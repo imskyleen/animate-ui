@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "management-bar-demo",
+  "type": "registry:ui",
+  "title": "Management Bar Demo",
+  "description": "Demo management Bar.",
+  "registryDependencies": [
+    "https://animate-ui.com/r/management-bar"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/ui-elements/management-bar/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/ui-elements/management-bar.tsx"
+    }
+  ]
+}

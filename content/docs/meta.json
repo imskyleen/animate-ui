@@ -15,6 +15,8 @@
     "components/scroll-progress",
     "components/tabs",
     "components/tooltip",
+    "---UI Elements---",
+    "ui-elements/management-bar",
     "---Effects---",
     "effects/motion-effect",
     "effects/motion-highlight",

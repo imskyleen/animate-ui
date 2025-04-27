@@ -1,0 +1,21 @@
+{
+    "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+    "name": "management-bar",
+    "type": "registry:ui",
+    "title": "Management Bar",
+    "description": "Management Bar Component",
+    "dependencies": [
+        "motion",
+        "lucide-react"
+    ],
+    "registryDependencies": [
+        "https://animate-ui.com/r/sliding-number"
+    ],
+    "files": [
+        {
+            "path": "registry/components/management-bar/index.tsx",
+            "type": "registry:ui",
+            "target": "components/animate-ui/management-bar/management-bar.tsx"
+        }
+    ]
+}
