@@ -1,6 +1,6 @@
 ---
 title: Management Bar
-description: A responsive management bar that combines pagination, action buttons, and a call-to-action for streamlined item handling.
+description: A management bar that combines pagination, action buttons, and a call-to-action for streamlined item handling.
 author:
   name: arhamkhnz
   url: https://github.com/arhamkhnz
@@ -18,77 +18,6 @@ author:
 <ManagementBar />
 ```
 
-## Examples
-
-### With decimal
-
-<ComponentPreview name="counting-number-decimal-demo" />
-
-### Starting from a specific number
-
-<ComponentPreview name="counting-from-number-demo" />
-
-## Props
-
-<TypeTable
-  type={{
-    number: {
-      description: 'The number to display',
-      type: 'number',
-      required: true,
-    },
-    fromNumber: {
-      description: 'The number to start from',
-      type: 'number',
-      required: false,
-      default: '0',
-    },
-    padStart: {
-      description: 'Whether to pad the number with leading zeros',
-      type: 'boolean',
-      required: false,
-      default: 'false',
-    },
-    inView: {
-      description: 'Enable animation when in view.',
-      type: 'boolean',
-      required: false,
-      default: 'false',
-    },
-    inViewMargin: {
-      description: 'The margin of the in view.',
-      type: 'string',
-      required: false,
-      default: '0px',
-    },
-    inViewOnce: {
-      description: 'Enable animation when in view once.',
-      type: 'boolean',
-      required: false,
-      default: 'true',
-    },
-    decimalSeparator: {
-      description: 'The decimal separator to use',
-      type: 'string',
-      required: false,
-      default: '.',
-    },
-    transition: {
-      description: 'The transition to use for the animation',
-      type: 'object',
-      required: false,
-      default: '{ stiffness: 90, damping: 50 }',
-    },
-    decimalPlaces: {
-      description: 'The number of decimal places to display',
-      type: 'number',
-      required: false,
-      default: '0',
-    },
-  }}
-/>
-
 ## Credits
 
-- Credits to [Motion](https://examples.motion.dev/react/html-content) for the inspiration
-- Credits to [Magic UI](https://magicui.design/docs/components/number-ticker) for the spring transition
+- Credits to [Amelie](https://x.com/amelieschltr) for [this X post](https://x.com/amelieschltr/status/1915019518813851985) as inspiration

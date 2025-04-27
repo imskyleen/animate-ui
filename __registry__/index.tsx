@@ -4067,6 +4067,41 @@ export const index: Record<Styles, Record<string, any>> = {
       })(),
       command: 'https://animate-ui.com/r/default/writing-text-demo',
     },
+    'management-bar-demo': {
+      name: 'management-bar-demo',
+      description: 'Demo management Bar.',
+      type: 'registry:ui',
+      dependencies: undefined,
+      devDependencies: undefined,
+      registryDependencies: ['https://animate-ui.com/r/default/management-bar'],
+      styles: undefined,
+      files: [
+        {
+          path: '__registry__/demo/ui-elements/management-bar/default/index.tsx',
+          type: 'registry:ui',
+          target: 'components/animate-ui/demo/ui-elements/management-bar.tsx',
+          content:
+            "'use client';\n\nimport * as React from 'react';\n\nimport { ManagementBar } from '@/components/animate-ui/ui-elements/management-bar';\n\nexport const ManagementBarDemo = () => {\n  return <ManagementBar />;\n};",
+        },
+      ],
+      component: (function () {
+        const LazyComp = React.lazy(async () => {
+          const mod = await import(
+            '@/__registry__/demo/ui-elements/management-bar/default/index.tsx'
+          );
+          const exportName =
+            Object.keys(mod).find(
+              (key) =>
+                typeof mod[key] === 'function' || typeof mod[key] === 'object',
+            ) || 'management-bar-demo';
+          const Comp = mod.default || mod[exportName];
+          return { default: Comp };
+        });
+        LazyComp.demoProps = {};
+        return LazyComp;
+      })(),
+      command: 'https://animate-ui.com/r/default/management-bar-demo',
+    },
     'motion-effect': {
       name: 'motion-effect',
       description: 'Motion effect component that displays the motion effect.',
@@ -5184,6 +5219,41 @@ export const index: Record<Styles, Record<string, any>> = {
         return LazyComp;
       })(),
       command: 'https://animate-ui.com/r/default/writing-text',
+    },
+    'management-bar': {
+      name: 'management-bar',
+      description: 'Management Bar Component',
+      type: 'registry:ui',
+      dependencies: ['motion', 'lucide-react'],
+      devDependencies: undefined,
+      registryDependencies: ['https://animate-ui.com/r/default/sliding-number'],
+      styles: undefined,
+      files: [
+        {
+          path: '__registry__/ui-elements/management-bar/default/index.tsx',
+          type: 'registry:ui',
+          target: 'components/animate-ui/management-bar/management-bar.tsx',
+          content:
+            '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  ChevronLeft,\n  ChevronRight,\n  Ban,\n  X,\n  Command,\n  IdCard,\n} from \'lucide-react\';\nimport { SlidingNumber } from \'@/components/animate-ui/text/sliding-number\';\n\nfunction ManagementBar() {\n  const [currentPage, setCurrentPage] = React.useState(1);\n  const totalPages = 10;\n\n  const handlePrevPage = () => {\n    if (currentPage > 1) {\n      setCurrentPage(currentPage - 1);\n    }\n  };\n\n  const handleNextPage = () => {\n    if (currentPage < totalPages) {\n      setCurrentPage(currentPage + 1);\n    }\n  };\n\n  return (\n    <div className="flex w-fit flex-wrap items-center gap-y-2 rounded-2xl border-2 border-slate-600 bg-black/90 p-2 shadow-lg">\n      <div className="mx-auto flex shrink-0 items-center">\n        <button\n          disabled={currentPage === 1}\n          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"\n          onClick={handlePrevPage}\n        >\n          <ChevronLeft size={20} />\n        </button>\n        <div className="mx-2 flex items-center space-x-1 text-sm tabular-nums">\n          <SlidingNumber className="text-white" padStart number={currentPage} />\n          <span className="text-gray-400">/ {totalPages}</span>\n        </div>\n        <button\n          disabled={currentPage === totalPages}\n          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"\n          onClick={handleNextPage}\n        >\n          <ChevronRight size={20} />\n        </button>\n      </div>\n\n      <div className="mx-3 h-5 w-px bg-slate-500" />\n\n      <div className="mx-auto flex flex-wrap space-x-2 sm:flex-nowrap">\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-zinc-600 px-2.5 py-2 text-white transition-all duration-300 hover:space-x-2"\n          aria-label="Blacklist"\n        >\n          <Ban size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Blacklist\n          </span>\n        </button>\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-red-800/80 px-2.5 py-2 text-red-300 transition-all duration-300 hover:space-x-2"\n          aria-label="Reject"\n        >\n          <X size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Reject\n          </span>\n        </button>\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-green-800/80 px-2.5 py-2 text-green-300 transition-all duration-300 hover:space-x-2"\n          aria-label="Hire"\n        >\n          <IdCard size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Hire\n          </span>\n        </button>\n      </div>\n\n      <div className="mx-3 hidden h-5 w-px bg-slate-500 sm:block" />\n\n      <div className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-teal-600 px-3 py-2 text-white transition-colors duration-300 hover:bg-teal-700 sm:w-auto">\n        <span className="mr-1 text-stone-300">Move to:</span>\n        <span>Interview I</span>\n        <div className="mx-3 h-5 w-px bg-white/40" />\n        <div className="flex items-center gap-1 rounded-md bg-white/20 px-2">\n          <Command size={14} />E\n        </div>\n      </div>\n    </div>\n  );\n}\n\nexport { ManagementBar };',
+        },
+      ],
+      component: (function () {
+        const LazyComp = React.lazy(async () => {
+          const mod = await import(
+            '@/__registry__/ui-elements/management-bar/default/index.tsx'
+          );
+          const exportName =
+            Object.keys(mod).find(
+              (key) =>
+                typeof mod[key] === 'function' || typeof mod[key] === 'object',
+            ) || 'management-bar';
+          const Comp = mod.default || mod[exportName];
+          return { default: Comp };
+        });
+        LazyComp.demoProps = {};
+        return LazyComp;
+      })(),
+      command: 'https://animate-ui.com/r/default/management-bar',
     },
   },
   'shadcn-default': {
@@ -9321,6 +9391,43 @@ export const index: Record<Styles, Record<string, any>> = {
       })(),
       command: 'https://animate-ui.com/r/shadcn-default/writing-text-demo',
     },
+    'management-bar-demo': {
+      name: 'management-bar-demo',
+      description: 'Demo management Bar.',
+      type: 'registry:ui',
+      dependencies: undefined,
+      devDependencies: undefined,
+      registryDependencies: [
+        'https://animate-ui.com/r/shadcn-default/management-bar',
+      ],
+      styles: undefined,
+      files: [
+        {
+          path: '__registry__/demo/ui-elements/management-bar/shadcn-default/index.tsx',
+          type: 'registry:ui',
+          target: 'components/animate-ui/demo/ui-elements/management-bar.tsx',
+          content:
+            "'use client';\n\nimport * as React from 'react';\n\nimport { ManagementBar } from '@/components/animate-ui/ui-elements/management-bar';\n\nexport const ManagementBarDemo = () => {\n  return <ManagementBar />;\n};",
+        },
+      ],
+      component: (function () {
+        const LazyComp = React.lazy(async () => {
+          const mod = await import(
+            '@/__registry__/demo/ui-elements/management-bar/shadcn-default/index.tsx'
+          );
+          const exportName =
+            Object.keys(mod).find(
+              (key) =>
+                typeof mod[key] === 'function' || typeof mod[key] === 'object',
+            ) || 'management-bar-demo';
+          const Comp = mod.default || mod[exportName];
+          return { default: Comp };
+        });
+        LazyComp.demoProps = {};
+        return LazyComp;
+      })(),
+      command: 'https://animate-ui.com/r/shadcn-default/management-bar-demo',
+    },
     'motion-effect': {
       name: 'motion-effect',
       description: 'Motion effect component that displays the motion effect.',
@@ -10438,6 +10545,43 @@ export const index: Record<Styles, Record<string, any>> = {
         return LazyComp;
       })(),
       command: 'https://animate-ui.com/r/shadcn-default/writing-text',
+    },
+    'management-bar': {
+      name: 'management-bar',
+      description: 'Management Bar Component',
+      type: 'registry:ui',
+      dependencies: ['motion', 'lucide-react'],
+      devDependencies: undefined,
+      registryDependencies: [
+        'https://animate-ui.com/r/shadcn-default/sliding-number',
+      ],
+      styles: undefined,
+      files: [
+        {
+          path: '__registry__/ui-elements/management-bar/shadcn-default/index.tsx',
+          type: 'registry:ui',
+          target: 'components/animate-ui/management-bar/management-bar.tsx',
+          content:
+            '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  ChevronLeft,\n  ChevronRight,\n  Ban,\n  X,\n  Command,\n  IdCard,\n} from \'lucide-react\';\nimport { SlidingNumber } from \'@/components/animate-ui/text/sliding-number\';\n\nfunction ManagementBar() {\n  const [currentPage, setCurrentPage] = React.useState(1);\n  const totalPages = 10;\n\n  const handlePrevPage = () => {\n    if (currentPage > 1) {\n      setCurrentPage(currentPage - 1);\n    }\n  };\n\n  const handleNextPage = () => {\n    if (currentPage < totalPages) {\n      setCurrentPage(currentPage + 1);\n    }\n  };\n\n  return (\n    <div className="flex w-fit flex-wrap items-center gap-y-2 rounded-2xl border-2 border-slate-600 bg-black/90 p-2 shadow-lg">\n      <div className="mx-auto flex shrink-0 items-center">\n        <button\n          disabled={currentPage === 1}\n          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"\n          onClick={handlePrevPage}\n        >\n          <ChevronLeft size={20} />\n        </button>\n        <div className="mx-2 flex items-center space-x-1 text-sm tabular-nums">\n          <SlidingNumber className="text-white" padStart number={currentPage} />\n          <span className="text-gray-400">/ {totalPages}</span>\n        </div>\n        <button\n          disabled={currentPage === totalPages}\n          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"\n          onClick={handleNextPage}\n        >\n          <ChevronRight size={20} />\n        </button>\n      </div>\n\n      <div className="mx-3 h-5 w-px bg-slate-500" />\n\n      <div className="mx-auto flex flex-wrap space-x-2 sm:flex-nowrap">\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-zinc-600 px-2.5 py-2 text-white transition-all duration-300 hover:space-x-2"\n          aria-label="Blacklist"\n        >\n          <Ban size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Blacklist\n          </span>\n        </button>\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-red-800/80 px-2.5 py-2 text-red-300 transition-all duration-300 hover:space-x-2"\n          aria-label="Reject"\n        >\n          <X size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Reject\n          </span>\n        </button>\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-green-800/80 px-2.5 py-2 text-green-300 transition-all duration-300 hover:space-x-2"\n          aria-label="Hire"\n        >\n          <IdCard size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Hire\n          </span>\n        </button>\n      </div>\n\n      <div className="mx-3 hidden h-5 w-px bg-slate-500 sm:block" />\n\n      <div className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-teal-600 px-3 py-2 text-white transition-colors duration-300 hover:bg-teal-700 sm:w-auto">\n        <span className="mr-1 text-stone-300">Move to:</span>\n        <span>Interview I</span>\n        <div className="mx-3 h-5 w-px bg-white/40" />\n        <div className="flex items-center gap-1 rounded-md bg-white/20 px-2">\n          <Command size={14} />E\n        </div>\n      </div>\n    </div>\n  );\n}\n\nexport { ManagementBar };',
+        },
+      ],
+      component: (function () {
+        const LazyComp = React.lazy(async () => {
+          const mod = await import(
+            '@/__registry__/ui-elements/management-bar/shadcn-default/index.tsx'
+          );
+          const exportName =
+            Object.keys(mod).find(
+              (key) =>
+                typeof mod[key] === 'function' || typeof mod[key] === 'object',
+            ) || 'management-bar';
+          const Comp = mod.default || mod[exportName];
+          return { default: Comp };
+        });
+        LazyComp.demoProps = {};
+        return LazyComp;
+      })(),
+      command: 'https://animate-ui.com/r/shadcn-default/management-bar',
     },
   },
   'shadcn-new-york': {
@@ -14589,6 +14733,43 @@ export const index: Record<Styles, Record<string, any>> = {
       })(),
       command: 'https://animate-ui.com/r/shadcn-new-york/writing-text-demo',
     },
+    'management-bar-demo': {
+      name: 'management-bar-demo',
+      description: 'Demo management Bar.',
+      type: 'registry:ui',
+      dependencies: undefined,
+      devDependencies: undefined,
+      registryDependencies: [
+        'https://animate-ui.com/r/shadcn-new-york/management-bar',
+      ],
+      styles: undefined,
+      files: [
+        {
+          path: '__registry__/demo/ui-elements/management-bar/shadcn-new-york/index.tsx',
+          type: 'registry:ui',
+          target: 'components/animate-ui/demo/ui-elements/management-bar.tsx',
+          content:
+            "'use client';\n\nimport * as React from 'react';\n\nimport { ManagementBar } from '@/components/animate-ui/ui-elements/management-bar';\n\nexport const ManagementBarDemo = () => {\n  return <ManagementBar />;\n};",
+        },
+      ],
+      component: (function () {
+        const LazyComp = React.lazy(async () => {
+          const mod = await import(
+            '@/__registry__/demo/ui-elements/management-bar/shadcn-new-york/index.tsx'
+          );
+          const exportName =
+            Object.keys(mod).find(
+              (key) =>
+                typeof mod[key] === 'function' || typeof mod[key] === 'object',
+            ) || 'management-bar-demo';
+          const Comp = mod.default || mod[exportName];
+          return { default: Comp };
+        });
+        LazyComp.demoProps = {};
+        return LazyComp;
+      })(),
+      command: 'https://animate-ui.com/r/shadcn-new-york/management-bar-demo',
+    },
     'motion-effect': {
       name: 'motion-effect',
       description: 'Motion effect component that displays the motion effect.',
@@ -15706,6 +15887,43 @@ export const index: Record<Styles, Record<string, any>> = {
         return LazyComp;
       })(),
       command: 'https://animate-ui.com/r/shadcn-new-york/writing-text',
+    },
+    'management-bar': {
+      name: 'management-bar',
+      description: 'Management Bar Component',
+      type: 'registry:ui',
+      dependencies: ['motion', 'lucide-react'],
+      devDependencies: undefined,
+      registryDependencies: [
+        'https://animate-ui.com/r/shadcn-new-york/sliding-number',
+      ],
+      styles: undefined,
+      files: [
+        {
+          path: '__registry__/ui-elements/management-bar/shadcn-new-york/index.tsx',
+          type: 'registry:ui',
+          target: 'components/animate-ui/management-bar/management-bar.tsx',
+          content:
+            '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  ChevronLeft,\n  ChevronRight,\n  Ban,\n  X,\n  Command,\n  IdCard,\n} from \'lucide-react\';\nimport { SlidingNumber } from \'@/components/animate-ui/text/sliding-number\';\n\nfunction ManagementBar() {\n  const [currentPage, setCurrentPage] = React.useState(1);\n  const totalPages = 10;\n\n  const handlePrevPage = () => {\n    if (currentPage > 1) {\n      setCurrentPage(currentPage - 1);\n    }\n  };\n\n  const handleNextPage = () => {\n    if (currentPage < totalPages) {\n      setCurrentPage(currentPage + 1);\n    }\n  };\n\n  return (\n    <div className="flex w-fit flex-wrap items-center gap-y-2 rounded-2xl border-2 border-slate-600 bg-black/90 p-2 shadow-lg">\n      <div className="mx-auto flex shrink-0 items-center">\n        <button\n          disabled={currentPage === 1}\n          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"\n          onClick={handlePrevPage}\n        >\n          <ChevronLeft size={20} />\n        </button>\n        <div className="mx-2 flex items-center space-x-1 text-sm tabular-nums">\n          <SlidingNumber className="text-white" padStart number={currentPage} />\n          <span className="text-gray-400">/ {totalPages}</span>\n        </div>\n        <button\n          disabled={currentPage === totalPages}\n          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"\n          onClick={handleNextPage}\n        >\n          <ChevronRight size={20} />\n        </button>\n      </div>\n\n      <div className="mx-3 h-5 w-px bg-slate-500" />\n\n      <div className="mx-auto flex flex-wrap space-x-2 sm:flex-nowrap">\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-zinc-600 px-2.5 py-2 text-white transition-all duration-300 hover:space-x-2"\n          aria-label="Blacklist"\n        >\n          <Ban size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Blacklist\n          </span>\n        </button>\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-red-800/80 px-2.5 py-2 text-red-300 transition-all duration-300 hover:space-x-2"\n          aria-label="Reject"\n        >\n          <X size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Reject\n          </span>\n        </button>\n        <button\n          className="group flex h-10 w-auto items-center overflow-hidden rounded-lg bg-green-800/80 px-2.5 py-2 text-green-300 transition-all duration-300 hover:space-x-2"\n          aria-label="Hire"\n        >\n          <IdCard size={20} />\n          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100">\n            Hire\n          </span>\n        </button>\n      </div>\n\n      <div className="mx-3 hidden h-5 w-px bg-slate-500 sm:block" />\n\n      <div className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-teal-600 px-3 py-2 text-white transition-colors duration-300 hover:bg-teal-700 sm:w-auto">\n        <span className="mr-1 text-stone-300">Move to:</span>\n        <span>Interview I</span>\n        <div className="mx-3 h-5 w-px bg-white/40" />\n        <div className="flex items-center gap-1 rounded-md bg-white/20 px-2">\n          <Command size={14} />E\n        </div>\n      </div>\n    </div>\n  );\n}\n\nexport { ManagementBar };',
+        },
+      ],
+      component: (function () {
+        const LazyComp = React.lazy(async () => {
+          const mod = await import(
+            '@/__registry__/ui-elements/management-bar/shadcn-new-york/index.tsx'
+          );
+          const exportName =
+            Object.keys(mod).find(
+              (key) =>
+                typeof mod[key] === 'function' || typeof mod[key] === 'object',
+            ) || 'management-bar';
+          const Comp = mod.default || mod[exportName];
+          return { default: Comp };
+        });
+        LazyComp.demoProps = {};
+        return LazyComp;
+      })(),
+      command: 'https://animate-ui.com/r/shadcn-new-york/management-bar',
     },
   },
 };

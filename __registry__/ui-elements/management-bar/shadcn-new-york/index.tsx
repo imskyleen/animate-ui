@@ -9,7 +9,7 @@ import {
   Command,
   IdCard,
 } from 'lucide-react';
-import { SlidingNumber } from '@/registry/text/sliding-number';
+import { SlidingNumber } from '@/__registry__/text/sliding-number/shadcn-new-york';
 
 function ManagementBar() {
   const [currentPage, setCurrentPage] = React.useState(1);

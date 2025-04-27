@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "management-bar-demo",
+  "type": "registry:ui",
+  "title": "Management Bar Demo",
+  "description": "Demo management Bar.",
+  "registryDependencies": [
+    "https://animate-ui.com/r/shadcn-new-york/management-bar"
+  ],
+  "files": [
+    {
+      "path": "__registry__/demo/ui-elements/management-bar/shadcn-new-york/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\n\nimport { ManagementBar } from '@/components/animate-ui/ui-elements/management-bar';\n\nexport const ManagementBarDemo = () => {\n  return <ManagementBar />;\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/ui-elements/management-bar.tsx"
+    }
+  ]
+}
