@@ -7,6 +7,14 @@ import { rimraf } from 'rimraf';
 import { AUTO_REGISTRY_DIR_NAME, REGISTRY_DIR, Styles } from './constants.mts';
 
 /**
+ * Normalize a path to use forward slashes.
+ * @param inputPath - The input path to normalize.
+ * @returns The normalized path with forward slashes.
+ */
+function normalizePath(inputPath: string): string {
+  return inputPath.replace(/\\/g, '/');
+}
+/**
  * Replace registry paths with component paths.
  * @param inputStr - The input string to process.
  * @returns The processed string with registry paths replaced.
@@ -232,7 +240,7 @@ export const index: Record<Styles, Record<string, any>> = {`;
       const compSnippet = componentPath
         ? `(function() {
       const LazyComp = React.lazy(async () => {
-        const mod = await import("${componentPath}")
+        const mod = await import("${normalizePath(componentPath)}")
         const exportName = Object.keys(mod).find(
           key => typeof mod[key] === 'function' || typeof mod[key] === 'object'
         ) || "${item.name}"

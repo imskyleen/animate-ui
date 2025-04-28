@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radix-sheet-variants-demo",
+  "type": "registry:ui",
+  "title": "Radix Sheet Variants Demo",
+  "description": "Use the side property to <SheetContent /> to indicate the edge of the screen where the component will appear. The values can be top, right, bottom or left.",
+  "dependencies": ["lucide-react", "motion"],
+  "registryDependencies": [
+    "https://animate-ui.com/r/radix-sheet",
+    "button",
+    "label",
+    "input"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/radix/sheet-variants/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/radix/sheet-variants.tsx"
+    }
+  ]
+}
