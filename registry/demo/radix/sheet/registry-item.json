@@ -21,17 +21,14 @@
   "meta": {
     "demoProps":{
       "Sheet":{
-        "right":{
-          "value":true
-        },
-        "left":{
-          "value":false
-        },
-        "top":{
-          "value":false
-        },
-        "bottom":{
-          "value":false
+        "side": {
+          "value": "right",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
         }
       }
     }
