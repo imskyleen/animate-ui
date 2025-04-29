@@ -17,10 +17,7 @@ interface RadixSheetDemoProps {
 }
 
 export const RadixSheetDemo = ({
-  right,
-  left,
-  top,
-  bottom,
+  side,
 }: RadixSheetDemoProps) => {
   return (
     <Sheet>
