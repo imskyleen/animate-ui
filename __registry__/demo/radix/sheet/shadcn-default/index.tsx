@@ -12,13 +12,36 @@ import {
   SheetTrigger,
 } from '@/__registry__/radix/sheet/shadcn-default';
 
-export const RadixSheetDemo = () => {
+interface RadixSheetDemoProps {
+  top: boolean;
+  bottom: boolean;
+  right: boolean;
+  left: boolean;
+}
+export const RadixSheetDemo = ({
+  right,
+  left,
+  top,
+  bottom,
+}: RadixSheetDemoProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent
+        side={
+          right
+            ? 'right'
+            : left
+              ? 'left'
+              : top
+                ? 'top'
+                : bottom
+                  ? 'bottom'
+                  : 'right'
+        }
+      >
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>

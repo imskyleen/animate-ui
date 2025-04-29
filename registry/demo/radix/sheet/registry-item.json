@@ -17,5 +17,23 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/radix/sheet.tsx"
     }
-  ]
+  ],
+  "meta": {
+    "demoProps":{
+      "Sheet":{
+        "right":{
+          "value":true
+        },
+        "left":{
+          "value":false
+        },
+        "top":{
+          "value":false
+        },
+        "bottom":{
+          "value":false
+        }
+      }
+    }
+  }
 }
