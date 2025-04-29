@@ -13,11 +13,9 @@ import {
 } from '@/registry/radix/sheet';
 
 interface RadixSheetDemoProps {
-  top: boolean;
-  bottom: boolean;
-  right: boolean;
-  left: boolean;
+  side: 'top' | 'bottom' | 'right' | 'left';
 }
+
 export const RadixSheetDemo = ({
   right,
   left,
