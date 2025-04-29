@@ -25,17 +25,7 @@ export const RadixSheetDemo = ({
         <Button variant="outline">Open</Button>
       </SheetTrigger>
       <SheetContent
-        side={
-          right
-            ? 'right'
-            : left
-              ? 'left'
-              : top
-                ? 'top'
-                : bottom
-                  ? 'bottom'
-                  : 'right'
-        }
+        side={side}
       >
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
