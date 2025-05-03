@@ -17,10 +17,13 @@ const buttonMotionConfig = {
   animate: 'rest',
   whileHover: 'hover',
   variants: {
-    rest: { maxWidth: '40px' },
+    rest: {
+      maxWidth: '40px',
+      transition: { type: 'spring', stiffness: 200, damping: 25, delay: 0.1 },
+    },
     hover: { maxWidth: '140px' },
   },
-  transition: { type: 'tween', ease: 'easeOut', duration: 0.3 },
+  transition: { type: 'spring', stiffness: 200, damping: 25 },
 };
 
 const labelVariants: Variants = {
@@ -29,10 +32,9 @@ const labelVariants: Variants = {
 };
 
 const labelTransition: Transition = {
-  type: 'tween',
-  ease: 'easeOut',
-  duration: 0.25,
-  delay: 0,
+  type: 'spring',
+  stiffness: 200,
+  damping: 25,
 };
 
 function ManagementBar() {
@@ -40,41 +42,41 @@ function ManagementBar() {
   const totalPages = 10;
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   return (
-    <div className="flex w-fit flex-wrap items-center gap-y-2 rounded-2xl border-2 border-slate-600 bg-black/90 p-2 shadow-lg">
+    <div className="flex w-fit flex-wrap items-center gap-y-2 rounded-2xl border border-border bg-background p-2 shadow-lg">
       <div className="mx-auto flex shrink-0 items-center">
         <button
           disabled={currentPage === 1}
-          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"
+          className="p-1 text-muted-foreground transition-colors hover:text-foreground disabled:text-muted-foreground/30 disabled:hover:text-muted-foreground/30"
           onClick={handlePrevPage}
         >
           <ChevronLeft size={20} />
         </button>
         <div className="mx-2 flex items-center space-x-1 text-sm tabular-nums">
-          <SlidingNumber className="text-white" padStart number={currentPage} />
-          <span className="text-gray-400">/ {totalPages}</span>
+          <SlidingNumber
+            className="text-foreground"
+            padStart
+            number={currentPage}
+          />
+          <span className="text-muted-foreground">/ {totalPages}</span>
         </div>
         <button
           disabled={currentPage === totalPages}
-          className="p-1 text-gray-300 transition-colors hover:text-white disabled:text-gray-500 disabled:hover:text-gray-500"
+          className="p-1 text-muted-foreground transition-colors hover:text-foreground disabled:text-muted-foreground/30 disabled:hover:text-muted-foreground/30"
           onClick={handleNextPage}
         >
           <ChevronRight size={20} />
         </button>
       </div>
 
-      <div className="mx-3 h-5 w-px bg-slate-500" />
+      <div className="mx-3 h-5 w-px bg-border rounded-full" />
 
       <motion.div
         layout
@@ -83,7 +85,7 @@ function ManagementBar() {
       >
         <motion.button
           {...buttonMotionConfig}
-          className="flex h-10 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-zinc-600 px-2.5 py-2 text-white"
+          className="flex h-10 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-neutral-500/80 dark:bg-neutral-600/80 px-2.5 py-2 text-white"
           aria-label="Blacklist"
         >
           <Ban size={20} className="shrink-0" />
@@ -98,7 +100,7 @@ function ManagementBar() {
 
         <motion.button
           {...buttonMotionConfig}
-          className="flex h-10 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-red-800/80 px-2.5 py-2 text-red-300"
+          className="flex h-10 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-red-500/80 dark:bg-red-800/80 px-2.5 py-2 text-white dark:text-red-300"
           aria-label="Reject"
         >
           <X size={20} className="shrink-0" />
@@ -113,7 +115,7 @@ function ManagementBar() {
 
         <motion.button
           {...buttonMotionConfig}
-          className="flex h-10 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-green-800/80 px-2.5 py-2 text-green-300"
+          className="flex h-10 items-center space-x-2 overflow-hidden whitespace-nowrap rounded-lg bg-green-500/80 dark:bg-green-800/80 px-2.5 py-2 text-white dark:text-green-300"
           aria-label="Hire"
         >
           <IdCard size={20} className="shrink-0" />
@@ -127,16 +129,18 @@ function ManagementBar() {
         </motion.button>
       </motion.div>
 
-      <div className="mx-3 hidden h-5 w-px bg-slate-500 sm:block" />
+      <div className="mx-3 hidden h-5 w-px bg-border sm:block rounded-full" />
 
-      <div className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-teal-600 px-3 py-2 text-white transition-colors duration-300 hover:bg-teal-700 sm:w-auto">
-        <span className="mr-1 text-stone-300">Move to:</span>
+      <button className="flex w-full h-10 text-sm cursor-pointer items-center justify-center rounded-lg bg-teal-500/80 dark:bg-teal-600/80 px-3 py-2 text-white transition-colors duration-300 hover:bg-teal-700 sm:w-auto">
+        <span className="mr-1 text-neutral-100 dark:text-neutral-200">
+          Move to:
+        </span>
         <span>Interview I</span>
-        <div className="mx-3 h-5 w-px bg-white/40" />
-        <div className="flex items-center gap-1 rounded-md bg-white/20 px-2">
+        <div className="mx-3 h-5 w-px bg-white/40 rounded-full" />
+        <div className="flex items-center gap-1 rounded-md bg-white/20 px-1.5 py-0.5 -mr-1">
           <Command size={14} />E
         </div>
-      </div>
+      </button>
     </div>
   );
 }
