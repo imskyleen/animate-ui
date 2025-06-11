@@ -2628,6 +2628,38 @@
       ]
     },
     {
+      "name": "axe-icon",
+      "type": "registry:ui",
+      "title": "Axe Icon",
+      "description": "Axe icon component.",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/axe/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/axe.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "hatchet",
+          "weapon",
+          "chop",
+          "sharp",
+          "equipment",
+          "fireman",
+          "firefighter",
+          "brigade",
+          "lumberjack",
+          "woodcutter",
+          "logger",
+          "forestry"
+        ]
+      }
+    },
+    {
       "name": "activity-icon",
       "type": "registry:ui",
       "title": "Activity Icon",

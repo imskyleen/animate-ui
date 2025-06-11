@@ -5394,6 +5394,55 @@ export const index: Record<string, any> = {
     })(),
     command: 'https://animate-ui.com/r/headless-tabs',
   },
+  'axe-icon': {
+    name: 'axe-icon',
+    description: 'Axe icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: undefined,
+    files: [
+      {
+        path: 'registry/icons/axe/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/axe.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype AxeProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        transformOrigin: \'bottom left\',\n        rotate: [0, 25, -5, 0],\n      },\n    },\n    path1: {},\n    path2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: AxeProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      variants={variants.group}\n      initial="initial"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d="m14 12-8.381 8.38a1 1 0 0 1-3.001-3L11 9"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M15 15.5a.5.5 0 0 0 .5.5A6.5 6.5 0 0 0 22 9.5a.5.5 0 0 0-.5-.5h-1.672a2 2 0 0 1-1.414-.586l-5.062-5.062a1.205 1.205 0 0 0-1.704 0L9.352 5.648a1.205 1.205 0 0 0 0 1.704l5.062 5.062A2 2 0 0 1 15 13.828z"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Axe(props: AxeProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Axe,\n  Axe as AxeIcon,\n  type AxeProps,\n  type AxeProps as AxeIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'hatchet',
+      'weapon',
+      'chop',
+      'sharp',
+      'equipment',
+      'fireman',
+      'firefighter',
+      'brigade',
+      'lumberjack',
+      'woodcutter',
+      'logger',
+      'forestry',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/axe/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'axe-icon';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: 'https://animate-ui.com/r/axe-icon',
+  },
   'activity-icon': {
     name: 'activity-icon',
     description: 'Activity icon component.',
@@ -5687,55 +5736,6 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: 'https://animate-ui.com/r/audio-lines-icon',
-  },
-  'axe-icon': {
-    name: 'axe-icon',
-    description: 'Axe icon component.',
-    type: 'registry:ui',
-    dependencies: ['motion'],
-    devDependencies: undefined,
-    registryDependencies: undefined,
-    files: [
-      {
-        path: 'registry/icons/axe/index.tsx',
-        type: 'registry:ui',
-        target: 'components/animate-ui/icons/axe.tsx',
-        content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype AxeProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        transformOrigin: \'bottom left\',\n        rotate: [0, 25, -5, 0],\n      },\n    },\n    path1: {},\n    path2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: AxeProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      variants={variants.group}\n      initial="initial"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d="m14 12-8.381 8.38a1 1 0 0 1-3.001-3L11 9"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M15 15.5a.5.5 0 0 0 .5.5A6.5 6.5 0 0 0 22 9.5a.5.5 0 0 0-.5-.5h-1.672a2 2 0 0 1-1.414-.586l-5.062-5.062a1.205 1.205 0 0 0-1.704 0L9.352 5.648a1.205 1.205 0 0 0 0 1.704l5.062 5.062A2 2 0 0 1 15 13.828z"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Axe(props: AxeProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Axe,\n  Axe as AxeIcon,\n  type AxeProps,\n  type AxeProps as AxeIconProps,\n};',
-      },
-    ],
-    keywords: [
-      'hatchet',
-      'weapon',
-      'chop',
-      'sharp',
-      'equipment',
-      'fireman',
-      'firefighter',
-      'brigade',
-      'lumberjack',
-      'woodcutter',
-      'logger',
-      'forestry',
-    ],
-    component: (function () {
-      const LazyComp = React.lazy(async () => {
-        const mod = await import('@/registry/icons/axe/index.tsx');
-        const exportName =
-          Object.keys(mod).find(
-            (key) =>
-              typeof mod[key] === 'function' || typeof mod[key] === 'object',
-          ) || 'axe-icon';
-        const Comp = mod.default || mod[exportName];
-        if (mod.animations) {
-          (LazyComp as any).animations = mod.animations;
-        }
-        return { default: Comp };
-      });
-      LazyComp.demoProps = {};
-      return LazyComp;
-    })(),
-    command: 'https://animate-ui.com/r/axe-icon',
   },
   'battery-charging-icon': {
     name: 'battery-charging-icon',
