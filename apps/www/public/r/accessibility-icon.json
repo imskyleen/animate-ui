@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "accessibility-icon",
+  "type": "registry:ui",
+  "title": "Accessibility Icon",
+  "description": "Accessibility icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/accessibility/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype AccessibilityProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group1: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        rotate: [0, 5, -5, 0],\n        transition: {\n          duration: 0.8,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    group2: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        rotate: -360,\n        transition: {\n          duration: 1,\n          delay: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    circle: {\n      initial: {\n        y: 0,\n        x: 0,\n      },\n      animate: {\n        y: [0, 1, -1, 0],\n        x: [0, 1, -1, 0],\n        transition: {\n          duration: 0.8,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path1: {},\n    path2: {},\n    path3: {\n      initial: {\n        rotate: 0,\n        d: 'M8 5 L5 8',\n      },\n      animate: {\n        rotate: [0, -60, 0],\n        d: ['M8 5 L5 8', 'M8 5 L4 9', 'M8 5 L5 8'],\n        transition: {\n          duration: 0.4,\n          delay: 0.2,\n          ease: 'easeInOut',\n        },\n        transformOrigin: 'top right',\n      },\n    },\n    path4: {},\n    path5: {},\n    path6: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: AccessibilityProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.circle\n        cx=\"16\"\n        cy=\"4\"\n        r=\"1\"\n        variants={variants.circle}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.g variants={variants.group1} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"M18,19l1-7-6,1\"\n          variants={variants.path1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M8,5l5.5,3-2.4,3.5\"\n          variants={variants.path2}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M8 5 L5 8\"\n          variants={variants.path3}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n      <motion.g variants={variants.group2} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"M4.2,14.5c-.8,2.6.7,5.4,3.3,6.2,1.2.4,2.4.3,3.6-.2\"\n          variants={variants.path4}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M13.8,17.5c.8-2.6-.7-5.4-3.3-6.2-1.2-.4-2.4-.3-3.6.2\"\n          variants={variants.path5}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n      <motion.path\n        d=\"M13,13.1c-.5-.7-1.1-1.2-1.9-1.6\"\n        variants={variants.path6}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Accessibility(props: AccessibilityProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Accessibility,\n  Accessibility as AccessibilityIcon,\n  type AccessibilityProps,\n  type AccessibilityProps as AccessibilityIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/accessibility.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "disability",
+      "disabled",
+      "dda",
+      "wheelchair"
+    ]
+  }
+}

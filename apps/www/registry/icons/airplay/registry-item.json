@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "airplay-icon",
+  "type": "registry:ui",
+  "title": "Airplay Icon",
+  "description": "Airplay icon component.",
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/airplay/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/airplay.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "stream",
+      "cast",
+      "mirroring",
+      "screen",
+      "monitor",
+      "macos",
+      "osx"
+    ]
+  }
+}

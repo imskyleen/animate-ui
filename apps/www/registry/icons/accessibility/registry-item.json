@@ -1,31 +1,18 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "axe-icon",
+  "name": "accessibility-icon",
   "type": "registry:ui",
-  "title": "Axe Icon",
-  "description": "Axe icon component.",
+  "title": "Accessibility Icon",
+  "description": "Accessibility icon component.",
   "dependencies": ["motion"],
   "files": [
     {
-      "path": "registry/icons/axe/index.tsx",
+      "path": "registry/icons/accessibility/index.tsx",
       "type": "registry:ui",
-      "target": "components/animate-ui/icons/axe.tsx"
+      "target": "components/animate-ui/icons/accessibility.tsx"
     }
   ],
   "meta": {
-    "keywords": [
-      "hatchet",
-      "weapon",
-      "chop",
-      "sharp",
-      "equipment",
-      "fireman",
-      "firefighter",
-      "brigade",
-      "lumberjack",
-      "woodcutter",
-      "logger",
-      "forestry"
-    ]
+    "keywords": ["disability", "disabled", "dda", "wheelchair"]
   }
 }

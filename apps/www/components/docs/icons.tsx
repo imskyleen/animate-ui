@@ -37,6 +37,8 @@ import { RotateCcw } from '@/registry/icons/rotate-ccw';
 
 const staticAnimationsLength = Object.keys(staticAnimations).length;
 
+const NEW_ICONS = ['accessibility-icon', 'airplay-icon'];
+
 export const Icons = () => {
   const [search, setSearch] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
@@ -124,6 +126,11 @@ export const Icons = () => {
                                   activeIcon === icon.name && 'bg-blue-500/20',
                                 )}
                               />
+
+                              {NEW_ICONS.includes(icon.name) && (
+                                <div className="absolute -top-1 -right-1 size-2.5 border border-background bg-blue-500 rounded-full" />
+                              )}
+
                               <div className="absolute -bottom-2.5 -right-2.5 flex items-center justify-center text-muted-foreground font-medium size-5 bg-background border group-hover:border-blue-500 group-hover:ring group-hover:ring-blue-500 transition-colors duration-200 rounded-full">
                                 <span className="text-[11px] leading-none">
                                   {staticAnimationsLength + animationsLength}
