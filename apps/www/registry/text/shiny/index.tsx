@@ -26,7 +26,6 @@ const ShinyText = ({
 }: ShinyTextProps) => {
   const animationDuration = speed;
 
-  // 根据主题设置默认颜色
   const getColors = () => {
     if (shimmerColor && baseColor) {
       return { shimmer: shimmerColor, base: baseColor };
@@ -36,12 +35,12 @@ const ShinyText = ({
       case 'light':
         return {
           shimmer: '#000000',
-          base: '#9ca3af', // gray-400
+          base: '#9ca3af',
         };
       case 'dark':
         return {
           shimmer: '#ffffff',
-          base: '#6b7280', // gray-500
+          base: '#6b7280',
         };
       default: // auto
         return {
@@ -53,47 +52,44 @@ const ShinyText = ({
 
   const colors = getColors();
 
+  // 使用CSS变量传递动态颜色
+  const cssVariables = {
+    '--shiny-text-base-color': colors.base,
+    '--shiny-text-shimmer-color': colors.shimmer,
+  } as React.CSSProperties;
+
   return (
     <div
       className={cn('relative inline-block', className)}
-      style={style}
+      style={{ ...cssVariables, ...style }}
       {...props}
     >
-      {/* 基础文字 */}
-      <div className="font-semibold" style={{ color: colors.base }}>
+      <div className="font-semibold text-[var(--shiny-text-base-color)]">
         {text}
       </div>
 
-      {/* 闪光效果遮罩 */}
-      <motion.div
-        className="absolute inset-0 font-semibold overflow-hidden pointer-events-none"
-        style={{
-          background: `linear-gradient(120deg, transparent 0%, transparent 40%, ${colors.shimmer} 50%, transparent 60%, transparent 100%)`,
-          backgroundSize: '200% 100%',
-          WebkitBackgroundClip: 'text',
-          backgroundClip: 'text',
-          color: 'transparent',
-          WebkitTextFillColor: 'transparent',
-        }}
-        animate={
-          disable
-            ? { backgroundPosition: '100% 0%' }
-            : {
-                backgroundPosition: ['100% 0%', '-100% 0%'],
-              }
-        }
-        transition={
-          disable
-            ? { duration: 0 }
-            : {
-                duration: animationDuration,
-                ease: 'linear',
-                repeat: Infinity,
-              }
-        }
-      >
-        {text}
-      </motion.div>
+      {!disable && (
+        <motion.div
+          className={cn(
+            'absolute inset-0 font-semibold overflow-hidden pointer-events-none',
+            'bg-gradient-to-r bg-clip-text text-transparent',
+            'bg-[length:200%_100%]',
+            '[background-image:linear-gradient(120deg,transparent_0%,transparent_40%,var(--shiny-text-shimmer-color)_50%,transparent_60%,transparent_100%)]',
+            '[background-clip:text] [-webkit-background-clip:text]',
+            '[color:transparent] [-webkit-text-fill-color:transparent]',
+          )}
+          animate={{
+            backgroundPosition: ['100% 0%', '-100% 0%'],
+          }}
+          transition={{
+            duration: animationDuration,
+            ease: 'linear',
+            repeat: Infinity,
+          }}
+        >
+          {text}
+        </motion.div>
+      )}
     </div>
   );
 };

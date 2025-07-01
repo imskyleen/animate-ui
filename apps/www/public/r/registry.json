@@ -2445,7 +2445,8 @@
           "ShinyTextDemo": {
             "text": "Shiny Text",
             "speed": 5,
-            "theme": "dark"
+            "theme": "dark",
+            "disable": false
           }
         }
       }

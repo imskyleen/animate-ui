@@ -31,5 +31,38 @@ new: true
       required: true,
       type: 'string',
     },
+    speed: {
+      value: '5',
+      description: 'The speed of the animation',
+      required: false,
+      type: 'number',
+      default: '5',
+    },
+    disable: {
+      value: 'false',
+      description: 'Whether to disable the animation',
+      required: false,
+      type: 'boolean',
+      default: 'false',
+    },
+    theme: {
+      value: 'dark',
+      description: 'The theme of the text',
+      required: false,
+      type: 'string',
+      default: 'dark',
+    },
+    shimmerColor: {
+      value: '#000000',
+      description: 'The color of the shimmer',
+      required: false,
+      type: 'string',
+    },
+    baseColor: {
+      value: '#9ca3af',
+      description: 'The color of the base text',
+      required: false,
+      type: 'string',
+    },
   }}
 />
