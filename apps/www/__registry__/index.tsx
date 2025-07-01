@@ -4905,6 +4905,42 @@ export const index: Record<string, any> = {
     })(),
     command: 'https://animate-ui.com/r/shimmering-text-demo',
   },
+  'shiny-text-demo': {
+    name: 'shiny-text-demo',
+    description: 'Demo showing an animated shiny text.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['https://animate-ui.com/r/shiny-text'],
+    files: [
+      {
+        path: 'registry/demo/text/shiny/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/text/shiny.tsx',
+        content:
+          "'use client';\n\nimport { ShinyText, ShinyTextProps } from '@/components/animate-ui/text/shiny';\n\ntype ShinyTextDemoProps = ShinyTextProps & {\n  text: string;\n};\n\nexport const ShinyTextDemo = ({ text, ...props }: ShinyTextDemoProps) => {\n  return <ShinyText text={text} {...props} />;\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/demo/text/shiny/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'shiny-text-demo';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = { ShinyTextDemo: { text: 'Shiny Text' } };
+      return LazyComp;
+    })(),
+    command: 'https://animate-ui.com/r/shiny-text-demo',
+  },
   'sliding-number-demo': {
     name: 'sliding-number-demo',
     description: 'Demo showing an animated sliding number.',
@@ -12836,6 +12872,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: 'https://animate-ui.com/r/shimmering-text',
+  },
+  'shiny-text': {
+    name: 'shiny-text',
+    description:
+      'A text component that smoothly animates text changes with a shiny transition effect.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: undefined,
+    files: [
+      {
+        path: 'registry/text/shiny/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/text/shiny.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\nimport { motion } from 'motion/react';\n\ntype ShinyTextProps = React.ComponentProps<'div'> & {\n  text: string;\n};\n\nconst ShinyText = ({ text, className, ...props }: ShinyTextProps) => {\n  return (\n    <div\n      className={cn(\n        'relative flex items-center justify-center min-w-2xl min-h-2',\n        className,\n      )}\n      {...props}\n    >\n      {text}\n    </div>\n  );\n};\n\nexport { ShinyText, type ShinyTextProps };",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/text/shiny/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'shiny-text';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: 'https://animate-ui.com/r/shiny-text',
   },
   'sliding-number': {
     name: 'sliding-number',

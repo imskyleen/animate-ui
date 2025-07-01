@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shiny-text-demo",
+  "type": "registry:ui",
+  "title": "Shiny Text Demo",
+  "description": "Demo showing an animated shiny text.",
+  "registryDependencies": [
+    "https://animate-ui.com/r/shiny-text"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/text/shiny/index.tsx",
+      "content": "'use client';\n\nimport { ShinyText, ShinyTextProps } from '@/components/animate-ui/text/shiny';\n\ntype ShinyTextDemoProps = ShinyTextProps & {\n  text: string;\n};\n\nexport const ShinyTextDemo = ({ text, ...props }: ShinyTextDemoProps) => {\n  return <ShinyText text={text} {...props} />;\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/text/shiny.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ShinyTextDemo": {
+        "text": "Shiny Text"
+      }
+    }
+  }
+}

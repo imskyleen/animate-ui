@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shiny-text",
+  "type": "registry:ui",
+  "title": "Shiny Text",
+  "description": "A text component that smoothly animates text changes with a shiny transition effect.",
+  "dependencies": [
+    "motion"
+  ],
+  "files": [
+    {
+      "path": "registry/text/shiny/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { cn } from '@/lib/utils';\nimport { motion } from 'motion/react';\n\ntype ShinyTextProps = React.ComponentProps<'div'> & {\n  text: string;\n};\n\nconst ShinyText = ({ text, className, ...props }: ShinyTextProps) => {\n  return (\n    <div\n      className={cn(\n        'relative flex items-center justify-center min-w-2xl min-h-2',\n        className,\n      )}\n      {...props}\n    >\n      {text}\n    </div>\n  );\n};\n\nexport { ShinyText, type ShinyTextProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/text/shiny.tsx"
+    }
+  ]
+}

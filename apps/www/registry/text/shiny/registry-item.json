@@ -1,0 +1,17 @@
+{
+    "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+    "name": "shiny-text",
+    "type": "registry:ui",
+    "title": "Shiny Text",
+    "description": "A text component that smoothly animates text changes with a shiny transition effect.",
+    "dependencies": [
+        "motion"
+    ],
+    "files": [
+        {
+            "path": "registry/text/shiny/index.tsx",
+            "type": "registry:ui",
+            "target": "components/animate-ui/text/shiny.tsx"
+        }
+    ]
+}

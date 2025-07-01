@@ -2426,6 +2426,29 @@
       ]
     },
     {
+      "name": "shiny-text-demo",
+      "type": "registry:ui",
+      "title": "Shiny Text Demo",
+      "description": "Demo showing an animated shiny text.",
+      "registryDependencies": [
+        "https://animate-ui.com/r/shiny-text"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/text/shiny/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/text/shiny.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "ShinyTextDemo": {
+            "text": "Shiny Text"
+          }
+        }
+      }
+    },
+    {
       "name": "sliding-number-demo",
       "type": "registry:ui",
       "title": "Sliding Number Demo",
@@ -7279,6 +7302,22 @@
           "path": "registry/text/shimmering/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/text/shimmering.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shiny-text",
+      "type": "registry:ui",
+      "title": "Shiny Text",
+      "description": "A text component that smoothly animates text changes with a shiny transition effect.",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/text/shiny/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/text/shiny.tsx"
         }
       ]
     },
