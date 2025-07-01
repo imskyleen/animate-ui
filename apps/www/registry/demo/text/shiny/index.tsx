@@ -7,5 +7,5 @@ type ShinyTextDemoProps = ShinyTextProps & {
 };
 
 export const ShinyTextDemo = ({ text, ...props }: ShinyTextDemoProps) => {
-  return <ShinyText text={text} {...props} />;
+  return <ShinyText text={text} theme="auto" {...props} />;
 };

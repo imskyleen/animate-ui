@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "registry/demo/text/shiny/index.tsx",
-      "content": "'use client';\n\nimport { ShinyText, ShinyTextProps } from '@/components/animate-ui/text/shiny';\n\ntype ShinyTextDemoProps = ShinyTextProps & {\n  text: string;\n};\n\nexport const ShinyTextDemo = ({ text, ...props }: ShinyTextDemoProps) => {\n  return <ShinyText text={text} {...props} />;\n};\n",
+      "content": "'use client';\n\nimport { ShinyText, ShinyTextProps } from '@/components/animate-ui/text/shiny';\n\ntype ShinyTextDemoProps = ShinyTextProps & {\n  text: string;\n};\n\nexport const ShinyTextDemo = ({ text, ...props }: ShinyTextDemoProps) => {\n  return <ShinyText text={text} theme=\"auto\" {...props} />;\n};\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/text/shiny.tsx"
     }
@@ -18,7 +18,9 @@
   "meta": {
     "demoProps": {
       "ShinyTextDemo": {
-        "text": "Shiny Text"
+        "text": "Shiny Text",
+        "speed": 5,
+        "theme": "dark"
       }
     }
   }
