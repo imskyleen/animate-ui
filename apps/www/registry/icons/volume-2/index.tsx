@@ -14,7 +14,9 @@ type Volume2Props = IconProps<keyof typeof animations>;
 
 const animations = {
   default: (() => {
-    const animation: Record<string, Variants> = {};
+    const animation: Record<string, Variants> = {
+      path3: {},
+    };
 
     for (let i = 1; i <= 2; i++) {
       animation[`path${i}`] = {

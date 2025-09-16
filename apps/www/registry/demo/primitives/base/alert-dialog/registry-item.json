@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-alert-dialog",
+  "type": "registry:ui",
+  "title": "Base Alert Dialog Demo",
+  "description": "Demo showing an animated base alert dialog.",
+  "registryDependencies": ["@animate-ui/primitives-base-alert-dialog"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/alert-dialog/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/alert-dialog.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "AlertDialogPopup": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

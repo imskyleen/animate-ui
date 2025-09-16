@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { XIcon } from 'lucide-react';
 
 import {
   Dialog as DialogPrimitive,
@@ -22,7 +23,6 @@ import {
   type DialogCloseProps as DialogClosePrimitiveProps,
 } from '@/registry/primitives/radix/dialog';
 import { cn } from '@workspace/ui/lib/utils';
-import { XIcon } from 'lucide-react';
 
 type DialogProps = DialogPrimitiveProps;
 
@@ -62,9 +62,7 @@ function DialogContent({
   children,
   showCloseButton = true,
   ...props
-}: DialogContentProps & {
-  showCloseButton?: boolean;
-}) {
+}: DialogContentProps) {
   return (
     <DialogPortalPrimitive>
       <DialogOverlay />

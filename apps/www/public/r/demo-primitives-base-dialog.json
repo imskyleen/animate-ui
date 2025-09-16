@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-dialog",
+  "type": "registry:ui",
+  "title": "Base Dialog Demo",
+  "description": "Demo showing an animated base dialog.",
+  "registryDependencies": [
+    "@animate-ui/primitives-base-dialog"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/dialog/index.tsx",
+      "content": "import {\n  Dialog,\n  DialogTrigger,\n  DialogPopup,\n  DialogHeader,\n  DialogTitle,\n  DialogDescription,\n  DialogFooter,\n  DialogPortal,\n  DialogBackdrop,\n  DialogClose,\n  type DialogFlipDirection,\n} from '@/components/animate-ui/primitives/base/dialog';\nimport { X } from 'lucide-react';\n\ntype BaseDialogDemoProps = {\n  from: DialogFlipDirection;\n};\n\nexport const BaseDialogDemo = ({ from }: BaseDialogDemoProps) => {\n  return (\n    <Dialog>\n      <DialogTrigger className=\"bg-primary text-primary-foreground px-4 py-2 text-sm\">\n        Open Dialog\n      </DialogTrigger>\n\n      <DialogPortal>\n        <DialogBackdrop className=\"fixed inset-0 z-50 bg-black/80\" />\n        <DialogPopup\n          from={from}\n          className=\"sm:max-w-md fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-50 border bg-background p-6\"\n        >\n          <DialogHeader>\n            <DialogTitle className=\"text-lg\">Terms of Service</DialogTitle>\n            <DialogDescription className=\"text-sm\">\n              Please read the following terms of service carefully.\n            </DialogDescription>\n          </DialogHeader>\n\n          <p className=\"py-4 text-sm text-muted-foreground\">\n            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,\n            quos. Lorem ipsum dolor sit amet consectetur adipisicing elit.\n            Quisquam, quos.\n          </p>\n\n          <DialogFooter>\n            <button className=\"bg-primary text-primary-foreground px-4 py-2 text-sm\">\n              Accept\n            </button>\n          </DialogFooter>\n\n          <DialogClose className=\"absolute top-4 right-4\">\n            <X className=\"size-4\" />\n            <span className=\"sr-only\">Close</span>\n          </DialogClose>\n        </DialogPopup>\n      </DialogPortal>\n    </Dialog>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/dialog.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "DialogPopup": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

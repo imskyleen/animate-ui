@@ -1,0 +1,198 @@
+---
+title: Alert Dialog
+description: A dialog that requires user response to proceed.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-components-base-alert-dialog" />
+
+## Installation
+
+<ComponentInstallation name="components-base-alert-dialog" />
+
+## Usage
+
+```tsx
+<AlertDialog>
+  <AlertDialogTrigger>Open Dialog</AlertDialogTrigger>
+  <AlertDialogPopup>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Alert Dialog Title</AlertDialogTitle>
+      <AlertDialogDescription>Alert Dialog Description</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction>Accept</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogPopup>
+</AlertDialog>
+```
+
+## API Reference
+
+### AlertDialog
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialog"
+  text="Animate UI API Reference - Alert Dialog Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#root"
+  text="Base UI API Reference - AlertDialog.Root"
+/>
+</div>
+
+### AlertDialogTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogtrigger"
+  text="Animate UI API Reference - Dialog Trigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#trigger"
+    text="Base UI API Reference - AlertDialog.Trigger"
+  />
+</div>
+
+### AlertDialogPopup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogpopup"
+  text="Animate UI API Reference - Alert Dialog Popup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#popup"
+  text="Base UI API Reference - AlertDialog.Popup"
+/>
+</div>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the alert dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the alert dialog popup',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the alert dialog popup.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `AlertDialogPopup` component, as
+  it is used for animation.
+</Callout>
+
+### AlertDialogAction
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogclose"
+  text="Animate UI API Reference - Alert Dialog Close Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#close"
+  text="Base UI API Reference - AlertDialog.Close"
+/>
+</div>
+
+### AlertDialogCancel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogclose"
+  text="Animate UI API Reference - Alert Dialog Close Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#close"
+  text="Base UI API Reference - AlertDialog.Close"
+/>
+</div>
+
+### AlertDialogHeader
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogheader"
+  text="Animate UI API Reference - Alert Dialog Header Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### AlertDialogTitle
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogtitle"
+  text="Animate UI API Reference - Alert Dialog Title Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#title"
+  text="Base UI API Reference - AlertDialog.Title"
+/>
+</div>
+
+### AlertDialogDescription
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogdescription"
+  text="Animate UI API Reference - Alert Dialog Description Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#description"
+  text="Base UI API Reference - AlertDialog.Description"
+/>
+</div>
+
+### AlertDialogFooter
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/alert-dialog#alertdialogfooter"
+  text="Animate UI API Reference - Alert Dialog Footer Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Alert Dialog](https://base-ui.com/react/components/alert-dialog)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/alert-dialog) for style inspiration.

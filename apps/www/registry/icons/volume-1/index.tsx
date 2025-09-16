@@ -37,6 +37,7 @@ const animations = {
         },
       },
     },
+    path2: {},
   } satisfies Record<string, Variants>,
 } as const;
 

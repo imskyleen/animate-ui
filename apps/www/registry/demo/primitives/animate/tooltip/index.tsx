@@ -70,9 +70,10 @@ export const AnimateTooltipDemo = ({
                 className="fill-primary size-2.5"
                 withTransition={withTransition}
               />
-              <motion.p layout="preserve-aspect">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit
-              </motion.p>
+              <motion.div layout="preserve-aspect">
+                <p>Lorem ipsum dolor sit amet</p>
+                <p>consectetur adipisicing elit</p>
+              </motion.div>
             </TooltipContent>
           </Tooltip>
 

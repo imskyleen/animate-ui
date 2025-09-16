@@ -76,8 +76,6 @@ export async function generateMetadata(props: {
 
   const image = ['/docs-og', ...slug, 'image.png'].join('/');
 
-  console.log(image, 'image');
-
   return {
     title: page.data.title,
     description: page.data.description,

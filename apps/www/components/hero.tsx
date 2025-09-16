@@ -13,6 +13,7 @@ import { HeroBackground } from './hero-background';
 import { PartyPopper } from '@/registry/icons/party-popper';
 
 const ICONS = [ReactIcon, TSIcon, TailwindIcon, MotionIcon, ShadcnIcon];
+const TITLE = 'Animate your UI with style';
 
 export const Hero = () => {
   return (
@@ -54,18 +55,20 @@ export const Hero = () => {
           delay={0.15}
         >
           <div className="relative z-10">
-            <h1 className="md:max-w-[700px] sm:max-w-[580px] max-w-[350px]">
+            <h1 className="md:max-w-[800px] sm:max-w-[580px] max-w-[350px]">
               <SplittingText
-                text="Elevate your UI with fluid, animated components"
+                text={TITLE}
+                aria-hidden="true"
                 className="block md:text-6xl sm:text-5xl text-4xl font-semibold text-center text-neutral-200 dark:text-neutral-800"
                 disableAnimation
               />
             </h1>
-            <div className="md:max-w-[700px] sm:max-w-[580px] max-w-[350px] absolute inset-0 flex items-center justify-center">
+            <div className="md:max-w-[800px] sm:max-w-[580px] max-w-[350px] absolute inset-0 flex items-center justify-center">
               <SplittingText
-                text="Elevate your UI with fluid, animated components"
+                text={TITLE}
                 className="block md:text-6xl sm:text-5xl text-4xl font-semibold text-center"
                 type="chars"
+                delay={400}
                 initial={{ y: 0, opacity: 0, x: 0, filter: 'blur(10px)' }}
                 animate={{ y: 0, opacity: 1, x: 0, filter: 'blur(0px)' }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}

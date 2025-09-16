@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-alert-dialog",
+  "type": "registry:ui",
+  "title": "Alert Dialog Demo",
+  "description": "Demo showing a alert dialog.",
+  "registryDependencies": [
+    "@animate-ui/components-radix-alert-dialog"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/alert-dialog/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogCancel,\n  AlertDialogAction,\n  type AlertDialogContentProps,\n} from '@/components/animate-ui/components/radix/alert-dialog';\nimport { Button } from '@/components/ui/button';\n\ninterface RadixAlertDialogDemoProps {\n  from: AlertDialogContentProps['from'];\n}\n\nexport const RadixAlertDialogDemo = ({ from }: RadixAlertDialogDemoProps) => {\n  return (\n    <AlertDialog>\n      <AlertDialogTrigger asChild>\n        <Button variant=\"outline\">Open Dialog</Button>\n      </AlertDialogTrigger>\n      <AlertDialogContent from={from} className=\"sm:max-w-[425px]\">\n        <AlertDialogHeader>\n          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>\n          <AlertDialogDescription>\n            This action cannot be undone. This will permanently delete your\n            account and remove your data from our servers.\n          </AlertDialogDescription>\n        </AlertDialogHeader>\n        <AlertDialogFooter>\n          <AlertDialogCancel>Cancel</AlertDialogCancel>\n          <AlertDialogAction>Continue</AlertDialogAction>\n        </AlertDialogFooter>\n      </AlertDialogContent>\n    </AlertDialog>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/alert-dialog.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "AlertDialogContent": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

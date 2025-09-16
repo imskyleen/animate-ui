@@ -1,0 +1,184 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content and expects a response.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-components-radix-alert-dialog" />
+
+## Installation
+
+<ComponentInstallation name="components-radix-alert-dialog" />
+
+## Usage
+
+```tsx
+<AlertDialog>
+  <AlertDialogTrigger>Open Dialog</AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Alert Dialog Title</AlertDialogTitle>
+      <AlertDialogDescription>Alert Dialog Description</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction>Accept</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
+## API Reference
+
+### AlertDialog
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialog"
+  text="Animate UI API Reference - Alert Dialog Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#root"
+  text="Radix UI API Reference - AlertDialog.Root"
+/>
+</div>
+
+### AlertDialogTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogtrigger"
+  text="Animate UI API Reference - Dialog Trigger Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#trigger"
+    text="Radix UI API Reference - AlertDialog.Trigger"
+  />
+</div>
+
+### AlertDialogContent
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogcontent"
+  text="Animate UI API Reference - Alert Dialog Content Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#content"
+  text="Radix UI API Reference - AlertDialog.Content"
+/>
+</div>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the alert dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the alert dialog content',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the alert dialog content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `AlertDialogContent` component, as it is used for animation.
+</Callout>
+
+### AlertDialogCancel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogcancel"
+  text="Animate UI API Reference - Alert Dialog Cancel Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#cancel"
+  text="Radix UI API Reference - AlertDialog.Cancel"
+/>
+</div>
+
+### AlertDialogHeader
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogheader"
+  text="Animate UI API Reference - Alert Dialog Header Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### AlertDialogTitle
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogtitle"
+  text="Animate UI API Reference - Alert Dialog Title Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#title"
+  text="Radix UI API Reference - AlertDialog.Title"
+/>
+</div>
+
+### AlertDialogDescription
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogdescription"
+  text="Animate UI API Reference - Alert Dialog Description Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#description"
+  text="Radix UI API Reference - AlertDialog.Description"
+/>
+</div>
+
+### AlertDialogFooter
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/alert-dialog#alertdialogfooter"
+  text="Animate UI API Reference - Alert Dialog Footer Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Alert Dialog](https://www.radix-ui.com/primitives/docs/components/alert-dialog)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/alert-dialog) for style inspiration.

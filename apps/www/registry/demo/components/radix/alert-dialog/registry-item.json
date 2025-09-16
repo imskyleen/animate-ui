@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-alert-dialog",
+  "type": "registry:ui",
+  "title": "Alert Dialog Demo",
+  "description": "Demo showing a alert dialog.",
+  "registryDependencies": ["@animate-ui/components-radix-alert-dialog"],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/alert-dialog/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/alert-dialog.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "AlertDialogContent": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

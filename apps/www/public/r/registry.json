@@ -277,6 +277,23 @@
       ]
     },
     {
+      "name": "components-base-alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A dialog that requires user response to proceed.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-alert-dialog",
+        "@animate-ui/components-buttons-button"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/alert-dialog.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
@@ -292,6 +309,25 @@
           "path": "registry/components/base/checkbox/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/checkbox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-base-dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A popup that opens on top of the entire page.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/dialog.tsx"
         }
       ]
     },
@@ -839,6 +875,23 @@
           "path": "registry/components/radix/accordion/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/radix/accordion.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-radix-alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A modal dialog that interrupts the user with important content and expects a response.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-alert-dialog",
+        "@animate-ui/components-buttons-button"
+      ],
+      "files": [
+        {
+          "path": "registry/components/radix/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/radix/alert-dialog.tsx"
         }
       ]
     },
@@ -1581,6 +1634,37 @@
       }
     },
     {
+      "name": "demo-components-base-alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog Demo",
+      "description": "Demo showing a alert dialog.",
+      "registryDependencies": [
+        "@animate-ui/components-base-alert-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/alert-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "AlertDialogPopup": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-components-base-checkbox",
       "type": "registry:ui",
       "title": "Checkbox Demo",
@@ -1615,6 +1699,40 @@
                 "sm": "sm",
                 "lg": "lg"
               }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-components-base-dialog",
+      "type": "registry:ui",
+      "title": "Dialog Demo",
+      "description": "Demo showing a dialog.",
+      "registryDependencies": [
+        "@animate-ui/components-base-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "DialogPopup": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "showCloseButton": {
+              "value": true
             }
           }
         }
@@ -2623,6 +2741,37 @@
       }
     },
     {
+      "name": "demo-components-radix-alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog Demo",
+      "description": "Demo showing a alert dialog.",
+      "registryDependencies": [
+        "@animate-ui/components-radix-alert-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/radix/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/radix/alert-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "AlertDialogContent": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-components-radix-checkbox",
       "type": "registry:ui",
       "title": "Checkbox Demo",
@@ -3517,6 +3666,37 @@
       }
     },
     {
+      "name": "demo-primitives-base-alert-dialog",
+      "type": "registry:ui",
+      "title": "Base Alert Dialog Demo",
+      "description": "Demo showing an animated base alert dialog.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-alert-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/alert-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "AlertDialogPopup": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-primitives-base-checkbox",
       "type": "registry:ui",
       "title": "Base Checkbox Demo",
@@ -3561,6 +3741,37 @@
           "CollapsiblePanel": {
             "keepRendered": {
               "value": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-primitives-base-dialog",
+      "type": "registry:ui",
+      "title": "Base Dialog Demo",
+      "description": "Demo showing an animated base dialog.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "DialogPopup": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
             }
           }
         }
@@ -4587,6 +4798,37 @@
           "AccordionContent": {
             "keepRendered": {
               "value": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-primitives-radix-alert-dialog",
+      "type": "registry:ui",
+      "title": "Radix Alert Dialog Demo",
+      "description": "Demo showing an animated radix alert dialog.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-alert-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/radix/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/radix/alert-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "AlertDialogContent": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
             }
           }
         }
@@ -11772,6 +12014,27 @@
       ]
     },
     {
+      "name": "primitives-base-alert-dialog",
+      "type": "registry:ui",
+      "title": "Base Alert Dialog",
+      "description": "A dialog that requires user response to proceed.",
+      "dependencies": [
+        "motion",
+        "@base-ui-components/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/alert-dialog.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-base-checkbox",
       "type": "registry:ui",
       "title": "Base Checkbox",
@@ -11810,6 +12073,27 @@
           "path": "registry/primitives/base/collapsible/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/collapsible.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-base-dialog",
+      "type": "registry:ui",
+      "title": "Base Dialog",
+      "description": "A popup that opens on top of the entire page.",
+      "dependencies": [
+        "motion",
+        "@base-ui-components/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/dialog.tsx"
         }
       ]
     },
@@ -12407,6 +12691,27 @@
           "path": "registry/primitives/radix/accordion/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/accordion.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-radix-alert-dialog",
+      "type": "registry:ui",
+      "title": "Radix Alert Dialog",
+      "description": "A modal dialog that interrupts the user with important content and expects a response.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/radix/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/radix/alert-dialog.tsx"
         }
       ]
     },
