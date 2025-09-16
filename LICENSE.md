@@ -1,4 +1,4 @@
-MIT + Commons Clause License Condition v1.0
+MIT + Commons Clause License Condition
 
 Copyright (c) 2025 Elliot Sutton
 
