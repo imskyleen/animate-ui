@@ -33,6 +33,7 @@
     "radix/tooltip",
     "---Base UI---",
     "base/accordion",
+    "base/alert-dialog",
     "base/checkbox",
     "base/dialog",
     "base/files",

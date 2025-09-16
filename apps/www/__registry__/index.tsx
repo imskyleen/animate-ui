@@ -612,6 +612,47 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-base-accordion',
   },
+  'components-base-alert-dialog': {
+    name: 'components-base-alert-dialog',
+    description: 'A dialog that requires user response to proceed.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/primitives-base-alert-dialog',
+      '@animate-ui/components-buttons-button',
+    ],
+    files: [
+      {
+        path: 'registry/components/base/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/alert-dialog.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  AlertDialog as AlertDialogPrimitive,\n  AlertDialogPopup as AlertDialogPopupPrimitive,\n  AlertDialogDescription as AlertDialogDescriptionPrimitive,\n  AlertDialogFooter as AlertDialogFooterPrimitive,\n  AlertDialogHeader as AlertDialogHeaderPrimitive,\n  AlertDialogTitle as AlertDialogTitlePrimitive,\n  AlertDialogTrigger as AlertDialogTriggerPrimitive,\n  AlertDialogPortal as AlertDialogPortalPrimitive,\n  AlertDialogBackdrop as AlertDialogBackdropPrimitive,\n  AlertDialogClose as AlertDialogClosePrimitive,\n  type AlertDialogProps as AlertDialogPrimitiveProps,\n  type AlertDialogPopupProps as AlertDialogPopupPrimitiveProps,\n  type AlertDialogDescriptionProps as AlertDialogDescriptionPrimitiveProps,\n  type AlertDialogFooterProps as AlertDialogFooterPrimitiveProps,\n  type AlertDialogHeaderProps as AlertDialogHeaderPrimitiveProps,\n  type AlertDialogTitleProps as AlertDialogTitlePrimitiveProps,\n  type AlertDialogTriggerProps as AlertDialogTriggerPrimitiveProps,\n  type AlertDialogBackdropProps as AlertDialogBackdropPrimitiveProps,\n  type AlertDialogCloseProps as AlertDialogClosePrimitiveProps,\n} from '@/components/animate-ui/primitives/base/alert-dialog';\nimport { buttonVariants } from '@/components/animate-ui/components/buttons/button';\nimport { cn } from '@/lib/utils';\n\ntype AlertDialogProps = AlertDialogPrimitiveProps;\n\nfunction AlertDialog(props: AlertDialogProps) {\n  return <AlertDialogPrimitive {...props} />;\n}\n\ntype AlertDialogTriggerProps = AlertDialogTriggerPrimitiveProps;\n\nfunction AlertDialogTrigger(props: AlertDialogTriggerProps) {\n  return <AlertDialogTriggerPrimitive {...props} />;\n}\n\ntype AlertDialogBackdropProps = AlertDialogBackdropPrimitiveProps;\n\nfunction AlertDialogBackdrop({\n  className,\n  ...props\n}: AlertDialogBackdropProps) {\n  return (\n    <AlertDialogBackdropPrimitive\n      className={cn('fixed inset-0 z-50 bg-black/50', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogPopupProps = AlertDialogPopupPrimitiveProps;\n\nfunction AlertDialogPopup({ className, ...props }: AlertDialogPopupProps) {\n  return (\n    <AlertDialogPortalPrimitive>\n      <AlertDialogBackdrop />\n      <AlertDialogPopupPrimitive\n        className={cn(\n          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',\n          className,\n        )}\n        {...props}\n      />\n    </AlertDialogPortalPrimitive>\n  );\n}\n\ntype AlertDialogHeaderProps = AlertDialogHeaderPrimitiveProps;\n\nfunction AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps) {\n  return (\n    <AlertDialogHeaderPrimitive\n      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogFooterProps = AlertDialogFooterPrimitiveProps;\n\nfunction AlertDialogFooter({ className, ...props }: AlertDialogFooterProps) {\n  return (\n    <AlertDialogFooterPrimitive\n      className={cn(\n        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogTitleProps = AlertDialogTitlePrimitiveProps;\n\nfunction AlertDialogTitle({ className, ...props }: AlertDialogTitleProps) {\n  return (\n    <AlertDialogTitlePrimitive\n      className={cn('text-lg font-semibold', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogDescriptionProps = AlertDialogDescriptionPrimitiveProps;\n\nfunction AlertDialogDescription({\n  className,\n  ...props\n}: AlertDialogDescriptionProps) {\n  return (\n    <AlertDialogDescriptionPrimitive\n      className={cn('text-muted-foreground text-sm', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogActionProps = AlertDialogClosePrimitiveProps;\n\nfunction AlertDialogAction({ className, ...props }: AlertDialogActionProps) {\n  return (\n    <AlertDialogClosePrimitive\n      className={cn(buttonVariants(), className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogCancelProps = AlertDialogClosePrimitiveProps;\n\nfunction AlertDialogCancel({ className, ...props }: AlertDialogCancelProps) {\n  return (\n    <AlertDialogClosePrimitive\n      className={cn(buttonVariants({ variant: 'outline' }), className)}\n      {...props}\n    />\n  );\n}\n\nexport {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogPopup,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogAction,\n  AlertDialogCancel,\n  type AlertDialogProps,\n  type AlertDialogTriggerProps,\n  type AlertDialogPopupProps,\n  type AlertDialogHeaderProps,\n  type AlertDialogFooterProps,\n  type AlertDialogTitleProps,\n  type AlertDialogDescriptionProps,\n  type AlertDialogActionProps,\n  type AlertDialogCancelProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/base/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-alert-dialog',
+  },
   'components-base-checkbox': {
     name: 'components-base-checkbox',
     description: 'An easily stylable checkbox component.',
@@ -3180,6 +3221,56 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-base-accordion',
+  },
+  'demo-components-base-alert-dialog': {
+    name: 'demo-components-base-alert-dialog',
+    description: 'Demo showing a alert dialog.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-alert-dialog'],
+    files: [
+      {
+        path: 'registry/demo/components/base/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/alert-dialog.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogPopup,\n  AlertDialogHeader,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogCancel,\n  AlertDialogAction,\n  type AlertDialogPopupProps,\n} from '@/components/animate-ui/components/base/alert-dialog';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseAlertDialogDemoProps {\n  from: AlertDialogPopupProps['from'];\n}\n\nexport const BaseAlertDialogDemo = ({ from }: BaseAlertDialogDemoProps) => {\n  return (\n    <AlertDialog>\n      <AlertDialogTrigger\n        render={<Button variant=\"outline\">Open Dialog</Button>}\n      />\n      <AlertDialogPopup from={from} className=\"sm:max-w-[425px]\">\n        <AlertDialogHeader>\n          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>\n          <AlertDialogDescription>\n            This action cannot be undone. This will permanently delete your\n            account and remove your data from our servers.\n          </AlertDialogDescription>\n        </AlertDialogHeader>\n        <AlertDialogFooter>\n          <AlertDialogCancel>Cancel</AlertDialogCancel>\n          <AlertDialogAction>Continue</AlertDialogAction>\n        </AlertDialogFooter>\n      </AlertDialogPopup>\n    </AlertDialog>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/base/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        AlertDialogPopup: {
+          from: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-alert-dialog',
   },
   'demo-components-base-checkbox': {
     name: 'demo-components-base-checkbox',

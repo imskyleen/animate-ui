@@ -277,6 +277,23 @@
       ]
     },
     {
+      "name": "components-base-alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A dialog that requires user response to proceed.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-alert-dialog",
+        "@animate-ui/components-buttons-button"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/alert-dialog.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
@@ -1611,6 +1628,37 @@
           "AccordionPanel": {
             "keepRendered": {
               "value": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-components-base-alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog Demo",
+      "description": "Demo showing a alert dialog.",
+      "registryDependencies": [
+        "@animate-ui/components-base-alert-dialog"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/alert-dialog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/alert-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "AlertDialogPopup": {
+            "from": {
+              "value": "top",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
             }
           }
         }
