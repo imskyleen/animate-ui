@@ -1,0 +1,183 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content and expects a response.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-primitives-radix-alert-dialog" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-alert-dialog" />
+
+## Usage
+
+```tsx
+<AlertDialog>
+  <AlertDialogTrigger>Open Dialog</AlertDialogTrigger>
+  <AlertDialogPortal>
+    <AlertDialogOverlay />
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Alert Dialog Title</AlertDialogTitle>
+        <AlertDialogDescription>
+          Alert Dialog Description
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogAction>Accept</AlertDialogAction>
+        <AlertDialogClose>Close</AlertDialogClose>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialogPortal>
+</AlertDialog>
+```
+
+## API Reference
+
+### AlertDialog
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#root"
+  text="Radix UI API Reference - AlertDialog.Root"
+/>
+
+### AlertDialogTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#trigger"
+  text="Radix UI API Reference - AlertDialog.Trigger"
+/>
+
+### AlertDialogPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#portal"
+  text="Radix UI API Reference - AlertDialog.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `AlertDialogPortal`
+  component, as it is used for animation.
+</Callout>
+
+### AlertDialogOverlay
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#overlay"
+  text="Radix UI API Reference - AlertDialog.Overlay"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the alert dialog overlay',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the alert dialog overlay.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `AlertDialogOverlay` component, as it is used for animation.
+</Callout>
+
+### AlertDialogContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#content"
+  text="Radix UI API Reference - AlertDialog.Content"
+/>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the alert dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the alert dialog content',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the alert dialog content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `AlertDialogContent` component, as it is used for animation.
+</Callout>
+
+### AlertDialogAction
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#action"
+  text="Radix UI API Reference - AlertDialog.Action"
+/>
+
+### AlertDialogCancel
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#cancel"
+  text="Radix UI API Reference - AlertDialog.Cancel"
+/>
+
+### AlertDialogHeader
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### AlertDialogTitle
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#title"
+  text="Radix UI API Reference - AlertDialog.Title"
+/>
+
+### AlertDialogDescription
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/alert-dialog#description"
+  text="Radix UI API Reference - AlertDialog.Description"
+/>
+
+### AlertDialogFooter
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Alert Dialog](https://www.radix-ui.com/primitives/docs/components/alert-dialog)

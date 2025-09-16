@@ -650,6 +650,42 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-base-checkbox',
   },
+  'components-base-dialog': {
+    name: 'components-base-dialog',
+    description: 'A popup that opens on top of the entire page.',
+    type: 'registry:ui',
+    dependencies: ['lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-dialog'],
+    files: [
+      {
+        path: 'registry/components/base/dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/dialog.tsx',
+        content:
+          "import * as React from 'react';\nimport { XIcon } from 'lucide-react';\n\nimport {\n  Dialog as DialogPrimitive,\n  DialogPopup as DialogPopupPrimitive,\n  DialogDescription as DialogDescriptionPrimitive,\n  DialogFooter as DialogFooterPrimitive,\n  DialogHeader as DialogHeaderPrimitive,\n  DialogTitle as DialogTitlePrimitive,\n  DialogTrigger as DialogTriggerPrimitive,\n  DialogPortal as DialogPortalPrimitive,\n  DialogBackdrop as DialogBackdropPrimitive,\n  DialogClose as DialogClosePrimitive,\n  type DialogProps as DialogPrimitiveProps,\n  type DialogPopupProps as DialogPopupPrimitiveProps,\n  type DialogDescriptionProps as DialogDescriptionPrimitiveProps,\n  type DialogFooterProps as DialogFooterPrimitiveProps,\n  type DialogHeaderProps as DialogHeaderPrimitiveProps,\n  type DialogTitleProps as DialogTitlePrimitiveProps,\n  type DialogTriggerProps as DialogTriggerPrimitiveProps,\n  type DialogBackdropProps as DialogBackdropPrimitiveProps,\n  type DialogCloseProps as DialogClosePrimitiveProps,\n} from '@/components/animate-ui/primitives/base/dialog';\nimport { cn } from '@/lib/utils';\n\ntype DialogProps = DialogPrimitiveProps;\n\nfunction Dialog(props: DialogProps) {\n  return <DialogPrimitive {...props} />;\n}\n\ntype DialogTriggerProps = DialogTriggerPrimitiveProps;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogTriggerPrimitive {...props} />;\n}\n\ntype DialogCloseProps = DialogClosePrimitiveProps;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogClosePrimitive {...props} />;\n}\n\ntype DialogBackdropProps = DialogBackdropPrimitiveProps;\n\nfunction DialogBackdrop({ className, ...props }: DialogBackdropProps) {\n  return (\n    <DialogBackdropPrimitive\n      className={cn('fixed inset-0 z-50 bg-black/50', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogPopupProps = DialogPopupPrimitiveProps & {\n  showCloseButton?: boolean;\n};\n\nfunction DialogPopup({\n  className,\n  children,\n  showCloseButton = true,\n  ...props\n}: DialogPopupProps) {\n  return (\n    <DialogPortalPrimitive>\n      <DialogBackdrop />\n      <DialogPopupPrimitive\n        className={cn(\n          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        {showCloseButton && (\n          <DialogClosePrimitive className=\"ring-offset-background focus:ring-ring data-[open]:bg-accent data-[open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\">\n            <XIcon />\n            <span className=\"sr-only\">Close</span>\n          </DialogClosePrimitive>\n        )}\n      </DialogPopupPrimitive>\n    </DialogPortalPrimitive>\n  );\n}\n\ntype DialogHeaderProps = DialogHeaderPrimitiveProps;\n\nfunction DialogHeader({ className, ...props }: DialogHeaderProps) {\n  return (\n    <DialogHeaderPrimitive\n      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogFooterProps = DialogFooterPrimitiveProps;\n\nfunction DialogFooter({ className, ...props }: DialogFooterProps) {\n  return (\n    <DialogFooterPrimitive\n      className={cn(\n        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype DialogTitleProps = DialogTitlePrimitiveProps;\n\nfunction DialogTitle({ className, ...props }: DialogTitleProps) {\n  return (\n    <DialogTitlePrimitive\n      className={cn('text-lg leading-none font-semibold', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogDescriptionProps = DialogDescriptionPrimitiveProps;\n\nfunction DialogDescription({ className, ...props }: DialogDescriptionProps) {\n  return (\n    <DialogDescriptionPrimitive\n      className={cn('text-muted-foreground text-sm', className)}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Dialog,\n  DialogTrigger,\n  DialogClose,\n  DialogPopup,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogCloseProps,\n  type DialogPopupProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/components/base/dialog/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-dialog',
+  },
   'components-base-files': {
     name: 'components-base-files',
     description:
@@ -1818,6 +1854,48 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-radix-accordion',
   },
+  'components-radix-alert-dialog': {
+    name: 'components-radix-alert-dialog',
+    description:
+      'A modal dialog that interrupts the user with important content and expects a response.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/primitives-radix-alert-dialog',
+      '@animate-ui/components-buttons-button',
+    ],
+    files: [
+      {
+        path: 'registry/components/radix/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/radix/alert-dialog.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  AlertDialog as AlertDialogPrimitive,\n  AlertDialogContent as AlertDialogContentPrimitive,\n  AlertDialogDescription as AlertDialogDescriptionPrimitive,\n  AlertDialogFooter as AlertDialogFooterPrimitive,\n  AlertDialogHeader as AlertDialogHeaderPrimitive,\n  AlertDialogTitle as AlertDialogTitlePrimitive,\n  AlertDialogTrigger as AlertDialogTriggerPrimitive,\n  AlertDialogPortal as AlertDialogPortalPrimitive,\n  AlertDialogOverlay as AlertDialogOverlayPrimitive,\n  AlertDialogAction as AlertDialogActionPrimitive,\n  AlertDialogCancel as AlertDialogCancelPrimitive,\n  type AlertDialogProps as AlertDialogPrimitiveProps,\n  type AlertDialogContentProps as AlertDialogContentPrimitiveProps,\n  type AlertDialogDescriptionProps as AlertDialogDescriptionPrimitiveProps,\n  type AlertDialogFooterProps as AlertDialogFooterPrimitiveProps,\n  type AlertDialogHeaderProps as AlertDialogHeaderPrimitiveProps,\n  type AlertDialogTitleProps as AlertDialogTitlePrimitiveProps,\n  type AlertDialogTriggerProps as AlertDialogTriggerPrimitiveProps,\n  type AlertDialogOverlayProps as AlertDialogOverlayPrimitiveProps,\n  type AlertDialogActionProps as AlertDialogActionPrimitiveProps,\n  type AlertDialogCancelProps as AlertDialogCancelPrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/alert-dialog';\nimport { buttonVariants } from '@/components/animate-ui/components/buttons/button';\nimport { cn } from '@/lib/utils';\n\ntype AlertDialogProps = AlertDialogPrimitiveProps;\n\nfunction AlertDialog(props: AlertDialogProps) {\n  return <AlertDialogPrimitive {...props} />;\n}\n\ntype AlertDialogTriggerProps = AlertDialogTriggerPrimitiveProps;\n\nfunction AlertDialogTrigger(props: AlertDialogTriggerProps) {\n  return <AlertDialogTriggerPrimitive {...props} />;\n}\n\ntype AlertDialogOverlayProps = AlertDialogOverlayPrimitiveProps;\n\nfunction AlertDialogOverlay({ className, ...props }: AlertDialogOverlayProps) {\n  return (\n    <AlertDialogOverlayPrimitive\n      className={cn('fixed inset-0 z-50 bg-black/50', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogContentProps = AlertDialogContentPrimitiveProps;\n\nfunction AlertDialogContent({ className, ...props }: AlertDialogContentProps) {\n  return (\n    <AlertDialogPortalPrimitive>\n      <AlertDialogOverlay />\n      <AlertDialogContentPrimitive\n        className={cn(\n          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',\n          className,\n        )}\n        {...props}\n      />\n    </AlertDialogPortalPrimitive>\n  );\n}\n\ntype AlertDialogHeaderProps = AlertDialogHeaderPrimitiveProps;\n\nfunction AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps) {\n  return (\n    <AlertDialogHeaderPrimitive\n      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogFooterProps = AlertDialogFooterPrimitiveProps;\n\nfunction AlertDialogFooter({ className, ...props }: AlertDialogFooterProps) {\n  return (\n    <AlertDialogFooterPrimitive\n      className={cn(\n        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogTitleProps = AlertDialogTitlePrimitiveProps;\n\nfunction AlertDialogTitle({ className, ...props }: AlertDialogTitleProps) {\n  return (\n    <AlertDialogTitlePrimitive\n      className={cn('text-lg font-semibold', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogDescriptionProps = AlertDialogDescriptionPrimitiveProps;\n\nfunction AlertDialogDescription({\n  className,\n  ...props\n}: AlertDialogDescriptionProps) {\n  return (\n    <AlertDialogDescriptionPrimitive\n      className={cn('text-muted-foreground text-sm', className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogActionProps = AlertDialogActionPrimitiveProps;\n\nfunction AlertDialogAction({\n  className,\n  ...props\n}: AlertDialogActionPrimitiveProps) {\n  return (\n    <AlertDialogActionPrimitive\n      className={cn(buttonVariants(), className)}\n      {...props}\n    />\n  );\n}\n\ntype AlertDialogCancelProps = AlertDialogCancelPrimitiveProps;\n\nfunction AlertDialogCancel({\n  className,\n  ...props\n}: AlertDialogCancelPrimitiveProps) {\n  return (\n    <AlertDialogCancelPrimitive\n      className={cn(buttonVariants({ variant: 'outline' }), className)}\n      {...props}\n    />\n  );\n}\n\nexport {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogAction,\n  AlertDialogCancel,\n  type AlertDialogProps,\n  type AlertDialogTriggerProps,\n  type AlertDialogContentProps,\n  type AlertDialogHeaderProps,\n  type AlertDialogFooterProps,\n  type AlertDialogTitleProps,\n  type AlertDialogDescriptionProps,\n  type AlertDialogActionProps,\n  type AlertDialogCancelProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/radix/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-radix-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-radix-alert-dialog',
+  },
   'components-radix-checkbox': {
     name: 'components-radix-checkbox',
     description:
@@ -1871,7 +1949,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/components/radix/dialog.tsx',
         content:
-          "import * as React from 'react';\n\nimport {\n  Dialog as DialogPrimitive,\n  DialogContent as DialogContentPrimitive,\n  DialogDescription as DialogDescriptionPrimitive,\n  DialogFooter as DialogFooterPrimitive,\n  DialogHeader as DialogHeaderPrimitive,\n  DialogTitle as DialogTitlePrimitive,\n  DialogTrigger as DialogTriggerPrimitive,\n  DialogPortal as DialogPortalPrimitive,\n  DialogOverlay as DialogOverlayPrimitive,\n  DialogClose as DialogClosePrimitive,\n  type DialogProps as DialogPrimitiveProps,\n  type DialogContentProps as DialogContentPrimitiveProps,\n  type DialogDescriptionProps as DialogDescriptionPrimitiveProps,\n  type DialogFooterProps as DialogFooterPrimitiveProps,\n  type DialogHeaderProps as DialogHeaderPrimitiveProps,\n  type DialogTitleProps as DialogTitlePrimitiveProps,\n  type DialogTriggerProps as DialogTriggerPrimitiveProps,\n  type DialogOverlayProps as DialogOverlayPrimitiveProps,\n  type DialogCloseProps as DialogClosePrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/dialog';\nimport { cn } from '@/lib/utils';\nimport { XIcon } from 'lucide-react';\n\ntype DialogProps = DialogPrimitiveProps;\n\nfunction Dialog(props: DialogProps) {\n  return <DialogPrimitive {...props} />;\n}\n\ntype DialogTriggerProps = DialogTriggerPrimitiveProps;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogTriggerPrimitive {...props} />;\n}\n\ntype DialogCloseProps = DialogClosePrimitiveProps;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogClosePrimitive {...props} />;\n}\n\ntype DialogOverlayProps = DialogOverlayPrimitiveProps;\n\nfunction DialogOverlay({ className, ...props }: DialogOverlayProps) {\n  return (\n    <DialogOverlayPrimitive\n      className={cn('fixed inset-0 z-50 bg-black/50', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogContentProps = DialogContentPrimitiveProps & {\n  showCloseButton?: boolean;\n};\n\nfunction DialogContent({\n  className,\n  children,\n  showCloseButton = true,\n  ...props\n}: DialogContentProps & {\n  showCloseButton?: boolean;\n}) {\n  return (\n    <DialogPortalPrimitive>\n      <DialogOverlay />\n      <DialogContentPrimitive\n        className={cn(\n          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        {showCloseButton && (\n          <DialogClosePrimitive className=\"ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\">\n            <XIcon />\n            <span className=\"sr-only\">Close</span>\n          </DialogClosePrimitive>\n        )}\n      </DialogContentPrimitive>\n    </DialogPortalPrimitive>\n  );\n}\n\ntype DialogHeaderProps = DialogHeaderPrimitiveProps;\n\nfunction DialogHeader({ className, ...props }: DialogHeaderProps) {\n  return (\n    <DialogHeaderPrimitive\n      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogFooterProps = DialogFooterPrimitiveProps;\n\nfunction DialogFooter({ className, ...props }: DialogFooterProps) {\n  return (\n    <DialogFooterPrimitive\n      className={cn(\n        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype DialogTitleProps = DialogTitlePrimitiveProps;\n\nfunction DialogTitle({ className, ...props }: DialogTitleProps) {\n  return (\n    <DialogTitlePrimitive\n      className={cn('text-lg leading-none font-semibold', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogDescriptionProps = DialogDescriptionPrimitiveProps;\n\nfunction DialogDescription({ className, ...props }: DialogDescriptionProps) {\n  return (\n    <DialogDescriptionPrimitive\n      className={cn('text-muted-foreground text-sm', className)}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Dialog,\n  DialogTrigger,\n  DialogClose,\n  DialogContent,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogCloseProps,\n  type DialogContentProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n};",
+          "import * as React from 'react';\nimport { XIcon } from 'lucide-react';\n\nimport {\n  Dialog as DialogPrimitive,\n  DialogContent as DialogContentPrimitive,\n  DialogDescription as DialogDescriptionPrimitive,\n  DialogFooter as DialogFooterPrimitive,\n  DialogHeader as DialogHeaderPrimitive,\n  DialogTitle as DialogTitlePrimitive,\n  DialogTrigger as DialogTriggerPrimitive,\n  DialogPortal as DialogPortalPrimitive,\n  DialogOverlay as DialogOverlayPrimitive,\n  DialogClose as DialogClosePrimitive,\n  type DialogProps as DialogPrimitiveProps,\n  type DialogContentProps as DialogContentPrimitiveProps,\n  type DialogDescriptionProps as DialogDescriptionPrimitiveProps,\n  type DialogFooterProps as DialogFooterPrimitiveProps,\n  type DialogHeaderProps as DialogHeaderPrimitiveProps,\n  type DialogTitleProps as DialogTitlePrimitiveProps,\n  type DialogTriggerProps as DialogTriggerPrimitiveProps,\n  type DialogOverlayProps as DialogOverlayPrimitiveProps,\n  type DialogCloseProps as DialogClosePrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/dialog';\nimport { cn } from '@/lib/utils';\n\ntype DialogProps = DialogPrimitiveProps;\n\nfunction Dialog(props: DialogProps) {\n  return <DialogPrimitive {...props} />;\n}\n\ntype DialogTriggerProps = DialogTriggerPrimitiveProps;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogTriggerPrimitive {...props} />;\n}\n\ntype DialogCloseProps = DialogClosePrimitiveProps;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogClosePrimitive {...props} />;\n}\n\ntype DialogOverlayProps = DialogOverlayPrimitiveProps;\n\nfunction DialogOverlay({ className, ...props }: DialogOverlayProps) {\n  return (\n    <DialogOverlayPrimitive\n      className={cn('fixed inset-0 z-50 bg-black/50', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogContentProps = DialogContentPrimitiveProps & {\n  showCloseButton?: boolean;\n};\n\nfunction DialogContent({\n  className,\n  children,\n  showCloseButton = true,\n  ...props\n}: DialogContentProps) {\n  return (\n    <DialogPortalPrimitive>\n      <DialogOverlay />\n      <DialogContentPrimitive\n        className={cn(\n          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        {showCloseButton && (\n          <DialogClosePrimitive className=\"ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\">\n            <XIcon />\n            <span className=\"sr-only\">Close</span>\n          </DialogClosePrimitive>\n        )}\n      </DialogContentPrimitive>\n    </DialogPortalPrimitive>\n  );\n}\n\ntype DialogHeaderProps = DialogHeaderPrimitiveProps;\n\nfunction DialogHeader({ className, ...props }: DialogHeaderProps) {\n  return (\n    <DialogHeaderPrimitive\n      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogFooterProps = DialogFooterPrimitiveProps;\n\nfunction DialogFooter({ className, ...props }: DialogFooterProps) {\n  return (\n    <DialogFooterPrimitive\n      className={cn(\n        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype DialogTitleProps = DialogTitlePrimitiveProps;\n\nfunction DialogTitle({ className, ...props }: DialogTitleProps) {\n  return (\n    <DialogTitlePrimitive\n      className={cn('text-lg leading-none font-semibold', className)}\n      {...props}\n    />\n  );\n}\n\ntype DialogDescriptionProps = DialogDescriptionPrimitiveProps;\n\nfunction DialogDescription({ className, ...props }: DialogDescriptionProps) {\n  return (\n    <DialogDescriptionPrimitive\n      className={cn('text-muted-foreground text-sm', className)}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Dialog,\n  DialogTrigger,\n  DialogClose,\n  DialogContent,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogCloseProps,\n  type DialogContentProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n};",
       },
     ],
     keywords: [],
@@ -2731,7 +2809,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/animate/tooltip.tsx',
         content:
-          "'use client';\n\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from '@/components/animate-ui/components/animate/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface TooltipDemoProps {\n  openDelay?: number;\n  closeDelay?: number;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const AnimateTooltipDemo = ({\n  openDelay,\n  closeDelay,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: TooltipDemoProps) => {\n  return (\n    <TooltipProvider\n      key={`${side}-${align}-${sideOffset}-${alignOffset}-${openDelay}-${closeDelay}`}\n      openDelay={openDelay}\n      closeDelay={closeDelay}\n    >\n      <div className=\"flex flex-col gap-5 justify-center items-center\">\n        <div className=\"flex flex-row gap-2 border p-2\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Docs</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Documentation</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Lorem</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Guide</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>User Guide</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n        <div className=\"flex flex-row gap-5\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Repo</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>GitHub</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n      </div>\n    </TooltipProvider>\n  );\n};",
+          "'use client';\n\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from '@/components/animate-ui/components/animate/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface TooltipDemoProps {\n  openDelay?: number;\n  closeDelay?: number;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const AnimateTooltipDemo = ({\n  openDelay,\n  closeDelay,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: TooltipDemoProps) => {\n  return (\n    <TooltipProvider\n      key={`${side}-${align}-${sideOffset}-${alignOffset}-${openDelay}-${closeDelay}`}\n      openDelay={openDelay}\n      closeDelay={closeDelay}\n    >\n      <div className=\"flex flex-col gap-5 justify-center items-center\">\n        <div className=\"flex flex-row gap-2 border p-2\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Docs</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Documentation</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Lorem</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Lorem ipsum dolor sit amet</p>\n              <p>consectetur adipisicing elit</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Guide</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>User Guide</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n        <div className=\"flex flex-row gap-5\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Repo</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>GitHub</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n      </div>\n    </TooltipProvider>\n  );\n};",
       },
     ],
     keywords: [],
@@ -3152,6 +3230,57 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-base-checkbox',
+  },
+  'demo-components-base-dialog': {
+    name: 'demo-components-base-dialog',
+    description: 'Demo showing a dialog.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-dialog'],
+    files: [
+      {
+        path: 'registry/demo/components/base/dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/dialog.tsx',
+        content:
+          'import * as React from \'react\';\n\nimport { Button } from \'@/components/ui/button\';\nimport {\n  Dialog,\n  DialogTrigger,\n  DialogPopup,\n  DialogHeader,\n  DialogTitle,\n  DialogDescription,\n  DialogClose,\n  DialogFooter,\n  type DialogPopupProps,\n} from \'@/components/animate-ui/components/base/dialog\';\nimport { Label } from \'@/components/ui/label\';\nimport { Input } from \'@/components/ui/input\';\n\ninterface BaseDialogDemoProps {\n  from: DialogPopupProps[\'from\'];\n  showCloseButton: boolean;\n}\n\nexport const BaseDialogDemo = ({\n  from,\n  showCloseButton,\n}: BaseDialogDemoProps) => {\n  return (\n    <Dialog>\n      <form>\n        <DialogTrigger\n          render={<Button variant="outline">Open Dialog</Button>}\n        />\n\n        <DialogPopup\n          from={from}\n          showCloseButton={showCloseButton}\n          className="sm:max-w-[425px]"\n        >\n          <DialogHeader>\n            <DialogTitle>Edit profile</DialogTitle>\n            <DialogDescription>\n              Make changes to your profile here. Click save when you&apos;re\n              done.\n            </DialogDescription>\n          </DialogHeader>\n          <div className="grid gap-4">\n            <div className="grid gap-3">\n              <Label htmlFor="name-1">Name</Label>\n              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />\n            </div>\n            <div className="grid gap-3">\n              <Label htmlFor="username-1">Username</Label>\n              <Input id="username-1" name="username" defaultValue="@peduarte" />\n            </div>\n          </div>\n          <DialogFooter>\n            <DialogClose render={<Button variant="outline">Cancel</Button>} />\n            <Button type="submit">Save changes</Button>\n          </DialogFooter>\n        </DialogPopup>\n      </form>\n    </Dialog>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/base/dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        DialogPopup: {
+          from: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+          showCloseButton: { value: true },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-dialog',
   },
   'demo-components-base-files': {
     name: 'demo-components-base-files',
@@ -4639,6 +4768,56 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-radix-accordion',
   },
+  'demo-components-radix-alert-dialog': {
+    name: 'demo-components-radix-alert-dialog',
+    description: 'Demo showing a alert dialog.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-radix-alert-dialog'],
+    files: [
+      {
+        path: 'registry/demo/components/radix/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/radix/alert-dialog.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogCancel,\n  AlertDialogAction,\n  type AlertDialogContentProps,\n} from '@/components/animate-ui/components/radix/alert-dialog';\nimport { Button } from '@/components/ui/button';\n\ninterface RadixAlertDialogDemoProps {\n  from: AlertDialogContentProps['from'];\n}\n\nexport const RadixAlertDialogDemo = ({ from }: RadixAlertDialogDemoProps) => {\n  return (\n    <AlertDialog>\n      <AlertDialogTrigger asChild>\n        <Button variant=\"outline\">Open Dialog</Button>\n      </AlertDialogTrigger>\n      <AlertDialogContent from={from} className=\"sm:max-w-[425px]\">\n        <AlertDialogHeader>\n          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>\n          <AlertDialogDescription>\n            This action cannot be undone. This will permanently delete your\n            account and remove your data from our servers.\n          </AlertDialogDescription>\n        </AlertDialogHeader>\n        <AlertDialogFooter>\n          <AlertDialogCancel>Cancel</AlertDialogCancel>\n          <AlertDialogAction>Continue</AlertDialogAction>\n        </AlertDialogFooter>\n      </AlertDialogContent>\n    </AlertDialog>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/radix/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-radix-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        AlertDialogContent: {
+          from: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-radix-alert-dialog',
+  },
   'demo-components-radix-checkbox': {
     name: 'demo-components-radix-checkbox',
     description: 'Demo showing a checkbox.',
@@ -5902,7 +6081,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/animate/tooltip.tsx',
         content:
-          '\'use client\';\n\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n  TooltipArrow,\n} from \'@/components/animate-ui/primitives/animate/tooltip\';\nimport { motion } from \'motion/react\';\n\ninterface TooltipDemoProps {\n  openDelay?: number;\n  closeDelay?: number;\n  side?: \'top\' | \'bottom\' | \'left\' | \'right\';\n  sideOffset?: number;\n  align?: \'start\' | \'center\' | \'end\';\n  alignOffset?: number;\n  withTransition?: boolean;\n}\n\nexport const AnimateTooltipDemo = ({\n  openDelay,\n  closeDelay,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  withTransition,\n}: TooltipDemoProps) => {\n  return (\n    <TooltipProvider\n      key={`${side}-${align}-${sideOffset}-${alignOffset}-${openDelay}-${closeDelay}`}\n      openDelay={openDelay}\n      closeDelay={closeDelay}\n    >\n      <div className="flex flex-col gap-5 justify-center items-center">\n        <div className="flex flex-row gap-2 border p-2">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Docs\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">Documentation</motion.p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Lorem\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary max-w-[200px] px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">\n                Lorem ipsum dolor sit amet consectetur adipisicing elit\n              </motion.p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Guide\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">User Guide</motion.p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n        <div className="flex flex-row gap-5">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Repo\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">GitHub</motion.p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n      </div>\n    </TooltipProvider>\n  );\n};',
+          '\'use client\';\n\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n  TooltipArrow,\n} from \'@/components/animate-ui/primitives/animate/tooltip\';\nimport { motion } from \'motion/react\';\n\ninterface TooltipDemoProps {\n  openDelay?: number;\n  closeDelay?: number;\n  side?: \'top\' | \'bottom\' | \'left\' | \'right\';\n  sideOffset?: number;\n  align?: \'start\' | \'center\' | \'end\';\n  alignOffset?: number;\n  withTransition?: boolean;\n}\n\nexport const AnimateTooltipDemo = ({\n  openDelay,\n  closeDelay,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  withTransition,\n}: TooltipDemoProps) => {\n  return (\n    <TooltipProvider\n      key={`${side}-${align}-${sideOffset}-${alignOffset}-${openDelay}-${closeDelay}`}\n      openDelay={openDelay}\n      closeDelay={closeDelay}\n    >\n      <div className="flex flex-col gap-5 justify-center items-center">\n        <div className="flex flex-row gap-2 border p-2">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Docs\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">Documentation</motion.p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Lorem\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary max-w-[200px] px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.div layout="preserve-aspect">\n                <p>Lorem ipsum dolor sit amet</p>\n                <p>consectetur adipisicing elit</p>\n              </motion.div>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Guide\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">User Guide</motion.p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n        <div className="flex flex-row gap-5">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger className="bg-accent select-none px-4 py-2">\n              Repo\n            </TooltipTrigger>\n\n            <TooltipContent className="bg-primary px-3 py-1.5 text-sm text-primary-foreground">\n              <TooltipArrow\n                className="fill-primary size-2.5"\n                withTransition={withTransition}\n              />\n              <motion.p layout="preserve-aspect">GitHub</motion.p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n      </div>\n    </TooltipProvider>\n  );\n};',
       },
     ],
     keywords: [],
@@ -5991,6 +6170,56 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-primitives-base-accordion',
   },
+  'demo-primitives-base-alert-dialog': {
+    name: 'demo-primitives-base-alert-dialog',
+    description: 'Demo showing an animated base alert dialog.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-alert-dialog'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/base/alert-dialog.tsx',
+        content:
+          'import {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogPopup,\n  AlertDialogHeader,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogPortal,\n  AlertDialogBackdrop,\n  AlertDialogClose,\n  type AlertDialogFlipDirection,\n} from \'@/components/animate-ui/primitives/base/alert-dialog\';\n\ntype BaseAlertDialogDemoProps = {\n  from: AlertDialogFlipDirection;\n};\n\nexport const BaseAlertDialogDemo = ({ from }: BaseAlertDialogDemoProps) => {\n  return (\n    <AlertDialog>\n      <AlertDialogTrigger className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n        Open Dialog\n      </AlertDialogTrigger>\n\n      <AlertDialogPortal>\n        <AlertDialogBackdrop className="fixed inset-0 z-50 bg-black/80" />\n        <AlertDialogPopup\n          from={from}\n          className="sm:max-w-md fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-50 border bg-background p-6"\n        >\n          <AlertDialogHeader>\n            <AlertDialogTitle className="text-lg">\n              Are you absolutely sure?\n            </AlertDialogTitle>\n            <AlertDialogDescription className="text-sm">\n              This action cannot be undone. This will permanently delete your\n              account and remove your data from our servers.\n            </AlertDialogDescription>\n          </AlertDialogHeader>\n\n          <AlertDialogFooter className="mt-4 flex justify-end gap-2">\n            <AlertDialogClose className="bg-accent text-accent-foreground px-4 py-2 text-sm">\n              Cancel\n            </AlertDialogClose>\n            <AlertDialogClose className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n              Continue\n            </AlertDialogClose>\n          </AlertDialogFooter>\n        </AlertDialogPopup>\n      </AlertDialogPortal>\n    </AlertDialog>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/primitives/base/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        AlertDialogPopup: {
+          from: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-alert-dialog',
+  },
   'demo-primitives-base-checkbox': {
     name: 'demo-primitives-base-checkbox',
     description: 'Demo showing an animated base checkbox.',
@@ -6068,6 +6297,56 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-base-collapsible',
+  },
+  'demo-primitives-base-dialog': {
+    name: 'demo-primitives-base-dialog',
+    description: 'Demo showing an animated base dialog.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-dialog'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/base/dialog.tsx',
+        content:
+          'import {\n  Dialog,\n  DialogTrigger,\n  DialogPopup,\n  DialogHeader,\n  DialogTitle,\n  DialogDescription,\n  DialogFooter,\n  DialogPortal,\n  DialogBackdrop,\n  DialogClose,\n  type DialogFlipDirection,\n} from \'@/components/animate-ui/primitives/base/dialog\';\nimport { X } from \'lucide-react\';\n\ntype BaseDialogDemoProps = {\n  from: DialogFlipDirection;\n};\n\nexport const BaseDialogDemo = ({ from }: BaseDialogDemoProps) => {\n  return (\n    <Dialog>\n      <DialogTrigger className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n        Open Dialog\n      </DialogTrigger>\n\n      <DialogPortal>\n        <DialogBackdrop className="fixed inset-0 z-50 bg-black/80" />\n        <DialogPopup\n          from={from}\n          className="sm:max-w-md fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-50 border bg-background p-6"\n        >\n          <DialogHeader>\n            <DialogTitle className="text-lg">Terms of Service</DialogTitle>\n            <DialogDescription className="text-sm">\n              Please read the following terms of service carefully.\n            </DialogDescription>\n          </DialogHeader>\n\n          <p className="py-4 text-sm text-muted-foreground">\n            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,\n            quos. Lorem ipsum dolor sit amet consectetur adipisicing elit.\n            Quisquam, quos.\n          </p>\n\n          <DialogFooter>\n            <button className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n              Accept\n            </button>\n          </DialogFooter>\n\n          <DialogClose className="absolute top-4 right-4">\n            <X className="size-4" />\n            <span className="sr-only">Close</span>\n          </DialogClose>\n        </DialogPopup>\n      </DialogPortal>\n    </Dialog>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/primitives/base/dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        DialogPopup: {
+          from: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-dialog',
   },
   'demo-primitives-base-files': {
     name: 'demo-primitives-base-files',
@@ -7435,6 +7714,56 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-primitives-radix-accordion',
   },
+  'demo-primitives-radix-alert-dialog': {
+    name: 'demo-primitives-radix-alert-dialog',
+    description: 'Demo showing an animated radix alert dialog.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-radix-alert-dialog'],
+    files: [
+      {
+        path: 'registry/demo/primitives/radix/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/radix/alert-dialog.tsx',
+        content:
+          'import {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogPortal,\n  AlertDialogOverlay,\n  AlertDialogCancel,\n  AlertDialogAction,\n  type AlertDialogFlipDirection,\n} from \'@/components/animate-ui/primitives/radix/alert-dialog\';\n\ntype RadixAlertDialogDemoProps = {\n  from: AlertDialogFlipDirection;\n};\n\nexport const RadixAlertDialogDemo = ({ from }: RadixAlertDialogDemoProps) => {\n  return (\n    <AlertDialog>\n      <AlertDialogTrigger className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n        Open Dialog\n      </AlertDialogTrigger>\n\n      <AlertDialogPortal>\n        <AlertDialogOverlay className="fixed inset-0 z-50 bg-black/80" />\n        <AlertDialogContent\n          from={from}\n          className="sm:max-w-md fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-50 border bg-background p-6"\n        >\n          <AlertDialogHeader>\n            <AlertDialogTitle className="text-lg">\n              Are you absolutely sure?\n            </AlertDialogTitle>\n            <AlertDialogDescription className="text-sm">\n              This action cannot be undone. This will permanently delete your\n              account and remove your data from our servers.\n            </AlertDialogDescription>\n          </AlertDialogHeader>\n\n          <AlertDialogFooter className="mt-4 flex justify-end gap-2">\n            <AlertDialogCancel className="bg-accent text-accent-foreground px-4 py-2 text-sm">\n              Cancel\n            </AlertDialogCancel>\n            <AlertDialogAction className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n              Continue\n            </AlertDialogAction>\n          </AlertDialogFooter>\n        </AlertDialogContent>\n      </AlertDialogPortal>\n    </AlertDialog>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/primitives/radix/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-radix-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        AlertDialogContent: {
+          from: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-radix-alert-dialog',
+  },
   'demo-primitives-radix-checkbox': {
     name: 'demo-primitives-radix-checkbox',
     description: 'Demo showing an animated radix checkbox.',
@@ -7448,7 +7777,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/radix/checkbox.tsx',
         content:
-          'import {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/radix/checkbox\';\nimport { useEffect, useState } from \'react\';\n\ntype RadixCheckboxDemoProps = {\n  checked: boolean | \'indeterminate\';\n};\n\nexport const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {\n  const [isChecked, setIsChecked] = useState(checked ?? false);\n\n  useEffect(() => {\n    setIsChecked(checked);\n  }, [checked]);\n\n  return (\n    <div className="flex items-center space-x-2">\n      <Checkbox\n        id="terms"\n        checked={isChecked}\n        onCheckedChange={setIsChecked}\n        className="size-5 flex justify-center items-center border [&[data-state=checked],&[data-state=indeterminate]]:bg-primary [&[data-state=checked],&[data-state=indeterminate]]:text-primary-foreground transition-colors duration-500"\n      >\n        <CheckboxIndicator className="size-3.5" />\n      </Checkbox>\n      <label htmlFor="terms">Accept terms and conditions</label>\n    </div>\n  );\n};',
+          '\'use client\';\n\nimport {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/radix/checkbox\';\nimport { useEffect, useState } from \'react\';\n\ntype RadixCheckboxDemoProps = {\n  checked: boolean | \'indeterminate\';\n};\n\nexport const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {\n  const [isChecked, setIsChecked] = useState(checked ?? false);\n\n  useEffect(() => {\n    setIsChecked(checked);\n  }, [checked]);\n\n  return (\n    <div className="flex items-center space-x-2">\n      <Checkbox\n        id="terms"\n        checked={isChecked}\n        onCheckedChange={setIsChecked}\n        className="size-5 flex justify-center items-center border [&[data-state=checked],&[data-state=indeterminate]]:bg-primary [&[data-state=checked],&[data-state=indeterminate]]:text-primary-foreground transition-colors duration-500"\n      >\n        <CheckboxIndicator className="size-3.5" />\n      </Checkbox>\n      <label htmlFor="terms">Accept terms and conditions</label>\n    </div>\n  );\n};',
       },
     ],
     keywords: [],
@@ -8586,7 +8915,7 @@ export const index: Record<string, any> = {
         target:
           'components/animate-ui/demo/primitives/texts/splitting-example.tsx',
         content:
-          "import { SplittingText } from '@/components/animate-ui/primitives/texts/splitting';\n\nconst TEXT = 'Elevate your UI with fluid, animated components';\n\nexport const SplittingTextDemo = () => {\n  return (\n    <div className=\"relative max-w-[450px]\">\n      <SplittingText\n        text={TEXT}\n        className=\"block text-4xl font-semibold text-center text-neutral-200 dark:text-neutral-800\"\n        disableAnimation\n      />\n      <SplittingText\n        text={TEXT}\n        className=\"block text-4xl font-semibold text-center absolute inset-0\"\n        type=\"chars\"\n        inView\n        initial={{ y: 0, opacity: 0, x: 0, filter: 'blur(10px)' }}\n        animate={{ y: 0, opacity: 1, x: 0, filter: 'blur(0px)' }}\n        transition={{ duration: 0.4, ease: 'easeOut' }}\n      />\n    </div>\n  );\n};",
+          'import { SplittingText } from \'@/components/animate-ui/primitives/texts/splitting\';\n\nconst TEXT = \'Elevate your UI with fluid, animated components\';\n\nexport const SplittingTextDemo = () => {\n  return (\n    <div className="relative max-w-[450px]">\n      <SplittingText\n        text={TEXT}\n        aria-hidden="true"\n        className="block text-4xl font-semibold text-center text-neutral-200 dark:text-neutral-800"\n        disableAnimation\n      />\n      <SplittingText\n        text={TEXT}\n        className="block text-4xl font-semibold text-center absolute inset-0"\n        type="chars"\n        inView\n        initial={{ y: 0, opacity: 0, x: 0, filter: \'blur(10px)\' }}\n        animate={{ y: 0, opacity: 1, x: 0, filter: \'blur(0px)\' }}\n        transition={{ duration: 0.4, ease: \'easeOut\' }}\n      />\n    </div>\n  );\n};',
       },
     ],
     keywords: [],
@@ -16861,7 +17190,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/icons/volume-1.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype Volume1Props = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: {\n          opacity: {\n            duration: 0.2,\n            ease: \'easeInOut\',\n            repeat: 1,\n            repeatType: \'reverse\',\n            repeatDelay: 0.2,\n          },\n          scale: {\n            duration: 0.2,\n            ease: \'easeInOut\',\n            repeat: 1,\n            repeatType: \'reverse\',\n            repeatDelay: 0.2,\n          },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: Volume1Props) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M16 9a5 5 0 0 1 0 6"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Volume1(props: Volume1Props) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Volume1,\n  Volume1 as Volume1Icon,\n  type Volume1Props,\n  type Volume1Props as Volume1IconProps,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype Volume1Props = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: {\n          opacity: {\n            duration: 0.2,\n            ease: \'easeInOut\',\n            repeat: 1,\n            repeatType: \'reverse\',\n            repeatDelay: 0.2,\n          },\n          scale: {\n            duration: 0.2,\n            ease: \'easeInOut\',\n            repeat: 1,\n            repeatType: \'reverse\',\n            repeatDelay: 0.2,\n          },\n        },\n      },\n    },\n    path2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: Volume1Props) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M16 9a5 5 0 0 1 0 6"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Volume1(props: Volume1Props) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Volume1,\n  Volume1 as Volume1Icon,\n  type Volume1Props,\n  type Volume1Props as Volume1IconProps,\n};',
       },
     ],
     keywords: ['music', 'sound', 'speaker'],
@@ -16897,7 +17226,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/icons/volume-2.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype Volume2Props = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {};\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`path${i}`] = {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n              delay: 0.2 * (i - 1),\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n              delay: 0.2 * (i - 1),\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: Volume2Props) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M16 9a5 5 0 0 1 0 6"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M19.364 18.364a9 9 0 0 0 0-12.728"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"\n        variants={variants.path3}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Volume2(props: Volume2Props) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Volume2,\n  Volume2 as Volume2Icon,\n  type Volume2Props,\n  type Volume2Props as Volume2IconProps,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype Volume2Props = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {\n      path3: {},\n    };\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`path${i}`] = {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n              delay: 0.2 * (i - 1),\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n              delay: 0.2 * (i - 1),\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: Volume2Props) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M16 9a5 5 0 0 1 0 6"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M19.364 18.364a9 9 0 0 0 0-12.728"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"\n        variants={variants.path3}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Volume2(props: Volume2Props) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Volume2,\n  Volume2 as Volume2Icon,\n  type Volume2Props,\n  type Volume2Props as Volume2IconProps,\n};',
       },
     ],
     keywords: ['music', 'sound', 'speaker'],
@@ -17686,6 +18015,47 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-base-accordion',
   },
+  'primitives-base-alert-dialog': {
+    name: 'primitives-base-alert-dialog',
+    description: 'A dialog that requires user response to proceed.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@base-ui-components/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/lib-get-strict-context',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/base/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/alert-dialog.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { AlertDialog as AlertDialogPrimitive } from '@base-ui-components/react/alert-dialog';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype AlertDialogContextType = {\n  isOpen: boolean;\n  setIsOpen: AlertDialogProps['onOpenChange'];\n};\n\nconst [AlertDialogProvider, useAlertDialog] =\n  getStrictContext<AlertDialogContextType>('AlertDialogContext');\n\ntype AlertDialogProps = React.ComponentProps<typeof AlertDialogPrimitive.Root>;\n\nfunction AlertDialog(props: AlertDialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <AlertDialogProvider value={{ isOpen, setIsOpen }}>\n      <AlertDialogPrimitive.Root\n        data-slot=\"alert-dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </AlertDialogProvider>\n  );\n}\n\ntype AlertDialogTriggerProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Trigger\n>;\n\nfunction AlertDialogTrigger(props: AlertDialogTriggerProps) {\n  return (\n    <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n  );\n}\n\ntype AlertDialogPortalProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction AlertDialogPortal(props: AlertDialogPortalProps) {\n  const { isOpen } = useAlertDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <AlertDialogPrimitive.Portal\n          data-slot=\"alert-dialog-portal\"\n          keepMounted\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype AlertDialogBackdropProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Backdrop>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction AlertDialogBackdrop({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: AlertDialogBackdropProps) {\n  return (\n    <AlertDialogPrimitive.Backdrop\n      data-slot=\"alert-dialog-backdrop\"\n      render={\n        <motion.div\n          key=\"alert-dialog-backdrop\"\n          initial={{ opacity: 0, filter: 'blur(4px)' }}\n          animate={{ opacity: 1, filter: 'blur(0px)' }}\n          exit={{ opacity: 0, filter: 'blur(4px)' }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype AlertDialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype AlertDialogPopupProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: AlertDialogFlipDirection;\n  };\n\nfunction AlertDialogPopup({\n  from = 'top',\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: AlertDialogPopupProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <AlertDialogPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"alert-dialog-popup\"\n          data-slot=\"alert-dialog-popup\"\n          initial={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          animate={{\n            opacity: 1,\n            filter: 'blur(0px)',\n            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n          }}\n          exit={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype AlertDialogCloseProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Close\n>;\n\nfunction AlertDialogClose(props: AlertDialogCloseProps) {\n  return (\n    <AlertDialogPrimitive.Close data-slot=\"alert-dialog-close\" {...props} />\n  );\n}\n\ntype AlertDialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogHeader(props: AlertDialogHeaderProps) {\n  return <div data-slot=\"alert-dialog-header\" {...props} />;\n}\n\ntype AlertDialogFooterProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogFooter(props: AlertDialogFooterProps) {\n  return <div data-slot=\"alert-dialog-footer\" {...props} />;\n}\n\ntype AlertDialogTitleProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Title\n>;\n\nfunction AlertDialogTitle(props: AlertDialogTitleProps) {\n  return (\n    <AlertDialogPrimitive.Title data-slot=\"alert-dialog-title\" {...props} />\n  );\n}\n\ntype AlertDialogDescriptionProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Description\n>;\n\nfunction AlertDialogDescription(props: AlertDialogDescriptionProps) {\n  return (\n    <AlertDialogPrimitive.Description\n      data-slot=\"alert-dialog-description\"\n      {...props}\n    />\n  );\n}\n\nexport {\n  AlertDialog,\n  AlertDialogPortal,\n  AlertDialogBackdrop,\n  AlertDialogClose,\n  AlertDialogTrigger,\n  AlertDialogPopup,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  useAlertDialog,\n  type AlertDialogProps,\n  type AlertDialogTriggerProps,\n  type AlertDialogPortalProps,\n  type AlertDialogCloseProps,\n  type AlertDialogBackdropProps,\n  type AlertDialogPopupProps,\n  type AlertDialogHeaderProps,\n  type AlertDialogFooterProps,\n  type AlertDialogTitleProps,\n  type AlertDialogDescriptionProps,\n  type AlertDialogContextType,\n  type AlertDialogFlipDirection,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/primitives/base/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-alert-dialog',
+  },
   'primitives-base-checkbox': {
     name: 'primitives-base-checkbox',
     description: 'An easily stylable checkbox component.',
@@ -17767,6 +18137,45 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-base-collapsible',
+  },
+  'primitives-base-dialog': {
+    name: 'primitives-base-dialog',
+    description: 'A popup that opens on top of the entire page.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@base-ui-components/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/lib-get-strict-context',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/base/dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/dialog.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as DialogPrimitive } from '@base-ui-components/react/dialog';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype DialogContextType = {\n  isOpen: boolean;\n  setIsOpen: DialogProps['onOpenChange'];\n};\n\nconst [DialogProvider, useDialog] =\n  getStrictContext<DialogContextType>('DialogContext');\n\ntype DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;\n\nfunction Dialog(props: DialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <DialogProvider value={{ isOpen, setIsOpen }}>\n      <DialogPrimitive.Root\n        data-slot=\"dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </DialogProvider>\n  );\n}\n\ntype DialogTriggerProps = React.ComponentProps<typeof DialogPrimitive.Trigger>;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\ntype DialogPortalProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction DialogPortal(props: DialogPortalProps) {\n  const { isOpen } = useDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <DialogPrimitive.Portal\n          data-slot=\"dialog-portal\"\n          keepMounted\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype DialogBackdropProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Backdrop>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction DialogBackdrop({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: DialogBackdropProps) {\n  return (\n    <DialogPrimitive.Backdrop\n      data-slot=\"dialog-backdrop\"\n      render={\n        <motion.div\n          key=\"dialog-backdrop\"\n          initial={{ opacity: 0, filter: 'blur(4px)' }}\n          animate={{ opacity: 1, filter: 'blur(0px)' }}\n          exit={{ opacity: 0, filter: 'blur(4px)' }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype DialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype DialogPopupProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: DialogFlipDirection;\n  };\n\nfunction DialogPopup({\n  from = 'top',\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: DialogPopupProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <DialogPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"dialog-popup\"\n          data-slot=\"dialog-popup\"\n          initial={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          animate={{\n            opacity: 1,\n            filter: 'blur(0px)',\n            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n          }}\n          exit={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype DialogCloseProps = React.ComponentProps<typeof DialogPrimitive.Close>;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\ntype DialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction DialogHeader(props: DialogHeaderProps) {\n  return <div data-slot=\"dialog-header\" {...props} />;\n}\n\ntype DialogFooterProps = React.ComponentProps<'div'>;\n\nfunction DialogFooter(props: DialogFooterProps) {\n  return <div data-slot=\"dialog-footer\" {...props} />;\n}\n\ntype DialogTitleProps = React.ComponentProps<typeof DialogPrimitive.Title>;\n\nfunction DialogTitle(props: DialogTitleProps) {\n  return <DialogPrimitive.Title data-slot=\"dialog-title\" {...props} />;\n}\n\ntype DialogDescriptionProps = React.ComponentProps<\n  typeof DialogPrimitive.Description\n>;\n\nfunction DialogDescription(props: DialogDescriptionProps) {\n  return (\n    <DialogPrimitive.Description data-slot=\"dialog-description\" {...props} />\n  );\n}\n\nexport {\n  Dialog,\n  DialogPortal,\n  DialogBackdrop,\n  DialogClose,\n  DialogTrigger,\n  DialogPopup,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  useDialog,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogPortalProps,\n  type DialogCloseProps,\n  type DialogBackdropProps,\n  type DialogPopupProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n  type DialogContextType,\n  type DialogFlipDirection,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/primitives/base/dialog/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-dialog',
   },
   'primitives-base-files': {
     name: 'primitives-base-files',
@@ -18988,6 +19397,48 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-radix-accordion',
   },
+  'primitives-radix-alert-dialog': {
+    name: 'primitives-radix-alert-dialog',
+    description:
+      'A modal dialog that interrupts the user with important content and expects a response.',
+    type: 'registry:ui',
+    dependencies: ['motion', 'radix-ui'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/lib-get-strict-context',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/radix/alert-dialog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/radix/alert-dialog.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { AlertDialog as AlertDialogPrimitive } from 'radix-ui';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype AlertDialogContextType = {\n  isOpen: boolean;\n  setIsOpen: AlertDialogProps['onOpenChange'];\n};\n\nconst [AlertDialogProvider, useAlertDialog] =\n  getStrictContext<AlertDialogContextType>('AlertDialogContext');\n\ntype AlertDialogProps = React.ComponentProps<typeof AlertDialogPrimitive.Root>;\n\nfunction AlertDialog(props: AlertDialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <AlertDialogProvider value={{ isOpen, setIsOpen }}>\n      <AlertDialogPrimitive.Root\n        data-slot=\"alert-dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </AlertDialogProvider>\n  );\n}\n\ntype AlertDialogTriggerProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Trigger\n>;\n\nfunction AlertDialogTrigger(props: AlertDialogTriggerProps) {\n  return (\n    <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n  );\n}\n\ntype AlertDialogPortalProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Portal>,\n  'forceMount'\n>;\n\nfunction AlertDialogPortal(props: AlertDialogPortalProps) {\n  const { isOpen } = useAlertDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <AlertDialogPrimitive.Portal\n          data-slot=\"alert-dialog-portal\"\n          forceMount\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype AlertDialogOverlayProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Overlay>,\n  'forceMount' | 'asChild'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction AlertDialogOverlay({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: AlertDialogOverlayProps) {\n  return (\n    <AlertDialogPrimitive.Overlay\n      data-slot=\"alert-dialog-overlay\"\n      asChild\n      forceMount\n    >\n      <motion.div\n        key=\"alert-dialog-overlay\"\n        initial={{ opacity: 0, filter: 'blur(4px)' }}\n        animate={{ opacity: 1, filter: 'blur(0px)' }}\n        exit={{ opacity: 0, filter: 'blur(4px)' }}\n        transition={transition}\n        {...props}\n      />\n    </AlertDialogPrimitive.Overlay>\n  );\n}\n\ntype AlertDialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype AlertDialogContentProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Content>,\n  'forceMount' | 'asChild'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: AlertDialogFlipDirection;\n  };\n\nfunction AlertDialogContent({\n  from = 'top',\n  onOpenAutoFocus,\n  onCloseAutoFocus,\n  onEscapeKeyDown,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: AlertDialogContentProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <AlertDialogPrimitive.Content\n      asChild\n      forceMount\n      onOpenAutoFocus={onOpenAutoFocus}\n      onCloseAutoFocus={onCloseAutoFocus}\n      onEscapeKeyDown={onEscapeKeyDown}\n    >\n      <motion.div\n        key=\"alert-dialog-content\"\n        data-slot=\"alert-dialog-content\"\n        initial={{\n          opacity: 0,\n          filter: 'blur(4px)',\n          transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n        }}\n        animate={{\n          opacity: 1,\n          filter: 'blur(0px)',\n          transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n        }}\n        exit={{\n          opacity: 0,\n          filter: 'blur(4px)',\n          transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n        }}\n        transition={transition}\n        {...props}\n      />\n    </AlertDialogPrimitive.Content>\n  );\n}\n\ntype AlertDialogCancelProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Cancel\n>;\n\nfunction AlertDialogCancel(props: AlertDialogCancelProps) {\n  return (\n    <AlertDialogPrimitive.Cancel data-slot=\"alert-dialog-cancel\" {...props} />\n  );\n}\n\ntype AlertDialogActionProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Action\n>;\n\nfunction AlertDialogAction(props: AlertDialogActionProps) {\n  return (\n    <AlertDialogPrimitive.Action data-slot=\"alert-dialog-action\" {...props} />\n  );\n}\n\ntype AlertDialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogHeader(props: AlertDialogHeaderProps) {\n  return <div data-slot=\"alert-dialog-header\" {...props} />;\n}\n\ntype AlertDialogFooterProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogFooter(props: AlertDialogFooterProps) {\n  return <div data-slot=\"alert-dialog-footer\" {...props} />;\n}\n\ntype AlertDialogTitleProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Title\n>;\n\nfunction AlertDialogTitle(props: AlertDialogTitleProps) {\n  return (\n    <AlertDialogPrimitive.Title data-slot=\"alert-dialog-title\" {...props} />\n  );\n}\n\ntype AlertDialogDescriptionProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Description\n>;\n\nfunction AlertDialogDescription(props: AlertDialogDescriptionProps) {\n  return (\n    <AlertDialogPrimitive.Description\n      data-slot=\"alert-dialog-description\"\n      {...props}\n    />\n  );\n}\n\nexport {\n  AlertDialog,\n  AlertDialogPortal,\n  AlertDialogOverlay,\n  AlertDialogCancel,\n  AlertDialogAction,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  useAlertDialog,\n  type AlertDialogProps,\n  type AlertDialogTriggerProps,\n  type AlertDialogPortalProps,\n  type AlertDialogCancelProps,\n  type AlertDialogActionProps,\n  type AlertDialogOverlayProps,\n  type AlertDialogContentProps,\n  type AlertDialogHeaderProps,\n  type AlertDialogFooterProps,\n  type AlertDialogTitleProps,\n  type AlertDialogDescriptionProps,\n  type AlertDialogContextType,\n  type AlertDialogFlipDirection,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/primitives/radix/alert-dialog/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-radix-alert-dialog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-radix-alert-dialog',
+  },
   'primitives-radix-checkbox': {
     name: 'primitives-radix-checkbox',
     description:
@@ -19088,7 +19539,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/radix/dialog.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as DialogPrimitive } from 'radix-ui';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype DialogContextType = {\n  isOpen: boolean;\n  setIsOpen: (isOpen: boolean) => void;\n};\n\nconst [DialogProvider, useDialog] =\n  getStrictContext<DialogContextType>('DialogContext');\n\ntype DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;\n\nfunction Dialog(props: DialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <DialogProvider value={{ isOpen, setIsOpen }}>\n      <DialogPrimitive.Root\n        data-slot=\"dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </DialogProvider>\n  );\n}\n\ntype DialogTriggerProps = React.ComponentProps<typeof DialogPrimitive.Trigger>;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\ntype DialogPortalProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Portal>,\n  'forceMount'\n>;\n\nfunction DialogPortal(props: DialogPortalProps) {\n  const { isOpen } = useDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <DialogPrimitive.Portal\n          data-slot=\"dialog-portal\"\n          forceMount\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype DialogOverlayProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Overlay>,\n  'forceMount' | 'asChild'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction DialogOverlay({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: DialogOverlayProps) {\n  return (\n    <DialogPrimitive.Overlay data-slot=\"dialog-overlay\" asChild forceMount>\n      <motion.div\n        key=\"dialog-overlay\"\n        initial={{ opacity: 0, filter: 'blur(4px)' }}\n        animate={{ opacity: 1, filter: 'blur(0px)' }}\n        exit={{ opacity: 0, filter: 'blur(4px)' }}\n        transition={transition}\n        {...props}\n      />\n    </DialogPrimitive.Overlay>\n  );\n}\n\ntype DialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype DialogContentProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Content>,\n  'forceMount' | 'asChild'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: DialogFlipDirection;\n  };\n\nfunction DialogContent({\n  from = 'top',\n  onOpenAutoFocus,\n  onCloseAutoFocus,\n  onEscapeKeyDown,\n  onPointerDownOutside,\n  onInteractOutside,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: DialogContentProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <DialogPrimitive.Content\n      asChild\n      forceMount\n      onOpenAutoFocus={onOpenAutoFocus}\n      onCloseAutoFocus={onCloseAutoFocus}\n      onEscapeKeyDown={onEscapeKeyDown}\n      onPointerDownOutside={onPointerDownOutside}\n      onInteractOutside={onInteractOutside}\n    >\n      <motion.div\n        key=\"dialog-content\"\n        data-slot=\"dialog-content\"\n        initial={{\n          opacity: 0,\n          filter: 'blur(4px)',\n          transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n        }}\n        animate={{\n          opacity: 1,\n          filter: 'blur(0px)',\n          transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n        }}\n        exit={{\n          opacity: 0,\n          filter: 'blur(4px)',\n          transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n        }}\n        transition={transition}\n        {...props}\n      />\n    </DialogPrimitive.Content>\n  );\n}\n\ntype DialogCloseProps = React.ComponentProps<typeof DialogPrimitive.Close>;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\ntype DialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction DialogHeader(props: DialogHeaderProps) {\n  return <div data-slot=\"dialog-header\" {...props} />;\n}\n\ntype DialogFooterProps = React.ComponentProps<'div'>;\n\nfunction DialogFooter(props: DialogFooterProps) {\n  return <div data-slot=\"dialog-footer\" {...props} />;\n}\n\ntype DialogTitleProps = React.ComponentProps<typeof DialogPrimitive.Title>;\n\nfunction DialogTitle(props: DialogTitleProps) {\n  return <DialogPrimitive.Title data-slot=\"dialog-title\" {...props} />;\n}\n\ntype DialogDescriptionProps = React.ComponentProps<\n  typeof DialogPrimitive.Description\n>;\n\nfunction DialogDescription(props: DialogDescriptionProps) {\n  return (\n    <DialogPrimitive.Description data-slot=\"dialog-description\" {...props} />\n  );\n}\n\nexport {\n  Dialog,\n  DialogPortal,\n  DialogOverlay,\n  DialogClose,\n  DialogTrigger,\n  DialogContent,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  useDialog,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogPortalProps,\n  type DialogCloseProps,\n  type DialogOverlayProps,\n  type DialogContentProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n  type DialogContextType,\n  type DialogFlipDirection,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as DialogPrimitive } from 'radix-ui';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype DialogContextType = {\n  isOpen: boolean;\n  setIsOpen: DialogProps['onOpenChange'];\n};\n\nconst [DialogProvider, useDialog] =\n  getStrictContext<DialogContextType>('DialogContext');\n\ntype DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;\n\nfunction Dialog(props: DialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <DialogProvider value={{ isOpen, setIsOpen }}>\n      <DialogPrimitive.Root\n        data-slot=\"dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </DialogProvider>\n  );\n}\n\ntype DialogTriggerProps = React.ComponentProps<typeof DialogPrimitive.Trigger>;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\ntype DialogPortalProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Portal>,\n  'forceMount'\n>;\n\nfunction DialogPortal(props: DialogPortalProps) {\n  const { isOpen } = useDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <DialogPrimitive.Portal\n          data-slot=\"dialog-portal\"\n          forceMount\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype DialogOverlayProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Overlay>,\n  'forceMount' | 'asChild'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction DialogOverlay({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: DialogOverlayProps) {\n  return (\n    <DialogPrimitive.Overlay data-slot=\"dialog-overlay\" asChild forceMount>\n      <motion.div\n        key=\"dialog-overlay\"\n        initial={{ opacity: 0, filter: 'blur(4px)' }}\n        animate={{ opacity: 1, filter: 'blur(0px)' }}\n        exit={{ opacity: 0, filter: 'blur(4px)' }}\n        transition={transition}\n        {...props}\n      />\n    </DialogPrimitive.Overlay>\n  );\n}\n\ntype DialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype DialogContentProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Content>,\n  'forceMount' | 'asChild'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: DialogFlipDirection;\n  };\n\nfunction DialogContent({\n  from = 'top',\n  onOpenAutoFocus,\n  onCloseAutoFocus,\n  onEscapeKeyDown,\n  onPointerDownOutside,\n  onInteractOutside,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: DialogContentProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <DialogPrimitive.Content\n      asChild\n      forceMount\n      onOpenAutoFocus={onOpenAutoFocus}\n      onCloseAutoFocus={onCloseAutoFocus}\n      onEscapeKeyDown={onEscapeKeyDown}\n      onPointerDownOutside={onPointerDownOutside}\n      onInteractOutside={onInteractOutside}\n    >\n      <motion.div\n        key=\"dialog-content\"\n        data-slot=\"dialog-content\"\n        initial={{\n          opacity: 0,\n          filter: 'blur(4px)',\n          transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n        }}\n        animate={{\n          opacity: 1,\n          filter: 'blur(0px)',\n          transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n        }}\n        exit={{\n          opacity: 0,\n          filter: 'blur(4px)',\n          transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n        }}\n        transition={transition}\n        {...props}\n      />\n    </DialogPrimitive.Content>\n  );\n}\n\ntype DialogCloseProps = React.ComponentProps<typeof DialogPrimitive.Close>;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\ntype DialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction DialogHeader(props: DialogHeaderProps) {\n  return <div data-slot=\"dialog-header\" {...props} />;\n}\n\ntype DialogFooterProps = React.ComponentProps<'div'>;\n\nfunction DialogFooter(props: DialogFooterProps) {\n  return <div data-slot=\"dialog-footer\" {...props} />;\n}\n\ntype DialogTitleProps = React.ComponentProps<typeof DialogPrimitive.Title>;\n\nfunction DialogTitle(props: DialogTitleProps) {\n  return <DialogPrimitive.Title data-slot=\"dialog-title\" {...props} />;\n}\n\ntype DialogDescriptionProps = React.ComponentProps<\n  typeof DialogPrimitive.Description\n>;\n\nfunction DialogDescription(props: DialogDescriptionProps) {\n  return (\n    <DialogPrimitive.Description data-slot=\"dialog-description\" {...props} />\n  );\n}\n\nexport {\n  Dialog,\n  DialogPortal,\n  DialogOverlay,\n  DialogClose,\n  DialogTrigger,\n  DialogContent,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  useDialog,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogPortalProps,\n  type DialogCloseProps,\n  type DialogOverlayProps,\n  type DialogContentProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n  type DialogContextType,\n  type DialogFlipDirection,\n};",
       },
     ],
     keywords: [],

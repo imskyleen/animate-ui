@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-alert-dialog",
+  "type": "registry:ui",
+  "title": "Radix Alert Dialog Demo",
+  "description": "Demo showing an animated radix alert dialog.",
+  "registryDependencies": [
+    "@animate-ui/primitives-radix-alert-dialog"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/alert-dialog/index.tsx",
+      "content": "import {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogPortal,\n  AlertDialogOverlay,\n  AlertDialogCancel,\n  AlertDialogAction,\n  type AlertDialogFlipDirection,\n} from '@/components/animate-ui/primitives/radix/alert-dialog';\n\ntype RadixAlertDialogDemoProps = {\n  from: AlertDialogFlipDirection;\n};\n\nexport const RadixAlertDialogDemo = ({ from }: RadixAlertDialogDemoProps) => {\n  return (\n    <AlertDialog>\n      <AlertDialogTrigger className=\"bg-primary text-primary-foreground px-4 py-2 text-sm\">\n        Open Dialog\n      </AlertDialogTrigger>\n\n      <AlertDialogPortal>\n        <AlertDialogOverlay className=\"fixed inset-0 z-50 bg-black/80\" />\n        <AlertDialogContent\n          from={from}\n          className=\"sm:max-w-md fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-50 border bg-background p-6\"\n        >\n          <AlertDialogHeader>\n            <AlertDialogTitle className=\"text-lg\">\n              Are you absolutely sure?\n            </AlertDialogTitle>\n            <AlertDialogDescription className=\"text-sm\">\n              This action cannot be undone. This will permanently delete your\n              account and remove your data from our servers.\n            </AlertDialogDescription>\n          </AlertDialogHeader>\n\n          <AlertDialogFooter className=\"mt-4 flex justify-end gap-2\">\n            <AlertDialogCancel className=\"bg-accent text-accent-foreground px-4 py-2 text-sm\">\n              Cancel\n            </AlertDialogCancel>\n            <AlertDialogAction className=\"bg-primary text-primary-foreground px-4 py-2 text-sm\">\n              Continue\n            </AlertDialogAction>\n          </AlertDialogFooter>\n        </AlertDialogContent>\n      </AlertDialogPortal>\n    </AlertDialog>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/alert-dialog.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "AlertDialogContent": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

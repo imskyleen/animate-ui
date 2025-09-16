@@ -1,0 +1,175 @@
+---
+title: Dialog
+description: A popup that opens on top of the entire page.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-primitives-base-dialog" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-dialog" />
+
+## Usage
+
+```tsx
+<Dialog>
+  <DialogTrigger>Open Dialog</DialogTrigger>
+  <DialogPortal>
+    <DialogBackdrop />
+    <DialogPopup>
+      <DialogHeader>
+        <DialogTitle>Dialog Title</DialogTitle>
+        <DialogDescription>Dialog Description</DialogDescription>
+      </DialogHeader>
+      <p>Dialog Content</p>
+      <DialogFooter>
+        <button>Accept</button>
+      </DialogFooter>
+      <DialogClose>Close</DialogClose>
+    </DialogPopup>
+  </DialogPortal>
+</Dialog>
+```
+
+## API Reference
+
+### Dialog
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#root"
+  text="Base UI API Reference - Dialog.Root"
+/>
+
+### DialogTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#trigger"
+  text="Base UI API Reference - Dialog.Trigger"
+/>
+
+### DialogPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#portal"
+  text="Base UI API Reference - Dialog.Portal"
+/>
+
+<Callout type="info">
+  The `keepMounted` property is not supported in the `DialogPortal` component,
+  as it is used for animation.
+</Callout>
+
+### DialogOverlay
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#backdrop"
+  text="Base UI API Reference - Dialog.Backdrop"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the dialog backdrop',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the dialog backdrop.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `DialogBackdrop` component, as
+  it is used for animation.
+</Callout>
+
+### DialogPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#popup"
+  text="Base UI API Reference - Dialog.Popup"
+/>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the dialog popup',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the dialog popup.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `DialogPopup` component, as it
+  is used for animation.
+</Callout>
+
+### DialogClose
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#close"
+  text="Base UI API Reference - Dialog.Close"
+/>
+
+### DialogHeader
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### DialogTitle
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#title"
+  text="Base UI API Reference - Dialog.Title"
+/>
+
+### DialogDescription
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#description"
+  text="Base UI API Reference - Dialog.Description"
+/>
+
+### DialogFooter
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Dialog](https://base-ui.com/react/components/dialog)

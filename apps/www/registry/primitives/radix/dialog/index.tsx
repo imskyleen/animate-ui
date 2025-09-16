@@ -9,7 +9,7 @@ import { getStrictContext } from '@/registry/lib/get-strict-context';
 
 type DialogContextType = {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: DialogProps['onOpenChange'];
 };
 
 const [DialogProvider, useDialog] =

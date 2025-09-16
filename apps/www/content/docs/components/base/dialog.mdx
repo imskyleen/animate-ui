@@ -1,0 +1,190 @@
+---
+title: Dialog
+description: A popup that opens on top of the entire page.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-components-base-dialog" />
+
+## Installation
+
+<ComponentInstallation name="components-base-dialog" />
+
+## Usage
+
+```tsx
+<Dialog>
+  <DialogTrigger>Open Dialog</DialogTrigger>
+  <DialogPopup>
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+      <DialogDescription>Dialog Description</DialogDescription>
+    </DialogHeader>
+    <p>Dialog Content</p>
+    <DialogFooter>
+      <button>Accept</button>
+    </DialogFooter>
+  </DialogPopup>
+</Dialog>
+```
+
+## API Reference
+
+### Dialog
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialog"
+  text="Animate UI API Reference - Dialog Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#root"
+  text="Base UI API Reference - Dialog.Root"
+/>
+</div>
+
+### DialogTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogtrigger"
+  text="Animate UI API Reference - Dialog Trigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#trigger"
+  text="Base UI API Reference - Dialog.Trigger"
+/>
+</div>
+
+### DialogPopup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogcontent"
+  text="Animate UI API Reference - Dialog Content Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#popup"
+  text="Base UI API Reference - Dialog.Popup"
+/>
+</div>
+
+<TypeTable
+  type={{
+    showCloseButton: {
+      description: 'Whether to show the close button.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    from: {
+      description: 'The direction the dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the dialog popup',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the dialog popup.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `DialogPopup` component, as it
+  is used for animation.
+</Callout>
+
+### DialogClose
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogclose"
+  text="Animate UI API Reference - Dialog Close Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#close"
+  text="Base UI API Reference - Dialog.Close"
+/>
+</div>
+
+### DialogHeader
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogheader"
+  text="Animate UI API Reference - Dialog Header Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### DialogTitle
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogtitle"
+  text="Animate UI API Reference - Dialog Title Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#title"
+  text="Base UI API Reference - Dialog.Title"
+/>
+</div>
+
+### DialogDescription
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogdescription"
+  text="Animate UI API Reference - Dialog Description Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/dialog#description"
+  text="Base UI API Reference - Dialog.Description"
+/>
+</div>
+
+### DialogFooter
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/dialog#dialogfooter"
+  text="Animate UI API Reference - Dialog Footer Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Dialog](https://base-ui.com/react/components/dialog)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/dialog) for style inspiration.

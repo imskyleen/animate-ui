@@ -7,6 +7,7 @@ export const SplittingTextDemo = () => {
     <div className="relative max-w-[450px]">
       <SplittingText
         text={TEXT}
+        aria-hidden="true"
         className="block text-4xl font-semibold text-center text-neutral-200 dark:text-neutral-800"
         disableAnimation
       />

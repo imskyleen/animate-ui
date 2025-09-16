@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-dialog",
+  "type": "registry:ui",
+  "title": "Base Dialog Demo",
+  "description": "Demo showing an animated base dialog.",
+  "registryDependencies": ["@animate-ui/primitives-base-dialog"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/dialog/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/dialog.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "DialogPopup": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

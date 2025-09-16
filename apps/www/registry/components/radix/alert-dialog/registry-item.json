@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-alert-dialog",
+  "type": "registry:ui",
+  "title": "Alert Dialog",
+  "description": "A modal dialog that interrupts the user with important content and expects a response.",
+  "registryDependencies": [
+    "@animate-ui/primitives-radix-alert-dialog",
+    "@animate-ui/components-buttons-button"
+  ],
+  "files": [
+    {
+      "path": "registry/components/radix/alert-dialog/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/alert-dialog.tsx"
+    }
+  ]
+}

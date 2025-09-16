@@ -1,0 +1,176 @@
+---
+title: Alert Dialog
+description: A dialog that requires user response to proceed.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-primitives-base-alert-dialog" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-alert-dialog" />
+
+## Usage
+
+```tsx
+<AlertDialog>
+  <AlertDialogTrigger>Open Dialog</AlertDialogTrigger>
+  <AlertDialogPortal>
+    <AlertDialogBackdrop />
+    <AlertDialogPopup>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Alert Dialog Title</AlertDialogTitle>
+        <AlertDialogDescription>
+          Alert Dialog Description
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogClose render={<button>Cancel</button>} />
+        <button>Continue</button>
+      </AlertDialogFooter>
+    </AlertDialogPopup>
+  </AlertDialogPortal>
+</AlertDialog>
+```
+
+## API Reference
+
+### AlertDialog
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#root"
+  text="Base UI API Reference - AlertDialog.Root"
+/>
+
+### AlertDialogTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#trigger"
+  text="Base UI API Reference - AlertDialog.Trigger"
+/>
+
+### AlertDialogPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#portal"
+  text="Base UI API Reference - AlertDialog.Portal"
+/>
+
+<Callout type="info">
+  The `keepMounted` property is not supported in the `AlertDialogPortal`
+  component, as it is used for animation.
+</Callout>
+
+### AlertDialogOverlay
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#backdrop"
+  text="Base UI API Reference - AlertDialog.Backdrop"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the alert dialog backdrop',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the alert dialog backdrop.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `AlertDialogBackdrop` component,
+  as it is used for animation.
+</Callout>
+
+### AlertDialogPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#popup"
+  text="Base UI API Reference - AlertDialog.Popup"
+/>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the alert dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the alert dialog popup',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the alert dialog popup.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `AlertDialogPopup` component, as
+  it is used for animation.
+</Callout>
+
+### AlertDialogClose
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#close"
+  text="Base UI API Reference - AlertDialog.Close"
+/>
+
+### AlertDialogHeader
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### AlertDialogTitle
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#title"
+  text="Base UI API Reference - AlertDialog.Title"
+/>
+
+### AlertDialogDescription
+
+<ExternalLink
+  href="https://base-ui.com/react/components/alert-dialog#description"
+  text="Base UI API Reference - AlertDialog.Description"
+/>
+
+### AlertDialogFooter
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the alert dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Alert Dialog](https://base-ui.com/react/components/alert-dialog)
