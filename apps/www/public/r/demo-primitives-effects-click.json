@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-click",
+  "type": "registry:ui",
+  "title": "Click Demo",
+  "description": "Demo showing an animated click.",
+  "registryDependencies": [
+    "@animate-ui/primitives-effects-click"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/click/index.tsx",
+      "content": "import { Click, type ClickVariant } from '@/components/animate-ui/primitives/effects/click';\nimport { useRef } from 'react';\n\ninterface ClickDemoProps {\n  variant: ClickVariant;\n  global: boolean;\n  duration: number;\n  size: number;\n}\n\nexport default function ClickDemo({\n  variant,\n  global,\n  duration,\n  size,\n}: ClickDemoProps) {\n  const scope = useRef<HTMLDivElement>(null);\n\n  return (\n    <div\n      ref={scope}\n      className=\"absolute inset-0 w-full h-full flex items-center justify-center\"\n    >\n      <Click\n        scope={global ? undefined : scope}\n        // @ts-expect-error - typescript does not handle this well\n        variant={variant}\n        color=\"currentColor\"\n        size={size}\n        duration={duration}\n      >\n        <p className=\"text-2xl font-bold italic text-neutral-500 select-none\">\n          Click here to see the effect\n        </p>\n      </Click>\n    </div>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/click.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Click": {
+        "global": {
+          "value": false
+        },
+        "variant": {
+          "value": "ring",
+          "options": {
+            "ripple": "ripple",
+            "ring": "ring",
+            "crosshair": "crosshair",
+            "burst": "burst",
+            "particles": "particles"
+          }
+        },
+        "duration": {
+          "value": 400,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "size": {
+          "value": 100,
+          "min": 0,
+          "max": 300,
+          "step": 10
+        }
+      }
+    }
+  }
+}

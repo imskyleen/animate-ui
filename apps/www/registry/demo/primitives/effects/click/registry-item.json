@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-click",
+  "type": "registry:ui",
+  "title": "Click Demo",
+  "description": "Demo showing an animated click.",
+  "registryDependencies": ["@animate-ui/primitives-effects-click"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/click/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/click.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Click": {
+        "global": {
+          "value": false
+        },
+        "variant": {
+          "value": "ring",
+          "options": {
+            "ripple": "ripple",
+            "ring": "ring",
+            "crosshair": "crosshair",
+            "burst": "burst",
+            "particles": "particles"
+          }
+        },
+        "duration": {
+          "value": 400,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "size": {
+          "value": 100,
+          "min": 0,
+          "max": 300,
+          "step": 10
+        }
+      }
+    }
+  }
+}

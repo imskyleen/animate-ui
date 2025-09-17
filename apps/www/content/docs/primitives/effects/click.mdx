@@ -1,0 +1,69 @@
+---
+title: Click
+description: An effect that creates animated effects at the click position, adding interactive feedback to user actions.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+new: true
+---
+
+<ComponentPreview name="demo-primitives-effects-click" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-click" />
+
+## Usage
+
+```tsx
+<Click>...</Click>
+```
+
+## API Reference
+
+### Click
+
+<TypeTable
+  type={{
+    color: {
+      description: 'The color of the click effect.',
+      type: 'string',
+      required: false,
+      default: 'currentColor',
+    },
+    size: {
+      description: 'The size of the click effect.',
+      type: 'number',
+      required: false,
+      default: 100,
+    },
+    duration: {
+      description: 'The duration of the click effect.',
+      type: 'number',
+      required: false,
+      default: 400,
+    },
+    scope: {
+      description: 'The scope of the click effect.',
+      type: 'React.RefObject<HTMLElement | null>',
+      required: false,
+      default: 'undefined',
+    },
+    disabled: {
+      description: 'Whether the click effect is disabled.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    variant: {
+      description: 'The variant of the click effect.',
+      type: '"ripple" | "ring" | "crosshair" | "burst" | "particles"',
+      required: false,
+      default: 'ring',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Framer University](https://x.com/learnframer/status/1967951471284195711) for the inspiration.
