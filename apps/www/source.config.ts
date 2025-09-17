@@ -11,7 +11,7 @@ import { z } from 'zod';
 export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
-      new: z.boolean().optional(),
+      releaseDate: z.coerce.date().optional(),
       beta: z.boolean().optional(),
       alpha: z.boolean().optional(),
       updated: z.boolean().optional(),

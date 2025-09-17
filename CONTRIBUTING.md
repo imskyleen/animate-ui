@@ -301,7 +301,7 @@ description: Description for the new component
 author:
   name: your name
   url: https://link-to-your-profile.com
-new: true
+releaseDate: 2025-XX-XX
 ---
 
 <ComponentPreview name="demo-my-component" />
