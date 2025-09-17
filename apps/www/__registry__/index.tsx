@@ -17795,6 +17795,7 @@ export const index: Record<string, any> = {
     registryDependencies: [
       '@animate-ui/primitives-animate-slot',
       '@animate-ui/primitives-texts-sliding-number',
+      '@animate-ui/primitives-effects-particles',
       '@animate-ui/hooks-use-is-in-view',
       '@animate-ui/lib-get-strict-context',
     ],
