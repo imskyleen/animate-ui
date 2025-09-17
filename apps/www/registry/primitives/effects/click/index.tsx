@@ -64,7 +64,7 @@ function Click(props: ClickProps): React.ReactElement | null {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const el: any = isDoc ? document : target;
     if (!el) return;
-    function onPointerDown(e: PointerEvent) {
+    function onPointerUp(e: PointerEvent) {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       if (!isDoc) {
         const rect = (el as HTMLElement).getBoundingClientRect();
@@ -94,8 +94,8 @@ function Click(props: ClickProps): React.ReactElement | null {
         setItems((prev) => prev.filter((it) => it.id !== id));
       }, duration + 300);
     }
-    el.addEventListener('pointerdown', onPointerDown, { passive: true });
-    return () => el.removeEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointerup', onPointerUp, { passive: true });
+    return () => el.removeEventListener('pointerup', onPointerUp);
   }, [scope, variant, color, size, duration, disabled]);
 
   const portal = typeof window !== 'undefined' ? document.body : null;
