@@ -59,6 +59,13 @@ author:
       required: false,
       default: '{ stiffness: 90, damping: 50 }',
     },
+    initiallyStable: {
+      description:
+        'Whether the number should be initially stable. This is useful if you have a lot of animated elements, to prevent this from causing problems during the first rendering.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
     inView: {
       description: 'Whether the number is in view.',
       type: 'boolean',

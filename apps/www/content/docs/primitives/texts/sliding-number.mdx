@@ -69,6 +69,31 @@ author:
       required: false,
       default: '0',
     },
+    initiallyStable: {
+      description:
+        'Whether the number should be initially stable. This is useful if you have a lot of animated elements, to prevent this from causing problems during the first rendering.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Whether the number is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'The margin of the in view area.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    inViewOnce: {
+      description: 'Whether the number should be in view only once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
     '...props': {
       description: 'The props of the sliding number.',
       type: 'React.ComponentProps<"span">',
