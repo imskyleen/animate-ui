@@ -3,7 +3,11 @@ import { LucideIcons } from '@/components/icons/lucide-icons';
 import { attachFile } from '@/lib/attach-file';
 import { attachSeparator } from '@/lib/attach-separator';
 import AnimateUIIcon from '@workspace/ui/components/icons/animateui-icon';
-import { loader } from 'fumadocs-core/source';
+import {
+  loader,
+  type InferMetaType,
+  type InferPageType,
+} from 'fumadocs-core/source';
 import { icons } from 'lucide-react';
 import { createElement } from 'react';
 
@@ -21,3 +25,6 @@ export const source = loader({
     if (icon === 'LucideIcons') return createElement(LucideIcons);
   },
 });
+
+export type Page = InferPageType<typeof source>;
+export type Meta = InferMetaType<typeof source>;

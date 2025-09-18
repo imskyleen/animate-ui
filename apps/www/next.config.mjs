@@ -15,6 +15,14 @@ const config = {
     ],
   },
   reactStrictMode: false,
+  async rewrites() {
+    return [
+      {
+        source: '/docs/:path*.mdx',
+        destination: '/llms.mdx/:path*',
+      },
+    ];
+  },
   async redirects() {
     return [
       {
