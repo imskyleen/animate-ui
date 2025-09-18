@@ -130,6 +130,7 @@ type SlidingNumberProps = Omit<React.ComponentProps<'span'>, 'children'> & {
   thousandSeparator?: string;
   transition?: SpringOptions;
   delay?: number;
+  initiallyStable?: boolean;
 } & UseIsInViewOptions;
 
 function SlidingNumber({
@@ -146,6 +147,7 @@ function SlidingNumber({
   thousandSeparator,
   transition = { stiffness: 200, damping: 20, mass: 0.4 },
   delay = 0,
+  initiallyStable = false,
   ...props
 }: SlidingNumberProps) {
   const { ref: localRef, isInView } = useIsInView(
@@ -157,21 +159,35 @@ function SlidingNumber({
     },
   );
 
-  const prevNumberRef = React.useRef<number>(0);
+  const initialNumeric = Math.abs(Number(number));
+  const prevNumberRef = React.useRef<number>(
+    initiallyStable ? initialNumeric : 0,
+  );
 
   const hasAnimated = fromNumber !== undefined;
-  const motionVal = useMotionValue(fromNumber ?? 0);
+
+  const motionVal = useMotionValue(
+    initiallyStable ? initialNumeric : (fromNumber ?? 0),
+  );
   const springVal = useSpring(motionVal, { stiffness: 90, damping: 50 });
+
+  const skippedInitialWhenStable = React.useRef(false);
 
   React.useEffect(() => {
     if (!hasAnimated) return;
+    if (initiallyStable && !skippedInitialWhenStable.current) {
+      skippedInitialWhenStable.current = true;
+      return;
+    }
     const timeoutId = setTimeout(() => {
       if (isInView) motionVal.set(number);
     }, delay);
     return () => clearTimeout(timeoutId);
-  }, [hasAnimated, isInView, number, motionVal, delay]);
+  }, [hasAnimated, initiallyStable, isInView, number, motionVal, delay]);
 
-  const [effectiveNumber, setEffectiveNumber] = React.useState(0);
+  const [effectiveNumber, setEffectiveNumber] = React.useState<number>(
+    initiallyStable ? initialNumeric : 0,
+  );
 
   React.useEffect(() => {
     if (hasAnimated) {
@@ -199,7 +215,9 @@ function SlidingNumber({
       });
       return () => unsubscribe();
     } else {
-      setEffectiveNumber(!isInView ? 0 : Math.abs(Number(number)));
+      setEffectiveNumber(
+        initiallyStable ? initialNumeric : !isInView ? 0 : initialNumeric,
+      );
     }
   }, [
     hasAnimated,
@@ -209,6 +227,8 @@ function SlidingNumber({
     decimalPlaces,
     onNumberChange,
     effectiveNumber,
+    initiallyStable,
+    initialNumeric,
   ]);
 
   const formatNumber = React.useCallback(
@@ -251,8 +271,10 @@ function SlidingNumber({
   }, [prevDecStrRaw, newDecStrRaw]);
 
   React.useEffect(() => {
-    if (isInView) prevNumberRef.current = effectiveNumber;
-  }, [effectiveNumber, isInView]);
+    if (isInView || initiallyStable) {
+      prevNumberRef.current = effectiveNumber;
+    }
+  }, [effectiveNumber, isInView, initiallyStable]);
 
   const intPlaces = React.useMemo(
     () =>
