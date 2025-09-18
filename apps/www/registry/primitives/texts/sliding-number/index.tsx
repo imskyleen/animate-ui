@@ -8,6 +8,7 @@ import {
   useMotionValue,
   type MotionValue,
   type SpringOptions,
+  type HTMLMotionProps,
 } from 'motion/react';
 import useMeasure from 'react-use-measure';
 
@@ -120,7 +121,7 @@ function SlidingNumberDisplay({
   );
 }
 
-type SlidingNumberProps = Omit<React.ComponentProps<'span'>, 'children'> & {
+type SlidingNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   number: number;
   fromNumber?: number;
   onNumberChange?: (number: number) => void;
@@ -297,7 +298,7 @@ function SlidingNumber({
   const prevDecValue = adjustedPrevDec ? parseInt(adjustedPrevDec, 10) : 0;
 
   return (
-    <span
+    <motion.span
       ref={localRef}
       data-slot="sliding-number"
       style={{
@@ -345,7 +346,7 @@ function SlidingNumber({
           ))}
         </>
       )}
-    </span>
+    </motion.span>
   );
 }
 

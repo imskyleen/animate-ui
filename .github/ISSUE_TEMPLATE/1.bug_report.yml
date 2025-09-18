@@ -20,7 +20,7 @@ body:
       label: Concerned component
       description: The component that you are experiencing the issue with.
       placeholder: |
-        Counter
+        AvatarGroup
   - type: textarea
     attributes:
       label: Additional context

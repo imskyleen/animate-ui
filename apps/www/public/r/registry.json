@@ -78,25 +78,6 @@
       ]
     },
     {
-      "name": "components-animate-counter",
-      "type": "registry:ui",
-      "title": "Counter",
-      "description": "A numeric input control featuring increment and decrement buttons, smoothly animating number transitions using the SlidingNumber component.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-animate-counter"
-      ],
-      "files": [
-        {
-          "path": "registry/components/animate/counter/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/animate/counter.tsx"
-        }
-      ]
-    },
-    {
       "name": "components-animate-cursor",
       "type": "registry:ui",
       "title": "Cursor",
@@ -1242,22 +1223,6 @@
           "path": "registry/demo/components/animate/code-tabs/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/animate/code-tabs.tsx"
-        }
-      ]
-    },
-    {
-      "name": "demo-components-animate-counter",
-      "type": "registry:ui",
-      "title": "Counter Demo",
-      "description": "Demo showing a counter.",
-      "registryDependencies": [
-        "@animate-ui/components-animate-counter"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/animate/counter/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/animate/counter.tsx"
         }
       ]
     },
@@ -3388,22 +3353,6 @@
           }
         }
       }
-    },
-    {
-      "name": "demo-primitives-animate-counter",
-      "type": "registry:ui",
-      "title": "Animate Counter Demo",
-      "description": "Demo showing an animated counter.",
-      "registryDependencies": [
-        "@animate-ui/primitives-animate-counter"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/animate/counter/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/animate/counter.tsx"
-        }
-      ]
     },
     {
       "name": "demo-primitives-animate-cursor",
@@ -11833,28 +11782,6 @@
           "path": "registry/primitives/animate/code-block/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/animate/code-block.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-animate-counter",
-      "type": "registry:ui",
-      "title": "Counter",
-      "description": "A numeric input control featuring increment and decrement buttons, smoothly animating number transitions using the SlidingNumber component.",
-      "dependencies": [
-        "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/primitives-texts-sliding-number",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/animate/counter/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/animate/counter.tsx"
         }
       ]
     },

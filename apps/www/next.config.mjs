@@ -41,11 +41,6 @@ const config = {
         permanent: true,
       },
       {
-        source: '/docs/components/counter',
-        destination: '/docs/components/animate/counter',
-        permanent: true,
-      },
-      {
         source: '/docs/components/cursor',
         destination: '/docs/components/animate/cursor',
         permanent: true,

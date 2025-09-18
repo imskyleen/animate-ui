@@ -144,45 +144,6 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-animate-code-tabs',
   },
-  'components-animate-counter': {
-    name: 'components-animate-counter',
-    description:
-      'A numeric input control featuring increment and decrement buttons, smoothly animating number transitions using the SlidingNumber component.',
-    type: 'registry:ui',
-    dependencies: ['lucide-react'],
-    devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-counter'],
-    files: [
-      {
-        path: 'registry/components/animate/counter/index.tsx',
-        type: 'registry:ui',
-        target: 'components/animate-ui/components/animate/counter.tsx',
-        content:
-          'import * as React from \'react\';\nimport { PlusIcon, MinusIcon } from \'lucide-react\';\n\nimport {\n  Counter as CounterPrimitive,\n  CounterNumber as CounterNumberPrimitive,\n  CounterMinusButton as CounterMinusButtonPrimitive,\n  CounterPlusButton as CounterPlusButtonPrimitive,\n  type CounterProps as CounterPropsPrimitive,\n} from \'@/components/animate-ui/primitives/animate/counter\';\nimport { Button } from \'@/components/animate-ui/components/buttons/button\';\nimport { cn } from \'@/lib/utils\';\n\ntype CounterProps = Omit<CounterPropsPrimitive, \'children\' | \'asChild\'>;\n\nfunction Counter({ className, ...props }: CounterProps) {\n  return (\n    <CounterPrimitive\n      className={cn(\'flex items-center p-1 border rounded-lg\', className)}\n      {...props}\n    >\n      <CounterMinusButtonPrimitive asChild>\n        <Button size="icon-sm" variant="accent" className="rounded-sm">\n          <MinusIcon className="size-4" />\n        </Button>\n      </CounterMinusButtonPrimitive>\n      <CounterNumberPrimitive className="px-2.5" />\n      <CounterPlusButtonPrimitive asChild>\n        <Button size="icon-sm" variant="accent" className="rounded-sm">\n          <PlusIcon className="size-4" />\n        </Button>\n      </CounterPlusButtonPrimitive>\n    </CounterPrimitive>\n  );\n}\n\nexport { Counter, type CounterProps };',
-      },
-    ],
-    keywords: [],
-    component: (function () {
-      const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/counter/index.tsx'
-        );
-        const exportName =
-          Object.keys(mod).find(
-            (key) =>
-              typeof mod[key] === 'function' || typeof mod[key] === 'object',
-          ) || 'components-animate-counter';
-        const Comp = mod.default || mod[exportName];
-        if (mod.animations) {
-          (LazyComp as any).animations = mod.animations;
-        }
-        return { default: Comp };
-      });
-      LazyComp.demoProps = {};
-      return LazyComp;
-    })(),
-    command: '@animate-ui/components-animate-counter',
-  },
   'components-animate-cursor': {
     name: 'components-animate-cursor',
     description:
@@ -2651,44 +2612,6 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-animate-code-tabs',
-  },
-  'demo-components-animate-counter': {
-    name: 'demo-components-animate-counter',
-    description: 'Demo showing a counter.',
-    type: 'registry:ui',
-    dependencies: undefined,
-    devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-counter'],
-    files: [
-      {
-        path: 'registry/demo/components/animate/counter/index.tsx',
-        type: 'registry:ui',
-        target: 'components/animate-ui/demo/components/animate/counter.tsx',
-        content:
-          "'use client';\n\nimport { Counter } from '@/components/animate-ui/components/animate/counter';\n\nexport const CounterDemo = () => {\n  return <Counter />;\n};",
-      },
-    ],
-    keywords: [],
-    component: (function () {
-      const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/counter/index.tsx'
-        );
-        const exportName =
-          Object.keys(mod).find(
-            (key) =>
-              typeof mod[key] === 'function' || typeof mod[key] === 'object',
-          ) || 'demo-components-animate-counter';
-        const Comp = mod.default || mod[exportName];
-        if (mod.animations) {
-          (LazyComp as any).animations = mod.animations;
-        }
-        return { default: Comp };
-      });
-      LazyComp.demoProps = {};
-      return LazyComp;
-    })(),
-    command: '@animate-ui/demo-components-animate-counter',
   },
   'demo-components-animate-cursor': {
     name: 'demo-components-animate-cursor',
@@ -5818,44 +5741,6 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-animate-code-block',
-  },
-  'demo-primitives-animate-counter': {
-    name: 'demo-primitives-animate-counter',
-    description: 'Demo showing an animated counter.',
-    type: 'registry:ui',
-    dependencies: undefined,
-    devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-counter'],
-    files: [
-      {
-        path: 'registry/demo/primitives/animate/counter/index.tsx',
-        type: 'registry:ui',
-        target: 'components/animate-ui/demo/primitives/animate/counter.tsx',
-        content:
-          'import {\n  Counter,\n  CounterMinusButton,\n  CounterNumber,\n  CounterPlusButton,\n} from \'@/components/animate-ui/primitives/animate/counter\';\nimport { MinusIcon, PlusIcon } from \'lucide-react\';\n\nexport const CounterDemo = () => {\n  return (\n    <Counter className="flex items-center p-1 bg-accent">\n      <CounterMinusButton className="bg-background size-7 flex items-center justify-center">\n        <MinusIcon className="size-4" />\n      </CounterMinusButton>\n      <CounterNumber className="px-2.5" />\n      <CounterPlusButton className="bg-background size-7 flex items-center justify-center">\n        <PlusIcon className="size-4" />\n      </CounterPlusButton>\n    </Counter>\n  );\n};',
-      },
-    ],
-    keywords: [],
-    component: (function () {
-      const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/counter/index.tsx'
-        );
-        const exportName =
-          Object.keys(mod).find(
-            (key) =>
-              typeof mod[key] === 'function' || typeof mod[key] === 'object',
-          ) || 'demo-primitives-animate-counter';
-        const Comp = mod.default || mod[exportName];
-        if (mod.animations) {
-          (LazyComp as any).animations = mod.animations;
-        }
-        return { default: Comp };
-      });
-      LazyComp.demoProps = {};
-      return LazyComp;
-    })(),
-    command: '@animate-ui/demo-primitives-animate-counter',
   },
   'demo-primitives-animate-cursor': {
     name: 'demo-primitives-animate-cursor',
@@ -17699,50 +17584,6 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-animate-code-block',
   },
-  'primitives-animate-counter': {
-    name: 'primitives-animate-counter',
-    description:
-      'A numeric input control featuring increment and decrement buttons, smoothly animating number transitions using the SlidingNumber component.',
-    type: 'registry:ui',
-    dependencies: ['motion'],
-    devDependencies: undefined,
-    registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/primitives-texts-sliding-number',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
-    ],
-    files: [
-      {
-        path: 'registry/primitives/animate/counter/index.tsx',
-        type: 'registry:ui',
-        target: 'components/animate-ui/primitives/animate/counter.tsx',
-        content:
-          "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps, type Transition } from 'motion/react';\n\nimport {\n  SlidingNumber,\n  type SlidingNumberProps,\n} from '@/components/animate-ui/primitives/texts/sliding-number';\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype CounterContextType = {\n  value: number;\n  setValue: (value: number) => void;\n};\n\nconst [CounterProvider, useCounter] =\n  getStrictContext<CounterContextType>('CounterContext');\n\ntype BaseCounterProps = HTMLMotionProps<'div'> & {\n  children: React.ReactNode;\n  transition?: Transition;\n};\n\ntype CounterControlProps = {\n  value?: number;\n  defaultValue?: number;\n  onValueChange?: (value: number) => void;\n};\n\ntype CounterProps = WithAsChild<BaseCounterProps & CounterControlProps>;\n\nfunction Counter({\n  value,\n  defaultValue = 0,\n  onValueChange,\n  transition = { type: 'spring', bounce: 0, stiffness: 300, damping: 30 },\n  asChild = false,\n  ...props\n}: CounterProps) {\n  const [number, setNumber] = useControlledState({\n    value,\n    defaultValue,\n    onChange: onValueChange,\n  });\n\n  const Component = asChild ? Slot : motion.div;\n\n  return (\n    <CounterProvider value={{ value: number, setValue: setNumber }}>\n      <Component\n        data-slot=\"counter\"\n        layout\n        transition={transition}\n        {...props}\n      />\n    </CounterProvider>\n  );\n}\n\ntype CounterMinusButtonProps = WithAsChild<HTMLMotionProps<'button'>>;\n\nconst CounterMinusButton = ({\n  onClick,\n  asChild = false,\n  ...props\n}: CounterMinusButtonProps) => {\n  const { setValue, value } = useCounter();\n\n  const Component = asChild ? Slot : motion.button;\n\n  return (\n    <Component\n      data-slot=\"counter-minus-button\"\n      whileHover={{ scale: 1.05 }}\n      whileTap={{ scale: 0.95 }}\n      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {\n        setValue(value - 1);\n        onClick?.(e);\n      }}\n      {...props}\n    />\n  );\n};\n\ntype CounterPlusButtonProps = WithAsChild<HTMLMotionProps<'button'>>;\n\nconst CounterPlusButton = ({\n  onClick,\n  asChild = false,\n  ...props\n}: CounterPlusButtonProps) => {\n  const { setValue, value } = useCounter();\n\n  const Component = asChild ? Slot : motion.button;\n\n  return (\n    <Component\n      data-slot=\"counter-plus-button\"\n      whileHover={{ scale: 1.05 }}\n      whileTap={{ scale: 0.95 }}\n      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {\n        setValue(value + 1);\n        onClick?.(e);\n      }}\n      {...props}\n    />\n  );\n};\n\ntype CounterNumberProps = Omit<SlidingNumberProps, 'number'>;\n\nconst CounterNumber = (props: CounterNumberProps) => {\n  const { value } = useCounter();\n\n  return <SlidingNumber data-slot=\"counter-number\" number={value} {...props} />;\n};\n\nexport {\n  Counter,\n  CounterMinusButton,\n  CounterPlusButton,\n  CounterNumber,\n  type CounterProps,\n  type CounterMinusButtonProps,\n  type CounterPlusButtonProps,\n  type CounterContextType,\n};",
-      },
-    ],
-    keywords: [],
-    component: (function () {
-      const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/counter/index.tsx'
-        );
-        const exportName =
-          Object.keys(mod).find(
-            (key) =>
-              typeof mod[key] === 'function' || typeof mod[key] === 'object',
-          ) || 'primitives-animate-counter';
-        const Comp = mod.default || mod[exportName];
-        if (mod.animations) {
-          (LazyComp as any).animations = mod.animations;
-        }
-        return { default: Comp };
-      });
-      LazyComp.demoProps = {};
-      return LazyComp;
-    })(),
-    command: '@animate-ui/primitives-animate-counter',
-  },
   'primitives-animate-cursor': {
     name: 'primitives-animate-cursor',
     description:
@@ -20571,7 +20412,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/texts/sliding-number.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport {\n  useSpring,\n  useTransform,\n  motion,\n  useMotionValue,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\nimport useMeasure from 'react-use-measure';\n\nimport {\n  useIsInView,\n  type UseIsInViewOptions,\n} from '@/hooks/use-is-in-view';\n\ntype SlidingNumberRollerProps = {\n  prevValue: number;\n  value: number;\n  place: number;\n  transition: SpringOptions;\n  delay?: number;\n};\n\nfunction SlidingNumberRoller({\n  prevValue,\n  value,\n  place,\n  transition,\n  delay = 0,\n}: SlidingNumberRollerProps) {\n  const startNumber = Math.floor(prevValue / place) % 10;\n  const targetNumber = Math.floor(value / place) % 10;\n  const animatedValue = useSpring(startNumber, transition);\n\n  React.useEffect(() => {\n    const timeoutId = setTimeout(() => {\n      animatedValue.set(targetNumber);\n    }, delay);\n    return () => clearTimeout(timeoutId);\n  }, [targetNumber, animatedValue, delay]);\n\n  const [measureRef, { height }] = useMeasure();\n\n  return (\n    <span\n      ref={measureRef}\n      data-slot=\"sliding-number-roller\"\n      style={{\n        position: 'relative',\n        display: 'inline-block',\n        width: '1ch',\n        overflowX: 'visible',\n        overflowY: 'clip',\n        lineHeight: 1,\n        fontVariantNumeric: 'tabular-nums',\n      }}\n    >\n      <span style={{ visibility: 'hidden' }}>0</span>\n      {Array.from({ length: 10 }, (_, i) => (\n        <SlidingNumberDisplay\n          key={i}\n          motionValue={animatedValue}\n          number={i}\n          height={height}\n          transition={transition}\n        />\n      ))}\n    </span>\n  );\n}\n\ntype SlidingNumberDisplayProps = {\n  motionValue: MotionValue<number>;\n  number: number;\n  height: number;\n  transition: SpringOptions;\n};\n\nfunction SlidingNumberDisplay({\n  motionValue,\n  number,\n  height,\n  transition,\n}: SlidingNumberDisplayProps) {\n  const y = useTransform(motionValue, (latest) => {\n    if (!height) return 0;\n    const currentNumber = latest % 10;\n    const offset = (10 + number - currentNumber) % 10;\n    let translateY = offset * height;\n    if (offset > 5) translateY -= 10 * height;\n    return translateY;\n  });\n\n  if (!height) {\n    return (\n      <span style={{ visibility: 'hidden', position: 'absolute' }}>\n        {number}\n      </span>\n    );\n  }\n\n  return (\n    <motion.span\n      data-slot=\"sliding-number-display\"\n      style={{\n        y,\n        position: 'absolute',\n        inset: 0,\n        display: 'flex',\n        alignItems: 'center',\n        justifyContent: 'center',\n      }}\n      transition={{ ...transition, type: 'spring' }}\n    >\n      {number}\n    </motion.span>\n  );\n}\n\ntype SlidingNumberProps = Omit<React.ComponentProps<'span'>, 'children'> & {\n  number: number;\n  fromNumber?: number;\n  onNumberChange?: (number: number) => void;\n  padStart?: boolean;\n  decimalSeparator?: string;\n  decimalPlaces?: number;\n  thousandSeparator?: string;\n  transition?: SpringOptions;\n  delay?: number;\n  initiallyStable?: boolean;\n} & UseIsInViewOptions;\n\nfunction SlidingNumber({\n  ref,\n  number,\n  fromNumber,\n  onNumberChange,\n  inView = false,\n  inViewMargin = '0px',\n  inViewOnce = true,\n  padStart = false,\n  decimalSeparator = '.',\n  decimalPlaces = 0,\n  thousandSeparator,\n  transition = { stiffness: 200, damping: 20, mass: 0.4 },\n  delay = 0,\n  initiallyStable = false,\n  ...props\n}: SlidingNumberProps) {\n  const { ref: localRef, isInView } = useIsInView(\n    ref as React.Ref<HTMLElement>,\n    {\n      inView,\n      inViewOnce,\n      inViewMargin,\n    },\n  );\n\n  const initialNumeric = Math.abs(Number(number));\n  const prevNumberRef = React.useRef<number>(\n    initiallyStable ? initialNumeric : 0,\n  );\n\n  const hasAnimated = fromNumber !== undefined;\n\n  const motionVal = useMotionValue(\n    initiallyStable ? initialNumeric : (fromNumber ?? 0),\n  );\n  const springVal = useSpring(motionVal, { stiffness: 90, damping: 50 });\n\n  const skippedInitialWhenStable = React.useRef(false);\n\n  React.useEffect(() => {\n    if (!hasAnimated) return;\n    if (initiallyStable && !skippedInitialWhenStable.current) {\n      skippedInitialWhenStable.current = true;\n      return;\n    }\n    const timeoutId = setTimeout(() => {\n      if (isInView) motionVal.set(number);\n    }, delay);\n    return () => clearTimeout(timeoutId);\n  }, [hasAnimated, initiallyStable, isInView, number, motionVal, delay]);\n\n  const [effectiveNumber, setEffectiveNumber] = React.useState<number>(\n    initiallyStable ? initialNumeric : 0,\n  );\n\n  React.useEffect(() => {\n    if (hasAnimated) {\n      const inferredDecimals =\n        typeof decimalPlaces === 'number' && decimalPlaces >= 0\n          ? decimalPlaces\n          : (() => {\n              const s = String(number);\n              const idx = s.indexOf('.');\n              return idx >= 0 ? s.length - idx - 1 : 0;\n            })();\n\n      const factor = Math.pow(10, inferredDecimals);\n\n      const unsubscribe = springVal.on('change', (latest: number) => {\n        const newValue =\n          inferredDecimals > 0\n            ? Math.round(latest * factor) / factor\n            : Math.round(latest);\n\n        if (effectiveNumber !== newValue) {\n          setEffectiveNumber(newValue);\n          onNumberChange?.(newValue);\n        }\n      });\n      return () => unsubscribe();\n    } else {\n      setEffectiveNumber(\n        initiallyStable ? initialNumeric : !isInView ? 0 : initialNumeric,\n      );\n    }\n  }, [\n    hasAnimated,\n    springVal,\n    isInView,\n    number,\n    decimalPlaces,\n    onNumberChange,\n    effectiveNumber,\n    initiallyStable,\n    initialNumeric,\n  ]);\n\n  const formatNumber = React.useCallback(\n    (num: number) =>\n      decimalPlaces != null ? num.toFixed(decimalPlaces) : num.toString(),\n    [decimalPlaces],\n  );\n\n  const numberStr = formatNumber(effectiveNumber);\n  const [newIntStrRaw, newDecStrRaw = ''] = numberStr.split('.');\n\n  const finalIntLength = padStart\n    ? Math.max(\n        Math.floor(Math.abs(number)).toString().length,\n        newIntStrRaw.length,\n      )\n    : newIntStrRaw.length;\n\n  const newIntStr = padStart\n    ? newIntStrRaw.padStart(finalIntLength, '0')\n    : newIntStrRaw;\n\n  const prevFormatted = formatNumber(prevNumberRef.current);\n  const [prevIntStrRaw = '', prevDecStrRaw = ''] = prevFormatted.split('.');\n  const prevIntStr = padStart\n    ? prevIntStrRaw.padStart(finalIntLength, '0')\n    : prevIntStrRaw;\n\n  const adjustedPrevInt = React.useMemo(() => {\n    return prevIntStr.length > finalIntLength\n      ? prevIntStr.slice(-finalIntLength)\n      : prevIntStr.padStart(finalIntLength, '0');\n  }, [prevIntStr, finalIntLength]);\n\n  const adjustedPrevDec = React.useMemo(() => {\n    if (!newDecStrRaw) return '';\n    return prevDecStrRaw.length > newDecStrRaw.length\n      ? prevDecStrRaw.slice(0, newDecStrRaw.length)\n      : prevDecStrRaw.padEnd(newDecStrRaw.length, '0');\n  }, [prevDecStrRaw, newDecStrRaw]);\n\n  React.useEffect(() => {\n    if (isInView || initiallyStable) {\n      prevNumberRef.current = effectiveNumber;\n    }\n  }, [effectiveNumber, isInView, initiallyStable]);\n\n  const intPlaces = React.useMemo(\n    () =>\n      Array.from({ length: finalIntLength }, (_, i) =>\n        Math.pow(10, finalIntLength - i - 1),\n      ),\n    [finalIntLength],\n  );\n  const decPlaces = React.useMemo(\n    () =>\n      newDecStrRaw\n        ? Array.from({ length: newDecStrRaw.length }, (_, i) =>\n            Math.pow(10, newDecStrRaw.length - i - 1),\n          )\n        : [],\n    [newDecStrRaw],\n  );\n\n  const newDecValue = newDecStrRaw ? parseInt(newDecStrRaw, 10) : 0;\n  const prevDecValue = adjustedPrevDec ? parseInt(adjustedPrevDec, 10) : 0;\n\n  return (\n    <span\n      ref={localRef}\n      data-slot=\"sliding-number\"\n      style={{\n        display: 'inline-flex',\n        alignItems: 'center',\n      }}\n      {...props}\n    >\n      {isInView && Number(number) < 0 && (\n        <span style={{ marginRight: '0.25rem' }}>-</span>\n      )}\n\n      {intPlaces.map((place, idx) => {\n        const digitsToRight = intPlaces.length - idx - 1;\n        const isSeparatorPosition =\n          typeof thousandSeparator !== 'undefined' &&\n          digitsToRight > 0 &&\n          digitsToRight % 3 === 0;\n\n        return (\n          <React.Fragment key={`int-${place}`}>\n            <SlidingNumberRoller\n              prevValue={parseInt(adjustedPrevInt, 10)}\n              value={parseInt(newIntStr ?? '0', 10)}\n              place={place}\n              transition={transition}\n            />\n            {isSeparatorPosition && <span>{thousandSeparator}</span>}\n          </React.Fragment>\n        );\n      })}\n\n      {newDecStrRaw && (\n        <>\n          <span>{decimalSeparator}</span>\n          {decPlaces.map((place) => (\n            <SlidingNumberRoller\n              key={`dec-${place}`}\n              prevValue={prevDecValue}\n              value={newDecValue}\n              place={place}\n              transition={transition}\n              delay={delay}\n            />\n          ))}\n        </>\n      )}\n    </span>\n  );\n}\n\nexport { SlidingNumber, type SlidingNumberProps };",
+          "'use client';\n\nimport * as React from 'react';\nimport {\n  useSpring,\n  useTransform,\n  motion,\n  useMotionValue,\n  type MotionValue,\n  type SpringOptions,\n  type HTMLMotionProps,\n} from 'motion/react';\nimport useMeasure from 'react-use-measure';\n\nimport {\n  useIsInView,\n  type UseIsInViewOptions,\n} from '@/hooks/use-is-in-view';\n\ntype SlidingNumberRollerProps = {\n  prevValue: number;\n  value: number;\n  place: number;\n  transition: SpringOptions;\n  delay?: number;\n};\n\nfunction SlidingNumberRoller({\n  prevValue,\n  value,\n  place,\n  transition,\n  delay = 0,\n}: SlidingNumberRollerProps) {\n  const startNumber = Math.floor(prevValue / place) % 10;\n  const targetNumber = Math.floor(value / place) % 10;\n  const animatedValue = useSpring(startNumber, transition);\n\n  React.useEffect(() => {\n    const timeoutId = setTimeout(() => {\n      animatedValue.set(targetNumber);\n    }, delay);\n    return () => clearTimeout(timeoutId);\n  }, [targetNumber, animatedValue, delay]);\n\n  const [measureRef, { height }] = useMeasure();\n\n  return (\n    <span\n      ref={measureRef}\n      data-slot=\"sliding-number-roller\"\n      style={{\n        position: 'relative',\n        display: 'inline-block',\n        width: '1ch',\n        overflowX: 'visible',\n        overflowY: 'clip',\n        lineHeight: 1,\n        fontVariantNumeric: 'tabular-nums',\n      }}\n    >\n      <span style={{ visibility: 'hidden' }}>0</span>\n      {Array.from({ length: 10 }, (_, i) => (\n        <SlidingNumberDisplay\n          key={i}\n          motionValue={animatedValue}\n          number={i}\n          height={height}\n          transition={transition}\n        />\n      ))}\n    </span>\n  );\n}\n\ntype SlidingNumberDisplayProps = {\n  motionValue: MotionValue<number>;\n  number: number;\n  height: number;\n  transition: SpringOptions;\n};\n\nfunction SlidingNumberDisplay({\n  motionValue,\n  number,\n  height,\n  transition,\n}: SlidingNumberDisplayProps) {\n  const y = useTransform(motionValue, (latest) => {\n    if (!height) return 0;\n    const currentNumber = latest % 10;\n    const offset = (10 + number - currentNumber) % 10;\n    let translateY = offset * height;\n    if (offset > 5) translateY -= 10 * height;\n    return translateY;\n  });\n\n  if (!height) {\n    return (\n      <span style={{ visibility: 'hidden', position: 'absolute' }}>\n        {number}\n      </span>\n    );\n  }\n\n  return (\n    <motion.span\n      data-slot=\"sliding-number-display\"\n      style={{\n        y,\n        position: 'absolute',\n        inset: 0,\n        display: 'flex',\n        alignItems: 'center',\n        justifyContent: 'center',\n      }}\n      transition={{ ...transition, type: 'spring' }}\n    >\n      {number}\n    </motion.span>\n  );\n}\n\ntype SlidingNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {\n  number: number;\n  fromNumber?: number;\n  onNumberChange?: (number: number) => void;\n  padStart?: boolean;\n  decimalSeparator?: string;\n  decimalPlaces?: number;\n  thousandSeparator?: string;\n  transition?: SpringOptions;\n  delay?: number;\n  initiallyStable?: boolean;\n} & UseIsInViewOptions;\n\nfunction SlidingNumber({\n  ref,\n  number,\n  fromNumber,\n  onNumberChange,\n  inView = false,\n  inViewMargin = '0px',\n  inViewOnce = true,\n  padStart = false,\n  decimalSeparator = '.',\n  decimalPlaces = 0,\n  thousandSeparator,\n  transition = { stiffness: 200, damping: 20, mass: 0.4 },\n  delay = 0,\n  initiallyStable = false,\n  ...props\n}: SlidingNumberProps) {\n  const { ref: localRef, isInView } = useIsInView(\n    ref as React.Ref<HTMLElement>,\n    {\n      inView,\n      inViewOnce,\n      inViewMargin,\n    },\n  );\n\n  const initialNumeric = Math.abs(Number(number));\n  const prevNumberRef = React.useRef<number>(\n    initiallyStable ? initialNumeric : 0,\n  );\n\n  const hasAnimated = fromNumber !== undefined;\n\n  const motionVal = useMotionValue(\n    initiallyStable ? initialNumeric : (fromNumber ?? 0),\n  );\n  const springVal = useSpring(motionVal, { stiffness: 90, damping: 50 });\n\n  const skippedInitialWhenStable = React.useRef(false);\n\n  React.useEffect(() => {\n    if (!hasAnimated) return;\n    if (initiallyStable && !skippedInitialWhenStable.current) {\n      skippedInitialWhenStable.current = true;\n      return;\n    }\n    const timeoutId = setTimeout(() => {\n      if (isInView) motionVal.set(number);\n    }, delay);\n    return () => clearTimeout(timeoutId);\n  }, [hasAnimated, initiallyStable, isInView, number, motionVal, delay]);\n\n  const [effectiveNumber, setEffectiveNumber] = React.useState<number>(\n    initiallyStable ? initialNumeric : 0,\n  );\n\n  React.useEffect(() => {\n    if (hasAnimated) {\n      const inferredDecimals =\n        typeof decimalPlaces === 'number' && decimalPlaces >= 0\n          ? decimalPlaces\n          : (() => {\n              const s = String(number);\n              const idx = s.indexOf('.');\n              return idx >= 0 ? s.length - idx - 1 : 0;\n            })();\n\n      const factor = Math.pow(10, inferredDecimals);\n\n      const unsubscribe = springVal.on('change', (latest: number) => {\n        const newValue =\n          inferredDecimals > 0\n            ? Math.round(latest * factor) / factor\n            : Math.round(latest);\n\n        if (effectiveNumber !== newValue) {\n          setEffectiveNumber(newValue);\n          onNumberChange?.(newValue);\n        }\n      });\n      return () => unsubscribe();\n    } else {\n      setEffectiveNumber(\n        initiallyStable ? initialNumeric : !isInView ? 0 : initialNumeric,\n      );\n    }\n  }, [\n    hasAnimated,\n    springVal,\n    isInView,\n    number,\n    decimalPlaces,\n    onNumberChange,\n    effectiveNumber,\n    initiallyStable,\n    initialNumeric,\n  ]);\n\n  const formatNumber = React.useCallback(\n    (num: number) =>\n      decimalPlaces != null ? num.toFixed(decimalPlaces) : num.toString(),\n    [decimalPlaces],\n  );\n\n  const numberStr = formatNumber(effectiveNumber);\n  const [newIntStrRaw, newDecStrRaw = ''] = numberStr.split('.');\n\n  const finalIntLength = padStart\n    ? Math.max(\n        Math.floor(Math.abs(number)).toString().length,\n        newIntStrRaw.length,\n      )\n    : newIntStrRaw.length;\n\n  const newIntStr = padStart\n    ? newIntStrRaw.padStart(finalIntLength, '0')\n    : newIntStrRaw;\n\n  const prevFormatted = formatNumber(prevNumberRef.current);\n  const [prevIntStrRaw = '', prevDecStrRaw = ''] = prevFormatted.split('.');\n  const prevIntStr = padStart\n    ? prevIntStrRaw.padStart(finalIntLength, '0')\n    : prevIntStrRaw;\n\n  const adjustedPrevInt = React.useMemo(() => {\n    return prevIntStr.length > finalIntLength\n      ? prevIntStr.slice(-finalIntLength)\n      : prevIntStr.padStart(finalIntLength, '0');\n  }, [prevIntStr, finalIntLength]);\n\n  const adjustedPrevDec = React.useMemo(() => {\n    if (!newDecStrRaw) return '';\n    return prevDecStrRaw.length > newDecStrRaw.length\n      ? prevDecStrRaw.slice(0, newDecStrRaw.length)\n      : prevDecStrRaw.padEnd(newDecStrRaw.length, '0');\n  }, [prevDecStrRaw, newDecStrRaw]);\n\n  React.useEffect(() => {\n    if (isInView || initiallyStable) {\n      prevNumberRef.current = effectiveNumber;\n    }\n  }, [effectiveNumber, isInView, initiallyStable]);\n\n  const intPlaces = React.useMemo(\n    () =>\n      Array.from({ length: finalIntLength }, (_, i) =>\n        Math.pow(10, finalIntLength - i - 1),\n      ),\n    [finalIntLength],\n  );\n  const decPlaces = React.useMemo(\n    () =>\n      newDecStrRaw\n        ? Array.from({ length: newDecStrRaw.length }, (_, i) =>\n            Math.pow(10, newDecStrRaw.length - i - 1),\n          )\n        : [],\n    [newDecStrRaw],\n  );\n\n  const newDecValue = newDecStrRaw ? parseInt(newDecStrRaw, 10) : 0;\n  const prevDecValue = adjustedPrevDec ? parseInt(adjustedPrevDec, 10) : 0;\n\n  return (\n    <motion.span\n      ref={localRef}\n      data-slot=\"sliding-number\"\n      style={{\n        display: 'inline-flex',\n        alignItems: 'center',\n      }}\n      {...props}\n    >\n      {isInView && Number(number) < 0 && (\n        <span style={{ marginRight: '0.25rem' }}>-</span>\n      )}\n\n      {intPlaces.map((place, idx) => {\n        const digitsToRight = intPlaces.length - idx - 1;\n        const isSeparatorPosition =\n          typeof thousandSeparator !== 'undefined' &&\n          digitsToRight > 0 &&\n          digitsToRight % 3 === 0;\n\n        return (\n          <React.Fragment key={`int-${place}`}>\n            <SlidingNumberRoller\n              prevValue={parseInt(adjustedPrevInt, 10)}\n              value={parseInt(newIntStr ?? '0', 10)}\n              place={place}\n              transition={transition}\n            />\n            {isSeparatorPosition && <span>{thousandSeparator}</span>}\n          </React.Fragment>\n        );\n      })}\n\n      {newDecStrRaw && (\n        <>\n          <span>{decimalSeparator}</span>\n          {decPlaces.map((place) => (\n            <SlidingNumberRoller\n              key={`dec-${place}`}\n              prevValue={prevDecValue}\n              value={newDecValue}\n              place={place}\n              transition={transition}\n              delay={delay}\n            />\n          ))}\n        </>\n      )}\n    </motion.span>\n  );\n}\n\nexport { SlidingNumber, type SlidingNumberProps };",
       },
     ],
     keywords: [],
