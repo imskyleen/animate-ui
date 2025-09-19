@@ -11,9 +11,9 @@
   ],
   "files": [
     {
-      "path": "registry/primitives/radix/progress/index.tsx",
+      "path": "registry/primitives/radix/radio-group/index.tsx",
       "type": "registry:ui",
-      "target": "components/animate-ui/primitives/radix/progress.tsx"
+      "target": "components/animate-ui/primitives/radix/radio-group.tsx"
     }
   ]
 }
