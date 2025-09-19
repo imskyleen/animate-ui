@@ -94,15 +94,15 @@ function CodeBlock({
     const timeout = setTimeout(() => {
       intervalId = setInterval(() => {
         if (index < characters.length) {
-          setVisibleCode((prev) => {
-            const currentIndex = index;
-            index += 1;
+          setVisibleCode(() => {
+            const nextChar = characters.slice(0, index + 1).join('');
             onWrite?.({
-              index: currentIndex + 1,
+              index: index + 1,
               length: characters.length,
               done: false,
             });
-            return prev + characters[currentIndex];
+            index += 1;
+            return nextChar;
           });
           localRef.current?.scrollTo({
             top: localRef.current?.scrollHeight,
