@@ -45,59 +45,104 @@ const FILTERS = {
   new: 'New',
 };
 
-const NEW_ICONS = [
-  'icons-accessibility',
-  'icons-airplay',
-  'icons-binary',
-  'icons-terminal',
-  'icons-badge-check',
-  'icons-cast',
-  'icons-cctv',
-  'icons-chart-bar',
-  'icons-chart-bar-increasing',
-  'icons-chart-bar-decreasing',
-  'icons-chart-column',
-  'icons-chart-column-increasing',
-  'icons-chart-column-decreasing',
-  'icons-chart-line',
-  'icons-chart-no-axes-column',
-  'icons-chart-no-axes-column-decreasing',
-  'icons-chart-no-axes-column-increasing',
-  'icons-chart-scatter',
-  'icons-chart-spline',
-  'icons-check',
-  'icons-check-check',
-  'icons-check-line',
-  'icons-circle-check',
-  'icons-clapperboard',
-  'icons-cloud-drizzle',
-  'icons-cloud-hail',
-  'icons-cloud-lightning',
-  'icons-cloud-moon',
-  'icons-cloud-moon-rain',
-  'icons-cloud-rain',
-  'icons-cloud-rain-wind',
-  'icons-cloud-snow',
-  'icons-cloud-sun',
-  'icons-cloud-sun-rain',
-  'icons-contrast',
-  'icons-crop',
-  'icons-cross',
-  'icons-ellipsis',
-  'icons-ellipsis-vertical',
-  'icons-lock',
-  'icons-lock-keyhole',
-  'icons-lock-open',
-  'icons-lock-keyhole-open',
-  'icons-party-popper',
-  'icons-moon',
-  'icons-moon-star',
-  'icons-orbit',
-  'icons-sun',
-  'icons-sun-dim',
-  'icons-sun-medium',
-  'icons-sun-moon',
+const addedIcons = [
+  {
+    date: '2025-09-07',
+    icons: [
+      'icons-accessibility',
+      'icons-airplay',
+      'icons-binary',
+      'icons-terminal',
+      'icons-badge-check',
+      'icons-cast',
+      'icons-cctv',
+      'icons-chart-bar',
+      'icons-chart-bar-increasing',
+      'icons-chart-bar-decreasing',
+      'icons-chart-column',
+      'icons-chart-column-increasing',
+      'icons-chart-column-decreasing',
+      'icons-chart-line',
+      'icons-chart-no-axes-column',
+      'icons-chart-no-axes-column-decreasing',
+      'icons-chart-no-axes-column-increasing',
+      'icons-chart-scatter',
+      'icons-chart-spline',
+      'icons-contrast',
+      'icons-cross',
+      'icons-ellipsis',
+      'icons-ellipsis-vertical',
+      'icons-party-popper',
+    ],
+  },
+  {
+    date: '2025-09-09',
+    icons: [
+      'icons-cloud-drizzle',
+      'icons-cloud-hail',
+      'icons-cloud-lightning',
+      'icons-cloud-moon',
+      'icons-cloud-moon-rain',
+      'icons-cloud-rain',
+      'icons-cloud-rain-wind',
+      'icons-cloud-snow',
+      'icons-cloud-sun',
+      'icons-cloud-sun-rain',
+      'icons-moon',
+      'icons-moon-star',
+      'icons-orbit',
+      'icons-sun',
+      'icons-sun-dim',
+      'icons-sun-medium',
+      'icons-sun-moon',
+    ],
+  },
+  {
+    date: '2025-09-13',
+    icons: [
+      'icons-check',
+      'icons-check-check',
+      'icons-check-line',
+      'icons-circle-check',
+      'icons-clapperboard',
+      'icons-crop',
+      'icons-lock',
+      'icons-lock-keyhole',
+      'icons-lock-open',
+      'icons-lock-keyhole-open',
+    ],
+  },
+  {
+    date: '2025-09-24',
+    icons: [
+      'icons-blocks',
+      'icons-frame',
+      'icons-plug-zap',
+      'icons-radio',
+      'icons-radio-tower',
+      'icons-nfc',
+      'icons-paperclip',
+      'icons-unplug',
+      'icons-ev-charger',
+      'icons-link',
+      'icons-sliders-horizontal',
+      'icons-sliders-vertical',
+      'icons-equal-not',
+      'icons-circle-check-big',
+      'icons-router',
+    ],
+  },
 ];
+
+const thirtyDaysAgo = new Date();
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+const newIcons = addedIcons
+  .filter((entry) => {
+    const entryDate = new Date(entry.date);
+    return entryDate >= thirtyDaysAgo;
+  })
+  .flatMap((entry) => entry.icons);
 
 type CheckBadgeProps = Omit<HTMLMotionProps<'button'>, 'children'> & {
   isActive?: boolean;
@@ -127,7 +172,6 @@ const CheckBadge = ({
 };
 
 export const Icons = () => {
-  const [search, setSearch] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
   const [activeTab, setActiveTab] = useState<string>('cli');
   const [isCopied, setIsCopied] = useState(false);
@@ -136,6 +180,13 @@ export const Icons = () => {
   const [isLoop, setIsLoop] = useState(false);
   const [filter, setFilter] = useState<keyof typeof FILTERS>('all');
 
+  const [search, setSearch] = useQueryState(
+    'search',
+    parseAsString.withOptions({
+      history: 'replace',
+      throttleMs: 150,
+    }),
+  );
   const [activeIconWithoutPrefix, setActiveIconWithoutPrefix] = useQueryState(
     'icon',
     parseAsString.withOptions({
@@ -147,6 +198,22 @@ export const Icons = () => {
     () => (activeIconWithoutPrefix ? `icons-${activeIconWithoutPrefix}` : null),
     [activeIconWithoutPrefix],
   );
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  useEffect(() => {
+    if (activeIcon) {
+      setIsPanelOpen(true);
+    }
+  }, [activeIcon]);
+
+  useEffect(() => {
+    if (!isPanelOpen && activeIcon) {
+      setTimeout(() => {
+        setActiveIconWithoutPrefix(null);
+      }, 500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPanelOpen]);
 
   const icons = Object.values(index).filter(
     (icon) => icon.name.startsWith('icons-') && icon.name !== 'icons-icon',
@@ -154,7 +221,7 @@ export const Icons = () => {
 
   const filteredIcons = useMemo(() => {
     if (filter === 'all') return icons;
-    return icons.filter((icon) => NEW_ICONS.includes(icon.name));
+    return icons.filter((icon) => newIcons.includes(icon.name));
   }, [icons, filter]);
 
   const fuse = useMemo(() => {
@@ -166,14 +233,14 @@ export const Icons = () => {
   }, [icons]);
 
   const searchedIcons = useMemo(() => {
-    const q = search.trim();
+    const q = search?.trim();
     if (!q) return filteredIcons;
     return fuse.search(q).map((result) => result.item);
   }, [search, fuse, filteredIcons]);
 
   const searchedNewIcons = useMemo(() => {
-    if (!search.trim()) return NEW_ICONS;
-    return searchedIcons.filter((icon) => NEW_ICONS.includes(icon.name));
+    if (!search?.trim()) return newIcons;
+    return searchedIcons.filter((icon) => newIcons.includes(icon.name));
   }, [search, searchedIcons]);
 
   const icon = useMemo(
@@ -203,7 +270,7 @@ export const Icons = () => {
   return (
     <div className="-mt-4.5 text-black dark:text-white">
       <p className="text-sm text-muted-foreground">
-        {searchedIcons.length} icons {search.length ? 'found' : 'available'}{' '}
+        {searchedIcons.length} icons {search?.length ? 'found' : 'available'}{' '}
         {searchedNewIcons.length ? (
           <span>
             •{' '}
@@ -216,7 +283,7 @@ export const Icons = () => {
 
       <Input
         placeholder="Search icons"
-        value={search}
+        value={search ?? ''}
         onChange={(e) => setSearch(e.target.value)}
       />
 
@@ -250,7 +317,7 @@ export const Icons = () => {
                     <Tooltip side="bottom" sideOffset={14} key={icon.name}>
                       <TooltipTrigger>
                         <div>
-                          <AnimateIcon animateOnHover>
+                          <AnimateIcon asChild animateOnHover>
                             <button
                               data-value={icon.name}
                               onClick={() => {
@@ -271,7 +338,7 @@ export const Icons = () => {
                                 )}
                               />
 
-                              {NEW_ICONS.includes(icon.name) && (
+                              {newIcons.includes(icon.name) && (
                                 <div className="absolute -top-1 -right-1 size-2.5 border border-background bg-foreground rounded-full" />
                               )}
 
@@ -303,16 +370,16 @@ export const Icons = () => {
       <motion.div
         className="fixed z-50 w-[325px] right-0 inset-y-12 rounded-l-2xl border-l border-y bg-background shadow-sm p-4"
         initial={{ opacity: 0, x: '100%' }}
-        animate={activeIcon ? { opacity: 1, x: 0 } : { opacity: 0, x: '100%' }}
+        animate={isPanelOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: '100%' }}
         exit={{ opacity: 0, x: '100%' }}
         transition={{ type: 'spring', stiffness: 150, damping: 25 }}
       >
         <h2 className="text-lg font-medium mt-1.5">
           {activeIcon?.replace('icons-', '')}
         </h2>
-        <AnimateIcon animateOnHover>
+        <AnimateIcon asChild animateOnHover>
           <button
-            onClick={() => setActiveIconWithoutPrefix(null)}
+            onClick={() => setIsPanelOpen(false)}
             className="absolute cursor-pointer top-5 right-5 size-8 rounded-full flex items-center justify-center bg-background hover:bg-muted transition-colors duration-200"
           >
             <X className="size-5 text-neutral-500" />
@@ -424,7 +491,7 @@ export const Icons = () => {
                       <InfinityIcon className="size-3.5" />
                     </Button>
 
-                    <AnimateIcon animateOnHover>
+                    <AnimateIcon asChild animateOnHover>
                       <Button
                         size="icon-sm"
                         variant="ghost"

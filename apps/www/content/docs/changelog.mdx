@@ -3,19 +3,90 @@ title: Changelog
 description: Latest updates and announcements.
 ---
 
-## September 2025 - Animate UI 1.0
+import {
+  Changelog,
+  ChangelogItem,
+  ChangelogItemTitle,
+  ChangelogItemDescription,
+  ChangelogItemVersion,
+  ChangelogItemList,
+} from '@/components/docs/changelog';
 
-### v1.0.8
+<Changelog>
 
-#### Primitives
+<ChangelogItem date="2025-09-24">
+  <ChangelogItemVersion>
+
+## 1.0.9
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- New `Shine` effect primitive.
+
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Icons</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- Bug fixes on the `AnimateIcon` component.
+- Removed the `onAnimateChange`, `onAnimateStart`, and `onAnimateEnd` events, which added complexity and caused many bugs for very limited utility.
+- Added the `completeOnStop` property.
+- Added a new animation for all "off" icons.
+- Added **7 new icons**:
+  - `blocks`
+  - `frame`
+  - `plug-zap`
+  - `radio`
+  - `radio-tower`
+  - `nfc`
+  - `paperclip`
+  - `unplug`
+  - `ev-charger`
+  - `link`
+  - `sliders-horizontal`
+  - `sliders-vertical`
+  - `equal-not`
+  - `circle-check-big`
+  - `router`
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
+
+<ChangelogItem date="2025-09-18">
+  <ChangelogItemVersion>
+
+## 1.0.8
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - New `Click` effect primitive.
 - Update the `SlidingNumber` and `CountingNumber` primitives to add the `initiallyStable` prop.
 - Remove the `Counter` primitive and component.
 
-### v1.0.7
+</ChangelogItemDescription>
 
-#### Primitives and Components
+</ChangelogItem>
+
+<ChangelogItem date="2025-09-16">
+  <ChangelogItemVersion>
+
+## 1.0.7
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives and Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 **Radix UI**:
 
@@ -26,37 +97,74 @@ description: Latest updates and announcements.
 - New `AlertDialog` primitive and component.
 - New `Dialog` primitive and component.
 
-### v1.0.6
+</ChangelogItemDescription>
 
-#### Primitives
+</ChangelogItem>
+
+<ChangelogItem date="2025-09-14">
+
+  <ChangelogItemVersion>
+
+## 1.0.6
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - For Radix UI, Base UI, and Headless UI Tabs, we have added a props `mode`. This allows you to adjust the animation for resizing tab content according to your needs.
 - New `MorphingText` primitive.
 
-#### Accessibility
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Accessibility</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 We have added [documentation for accessibility with Animate UI](./accessibility).
 
-### v1.0.5
+</ChangelogItemDescription>
 
-#### Icons
+</ChangelogItem>
 
-There are **10 new icons**:
+<ChangelogItem date="2025-09-13">
+  <ChangelogItemVersion>
 
-- `check`
-- `check-check`
-- `check-line`
-- `circle-check`
-- `clapperboard`
-- `crop`
-- `lock`
-- `lock-keyhole`
-- `lock-open`
-- `lock-keyhole-open`
+## 1.0.5
 
-### v1.0.4
+  </ChangelogItemVersion>
 
-#### Primitives
+<ChangelogItemTitle>Icons</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- Added **10 new icons**:
+  - `check`
+  - `check-check`
+  - `check-line`
+  - `circle-check`
+  - `clapperboard`
+  - `crop`
+  - `lock`
+  - `lock-keyhole`
+  - `lock-open`
+  - `lock-keyhole-open`
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
+
+<ChangelogItem date="2025-09-12">
+  <ChangelogItemVersion>
+
+## 1.0.4
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - New `AutoHeight` effect primitive.
 - Update of the Animate UI `Tabs` primitive.
@@ -66,53 +174,103 @@ There are **10 new icons**:
 
 This update has made the auto-height of tables more fluid and added the `AutoHeight` effect.
 
-### v1.0.3
+</ChangelogItemDescription>
 
-#### Icons
+</ChangelogItem>
 
-Update of the `AnimateIcon` component, notably for the `loop` and `loopDelay` props, but also to fix some bugs and add an `initialOnAnimateEnd` prop.
+<ChangelogItem date="2025-09-11">
+  <ChangelogItemVersion>
 
-**17 new icons**:
+## 1.0.3
 
-- `cloud-drizzle`
-- `cloud-hail`
-- `cloud-lightning`
-- `cloud-moon`
-- `cloud-moon-rain`
-- `cloud-rain`
-- `cloud-rain-wind`
-- `cloud-snow`
-- `cloud-sun`
-- `cloud-sun-rain`
-- `moon`
-- `moon-star`
-- `orbit`
-- `sun`
-- `sun-dim`
-- `sun-medium`
-- `sun-moon`
+  </ChangelogItemVersion>
 
-### v1.0.2
+<ChangelogItemTitle>Icons</ChangelogItemTitle>
 
-#### Primitives
+<ChangelogItemDescription>
+
+- Update of the `AnimateIcon` component, notably for the `loop` and `loopDelay` props, but also to fix some bugs and add an `initialOnAnimateEnd` prop.
+- Added **17 new icons**:
+  - `cloud-drizzle`
+  - `cloud-hail`
+  - `cloud-lightning`
+  - `cloud-moon`
+  - `cloud-moon-rain`
+  - `cloud-rain`
+  - `cloud-rain-wind`
+  - `cloud-snow`
+  - `cloud-sun`
+  - `cloud-sun-rain`
+  - `moon`
+  - `moon-star`
+  - `orbit`
+  - `sun`
+  - `sun-dim`
+  - `sun-medium`
+  - `sun-moon`
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
+
+<ChangelogItem date="2025-09-09">
+  <ChangelogItemVersion>
+
+## 1.0.2
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - New Base UI `Tabs` primitive.
 
-#### Components
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - New Base UI `Tabs` component based on the `Tabs` primitive.
 
-### v1.0.1
+</ChangelogItemDescription>
 
-#### Primitives
+</ChangelogItem>
+
+<ChangelogItem date="2025-09-08">
+  <ChangelogItemVersion>
+
+## 1.0.1
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - New `ThemeToggler` effect primitive.
 
-#### Components
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 - New `ThemeTogglerButton` button component based on the `ThemeToggler` effect primitive.
 
-### v1.0.0
+</ChangelogItemDescription>
+
+</ChangelogItem>
+
+<ChangelogItem major date="2025-09-07">
+  <ChangelogItemVersion>
+
+## 1.0.0
+
+  </ChangelogItemVersion>
+  
+<ChangelogItemDescription>
 
 **Animate UI** is no longer in beta.
 
@@ -132,7 +290,11 @@ Animate UI is now divided into three parts:
   version.
 </Callout>
 
-#### Primitives
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Primitives</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 **Animate UI**:
 
@@ -215,7 +377,11 @@ _All other texts have been updated to be optimized and fix some bugs._
 
 _All other effects have been updated to be optimized and fix some bugs._
 
-#### Components
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 **Animate UI**:
 
@@ -254,7 +420,7 @@ The new community category contains animated components contributed by the commu
 
 The goal is to make it easy for anyone to publish and share animated components with the community.
 
-#### Icons
+<ChangelogItemTitle>Icons</ChangelogItemTitle>
 
 The `AnimateIcon` wrapper has been updated to fix some bugs and add 4 new props:
 
@@ -290,30 +456,56 @@ There are **24 new icons**:
 - `ellipsis-vertical`
 - `party-popper`
 
-#### Changelog
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Changelog</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 Now, all changes will be detailed month by month and version by version on this page for greater transparency.
 
-#### Roadmap
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Roadmap</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 We have added a roadmap page to give you more visibility into the future of Animate UI. This may evolve over time.
 
 See the [roadmap page here](./roadmap).
 
-#### Shadcn CLI V3
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Shadcn CLI V3</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 We have updated our installation method to use the new feature of CLI shadcn/ui version 3. Now, to install a component, you can use `@animate-ui/[type]-[category]-[name]`. For example, to install the Base UI accordion primitive, you can use `@animate-ui/primitives-base-accordion`.
 
 See the [getting started guide here](./installation).
 
-#### MCP
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>MCP</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 We have updated the MCP page to show you how to use the MCP shadcn/ui with Animate UI.
 
 See the [MCP page here](./mcp).
 
-#### Other animated distributions
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Other animated distributions</ChangelogItemTitle>
+
+<ChangelogItemDescription>
 
 We have added a page to show you other animated distributions that you can use with Animate UI.
 
 See the [other animated distributions page here](./other-animated-distributions).
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
+
+</Changelog>

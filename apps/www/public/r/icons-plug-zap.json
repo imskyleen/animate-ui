@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-plug-zap",
+  "type": "registry:ui",
+  "title": "Plug Zap Icon",
+  "description": "Plug Zap icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/plug-zap/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype PlugZapProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {},\n    path5: {\n      initial: {\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        opacity: [1, 0.5, 1, 0.5, 1],\n        scale: [1, 0.9, 1, 0.9, 1],\n        transition: {\n          duration: 1.8,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PlugZapProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m2 22 3-3\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M7.5 13.5 10 11\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M10.5 16.5 13 14\"\n        variants={variants.path4}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m18 3-4 4h6l-4 4\"\n        variants={variants.path5}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PlugZap(props: PlugZapProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PlugZap,\n  PlugZap as PlugZapIcon,\n  type PlugZapProps,\n  type PlugZapProps as PlugZapIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/plug-zap.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "electricity",
+      "energy",
+      "electronics",
+      "charge",
+      "charging",
+      "battery",
+      "connect"
+    ]
+  }
+}

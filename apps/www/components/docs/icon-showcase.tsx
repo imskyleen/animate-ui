@@ -1,14 +1,16 @@
 import type { IconProps } from '@/registry/icons/icon';
 import React from 'react';
 
+export type IconShowcaseProps = {
+  icon: React.ComponentType<IconProps<string>>;
+  displayTitle?: boolean;
+} & IconProps<string>;
+
 export const IconShowcase = ({
   icon: Icon,
   displayTitle = true,
   ...props
-}: {
-  icon: React.ComponentType<IconProps<string>>;
-  displayTitle?: boolean;
-} & IconProps<string>) => {
+}: IconShowcaseProps) => {
   return (
     <div className="relative h-[200px] w-full lg:w-[250px] max-w-[250px] mx-auto rounded-2xl aspect-square bg-muted/50 border flex items-center justify-center">
       {props.animation && displayTitle ? (

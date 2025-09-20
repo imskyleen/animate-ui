@@ -29,24 +29,6 @@ const animations = {
     path: {},
     circle: {},
   } satisfies Record<string, Variants>,
-  'default-loop': {
-    group: {
-      initial: {
-        rotate: 0,
-      },
-      animate: {
-        rotate: [0, 90, 180, 270, 360],
-        transition: {
-          duration: 2.5,
-          ease: 'easeInOut',
-          repeat: Infinity,
-          repeatType: 'loop',
-        },
-      },
-    },
-    path: {},
-    circle: {},
-  } satisfies Record<string, Variants>,
   rotate: {
     group: {
       initial: {
@@ -57,8 +39,6 @@ const animations = {
         transition: {
           duration: 2,
           ease: 'linear',
-          repeat: Infinity,
-          repeatType: 'loop',
         },
       },
     },

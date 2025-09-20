@@ -1,5 +1,6 @@
 import { Logo } from '@/components/logo';
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import { BookOpen } from 'lucide-react';
 
 /**
  * Shared layout configurations
@@ -19,16 +20,11 @@ export const baseOptions: BaseLayoutProps = {
 
   links: [
     {
-      type: 'custom',
-      children: (
-        <p
-          className="inline-flex items-center gap-2 mb-2 px-2 empty:mb-0 [&amp;_svg]:size-4 [&amp;_svg]:shrink-0"
-          style={{ paddingInlineStart: 'calc(var(--spacing) * 2)' }}
-        >
-          Guide
-        </p>
-      ),
-    },
+      type: 'separator',
+      name: 'Guide',
+      icon: <BookOpen fill="currentColor" strokeWidth={2.5} />,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any,
     {
       text: 'Introduction',
       url: '/docs',

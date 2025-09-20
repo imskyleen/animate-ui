@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-frame",
+  "type": "registry:ui",
+  "title": "Frame Icon",
+  "description": "Frame icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/frame/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype FrameProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    line1: {\n      initial: {\n        y: 0,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n      animate: {\n        y: -4,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n    },\n    line2: {\n      initial: {\n        y: 0,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n      animate: {\n        y: 4,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n    },\n    line3: {\n      initial: {\n        x: 0,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n      animate: {\n        x: -4,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n    },\n    line4: {\n      initial: {\n        x: 0,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n      animate: {\n        x: 4,\n        transition: { type: 'spring', stiffness: 150, damping: 15 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    line1: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n      animate: {\n        y: [0, -4, 0],\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n    },\n    line2: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n      animate: {\n        y: [0, 4, 0],\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n    },\n    line3: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n      animate: {\n        x: [0, -4, 0],\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n    },\n    line4: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n      animate: {\n        x: [0, 4, 0],\n        transition: { ease: 'easeInOut', duration: 0.8 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: FrameProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.line\n        x1=\"22\"\n        x2=\"2\"\n        y1=\"6\"\n        y2=\"6\"\n        variants={variants.line1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1=\"22\"\n        x2=\"2\"\n        y1=\"18\"\n        y2=\"18\"\n        variants={variants.line2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1=\"6\"\n        x2=\"6\"\n        y1=\"2\"\n        y2=\"22\"\n        variants={variants.line3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1=\"18\"\n        x2=\"18\"\n        y1=\"2\"\n        y2=\"22\"\n        variants={variants.line4}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Frame(props: FrameProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Frame,\n  Frame as FrameIcon,\n  type FrameProps,\n  type FrameProps as FrameIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/frame.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "logo",
+      "design",
+      "tool"
+    ]
+  }
+}

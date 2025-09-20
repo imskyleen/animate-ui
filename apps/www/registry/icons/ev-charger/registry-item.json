@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-ev-charger",
+  "type": "registry:ui",
+  "title": "EV Charger Icon",
+  "description": "EV Charger icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/ev-charger/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/ev-charger.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "electric",
+      "charger",
+      "station",
+      "vehicle",
+      "fast",
+      "plug",
+      "ev",
+      "power",
+      "electricity",
+      "energy",
+      "accumulator",
+      "charge"
+    ]
+  }
+}

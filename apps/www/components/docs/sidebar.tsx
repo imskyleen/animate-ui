@@ -33,6 +33,7 @@ import { useTreeContext } from 'fumadocs-ui/provider';
 import { usePathname } from 'next/navigation';
 import { isActive } from 'fumadocs-ui/utils/is-active';
 import { AnimatePresence, motion } from 'motion/react';
+import { Separator } from '@/lib/attach-separator';
 
 const sidebarItemClassName =
   'relative hover:bg-transparent !bg-transparent ml-2 !pl-4 data-[active=true]:bg-transparent';
@@ -57,7 +58,10 @@ export function SidebarPageTree(props: {
           // @ts-ignore
           if (Separator) return <Separator key={i} item={item} />;
           return (
-            <SidebarSeparator key={i} className={cn(i !== 0 && 'mt-6', 'mb-2')}>
+            <SidebarSeparator
+              key={i}
+              className={cn(i === 0 ? 'mb-2 mt-4' : 'mb-2 mt-8')}
+            >
               {item.icon}
               {item.name}
             </SidebarSeparator>
@@ -81,13 +85,13 @@ export function SidebarPageTree(props: {
             onMouseEnter={() => setHoveredItem(url)}
             onMouseLeave={() => setHoveredItem(null)}
           >
-            <span className="h-full w-px bg-border absolute left-0 inset-y-0" />
+            <span className="h-full w-px bg-border absolute left-[9px] inset-y-0" />
 
             <AnimatePresence initial={false} mode="wait">
               {isActive && (
                 <motion.span
                   layoutId="sidebar-item-active-indicator"
-                  className="pointer-events-none absolute z-11 left-0 top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full bg-primary"
+                  className="pointer-events-none absolute z-11 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full bg-primary"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -104,7 +108,7 @@ export function SidebarPageTree(props: {
               {isHovered && (
                 <motion.span
                   layoutId="sidebar-item-hover-indicator"
-                  className="pointer-events-none absolute z-10 left-0 top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
+                  className="pointer-events-none absolute z-10 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -118,7 +122,7 @@ export function SidebarPageTree(props: {
             </AnimatePresence>
 
             <motion.span
-              className="text-sm font-medium w-full"
+              className="text-sm font-medium w-full pl-[9px]"
               animate={{
                 x: isHovered || isActive ? 3 : 0,
               }}
@@ -174,8 +178,17 @@ export function SidebarLinkItem({
       </SidebarFolder>
     );
 
-  if (item.type === 'custom')
+  if (item.type === 'custom') {
     return <div {...props}>{item.children as React.ReactNode}</div>;
+  }
+
+  if (item.type === ('separator' as any)) {
+    return (
+      <SidebarSeparator className="mb-2">
+        <Separator icon={item.icon} name={(item as any).name} />
+      </SidebarSeparator>
+    );
+  }
 
   const isHovered = hoveredItem === item.url;
   const isActive = getIsActive(pathname, item.url);
@@ -190,13 +203,13 @@ export function SidebarLinkItem({
       onMouseLeave={() => setHoveredItem(null)}
       {...props}
     >
-      <span className="h-full w-px bg-border absolute left-0 inset-y-0" />
+      <span className="h-full w-px bg-border absolute left-[9px] inset-y-0" />
 
       <AnimatePresence initial={false} mode="wait">
         {isActive && (
           <motion.span
             layoutId="sidebar-item-active-indicator"
-            className="pointer-events-none absolute z-11 left-0 top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full bg-primary"
+            className="pointer-events-none absolute z-11 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full bg-primary"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -213,7 +226,7 @@ export function SidebarLinkItem({
         {isHovered && (
           <motion.span
             layoutId="sidebar-item-hover-indicator"
-            className="pointer-events-none absolute z-10 left-0 top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
+            className="pointer-events-none absolute z-10 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -227,7 +240,7 @@ export function SidebarLinkItem({
       </AnimatePresence>
 
       <motion.span
-        className="text-sm font-medium w-full"
+        className="text-sm font-medium w-full pl-[9px]"
         animate={{
           x: isHovered || isActive ? 3 : 0,
         }}
@@ -273,7 +286,7 @@ export const DocsSidebar = ({
       {sidebarCollapsible ? <CollapsibleControl /> : null}
       <Sidebar collapsible={sidebarCollapsible} {...sidebarProps}>
         <HideIfEmpty>
-          <SidebarHeader className="data-[empty=true]:hidden">
+          <SidebarHeader className="data-[empty=true]:hidden mb-2">
             <div className="flex max-md:hidden">
               <Link
                 href={nav.url ?? '/'}
@@ -306,7 +319,8 @@ export const DocsSidebar = ({
             {sidebarBanner}
           </SidebarHeader>
         </HideIfEmpty>
-        <SidebarViewport>
+
+        <SidebarViewport className="[&_[data-radix-scroll-area-viewport]]:pb-8">
           {links
             .filter((v) => v.type !== 'icon')
             .map((item, i, list) => (
@@ -322,6 +336,7 @@ export const DocsSidebar = ({
 
           <SidebarPageTree components={sidebarComponents} />
         </SidebarViewport>
+
         <HideIfEmpty>
           <SidebarFooter className="data-[empty=true]:hidden">
             <div className="flex items-center justify-end empty:hidden">

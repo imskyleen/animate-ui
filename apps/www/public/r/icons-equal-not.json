@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-equal-not",
+  "type": "registry:ui",
+  "title": "Equal Not Icon",
+  "description": "Equal not icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/equal-not/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype EqualNotProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    line1: {},\n    line2: {},\n    line3: {\n      initial: {\n        pathLength: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n          opacity: { duration: 0.1 },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    line1: {},\n    line2: {},\n    line3: {\n      initial: {\n        pathLength: 1,\n      },\n      animate: {\n        pathLength: [1, 0, 1],\n        transition: { duration: 1.2, ease: 'easeInOut' },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'to-not': {\n    line1: {},\n    line2: {},\n    line3: {\n      initial: {\n        pathLength: 0,\n        opacity: 0,\n      },\n      animate: {\n        pathLength: 1,\n        opacity: 1,\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n          opacity: { duration: 0.1 },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: EqualNotProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.line\n        x1=\"5\"\n        x2=\"19\"\n        y1=\"9\"\n        y2=\"9\"\n        variants={variants.line1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1=\"5\"\n        x2=\"19\"\n        y1=\"15\"\n        y2=\"15\"\n        variants={variants.line2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1=\"19\"\n        x2=\"5\"\n        y1=\"5\"\n        y2=\"19\"\n        variants={variants.line3}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction EqualNot(props: EqualNotProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  EqualNot,\n  EqualNot as EqualNotIcon,\n  type EqualNotProps,\n  type EqualNotProps as EqualNotIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/equal-not.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "calculate",
+      "off",
+      "math",
+      "operator",
+      "code",
+      "≠"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-router",
+  "type": "registry:ui",
+  "title": "Router Icon",
+  "description": "Router icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/router/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/router.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["computer", "server", "cloud"]
+  }
+}

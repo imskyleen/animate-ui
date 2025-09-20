@@ -1,0 +1,52 @@
+---
+title: Animations
+description: Choose the specific animation applied to the icon from the available options.
+---
+
+Each icon has several animations, with at least **3 animations by default**:
+
+- **path**: an animation of the pathLength from 0 to 1
+- **path-loop**: pathLength animation from 1 to 0 to 1
+- **default**: the default animation, customized for each icon
+
+## `animation`
+
+```tsx
+<ArrowRight animation="pointing" />
+
+// or with AnimateIcon
+<AnimateIcon animation="pointing">
+  <ArrowRight />
+</AnimateIcon>
+```
+
+You can set the animation on the wrapper and customize it for an icon:
+
+```tsx
+<AnimateIcon animation="pointing">
+  <ArrowRight />
+  <ArrowLeft animation="default" />
+</AnimateIcon>
+```
+
+or you can set it for each icon individually:
+
+```tsx
+<AnimateIcon>
+  <ArrowRight animation="pointing" />
+  <ArrowLeft animation="default" />
+</AnimateIcon>
+```
+
+## API Reference
+
+<TypeTable
+  type={{
+    animation: {
+      description: 'The animation to use',
+      type: 'StaticAnimations | string',
+      required: false,
+      default: 'default',
+    },
+  }}
+/>

@@ -27,6 +27,21 @@ const animations = {
     path2: {},
     path3: {},
   } satisfies Record<string, Variants>,
+  off: {
+    path1: {},
+    path2: {
+      initial: {
+        opacity: 0,
+        pathLength: 0,
+      },
+      animate: {
+        opacity: 1,
+        pathLength: 1,
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path3: {},
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: MessageCircleOffProps) {

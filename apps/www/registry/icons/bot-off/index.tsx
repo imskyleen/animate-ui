@@ -31,6 +31,25 @@ const animations = {
     path6: {},
     path7: {},
   } satisfies Record<string, Variants>,
+  off: {
+    path1: {},
+    path2: {},
+    path3: {},
+    path4: {
+      initial: {
+        opacity: 0,
+        pathLength: 0,
+      },
+      animate: {
+        opacity: 1,
+        pathLength: 1,
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path5: {},
+    path6: {},
+    path7: {},
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: BotOffProps) {
@@ -72,7 +91,7 @@ function IconComponent({ size, ...props }: BotOffProps) {
         animate={controls}
       />
       <motion.path
-        d="M22 22 2 2"
+        d="m2 2 20 20"
         variants={variants.path4}
         initial="initial"
         animate={controls}

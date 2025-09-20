@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-circle-check-big",
+  "type": "registry:ui",
+  "title": "Circle Check Big Icon",
+  "description": "Circle check big icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/circle-check-big/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype CircleCheckBigProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1, 1.1, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: CircleCheckBigProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M21.801 10A10 10 0 1 1 17 3.335\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m9 11 3 3L22 4\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction CircleCheckBig(props: CircleCheckBigProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  CircleCheckBig,\n  CircleCheckBig as CircleCheckBigIcon,\n  type CircleCheckBigProps,\n  type CircleCheckBigProps as CircleCheckBigIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/circle-check-big.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "done",
+      "todo",
+      "tick",
+      "complete",
+      "task"
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+---
+title: Timing
+description: Adjust animation timing with delays and loops.
+---
+
+## `delay`
+
+This allows you to add a delay in milliseconds before starting the animation.
+
+```tsx
+<ArrowRight delay={1000} />
+
+// or with AnimateIcon
+<AnimateIcon delay={1000}>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `loop`
+
+This allows the animation to be played in a loop.
+
+<Callout type="info">
+  **Note:** We recommend using loop when the final state of the animation is
+  identical to the `initial` state.
+</Callout>
+
+```tsx
+<ArrowRight loop />
+
+// or with AnimateIcon
+<AnimateIcon loop>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `loopDelay`
+
+This allows you to add a delay in milliseconds between animations when the animation plays in a loop.
+
+```tsx
+<ArrowRight loop loopDelay={1000} />
+
+// or with AnimateIcon
+<AnimateIcon loop loopDelay={1000}>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## API Reference
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'The delay before animating the icon.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    loop: {
+      description: 'Whether to loop the animation',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    loopDelay: {
+      description: 'The delay before looping the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+  }}
+/>

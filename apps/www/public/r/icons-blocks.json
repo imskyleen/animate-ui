@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-blocks",
+  "type": "registry:ui",
+  "title": "Blocks Icon",
+  "description": "Blocks icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/blocks/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BlocksProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {\n      initial: {\n        x: 0,\n        y: 0,\n        d: 'M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2',\n        strokeLinejoin: 'round',\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n      animate: {\n        x: 2,\n        y: -2,\n        d: 'M10 22V6H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-6H2',\n        strokeLinejoin: 'miter',\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n          d: { duration: 0, delay: 0.3 },\n          strokeLinejoin: { duration: 0, delay: 0.3 },\n        },\n      },\n    },\n    path2: {\n      initial: {\n        x: 0,\n        y: 0,\n        d: 'M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n      animate: {\n        x: -2,\n        y: 2,\n        d: 'M15 2 H20 A2 2 0 0 1 22 4 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    path1: {\n      initial: {\n        x: 0,\n        y: 0,\n        d: 'M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2',\n        strokeLinejoin: 'round',\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n      animate: {\n        x: [0, 2, 0],\n        y: [0, -2, 0],\n        d: [\n          'M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2',\n          'M10 22V6H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-6H2',\n          'M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2',\n        ],\n        strokeLinejoin: ['round', 'miter', 'round'],\n        transition: {\n          duration: 0.8,\n          ease: 'easeInOut',\n          d: { duration: 0, delay: 0.3 },\n          strokeLinejoin: { duration: 0, delay: 0.3 },\n        },\n      },\n    },\n    path2: {\n      initial: {\n        x: 0,\n        y: 0,\n        d: 'M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n      animate: {\n        x: [0, -2, 0],\n        y: [0, 2, 0],\n        d: [\n          'M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',\n          'M15 2 H20 A2 2 0 0 1 22 4 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',\n          'M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',\n        ],\n        transition: {\n          duration: 0.8,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BlocksProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Blocks(props: BlocksProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Blocks,\n  Blocks as BlocksIcon,\n  type BlocksProps,\n  type BlocksProps as BlocksIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/blocks.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "addon",
+      "plugin",
+      "integration",
+      "extension",
+      "package",
+      "build",
+      "stack",
+      "toys",
+      "kids",
+      "children",
+      "learning",
+      "squares",
+      "corner"
+    ]
+  }
+}

@@ -3,5 +3,14 @@
   "description": "Animated Icons",
   "icon": "LucideIcons",
   "root": true,
-  "pages": ["---Icons---", "get-started", "index"]
+  "pages": [
+    "---Icons---",
+    "get-started",
+    "index",
+    "---Usage---",
+    "usage/animations",
+    "usage/persistence",
+    "usage/timing",
+    "usage/triggers"
+  ]
 }

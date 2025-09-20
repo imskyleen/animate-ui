@@ -4485,6 +4485,64 @@
       }
     },
     {
+      "name": "demo-primitives-effects-shine",
+      "type": "registry:ui",
+      "title": "Shine Demo",
+      "description": "Demo showing an animated shine.",
+      "registryDependencies": [
+        "@animate-ui/primitives-effects-shine"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/effects/shine/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/effects/shine.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "Slide": {
+            "delay": {
+              "value": 0,
+              "min": 0,
+              "max": 3000,
+              "step": 100
+            },
+            "duration": {
+              "value": 1200,
+              "min": 0,
+              "max": 3000,
+              "step": 100
+            },
+            "loop": {
+              "value": true
+            },
+            "loopDelay": {
+              "value": 500,
+              "min": 0,
+              "max": 3000,
+              "step": 100
+            },
+            "deg": {
+              "value": -15,
+              "min": -50,
+              "max": 50,
+              "step": 5
+            },
+            "enable": {
+              "value": true
+            },
+            "enableOnHover": {
+              "value": false
+            },
+            "enableOnTap": {
+              "value": false
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-primitives-effects-slide",
       "type": "registry:ui",
       "title": "Slide Demo",
@@ -6313,6 +6371,42 @@
       }
     },
     {
+      "name": "icons-blocks",
+      "type": "registry:ui",
+      "title": "Blocks Icon",
+      "description": "Blocks icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/blocks/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/blocks.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "addon",
+          "plugin",
+          "integration",
+          "extension",
+          "package",
+          "build",
+          "stack",
+          "toys",
+          "kids",
+          "children",
+          "learning",
+          "squares",
+          "corner"
+        ]
+      }
+    },
+    {
       "name": "icons-bot",
       "type": "registry:ui",
       "title": "Bot Icon",
@@ -7177,6 +7271,34 @@
           "path": "registry/icons/circle-check/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/icons/circle-check.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "done",
+          "todo",
+          "tick",
+          "complete",
+          "task"
+        ]
+      }
+    },
+    {
+      "name": "icons-circle-check-big",
+      "type": "registry:ui",
+      "title": "Circle Check Big Icon",
+      "description": "Circle check big icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/circle-check-big/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/circle-check-big.tsx"
         }
       ],
       "meta": {
@@ -8260,6 +8382,70 @@
       }
     },
     {
+      "name": "icons-equal-not",
+      "type": "registry:ui",
+      "title": "Equal Not Icon",
+      "description": "Equal not icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/equal-not/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/equal-not.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "calculate",
+          "off",
+          "math",
+          "operator",
+          "code",
+          "≠"
+        ]
+      }
+    },
+    {
+      "name": "icons-ev-charger",
+      "type": "registry:ui",
+      "title": "EV Charger Icon",
+      "description": "EV Charger icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/ev-charger/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/ev-charger.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "electric",
+          "charger",
+          "station",
+          "vehicle",
+          "fast",
+          "plug",
+          "ev",
+          "power",
+          "electricity",
+          "energy",
+          "accumulator",
+          "charge"
+        ]
+      }
+    },
+    {
       "name": "icons-expand",
       "type": "registry:ui",
       "title": "Expand Icon",
@@ -8364,6 +8550,32 @@
           "vehicle",
           "transport",
           "logistics"
+        ]
+      }
+    },
+    {
+      "name": "icons-frame",
+      "type": "registry:ui",
+      "title": "Frame Icon",
+      "description": "Frame icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/frame/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/frame.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "logo",
+          "design",
+          "tool"
         ]
       }
     },
@@ -8517,7 +8729,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -8699,6 +8912,31 @@
       "meta": {
         "keywords": [
           "lights"
+        ]
+      }
+    },
+    {
+      "name": "icons-link",
+      "type": "registry:ui",
+      "title": "Link Icon",
+      "description": "Link icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/link/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/link.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "chain",
+          "url"
         ]
       }
     },
@@ -10060,6 +10298,33 @@
       }
     },
     {
+      "name": "icons-nfc",
+      "type": "registry:ui",
+      "title": "Nfc Icon",
+      "description": "Nfc icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/nfc/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/nfc.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "contactless",
+          "payment",
+          "near-field",
+          "communication"
+        ]
+      }
+    },
+    {
       "name": "icons-orbit",
       "type": "registry:ui",
       "title": "Orbit Icon",
@@ -10230,6 +10495,31 @@
           "menu",
           "drawer",
           "navigation"
+        ]
+      }
+    },
+    {
+      "name": "icons-paperclip",
+      "type": "registry:ui",
+      "title": "Paperclip Icon",
+      "description": "Paperclip icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/paperclip/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/paperclip.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "attachment",
+          "file"
         ]
       }
     },
@@ -10411,6 +10701,36 @@
       }
     },
     {
+      "name": "icons-plug-zap",
+      "type": "registry:ui",
+      "title": "Plug Zap Icon",
+      "description": "Plug Zap icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/plug-zap/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/plug-zap.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "electricity",
+          "energy",
+          "electronics",
+          "charge",
+          "charging",
+          "battery",
+          "connect"
+        ]
+      }
+    },
+    {
       "name": "icons-plus",
       "type": "registry:ui",
       "title": "Plus Icon",
@@ -10441,6 +10761,64 @@
           "increase",
           "positive",
           "calculate"
+        ]
+      }
+    },
+    {
+      "name": "icons-radio",
+      "type": "registry:ui",
+      "title": "Radio Icon",
+      "description": "Radio icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/radio/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/radio.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "radio",
+          "tower",
+          "broadcast",
+          "airwaves",
+          "frequency",
+          "live"
+        ]
+      }
+    },
+    {
+      "name": "icons-radio-tower",
+      "type": "registry:ui",
+      "title": "Radio Tower Icon",
+      "description": "Radio tower icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/radio-tower/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/radio-tower.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "radio",
+          "tower",
+          "broadcast",
+          "airwaves",
+          "frequency",
+          "live"
         ]
       }
     },
@@ -10644,6 +11022,32 @@
       }
     },
     {
+      "name": "icons-router",
+      "type": "registry:ui",
+      "title": "Router Icon",
+      "description": "Router icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/router/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/router.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "computer",
+          "server",
+          "cloud"
+        ]
+      }
+    },
+    {
       "name": "icons-search",
       "type": "registry:ui",
       "title": "Search Icon",
@@ -10781,6 +11185,57 @@
           "maximize",
           "minimize",
           "contract"
+        ]
+      }
+    },
+    {
+      "name": "icons-sliders-horizontal",
+      "type": "registry:ui",
+      "title": "Sliders Horizontal Icon",
+      "description": "Sliders horizontal icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/sliders-horizontal/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/sliders-horizontal.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "settings",
+          "filters",
+          "controls"
+        ]
+      }
+    },
+    {
+      "name": "icons-sliders-vertical",
+      "type": "registry:ui",
+      "title": "Sliders Vertical Icon",
+      "description": "Sliders vertical icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/sliders-vertical/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/sliders-vertical.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "settings",
+          "controls"
         ]
       }
     },
@@ -11415,6 +11870,35 @@
           "delete",
           "remove",
           "bin"
+        ]
+      }
+    },
+    {
+      "name": "icons-unplug",
+      "type": "registry:ui",
+      "title": "Unplug Icon",
+      "description": "Unplug icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/unplug/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/unplug.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "electricity",
+          "energy",
+          "electronics",
+          "socket",
+          "outlet",
+          "disconnect"
         ]
       }
     },
@@ -12492,6 +12976,22 @@
           "path": "registry/primitives/effects/particles/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/effects/particles.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-effects-shine",
+      "type": "registry:ui",
+      "title": "Shine",
+      "description": "An animated light sweep effect with configurable timing, colors, and triggers (hover, tap, or continuous).",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/effects/shine/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/effects/shine.tsx"
         }
       ]
     },
