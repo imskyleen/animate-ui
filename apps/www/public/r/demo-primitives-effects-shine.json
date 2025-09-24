@@ -1,0 +1,60 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-shine",
+  "type": "registry:ui",
+  "title": "Shine Demo",
+  "description": "Demo showing an animated shine.",
+  "registryDependencies": [
+    "@animate-ui/primitives-effects-shine"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/shine/index.tsx",
+      "content": "import { Shine } from '@/components/animate-ui/primitives/effects/shine';\nimport { Button } from '@/components/ui/button';\n\ntype ShineDemoProps = {\n  delay?: number;\n  duration?: number;\n  loop?: boolean;\n  loopDelay?: number;\n  deg?: number;\n  enable?: boolean;\n  enableOnHover?: boolean;\n  enableOnTap?: boolean;\n};\n\nexport default function SlideDemo({\n  delay,\n  duration,\n  loop,\n  loopDelay,\n  deg,\n  enable,\n  enableOnHover,\n  enableOnTap,\n}: ShineDemoProps) {\n  return (\n    <Shine\n      delay={delay}\n      duration={duration}\n      loop={loop}\n      loopDelay={loopDelay}\n      deg={deg}\n      enable={enable}\n      enableOnHover={enableOnHover}\n      enableOnTap={enableOnTap}\n      asChild\n    >\n      <Button>Shine Effect</Button>\n    </Shine>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/shine.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Slide": {
+        "delay": {
+          "value": 0,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "duration": {
+          "value": 1200,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "loop": {
+          "value": true
+        },
+        "loopDelay": {
+          "value": 500,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "deg": {
+          "value": -15,
+          "min": -50,
+          "max": 50,
+          "step": 5
+        },
+        "enable": {
+          "value": true
+        },
+        "enableOnHover": {
+          "value": false
+        },
+        "enableOnTap": {
+          "value": false
+        }
+      }
+    }
+  }
+}

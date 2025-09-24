@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-blocks",
+  "type": "registry:ui",
+  "title": "Blocks Icon",
+  "description": "Blocks icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/blocks/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/blocks.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "addon",
+      "plugin",
+      "integration",
+      "extension",
+      "package",
+      "build",
+      "stack",
+      "toys",
+      "kids",
+      "children",
+      "learning",
+      "squares",
+      "corner"
+    ]
+  }
+}

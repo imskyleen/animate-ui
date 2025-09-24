@@ -2,38 +2,37 @@
 
 import * as React from 'react';
 import {
-  SVGMotionProps,
+  motion,
   useAnimation,
-  UseInViewOptions,
+  type SVGMotionProps,
+  type UseInViewOptions,
   type LegacyAnimationControls,
   type Variants,
+  type HTMLMotionProps,
 } from 'motion/react';
 
 import { cn } from '@workspace/ui/lib/utils';
 import { useIsInView } from '@/registry/hooks/use-is-in-view';
+import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 const staticAnimations = {
   path: {
-    initial: { pathLength: 1, opacity: 1 },
+    initial: { pathLength: 1 },
     animate: {
       pathLength: [0.05, 1],
-      opacity: [0, 1],
       transition: {
         duration: 0.8,
         ease: 'easeInOut',
-        opacity: { duration: 0.01 },
       },
     },
   } as Variants,
   'path-loop': {
-    initial: { pathLength: 1, opacity: 1 },
+    initial: { pathLength: 1 },
     animate: {
       pathLength: [1, 0.05, 1],
-      opacity: [1, 0, 1],
       transition: {
         duration: 1.6,
         ease: 'easeInOut',
-        opacity: { duration: 0.01 },
       },
     },
   } as Variants,
@@ -43,29 +42,21 @@ type StaticAnimations = keyof typeof staticAnimations;
 type TriggerProp<T = string> = boolean | StaticAnimations | T;
 type Trigger = TriggerProp<string>;
 
-interface AnimateIconContextValue {
+type AnimateIconContextValue = {
   controls: LegacyAnimationControls | undefined;
   animation: StaticAnimations | string;
   loop: boolean;
   loopDelay: number;
   active: boolean;
   animate?: Trigger;
-  animateOnHover?: Trigger;
-  animateOnTap?: Trigger;
-  animateOnView?: Trigger;
-  animateOnViewMargin?: UseInViewOptions['margin'];
-  animateOnViewOnce?: boolean;
   initialOnAnimateEnd?: boolean;
+  completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
-}
+};
 
-interface DefaultIconProps<T = string> {
+type DefaultIconProps<T = string> = {
   animate?: TriggerProp<T>;
-  onAnimateChange?: (
-    value: boolean,
-    animation: StaticAnimations | string,
-  ) => void;
   animateOnHover?: TriggerProp<T>;
   animateOnTap?: TriggerProp<T>;
   animateOnView?: TriggerProp<T>;
@@ -74,30 +65,28 @@ interface DefaultIconProps<T = string> {
   animation?: T | StaticAnimations;
   loop?: boolean;
   loopDelay?: number;
-  onAnimateStart?: () => void;
-  onAnimateEnd?: () => void;
   initialOnAnimateEnd?: boolean;
+  completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
-}
+};
 
-interface AnimateIconProps<T = string> extends DefaultIconProps<T> {
-  children: React.ReactNode;
-  asChild?: boolean;
-}
+type AnimateIconProps<T = string> = WithAsChild<
+  HTMLMotionProps<'span'> &
+    DefaultIconProps<T> & {
+      children: React.ReactNode;
+      asChild?: boolean;
+    }
+>;
 
-interface IconProps<T>
-  extends DefaultIconProps<T>,
-    Omit<
-      SVGMotionProps<SVGSVGElement>,
-      'animate' | 'onAnimationStart' | 'onAnimationEnd'
-    > {
-  size?: number;
-}
+type IconProps<T> = DefaultIconProps<T> &
+  Omit<SVGMotionProps<SVGSVGElement>, 'animate'> & {
+    size?: number;
+  };
 
-interface IconWrapperProps<T> extends IconProps<T> {
+type IconWrapperProps<T> = IconProps<T> & {
   icon: React.ComponentType<IconProps<T>>;
-}
+};
 
 const AnimateIconContext = React.createContext<AnimateIconContextValue | null>(
   null,
@@ -109,18 +98,14 @@ function useAnimateIconContext() {
     return {
       controls: undefined,
       animation: 'default',
-      loop: false,
-      loopDelay: 0,
-      active: false,
+      loop: undefined,
+      loopDelay: undefined,
+      active: undefined,
       animate: undefined,
-      animateOnHover: undefined,
-      animateOnTap: undefined,
-      animateOnView: undefined,
-      animateOnViewMargin: '0px' as UseInViewOptions['margin'],
-      animateOnViewOnce: true,
-      initialOnAnimateEnd: false,
-      persistOnAnimateEnd: false,
-      delay: 0,
+      initialOnAnimateEnd: undefined,
+      completeOnStop: undefined,
+      persistOnAnimateEnd: undefined,
+      delay: undefined,
     };
   return context;
 }
@@ -135,85 +120,26 @@ function composeEventHandlers<E extends React.SyntheticEvent<unknown>>(
   };
 }
 
-function mergeRefs<T>(...refs: Array<React.Ref<T> | undefined>) {
-  return (value: T) => {
-    for (const ref of refs) {
-      if (!ref) continue;
-      if (typeof ref === 'function') ref(value);
-      else (ref as React.MutableRefObject<T | null>).current = value;
-    }
-  };
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
 
-type SlotProps<E extends Element = HTMLElement> = {
-  children: React.ReactElement;
-} & React.HTMLAttributes<E> &
-  AnyProps;
-
-function Slot<E extends Element = HTMLElement>({
-  children,
-  ...slotProps
-}: SlotProps<E>) {
-  if (!React.isValidElement(children)) return children;
-
-  const {
-    className: slotClassName,
-    style: slotStyle,
-    ref: slotRef,
-    onMouseEnter: sOnMouseEnter,
-    onMouseLeave: sOnMouseLeave,
-    onPointerDown: sOnPointerDown,
-    onPointerUp: sOnPointerUp,
-    ...restSlot
-  } = slotProps;
-
-  const {
-    className: childClassName,
-    style: childStyle,
-    ref: childRef,
-    onMouseEnter: cOnMouseEnter,
-    onMouseLeave: cOnMouseLeave,
-    onPointerDown: cOnPointerDown,
-    onPointerUp: cOnPointerUp,
-    ...restChild
-  } = (children.props ?? {}) as AnyProps;
-
-  const mergedProps: AnyProps = {
-    ...restChild,
-    ...restSlot,
-    className: cn(childClassName, slotClassName),
-    style: { ...(childStyle || {}), ...(slotStyle || {}) },
-    ref: mergeRefs(childRef, slotRef),
-    onMouseEnter: composeEventHandlers(cOnMouseEnter, sOnMouseEnter),
-    onMouseLeave: composeEventHandlers(cOnMouseLeave, sOnMouseLeave),
-    onPointerDown: composeEventHandlers(cOnPointerDown, sOnPointerDown),
-    onPointerUp: composeEventHandlers(cOnPointerUp, sOnPointerUp),
-  };
-
-  return React.cloneElement(children, mergedProps);
-}
-
 function AnimateIcon({
-  animate,
-  onAnimateChange,
-  asChild = true,
-  animateOnHover,
-  animateOnTap,
-  animateOnView,
+  asChild = false,
+  animate = false,
+  animateOnHover = false,
+  animateOnTap = false,
+  animateOnView = false,
   animateOnViewMargin = '0px',
   animateOnViewOnce = true,
   animation = 'default',
   loop = false,
   loopDelay = 0,
-  onAnimateStart,
-  onAnimateEnd,
   initialOnAnimateEnd = false,
+  completeOnStop = false,
   persistOnAnimateEnd = false,
   delay = 0,
   children,
+  ...props
 }: AnimateIconProps) {
   const controls = useAnimation();
 
@@ -227,10 +153,23 @@ function AnimateIcon({
   const [status, setStatus] = React.useState<'initial' | 'animate'>('initial');
 
   const delayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loopDelayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isAnimateInProgressRef = React.useRef<boolean>(false);
+  const animateEndPromiseRef = React.useRef<Promise<void> | null>(null);
+  const resolveAnimateEndRef = React.useRef<(() => void) | null>(null);
+  const activeRef = React.useRef<boolean>(localAnimate);
+
+  const runGenRef = React.useRef(0);
+  const cancelledRef = React.useRef(false);
+
+  const bumpGeneration = React.useCallback(() => {
+    runGenRef.current++;
+  }, []);
 
   const startAnimation = React.useCallback(
     (trigger: TriggerProp) => {
       const next = typeof trigger === 'string' ? trigger : animation;
+      bumpGeneration();
       if (delayRef.current) {
         clearTimeout(delayRef.current);
         delayRef.current = null;
@@ -245,16 +184,25 @@ function AnimateIcon({
         setLocalAnimate(true);
       }
     },
-    [animation, delay],
+    [animation, delay, bumpGeneration],
   );
 
   const stopAnimation = React.useCallback(() => {
+    bumpGeneration();
     if (delayRef.current) {
       clearTimeout(delayRef.current);
       delayRef.current = null;
     }
+    if (loopDelayRef.current) {
+      clearTimeout(loopDelayRef.current);
+      loopDelayRef.current = null;
+    }
     setLocalAnimate(false);
-  }, []);
+  }, [bumpGeneration]);
+
+  React.useEffect(() => {
+    activeRef.current = localAnimate;
+  }, [localAnimate]);
 
   React.useEffect(() => {
     if (animate === undefined) return;
@@ -264,14 +212,10 @@ function AnimateIcon({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animate]);
 
-  React.useEffect(
-    () => onAnimateChange?.(localAnimate, currentAnimation),
-    [localAnimate, onAnimateChange, currentAnimation],
-  );
-
   React.useEffect(() => {
     return () => {
       if (delayRef.current) clearTimeout(delayRef.current);
+      if (loopDelayRef.current) clearTimeout(loopDelayRef.current);
     };
   }, []);
 
@@ -282,6 +226,18 @@ function AnimateIcon({
     inViewMargin: animateOnViewMargin,
   });
 
+  const startAnim = React.useCallback(
+    async (anim: 'initial' | 'animate', method: 'start' | 'set' = 'start') => {
+      try {
+        await controls[method](anim);
+        setStatus(anim);
+      } catch {
+        return;
+      }
+    },
+    [controls],
+  );
+
   React.useEffect(() => {
     if (!animateOnView) return;
     if (isInView) startAnimation(animateOnView);
@@ -289,42 +245,111 @@ function AnimateIcon({
   }, [isInView, animateOnView, startAnimation, stopAnimation]);
 
   React.useEffect(() => {
+    const gen = ++runGenRef.current;
+    cancelledRef.current = false;
+
     async function run() {
+      if (cancelledRef.current || gen !== runGenRef.current) {
+        await startAnim('initial');
+        return;
+      }
+
       if (!localAnimate) {
+        if (
+          completeOnStop &&
+          isAnimateInProgressRef.current &&
+          animateEndPromiseRef.current
+        ) {
+          try {
+            await animateEndPromiseRef.current;
+          } catch {
+            // noop
+          }
+        }
         if (!persistOnAnimateEnd) {
-          controls.start('initial');
-          setStatus('initial');
+          if (cancelledRef.current || gen !== runGenRef.current) {
+            await startAnim('initial');
+            return;
+          }
+          await startAnim('initial');
         }
         return;
       }
 
-      if (status !== 'initial' && persistOnAnimateEnd) {
-        controls.set('initial');
-        setStatus('initial');
-      }
-
-      onAnimateStart?.();
-
-      try {
-        await controls.start('animate');
-        setStatus('animate');
-      } catch {
-        return;
-      }
-
-      onAnimateEnd?.();
-
-      if (initialOnAnimateEnd || loop) {
-        try {
-          controls.set('initial');
-          setStatus('initial');
-        } catch {
+      if (loop) {
+        if (cancelledRef.current || gen !== runGenRef.current) {
+          await startAnim('initial');
           return;
         }
+        await startAnim('initial', 'set');
       }
+
+      isAnimateInProgressRef.current = true;
+      animateEndPromiseRef.current = new Promise<void>((resolve) => {
+        resolveAnimateEndRef.current = resolve;
+      });
+
+      if (cancelledRef.current || gen !== runGenRef.current) {
+        isAnimateInProgressRef.current = false;
+        resolveAnimateEndRef.current?.();
+        resolveAnimateEndRef.current = null;
+        animateEndPromiseRef.current = null;
+        await startAnim('initial');
+        return;
+      }
+
+      await startAnim('animate');
+
+      if (cancelledRef.current || gen !== runGenRef.current) {
+        isAnimateInProgressRef.current = false;
+        resolveAnimateEndRef.current?.();
+        resolveAnimateEndRef.current = null;
+        animateEndPromiseRef.current = null;
+        await startAnim('initial');
+        return;
+      }
+
+      isAnimateInProgressRef.current = false;
+      resolveAnimateEndRef.current?.();
+      resolveAnimateEndRef.current = null;
+      animateEndPromiseRef.current = null;
+
+      if (initialOnAnimateEnd) {
+        if (cancelledRef.current || gen !== runGenRef.current) {
+          await startAnim('initial');
+          return;
+        }
+        await startAnim('initial', 'set');
+      }
+
       if (loop) {
         if (loopDelay > 0) {
-          await new Promise((r) => setTimeout(r, loopDelay));
+          await new Promise<void>((resolve) => {
+            loopDelayRef.current = setTimeout(() => {
+              loopDelayRef.current = null;
+              resolve();
+            }, loopDelay);
+          });
+
+          if (cancelledRef.current || gen !== runGenRef.current) {
+            await startAnim('initial');
+            return;
+          }
+          if (!activeRef.current) {
+            if (status !== 'initial' && !persistOnAnimateEnd)
+              await startAnim('initial');
+            return;
+          }
+        } else {
+          if (!activeRef.current) {
+            if (status !== 'initial' && !persistOnAnimateEnd)
+              await startAnim('initial');
+            return;
+          }
+        }
+        if (cancelledRef.current || gen !== runGenRef.current) {
+          await startAnim('initial');
+          return;
         }
         await run();
       }
@@ -332,6 +357,17 @@ function AnimateIcon({
 
     void run();
 
+    return () => {
+      cancelledRef.current = true;
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
+      if (loopDelayRef.current) {
+        clearTimeout(loopDelayRef.current);
+        loopDelayRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localAnimate, controls]);
 
@@ -373,20 +409,21 @@ function AnimateIcon({
       onMouseLeave={handleMouseLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
+      {...props}
     >
-      {children as React.ReactElement}
+      {children}
     </Slot>
   ) : (
-    <span
+    <motion.span
       ref={inViewRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      style={{ display: 'contents' }}
+      {...props}
     >
       {children}
-    </span>
+    </motion.span>
   );
 
   return (
@@ -398,12 +435,8 @@ function AnimateIcon({
         loopDelay,
         active: localAnimate,
         animate,
-        animateOnHover,
-        animateOnTap,
-        animateOnView,
-        animateOnViewMargin,
-        animateOnViewOnce,
         initialOnAnimateEnd,
+        completeOnStop,
         delay,
       }}
     >
@@ -419,19 +452,18 @@ function IconWrapper<T extends string>({
   size = 28,
   animation: animationProp,
   animate,
-  onAnimateChange,
-  animateOnHover = false,
-  animateOnTap = false,
-  animateOnView = false,
-  animateOnViewMargin = '0px',
-  animateOnViewOnce = true,
+  animateOnHover,
+  animateOnTap,
+  animateOnView,
+  animateOnViewMargin,
+  animateOnViewOnce,
   icon: IconComponent,
-  loop = false,
-  loopDelay = 0,
-  onAnimateStart,
-  onAnimateEnd,
-  initialOnAnimateEnd = false,
-  delay = 0,
+  loop,
+  loopDelay,
+  persistOnAnimateEnd,
+  initialOnAnimateEnd,
+  delay,
+  completeOnStop,
   className,
   ...props
 }: IconWrapperProps<T>) {
@@ -445,25 +477,23 @@ function IconWrapper<T extends string>({
       loopDelay: parentLoopDelay,
       active: parentActive,
       animate: parentAnimate,
-      animateOnHover: parentAnimateOnHover,
-      animateOnTap: parentAnimateOnTap,
-      animateOnView: parentAnimateOnView,
-      animateOnViewMargin: parentAnimateOnViewMargin,
-      animateOnViewOnce: parentAnimateOnViewOnce,
+      persistOnAnimateEnd: parentPersistOnAnimateEnd,
       initialOnAnimateEnd: parentInitialOnAnimateEnd,
       delay: parentDelay,
+      completeOnStop: parentCompleteOnStop,
     } = context;
 
     const hasOverrides =
       animate !== undefined ||
-      animationProp !== undefined ||
-      animateOnHover !== false ||
-      animateOnTap !== false ||
-      animateOnView !== false ||
-      loop !== false ||
-      loopDelay !== 0 ||
-      initialOnAnimateEnd !== false ||
-      delay !== 0;
+      animateOnHover !== undefined ||
+      animateOnTap !== undefined ||
+      animateOnView !== undefined ||
+      loop !== undefined ||
+      loopDelay !== undefined ||
+      initialOnAnimateEnd !== undefined ||
+      persistOnAnimateEnd !== undefined ||
+      delay !== undefined ||
+      completeOnStop !== undefined;
 
     if (hasOverrides) {
       const inheritedAnimate: Trigger = parentActive
@@ -477,19 +507,18 @@ function IconWrapper<T extends string>({
       return (
         <AnimateIcon
           animate={finalAnimate}
-          animateOnHover={animateOnHover ?? parentAnimateOnHover}
-          animateOnTap={animateOnTap ?? parentAnimateOnTap}
-          animateOnView={animateOnView ?? parentAnimateOnView}
-          animateOnViewMargin={animateOnViewMargin ?? parentAnimateOnViewMargin}
-          animateOnViewOnce={animateOnViewOnce ?? parentAnimateOnViewOnce}
+          animateOnHover={animateOnHover}
+          animateOnTap={animateOnTap}
+          animateOnView={animateOnView}
+          animateOnViewMargin={animateOnViewMargin}
+          animateOnViewOnce={animateOnViewOnce}
           animation={animationProp ?? parentAnimation}
           loop={loop ?? parentLoop}
           loopDelay={loopDelay ?? parentLoopDelay}
-          onAnimateChange={onAnimateChange}
-          onAnimateStart={onAnimateStart}
-          onAnimateEnd={onAnimateEnd}
+          persistOnAnimateEnd={persistOnAnimateEnd ?? parentPersistOnAnimateEnd}
           initialOnAnimateEnd={initialOnAnimateEnd ?? parentInitialOnAnimateEnd}
           delay={delay ?? parentDelay}
+          completeOnStop={completeOnStop ?? parentCompleteOnStop}
           asChild
         >
           <IconComponent
@@ -519,13 +548,9 @@ function IconWrapper<T extends string>({
           loopDelay: loopDelayToUse,
           active: parentActive,
           animate: parentAnimate,
-          animateOnHover: parentAnimateOnHover,
-          animateOnTap: parentAnimateOnTap,
-          animateOnView: parentAnimateOnView,
-          animateOnViewMargin: parentAnimateOnViewMargin,
-          animateOnViewOnce: parentAnimateOnViewOnce,
           initialOnAnimateEnd: parentInitialOnAnimateEnd,
           delay: parentDelay,
+          completeOnStop: parentCompleteOnStop,
         }}
       >
         <IconComponent
@@ -543,16 +568,14 @@ function IconWrapper<T extends string>({
 
   if (
     animate !== undefined ||
-    onAnimateChange !== undefined ||
-    animateOnHover ||
-    animateOnTap ||
-    animateOnView ||
-    animationProp
+    animateOnHover !== undefined ||
+    animateOnTap !== undefined ||
+    animateOnView !== undefined ||
+    animationProp !== undefined
   ) {
     return (
       <AnimateIcon
         animate={animate}
-        onAnimateChange={onAnimateChange}
         animateOnHover={animateOnHover}
         animateOnTap={animateOnTap}
         animateOnView={animateOnView}
@@ -561,9 +584,8 @@ function IconWrapper<T extends string>({
         animation={animationProp}
         loop={loop}
         loopDelay={loopDelay}
-        onAnimateStart={onAnimateStart}
-        onAnimateEnd={onAnimateEnd}
         delay={delay}
+        completeOnStop={completeOnStop}
         asChild
       >
         <IconComponent

@@ -1,7 +1,6 @@
 ---
 title: Get Started
 description: Get started with Animate UI Icons.
-beta: true
 ---
 
 import { CodeTabs } from '@/registry/components/animate/code-tabs';
@@ -10,15 +9,21 @@ import { IconShowcase } from '@/components/docs/icon-showcase';
 
 We animated [Lucide Icons](https://lucide.dev) with [Motion](https://motion.dev), one of the most popular icon libraries on the web.
 
+<Callout type="warning">
+  **Note:** The animated icons are in **beta**. You may encounter bugs.
+  Recurring changes will take place, and some props may be added or removed. We
+  recommend that you update the wrapper regularly.
+</Callout>
+
 ## Installation
+
+### Icon Wrapper
 
 You need to install the icon wrapper components to use the animated icons.
 
 <ComponentInstallation name="icons-icon" />
 
-## Usage
-
-### Install an icon
+### Icons
 
 <CodeTabs
   codes={{
@@ -29,80 +34,25 @@ You need to install the icon wrapper components to use the animated icons.
   }}
 />
 
-### How to use an icon
+## Basic Usage
 
-Each icon has at least 3 animations:
-
-- `path`: an animation of the pathLength from 0 to 1
-- `path-loop`: pathLength animation from 1 to 0 to 1
-- `default`: the default animation, customized for each icon
-
-You can use the `animation` prop to select the animation.
+### Icon
 
 ```tsx
-<Icon animation="path" />
+<ArrowRight animateOnHover />
 ```
 
-Some icons also have other animations created specifically for them.
-
-<div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
-  <IconShowcase icon={ArrowRight} animation="default-loop" loop loopDelay={2} />
-  <IconShowcase
-    icon={ArrowRight}
-    animation="pointing-loop"
-    loop
-    loopDelay={2}
-  />
-  <IconShowcase icon={ArrowRight} animation="out" loop loopDelay={2} />
-</div>
-
-Animations ending with `-loop` are animations that start at the initial state, do the animation and return to the initial state.
-
-<div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
-  <IconShowcase icon={ArrowRight} animation="pointing" loop loopDelay={2} />
-  <IconShowcase
-    icon={ArrowRight}
-    animation="pointing-loop"
-    loop
-    loopDelay={2}
-  />
-</div>
-
-### Trigger animation by parent element
-
-You can use the `AnimateIcon` component to manage child icon animations.
+### Icon with AnimateIcon wrapper
 
 ```tsx
 <AnimateIcon animateOnHover>
-  <div>
-    <Icon />
-  </div>
-</AnimateIcon>
-```
-
-You can choose the animation on the `AnimateIcon` component.
-
-```tsx
-<AnimateIcon animateOnHover animation="path">
-  <div>
-    <Icon />
-  </div>
-</AnimateIcon>
-```
-
-But you can also specify it directly on the icon, which will be given priority.
-
-```tsx
-<AnimateIcon animateOnHover animation="path">
-  <div>
-    <Icon animation="out" />
-    <Icon2 />
-    <Icon3 />
-  </div>
+  <ArrowRight />
 </AnimateIcon>
 ```
 
 ## API Reference
+
+### Icon
 
 <TypeTable
   type={{
@@ -112,24 +62,42 @@ But you can also specify it directly on the icon, which will be given priority.
       required: false,
       default: '28',
     },
-    onAnimateChange: {
-      description: 'The callback function to call when the animation changes',
-      type: 'onAnimateChange?: (value: boolean, animation: StaticAnimations | string) => void;',
+    '...props': {
+      description: 'The props for the icon',
+      type: 'SVGMotionProps<SVGSVGElement>',
       required: false,
-      default: 'undefined',
     },
-    onAnimateStart: {
-      description: 'The callback function to call when the animation starts',
-      type: '() => void',
+  }}
+/>
+
+### AnimateIcon
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the AnimateIcon',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    asChild: {
+      description:
+        'Whether to render the children as a child of the AnimateIcon',
+      type: 'boolean',
       required: false,
-      default: 'undefined',
+      default: 'false',
     },
-    onAnimateEnd: {
-      description: 'The callback function to call when the animation ends',
-      type: '() => void',
+    '...props': {
+      description: 'The props for the AnimateIcon',
+      type: 'HTMLMotionProps<"span">',
       required: false,
-      default: 'undefined',
     },
+  }}
+/>
+
+### Common Props
+
+<TypeTable
+  type={{
     animate: {
       description:
         'Whether to animate the icon. You can also specify the animation to use.',
@@ -183,6 +151,12 @@ But you can also specify it directly on the icon, which will be given priority.
       required: false,
       default: 'false',
     },
+    completeOnStop: {
+      description: 'Whether to complete the current animation on stop.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
     delay: {
       description: 'The delay before animating the icon.',
       type: 'number',
@@ -191,8 +165,9 @@ But you can also specify it directly on the icon, which will be given priority.
     },
     animation: {
       description: 'The animation to use',
-      type: 'string',
-      required: true,
+      type: 'StaticAnimations | string',
+      required: false,
+      default: 'default',
     },
     loop: {
       description: 'Whether to loop the animation',

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-plug-zap",
+  "type": "registry:ui",
+  "title": "Plug Zap Icon",
+  "description": "Plug Zap icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/plug-zap/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/plug-zap.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "electricity",
+      "energy",
+      "electronics",
+      "charge",
+      "charging",
+      "battery",
+      "connect"
+    ]
+  }
+}

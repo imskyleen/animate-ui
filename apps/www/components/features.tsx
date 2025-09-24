@@ -44,10 +44,7 @@ const COMPONENTS = [
             <LoaderIcon className="sm:size-9 size-6.5" />
           </div>
           <div className="flex flex-row gap-7 sm:gap-10">
-            <SettingsIcon
-              animation="default-loop"
-              className="sm:size-9 size-6.5"
-            />
+            <SettingsIcon animation="default" className="sm:size-9 size-6.5" />
             <Disc3Icon className="sm:size-9 size-6.5" />
             <BatteryFullIcon className="sm:size-9 size-6.5" />
             <UserIcon className="sm:size-9 size-6.5" />

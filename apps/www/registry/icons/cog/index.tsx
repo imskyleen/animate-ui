@@ -51,8 +51,6 @@ const animations = {
         transition: {
           duration: 2.5,
           ease: 'easeInOut',
-          repeat: Infinity,
-          repeatType: 'loop',
         },
       },
     },
@@ -81,8 +79,6 @@ const animations = {
         transition: {
           duration: 2,
           ease: 'linear',
-          repeat: Infinity,
-          repeatType: 'loop',
         },
       },
     },

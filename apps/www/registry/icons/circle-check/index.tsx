@@ -49,8 +49,6 @@ function IconComponent({ size, ...props }: CircleCheckProps) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      initial="initial"
-      animate={controls}
       {...props}
     >
       <motion.circle

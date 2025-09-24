@@ -1,0 +1,57 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-shine",
+  "type": "registry:ui",
+  "title": "Shine Demo",
+  "description": "Demo showing an animated shine.",
+  "registryDependencies": ["@animate-ui/primitives-effects-shine"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/shine/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/shine.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Slide": {
+        "delay": {
+          "value": 0,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "duration": {
+          "value": 1200,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "loop": {
+          "value": true
+        },
+        "loopDelay": {
+          "value": 500,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "deg": {
+          "value": -15,
+          "min": -50,
+          "max": 50,
+          "step": 5
+        },
+        "enable": {
+          "value": true
+        },
+        "enableOnHover": {
+          "value": false
+        },
+        "enableOnTap": {
+          "value": false
+        }
+      }
+    }
+  }
+}

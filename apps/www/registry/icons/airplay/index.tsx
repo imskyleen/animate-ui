@@ -18,13 +18,11 @@ const animations = {
     path2: {
       initial: {
         y: 0,
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
       animate: {
         y: 2,
-        transition: {
-          duration: 0.4,
-          ease: 'easeInOut',
-        },
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
   } satisfies Record<string, Variants>,

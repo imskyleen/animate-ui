@@ -55,7 +55,7 @@ export const Hero = () => {
           delay={0.15}
         >
           <div className="relative z-10">
-            <h1 className="md:max-w-[800px] sm:max-w-[580px] max-w-[350px]">
+            <h1 className="md:max-w-[800px] sm:max-w-[580px] max-w-[280px]">
               <SplittingText
                 text={TITLE}
                 aria-hidden="true"

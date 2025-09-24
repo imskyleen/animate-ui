@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-ev-charger",
+  "type": "registry:ui",
+  "title": "EV Charger Icon",
+  "description": "EV Charger icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/ev-charger/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype EvChargerProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {},\n    path5: {\n      initial: {\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        opacity: [1, 0.5, 1, 0.5, 1],\n        scale: [1, 0.9, 1, 0.9, 1],\n        transition: {\n          duration: 1.8,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: EvChargerProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M2 21h13\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M3 7h11\"\n        variants={variants.path4}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m9 11-2 3h3l-2 3\"\n        variants={variants.path5}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction EvCharger(props: EvChargerProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  EvCharger,\n  EvCharger as EvChargerIcon,\n  type EvChargerProps,\n  type EvChargerProps as EvChargerIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/ev-charger.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "electric",
+      "charger",
+      "station",
+      "vehicle",
+      "fast",
+      "plug",
+      "ev",
+      "power",
+      "electricity",
+      "energy",
+      "accumulator",
+      "charge"
+    ]
+  }
+}

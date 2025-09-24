@@ -75,7 +75,6 @@ const animations = {
         transition: {
           duration: 1,
           delay: 0.4,
-          repeat: Infinity,
           ease: 'easeInOut',
         },
       },
@@ -89,7 +88,6 @@ const animations = {
         transition: {
           duration: 1,
           delay: 0.2,
-          repeat: Infinity,
           ease: 'easeInOut',
         },
       },
@@ -102,7 +100,6 @@ const animations = {
         scale: [1, 1.5, 1],
         transition: {
           duration: 1,
-          repeat: Infinity,
           ease: 'easeInOut',
         },
       },
