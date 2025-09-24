@@ -31,13 +31,13 @@ export const ChangelogItem = ({
 }: ChangelogItemProps) => {
   return (
     <ChangelogItemProvider value={{ major }}>
-      <div className="flex flex-row gap-x-6" {...props}>
-        <div className="relative w-28 shrink-0 h-auto">
-          <p className="mt-0 top-6 left-0 sticky text-sm dark:text-neutral-600 text-neutral-400">
+      <div className="flex sm:flex-row flex-col gap-x-6" {...props}>
+        <div className="relative w-28 shrink-0 h-auto max-sm:mb-2">
+          <p className="mt-0 top-6 left-0 sm:sticky text-sm text-neutral-500">
             {format(new Date(date), 'MMM d, yyyy', { locale: enUS })}
           </p>
         </div>
-        <div className="relative w-2.5 shrink-0 h-auto pt-[5px] flex flex-col items-center">
+        <div className="relative w-2.5 shrink-0 h-auto pt-[5px] hidden sm:flex flex-col items-center">
           <div
             className={cn(
               'relative size-2.5 shrink-0 rounded-full',
