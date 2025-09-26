@@ -9,13 +9,14 @@ import {
   Code,
   RectangleHorizontalIcon,
   SparklesIcon,
+  SquareMenu,
   TypeIcon,
 } from 'lucide-react';
 import { LucideIcons } from '@/components/icons/lucide-icons';
 
 const Icon = ({ children }: { children: React.ReactNode }) => {
   return (
-    <span className="relative size-5 [&_svg]:size-[12px] flex items-center justify-center bg-muted text-muted-foreground rounded-[5px]">
+    <span className="relative size-5 [&_svg]:size-[12px] flex items-center justify-center bg-border text-muted-foreground rounded-[5px]">
       {children}
 
       <span className="absolute left-1/2 translate-x-[calc(-50%-0.5px)] bg-border w-px h-[8px] top-full" />
@@ -31,9 +32,9 @@ export const Separator = ({
   name: string;
 }) => {
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-center gap-2">
       <Icon>{icon}</Icon>
-      <span>{name}</span>
+      <span className="text-[13px] text-neutral-500">{name}</span>
     </span>
   );
 };
@@ -97,6 +98,11 @@ export const attachSeparator: BuildPageTreeOptions['attachSeparator'] = (
       break;
     case 'Guide':
       node.name = <Separator icon={<Code strokeWidth={2.5} />} name="Usage" />;
+      break;
+    case 'Menu':
+      node.name = (
+        <Separator icon={<SquareMenu strokeWidth={2} />} name="Menu" />
+      );
       break;
   }
 

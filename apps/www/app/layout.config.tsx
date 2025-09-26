@@ -1,4 +1,3 @@
-import { Logo } from '@/components/logo';
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { BookOpen } from 'lucide-react';
 
@@ -10,14 +9,6 @@ import { BookOpen } from 'lucide-react';
  * Docs Layout: app/docs/layout.tsx
  */
 export const baseOptions: BaseLayoutProps = {
-  nav: {
-    title: (
-      <div className="md:mb-2 md:mt-1 ml-0.5">
-        <Logo size="xs" />
-      </div>
-    ),
-  },
-
   links: [
     {
       type: 'separator',

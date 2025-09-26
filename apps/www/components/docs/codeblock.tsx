@@ -77,12 +77,12 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
         ref={ref}
         {...props}
         className={cn(
-          'not-prose group fd-codeblock relative my-6 overflow-hidden rounded-xl border border-border text-sm [&.shiki]:!bg-muted/50',
+          'not-prose group fd-codeblock relative my-6 overflow-hidden rounded-xl text-sm [&.shiki]:!bg-accent',
           props.className,
         )}
       >
         {title ? (
-          <div className="flex flex-row items-center gap-2 bg-muted border-b border-border/75 dark:border-border/50 px-4 h-10">
+          <div className="flex flex-row items-center gap-2 pl-4 pr-4.5 h-10">
             {icon ? (
               <div
                 className="text-muted-foreground [&_svg]:size-3.5"
@@ -98,7 +98,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
             </figcaption>
             {allowCopy ? (
               <CopyButton
-                size="sm"
+                size="xs"
                 variant="ghost"
                 className="-me-2 bg-transparent hover:bg-black/5 dark:hover:bg-white/10"
                 onClick={onCopy}
@@ -108,27 +108,31 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           </div>
         ) : (
           allowCopy && (
-            <CopyButton
-              size="sm"
-              variant="ghost"
-              className="absolute right-2 top-2 z-[2] backdrop-blur-md bg-transparent hover:bg-black/5 dark:hover:bg-white/10"
-              onClick={onCopy}
-              isCopied={isCopied}
-            />
+            <div className="absolute right-0 top-0 z-[2] bg-accent p-2 rounded-bl-xl">
+              <CopyButton
+                size="xs"
+                variant="ghost"
+                className="bg-transparent hover:bg-black/5 dark:hover:bg-white/10"
+                onClick={onCopy}
+                isCopied={isCopied}
+              />
+            </div>
           )
         )}
-        <ScrollArea ref={areaRef} dir="ltr">
-          <ScrollViewport
-            {...viewportProps}
-            className={cn(
-              'max-h-[600px] [&_code]:!text-[13px] [&_code_.line]:!px-0',
-              viewportProps?.className,
-            )}
-          >
-            {props.children}
-          </ScrollViewport>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        <div className={cn('p-2', title && 'pt-0')}>
+          <ScrollArea ref={areaRef} dir="ltr">
+            <ScrollViewport
+              {...viewportProps}
+              className={cn(
+                'max-h-[600px] bg-background rounded-md [&_code]:!text-[13px] [&_code_.line]:!px-0',
+                viewportProps?.className,
+              )}
+            >
+              {props.children}
+            </ScrollViewport>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
       </figure>
     );
   },

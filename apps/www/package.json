@@ -1,6 +1,6 @@
 {
   "name": "animate-ui",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -62,6 +62,7 @@
     "eslint": "^9.34.0",
     "eslint-config-next": "15.3.4",
     "postcss": "^8.5.6",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2"
   }

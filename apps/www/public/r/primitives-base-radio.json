@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio",
+  "description": "An easily stylable radio button component.",
+  "dependencies": [
+    "motion",
+    "@base-ui-components/react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/hooks-use-controlled-state"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/base/radio/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { RadioGroup as RadioGroupPrimitive } from '@base-ui-components/react/radio-group';\nimport { Radio as RadioPrimitive } from '@base-ui-components/react/radio';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype RadioGroupContextType = {\n  value: RadioGroupProps['value'];\n  setValue: RadioGroupProps['onValueChange'];\n};\n\ntype RadioContextType = {\n  isChecked: boolean;\n  setIsChecked: (isChecked: boolean) => void;\n};\n\nconst [RadioGroupProvider, useRadioGroup] =\n  getStrictContext<RadioGroupContextType>('RadioGroupContext');\n\nconst [RadioProvider, useRadio] =\n  getStrictContext<RadioContextType>('RadioContext');\n\ntype RadioGroupProps = React.ComponentProps<typeof RadioGroupPrimitive>;\n\nfunction RadioGroup(props: RadioGroupProps) {\n  const [value, setValue] = useControlledState({\n    value: props.value ?? undefined,\n    defaultValue: props.defaultValue,\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <RadioGroupProvider value={{ value, setValue }}>\n      <RadioGroupPrimitive\n        data-slot=\"radio-group\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </RadioGroupProvider>\n  );\n}\n\ntype RadioIndicatorProps = Omit<\n  React.ComponentProps<typeof RadioPrimitive.Indicator>,\n  'asChild' | 'forceMount'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction RadioIndicator({\n  transition = { type: 'spring', stiffness: 200, damping: 16 },\n  ...props\n}: RadioIndicatorProps) {\n  const { isChecked } = useRadio();\n\n  return (\n    <AnimatePresence>\n      {isChecked && (\n        <RadioPrimitive.Indicator\n          data-slot=\"radio-group-indicator\"\n          keepMounted\n          render={\n            <motion.div\n              key=\"radio-group-indicator-circle\"\n              data-slot=\"radio-group-indicator-circle\"\n              initial={{ opacity: 0, scale: 0 }}\n              animate={{ opacity: 1, scale: 1 }}\n              exit={{ opacity: 0, scale: 0 }}\n              transition={transition}\n              {...props}\n            />\n          }\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype RadioProps = Omit<\n  React.ComponentProps<typeof RadioPrimitive.Root>,\n  'asChild'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Radio({\n  value: valueProps,\n  disabled,\n  required,\n  ...props\n}: RadioProps) {\n  const { value } = useRadioGroup();\n  const [isChecked, setIsChecked] = React.useState(value === valueProps);\n\n  React.useEffect(() => {\n    setIsChecked(value === valueProps);\n  }, [value, valueProps]);\n\n  return (\n    <RadioProvider value={{ isChecked, setIsChecked }}>\n      <RadioPrimitive.Root\n        value={valueProps}\n        disabled={disabled}\n        required={required}\n        render={\n          <motion.button\n            data-slot=\"radio-group-item\"\n            whileHover={{ scale: 1.05 }}\n            whileTap={{ scale: 0.95 }}\n            {...props}\n          />\n        }\n      />\n    </RadioProvider>\n  );\n}\n\nexport {\n  RadioGroup,\n  Radio,\n  RadioIndicator,\n  useRadioGroup,\n  useRadio,\n  type RadioGroupProps,\n  type RadioProps,\n  type RadioIndicatorProps,\n  type RadioGroupContextType,\n  type RadioContextType,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/base/radio.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio",
+  "description": "An easily stylable radio button component.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["@animate-ui/primitives-base-radio"],
+  "files": [
+    {
+      "path": "registry/components/base/radio/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/radio.tsx"
+    }
+  ]
+}

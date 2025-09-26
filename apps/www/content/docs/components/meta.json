@@ -39,6 +39,7 @@
     "base/popover",
     "base/preview-card",
     "base/progress",
+    "base/radio",
     "base/switch",
     "base/tabs",
     "base/toggle",

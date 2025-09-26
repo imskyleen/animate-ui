@@ -9,7 +9,7 @@ import {
   TabsContent,
   TabsContents,
 } from '@/components/radix/tabs';
-import { CodeTabs } from '@/registry/components/animate/code-tabs';
+import { CodeTabs } from '@/components/docs/code-tabs';
 import { ComponentManualInstallation } from './component-manual-installation';
 
 interface ComponentInstallationProps

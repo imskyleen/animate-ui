@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio Demo",
+  "description": "Demo showing a base radio.",
+  "registryDependencies": ["@animate-ui/components-base-radio"],
+  "files": [
+    {
+      "path": "registry/demo/components/base/radio/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/radio.tsx"
+    }
+  ]
+}

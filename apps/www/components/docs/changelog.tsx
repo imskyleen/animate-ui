@@ -33,7 +33,7 @@ export const ChangelogItem = ({
     <ChangelogItemProvider value={{ major }}>
       <div className="flex sm:flex-row flex-col gap-x-6" {...props}>
         <div className="relative w-28 shrink-0 h-auto max-sm:mb-2">
-          <p className="mt-0 top-6 left-0 sm:sticky text-sm text-neutral-500">
+          <p className="mt-0 top-20 left-0 sm:sticky text-sm text-neutral-500">
             {format(new Date(date), 'MMM d, yyyy', { locale: enUS })}
           </p>
         </div>

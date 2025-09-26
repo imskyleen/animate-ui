@@ -10,7 +10,7 @@ import { Input } from '@workspace/ui/components/ui/input';
 import { cn } from '@workspace/ui/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { type HTMLMotionProps, motion } from 'motion/react';
-import { CodeTabs } from '@/registry/components/animate/code-tabs';
+import { CodeTabs } from '@/components/docs/code-tabs';
 import { DynamicCodeBlock } from './dynamic-codeblock';
 import {
   Tabs,
@@ -158,7 +158,7 @@ const CheckBadge = ({
   return (
     <motion.button
       className={cn(
-        'bg-accent overflow-hidden transition-colors duration-200 ease-in-out flex items-center gap-1 py-1 px-3 rounded-full text-sm font-medium text-accent-foreground hover:bg-accent/80',
+        'bg-accent overflow-hidden transition-colors duration-200 ease-in-out flex items-center gap-1 py-1 px-3 rounded-full text-sm font-normal text-accent-foreground hover:bg-accent/80',
         isActive && 'pl-2 bg-primary text-primary-foreground hover:bg-primary',
         className,
       )}

@@ -380,6 +380,25 @@
       ]
     },
     {
+      "name": "components-base-radio",
+      "type": "registry:ui",
+      "title": "Base Radio",
+      "description": "An easily stylable radio button component.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-radio"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/radio/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/radio.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-switch",
       "type": "registry:ui",
       "title": "Switch",
@@ -1824,6 +1843,22 @@
           "path": "registry/demo/components/base/progress/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/base/progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-components-base-radio",
+      "type": "registry:ui",
+      "title": "Base Radio Demo",
+      "description": "Demo showing a base radio.",
+      "registryDependencies": [
+        "@animate-ui/components-base-radio"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/radio/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/radio.tsx"
         }
       ]
     },
@@ -3852,6 +3887,22 @@
           "path": "registry/demo/primitives/base/progress/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/primitives/base/progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-primitives-base-radio",
+      "type": "registry:ui",
+      "title": "Base Radio Demo",
+      "description": "Demo showing an animated base radio.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-radio"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/radio/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/radio.tsx"
         }
       ]
     },
@@ -12638,6 +12689,27 @@
           "path": "registry/primitives/base/progress/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-base-radio",
+      "type": "registry:ui",
+      "title": "Base Radio",
+      "description": "An easily stylable radio button component.",
+      "dependencies": [
+        "motion",
+        "@base-ui-components/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/hooks-use-controlled-state"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/radio/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/radio.tsx"
         }
       ]
     },

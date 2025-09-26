@@ -1,5 +1,4 @@
 import { motion } from 'motion/react';
-import { ArrowRightIcon } from 'lucide-react';
 import { SplittingText } from '@/registry/primitives/texts/splitting';
 import ReactIcon from '@workspace/ui/components/icons/react-icon';
 import TSIcon from '@workspace/ui/components/icons/ts-icon';
@@ -9,19 +8,17 @@ import ShadcnIcon from '@workspace/ui/components/icons/shadcn-icon';
 import { Button } from '@workspace/ui/components/ui/button';
 import Link from 'next/link';
 import { MotionEffect } from './effects/motion-effect';
-import { HeroBackground } from './hero-background';
 import { PartyPopper } from '@/registry/icons/party-popper';
+import { ArrowRightIcon } from '@/registry/icons/arrow-right';
+import { AnimateIcon } from '@/registry/icons/icon';
 
 const ICONS = [ReactIcon, TSIcon, TailwindIcon, MotionIcon, ShadcnIcon];
-const TITLE = 'Animate your UI with style';
+const TITLE = 'Animate your UI with smooth style';
 
 export const Hero = () => {
   return (
-    <div className="relative h-screen overflow-x-hidden flex flex-col items-center justify-center px-5">
-      <HeroBackground className="fixed -bottom-70 -right-120 size-[800px]" />
-      <HeroBackground className="fixed -top-70 -left-120 size-[800px]" />
-
-      <div className="relative z-10 flex flex-col items-center justify-center">
+    <div className="relative overflow-x-hidden flex flex-col items-center px-5">
+      <div className="relative z-10 flex flex-col items-center justify-center pt-30">
         <MotionEffect
           slide={{
             direction: 'down',
@@ -30,18 +27,17 @@ export const Hero = () => {
           zoom
           inView
         >
-          <div className="mb-10 rounded-full bg-accent py-1 pl-3 pr-1 text-sm flex items-center gap-2">
-            <p className="flex items-center gap-2 text-accent-foreground">
-              <PartyPopper
-                animateOnView
-                animateOnViewOnce={false}
-                className="size-4 text-muted-foreground"
-              />{' '}
-              Introducing Animate UI{' '}
-              <span className="bg-white dark:bg-neutral-950 rounded-full font-bold -ml-0.5 tracking-tighter px-[7px] py-1.5 text-xs">
-                1.0
-              </span>
-            </p>
+          <div className="mb-8 rounded-full bg-accent py-1 pl-1 pr-3 text-sm flex items-center gap-2">
+            <Link
+              href="/docs/components/base/radio"
+              className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
+            >
+              <span className="h-6 px-2 bg-primary text-xs text-primary-foreground rounded-full flex gap-1 items-center justify-center">
+                New
+                <PartyPopper delay={500} className="size-3.5" animate />
+              </span>{' '}
+              <span>Base UI Radio</span>
+            </Link>
           </div>
         </MotionEffect>
 
@@ -55,18 +51,18 @@ export const Hero = () => {
           delay={0.15}
         >
           <div className="relative z-10">
-            <h1 className="md:max-w-[800px] sm:max-w-[580px] max-w-[280px]">
+            <h1 className="md:max-w-[800px] max-w-[320px]">
               <SplittingText
                 text={TITLE}
                 aria-hidden="true"
-                className="block md:text-6xl sm:text-5xl text-4xl font-semibold text-center text-neutral-200 dark:text-neutral-800"
+                className="block md:text-5xl text-4xl font-medium text-center text-neutral-200 dark:text-neutral-800"
                 disableAnimation
               />
             </h1>
-            <div className="md:max-w-[800px] sm:max-w-[580px] max-w-[350px] absolute inset-0 flex items-center justify-center">
+            <div className="md:max-w-[800px] max-w-[320px] absolute inset-0 flex items-center justify-center">
               <SplittingText
                 text={TITLE}
-                className="block md:text-6xl sm:text-5xl text-4xl font-semibold text-center"
+                className="block md:text-5xl text-4xl font-medium text-center"
                 type="chars"
                 delay={400}
                 initial={{ y: 0, opacity: 0, x: 0, filter: 'blur(10px)' }}
@@ -86,36 +82,39 @@ export const Hero = () => {
           inView
           delay={0.3}
         >
-          <p className="block md:text-lg sm:text-base text-sm text-center mt-5 text-muted-foreground sm:max-w-[550px] max-w-[350px]">
-            A fully animated, open-source component distribution built with
-            React, TypeScript, Tailwind CSS, Motion and Shadcn CLI. Browse a
-            list of components you can install, modify, and use in your
-            projects.
+          <p className="block font-normal md:text-lg sm:text-base text-sm text-center mt-3 text-muted-foreground md:max-w-[660px] sm:max-w-[450px] text-balance">
+            A fully animated, open-source React component distribution. Browse a
+            list of animated primitives, components and icons you can install
+            and use in your projects.
           </p>
         </MotionEffect>
 
-        <div className="flex sm:flex-row flex-col sm:gap-5 gap-3 my-8 max-sm:w-full">
+        <div className="flex sm:flex-row flex-col sm:gap-4 gap-3 mt-5 mb-8 max-sm:w-full">
           <MotionEffect
             slide={{
               direction: 'down',
             }}
             fade
             zoom
-            inView
             delay={0.45}
           >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                size="lg"
-                className="w-full rounded-full pr-5"
-                variant="default"
-                asChild
+            <AnimateIcon animateOnHover="out" completeOnStop asChild>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Link href="/docs/installation">
-                  Get Started <ArrowRightIcon className="!size-5" />
-                </Link>
-              </Button>
-            </motion.div>
+                <Button
+                  size="lg"
+                  className="w-full !pr-5"
+                  variant="default"
+                  asChild
+                >
+                  <Link href="/docs/installation">
+                    Get Started <ArrowRightIcon className="!size-5" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </AnimateIcon>
           </MotionEffect>
 
           <MotionEffect
@@ -124,16 +123,10 @@ export const Hero = () => {
             }}
             fade
             zoom
-            inView
             delay={0.6}
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                size="lg"
-                className="w-full rounded-full"
-                variant="accent"
-                asChild
-              >
+              <Button size="lg" className="w-full" variant="accent" asChild>
                 <Link href="/docs/components">Browse Components</Link>
               </Button>
             </motion.div>
@@ -149,7 +142,6 @@ export const Hero = () => {
               }}
               fade
               zoom
-              inView
               delay={0.75 + index * 0.1}
             >
               <Icon className="size-8" />

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio",
+  "description": "An easily stylable radio button component.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/primitives-base-radio"
+  ],
+  "files": [
+    {
+      "path": "registry/components/base/radio/index.tsx",
+      "content": "import * as React from 'react';\nimport { CircleIcon } from 'lucide-react';\n\nimport {\n  RadioGroup as RadioGroupPrimitive,\n  Radio as RadioPrimitive,\n  RadioIndicator as RadioIndicatorPrimitive,\n  type RadioGroupProps as RadioGroupPrimitiveProps,\n  type RadioProps as RadioPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/radio';\nimport { cn } from '@/lib/utils';\n\ntype RadioGroupProps = RadioGroupPrimitiveProps;\n\nfunction RadioGroup({ className, ...props }: RadioGroupProps) {\n  return (\n    <RadioGroupPrimitive className={cn('grid gap-3', className)} {...props} />\n  );\n}\n\ntype RadioProps = RadioPrimitiveProps;\n\nfunction Radio({ className, ...props }: RadioProps) {\n  return (\n    <RadioPrimitive\n      className={cn(\n        'border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',\n        className,\n      )}\n      {...props}\n    >\n      <RadioIndicatorPrimitive className=\"relative flex items-center justify-center\">\n        <CircleIcon className=\"fill-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2\" />\n      </RadioIndicatorPrimitive>\n    </RadioPrimitive>\n  );\n}\n\nexport { RadioGroup, Radio, type RadioGroupProps, type RadioProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/radio.tsx"
+    }
+  ]
+}
