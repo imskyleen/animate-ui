@@ -82,7 +82,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
         )}
       >
         {title ? (
-          <div className="flex flex-row items-center gap-2 pl-4 pr-4.5 h-10">
+          <div className="flex flex-row items-center gap-2 pl-4 pr-4 h-10">
             {icon ? (
               <div
                 className="text-muted-foreground [&_svg]:size-3.5"
@@ -108,7 +108,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           </div>
         ) : (
           allowCopy && (
-            <div className="absolute right-0 top-0 z-[2] bg-accent p-2 rounded-bl-xl">
+            <div className="absolute right-0 top-0 z-[2] bg-accent p-1.5 rounded-bl-xl">
               <CopyButton
                 size="xs"
                 variant="ghost"
@@ -119,7 +119,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
             </div>
           )
         )}
-        <div className={cn('p-2', title && 'pt-0')}>
+        <div className={cn('p-1.5', title && 'pt-0')}>
           <ScrollArea ref={areaRef} dir="ltr">
             <ScrollViewport
               {...viewportProps}

@@ -94,7 +94,7 @@ function CodeTabs({
       <TabsHighlight className="absolute z-0 inset-0 rounded-none shadow-none bg-transparent after:content-[''] after:absolute after:inset-x-0 after:h-0.5 after:bottom-0 dark:after:bg-white after:bg-black after:rounded-t-full">
         <TabsList
           data-slot="install-tabs-list"
-          className="w-full relative flex items-center justify-between rounded-none h-10 text-current py-0 pl-6 pr-4.5"
+          className="w-full relative flex items-center justify-between rounded-none h-10 text-current py-0 pl-5 pr-4.5"
         >
           <div className="flex gap-x-3 h-full">
             {highlightedCodes &&
@@ -127,7 +127,7 @@ function CodeTabs({
         </TabsList>
       </TabsHighlight>
 
-      <div className="px-2 pb-2">
+      <div className="px-1.5 pb-1.5">
         <TabsContents
           data-slot="install-tabs-contents"
           className="bg-background rounded-md"

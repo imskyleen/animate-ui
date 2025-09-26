@@ -30,7 +30,7 @@ export const ComponentWrapper = ({
   const isMobile = useIsMobile();
 
   return (
-    <div className="bg-accent rounded-xl p-2">
+    <div className="bg-accent rounded-xl p-1.5">
       <motion.div
         id="component-wrapper"
         className={cn(
