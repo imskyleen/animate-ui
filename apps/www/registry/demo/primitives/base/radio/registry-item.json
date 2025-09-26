@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio Demo",
+  "description": "Demo showing an animated base radio.",
+  "registryDependencies": ["@animate-ui/primitives-base-radio"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/radio/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/radio.tsx"
+    }
+  ]
+}

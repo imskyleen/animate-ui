@@ -97,10 +97,10 @@ const animations = {
       animate: {
         x: [0, '-150%', '150%', 0],
         transition: {
-          default: { ease: 'easeInOut', duration: 0.8 },
+          default: { ease: 'easeInOut', duration: 0.6 },
           x: {
             ease: 'easeInOut',
-            duration: 0.8,
+            duration: 0.6,
             times: [0, 0.5, 0.5, 1],
           },
         },

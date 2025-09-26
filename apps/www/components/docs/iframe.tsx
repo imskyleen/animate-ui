@@ -22,7 +22,7 @@ export default function Iframe({
   return (
     <iframe
       src={iframeUrl}
-      className={cn('h-[500px] rounded-xl', bigScreen && 'w-[1600px]')}
+      className={cn('h-[500px] rounded-md', bigScreen && 'w-[1600px]')}
     />
   );
 }

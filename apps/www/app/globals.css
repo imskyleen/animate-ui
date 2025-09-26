@@ -7,6 +7,7 @@
 @source "./(playground)/**/*.{ts,tsx,mdx}";
 
 @import 'tw-animate-css';
+@plugin 'tailwind-scrollbar';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -43,6 +44,10 @@
   --accent: oklch(0.97 0 0);
 
   --accent-foreground: oklch(0.205 0 0);
+
+  --color-fd-accent: oklch(0.97 0 0);
+
+  --color-fd-accent-foreground: oklch(0.205 0 0);
 
   --destructive: oklch(0.577 0.245 27.325);
 
@@ -113,6 +118,10 @@
   --accent: oklch(0.269 0 0);
 
   --accent-foreground: oklch(0.985 0 0);
+
+  --color-fd-accent: oklch(0.269 0 0);
+
+  --color-fd-accent-foreground: oklch(0.985 0 0);
 
   --destructive: oklch(0.704 0.191 22.216);
 
@@ -239,6 +248,10 @@
     overscroll-behavior: none;
   }
 
+  #nd-sidebar {
+    @apply md:!border-0;
+  }
+
   #nd-sidebar div div div a[href^='/docs/components'] > svg[data-icon='true'],
   #nd-sidebar div div div a[href^='/docs/primitives'] > svg[data-icon='true'],
   #nd-sidebar div div div a[href^='/docs/icons'] > svg[data-icon='true'],
@@ -251,11 +264,36 @@
   }
 
   #nd-page article {
-    @apply max-w-[860px];
+    @apply max-w-[860px] !pt-23;
+  }
+
+  #nd-page {
+    @apply !pt-0;
   }
 
   #nd-toc {
-    @apply !pb-18;
+    @apply !pb-18 !pt-24;
+  }
+
+  #nd-toc div div {
+    @apply !pl-px;
+  }
+
+  #nd-toc div[role='none'] {
+    @apply !w-[3px] !rounded-full -ml-px;
+  }
+
+  #nd-tocnav {
+    @apply !hidden;
+  }
+
+  #docs-body h1,
+  #docs-body h2,
+  #docs-body h3,
+  #docs-body h4,
+  #docs-body h5,
+  #docs-body h6 {
+    @apply !font-medium;
   }
 
   @keyframes blink {

@@ -23,8 +23,8 @@ export default function HomePage() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setTransition(true), 2000);
-    const timer2 = setTimeout(() => setIsLoaded(true), 3000);
+    const timer = setTimeout(() => setTransition(true), 1250);
+    const timer2 = setTimeout(() => setIsLoaded(true), 2500);
     return () => {
       clearTimeout(timer);
       clearTimeout(timer2);
@@ -35,22 +35,26 @@ export default function HomePage() {
     <main className={cn('relative h-dvh', !isLoaded && 'overflow-y-hidden')}>
       <Header transition={transition} />
 
-      <div className="h-dvh w-full flex items-center">
+      <div className="h-dvh w-full flex flex-col justify-between">
         {transition && (
-          <motion.div
-            variants={CONTENT_VARIANTS}
-            initial="hidden"
-            animate={transition ? 'visible' : 'hidden'}
-            className="w-full"
-          >
-            <Hero key={String(transition)} />
-          </motion.div>
+          <>
+            <div>
+              <motion.div
+                variants={CONTENT_VARIANTS}
+                initial="hidden"
+                animate={transition ? 'visible' : 'hidden'}
+                className="w-full"
+              >
+                <Hero key={String(transition)} />
+              </motion.div>
+
+              <Features />
+            </div>
+
+            <Footer />
+          </>
         )}
       </div>
-
-      <Features />
-
-      <Footer />
     </main>
   );
 }

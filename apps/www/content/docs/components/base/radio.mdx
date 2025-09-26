@@ -1,0 +1,74 @@
+---
+title: Radio
+description: An easily stylable radio button component.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-26
+---
+
+<ComponentPreview name="demo-components-base-radio" />
+
+## Installation
+
+<ComponentInstallation name="components-base-radio" />
+
+## Usage
+
+```tsx
+<RadioGroup>
+  <Radio value="1" />
+  <Radio value="2" />
+  <Radio value="3" />
+</RadioGroup>
+```
+
+## API Reference
+
+### RadioGroup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/radio#radiogroup"
+  text="Animate UI API Reference - RadioGroup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/radio#radiogroup"
+  text="Base UI API Reference - RadioGroup"
+/>
+</div>
+
+### Radio
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/radio#radiogroupitem"
+  text="Animate UI API Reference - Radio Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/radio#root"
+  text="Base UI API Reference - Radio.Root"
+/>
+</div>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the radio.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `Radio` component, as it is used
+  for animation.
+</Callout>
+
+## Credits
+
+- [Base UI Radio](https://base-ui.com/react/components/radio)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/radio-group) for style inspiration.

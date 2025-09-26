@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio Demo",
+  "description": "Demo showing a base radio.",
+  "registryDependencies": [
+    "@animate-ui/components-base-radio"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/radio/index.tsx",
+      "content": "import * as React from 'react';\n\nimport { RadioGroup, Radio } from '@/components/animate-ui/components/base/radio';\nimport { Label } from '@/components/ui/label';\n\nexport const BaseRadioDemo = () => {\n  return (\n    <RadioGroup defaultValue=\"default\">\n      <div className=\"flex items-center space-x-2\">\n        <Radio value=\"default\" id=\"r1\" />\n        <Label htmlFor=\"r1\">Default</Label>\n      </div>\n      <div className=\"flex items-center space-x-2\">\n        <Radio value=\"comfortable\" id=\"r2\" />\n        <Label htmlFor=\"r2\">Comfortable</Label>\n      </div>\n      <div className=\"flex items-center space-x-2\">\n        <Radio value=\"compact\" id=\"r3\" />\n        <Label htmlFor=\"r3\">Compact</Label>\n      </div>\n    </RadioGroup>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/radio.tsx"
+    }
+  ]
+}

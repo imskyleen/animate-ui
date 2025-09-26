@@ -100,14 +100,14 @@ function CopyButton({
       onClick={handleCopy}
       {...props}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         <motion.span
           key={isCopied ? 'check' : 'copy'}
           data-slot="copy-button-icon"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          transition={{ duration: 0.15 }}
+          initial={{ scale: 0, opacity: 0.4, filter: 'blur(4px)' }}
+          animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+          exit={{ scale: 0, opacity: 0.4, filter: 'blur(4px)' }}
+          transition={{ duration: 0.25 }}
         >
           <Icon />
         </motion.span>

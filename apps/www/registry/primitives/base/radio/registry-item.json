@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-base-radio",
+  "type": "registry:ui",
+  "title": "Base Radio",
+  "description": "An easily stylable radio button component.",
+  "dependencies": ["motion", "@base-ui-components/react"],
+  "registryDependencies": [
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/hooks-use-controlled-state"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/base/radio/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/base/radio.tsx"
+    }
+  ]
+}

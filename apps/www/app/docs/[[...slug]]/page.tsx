@@ -10,10 +10,14 @@ import { notFound } from 'next/navigation';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { getMDXComponents } from '@/mdx-components';
 import { Metadata } from 'next';
-import { Footer } from '@workspace/ui/components/docs/footer';
-import { DocsBreadcrumb } from '@/components/docs/docs-breadcrumb';
 import { DocsAuthor } from '@/components/docs/docs-author';
 import { ViewOptions, LLMCopyButton } from '@/components/docs/page-actions';
+import { Footer } from '@workspace/ui/components/docs/footer';
+import { Button } from '@/registry/components/buttons/button';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { findNeighbour } from 'fumadocs-core/server';
+import { baseOptions } from '@/app/layout.config';
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
@@ -24,16 +28,119 @@ export default async function Page(props: {
 
   const MDXContent = page.data.body;
 
+  const tree = source.getPageTree();
+  const { previous, next: nextPage } = findNeighbour(tree, page.url);
+
+  type GuideLink = { text: string; url: string };
+  const isGuideLink = (l: unknown): l is GuideLink => {
+    if (typeof l !== 'object' || l === null) return false;
+    const obj = l as Record<string, unknown>;
+    return typeof obj.url === 'string' && typeof obj.text === 'string';
+  };
+  const guideItems = (baseOptions.links ?? []).filter(isGuideLink);
+  const guideIndex = guideItems.findIndex((it) => it.url === page.url);
+
+  const prevNav = (() => {
+    if (guideIndex >= 0 && guideItems.length > 0) {
+      if (guideIndex > 0) {
+        return {
+          url: guideItems[guideIndex - 1].url,
+          name: guideItems[guideIndex - 1].text,
+        } as const;
+      }
+      return undefined;
+    }
+
+    if (previous) {
+      return {
+        url: previous.url,
+        name: String(previous.name ?? 'Précédent'),
+      } as const;
+    }
+
+    if (page.url.startsWith('/docs/components/')) {
+      return { url: '/docs/components', name: 'Components' } as const;
+    }
+    if (page.url.startsWith('/docs/primitives/')) {
+      return { url: '/docs/primitives', name: 'Primitives' } as const;
+    }
+
+    const isSectionRoot =
+      page.url === '/docs/components' ||
+      page.url === '/docs/primitives' ||
+      page.url === '/docs/icons/get-started';
+    if (isSectionRoot && guideItems.length > 0) {
+      const last = guideItems[guideItems.length - 1];
+      return { url: last.url, name: last.text } as const;
+    }
+
+    return undefined;
+  })();
+
+  const nextNav =
+    guideIndex >= 0 && guideItems.length > 0
+      ? guideIndex < guideItems.length - 1
+        ? {
+            url: guideItems[guideIndex + 1].url,
+            name: guideItems[guideIndex + 1].text,
+          }
+        : { url: '/docs/components', name: 'Components' }
+      : nextPage
+        ? { url: nextPage.url, name: String(nextPage.name ?? 'Suivant') }
+        : undefined;
+
   return (
     <DocsPage
       toc={page.data.toc}
       full={page.data.full}
-      footer={{ component: <Footer /> }}
-      tableOfContent={{ style: 'clerk' }}
+      footer={{
+        component: (
+          <Footer
+            lastUpdate={
+              page.data.lastModified
+                ? new Date(page.data.lastModified)
+                : undefined
+            }
+          />
+        ),
+      }}
     >
-      <DocsBreadcrumb slug={params.slug} />
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription className="mb-1">
+      <div className="flex flex-row gap-2 items-start w-full justify-between">
+        <DocsTitle className="font-medium">{page.data.title}</DocsTitle>
+        {(prevNav || nextNav) && (
+          <div className="flex flex-row gap-1.5 items-center pt-0.5">
+            <Link
+              href={prevNav?.url ?? page.url}
+              aria-disabled={!prevNav}
+              className={
+                !prevNav ? 'pointer-events-none opacity-50' : undefined
+              }
+              aria-label={
+                prevNav ? `Aller à ${prevNav.name}` : 'Pas de page précédente'
+              }
+            >
+              <Button variant="accent" size="icon-sm">
+                <ArrowLeft />
+              </Button>
+            </Link>
+            <Link
+              href={nextNav?.url ?? page.url}
+              aria-disabled={!nextNav}
+              className={
+                !nextNav ? 'pointer-events-none opacity-50' : undefined
+              }
+              aria-label={
+                nextNav ? `Aller à ${nextNav.name}` : 'Pas de page suivante'
+              }
+            >
+              <Button variant="accent" size="icon-sm">
+                <ArrowRight />
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
+      <DocsDescription className="mb-1 font-normal">
         {page.data.description}
       </DocsDescription>
       {page.data.author && (

@@ -1,27 +1,20 @@
 'use client';
 
-import { SidebarIcon } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import {
   Sidebar,
-  SidebarCollapseTrigger,
   SidebarComponents,
   SidebarFolder,
   SidebarFolderContent,
   SidebarFolderLink,
   SidebarFolderTrigger,
   SidebarFooter,
-  SidebarHeader,
   SidebarItem,
   SidebarSeparator,
   SidebarViewport,
 } from 'fumadocs-ui/components/layout/sidebar';
 import { HideIfEmpty } from 'fumadocs-core/hide-if-empty';
-import Link from 'next/link';
-import { CollapsibleControl } from 'fumadocs-ui/layouts/docs-client';
 import { buttonVariants } from 'fumadocs-ui/components/ui/button';
-import { LargeSearchToggle } from 'fumadocs-ui/components/layout/search-toggle';
-import { RootToggle } from 'fumadocs-ui/components/layout/root-toggle';
 import { getSidebarTabsFromOptions } from 'fumadocs-ui/layouts/docs/shared';
 import { BaseLinkItem, LinkItemType } from 'fumadocs-ui/layouts/links';
 import { DocsLayoutProps } from 'fumadocs-ui/layouts/docs';
@@ -34,6 +27,21 @@ import { usePathname } from 'next/navigation';
 import { isActive } from 'fumadocs-ui/utils/is-active';
 import { AnimatePresence, motion } from 'motion/react';
 import { Separator } from '@/lib/attach-separator';
+import { NAV_ITEMS } from './nav';
+import { SquareMenu } from 'lucide-react';
+import { useIsMobile } from '@workspace/ui/hooks/use-mobile';
+
+const MENU_ITEMS = [
+  {
+    name: 'Menu',
+    type: 'separator',
+    icon: <SquareMenu />,
+  },
+  ...NAV_ITEMS.filter((item) => item.title !== 'Docs').map((item) => ({
+    text: item.title,
+    url: item.url,
+  })),
+];
 
 const sidebarItemClassName =
   'relative hover:bg-transparent !bg-transparent ml-2 !pl-4 data-[active=true]:bg-transparent';
@@ -91,7 +99,7 @@ export function SidebarPageTree(props: {
               {isActive && (
                 <motion.span
                   layoutId="sidebar-item-active-indicator"
-                  className="pointer-events-none absolute z-11 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full bg-primary"
+                  className="pointer-events-none absolute z-11 left-[8px] top-1/2 h-[56%] w-[3px] -translate-y-1/2 rounded-full bg-primary"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -108,7 +116,7 @@ export function SidebarPageTree(props: {
               {isHovered && (
                 <motion.span
                   layoutId="sidebar-item-hover-indicator"
-                  className="pointer-events-none absolute z-10 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
+                  className="pointer-events-none absolute z-10 left-[8px] top-1/2 h-[56%] w-[3px] -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -122,7 +130,10 @@ export function SidebarPageTree(props: {
             </AnimatePresence>
 
             <motion.span
-              className="text-sm font-medium w-full pl-[9px]"
+              className={cn(
+                'text-sm w-full pl-[12px] text-neutral-700 dark:text-neutral-200',
+                (isActive || isHovered) && 'text-black dark:text-white',
+              )}
               animate={{
                 x: isHovered || isActive ? 3 : 0,
               }}
@@ -209,7 +220,7 @@ export function SidebarLinkItem({
         {isActive && (
           <motion.span
             layoutId="sidebar-item-active-indicator"
-            className="pointer-events-none absolute z-11 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full bg-primary"
+            className="pointer-events-none absolute z-11 left-[8px] top-1/2 h-[56%] w-[3px] -translate-y-1/2 rounded-full bg-primary"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -226,7 +237,7 @@ export function SidebarLinkItem({
         {isHovered && (
           <motion.span
             layoutId="sidebar-item-hover-indicator"
-            className="pointer-events-none absolute z-10 left-[9px] top-1/2 h-[50%] w-0.5 -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
+            className="pointer-events-none absolute z-10 left-[8px] top-1/2 h-[56%] w-[3px] -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -240,7 +251,10 @@ export function SidebarLinkItem({
       </AnimatePresence>
 
       <motion.span
-        className="text-sm font-medium w-full pl-[9px]"
+        className={cn(
+          'text-sm w-full pl-[12px] text-neutral-700 dark:text-neutral-200',
+          (isActive || isHovered) && 'text-black dark:text-white',
+        )}
         animate={{
           x: isHovered || isActive ? 3 : 0,
         }}
@@ -279,48 +293,18 @@ export const DocsSidebar = ({
     () => getSidebarTabsFromOptions(sidebarTabs, props.tree) ?? [],
     [sidebarTabs, props.tree],
   );
+  const pathname = usePathname();
   const links = getLinks(props.links ?? [], props.githubUrl);
+  const isMenu =
+    !pathname.startsWith('/docs/primitives') &&
+    !pathname.startsWith('/docs/components') &&
+    !pathname.startsWith('/docs/icons');
+  const isMobile = useIsMobile();
 
   return (
     <>
-      {sidebarCollapsible ? <CollapsibleControl /> : null}
-      <Sidebar collapsible={sidebarCollapsible} {...sidebarProps}>
-        <HideIfEmpty>
-          <SidebarHeader className="data-[empty=true]:hidden mb-2">
-            <div className="flex max-md:hidden">
-              <Link
-                href={nav.url ?? '/'}
-                className="inline-flex text-[15px] items-center gap-2.5 font-medium me-auto"
-              >
-                {nav.title as React.ReactNode}
-              </Link>
-              {nav.children as React.ReactNode}
-              {sidebarCollapsible && (
-                <SidebarCollapseTrigger
-                  className={cn(
-                    buttonVariants({
-                      color: 'ghost',
-                      size: 'icon-sm',
-                      className:
-                        'mb-auto text-fd-muted-foreground max-md:hidden',
-                    }),
-                  )}
-                >
-                  <SidebarIcon />
-                </SidebarCollapseTrigger>
-              )}
-            </div>
-            {searchToggle.enabled !== false &&
-              (searchToggle.components?.lg ?? (
-                <LargeSearchToggle hideIfDisabled className="max-md:hidden" />
-              ))}
-            {tabs.length > 0 && <RootToggle options={tabs} />}
-
-            {sidebarBanner}
-          </SidebarHeader>
-        </HideIfEmpty>
-
-        <SidebarViewport className="[&_[data-radix-scroll-area-viewport]]:pb-8">
+      <Sidebar collapsible={false} className="md:mt-20" {...sidebarProps}>
+        <SidebarViewport className="md:[&_[data-radix-scroll-area-viewport]]:pb-14 [&_[data-radix-scroll-area-viewport]]:pb-4 max-md:pt-2">
           {links
             .filter((v) => v.type !== 'icon')
             .map((item, i, list) => (
@@ -334,11 +318,26 @@ export const DocsSidebar = ({
               />
             ))}
 
+          {!isMenu && isMobile && (
+            <div>
+              {MENU_ITEMS.map((item, i) => (
+                <SidebarLinkItem
+                  key={i}
+                  item={item as LinkItemType}
+                  className={cn(
+                    sidebarItemClassName,
+                    i === MENU_ITEMS.length - 1 && 'mb-8',
+                  )}
+                />
+              ))}
+            </div>
+          )}
+
           <SidebarPageTree components={sidebarComponents} />
         </SidebarViewport>
 
         <HideIfEmpty>
-          <SidebarFooter className="data-[empty=true]:hidden">
+          <SidebarFooter className="data-[empty=true]:hidden md:hidden border-0">
             <div className="flex items-center justify-end empty:hidden">
               {links
                 .filter((item) => item.type === 'icon')

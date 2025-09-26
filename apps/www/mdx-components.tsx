@@ -12,6 +12,7 @@ import {
   Pre,
   type CodeBlockProps,
 } from './components/docs/codeblock';
+import { Callout } from './components/docs/callout';
 
 // use this function to get MDX components, you will need it for rendering MDX
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -36,6 +37,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ExternalLink,
     Steps,
     Step,
+    Callout,
     pre: (props: CodeBlockProps) => (
       <CodeBlock {...props}>
         <Pre>{props.children}</Pre>

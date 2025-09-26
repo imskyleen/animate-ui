@@ -15,7 +15,7 @@ const Badge = ({
 }) => {
   return (
     <span className="flex items-center gap-3 w-full justify-between">
-      {name}{' '}
+      <span className="!font-normal">{name}</span>{' '}
       <span
         className={cn(
           'text-[17px] text-nowrap text-foreground leading-1 font-black',

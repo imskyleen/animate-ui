@@ -11,7 +11,7 @@ import { cn } from '@workspace/ui/lib/utils';
 
 export const DocsBreadcrumb = ({ slug }: { slug?: string[] }) => {
   return (
-    <Breadcrumb className="mb-6">
+    <Breadcrumb className="mb-2 max-xl:hidden">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/docs">Docs</BreadcrumbLink>
