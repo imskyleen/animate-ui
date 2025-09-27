@@ -12,15 +12,17 @@ export const HeadlessCheckboxDemo = ({
   indeterminate,
 }: HeadlessCheckboxDemoProps) => {
   return (
-    <Field className="flex items-center space-x-2">
-      <Checkbox
-        id="terms"
-        indeterminate={indeterminate}
-        className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"
-      >
-        <CheckboxIndicator className="size-3.5" />
-      </Checkbox>
-      <Label htmlFor="terms">Accept terms and conditions</Label>
+    <Field>
+      <Label htmlFor="terms" className="flex items-center gap-x-3">
+        <Checkbox
+          id="terms"
+          indeterminate={indeterminate}
+          className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"
+        >
+          <CheckboxIndicator className="size-3.5" />
+        </Checkbox>
+        Accept terms and conditions
+      </Label>
     </Field>
   );
 };

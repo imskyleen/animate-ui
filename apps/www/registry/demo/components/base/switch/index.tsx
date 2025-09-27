@@ -3,9 +3,9 @@ import { Switch } from '@/registry/components/base/switch';
 
 export function BaseSwitchDemo() {
   return (
-    <div className="flex items-center space-x-2">
+    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">
       <Switch id="airplane-mode" />
-      <Label htmlFor="airplane-mode">Airplane Mode</Label>
-    </div>
+      Airplane Mode
+    </Label>
   );
 }

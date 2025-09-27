@@ -1,10 +1,10 @@
 import { Switch, SwitchThumb } from '@/registry/primitives/base/switch';
+import { Label } from '@workspace/ui/components/ui/label';
 import { cn } from '@workspace/ui/lib/utils';
 
 export const BaseSwitchDemo = () => {
   return (
-    <div className="flex items-center space-x-2">
-      <label htmlFor="airplane-mode">Airplane mode</label>
+    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">
       <Switch
         className={cn(
           'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',
@@ -18,6 +18,7 @@ export const BaseSwitchDemo = () => {
           pressedAnimation={{ width: 22 }}
         />
       </Switch>
-    </div>
+      Airplane mode
+    </Label>
   );
 };

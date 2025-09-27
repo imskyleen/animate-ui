@@ -24,7 +24,7 @@ export const RadixCheckboxDemo = ({
   }, [checked]);
 
   return (
-    <div className="flex items-center space-x-2">
+    <Label htmlFor="terms" className="flex items-center gap-x-3">
       <Checkbox
         id="terms"
         checked={isChecked}
@@ -32,7 +32,7 @@ export const RadixCheckboxDemo = ({
         variant={variant}
         size={size}
       />
-      <Label htmlFor="terms">Accept terms and conditions</Label>
-    </div>
+      Accept terms and conditions
+    </Label>
   );
 };

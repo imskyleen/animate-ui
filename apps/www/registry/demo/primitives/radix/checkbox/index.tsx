@@ -4,6 +4,7 @@ import {
   Checkbox,
   CheckboxIndicator,
 } from '@/registry/primitives/radix/checkbox';
+import { Label } from '@workspace/ui/components/ui/label';
 import { useEffect, useState } from 'react';
 
 type RadixCheckboxDemoProps = {
@@ -18,7 +19,7 @@ export const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {
   }, [checked]);
 
   return (
-    <div className="flex items-center space-x-2">
+    <Label htmlFor="terms" className="flex items-center gap-x-3">
       <Checkbox
         id="terms"
         checked={isChecked}
@@ -27,7 +28,7 @@ export const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {
       >
         <CheckboxIndicator className="size-3.5" />
       </Checkbox>
-      <label htmlFor="terms">Accept terms and conditions</label>
-    </div>
+      Accept terms and conditions
+    </Label>
   );
 };

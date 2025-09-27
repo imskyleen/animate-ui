@@ -2,6 +2,7 @@ import {
   Checkbox,
   CheckboxIndicator,
 } from '@/registry/primitives/base/checkbox';
+import { Label } from '@workspace/ui/components/ui/label';
 
 interface BaseCheckboxDemoProps {
   indeterminate: boolean;
@@ -9,7 +10,7 @@ interface BaseCheckboxDemoProps {
 
 export const BaseCheckboxDemo = ({ indeterminate }: BaseCheckboxDemoProps) => {
   return (
-    <div className="flex items-center space-x-2">
+    <Label htmlFor="terms" className="flex items-center gap-x-3">
       <Checkbox
         id="terms"
         indeterminate={indeterminate}
@@ -17,7 +18,7 @@ export const BaseCheckboxDemo = ({ indeterminate }: BaseCheckboxDemoProps) => {
       >
         <CheckboxIndicator className="size-3.5" />
       </Checkbox>
-      <label htmlFor="terms">Accept terms and conditions</label>
-    </div>
+      Accept terms and conditions
+    </Label>
   );
 };
