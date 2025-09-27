@@ -3,8 +3,8 @@ import { Switch } from '@/registry/components/radix/switch';
 
 export function RadixSwitchDemo() {
   return (
-    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">
-      <Switch id="airplane-mode" />
+    <Label className="flex items-center gap-x-3">
+      <Switch />
       Airplane Mode
     </Label>
   );

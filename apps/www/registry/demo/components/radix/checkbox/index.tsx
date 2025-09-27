@@ -24,9 +24,8 @@ export const RadixCheckboxDemo = ({
   }, [checked]);
 
   return (
-    <Label htmlFor="terms" className="flex items-center gap-x-3">
+    <Label className="flex items-center gap-x-3">
       <Checkbox
-        id="terms"
         checked={isChecked}
         onCheckedChange={setIsChecked}
         variant={variant}

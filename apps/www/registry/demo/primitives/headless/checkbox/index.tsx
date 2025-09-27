@@ -13,9 +13,8 @@ export const HeadlessCheckboxDemo = ({
 }: HeadlessCheckboxDemoProps) => {
   return (
     <Field>
-      <Label htmlFor="terms" className="flex items-center gap-x-3">
+      <Label className="flex items-center gap-x-3">
         <Checkbox
-          id="terms"
           indeterminate={indeterminate}
           className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"
         >

@@ -19,9 +19,8 @@ export const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {
   }, [checked]);
 
   return (
-    <Label htmlFor="terms" className="flex items-center gap-x-3">
+    <Label className="flex items-center gap-x-3">
       <Checkbox
-        id="terms"
         checked={isChecked}
         onCheckedChange={setIsChecked}
         className="size-5 flex justify-center items-center border [&[data-state=checked],&[data-state=indeterminate]]:bg-primary [&[data-state=checked],&[data-state=indeterminate]]:text-primary-foreground transition-colors duration-500"

@@ -12,20 +12,20 @@ const indicatorClassName = 'size-3 bg-primary rounded-full';
 export function BaseRadioDemo() {
   return (
     <RadioGroup defaultValue="default" className="flex flex-col gap-2">
-      <Label htmlFor="r1" className="flex items-center gap-x-3">
-        <Radio value="default" id="r1" className={itemClassName}>
+      <Label className="flex items-center gap-x-3">
+        <Radio value="default" className={itemClassName}>
           <RadioIndicator className={indicatorClassName} />
         </Radio>
         Default
       </Label>
-      <Label htmlFor="r2" className="flex items-center gap-x-3">
-        <Radio value="comfortable" id="r2" className={itemClassName}>
+      <Label className="flex items-center gap-x-3">
+        <Radio value="comfortable" className={itemClassName}>
           <RadioIndicator className={indicatorClassName} />
         </Radio>
         Comfortable
       </Label>
-      <Label htmlFor="r3" className="flex items-center gap-x-3">
-        <Radio value="compact" id="r3" className={itemClassName}>
+      <Label className="flex items-center gap-x-3">
+        <Radio value="compact" className={itemClassName}>
           <RadioIndicator className={indicatorClassName} />
         </Radio>
         Compact

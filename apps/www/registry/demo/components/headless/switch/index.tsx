@@ -3,8 +3,8 @@ import { Switch } from '@/registry/components/headless/switch';
 
 export function HeadlessSwitchDemo() {
   return (
-    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">
-      <Switch id="airplane-mode" />
+    <Label className="flex items-center gap-x-3">
+      <Switch />
       Airplane Mode
     </Label>
   );
