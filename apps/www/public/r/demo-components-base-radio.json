@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "registry/demo/components/base/radio/index.tsx",
-      "content": "import * as React from 'react';\n\nimport { RadioGroup, Radio } from '@/components/animate-ui/components/base/radio';\nimport { Label } from '@/components/ui/label';\n\nexport const BaseRadioDemo = () => {\n  return (\n    <RadioGroup defaultValue=\"default\">\n      <Label htmlFor=\"r1\" className=\"flex items-center gap-x-3\">\n        <Radio value=\"default\" id=\"r1\" />\n        Default\n      </Label>\n      <Label htmlFor=\"r2\" className=\"flex items-center gap-x-3\">\n        <Radio value=\"comfortable\" id=\"r2\" />\n        Comfortable\n      </Label>\n      <Label htmlFor=\"r3\" className=\"flex items-center gap-x-3\">\n        <Radio value=\"compact\" id=\"r3\" />\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n};\n",
+      "content": "import * as React from 'react';\n\nimport { RadioGroup, Radio } from '@/components/animate-ui/components/base/radio';\nimport { Label } from '@/components/ui/label';\n\nexport const BaseRadioDemo = () => {\n  return (\n    <RadioGroup defaultValue=\"default\">\n      <Label className=\"flex items-center gap-x-3\">\n        <Radio value=\"default\" />\n        Default\n      </Label>\n      <Label className=\"flex items-center gap-x-3\">\n        <Radio value=\"comfortable\" />\n        Comfortable\n      </Label>\n      <Label className=\"flex items-center gap-x-3\">\n        <Radio value=\"compact\" />\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n};\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/base/radio.tsx"
     }

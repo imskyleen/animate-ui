@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "registry/demo/components/base/checkbox/index.tsx",
-      "content": "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/base/checkbox';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const BaseCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: BaseCheckboxDemoProps) => {\n  return (\n    <Label htmlFor=\"terms\" className=\"flex items-center gap-x-3\">\n      <Checkbox\n        id=\"terms\"\n        indeterminate={indeterminate}\n        variant={variant}\n        size={size}\n      />\n      Accept terms and conditions\n    </Label>\n  );\n};\n",
+      "content": "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/base/checkbox';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const BaseCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: BaseCheckboxDemoProps) => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Checkbox indeterminate={indeterminate} variant={variant} size={size} />\n      Accept terms and conditions\n    </Label>\n  );\n};\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/base/checkbox.tsx"
     }

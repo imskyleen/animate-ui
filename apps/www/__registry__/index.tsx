@@ -3244,7 +3244,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/base/checkbox.tsx',
         content:
-          "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/base/checkbox';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const BaseCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: BaseCheckboxDemoProps) => {\n  return (\n    <Label htmlFor=\"terms\" className=\"flex items-center gap-x-3\">\n      <Checkbox\n        id=\"terms\"\n        indeterminate={indeterminate}\n        variant={variant}\n        size={size}\n      />\n      Accept terms and conditions\n    </Label>\n  );\n};",
+          "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/base/checkbox';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const BaseCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: BaseCheckboxDemoProps) => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Checkbox indeterminate={indeterminate} variant={variant} size={size} />\n      Accept terms and conditions\n    </Label>\n  );\n};",
       },
     ],
     keywords: [],
@@ -3535,7 +3535,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/base/radio.tsx',
         content:
-          'import * as React from \'react\';\n\nimport { RadioGroup, Radio } from \'@/components/animate-ui/components/base/radio\';\nimport { Label } from \'@/components/ui/label\';\n\nexport const BaseRadioDemo = () => {\n  return (\n    <RadioGroup defaultValue="default">\n      <Label htmlFor="r1" className="flex items-center gap-x-3">\n        <Radio value="default" id="r1" />\n        Default\n      </Label>\n      <Label htmlFor="r2" className="flex items-center gap-x-3">\n        <Radio value="comfortable" id="r2" />\n        Comfortable\n      </Label>\n      <Label htmlFor="r3" className="flex items-center gap-x-3">\n        <Radio value="compact" id="r3" />\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n};',
+          'import * as React from \'react\';\n\nimport { RadioGroup, Radio } from \'@/components/animate-ui/components/base/radio\';\nimport { Label } from \'@/components/ui/label\';\n\nexport const BaseRadioDemo = () => {\n  return (\n    <RadioGroup defaultValue="default">\n      <Label className="flex items-center gap-x-3">\n        <Radio value="default" />\n        Default\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <Radio value="comfortable" />\n        Comfortable\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <Radio value="compact" />\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n};',
       },
     ],
     keywords: [],
@@ -3573,7 +3573,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/base/switch.tsx',
         content:
-          'import { Label } from \'@/components/ui/label\';\nimport { Switch } from \'@/components/animate-ui/components/base/switch\';\n\nexport function BaseSwitchDemo() {\n  return (\n    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">\n      <Switch id="airplane-mode" />\n      Airplane Mode\n    </Label>\n  );\n}',
+          "import { Label } from '@/components/ui/label';\nimport { Switch } from '@/components/animate-ui/components/base/switch';\n\nexport function BaseSwitchDemo() {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch />\n      Airplane Mode\n    </Label>\n  );\n}",
       },
     ],
     keywords: [],
@@ -4591,7 +4591,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/headless/checkbox.tsx',
         content:
-          "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/headless/checkbox';\n\ninterface HeadlessCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const HeadlessCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: HeadlessCheckboxDemoProps) => {\n  return (\n    <Label htmlFor=\"terms\" className=\"flex items-center gap-x-3\">\n      <Checkbox\n        id=\"terms\"\n        indeterminate={indeterminate}\n        variant={variant}\n        size={size}\n      />\n      Accept terms and conditions\n    </Label>\n  );\n};",
+          "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/headless/checkbox';\n\ninterface HeadlessCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const HeadlessCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: HeadlessCheckboxDemoProps) => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Checkbox indeterminate={indeterminate} variant={variant} size={size} />\n      Accept terms and conditions\n    </Label>\n  );\n};",
       },
     ],
     keywords: [],
@@ -4751,7 +4751,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/headless/switch.tsx',
         content:
-          'import { Label } from \'@/components/ui/label\';\nimport { Switch } from \'@/components/animate-ui/components/headless/switch\';\n\nexport function HeadlessSwitchDemo() {\n  return (\n    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">\n      <Switch id="airplane-mode" />\n      Airplane Mode\n    </Label>\n  );\n}',
+          "import { Label } from '@/components/ui/label';\nimport { Switch } from '@/components/animate-ui/components/headless/switch';\n\nexport function HeadlessSwitchDemo() {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch />\n      Airplane Mode\n    </Label>\n  );\n}",
       },
     ],
     keywords: [],
@@ -4919,7 +4919,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/radix/checkbox.tsx',
         content:
-          "import { useEffect, useState } from 'react';\n\nimport { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/radix/checkbox';\n\ninterface RadixCheckboxDemoProps {\n  checked: boolean | 'indeterminate';\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const RadixCheckboxDemo = ({\n  checked,\n  variant,\n  size,\n}: RadixCheckboxDemoProps) => {\n  const [isChecked, setIsChecked] = useState(checked ?? false);\n\n  useEffect(() => {\n    setIsChecked(checked);\n  }, [checked]);\n\n  return (\n    <Label htmlFor=\"terms\" className=\"flex items-center gap-x-3\">\n      <Checkbox\n        id=\"terms\"\n        checked={isChecked}\n        onCheckedChange={setIsChecked}\n        variant={variant}\n        size={size}\n      />\n      Accept terms and conditions\n    </Label>\n  );\n};",
+          "import { useEffect, useState } from 'react';\n\nimport { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/radix/checkbox';\n\ninterface RadixCheckboxDemoProps {\n  checked: boolean | 'indeterminate';\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const RadixCheckboxDemo = ({\n  checked,\n  variant,\n  size,\n}: RadixCheckboxDemoProps) => {\n  const [isChecked, setIsChecked] = useState(checked ?? false);\n\n  useEffect(() => {\n    setIsChecked(checked);\n  }, [checked]);\n\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Checkbox\n        checked={isChecked}\n        onCheckedChange={setIsChecked}\n        variant={variant}\n        size={size}\n      />\n      Accept terms and conditions\n    </Label>\n  );\n};",
       },
     ],
     keywords: [],
@@ -5385,7 +5385,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/radix/radio-group.tsx',
         content:
-          'import * as React from \'react\';\n\nimport {\n  RadioGroup,\n  RadioGroupItem,\n} from \'@/components/animate-ui/components/radix/radio-group\';\nimport { Label } from \'@/components/ui/label\';\n\nexport const RadixRadioGroupDemo = () => {\n  return (\n    <RadioGroup defaultValue="default">\n      <Label htmlFor="r1" className="flex items-center gap-x-3">\n        <RadioGroupItem value="default" id="r1" />\n        Default\n      </Label>\n      <Label htmlFor="r2" className="flex items-center gap-x-3">\n        <RadioGroupItem value="comfortable" id="r2" />\n        Comfortable\n      </Label>\n      <Label htmlFor="r3" className="flex items-center gap-x-3">\n        <RadioGroupItem value="compact" id="r3" />\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n};',
+          'import * as React from \'react\';\n\nimport {\n  RadioGroup,\n  RadioGroupItem,\n} from \'@/components/animate-ui/components/radix/radio-group\';\nimport { Label } from \'@/components/ui/label\';\n\nexport const RadixRadioGroupDemo = () => {\n  return (\n    <RadioGroup defaultValue="default">\n      <Label className="flex items-center gap-x-3">\n        <RadioGroupItem value="default" />\n        Default\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <RadioGroupItem value="comfortable" />\n        Comfortable\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <RadioGroupItem value="compact" />\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n};',
       },
     ],
     keywords: [],
@@ -5511,7 +5511,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/radix/switch.tsx',
         content:
-          'import { Label } from \'@/components/ui/label\';\nimport { Switch } from \'@/components/animate-ui/components/radix/switch\';\n\nexport function RadixSwitchDemo() {\n  return (\n    <Label htmlFor="airplane-mode" className="flex items-center gap-x-3">\n      <Switch id="airplane-mode" />\n      Airplane Mode\n    </Label>\n  );\n}',
+          "import { Label } from '@/components/ui/label';\nimport { Switch } from '@/components/animate-ui/components/radix/switch';\n\nexport function RadixSwitchDemo() {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch />\n      Airplane Mode\n    </Label>\n  );\n}",
       },
     ],
     keywords: [],
@@ -6283,7 +6283,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/base/checkbox.tsx',
         content:
-          'import {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/base/checkbox\';\nimport { Label } from \'@/components/ui/label\';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n}\n\nexport const BaseCheckboxDemo = ({ indeterminate }: BaseCheckboxDemoProps) => {\n  return (\n    <Label htmlFor="terms" className="flex items-center gap-x-3">\n      <Checkbox\n        id="terms"\n        indeterminate={indeterminate}\n        className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"\n      >\n        <CheckboxIndicator className="size-3.5" />\n      </Checkbox>\n      Accept terms and conditions\n    </Label>\n  );\n};',
+          'import {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/base/checkbox\';\nimport { Label } from \'@/components/ui/label\';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n}\n\nexport const BaseCheckboxDemo = ({ indeterminate }: BaseCheckboxDemoProps) => {\n  return (\n    <Label className="flex items-center gap-x-3">\n      <Checkbox\n        indeterminate={indeterminate}\n        className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"\n      >\n        <CheckboxIndicator className="size-3.5" />\n      </Checkbox>\n      Accept terms and conditions\n    </Label>\n  );\n};',
       },
     ],
     keywords: [],
@@ -6603,7 +6603,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/base/radio.tsx',
         content:
-          'import { Label } from \'@/components/ui/label\';\nimport {\n  RadioGroup,\n  Radio,\n  RadioIndicator,\n} from \'@/components/animate-ui/primitives/base/radio\';\n\nconst itemClassName =\n  \'size-5 rounded-full flex items-center justify-center border\';\nconst indicatorClassName = \'size-3 bg-primary rounded-full\';\n\nexport function BaseRadioDemo() {\n  return (\n    <RadioGroup defaultValue="default" className="flex flex-col gap-2">\n      <Label htmlFor="r1" className="flex items-center gap-x-3">\n        <Radio value="default" id="r1" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Default\n      </Label>\n      <Label htmlFor="r2" className="flex items-center gap-x-3">\n        <Radio value="comfortable" id="r2" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Comfortable\n      </Label>\n      <Label htmlFor="r3" className="flex items-center gap-x-3">\n        <Radio value="compact" id="r3" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n}',
+          'import { Label } from \'@/components/ui/label\';\nimport {\n  RadioGroup,\n  Radio,\n  RadioIndicator,\n} from \'@/components/animate-ui/primitives/base/radio\';\n\nconst itemClassName =\n  \'size-5 rounded-full flex items-center justify-center border\';\nconst indicatorClassName = \'size-3 bg-primary rounded-full\';\n\nexport function BaseRadioDemo() {\n  return (\n    <RadioGroup defaultValue="default" className="flex flex-col gap-2">\n      <Label className="flex items-center gap-x-3">\n        <Radio value="default" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Default\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <Radio value="comfortable" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Comfortable\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <Radio value="compact" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n}',
       },
     ],
     keywords: [],
@@ -6641,7 +6641,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/base/switch.tsx',
         content:
-          "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/base/switch';\nimport { Label } from '@/components/ui/label';\nimport { cn } from '@/lib/utils';\n\nexport const BaseSwitchDemo = () => {\n  return (\n    <Label htmlFor=\"airplane-mode\" className=\"flex items-center gap-x-3\">\n      <Switch\n        className={cn(\n          'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n          'data-[checked]:bg-primary data-[checked]:justify-end',\n        )}\n        defaultChecked\n        id=\"airplane-mode\"\n      >\n        <SwitchThumb\n          className=\"rounded-full bg-accent h-full aspect-square\"\n          pressedAnimation={{ width: 22 }}\n        />\n      </Switch>\n      Airplane mode\n    </Label>\n  );\n};",
+          "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/base/switch';\nimport { Label } from '@/components/ui/label';\nimport { cn } from '@/lib/utils';\n\nexport const BaseSwitchDemo = () => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch\n        className={cn(\n          'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n          'data-[checked]:bg-primary data-[checked]:justify-end',\n        )}\n        defaultChecked\n      >\n        <SwitchThumb\n          className=\"rounded-full bg-accent h-full aspect-square\"\n          pressedAnimation={{ width: 22 }}\n        />\n      </Switch>\n      Airplane mode\n    </Label>\n  );\n};",
       },
     ],
     keywords: [],
@@ -7607,7 +7607,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/headless/checkbox.tsx',
         content:
-          'import {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/headless/checkbox\';\nimport { Field, Label } from \'@headlessui/react\';\n\ntype HeadlessCheckboxDemoProps = {\n  indeterminate: boolean;\n};\n\nexport const HeadlessCheckboxDemo = ({\n  indeterminate,\n}: HeadlessCheckboxDemoProps) => {\n  return (\n    <Field>\n      <Label htmlFor="terms" className="flex items-center gap-x-3">\n        <Checkbox\n          id="terms"\n          indeterminate={indeterminate}\n          className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"\n        >\n          <CheckboxIndicator className="size-3.5" />\n        </Checkbox>\n        Accept terms and conditions\n      </Label>\n    </Field>\n  );\n};',
+          'import {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/headless/checkbox\';\nimport { Field, Label } from \'@headlessui/react\';\n\ntype HeadlessCheckboxDemoProps = {\n  indeterminate: boolean;\n};\n\nexport const HeadlessCheckboxDemo = ({\n  indeterminate,\n}: HeadlessCheckboxDemoProps) => {\n  return (\n    <Field>\n      <Label className="flex items-center gap-x-3">\n        <Checkbox\n          indeterminate={indeterminate}\n          className="size-5 flex justify-center items-center border [&[data-checked],&[data-indeterminate]]:bg-primary [&[data-checked],&[data-indeterminate]]:text-primary-foreground transition-colors duration-500"\n        >\n          <CheckboxIndicator className="size-3.5" />\n        </Checkbox>\n        Accept terms and conditions\n      </Label>\n    </Field>\n  );\n};',
       },
     ],
     keywords: [],
@@ -7794,7 +7794,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/headless/switch.tsx',
         content:
-          "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/headless/switch';\nimport { Field, Label } from '@headlessui/react';\nimport { cn } from '@/lib/utils';\n\nexport const HeadlessSwitchDemo = () => {\n  return (\n    <Field>\n      <Label htmlFor=\"airplane-mode\" className=\"flex items-center gap-x-3\">\n        <Switch\n          className={cn(\n            'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n            'data-[checked]:bg-primary data-[checked]:justify-end',\n          )}\n          defaultChecked\n          id=\"airplane-mode\"\n        >\n          <SwitchThumb\n            className=\"rounded-full bg-accent h-full aspect-square\"\n            pressedAnimation={{ width: 22 }}\n          />\n        </Switch>\n        Airplane mode\n      </Label>\n    </Field>\n  );\n};",
+          "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/headless/switch';\nimport { Field, Label } from '@headlessui/react';\nimport { cn } from '@/lib/utils';\n\nexport const HeadlessSwitchDemo = () => {\n  return (\n    <Field>\n      <Label className=\"flex items-center gap-x-3\">\n        <Switch\n          className={cn(\n            'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n            'data-[checked]:bg-primary data-[checked]:justify-end',\n          )}\n          defaultChecked\n        >\n          <SwitchThumb\n            className=\"rounded-full bg-accent h-full aspect-square\"\n            pressedAnimation={{ width: 22 }}\n          />\n        </Switch>\n        Airplane mode\n      </Label>\n    </Field>\n  );\n};",
       },
     ],
     keywords: [],
@@ -7968,7 +7968,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/radix/checkbox.tsx',
         content:
-          '\'use client\';\n\nimport {\n  Checkbox,\n  CheckboxIndicator,\n} from \'@/components/animate-ui/primitives/radix/checkbox\';\nimport { Label } from \'@/components/ui/label\';\nimport { useEffect, useState } from \'react\';\n\ntype RadixCheckboxDemoProps = {\n  checked: boolean | \'indeterminate\';\n};\n\nexport const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {\n  const [isChecked, setIsChecked] = useState(checked ?? false);\n\n  useEffect(() => {\n    setIsChecked(checked);\n  }, [checked]);\n\n  return (\n    <Label htmlFor="terms" className="flex items-center gap-x-3">\n      <Checkbox\n        id="terms"\n        checked={isChecked}\n        onCheckedChange={setIsChecked}\n        className="size-5 flex justify-center items-center border [&[data-state=checked],&[data-state=indeterminate]]:bg-primary [&[data-state=checked],&[data-state=indeterminate]]:text-primary-foreground transition-colors duration-500"\n      >\n        <CheckboxIndicator className="size-3.5" />\n      </Checkbox>\n      Accept terms and conditions\n    </Label>\n  );\n};',
+          "'use client';\n\nimport {\n  Checkbox,\n  CheckboxIndicator,\n} from '@/components/animate-ui/primitives/radix/checkbox';\nimport { Label } from '@/components/ui/label';\nimport { useEffect, useState } from 'react';\n\ntype RadixCheckboxDemoProps = {\n  checked: boolean | 'indeterminate';\n};\n\nexport const RadixCheckboxDemo = ({ checked }: RadixCheckboxDemoProps) => {\n  const [isChecked, setIsChecked] = useState(checked ?? false);\n\n  useEffect(() => {\n    setIsChecked(checked);\n  }, [checked]);\n\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Checkbox\n        checked={isChecked}\n        onCheckedChange={setIsChecked}\n        className=\"size-5 flex justify-center items-center border [&[data-state=checked],&[data-state=indeterminate]]:bg-primary [&[data-state=checked],&[data-state=indeterminate]]:text-primary-foreground transition-colors duration-500\"\n      >\n        <CheckboxIndicator className=\"size-3.5\" />\n      </Checkbox>\n      Accept terms and conditions\n    </Label>\n  );\n};",
       },
     ],
     keywords: [],
@@ -8351,7 +8351,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/radix/radio-group.tsx',
         content:
-          'import { Label } from \'@/components/ui/label\';\nimport {\n  RadioGroup,\n  RadioGroupItem,\n  RadioGroupIndicator,\n} from \'@/components/animate-ui/primitives/radix/radio-group\';\n\nconst itemClassName =\n  \'size-5 rounded-full flex items-center justify-center border\';\nconst indicatorClassName = \'size-3 bg-primary rounded-full\';\n\nexport function RadioGroupDemo() {\n  return (\n    <RadioGroup defaultValue="default" className="flex flex-col gap-2">\n      <Label htmlFor="r1" className="flex items-center gap-x-3">\n        <RadioGroupItem value="default" id="r1" className={itemClassName}>\n          <RadioGroupIndicator className={indicatorClassName} />\n        </RadioGroupItem>\n        Default\n      </Label>\n      <Label htmlFor="r2" className="flex items-center gap-x-3">\n        <RadioGroupItem value="comfortable" id="r2" className={itemClassName}>\n          <RadioGroupIndicator className={indicatorClassName} />\n        </RadioGroupItem>\n        Comfortable\n      </Label>\n      <Label htmlFor="r3" className="flex items-center gap-x-3">\n        <RadioGroupItem value="compact" id="r3" className={itemClassName}>\n          <RadioGroupIndicator className={indicatorClassName} />\n        </RadioGroupItem>\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n}',
+          'import { Label } from \'@/components/ui/label\';\nimport {\n  RadioGroup,\n  RadioGroupItem,\n  RadioGroupIndicator,\n} from \'@/components/animate-ui/primitives/radix/radio-group\';\n\nconst itemClassName =\n  \'size-5 rounded-full flex items-center justify-center border\';\nconst indicatorClassName = \'size-3 bg-primary rounded-full\';\n\nexport function RadioGroupDemo() {\n  return (\n    <RadioGroup defaultValue="default" className="flex flex-col gap-2">\n      <Label className="flex items-center gap-x-3">\n        <RadioGroupItem value="default" className={itemClassName}>\n          <RadioGroupIndicator className={indicatorClassName} />\n        </RadioGroupItem>\n        Default\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <RadioGroupItem value="comfortable" className={itemClassName}>\n          <RadioGroupIndicator className={indicatorClassName} />\n        </RadioGroupItem>\n        Comfortable\n      </Label>\n      <Label className="flex items-center gap-x-3">\n        <RadioGroupItem value="compact" className={itemClassName}>\n          <RadioGroupIndicator className={indicatorClassName} />\n        </RadioGroupItem>\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n}',
       },
     ],
     keywords: [],
@@ -8439,7 +8439,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/radix/switch.tsx',
         content:
-          "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/radix/switch';\nimport { Label } from '@/components/ui/label';\nimport { cn } from '@/lib/utils';\n\nexport const RadixSwitchDemo = () => {\n  return (\n    <Label htmlFor=\"airplane-mode\" className=\"flex items-center gap-x-3\">\n      <Switch\n        className={cn(\n          'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n          'data-[state=checked]:bg-primary data-[state=checked]:justify-end',\n        )}\n        defaultChecked\n        id=\"airplane-mode\"\n      >\n        <SwitchThumb\n          className=\"rounded-full bg-accent h-full aspect-square\"\n          pressedAnimation={{ width: 22 }}\n        />\n      </Switch>\n      Airplane mode\n    </Label>\n  );\n};",
+          "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/radix/switch';\nimport { Label } from '@/components/ui/label';\nimport { cn } from '@/lib/utils';\n\nexport const RadixSwitchDemo = () => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch\n        className={cn(\n          'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n          'data-[state=checked]:bg-primary data-[state=checked]:justify-end',\n        )}\n        defaultChecked\n      >\n        <SwitchThumb\n          className=\"rounded-full bg-accent h-full aspect-square\"\n          pressedAnimation={{ width: 22 }}\n        />\n      </Switch>\n      Airplane mode\n    </Label>\n  );\n};",
       },
     ],
     keywords: [],
