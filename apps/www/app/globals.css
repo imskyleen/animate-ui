@@ -236,6 +236,8 @@
   --color-sidebar-border: var(--sidebar-border);
 
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --breakpoint-3xl: 1670px;
 }
 
 @layer base {
@@ -260,15 +262,15 @@
   }
 
   #nd-docs-layout {
-    @apply relative;
+    @apply relative 3xl:!w-full 3xl:!mx-auto 3xl:!max-w-[1670px];
   }
 
   #nd-page article {
-    @apply max-w-[860px] !pt-23;
+    @apply max-2xl:max-w-[860px] !pt-23 3xl:!ml-[262px] 2xl:!max-w-[1124px];
   }
 
   #nd-page {
-    @apply !pt-0;
+    @apply !pt-0 2xl:!max-w-none;
   }
 
   #nd-toc {

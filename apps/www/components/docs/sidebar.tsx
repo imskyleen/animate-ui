@@ -303,7 +303,11 @@ export const DocsSidebar = ({
 
   return (
     <>
-      <Sidebar collapsible={false} className="md:mt-20" {...sidebarProps}>
+      <Sidebar
+        collapsible={false}
+        className="md:mt-20 3xl:!absolute"
+        {...sidebarProps}
+      >
         <SidebarViewport className="md:[&_[data-radix-scroll-area-viewport]]:pb-14 [&_[data-radix-scroll-area-viewport]]:pb-4 max-md:pt-2">
           {links
             .filter((v) => v.type !== 'icon')

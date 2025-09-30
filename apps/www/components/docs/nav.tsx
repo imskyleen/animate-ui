@@ -54,7 +54,7 @@ export const Nav = () => {
   const { open, setOpen } = useSidebar();
 
   return (
-    <Navbar className="md:h-17 h-14 border-b-0 bg-background md:px-5 px-3 flex items-center gap-3">
+    <Navbar className="md:h-17 h-14 border-b-0 bg-background md:px-5 px-3 flex items-center gap-3 max-w-[1670px] w-full left-1/2 -translate-x-1/2">
       <Link
         href="/"
         className={buttonVariants({
