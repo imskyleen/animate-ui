@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-route",
+  "type": "registry:ui",
+  "title": "Route Icon",
+  "description": "Route icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/route/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype RouteProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    circle1: {},\n    circle2: {},\n    path: {\n      initial: {\n        opacity: 1,\n        pathLength: 1,\n      },\n      animate: {\n        opacity: [0, 1],\n        pathLength: [0.05, 1],\n        transition: {\n          duration: 0.8,\n          ease: 'easeInOut',\n          opacity: {\n            duration: 0.01,\n          },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    circle1: {},\n    circle2: {},\n    path: {\n      initial: {\n        opacity: 1,\n        pathLength: 1,\n      },\n      animate: {\n        opacity: [1, 0, 1],\n        pathLength: [1, 0.05, 1],\n        transition: {\n          duration: 1.6,\n          ease: 'easeInOut',\n          opacity: {\n            duration: 0.01,\n          },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: RouteProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.circle\n        cx=\"6\"\n        cy=\"19\"\n        r=\"3\"\n        variants={variants.circle1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15\"\n        variants={variants.path}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.circle\n        cx=\"18\"\n        cy=\"5\"\n        r=\"3\"\n        variants={variants.circle2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Route(props: RouteProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Route,\n  Route as RouteIcon,\n  type RouteProps,\n  type RouteProps as RouteIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/route.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "path",
+      "journey",
+      "planner",
+      "points",
+      "stops",
+      "stations"
+    ]
+  }
+}

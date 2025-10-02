@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-blend",
+  "type": "registry:ui",
+  "title": "Blend Icon",
+  "description": "Blend icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/blend/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BlendProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    circle1: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: 6,\n        y: 6,\n        transition: { type: 'spring', stiffness: 100, damping: 12 },\n      },\n    },\n    circle2: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: -6,\n        y: -6,\n        transition: { type: 'spring', stiffness: 100, damping: 12 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BlendProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.circle\n        cx=\"9\"\n        cy=\"9\"\n        r=\"7\"\n        variants={variants.circle1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.circle\n        cx=\"15\"\n        cy=\"15\"\n        r=\"7\"\n        variants={variants.circle2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Blend(props: BlendProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Blend,\n  Blend as BlendIcon,\n  type BlendProps,\n  type BlendProps as BlendIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/blend.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "mode",
+      "overlay",
+      "multiply",
+      "screen",
+      "opacity",
+      "transparency",
+      "alpha",
+      "filters",
+      "lenses",
+      "mixed",
+      "shades",
+      "tints",
+      "hues",
+      "saturation",
+      "brightness",
+      "overlap",
+      "colors",
+      "colours"
+    ]
+  }
+}

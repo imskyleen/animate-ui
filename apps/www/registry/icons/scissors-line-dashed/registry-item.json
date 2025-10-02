@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-scissors-line-dashed",
+  "type": "registry:ui",
+  "title": "Scissors Line Dashed Icon",
+  "description": "Scissors line dashed icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/scissors-line-dashed/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/scissors-line-dashed.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "cut here",
+      "along",
+      "snip",
+      "chop",
+      "stationery",
+      "crafts",
+      "instructions",
+      "diagram"
+    ]
+  }
+}

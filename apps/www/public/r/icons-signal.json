@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-signal",
+  "type": "registry:ui",
+  "title": "Signal Icon",
+  "description": "Signal icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/signal/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype SignalProps = IconProps<keyof typeof animations>;\n\nconst pathAnimation: Variants = {\n  initial: {\n    pathLength: 1,\n    opacity: 1,\n  },\n  animate: {\n    pathLength: [0, 1],\n    opacity: [0, 1],\n    transition: {\n      duration: 0.3,\n      ease: 'easeInOut',\n    },\n  },\n};\n\nconst animations = {\n  default: {\n    group: {\n      initial: {},\n      animate: {\n        transition: {\n          staggerChildren: 0.2,\n        },\n      },\n    },\n    path1: pathAnimation,\n    path2: pathAnimation,\n    path3: pathAnimation,\n    path4: pathAnimation,\n    path5: pathAnimation,\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: SignalProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      variants={variants.group}\n      initial=\"initial\"\n      animate={controls}\n      {...props}\n    >\n      <motion.path d=\"M2 20h.01\" variants={variants.path1} />\n      <motion.path d=\"M7 20v-4\" variants={variants.path2} />\n      <motion.path d=\"M12 20v-8\" variants={variants.path3} />\n      <motion.path d=\"M17 20V8\" variants={variants.path4} />\n      <motion.path d=\"M22 20V4\" variants={variants.path5} />\n    </motion.svg>\n  );\n}\n\nfunction Signal(props: SignalProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Signal,\n  Signal as SignalIcon,\n  type SignalProps,\n  type SignalProps as SignalIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/signal.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "connection",
+      "wireless",
+      "gsm",
+      "phone",
+      "2g",
+      "3g",
+      "4g",
+      "5g"
+    ]
+  }
+}

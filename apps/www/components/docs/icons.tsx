@@ -132,6 +132,23 @@ const addedIcons = [
       'icons-router',
     ],
   },
+  {
+    date: '2025-10-02',
+    icons: [
+      'icons-fan',
+      'icons-axis-3d',
+      'icons-blend',
+      'icons-signal',
+      'icons-signal-high',
+      'icons-signal-medium',
+      'icons-signal-low',
+      'icons-signal-zero',
+      'icons-wifi-zero',
+      'icons-scissors',
+      'icons-scissors-line-dashed',
+      'icons-route',
+    ],
+  },
 ];
 
 const thirtyDaysAgo = new Date();
@@ -426,7 +443,7 @@ export const Icons = () => {
                         lang="jsx"
                         title={`${icon?.name.replace('icons-', '')}.tsx`}
                         icon={<ReactIcon />}
-                        className="max-h-[92px]"
+                        className="max-h-[98px] [&_[data-slot='codeblock-viewport']]:max-h-[52px]"
                       />
                     )}
 

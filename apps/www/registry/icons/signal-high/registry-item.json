@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-signal-high",
+  "type": "registry:ui",
+  "title": "Signal High Icon",
+  "description": "Signal high icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/signal-high/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/signal-high.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "connection",
+      "wireless",
+      "gsm",
+      "phone",
+      "2g",
+      "3g",
+      "4g",
+      "5g"
+    ]
+  }
+}

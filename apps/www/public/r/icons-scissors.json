@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-scissors",
+  "type": "registry:ui",
+  "title": "Scissors Icon",
+  "description": "Scissors icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/scissors/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype ScissorsProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group1: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        rotate: [0, -26, 0],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    group2: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        rotate: [0, 26, 0],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path1: {},\n    path2: {},\n    path3: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ScissorsProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group1} initial=\"initial\" animate={controls}>\n        <motion.circle\n          cx=\"6\"\n          cy=\"6\"\n          r=\"3\"\n          variants={variants.circle1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M8.12 8.12 12 12\"\n          variants={variants.path1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M14.8 14.8 20 20\"\n          variants={variants.path2}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n      <motion.g variants={variants.group2} initial=\"initial\" animate={controls}>\n        <motion.circle\n          cx=\"6\"\n          cy=\"18\"\n          r=\"3\"\n          variants={variants.circle2}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M20 4 8.12 15.88\"\n          variants={variants.path3}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction Scissors(props: ScissorsProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Scissors,\n  Scissors as ScissorsIcon,\n  type ScissorsProps,\n  type ScissorsProps as ScissorsIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/scissors.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "cut",
+      "snip",
+      "chop",
+      "stationery",
+      "crafts"
+    ]
+  }
+}

@@ -123,6 +123,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           <ScrollArea ref={areaRef} dir="ltr">
             <ScrollViewport
               {...viewportProps}
+              data-slot="codeblock-viewport"
               className={cn(
                 'max-h-[600px] bg-background rounded-md [&_code]:!text-[13px] [&_code_.line]:!px-0',
                 viewportProps?.className,

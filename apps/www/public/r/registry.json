@@ -6175,6 +6175,31 @@
       }
     },
     {
+      "name": "icons-axis-3d",
+      "type": "registry:ui",
+      "title": "Axis 3D Icon",
+      "description": "Axis 3D icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/axis-3d/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/axis-3d.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "gizmo",
+          "coordinates"
+        ]
+      }
+    },
+    {
       "name": "icons-badge-check",
       "type": "registry:ui",
       "title": "Badge Check Icon",
@@ -6418,6 +6443,47 @@
           "zero",
           "one",
           "boolean"
+        ]
+      }
+    },
+    {
+      "name": "icons-blend",
+      "type": "registry:ui",
+      "title": "Blend Icon",
+      "description": "Blend icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/blend/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/blend.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "mode",
+          "overlay",
+          "multiply",
+          "screen",
+          "opacity",
+          "transparency",
+          "alpha",
+          "filters",
+          "lenses",
+          "mixed",
+          "shades",
+          "tints",
+          "hues",
+          "saturation",
+          "brightness",
+          "overlap",
+          "colors",
+          "colours"
         ]
       }
     },
@@ -8547,6 +8613,34 @@
           "outbound",
           "open",
           "share"
+        ]
+      }
+    },
+    {
+      "name": "icons-fan",
+      "type": "registry:ui",
+      "title": "Fan Icon",
+      "description": "Fan icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/fan/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/fan.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "air",
+          "cooler",
+          "ventilation",
+          "ventilator",
+          "blower"
         ]
       }
     },
@@ -11073,6 +11167,35 @@
       }
     },
     {
+      "name": "icons-route",
+      "type": "registry:ui",
+      "title": "Route Icon",
+      "description": "Route icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/route/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/route.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "path",
+          "journey",
+          "planner",
+          "points",
+          "stops",
+          "stations"
+        ]
+      }
+    },
+    {
       "name": "icons-router",
       "type": "registry:ui",
       "title": "Router Icon",
@@ -11095,6 +11218,65 @@
           "computer",
           "server",
           "cloud"
+        ]
+      }
+    },
+    {
+      "name": "icons-scissors",
+      "type": "registry:ui",
+      "title": "Scissors Icon",
+      "description": "Scissors icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/scissors/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/scissors.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "cut",
+          "snip",
+          "chop",
+          "stationery",
+          "crafts"
+        ]
+      }
+    },
+    {
+      "name": "icons-scissors-line-dashed",
+      "type": "registry:ui",
+      "title": "Scissors Line Dashed Icon",
+      "description": "Scissors line dashed icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/scissors-line-dashed/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/scissors-line-dashed.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "cut here",
+          "along",
+          "snip",
+          "chop",
+          "stationery",
+          "crafts",
+          "instructions",
+          "diagram"
         ]
       }
     },
@@ -11236,6 +11418,161 @@
           "maximize",
           "minimize",
           "contract"
+        ]
+      }
+    },
+    {
+      "name": "icons-signal",
+      "type": "registry:ui",
+      "title": "Signal Icon",
+      "description": "Signal icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/signal/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/signal.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "connection",
+          "wireless",
+          "gsm",
+          "phone",
+          "2g",
+          "3g",
+          "4g",
+          "5g"
+        ]
+      }
+    },
+    {
+      "name": "icons-signal-high",
+      "type": "registry:ui",
+      "title": "Signal High Icon",
+      "description": "Signal high icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/signal-high/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/signal-high.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "connection",
+          "wireless",
+          "gsm",
+          "phone",
+          "2g",
+          "3g",
+          "4g",
+          "5g"
+        ]
+      }
+    },
+    {
+      "name": "icons-signal-low",
+      "type": "registry:ui",
+      "title": "Signal Low Icon",
+      "description": "Signal low icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/signal-low/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/signal-low.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "connection",
+          "wireless",
+          "gsm",
+          "phone",
+          "2g",
+          "3g",
+          "4g",
+          "5g"
+        ]
+      }
+    },
+    {
+      "name": "icons-signal-medium",
+      "type": "registry:ui",
+      "title": "Signal Medium Icon",
+      "description": "Signal medium icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/signal-medium/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/signal-medium.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "connection",
+          "wireless",
+          "gsm",
+          "phone",
+          "2g",
+          "3g",
+          "4g",
+          "5g"
+        ]
+      }
+    },
+    {
+      "name": "icons-signal-zero",
+      "type": "registry:ui",
+      "title": "Signal Zero Icon",
+      "description": "Signal zero icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/signal-zero/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/signal-zero.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "connection",
+          "wireless",
+          "gsm",
+          "phone",
+          "2g",
+          "3g",
+          "4g",
+          "5g"
         ]
       }
     },
@@ -12226,6 +12563,32 @@
           "path": "registry/icons/wifi-low/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/icons/wifi-low.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "connection",
+          "signal",
+          "wireless"
+        ]
+      }
+    },
+    {
+      "name": "icons-wifi-zero",
+      "type": "registry:ui",
+      "title": "Wifi Zero Icon",
+      "description": "Wifi zero icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/wifi-zero/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/wifi-zero.tsx"
         }
       ],
       "meta": {
