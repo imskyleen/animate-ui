@@ -5,7 +5,10 @@
   "title": "Icon Button",
   "description": "An icon button component with a variety of styles and animations.",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["@animate-ui/primitives-buttons-button"],
+  "registryDependencies": [
+    "@animate-ui/primitives-buttons-button",
+    "@animate-ui/primitives-effects-particles"
+  ],
   "files": [
     {
       "path": "registry/components/buttons/icon/index.tsx",
