@@ -568,7 +568,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button"
+        "@animate-ui/primitives-buttons-button",
+        "@animate-ui/primitives-effects-particles"
       ],
       "files": [
         {
@@ -4662,6 +4663,40 @@
                 "ltr": "ltr",
                 "rtl": "rtl"
               }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-primitives-effects-tilt",
+      "type": "registry:ui",
+      "title": "Tilt Demo",
+      "description": "Demo showing an animated tilt.",
+      "registryDependencies": [
+        "@animate-ui/primitives-effects-tilt"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/effects/tilt/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/effects/tilt.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "Tilt": {
+            "maxTilt": {
+              "value": 10,
+              "min": 0,
+              "max": 50,
+              "step": 1
+            },
+            "perspective": {
+              "value": 800,
+              "min": 200,
+              "max": 5000,
+              "step": 10
             }
           }
         }
@@ -13460,6 +13495,26 @@
           "path": "registry/primitives/effects/theme-toggler/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/effects/theme-toggler.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-effects-tilt",
+      "type": "registry:ui",
+      "title": "Tilt",
+      "description": "An effect that allows you to animate elements with a tilt effect on mouse hover.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/effects/tilt/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/effects/tilt.tsx"
         }
       ]
     },

@@ -40,7 +40,7 @@ export const AnimateTooltipDemo = ({
             alignOffset={alignOffset}
           >
             <TooltipTrigger>
-              <Button>Docs</Button>
+              <Button variant="accent">Docs</Button>
             </TooltipTrigger>
 
             <TooltipContent>
@@ -55,7 +55,7 @@ export const AnimateTooltipDemo = ({
             alignOffset={alignOffset}
           >
             <TooltipTrigger>
-              <Button>Lorem</Button>
+              <Button variant="accent">Lorem</Button>
             </TooltipTrigger>
 
             <TooltipContent>
@@ -71,7 +71,7 @@ export const AnimateTooltipDemo = ({
             alignOffset={alignOffset}
           >
             <TooltipTrigger>
-              <Button>Guide</Button>
+              <Button variant="accent">Guide</Button>
             </TooltipTrigger>
 
             <TooltipContent>
@@ -87,7 +87,7 @@ export const AnimateTooltipDemo = ({
             alignOffset={alignOffset}
           >
             <TooltipTrigger>
-              <Button>Repo</Button>
+              <Button variant="accent">Repo</Button>
             </TooltipTrigger>
 
             <TooltipContent>

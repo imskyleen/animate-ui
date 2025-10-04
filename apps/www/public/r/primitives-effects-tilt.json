@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-effects-tilt",
+  "type": "registry:ui",
+  "title": "Tilt",
+  "description": "An effect that allows you to animate elements with a tilt effect on mouse hover.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/primitives-animate-slot",
+    "@animate-ui/lib-get-strict-context"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/effects/tilt/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {\n  motion,\n  useMotionValue,\n  useSpring,\n  type MotionValue,\n  type SpringOptions,\n  type HTMLMotionProps,\n} from 'motion/react';\n\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype TiltContextType = {\n  sRX: MotionValue<number>;\n  sRY: MotionValue<number>;\n  transition: SpringOptions;\n};\n\nconst [TiltProvider, useTilt] =\n  getStrictContext<TiltContextType>('TiltContext');\n\ntype TiltProps = WithAsChild<\n  HTMLMotionProps<'div'> & {\n    maxTilt?: number;\n    perspective?: number;\n    transition?: SpringOptions;\n  }\n>;\n\nfunction Tilt({\n  maxTilt = 10,\n  perspective = 800,\n  style,\n  transition = {\n    stiffness: 300,\n    damping: 25,\n    mass: 0.5,\n  },\n  onMouseMove,\n  onMouseLeave,\n  asChild = false,\n  ...props\n}: TiltProps) {\n  const rX = useMotionValue(0);\n  const rY = useMotionValue(0);\n\n  const sRX = useSpring(rX, transition);\n  const sRY = useSpring(rY, transition);\n\n  const handleMouseMove = React.useCallback(\n    (e: React.MouseEvent<HTMLDivElement>) => {\n      onMouseMove?.(e);\n      const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();\n      const px = (e.clientX - rect.left) / rect.width;\n      const py = (e.clientY - rect.top) / rect.height;\n      const nx = px * 2 - 1;\n      const ny = py * 2 - 1;\n      rY.set(nx * maxTilt);\n      rX.set(-ny * maxTilt);\n    },\n    [maxTilt, rX, rY, onMouseMove],\n  );\n\n  const handleMouseLeave = React.useCallback(\n    (e: React.MouseEvent<HTMLDivElement>) => {\n      onMouseLeave?.(e);\n      rX.set(0);\n      rY.set(0);\n    },\n    [rX, rY, onMouseLeave],\n  );\n\n  const Comp = asChild ? Slot : motion.div;\n\n  return (\n    <TiltProvider value={{ sRX, sRY, transition }}>\n      <Comp\n        style={{\n          perspective,\n          transformStyle: 'preserve-3d',\n          willChange: 'transform',\n          ...style,\n        }}\n        onMouseMove={handleMouseMove}\n        onMouseLeave={handleMouseLeave}\n        {...props}\n      />\n    </TiltProvider>\n  );\n}\n\ntype TiltContentProps = WithAsChild<HTMLMotionProps<'div'>>;\n\nfunction TiltContent({\n  children,\n  style,\n  transition,\n  asChild = false,\n  ...props\n}: TiltContentProps) {\n  const { sRX, sRY, transition: tiltTransition } = useTilt();\n\n  const Comp = asChild ? Slot : motion.div;\n\n  return (\n    <Comp\n      style={{\n        rotateX: sRX,\n        rotateY: sRY,\n        willChange: 'transform',\n        ...style,\n      }}\n      transition={transition ?? tiltTransition}\n      {...props}\n    >\n      {children}\n    </Comp>\n  );\n}\n\nexport { Tilt, TiltContent, type TiltProps, type TiltContentProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/effects/tilt.tsx"
+    }
+  ]
+}

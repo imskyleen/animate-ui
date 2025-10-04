@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-tilt",
+  "type": "registry:ui",
+  "title": "Tilt Demo",
+  "description": "Demo showing an animated tilt.",
+  "registryDependencies": [
+    "@animate-ui/primitives-effects-tilt"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/tilt/index.tsx",
+      "content": "import Image from 'next/image';\n\nimport { Tilt, TiltContent } from '@/components/animate-ui/primitives/effects/tilt';\nimport {\n  Card,\n  CardContent,\n  CardFooter,\n  CardHeader,\n} from '@/components/ui/card';\n\ntype TiltDemoProps = {\n  maxTilt?: number;\n  perspective?: number;\n};\n\nexport default function TiltDemo({ maxTilt, perspective }: TiltDemoProps) {\n  return (\n    <Tilt\n      className=\"w-full max-w-[250px]\"\n      maxTilt={maxTilt}\n      perspective={perspective}\n    >\n      <TiltContent asChild>\n        <Card className=\"w-full p-0 gap-2\">\n          <CardHeader className=\"p-2 pb-1\">\n            <Image\n              src=\"/mug.webp\"\n              alt=\"Black porcelain mug with modern square handle and natural clay accents on rim and bottom.\"\n              width={250}\n              height={250}\n              className=\"rounded-md\"\n            />\n          </CardHeader>\n          <CardContent className=\"text-center\">\n            <p className=\"text-xs text-neutral-500\">Dark Grey</p>\n            <h3>Matt Mug</h3>\n            <p className=\"text-base/6\">$20</p>\n          </CardContent>\n          <CardFooter className=\"pb-5 pt-1 flex items-center justify-center\">\n            <ul\n              role=\"list\"\n              className=\"mt-auto flex items-center justify-center space-x-3 [&>li]:size-4.5 [&>li]:rounded-full [&>li]:border\"\n            >\n              <li className=\"bg-neutral-800\" />\n              <li className=\"bg-red-950\" />\n              <li className=\"bg-blue-950\" />\n            </ul>\n          </CardFooter>\n        </Card>\n      </TiltContent>\n    </Tilt>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/tilt.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Tilt": {
+        "maxTilt": {
+          "value": 10,
+          "min": 0,
+          "max": 50,
+          "step": 1
+        },
+        "perspective": {
+          "value": 800,
+          "min": 200,
+          "max": 5000,
+          "step": 10
+        }
+      }
+    }
+  }
+}

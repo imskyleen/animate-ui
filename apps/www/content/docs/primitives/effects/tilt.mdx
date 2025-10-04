@@ -1,0 +1,80 @@
+---
+title: Tilt
+description: An effect that allows you to animate elements with a tilt effect on mouse hover.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-10-04
+---
+
+<ComponentPreview name="demo-primitives-effects-tilt" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-tilt" />
+
+## Usage
+
+```tsx
+<Tilt>
+  <TiltContent>Tilt</TiltContent>
+</Tilt>
+```
+
+## API Reference
+
+### Tilt
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    maxTilt: {
+      description: 'The maximum tilt of the element',
+      type: 'number',
+      required: false,
+      default: '10',
+    },
+    perspective: {
+      description: 'The perspective of the element',
+      type: 'number',
+      required: false,
+      default: '800',
+    },
+    transition: {
+      description: 'The transition of the element',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 300, damping: 25, mass: 0.5 }',
+    },
+    '...props': {
+      description: 'The props of the tilt',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### TiltContent
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the tilt content',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

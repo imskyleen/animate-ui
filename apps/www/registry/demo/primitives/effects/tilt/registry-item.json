@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-tilt",
+  "type": "registry:ui",
+  "title": "Tilt Demo",
+  "description": "Demo showing an animated tilt.",
+  "registryDependencies": ["@animate-ui/primitives-effects-tilt"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/tilt/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/tilt.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Tilt": {
+        "maxTilt": {
+          "value": 10,
+          "min": 0,
+          "max": 50,
+          "step": 1
+        },
+        "perspective": {
+          "value": 800,
+          "min": 200,
+          "max": 5000,
+          "step": 10
+        }
+      }
+    }
+  }
+}

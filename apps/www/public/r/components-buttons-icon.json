@@ -8,7 +8,8 @@
     "class-variance-authority"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-buttons-button"
+    "@animate-ui/primitives-buttons-button",
+    "@animate-ui/primitives-effects-particles"
   ],
   "files": [
     {

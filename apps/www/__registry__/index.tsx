@@ -1232,7 +1232,10 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-button'],
+    registryDependencies: [
+      '@animate-ui/primitives-buttons-button',
+      '@animate-ui/primitives-effects-particles',
+    ],
     files: [
       {
         path: 'registry/components/buttons/icon/index.tsx',
@@ -2809,7 +2812,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/animate/tooltip.tsx',
         content:
-          "'use client';\n\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from '@/components/animate-ui/components/animate/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface TooltipDemoProps {\n  openDelay?: number;\n  closeDelay?: number;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const AnimateTooltipDemo = ({\n  openDelay,\n  closeDelay,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: TooltipDemoProps) => {\n  return (\n    <TooltipProvider\n      key={`${side}-${align}-${sideOffset}-${alignOffset}-${openDelay}-${closeDelay}`}\n      openDelay={openDelay}\n      closeDelay={closeDelay}\n    >\n      <div className=\"flex flex-col gap-5 justify-center items-center\">\n        <div className=\"flex flex-row gap-2 border p-2\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Docs</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Documentation</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Lorem</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Lorem ipsum dolor sit amet</p>\n              <p>consectetur adipisicing elit</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Guide</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>User Guide</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n        <div className=\"flex flex-row gap-5\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button>Repo</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>GitHub</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n      </div>\n    </TooltipProvider>\n  );\n};",
+          "'use client';\n\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from '@/components/animate-ui/components/animate/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface TooltipDemoProps {\n  openDelay?: number;\n  closeDelay?: number;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const AnimateTooltipDemo = ({\n  openDelay,\n  closeDelay,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: TooltipDemoProps) => {\n  return (\n    <TooltipProvider\n      key={`${side}-${align}-${sideOffset}-${alignOffset}-${openDelay}-${closeDelay}`}\n      openDelay={openDelay}\n      closeDelay={closeDelay}\n    >\n      <div className=\"flex flex-col gap-5 justify-center items-center\">\n        <div className=\"flex flex-row gap-2 border p-2\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button variant=\"accent\">Docs</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Documentation</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button variant=\"accent\">Lorem</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>Lorem ipsum dolor sit amet</p>\n              <p>consectetur adipisicing elit</p>\n            </TooltipContent>\n          </Tooltip>\n\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button variant=\"accent\">Guide</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>User Guide</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n        <div className=\"flex flex-row gap-5\">\n          <Tooltip\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            <TooltipTrigger>\n              <Button variant=\"accent\">Repo</Button>\n            </TooltipTrigger>\n\n            <TooltipContent>\n              <p>GitHub</p>\n            </TooltipContent>\n          </Tooltip>\n        </div>\n      </div>\n    </TooltipProvider>\n  );\n};",
       },
     ],
     keywords: [],
@@ -7549,6 +7552,49 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-effects-theme-toggler',
+  },
+  'demo-primitives-effects-tilt': {
+    name: 'demo-primitives-effects-tilt',
+    description: 'Demo showing an animated tilt.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-effects-tilt'],
+    files: [
+      {
+        path: 'registry/demo/primitives/effects/tilt/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/effects/tilt.tsx',
+        content:
+          'import Image from \'next/image\';\n\nimport { Tilt, TiltContent } from \'@/components/animate-ui/primitives/effects/tilt\';\nimport {\n  Card,\n  CardContent,\n  CardFooter,\n  CardHeader,\n} from \'@/components/ui/card\';\n\ntype TiltDemoProps = {\n  maxTilt?: number;\n  perspective?: number;\n};\n\nexport default function TiltDemo({ maxTilt, perspective }: TiltDemoProps) {\n  return (\n    <Tilt\n      className="w-full max-w-[250px]"\n      maxTilt={maxTilt}\n      perspective={perspective}\n    >\n      <TiltContent asChild>\n        <Card className="w-full p-0 gap-2">\n          <CardHeader className="p-2 pb-1">\n            <Image\n              src="/mug.webp"\n              alt="Black porcelain mug with modern square handle and natural clay accents on rim and bottom."\n              width={250}\n              height={250}\n              className="rounded-md"\n            />\n          </CardHeader>\n          <CardContent className="text-center">\n            <p className="text-xs text-neutral-500">Dark Grey</p>\n            <h3>Matt Mug</h3>\n            <p className="text-base/6">$20</p>\n          </CardContent>\n          <CardFooter className="pb-5 pt-1 flex items-center justify-center">\n            <ul\n              role="list"\n              className="mt-auto flex items-center justify-center space-x-3 [&>li]:size-4.5 [&>li]:rounded-full [&>li]:border"\n            >\n              <li className="bg-neutral-800" />\n              <li className="bg-red-950" />\n              <li className="bg-blue-950" />\n            </ul>\n          </CardFooter>\n        </Card>\n      </TiltContent>\n    </Tilt>\n  );\n}',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/primitives/effects/tilt/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-effects-tilt';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        Tilt: {
+          maxTilt: { value: 10, min: 0, max: 50, step: 1 },
+          perspective: { value: 800, min: 200, max: 5000, step: 10 },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-effects-tilt',
   },
   'demo-primitives-effects-zoom': {
     name: 'demo-primitives-effects-zoom',
@@ -20433,6 +20479,48 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-effects-theme-toggler',
+  },
+  'primitives-effects-tilt': {
+    name: 'primitives-effects-tilt',
+    description:
+      'An effect that allows you to animate elements with a tilt effect on mouse hover.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/primitives-animate-slot',
+      '@animate-ui/lib-get-strict-context',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/effects/tilt/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/effects/tilt.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport {\n  motion,\n  useMotionValue,\n  useSpring,\n  type MotionValue,\n  type SpringOptions,\n  type HTMLMotionProps,\n} from 'motion/react';\n\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype TiltContextType = {\n  sRX: MotionValue<number>;\n  sRY: MotionValue<number>;\n  transition: SpringOptions;\n};\n\nconst [TiltProvider, useTilt] =\n  getStrictContext<TiltContextType>('TiltContext');\n\ntype TiltProps = WithAsChild<\n  HTMLMotionProps<'div'> & {\n    maxTilt?: number;\n    perspective?: number;\n    transition?: SpringOptions;\n  }\n>;\n\nfunction Tilt({\n  maxTilt = 10,\n  perspective = 800,\n  style,\n  transition = {\n    stiffness: 300,\n    damping: 25,\n    mass: 0.5,\n  },\n  onMouseMove,\n  onMouseLeave,\n  asChild = false,\n  ...props\n}: TiltProps) {\n  const rX = useMotionValue(0);\n  const rY = useMotionValue(0);\n\n  const sRX = useSpring(rX, transition);\n  const sRY = useSpring(rY, transition);\n\n  const handleMouseMove = React.useCallback(\n    (e: React.MouseEvent<HTMLDivElement>) => {\n      onMouseMove?.(e);\n      const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();\n      const px = (e.clientX - rect.left) / rect.width;\n      const py = (e.clientY - rect.top) / rect.height;\n      const nx = px * 2 - 1;\n      const ny = py * 2 - 1;\n      rY.set(nx * maxTilt);\n      rX.set(-ny * maxTilt);\n    },\n    [maxTilt, rX, rY, onMouseMove],\n  );\n\n  const handleMouseLeave = React.useCallback(\n    (e: React.MouseEvent<HTMLDivElement>) => {\n      onMouseLeave?.(e);\n      rX.set(0);\n      rY.set(0);\n    },\n    [rX, rY, onMouseLeave],\n  );\n\n  const Comp = asChild ? Slot : motion.div;\n\n  return (\n    <TiltProvider value={{ sRX, sRY, transition }}>\n      <Comp\n        style={{\n          perspective,\n          transformStyle: 'preserve-3d',\n          willChange: 'transform',\n          ...style,\n        }}\n        onMouseMove={handleMouseMove}\n        onMouseLeave={handleMouseLeave}\n        {...props}\n      />\n    </TiltProvider>\n  );\n}\n\ntype TiltContentProps = WithAsChild<HTMLMotionProps<'div'>>;\n\nfunction TiltContent({\n  children,\n  style,\n  transition,\n  asChild = false,\n  ...props\n}: TiltContentProps) {\n  const { sRX, sRY, transition: tiltTransition } = useTilt();\n\n  const Comp = asChild ? Slot : motion.div;\n\n  return (\n    <Comp\n      style={{\n        rotateX: sRX,\n        rotateY: sRY,\n        willChange: 'transform',\n        ...style,\n      }}\n      transition={transition ?? tiltTransition}\n      {...props}\n    >\n      {children}\n    </Comp>\n  );\n}\n\nexport { Tilt, TiltContent, type TiltProps, type TiltContentProps };",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/primitives/effects/tilt/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-effects-tilt';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-effects-tilt',
   },
   'primitives-effects-zoom': {
     name: 'primitives-effects-zoom',
