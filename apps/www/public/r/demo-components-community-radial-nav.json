@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-community-radial-nav",
+  "type": "registry:ui",
+  "title": "Radial Nav Demo",
+  "description": "Demo Radial Nav.",
+  "registryDependencies": [
+    "@animate-ui/components-community-radial-nav"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/community/radial-nav/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { RadialNav } from '@/components/animate-ui/components/community/radial-nav';\nimport { Bookmark, LayoutGrid, User } from 'lucide-react';\n\nconst ITEMS = [\n  { id: 1, icon: LayoutGrid, label: 'Projects', angle: 0 },\n  { id: 2, icon: Bookmark, label: 'Bookmarks', angle: -115 },\n  { id: 3, icon: User, label: 'About', angle: 115 },\n];\n\nexport const RadialNavDemo = () => (\n  <RadialNav items={ITEMS} defaultActiveId={1} />\n);\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/community/radial-nav.tsx"
+    }
+  ]
+}

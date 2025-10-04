@@ -1544,6 +1544,45 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-community-playful-todolist',
   },
+  'components-community-radial-nav': {
+    name: 'components-community-radial-nav',
+    description:
+      'A circular navigation menu with animated pointer and expanding buttons for smooth interactive transitions.',
+    type: 'registry:ui',
+    dependencies: ['motion', 'lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: [],
+    files: [
+      {
+        path: 'registry/components/community/radial-nav/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/community/radial-nav.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { MousePointer2, type LucideIcon } from 'lucide-react';\nimport { motion, type Variants, type Transition } from 'motion/react';\n\ntype RadialNavProps = {\n  size?: number;\n  items: RadialNavItem[];\n  menuButtonConfig?: MenuButtonConfig;\n  defaultActiveId?: number;\n  onActiveChange?: (id: number) => void;\n};\n\ntype RadialNavItem = {\n  id: number;\n  icon: LucideIcon;\n  label: string;\n  angle: number;\n};\n\ntype MenuButtonConfig = {\n  iconSize?: number; // px\n  buttonSize?: number; // px, button diameter when collapsed\n  buttonPadding?: number; // px\n};\n\nconst defaultMenuButtonConfig: Required<MenuButtonConfig> = {\n  iconSize: 20,\n  buttonSize: 40,\n  buttonPadding: 8,\n};\n\nconst POINTER_BASE_DEG = 45;\n\nconst POINTER_ROT_SPRING = {\n  type: 'spring',\n  stiffness: 220,\n  damping: 26,\n} as const;\n\nconst BUTTON_MOTION_CONFIG = {\n  initial: 'rest',\n  variants: {\n    rest: { maxWidth: '40px' },\n    hover: {\n      maxWidth: '140px',\n      transition: { type: 'spring', stiffness: 200, damping: 35, delay: 0.05 },\n    },\n    tap: { scale: 0.95 },\n  },\n  transition: { type: 'spring', stiffness: 200, damping: 25 },\n} as const;\n\nconst LABEL_VARIANTS: Variants = {\n  rest: { opacity: 0, x: 4 },\n  hover: {\n    opacity: 1,\n    x: 0,\n    visibility: 'visible',\n    width: 'auto',\n  },\n  tap: { opacity: 1, x: 0, visibility: 'visible', width: 'auto' },\n};\n\nconst LABEL_TRANSITION: Transition = {\n  type: 'spring',\n  stiffness: 200,\n  damping: 25,\n};\n\nfunction getPolarCoordinates(angleDeg: number, r: number) {\n  const rad = ((angleDeg - 90) * Math.PI) / 180;\n  return { x: r * Math.cos(rad), y: r * Math.sin(rad) };\n}\n\nfunction calculateIconOffset({\n  buttonSize,\n  iconSize,\n  buttonPadding,\n  bias = 0,\n}: {\n  buttonSize: number;\n  iconSize: number;\n  buttonPadding: number;\n  bias?: number;\n}) {\n  const centerOffset = (buttonSize - iconSize) / 2;\n  return centerOffset - buttonPadding + bias;\n}\n\nfunction withDefaults<T extends Record<string, any>>(\n  defaults: T,\n  overrides?: Partial<T>,\n): T {\n  return { ...defaults, ...overrides };\n}\n\nfunction normalizeDeg(a: number) {\n  return ((a % 360) + 360) % 360;\n}\n\nfunction toNearestTurn(prev: number | undefined, target: number) {\n  const b = normalizeDeg(target);\n  if (prev === undefined) return b;\n  const k = Math.round((prev - b) / 360);\n  return b + 360 * k;\n}\n\nfunction useShortestRotation(target: number) {\n  const prevRef = React.useRef<number | undefined>(undefined);\n  return React.useMemo(() => {\n    const next = toNearestTurn(prevRef.current, target);\n    prevRef.current = next;\n    return next;\n  }, [target]);\n}\n\nfunction MenuButton({\n  item,\n  isActive,\n  onActivate,\n  menuButtonConfig,\n}: {\n  item: RadialNavItem;\n  isActive?: boolean;\n  onActivate?: () => void;\n  menuButtonConfig: Required<MenuButtonConfig>;\n}) {\n  const { icon: Icon, label } = item;\n  const { iconSize, buttonSize, buttonPadding } = menuButtonConfig;\n\n  const translateX = calculateIconOffset({\n    ...menuButtonConfig,\n    bias: -1,\n  });\n\n  return (\n    <motion.button\n      {...BUTTON_MOTION_CONFIG}\n      initial={false}\n      animate={isActive ? 'hover' : 'rest'}\n      className=\"relative flex space-x-1 items-center overflow-hidden whitespace-nowrap rounded-full border border-neutral-800 dark:border-neutral-200 bg-background text-foreground font-medium\"\n      style={{\n        height: buttonSize,\n        minWidth: buttonSize,\n        padding: buttonPadding,\n      }}\n      onClick={onActivate}\n      type=\"button\"\n      role=\"menuitem\"\n      aria-pressed={!!isActive}\n      aria-label={label}\n    >\n      <Icon\n        className=\"shrink-0\"\n        style={{\n          height: iconSize,\n          width: iconSize,\n          transform: `translateX(${translateX}px)`,\n        }}\n      />\n      <motion.span\n        variants={LABEL_VARIANTS}\n        transition={LABEL_TRANSITION}\n        className=\"invisible text-sm w-0\"\n      >\n        {label}\n      </motion.span>\n    </motion.button>\n  );\n}\n\n// orbitRadius determines how far from the center each item should be placed.\n// It positions the CENTER of each small circle exactly on the parent circle's stroke.\n// Formula: parentRadius (size/2) minus half of the child diameter (~0.5 accounts for border).\nfunction RadialNav({\n  size = 180,\n  items,\n  menuButtonConfig,\n  defaultActiveId,\n  onActiveChange,\n}: RadialNavProps) {\n  const orbitRadius = size / 2 - 0.5;\n  const [activeId, setActiveId] = React.useState<number | null>(\n    defaultActiveId ?? null,\n  );\n\n  const handleActivate = React.useCallback(\n    (id: number) => {\n      setActiveId(id);\n      onActiveChange?.(id);\n    },\n    [onActiveChange],\n  );\n\n  const baseAngle =\n    (items.find((it) => it.id === activeId)?.angle ?? 0) + POINTER_BASE_DEG;\n  const rotateAngle = useShortestRotation(baseAngle);\n\n  const resolvedMenuButtonConfig = withDefaults(\n    defaultMenuButtonConfig,\n    menuButtonConfig,\n  );\n\n  return (\n    <div\n      className=\"relative flex items-center justify-center rounded-full border border-neutral-800 dark:border-neutral-200\"\n      style={{ width: size, height: size }}\n      role=\"menu\"\n      aria-label=\"Radial navigation\"\n    >\n      <motion.div\n        initial={false}\n        className=\"absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2\"\n        animate={{ rotate: rotateAngle }}\n        transition={POINTER_ROT_SPRING}\n        style={{ originX: 0.5, originY: 0.5 }}\n        aria-hidden=\"true\"\n      >\n        <MousePointer2 className=\"size-5 text-foreground\" />\n      </motion.div>\n      {items.map((item) => {\n        const { id, angle } = item;\n        const { x, y } = getPolarCoordinates(angle, orbitRadius);\n        return (\n          <div\n            key={id}\n            className=\"group absolute\"\n            style={{\n              left: `calc(50% + ${x}px)`,\n              top: `calc(50% + ${y}px)`,\n              transform: 'translate(-50%, -50%)',\n            }}\n          >\n            <MenuButton\n              item={item}\n              isActive={activeId === id}\n              onActivate={() => handleActivate(id)}\n              menuButtonConfig={resolvedMenuButtonConfig}\n            />\n          </div>\n        );\n      })}\n    </div>\n  );\n}\n\nexport {\n  RadialNav,\n  type RadialNavItem,\n  type MenuButtonConfig,\n  type RadialNavProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/community/radial-nav/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-community-radial-nav';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-community-radial-nav',
+  },
   'components-community-share-button': {
     name: 'components-community-share-button',
     description: 'This is a button for sharing.',
@@ -4448,6 +4487,45 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-community-playful-todolist',
+  },
+  'demo-components-community-radial-nav': {
+    name: 'demo-components-community-radial-nav',
+    description: 'Demo Radial Nav.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-community-radial-nav'],
+    files: [
+      {
+        path: 'registry/demo/components/community/radial-nav/index.tsx',
+        type: 'registry:ui',
+        target:
+          'components/animate-ui/demo/components/community/radial-nav.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { RadialNav } from '@/components/animate-ui/components/community/radial-nav';\nimport { Bookmark, LayoutGrid, User } from 'lucide-react';\n\nconst ITEMS = [\n  { id: 1, icon: LayoutGrid, label: 'Projects', angle: 0 },\n  { id: 2, icon: Bookmark, label: 'Bookmarks', angle: -115 },\n  { id: 3, icon: User, label: 'About', angle: 115 },\n];\n\nexport const RadialNavDemo = () => (\n  <RadialNav items={ITEMS} defaultActiveId={1} />\n);",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/community/radial-nav/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-community-radial-nav';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-community-radial-nav',
   },
   'demo-components-community-share-button': {
     name: 'demo-components-community-share-button',

@@ -1,0 +1,88 @@
+---
+title: Radial Nav
+description: A circular navigation menu with animated pointer and expanding buttons for smooth interactive transitions.
+author:
+  name: arhamkhnz
+  url: https://github.com/arhamkhnz
+releaseDate: 2025-10-04
+---
+
+<ComponentPreview name="demo-components-community-radial-nav" />
+
+## Installation
+
+<ComponentInstallation name="components-community-radial-nav" />
+
+## Usage
+
+```tsx
+<RadialNav items={ITEMS} />
+```
+
+## API Reference
+
+### PinList
+
+<TypeTable
+  type={{
+    items: {
+      description:
+        'Array of items to show in the list. Each item should have id, name, info, icon, and pinned.',
+      type: 'PinListItem[]',
+      required: true,
+    },
+    labels: {
+      description:
+        'Custom labels for the pinned and unpinned sections. Example: { pinned: "Favorites", unpinned: "All" }.',
+      type: '{ pinned?: string; unpinned?: string; }',
+      required: false,
+      default: '{ pinned: "Pinned Items", unpinned: "All Items" }',
+    },
+    transition: {
+      description:
+        'Spring animation config for item transitions. Controls the movement physics. Example: { stiffness: 320, damping: 20, mass: 0.8, type: "spring" }',
+      type: '{ stiffness?: number; damping?: number; mass?: number; type?: string; }',
+      required: false,
+      default: '{ stiffness: 320, damping: 20, mass: 0.8, type: "spring" }',
+    },
+    labelMotionProps: {
+      description:
+        'Motion props for the section labels. Allows customizing the label enter/exit animation. Example: { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.22, ease: "easeInOut" } }',
+      type: '{ initial?: object; animate?: object; exit?: object; transition?: object; }',
+      required: false,
+      default:
+        '{ initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.22, ease: "easeInOut" } }',
+    },
+    className: {
+      description: 'Class name for the outermost container.',
+      type: 'string',
+      required: false,
+    },
+    labelClassName: {
+      description: 'Class name for the section labels.',
+      type: 'string',
+      required: false,
+    },
+    pinnedSectionClassName: {
+      description: 'Class name for the pinned items group.',
+      type: 'string',
+      required: false,
+    },
+    unpinnedSectionClassName: {
+      description: 'Class name for the unpinned items group.',
+      type: 'string',
+      required: false,
+    },
+    zIndexResetDelay: {
+      description:
+        'Delay (in ms) before resetting z-index after toggle, should match your animation duration if changed.',
+      type: 'number',
+      required: false,
+      default: '500',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Azzam](https://x.com/azzamfyi) for [this X post](https://x.com/azzamfyi/status/1972164743143293209) as inspiration
