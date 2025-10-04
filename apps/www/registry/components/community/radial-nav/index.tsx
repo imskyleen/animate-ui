@@ -89,6 +89,7 @@ function calculateIconOffset({
   return centerOffset - buttonPadding + bias;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function withDefaults<T extends Record<string, any>>(
   defaults: T,
   overrides?: Partial<T>,
