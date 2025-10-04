@@ -1,0 +1,72 @@
+---
+title: Radial Nav
+description: A circular navigation menu with animated pointer and expanding buttons for smooth interactive transitions.
+author:
+  name: arhamkhnz
+  url: https://github.com/arhamkhnz
+releaseDate: 2025-10-04
+---
+
+<ComponentPreview name="demo-components-community-radial-nav" />
+
+<Callout>
+**Note:** This component is not fully reusable out-of-the-box. Styling, animation, and positioning may need to be modified as per your specific use case, so you won’t find most configurations passed from the parent. I’ve only kept the necessary configuration options that I felt essential.
+
+Feel free to open any issues tagging me [@arhamkhnz](https://github.com/arhamkhnz) for feature requests or bug reports related to this component.
+
+</Callout>
+
+## Installation
+
+<ComponentInstallation name="components-community-radial-nav" />
+
+## Usage
+
+```tsx
+<RadialNav items={ITEMS} />
+```
+
+## API Reference
+
+### RadialNav
+
+<TypeTable
+  type={{
+    items: {
+      description:
+        'Array of navigation items to render around the circle. Each item defines its icon, label, id, and angle.',
+      type: 'RadialNavItem[]',
+      required: true,
+    },
+    size: {
+      description:
+        'Diameter of the radial navigation circle in pixels. Controls how far buttons orbit from the center.',
+      type: 'number',
+      required: false,
+      default: '180',
+    },
+    menuButtonConfig: {
+      description:
+        'Configuration object that defines button sizing and spacing.',
+      type: 'MenuButtonConfig',
+      required: false,
+      default: '{ iconSize: 20, buttonSize: 40, buttonPadding: 8 }',
+    },
+    defaultActiveId: {
+      description: 'ID of the item to set as active by default.',
+      type: 'number',
+      required: false,
+      default: 'null',
+    },
+    onActiveChange: {
+      description:
+        'Callback fired when the active item changes. Receives the selected item’s ID.',
+      type: '(id: number) => void',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Azzam](https://x.com/azzamfyi) for [this X post](https://x.com/azzamfyi/status/1972164743143293209) as inspiration

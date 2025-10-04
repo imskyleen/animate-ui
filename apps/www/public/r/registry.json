@@ -714,6 +714,24 @@
       ]
     },
     {
+      "name": "components-community-radial-nav",
+      "type": "registry:ui",
+      "title": "Radial Nav",
+      "description": "A circular navigation menu with animated pointer and expanding buttons for smooth interactive transitions.",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/components/community/radial-nav/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/community/radial-nav.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-community-share-button",
       "type": "registry:ui",
       "title": "Share Button",
@@ -2468,6 +2486,22 @@
           "path": "registry/demo/components/community/playful-todolist/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/community/playful-todolist.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-components-community-radial-nav",
+      "type": "registry:ui",
+      "title": "Radial Nav Demo",
+      "description": "Demo Radial Nav.",
+      "registryDependencies": [
+        "@animate-ui/components-community-radial-nav"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/community/radial-nav/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/community/radial-nav.tsx"
         }
       ]
     },
