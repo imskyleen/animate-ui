@@ -318,7 +318,7 @@ export const Icons = () => {
 
       <div>
         {searchedIcons.length ? (
-          <div className="grid lg:grid-cols-11 2xl:grid-cols-12 3xl:grid-cols-13 sm:grid-cols-9 xs:grid-cols-7 grid-cols-5 gap-4 mt-6">
+          <div className="grid lg:grid-cols-11 2xl:grid-cols-14 sm:grid-cols-9 xs:grid-cols-7 grid-cols-5 gap-4 mt-6">
             <TooltipProvider>
               <Highlight
                 hover
