@@ -263,6 +263,7 @@ function TabsContent({
       role="tabpanel"
       data-slot="tabs-content"
       className={cn('overflow-hidden', className)}
+      inert={!isActive}
       initial={{ filter: 'blur(0px)' }}
       animate={{ filter: isActive ? 'blur(0px)' : 'blur(4px)' }}
       exit={{ filter: 'blur(0px)' }}
