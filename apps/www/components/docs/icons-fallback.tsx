@@ -12,7 +12,7 @@ export const IconsFallback = () => {
         <Skeleton className="h-7 w-12 rounded-full" />
       </div>
 
-      <div className="w-full grid lg:grid-cols-11 sm:grid-cols-9 xs:grid-cols-7 grid-cols-5 gap-4 mt-6">
+      <div className="w-full grid lg:grid-cols-11 2xl:grid-cols-14 sm:grid-cols-9 xs:grid-cols-7 grid-cols-5 gap-4 mt-6">
         {new Array(99).fill(0).map((_, index) => (
           <Skeleton className="size-full aspect-square" key={index} />
         ))}
