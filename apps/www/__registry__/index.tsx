@@ -11701,6 +11701,42 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-circle-x',
   },
+  'icons-circuit-board': {
+    name: 'icons-circuit-board',
+    description: 'Circuit Board icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/circuit-board/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/circuit-board.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype CircuitBoardProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {\n      initial: { pathLength: 1, opacity: 1, pathOffset: 0 },\n      animate: {\n        pathLength: [0.05, 1],\n        pathOffset: [1, 0],\n        opacity: [0, 1],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    circle1: {},\n    path2: {\n      initial: { pathLength: 1, opacity: 1 },\n      animate: {\n        pathLength: [0.05, 1],\n        opacity: [0, 1],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    circle2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: CircuitBoardProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width="18"\n        height="18"\n        x="3"\n        y="3"\n        rx="2"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M11 9h4a2 2 0 0 0 2-2V3"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.circle\n        cx="9"\n        cy="9"\n        r="2"\n        variants={variants.circle1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M7 21v-4a2 2 0 0 1 2-2h4"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.circle\n        cx="15"\n        cy="15"\n        r="2"\n        variants={variants.circle2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction CircuitBoard(props: CircuitBoardProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  CircuitBoard,\n  CircuitBoard as CircuitBoardIcon,\n  type CircuitBoardProps,\n  type CircuitBoardProps as CircuitBoardIconProps,\n};',
+      },
+    ],
+    keywords: ['computing', 'electricity', 'electronics'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/circuit-board/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-circuit-board';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-circuit-board',
+  },
   'icons-clapperboard': {
     name: 'icons-clapperboard',
     description: 'Clapperboard icon component.',
@@ -11748,6 +11784,114 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/icons-clapperboard',
+  },
+  'icons-clipboard': {
+    name: 'icons-clipboard',
+    description: 'Clipboard icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/clipboard/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/clipboard.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype ClipboardProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 0,\n        opacity: 0,\n        scale: 0,\n      },\n      animate: {\n        pathLength: 1,\n        opacity: 1,\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  \'default-return\': {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 0,\n        pathOffset: 0,\n        opacity: 0,\n        scale: 0,\n      },\n      animate: {\n        pathLength: [0, 1, 1, 1],\n        pathOffset: [0, 0, 0, 1],\n        opacity: [0, 1, 1, 0],\n        scale: [1.1, 1, 1, 1],\n        transition: {\n          duration: 1.8,\n          ease: \'easeInOut\',\n          times: [0, 0.3, 0.7, 1],\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ClipboardProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width="8"\n        height="4"\n        x="8"\n        y="2"\n        rx="1"\n        ry="1"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m9 14 2 2 4-4"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Clipboard(props: ClipboardProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Clipboard,\n  Clipboard as ClipboardIcon,\n  type ClipboardProps,\n  type ClipboardProps as ClipboardIconProps,\n};',
+      },
+    ],
+    keywords: ['copy', 'paste'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/clipboard/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-clipboard';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-clipboard',
+  },
+  'icons-clipboard-check': {
+    name: 'icons-clipboard-check',
+    description: 'Clipboard Check icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/clipboard-check/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/clipboard-check.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype ClipboardCheckProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1, 1.1, 1],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  check: {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 0,\n        opacity: 0,\n        scale: 0,\n      },\n      animate: {\n        pathLength: 1,\n        opacity: 1,\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ClipboardCheckProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width="8"\n        height="4"\n        x="8"\n        y="2"\n        rx="1"\n        ry="1"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m9 14 2 2 4-4"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction ClipboardCheck(props: ClipboardCheckProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  ClipboardCheck,\n  ClipboardCheck as ClipboardCheckIcon,\n  type ClipboardCheckProps,\n  type ClipboardCheckProps as ClipboardCheckIconProps,\n};',
+      },
+    ],
+    keywords: ['copied', 'pasted', 'done', 'todo', 'tick', 'complete', 'task'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/clipboard-check/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-clipboard-check';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-clipboard-check',
+  },
+  'icons-clipboard-list': {
+    name: 'icons-clipboard-list',
+    description: 'Clipboard List icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/clipboard-list/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/clipboard-list.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype ClipboardListProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    path3: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.2,\n        },\n      },\n    },\n    path4: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.5,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.7,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ClipboardListProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width="8"\n        height="4"\n        x="8"\n        y="2"\n        rx="1"\n        ry="1"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M8 11h.01"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M12 11h4"\n        variants={variants.path3}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M8 16h.01"\n        variants={variants.path4}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M12 16h4"\n        variants={variants.path5}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction ClipboardList(props: ClipboardListProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  ClipboardList,\n  ClipboardList as ClipboardListIcon,\n  type ClipboardListProps,\n  type ClipboardListProps as ClipboardListIconProps,\n};',
+      },
+    ],
+    keywords: ['copy', 'paste', 'task'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/clipboard-list/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-clipboard-list';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-clipboard-list',
   },
   'icons-clock': {
     name: 'icons-clock',
@@ -13889,6 +14033,42 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/icons-link',
+  },
+  'icons-list': {
+    name: 'icons-list',
+    description: 'List icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/list/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/list.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype ListProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    path2: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.2,\n        },\n      },\n    },\n    path3: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.4,\n        },\n      },\n    },\n    path4: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.6,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 0.8,\n        },\n      },\n    },\n    path6: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: \'easeInOut\',\n          delay: 1,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ListProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M3 5h.01"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M8 5h13"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M3 12h.01"\n        variants={variants.path3}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M8 12h13"\n        variants={variants.path4}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M3 19h.01"\n        variants={variants.path5}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M8 19h13"\n        variants={variants.path6}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction List(props: ListProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  List,\n  List as ListIcon,\n  type ListProps,\n  type ListProps as ListIconProps,\n};',
+      },
+    ],
+    keywords: ['options'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/list/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-list';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-list',
   },
   'icons-loader': {
     name: 'icons-loader',

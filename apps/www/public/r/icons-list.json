@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-list",
+  "type": "registry:ui",
+  "title": "List Icon",
+  "description": "List icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/list/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype ListProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path2: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n          delay: 0.2,\n        },\n      },\n    },\n    path3: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n          delay: 0.4,\n        },\n      },\n    },\n    path4: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n          delay: 0.6,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n          delay: 0.8,\n        },\n      },\n    },\n    path6: {\n      initial: {\n        pathLength: 1,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        pathLength: [0, 1],\n        opacity: [0, 1],\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n          delay: 1,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ListProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M3 5h.01\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M8 5h13\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M3 12h.01\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M8 12h13\"\n        variants={variants.path4}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M3 19h.01\"\n        variants={variants.path5}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M8 19h13\"\n        variants={variants.path6}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction List(props: ListProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  List,\n  List as ListIcon,\n  type ListProps,\n  type ListProps as ListIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/list.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "options"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-circuit-board",
+  "type": "registry:ui",
+  "title": "Circuit Board Icon",
+  "description": "Circuit Board icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/circuit-board/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype CircuitBoardProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {\n      initial: { pathLength: 1, opacity: 1, pathOffset: 0 },\n      animate: {\n        pathLength: [0.05, 1],\n        pathOffset: [1, 0],\n        opacity: [0, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    circle1: {},\n    path2: {\n      initial: { pathLength: 1, opacity: 1 },\n      animate: {\n        pathLength: [0.05, 1],\n        opacity: [0, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    circle2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: CircuitBoardProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width=\"18\"\n        height=\"18\"\n        x=\"3\"\n        y=\"3\"\n        rx=\"2\"\n        variants={variants.rect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M11 9h4a2 2 0 0 0 2-2V3\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.circle\n        cx=\"9\"\n        cy=\"9\"\n        r=\"2\"\n        variants={variants.circle1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M7 21v-4a2 2 0 0 1 2-2h4\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.circle\n        cx=\"15\"\n        cy=\"15\"\n        r=\"2\"\n        variants={variants.circle2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction CircuitBoard(props: CircuitBoardProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  CircuitBoard,\n  CircuitBoard as CircuitBoardIcon,\n  type CircuitBoardProps,\n  type CircuitBoardProps as CircuitBoardIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/circuit-board.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "computing",
+      "electricity",
+      "electronics"
+    ]
+  }
+}

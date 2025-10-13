@@ -7567,6 +7567,32 @@
       }
     },
     {
+      "name": "icons-circuit-board",
+      "type": "registry:ui",
+      "title": "Circuit Board Icon",
+      "description": "Circuit Board icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/circuit-board/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/circuit-board.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "computing",
+          "electricity",
+          "electronics"
+        ]
+      }
+    },
+    {
       "name": "icons-clapperboard",
       "type": "registry:ui",
       "title": "Clapperboard Icon",
@@ -7597,6 +7623,87 @@
           "tv",
           "show",
           "entertainment"
+        ]
+      }
+    },
+    {
+      "name": "icons-clipboard",
+      "type": "registry:ui",
+      "title": "Clipboard Icon",
+      "description": "Clipboard icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/clipboard/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/clipboard.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "copy",
+          "paste"
+        ]
+      }
+    },
+    {
+      "name": "icons-clipboard-check",
+      "type": "registry:ui",
+      "title": "Clipboard Check Icon",
+      "description": "Clipboard Check icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/clipboard-check/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/clipboard-check.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "copied",
+          "pasted",
+          "done",
+          "todo",
+          "tick",
+          "complete",
+          "task"
+        ]
+      }
+    },
+    {
+      "name": "icons-clipboard-list",
+      "type": "registry:ui",
+      "title": "Clipboard List Icon",
+      "description": "Clipboard List icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/clipboard-list/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/clipboard-list.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "copy",
+          "paste",
+          "task"
         ]
       }
     },
@@ -9151,6 +9258,30 @@
         "keywords": [
           "chain",
           "url"
+        ]
+      }
+    },
+    {
+      "name": "icons-list",
+      "type": "registry:ui",
+      "title": "List Icon",
+      "description": "List icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/list/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/list.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "options"
         ]
       }
     },

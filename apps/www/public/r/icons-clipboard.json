@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-clipboard",
+  "type": "registry:ui",
+  "title": "Clipboard Icon",
+  "description": "Clipboard icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/clipboard/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype ClipboardProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 0,\n        opacity: 0,\n        scale: 0,\n      },\n      animate: {\n        pathLength: 1,\n        opacity: 1,\n        scale: [1.1, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-return': {\n    rect: {},\n    path1: {},\n    path2: {\n      initial: {\n        pathLength: 0,\n        pathOffset: 0,\n        opacity: 0,\n        scale: 0,\n      },\n      animate: {\n        pathLength: [0, 1, 1, 1],\n        pathOffset: [0, 0, 0, 1],\n        opacity: [0, 1, 1, 0],\n        scale: [1.1, 1, 1, 1],\n        transition: {\n          duration: 1.8,\n          ease: 'easeInOut',\n          times: [0, 0.3, 0.7, 1],\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ClipboardProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width=\"8\"\n        height=\"4\"\n        x=\"8\"\n        y=\"2\"\n        rx=\"1\"\n        ry=\"1\"\n        variants={variants.rect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m9 14 2 2 4-4\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Clipboard(props: ClipboardProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Clipboard,\n  Clipboard as ClipboardIcon,\n  type ClipboardProps,\n  type ClipboardProps as ClipboardIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/clipboard.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "copy",
+      "paste"
+    ]
+  }
+}

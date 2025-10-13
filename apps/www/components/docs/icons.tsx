@@ -149,6 +149,16 @@ const addedIcons = [
       'icons-route',
     ],
   },
+  {
+    date: '2025-10-13',
+    icons: [
+      'icons-circuit-board',
+      'icons-clipboard',
+      'icons-clipboard-check',
+      'icons-clipboard-list',
+      'icons-list',
+    ],
+  },
 ];
 
 const thirtyDaysAgo = new Date();
