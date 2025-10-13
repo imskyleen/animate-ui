@@ -195,7 +195,7 @@ export function SidebarLinkItem({
 
   if (item.type === ('separator' as any)) {
     return (
-      <SidebarSeparator className="mb-2">
+      <SidebarSeparator className={cn('mb-2', props.className, '!pl-0')}>
         <Separator icon={item.icon} name={(item as any).name} />
       </SidebarSeparator>
     );
@@ -322,7 +322,7 @@ export const DocsSidebar = ({
               />
             ))}
 
-          {!isMenu && isMobile && (
+          {isMobile && (
             <div>
               {MENU_ITEMS.map((item, i) => (
                 <SidebarLinkItem
@@ -330,14 +330,17 @@ export const DocsSidebar = ({
                   item={item as LinkItemType}
                   className={cn(
                     sidebarItemClassName,
-                    i === MENU_ITEMS.length - 1 && 'mb-8',
+                    i === 0 && 'mt-4',
+                    i === MENU_ITEMS.length - 1 && 'mb-4',
                   )}
                 />
               ))}
             </div>
           )}
 
-          <SidebarPageTree components={sidebarComponents} />
+          {((!isMenu && isMobile) || !isMobile) && (
+            <SidebarPageTree components={sidebarComponents} />
+          )}
         </SidebarViewport>
 
         <HideIfEmpty>
