@@ -1,0 +1,372 @@
+---
+title: Menu
+description: A list of actions in a dropdown, enhanced with keyboard navigation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-10-21
+---
+
+<ComponentPreview name="demo-primitives-base-menu" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-menu" />
+
+## Usage
+
+### With Highlight
+
+```tsx
+<Menu>
+  <MenuTrigger>Open</MenuTrigger>
+
+  <MenuPortal>
+    <MenuPositioner>
+      <MenuPopup>
+        <MenuHighlight>
+          <MenuGroup>
+            <MenuHighlightItem>
+              <MenuItem>
+                <span>Profile</span>
+                <MenuShortcut>⇧⌘P</MenuShortcut>
+              </MenuItem>
+            </MenuHighlightItem>
+            <MenuHighlightItem>
+              <MenuItem>
+                <span>Billing</span>
+                <MenuShortcut>⌘B</MenuShortcut>
+              </MenuItem>
+            </MenuHighlightItem>
+            <MenuHighlightItem>
+              <MenuItem>
+                <span>Settings</span>
+                <MenuShortcut>⌘S</MenuShortcut>
+              </MenuItem>
+            </MenuHighlightItem>
+            <MenuHighlightItem>
+              <MenuItem>
+                <span>Keyboard shortcuts</span>
+                <MenuShortcut>⌘K</MenuShortcut>
+              </MenuItem>
+            </MenuHighlightItem>
+          </MenuGroup>
+
+          <MenuSeparator />
+
+          <MenuGroup>
+            <MenuHighlightItem>
+              <MenuItem>
+                <span>Team</span>
+              </MenuItem>
+            </MenuHighlightItem>
+
+            <MenuSubmenu>
+              <MenuHighlightItem>
+                <MenuSubmenuTrigger>
+                  <span>Invite users</span>
+                  <ChevronRight />
+                </MenuSubmenuTrigger>
+              </MenuHighlightItem>
+
+              <MenuPortal>
+                <MenuPositioner>
+                  <MenuPopup>
+                    <MenuHighlightItem>
+                      <MenuItem>
+                        <span>Email</span>
+                      </MenuItem>
+                    </MenuHighlightItem>
+                    <MenuHighlightItem>
+                      <MenuItem>
+                        <span>Message</span>
+                      </MenuItem>
+                    </MenuHighlightItem>
+                    <MenuSeparator />
+                    <MenuHighlightItem>
+                      <MenuItem>
+                        <span>More...</span>
+                      </MenuItem>
+                    </MenuHighlightItem>
+                  </MenuPopup>
+                </MenuPositioner>
+              </MenuPortal>
+            </MenuSubmenu>
+
+            <MenuHighlightItem>
+              <MenuItem>
+                <span>New Team</span>
+                <MenuShortcut>⌘+T</MenuShortcut>
+              </MenuItem>
+            </MenuHighlightItem>
+          </MenuGroup>
+
+          <MenuSeparator />
+
+          <MenuHighlightItem>
+            <MenuItem>
+              <span>Log out</span>
+              <MenuShortcut>⇧⌘Q</MenuShortcut>
+            </MenuItem>
+          </MenuHighlightItem>
+        </MenuHighlight>
+      </MenuPopup>
+    </MenuPositioner>
+  </MenuPortal>
+</Menu>
+```
+
+### Without Highlight
+
+```tsx
+<Menu>
+  <MenuTrigger>Open</MenuTrigger>
+
+  <MenuPortal>
+    <MenuPositioner>
+      <MenuPopup>
+        <MenuGroup>
+          <MenuItem>
+            <span>Profile</span>
+            <MenuShortcut>⇧⌘P</MenuShortcut>
+          </MenuItem>
+          <MenuItem>
+            <span>Billing</span>
+            <MenuShortcut>⌘B</MenuShortcut>
+          </MenuItem>
+          <MenuItem>
+            <span>Settings</span>
+            <MenuShortcut>⌘S</MenuShortcut>
+          </MenuItem>
+          <MenuItem>
+            <span>Keyboard shortcuts</span>
+            <MenuShortcut>⌘K</MenuShortcut>
+          </MenuItem>
+        </MenuGroup>
+
+        <MenuSeparator />
+
+        <MenuGroup>
+          <MenuItem>
+            <span>Team</span>
+          </MenuItem>
+
+          <MenuSubmenu>
+            <MenuSubmenuTrigger>
+              <span>Invite users</span>
+              <ChevronRight />
+            </MenuSubmenuTrigger>
+
+            <MenuPortal>
+              <MenuPositioner>
+                <MenuPopup>
+                  <MenuItem>
+                    <span>Email</span>
+                  </MenuItem>
+                  <MenuItem>
+                    <span>Message</span>
+                  </MenuItem>
+                  <MenuSeparator />
+                  <MenuItem>
+                    <span>More...</span>
+                  </MenuItem>
+                </MenuPopup>
+              </MenuPositioner>
+            </MenuPortal>
+          </MenuSubmenu>
+
+          <MenuItem>
+            <span>New Team</span>
+            <MenuShortcut>⌘+T</MenuShortcut>
+          </MenuItem>
+        </MenuGroup>
+
+        <MenuSeparator />
+
+        <MenuItem>
+          <span>Log out</span>
+          <MenuShortcut>⇧⌘Q</MenuShortcut>
+        </MenuItem>
+      </MenuPopup>
+    </MenuPositioner>
+  </MenuPortal>
+</Menu>
+```
+
+## API Reference
+
+### Menu
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#root"
+  text="Base UI Menu.Root API Reference"
+/>
+
+### MenuTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#trigger"
+  text="Base UI Menu.Trigger API Reference"
+/>
+
+### MenuPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#portal"
+  text="Base UI Menu.Portal API Reference"
+/>
+
+<Callout type="info">
+  The `keepMounted` property is not supported in the `MenuPortal` component, as
+  it is used for animation.
+</Callout>
+
+### MenuPositioner
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#positioner"
+  text="Base UI Menu.Positioner API Reference"
+/>
+
+### MenuPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#popup"
+  text="Base UI Menu.Popup API Reference"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the menu popup',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.2 }',
+    },
+    '...props': {
+      description: 'The props of the menu popup.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### MenuHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the menu highlight',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 350, damping: 35 }',
+    },
+  }}
+/>
+
+### MenuHighlightItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+### MenuGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#group"
+  text="Base UI Menu.Group API Reference"
+/>
+
+### MenuGroupLabel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#group-label"
+  text="Base UI Menu.GroupLabel API Reference"
+/>
+
+### MenuSeparator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#separator"
+  text="Base UI Menu.Separator API Reference"
+/>
+
+### MenuItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#item"
+  text="Base UI Menu.Item API Reference"
+/>
+
+### MenuCheckboxItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#checkbox-item"
+  text="Base UI Menu.CheckboxItem API Reference"
+/>
+
+### MenuCheckboxItemIndicator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#checkbox-item-indicator"
+  text="Base UI Menu.CheckboxItemIndicator API Reference"
+/>
+
+### MenuRadioGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#radio-group"
+  text="Base UI Menu.RadioGroup API Reference"
+/>
+
+### MenuRadioItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#radio-item"
+  text="Base UI Menu.RadioItem API Reference"
+/>
+
+### MenuRadioItemIndicator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#radio-item-indicator"
+  text="Base UI Menu.RadioItemIndicator API Reference"
+/>
+
+### MenuShortcut
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#shortcut"
+  text="Base UI Menu.Shortcut API Reference"
+/>
+
+### MenuArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#arrow"
+  text="Base UI Menu.Arrow API Reference"
+/>
+
+### MenuSubmenu
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#submenu"
+  text="Base UI Menu.Submenu API Reference"
+/>
+
+### MenuSubmenuTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#submenu-trigger"
+  text="Base UI Menu.SubmenuTrigger API Reference"
+/>
+
+## Credits
+
+- [Base UI Menu](https://base-ui.com/react/components/menu)

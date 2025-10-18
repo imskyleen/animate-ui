@@ -6,18 +6,18 @@ import {
 import { Bold, Italic, Underline } from 'lucide-react';
 
 interface BaseToggleGroupDemoProps {
-  toggleMultiple: boolean;
+  multiple: boolean;
   variant: ToggleGroupProps['variant'];
   size: ToggleGroupProps['size'];
 }
 
 export function BaseToggleGroupDemo({
-  toggleMultiple,
+  multiple,
   variant,
   size,
 }: BaseToggleGroupDemoProps) {
   return (
-    <ToggleGroup toggleMultiple={toggleMultiple} variant={variant} size={size}>
+    <ToggleGroup multiple={multiple} variant={variant} size={size}>
       <Toggle value="bold" aria-label="Toggle bold">
         <Bold />
       </Toggle>

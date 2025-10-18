@@ -230,6 +230,23 @@ author:
 />
 </div>
 
+<TypeTable
+  type={{
+    variant: {
+      description: 'The variant of the dropdown menu item.',
+      type: 'default' | 'destructive',
+      required: false,
+      default: 'default',
+    },
+    inset: {
+      description: 'Whether the dropdown menu item is inset.',
+      type: 'boolean',
+      default: false,
+      required: false,
+    },
+  }}
+/>
+
 ### DropdownMenuItemIndicator
 
 <div className="flex flex-col gap-2">

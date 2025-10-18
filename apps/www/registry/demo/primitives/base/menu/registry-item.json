@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-menu",
+  "type": "registry:ui",
+  "title": "Base Menu Demo",
+  "description": "Demo showing an animated base menu.",
+  "registryDependencies": ["@animate-ui/primitives-base-menu"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/menu/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/menu.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MenuPositioner": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "inline-start": "inline-start",
+            "inline-end": "inline-end"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

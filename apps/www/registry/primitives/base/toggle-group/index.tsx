@@ -18,7 +18,7 @@ type ToggleGroupContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any[];
   setValue: ToggleGroupProps['onValueChange'];
-  toggleMultiple: boolean | undefined;
+  multiple: boolean | undefined;
 };
 
 const [ToggleGroupProvider, useToggleGroup] =
@@ -36,9 +36,7 @@ function ToggleGroup(props: ToggleGroupProps) {
   });
 
   return (
-    <ToggleGroupProvider
-      value={{ value, setValue, toggleMultiple: props.toggleMultiple }}
-    >
+    <ToggleGroupProvider value={{ value, setValue, multiple: props.multiple }}>
       <ToggleGroupPrimitive
         data-slot="toggle-group"
         {...props}
@@ -108,9 +106,9 @@ type ToggleHighlightProps = HighlightItemProps &
   };
 
 function ToggleHighlight({ children, style, ...props }: ToggleHighlightProps) {
-  const { toggleMultiple, value } = useToggleGroup();
+  const { multiple, value } = useToggleGroup();
 
-  if (!toggleMultiple) {
+  if (!multiple) {
     return (
       <HighlightItem
         data-slot="toggle-highlight"
@@ -122,7 +120,7 @@ function ToggleHighlight({ children, style, ...props }: ToggleHighlightProps) {
     );
   }
 
-  if (toggleMultiple && React.isValidElement(children)) {
+  if (multiple && React.isValidElement(children)) {
     const isActive = props.value && value && value.includes(props.value);
 
     const element = children as React.ReactElement<React.ComponentProps<'div'>>;

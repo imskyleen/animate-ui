@@ -54,7 +54,7 @@ export const BaseToggleGroupDemo = ({
     </ToggleGroup>
   ) : (
     <ToggleGroup
-      toggleMultiple
+      multiple
       value={value}
       onValueChange={setValue}
       className="flex gap-2"
