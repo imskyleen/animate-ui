@@ -9799,6 +9799,42 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-arrow-up',
   },
+  'icons-arrow-up-down': {
+    name: 'icons-arrow-up-down',
+    description: 'Arrow up down icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/arrow-up-down/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/arrow-up-down.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype ArrowUpDownProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    upArrowGroup: {\n      initial: {\n        y: 0,\n        transition: { ease: \'easeInOut\', duration: 0.3 },\n      },\n      animate: {\n        y: -3,\n        transition: { ease: \'easeInOut\', duration: 0.3 },\n      },\n    },\n    downArrowGroup: {\n      initial: {\n        y: 0,\n        transition: { ease: \'easeInOut\', duration: 0.3 },\n      },\n      animate: {\n        y: 3,\n        transition: { ease: \'easeInOut\', duration: 0.3 },\n      },\n    },\n    upArrowLine: {},\n    upArrowHead: {},\n    downArrowLine: {},\n    downArrowHead: {},\n  } satisfies Record<string, Variants>,\n  \'default-loop\': {\n    upArrowGroup: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, -3, 0],\n        transition: { ease: \'easeInOut\', duration: 0.6 },\n      },\n    },\n    downArrowGroup: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 3, 0],\n        transition: { ease: \'easeInOut\', duration: 0.6 },\n      },\n    },\n    upArrowLine: {},\n    upArrowHead: {},\n    downArrowLine: {},\n    downArrowHead: {},\n  } satisfies Record<string, Variants>,\n  out: {\n    upArrowGroup: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, -24, 24, 0],\n        transition: {\n          default: { ease: \'easeInOut\', duration: 0.6 },\n          y: {\n            ease: \'easeInOut\',\n            duration: 0.6,\n            times: [0, 0.5, 0.5, 1],\n          },\n        },\n      },\n    },\n    downArrowGroup: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 24, -24, 0],\n        transition: {\n          default: { ease: \'easeInOut\', duration: 0.6 },\n          y: {\n            ease: \'easeInOut\',\n            duration: 0.6,\n            times: [0, 0.5, 0.5, 1],\n          },\n        },\n      },\n    },\n    upArrowLine: {},\n    upArrowHead: {},\n    downArrowLine: {},\n    downArrowHead: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: ArrowUpDownProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      {/* Right Arrow (Down) */}\n      <motion.g\n        variants={variants.downArrowGroup}\n        initial="initial"\n        animate={controls}\n      >\n        <motion.path\n          d="m21 16-4 4-4-4"\n          variants={variants.downArrowHead}\n          initial="initial"\n          animate={controls}\n        />\n        <motion.path\n          d="M17 20V4"\n          variants={variants.downArrowLine}\n          initial="initial"\n          animate={controls}\n        />\n      </motion.g>\n      {/* Left Arrow (Up) */}\n      <motion.g\n        variants={variants.upArrowGroup}\n        initial="initial"\n        animate={controls}\n      >\n        <motion.path\n          d="m3 8 4-4 4 4"\n          variants={variants.upArrowHead}\n          initial="initial"\n          animate={controls}\n        />\n        <motion.path\n          d="M7 4v16"\n          variants={variants.upArrowLine}\n          initial="initial"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction ArrowUpDown(props: ArrowUpDownProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  ArrowUpDown,\n  ArrowUpDown as ArrowUpDownIcon,\n  type ArrowUpDownProps,\n  type ArrowUpDownProps as ArrowUpDownIconProps,\n};',
+      },
+    ],
+    keywords: ['arrow', 'up', 'down', 'sort', 'direction', 'vertical'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/arrow-up-down/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-arrow-up-down';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-arrow-up-down',
+  },
   'icons-audio-lines': {
     name: 'icons-audio-lines',
     description: 'Audio Lines icon component.',
