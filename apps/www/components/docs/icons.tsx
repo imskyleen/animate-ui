@@ -159,6 +159,10 @@ const addedIcons = [
       'icons-list',
     ],
   },
+  {
+    date: '2025-10-18',
+    icons: ['icons-arrow-up-down'],
+  },
 ];
 
 const thirtyDaysAgo = new Date();
