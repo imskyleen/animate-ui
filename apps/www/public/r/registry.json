@@ -6720,6 +6720,190 @@
       }
     },
     {
+      "name": "icons-between-horizontal-end",
+      "type": "registry:ui",
+      "title": "Between Horizontal End Icon",
+      "description": "Between horizontal end icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/between-horizontal-end/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/between-horizontal-end.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "insert",
+          "add",
+          "left",
+          "slot",
+          "squeeze",
+          "space",
+          "grid",
+          "table",
+          "rows",
+          "cells",
+          "excel",
+          "spreadsheet",
+          "accountancy",
+          "data",
+          "enter",
+          "entry",
+          "entries",
+          "blocks",
+          "rectangles",
+          "chevron",
+          "between",
+          "horizontal",
+          "end"
+        ]
+      }
+    },
+    {
+      "name": "icons-between-horizontal-start",
+      "type": "registry:ui",
+      "title": "Between Horizontal Start Icon",
+      "description": "Between horizontal start icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/between-horizontal-start/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/between-horizontal-start.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "insert",
+          "add",
+          "right",
+          "slot",
+          "squeeze",
+          "space",
+          "grid",
+          "table",
+          "rows",
+          "cells",
+          "excel",
+          "spreadsheet",
+          "accountancy",
+          "data",
+          "enter",
+          "entry",
+          "entries",
+          "blocks",
+          "rectangles",
+          "chevron",
+          "between",
+          "horizontal",
+          "start"
+        ]
+      }
+    },
+    {
+      "name": "icons-between-vertical-end",
+      "type": "registry:ui",
+      "title": "Between Vertical End Icon",
+      "description": "Between vertical end icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/between-vertical-end/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/between-vertical-end.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "insert",
+          "add",
+          "down",
+          "slot",
+          "squeeze",
+          "space",
+          "grid",
+          "table",
+          "columns",
+          "cells",
+          "excel",
+          "spreadsheet",
+          "accountancy",
+          "data",
+          "enter",
+          "entry",
+          "entries",
+          "blocks",
+          "rectangles",
+          "chevron",
+          "between",
+          "vertical",
+          "end"
+        ]
+      }
+    },
+    {
+      "name": "icons-between-vertical-start",
+      "type": "registry:ui",
+      "title": "Between Vertical Start Icon",
+      "description": "Between vertical start icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/between-vertical-start/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/between-vertical-start.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "insert",
+          "add",
+          "up",
+          "slot",
+          "squeeze",
+          "space",
+          "grid",
+          "table",
+          "columns",
+          "cells",
+          "excel",
+          "spreadsheet",
+          "accountancy",
+          "data",
+          "enter",
+          "entry",
+          "entries",
+          "blocks",
+          "rectangles",
+          "chevron",
+          "between",
+          "vertical",
+          "start"
+        ]
+      }
+    },
+    {
       "name": "icons-binary",
       "type": "registry:ui",
       "title": "Binary Icon",

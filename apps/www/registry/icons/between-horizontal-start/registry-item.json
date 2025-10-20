@@ -1,0 +1,45 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-between-horizontal-start",
+  "type": "registry:ui",
+  "title": "Between Horizontal Start Icon",
+  "description": "Between horizontal start icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/between-horizontal-start/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/between-horizontal-start.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "insert",
+      "add",
+      "right",
+      "slot",
+      "squeeze",
+      "space",
+      "grid",
+      "table",
+      "rows",
+      "cells",
+      "excel",
+      "spreadsheet",
+      "accountancy",
+      "data",
+      "enter",
+      "entry",
+      "entries",
+      "blocks",
+      "rectangles",
+      "chevron",
+      "between",
+      "horizontal",
+      "start"
+    ]
+  }
+}
+
+

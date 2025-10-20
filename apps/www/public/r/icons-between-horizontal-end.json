@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-between-horizontal-end",
+  "type": "registry:ui",
+  "title": "Between Horizontal End Icon",
+  "description": "Between horizontal end icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/between-horizontal-end/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BetweenHorizontalEndProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    topRect: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: -2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    bottomRect: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: 2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    arrow: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: -3,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    topRect: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, -2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    bottomRect: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, 2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, -3, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BetweenHorizontalEndProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={13}\n        height={7}\n        x={3}\n        y={3}\n        rx={1}\n        variants={variants.topRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m22 15-3-3 3-3\"\n        variants={variants.arrow}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.rect\n        width={13}\n        height={7}\n        x={3}\n        y={14}\n        rx={1}\n        variants={variants.bottomRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BetweenHorizontalEnd(props: BetweenHorizontalEndProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BetweenHorizontalEnd,\n  BetweenHorizontalEnd as BetweenHorizontalEndIcon,\n  type BetweenHorizontalEndProps,\n  type BetweenHorizontalEndProps as BetweenHorizontalEndIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/between-horizontal-end.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "insert",
+      "add",
+      "left",
+      "slot",
+      "squeeze",
+      "space",
+      "grid",
+      "table",
+      "rows",
+      "cells",
+      "excel",
+      "spreadsheet",
+      "accountancy",
+      "data",
+      "enter",
+      "entry",
+      "entries",
+      "blocks",
+      "rectangles",
+      "chevron",
+      "between",
+      "horizontal",
+      "end"
+    ]
+  }
+}
