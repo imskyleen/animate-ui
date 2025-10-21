@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-between-vertical-start",
+  "type": "registry:ui",
+  "title": "Between Vertical Start Icon",
+  "description": "Between vertical start icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/between-vertical-start/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/between-vertical-start.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "insert",
+      "add",
+      "up",
+      "slot",
+      "squeeze",
+      "space",
+      "grid",
+      "table",
+      "columns",
+      "cells",
+      "excel",
+      "spreadsheet",
+      "accountancy",
+      "data",
+      "enter",
+      "entry",
+      "entries",
+      "blocks",
+      "rectangles",
+      "chevron",
+      "between",
+      "vertical",
+      "start"
+    ]
+  }
+}

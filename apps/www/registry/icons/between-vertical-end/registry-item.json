@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-between-vertical-end",
+  "type": "registry:ui",
+  "title": "Between Vertical End Icon",
+  "description": "Between vertical end icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/between-vertical-end/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/between-vertical-end.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "insert",
+      "add",
+      "down",
+      "slot",
+      "squeeze",
+      "space",
+      "grid",
+      "table",
+      "columns",
+      "cells",
+      "excel",
+      "spreadsheet",
+      "accountancy",
+      "data",
+      "enter",
+      "entry",
+      "entries",
+      "blocks",
+      "rectangles",
+      "chevron",
+      "between",
+      "vertical",
+      "end"
+    ]
+  }
+}

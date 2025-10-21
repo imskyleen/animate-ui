@@ -10537,6 +10537,254 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-bell-ring',
   },
+  'icons-between-horizontal-end': {
+    name: 'icons-between-horizontal-end',
+    description: 'Between horizontal end icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/between-horizontal-end/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/between-horizontal-end.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BetweenHorizontalEndProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    topRect: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: -2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    bottomRect: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: 2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    arrow: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: -3,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    topRect: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, -2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    bottomRect: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, 2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, -3, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BetweenHorizontalEndProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={13}\n        height={7}\n        x={3}\n        y={3}\n        rx={1}\n        variants={variants.topRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m22 15-3-3 3-3\"\n        variants={variants.arrow}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.rect\n        width={13}\n        height={7}\n        x={3}\n        y={14}\n        rx={1}\n        variants={variants.bottomRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BetweenHorizontalEnd(props: BetweenHorizontalEndProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BetweenHorizontalEnd,\n  BetweenHorizontalEnd as BetweenHorizontalEndIcon,\n  type BetweenHorizontalEndProps,\n  type BetweenHorizontalEndProps as BetweenHorizontalEndIconProps,\n};",
+      },
+    ],
+    keywords: [
+      'insert',
+      'add',
+      'left',
+      'slot',
+      'squeeze',
+      'space',
+      'grid',
+      'table',
+      'rows',
+      'cells',
+      'excel',
+      'spreadsheet',
+      'accountancy',
+      'data',
+      'enter',
+      'entry',
+      'entries',
+      'blocks',
+      'rectangles',
+      'chevron',
+      'between',
+      'horizontal',
+      'end',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/between-horizontal-end/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-between-horizontal-end';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-between-horizontal-end',
+  },
+  'icons-between-horizontal-start': {
+    name: 'icons-between-horizontal-start',
+    description: 'Between horizontal start icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/between-horizontal-start/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/between-horizontal-start.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BetweenHorizontalStartProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    topRect: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: -2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    bottomRect: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: 2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    arrow: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: 3,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    topRect: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, -2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    bottomRect: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, 2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, 3, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BetweenHorizontalStartProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={13}\n        height={7}\n        x={8}\n        y={3}\n        rx={1}\n        variants={variants.topRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m2 9 3 3-3 3\"\n        variants={variants.arrow}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.rect\n        width={13}\n        height={7}\n        x={8}\n        y={14}\n        rx={1}\n        variants={variants.bottomRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BetweenHorizontalStart(props: BetweenHorizontalStartProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BetweenHorizontalStart,\n  BetweenHorizontalStart as BetweenHorizontalStartIcon,\n  type BetweenHorizontalStartProps,\n  type BetweenHorizontalStartProps as BetweenHorizontalStartIconProps,\n};",
+      },
+    ],
+    keywords: [
+      'insert',
+      'add',
+      'right',
+      'slot',
+      'squeeze',
+      'space',
+      'grid',
+      'table',
+      'rows',
+      'cells',
+      'excel',
+      'spreadsheet',
+      'accountancy',
+      'data',
+      'enter',
+      'entry',
+      'entries',
+      'blocks',
+      'rectangles',
+      'chevron',
+      'between',
+      'horizontal',
+      'start',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/between-horizontal-start/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-between-horizontal-start';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-between-horizontal-start',
+  },
+  'icons-between-vertical-end': {
+    name: 'icons-between-vertical-end',
+    description: 'Between vertical end icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/between-vertical-end/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/between-vertical-end.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BetweenVerticalEndProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    leftRect: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: -2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    rightRect: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: 2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    arrow: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: -3,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    leftRect: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, -2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    rightRect: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, 2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, -3, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BetweenVerticalEndProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={7}\n        height={13}\n        x={3}\n        y={3}\n        rx={1}\n        variants={variants.leftRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m9 22 3-3 3 3\"\n        variants={variants.arrow}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.rect\n        width={7}\n        height={13}\n        x={14}\n        y={3}\n        rx={1}\n        variants={variants.rightRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BetweenVerticalEnd(props: BetweenVerticalEndProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BetweenVerticalEnd,\n  BetweenVerticalEnd as BetweenVerticalEndIcon,\n  type BetweenVerticalEndProps,\n  type BetweenVerticalEndProps as BetweenVerticalEndIconProps,\n};",
+      },
+    ],
+    keywords: [
+      'insert',
+      'add',
+      'down',
+      'slot',
+      'squeeze',
+      'space',
+      'grid',
+      'table',
+      'columns',
+      'cells',
+      'excel',
+      'spreadsheet',
+      'accountancy',
+      'data',
+      'enter',
+      'entry',
+      'entries',
+      'blocks',
+      'rectangles',
+      'chevron',
+      'between',
+      'vertical',
+      'end',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/between-vertical-end/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-between-vertical-end';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-between-vertical-end',
+  },
+  'icons-between-vertical-start': {
+    name: 'icons-between-vertical-start',
+    description: 'Between vertical start icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/between-vertical-start/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/between-vertical-start.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BetweenVerticalStartProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    leftRect: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: -2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    rightRect: {\n      initial: {\n        x: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        x: 2,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n    arrow: {\n      initial: {\n        y: 0,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        y: 3,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    leftRect: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, -2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    rightRect: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, 2, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: [0, 3, 0],\n        transition: { ease: 'easeInOut', duration: 0.6 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BetweenVerticalStartProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={7}\n        height={13}\n        x={3}\n        y={8}\n        rx={1}\n        variants={variants.leftRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m15 2-3 3-3-3\"\n        variants={variants.arrow}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.rect\n        width={7}\n        height={13}\n        x={14}\n        y={8}\n        rx={1}\n        variants={variants.rightRect}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BetweenVerticalStart(props: BetweenVerticalStartProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BetweenVerticalStart,\n  BetweenVerticalStart as BetweenVerticalStartIcon,\n  type BetweenVerticalStartProps,\n  type BetweenVerticalStartProps as BetweenVerticalStartIconProps,\n};",
+      },
+    ],
+    keywords: [
+      'insert',
+      'add',
+      'up',
+      'slot',
+      'squeeze',
+      'space',
+      'grid',
+      'table',
+      'columns',
+      'cells',
+      'excel',
+      'spreadsheet',
+      'accountancy',
+      'data',
+      'enter',
+      'entry',
+      'entries',
+      'blocks',
+      'rectangles',
+      'chevron',
+      'between',
+      'vertical',
+      'start',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/between-vertical-start/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-between-vertical-start';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-between-vertical-start',
+  },
   'icons-binary': {
     name: 'icons-binary',
     description: 'Binary icon component.',
