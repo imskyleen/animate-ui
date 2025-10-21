@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-menu-radio",
+  "type": "registry:ui",
+  "title": "Menu Radio Demo",
+  "description": "Demo showing a menu radio.",
+  "registryDependencies": [
+    "@animate-ui/components-base-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/menu-radio/index.tsx",
+      "content": "import * as React from 'react';\n\nimport { Button } from '@/components/ui/button';\nimport {\n  Menu,\n  MenuTrigger,\n  MenuPanel,\n  MenuGroupLabel,\n  MenuSeparator,\n  MenuRadioGroup,\n  MenuRadioItem,\n  MenuGroup,\n} from '@/components/animate-ui/components/base/menu';\n\ninterface BaseMenuRadioDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport function BaseMenuRadioDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: BaseMenuRadioDemoProps) {\n  const [position, setPosition] = React.useState('bottom');\n\n  return (\n    <Menu>\n      <MenuTrigger render={<Button variant=\"outline\">Open</Button>} />\n      <MenuPanel\n        className=\"w-56\"\n        align={align}\n        alignOffset={alignOffset}\n        side={side}\n        sideOffset={sideOffset}\n      >\n        <MenuGroup>\n          <MenuGroupLabel>Panel Position</MenuGroupLabel>\n          <MenuSeparator />\n          <MenuRadioGroup value={position} onValueChange={setPosition}>\n            <MenuRadioItem value=\"top\">Top</MenuRadioItem>\n            <MenuRadioItem value=\"bottom\">Bottom</MenuRadioItem>\n            <MenuRadioItem value=\"right\">Right</MenuRadioItem>\n          </MenuRadioGroup>\n        </MenuGroup>\n      </MenuPanel>\n    </Menu>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/menu-radio.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MenuPositioner": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "inline-start": "inline-start",
+            "inline-end": "inline-end"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

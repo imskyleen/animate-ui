@@ -24,18 +24,18 @@ const ITEMS = [
 ];
 
 type BaseAccordionDemoProps = {
-  openMultiple?: boolean;
+  multiple?: boolean;
   keepRendered?: boolean;
   showArrow?: boolean;
 };
 
 export const BaseAccordionDemo = ({
-  openMultiple = false,
+  multiple = false,
   keepRendered = false,
   showArrow = true,
 }: BaseAccordionDemoProps) => {
   return (
-    <Accordion openMultiple={openMultiple} className="max-w-[400px] w-full">
+    <Accordion multiple={multiple} className="max-w-[400px] w-full">
       {ITEMS.map((item, index) => (
         <AccordionItem key={index} value={`item-${index + 1}`}>
           <AccordionTrigger showArrow={showArrow}>

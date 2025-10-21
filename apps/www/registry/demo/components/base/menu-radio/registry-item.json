@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-menu-radio",
+  "type": "registry:ui",
+  "title": "Menu Radio Demo",
+  "description": "Demo showing a menu radio.",
+  "registryDependencies": ["@animate-ui/components-base-menu"],
+  "files": [
+    {
+      "path": "registry/demo/components/base/menu-radio/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/menu-radio.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MenuPositioner": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "inline-start": "inline-start",
+            "inline-end": "inline-end"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

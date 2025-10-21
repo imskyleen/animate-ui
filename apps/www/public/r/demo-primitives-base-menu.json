@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-menu",
+  "type": "registry:ui",
+  "title": "Base Menu Demo",
+  "description": "Demo showing an animated base menu.",
+  "registryDependencies": [
+    "@animate-ui/primitives-base-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/menu/index.tsx",
+      "content": "'use client';\n\nimport {\n  ChevronRight,\n  CreditCard,\n  Keyboard,\n  LogOut,\n  Mail,\n  MessageSquare,\n  Plus,\n  PlusCircle,\n  Settings,\n  User,\n  UserPlus,\n  Users,\n} from 'lucide-react';\n\nimport {\n  Menu,\n  MenuArrow,\n  MenuGroup,\n  MenuGroupLabel,\n  MenuHighlight,\n  MenuHighlightItem,\n  MenuItem,\n  MenuPortal,\n  MenuPositioner,\n  MenuPopup,\n  MenuSubmenu,\n  MenuSubmenuTrigger,\n  MenuSeparator,\n  MenuShortcut,\n  MenuTrigger,\n} from '@/components/animate-ui/primitives/base/menu';\n\nconst itemClassName =\n  'relative z-[1] focus:text-accent-foreground select-none flex items-center gap-2 px-2 py-1.5 text-sm outline-none [&_svg]:size-4 [&_span]:data-[slot=menu-shortcut]:text-xs [&_span]:data-[slot=menu-shortcut]:ml-auto';\nconst separatorClassName = '-mx-1 my-1 h-px bg-border';\n\ninterface BaseMenuDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const BaseMenuDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: BaseMenuDemoProps) => {\n  return (\n    <Menu>\n      <MenuTrigger>Open</MenuTrigger>\n      <MenuPortal>\n        <MenuPositioner\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          className=\"z-50\"\n        >\n          <MenuPopup className=\"w-56 max-h-[var(--available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden border bg-background p-1 outline-none\">\n            <MenuArrow />\n            <MenuHighlight className=\"absolute inset-0 bg-accent z-0\">\n              <MenuGroup>\n                <MenuGroupLabel className=\"px-2 py-1.5 text-sm font-semibold\">\n                  My Account\n                </MenuGroupLabel>\n                <MenuSeparator className={separatorClassName} />\n                <MenuHighlightItem>\n                  <MenuItem className={itemClassName}>\n                    <User />\n                    <span>Profile</span>\n                    <MenuShortcut>⇧⌘P</MenuShortcut>\n                  </MenuItem>\n                </MenuHighlightItem>\n                <MenuHighlightItem>\n                  <MenuItem className={itemClassName}>\n                    <CreditCard />\n                    <span>Billing</span>\n                    <MenuShortcut>⌘B</MenuShortcut>\n                  </MenuItem>\n                </MenuHighlightItem>\n                <MenuHighlightItem>\n                  <MenuItem className={itemClassName}>\n                    <Settings />\n                    <span>Settings</span>\n                    <MenuShortcut>⌘S</MenuShortcut>\n                  </MenuItem>\n                </MenuHighlightItem>\n                <MenuHighlightItem>\n                  <MenuItem className={itemClassName}>\n                    <Keyboard />\n                    <span>Keyboard shortcuts</span>\n                    <MenuShortcut>⌘K</MenuShortcut>\n                  </MenuItem>\n                </MenuHighlightItem>\n              </MenuGroup>\n\n              <MenuSeparator className={separatorClassName} />\n\n              <MenuGroup>\n                <MenuHighlightItem>\n                  <MenuItem className={itemClassName}>\n                    <Users />\n                    <span>Team</span>\n                  </MenuItem>\n                </MenuHighlightItem>\n                <MenuSubmenu>\n                  <MenuHighlightItem>\n                    <MenuSubmenuTrigger className={itemClassName}>\n                      <UserPlus />\n                      <span>Invite users</span>\n                      <ChevronRight data-chevron className=\"ml-auto size-4\" />\n                    </MenuSubmenuTrigger>\n                  </MenuHighlightItem>\n                  <MenuPortal>\n                    <MenuPositioner className=\"z-50\">\n                      <MenuPopup className=\"overflow-hidden min-w-[8rem] overflow-y-auto overflow-x-hidden border bg-background p-1 z-50\">\n                        <MenuHighlightItem>\n                          <MenuItem className={itemClassName}>\n                            <Mail />\n                            <span>Email</span>\n                          </MenuItem>\n                        </MenuHighlightItem>\n                        <MenuHighlightItem>\n                          <MenuItem className={itemClassName}>\n                            <MessageSquare />\n                            <span>Message</span>\n                          </MenuItem>\n                        </MenuHighlightItem>\n                        <MenuSeparator className={separatorClassName} />\n                        <MenuHighlightItem>\n                          <MenuItem className={itemClassName}>\n                            <PlusCircle />\n                            <span>More...</span>\n                          </MenuItem>\n                        </MenuHighlightItem>\n                      </MenuPopup>\n                    </MenuPositioner>\n                  </MenuPortal>\n                </MenuSubmenu>\n\n                <MenuHighlightItem>\n                  <MenuItem className={itemClassName}>\n                    <Plus />\n                    <span>New Team</span>\n                    <MenuShortcut>⌘+T</MenuShortcut>\n                  </MenuItem>\n                </MenuHighlightItem>\n              </MenuGroup>\n\n              <MenuSeparator className={separatorClassName} />\n\n              <MenuHighlightItem>\n                <MenuItem className={itemClassName}>\n                  <LogOut />\n                  <span>Log out</span>\n                  <MenuShortcut>⇧⌘Q</MenuShortcut>\n                </MenuItem>\n              </MenuHighlightItem>\n            </MenuHighlight>\n          </MenuPopup>\n        </MenuPositioner>\n      </MenuPortal>\n    </Menu>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/menu.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MenuPositioner": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "inline-start": "inline-start",
+            "inline-end": "inline-end"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

@@ -36,6 +36,7 @@
     "base/checkbox",
     "base/dialog",
     "base/files",
+    "base/menu",
     "base/popover",
     "base/preview-card",
     "base/progress",

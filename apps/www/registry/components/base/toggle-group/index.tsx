@@ -25,7 +25,7 @@ function ToggleGroup({
   variant,
   size,
   children,
-  toggleMultiple,
+  multiple,
   ...props
 }: ToggleGroupProps) {
   return (
@@ -36,11 +36,11 @@ function ToggleGroup({
         'group/toggle-group flex gap-0.5 w-fit items-center rounded-lg data-[variant=outline]:shadow-xs data-[variant=outline]:border data-[variant=outline]:p-0.5',
         className,
       )}
-      toggleMultiple={toggleMultiple}
+      multiple={multiple}
       {...props}
     >
       <ToggleGroupProvider value={{ variant, size }}>
-        {!toggleMultiple ? (
+        {!multiple ? (
           <ToggleGroupHighlightPrimitive className="bg-accent rounded-md">
             {children}
           </ToggleGroupHighlightPrimitive>
@@ -56,12 +56,12 @@ type ToggleProps = TogglePrimitiveProps & VariantProps<typeof toggleVariants>;
 
 function Toggle({ className, children, variant, size, ...props }: ToggleProps) {
   const { variant: contextVariant, size: contextSize } = useToggleGroup();
-  const { toggleMultiple } = useToggleGroupPrimitive();
+  const { multiple } = useToggleGroupPrimitive();
 
   return (
     <ToggleHighlightPrimitive
       value={props.value?.toString()}
-      className={cn(toggleMultiple && 'bg-accent rounded-md')}
+      className={cn(multiple && 'bg-accent rounded-md')}
     >
       <TogglePrimitive
         data-variant={contextVariant || variant}

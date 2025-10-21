@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-menu",
+  "type": "registry:ui",
+  "title": "Menu Demo",
+  "description": "Demo showing a menu.",
+  "registryDependencies": [
+    "@animate-ui/components-base-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/menu/index.tsx",
+      "content": "import { Button } from '@/components/ui/button';\nimport {\n  Menu,\n  MenuTrigger,\n  MenuPanel,\n  MenuGroup,\n  MenuGroupLabel,\n  MenuItem,\n  MenuSeparator,\n  MenuShortcut,\n  MenuSubmenu,\n  MenuSubmenuTrigger,\n  MenuSubmenuPanel,\n} from '@/components/animate-ui/components/base/menu';\n\ninterface BaseMenuDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport function BaseMenuDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: BaseMenuDemoProps) {\n  return (\n    <Menu>\n      <MenuTrigger render={<Button variant=\"outline\">Open</Button>} />\n      <MenuPanel\n        className=\"w-56\"\n        align={align}\n        alignOffset={alignOffset}\n        side={side}\n        sideOffset={sideOffset}\n      >\n        <MenuGroup>\n          <MenuGroupLabel>My Account</MenuGroupLabel>\n          <MenuItem>\n            Profile\n            <MenuShortcut>⇧⌘P</MenuShortcut>\n          </MenuItem>\n          <MenuItem>\n            Billing\n            <MenuShortcut>⌘B</MenuShortcut>\n          </MenuItem>\n          <MenuItem>\n            Settings\n            <MenuShortcut>⌘S</MenuShortcut>\n          </MenuItem>\n          <MenuItem>\n            Keyboard shortcuts\n            <MenuShortcut>⌘K</MenuShortcut>\n          </MenuItem>\n        </MenuGroup>\n        <MenuSeparator />\n        <MenuGroup>\n          <MenuItem>Team</MenuItem>\n          <MenuSubmenu>\n            <MenuSubmenuTrigger>Invite users</MenuSubmenuTrigger>\n            <MenuSubmenuPanel>\n              <MenuItem>Email</MenuItem>\n              <MenuItem>Message</MenuItem>\n              <MenuSeparator />\n              <MenuItem>More...</MenuItem>\n            </MenuSubmenuPanel>\n          </MenuSubmenu>\n          <MenuItem>\n            New Team\n            <MenuShortcut>⌘+T</MenuShortcut>\n          </MenuItem>\n        </MenuGroup>\n        <MenuSeparator />\n        <MenuItem>GitHub</MenuItem>\n        <MenuItem>Support</MenuItem>\n        <MenuItem disabled>API</MenuItem>\n        <MenuSeparator />\n        <MenuItem variant=\"destructive\">\n          Log out\n          <MenuShortcut>⇧⌘Q</MenuShortcut>\n        </MenuItem>\n      </MenuPanel>\n    </Menu>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/menu.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MenuPositioner": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "inline-start": "inline-start",
+            "inline-end": "inline-end"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

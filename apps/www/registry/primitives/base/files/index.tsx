@@ -63,7 +63,7 @@ function Files({
     <FilesProvider value={{ open: openValue ?? [] }}>
       <Accordion
         data-slot="files"
-        openMultiple
+        multiple
         defaultValue={defaultOpen}
         value={open}
         onValueChange={setOpenValue}

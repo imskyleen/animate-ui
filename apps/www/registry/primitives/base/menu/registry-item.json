@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-base-menu",
+  "type": "registry:ui",
+  "title": "Base Menu",
+  "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
+  "dependencies": ["motion", "@base-ui-components/react"],
+  "registryDependencies": [
+    "@animate-ui/primitives/effects/highlight",
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/hooks-use-controlled-state",
+    "@animate-ui/hooks-use-data-state"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/base/menu/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/base/menu.tsx"
+    }
+  ]
+}

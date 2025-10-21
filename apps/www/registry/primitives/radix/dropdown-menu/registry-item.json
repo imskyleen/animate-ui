@@ -8,6 +8,7 @@
   "registryDependencies": [
     "@animate-ui/primitives-effects-highlight",
     "@animate-ui/hooks-use-controlled-state",
+    "@animate-ui/hooks-use-data-state",
     "@animate-ui/lib-get-strict-context"
   ],
   "files": [
