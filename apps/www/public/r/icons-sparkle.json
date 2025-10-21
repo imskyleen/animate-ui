@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-sparkle",
+  "type": "registry:ui",
+  "title": "Sparkle Icon",
+  "description": "Sparkle icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/sparkle/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype SparkleProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        scale: 1,\n      },\n      animate: {\n        scale: [1, 0.9, 1.2, 1],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path: {},\n  } satisfies Record<string, Variants>,\n  fill: {\n    group: {\n      initial: {\n        scale: 1,\n      },\n      animate: {\n        scale: [1, 0.9, 1.2, 1],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path: {\n      initial: {\n        fill: 'currentColor',\n        fillOpacity: 0,\n      },\n      animate: {\n        fillOpacity: 1,\n        transition: { delay: 0.2 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: SparkleProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      variants={variants.group}\n      initial=\"initial\"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"\n        variants={variants.path}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Sparkle(props: SparkleProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Sparkle,\n  Sparkle as SparkleIcon,\n  type SparkleProps,\n  type SparkleProps as SparkleIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/sparkle.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "star",
+      "effect",
+      "filter",
+      "night",
+      "magic",
+      "shiny",
+      "glitter",
+      "twinkle",
+      "celebration"
+    ]
+  }
+}
