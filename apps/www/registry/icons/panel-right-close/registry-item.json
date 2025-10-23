@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-panel-right-close",
+  "type": "registry:ui",
+  "title": "Panel Right Close Icon",
+  "description": "Panel right close icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/panel-right-close/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/panel-right-close.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["sidebar", "panel", "right", "menu", "drawer", "navigation", "close"]
+  }
+}
+
+

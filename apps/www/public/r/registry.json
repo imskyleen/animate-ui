@@ -9679,6 +9679,36 @@
       }
     },
     {
+      "name": "icons-link-2",
+      "type": "registry:ui",
+      "title": "Link 2 Icon",
+      "description": "Link 2 icon with connect/unlink animations.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/link-2/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/link-2.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "link",
+          "connect",
+          "chain",
+          "url",
+          "relation",
+          "union",
+          "attach"
+        ]
+      }
+    },
+    {
       "name": "icons-list",
       "type": "registry:ui",
       "title": "List Icon",
@@ -11174,6 +11204,66 @@
       }
     },
     {
+      "name": "icons-panel-bottom-close",
+      "type": "registry:ui",
+      "title": "Panel Bottom Close Icon",
+      "description": "Panel bottom close icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-bottom-close/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-bottom-close.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "bottom",
+          "menu",
+          "drawer",
+          "navigation",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "icons-panel-bottom-open",
+      "type": "registry:ui",
+      "title": "Panel Bottom Open Icon",
+      "description": "Panel bottom open icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-bottom-open/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-bottom-open.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "bottom",
+          "menu",
+          "drawer",
+          "navigation",
+          "open"
+        ]
+      }
+    },
+    {
       "name": "icons-panel-left",
       "type": "registry:ui",
       "title": "Panel Left Icon",
@@ -11199,6 +11289,66 @@
           "menu",
           "drawer",
           "navigation"
+        ]
+      }
+    },
+    {
+      "name": "icons-panel-left-close",
+      "type": "registry:ui",
+      "title": "Panel Left Close Icon",
+      "description": "Panel left close icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-left-close/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-left-close.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "left",
+          "menu",
+          "drawer",
+          "navigation",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "icons-panel-left-open",
+      "type": "registry:ui",
+      "title": "Panel Left Open Icon",
+      "description": "Panel left open icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-left-open/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-left-open.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "left",
+          "menu",
+          "drawer",
+          "navigation",
+          "open"
         ]
       }
     },
@@ -11232,6 +11382,66 @@
       }
     },
     {
+      "name": "icons-panel-right-close",
+      "type": "registry:ui",
+      "title": "Panel Right Close Icon",
+      "description": "Panel right close icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-right-close/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-right-close.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "right",
+          "menu",
+          "drawer",
+          "navigation",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "icons-panel-right-open",
+      "type": "registry:ui",
+      "title": "Panel Right Open Icon",
+      "description": "Panel right open icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-right-open/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-right-open.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "right",
+          "menu",
+          "drawer",
+          "navigation",
+          "open"
+        ]
+      }
+    },
+    {
       "name": "icons-panel-top",
       "type": "registry:ui",
       "title": "Panel Top Icon",
@@ -11257,6 +11467,66 @@
           "menu",
           "drawer",
           "navigation"
+        ]
+      }
+    },
+    {
+      "name": "icons-panel-top-close",
+      "type": "registry:ui",
+      "title": "Panel Top Close Icon",
+      "description": "Panel top close icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-top-close/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-top-close.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "top",
+          "menu",
+          "drawer",
+          "navigation",
+          "close"
+        ]
+      }
+    },
+    {
+      "name": "icons-panel-top-open",
+      "type": "registry:ui",
+      "title": "Panel Top Open Icon",
+      "description": "Panel top open icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/panel-top-open/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/panel-top-open.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "sidebar",
+          "panel",
+          "top",
+          "menu",
+          "drawer",
+          "navigation",
+          "open"
         ]
       }
     },
@@ -11341,6 +11611,39 @@
         "keywords": [
           "music",
           "stop"
+        ]
+      }
+    },
+    {
+      "name": "icons-phone-call",
+      "type": "registry:ui",
+      "title": "Phone Call Icon",
+      "description": "Phone call icon with animated waves.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/phone-call/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/phone-call.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "phone",
+          "call",
+          "ring",
+          "audio",
+          "dial",
+          "contact",
+          "communication",
+          "voice",
+          "waves",
+          "signal"
         ]
       }
     },
@@ -12241,6 +12544,66 @@
         "keywords": [
           "settings",
           "controls"
+        ]
+      }
+    },
+    {
+      "name": "icons-sparkle",
+      "type": "registry:ui",
+      "title": "Sparkle Icon",
+      "description": "Sparkle icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/sparkle/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/sparkle.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "star",
+          "effect",
+          "filter",
+          "night",
+          "magic",
+          "shiny",
+          "glitter",
+          "twinkle",
+          "celebration"
+        ]
+      }
+    },
+    {
+      "name": "icons-sparkles",
+      "type": "registry:ui",
+      "title": "Sparkles Icon",
+      "description": "Sparkles icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/sparkles/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/sparkles.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "stars",
+          "effect",
+          "filter",
+          "night",
+          "magic"
         ]
       }
     },
