@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-gallery-vertical",
+  "type": "registry:ui",
+  "title": "Gallery Vertical Icon",
+  "description": "Gallery vertical icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/gallery-vertical/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/gallery-vertical.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "layout",
+      "design",
+      "development",
+      "photography",
+      "multimedia",
+      "files"
+    ]
+  }
+}

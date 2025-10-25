@@ -9318,6 +9318,122 @@
       }
     },
     {
+      "name": "icons-gallery-horizontal",
+      "type": "registry:ui",
+      "title": "Gallery Horizontal Icon",
+      "description": "Gallery horizontal icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/gallery-horizontal/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/gallery-horizontal.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "layout",
+          "design",
+          "development",
+          "photography",
+          "multimedia",
+          "files"
+        ]
+      }
+    },
+    {
+      "name": "icons-gallery-vertical-end",
+      "type": "registry:ui",
+      "title": "Gallery Vertical End Icon",
+      "description": "Gallery vertical end icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/gallery-vertical-end/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/gallery-vertical-end.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "layout",
+          "design",
+          "development",
+          "photography",
+          "multimedia",
+          "files"
+        ]
+      }
+    },
+    {
+      "name": "icons-gallery-vertical",
+      "type": "registry:ui",
+      "title": "Gallery Vertical Icon",
+      "description": "Gallery vertical icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/gallery-vertical/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/gallery-vertical.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "layout",
+          "design",
+          "development",
+          "photography",
+          "multimedia",
+          "files"
+        ]
+      }
+    },
+    {
+      "name": "icons-gallery-horizontal-end",
+      "type": "registry:ui",
+      "title": "Gallery Horizontal End Icon",
+      "description": "Gallery horizontal end icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/gallery-horizontal-end/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/gallery-horizontal-end.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "layout",
+          "design",
+          "development",
+          "photography",
+          "multimedia",
+          "files"
+        ]
+      }
+    },
+    {
       "name": "icons-gauge",
       "type": "registry:ui",
       "title": "Gauge Icon",

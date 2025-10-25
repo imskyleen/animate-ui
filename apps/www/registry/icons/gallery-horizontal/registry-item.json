@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-gallery-horizontal",
+  "type": "registry:ui",
+  "title": "Gallery Horizontal Icon",
+  "description": "Gallery horizontal icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/gallery-horizontal/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/gallery-horizontal.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "layout",
+      "design",
+      "development",
+      "photography",
+      "multimedia",
+      "files"
+    ]
+  }
+}
