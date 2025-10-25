@@ -14074,6 +14074,184 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-frame',
   },
+  'icons-gallery-horizontal': {
+    name: 'icons-gallery-horizontal',
+    description: 'Gallery horizontal icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/gallery-horizontal/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/gallery-horizontal.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype GalleryHorizontalProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {\n      rect: {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n          },\n        },\n      },\n    };\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`path${i}`] = {\n        initial: { opacity: 1, transform: \'translateX(0) scale(1)\' },\n        animate: {\n          opacity: 0,\n          transform: `translateX(${8 * Math.pow(-1, i + 1)}px) scale(0)`,\n          transition: {\n            transform: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.4,\n            },\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.4,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.4,\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: GalleryHorizontalProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M2 3v18"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.rect\n        width="12"\n        height="18"\n        x="6"\n        y="3"\n        rx="2"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M22 3v18"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction GalleryHorizontal(props: GalleryHorizontalProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  GalleryHorizontal,\n  GalleryHorizontal as GalleryHorizontalIcon,\n  type GalleryHorizontalProps,\n  type GalleryHorizontalProps as GalleryHorizontalIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'layout',
+      'design',
+      'development',
+      'photography',
+      'multimedia',
+      'files',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/gallery-horizontal/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-gallery-horizontal';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-gallery-horizontal',
+  },
+  'icons-gallery-vertical-end': {
+    name: 'icons-gallery-vertical-end',
+    description: 'Gallery vertical end icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/gallery-vertical-end/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/gallery-vertical-end.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype GalleryHorizontalEndProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {\n      rect: {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n          },\n        },\n      },\n    };\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`path${i}`] = {\n        initial: { opacity: 1, transform: \'translateX(0) scale(1)\' },\n        animate: {\n          opacity: 0,\n          transform: `translateX(${(3 - i) * 3}px) scale(0)`,\n          transition: {\n            transform: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.8 - 0.2 * i,\n            },\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.8 - 0.2 * i,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.8 - 0.2 * i,\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: GalleryHorizontalEndProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M2 7v10"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M6 5v14"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.rect\n        width="12"\n        height="18"\n        x="10"\n        y="3"\n        rx="2"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction GalleryHorizontalEnd(props: GalleryHorizontalEndProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  GalleryHorizontalEnd,\n  GalleryHorizontalEnd as GalleryHorizontalEndIcon,\n  type GalleryHorizontalEndProps,\n  type GalleryHorizontalEndProps as GalleryHorizontalEndIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'layout',
+      'design',
+      'development',
+      'photography',
+      'multimedia',
+      'files',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/gallery-vertical-end/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-gallery-vertical-end';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-gallery-vertical-end',
+  },
+  'icons-gallery-vertical': {
+    name: 'icons-gallery-vertical',
+    description: 'Gallery vertical icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/gallery-vertical/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/gallery-vertical.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype GalleryVerticalProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {\n      rect: {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n          },\n        },\n      },\n    };\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`path${i}`] = {\n        initial: { opacity: 1, transform: \'translateY(0) scale(1)\' },\n        animate: {\n          opacity: 0,\n          transform: `translateY(${3 * Math.pow(-1, i + 1)}px) scale(0)`,\n          transition: {\n            transform: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.4,\n            },\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.4,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.4,\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: GalleryVerticalProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M3 2h18"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.rect\n        width="18"\n        height="12"\n        x="3"\n        y="6"\n        rx="2"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M3 22h18"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction GalleryVertical(props: GalleryVerticalProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  GalleryVertical,\n  GalleryVertical as GalleryVerticalIcon,\n  type GalleryVerticalProps,\n  type GalleryVerticalProps as GalleryVerticalIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'layout',
+      'design',
+      'development',
+      'photography',
+      'multimedia',
+      'files',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/gallery-vertical/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-gallery-vertical';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-gallery-vertical',
+  },
+  'icons-gallery-horizontal-end': {
+    name: 'icons-gallery-horizontal-end',
+    description: 'Gallery horizontal end icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/gallery-horizontal-end/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/gallery-horizontal-end.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype GalleryVerticalEndProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {\n      rect: {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n            },\n          },\n        },\n      },\n    };\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`path${i}`] = {\n        initial: { opacity: 1, transform: \'translateY(0) scale(1)\' },\n        animate: {\n          opacity: 0,\n          transform: `translateY(${(3 - i) * 3}px) scale(0)`,\n          transition: {\n            transform: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.8 - 0.2 * i,\n            },\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.8 - 0.2 * i,\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.8 - 0.2 * i,\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: GalleryVerticalEndProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M7 2h10"\n        variants={variants.path1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M5 6h14"\n        variants={variants.path2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.rect\n        width="18"\n        height="12"\n        x="3"\n        y="10"\n        rx="2"\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction GalleryVerticalEnd(props: GalleryVerticalEndProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  GalleryVerticalEnd,\n  GalleryVerticalEnd as GalleryVerticalEndIcon,\n  type GalleryVerticalEndProps,\n  type GalleryVerticalEndProps as GalleryVerticalEndIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'layout',
+      'design',
+      'development',
+      'photography',
+      'multimedia',
+      'files',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/gallery-horizontal-end/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-gallery-horizontal-end';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-gallery-horizontal-end',
+  },
   'icons-gauge': {
     name: 'icons-gauge',
     description: 'Gauge icon component.',
