@@ -172,6 +172,15 @@ const addedIcons = [
       'icons-between-vertical-start',
     ],
   },
+  {
+    date: '2025-10-25',
+    icons: [
+      'icons-gallery-horizontal',
+      'icons-gallery-horizontal-end',
+      'icons-gallery-vertical',
+      'icons-gallery-vertical-end',
+    ],
+  },
 ];
 
 const thirtyDaysAgo = new Date();
