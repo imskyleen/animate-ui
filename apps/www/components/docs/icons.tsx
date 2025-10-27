@@ -292,8 +292,10 @@ export const Icons = () => {
   const searchedIcons = useMemo(() => {
     const q = search?.trim();
     if (!q) return filteredIcons;
-    return fuse.search(q).map((result) => result.item);
-  }, [search, fuse, filteredIcons]);
+    const results = fuse.search(q).map((result) => result.item);
+    if (filter === 'all') return results;
+    return results.filter((icon) => newIcons.includes(icon.name));
+  }, [search, fuse, filteredIcons, filter]);
 
   const searchedNewIcons = useMemo(() => {
     if (!search?.trim()) return newIcons;
