@@ -15,6 +15,30 @@ type GalleryHorizontalProps = IconProps<keyof typeof animations>;
 const animations = {
   default: (() => {
     const animation: Record<string, Variants> = {
+      rect: {},
+    };
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`path${i}`] = {
+        initial: { opacity: 1, scale: 1, x: 0 },
+        animate: {
+          opacity: [0, 1],
+          scale: [0.8, 1],
+          x: [4 * Math.pow(-1, i + 1), 0],
+          transition: {
+            type: 'spring',
+            stiffness: 150,
+            damping: 15,
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+
+  zoom: (() => {
+    const animation: Record<string, Variants> = {
       rect: {
         initial: { opacity: 1, scale: 1 },
         animate: {
@@ -75,6 +99,32 @@ const animations = {
 
     return animation;
   })() satisfies Record<string, Variants>,
+
+  collapse: {
+    rect: {},
+    path1: {
+      initial: { x: 0, scaleY: 1 },
+      animate: {
+        x: 4,
+        scaleY: 0.8,
+        transition: {
+          duration: 0.3,
+          ease: 'easeInOut',
+        },
+      },
+    },
+    path2: {
+      initial: { x: 0, scaleY: 1 },
+      animate: {
+        x: -4,
+        scaleY: 0.8,
+        transition: {
+          duration: 0.3,
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: GalleryHorizontalProps) {

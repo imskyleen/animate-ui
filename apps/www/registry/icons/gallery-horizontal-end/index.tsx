@@ -15,6 +15,31 @@ type GalleryVerticalEndProps = IconProps<keyof typeof animations>;
 const animations = {
   default: (() => {
     const animation: Record<string, Variants> = {
+      rect: {},
+    };
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`path${i}`] = {
+        initial: { opacity: 1, scale: 1, y: 0 },
+        animate: {
+          opacity: [0, 1],
+          scale: [0.8, 1],
+          y: [2 * i, 0],
+          transition: {
+            delay: 0.2 * (2 - i),
+            type: 'spring',
+            stiffness: 150,
+            damping: 15,
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+
+  zoom: (() => {
+    const animation: Record<string, Variants> = {
       rect: {
         initial: { opacity: 1, scale: 1 },
         animate: {
@@ -75,6 +100,29 @@ const animations = {
 
     return animation;
   })() satisfies Record<string, Variants>,
+
+  collapse: {
+    rect: {
+      initial: { y: 0 },
+      animate: {
+        y: -4,
+        transition: {
+          duration: 0.3,
+          ease: 'easeInOut',
+        },
+      },
+    },
+    path1: {
+      initial: { y: 0 },
+      animate: {
+        y: 4,
+        transition: {
+          duration: 0.3,
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: GalleryVerticalEndProps) {
