@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-link-2",
+  "type": "registry:ui",
+  "title": "Link 2 Icon",
+  "description": "Link 2 icon with connect/unlink animations.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/link-2/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/link-2.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "link",
+      "connect",
+      "chain",
+      "url",
+      "relation",
+      "union",
+      "attach"
+    ]
+  }
+}
+
+

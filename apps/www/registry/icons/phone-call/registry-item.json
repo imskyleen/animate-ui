@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-phone-call",
+  "type": "registry:ui",
+  "title": "Phone Call Icon",
+  "description": "Phone call icon with animated waves.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/phone-call/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/phone-call.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "phone",
+      "call",
+      "ring",
+      "audio",
+      "dial",
+      "contact",
+      "communication",
+      "voice",
+      "waves",
+      "signal"
+    ]
+  }
+}
+
+

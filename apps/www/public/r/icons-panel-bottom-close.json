@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-panel-bottom-close",
+  "type": "registry:ui",
+  "title": "Panel Bottom Close Icon",
+  "description": "Panel bottom close icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/panel-bottom-close/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype PanelBottomCloseProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 15, x2: 21, y2: 15 },\n      animate: {\n        x1: 3,\n        y1: 17,\n        x2: 21,\n        y2: 17,\n        transition: { type: 'spring', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: 2,\n        transition: { type: 'spring', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelBottomCloseProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={15}\n        x2={21}\n        y2={15}\n        variants={variants.line}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m15 8-3 3-3-3\"\n        variants={variants.arrow}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelBottomClose(props: PanelBottomCloseProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelBottomClose,\n  PanelBottomClose as PanelBottomCloseIcon,\n  type PanelBottomCloseProps,\n  type PanelBottomCloseProps as PanelBottomCloseIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/panel-bottom-close.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "sidebar",
+      "panel",
+      "bottom",
+      "menu",
+      "drawer",
+      "navigation",
+      "close"
+    ]
+  }
+}

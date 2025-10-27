@@ -14587,6 +14587,50 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-link',
   },
+  'icons-link-2': {
+    name: 'icons-link-2',
+    description: 'Link 2 icon with connect/unlink animations.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/link-2/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/link-2.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype Link2Props = IconProps<keyof typeof animations>;\n\nconst spring = { type: 'spring', damping: 20, stiffness: 200 } as const;\n\nconst animations = {\n  // Little \"clink\" at the joint\n  default: {\n    left: {\n      initial: { rotate: 0, transformOrigin: '9px 12px' },\n      animate: {\n        rotate: [0, 10, 0],\n        transformOrigin: '9px 12px',\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n    },\n    right: {\n      initial: { rotate: 0, transformOrigin: '15px 12px' },\n      animate: {\n        rotate: [0, -6, 0],\n        transformOrigin: '15px 12px',\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n    },\n    middle: {\n      initial: { rotate: 0 },\n      animate: {\n        rotate: [0, 12, 0],\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n    },\n    burstTop: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n    burstLeft: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n    burstBottom: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n    burstRight: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n  } satisfies Record<string, Variants>,\n\n  // Pull apart: arcs move outward, line shrinks away\n  unlink: {\n    left: {\n      initial: { x: 0 },\n      animate: { x: -1, transition: spring },\n    },\n    right: {\n      initial: { x: 0 },\n      animate: { x: 1, transition: spring },\n    },\n    middle: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: { ...spring, delay: 0.1 },\n      },\n    },\n    burstTop: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0],\n        scale: [0, 1, 0],\n        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n    burstLeft: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0],\n        scale: [0, 1, 0],\n        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n    burstBottom: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0],\n        scale: [0, 1, 0],\n        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n    burstRight: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0],\n        scale: [0, 1, 0],\n        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n\n  // Pull apart: arcs move outward, line shrinks away\n  'unlink-loop': {\n    left: {\n      initial: { x: 0 },\n      animate: {\n        x: [-1, 0, -1],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    right: {\n      initial: { x: 0 },\n      animate: {\n        x: [1, 0, 1],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    middle: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: [1, 0, 1],\n        scale: [1, 0, 1],\n        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.1 },\n      },\n    },\n    burstTop: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0, 0],\n        scale: [0, 1, 0, 0],\n        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n    burstLeft: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0, 0],\n        scale: [0, 1, 0, 0],\n        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n    burstBottom: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0, 0],\n        scale: [0, 1, 0, 0],\n        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n    burstRight: {\n      initial: { opacity: 0, scale: 0 },\n      animate: {\n        opacity: [0, 1, 0, 0],\n        scale: [0, 1, 0, 0],\n        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n\n  // Emphasize link: arcs nudge toward center, line pulses slightly\n  link: {\n    left: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, 1.5, 0],\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n    },\n    right: {\n      initial: { x: 0 },\n      animate: {\n        x: [0, -1.5, 0],\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n    },\n    burstTop: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n    burstLeft: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n    burstBottom: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n    burstRight: {\n      initial: { opacity: 0 },\n      animate: { opacity: 0 },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: Link2Props) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      {/* Left arc */}\n      <motion.path\n        d=\"M9 17H7A5 5 0 0 1 7 7h2\"\n        variants={variants.left}\n        initial=\"initial\"\n        animate={controls}\n      />\n      {/* Right arc */}\n      <motion.path\n        d=\"M15 7h2a5 5 0 1 1 0 10h-2\"\n        variants={variants.right}\n        initial=\"initial\"\n        animate={controls}\n      />\n      {/* Middle line */}\n      <motion.line\n        x1={8}\n        y1={12}\n        x2={16}\n        y2={12}\n        style={{ transformOrigin: '12px 12px' }}\n        variants={variants.middle}\n        initial=\"initial\"\n        animate={controls}\n      />\n      {/* Explosion lines (shown in unlink) - rotated around center to avoid overlap */}\n      <motion.g style={{ rotate: 45, transformOrigin: '12px 12px' }}>\n        <motion.line\n          x1={8}\n          y1={2}\n          x2={8}\n          y2={5}\n          style={{ transformOrigin: '8px 3.5px' }}\n          variants={variants.burstTop}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.line\n          x1={2}\n          y1={8}\n          x2={5}\n          y2={8}\n          style={{ transformOrigin: '3.5px 8px' }}\n          variants={variants.burstLeft}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.line\n          x1={16}\n          y1={19}\n          x2={16}\n          y2={22}\n          style={{ transformOrigin: '16px 20.5px' }}\n          variants={variants.burstBottom}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.line\n          x1={19}\n          y1={16}\n          x2={22}\n          y2={16}\n          style={{ transformOrigin: '20.5px 16px' }}\n          variants={variants.burstRight}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction Link2(props: Link2Props) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Link2,\n  Link2 as Link2Icon,\n  type Link2Props,\n  type Link2Props as Link2IconProps,\n};",
+      },
+    ],
+    keywords: [
+      'link',
+      'connect',
+      'chain',
+      'url',
+      'relation',
+      'union',
+      'attach',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/link-2/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-link-2';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-link-2',
+  },
   'icons-list': {
     name: 'icons-list',
     description: 'List icon component.',
@@ -16697,7 +16741,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/icons/panel-bottom.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelBottomProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 15, x2: 21, y2: 15 },\n      animate: {\n        x1: 3,\n        y1: 17,\n        x2: 21,\n        y2: 17,\n        transition: { type: \'spring\', damping: 20, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelBottomProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={15}\n        x2={21}\n        y2={15}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelBottom(props: PanelBottomProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelBottom,\n  PanelBottom as PanelBottomIcon,\n  type PanelBottomProps,\n  type PanelBottomProps as PanelBottomIconProps,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelBottomProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 15, x2: 21, y2: 15 },\n      animate: {\n        x1: 3,\n        y1: 17,\n        x2: 21,\n        y2: 17,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelBottomProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={15}\n        x2={21}\n        y2={15}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelBottom(props: PanelBottomProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelBottom,\n  PanelBottom as PanelBottomIcon,\n  type PanelBottomProps,\n  type PanelBottomProps as PanelBottomIconProps,\n};',
       },
     ],
     keywords: ['sidebar', 'panel', 'bottom', 'menu', 'drawer', 'navigation'],
@@ -16720,6 +16764,98 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-panel-bottom',
   },
+  'icons-panel-bottom-close': {
+    name: 'icons-panel-bottom-close',
+    description: 'Panel bottom close icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-bottom-close/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-bottom-close.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelBottomCloseProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 15, x2: 21, y2: 15 },\n      animate: {\n        x1: 3,\n        y1: 17,\n        x2: 21,\n        y2: 17,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: 2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelBottomCloseProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={15}\n        x2={21}\n        y2={15}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m15 8-3 3-3-3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelBottomClose(props: PanelBottomCloseProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelBottomClose,\n  PanelBottomClose as PanelBottomCloseIcon,\n  type PanelBottomCloseProps,\n  type PanelBottomCloseProps as PanelBottomCloseIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'bottom',
+      'menu',
+      'drawer',
+      'navigation',
+      'close',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/panel-bottom-close/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-bottom-close';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-bottom-close',
+  },
+  'icons-panel-bottom-open': {
+    name: 'icons-panel-bottom-open',
+    description: 'Panel bottom open icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-bottom-open/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-bottom-open.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelBottomOpenProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 15, x2: 21, y2: 15 },\n      animate: {\n        x1: 3,\n        y1: 13,\n        x2: 21,\n        y2: 13,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: -2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelBottomOpenProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={15}\n        x2={21}\n        y2={15}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m9 10 3-3 3 3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelBottomOpen(props: PanelBottomOpenProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelBottomOpen,\n  PanelBottomOpen as PanelBottomOpenIcon,\n  type PanelBottomOpenProps,\n  type PanelBottomOpenProps as PanelBottomOpenIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'bottom',
+      'menu',
+      'drawer',
+      'navigation',
+      'open',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/panel-bottom-open/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-bottom-open';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-bottom-open',
+  },
   'icons-panel-left': {
     name: 'icons-panel-left',
     description: 'Panel left icon component.',
@@ -16733,7 +16869,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/icons/panel-left.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelLeftProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 9, y1: 3, x2: 9, y2: 21 },\n      animate: {\n        x1: 7,\n        y1: 3,\n        x2: 7,\n        y2: 21,\n        transition: { type: \'spring\', damping: 20, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelLeftProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={9}\n        y1={3}\n        x2={9}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelLeft(props: PanelLeftProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelLeft,\n  PanelLeft as PanelLeftIcon,\n  type PanelLeftProps,\n  type PanelLeftProps as PanelLeftIconProps,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelLeftProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 9, y1: 3, x2: 9, y2: 21 },\n      animate: {\n        x1: 7,\n        y1: 3,\n        x2: 7,\n        y2: 21,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelLeftProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={9}\n        y1={3}\n        x2={9}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelLeft(props: PanelLeftProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelLeft,\n  PanelLeft as PanelLeftIcon,\n  type PanelLeftProps,\n  type PanelLeftProps as PanelLeftIconProps,\n};',
       },
     ],
     keywords: ['sidebar', 'panel', 'left', 'menu', 'drawer', 'navigation'],
@@ -16756,6 +16892,94 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-panel-left',
   },
+  'icons-panel-left-close': {
+    name: 'icons-panel-left-close',
+    description: 'Panel left close icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-left-close/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-left-close.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelLeftCloseProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 9, y1: 3, x2: 9, y2: 21 },\n      animate: {\n        x1: 7,\n        y1: 3,\n        x2: 7,\n        y2: 21,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: -2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelLeftCloseProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={9}\n        y1={3}\n        x2={9}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m16 15-3-3 3-3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelLeftClose(props: PanelLeftCloseProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelLeftClose,\n  PanelLeftClose as PanelLeftCloseIcon,\n  type PanelLeftCloseProps,\n  type PanelLeftCloseProps as PanelLeftCloseIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'left',
+      'menu',
+      'drawer',
+      'navigation',
+      'close',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/panel-left-close/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-left-close';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-left-close',
+  },
+  'icons-panel-left-open': {
+    name: 'icons-panel-left-open',
+    description: 'Panel left open icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-left-open/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-left-open.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelLeftOpenProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 9, y1: 3, x2: 9, y2: 21 },\n      animate: {\n        x1: 11,\n        y1: 3,\n        x2: 11,\n        y2: 21,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: 2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelLeftOpenProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={9}\n        y1={3}\n        x2={9}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m14 9 3 3-3 3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelLeftOpen(props: PanelLeftOpenProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelLeftOpen,\n  PanelLeftOpen as PanelLeftOpenIcon,\n  type PanelLeftOpenProps,\n  type PanelLeftOpenProps as PanelLeftOpenIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'left',
+      'menu',
+      'drawer',
+      'navigation',
+      'open',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/panel-left-open/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-left-open';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-left-open',
+  },
   'icons-panel-right': {
     name: 'icons-panel-right',
     description: 'Panel right icon component.',
@@ -16769,7 +16993,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/icons/panel-right.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelRightProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 15, y1: 3, x2: 15, y2: 21 },\n      animate: {\n        x1: 17,\n        y1: 3,\n        x2: 17,\n        y2: 21,\n        transition: { type: \'spring\', damping: 20, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelRightProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={15}\n        y1={3}\n        x2={15}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelRight(props: PanelRightProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelRight,\n  PanelRight as PanelRightIcon,\n  type PanelRightProps,\n  type PanelRightProps as PanelRightIconProps,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelRightProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 15, y1: 3, x2: 15, y2: 21 },\n      animate: {\n        x1: 17,\n        y1: 3,\n        x2: 17,\n        y2: 21,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelRightProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={15}\n        y1={3}\n        x2={15}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelRight(props: PanelRightProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelRight,\n  PanelRight as PanelRightIcon,\n  type PanelRightProps,\n  type PanelRightProps as PanelRightIconProps,\n};',
       },
     ],
     keywords: ['sidebar', 'panel', 'right', 'menu', 'drawer', 'navigation'],
@@ -16792,6 +17016,96 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-panel-right',
   },
+  'icons-panel-right-close': {
+    name: 'icons-panel-right-close',
+    description: 'Panel right close icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-right-close/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-right-close.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelRightCloseProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 15, y1: 3, x2: 15, y2: 21 },\n      animate: {\n        x1: 17,\n        y1: 3,\n        x2: 17,\n        y2: 21,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: 2,\n        transition: { type: \'spring\', damping: 20, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelRightCloseProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={15}\n        y1={3}\n        x2={15}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m8 9 3 3-3 3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelRightClose(props: PanelRightCloseProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelRightClose,\n  PanelRightClose as PanelRightCloseIcon,\n  type PanelRightCloseProps,\n  type PanelRightCloseProps as PanelRightCloseIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'right',
+      'menu',
+      'drawer',
+      'navigation',
+      'close',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/icons/panel-right-close/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-right-close';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-right-close',
+  },
+  'icons-panel-right-open': {
+    name: 'icons-panel-right-open',
+    description: 'Panel right open icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-right-open/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-right-open.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelRightOpenProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 15, y1: 3, x2: 15, y2: 21 },\n      animate: {\n        x1: 13,\n        y1: 3,\n        x2: 13,\n        y2: 21,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { x: 0 },\n      animate: {\n        x: -2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelRightOpenProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={15}\n        y1={3}\n        x2={15}\n        y2={21}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m10 15-3-3 3-3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelRightOpen(props: PanelRightOpenProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelRightOpen,\n  PanelRightOpen as PanelRightOpenIcon,\n  type PanelRightOpenProps,\n  type PanelRightOpenProps as PanelRightOpenIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'right',
+      'menu',
+      'drawer',
+      'navigation',
+      'open',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/panel-right-open/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-right-open';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-right-open',
+  },
   'icons-panel-top': {
     name: 'icons-panel-top',
     description: 'Panel top icon component.',
@@ -16805,7 +17119,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/icons/panel-top.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelTopProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 9, x2: 21, y2: 9 },\n      animate: {\n        x1: 3,\n        y1: 7,\n        x2: 21,\n        y2: 7,\n        transition: { type: \'spring\', damping: 20, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelTopProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={9}\n        x2={21}\n        y2={9}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelTop(props: PanelTopProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelTop,\n  PanelTop as PanelTopIcon,\n  type PanelTopProps,\n  type PanelTopProps as PanelTopIconProps,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelTopProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 9, x2: 21, y2: 9 },\n      animate: {\n        x1: 3,\n        y1: 7,\n        x2: 21,\n        y2: 7,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelTopProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={9}\n        x2={21}\n        y2={9}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelTop(props: PanelTopProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelTop,\n  PanelTop as PanelTopIcon,\n  type PanelTopProps,\n  type PanelTopProps as PanelTopIconProps,\n};',
       },
     ],
     keywords: ['sidebar', 'panel', 'top', 'menu', 'drawer', 'navigation'],
@@ -16827,6 +17141,94 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/icons-panel-top',
+  },
+  'icons-panel-top-close': {
+    name: 'icons-panel-top-close',
+    description: 'Panel top close icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-top-close/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-top-close.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelTopCloseProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 9, x2: 21, y2: 9 },\n      animate: {\n        x1: 3,\n        y1: 7,\n        x2: 21,\n        y2: 7,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: -2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelTopCloseProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={9}\n        x2={21}\n        y2={9}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m9 16 3-3 3 3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelTopClose(props: PanelTopCloseProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelTopClose,\n  PanelTopClose as PanelTopCloseIcon,\n  type PanelTopCloseProps,\n  type PanelTopCloseProps as PanelTopCloseIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'top',
+      'menu',
+      'drawer',
+      'navigation',
+      'close',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/panel-top-close/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-top-close';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-top-close',
+  },
+  'icons-panel-top-open': {
+    name: 'icons-panel-top-open',
+    description: 'Panel top open icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/panel-top-open/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/panel-top-open.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PanelTopOpenProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line: {\n      initial: { x1: 3, y1: 9, x2: 21, y2: 9 },\n      animate: {\n        x1: 3,\n        y1: 11,\n        x2: 21,\n        y2: 11,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n    arrow: {\n      initial: { y: 0 },\n      animate: {\n        y: 2,\n        transition: { type: \'spring\', damping: 18, stiffness: 200 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PanelTopOpenProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width={18}\n        height={18}\n        x={3}\n        y={3}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.line\n        x1={3}\n        y1={9}\n        x2={21}\n        y2={9}\n        variants={variants.line}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m15 14-3 3-3-3"\n        variants={variants.arrow}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PanelTopOpen(props: PanelTopOpenProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PanelTopOpen,\n  PanelTopOpen as PanelTopOpenIcon,\n  type PanelTopOpenProps,\n  type PanelTopOpenProps as PanelTopOpenIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'sidebar',
+      'panel',
+      'top',
+      'menu',
+      'drawer',
+      'navigation',
+      'open',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/panel-top-open/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-panel-top-open';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-panel-top-open',
   },
   'icons-paperclip': {
     name: 'icons-paperclip',
@@ -16947,6 +17349,53 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/icons-pause',
+  },
+  'icons-phone-call': {
+    name: 'icons-phone-call',
+    description: 'Phone call icon with animated waves.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/phone-call/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/phone-call.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype PhoneCallProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: (() => {\n    const animation: Record<string, Variants> = {\n      phone: {},\n    };\n\n    for (let i = 1; i <= 2; i++) {\n      animation[`wave${i}`] = {\n        initial: { opacity: 1, scale: 1 },\n        animate: {\n          opacity: 0,\n          scale: 0,\n          transition: {\n            opacity: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n              delay: 0.2 * (i - 1),\n            },\n            scale: {\n              duration: 0.2,\n              ease: \'easeInOut\',\n              repeat: 1,\n              repeatType: \'reverse\',\n              repeatDelay: 0.2,\n              delay: 0.2 * (i - 1),\n            },\n          },\n        },\n      };\n    }\n\n    return animation;\n  })() satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: PhoneCallProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      {/* Waves (inner first, then outer with delay) */}\n      <motion.path\n        d="M13 6a5 5 0 0 1 5 5"\n        variants={variants.wave1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M13 2a9 9 0 0 1 9 9"\n        variants={variants.wave2}\n        initial="initial"\n        animate={controls}\n      />\n      {/* Phone body */}\n      <motion.path\n        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"\n        variants={variants.phone}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction PhoneCall(props: PhoneCallProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  PhoneCall,\n  PhoneCall as PhoneCallIcon,\n  type PhoneCallProps,\n  type PhoneCallProps as PhoneCallIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'phone',
+      'call',
+      'ring',
+      'audio',
+      'dial',
+      'contact',
+      'communication',
+      'voice',
+      'waves',
+      'signal',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/phone-call/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-phone-call';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-phone-call',
   },
   'icons-pickaxe': {
     name: 'icons-pickaxe',
@@ -18182,6 +18631,88 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/icons-sliders-vertical',
+  },
+  'icons-sparkle': {
+    name: 'icons-sparkle',
+    description: 'Sparkle icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/sparkle/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/sparkle.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype SparkleProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        scale: 1,\n      },\n      animate: {\n        scale: [1, 0.9, 1.2, 1],\n        transition: { duration: 0.6, ease: \'easeInOut\' },\n      },\n    },\n    path: {},\n  } satisfies Record<string, Variants>,\n  fill: {\n    group: {\n      initial: {\n        scale: 1,\n      },\n      animate: {\n        scale: [1, 0.9, 1.2, 1],\n        transition: { duration: 0.6, ease: \'easeInOut\' },\n      },\n    },\n    path: {\n      initial: {\n        fill: \'currentColor\',\n        fillOpacity: 0,\n      },\n      animate: {\n        fillOpacity: 1,\n        transition: { delay: 0.2 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: SparkleProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      variants={variants.group}\n      initial="initial"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"\n        variants={variants.path}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Sparkle(props: SparkleProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Sparkle,\n  Sparkle as SparkleIcon,\n  type SparkleProps,\n  type SparkleProps as SparkleIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'star',
+      'effect',
+      'filter',
+      'night',
+      'magic',
+      'shiny',
+      'glitter',
+      'twinkle',
+      'celebration',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/sparkle/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-sparkle';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-sparkle',
+  },
+  'icons-sparkles': {
+    name: 'icons-sparkles',
+    description: 'Sparkles icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/sparkles/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/sparkles.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype SparklesProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        scale: 1,\n      },\n      animate: {\n        scale: [1, 0.9, 1.1, 1],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path: {},\n    plus: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: {\n          opacity: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n            delay: 0.15,\n          },\n          scale: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n            delay: 0.15,\n          },\n        },\n      },\n    },\n    circle: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: {\n          opacity: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n          },\n          scale: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n          },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  fill: {\n    group: {\n      initial: {\n        scale: 1,\n      },\n      animate: {\n        scale: [1, 0.9, 1.1, 1],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path: {\n      initial: {\n        fill: 'currentColor',\n        fillOpacity: 0,\n      },\n      animate: {\n        fillOpacity: 1,\n        transition: { delay: 0.2 },\n      },\n    },\n    plus: {\n      initial: { opacity: 1, scale: 1 },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: {\n          opacity: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n            delay: 0.15,\n          },\n          scale: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n            delay: 0.15,\n          },\n        },\n      },\n    },\n    circle: {\n      initial: {\n        fill: 'currentColor',\n        fillOpacity: 0,\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        fillOpacity: 1,\n        opacity: 0,\n        scale: 0,\n        transition: {\n          fillOpacity: { delay: 0.2 },\n          opacity: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n          },\n          scale: {\n            duration: 0.2,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0.2,\n          },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: SparklesProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"\n          variants={variants.path}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n      <motion.path\n        d=\"M20 2v4 M22 4h-4\"\n        variants={variants.plus}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.circle\n        cx=\"4\"\n        cy=\"20\"\n        r=\"2\"\n        variants={variants.circle}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Sparkles(props: SparklesProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Sparkles,\n  Sparkles as SparklesIcon,\n  type SparklesProps,\n  type SparklesProps as SparklesIconProps,\n};",
+      },
+    ],
+    keywords: ['stars', 'effect', 'filter', 'night', 'magic'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/sparkles/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-sparkles';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-sparkles',
   },
   'icons-square-arrow-out-down-left': {
     name: 'icons-square-arrow-out-down-left',

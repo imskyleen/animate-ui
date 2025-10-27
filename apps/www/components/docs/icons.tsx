@@ -172,6 +172,23 @@ const addedIcons = [
       'icons-between-vertical-start',
     ],
   },
+  {
+    date: '2025-10-27',
+    icons: [
+      'icons-phone-call',
+      'icons-link-2',
+      'icons-sparkle',
+      'icons-sparkles',
+      'icons-panel-bottom-close',
+      'icons-panel-bottom-open',
+      'icons-panel-left-close',
+      'icons-panel-left-open',
+      'icons-panel-right-close',
+      'icons-panel-right-open',
+      'icons-panel-top-close',
+      'icons-panel-top-open',
+    ],
+  },
 ];
 
 const thirtyDaysAgo = new Date();

@@ -10,25 +10,32 @@ import {
   type IconProps,
 } from '@/registry/icons/icon';
 
-type PanelBottomProps = IconProps<keyof typeof animations>;
+type PanelRightCloseProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
     rect: {},
     line: {
-      initial: { x1: 3, y1: 15, x2: 21, y2: 15 },
+      initial: { x1: 15, y1: 3, x2: 15, y2: 21 },
       animate: {
-        x1: 3,
-        y1: 17,
-        x2: 21,
-        y2: 17,
+        x1: 17,
+        y1: 3,
+        x2: 17,
+        y2: 21,
         transition: { type: 'spring', damping: 18, stiffness: 200 },
+      },
+    },
+    arrow: {
+      initial: { x: 0 },
+      animate: {
+        x: 2,
+        transition: { type: 'spring', damping: 20, stiffness: 200 },
       },
     },
   } satisfies Record<string, Variants>,
 } as const;
 
-function IconComponent({ size, ...props }: PanelBottomProps) {
+function IconComponent({ size, ...props }: PanelRightCloseProps) {
   const { controls } = useAnimateIconContext();
   const variants = getVariants(animations);
 
@@ -57,11 +64,17 @@ function IconComponent({ size, ...props }: PanelBottomProps) {
         animate={controls}
       />
       <motion.line
-        x1={3}
-        y1={15}
-        x2={21}
-        y2={15}
+        x1={15}
+        y1={3}
+        x2={15}
+        y2={21}
         variants={variants.line}
+        initial="initial"
+        animate={controls}
+      />
+      <motion.path
+        d="m8 9 3 3-3 3"
+        variants={variants.arrow}
         initial="initial"
         animate={controls}
       />
@@ -69,14 +82,14 @@ function IconComponent({ size, ...props }: PanelBottomProps) {
   );
 }
 
-function PanelBottom(props: PanelBottomProps) {
+function PanelRightClose(props: PanelRightCloseProps) {
   return <IconWrapper icon={IconComponent} {...props} />;
 }
 
 export {
   animations,
-  PanelBottom,
-  PanelBottom as PanelBottomIcon,
-  type PanelBottomProps,
-  type PanelBottomProps as PanelBottomIconProps,
+  PanelRightClose,
+  PanelRightClose as PanelRightCloseIcon,
+  type PanelRightCloseProps,
+  type PanelRightCloseProps as PanelRightCloseIconProps,
 };

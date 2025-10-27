@@ -10,7 +10,7 @@ import {
   type IconProps,
 } from '@/registry/icons/icon';
 
-type PanelBottomProps = IconProps<keyof typeof animations>;
+type PanelBottomCloseProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
@@ -25,10 +25,17 @@ const animations = {
         transition: { type: 'spring', damping: 18, stiffness: 200 },
       },
     },
+    arrow: {
+      initial: { y: 0 },
+      animate: {
+        y: 2,
+        transition: { type: 'spring', damping: 18, stiffness: 200 },
+      },
+    },
   } satisfies Record<string, Variants>,
 } as const;
 
-function IconComponent({ size, ...props }: PanelBottomProps) {
+function IconComponent({ size, ...props }: PanelBottomCloseProps) {
   const { controls } = useAnimateIconContext();
   const variants = getVariants(animations);
 
@@ -65,18 +72,24 @@ function IconComponent({ size, ...props }: PanelBottomProps) {
         initial="initial"
         animate={controls}
       />
+      <motion.path
+        d="m15 8-3 3-3-3"
+        variants={variants.arrow}
+        initial="initial"
+        animate={controls}
+      />
     </motion.svg>
   );
 }
 
-function PanelBottom(props: PanelBottomProps) {
+function PanelBottomClose(props: PanelBottomCloseProps) {
   return <IconWrapper icon={IconComponent} {...props} />;
 }
 
 export {
   animations,
-  PanelBottom,
-  PanelBottom as PanelBottomIcon,
-  type PanelBottomProps,
-  type PanelBottomProps as PanelBottomIconProps,
+  PanelBottomClose,
+  PanelBottomClose as PanelBottomCloseIcon,
+  type PanelBottomCloseProps,
+  type PanelBottomCloseProps as PanelBottomCloseIconProps,
 };
