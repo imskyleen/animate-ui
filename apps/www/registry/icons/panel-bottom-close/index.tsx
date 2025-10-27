@@ -22,14 +22,14 @@ const animations = {
         y1: 17,
         x2: 21,
         y2: 17,
-        transition: { type: 'spring', damping: 20, stiffness: 200 },
+        transition: { type: 'spring', damping: 18, stiffness: 200 },
       },
     },
     arrow: {
       initial: { y: 0 },
       animate: {
         y: 2,
-        transition: { type: 'spring', damping: 20, stiffness: 200 },
+        transition: { type: 'spring', damping: 18, stiffness: 200 },
       },
     },
   } satisfies Record<string, Variants>,

@@ -22,7 +22,7 @@ const animations = {
       animate: {
         rotate: [0, 10, 0],
         transformOrigin: '9px 12px',
-        transition: { duration: 0.3, ease: 'easeInOut' },
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
     right: {
@@ -30,14 +30,14 @@ const animations = {
       animate: {
         rotate: [0, -6, 0],
         transformOrigin: '15px 12px',
-        transition: { duration: 0.3, ease: 'easeInOut' },
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
     middle: {
       initial: { rotate: 0 },
       animate: {
         rotate: [0, 12, 0],
-        transition: { duration: 0.3, ease: 'easeInOut' },
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
     burstTop: {
@@ -69,40 +69,101 @@ const animations = {
       animate: { x: 1, transition: spring },
     },
     middle: {
-      initial: { opacity: 1, scaleX: 1 },
+      initial: { opacity: 1, scale: 1 },
       animate: {
         opacity: 0,
-        scaleX: 0.6,
-        // transition: spring
+        scale: 0,
         transition: { ...spring, delay: 0.1 },
       },
     },
     burstTop: {
-      initial: { opacity: 0 },
+      initial: { opacity: 0, scale: 0 },
       animate: {
         opacity: [0, 1, 0],
-        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.2 },
+        scale: [0, 1, 0],
+        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },
       },
     },
     burstLeft: {
-      initial: { opacity: 0 },
+      initial: { opacity: 0, scale: 0 },
       animate: {
         opacity: [0, 1, 0],
-        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.2 },
+        scale: [0, 1, 0],
+        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },
       },
     },
     burstBottom: {
-      initial: { opacity: 0 },
+      initial: { opacity: 0, scale: 0 },
       animate: {
         opacity: [0, 1, 0],
-        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.2 },
+        scale: [0, 1, 0],
+        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },
       },
     },
     burstRight: {
-      initial: { opacity: 0 },
+      initial: { opacity: 0, scale: 0 },
       animate: {
         opacity: [0, 1, 0],
-        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.2 },
+        scale: [0, 1, 0],
+        transition: { duration: 0.4, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+
+  // Pull apart: arcs move outward, line shrinks away
+  'unlink-loop': {
+    left: {
+      initial: { x: 0 },
+      animate: {
+        x: [-1, 0, -1],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    right: {
+      initial: { x: 0 },
+      animate: {
+        x: [1, 0, 1],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    middle: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0, 1],
+        scale: [1, 0, 1],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.1 },
+      },
+    },
+    burstTop: {
+      initial: { opacity: 0, scale: 0 },
+      animate: {
+        opacity: [0, 1, 0, 0],
+        scale: [0, 1, 0, 0],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+    burstLeft: {
+      initial: { opacity: 0, scale: 0 },
+      animate: {
+        opacity: [0, 1, 0, 0],
+        scale: [0, 1, 0, 0],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+    burstBottom: {
+      initial: { opacity: 0, scale: 0 },
+      animate: {
+        opacity: [0, 1, 0, 0],
+        scale: [0, 1, 0, 0],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+    burstRight: {
+      initial: { opacity: 0, scale: 0 },
+      animate: {
+        opacity: [0, 1, 0, 0],
+        scale: [0, 1, 0, 0],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },
       },
     },
   } satisfies Record<string, Variants>,
@@ -112,15 +173,15 @@ const animations = {
     left: {
       initial: { x: 0 },
       animate: {
-        x: [0, 2, 0],
-        transition: { duration: 0.3, ease: 'easeInOut' },
+        x: [0, 1.5, 0],
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
     right: {
       initial: { x: 0 },
       animate: {
-        x: [0, -2, 0],
-        transition: { duration: 0.3, ease: 'easeInOut' },
+        x: [0, -1.5, 0],
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
     burstTop: {

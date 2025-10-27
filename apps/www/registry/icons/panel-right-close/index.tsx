@@ -22,7 +22,7 @@ const animations = {
         y1: 3,
         x2: 17,
         y2: 21,
-        transition: { type: 'spring', damping: 20, stiffness: 200 },
+        transition: { type: 'spring', damping: 18, stiffness: 200 },
       },
     },
     arrow: {

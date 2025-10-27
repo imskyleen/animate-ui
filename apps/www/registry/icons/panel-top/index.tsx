@@ -22,7 +22,7 @@ const animations = {
         y1: 7,
         x2: 21,
         y2: 7,
-        transition: { type: 'spring', damping: 20, stiffness: 200 },
+        transition: { type: 'spring', damping: 18, stiffness: 200 },
       },
     },
   } satisfies Record<string, Variants>,
