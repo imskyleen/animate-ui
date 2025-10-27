@@ -187,6 +187,10 @@ const addedIcons = [
       'icons-panel-right-open',
       'icons-panel-top-close',
       'icons-panel-top-open',
+      'icons-gallery-horizontal',
+      'icons-gallery-horizontal-end',
+      'icons-gallery-vertical',
+      'icons-gallery-vertical-end',
     ],
   },
 ];
