@@ -4654,6 +4654,22 @@
       }
     },
     {
+      "name": "demo-primitives-effects-image-zoom",
+      "type": "registry:ui",
+      "title": "Image Zoom Demo",
+      "description": "Demo showing a image zoom effect.",
+      "registryDependencies": [
+        "@animate-ui/primitives-effects-image-zoom"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/effects/image-zoom/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/effects/image-zoom.tsx"
+        }
+      ]
+    },
+    {
       "name": "demo-primitives-effects-magnetic",
       "type": "registry:ui",
       "title": "Magnetic Demo",
@@ -14491,6 +14507,22 @@
           "path": "registry/primitives/effects/highlight/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/effects/highlight.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-effects-image-zoom",
+      "type": "registry:ui",
+      "title": "Image Zoom",
+      "description": "An effect that allows you to zoom in on an image on hover.",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/effects/image-zoom/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/effects/image-zoom.tsx"
         }
       ]
     },

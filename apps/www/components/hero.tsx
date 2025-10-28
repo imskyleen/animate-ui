@@ -36,7 +36,7 @@ export const Hero = () => {
                 New
                 <PartyPopper delay={500} className="size-3.5" animate />
               </span>{' '}
-              <span>Base UI Menu</span>
+              <span>Image Zoom Effect</span>
             </Link>
           </div>
         </MotionEffect>

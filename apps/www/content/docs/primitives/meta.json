@@ -82,6 +82,7 @@
     "effects/effect",
     "effects/fade",
     "effects/highlight",
+    "effects/image-zoom",
     "effects/magnetic",
     "effects/particles",
     "effects/shine",

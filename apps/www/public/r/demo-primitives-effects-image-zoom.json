@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-image-zoom",
+  "type": "registry:ui",
+  "title": "Image Zoom Demo",
+  "description": "Demo showing a image zoom effect.",
+  "registryDependencies": [
+    "@animate-ui/primitives-effects-image-zoom"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/image-zoom/index.tsx",
+      "content": "import { ImageZoom, Image } from '@/components/animate-ui/primitives/effects/image-zoom';\nimport NextImage from 'next/image';\n\nexport const ImageZoomDemo = () => {\n  return (\n    <ImageZoom className=\"rounded-2xl\">\n      <Image\n        src=\"https://images.pexels.com/photos/34293571/pexels-photo-34293571.jpeg\"\n        alt=\"Aerial View of the Great Lake of Almaty in Kazakhstan\"\n        as={NextImage}\n        width={3840}\n        height={2160}\n      />\n    </ImageZoom>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/image-zoom.tsx"
+    }
+  ]
+}

@@ -64,7 +64,7 @@ function DisclosurePanel<TTag extends React.ElementType = typeof motion.div>(
 ) {
   const {
     children,
-    transition = { type: 'spring', stiffness: 150, damping: 22 },
+    transition = { duration: 0.35, ease: 'easeInOut' },
     as = motion.div,
     unmount,
     keepRendered = false,
@@ -84,11 +84,11 @@ function DisclosurePanel<TTag extends React.ElementType = typeof motion.div>(
             <motion.div
               key="disclosure-panel"
               data-slot="disclosure-panel"
-              initial={{ height: 0, opacity: 0, '--mask-stop': '0%' }}
+              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 35 }}
               animate={
                 isOpen
-                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%' }
-                  : { height: 0, opacity: 0, '--mask-stop': '0%' }
+                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }
+                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 35 }
               }
               transition={transition}
               style={{
@@ -115,9 +115,14 @@ function DisclosurePanel<TTag extends React.ElementType = typeof motion.div>(
               <motion.div
                 key="disclosure-panel"
                 data-slot="disclosure-panel"
-                initial={{ height: 0, opacity: 0, '--mask-stop': '0%' }}
-                animate={{ height: 'auto', opacity: 1, '--mask-stop': '100%' }}
-                exit={{ height: 0, opacity: 0, '--mask-stop': '0%' }}
+                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 35 }}
+                animate={{
+                  height: 'auto',
+                  opacity: 1,
+                  '--mask-stop': '100%',
+                  y: 0,
+                }}
+                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 35 }}
                 transition={transition}
                 style={{
                   maskImage:

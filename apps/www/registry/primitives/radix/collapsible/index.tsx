@@ -55,7 +55,7 @@ type CollapsibleContentProps = Omit<
 
 function CollapsibleContent({
   keepRendered = false,
-  transition = { type: 'spring', stiffness: 150, damping: 22 },
+  transition = { duration: 0.35, ease: 'easeInOut' },
   ...props
 }: CollapsibleContentProps) {
   const { isOpen } = useCollapsible();
@@ -68,11 +68,11 @@ function CollapsibleContent({
             key="collapsible-content"
             data-slot="collapsible-content"
             layout
-            initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+            initial={{ opacity: 0, height: 0, overflow: 'hidden', y: 35 }}
             animate={
               isOpen
-                ? { opacity: 1, height: 'auto', overflow: 'hidden' }
-                : { opacity: 0, height: 0, overflow: 'hidden' }
+                ? { opacity: 1, height: 'auto', overflow: 'hidden', y: 0 }
+                : { opacity: 0, height: 0, overflow: 'hidden', y: 35 }
             }
             transition={transition}
             {...props}
@@ -85,9 +85,9 @@ function CollapsibleContent({
               key="collapsible-content"
               data-slot="collapsible-content"
               layout
-              initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
-              animate={{ opacity: 1, height: 'auto', overflow: 'hidden' }}
-              exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              initial={{ opacity: 0, height: 0, overflow: 'hidden', y: 35 }}
+              animate={{ opacity: 1, height: 'auto', overflow: 'hidden', y: 0 }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden', y: 35 }}
               transition={transition}
               {...props}
             />
