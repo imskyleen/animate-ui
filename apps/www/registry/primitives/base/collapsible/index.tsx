@@ -72,11 +72,11 @@ function CollapsiblePanel({
             <motion.div
               key="collapsible-panel"
               data-slot="collapsible-panel"
-              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 35 }}
+              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
               animate={
                 isOpen
                   ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }
-                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 35 }
+                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }
               }
               transition={transition}
               style={{
@@ -100,14 +100,14 @@ function CollapsiblePanel({
               <motion.div
                 key="collapsible-panel"
                 data-slot="collapsible-panel"
-                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 25 }}
+                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
                 animate={{
                   height: 'auto',
                   opacity: 1,
                   '--mask-stop': '100%',
                   y: 0,
                 }}
-                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 25 }}
+                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
                 transition={transition}
                 style={{
                   maskImage:

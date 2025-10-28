@@ -68,11 +68,11 @@ function CollapsibleContent({
             key="collapsible-content"
             data-slot="collapsible-content"
             layout
-            initial={{ opacity: 0, height: 0, overflow: 'hidden', y: 35 }}
+            initial={{ opacity: 0, height: 0, overflow: 'hidden', y: 20 }}
             animate={
               isOpen
                 ? { opacity: 1, height: 'auto', overflow: 'hidden', y: 0 }
-                : { opacity: 0, height: 0, overflow: 'hidden', y: 35 }
+                : { opacity: 0, height: 0, overflow: 'hidden', y: 20 }
             }
             transition={transition}
             {...props}
@@ -85,9 +85,9 @@ function CollapsibleContent({
               key="collapsible-content"
               data-slot="collapsible-content"
               layout
-              initial={{ opacity: 0, height: 0, overflow: 'hidden', y: 35 }}
+              initial={{ opacity: 0, height: 0, overflow: 'hidden', y: 20 }}
               animate={{ opacity: 1, height: 'auto', overflow: 'hidden', y: 0 }}
-              exit={{ opacity: 0, height: 0, overflow: 'hidden', y: 35 }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden', y: 20 }}
               transition={transition}
               {...props}
             />
