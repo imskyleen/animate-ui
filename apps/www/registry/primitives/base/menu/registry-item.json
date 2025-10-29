@@ -6,7 +6,7 @@
   "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
   "dependencies": ["motion", "@base-ui-components/react"],
   "registryDependencies": [
-    "@animate-ui/primitives/effects/highlight",
+    "@animate-ui/primitives-effects-highlight",
     "@animate-ui/lib-get-strict-context",
     "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/hooks-use-data-state"

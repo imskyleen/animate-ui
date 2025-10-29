@@ -21073,7 +21073,7 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives/effects/highlight',
+      '@animate-ui/primitives-effects-highlight',
       '@animate-ui/lib-get-strict-context',
       '@animate-ui/hooks-use-controlled-state',
       '@animate-ui/hooks-use-data-state',
