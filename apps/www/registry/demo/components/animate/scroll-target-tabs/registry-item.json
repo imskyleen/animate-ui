@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-animate-scroll-target-tabs",
+  "type": "registry:ui",
+  "title": "Scroll Target Tabs Demo",
+  "description": "Demo showing scroll target tabs with three sections.",
+  "registryDependencies": ["@animate-ui/components-animate-scroll-target-tabs"],
+  "files": [
+    {
+      "path": "registry/demo/components/animate/scroll-target-tabs/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/animate/scroll-target-tabs.tsx"
+    }
+  ]
+}
+

@@ -114,6 +114,22 @@
       ]
     },
     {
+      "name": "components-animate-scroll-target-tabs",
+      "type": "registry:ui",
+      "title": "Scroll Target Tabs",
+      "description": "A tabs component that scrolls to content sections instead of hiding/showing them. Sections remain visible and the active tab updates based on scroll position.",
+      "registryDependencies": [
+        "@animate-ui/primitives-animate-scroll-target-tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/components/animate/scroll-target-tabs/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/animate/scroll-target-tabs.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-animate-tabs",
       "type": "registry:ui",
       "title": "Tabs",
@@ -1378,6 +1394,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-components-animate-scroll-target-tabs",
+      "type": "registry:ui",
+      "title": "Scroll Target Tabs Demo",
+      "description": "Demo showing scroll target tabs with three sections.",
+      "registryDependencies": [
+        "@animate-ui/components-animate-scroll-target-tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/animate/scroll-target-tabs/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/animate/scroll-target-tabs.tsx"
+        }
+      ]
     },
     {
       "name": "demo-components-animate-tabs",
@@ -13895,6 +13927,28 @@
           "path": "registry/primitives/animate/scroll-progress/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/animate/scroll-progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-animate-scroll-target-tabs",
+      "type": "registry:ui",
+      "title": "Scroll Target Tabs",
+      "description": "A tabs component that scrolls to content sections instead of hiding/showing them. Sections remain visible and the active tab updates based on scroll position.",
+      "dependencies": [
+        "motion",
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/animate/scroll-target-tabs/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/animate/scroll-target-tabs.tsx"
         }
       ]
     },
