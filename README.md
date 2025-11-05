@@ -28,3 +28,9 @@ Please read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) before contributing.
 ## License
 
 Licensed under the [MIT license](https://github.com/imskyleen/animate-ui/blob/main/LICENSE.md).
+
+<br />
+<br />
+<a href="https://vercel.com/oss">
+  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+</a>
