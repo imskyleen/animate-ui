@@ -4989,22 +4989,6 @@
       }
     },
     {
-      "name": "demo-primitives-effects-trail",
-      "type": "registry:ui",
-      "title": "Trail Demo",
-      "description": "Demo showing an animated trail.",
-      "registryDependencies": [
-        "@animate-ui/primitives-effects-trail"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/effects/trail/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/effects/trail.tsx"
-        }
-      ]
-    },
-    {
       "name": "demo-primitives-effects-zoom",
       "type": "registry:ui",
       "title": "Zoom Demo",
@@ -14679,22 +14663,6 @@
           "path": "registry/primitives/effects/tilt/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/effects/tilt.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-effects-trail",
-      "type": "registry:ui",
-      "title": "Trail",
-      "description": "An effect that creates a trail that follows the cursor movement.",
-      "dependencies": [
-        "motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/effects/trail/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/effects/trail.tsx"
         }
       ]
     },
