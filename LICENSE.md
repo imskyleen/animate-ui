@@ -12,7 +12,7 @@ copies or substantial portions of the Software.
 
 ## Commons Clause Restriction
 
-You may use this Software, including for any commercial purpose, **so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.**
+You may use this Software, including for any commercial purpose, **so long as you do not sell or redistribute the components themselves in their original form—whether alone or in a bundle.**
 
 ## No Warranty
 
