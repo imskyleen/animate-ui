@@ -89,7 +89,6 @@
     "effects/slide",
     "effects/theme-toggler",
     "effects/tilt",
-    "effects/trail",
     "effects/zoom"
   ]
 }
