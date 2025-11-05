@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-backgrounds-gravity-stars",
+  "type": "registry:ui",
+  "title": "Gravity Stars Background Demo",
+  "description": "Demo showing a gravity stars background.",
+  "registryDependencies": [
+    "@animate-ui/components-backgrounds-gravity-stars"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/backgrounds/gravity-stars/index.tsx",
+      "content": "import { GravityStarsBackground } from '@/components/animate-ui/components/backgrounds/gravity-stars';\n\nexport const GravityStarsBackgroundDemo = () => {\n  return (\n    <GravityStarsBackground className=\"absolute inset-0 flex items-center justify-center rounded-xl\" />\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/backgrounds/gravity-stars.tsx"
+    }
+  ]
+}
