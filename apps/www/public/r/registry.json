@@ -194,6 +194,22 @@
       ]
     },
     {
+      "name": "components-backgrounds-gravity-stars",
+      "type": "registry:ui",
+      "title": "Gravity Stars Background",
+      "description": "A background component featuring a subtle yet engaging animated gravity stars effect.",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/components/backgrounds/gravity-stars/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/backgrounds/gravity-stars.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-backgrounds-hexagon",
       "type": "registry:ui",
       "title": "Hexagon Background",
@@ -1566,6 +1582,22 @@
           "path": "registry/demo/components/backgrounds/gradient/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/backgrounds/gradient.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-components-backgrounds-gravity-stars",
+      "type": "registry:ui",
+      "title": "Gravity Stars Background Demo",
+      "description": "Demo showing a gravity stars background.",
+      "registryDependencies": [
+        "@animate-ui/components-backgrounds-gravity-stars"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/backgrounds/gravity-stars/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/backgrounds/gravity-stars.tsx"
         }
       ]
     },

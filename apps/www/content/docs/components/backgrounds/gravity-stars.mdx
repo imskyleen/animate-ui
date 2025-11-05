@@ -1,0 +1,104 @@
+---
+title: Gravity Stars Background
+description: A background component featuring an interactive gravity stars effect.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-11-05
+---
+
+<ComponentPreview name="demo-components-backgrounds-gravity-stars" />
+
+## Installation
+
+<ComponentInstallation name="components-backgrounds-gravity-stars" />
+
+## Usage
+
+```tsx
+<GravityStarsBackground />
+```
+
+## API Reference
+
+### GravityStarsBackground
+
+<TypeTable
+  type={{
+    starsCount: {
+      description: 'The number of stars.',
+      type: 'number',
+      required: false,
+      default: '75',
+    },
+    starsSize: {
+      description: 'The size of the stars.',
+      type: 'number',
+      required: false,
+      default: '2',
+    },
+    starsOpacity: {
+      description: 'The opacity of the stars.',
+      type: 'number',
+      required: false,
+      default: '0.75',
+    },
+    glowIntensity: {
+      description: 'The intensity of the glow.',
+      type: 'number',
+      required: false,
+      default: '15',
+    },
+    glowAnimation: {
+      description: 'The animation of the glow.',
+      type: "'instant' | 'ease' | 'spring'",
+      required: false,
+      default: 'ease',
+    },
+    movementSpeed: {
+      description: 'The speed of the movement.',
+      type: 'number',
+      required: false,
+      default: '0.3',
+    },
+    mouseInfluence: {
+      description: 'The influence of the mouse.',
+      type: 'number',
+      required: false,
+      default: '100',
+    },
+    mouseGravity: {
+      description: 'The gravity of the mouse.',
+      type: "'attract' | 'repel'",
+      required: false,
+      default: 'attract',
+    },
+    gravityStrength: {
+      description: 'The strength of the gravity.',
+      type: 'number',
+      required: false,
+      default: '75',
+    },
+    starsInteraction: {
+      description: 'Whether the stars should interact with the mouse.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    starsInteractionType: {
+      description: 'The type of interaction for the stars.',
+      type: "'bounce' | 'merge'",
+      required: false,
+      default: 'bounce',
+    },
+    '...props': {
+      description: 'The props of the GravityStarsBackground.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Brett Jackson](https://www.framer.com/marketplace/components/gravity-particles/) for the initial Framer component.
