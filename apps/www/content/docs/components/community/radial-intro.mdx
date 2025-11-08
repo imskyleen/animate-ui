@@ -1,0 +1,51 @@
+---
+title: Radial Intro
+description: A circular intro animation component that arranges elements in a radial layout, smoothly transitioning them into orbit with looping motion.
+author:
+  name: arhamkhnz
+  url: https://github.com/arhamkhnz
+releaseDate: 2025-11-08
+---
+
+<ComponentPreview name="demo-components-community-radial-intro" />
+
+## Installation
+
+<ComponentInstallation name="components-community-radial-intro" />
+
+## Usage
+
+```tsx
+<RadialIntro orbitItems={ITEMS}
+```
+
+## API Reference
+
+### RadialIntro
+
+<TypeTable
+  type={{
+    orbitItems: {
+      description:
+        'Array of items to render around the circle. Each item provides id, name, and src.',
+      type: 'OrbitItem[]',
+      required: true,
+    },
+    stageSize: {
+      description: 'Diameter of the stage in pixels. Controls orbit radius.',
+      type: 'number',
+      required: false,
+      default: '320',
+    },
+    imageSize: {
+      description: 'Square size in pixels for each image inside the orbit.',
+      type: 'number',
+      required: false,
+      default: '60',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Framer University](https://www.framer.com/learn/resources/circular-intro-animation-in-framer/) for the original Framer component and explanation of the animation effect.

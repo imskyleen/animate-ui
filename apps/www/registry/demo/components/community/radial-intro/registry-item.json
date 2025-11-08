@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-community-radial-intro",
+  "type": "registry:ui",
+  "title": "Radial Intro Demo",
+  "description": "Demo showing radial intro.",
+  "registryDependencies": [
+    "@animate-ui/components-community-radial-intro"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/community/radial-intro/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/community/radial-intro.tsx"
+    }
+  ]
+}
