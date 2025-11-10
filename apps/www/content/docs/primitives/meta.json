@@ -26,6 +26,7 @@
     "radix/files",
     "radix/hover-card",
     "radix/popover",
+    "radix/preview-link-card",
     "radix/progress",
     "radix/radio-group",
     "radix/sheet",

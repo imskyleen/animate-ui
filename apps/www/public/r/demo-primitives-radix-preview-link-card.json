@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-preview-link-card",
+  "type": "registry:ui",
+  "title": "Radix Preview Link Card Demo",
+  "description": "Demo showing an animated radix preview link card.",
+  "registryDependencies": [
+    "@animate-ui/primitives-radix-preview-link-card"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/preview-link-card/index.tsx",
+      "content": "import {\n  PreviewLinkCard,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardPortal,\n  PreviewLinkCardTrigger,\n} from '@/components/animate-ui/primitives/radix/preview-link-card';\n\nexport const RadixPreviewLinkCardDemo = () => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href=\"https://ui.shadcn.com\">\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          shadcn/ui Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPortal>\n          <PreviewLinkCardContent className=\"border\" target=\"_blank\">\n            <PreviewLinkCardImage alt=\"shadcn/ui Docs\" />\n          </PreviewLinkCardContent>\n        </PreviewLinkCardPortal>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/preview-link-card.tsx"
+    }
+  ]
+}

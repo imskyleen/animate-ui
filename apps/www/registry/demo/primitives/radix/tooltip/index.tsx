@@ -11,6 +11,7 @@ interface RadixTooltipDemoProps {
   sideOffset?: number;
   align?: 'start' | 'center' | 'end';
   alignOffset?: number;
+  followCursor?: boolean | 'x' | 'y';
 }
 
 export const RadixTooltipDemo = ({
@@ -18,10 +19,11 @@ export const RadixTooltipDemo = ({
   sideOffset,
   align,
   alignOffset,
+  followCursor,
 }: RadixTooltipDemoProps) => {
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip followCursor={followCursor}>
         <TooltipTrigger>Hover</TooltipTrigger>
         <TooltipPortal>
           <TooltipContent

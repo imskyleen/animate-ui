@@ -10,13 +10,24 @@
   "files": [
     {
       "path": "registry/demo/components/radix/tooltip/index.tsx",
-      "content": "import {\n  Tooltip,\n  TooltipTrigger,\n  TooltipContent,\n  type TooltipContentProps,\n} from '@/components/animate-ui/components/radix/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface RadixTooltipDemoProps {\n  side: TooltipContentProps['side'];\n  sideOffset: TooltipContentProps['sideOffset'];\n  align: TooltipContentProps['align'];\n  alignOffset: TooltipContentProps['alignOffset'];\n}\n\nexport function RadixTooltipDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: RadixTooltipDemoProps) {\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\">Hover</Button>\n      </TooltipTrigger>\n      <TooltipContent\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <p>Add to library</p>\n      </TooltipContent>\n    </Tooltip>\n  );\n}\n",
+      "content": "import {\n  Tooltip,\n  TooltipTrigger,\n  TooltipContent,\n  type TooltipContentProps,\n} from '@/components/animate-ui/components/radix/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface RadixTooltipDemoProps {\n  side: TooltipContentProps['side'];\n  sideOffset: TooltipContentProps['sideOffset'];\n  align: TooltipContentProps['align'];\n  alignOffset: TooltipContentProps['alignOffset'];\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport function RadixTooltipDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: RadixTooltipDemoProps) {\n  return (\n    <Tooltip followCursor={followCursor}>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\">Hover</Button>\n      </TooltipTrigger>\n      <TooltipContent\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <p>Add to library</p>\n      </TooltipContent>\n    </Tooltip>\n  );\n}\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/radix/tooltip.tsx"
     }
   ],
   "meta": {
     "demoProps": {
+      "Tooltip": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
       "TooltipContent": {
         "side": {
           "value": "top",

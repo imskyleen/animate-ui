@@ -10,6 +10,7 @@ interface RadixHoverCardDemoProps {
   sideOffset?: number;
   align?: 'start' | 'center' | 'end';
   alignOffset?: number;
+  followCursor?: boolean | 'x' | 'y';
 }
 
 export const RadixHoverCardDemo = ({
@@ -17,9 +18,10 @@ export const RadixHoverCardDemo = ({
   sideOffset,
   align,
   alignOffset,
+  followCursor,
 }: RadixHoverCardDemoProps) => {
   return (
-    <HoverCard>
+    <HoverCard followCursor={followCursor}>
       <HoverCardTrigger asChild>
         <a
           className="size-12 border"

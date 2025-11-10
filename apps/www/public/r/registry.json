@@ -3309,6 +3309,17 @@
       ],
       "meta": {
         "demoProps": {
+          "HoverCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "HoverCardContent": {
             "side": {
               "value": "bottom",
@@ -3593,6 +3604,17 @@
       ],
       "meta": {
         "demoProps": {
+          "Tooltip": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "TooltipContent": {
             "side": {
               "value": "top",
@@ -5494,6 +5516,17 @@
       ],
       "meta": {
         "demoProps": {
+          "HoverCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "HoverCardContent": {
             "side": {
               "value": "bottom",
@@ -5566,6 +5599,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-primitives-radix-preview-link-card",
+      "type": "registry:ui",
+      "title": "Radix Preview Link Card Demo",
+      "description": "Demo showing an animated radix preview link card.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-preview-link-card"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/radix/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/radix/preview-link-card.tsx"
+        }
+      ]
     },
     {
       "name": "demo-primitives-radix-progress",
@@ -5737,6 +5786,17 @@
       ],
       "meta": {
         "demoProps": {
+          "Tooltip": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "TooltipContent": {
             "side": {
               "value": "top",
@@ -15058,6 +15118,26 @@
           "path": "registry/primitives/radix/popover/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-radix-preview-link-card",
+      "type": "registry:ui",
+      "title": "Radix Preview Link Card",
+      "description": "Displays a preview image of a link when hovered.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-hover-card",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/radix/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/radix/preview-link-card.tsx"
         }
       ]
     },
