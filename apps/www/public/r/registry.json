@@ -746,6 +746,23 @@
       ]
     },
     {
+      "name": "components-community-radial-intro",
+      "type": "registry:ui",
+      "title": "Radial Intro",
+      "description": "A circular intro animation component that arranges elements in a radial layout, smoothly transitioning them into orbit with looping motion.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/components/community/radial-intro/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/community/radial-intro.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-community-radial-nav",
       "type": "registry:ui",
       "title": "Radial Nav",
@@ -2675,6 +2692,22 @@
           "path": "registry/demo/components/community/playful-todolist/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/community/playful-todolist.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-components-community-radial-intro",
+      "type": "registry:ui",
+      "title": "Radial Intro Demo",
+      "description": "Demo showing radial intro.",
+      "registryDependencies": [
+        "@animate-ui/components-community-radial-intro"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/community/radial-intro/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/community/radial-intro.tsx"
         }
       ]
     },

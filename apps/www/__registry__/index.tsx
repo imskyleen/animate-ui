@@ -1621,6 +1621,45 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-community-playful-todolist',
   },
+  'components-community-radial-intro': {
+    name: 'components-community-radial-intro',
+    description:
+      'A circular intro animation component that arranges elements in a radial layout, smoothly transitioning them into orbit with looping motion.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: [],
+    files: [
+      {
+        path: 'registry/components/community/radial-intro/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/community/radial-intro.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport {\n  LayoutGroup,\n  motion,\n  useAnimate,\n  delay,\n  type Transition,\n  type AnimationSequence,\n} from 'motion/react';\n\ninterface ComponentProps {\n  orbitItems: OrbitItem[];\n  stageSize?: number;\n  imageSize?: number;\n}\n\ntype OrbitItem = {\n  id: number;\n  name: string;\n  src: string;\n};\n\nconst transition: Transition = {\n  delay: 0,\n  stiffness: 300,\n  damping: 35,\n  type: 'spring',\n  restSpeed: 0.01,\n  restDelta: 0.01,\n};\n\nconst spinConfig = {\n  duration: 30,\n  ease: 'linear' as const,\n  repeat: Infinity,\n};\n\nconst qsa = (root: Element, sel: string) =>\n  Array.from(root.querySelectorAll(sel));\n\nconst angleOf = (el: Element) => Number((el as HTMLElement).dataset.angle || 0);\n\nconst armOfImg = (img: Element) =>\n  (img as HTMLElement).closest('[data-arm]') as HTMLElement | null;\n\nfunction RadialIntro({\n  orbitItems,\n  stageSize = 320,\n  imageSize = 60,\n}: ComponentProps) {\n  const step = 360 / orbitItems.length;\n  const [scope, animate] = useAnimate();\n\n  React.useEffect(() => {\n    const root = scope.current;\n    if (!root) return;\n\n    // get arm and image elements\n    const arms = qsa(root, '[data-arm]');\n    const imgs = qsa(root, '[data-arm-image]');\n    const stops: Array<() => void> = [];\n\n    // image lift-in\n    delay(() => animate(imgs, { top: 0 }, transition), 250);\n\n    // build sequence for orbit placement\n    const orbitPlacementSequence: AnimationSequence = [\n      ...arms.map((el): [Element, Record<string, any>, any] => [\n        el,\n        { rotate: angleOf(el) },\n        { ...transition, at: 0 },\n      ]),\n      ...imgs.map((img): [Element, Record<string, any>, any] => [\n        img,\n        { rotate: -angleOf(armOfImg(img)!), opacity: 1 },\n        { ...transition, at: 0 },\n      ]),\n    ];\n\n    // play placement sequence\n    delay(() => animate(orbitPlacementSequence), 700);\n\n    // start continuous spin for arms and images\n    delay(() => {\n      // arms spin clockwise\n      arms.forEach((el) => {\n        const angle = angleOf(el);\n        const ctrl = animate(el, { rotate: [angle, angle + 360] }, spinConfig);\n        stops.push(() => ctrl.cancel());\n      });\n\n      // images counter-spin to stay upright\n      imgs.forEach((img) => {\n        const arm = armOfImg(img);\n        const angle = arm ? angleOf(arm) : 0;\n        const ctrl = animate(\n          img,\n          { rotate: [-angle, -angle - 360] },\n          spinConfig,\n        );\n        stops.push(() => ctrl.cancel());\n      });\n    }, 1300);\n\n    return () => stops.forEach((stop) => stop());\n  }, []);\n\n  return (\n    <LayoutGroup>\n      <motion.div\n        ref={scope}\n        className=\"relative overflow-visible\"\n        style={{ width: stageSize, height: stageSize }}\n        initial={false}\n      >\n        {orbitItems.map((item, i) => (\n          <motion.div\n            key={item.id}\n            data-arm\n            className=\"will-change-transform absolute inset-0\"\n            style={{ zIndex: orbitItems.length - i }}\n            data-angle={i * step}\n            layoutId={`arm-${item.id}`}\n          >\n            <motion.img\n              data-arm-image\n              className=\"rounded-full object-fill absolute left-1/2 top-1/2 aspect-square translate -translate-x-1/2\"\n              style={{\n                width: imageSize,\n                height: imageSize,\n                opacity: i === 0 ? 1 : 0,\n              }}\n              src={item.src}\n              alt={item.name}\n              draggable={false}\n              layoutId={`arm-img-${item.id}`}\n            />\n          </motion.div>\n        ))}\n      </motion.div>\n    </LayoutGroup>\n  );\n}\n\nexport { RadialIntro };",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/community/radial-intro/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-community-radial-intro';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-community-radial-intro',
+  },
   'components-community-radial-nav': {
     name: 'components-community-radial-nav',
     description:
@@ -4777,6 +4816,45 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-community-playful-todolist',
+  },
+  'demo-components-community-radial-intro': {
+    name: 'demo-components-community-radial-intro',
+    description: 'Demo showing radial intro.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-community-radial-intro'],
+    files: [
+      {
+        path: 'registry/demo/components/community/radial-intro/index.tsx',
+        type: 'registry:ui',
+        target:
+          'components/animate-ui/demo/components/community/radial-intro.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\n\nimport { RadialIntro } from '@/components/animate-ui/components/community/radial-intro';\n\nconst ITEMS = [\n  {\n    id: 1,\n    name: 'Framer University',\n    src: 'https://pbs.twimg.com/profile_images/1602734731728142336/9Bppcs67_400x400.jpg',\n  },\n  {\n    id: 2,\n    name: 'arhamkhnz',\n    src: 'https://pbs.twimg.com/profile_images/1897311929028255744/otxpL-ke_400x400.jpg',\n  },\n  {\n    id: 3,\n    name: 'Skyleen',\n    src: 'https://pbs.twimg.com/profile_images/1948770261848756224/oPwqXMD6_400x400.jpg',\n  },\n  {\n    id: 4,\n    name: 'Shadcn',\n    src: 'https://pbs.twimg.com/profile_images/1593304942210478080/TUYae5z7_400x400.jpg',\n  },\n  {\n    id: 5,\n    name: 'Adam Wathan',\n    src: 'https://pbs.twimg.com/profile_images/1677042510839857154/Kq4tpySA_400x400.jpg',\n  },\n  {\n    id: 6,\n    name: 'Guillermo Rauch',\n    src: 'https://pbs.twimg.com/profile_images/1783856060249595904/8TfcCN0r_400x400.jpg',\n  },\n  {\n    id: 7,\n    name: 'Jhey',\n    src: 'https://pbs.twimg.com/profile_images/1534700564810018816/anAuSfkp_400x400.jpg',\n  },\n  {\n    id: 8,\n    name: 'David Haz',\n    src: 'https://pbs.twimg.com/profile_images/1927474594102784000/Al0g-I6o_400x400.jpg',\n  },\n  {\n    id: 9,\n    name: 'Matt Perry',\n    src: 'https://pbs.twimg.com/profile_images/1690345911149375488/wfD0Ai9j_400x400.jpg',\n  },\n];\n\nexport const RadialIntroDemo = () => <RadialIntro orbitItems={ITEMS} />;",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/community/radial-intro/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-community-radial-intro';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-community-radial-intro',
   },
   'demo-components-community-radial-nav': {
     name: 'demo-components-community-radial-nav',
