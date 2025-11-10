@@ -74,7 +74,7 @@ function RadialIntro({
       ]),
       ...imgs.map((img): [Element, Record<string, any>, any] => [
         img,
-        { rotate: -angleOf(armOfImg(img)!) },
+        { rotate: -angleOf(armOfImg(img)!), opacity: 1 },
         { ...transition, at: 0 },
       ]),
     ];
@@ -127,7 +127,11 @@ function RadialIntro({
             <motion.img
               data-arm-image
               className="rounded-full object-fill absolute left-1/2 top-1/2 aspect-square translate -translate-x-1/2"
-              style={{ width: imageSize, height: imageSize }}
+              style={{
+                width: imageSize,
+                height: imageSize,
+                opacity: i === 0 ? 1 : 0,
+              }}
               src={item.src}
               alt={item.name}
               draggable={false}
