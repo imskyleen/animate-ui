@@ -1464,6 +1464,45 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-buttons-theme-toggler',
   },
+  'components-community-flip-card': {
+    name: 'components-community-flip-card',
+    description:
+      'A 3D animated card component that flips to reveal content on the back.',
+    type: 'registry:ui',
+    dependencies: ['motion', 'class-variance-authority', 'lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: undefined,
+    files: [
+      {
+        path: 'registry/components/community/flip-card/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/community/flip-card.tsx',
+        content:
+          '/* eslint-disable @next/next/no-img-element */\n\'use client\';\n\nimport { Button } from \'@/components/ui/button\';\nimport { easeOut, motion } from \'motion/react\';\nimport * as React from \'react\';\nimport { Github, Linkedin, Twitter } from \'lucide-react\';\n\nexport interface FlipCardData {\n  name: string;\n  username: string;\n  image: string;\n  bio: string;\n  stats: {\n    following: number;\n    followers: number;\n    posts?: number;\n  };\n  socialLinks?: {\n    linkedin?: string;\n    github?: string;\n    twitter?: string;\n  };\n}\n\ninterface FlipCardProps {\n  data: FlipCardData;\n}\n\nexport function FlipCard({ data }: FlipCardProps) {\n  const [isFlipped, setIsFlipped] = React.useState(false);\n\n  const isTouchDevice =\n    typeof window !== \'undefined\' && \'ontouchstart\' in window;\n\n  const handleClick = () => {\n    if (isTouchDevice) setIsFlipped(!isFlipped);\n  };\n\n  const handleMouseEnter = () => {\n    if (!isTouchDevice) setIsFlipped(true);\n  };\n\n  const handleMouseLeave = () => {\n    if (!isTouchDevice) setIsFlipped(false);\n  };\n\n  const cardVariants = {\n    front: { rotateY: 0, transition: { duration: 0.5, ease: easeOut } },\n    back: { rotateY: 180, transition: { duration: 0.5, ease: easeOut } },\n  };\n\n  return (\n    <div\n      className="mt-2 relative w-40 h-60 md:w-60 md:h-80 perspective-1000 cursor-pointer mx-auto"\n      onClick={handleClick}\n      onMouseEnter={handleMouseEnter}\n      onMouseLeave={handleMouseLeave}\n    >\n      {/* FRONT: Profile */}\n      <motion.div\n        className="absolute inset-0 backface-hidden rounded-md border-2 border-foreground/20 px-4 py-6 flex flex-col items-center justify-center bg-gradient-to-br from-muted via-background to-muted text-center"\n        animate={isFlipped ? \'back\' : \'front\'}\n        variants={cardVariants}\n        style={{ transformStyle: \'preserve-3d\' }}\n      >\n        <img\n          src={data.image}\n          alt={data.name}\n          className="size-20 md:size-24 rounded-full object-cover mb-4 border-2"\n        />\n        <h2 className="text-lg font-bold text-foreground">{data.name}</h2>\n        <p className="text-sm text-muted-foreground">@{data.username}</p>\n      </motion.div>\n\n      {/* BACK: Bio + Stats + Socials */}\n      <motion.div\n        className="absolute inset-0 backface-hidden rounded-md border-2 border-foreground/20 px-4 py-6 flex flex-col justify-between items-center gap-y-4 bg-gradient-to-tr from-muted via-background to-muted "\n        initial={{ rotateY: 180 }}\n        animate={isFlipped ? \'front\' : \'back\'}\n        variants={cardVariants}\n        style={{ transformStyle: \'preserve-3d\', rotateY: 180 }}\n      >\n        <p className="text-xs md:text-sm text-muted-foreground text-center">\n          {data.bio}\n        </p>\n\n        <div className="px-6 flex items-center justify-between w-full">\n          <div>\n            <p className="text-base font-bold">{data.stats.following}</p>\n            <p className="text-xs text-muted-foreground">Following</p>\n          </div>\n          <div>\n            <p className="text-base font-bold">{data.stats.followers}</p>\n            <p className="text-xs text-muted-foreground">Followers</p>\n          </div>\n          {data.stats.posts && (\n            <div>\n              <p className="text-base font-bold">{data.stats.posts}</p>\n              <p className="text-xs text-muted-foreground">Posts</p>\n            </div>\n          )}\n        </div>\n\n        {/* Social Media Icons */}\n        <div className="flex items-center justify-center gap-4">\n          {data.socialLinks?.linkedin && (\n            <a\n              href={data.socialLinks.linkedin}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Linkedin size={20} />\n            </a>\n          )}\n          {data.socialLinks?.github && (\n            <a\n              href={data.socialLinks.github}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Github size={20} />\n            </a>\n          )}\n          {data.socialLinks?.twitter && (\n            <a\n              href={data.socialLinks.twitter}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Twitter size={20} />\n            </a>\n          )}\n        </div>\n\n        <Button>Follow</Button>\n      </motion.div>\n    </div>\n  );\n}',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/community/flip-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-community-flip-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-community-flip-card',
+  },
   'components-community-management-bar': {
     name: 'components-community-management-bar',
     description: 'A management bar for managing items.',
@@ -4659,6 +4698,44 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-buttons-theme-toggler',
+  },
+  'demo-components-community-flip-card': {
+    name: 'demo-components-community-flip-card',
+    description: 'Demo showing the flip card component.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-community-flip-card'],
+    files: [
+      {
+        path: 'registry/demo/components/community/flip-card/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/community/flip-card.tsx',
+        content:
+          "'use client';\n\nimport { FlipCard } from '@/components/animate-ui/components/community/flip-card';\n\nexport const FlipCardDemo = () => {\n  const data = {\n    name: 'Animate UI',\n    username: 'animate_ui',\n    image:\n      'https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg',\n    bio: 'A fully animated, open-source component distribution built with React, TypeScript, Tailwind CSS, and Motion.',\n    stats: { following: 200, followers: 2900, posts: 120 },\n    socialLinks: {\n      linkedin: 'https://linkedin.com',\n      github: 'https://github.com',\n      twitter: 'https://twitter.com',\n    },\n  };\n\n  return <FlipCard data={data} />;\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/community/flip-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-community-flip-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-community-flip-card',
   },
   'demo-components-community-management-bar': {
     name: 'demo-components-community-management-bar',

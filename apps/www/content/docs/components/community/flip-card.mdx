@@ -1,0 +1,73 @@
+---
+title: Flip Card
+description: A 3D animated card component that flips to reveal content on the back.
+author:
+  name: Divyashri
+  url: https://github.com/DivyashriRavichandran
+---
+
+<ComponentPreview name="demo-components-community-flip-card" />
+
+## Installation
+
+<ComponentInstallation name="demo-components-community-flip-card" />
+
+## Usage
+
+```tsx
+<FlipCard data={data} />
+```
+
+## API Reference
+
+### FlipCard
+
+<TypeTable
+  type={{
+    data: {
+      description:
+        'The data object containing all information to display on the card, including user info, stats, and social links.',
+      type: 'FlipCardData',
+      required: true,
+    },
+  }}
+/>
+
+### FlipCardData
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Full name of the person.',
+      type: 'string',
+      required: true,
+    },
+    username: {
+      description: 'Username or handle of the person.',
+      type: 'string',
+      required: true,
+    },
+    image: {
+      description: 'URL of the profile image.',
+      type: 'string',
+      required: true,
+    },
+    bio: {
+      description: 'Short biography or description.',
+      type: 'string',
+      required: true,
+    },
+    stats: {
+      description:
+        'Object containing statistics such as following, followers, and optionally posts.',
+      type: '{ following: number; followers: number; posts?: number }',
+      required: true,
+    },
+    socialLinks: {
+      description:
+        'Optional object containing social profile links for LinkedIn, GitHub, and Twitter.',
+      type: '{ linkedin?: string; github?: string; twitter?: string }',
+      required: false,
+    },
+  }}
+/>
