@@ -72,6 +72,7 @@
     "backgrounds/stars",
     "---Community---",
     "community/index",
+    "community/flip-card",
     "community/management-bar",
     "community/notification-list",
     "community/pin-list",
