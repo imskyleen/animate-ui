@@ -4712,7 +4712,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/community/flip-card.tsx',
         content:
-          "'use client';\n\nimport { FlipCard } from '@/components/animate-ui/components/community/flip-card';\n\nexport const FlipCardDemo = () => {\n  const data = {\n    name: 'Animate UI',\n    username: 'animate_ui',\n    image:\n      'https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg',\n    bio: 'A fully animated, open-source component distribution built with React, TypeScript, Tailwind CSS, and Motion.',\n    stats: { following: 200, followers: 2900, posts: 120 },\n    socialLinks: {\n      linkedin: 'https://linkedin.com',\n      github: 'https://github.com',\n      twitter: 'https://twitter.com',\n    },\n  };\n\n  return <FlipCard data={data} />;\n};",
+          "'use client';\n\nimport { FlipCard } from '@/components/animate-ui/components/community/flip-card';\n\nconst data = {\n  name: 'Animate UI',\n  username: 'animate_ui',\n  image:\n    'https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg',\n  bio: 'A fully animated, open-source component distribution built with React, TypeScript, Tailwind CSS, and Motion.',\n  stats: { following: 200, followers: 2900, posts: 120 },\n  socialLinks: {\n    linkedin: 'https://linkedin.com',\n    github: 'https://github.com',\n    twitter: 'https://twitter.com',\n  },\n};\n\nexport const FlipCardDemo = () => {\n  return <FlipCard data={data} />;\n};",
       },
     ],
     keywords: [],
