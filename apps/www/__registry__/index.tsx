@@ -1737,6 +1737,45 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-community-radial-intro',
   },
+  'components-community-radial-menu': {
+    name: 'components-community-radial-menu',
+    description:
+      'A circular context menu built with Base UI, displaying actions in a clean radial layout with full keyboard support and smooth interaction.',
+    type: 'registry:ui',
+    dependencies: ['motion', 'lucide-react', '@base-ui-components/react'],
+    devDependencies: undefined,
+    registryDependencies: [],
+    files: [
+      {
+        path: 'registry/components/community/radial-menu/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/community/radial-menu.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { LucideIcon } from 'lucide-react';\nimport { motion, AnimatePresence, type Transition } from 'motion/react';\nimport { ContextMenu } from '@base-ui-components/react/context-menu';\nimport { cn } from '@/lib/utils';\n\ntype RadialMenuProps = {\n  children?: React.ReactNode;\n  menuItems: MenuItem[];\n  size?: number;\n  iconSize?: number;\n  wedgeRadius?: number;\n  innerRadius?: number;\n  onSelect?: (item: MenuItem) => void;\n};\n\ntype MenuItem = {\n  id: number;\n  label: string;\n  icon: LucideIcon;\n};\n\ntype Point = { x: number; y: number };\n\nconst menuTransition: Transition = {\n  type: 'spring',\n  stiffness: 420,\n  damping: 32,\n  mass: 1,\n};\n\nconst wedgeTransition: Transition = {\n  duration: 0.18,\n  ease: 'easeOut',\n};\n\nconst FULL_CIRCLE = 360;\nconst START_ANGLE = -90;\n\nfunction degToRad(deg: number) {\n  return (deg * Math.PI) / 180;\n}\n\nfunction polarToCartesian(radius: number, angleDeg: number): Point {\n  const rad = degToRad(angleDeg);\n  return {\n    x: Math.cos(rad) * radius,\n    y: Math.sin(rad) * radius,\n  };\n}\n\nfunction slicePath(\n  index: number,\n  total: number,\n  wedgeRadius: number,\n  innerRadius: number,\n) {\n  if (total <= 0) return '';\n\n  // single item → full donut ring\n  if (total === 1) {\n    return `\n      M ${wedgeRadius} 0\n      A ${wedgeRadius} ${wedgeRadius} 0 1 1 ${-wedgeRadius} 0\n      A ${wedgeRadius} ${wedgeRadius} 0 1 1 ${wedgeRadius} 0\n      M ${innerRadius} 0\n      A ${innerRadius} ${innerRadius} 0 1 0 ${-innerRadius} 0\n      A ${innerRadius} ${innerRadius} 0 1 0 ${innerRadius} 0\n    `;\n  }\n\n  const anglePerSlice = FULL_CIRCLE / total;\n  const midDeg = START_ANGLE + anglePerSlice * index;\n  const halfSlice = anglePerSlice / 2;\n\n  const startDeg = midDeg - halfSlice;\n  const endDeg = midDeg + halfSlice;\n\n  const outerStart = polarToCartesian(wedgeRadius, startDeg);\n  const outerEnd = polarToCartesian(wedgeRadius, endDeg);\n  const innerStart = polarToCartesian(innerRadius, startDeg);\n  const innerEnd = polarToCartesian(innerRadius, endDeg);\n\n  const largeArcFlag = anglePerSlice > 180 ? 1 : 0;\n\n  return `\n    M ${outerStart.x} ${outerStart.y}\n    A ${wedgeRadius} ${wedgeRadius} 0 ${largeArcFlag} 1 ${outerEnd.x} ${outerEnd.y}\n    L ${innerEnd.x} ${innerEnd.y}\n    A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerStart.x} ${innerStart.y}\n    Z\n  `;\n}\n\nfunction RadialMenu({\n  children,\n  menuItems,\n  size = 240,\n  iconSize = 14,\n  wedgeRadius = 80,\n  innerRadius = 40,\n  onSelect,\n}: RadialMenuProps) {\n  const slice = 360 / menuItems.length;\n  const iconRingRadius = (innerRadius + wedgeRadius) / 2;\n  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);\n  const [open, setOpen] = React.useState<boolean>(false);\n  const itemRefs = React.useRef<(HTMLElement | null)[]>([]);\n\n  const resetActive = () => setActiveIndex(null);\n\n  const handleOpenChange = (isOpen: boolean) => {\n    setOpen(isOpen);\n    if (!isOpen) resetActive();\n  };\n\n  return (\n    <ContextMenu.Root open={open} onOpenChange={handleOpenChange}>\n      <ContextMenu.Trigger\n        render={(triggerProps) => {\n          return (\n            <div\n              {...triggerProps}\n              className={cn('select-none outline-none', triggerProps.className)}\n            >\n              {children ? (\n                children\n              ) : (\n                <div className=\"size-80 flex justify-center items-center border-2 border-dashed rounded-lg\">\n                  Right-click here.\n                </div>\n              )}\n            </div>\n          );\n        }}\n      />\n\n      <AnimatePresence>\n        {open && (\n          <ContextMenu.Portal keepMounted>\n            <ContextMenu.Positioner\n              align=\"center\"\n              sideOffset={({ positioner }) => -positioner.height / 2}\n              className=\"outline-none\"\n            >\n              <ContextMenu.Popup\n                style={{ width: size, height: size }}\n                className=\"relative rounded-full overflow-hidden shadow-xl outline-none border-1 border-neutral-400 dark:border-neutral-700\"\n                render={\n                  <motion.div\n                    className=\"absolute inset-0\"\n                    initial={{ opacity: 0, scale: 0.5 }}\n                    animate={{ opacity: 1, scale: 1 }}\n                    exit={{ opacity: 0, scale: 0.5 }}\n                    transition={menuTransition}\n                  />\n                }\n              >\n                <svg\n                  className=\"absolute inset-0 size-full\"\n                  viewBox={`${-wedgeRadius} ${-wedgeRadius} ${\n                    wedgeRadius * 2\n                  } ${wedgeRadius * 2}`}\n                >\n                  {menuItems.map((item, index) => {\n                    const Icon = item.icon;\n                    const midDeg = START_ANGLE + slice * index;\n                    const { x: iconX, y: iconY } = polarToCartesian(\n                      iconRingRadius,\n                      midDeg,\n                    );\n                    const ICON_BOX = iconSize * 2;\n                    const isActive = activeIndex === index;\n\n                    return (\n                      <g\n                        key={item.id}\n                        className=\"cursor-pointer\"\n                        onClick={() => itemRefs.current[index]?.click()}\n                        onMouseEnter={() => {\n                          setActiveIndex(index);\n                          itemRefs.current[index]?.focus();\n                        }}\n                      >\n                        <motion.path\n                          d={slicePath(\n                            index,\n                            menuItems.length,\n                            wedgeRadius,\n                            innerRadius,\n                          )}\n                          className={cn(\n                            'stroke-neutral-400 dark:stroke-neutral-700 stroke-1',\n                            {\n                              'fill-neutral-200 dark:fill-neutral-800':\n                                isActive,\n                              'fill-neutral-300 dark:fill-neutral-900':\n                                !isActive,\n                            },\n                          )}\n                          initial={false}\n                          animate={{ opacity: isActive ? 1 : 0.95 }}\n                          transition={wedgeTransition}\n                        />\n\n                        <foreignObject\n                          x={iconX - ICON_BOX / 2}\n                          y={iconY - ICON_BOX / 2}\n                          width={ICON_BOX}\n                          height={ICON_BOX}\n                        >\n                          <ContextMenu.Item\n                            ref={(el) => {\n                              itemRefs.current[index] =\n                                el as HTMLElement | null;\n                            }}\n                            onFocus={() => setActiveIndex(index)}\n                            onClick={() => {\n                              onSelect?.(item);\n                            }}\n                            aria-label={item.label}\n                            className={cn(\n                              'size-full flex items-center justify-center rounded-full outline-none text-neutral-600 dark:text-neutral-400',\n                              {\n                                'text-neutral-900 dark:text-neutral-50':\n                                  isActive,\n                              },\n                            )}\n                          >\n                            <Icon\n                              style={{ height: iconSize, width: iconSize }}\n                            />\n                          </ContextMenu.Item>\n                        </foreignObject>\n                      </g>\n                    );\n                  })}\n\n                  <circle\n                    cx={0}\n                    cy={0}\n                    r={innerRadius - 6}\n                    className=\"fill-neutral-200 dark:fill-neutral-950 stroke-1 opacity-50 stroke-neutral-500 dark:stroke-neutral-600\"\n                  />\n                  <circle\n                    cx={0}\n                    cy={0}\n                    r={3}\n                    className=\"fill-none stroke-neutral-500 dark:stroke-neutral-600\"\n                  />\n                </svg>\n              </ContextMenu.Popup>\n            </ContextMenu.Positioner>\n          </ContextMenu.Portal>\n        )}\n      </AnimatePresence>\n    </ContextMenu.Root>\n  );\n}\n\nexport { RadialMenu };",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/community/radial-menu/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-community-radial-menu';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-community-radial-menu',
+  },
   'components-community-radial-nav': {
     name: 'components-community-radial-nav',
     description:
@@ -5086,6 +5125,45 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-community-radial-intro',
+  },
+  'demo-components-community-radial-menu': {
+    name: 'demo-components-community-radial-menu',
+    description: 'Demo Radial Menu.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-community-radial-menu'],
+    files: [
+      {
+        path: 'registry/demo/components/community/radial-menu/index.tsx',
+        type: 'registry:ui',
+        target:
+          'components/animate-ui/demo/components/community/radial-menu.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { RadialMenu } from '@/components/animate-ui/components/community/radial-menu';\nimport {\n  Copy,\n  Scissors,\n  ClipboardPaste,\n  Trash2,\n  Star,\n  Pin,\n} from 'lucide-react';\n\nconst MENU_ITEMS = [\n  { id: 1, label: 'Copy', icon: Copy },\n  { id: 2, label: 'Cut', icon: Scissors },\n  { id: 3, label: 'Paste', icon: ClipboardPaste },\n  { id: 4, label: 'Favorite', icon: Star },\n  { id: 5, label: 'Pin', icon: Pin },\n  { id: 6, label: 'Delete', icon: Trash2 },\n];\n\nexport const RadialMenuDemo = () => (\n  <RadialMenu\n    menuItems={MENU_ITEMS}\n    onSelect={(item) => {\n      console.log(item);\n      // run your action here\n    }}\n  >\n    <div className=\"size-80 flex justify-center items-center border-2 border-dashed rounded-lg\">\n      Right click to open the radial menu\n    </div>\n  </RadialMenu>\n);",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/community/radial-menu/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-community-radial-menu';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-community-radial-menu',
   },
   'demo-components-community-radial-nav': {
     name: 'demo-components-community-radial-nav',

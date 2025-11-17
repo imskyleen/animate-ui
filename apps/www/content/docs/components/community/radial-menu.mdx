@@ -1,0 +1,77 @@
+---
+title: Radial Menu
+description: A circular context menu built with Base UI, displaying actions in a clean radial layout with full keyboard support and smooth interaction.
+author:
+  name: arhamkhnz
+  url: https://github.com/arhamkhnz
+releaseDate: 2025-11-17
+---
+
+<ComponentPreview name="demo-components-community-radial-menu" />
+
+## Installation
+
+<ComponentInstallation name="components-community-radial-menu" />
+
+## Usage
+
+```tsx
+<RadialMenu menuItems={MENU_ITEMS} />
+```
+
+## API Reference
+
+### RadialMenu
+
+<TypeTable
+  type={{
+    children: {
+      description:
+        'Custom trigger content for the context menu. Falls back to a default block when not provided.',
+      type: 'React.ReactNode',
+      required: false,
+    },
+    menuItems: {
+      description:
+        'Array of items to render as radial actions. Each item contains id, label, and icon.',
+      type: 'MenuItem[]',
+      required: true,
+    },
+    size: {
+      description: 'Overall diameter of the radial menu in pixels.',
+      type: 'number',
+      required: false,
+      default: '260',
+    },
+    iconSize: {
+      description: 'Pixel size of each icon placed inside a wedge.',
+      type: 'number',
+      required: false,
+      default: '22',
+    },
+    wedgeRadius: {
+      description:
+        'Outer radius of the wedge shape. Controls how far wedges extend outward.',
+      type: 'number',
+      required: false,
+      default: '120',
+    },
+    innerRadius: {
+      description:
+        'Inner radius cutout size. Controls the hollow center of the circle.',
+      type: 'number',
+      required: false,
+      default: '40',
+    },
+    onSelect: {
+      description:
+        'Callback fired when a user selects a menu item via click, wedge activation, or keyboard.',
+      type: '(item: MenuItem) => void',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Jay](https://x.com/RankJay1) for [this X post](https://x.com/rankjay1/status/1987858513759199626) as inspiration

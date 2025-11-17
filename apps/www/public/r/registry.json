@@ -797,6 +797,25 @@
       ]
     },
     {
+      "name": "components-community-radial-menu",
+      "type": "registry:ui",
+      "title": "Radial Menu",
+      "description": "A circular context menu built with Base UI, displaying actions in a clean radial layout with full keyboard support and smooth interaction.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "@base-ui-components/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/components/community/radial-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/community/radial-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-community-radial-nav",
       "type": "registry:ui",
       "title": "Radial Nav",
@@ -2857,6 +2876,22 @@
           "path": "registry/demo/components/community/radial-intro/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/community/radial-intro.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-components-community-radial-menu",
+      "type": "registry:ui",
+      "title": "Radial Menu Demo",
+      "description": "Demo Radial Menu.",
+      "registryDependencies": [
+        "@animate-ui/components-community-radial-menu"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/community/radial-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/community/radial-menu.tsx"
         }
       ]
     },
