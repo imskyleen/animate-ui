@@ -46,6 +46,23 @@ releaseDate: 2025-09-07
   text="Base UI API Reference - Tooltip.Root"
 />
 
+<TypeTable
+  type={{
+    followCursor: {
+      description: 'Whether to follow the cursor.',
+      type: 'boolean | "x" | "y"',
+      required: false,
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring options of the follow cursor.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
 ### TooltipTrigger
 
 <ExternalLink

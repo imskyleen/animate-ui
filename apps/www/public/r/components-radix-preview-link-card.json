@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-preview-link-card",
+  "type": "registry:ui",
+  "title": "Preview Link Card",
+  "description": "Displays a preview image of a link when hovered.",
+  "registryDependencies": [
+    "@animate-ui/primitives-radix-preview-link-card"
+  ],
+  "files": [
+    {
+      "path": "registry/components/radix/preview-link-card/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  PreviewLinkCard as PreviewLinkCardPrimitive,\n  PreviewLinkCardTrigger as PreviewLinkCardTriggerPrimitive,\n  PreviewLinkCardPortal as PreviewLinkCardPortalPrimitive,\n  PreviewLinkCardContent as PreviewLinkCardContentPrimitive,\n  PreviewLinkCardImage as PreviewLinkCardImagePrimitive,\n  type PreviewLinkCardProps as PreviewLinkCardPrimitiveProps,\n  type PreviewLinkCardTriggerProps as PreviewLinkCardTriggerPrimitiveProps,\n  type PreviewLinkCardContentProps as PreviewLinkCardContentPrimitiveProps,\n  type PreviewLinkCardImageProps as PreviewLinkCardImagePrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/preview-link-card';\nimport { cn } from '@/lib/utils';\n\ntype PreviewLinkCardProps = PreviewLinkCardPrimitiveProps;\n\nfunction PreviewLinkCard(props: PreviewLinkCardProps) {\n  return <PreviewLinkCardPrimitive {...props} />;\n}\n\ntype PreviewLinkCardTriggerProps = PreviewLinkCardTriggerPrimitiveProps;\n\nfunction PreviewLinkCardTrigger(props: PreviewLinkCardTriggerProps) {\n  return <PreviewLinkCardTriggerPrimitive {...props} />;\n}\n\ntype PreviewLinkCardContentProps = PreviewLinkCardContentPrimitiveProps;\n\nfunction PreviewLinkCardContent({\n  className,\n  align = 'center',\n  sideOffset = 4,\n  ...props\n}: PreviewLinkCardContentProps) {\n  return (\n    <PreviewLinkCardPortalPrimitive>\n      <PreviewLinkCardContentPrimitive\n        align={align}\n        sideOffset={sideOffset}\n        className={cn(\n          'z-50 origin-(--radix-hover-card-content-transform-origin) rounded-md border shadow-md outline-hidden overflow-hidden',\n          className,\n        )}\n        {...props}\n      />\n    </PreviewLinkCardPortalPrimitive>\n  );\n}\n\ntype PreviewLinkCardImageProps = PreviewLinkCardImagePrimitiveProps;\n\nfunction PreviewLinkCardImage(props: PreviewLinkCardImageProps) {\n  return <PreviewLinkCardImagePrimitive {...props} />;\n}\n\nexport {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  type PreviewLinkCardProps,\n  type PreviewLinkCardTriggerProps,\n  type PreviewLinkCardContentProps,\n  type PreviewLinkCardImageProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/preview-link-card.tsx"
+    }
+  ]
+}

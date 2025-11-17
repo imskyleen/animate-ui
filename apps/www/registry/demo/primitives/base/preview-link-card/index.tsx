@@ -1,12 +1,13 @@
 import {
   PreviewLinkCard,
-  PreviewLinkCardContent,
   PreviewLinkCardImage,
   PreviewLinkCardPortal,
   PreviewLinkCardTrigger,
-} from '@/registry/primitives/radix/preview-link-card';
+  PreviewLinkCardPositioner,
+  PreviewLinkCardPopup,
+} from '@/registry/primitives/base/preview-link-card';
 
-interface RadixPreviewLinkCardDemoProps {
+interface BasePreviewLinkCardDemoProps {
   side?: 'top' | 'bottom' | 'left' | 'right';
   sideOffset?: number;
   align?: 'start' | 'center' | 'end';
@@ -16,14 +17,14 @@ interface RadixPreviewLinkCardDemoProps {
   gravity?: number | false;
 }
 
-export const RadixPreviewLinkCardDemo = ({
+export const BasePreviewLinkCardDemo = ({
   side,
   sideOffset,
   align,
   alignOffset,
   followCursor,
   href,
-}: RadixPreviewLinkCardDemoProps) => {
+}: BasePreviewLinkCardDemoProps) => {
   return (
     <p className="text-muted-foreground">
       Read the{' '}
@@ -35,16 +36,17 @@ export const RadixPreviewLinkCardDemo = ({
           Animate UI Docs
         </PreviewLinkCardTrigger>
         <PreviewLinkCardPortal>
-          <PreviewLinkCardContent
+          <PreviewLinkCardPositioner
             side={side}
             sideOffset={sideOffset}
             align={align}
             alignOffset={alignOffset}
-            className="z-50 border"
-            target="_blank"
+            className="z-50"
           >
-            <PreviewLinkCardImage alt="Animate UI Docs" />
-          </PreviewLinkCardContent>
+            <PreviewLinkCardPopup className="border" target="_blank">
+              <PreviewLinkCardImage alt="Animate UI Docs" />
+            </PreviewLinkCardPopup>
+          </PreviewLinkCardPositioner>
         </PreviewLinkCardPortal>
       </PreviewLinkCard>{' '}
       — hover to preview, click to dive in.

@@ -10,13 +10,24 @@
   "files": [
     {
       "path": "registry/demo/primitives/base/tooltip/index.tsx",
-      "content": "import {\n  Tooltip,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipProvider,\n  TooltipPortal,\n  TooltipTrigger,\n} from '@/components/animate-ui/primitives/base/tooltip';\n\ninterface RadixTooltipDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const BaseTooltipDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: RadixTooltipDemoProps) => {\n  return (\n    <TooltipProvider>\n      <Tooltip>\n        <TooltipTrigger>Hover</TooltipTrigger>\n        <TooltipPortal>\n          <TooltipPositioner\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50\"\n          >\n            <TooltipPopup className=\"bg-primary text-primary-foreground px-2 py-1 text-sm\">\n              <p>Add to library</p>\n            </TooltipPopup>\n          </TooltipPositioner>\n        </TooltipPortal>\n      </Tooltip>\n    </TooltipProvider>\n  );\n};\n",
+      "content": "import {\n  Tooltip,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipProvider,\n  TooltipPortal,\n  TooltipTrigger,\n} from '@/components/animate-ui/primitives/base/tooltip';\n\ninterface RadixTooltipDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport const BaseTooltipDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: RadixTooltipDemoProps) => {\n  return (\n    <TooltipProvider>\n      <Tooltip followCursor={followCursor}>\n        <TooltipTrigger>Hover</TooltipTrigger>\n        <TooltipPortal>\n          <TooltipPositioner\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50\"\n          >\n            <TooltipPopup className=\"bg-primary text-primary-foreground px-2 py-1 text-sm\">\n              <p>Add to library</p>\n            </TooltipPopup>\n          </TooltipPositioner>\n        </TooltipPortal>\n      </Tooltip>\n    </TooltipProvider>\n  );\n};\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/base/tooltip.tsx"
     }
   ],
   "meta": {
     "demoProps": {
+      "Tooltip": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
       "TooltipPositioner": {
         "side": {
           "value": "top",

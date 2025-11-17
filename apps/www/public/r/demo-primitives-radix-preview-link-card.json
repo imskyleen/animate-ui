@@ -10,9 +10,52 @@
   "files": [
     {
       "path": "registry/demo/primitives/radix/preview-link-card/index.tsx",
-      "content": "import {\n  PreviewLinkCard,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardPortal,\n  PreviewLinkCardTrigger,\n} from '@/components/animate-ui/primitives/radix/preview-link-card';\n\nexport const RadixPreviewLinkCardDemo = () => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href=\"https://ui.shadcn.com\">\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          shadcn/ui Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPortal>\n          <PreviewLinkCardContent className=\"border\" target=\"_blank\">\n            <PreviewLinkCardImage alt=\"shadcn/ui Docs\" />\n          </PreviewLinkCardContent>\n        </PreviewLinkCardPortal>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};\n",
+      "content": "import {\n  PreviewLinkCard,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardPortal,\n  PreviewLinkCardTrigger,\n} from '@/components/animate-ui/primitives/radix/preview-link-card';\n\ninterface RadixPreviewLinkCardDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n  href: string;\n  gravity?: number | false;\n}\n\nexport const RadixPreviewLinkCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n  href,\n}: RadixPreviewLinkCardDemoProps) => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href={href} followCursor={followCursor}>\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          Animate UI Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPortal>\n          <PreviewLinkCardContent\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50 border\"\n            target=\"_blank\"\n          >\n            <PreviewLinkCardImage alt=\"Animate UI Docs\" />\n          </PreviewLinkCardContent>\n        </PreviewLinkCardPortal>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/radix/preview-link-card.tsx"
     }
-  ]
+  ],
+  "meta": {
+    "demoProps": {
+      "PreviewLinkCard": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        },
+        "href": {
+          "value": "https://animate-ui.com/docs"
+        }
+      },
+      "PreviewLinkCardContent": {
+        "side": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
 }

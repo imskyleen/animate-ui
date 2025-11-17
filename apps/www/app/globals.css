@@ -305,6 +305,10 @@
   }
 }
 
+@utility squircle {
+  corner-shape: squircle;
+}
+
 .screenshot-mode #nd-sidebar,
 .screenshot-mode #nd-toc,
 .screenshot-mode #nd-page article > *:not(#docs-body),

@@ -11,6 +11,7 @@ interface BaseTooltipDemoProps {
   sideOffset: TooltipPanelProps['sideOffset'];
   align: TooltipPanelProps['align'];
   alignOffset: TooltipPanelProps['alignOffset'];
+  followCursor?: boolean | 'x' | 'y';
 }
 
 export function BaseTooltipDemo({
@@ -18,9 +19,10 @@ export function BaseTooltipDemo({
   sideOffset,
   align,
   alignOffset,
+  followCursor,
 }: BaseTooltipDemoProps) {
   return (
-    <Tooltip>
+    <Tooltip followCursor={followCursor}>
       <TooltipTrigger render={<Button variant="outline">Hover</Button>} />
       <TooltipPanel
         side={side}

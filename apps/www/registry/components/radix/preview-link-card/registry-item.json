@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-preview-link-card",
+  "type": "registry:ui",
+  "title": "Preview Link Card",
+  "description": "Displays a preview image of a link when hovered.",
+  "registryDependencies": ["@animate-ui/primitives-radix-preview-link-card"],
+  "files": [
+    {
+      "path": "registry/components/radix/preview-link-card/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/preview-link-card.tsx"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ interface PreviewCardDemoProps {
   sideOffset?: number;
   align?: 'start' | 'center' | 'end';
   alignOffset?: number;
+  followCursor?: boolean | 'x' | 'y';
 }
 
 export const PreviewCardDemo = ({
@@ -18,9 +19,10 @@ export const PreviewCardDemo = ({
   sideOffset,
   align,
   alignOffset,
+  followCursor,
 }: PreviewCardDemoProps) => {
   return (
-    <PreviewCard>
+    <PreviewCard followCursor={followCursor}>
       <PreviewCardTrigger
         render={
           <a

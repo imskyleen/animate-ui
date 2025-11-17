@@ -45,6 +45,7 @@
     "base/menu",
     "base/popover",
     "base/preview-card",
+    "base/preview-link-card",
     "base/progress",
     "base/radio",
     "base/switch",

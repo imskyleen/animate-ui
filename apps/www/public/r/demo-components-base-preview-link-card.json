@@ -1,0 +1,63 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-preview-link-card",
+  "type": "registry:ui",
+  "title": "Preview Link Card Demo",
+  "description": "Demo showing a preview link card.",
+  "registryDependencies": [
+    "@animate-ui/components-base-preview-link-card"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/preview-link-card/index.tsx",
+      "content": "import {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPanel,\n  PreviewLinkCardImage,\n} from '@/components/animate-ui/components/base/preview-link-card';\n\ninterface BasePreviewLinkCardDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n  href: string;\n}\n\nexport const BasePreviewLinkCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n  href,\n}: BasePreviewLinkCardDemoProps) => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href={href} followCursor={followCursor}>\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          Animate UI Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPanel\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          target=\"_blank\"\n        >\n          <PreviewLinkCardImage alt=\"Animate UI Docs\" />\n        </PreviewLinkCardPanel>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/preview-link-card.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "PreviewLinkCard": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        },
+        "href": {
+          "value": "https://animate-ui.com/docs"
+        }
+      },
+      "PreviewLinkCardPanel": {
+        "side": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "inline-start": "inline-start",
+            "inline-end": "inline-end"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

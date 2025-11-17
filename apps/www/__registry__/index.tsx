@@ -879,6 +879,44 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-base-preview-card',
   },
+  'components-base-preview-link-card': {
+    name: 'components-base-preview-link-card',
+    description: 'Displays a preview image of a link when hovered.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-preview-card'],
+    files: [
+      {
+        path: 'registry/components/base/preview-link-card/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/preview-link-card.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  PreviewLinkCard as PreviewLinkCardPrimitive,\n  PreviewLinkCardTrigger as PreviewLinkCardTriggerPrimitive,\n  PreviewLinkCardPortal as PreviewLinkCardPortalPrimitive,\n  PreviewLinkCardPositioner as PreviewLinkCardPositionerPrimitive,\n  PreviewLinkCardPopup as PreviewLinkCardPopupPrimitive,\n  PreviewLinkCardImage as PreviewLinkCardImagePrimitive,\n  PreviewLinkCardBackdrop as PreviewLinkCardBackdropPrimitive,\n  type PreviewLinkCardProps as PreviewLinkCardPrimitiveProps,\n  type PreviewLinkCardTriggerProps as PreviewLinkCardTriggerPrimitiveProps,\n  type PreviewLinkCardPositionerProps as PreviewLinkCardPositionerPrimitiveProps,\n  type PreviewLinkCardPopupProps as PreviewLinkCardPopupPrimitiveProps,\n  type PreviewLinkCardImageProps as PreviewLinkCardImagePrimitiveProps,\n  type PreviewLinkCardBackdropProps as PreviewLinkCardBackdropPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/preview-link-card';\nimport { cn } from '@/lib/utils';\n\ntype PreviewLinkCardProps = PreviewLinkCardPrimitiveProps;\n\nfunction PreviewLinkCard(props: PreviewLinkCardProps) {\n  return <PreviewLinkCardPrimitive {...props} />;\n}\n\ntype PreviewLinkCardTriggerProps = PreviewLinkCardTriggerPrimitiveProps;\n\nfunction PreviewLinkCardTrigger(props: PreviewLinkCardTriggerProps) {\n  return <PreviewLinkCardTriggerPrimitive {...props} />;\n}\n\ntype PreviewLinkCardPanelProps = PreviewLinkCardPositionerPrimitiveProps &\n  PreviewLinkCardPopupPrimitiveProps;\n\nfunction PreviewLinkCardPanel({\n  className,\n  align = 'center',\n  sideOffset = 4,\n  style,\n  children,\n  ...props\n}: PreviewLinkCardPanelProps) {\n  return (\n    <PreviewLinkCardPortalPrimitive>\n      <PreviewLinkCardPositionerPrimitive\n        align={align}\n        sideOffset={sideOffset}\n        className=\"z-50\"\n        {...props}\n      >\n        <PreviewLinkCardPopupPrimitive\n          className={cn(\n            'border origin-(--transform-origin) rounded-md shadow-md outline-hidden overflow-hidden',\n            className,\n          )}\n          style={style}\n        >\n          {children}\n        </PreviewLinkCardPopupPrimitive>\n      </PreviewLinkCardPositionerPrimitive>\n    </PreviewLinkCardPortalPrimitive>\n  );\n}\n\ntype PreviewLinkCardBackdropProps = PreviewLinkCardBackdropPrimitiveProps;\n\nfunction PreviewLinkCardBackdrop(props: PreviewLinkCardBackdropProps) {\n  return <PreviewLinkCardBackdropPrimitive {...props} />;\n}\n\ntype PreviewLinkCardImageProps = PreviewLinkCardImagePrimitiveProps;\n\nfunction PreviewLinkCardImage(props: PreviewLinkCardImageProps) {\n  return <PreviewLinkCardImagePrimitive {...props} />;\n}\n\nexport {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPanel,\n  PreviewLinkCardBackdrop,\n  PreviewLinkCardImage,\n  type PreviewLinkCardProps,\n  type PreviewLinkCardTriggerProps,\n  type PreviewLinkCardPanelProps,\n  type PreviewLinkCardBackdropProps,\n  type PreviewLinkCardImageProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/base/preview-link-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-preview-link-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-preview-link-card',
+  },
   'components-base-progress': {
     name: 'components-base-progress',
     description: 'Displays the status of a task that takes a long time.',
@@ -2361,6 +2399,44 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/components-radix-popover',
+  },
+  'components-radix-preview-link-card': {
+    name: 'components-radix-preview-link-card',
+    description: 'Displays a preview image of a link when hovered.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-radix-preview-link-card'],
+    files: [
+      {
+        path: 'registry/components/radix/preview-link-card/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/radix/preview-link-card.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  PreviewLinkCard as PreviewLinkCardPrimitive,\n  PreviewLinkCardTrigger as PreviewLinkCardTriggerPrimitive,\n  PreviewLinkCardPortal as PreviewLinkCardPortalPrimitive,\n  PreviewLinkCardContent as PreviewLinkCardContentPrimitive,\n  PreviewLinkCardImage as PreviewLinkCardImagePrimitive,\n  type PreviewLinkCardProps as PreviewLinkCardPrimitiveProps,\n  type PreviewLinkCardTriggerProps as PreviewLinkCardTriggerPrimitiveProps,\n  type PreviewLinkCardContentProps as PreviewLinkCardContentPrimitiveProps,\n  type PreviewLinkCardImageProps as PreviewLinkCardImagePrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/preview-link-card';\nimport { cn } from '@/lib/utils';\n\ntype PreviewLinkCardProps = PreviewLinkCardPrimitiveProps;\n\nfunction PreviewLinkCard(props: PreviewLinkCardProps) {\n  return <PreviewLinkCardPrimitive {...props} />;\n}\n\ntype PreviewLinkCardTriggerProps = PreviewLinkCardTriggerPrimitiveProps;\n\nfunction PreviewLinkCardTrigger(props: PreviewLinkCardTriggerProps) {\n  return <PreviewLinkCardTriggerPrimitive {...props} />;\n}\n\ntype PreviewLinkCardContentProps = PreviewLinkCardContentPrimitiveProps;\n\nfunction PreviewLinkCardContent({\n  className,\n  align = 'center',\n  sideOffset = 4,\n  ...props\n}: PreviewLinkCardContentProps) {\n  return (\n    <PreviewLinkCardPortalPrimitive>\n      <PreviewLinkCardContentPrimitive\n        align={align}\n        sideOffset={sideOffset}\n        className={cn(\n          'z-50 origin-(--radix-hover-card-content-transform-origin) rounded-md border shadow-md outline-hidden overflow-hidden',\n          className,\n        )}\n        {...props}\n      />\n    </PreviewLinkCardPortalPrimitive>\n  );\n}\n\ntype PreviewLinkCardImageProps = PreviewLinkCardImagePrimitiveProps;\n\nfunction PreviewLinkCardImage(props: PreviewLinkCardImageProps) {\n  return <PreviewLinkCardImagePrimitive {...props} />;\n}\n\nexport {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  type PreviewLinkCardProps,\n  type PreviewLinkCardTriggerProps,\n  type PreviewLinkCardContentProps,\n  type PreviewLinkCardImageProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/components/radix/preview-link-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-radix-preview-link-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-radix-preview-link-card',
   },
   'components-radix-progress': {
     name: 'components-radix-progress',
@@ -3849,7 +3925,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/base/preview-card.tsx',
         content:
-          'import {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPanel,\n} from \'@/components/animate-ui/components/base/preview-card\';\n\ninterface BasePreviewCardDemoProps {\n  side?: \'top\' | \'bottom\' | \'left\' | \'right\';\n  sideOffset?: number;\n  align?: \'start\' | \'center\' | \'end\';\n  alignOffset?: number;\n}\n\nexport const BasePreviewCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: BasePreviewCardDemoProps) => {\n  return (\n    <PreviewCard>\n      <PreviewCardTrigger\n        render={\n          <a\n            className="size-12 border rounded-full overflow-hidden"\n            href="https://twitter.com/animate_ui"\n            target="_blank"\n            rel="noreferrer noopener"\n          >\n            <img\n              src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n              alt="Animate UI"\n            />\n          </a>\n        }\n      />\n\n      <PreviewCardPanel\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n        className="w-80"\n      >\n        <div className="flex flex-col gap-4">\n          <img\n            className="size-16 rounded-full overflow-hidden border"\n            src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n            alt="Animate UI"\n          />\n          <div className="flex flex-col gap-4">\n            <div>\n              <div className="font-bold">Animate UI</div>\n              <div className="text-sm text-muted-foreground">@animate_ui</div>\n            </div>\n            <div className="text-sm text-muted-foreground">\n              A fully animated, open-source component distribution built with\n              React, TypeScript, Tailwind CSS, and Motion.\n            </div>\n            <div className="flex gap-4">\n              <div className="flex gap-1 text-sm items-center">\n                <div className="font-bold">0</div>{\' \'}\n                <div className="text-muted-foreground">Following</div>\n              </div>\n              <div className="flex gap-1 text-sm items-center">\n                <div className="font-bold">2,900</div>{\' \'}\n                <div className="text-muted-foreground">Followers</div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </PreviewCardPanel>\n    </PreviewCard>\n  );\n};',
+          'import {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPanel,\n} from \'@/components/animate-ui/components/base/preview-card\';\n\ninterface BasePreviewCardDemoProps {\n  side?: \'top\' | \'bottom\' | \'left\' | \'right\';\n  sideOffset?: number;\n  align?: \'start\' | \'center\' | \'end\';\n  alignOffset?: number;\n  followCursor?: boolean | \'x\' | \'y\';\n}\n\nexport const BasePreviewCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: BasePreviewCardDemoProps) => {\n  return (\n    <PreviewCard followCursor={followCursor}>\n      <PreviewCardTrigger\n        render={\n          <a\n            className="size-12 border rounded-full overflow-hidden"\n            href="https://twitter.com/animate_ui"\n            target="_blank"\n            rel="noreferrer noopener"\n          >\n            <img\n              src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n              alt="Animate UI"\n            />\n          </a>\n        }\n      />\n\n      <PreviewCardPanel\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n        className="w-80"\n      >\n        <div className="flex flex-col gap-4">\n          <img\n            className="size-16 rounded-full overflow-hidden border"\n            src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n            alt="Animate UI"\n          />\n          <div className="flex flex-col gap-4">\n            <div>\n              <div className="font-bold">Animate UI</div>\n              <div className="text-sm text-muted-foreground">@animate_ui</div>\n            </div>\n            <div className="text-sm text-muted-foreground">\n              A fully animated, open-source component distribution built with\n              React, TypeScript, Tailwind CSS, and Motion.\n            </div>\n            <div className="flex gap-4">\n              <div className="flex gap-1 text-sm items-center">\n                <div className="font-bold">0</div>{\' \'}\n                <div className="text-muted-foreground">Following</div>\n              </div>\n              <div className="flex gap-1 text-sm items-center">\n                <div className="font-bold">2,900</div>{\' \'}\n                <div className="text-muted-foreground">Followers</div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </PreviewCardPanel>\n    </PreviewCard>\n  );\n};',
       },
     ],
     keywords: [],
@@ -3870,6 +3946,12 @@ export const index: Record<string, any> = {
         return { default: Comp };
       });
       LazyComp.demoProps = {
+        PreviewCard: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+        },
         PreviewCardPanel: {
           side: {
             value: 'bottom',
@@ -3893,6 +3975,72 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-base-preview-card',
+  },
+  'demo-components-base-preview-link-card': {
+    name: 'demo-components-base-preview-link-card',
+    description: 'Demo showing a preview link card.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-preview-link-card'],
+    files: [
+      {
+        path: 'registry/demo/components/base/preview-link-card/index.tsx',
+        type: 'registry:ui',
+        target:
+          'components/animate-ui/demo/components/base/preview-link-card.tsx',
+        content:
+          "import {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPanel,\n  PreviewLinkCardImage,\n} from '@/components/animate-ui/components/base/preview-link-card';\n\ninterface BasePreviewLinkCardDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n  href: string;\n}\n\nexport const BasePreviewLinkCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n  href,\n}: BasePreviewLinkCardDemoProps) => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href={href} followCursor={followCursor}>\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          Animate UI Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPanel\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          target=\"_blank\"\n        >\n          <PreviewLinkCardImage alt=\"Animate UI Docs\" />\n        </PreviewLinkCardPanel>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/base/preview-link-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-preview-link-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        PreviewLinkCard: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+          href: { value: 'https://animate-ui.com/docs' },
+        },
+        PreviewLinkCardPanel: {
+          side: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+              'inline-start': 'inline-start',
+              'inline-end': 'inline-end',
+            },
+          },
+          sideOffset: { value: 4 },
+          align: {
+            value: 'center',
+            options: { start: 'start', center: 'center', end: 'end' },
+          },
+          alignOffset: { value: 0 },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-preview-link-card',
   },
   'demo-components-base-progress': {
     name: 'demo-components-base-progress',
@@ -4158,7 +4306,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/base/tooltip.tsx',
         content:
-          "import {\n  Tooltip,\n  TooltipTrigger,\n  TooltipPanel,\n  type TooltipPanelProps,\n} from '@/components/animate-ui/components/base/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseTooltipDemoProps {\n  side: TooltipPanelProps['side'];\n  sideOffset: TooltipPanelProps['sideOffset'];\n  align: TooltipPanelProps['align'];\n  alignOffset: TooltipPanelProps['alignOffset'];\n}\n\nexport function BaseTooltipDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: BaseTooltipDemoProps) {\n  return (\n    <Tooltip>\n      <TooltipTrigger render={<Button variant=\"outline\">Hover</Button>} />\n      <TooltipPanel\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <p>Add to library</p>\n      </TooltipPanel>\n    </Tooltip>\n  );\n}",
+          "import {\n  Tooltip,\n  TooltipTrigger,\n  TooltipPanel,\n  type TooltipPanelProps,\n} from '@/components/animate-ui/components/base/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseTooltipDemoProps {\n  side: TooltipPanelProps['side'];\n  sideOffset: TooltipPanelProps['sideOffset'];\n  align: TooltipPanelProps['align'];\n  alignOffset: TooltipPanelProps['alignOffset'];\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport function BaseTooltipDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: BaseTooltipDemoProps) {\n  return (\n    <Tooltip followCursor={followCursor}>\n      <TooltipTrigger render={<Button variant=\"outline\">Hover</Button>} />\n      <TooltipPanel\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <p>Add to library</p>\n      </TooltipPanel>\n    </Tooltip>\n  );\n}",
       },
     ],
     keywords: [],
@@ -4179,6 +4327,12 @@ export const index: Record<string, any> = {
         return { default: Comp };
       });
       LazyComp.demoProps = {
+        Tooltip: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+        },
         TooltipPanel: {
           side: {
             value: 'top',
@@ -5866,6 +6020,70 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-radix-popover',
   },
+  'demo-components-radix-preview-link-card': {
+    name: 'demo-components-radix-preview-link-card',
+    description: 'Demo showing a preview link card.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-radix-preview-link-card'],
+    files: [
+      {
+        path: 'registry/demo/components/radix/preview-link-card/index.tsx',
+        type: 'registry:ui',
+        target:
+          'components/animate-ui/demo/components/radix/preview-link-card.tsx',
+        content:
+          "import {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n} from '@/components/animate-ui/components/radix/preview-link-card';\n\ninterface RadixPreviewLinkCardDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n  href: string;\n}\n\nexport const RadixPreviewLinkCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n  href,\n}: RadixPreviewLinkCardDemoProps) => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href={href} followCursor={followCursor}>\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          Animate UI Docs\n        </PreviewLinkCardTrigger>\n\n        <PreviewLinkCardContent\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          target=\"_blank\"\n        >\n          <PreviewLinkCardImage alt=\"Animate UI Docs\" />\n        </PreviewLinkCardContent>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/components/radix/preview-link-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-radix-preview-link-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        PreviewLinkCard: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+          href: { value: 'https://animate-ui.com/docs' },
+        },
+        PreviewLinkCardContent: {
+          side: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+          sideOffset: { value: 4 },
+          align: {
+            value: 'center',
+            options: { start: 'start', center: 'center', end: 'end' },
+          },
+          alignOffset: { value: 0 },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-radix-preview-link-card',
+  },
   'demo-components-radix-progress': {
     name: 'demo-components-radix-progress',
     description: 'Demo showing a radix progress.',
@@ -7103,7 +7321,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/base/preview-card.tsx',
         content:
-          'import {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPortal,\n  PreviewCardPositioner,\n  PreviewCardPopup,\n} from \'@/components/animate-ui/primitives/base/preview-card\';\n\ninterface PreviewCardDemoProps {\n  side?: \'top\' | \'bottom\' | \'left\' | \'right\' | \'inline-start\' | \'inline-end\';\n  sideOffset?: number;\n  align?: \'start\' | \'center\' | \'end\';\n  alignOffset?: number;\n}\n\nexport const PreviewCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: PreviewCardDemoProps) => {\n  return (\n    <PreviewCard>\n      <PreviewCardTrigger\n        render={\n          <a\n            className="size-12 border"\n            href="https://twitter.com/animate_ui"\n            target="_blank"\n            rel="noreferrer noopener"\n          >\n            <img\n              src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n              alt="Animate UI"\n            />\n          </a>\n        }\n      />\n      <PreviewCardPortal>\n        <PreviewCardPositioner\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          className="z-50"\n        >\n          <PreviewCardPopup className="w-80 bg-background border p-4">\n            <div className="flex flex-col gap-4">\n              <img\n                className="size-16 rounded-full overflow-hidden border"\n                src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n                alt="Animate UI"\n              />\n              <div className="flex flex-col gap-4">\n                <div>\n                  <div className="font-bold">Animate UI</div>\n                  <div className="text-sm text-muted-foreground">\n                    @animate_ui\n                  </div>\n                </div>\n                <div className="text-sm text-muted-foreground">\n                  A fully animated, open-source component distribution built\n                  with React, TypeScript, Tailwind CSS, and Motion.\n                </div>\n                <div className="flex gap-4">\n                  <div className="flex gap-1 text-sm items-center">\n                    <div className="font-bold">0</div>{\' \'}\n                    <div className="text-muted-foreground">Following</div>\n                  </div>\n                  <div className="flex gap-1 text-sm items-center">\n                    <div className="font-bold">2,900</div>{\' \'}\n                    <div className="text-muted-foreground">Followers</div>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </PreviewCardPopup>\n        </PreviewCardPositioner>\n      </PreviewCardPortal>\n    </PreviewCard>\n  );\n};',
+          'import {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPortal,\n  PreviewCardPositioner,\n  PreviewCardPopup,\n} from \'@/components/animate-ui/primitives/base/preview-card\';\n\ninterface PreviewCardDemoProps {\n  side?: \'top\' | \'bottom\' | \'left\' | \'right\' | \'inline-start\' | \'inline-end\';\n  sideOffset?: number;\n  align?: \'start\' | \'center\' | \'end\';\n  alignOffset?: number;\n  followCursor?: boolean | \'x\' | \'y\';\n}\n\nexport const PreviewCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: PreviewCardDemoProps) => {\n  return (\n    <PreviewCard followCursor={followCursor}>\n      <PreviewCardTrigger\n        render={\n          <a\n            className="size-12 border"\n            href="https://twitter.com/animate_ui"\n            target="_blank"\n            rel="noreferrer noopener"\n          >\n            <img\n              src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n              alt="Animate UI"\n            />\n          </a>\n        }\n      />\n      <PreviewCardPortal>\n        <PreviewCardPositioner\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          className="z-50"\n        >\n          <PreviewCardPopup className="w-80 bg-background border p-4">\n            <div className="flex flex-col gap-4">\n              <img\n                className="size-16 rounded-full overflow-hidden border"\n                src="https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg"\n                alt="Animate UI"\n              />\n              <div className="flex flex-col gap-4">\n                <div>\n                  <div className="font-bold">Animate UI</div>\n                  <div className="text-sm text-muted-foreground">\n                    @animate_ui\n                  </div>\n                </div>\n                <div className="text-sm text-muted-foreground">\n                  A fully animated, open-source component distribution built\n                  with React, TypeScript, Tailwind CSS, and Motion.\n                </div>\n                <div className="flex gap-4">\n                  <div className="flex gap-1 text-sm items-center">\n                    <div className="font-bold">0</div>{\' \'}\n                    <div className="text-muted-foreground">Following</div>\n                  </div>\n                  <div className="flex gap-1 text-sm items-center">\n                    <div className="font-bold">2,900</div>{\' \'}\n                    <div className="text-muted-foreground">Followers</div>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </PreviewCardPopup>\n        </PreviewCardPositioner>\n      </PreviewCardPortal>\n    </PreviewCard>\n  );\n};',
       },
     ],
     keywords: [],
@@ -7124,6 +7342,12 @@ export const index: Record<string, any> = {
         return { default: Comp };
       });
       LazyComp.demoProps = {
+        PreviewCard: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+        },
         PreviewCardPositioner: {
           side: {
             value: 'bottom',
@@ -7147,6 +7371,72 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-base-preview-card',
+  },
+  'demo-primitives-base-preview-link-card': {
+    name: 'demo-primitives-base-preview-link-card',
+    description: 'Demo showing an animated base preview link card.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-preview-link-card'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/preview-link-card/index.tsx',
+        type: 'registry:ui',
+        target:
+          'components/animate-ui/demo/primitives/base/preview-link-card.tsx',
+        content:
+          "import {\n  PreviewLinkCard,\n  PreviewLinkCardImage,\n  PreviewLinkCardPortal,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPositioner,\n  PreviewLinkCardPopup,\n} from '@/components/animate-ui/primitives/base/preview-link-card';\n\ninterface BasePreviewLinkCardDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n  href: string;\n  gravity?: number | false;\n}\n\nexport const BasePreviewLinkCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n  href,\n}: BasePreviewLinkCardDemoProps) => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href={href} followCursor={followCursor}>\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          Animate UI Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPortal>\n          <PreviewLinkCardPositioner\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50\"\n          >\n            <PreviewLinkCardPopup className=\"border\" target=\"_blank\">\n              <PreviewLinkCardImage alt=\"Animate UI Docs\" />\n            </PreviewLinkCardPopup>\n          </PreviewLinkCardPositioner>\n        </PreviewLinkCardPortal>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/demo/primitives/base/preview-link-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-preview-link-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        PreviewLinkCard: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+          href: { value: 'https://animate-ui.com/docs' },
+        },
+        PreviewLinkCardPositioner: {
+          side: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+              'inline-start': 'inline-start',
+              'inline-end': 'inline-end',
+            },
+          },
+          sideOffset: { value: 4 },
+          align: {
+            value: 'center',
+            options: { start: 'start', center: 'center', end: 'end' },
+          },
+          alignOffset: { value: 0 },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-preview-link-card',
   },
   'demo-primitives-base-progress': {
     name: 'demo-primitives-base-progress',
@@ -7398,7 +7688,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/base/tooltip.tsx',
         content:
-          "import {\n  Tooltip,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipProvider,\n  TooltipPortal,\n  TooltipTrigger,\n} from '@/components/animate-ui/primitives/base/tooltip';\n\ninterface RadixTooltipDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const BaseTooltipDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: RadixTooltipDemoProps) => {\n  return (\n    <TooltipProvider>\n      <Tooltip>\n        <TooltipTrigger>Hover</TooltipTrigger>\n        <TooltipPortal>\n          <TooltipPositioner\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50\"\n          >\n            <TooltipPopup className=\"bg-primary text-primary-foreground px-2 py-1 text-sm\">\n              <p>Add to library</p>\n            </TooltipPopup>\n          </TooltipPositioner>\n        </TooltipPortal>\n      </Tooltip>\n    </TooltipProvider>\n  );\n};",
+          "import {\n  Tooltip,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipProvider,\n  TooltipPortal,\n  TooltipTrigger,\n} from '@/components/animate-ui/primitives/base/tooltip';\n\ninterface RadixTooltipDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport const BaseTooltipDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: RadixTooltipDemoProps) => {\n  return (\n    <TooltipProvider>\n      <Tooltip followCursor={followCursor}>\n        <TooltipTrigger>Hover</TooltipTrigger>\n        <TooltipPortal>\n          <TooltipPositioner\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50\"\n          >\n            <TooltipPopup className=\"bg-primary text-primary-foreground px-2 py-1 text-sm\">\n              <p>Add to library</p>\n            </TooltipPopup>\n          </TooltipPositioner>\n        </TooltipPortal>\n      </Tooltip>\n    </TooltipProvider>\n  );\n};",
       },
     ],
     keywords: [],
@@ -7419,6 +7709,12 @@ export const index: Record<string, any> = {
         return { default: Comp };
       });
       LazyComp.demoProps = {
+        Tooltip: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+        },
         TooltipPositioner: {
           side: {
             value: 'top',
@@ -8997,7 +9293,7 @@ export const index: Record<string, any> = {
         target:
           'components/animate-ui/demo/primitives/radix/preview-link-card.tsx',
         content:
-          'import {\n  PreviewLinkCard,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardPortal,\n  PreviewLinkCardTrigger,\n} from \'@/components/animate-ui/primitives/radix/preview-link-card\';\n\nexport const RadixPreviewLinkCardDemo = () => {\n  return (\n    <p className="text-muted-foreground">\n      Read the{\' \'}\n      <PreviewLinkCard href="https://ui.shadcn.com">\n        <PreviewLinkCardTrigger\n          target="_blank"\n          className="underline text-foreground"\n        >\n          shadcn/ui Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPortal>\n          <PreviewLinkCardContent className="border" target="_blank">\n            <PreviewLinkCardImage alt="shadcn/ui Docs" />\n          </PreviewLinkCardContent>\n        </PreviewLinkCardPortal>\n      </PreviewLinkCard>{\' \'}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};',
+          "import {\n  PreviewLinkCard,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardPortal,\n  PreviewLinkCardTrigger,\n} from '@/components/animate-ui/primitives/radix/preview-link-card';\n\ninterface RadixPreviewLinkCardDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n  href: string;\n  gravity?: number | false;\n}\n\nexport const RadixPreviewLinkCardDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n  href,\n}: RadixPreviewLinkCardDemoProps) => {\n  return (\n    <p className=\"text-muted-foreground\">\n      Read the{' '}\n      <PreviewLinkCard href={href} followCursor={followCursor}>\n        <PreviewLinkCardTrigger\n          target=\"_blank\"\n          className=\"underline text-foreground\"\n        >\n          Animate UI Docs\n        </PreviewLinkCardTrigger>\n        <PreviewLinkCardPortal>\n          <PreviewLinkCardContent\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"z-50 border\"\n            target=\"_blank\"\n          >\n            <PreviewLinkCardImage alt=\"Animate UI Docs\" />\n          </PreviewLinkCardContent>\n        </PreviewLinkCardPortal>\n      </PreviewLinkCard>{' '}\n      — hover to preview, click to dive in.\n    </p>\n  );\n};",
       },
     ],
     keywords: [],
@@ -9017,7 +9313,32 @@ export const index: Record<string, any> = {
         }
         return { default: Comp };
       });
-      LazyComp.demoProps = {};
+      LazyComp.demoProps = {
+        PreviewLinkCard: {
+          followCursor: {
+            value: false,
+            options: { true: true, false: false, x: 'x', y: 'y' },
+          },
+          href: { value: 'https://animate-ui.com/docs' },
+        },
+        PreviewLinkCardContent: {
+          side: {
+            value: 'top',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+          sideOffset: { value: 4 },
+          align: {
+            value: 'center',
+            options: { start: 'start', center: 'center', end: 'end' },
+          },
+          alignOffset: { value: 0 },
+        },
+      };
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-radix-preview-link-card',
@@ -9327,7 +9648,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/radix/tooltip.tsx',
         content:
-          "import {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipPortal,\n  TooltipTrigger,\n} from '@/components/animate-ui/primitives/radix/tooltip';\n\ninterface RadixTooltipDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport const RadixTooltipDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: RadixTooltipDemoProps) => {\n  return (\n    <TooltipProvider>\n      <Tooltip followCursor={followCursor}>\n        <TooltipTrigger>Hover</TooltipTrigger>\n        <TooltipPortal>\n          <TooltipContent\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"bg-primary text-primary-foreground px-2 py-1 text-sm z-50\"\n          >\n            <p>Add to library</p>\n          </TooltipContent>\n        </TooltipPortal>\n      </Tooltip>\n    </TooltipProvider>\n  );\n};",
+          "import {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipPortal,\n  TooltipTrigger,\n} from '@/components/animate-ui/primitives/radix/tooltip';\n\ninterface RadixTooltipDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport const RadixTooltipDemo = ({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: RadixTooltipDemoProps) => {\n  return (\n    <TooltipProvider>\n      <Tooltip followCursor={followCursor}>\n        <TooltipTrigger>Hover</TooltipTrigger>\n        <TooltipPortal>\n          <TooltipContent\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n            className=\"bg-primary origin-(--radix-tooltip-content-transform-origin) text-primary-foreground px-2 py-1 text-sm z-50\"\n          >\n            <p>Add to library</p>\n          </TooltipContent>\n        </TooltipPortal>\n      </Tooltip>\n    </TooltipProvider>\n  );\n};",
       },
     ],
     keywords: [],
@@ -21462,7 +21783,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/preview-card.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { PreviewCard as PreviewCardPrimitive } from '@base-ui-components/react/preview-card';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype PreviewCardContextType = {\n  isOpen: boolean;\n  setIsOpen: PreviewCardProps['onOpenChange'];\n};\n\nconst [PreviewCardProvider, usePreviewCard] =\n  getStrictContext<PreviewCardContextType>('PreviewCardContext');\n\ntype PreviewCardProps = React.ComponentProps<typeof PreviewCardPrimitive.Root>;\n\nfunction PreviewCard(props: PreviewCardProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <PreviewCardProvider value={{ isOpen, setIsOpen }}>\n      <PreviewCardPrimitive.Root\n        data-slot=\"preview-card\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </PreviewCardProvider>\n  );\n}\n\ntype PreviewCardTriggerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Trigger\n>;\n\nfunction PreviewCardTrigger(props: PreviewCardTriggerProps) {\n  return (\n    <PreviewCardPrimitive.Trigger data-slot=\"preview-card-trigger\" {...props} />\n  );\n}\n\ntype PreviewCardPortalProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction PreviewCardPortal(props: PreviewCardPortalProps) {\n  const { isOpen } = usePreviewCard();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <PreviewCardPrimitive.Portal\n          keepMounted\n          data-slot=\"preview-card-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype PreviewCardPositionerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Positioner\n>;\n\nfunction PreviewCardPositioner(props: PreviewCardPositionerProps) {\n  return (\n    <PreviewCardPrimitive.Positioner\n      data-slot=\"preview-card-positioner\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPopupProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction PreviewCardPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: PreviewCardPopupProps) {\n  return (\n    <PreviewCardPrimitive.Popup\n      render={\n        <motion.div\n          key=\"preview-card-popup\"\n          data-slot=\"preview-card-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype PreviewCardBackdropProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Backdrop\n>;\n\nfunction PreviewCardBackdrop(props: PreviewCardBackdropProps) {\n  return (\n    <PreviewCardPrimitive.Backdrop\n      data-slot=\"preview-card-backdrop\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardArrowProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Arrow\n>;\n\nfunction PreviewCardArrow(props: PreviewCardArrowProps) {\n  return (\n    <PreviewCardPrimitive.Arrow data-slot=\"preview-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPortal,\n  PreviewCardPositioner,\n  PreviewCardPopup,\n  PreviewCardBackdrop,\n  PreviewCardArrow,\n  usePreviewCard,\n  type PreviewCardProps,\n  type PreviewCardTriggerProps,\n  type PreviewCardPortalProps,\n  type PreviewCardPositionerProps,\n  type PreviewCardPopupProps,\n  type PreviewCardBackdropProps,\n  type PreviewCardArrowProps,\n  type PreviewCardContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { PreviewCard as PreviewCardPrimitive } from '@base-ui-components/react/preview-card';\nimport {\n  AnimatePresence,\n  motion,\n  useMotionValue,\n  useSpring,\n  type HTMLMotionProps,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype PreviewCardContextType = {\n  isOpen: boolean;\n  setIsOpen: PreviewCardProps['onOpenChange'];\n  x: MotionValue<number>;\n  y: MotionValue<number>;\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nconst [PreviewCardProvider, usePreviewCard] =\n  getStrictContext<PreviewCardContextType>('PreviewCardContext');\n\ntype PreviewCardProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Root\n> & {\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nfunction PreviewCard({\n  followCursor = false,\n  followCursorSpringOptions = { stiffness: 200, damping: 17 },\n  ...props\n}: PreviewCardProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n\n  return (\n    <PreviewCardProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        x,\n        y,\n        followCursor,\n        followCursorSpringOptions,\n      }}\n    >\n      <PreviewCardPrimitive.Root\n        data-slot=\"preview-card\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </PreviewCardProvider>\n  );\n}\n\ntype PreviewCardTriggerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Trigger\n>;\n\nfunction PreviewCardTrigger({\n  onMouseMove,\n  ...props\n}: PreviewCardTriggerProps) {\n  const { x, y, followCursor } = usePreviewCard();\n\n  const handleMouseMove = (\n    event: Parameters<NonNullable<PreviewCardTriggerProps['onMouseMove']>>[0],\n  ) => {\n    onMouseMove?.(event);\n\n    const target = event.currentTarget.getBoundingClientRect();\n\n    if (followCursor === 'x' || followCursor === true) {\n      const eventOffsetX = event.clientX - target.left;\n      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;\n      x.set(offsetXFromCenter);\n    }\n\n    if (followCursor === 'y' || followCursor === true) {\n      const eventOffsetY = event.clientY - target.top;\n      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;\n      y.set(offsetYFromCenter);\n    }\n  };\n\n  return (\n    <PreviewCardPrimitive.Trigger\n      data-slot=\"preview-card-trigger\"\n      onMouseMove={handleMouseMove}\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPortalProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction PreviewCardPortal(props: PreviewCardPortalProps) {\n  const { isOpen } = usePreviewCard();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <PreviewCardPrimitive.Portal\n          keepMounted\n          data-slot=\"preview-card-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype PreviewCardPositionerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Positioner\n>;\n\nfunction PreviewCardPositioner(props: PreviewCardPositionerProps) {\n  return (\n    <PreviewCardPrimitive.Positioner\n      data-slot=\"preview-card-positioner\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPopupProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction PreviewCardPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  style,\n  ...props\n}: PreviewCardPopupProps) {\n  const { x, y, followCursor, followCursorSpringOptions } = usePreviewCard();\n  const translateX = useSpring(x, followCursorSpringOptions);\n  const translateY = useSpring(y, followCursorSpringOptions);\n\n  return (\n    <PreviewCardPrimitive.Popup\n      render={\n        <motion.div\n          key=\"preview-card-popup\"\n          data-slot=\"preview-card-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          style={{\n            x:\n              followCursor === 'x' || followCursor === true\n                ? translateX\n                : undefined,\n            y:\n              followCursor === 'y' || followCursor === true\n                ? translateY\n                : undefined,\n            ...style,\n          }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype PreviewCardBackdropProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Backdrop\n>;\n\nfunction PreviewCardBackdrop(props: PreviewCardBackdropProps) {\n  return (\n    <PreviewCardPrimitive.Backdrop\n      data-slot=\"preview-card-backdrop\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardArrowProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Arrow\n>;\n\nfunction PreviewCardArrow(props: PreviewCardArrowProps) {\n  return (\n    <PreviewCardPrimitive.Arrow data-slot=\"preview-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPortal,\n  PreviewCardPositioner,\n  PreviewCardPopup,\n  PreviewCardBackdrop,\n  PreviewCardArrow,\n  usePreviewCard,\n  type PreviewCardProps,\n  type PreviewCardTriggerProps,\n  type PreviewCardPortalProps,\n  type PreviewCardPositionerProps,\n  type PreviewCardPopupProps,\n  type PreviewCardBackdropProps,\n  type PreviewCardArrowProps,\n  type PreviewCardContextType,\n};",
       },
     ],
     keywords: [],
@@ -21486,6 +21807,47 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-base-preview-card',
+  },
+  'primitives-base-preview-link-card': {
+    name: 'primitives-base-preview-link-card',
+    description: 'Displays a preview image of a link when hovered.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@base-ui-components/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/primitives-base-preview-card',
+      '@animate-ui/lib-get-strict-context',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/base/preview-link-card/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/preview-link-card.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  PreviewCard as PreviewCardPrimitive,\n  PreviewCardTrigger as PreviewCardTriggerPrimitive,\n  PreviewCardPortal as PreviewCardPortalPrimitive,\n  PreviewCardArrow as PreviewCardArrowPrimitive,\n  PreviewCardPositioner as PreviewCardPositionerPrimitive,\n  PreviewCardPopup as PreviewCardPopupPrimitive,\n  PreviewCardBackdrop as PreviewCardBackdropPrimitive,\n  type PreviewCardProps as PreviewCardPropsPrimitive,\n  type PreviewCardTriggerProps as PreviewCardTriggerPropsPrimitive,\n  type PreviewCardPortalProps as PreviewCardPortalPropsPrimitive,\n  type PreviewCardPositionerProps as PreviewCardPositionerPropsPrimitive,\n  type PreviewCardPopupProps as PreviewCardPopupPropsPrimitive,\n  type PreviewCardArrowProps as PreviewCardArrowPropsPrimitive,\n  type PreviewCardBackdropProps as PreviewCardBackdropPropsPrimitive,\n} from '@/components/animate-ui/primitives/base/preview-card';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype PreviewLinkCardContextType = {\n  href: string;\n  src?: string;\n  width?: number;\n  height?: number;\n};\n\nconst [PreviewLinkCardProvider, usePreviewLinkCard] =\n  getStrictContext<PreviewLinkCardContextType>('PreviewLinkCardContext');\n\ntype PreviewLinkCardProps = PreviewCardPropsPrimitive & {\n  href: string;\n  src?: string;\n  width?: number;\n  height?: number;\n  deviceScaleFactor?: number;\n  colorScheme?: 'light' | 'dark';\n};\n\nfunction PreviewLinkCard({\n  href,\n  src,\n  width = 240,\n  height = 135,\n  deviceScaleFactor = 1,\n  colorScheme = 'light',\n  ...props\n}: PreviewLinkCardProps) {\n  const imageSrc =\n    src ??\n    `https://api.microlink.io/?${buildQueryString({\n      url: href,\n      screenshot: true,\n      meta: false,\n      embed: 'screenshot.url',\n      colorScheme,\n      'viewport.isMobile': true,\n      'viewport.deviceScaleFactor': deviceScaleFactor,\n      'viewport.width': width * 3,\n      'viewport.height': height * 3,\n    })}`;\n\n  React.useEffect(() => {\n    const link = document.createElement('link');\n    link.rel = 'preload';\n    link.as = 'image';\n    link.href = imageSrc;\n    document.head.appendChild(link);\n    return () => {\n      document.head.removeChild(link);\n    };\n  }, [imageSrc]);\n\n  return (\n    <PreviewLinkCardProvider value={{ href, src: imageSrc, width, height }}>\n      <PreviewCardPrimitive data-slot=\"preview-link-card\" {...props} />\n    </PreviewLinkCardProvider>\n  );\n}\n\ntype PreviewLinkCardTriggerProps = PreviewCardTriggerPropsPrimitive &\n  React.ComponentProps<'a'>;\n\nfunction PreviewLinkCardTrigger({\n  children,\n  href: hrefProp,\n  render,\n  ...props\n}: PreviewLinkCardTriggerProps) {\n  const { href } = usePreviewLinkCard();\n\n  return (\n    <PreviewCardTriggerPrimitive\n      data-slot=\"preview-link-card-trigger\"\n      render={render ?? <a href={hrefProp ?? href}>{children}</a>}\n      {...props}\n    />\n  );\n}\n\ntype PreviewLinkCardPortalProps = PreviewCardPortalPropsPrimitive;\n\nfunction PreviewLinkCardPortal(props: PreviewLinkCardPortalProps) {\n  return (\n    <PreviewCardPortalPrimitive\n      data-slot=\"preview-link-card-portal\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewLinkCardPositionerProps = PreviewCardPositionerPropsPrimitive;\n\nfunction PreviewLinkCardPositioner({\n  side = 'top',\n  sideOffset = 10,\n  align = 'center',\n  ...props\n}: PreviewLinkCardPositionerProps) {\n  return (\n    <PreviewCardPositionerPrimitive\n      data-slot=\"preview-link-card-positioner\"\n      side={side}\n      sideOffset={sideOffset}\n      align={align}\n      {...props}\n    />\n  );\n}\n\nfunction buildQueryString(\n  params: Record<string, string | number | boolean | undefined | null>,\n) {\n  const sp = new URLSearchParams();\n  for (const [k, v] of Object.entries(params)) {\n    if (v === undefined || v === null) continue;\n    sp.append(k, String(v));\n  }\n  return sp.toString();\n}\n\ntype PreviewLinkCardPopupProps = PreviewCardPopupPropsPrimitive &\n  React.ComponentProps<'a'>;\n\nfunction PreviewLinkCardPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  href: hrefProp,\n  style,\n  children,\n  ...props\n}: PreviewLinkCardPopupProps) {\n  const { href } = usePreviewLinkCard();\n\n  return (\n    <PreviewCardPopupPrimitive\n      data-slot=\"preview-link-card-popup\"\n      transition={transition}\n    >\n      <a\n        data-slot=\"preview-link-card-popup-link\"\n        style={{\n          display: 'block',\n          ...style,\n        }}\n        href={hrefProp ?? href}\n        {...props}\n      >\n        {children}\n      </a>\n    </PreviewCardPopupPrimitive>\n  );\n}\n\ntype PreviewLinkCardImageProps = Omit<\n  React.ComponentProps<'img'>,\n  'src' | 'width' | 'height'\n>;\n\nfunction PreviewLinkCardImage({\n  alt = 'preview image',\n  ...props\n}: PreviewLinkCardImageProps) {\n  const { src, width, height } = usePreviewLinkCard();\n\n  return <img src={src} width={width} height={height} alt={alt} {...props} />;\n}\n\ntype PreviewLinkCardBackdropProps = PreviewCardBackdropPropsPrimitive;\n\nfunction PreviewLinkCardBackdrop(props: PreviewLinkCardBackdropProps) {\n  return (\n    <PreviewCardBackdropPrimitive\n      data-slot=\"preview-link-card-backdrop\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewLinkCardArrowProps = PreviewCardArrowPropsPrimitive;\n\nfunction PreviewLinkCardArrow(props: PreviewLinkCardArrowProps) {\n  return (\n    <PreviewCardArrowPrimitive data-slot=\"preview-link-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPortal,\n  PreviewLinkCardPositioner,\n  PreviewLinkCardPopup,\n  PreviewLinkCardImage,\n  PreviewLinkCardBackdrop,\n  PreviewLinkCardArrow,\n  usePreviewLinkCard,\n  type PreviewLinkCardProps,\n  type PreviewLinkCardTriggerProps,\n  type PreviewLinkCardPortalProps,\n  type PreviewLinkCardPositionerProps,\n  type PreviewLinkCardPopupProps,\n  type PreviewLinkCardImageProps,\n  type PreviewLinkCardBackdropProps,\n  type PreviewLinkCardArrowProps,\n  type PreviewLinkCardContextType,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import(
+          '@/registry/primitives/base/preview-link-card/index.tsx'
+        );
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-preview-link-card';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-preview-link-card',
   },
   'primitives-base-progress': {
     name: 'primitives-base-progress',
@@ -21746,7 +22108,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/tooltip.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Tooltip as TooltipPrimitive } from '@base-ui-components/react/tooltip';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype TooltipContextType = {\n  isOpen: boolean;\n  setIsOpen: TooltipProps['onOpenChange'];\n};\n\nconst [LocalTooltipProvider, useTooltip] =\n  getStrictContext<TooltipContextType>('TooltipContext');\n\ntype TooltipProviderProps = React.ComponentProps<\n  typeof TooltipPrimitive.Provider\n>;\n\nfunction TooltipProvider(props: TooltipProviderProps) {\n  return <TooltipPrimitive.Provider data-slot=\"tooltip-provider\" {...props} />;\n}\n\ntype TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root>;\n\nfunction Tooltip(props: TooltipProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <LocalTooltipProvider value={{ isOpen, setIsOpen }}>\n      <TooltipPrimitive.Root\n        data-slot=\"tooltip\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </LocalTooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Trigger\n>;\n\nfunction TooltipTrigger(props: TooltipTriggerProps) {\n  return <TooltipPrimitive.Trigger data-slot=\"tooltip-trigger\" {...props} />;\n}\n\ntype TooltipPortalProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction TooltipPortal(props: TooltipPortalProps) {\n  const { isOpen } = useTooltip();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <TooltipPrimitive.Portal\n          keepMounted\n          data-slot=\"tooltip-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype TooltipPositionerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Positioner\n>;\n\nfunction TooltipPositioner(props: TooltipPositionerProps) {\n  return (\n    <TooltipPrimitive.Positioner data-slot=\"tooltip-positioner\" {...props} />\n  );\n}\n\ntype TooltipPopupProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction TooltipPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: TooltipPopupProps) {\n  return (\n    <TooltipPrimitive.Popup\n      render={\n        <motion.div\n          key=\"tooltip-popup\"\n          data-slot=\"tooltip-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype TooltipArrowProps = React.ComponentProps<typeof TooltipPrimitive.Arrow>;\n\nfunction TooltipArrow(props: TooltipArrowProps) {\n  return <TooltipPrimitive.Arrow data-slot=\"tooltip-arrow\" {...props} />;\n}\n\nexport {\n  TooltipProvider,\n  Tooltip,\n  TooltipTrigger,\n  TooltipPortal,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipArrow,\n  useTooltip,\n  type TooltipProviderProps,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipPortalProps,\n  type TooltipPositionerProps,\n  type TooltipPopupProps,\n  type TooltipArrowProps,\n  type TooltipContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Tooltip as TooltipPrimitive } from '@base-ui-components/react/tooltip';\nimport {\n  AnimatePresence,\n  motion,\n  useMotionValue,\n  useSpring,\n  type HTMLMotionProps,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype TooltipContextType = {\n  isOpen: boolean;\n  setIsOpen: TooltipProps['onOpenChange'];\n  x: MotionValue<number>;\n  y: MotionValue<number>;\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nconst [LocalTooltipProvider, useTooltip] =\n  getStrictContext<TooltipContextType>('TooltipContext');\n\ntype TooltipProviderProps = React.ComponentProps<\n  typeof TooltipPrimitive.Provider\n>;\n\nfunction TooltipProvider(props: TooltipProviderProps) {\n  return <TooltipPrimitive.Provider data-slot=\"tooltip-provider\" {...props} />;\n}\n\ntype TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root> & {\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nfunction Tooltip({\n  followCursor = false,\n  followCursorSpringOptions = { stiffness: 200, damping: 17 },\n  ...props\n}: TooltipProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n\n  return (\n    <LocalTooltipProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        x,\n        y,\n        followCursor,\n        followCursorSpringOptions,\n      }}\n    >\n      <TooltipPrimitive.Root\n        data-slot=\"tooltip\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </LocalTooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Trigger\n>;\n\nfunction TooltipTrigger({ onMouseMove, ...props }: TooltipTriggerProps) {\n  const { x, y, followCursor } = useTooltip();\n\n  const handleMouseMove = (\n    event: Parameters<NonNullable<TooltipTriggerProps['onMouseMove']>>[0],\n  ) => {\n    onMouseMove?.(event);\n\n    const target = event.currentTarget.getBoundingClientRect();\n\n    if (followCursor === 'x' || followCursor === true) {\n      const eventOffsetX = event.clientX - target.left;\n      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;\n      x.set(offsetXFromCenter);\n    }\n\n    if (followCursor === 'y' || followCursor === true) {\n      const eventOffsetY = event.clientY - target.top;\n      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;\n      y.set(offsetYFromCenter);\n    }\n  };\n\n  return (\n    <TooltipPrimitive.Trigger\n      data-slot=\"tooltip-trigger\"\n      onMouseMove={handleMouseMove}\n      {...props}\n    />\n  );\n}\n\ntype TooltipPortalProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction TooltipPortal(props: TooltipPortalProps) {\n  const { isOpen } = useTooltip();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <TooltipPrimitive.Portal\n          keepMounted\n          data-slot=\"tooltip-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype TooltipPositionerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Positioner\n>;\n\nfunction TooltipPositioner(props: TooltipPositionerProps) {\n  return (\n    <TooltipPrimitive.Positioner data-slot=\"tooltip-positioner\" {...props} />\n  );\n}\n\ntype TooltipPopupProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction TooltipPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  style,\n  ...props\n}: TooltipPopupProps) {\n  const { x, y, followCursor, followCursorSpringOptions } = useTooltip();\n  const translateX = useSpring(x, followCursorSpringOptions);\n  const translateY = useSpring(y, followCursorSpringOptions);\n\n  return (\n    <TooltipPrimitive.Popup\n      render={\n        <motion.div\n          key=\"tooltip-popup\"\n          data-slot=\"tooltip-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          style={{\n            x:\n              followCursor === 'x' || followCursor === true\n                ? translateX\n                : undefined,\n            y:\n              followCursor === 'y' || followCursor === true\n                ? translateY\n                : undefined,\n            ...style,\n          }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype TooltipArrowProps = React.ComponentProps<typeof TooltipPrimitive.Arrow>;\n\nfunction TooltipArrow(props: TooltipArrowProps) {\n  return <TooltipPrimitive.Arrow data-slot=\"tooltip-arrow\" {...props} />;\n}\n\nexport {\n  TooltipProvider,\n  Tooltip,\n  TooltipTrigger,\n  TooltipPortal,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipArrow,\n  useTooltip,\n  type TooltipProviderProps,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipPortalProps,\n  type TooltipPositionerProps,\n  type TooltipPopupProps,\n  type TooltipArrowProps,\n  type TooltipContextType,\n};",
       },
     ],
     keywords: [],
@@ -23131,7 +23493,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/radix/preview-link-card.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  HoverCard as HoverCardPrimitive,\n  HoverCardTrigger as HoverCardTriggerPrimitive,\n  HoverCardContent as HoverCardContentPrimitive,\n  HoverCardPortal as HoverCardPortalPrimitive,\n  HoverCardArrow as HoverCardArrowPrimitive,\n  type HoverCardProps as HoverCardPropsPrimitive,\n  type HoverCardTriggerProps as HoverCardTriggerPropsPrimitive,\n  type HoverCardContentProps as HoverCardContentPropsPrimitive,\n  type HoverCardPortalProps as HoverCardPortalPropsPrimitive,\n  type HoverCardArrowProps as HoverCardArrowPropsPrimitive,\n} from '@/components/animate-ui/primitives/radix/hover-card';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype PreviewLinkCardContextType = {\n  href: string;\n  src?: string;\n  width?: number;\n  height?: number;\n};\n\nconst [PreviewLinkCardProvider, usePreviewLinkCard] =\n  getStrictContext<PreviewLinkCardContextType>('PreviewLinkCardContext');\n\ntype PreviewLinkCardProps = HoverCardPropsPrimitive & {\n  href: string;\n  src?: string;\n  width?: number;\n  height?: number;\n  deviceScaleFactor?: number;\n  colorScheme?: 'light' | 'dark';\n};\n\nfunction PreviewLinkCard({\n  href,\n  src,\n  width = 240,\n  height = 135,\n  deviceScaleFactor = 1,\n  colorScheme = 'light',\n  ...props\n}: PreviewLinkCardProps) {\n  const imageSrc =\n    src ??\n    `https://api.microlink.io/?${buildQueryString({\n      url: href,\n      screenshot: true,\n      meta: false,\n      embed: 'screenshot.url',\n      colorScheme,\n      'viewport.isMobile': true,\n      'viewport.deviceScaleFactor': deviceScaleFactor,\n      'viewport.width': width * 3,\n      'viewport.height': height * 3,\n    })}`;\n\n  React.useEffect(() => {\n    const link = document.createElement('link');\n    link.rel = 'preload';\n    link.as = 'image';\n    link.href = imageSrc;\n    document.head.appendChild(link);\n    return () => {\n      document.head.removeChild(link);\n    };\n  }, [imageSrc]);\n\n  return (\n    <PreviewLinkCardProvider value={{ href, src: imageSrc, width, height }}>\n      <HoverCardPrimitive data-slot=\"preview-link-card\" {...props} />\n    </PreviewLinkCardProvider>\n  );\n}\n\ntype PreviewLinkCardTriggerProps = HoverCardTriggerPropsPrimitive & {\n  href?: string;\n};\n\nfunction PreviewLinkCardTrigger({\n  asChild,\n  children,\n  href: hrefProp,\n  ...props\n}: PreviewLinkCardTriggerProps) {\n  const { href } = usePreviewLinkCard();\n\n  return (\n    <HoverCardTriggerPrimitive\n      data-slot=\"preview-link-card-trigger\"\n      asChild\n      {...props}\n    >\n      {asChild ? children : <a href={hrefProp ?? href}>{children}</a>}\n    </HoverCardTriggerPrimitive>\n  );\n}\n\ntype PreviewLinkCardPortalProps = HoverCardPortalPropsPrimitive;\n\nfunction PreviewLinkCardPortal(props: PreviewLinkCardPortalProps) {\n  return (\n    <HoverCardPortalPrimitive data-slot=\"preview-link-card-portal\" {...props} />\n  );\n}\n\nfunction buildQueryString(\n  params: Record<string, string | number | boolean | undefined | null>,\n) {\n  const sp = new URLSearchParams();\n  for (const [k, v] of Object.entries(params)) {\n    if (v === undefined || v === null) continue;\n    sp.append(k, String(v));\n  }\n  return sp.toString();\n}\n\ntype PreviewLinkCardContentProps = HoverCardContentPropsPrimitive &\n  React.ComponentProps<'a'>;\n\nfunction PreviewLinkCardContent({\n  side = 'top',\n  sideOffset = 10,\n  align = 'center',\n  alignOffset,\n  avoidCollisions,\n  collisionBoundary,\n  collisionPadding,\n  arrowPadding,\n  sticky,\n  hideWhenDetached,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  asChild,\n  children,\n  href: hrefProp,\n  style,\n  ...props\n}: PreviewLinkCardContentProps) {\n  const { href } = usePreviewLinkCard();\n\n  return (\n    <HoverCardContentPrimitive\n      side={side}\n      sideOffset={sideOffset}\n      align={align}\n      alignOffset={alignOffset}\n      avoidCollisions={avoidCollisions}\n      collisionBoundary={collisionBoundary}\n      collisionPadding={collisionPadding}\n      arrowPadding={arrowPadding}\n      sticky={sticky}\n      hideWhenDetached={hideWhenDetached}\n      transition={transition}\n      asChild={asChild}\n      {...(asChild ? { style, ...props } : {})}\n    >\n      {asChild ? (\n        children\n      ) : (\n        <a\n          style={{\n            display: 'block',\n            ...style,\n          }}\n          href={hrefProp ?? href}\n          {...props}\n        >\n          {children}\n        </a>\n      )}\n    </HoverCardContentPrimitive>\n  );\n}\n\ntype PreviewLinkCardImageProps = Omit<\n  React.ComponentProps<'img'>,\n  'src' | 'width' | 'height'\n>;\n\nfunction PreviewLinkCardImage({\n  alt = 'preview image',\n  ...props\n}: PreviewLinkCardImageProps) {\n  const { src, width, height } = usePreviewLinkCard();\n\n  return <img src={src} width={width} height={height} alt={alt} {...props} />;\n}\n\ntype PreviewLinkCardArrowProps = HoverCardArrowPropsPrimitive;\n\nfunction PreviewLinkCardArrow(props: PreviewLinkCardArrowProps) {\n  return (\n    <HoverCardArrowPrimitive data-slot=\"preview-link-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPortal,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardArrow,\n  usePreviewLinkCard,\n  type PreviewLinkCardProps,\n  type PreviewLinkCardTriggerProps,\n  type PreviewLinkCardPortalProps,\n  type PreviewLinkCardContentProps,\n  type PreviewLinkCardImageProps,\n  type PreviewLinkCardArrowProps,\n  type PreviewLinkCardContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  HoverCard as HoverCardPrimitive,\n  HoverCardTrigger as HoverCardTriggerPrimitive,\n  HoverCardContent as HoverCardContentPrimitive,\n  HoverCardPortal as HoverCardPortalPrimitive,\n  HoverCardArrow as HoverCardArrowPrimitive,\n  type HoverCardProps as HoverCardPropsPrimitive,\n  type HoverCardTriggerProps as HoverCardTriggerPropsPrimitive,\n  type HoverCardContentProps as HoverCardContentPropsPrimitive,\n  type HoverCardPortalProps as HoverCardPortalPropsPrimitive,\n  type HoverCardArrowProps as HoverCardArrowPropsPrimitive,\n} from '@/components/animate-ui/primitives/radix/hover-card';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype PreviewLinkCardContextType = {\n  href: string;\n  src?: string;\n  width?: number;\n  height?: number;\n};\n\nconst [PreviewLinkCardProvider, usePreviewLinkCard] =\n  getStrictContext<PreviewLinkCardContextType>('PreviewLinkCardContext');\n\ntype PreviewLinkCardProps = HoverCardPropsPrimitive & {\n  href: string;\n  src?: string;\n  width?: number;\n  height?: number;\n  deviceScaleFactor?: number;\n  colorScheme?: 'light' | 'dark';\n};\n\nfunction PreviewLinkCard({\n  href,\n  src,\n  width = 240,\n  height = 135,\n  deviceScaleFactor = 1,\n  colorScheme = 'light',\n  ...props\n}: PreviewLinkCardProps) {\n  const imageSrc =\n    src ??\n    `https://api.microlink.io/?${buildQueryString({\n      url: href,\n      screenshot: true,\n      meta: false,\n      embed: 'screenshot.url',\n      colorScheme,\n      'viewport.isMobile': true,\n      'viewport.deviceScaleFactor': deviceScaleFactor,\n      'viewport.width': width * 3,\n      'viewport.height': height * 3,\n    })}`;\n\n  React.useEffect(() => {\n    const link = document.createElement('link');\n    link.rel = 'preload';\n    link.as = 'image';\n    link.href = imageSrc;\n    document.head.appendChild(link);\n    return () => {\n      document.head.removeChild(link);\n    };\n  }, [imageSrc]);\n\n  return (\n    <PreviewLinkCardProvider value={{ href, src: imageSrc, width, height }}>\n      <HoverCardPrimitive data-slot=\"preview-link-card\" {...props} />\n    </PreviewLinkCardProvider>\n  );\n}\n\ntype PreviewLinkCardTriggerProps = HoverCardTriggerPropsPrimitive &\n  React.ComponentProps<'a'>;\n\nfunction PreviewLinkCardTrigger({\n  asChild,\n  children,\n  href: hrefProp,\n  ...props\n}: PreviewLinkCardTriggerProps) {\n  const { href } = usePreviewLinkCard();\n\n  return (\n    <HoverCardTriggerPrimitive\n      data-slot=\"preview-link-card-trigger\"\n      asChild\n      {...props}\n    >\n      {asChild ? children : <a href={hrefProp ?? href}>{children}</a>}\n    </HoverCardTriggerPrimitive>\n  );\n}\n\ntype PreviewLinkCardPortalProps = HoverCardPortalPropsPrimitive;\n\nfunction PreviewLinkCardPortal(props: PreviewLinkCardPortalProps) {\n  return (\n    <HoverCardPortalPrimitive data-slot=\"preview-link-card-portal\" {...props} />\n  );\n}\n\nfunction buildQueryString(\n  params: Record<string, string | number | boolean | undefined | null>,\n) {\n  const sp = new URLSearchParams();\n  for (const [k, v] of Object.entries(params)) {\n    if (v === undefined || v === null) continue;\n    sp.append(k, String(v));\n  }\n  return sp.toString();\n}\n\ntype PreviewLinkCardContentProps = HoverCardContentPropsPrimitive &\n  React.ComponentProps<'a'>;\n\nfunction PreviewLinkCardContent({\n  side = 'top',\n  sideOffset = 10,\n  align = 'center',\n  alignOffset,\n  avoidCollisions,\n  collisionBoundary,\n  collisionPadding,\n  arrowPadding,\n  sticky,\n  hideWhenDetached,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  asChild,\n  children,\n  href: hrefProp,\n  style,\n  ...props\n}: PreviewLinkCardContentProps) {\n  const { href } = usePreviewLinkCard();\n\n  return (\n    <HoverCardContentPrimitive\n      data-slot=\"preview-link-card-content\"\n      side={side}\n      sideOffset={sideOffset}\n      align={align}\n      alignOffset={alignOffset}\n      avoidCollisions={avoidCollisions}\n      collisionBoundary={collisionBoundary}\n      collisionPadding={collisionPadding}\n      arrowPadding={arrowPadding}\n      sticky={sticky}\n      hideWhenDetached={hideWhenDetached}\n      transition={transition}\n      asChild={asChild}\n      {...(asChild ? { style, ...props } : {})}\n    >\n      {asChild ? (\n        children\n      ) : (\n        <a\n          style={{\n            display: 'block',\n            ...style,\n          }}\n          href={hrefProp ?? href}\n          {...props}\n        >\n          {children}\n        </a>\n      )}\n    </HoverCardContentPrimitive>\n  );\n}\n\ntype PreviewLinkCardImageProps = Omit<\n  React.ComponentProps<'img'>,\n  'src' | 'width' | 'height'\n>;\n\nfunction PreviewLinkCardImage({\n  alt = 'preview image',\n  ...props\n}: PreviewLinkCardImageProps) {\n  const { src, width, height } = usePreviewLinkCard();\n\n  return <img src={src} width={width} height={height} alt={alt} {...props} />;\n}\n\ntype PreviewLinkCardArrowProps = HoverCardArrowPropsPrimitive;\n\nfunction PreviewLinkCardArrow(props: PreviewLinkCardArrowProps) {\n  return (\n    <HoverCardArrowPrimitive data-slot=\"preview-link-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewLinkCard,\n  PreviewLinkCardTrigger,\n  PreviewLinkCardPortal,\n  PreviewLinkCardContent,\n  PreviewLinkCardImage,\n  PreviewLinkCardArrow,\n  usePreviewLinkCard,\n  type PreviewLinkCardProps,\n  type PreviewLinkCardTriggerProps,\n  type PreviewLinkCardPortalProps,\n  type PreviewLinkCardContentProps,\n  type PreviewLinkCardImageProps,\n  type PreviewLinkCardArrowProps,\n  type PreviewLinkCardContextType,\n};",
       },
     ],
     keywords: [],
@@ -23254,7 +23616,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/radix/sheet.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as SheetPrimitive } from 'radix-ui';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype SheetContextType = {\n  isOpen: boolean;\n  setIsOpen: (isOpen: boolean) => void;\n};\n\nconst [SheetProvider, useSheet] =\n  getStrictContext<SheetContextType>('SheetContext');\n\ntype SheetProps = React.ComponentProps<typeof SheetPrimitive.Root>;\n\nfunction Sheet(props: SheetProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props.open,\n    defaultValue: props.defaultOpen,\n    onChange: props.onOpenChange,\n  });\n\n  return (\n    <SheetProvider value={{ isOpen, setIsOpen }}>\n      <SheetPrimitive.Root\n        data-slot=\"sheet\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </SheetProvider>\n  );\n}\n\ntype SheetTriggerProps = React.ComponentProps<typeof SheetPrimitive.Trigger>;\n\nfunction SheetTrigger(props: SheetTriggerProps) {\n  return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;\n}\n\ntype SheetCloseProps = React.ComponentProps<typeof SheetPrimitive.Close>;\n\nfunction SheetClose(props: SheetCloseProps) {\n  return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;\n}\n\ntype SheetPortalProps = React.ComponentProps<typeof SheetPrimitive.Portal>;\n\nfunction SheetPortal(props: SheetPortalProps) {\n  const { isOpen } = useSheet();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <SheetPrimitive.Portal forceMount data-slot=\"sheet-portal\" {...props} />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype SheetOverlayProps = Omit<\n  React.ComponentProps<typeof SheetPrimitive.Overlay>,\n  'asChild' | 'forceMount'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction SheetOverlay({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: SheetOverlayProps) {\n  return (\n    <SheetPrimitive.Overlay asChild forceMount>\n      <motion.div\n        key=\"sheet-overlay\"\n        data-slot=\"sheet-overlay\"\n        initial={{ opacity: 0, filter: 'blur(4px)' }}\n        animate={{ opacity: 1, filter: 'blur(0px)' }}\n        exit={{ opacity: 0, filter: 'blur(4px)' }}\n        transition={transition}\n        {...props}\n      />\n    </SheetPrimitive.Overlay>\n  );\n}\n\ntype Side = 'top' | 'bottom' | 'left' | 'right';\n\ntype SheetContentProps = React.ComponentProps<typeof SheetPrimitive.Content> &\n  HTMLMotionProps<'div'> & {\n    side?: Side;\n  };\n\nfunction SheetContent({\n  side = 'right',\n  transition = { type: 'spring', stiffness: 150, damping: 22 },\n  style,\n  ...props\n}: SheetContentProps) {\n  const axis = side === 'left' || side === 'right' ? 'x' : 'y';\n\n  const offscreen: Record<Side, { x?: string; y?: string; opacity: number }> = {\n    right: { x: '100%', opacity: 0 },\n    left: { x: '-100%', opacity: 0 },\n    top: { y: '-100%', opacity: 0 },\n    bottom: { y: '100%', opacity: 0 },\n  };\n\n  const positionStyle: Record<Side, React.CSSProperties> = {\n    right: { insetBlock: 0, right: 0 },\n    left: { insetBlock: 0, left: 0 },\n    top: { insetInline: 0, top: 0 },\n    bottom: { insetInline: 0, bottom: 0 },\n  };\n\n  return (\n    <SheetPrimitive.Content asChild forceMount {...props}>\n      <motion.div\n        key=\"sheet-content\"\n        data-slot=\"sheet-content\"\n        data-side={side}\n        initial={offscreen[side]}\n        animate={{ [axis]: 0, opacity: 1 }}\n        exit={offscreen[side]}\n        style={{\n          position: 'fixed',\n          ...positionStyle[side],\n          ...style,\n        }}\n        transition={transition}\n        {...props}\n      />\n    </SheetPrimitive.Content>\n  );\n}\n\ntype SheetHeaderProps = React.ComponentProps<'div'>;\n\nfunction SheetHeader(props: SheetHeaderProps) {\n  return <div data-slot=\"sheet-header\" {...props} />;\n}\n\ntype SheetFooterProps = React.ComponentProps<'div'>;\n\nfunction SheetFooter(props: SheetFooterProps) {\n  return <div data-slot=\"sheet-footer\" {...props} />;\n}\n\ntype SheetTitleProps = React.ComponentProps<typeof SheetPrimitive.Title>;\n\nfunction SheetTitle(props: SheetTitleProps) {\n  return <SheetPrimitive.Title data-slot=\"sheet-title\" {...props} />;\n}\n\ntype SheetDescriptionProps = React.ComponentProps<\n  typeof SheetPrimitive.Description\n>;\n\nfunction SheetDescription(props: SheetDescriptionProps) {\n  return (\n    <SheetPrimitive.Description data-slot=\"sheet-description\" {...props} />\n  );\n}\n\nexport {\n  useSheet,\n  Sheet,\n  SheetPortal,\n  SheetOverlay,\n  SheetTrigger,\n  SheetClose,\n  SheetContent,\n  SheetHeader,\n  SheetFooter,\n  SheetTitle,\n  SheetDescription,\n  type SheetProps,\n  type SheetPortalProps,\n  type SheetOverlayProps,\n  type SheetTriggerProps,\n  type SheetCloseProps,\n  type SheetContentProps,\n  type SheetHeaderProps,\n  type SheetFooterProps,\n  type SheetTitleProps,\n  type SheetDescriptionProps,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as SheetPrimitive } from 'radix-ui';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype SheetContextType = {\n  isOpen: boolean;\n  setIsOpen: (isOpen: boolean) => void;\n};\n\nconst [SheetProvider, useSheet] =\n  getStrictContext<SheetContextType>('SheetContext');\n\ntype SheetProps = React.ComponentProps<typeof SheetPrimitive.Root>;\n\nfunction Sheet(props: SheetProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props.open,\n    defaultValue: props.defaultOpen,\n    onChange: props.onOpenChange,\n  });\n\n  return (\n    <SheetProvider value={{ isOpen, setIsOpen }}>\n      <SheetPrimitive.Root\n        data-slot=\"sheet\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </SheetProvider>\n  );\n}\n\ntype SheetTriggerProps = React.ComponentProps<typeof SheetPrimitive.Trigger>;\n\nfunction SheetTrigger(props: SheetTriggerProps) {\n  return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;\n}\n\ntype SheetCloseProps = React.ComponentProps<typeof SheetPrimitive.Close>;\n\nfunction SheetClose(props: SheetCloseProps) {\n  return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;\n}\n\ntype SheetPortalProps = React.ComponentProps<typeof SheetPrimitive.Portal>;\n\nfunction SheetPortal(props: SheetPortalProps) {\n  const { isOpen } = useSheet();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <SheetPrimitive.Portal forceMount data-slot=\"sheet-portal\" {...props} />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype SheetOverlayProps = Omit<\n  React.ComponentProps<typeof SheetPrimitive.Overlay>,\n  'asChild' | 'forceMount'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction SheetOverlay({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: SheetOverlayProps) {\n  return (\n    <SheetPrimitive.Overlay asChild forceMount>\n      <motion.div\n        key=\"sheet-overlay\"\n        data-slot=\"sheet-overlay\"\n        initial={{ opacity: 0, filter: 'blur(4px)' }}\n        animate={{ opacity: 1, filter: 'blur(0px)' }}\n        exit={{ opacity: 0, filter: 'blur(4px)' }}\n        transition={transition}\n        {...props}\n      />\n    </SheetPrimitive.Overlay>\n  );\n}\n\ntype Side = 'top' | 'bottom' | 'left' | 'right';\n\ntype SheetContentProps = React.ComponentProps<typeof SheetPrimitive.Content> &\n  HTMLMotionProps<'div'> & {\n    side?: Side;\n  };\n\nfunction SheetContent({\n  side = 'right',\n  transition = { type: 'spring', stiffness: 150, damping: 22 },\n  style,\n  ...props\n}: SheetContentProps) {\n  const axis = side === 'left' || side === 'right' ? 'x' : 'y';\n\n  const offscreen: Record<Side, { x?: string; y?: string; opacity: number }> = {\n    right: { x: '100%', opacity: 0 },\n    left: { x: '-100%', opacity: 0 },\n    top: { y: '-100%', opacity: 0 },\n    bottom: { y: '100%', opacity: 0 },\n  };\n\n  const positionStyle: Record<Side, React.CSSProperties> = {\n    right: { insetBlock: 0, right: 0 },\n    left: { insetBlock: 0, left: 0 },\n    top: { insetInline: 0, top: 0 },\n    bottom: { insetInline: 0, bottom: 0 },\n  };\n\n  return (\n    <SheetPrimitive.Content asChild forceMount {...props}>\n      <motion.div\n        key=\"sheet-content\"\n        data-slot=\"sheet-content\"\n        data-side={side}\n        initial={offscreen[side]}\n        animate={{ [axis]: 0, opacity: 1 }}\n        exit={offscreen[side]}\n        style={{\n          position: 'fixed',\n          ...positionStyle[side],\n          ...style,\n        }}\n        transition={transition}\n      />\n    </SheetPrimitive.Content>\n  );\n}\n\ntype SheetHeaderProps = React.ComponentProps<'div'>;\n\nfunction SheetHeader(props: SheetHeaderProps) {\n  return <div data-slot=\"sheet-header\" {...props} />;\n}\n\ntype SheetFooterProps = React.ComponentProps<'div'>;\n\nfunction SheetFooter(props: SheetFooterProps) {\n  return <div data-slot=\"sheet-footer\" {...props} />;\n}\n\ntype SheetTitleProps = React.ComponentProps<typeof SheetPrimitive.Title>;\n\nfunction SheetTitle(props: SheetTitleProps) {\n  return <SheetPrimitive.Title data-slot=\"sheet-title\" {...props} />;\n}\n\ntype SheetDescriptionProps = React.ComponentProps<\n  typeof SheetPrimitive.Description\n>;\n\nfunction SheetDescription(props: SheetDescriptionProps) {\n  return (\n    <SheetPrimitive.Description data-slot=\"sheet-description\" {...props} />\n  );\n}\n\nexport {\n  useSheet,\n  Sheet,\n  SheetPortal,\n  SheetOverlay,\n  SheetTrigger,\n  SheetClose,\n  SheetContent,\n  SheetHeader,\n  SheetFooter,\n  SheetTitle,\n  SheetDescription,\n  type SheetProps,\n  type SheetPortalProps,\n  type SheetOverlayProps,\n  type SheetTriggerProps,\n  type SheetCloseProps,\n  type SheetContentProps,\n  type SheetHeaderProps,\n  type SheetFooterProps,\n  type SheetTitleProps,\n  type SheetDescriptionProps,\n};",
       },
     ],
     keywords: [],

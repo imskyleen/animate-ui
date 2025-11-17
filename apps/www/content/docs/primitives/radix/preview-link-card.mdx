@@ -4,7 +4,7 @@ description: Displays a preview image of a link when hovered.
 author:
   name: imskyleen
   url: https://github.com/imskyleen
-releaseDate: 2025-11-07
+releaseDate: 2025-11-17
 ---
 
 <ComponentPreview name="demo-primitives-radix-preview-link-card" />
@@ -12,3 +12,165 @@ releaseDate: 2025-11-07
 ## Installation
 
 <ComponentInstallation name="primitives-radix-preview-link-card" />
+
+## Usage
+
+```tsx
+<PreviewLinkCard href="https://animate-ui.com/docs">
+  <PreviewLinkCardTrigger>Animate UI Docs</PreviewLinkCardTrigger>
+  <PreviewLinkCardPortal>
+    <PreviewLinkCardContent>
+      <PreviewLinkCardImage alt="Preview link card content" />
+    </PreviewLinkCardContent>
+  </PreviewLinkCardPortal>
+</PreviewLinkCard>
+```
+
+## API Reference
+
+### PreviewLinkCard
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/hover-card#hovercard"
+  text="Animate UI API Reference - HoverCard Primitive"
+/>
+
+<TypeTable
+  type={{
+    href: {
+      description: 'The href of the link.',
+      type: 'string',
+      required: true,
+    },
+    src: {
+      description: 'The src of the image.',
+      type: 'string',
+      required: false,
+    },
+    width: {
+      description: 'The width of the image.',
+      type: 'number',
+      required: false,
+    },
+    height: {
+      description: 'The height of the image.',
+      type: 'number',
+      required: false,
+    },
+    deviceScaleFactor: {
+      description: 'The device scale factor of the image.',
+      type: 'number',
+      required: false,
+      default: '1',
+    },
+    colorScheme: {
+      description: 'The color scheme of the image.',
+      type: 'light' | 'dark',
+      required: false,
+      default: 'light',
+    },
+    followCursor: {
+      description: 'Whether to follow the cursor.',
+      type: 'boolean | "x" | "y"',
+      required: false,
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring options of the follow cursor.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### PreviewLinkCardTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/hover-card#hovercardtrigger"
+  text="Animate UI API Reference - HoverCardTrigger Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#trigger"
+  text="Radix UI API Reference - HoverCard.Trigger"
+/>
+</div>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the preview link card trigger.',
+      type: "React.ComponentProps<'a'>",
+      required: false,
+    },
+  }}
+/>
+
+### PreviewLinkCardPortal
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/hover-card#hovercardportal"
+  text="Animate UI API Reference - HoverCardPortal Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#portal"
+  text="Radix UI API Reference - HoverCard.Portal"
+/>
+</div>
+
+### PreviewLinkCardContent
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/hover-card#hovercardcontent"
+  text="Animate UI API Reference - HoverCardContent Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#content"
+  text="Radix UI API Reference - HoverCard.Content"
+/>
+</div>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the hover card content.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the hover card content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### PreviewLinkCardImage
+
+<TypeTable
+  type={{
+    alt: {
+      description: 'The alt of the preview link card image.',
+      type: 'string',
+      required: false,
+      default: 'preview image',
+    },
+    '...props': {
+      description: 'The props of the preview link card image.',
+      type: "React.ComponentProps<'img'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Hover Card](https://www.radix-ui.com/primitives/docs/components/hover-card)
+- Inspired by [Aceternity UI Link Preview](https://ui.aceternity.com/components/link-preview)

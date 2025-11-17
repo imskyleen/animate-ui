@@ -10,13 +10,24 @@
   "files": [
     {
       "path": "registry/demo/components/base/tooltip/index.tsx",
-      "content": "import {\n  Tooltip,\n  TooltipTrigger,\n  TooltipPanel,\n  type TooltipPanelProps,\n} from '@/components/animate-ui/components/base/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseTooltipDemoProps {\n  side: TooltipPanelProps['side'];\n  sideOffset: TooltipPanelProps['sideOffset'];\n  align: TooltipPanelProps['align'];\n  alignOffset: TooltipPanelProps['alignOffset'];\n}\n\nexport function BaseTooltipDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: BaseTooltipDemoProps) {\n  return (\n    <Tooltip>\n      <TooltipTrigger render={<Button variant=\"outline\">Hover</Button>} />\n      <TooltipPanel\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <p>Add to library</p>\n      </TooltipPanel>\n    </Tooltip>\n  );\n}\n",
+      "content": "import {\n  Tooltip,\n  TooltipTrigger,\n  TooltipPanel,\n  type TooltipPanelProps,\n} from '@/components/animate-ui/components/base/tooltip';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseTooltipDemoProps {\n  side: TooltipPanelProps['side'];\n  sideOffset: TooltipPanelProps['sideOffset'];\n  align: TooltipPanelProps['align'];\n  alignOffset: TooltipPanelProps['alignOffset'];\n  followCursor?: boolean | 'x' | 'y';\n}\n\nexport function BaseTooltipDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n  followCursor,\n}: BaseTooltipDemoProps) {\n  return (\n    <Tooltip followCursor={followCursor}>\n      <TooltipTrigger render={<Button variant=\"outline\">Hover</Button>} />\n      <TooltipPanel\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <p>Add to library</p>\n      </TooltipPanel>\n    </Tooltip>\n  );\n}\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/base/tooltip.tsx"
     }
   ],
   "meta": {
     "demoProps": {
+      "Tooltip": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
       "TooltipPanel": {
         "side": {
           "value": "top",

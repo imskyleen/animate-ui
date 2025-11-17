@@ -14,6 +14,17 @@
   ],
   "meta": {
     "demoProps": {
+      "PreviewCard": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
       "PreviewCardPositioner": {
         "side": {
           "value": "bottom",

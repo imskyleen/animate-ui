@@ -3,17 +3,21 @@
 import * as React from 'react';
 
 import {
-  HoverCard as HoverCardPrimitive,
-  HoverCardTrigger as HoverCardTriggerPrimitive,
-  HoverCardContent as HoverCardContentPrimitive,
-  HoverCardPortal as HoverCardPortalPrimitive,
-  HoverCardArrow as HoverCardArrowPrimitive,
-  type HoverCardProps as HoverCardPropsPrimitive,
-  type HoverCardTriggerProps as HoverCardTriggerPropsPrimitive,
-  type HoverCardContentProps as HoverCardContentPropsPrimitive,
-  type HoverCardPortalProps as HoverCardPortalPropsPrimitive,
-  type HoverCardArrowProps as HoverCardArrowPropsPrimitive,
-} from '@/registry/primitives/radix/hover-card';
+  PreviewCard as PreviewCardPrimitive,
+  PreviewCardTrigger as PreviewCardTriggerPrimitive,
+  PreviewCardPortal as PreviewCardPortalPrimitive,
+  PreviewCardArrow as PreviewCardArrowPrimitive,
+  PreviewCardPositioner as PreviewCardPositionerPrimitive,
+  PreviewCardPopup as PreviewCardPopupPrimitive,
+  PreviewCardBackdrop as PreviewCardBackdropPrimitive,
+  type PreviewCardProps as PreviewCardPropsPrimitive,
+  type PreviewCardTriggerProps as PreviewCardTriggerPropsPrimitive,
+  type PreviewCardPortalProps as PreviewCardPortalPropsPrimitive,
+  type PreviewCardPositionerProps as PreviewCardPositionerPropsPrimitive,
+  type PreviewCardPopupProps as PreviewCardPopupPropsPrimitive,
+  type PreviewCardArrowProps as PreviewCardArrowPropsPrimitive,
+  type PreviewCardBackdropProps as PreviewCardBackdropPropsPrimitive,
+} from '@/registry/primitives/base/preview-card';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 
 type PreviewLinkCardContextType = {
@@ -26,7 +30,7 @@ type PreviewLinkCardContextType = {
 const [PreviewLinkCardProvider, usePreviewLinkCard] =
   getStrictContext<PreviewLinkCardContextType>('PreviewLinkCardContext');
 
-type PreviewLinkCardProps = HoverCardPropsPrimitive & {
+type PreviewLinkCardProps = PreviewCardPropsPrimitive & {
   href: string;
   src?: string;
   width?: number;
@@ -71,38 +75,58 @@ function PreviewLinkCard({
 
   return (
     <PreviewLinkCardProvider value={{ href, src: imageSrc, width, height }}>
-      <HoverCardPrimitive data-slot="preview-link-card" {...props} />
+      <PreviewCardPrimitive data-slot="preview-link-card" {...props} />
     </PreviewLinkCardProvider>
   );
 }
 
-type PreviewLinkCardTriggerProps = HoverCardTriggerPropsPrimitive &
+type PreviewLinkCardTriggerProps = PreviewCardTriggerPropsPrimitive &
   React.ComponentProps<'a'>;
 
 function PreviewLinkCardTrigger({
-  asChild,
   children,
   href: hrefProp,
+  render,
   ...props
 }: PreviewLinkCardTriggerProps) {
   const { href } = usePreviewLinkCard();
 
   return (
-    <HoverCardTriggerPrimitive
+    <PreviewCardTriggerPrimitive
       data-slot="preview-link-card-trigger"
-      asChild
+      render={render ?? <a href={hrefProp ?? href}>{children}</a>}
       {...props}
-    >
-      {asChild ? children : <a href={hrefProp ?? href}>{children}</a>}
-    </HoverCardTriggerPrimitive>
+    />
   );
 }
 
-type PreviewLinkCardPortalProps = HoverCardPortalPropsPrimitive;
+type PreviewLinkCardPortalProps = PreviewCardPortalPropsPrimitive;
 
 function PreviewLinkCardPortal(props: PreviewLinkCardPortalProps) {
   return (
-    <HoverCardPortalPrimitive data-slot="preview-link-card-portal" {...props} />
+    <PreviewCardPortalPrimitive
+      data-slot="preview-link-card-portal"
+      {...props}
+    />
+  );
+}
+
+type PreviewLinkCardPositionerProps = PreviewCardPositionerPropsPrimitive;
+
+function PreviewLinkCardPositioner({
+  side = 'top',
+  sideOffset = 10,
+  align = 'center',
+  ...props
+}: PreviewLinkCardPositionerProps) {
+  return (
+    <PreviewCardPositionerPrimitive
+      data-slot="preview-link-card-positioner"
+      side={side}
+      sideOffset={sideOffset}
+      align={align}
+      {...props}
+    />
   );
 }
 
@@ -117,61 +141,35 @@ function buildQueryString(
   return sp.toString();
 }
 
-type PreviewLinkCardContentProps = HoverCardContentPropsPrimitive &
+type PreviewLinkCardPopupProps = PreviewCardPopupPropsPrimitive &
   React.ComponentProps<'a'>;
 
-function PreviewLinkCardContent({
-  side = 'top',
-  sideOffset = 10,
-  align = 'center',
-  alignOffset,
-  avoidCollisions,
-  collisionBoundary,
-  collisionPadding,
-  arrowPadding,
-  sticky,
-  hideWhenDetached,
+function PreviewLinkCardPopup({
   transition = { type: 'spring', stiffness: 300, damping: 25 },
-  asChild,
-  children,
   href: hrefProp,
   style,
+  children,
   ...props
-}: PreviewLinkCardContentProps) {
+}: PreviewLinkCardPopupProps) {
   const { href } = usePreviewLinkCard();
 
   return (
-    <HoverCardContentPrimitive
-      data-slot="preview-link-card-content"
-      side={side}
-      sideOffset={sideOffset}
-      align={align}
-      alignOffset={alignOffset}
-      avoidCollisions={avoidCollisions}
-      collisionBoundary={collisionBoundary}
-      collisionPadding={collisionPadding}
-      arrowPadding={arrowPadding}
-      sticky={sticky}
-      hideWhenDetached={hideWhenDetached}
+    <PreviewCardPopupPrimitive
+      data-slot="preview-link-card-popup"
       transition={transition}
-      asChild={asChild}
-      {...(asChild ? { style, ...props } : {})}
     >
-      {asChild ? (
-        children
-      ) : (
-        <a
-          style={{
-            display: 'block',
-            ...style,
-          }}
-          href={hrefProp ?? href}
-          {...props}
-        >
-          {children}
-        </a>
-      )}
-    </HoverCardContentPrimitive>
+      <a
+        data-slot="preview-link-card-popup-link"
+        style={{
+          display: 'block',
+          ...style,
+        }}
+        href={hrefProp ?? href}
+        {...props}
+      >
+        {children}
+      </a>
+    </PreviewCardPopupPrimitive>
   );
 }
 
@@ -189,11 +187,22 @@ function PreviewLinkCardImage({
   return <img src={src} width={width} height={height} alt={alt} {...props} />;
 }
 
-type PreviewLinkCardArrowProps = HoverCardArrowPropsPrimitive;
+type PreviewLinkCardBackdropProps = PreviewCardBackdropPropsPrimitive;
+
+function PreviewLinkCardBackdrop(props: PreviewLinkCardBackdropProps) {
+  return (
+    <PreviewCardBackdropPrimitive
+      data-slot="preview-link-card-backdrop"
+      {...props}
+    />
+  );
+}
+
+type PreviewLinkCardArrowProps = PreviewCardArrowPropsPrimitive;
 
 function PreviewLinkCardArrow(props: PreviewLinkCardArrowProps) {
   return (
-    <HoverCardArrowPrimitive data-slot="preview-link-card-arrow" {...props} />
+    <PreviewCardArrowPrimitive data-slot="preview-link-card-arrow" {...props} />
   );
 }
 
@@ -201,15 +210,19 @@ export {
   PreviewLinkCard,
   PreviewLinkCardTrigger,
   PreviewLinkCardPortal,
-  PreviewLinkCardContent,
+  PreviewLinkCardPositioner,
+  PreviewLinkCardPopup,
   PreviewLinkCardImage,
+  PreviewLinkCardBackdrop,
   PreviewLinkCardArrow,
   usePreviewLinkCard,
   type PreviewLinkCardProps,
   type PreviewLinkCardTriggerProps,
   type PreviewLinkCardPortalProps,
-  type PreviewLinkCardContentProps,
+  type PreviewLinkCardPositionerProps,
+  type PreviewLinkCardPopupProps,
   type PreviewLinkCardImageProps,
+  type PreviewLinkCardBackdropProps,
   type PreviewLinkCardArrowProps,
   type PreviewLinkCardContextType,
 };

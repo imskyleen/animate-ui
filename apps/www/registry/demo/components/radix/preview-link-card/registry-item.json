@@ -1,20 +1,20 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "demo-components-base-tooltip",
+  "name": "demo-components-radix-preview-link-card",
   "type": "registry:ui",
-  "title": "Tooltip Demo",
-  "description": "Demo showing a tooltip.",
-  "registryDependencies": ["@animate-ui/components-base-tooltip"],
+  "title": "Preview Link Card Demo",
+  "description": "Demo showing a preview link card.",
+  "registryDependencies": ["@animate-ui/components-radix-preview-link-card"],
   "files": [
     {
-      "path": "registry/demo/components/base/tooltip/index.tsx",
+      "path": "registry/demo/components/radix/preview-link-card/index.tsx",
       "type": "registry:ui",
-      "target": "components/animate-ui/demo/components/base/tooltip.tsx"
+      "target": "components/animate-ui/demo/components/radix/preview-link-card.tsx"
     }
   ],
   "meta": {
     "demoProps": {
-      "Tooltip": {
+      "PreviewLinkCard": {
         "followCursor": {
           "value": false,
           "options": {
@@ -23,22 +23,23 @@
             "x": "x",
             "y": "y"
           }
+        },
+        "href": {
+          "value": "https://animate-ui.com/docs"
         }
       },
-      "TooltipPanel": {
+      "PreviewLinkCardContent": {
         "side": {
           "value": "top",
           "options": {
             "top": "top",
             "bottom": "bottom",
             "left": "left",
-            "right": "right",
-            "inline-start": "inline-start",
-            "inline-end": "inline-end"
+            "right": "right"
           }
         },
         "sideOffset": {
-          "value": 10
+          "value": 4
         },
         "align": {
           "value": "center",

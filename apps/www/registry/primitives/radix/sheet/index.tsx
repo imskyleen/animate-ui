@@ -130,7 +130,6 @@ function SheetContent({
           ...style,
         }}
         transition={transition}
-        {...props}
       />
     </SheetPrimitive.Content>
   );
