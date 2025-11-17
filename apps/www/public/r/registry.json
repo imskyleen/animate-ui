@@ -396,6 +396,22 @@
       ]
     },
     {
+      "name": "components-base-preview-link-card",
+      "type": "registry:ui",
+      "title": "Preview Link Card",
+      "description": "Displays a preview image of a link when hovered.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-preview-card"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/preview-link-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-progress",
       "type": "registry:ui",
       "title": "Progress",
@@ -1086,6 +1102,22 @@
           "path": "registry/components/radix/popover/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/radix/popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-radix-preview-link-card",
+      "type": "registry:ui",
+      "title": "Preview Link Card",
+      "description": "Displays a preview image of a link when hovered.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-preview-link-card"
+      ],
+      "files": [
+        {
+          "path": "registry/components/radix/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/radix/preview-link-card.tsx"
         }
       ]
     },
@@ -2043,9 +2075,81 @@
       ],
       "meta": {
         "demoProps": {
+          "PreviewCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "PreviewCardPanel": {
             "side": {
               "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right",
+                "inline-start": "inline-start",
+                "inline-end": "inline-end"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "center",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            },
+            "alignOffset": {
+              "value": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-components-base-preview-link-card",
+      "type": "registry:ui",
+      "title": "Preview Link Card Demo",
+      "description": "Demo showing a preview link card.",
+      "registryDependencies": [
+        "@animate-ui/components-base-preview-link-card"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/preview-link-card.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "PreviewLinkCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            },
+            "href": {
+              "value": "https://animate-ui.com/docs"
+            }
+          },
+          "PreviewLinkCardPanel": {
+            "side": {
+              "value": "top",
               "options": {
                 "top": "top",
                 "bottom": "bottom",
@@ -2233,6 +2337,17 @@
       ],
       "meta": {
         "demoProps": {
+          "Tooltip": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "TooltipPanel": {
             "side": {
               "value": "top",
@@ -3309,6 +3424,17 @@
       ],
       "meta": {
         "demoProps": {
+          "HoverCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "HoverCardContent": {
             "side": {
               "value": "bottom",
@@ -3357,6 +3483,65 @@
           "PopoverContent": {
             "side": {
               "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "center",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            },
+            "alignOffset": {
+              "value": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-components-radix-preview-link-card",
+      "type": "registry:ui",
+      "title": "Preview Link Card Demo",
+      "description": "Demo showing a preview link card.",
+      "registryDependencies": [
+        "@animate-ui/components-radix-preview-link-card"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/radix/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/radix/preview-link-card.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "PreviewLinkCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            },
+            "href": {
+              "value": "https://animate-ui.com/docs"
+            }
+          },
+          "PreviewLinkCardContent": {
+            "side": {
+              "value": "top",
               "options": {
                 "top": "top",
                 "bottom": "bottom",
@@ -3593,6 +3778,17 @@
       ],
       "meta": {
         "demoProps": {
+          "Tooltip": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "TooltipContent": {
             "side": {
               "value": "top",
@@ -4182,9 +4378,81 @@
       ],
       "meta": {
         "demoProps": {
+          "PreviewCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "PreviewCardPositioner": {
             "side": {
               "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right",
+                "inline-start": "inline-start",
+                "inline-end": "inline-end"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "center",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            },
+            "alignOffset": {
+              "value": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-primitives-base-preview-link-card",
+      "type": "registry:ui",
+      "title": "Base Preview Link Card Demo",
+      "description": "Demo showing an animated base preview link card.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-preview-link-card"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/preview-link-card.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "PreviewLinkCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            },
+            "href": {
+              "value": "https://animate-ui.com/docs"
+            }
+          },
+          "PreviewLinkCardPositioner": {
+            "side": {
+              "value": "top",
               "options": {
                 "top": "top",
                 "bottom": "bottom",
@@ -4347,6 +4615,17 @@
       ],
       "meta": {
         "demoProps": {
+          "Tooltip": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "TooltipPositioner": {
             "side": {
               "value": "top",
@@ -5494,6 +5773,17 @@
       ],
       "meta": {
         "demoProps": {
+          "HoverCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "HoverCardContent": {
             "side": {
               "value": "bottom",
@@ -5542,6 +5832,65 @@
           "PopoverContent": {
             "side": {
               "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "center",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            },
+            "alignOffset": {
+              "value": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "demo-primitives-radix-preview-link-card",
+      "type": "registry:ui",
+      "title": "Radix Preview Link Card Demo",
+      "description": "Demo showing an animated radix preview link card.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-preview-link-card"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/radix/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/radix/preview-link-card.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "PreviewLinkCard": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            },
+            "href": {
+              "value": "https://animate-ui.com/docs"
+            }
+          },
+          "PreviewLinkCardContent": {
+            "side": {
+              "value": "top",
               "options": {
                 "top": "top",
                 "bottom": "bottom",
@@ -5737,6 +6086,17 @@
       ],
       "meta": {
         "demoProps": {
+          "Tooltip": {
+            "followCursor": {
+              "value": false,
+              "options": {
+                "true": true,
+                "false": false,
+                "x": "x",
+                "y": "y"
+              }
+            }
+          },
           "TooltipContent": {
             "side": {
               "value": "top",
@@ -14269,6 +14629,27 @@
       ]
     },
     {
+      "name": "primitives-base-preview-link-card",
+      "type": "registry:ui",
+      "title": "Base Preview Link Card",
+      "description": "Displays a preview image of a link when hovered.",
+      "dependencies": [
+        "motion",
+        "@base-ui-components/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-preview-card",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/preview-link-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-base-progress",
       "type": "registry:ui",
       "title": "Base Progress",
@@ -15058,6 +15439,26 @@
           "path": "registry/primitives/radix/popover/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-radix-preview-link-card",
+      "type": "registry:ui",
+      "title": "Radix Preview Link Card",
+      "description": "Displays a preview image of a link when hovered.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-hover-card",
+        "@animate-ui/lib-get-strict-context"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/radix/preview-link-card/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/radix/preview-link-card.tsx"
         }
       ]
     },

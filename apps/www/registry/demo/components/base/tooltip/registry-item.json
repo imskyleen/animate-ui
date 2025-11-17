@@ -14,6 +14,17 @@
   ],
   "meta": {
     "demoProps": {
+      "Tooltip": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
       "TooltipPanel": {
         "side": {
           "value": "top",

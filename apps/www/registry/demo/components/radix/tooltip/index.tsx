@@ -11,6 +11,7 @@ interface RadixTooltipDemoProps {
   sideOffset: TooltipContentProps['sideOffset'];
   align: TooltipContentProps['align'];
   alignOffset: TooltipContentProps['alignOffset'];
+  followCursor?: boolean | 'x' | 'y';
 }
 
 export function RadixTooltipDemo({
@@ -18,9 +19,10 @@ export function RadixTooltipDemo({
   sideOffset,
   align,
   alignOffset,
+  followCursor,
 }: RadixTooltipDemoProps) {
   return (
-    <Tooltip>
+    <Tooltip followCursor={followCursor}>
       <TooltipTrigger asChild>
         <Button variant="outline">Hover</Button>
       </TooltipTrigger>

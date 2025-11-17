@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-preview-link-card",
+  "type": "registry:ui",
+  "title": "Radix Preview Link Card Demo",
+  "description": "Demo showing an animated radix preview link card.",
+  "registryDependencies": ["@animate-ui/primitives-radix-preview-link-card"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/preview-link-card/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/preview-link-card.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "PreviewLinkCard": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        },
+        "href": {
+          "value": "https://animate-ui.com/docs"
+        }
+      },
+      "PreviewLinkCardContent": {
+        "side": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}
