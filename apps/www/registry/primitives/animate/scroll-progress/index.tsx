@@ -110,7 +110,7 @@ function ScrollProgressContainer({
   asChild = false,
   ...props
 }: ScrollProgressContainerProps) {
-  const { containerRef, direction } = useScrollProgress();
+  const { containerRef, direction, global } = useScrollProgress();
 
   React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
