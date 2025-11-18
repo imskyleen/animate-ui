@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-community-radial-menu",
+  "type": "registry:ui",
+  "title": "Radial Menu Demo",
+  "description": "Demo Radial Menu.",
+  "registryDependencies": [
+    "@animate-ui/components-community-radial-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/community/radial-menu/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { RadialMenu } from '@/components/animate-ui/components/community/radial-menu';\nimport {\n  Copy,\n  Scissors,\n  ClipboardPaste,\n  Trash2,\n  Star,\n  Pin,\n} from 'lucide-react';\n\nconst MENU_ITEMS = [\n  { id: 1, label: 'Copy', icon: Copy },\n  { id: 2, label: 'Cut', icon: Scissors },\n  { id: 3, label: 'Paste', icon: ClipboardPaste },\n  { id: 4, label: 'Favorite', icon: Star },\n  { id: 5, label: 'Pin', icon: Pin },\n  { id: 6, label: 'Delete', icon: Trash2 },\n];\n\nexport const RadialMenuDemo = () => (\n  <RadialMenu\n    menuItems={MENU_ITEMS}\n    onSelect={(item) => {\n      console.log(item);\n      // run your action here\n    }}\n  >\n    <div className=\"size-80 flex justify-center items-center border-2 border-dashed rounded-lg\">\n      Right click to open the radial menu\n    </div>\n  </RadialMenu>\n);\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/community/radial-menu.tsx"
+    }
+  ]
+}
