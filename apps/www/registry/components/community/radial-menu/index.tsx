@@ -207,7 +207,7 @@ function RadialMenu({
                           )}
                           className={cn({
                             'fill-neutral-200 dark:fill-neutral-700': isActive,
-                            'fill-neutral-300 dark:fill-neutral-800': !isActive,
+                            'fill-neutral-100 dark:fill-neutral-800': !isActive,
                           })}
                           initial={false}
                           transition={wedgeTransition}
@@ -220,11 +220,11 @@ function RadialMenu({
                             wedgeInnerRadius,
                           )}
                           className={cn(
-                            'stroke-neutral-100 dark:stroke-neutral-600 stroke-1',
+                            'stroke-neutral-300 dark:stroke-neutral-600 stroke-1',
                             {
                               'fill-neutral-200 dark:fill-neutral-700':
                                 isActive,
-                              'fill-neutral-300 dark:fill-neutral-800':
+                              'fill-neutral-100 dark:fill-neutral-800':
                                 !isActive,
                             },
                           )}
@@ -269,13 +269,13 @@ function RadialMenu({
                     cx={0}
                     cy={0}
                     r={centerRadius}
-                    className="fill-neutral-200 dark:fill-neutral-950 stroke-1 opacity-50 stroke-neutral-500 dark:stroke-neutral-600"
+                    className="fill-neutral-100 dark:fill-neutral-950 stroke-1 opacity-50 stroke-neutral-400 dark:stroke-neutral-600"
                   />
                   <circle
                     cx={0}
                     cy={0}
                     r={3}
-                    className="fill-none stroke-neutral-500 dark:stroke-neutral-600"
+                    className="fill-none stroke-neutral-400 dark:stroke-neutral-600"
                   />
                 </svg>
               </ContextMenu.Popup>
