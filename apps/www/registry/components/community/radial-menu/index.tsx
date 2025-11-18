@@ -11,8 +11,10 @@ type RadialMenuProps = {
   menuItems: MenuItem[];
   size?: number;
   iconSize?: number;
-  wedgeRadius?: number;
-  innerRadius?: number;
+  bandWidth?: number;
+  innerGap?: number;
+  outerGap?: number;
+  outerRingWidth?: number;
   onSelect?: (item: MenuItem) => void;
 };
 
@@ -32,7 +34,7 @@ const menuTransition: Transition = {
 };
 
 const wedgeTransition: Transition = {
-  duration: 0.18,
+  duration: 0.05,
   ease: 'easeOut',
 };
 
@@ -98,16 +100,30 @@ function RadialMenu({
   children,
   menuItems,
   size = 240,
-  iconSize = 14,
-  wedgeRadius = 80,
-  innerRadius = 40,
+  iconSize = 18,
+  bandWidth = 50,
+  innerGap = 8,
+  outerGap = 8,
+  outerRingWidth = 12,
   onSelect,
 }: RadialMenuProps) {
+  const radius = size / 2;
+
+  const outerRingOuterRadius = radius;
+  const outerRingInnerRadius = outerRingOuterRadius - outerRingWidth;
+
+  const wedgeOuterRadius = outerRingInnerRadius - outerGap;
+  const wedgeInnerRadius = wedgeOuterRadius - bandWidth;
+
+  const iconRingRadius = (wedgeOuterRadius + wedgeInnerRadius) / 2;
+
+  const centerRadius = Math.max(wedgeInnerRadius - innerGap, 0);
+
   const slice = 360 / menuItems.length;
-  const iconRingRadius = (innerRadius + wedgeRadius) / 2;
+
+  const itemRefs = React.useRef<(HTMLElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const [open, setOpen] = React.useState<boolean>(false);
-  const itemRefs = React.useRef<(HTMLElement | null)[]>([]);
 
   const resetActive = () => setActiveIndex(null);
 
@@ -147,7 +163,7 @@ function RadialMenu({
             >
               <ContextMenu.Popup
                 style={{ width: size, height: size }}
-                className="relative rounded-full overflow-hidden shadow-xl outline-none border-1 border-neutral-400 dark:border-neutral-700"
+                className="relative rounded-full overflow-hidden shadow-xl outline-none"
                 render={
                   <motion.div
                     className="absolute inset-0"
@@ -160,9 +176,7 @@ function RadialMenu({
               >
                 <svg
                   className="absolute inset-0 size-full"
-                  viewBox={`${-wedgeRadius} ${-wedgeRadius} ${
-                    wedgeRadius * 2
-                  } ${wedgeRadius * 2}`}
+                  viewBox={`${-radius} ${-radius} ${radius * 2} ${radius * 2}`}
                 >
                   {menuItems.map((item, index) => {
                     const Icon = item.icon;
@@ -188,20 +202,33 @@ function RadialMenu({
                           d={slicePath(
                             index,
                             menuItems.length,
-                            wedgeRadius,
-                            innerRadius,
+                            outerRingOuterRadius,
+                            outerRingInnerRadius,
+                          )}
+                          className={cn({
+                            'fill-neutral-200 dark:fill-neutral-700': isActive,
+                            'fill-neutral-300 dark:fill-neutral-800': !isActive,
+                          })}
+                          initial={false}
+                          transition={wedgeTransition}
+                        />
+                        <motion.path
+                          d={slicePath(
+                            index,
+                            menuItems.length,
+                            wedgeOuterRadius,
+                            wedgeInnerRadius,
                           )}
                           className={cn(
-                            'stroke-neutral-400 dark:stroke-neutral-700 stroke-1',
+                            'stroke-neutral-100 dark:stroke-neutral-600 stroke-1',
                             {
-                              'fill-neutral-200 dark:fill-neutral-800':
+                              'fill-neutral-200 dark:fill-neutral-700':
                                 isActive,
-                              'fill-neutral-300 dark:fill-neutral-900':
+                              'fill-neutral-300 dark:fill-neutral-800':
                                 !isActive,
                             },
                           )}
                           initial={false}
-                          animate={{ opacity: isActive ? 1 : 0.95 }}
                           transition={wedgeTransition}
                         />
 
@@ -241,7 +268,7 @@ function RadialMenu({
                   <circle
                     cx={0}
                     cy={0}
-                    r={innerRadius - 6}
+                    r={centerRadius}
                     className="fill-neutral-200 dark:fill-neutral-950 stroke-1 opacity-50 stroke-neutral-500 dark:stroke-neutral-600"
                   />
                   <circle

@@ -27,7 +27,7 @@ releaseDate: 2025-11-17
   type={{
     children: {
       description:
-        'Custom trigger content for the context menu. Falls back to a default block when not provided.',
+        'Custom trigger element for opening the radial menu. Falls back to a default block when not provided.',
       type: 'React.ReactNode',
       required: false,
     },
@@ -41,27 +41,41 @@ releaseDate: 2025-11-17
       description: 'Overall diameter of the radial menu in pixels.',
       type: 'number',
       required: false,
-      default: '260',
+      default: '240',
     },
     iconSize: {
-      description: 'Pixel size of each icon placed inside a wedge.',
+      description: 'Pixel size of the icon rendered inside each wedge.',
       type: 'number',
       required: false,
-      default: '22',
+      default: '18',
     },
-    wedgeRadius: {
+    bandWidth: {
       description:
-        'Outer radius of the wedge shape. Controls how far wedges extend outward.',
+        'Thickness of the main wedge band. Defines how wide each action wedge appears.',
       type: 'number',
       required: false,
-      default: '120',
+      default: '50',
     },
-    innerRadius: {
+    innerGap: {
       description:
-        'Inner radius cutout size. Controls the hollow center of the circle.',
+        'Spacing between the inner hollow circle and the start of the wedge band.',
       type: 'number',
       required: false,
-      default: '40',
+      default: '8',
+    },
+    outerGap: {
+      description:
+        'Spacing between the wedge band and the outer decorative ring.',
+      type: 'number',
+      required: false,
+      default: '8',
+    },
+    outerRingWidth: {
+      description:
+        'Thickness of the outer decorative ring wrapping the entire menu.',
+      type: 'number',
+      required: false,
+      default: '12',
     },
     onSelect: {
       description:
