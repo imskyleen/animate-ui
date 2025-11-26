@@ -17,7 +17,7 @@ const TITLE = 'Animate your UI with smooth style';
 
 export const Hero = () => {
   return (
-    <div className="relative overflow-x-hidden flex flex-col items-center px-5">
+    <div className="relative overflow-hidden flex flex-col items-center px-5">
       <div className="relative z-10 flex flex-col items-center justify-center pt-30">
         <MotionEffect
           slide={{
