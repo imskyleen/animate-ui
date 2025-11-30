@@ -117,8 +117,7 @@ function MotionCarousel(props: PropType) {
                   className="size-full flex items-center justify-center text-3xl md:text-5xl font-semibold select-none border-4 rounded-xl"
                   initial={false}
                   animate={{
-                    scaleY: isActive ? 1 : 0.9,
-                    originY: 0,
+                    scale: isActive ? 1 : 0.9,
                   }}
                   transition={transition}
                 >
