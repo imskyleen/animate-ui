@@ -727,6 +727,28 @@
       ]
     },
     {
+      "name": "components-community-motion-carousel",
+      "type": "registry:ui",
+      "title": "Motion Carousel",
+      "description": "A carousel built on top of Embla Carousel with smooth Motion-powered animations. Each slide scales dynamically based on its active state, and the pagination uses animated pill-style dot buttons for an interactive, fluid experience.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "embla-carousel",
+        "embla-carousel-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/components-buttons-button"
+      ],
+      "files": [
+        {
+          "path": "registry/components/community/motion-carousel/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/community/motion-carousel.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-community-notification-list",
       "type": "registry:ui",
       "title": "Notification List",
@@ -2812,6 +2834,22 @@
           "path": "registry/demo/components/community/management-bar/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/community/management-bar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "demo-components-community-motion-carousel",
+      "type": "registry:ui",
+      "title": "Motion Carousel Demo",
+      "description": "Demo showing motion carousel.",
+      "registryDependencies": [
+        "@animate-ui/components-community-motion-carousel"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/community/motion-carousel/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/community/motion-carousel.tsx"
         }
       ]
     },

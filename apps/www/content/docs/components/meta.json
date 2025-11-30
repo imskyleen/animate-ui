@@ -76,6 +76,7 @@
     "community/index",
     "community/flip-card",
     "community/management-bar",
+    "community/motion-carousel",
     "community/notification-list",
     "community/pin-list",
     "community/playful-todolist",
