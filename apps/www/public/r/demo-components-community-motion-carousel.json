@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-community-motion-carousel",
+  "type": "registry:ui",
+  "title": "Motion Carousel Demo",
+  "description": "Demo showing motion carousel.",
+  "registryDependencies": [
+    "@animate-ui/components-community-motion-carousel"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/community/motion-carousel/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { MotionCarousel } from '@/components/animate-ui/components/community/motion-carousel';\nimport { EmblaOptionsType } from 'embla-carousel';\n\nexport const MotionCarouselDemo = () => {\n  const OPTIONS: EmblaOptionsType = { loop: true };\n  const SLIDE_COUNT = 6;\n  const SLIDES = Array.from(Array(SLIDE_COUNT).keys());\n\n  return <MotionCarousel slides={SLIDES} options={OPTIONS} />;\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/community/motion-carousel.tsx"
+    }
+  ]
+}
