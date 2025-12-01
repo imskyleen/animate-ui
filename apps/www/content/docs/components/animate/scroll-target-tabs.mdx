@@ -1,0 +1,334 @@
+---
+title: Scroll Target Tabs
+description: A tabs component that scrolls to content sections instead of hiding/showing them. Sections remain visible and the active tab updates based on scroll position.
+author:
+  name: Matthew Smith
+  url: https://github.com/Matthew-Smith
+---
+
+<ComponentPreview name="demo-components-animate-scroll-target-tabs" />
+
+## Installation
+
+<ComponentInstallation name="components-animate-scroll-target-tabs" />
+
+## Usage
+
+### Basic Example
+
+```tsx
+import {
+  ScrollTargetTabs,
+  ScrollTargetTabsList,
+  ScrollTargetTabsHighlight,
+  ScrollTargetTab,
+  ScrollTargetContent,
+  ScrollTargetSection,
+} from '@/components/animate-ui/components/animate/scroll-target-tabs';
+
+export function MyComponent() {
+  return (
+    <ScrollTargetTabs defaultValue="performance" scrollOffset={10}>
+      {/* Tab Navigation */}
+      <ScrollTargetTabsHighlight
+        mode="parent"
+        containerClassName="bg-sidebar inline-flex items-center rounded-lg p-1"
+      >
+        <ScrollTargetTabsList>
+          <ScrollTargetTab value="performance">Performance</ScrollTargetTab>
+          <ScrollTargetTab value="improvements">Improvements</ScrollTargetTab>
+          <ScrollTargetTab value="transcript">Transcript</ScrollTargetTab>
+        </ScrollTargetTabsList>
+      </ScrollTargetTabsHighlight>
+
+      {/* Scrollable Content */}
+      <ScrollTargetContent className="flex-1">
+        <ScrollTargetSection value="performance">
+          <h2>Performance Metrics</h2>
+          <p>Your performance content here...</p>
+        </ScrollTargetSection>
+
+        <ScrollTargetSection value="improvements">
+          <h2>Areas for Improvement</h2>
+          <p>Your improvements content here...</p>
+        </ScrollTargetSection>
+
+        <ScrollTargetSection value="transcript">
+          <h2>Transcript</h2>
+          <p>Your transcript content here...</p>
+        </ScrollTargetSection>
+      </ScrollTargetContent>
+    </ScrollTargetTabs>
+  );
+}
+```
+
+### Controlled Component
+
+```tsx
+import { useState } from 'react';
+
+export function ControlledExample() {
+  const [activeTab, setActiveTab] = useState('section1');
+
+  return (
+    <ScrollTargetTabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      scrollOffset={10}
+    >
+      <ScrollTargetTabsHighlight mode="parent">
+        <ScrollTargetTabsList>
+          <ScrollTargetTab value="section1">Section 1</ScrollTargetTab>
+          <ScrollTargetTab value="section2">Section 2</ScrollTargetTab>
+        </ScrollTargetTabsList>
+      </ScrollTargetTabsHighlight>
+
+      <ScrollTargetContent>
+        <ScrollTargetSection value="section1">
+          Content for section 1
+        </ScrollTargetSection>
+        <ScrollTargetSection value="section2">
+          Content for section 2
+        </ScrollTargetSection>
+      </ScrollTargetContent>
+    </ScrollTargetTabs>
+  );
+}
+```
+
+## API Reference
+
+### ScrollTargetTabs
+
+Root container that provides context for all child components.
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/scroll-target-tabs#scrolltargettabs"
+  text="Animate UI API Reference - ScrollTargetTabs Primitive"
+/>
+
+<TypeTable
+  type={{
+    defaultValue: {
+      description:
+        'The value of the tab that should be active by default (uncontrolled).',
+      type: 'string',
+      required: false,
+      default: '""',
+    },
+    value: {
+      description: 'The controlled value of the active tab.',
+      type: 'string',
+      required: false,
+    },
+    onValueChange: {
+      description: 'Callback when the active tab changes.',
+      type: '(value: string) => void',
+      required: false,
+    },
+    scrollOffset: {
+      description:
+        'Distance in pixels from viewport top where sections become active.',
+      type: 'number',
+      required: false,
+      default: '80',
+    },
+    variant: {
+      description: 'The visual variant of the tabs.',
+      type: '"primary" | "accent" | "secondary"',
+      required: false,
+      default: '"primary"',
+    },
+    '...props': {
+      description: 'Additional props for the root element.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollTargetTabsList
+
+Container for tab buttons.
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/scroll-target-tabs#scrolltargettabslist"
+  text="Animate UI API Reference - ScrollTargetTabsList Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Additional props for the list element.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollTargetTabsHighlight
+
+Animated highlight indicator that follows the active tab.
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/scroll-target-tabs#scrolltargettabshighlight"
+  text="Animate UI API Reference - ScrollTargetTabsHighlight Primitive"
+/>
+
+<TypeTable
+  type={{
+    mode: {
+      description: 'Highlight rendering mode.',
+      type: '"children" | "parent"',
+      required: false,
+      default: '"children"',
+    },
+    transition: {
+      description: 'Framer Motion transition configuration.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+    containerClassName: {
+      description: 'Classes for the container (parent mode).',
+      type: 'string',
+      required: false,
+    },
+    boundsOffset: {
+      description: 'Offset adjustments for highlight bounds.',
+      type: '{ top?: number; left?: number; width?: number; height?: number }',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollTargetTab
+
+Individual tab button that triggers scrolling.
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/scroll-target-tabs#scrolltargettab"
+  text="Animate UI API Reference - ScrollTargetTab Primitive"
+/>
+
+<TypeTable
+  type={{
+    value: {
+      description: 'Unique identifier matching a section.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Additional props including onClick handler.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollTargetContent
+
+Scrollable container that holds all sections.
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/scroll-target-tabs#scrolltargetcontent"
+  text="Animate UI API Reference - ScrollTargetContent Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Additional props for the scroll area.',
+      type: 'React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollTargetSection
+
+Individual content section that can be scrolled to.
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/scroll-target-tabs#scrolltargetsection"
+  text="Animate UI API Reference - ScrollTargetSection Primitive"
+/>
+
+<TypeTable
+  type={{
+    value: {
+      description: 'Unique identifier matching a tab.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Additional props for the section element.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## How It Works
+
+### Scroll Detection
+
+The component uses a **boundary-based detection system**:
+
+1. **Detection Threshold**: A virtual boundary line at `scrollOffset` pixels from the viewport top (default: 80px)
+2. **Boundary Crossing**: As you scroll, when a section's top edge crosses this threshold, that section becomes active
+3. **Real-time Updates**: The active tab updates continuously as you scroll through content
+
+```
+┌─────────────────────────┐
+│  Viewport               │
+│  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─  │ ← Detection threshold (scrollOffset: 80px from top)
+│                         │
+│  Section becomes active │
+│  when it crosses above  │
+│                         │
+│  Section Content        │
+│                         │
+└─────────────────────────┘
+```
+
+### Programmatic Scroll Behavior
+
+When you click a tab:
+
+1. **Immediate activation** - The clicked tab becomes active instantly
+2. **Smooth scroll** - Content smoothly scrolls to position the section at the threshold
+3. **Stay active** - The tab remains active throughout the scroll animation
+4. **Detection resumes** - After scroll completes (+ 150ms debounce), boundary detection resumes
+
+## Layout Requirements
+
+For proper scrolling behavior, ensure the component tree has appropriate height constraints:
+
+```tsx
+// ✅ Good - Proper flex constraints
+<div className="flex h-screen flex-col">
+  <ScrollTargetTabs className="flex min-h-0 flex-1 flex-col">
+    <div className="mb-4">
+      {/* Tabs */}
+    </div>
+    <ScrollTargetContent className="min-h-0 flex-1">
+      {/* Content */}
+    </ScrollTargetContent>
+  </ScrollTargetTabs>
+</div>
+
+// ❌ Bad - No height constraints
+<div>
+  <ScrollTargetTabs>
+    {/* Won't scroll properly */}
+  </ScrollTargetTabs>
+</div>
+```
+
+**Key CSS classes:**
+
+- `flex-1` - Grow to fill available space
+- `min-h-0` - Allow flex children to shrink below content size (critical for scrolling!)
+- `h-full` or `h-screen` - Establish a height constraint
