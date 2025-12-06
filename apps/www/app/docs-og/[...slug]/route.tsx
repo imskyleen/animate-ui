@@ -21,7 +21,10 @@ async function loadGoogleFont(font: string, text: string) {
   throw new Error('failed to load font data');
 }
 
-export async function GET(_req: Request, { params }: any) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ slug: string[] }> },
+) {
   const { slug } = await params;
   const page = source.getPage(slug.slice(0, -1));
   if (!page) notFound();
@@ -109,8 +112,14 @@ export async function GET(_req: Request, { params }: any) {
 export function generateStaticParams(): {
   slug: string[];
 }[] {
-  return source.generateParams().map((page) => ({
-    ...page,
-    slug: [...page.slug, 'image.png'],
-  }));
+  return source
+    .generateParams()
+    .filter((page) => {
+      const pageData = source.getPage(page.slug);
+      return pageData !== null && pageData !== undefined;
+    })
+    .map((page) => ({
+      ...page,
+      slug: [...page.slug, 'image.png'],
+    }));
 }
