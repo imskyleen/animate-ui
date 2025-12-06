@@ -97,6 +97,7 @@ function SheetContent({
   side = 'right',
   transition = { type: 'spring', stiffness: 150, damping: 22 },
   style,
+  children,
   ...props
 }: SheetContentProps) {
   const axis = side === 'left' || side === 'right' ? 'x' : 'y';
@@ -130,7 +131,9 @@ function SheetContent({
           ...style,
         }}
         transition={transition}
-      />
+      >
+        {children}
+      </motion.div>
     </SheetPrimitive.Content>
   );
 }
