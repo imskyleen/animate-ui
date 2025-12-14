@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-key",
+  "type": "registry:ui",
+  "title": "Key Icon",
+  "description": "Key icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/key/index.tsx",
+      "content": "'use client';\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\ntype KeyProps = IconProps<keyof typeof animations>;\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n        originX: '12px',\n        originY: '12px',\n      },\n      animate: {\n        rotate: [0, -20, 0],\n        scale: [1, 0.95, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    stem: {},\n    teeth: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n  wiggle: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n        originX: '12px',\n        originY: '12px',\n      },\n      animate: {\n        rotate: [0, -10, 10, -10, 0],\n        transition: {\n          duration: 0.5,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    stem: {},\n    teeth: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n} as const;\nfunction IconComponent({ size, ...props }: KeyProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4\"\n          variants={variants.stem}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"m21 2-9.6 9.6\"\n          variants={variants.teeth}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.circle\n          cx=\"7.5\"\n          cy=\"15.5\"\n          r=\"5.5\"\n          variants={variants.circle}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\nfunction Key(props: KeyProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\nexport {\n  animations,\n  Key,\n  Key as KeyIcon,\n  type KeyProps,\n  type KeyProps as KeyIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/key.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "password",
+      "login",
+      "authentication",
+      "secure",
+      "unlock",
+      "keychain",
+      "key ring",
+      "fob"
+    ]
+  }
+}

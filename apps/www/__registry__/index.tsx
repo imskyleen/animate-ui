@@ -15348,6 +15348,51 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-kanban',
   },
+  'icons-key': {
+    name: 'icons-key',
+    description: 'Key icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/key/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/key.tsx',
+        content:
+          '\'use client\';\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\ntype KeyProps = IconProps<keyof typeof animations>;\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n        originX: \'12px\',\n        originY: \'12px\',\n      },\n      animate: {\n        rotate: [0, -20, 0],\n        scale: [1, 0.95, 1],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    stem: {},\n    teeth: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n  wiggle: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n        originX: \'12px\',\n        originY: \'12px\',\n      },\n      animate: {\n        rotate: [0, -10, 10, -10, 0],\n        transition: {\n          duration: 0.5,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    stem: {},\n    teeth: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n} as const;\nfunction IconComponent({ size, ...props }: KeyProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial="initial" animate={controls}>\n        <motion.path\n          d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"\n          variants={variants.stem}\n          initial="initial"\n          animate={controls}\n        />\n        <motion.path\n          d="m21 2-9.6 9.6"\n          variants={variants.teeth}\n          initial="initial"\n          animate={controls}\n        />\n        <motion.circle\n          cx="7.5"\n          cy="15.5"\n          r="5.5"\n          variants={variants.circle}\n          initial="initial"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\nfunction Key(props: KeyProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\nexport {\n  animations,\n  Key,\n  Key as KeyIcon,\n  type KeyProps,\n  type KeyProps as KeyIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'password',
+      'login',
+      'authentication',
+      'secure',
+      'unlock',
+      'keychain',
+      'key ring',
+      'fob',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/key/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-key';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-key',
+  },
   'icons-layers': {
     name: 'icons-layers',
     description: 'Layers icon component.',
@@ -18948,6 +18993,42 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/icons-rotate-ccw',
+  },
+  'icons-rotate-ccw-key': {
+    name: 'icons-rotate-ccw-key',
+    description: 'Rotate Ccw Key icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/rotate-ccw-key/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/rotate-ccw-key.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype RotateCcwKeyProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { type: \'spring\', stiffness: 150, damping: 25 },\n      },\n      animate: {\n        rotate: -45,\n        transition: { type: \'spring\', stiffness: 150, damping: 25 },\n      },\n    },\n    arrowArc: {},\n    arrowHead: {},\n    keyPart1: {},\n    keyPart2: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n  rotate: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { type: \'spring\', stiffness: 150, damping: 25 },\n      },\n      animate: {\n        rotate: -360,\n        transition: { type: \'spring\', stiffness: 150, damping: 25 },\n      },\n    },\n    arrowArc: {},\n    arrowHead: {},\n    keyPart1: {},\n    keyPart2: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: RotateCcwKeyProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      variants={variants.group}\n      initial="initial"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d="m14.5 9.5 1 1"\n        variants={variants.keyPart1}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="m15.5 8.5-4 4"\n        variants={variants.keyPart2}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M3 12a9 9 0 1 0 9-9 9.74 9.74 0 0 0-6.74 2.74L3 8"\n        variants={variants.arrowArc}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M3 3v5h5"\n        variants={variants.arrowHead}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.circle\n        cx="10"\n        cy="14"\n        r="2"\n        variants={variants.circle}\n        initial="initial"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction RotateCcwKey(props: RotateCcwKeyProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  RotateCcwKey,\n  RotateCcwKey as RotateCcwKeyIcon,\n  type RotateCcwKeyProps,\n  type RotateCcwKeyProps as RotateCcwKeyIconProps,\n};',
+      },
+    ],
+    keywords: ['password', 'key', 'refresh', 'change'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/rotate-ccw-key/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-rotate-ccw-key';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-rotate-ccw-key',
   },
   'icons-rotate-cw': {
     name: 'icons-rotate-cw',

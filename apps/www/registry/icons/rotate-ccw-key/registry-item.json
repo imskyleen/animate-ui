@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-rotate-ccw-key",
+  "type": "registry:ui",
+  "title": "Rotate Ccw Key Icon",
+  "description": "Rotate Ccw Key icon component.",
+  "registryDependencies": ["@animate-ui/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/rotate-ccw-key/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/rotate-ccw-key.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "password",
+     "key",
+     "refresh",
+     "change"
+    ]
+  }
+}
