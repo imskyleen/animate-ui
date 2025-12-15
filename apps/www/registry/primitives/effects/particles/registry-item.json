@@ -7,7 +7,8 @@
   "dependencies": ["motion"],
   "registryDependencies": [
     "@animate-ui/primitives-animate-slot",
-    "@animate-ui/hooks-use-is-in-view"
+    "@animate-ui/hooks-use-is-in-view",
+    "@animate-ui/lib-get-strict-context"
   ],
   "files": [
     {
