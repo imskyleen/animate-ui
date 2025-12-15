@@ -14069,6 +14069,33 @@
       }
     },
     {
+      "name": "icons-user-round-cog",
+      "type": "registry:ui",
+      "title": "User Round Cog Icon",
+      "description": "User round cog icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/user-round-cog/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/user-round-cog.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "settings",
+          "edit",
+          "cog",
+          "gear"
+        ]
+      }
+    },
+    {
       "name": "icons-users",
       "type": "registry:ui",
       "title": "Users Icon",

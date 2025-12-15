@@ -20819,6 +20819,42 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-user-round',
   },
+  'icons-user-round-cog': {
+    name: 'icons-user-round-cog',
+    description: 'User round cog icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/user-round-cog/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/user-round-cog.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype UserRoundCogProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 4, -2, 0],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    circle: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 1, -2, 0],\n        transition: {\n          duration: 0.6,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n    group: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        rotate: [0, 90, 180],\n        transition: {\n          duration: 1.25,\n          ease: \'easeInOut\',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  rotate: {\n    path: {},\n    circle: {},\n    group: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        rotate: 360,\n        transition: {\n          duration: 2,\n          ease: \'linear\',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: UserRoundCogProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.path\n        d="M2 21a8 8 0 0 1 10.434-7.62"\n        variants={variants.path}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.circle\n        cx={10}\n        cy={8}\n        r={5}\n        variants={variants.circle}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.g\n        variants={variants.group}\n        initial="initial"\n        animate={controls}\n        style={{ transformOrigin: \'18px 18px\' }}\n      >\n        <path d="m14.305 19.53.923-.382" />\n        <path d="m15.228 16.852-.923-.383" />\n        <path d="m16.852 15.228-.383-.923" />\n        <path d="m16.852 20.772-.383.924" />\n        <path d="m19.148 15.228.383-.923" />\n        <path d="m19.53 21.696-.382-.924" />\n        <path d="m20.772 16.852.924-.383" />\n        <path d="m20.772 19.148.924.383" />\n        <circle cx={18} cy={18} r={3} />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction UserRoundCog(props: UserRoundCogProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  UserRoundCog,\n  UserRoundCog as UserRoundCogIcon,\n  type UserRoundCogProps,\n  type UserRoundCogProps as UserRoundCogIconProps,\n};',
+      },
+    ],
+    keywords: ['settings', 'edit', 'cog', 'gear'],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/user-round-cog/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-user-round-cog';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-user-round-cog',
+  },
   'icons-users': {
     name: 'icons-users',
     description: 'Users icon component.',
