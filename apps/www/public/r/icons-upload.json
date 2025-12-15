@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-upload",
-  "type": "registry:ui",
   "title": "Upload Icon",
   "description": "Upload icon component.",
   "dependencies": [
@@ -22,5 +21,6 @@
     "keywords": [
       "file"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

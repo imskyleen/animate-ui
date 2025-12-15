@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chevron-left-right",
-  "type": "registry:ui",
   "title": "Chevron Left Right Icon",
   "description": "Chevron left right icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "unfold",
       "<>"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

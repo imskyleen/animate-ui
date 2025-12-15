@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-thumbs-down",
-  "type": "registry:ui",
   "title": "Thumbs Down Icon",
   "description": "Thumbs down icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "bad",
       "emotion"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

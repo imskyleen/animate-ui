@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sun-medium",
-  "type": "registry:ui",
   "title": "Sun Medium Icon",
   "description": "Sun medium icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "brightness",
       "medium"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

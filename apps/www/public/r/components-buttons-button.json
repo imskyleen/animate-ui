@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-buttons-button",
-  "type": "registry:ui",
   "title": "Button",
   "description": "A button component with a variety of styles and animations.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/buttons/button.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

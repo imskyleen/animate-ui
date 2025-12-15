@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-radix-hover-card",
-  "type": "registry:ui",
   "title": "Hover Card",
   "description": "For sighted users to preview content available behind a link.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/radix/hover-card.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

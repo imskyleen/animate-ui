@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-dropdown-menu-radio",
-  "type": "registry:ui",
   "title": "Dropdown Menu Radio Demo",
   "description": "Demo showing a dropdown menu with a radio.",
   "registryDependencies": [
@@ -43,5 +42,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

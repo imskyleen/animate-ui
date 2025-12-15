@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-radio-tower",
-  "type": "registry:ui",
   "title": "Radio Tower Icon",
   "description": "Radio tower icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "frequency",
       "live"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cloud-drizzle",
-  "type": "registry:ui",
   "title": "Cloud Drizzle Icon",
   "description": "Cloud drizzle icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "weather",
       "shower"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

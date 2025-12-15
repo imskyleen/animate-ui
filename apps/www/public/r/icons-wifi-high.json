@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-wifi-high",
-  "type": "registry:ui",
   "title": "Wifi High Icon",
   "description": "Wifi high icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "signal",
       "wireless"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

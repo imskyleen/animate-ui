@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-gradient",
-  "type": "registry:ui",
   "title": "Gradient Text Demo",
   "description": "Demo showing an animated gradient text.",
   "registryDependencies": [
@@ -23,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

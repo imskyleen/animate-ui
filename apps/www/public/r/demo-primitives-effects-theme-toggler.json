@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-theme-toggler",
-  "type": "registry:ui",
   "title": "Theme Toggler Demo",
   "description": "Demo showing a theme toggler.",
   "registryDependencies": [
@@ -29,5 +28,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

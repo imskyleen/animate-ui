@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-star",
-  "type": "registry:ui",
   "title": "Star Icon",
   "description": "Star icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "review",
       "rating"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

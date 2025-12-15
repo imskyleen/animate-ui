@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-tabs",
-  "type": "registry:ui",
   "title": "Radix Tabs",
   "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   "dependencies": [
@@ -21,5 +20,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/tabs.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

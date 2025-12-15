@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-clock",
-  "type": "registry:ui",
   "title": "Clock Icon",
   "description": "Clock icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "alarm",
       "timer"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

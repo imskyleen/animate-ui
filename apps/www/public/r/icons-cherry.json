@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cherry",
-  "type": "registry:ui",
   "title": "Cherry Icon",
   "description": "Cherry icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "fruit",
       "food"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

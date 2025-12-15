@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-timer",
-  "type": "registry:ui",
   "title": "Timer Icon",
   "description": "Timer icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "timer",
       "stopwatch"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

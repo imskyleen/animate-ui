@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-animate-github-stars-wheel",
-  "type": "registry:ui",
   "title": "Animate GitHub Stars Wheel Demo",
   "description": "Demo showing an animated github stars wheel.",
   "registryDependencies": [
@@ -41,5 +40,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

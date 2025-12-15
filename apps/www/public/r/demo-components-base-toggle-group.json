@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-base-toggle-group",
-  "type": "registry:ui",
   "title": "Toggle Group Demo",
   "description": "Demo showing a toggle group.",
   "registryDependencies": [
@@ -39,5 +38,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

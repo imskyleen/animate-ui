@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-rotate-ccw",
-  "type": "registry:ui",
   "title": "Rotate Ccw Icon",
   "description": "Rotate ccw icon component.",
   "dependencies": [
@@ -36,5 +35,6 @@
       "rewind",
       "reverse"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

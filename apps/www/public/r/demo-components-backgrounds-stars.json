@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-backgrounds-stars",
-  "type": "registry:ui",
   "title": "Stars Background Demo",
   "description": "Demo showing a stars background.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/backgrounds/stars.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

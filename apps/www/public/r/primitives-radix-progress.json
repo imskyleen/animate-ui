@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-progress",
-  "type": "registry:ui",
   "title": "Radix Progress",
   "description": "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/progress.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

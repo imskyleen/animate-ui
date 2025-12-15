@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-scissors-line-dashed",
-  "type": "registry:ui",
   "title": "Scissors Line Dashed Icon",
   "description": "Scissors line dashed icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "instructions",
       "diagram"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-toggle-right",
-  "type": "registry:ui",
   "title": "Toggle Right Icon",
   "description": "Toggle right icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "switch",
       "boolean"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

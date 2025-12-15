@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-more",
-  "type": "registry:ui",
   "title": "Message Square More Icon",
   "description": "Message square more icon component.",
   "dependencies": [
@@ -34,5 +33,6 @@
       "et cetera",
       "..."
     ]
-  }
+  },
+  "type": "registry:ui"
 }

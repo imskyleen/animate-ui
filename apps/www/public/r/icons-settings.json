@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-settings",
-  "type": "registry:ui",
   "title": "Settings Icon",
   "description": "Settings icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "gear",
       "preferences"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

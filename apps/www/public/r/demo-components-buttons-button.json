@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-buttons-button",
-  "type": "registry:ui",
   "title": "Button Demo",
   "description": "Demo showing a button.",
   "dependencies": [
@@ -46,5 +45,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-preview-card",
-  "type": "registry:ui",
   "title": "Base Preview Card",
   "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/preview-card.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

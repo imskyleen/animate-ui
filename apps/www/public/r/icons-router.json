@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-router",
-  "type": "registry:ui",
   "title": "Router Icon",
   "description": "Router icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "server",
       "cloud"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

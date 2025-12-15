@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-backgrounds-bubble",
-  "type": "registry:ui",
   "title": "Bubble Background Demo",
   "description": "Demo showing a bubble background.",
   "registryDependencies": [
@@ -23,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

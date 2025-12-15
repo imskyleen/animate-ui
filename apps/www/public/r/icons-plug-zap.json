@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-plug-zap",
-  "type": "registry:ui",
   "title": "Plug Zap Icon",
   "description": "Plug Zap icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "battery",
       "connect"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

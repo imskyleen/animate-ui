@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-animate-spring",
-  "type": "registry:ui",
   "title": "Animate Spring Demo",
   "description": "Demo showing an animated spring.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/animate/spring.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

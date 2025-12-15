@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-panel-bottom",
-  "type": "registry:ui",
   "title": "Panel Bottom Icon",
   "description": "Panel bottom icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "drawer",
       "navigation"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

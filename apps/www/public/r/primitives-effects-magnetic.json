@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-effects-magnetic",
-  "type": "registry:ui",
   "title": "Magnetic",
   "description": "A magnetic effect that clings to the cursor, creating a magnetic attraction effect.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/effects/magnetic.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

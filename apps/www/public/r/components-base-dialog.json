@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-base-dialog",
-  "type": "registry:ui",
   "title": "Dialog",
   "description": "A popup that opens on top of the entire page.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/base/dialog.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

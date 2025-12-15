@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-popover",
-  "type": "registry:ui",
   "title": "Radix Popover",
   "description": "Displays rich content in a portal, triggered by a button.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/popover.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-disc-3",
-  "type": "registry:ui",
   "title": "Disc 3 Icon",
   "description": "Disc 3 icon component.",
   "dependencies": [
@@ -31,5 +30,6 @@
       "rotate",
       "rpm"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-headless-accordion",
-  "type": "registry:ui",
   "title": "Accordion Demo",
   "description": "Demo showing a accordion.",
   "registryDependencies": [
@@ -28,5 +27,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

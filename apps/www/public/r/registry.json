@@ -10180,6 +10180,37 @@
       }
     },
     {
+      "name": "icons-key",
+      "type": "registry:ui",
+      "title": "Key Icon",
+      "description": "Key icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/key/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/key.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "password",
+          "login",
+          "authentication",
+          "secure",
+          "unlock",
+          "keychain",
+          "key ring",
+          "fob"
+        ]
+      }
+    },
+    {
       "name": "icons-layers",
       "type": "registry:ui",
       "title": "Layers Icon",
@@ -12720,6 +12751,33 @@
       }
     },
     {
+      "name": "icons-rotate-ccw-key",
+      "type": "registry:ui",
+      "title": "Rotate Ccw Key Icon",
+      "description": "Rotate Ccw Key icon component.",
+      "registryDependencies": [
+        "@animate-ui/icons-icon"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/rotate-ccw-key/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/icons/rotate-ccw-key.tsx"
+        }
+      ],
+      "meta": {
+        "keywords": [
+          "password",
+          "key",
+          "refresh",
+          "change"
+        ]
+      }
+    },
+    {
       "name": "icons-rotate-cw",
       "type": "registry:ui",
       "title": "Rotate Cw Icon",
@@ -15108,7 +15166,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-preview-card",
-  "type": "registry:ui",
   "title": "Base Preview Card Demo",
   "description": "Demo showing an animated base preview card.",
   "registryDependencies": [
@@ -56,5 +55,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

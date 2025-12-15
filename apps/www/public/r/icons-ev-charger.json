@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-ev-charger",
-  "type": "registry:ui",
   "title": "EV Charger Icon",
   "description": "EV Charger icon component.",
   "dependencies": [
@@ -33,5 +32,6 @@
       "accumulator",
       "charge"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

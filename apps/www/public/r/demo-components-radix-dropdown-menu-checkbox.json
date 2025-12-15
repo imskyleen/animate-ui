@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-dropdown-menu-checkbox",
-  "type": "registry:ui",
   "title": "Dropdown Menu Checkbox Demo",
   "description": "Demo showing a dropdown menu with a checkbox.",
   "registryDependencies": [
@@ -43,5 +42,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

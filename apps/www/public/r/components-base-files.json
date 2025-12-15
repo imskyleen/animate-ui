@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-base-files",
-  "type": "registry:ui",
   "title": "Files",
   "description": "A component that allows you to display a list of files and folders.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/base/files.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

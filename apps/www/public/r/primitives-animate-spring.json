@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-spring",
-  "type": "registry:ui",
   "title": "Spring",
   "description": "A flexible, animated spring component that attaches a draggable element to its origin with a spring line.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/spring.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

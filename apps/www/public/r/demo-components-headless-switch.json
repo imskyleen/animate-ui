@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-headless-switch",
-  "type": "registry:ui",
   "title": "Headless Switch Demo",
   "description": "Demo showing a headless switch.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/headless/switch.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

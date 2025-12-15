@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-headless-tabs",
-  "type": "registry:ui",
   "title": "Headless Tabs",
   "description": "Easily create accessible, fully customizable tab interfaces, with robust focus management and keyboard navigation support.",
   "dependencies": [
@@ -20,5 +19,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/headless/switch.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

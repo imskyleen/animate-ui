@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-pin-off",
-  "type": "registry:ui",
   "title": "Pin Off Icon",
   "description": "Pin off icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "unsave",
       "remove"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

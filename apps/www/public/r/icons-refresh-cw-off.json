@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-refresh-cw-off",
-  "type": "registry:ui",
   "title": "Refresh Cw Off Icon",
   "description": "Refresh cw off icon component.",
   "dependencies": [
@@ -34,5 +33,6 @@
       "disconnect",
       "ignore"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

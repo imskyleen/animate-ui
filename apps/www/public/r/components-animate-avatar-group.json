@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-animate-avatar-group",
-  "type": "registry:ui",
   "title": "Avatar Group",
   "description": "An animated avatar group that displays overlapping user images and smoothly shifts each avatar forward on hover to highlight it.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/animate/avatar-group.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

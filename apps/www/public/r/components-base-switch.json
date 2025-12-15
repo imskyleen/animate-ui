@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-base-switch",
-  "type": "registry:ui",
   "title": "Switch",
   "description": "A control that indicates whether a setting is on or off.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/base/switch.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

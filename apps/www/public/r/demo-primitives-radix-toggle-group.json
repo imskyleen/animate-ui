@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-toggle-group",
-  "type": "registry:ui",
   "title": "Radix Toggle Group Demo",
   "description": "Demo showing an animated radix toggle group.",
   "registryDependencies": [
@@ -27,5 +26,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

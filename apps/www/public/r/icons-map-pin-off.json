@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-map-pin-off",
-  "type": "registry:ui",
   "title": "Map Pin Off Icon",
   "description": "Map pin off icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "marker",
       "remove"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

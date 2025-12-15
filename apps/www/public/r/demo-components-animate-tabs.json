@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-animate-tabs",
-  "type": "registry:ui",
   "title": "Animate Tabs Demo",
   "description": "Demo showing an animated tabs.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/animate/tabs.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

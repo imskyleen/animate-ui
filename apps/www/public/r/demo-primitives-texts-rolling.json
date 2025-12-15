@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-rolling",
-  "type": "registry:ui",
   "title": "Rolling Text Demo",
   "description": "Demo showing an animated rolling text.",
   "registryDependencies": [
@@ -26,5 +25,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

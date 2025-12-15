@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-particles",
-  "type": "registry:ui",
   "title": "Particles Demo",
   "description": "Demo showing an animated particles.",
   "registryDependencies": [
@@ -85,5 +84,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

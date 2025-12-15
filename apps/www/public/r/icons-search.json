@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-search",
-  "type": "registry:ui",
   "title": "Search Icon",
   "description": "Search icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "magnifying glass",
       "lens"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

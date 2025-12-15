@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-magnetic",
-  "type": "registry:ui",
   "title": "Magnetic Demo",
   "description": "Demo showing a magnetic effect.",
   "registryDependencies": [
@@ -32,5 +31,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

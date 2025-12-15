@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-menu",
-  "type": "registry:ui",
   "title": "Base Menu",
   "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
   "dependencies": [
@@ -21,5 +20,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/menu.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

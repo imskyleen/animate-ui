@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-airplay",
-  "type": "registry:ui",
   "title": "Airplay Icon",
   "description": "Airplay icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "macos",
       "osx"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

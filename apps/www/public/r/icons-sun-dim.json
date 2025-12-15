@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sun-dim",
-  "type": "registry:ui",
   "title": "Sun Dim Icon",
   "description": "Sun dim icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "low",
       "brightness low"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

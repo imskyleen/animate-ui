@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-x",
-  "type": "registry:ui",
   "title": "Message Square X Icon",
   "description": "Message square x icon component.",
   "dependencies": [
@@ -35,5 +34,6 @@
       "mute",
       "moderate"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

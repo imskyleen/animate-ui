@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-tooltip",
-  "type": "registry:ui",
   "title": "Radix Tooltip Demo",
   "description": "Demo showing a radix tooltip.",
   "registryDependencies": [
@@ -54,5 +53,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

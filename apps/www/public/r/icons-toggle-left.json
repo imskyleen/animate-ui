@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-toggle-left",
-  "type": "registry:ui",
   "title": "Toggle Left Icon",
   "description": "Toggle left icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "switch",
       "boolean"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

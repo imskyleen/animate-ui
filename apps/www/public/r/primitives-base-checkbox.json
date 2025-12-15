@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-checkbox",
-  "type": "registry:ui",
   "title": "Base Checkbox",
   "description": "An easily stylable checkbox component.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/checkbox.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

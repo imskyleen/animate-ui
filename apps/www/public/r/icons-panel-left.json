@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-panel-left",
-  "type": "registry:ui",
   "title": "Panel Left Icon",
   "description": "Panel left icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "drawer",
       "navigation"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

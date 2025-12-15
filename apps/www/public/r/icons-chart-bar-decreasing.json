@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chart-bar-decreasing",
-  "type": "registry:ui",
   "title": "Chart Bar Decreasing Icon",
   "description": "Chart bar decreasing icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "graph",
       "trending down"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

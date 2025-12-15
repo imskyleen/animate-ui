@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-brush-cleaning",
-  "type": "registry:ui",
   "title": "Brush Cleaning Icon",
   "description": "Brush cleaning icon component.",
   "dependencies": [
@@ -52,5 +51,6 @@
       "purge",
       "eliminate"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

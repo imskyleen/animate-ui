@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-clapperboard",
-  "type": "registry:ui",
   "title": "Clapperboard Icon",
   "description": "Clapperboard icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "show",
       "entertainment"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

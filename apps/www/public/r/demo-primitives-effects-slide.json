@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-slide",
-  "type": "registry:ui",
   "title": "Slide Demo",
   "description": "Demo showing an animated slide.",
   "registryDependencies": [
@@ -41,5 +40,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

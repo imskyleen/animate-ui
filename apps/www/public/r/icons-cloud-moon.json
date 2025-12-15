@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cloud-moon",
-  "type": "registry:ui",
   "title": "Cloud Moon Icon",
   "description": "Cloud moon icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "weather",
       "night"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

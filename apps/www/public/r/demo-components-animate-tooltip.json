@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-animate-tooltip",
-  "type": "registry:ui",
   "title": "Animate Tooltip Demo",
   "description": "Demo showing an animated tooltip.",
   "registryDependencies": [
@@ -51,5 +50,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

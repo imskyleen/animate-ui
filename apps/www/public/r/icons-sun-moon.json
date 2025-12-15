@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sun-moon",
-  "type": "registry:ui",
   "title": "Sun Moon Icon",
   "description": "Sun moon icon component.",
   "dependencies": [
@@ -30,5 +29,6 @@
       "system theme",
       "appearance"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

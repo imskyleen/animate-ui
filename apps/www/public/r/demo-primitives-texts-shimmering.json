@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-shimmering",
-  "type": "registry:ui",
   "title": "Shimmering Text Demo",
   "description": "Demo showing an animated shimmering text.",
   "registryDependencies": [
@@ -29,5 +28,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-rotate-cw",
-  "type": "registry:ui",
   "title": "Rotate Cw Icon",
   "description": "Rotate cw icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "rerun",
       "redo"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

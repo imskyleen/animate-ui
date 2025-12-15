@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-headless-checkbox",
-  "type": "registry:ui",
   "title": "Headless Checkbox",
   "description": "Checkboxes provide the same functionality as native HTML checkboxes, without any of the styling, giving you a clean slate to design them however you'd like.",
   "dependencies": [
@@ -15,5 +14,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/headless/checkbox.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

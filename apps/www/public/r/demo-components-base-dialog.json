@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-base-dialog",
-  "type": "registry:ui",
   "title": "Dialog Demo",
   "description": "Demo showing a dialog.",
   "registryDependencies": [
@@ -32,5 +31,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

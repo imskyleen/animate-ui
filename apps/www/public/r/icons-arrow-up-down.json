@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-arrow-up-down",
-  "type": "registry:ui",
   "title": "Arrow Up Down Icon",
   "description": "Arrow up down icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "direction",
       "vertical"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-ellipsis-vertical",
-  "type": "registry:ui",
   "title": "Ellipsis Vertical Icon",
   "description": "Ellipsis vertical icon component.",
   "dependencies": [
@@ -31,5 +30,6 @@
       "…",
       "..."
     ]
-  }
+  },
+  "type": "registry:ui"
 }

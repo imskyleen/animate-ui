@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-texts-shimmering",
-  "type": "registry:ui",
   "title": "Shimmering Text",
   "description": "A shimmering text animation.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/texts/shimmering.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

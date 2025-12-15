@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-checkbox",
-  "type": "registry:ui",
   "title": "Checkbox Demo",
   "description": "Demo showing a checkbox.",
   "registryDependencies": [
@@ -43,5 +42,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-circuit-board",
-  "type": "registry:ui",
   "title": "Circuit Board Icon",
   "description": "Circuit Board icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "electricity",
       "electronics"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-tabs",
-  "type": "registry:ui",
   "title": "Base Tabs Demo",
   "description": "Demo showing an animated base tabs.",
   "registryDependencies": [
@@ -27,5 +26,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

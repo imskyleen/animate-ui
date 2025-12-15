@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-base-popover",
-  "type": "registry:ui",
   "title": "Popover",
   "description": "An accessible popup anchored to a button.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/base/popover.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

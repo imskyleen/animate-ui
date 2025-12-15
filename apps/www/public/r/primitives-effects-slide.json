@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-effects-slide",
-  "type": "registry:ui",
   "title": "Slide",
   "description": "An effect that allows you to animate elements with a slide effect on first view or load.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/effects/slide.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

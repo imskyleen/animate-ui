@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-base-menu",
-  "type": "registry:ui",
   "title": "Menu",
   "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/base/menu.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

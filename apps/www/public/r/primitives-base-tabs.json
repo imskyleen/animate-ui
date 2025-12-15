@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-tabs",
-  "type": "registry:ui",
   "title": "Base Tabs",
   "description": "A component for toggling between related panels on the same page.",
   "dependencies": [
@@ -21,5 +20,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/tabs.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-link-2",
-  "type": "registry:ui",
   "title": "Link 2 Icon",
   "description": "Link 2 icon with connect/unlink animations.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "union",
       "attach"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

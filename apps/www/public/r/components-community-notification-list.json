@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-community-notification-list",
-  "type": "registry:ui",
   "title": "Notification List",
   "description": "A fun notification list with animated stacking and cards that expand as you interact.",
   "dependencies": [
@@ -15,5 +14,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/community/notification-list.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

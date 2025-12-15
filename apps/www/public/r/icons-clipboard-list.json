@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-clipboard-list",
-  "type": "registry:ui",
   "title": "Clipboard List Icon",
   "description": "Clipboard List icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "paste",
       "task"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-slot",
-  "type": "registry:ui",
   "title": "Animate Slot",
   "description": "A slot component that allows you to use motion components with any element.",
   "dependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/slot.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

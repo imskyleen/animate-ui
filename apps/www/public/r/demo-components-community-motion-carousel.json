@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-community-motion-carousel",
-  "type": "registry:ui",
   "title": "Motion Carousel Demo",
   "description": "Demo showing motion carousel.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/community/motion-carousel.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-hammer",
-  "type": "registry:ui",
   "title": "Hammer Icon",
   "description": "Hammer icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "build",
       "construction"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

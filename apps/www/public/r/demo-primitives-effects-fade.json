@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-fade",
-  "type": "registry:ui",
   "title": "Fade Demo",
   "description": "Demo showing an animated fade.",
   "registryDependencies": [
@@ -38,5 +37,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

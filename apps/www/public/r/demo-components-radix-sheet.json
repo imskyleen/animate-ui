@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-sheet",
-  "type": "registry:ui",
   "title": "Radix Sheet Demo",
   "description": "Demo showing a radix sheet.",
   "registryDependencies": [
@@ -29,5 +28,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

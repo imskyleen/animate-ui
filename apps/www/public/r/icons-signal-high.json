@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-signal-high",
-  "type": "registry:ui",
   "title": "Signal High Icon",
   "description": "Signal high icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "4g",
       "5g"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

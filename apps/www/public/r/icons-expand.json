@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-expand",
-  "type": "registry:ui",
   "title": "Expand Icon",
   "description": "Expand icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "minimize",
       "contract"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

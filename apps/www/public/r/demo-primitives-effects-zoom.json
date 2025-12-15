@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-zoom",
-  "type": "registry:ui",
   "title": "Zoom Demo",
   "description": "Demo showing an animated zoom.",
   "registryDependencies": [
@@ -38,5 +37,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

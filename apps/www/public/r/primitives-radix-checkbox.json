@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-checkbox",
-  "type": "registry:ui",
   "title": "Radix Checkbox",
   "description": "A control that allows the user to toggle between checked and not checked.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/checkbox.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

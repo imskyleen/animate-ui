@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-contrast",
-  "type": "registry:ui",
   "title": "Contrast Icon",
   "description": "Contrast icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "display",
       "accessibility"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-house-wifi",
-  "type": "registry:ui",
   "title": "House Wifi Icon",
   "description": "House wifi icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "wifi",
       "connectivity"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

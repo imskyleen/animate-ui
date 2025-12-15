@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-loader-circle",
-  "type": "registry:ui",
   "title": "Loader Circle Icon",
   "description": "Loader circle icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "spinning",
       "circle"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

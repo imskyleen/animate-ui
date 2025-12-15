@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-buttons-ripple",
-  "type": "registry:ui",
   "title": "Ripple Button Demo",
   "description": "Demo showing a ripple button.",
   "dependencies": [
@@ -46,5 +45,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

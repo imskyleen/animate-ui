@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-signal-medium",
-  "type": "registry:ui",
   "title": "Signal Medium Icon",
   "description": "Signal medium icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "4g",
       "5g"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

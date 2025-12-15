@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-gallery-vertical-end",
-  "type": "registry:ui",
   "title": "Gallery Vertical End Icon",
   "description": "Gallery vertical end icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "multimedia",
       "files"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

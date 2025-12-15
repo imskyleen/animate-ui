@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-party-popper",
-  "type": "registry:ui",
   "title": "Party Popper Icon",
   "description": "Party popper icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "excites",
       "confetti"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

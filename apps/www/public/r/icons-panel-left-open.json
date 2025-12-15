@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-panel-left-open",
-  "type": "registry:ui",
   "title": "Panel Left Open Icon",
   "description": "Panel left open icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "navigation",
       "open"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

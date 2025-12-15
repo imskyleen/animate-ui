@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-pinned-list",
-  "type": "registry:ui",
   "title": "Pin List",
   "description": "A pin list component that allows you to pin items to the top of the list.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/pinned-list.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-forklift",
-  "type": "registry:ui",
   "title": "Forklift Icon",
   "description": "Forklift icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "transport",
       "logistics"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

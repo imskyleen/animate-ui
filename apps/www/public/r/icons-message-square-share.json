@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-share",
-  "type": "registry:ui",
   "title": "Message Square Share Icon",
   "description": "Message square share icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "network",
       "forward"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

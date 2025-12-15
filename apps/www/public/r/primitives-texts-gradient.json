@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-texts-gradient",
-  "type": "registry:ui",
   "title": "Gradient Text",
   "description": "A gradient text animation.",
   "dependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/texts/gradient.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

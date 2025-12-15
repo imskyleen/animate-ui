@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-backgrounds-hole",
-  "type": "registry:ui",
   "title": "Hole Background Demo",
   "description": "Demo showing a hole background.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/backgrounds/hole.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

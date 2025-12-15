@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-files",
-  "type": "registry:ui",
   "title": "Base Files Demo",
   "description": "Demo showing an animated base files.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/base/files.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-toggle",
-  "type": "registry:ui",
   "title": "Radix Toggle Demo",
   "description": "Demo showing a radix toggle.",
   "registryDependencies": [
@@ -36,5 +35,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

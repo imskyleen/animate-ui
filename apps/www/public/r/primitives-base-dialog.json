@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-dialog",
-  "type": "registry:ui",
   "title": "Base Dialog",
   "description": "A popup that opens on top of the entire page.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/dialog.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

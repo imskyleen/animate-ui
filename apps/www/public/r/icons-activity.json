@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-activity",
-  "type": "registry:ui",
   "title": "Activity Icon",
   "description": "Activity icon component.",
   "dependencies": [
@@ -38,5 +37,6 @@
       "vital signs",
       "heart rate monitor"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

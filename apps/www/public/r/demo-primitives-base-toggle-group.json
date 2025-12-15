@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-toggle-group",
-  "type": "registry:ui",
   "title": "Base Toggle Group Demo",
   "description": "Demo showing an animated base toggle group.",
   "registryDependencies": [
@@ -23,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

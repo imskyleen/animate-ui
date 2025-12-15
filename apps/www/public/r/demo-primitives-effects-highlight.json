@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-highlight",
-  "type": "registry:ui",
   "title": "Highlight Demo",
   "description": "Demo showing an animated highlight.",
   "registryDependencies": [
@@ -36,5 +35,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

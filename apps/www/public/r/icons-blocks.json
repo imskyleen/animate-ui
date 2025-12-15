@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-blocks",
-  "type": "registry:ui",
   "title": "Blocks Icon",
   "description": "Blocks icon component.",
   "dependencies": [
@@ -34,5 +33,6 @@
       "squares",
       "corner"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

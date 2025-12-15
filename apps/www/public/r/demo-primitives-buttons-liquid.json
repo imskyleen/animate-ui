@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-buttons-liquid",
-  "type": "registry:ui",
   "title": "Liquid Button Demo",
   "description": "Demo showing an animated liquid button.",
   "registryDependencies": [
@@ -44,5 +43,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

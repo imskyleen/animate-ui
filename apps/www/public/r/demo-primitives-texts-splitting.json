@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-splitting",
-  "type": "registry:ui",
   "title": "Splitting Text Demo",
   "description": "Demo showing an animated splitting text.",
   "registryDependencies": [
@@ -42,5 +41,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-collapsible",
-  "type": "registry:ui",
   "title": "Base Collapsible",
   "description": "A collapsible panel controlled by a button.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/collapsible.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-code-block",
-  "type": "registry:ui",
   "title": "Code Block",
   "description": "A code block component that animates the code as it is written.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/code-block.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

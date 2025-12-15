@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-base-menu-checkbox",
-  "type": "registry:ui",
   "title": "Menu Checkbox Demo",
   "description": "Demo showing a menu checkbox.",
   "registryDependencies": [
@@ -45,5 +44,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

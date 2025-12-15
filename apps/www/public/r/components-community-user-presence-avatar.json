@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-community-user-presence-avatar",
-  "type": "registry:ui",
   "title": "User Presence Avatar",
   "description": "A compact avatar group for showing online and offline users, with smooth animated transitions when presence changes.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/community/user-presence-avatar.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

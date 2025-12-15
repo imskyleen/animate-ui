@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-effects-image-zoom",
-  "type": "registry:ui",
   "title": "Image Zoom",
   "description": "An effect that allows you to zoom in on an image on hover.",
   "dependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/effects/image-zoom.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

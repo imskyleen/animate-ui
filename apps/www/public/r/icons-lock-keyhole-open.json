@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-lock-keyhole-open",
-  "type": "registry:ui",
   "title": "Lock Keyhole Open Icon",
   "description": "Lock keyhole open icon component.",
   "dependencies": [
@@ -22,5 +21,6 @@
     "keywords": [
       "security"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

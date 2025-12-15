@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chart-no-axes-column-decreasing",
-  "type": "registry:ui",
   "title": "Chart No Axes Column Decreasing Icon",
   "description": "Chart no axes column decreasing icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "graph",
       "trending down"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

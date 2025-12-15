@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-preview-link-card",
-  "type": "registry:ui",
   "title": "Base Preview Link Card Demo",
   "description": "Demo showing an animated base preview link card.",
   "registryDependencies": [
@@ -59,5 +58,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

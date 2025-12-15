@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-route",
-  "type": "registry:ui",
   "title": "Route Icon",
   "description": "Route icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "stops",
       "stations"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

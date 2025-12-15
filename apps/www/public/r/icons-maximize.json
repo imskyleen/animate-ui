@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-maximize",
-  "type": "registry:ui",
   "title": "Maximize Icon",
   "description": "Maximize icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "expand",
       "dashed"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

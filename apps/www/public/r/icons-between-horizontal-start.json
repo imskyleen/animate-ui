@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-between-horizontal-start",
-  "type": "registry:ui",
   "title": "Between Horizontal Start Icon",
   "description": "Between horizontal start icon component.",
   "dependencies": [
@@ -44,5 +43,6 @@
       "horizontal",
       "start"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

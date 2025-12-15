@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-headless-switch",
-  "type": "registry:ui",
   "title": "Headless Switch",
   "description": "Switches are a pleasant interface for toggling a value between two states, and offer the same semantics and keyboard navigation as native checkbox elements.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/headless/switch.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

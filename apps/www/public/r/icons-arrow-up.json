@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-arrow-up",
-  "type": "registry:ui",
   "title": "Arrow Up Icon",
   "description": "Arrow up icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "direction",
       "north"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

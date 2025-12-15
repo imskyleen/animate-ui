@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-collapsible",
-  "type": "registry:ui",
   "title": "Base Collapsible Demo",
   "description": "Demo showing an animated base collapsible.",
   "registryDependencies": [
@@ -23,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

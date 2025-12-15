@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-pin",
-  "type": "registry:ui",
   "title": "Pin Icon",
   "description": "Pin icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "fixed",
       "anchor"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

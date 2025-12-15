@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-lightbulb",
-  "type": "registry:ui",
   "title": "Lightbulb Icon",
   "description": "Lightbulb icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "bright",
       "lights"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-toggle",
-  "type": "registry:ui",
   "title": "Base Toggle Demo",
   "description": "Demo showing an animated base toggle.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/base/toggle.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

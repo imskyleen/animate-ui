@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-accordion",
-  "type": "registry:ui",
   "title": "Radix Accordion Demo",
   "description": "Demo showing an animated radix accordion.",
   "registryDependencies": [
@@ -31,5 +30,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

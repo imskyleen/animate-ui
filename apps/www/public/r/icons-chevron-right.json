@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chevron-right",
-  "type": "registry:ui",
   "title": "Chevron Right Icon",
   "description": "Chevron right icon component.",
   "dependencies": [
@@ -33,5 +32,6 @@
       "shell",
       ">"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

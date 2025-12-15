@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-effects-tilt",
-  "type": "registry:ui",
   "title": "Tilt Demo",
   "description": "Demo showing an animated tilt.",
   "registryDependencies": [
@@ -32,5 +31,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

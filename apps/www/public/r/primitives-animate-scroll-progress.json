@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-scroll-progress",
-  "type": "registry:ui",
   "title": "Scroll Progress",
   "description": "A scroll progress component that allows you to track the progress of a scrollable element.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/scroll-progress.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

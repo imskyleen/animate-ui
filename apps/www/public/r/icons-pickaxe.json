@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-pickaxe",
-  "type": "registry:ui",
   "title": "Pickaxe Icon",
   "description": "Pickaxe icon component.",
   "dependencies": [
@@ -30,5 +29,6 @@
       "advancement",
       "crafting"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

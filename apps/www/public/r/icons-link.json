@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-link",
-  "type": "registry:ui",
   "title": "Link Icon",
   "description": "Link icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "chain",
       "url"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

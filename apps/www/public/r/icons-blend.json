@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-blend",
-  "type": "registry:ui",
   "title": "Blend Icon",
   "description": "Blend icon component.",
   "dependencies": [
@@ -39,5 +38,6 @@
       "colors",
       "colours"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

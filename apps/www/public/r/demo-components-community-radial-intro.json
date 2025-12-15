@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-community-radial-intro",
-  "type": "registry:ui",
   "title": "Radial Intro Demo",
   "description": "Demo showing radial intro.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/community/radial-intro.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-tabs",
-  "type": "registry:ui",
   "title": "Tabs",
   "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/tabs.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

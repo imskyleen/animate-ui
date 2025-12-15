@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sparkles",
-  "type": "registry:ui",
   "title": "Sparkles Icon",
   "description": "Sparkles icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "night",
       "magic"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

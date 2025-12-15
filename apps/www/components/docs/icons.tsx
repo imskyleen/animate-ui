@@ -193,6 +193,10 @@ const addedIcons = [
       'icons-gallery-vertical-end',
     ],
   },
+  {
+    date: '2025-12-15',
+    icons: ['icons-key', 'icons-rotate-ccw-key'],
+  },
 ];
 
 const thirtyDaysAgo = new Date();

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chevron-up-down",
-  "type": "registry:ui",
   "title": "Chevron Up Down Icon",
   "description": "Chevron up down icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "vertical",
       "unfold"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

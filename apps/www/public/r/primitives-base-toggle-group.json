@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-base-toggle-group",
-  "type": "registry:ui",
   "title": "Base Toggle Group",
   "description": "Provides a shared state to a series of toggle buttons.",
   "dependencies": [
@@ -20,5 +19,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/base/toggle-group.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

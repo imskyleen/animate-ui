@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-checkbox",
-  "type": "registry:ui",
   "title": "Base Checkbox Demo",
   "description": "Demo showing an animated base checkbox.",
   "registryDependencies": [
@@ -23,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

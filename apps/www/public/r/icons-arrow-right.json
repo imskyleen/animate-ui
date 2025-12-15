@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-arrow-right",
-  "type": "registry:ui",
   "title": "Arrow Right Icon",
   "description": "Arrow right icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "east",
       "->"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

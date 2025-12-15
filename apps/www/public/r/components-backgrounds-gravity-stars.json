@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-backgrounds-gravity-stars",
-  "type": "registry:ui",
   "title": "Gravity Stars Background",
   "description": "A background component featuring a subtle yet engaging animated gravity stars effect.",
   "dependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/backgrounds/gravity-stars.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

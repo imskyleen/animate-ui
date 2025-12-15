@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-animate-tabs",
-  "type": "registry:ui",
   "title": "Tabs",
   "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/animate/tabs.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }
