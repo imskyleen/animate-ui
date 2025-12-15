@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-radix-toggle-group",
-  "type": "registry:ui",
   "title": "Toggle Group",
   "description": "A set of two-state buttons that can be toggled on or off.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/radix/toggle-group.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

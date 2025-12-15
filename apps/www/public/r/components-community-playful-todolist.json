@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-community-playful-todolist",
-  "type": "registry:ui",
   "title": "Playful Todolist",
   "description": "A playful todolist component with animated wavy strikethroughs for each completed task.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/community/playful-todolist.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

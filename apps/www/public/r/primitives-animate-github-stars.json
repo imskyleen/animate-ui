@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-github-stars",
-  "type": "registry:ui",
   "title": "Github Stars",
   "description": "A component that animates a number of stars, smoothly animating number transitions using the SlidingNumber component.",
   "dependencies": [
@@ -21,5 +20,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/github-stars.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

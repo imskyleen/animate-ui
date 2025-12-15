@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-tooltip",
-  "type": "registry:ui",
   "title": "Base Tooltip Demo",
   "description": "Demo showing an animated base tooltip.",
   "registryDependencies": [
@@ -56,5 +55,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sliders-vertical",
-  "type": "registry:ui",
   "title": "Sliders Vertical Icon",
   "description": "Sliders vertical icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "settings",
       "controls"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

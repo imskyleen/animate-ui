@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chart-spline",
-  "type": "registry:ui",
   "title": "Chart Spline Icon",
   "description": "Chart spline icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "function",
       "interpolation"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

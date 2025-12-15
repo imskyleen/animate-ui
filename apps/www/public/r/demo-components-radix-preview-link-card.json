@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-preview-link-card",
-  "type": "registry:ui",
   "title": "Preview Link Card Demo",
   "description": "Demo showing a preview link card.",
   "registryDependencies": [
@@ -57,5 +56,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

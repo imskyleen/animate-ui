@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-community-management-bar",
-  "type": "registry:ui",
   "title": "Management Bar",
   "description": "A management bar for managing items.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/community/management-bar.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

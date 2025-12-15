@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-buttons-github-stars",
-  "type": "registry:ui",
   "title": "GitHub Stars Button Demo",
   "description": "Demo showing a GitHub stars button.",
   "registryDependencies": [
@@ -37,5 +36,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

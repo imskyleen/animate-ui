@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sliders-horizontal",
-  "type": "registry:ui",
   "title": "Sliders Horizontal Icon",
   "description": "Sliders horizontal icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "filters",
       "controls"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

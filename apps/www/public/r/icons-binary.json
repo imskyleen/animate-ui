@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-binary",
-  "type": "registry:ui",
   "title": "Binary Icon",
   "description": "Binary icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "one",
       "boolean"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

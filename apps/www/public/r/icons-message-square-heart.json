@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-heart",
-  "type": "registry:ui",
   "title": "Message Square Heart Icon",
   "description": "Message square heart icon component.",
   "dependencies": [
@@ -34,5 +33,6 @@
       "date",
       "speech bubble"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

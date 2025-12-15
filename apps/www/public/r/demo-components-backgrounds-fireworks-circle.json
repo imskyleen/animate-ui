@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-backgrounds-fireworks-circle",
-  "type": "registry:ui",
   "title": "Fireworks Circle Background Demo",
   "description": "Demo showing a fireworks circle background.",
   "registryDependencies": [
@@ -50,5 +49,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

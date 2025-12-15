@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-backgrounds-fireworks",
-  "type": "registry:ui",
   "title": "Fireworks Background",
   "description": "A background component that displays a fireworks animation.",
   "files": [
@@ -11,5 +10,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/backgrounds/fireworks.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

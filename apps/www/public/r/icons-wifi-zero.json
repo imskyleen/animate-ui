@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-wifi-zero",
-  "type": "registry:ui",
   "title": "Wifi Zero Icon",
   "description": "Wifi zero icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "signal",
       "wireless"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

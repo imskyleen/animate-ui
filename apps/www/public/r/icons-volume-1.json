@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-volume-1",
-  "type": "registry:ui",
   "title": "Volume 1 Icon",
   "description": "Volume 1 icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "sound",
       "speaker"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

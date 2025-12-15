@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-layout-dashboard",
-  "type": "registry:ui",
   "title": "Layout Dashboard Icon",
   "description": "Layout dashboard icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "masonry",
       "brick"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

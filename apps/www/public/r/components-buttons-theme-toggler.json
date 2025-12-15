@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-buttons-theme-toggler",
-  "type": "registry:ui",
   "title": "Theme Toggler Button",
   "description": "A button that toggles the theme gradually.",
   "dependencies": [
@@ -20,5 +19,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/buttons/theme-toggler.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

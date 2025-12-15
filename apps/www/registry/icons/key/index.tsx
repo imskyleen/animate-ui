@@ -1,13 +1,17 @@
 'use client';
+
 import * as React from 'react';
 import { motion, type Variants } from 'motion/react';
+
 import {
   getVariants,
   useAnimateIconContext,
   IconWrapper,
   type IconProps,
 } from '@/registry/icons/icon';
+
 type KeyProps = IconProps<keyof typeof animations>;
+
 const animations = {
   default: {
     group: {
@@ -51,9 +55,11 @@ const animations = {
     circle: {},
   } satisfies Record<string, Variants>,
 } as const;
+
 function IconComponent({ size, ...props }: KeyProps) {
   const { controls } = useAnimateIconContext();
   const variants = getVariants(animations);
+
   return (
     <motion.svg
       xmlns="http://www.w3.org/2000/svg"
@@ -92,9 +98,11 @@ function IconComponent({ size, ...props }: KeyProps) {
     </motion.svg>
   );
 }
+
 function Key(props: KeyProps) {
   return <IconWrapper icon={IconComponent} {...props} />;
 }
+
 export {
   animations,
   Key,

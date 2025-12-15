@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-animate-github-stars-wheel",
-  "type": "registry:ui",
   "title": "GitHub Stars Wheel",
   "description": "A scrolling wheel that displays GitHub stars count.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/animate/github-stars-wheel.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

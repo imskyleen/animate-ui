@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-phone-call",
-  "type": "registry:ui",
   "title": "Phone Call Icon",
   "description": "Phone call icon with animated waves.",
   "dependencies": [
@@ -31,5 +30,6 @@
       "waves",
       "signal"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

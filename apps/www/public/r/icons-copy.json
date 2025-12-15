@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-copy",
-  "type": "registry:ui",
   "title": "Copy Icon",
   "description": "Copy icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "duplicate",
       "multiple"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

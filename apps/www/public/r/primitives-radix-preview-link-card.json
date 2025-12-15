@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-preview-link-card",
-  "type": "registry:ui",
   "title": "Radix Preview Link Card",
   "description": "Displays a preview image of a link when hovered.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/preview-link-card.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

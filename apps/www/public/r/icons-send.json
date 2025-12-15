@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-send",
-  "type": "registry:ui",
   "title": "Send Icon",
   "description": "Send icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "paper aeroplane",
       "submit"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

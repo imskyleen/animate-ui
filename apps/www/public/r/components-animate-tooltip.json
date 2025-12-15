@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-animate-tooltip",
-  "type": "registry:ui",
   "title": "Tooltip",
   "description": "A tooltip is a small box that appears when hovering over an element.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/animate/tooltip.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

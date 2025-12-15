@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-effects-tilt",
-  "type": "registry:ui",
   "title": "Tilt",
   "description": "An effect that allows you to animate elements with a tilt effect on mouse hover.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/effects/tilt.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

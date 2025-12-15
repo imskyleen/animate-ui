@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-animate-cursor",
-  "type": "registry:ui",
   "title": "Animate Cursor Demo",
   "description": "Demo showing an animated cursor.",
   "registryDependencies": [
@@ -54,5 +53,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

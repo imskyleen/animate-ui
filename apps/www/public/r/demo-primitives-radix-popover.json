@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-popover",
-  "type": "registry:ui",
   "title": "Radix Popover Demo",
   "description": "Demo showing an animated radix popover.",
   "registryDependencies": [
@@ -43,5 +42,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

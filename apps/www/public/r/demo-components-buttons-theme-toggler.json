@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-buttons-theme-toggler",
-  "type": "registry:ui",
   "title": "Theme Toggler Button Demo",
   "description": "Demo showing a theme toggler button.",
   "dependencies": [
@@ -52,5 +51,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

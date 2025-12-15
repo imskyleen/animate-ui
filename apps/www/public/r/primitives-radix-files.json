@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-files",
-  "type": "registry:ui",
   "title": "Files",
   "description": "A component that allows you to display a list of files and folders.",
   "dependencies": [
@@ -20,5 +19,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/files.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cog",
-  "type": "registry:ui",
   "title": "Cog Icon",
   "description": "Cog icon component.",
   "dependencies": [
@@ -33,5 +32,6 @@
       "construction",
       "parts"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

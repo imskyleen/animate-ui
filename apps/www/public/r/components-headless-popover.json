@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-headless-popover",
-  "type": "registry:ui",
   "title": "Popover",
   "description": "Popovers are perfect for floating panels with arbitrary content like navigation menus, mobile menus and flyout menus.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/headless/popover.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

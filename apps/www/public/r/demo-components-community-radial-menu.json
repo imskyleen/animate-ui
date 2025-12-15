@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-community-radial-menu",
-  "type": "registry:ui",
   "title": "Radial Menu Demo",
   "description": "Demo Radial Menu.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/community/radial-menu.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cross",
-  "type": "registry:ui",
   "title": "Cross Icon",
   "description": "Cross icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "healthcare",
       "first aid"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

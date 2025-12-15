@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-dropdown-menu",
-  "type": "registry:ui",
   "title": "Radix Dropdown Menu Demo",
   "description": "Demo showing an animated radix dropdown menu.",
   "registryDependencies": [
@@ -43,5 +42,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

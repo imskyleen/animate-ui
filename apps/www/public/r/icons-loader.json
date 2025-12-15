@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-loader",
-  "type": "registry:ui",
   "title": "Loader Icon",
   "description": "Loader icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "spinner",
       "spinning"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

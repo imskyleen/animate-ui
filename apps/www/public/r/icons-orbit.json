@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-orbit",
-  "type": "registry:ui",
   "title": "Orbit Icon",
   "description": "Orbit icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "satellites",
       "moons"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

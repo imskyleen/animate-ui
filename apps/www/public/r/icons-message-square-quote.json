@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-quote",
-  "type": "registry:ui",
   "title": "Message Square Quote Icon",
   "description": "Message square quote icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "reply",
       "response"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

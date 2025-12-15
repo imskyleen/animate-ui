@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-circle-check",
-  "type": "registry:ui",
   "title": "Circle Check Icon",
   "description": "Circle check icon component.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "complete",
       "task"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

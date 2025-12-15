@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-buttons-flip",
-  "type": "registry:ui",
   "title": "Flip Button Demo",
   "description": "Demo showing an animated flip button.",
   "registryDependencies": [
@@ -35,5 +34,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

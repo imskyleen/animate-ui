@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-user-round",
-  "type": "registry:ui",
   "title": "User Round Icon",
   "description": "User round icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "account",
       "contact"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

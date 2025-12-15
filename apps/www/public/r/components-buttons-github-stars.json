@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-buttons-github-stars",
-  "type": "registry:ui",
   "title": "GitHub Stars Button",
   "description": "A clickable button that links to a GitHub repository and displays the number of stars.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/buttons/github-stars.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-typing",
-  "type": "registry:ui",
   "title": "Typing Text Demo",
   "description": "Demo showing an animated typing text.",
   "registryDependencies": [
@@ -38,5 +37,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

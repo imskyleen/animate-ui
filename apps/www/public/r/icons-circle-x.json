@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-circle-x",
-  "type": "registry:ui",
   "title": "Circle X Icon",
   "description": "Circle x icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "multiply",
       "multiplication"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

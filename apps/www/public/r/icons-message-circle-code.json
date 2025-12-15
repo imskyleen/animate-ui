@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-circle-code",
-  "type": "registry:ui",
   "title": "Message Circle Code Icon",
   "description": "Message circle code icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "code review",
       "coding"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

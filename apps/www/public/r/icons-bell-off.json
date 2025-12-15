@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-bell-off",
-  "type": "registry:ui",
   "title": "Bell Off Icon",
   "description": "Bell off icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "sound",
       "reminder"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

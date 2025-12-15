@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-square-plus",
-  "type": "registry:ui",
   "title": "Square Plus Icon",
   "description": "Square plus icon component.",
   "dependencies": [
@@ -34,5 +33,6 @@
       "positive",
       "calculate"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

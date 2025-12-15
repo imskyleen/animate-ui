@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chart-bar",
-  "type": "registry:ui",
   "title": "Chart Bar Icon",
   "description": "Chart bar icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "diagram",
       "graph"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

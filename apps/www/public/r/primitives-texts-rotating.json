@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-texts-rotating",
-  "type": "registry:ui",
   "title": "Rotating Text",
   "description": "A rotating text animation.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/texts/rotating.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

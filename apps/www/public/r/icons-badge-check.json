@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-badge-check",
-  "type": "registry:ui",
   "title": "Badge Check Icon",
   "description": "Badge check icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "verified",
       "check"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

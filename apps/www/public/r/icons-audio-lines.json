@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-audio-lines",
-  "type": "registry:ui",
   "title": "Audio Lines Icon",
   "description": "Audio Lines icon component.",
   "dependencies": [
@@ -44,5 +43,6 @@
       "singer",
       "song"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

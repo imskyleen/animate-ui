@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-radix-hover-card",
-  "type": "registry:ui",
   "title": "Hover Card Demo",
   "description": "Demo showing a hover card.",
   "registryDependencies": [
@@ -54,5 +53,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

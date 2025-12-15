@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-circle",
-  "type": "registry:ui",
   "title": "Message Circle Icon",
   "description": "Message circle icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "feedback",
       "speech bubble"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

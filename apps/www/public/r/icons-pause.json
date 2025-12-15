@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-pause",
-  "type": "registry:ui",
   "title": "Pause Icon",
   "description": "Pause icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "music",
       "stop"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

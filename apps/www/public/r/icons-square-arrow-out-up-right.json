@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-square-arrow-out-up-right",
-  "type": "registry:ui",
   "title": "Square Arrow Out Up Right Icon",
   "description": "Square arrow out up right icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "external",
       "link"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

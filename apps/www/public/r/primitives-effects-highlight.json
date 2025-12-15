@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-effects-highlight",
-  "type": "registry:ui",
   "title": "Highlight",
   "description": "A highlight effect that allows you to highlight elements on hover, click or with a controlled value.",
   "dependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/effects/highlight.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

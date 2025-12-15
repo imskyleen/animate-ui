@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-animate-motion-grid",
-  "type": "registry:ui",
   "title": "Animate Motion Grid Demo",
   "description": "Demo showing an animated motion grid.",
   "registryDependencies": [
@@ -15,5 +14,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/animate/motion-grid.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

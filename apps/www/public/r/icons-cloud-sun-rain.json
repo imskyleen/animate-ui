@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cloud-sun-rain",
-  "type": "registry:ui",
   "title": "Cloud Sun Rain Icon",
   "description": "Cloud sun rain icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "partly",
       "rainfall"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

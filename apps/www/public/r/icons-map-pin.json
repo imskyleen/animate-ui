@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-map-pin",
-  "type": "registry:ui",
   "title": "Map Pin Icon",
   "description": "Map pin icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "marker",
       "drop"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-headless-dialog",
-  "type": "registry:ui",
   "title": "Headless Dialog Demo",
   "description": "Demo showing an animated headless dialog.",
   "registryDependencies": [
@@ -29,5 +28,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

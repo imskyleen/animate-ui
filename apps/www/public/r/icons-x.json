@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-x",
-  "type": "registry:ui",
   "title": "X Icon",
   "description": "X icon component.",
   "dependencies": [
@@ -31,5 +30,6 @@
       "multiply",
       "multiplication"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

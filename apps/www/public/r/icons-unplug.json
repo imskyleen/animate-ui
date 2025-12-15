@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-unplug",
-  "type": "registry:ui",
   "title": "Unplug Icon",
   "description": "Unplug icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "outlet",
       "disconnect"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

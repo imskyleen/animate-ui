@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-gauge",
-  "type": "registry:ui",
   "title": "Gauge Icon",
   "description": "Gauge icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "measure",
       "level"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

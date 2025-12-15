@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-buttons-icon",
-  "type": "registry:ui",
   "title": "Icon Button",
   "description": "An icon button component with a variety of styles and animations.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/buttons/icon.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

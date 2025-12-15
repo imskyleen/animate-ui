@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-panel-top-close",
-  "type": "registry:ui",
   "title": "Panel Top Close Icon",
   "description": "Panel top close icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "navigation",
       "close"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-heart",
-  "type": "registry:ui",
   "title": "Heart Icon",
   "description": "Heart icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "playing",
       "cards"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-loader-pinwheel",
-  "type": "registry:ui",
   "title": "Loader Pinwheel Icon",
   "description": "Loader pinwheel icon component.",
   "dependencies": [
@@ -31,5 +30,6 @@
       "frozen",
       "freeze"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

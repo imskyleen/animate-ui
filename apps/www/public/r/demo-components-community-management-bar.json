@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-community-management-bar",
-  "type": "registry:ui",
   "title": "Management Bar Demo",
   "description": "Demo showing a management bar.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/components/community/management-bar.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

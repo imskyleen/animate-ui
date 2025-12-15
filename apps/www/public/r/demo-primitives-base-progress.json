@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-progress",
-  "type": "registry:ui",
   "title": "Base Progress Demo",
   "description": "Demo showing an animated base progress.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/base/progress.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

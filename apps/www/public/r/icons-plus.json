@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-plus",
-  "type": "registry:ui",
   "title": "Plus Icon",
   "description": "Plus icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "positive",
       "calculate"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

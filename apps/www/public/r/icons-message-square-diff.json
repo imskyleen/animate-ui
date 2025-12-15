@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-diff",
-  "type": "registry:ui",
   "title": "Message Square Diff Icon",
   "description": "Message square diff icon component.",
   "dependencies": [
@@ -38,5 +37,6 @@
       "version control",
       "git"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

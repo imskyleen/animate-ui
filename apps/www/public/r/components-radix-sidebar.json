@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-radix-sidebar",
-  "type": "registry:ui",
   "title": "Sidebar",
   "description": "A composable, themeable and customizable sidebar component. Created by Shadcn and animated by Animate UI.",
   "dependencies": [
@@ -26,5 +25,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/radix/sidebar.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

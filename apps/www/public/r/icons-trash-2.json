@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-trash-2",
-  "type": "registry:ui",
   "title": "Trash 2 Icon",
   "description": "Trash 2 icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "remove",
       "bin"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

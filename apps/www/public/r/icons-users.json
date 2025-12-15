@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-users",
-  "type": "registry:ui",
   "title": "Users Icon",
   "description": "Users icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "group",
       "people"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

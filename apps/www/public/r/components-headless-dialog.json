@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-headless-dialog",
-  "type": "registry:ui",
   "title": "Dialog",
   "description": "A fully-managed, renderless dialog component jam-packed with accessibility and keyboard features, perfect for building completely custom dialogs and alerts.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/headless/dialog.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-sparkle",
-  "type": "registry:ui",
   "title": "Sparkle Icon",
   "description": "Sparkle icon component.",
   "dependencies": [
@@ -30,5 +29,6 @@
       "twinkle",
       "celebration"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

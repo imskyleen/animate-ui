@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-radix-radio-group",
-  "type": "registry:ui",
   "title": "Radix Radio Group",
   "description": "A set of checkable buttons—known as radio buttons—where no more than one of the buttons can be checked at a time.",
   "dependencies": [
@@ -19,5 +18,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/radix/radio-group.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

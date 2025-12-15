@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-circle-dashed",
-  "type": "registry:ui",
   "title": "Message Circle Dashed Icon",
   "description": "Message circle dashed icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "speech bubble",
       "draft"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

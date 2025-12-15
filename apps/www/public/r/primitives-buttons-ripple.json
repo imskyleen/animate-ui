@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-buttons-ripple",
-  "type": "registry:ui",
   "title": "Ripple Button",
   "description": "A button that animates on tap with a ripple effect.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/buttons/ripple.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-backgrounds-hexagon",
-  "type": "registry:ui",
   "title": "Hexagon Background",
   "description": "A background component featuring an interactive hexagon grid.",
   "files": [
@@ -11,5 +10,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/backgrounds/hexagon.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

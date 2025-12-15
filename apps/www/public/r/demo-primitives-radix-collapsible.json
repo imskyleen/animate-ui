@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-collapsible",
-  "type": "registry:ui",
   "title": "Radix Collapsible Demo",
   "description": "Demo showing an animated radix collapsible.",
   "registryDependencies": [
@@ -23,5 +22,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

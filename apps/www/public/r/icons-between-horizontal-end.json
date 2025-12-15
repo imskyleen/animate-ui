@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-between-horizontal-end",
-  "type": "registry:ui",
   "title": "Between Horizontal End Icon",
   "description": "Between horizontal end icon component.",
   "dependencies": [
@@ -44,5 +43,6 @@
       "horizontal",
       "end"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

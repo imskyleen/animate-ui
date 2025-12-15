@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-radio",
-  "type": "registry:ui",
   "title": "Radio Icon",
   "description": "Radio icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "frequency",
       "live"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

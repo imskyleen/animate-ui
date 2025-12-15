@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "hooks-use-is-in-view",
-  "type": "registry:hook",
   "title": "useIsInView",
   "description": "A hook that allows you to check if an element is in view.",
   "dependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:hook",
       "target": "hooks/use-is-in-view.tsx"
     }
-  ]
+  ],
+  "type": "registry:hook"
 }

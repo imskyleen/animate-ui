@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-circle-x",
-  "type": "registry:ui",
   "title": "Message Circle X Icon",
   "description": "Message circle x icon component.",
   "dependencies": [
@@ -35,5 +34,6 @@
       "mute",
       "moderate"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-tabs",
-  "type": "registry:ui",
   "title": "Radix Tabs Demo",
   "description": "Demo showing an animated radix tabs.",
   "registryDependencies": [
@@ -27,5 +26,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

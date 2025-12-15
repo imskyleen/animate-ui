@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-log-out",
-  "type": "registry:ui",
   "title": "Log Out Icon",
   "description": "Log out icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "exit",
       "auth"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

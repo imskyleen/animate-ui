@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-compass",
-  "type": "registry:ui",
   "title": "Compass Icon",
   "description": "Compass icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "safari",
       "browser"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

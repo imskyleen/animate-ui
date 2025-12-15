@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-texts-scrolling-number",
-  "type": "registry:ui",
   "title": "Scrolling Number",
   "description": "A scrolling number animation.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/texts/scrolling-number.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

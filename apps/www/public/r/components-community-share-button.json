@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-community-share-button",
-  "type": "registry:ui",
   "title": "Share Button",
   "description": "This is a button for sharing.",
   "dependencies": [
@@ -16,5 +15,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/community/share-button.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-radix-checkbox",
-  "type": "registry:ui",
   "title": "Radix Checkbox Demo",
   "description": "Demo showing an animated radix checkbox.",
   "registryDependencies": [
@@ -28,5 +27,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

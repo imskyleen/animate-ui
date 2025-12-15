@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-scrolling-number",
-  "type": "registry:ui",
   "title": "Scrolling Number Demo",
   "description": "Demo showing an animated scrolling number.",
   "registryDependencies": [
@@ -37,5 +36,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

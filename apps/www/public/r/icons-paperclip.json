@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-paperclip",
-  "type": "registry:ui",
   "title": "Paperclip Icon",
   "description": "Paperclip icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "attachment",
       "file"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

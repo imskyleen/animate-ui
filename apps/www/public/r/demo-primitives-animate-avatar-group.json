@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-animate-avatar-group",
-  "type": "registry:ui",
   "title": "Animate Avatar Group Demo",
   "description": "Demo showing an animated avatar group.",
   "dependencies": [
@@ -17,5 +16,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/animate/avatar-group.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

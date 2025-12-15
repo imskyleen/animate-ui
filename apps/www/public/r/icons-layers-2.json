@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-layers-2",
-  "type": "registry:ui",
   "title": "Layers 2 Icon",
   "description": "Layers 2 icon component.",
   "dependencies": [
@@ -31,5 +30,6 @@
       "double",
       "shortcuts"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-buttons-liquid",
-  "type": "registry:ui",
   "title": "Liquid Button",
   "description": "A button that fills on hover.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/buttons/liquid.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

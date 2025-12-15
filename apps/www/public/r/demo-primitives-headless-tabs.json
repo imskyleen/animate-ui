@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-headless-tabs",
-  "type": "registry:ui",
   "title": "Headless Tabs Demo",
   "description": "Demo showing an animated headless tabs.",
   "registryDependencies": [
@@ -27,5 +26,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

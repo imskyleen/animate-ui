@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-community-radial-nav",
-  "type": "registry:ui",
   "title": "Radial Nav",
   "description": "A circular navigation menu with animated pointer and expanding buttons for smooth interactive transitions.",
   "dependencies": [
@@ -16,5 +15,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/community/radial-nav.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

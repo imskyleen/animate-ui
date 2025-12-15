@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-circle-heart",
-  "type": "registry:ui",
   "title": "Message Circle Heart Icon",
   "description": "Message circle heart icon component.",
   "dependencies": [
@@ -34,5 +33,6 @@
       "date",
       "speech bubble"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

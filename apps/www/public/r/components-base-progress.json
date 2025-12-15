@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-base-progress",
-  "type": "registry:ui",
   "title": "Progress",
   "description": "Displays the status of a task that takes a long time.",
   "registryDependencies": [
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/base/progress.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

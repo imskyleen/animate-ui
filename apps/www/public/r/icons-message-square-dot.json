@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-dot",
-  "type": "registry:ui",
   "title": "Message Square Dot Icon",
   "description": "Message square dot icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "feedback",
       "speech bubble"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

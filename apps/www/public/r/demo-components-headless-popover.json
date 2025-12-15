@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-headless-popover",
-  "type": "registry:ui",
   "title": "Popover Demo",
   "description": "Demo showing a popover.",
   "registryDependencies": [
@@ -40,5 +39,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

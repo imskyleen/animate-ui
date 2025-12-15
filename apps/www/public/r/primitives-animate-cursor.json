@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-animate-cursor",
-  "type": "registry:ui",
   "title": "Cursor",
   "description": "An animated cursor component that allows you to customize both the cursor and cursor follow elements with smooth animations.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/animate/cursor.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

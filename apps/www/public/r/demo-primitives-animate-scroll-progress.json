@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-animate-scroll-progress",
-  "type": "registry:ui",
   "title": "Animate Scroll Progress Demo",
   "description": "Demo showing an animated scroll progress.",
   "registryDependencies": [
@@ -30,5 +29,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

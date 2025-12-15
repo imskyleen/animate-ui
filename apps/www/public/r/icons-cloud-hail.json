@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cloud-hail",
-  "type": "registry:ui",
   "title": "Cloud Hail Icon",
   "description": "Cloud hail icon component.",
   "dependencies": [
@@ -23,5 +22,6 @@
       "weather",
       "rainfall"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

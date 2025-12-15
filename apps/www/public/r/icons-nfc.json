@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-nfc",
-  "type": "registry:ui",
   "title": "Nfc Icon",
   "description": "Nfc icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "near-field",
       "communication"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-components-buttons-copy",
-  "type": "registry:ui",
   "title": "Copy Button Demo",
   "description": "Demo showing a copy button.",
   "registryDependencies": [
@@ -41,5 +40,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

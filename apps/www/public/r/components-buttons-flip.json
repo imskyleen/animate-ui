@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "components-buttons-flip",
-  "type": "registry:ui",
   "title": "Flip Button",
   "description": "A button that flips between two states on hover.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/buttons/flip.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

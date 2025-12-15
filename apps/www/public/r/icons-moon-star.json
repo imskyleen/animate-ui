@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-moon-star",
-  "type": "registry:ui",
   "title": "Moon Star Icon",
   "description": "Moon star icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "night",
       "star"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

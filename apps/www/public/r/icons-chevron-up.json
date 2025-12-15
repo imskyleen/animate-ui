@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-chevron-up",
-  "type": "registry:ui",
   "title": "Chevron Up Icon",
   "description": "Chevron up icon component.",
   "dependencies": [
@@ -33,5 +32,6 @@
       "^",
       "dropdown"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

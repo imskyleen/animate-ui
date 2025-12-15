@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-menu",
-  "type": "registry:ui",
   "title": "Base Menu Demo",
   "description": "Demo showing an animated base menu.",
   "registryDependencies": [
@@ -45,5 +44,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

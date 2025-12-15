@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-layers",
-  "type": "registry:ui",
   "title": "Layers Icon",
   "description": "Layers icon component.",
   "dependencies": [
@@ -28,5 +27,6 @@
       "copies",
       "copy"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

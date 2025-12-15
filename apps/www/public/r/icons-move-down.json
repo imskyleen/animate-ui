@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-move-down",
-  "type": "registry:ui",
   "title": "Move Down Icon",
   "description": "Move down icon component.",
   "dependencies": [
@@ -27,5 +26,6 @@
       "south",
       "↓"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-external-link",
-  "type": "registry:ui",
   "title": "External Link Icon",
   "description": "External link icon component.",
   "dependencies": [
@@ -24,5 +23,6 @@
       "open",
       "share"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-texts-counting-number",
-  "type": "registry:ui",
   "title": "Counting Number Demo",
   "description": "Demo showing an animated counting number.",
   "registryDependencies": [
@@ -41,5 +40,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

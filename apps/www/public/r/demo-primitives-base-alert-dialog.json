@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-base-alert-dialog",
-  "type": "registry:ui",
   "title": "Base Alert Dialog Demo",
   "description": "Demo showing an animated base alert dialog.",
   "registryDependencies": [
@@ -29,5 +28,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

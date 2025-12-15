@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-refresh-ccw-dot",
-  "type": "registry:ui",
   "title": "Refresh Ccw Dot Icon",
   "description": "Refresh ccw dot icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "coding",
       "version control"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

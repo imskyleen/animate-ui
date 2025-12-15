@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-cloud-download",
-  "type": "registry:ui",
   "title": "Cloud Download Icon",
   "description": "Cloud download icon component.",
   "dependencies": [
@@ -22,5 +21,6 @@
     "keywords": [
       "import"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

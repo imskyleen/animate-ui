@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "primitives-effects-zoom",
-  "type": "registry:ui",
   "title": "Zoom",
   "description": "An effect that allows you to animate elements with a zoom effect on first view or load.",
   "dependencies": [
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/effects/zoom.tsx"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-message-square-code",
-  "type": "registry:ui",
   "title": "Message Square Code Icon",
   "description": "Message square code icon component.",
   "dependencies": [
@@ -29,5 +28,6 @@
       "code review",
       "coding"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

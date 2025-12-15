@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "demo-primitives-animate-code-block",
-  "type": "registry:ui",
   "title": "Animate Code Block Demo",
   "description": "Demo showing an animated code block.",
   "registryDependencies": [
@@ -38,5 +37,6 @@
         }
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

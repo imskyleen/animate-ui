@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-log-in",
-  "type": "registry:ui",
   "title": "Log In Icon",
   "description": "Log in icon component.",
   "dependencies": [
@@ -25,5 +24,6 @@
       "enter",
       "auth"
     ]
-  }
+  },
+  "type": "registry:ui"
 }

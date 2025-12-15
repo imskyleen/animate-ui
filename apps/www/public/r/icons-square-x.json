@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "icons-square-x",
-  "type": "registry:ui",
   "title": "Square X Icon",
   "description": "Square x icon component.",
   "dependencies": [
@@ -32,5 +31,6 @@
       "multiply",
       "multiplication"
     ]
-  }
+  },
+  "type": "registry:ui"
 }
