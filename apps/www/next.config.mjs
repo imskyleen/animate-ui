@@ -15,6 +15,15 @@ const config = {
       {
         hostname: 'images.pexels.com',
       },
+      {
+        hostname: 'ph-files.imgix.net',
+      },
+      {
+        hostname: 'headlessui.com',
+      },
+      {
+        hostname: '30tools.com',
+      },
     ],
   },
   reactStrictMode: false,
