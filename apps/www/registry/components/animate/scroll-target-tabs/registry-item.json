@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-animate-scroll-target-tabs",
+  "type": "registry:ui",
+  "title": "Scroll Target Tabs",
+  "description": "A tabs component that scrolls to content sections instead of hiding/showing them. Sections remain visible and the active tab updates based on scroll position.",
+  "registryDependencies": ["@animate-ui/primitives-animate-scroll-target-tabs"],
+  "files": [
+    {
+      "path": "registry/components/animate/scroll-target-tabs/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/animate/scroll-target-tabs.tsx"
+    }
+  ]
+}
+
