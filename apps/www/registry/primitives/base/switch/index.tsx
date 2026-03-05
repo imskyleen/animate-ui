@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Switch as SwitchPrimitives } from '@base-ui-components/react/switch';
+import { Switch as SwitchPrimitives } from '@base-ui/react/switch';
 import {
   motion,
   type TargetAndTransition,

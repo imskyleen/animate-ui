@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { PreviewCard as PreviewCardPrimitive } from '@base-ui-components/react/preview-card';
+import { PreviewCard as PreviewCardPrimitive } from '@base-ui/react/preview-card';
 import {
   AnimatePresence,
   motion,

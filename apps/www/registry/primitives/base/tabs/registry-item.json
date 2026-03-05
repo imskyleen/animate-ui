@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Tabs",
   "description": "A component for toggling between related panels on the same page.",
-  "dependencies": ["motion", "@base-ui-components/react"],
+  "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
     "@animate-ui/primitives-effects-auto-height",
     "@animate-ui/primitives-effects-highlight",

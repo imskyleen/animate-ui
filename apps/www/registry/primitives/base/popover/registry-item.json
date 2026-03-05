@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Popover",
   "description": "An accessible popup anchored to a button.",
-  "dependencies": ["motion", "@base-ui-components/react"],
+  "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
     "@animate-ui/lib-get-strict-context",
     "@animate-ui/hooks-use-controlled-state"

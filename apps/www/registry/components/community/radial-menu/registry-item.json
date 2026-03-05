@@ -7,7 +7,7 @@
   "dependencies": [
     "motion",
     "lucide-react",
-    "@base-ui-components/react"
+    "@base-ui/react"
   ],
   "registryDependencies": [],
   "files": [

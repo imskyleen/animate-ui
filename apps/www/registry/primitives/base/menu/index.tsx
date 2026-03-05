@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Menu as MenuPrimitive } from '@base-ui-components/react/menu';
+import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import {

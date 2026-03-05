@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Accordion as AccordionPrimitive } from '@base-ui-components/react/accordion';
+import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
