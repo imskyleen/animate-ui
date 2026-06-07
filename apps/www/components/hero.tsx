@@ -5,6 +5,7 @@ import TSIcon from '@workspace/ui/components/icons/ts-icon';
 import TailwindIcon from '@workspace/ui/components/icons/tailwind-icon';
 import MotionIcon from '@workspace/ui/components/icons/motion-icon';
 import ShadcnIcon from '@workspace/ui/components/icons/shadcn-icon';
+import VueIcon from '@workspace/ui/components/icons/vue-icon';
 import { Button } from '@workspace/ui/components/ui/button';
 import Link from 'next/link';
 import { MotionEffect } from './effects/motion-effect';
@@ -12,7 +13,15 @@ import { PartyPopper } from '@/registry/icons/party-popper';
 import { ArrowRightIcon } from '@/registry/icons/arrow-right';
 import { AnimateIcon } from '@/registry/icons/icon';
 
-const ICONS = [ReactIcon, TSIcon, TailwindIcon, MotionIcon, ShadcnIcon];
+const ICONS = [
+  ReactIcon,
+  VueIcon,
+  TSIcon,
+  TailwindIcon,
+  MotionIcon,
+  ShadcnIcon,
+];
+
 const TITLE = 'Animate your UI with smooth style';
 
 export const Hero = () => {
