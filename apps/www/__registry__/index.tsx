@@ -16631,6 +16631,66 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/icons-layout-template',
   },
+  'icons-library-big': {
+    name: 'icons-library-big',
+    description: 'Library Big icon component.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/icons-icon'],
+    files: [
+      {
+        path: 'registry/icons/library-big/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/icons/library-big.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { motion, type Variants } from \'motion/react\';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from \'@/components/animate-ui/icons/icon\';\n\ntype LibraryBigProps = IconProps<keyof typeof animations>;\n\nconst PIVOT = \'17.6px 20.96px\';\n\nconst animations = {\n  default: {\n    standing: {},\n    spine: {},\n    leaning: {\n      initial: {\n        rotate: 0,\n        transformOrigin: PIVOT,\n        transition: { duration: 0.15 },\n      },\n      animate: {\n        rotate: [0, 20, 20, 0, 2, 0],\n        transformOrigin: PIVOT,\n        transition: {\n          duration: 1,\n          times: [0, 0.3, 0.5, 0.78, 0.88, 1],\n          ease: [\'easeOut\', \'linear\', \'easeIn\', \'easeOut\', \'easeInOut\'],\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: LibraryBigProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      <motion.rect\n        width="8"\n        height="18"\n        x="3"\n        y="3"\n        rx="1"\n        variants={variants.standing}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M7 3v18"\n        variants={variants.spine}\n        initial="initial"\n        animate={controls}\n      />\n      <motion.path\n        d="M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z"\n        variants={variants.leaning}\n        initial="initial"\n        animate={controls}\n        style={{ transformBox: \'view-box\' }}\n      />\n    </motion.svg>\n  );\n}\n\nfunction LibraryBig(props: LibraryBigProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  LibraryBig,\n  LibraryBig as LibraryBigIcon,\n  type LibraryBigProps,\n  type LibraryBigProps as LibraryBigIconProps,\n};',
+      },
+    ],
+    keywords: [
+      'books',
+      'reading',
+      'written',
+      'authors',
+      'stories',
+      'fiction',
+      'novels',
+      'information',
+      'knowledge',
+      'education',
+      'high school',
+      'university',
+      'college',
+      'academy',
+      'learning',
+      'study',
+      'research',
+      'collection',
+      'vinyl',
+      'records',
+      'albums',
+      'music',
+      'package',
+    ],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/icons/library-big/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'icons-library-big';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/icons-library-big',
+  },
   'icons-lightbulb': {
     name: 'icons-lightbulb',
     description: 'Lightbulb icon component.',
