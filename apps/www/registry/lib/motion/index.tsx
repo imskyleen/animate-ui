@@ -57,6 +57,8 @@ const transition = {
   press: { duration: duration.press, ease: ease.out },
   tooltip: { duration: duration.tooltip, ease: ease.out },
   dropdown: { duration: duration.dropdown, ease: ease.out },
+  /** Accordion and collapsible height (one of the few layout animations). */
+  disclosure: { duration: duration.dropdown, ease: ease.out },
   modal: { duration: duration.modal, ease: ease.out },
   modalExit: { duration: duration.modalExit, ease: ease.out },
   drawer: { duration: 0.5, ease: ease.drawer },

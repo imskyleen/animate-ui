@@ -16,7 +16,7 @@ import { Label } from '@workspace/ui/components/ui/label';
 import { Input } from '@workspace/ui/components/ui/input';
 
 interface BaseDialogDemoProps {
-  from: DialogPopupProps['from'];
+  from: DialogPopupProps['from'] | 'none';
   showCloseButton: boolean;
 }
 
@@ -32,7 +32,7 @@ export const BaseDialogDemo = ({
         />
 
         <DialogPopup
-          from={from}
+          from={from === 'none' ? undefined : from}
           showCloseButton={showCloseButton}
           className="sm:max-w-[425px]"
         >

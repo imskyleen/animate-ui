@@ -16,8 +16,9 @@
     "demoProps": {
       "DialogContent": {
         "from": {
-          "value": "top",
+          "value": "none",
           "options": {
+            "none": "none",
             "top": "top",
             "bottom": "bottom",
             "left": "left",

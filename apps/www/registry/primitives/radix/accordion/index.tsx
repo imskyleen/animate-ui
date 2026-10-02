@@ -6,10 +6,15 @@ import { motion, AnimatePresence, type HTMLMotionProps } from 'motion/react';
 
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
+import {
+  ReducedMotionConfig,
+  transition as motionTransition,
+} from '@/registry/lib/motion';
 
 type AccordionContextType = {
   value: string | string[] | undefined;
   setValue: (value: string | string[] | undefined) => void;
+  multiple: boolean;
 };
 
 type AccordionItemContextType = {
@@ -36,12 +41,16 @@ function Accordion(props: AccordionProps) {
   });
 
   return (
-    <AccordionProvider value={{ value, setValue }}>
-      <AccordionPrimitive.Root
-        data-slot="accordion"
-        {...props}
-        onValueChange={setValue}
-      />
+    <AccordionProvider
+      value={{ value, setValue, multiple: props.type === 'multiple' }}
+    >
+      <ReducedMotionConfig>
+        <AccordionPrimitive.Root
+          data-slot="accordion"
+          {...props}
+          onValueChange={setValue}
+        />
+      </ReducedMotionConfig>
     </AccordionProvider>
   );
 }
@@ -49,14 +58,23 @@ function Accordion(props: AccordionProps) {
 type AccordionItemProps = React.ComponentProps<typeof AccordionPrimitive.Item>;
 
 function AccordionItem(props: AccordionItemProps) {
-  const { value } = useAccordion();
-  const [isOpen, setIsOpen] = React.useState(
-    value?.includes(props?.value) ?? false,
-  );
+  const { value, setValue, multiple } = useAccordion();
+  const isOpen = Array.isArray(value)
+    ? value.includes(props.value)
+    : value === props.value;
 
-  React.useEffect(() => {
-    setIsOpen(value?.includes(props?.value) ?? false);
-  }, [value, props?.value]);
+  const setIsOpen = (open: boolean) => {
+    if (multiple) {
+      const current = Array.isArray(value) ? value : [];
+      setValue(
+        open
+          ? [...current, props.value]
+          : current.filter((v) => v !== props.value),
+      );
+    } else {
+      setValue(open ? props.value : '');
+    }
+  };
 
   return (
     <AccordionItemProvider value={{ isOpen, setIsOpen, value: props.value }}>
@@ -91,34 +109,28 @@ type AccordionContentProps = Omit<
     keepRendered?: boolean;
   };
 
+// Height is one of the few layout animations allowed: keep it short.
+const collapsed = { height: 0, opacity: 0 };
+const expanded = { height: 'auto', opacity: 1 };
+
 function AccordionContent({
   keepRendered = false,
-  transition = { duration: 0.35, ease: 'easeInOut' },
+  transition = motionTransition.disclosure,
+  style,
   ...props
 }: AccordionContentProps) {
   const { isOpen } = useAccordionItem();
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {keepRendered ? (
         <AccordionPrimitive.Content asChild forceMount>
           <motion.div
-            key="accordion-content"
             data-slot="accordion-content"
-            initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
-            animate={
-              isOpen
-                ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }
-                : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }
-            }
+            initial={false}
+            animate={isOpen ? expanded : collapsed}
             transition={transition}
-            style={{
-              maskImage:
-                'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-              WebkitMaskImage:
-                'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-              overflow: 'hidden',
-            }}
+            style={{ overflow: 'hidden', ...style }}
             {...props}
           />
         </AccordionPrimitive.Content>
@@ -126,24 +138,12 @@ function AccordionContent({
         isOpen && (
           <AccordionPrimitive.Content asChild forceMount>
             <motion.div
-              key="accordion-content"
               data-slot="accordion-content"
-              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
-              animate={{
-                height: 'auto',
-                opacity: 1,
-                '--mask-stop': '100%',
-                y: 0,
-              }}
-              exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
+              initial={collapsed}
+              animate={expanded}
+              exit={collapsed}
               transition={transition}
-              style={{
-                maskImage:
-                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-                WebkitMaskImage:
-                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-                overflow: 'hidden',
-              }}
+              style={{ overflow: 'hidden', ...style }}
               {...props}
             />
           </AccordionPrimitive.Content>

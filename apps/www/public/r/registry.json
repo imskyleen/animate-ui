@@ -1882,8 +1882,9 @@
         "demoProps": {
           "DialogPopup": {
             "from": {
-              "value": "top",
+              "value": "none",
               "options": {
+                "none": "none",
                 "top": "top",
                 "bottom": "bottom",
                 "left": "left",
@@ -3092,8 +3093,9 @@
         "demoProps": {
           "DialogPanel": {
             "from": {
-              "value": "top",
+              "value": "none",
               "options": {
+                "none": "none",
                 "top": "top",
                 "bottom": "bottom",
                 "left": "left",
@@ -3314,8 +3316,9 @@
         "demoProps": {
           "DialogContent": {
             "from": {
-              "value": "top",
+              "value": "none",
               "options": {
+                "none": "none",
                 "top": "top",
                 "bottom": "bottom",
                 "left": "left",
@@ -14600,8 +14603,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -14622,7 +14626,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -14685,7 +14690,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15316,6 +15322,9 @@
         "motion",
         "@headlessui/react"
       ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
+      ],
       "files": [
         {
           "path": "registry/primitives/headless/dialog/index.tsx",
@@ -15417,7 +15426,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15438,7 +15448,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15501,7 +15512,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
