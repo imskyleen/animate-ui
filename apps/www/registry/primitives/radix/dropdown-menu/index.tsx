@@ -13,12 +13,22 @@ import {
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 import { useDataState } from '@/registry/hooks/use-data-state';
+import {
+  ReducedMotionConfig,
+  scale,
+  spring,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type DropdownMenuContextType = {
   isOpen: boolean;
   setIsOpen: (o: boolean) => void;
   highlightedValue: string | null;
   setHighlightedValue: (value: string | null) => void;
+  /** Last interaction was the keyboard: the highlight moves instantly. */
+  isKeyboard: boolean;
+  setIsKeyboard: (isKeyboard: boolean) => void;
 };
 
 type DropdownMenuSubContextType = {
@@ -45,10 +55,18 @@ function DropdownMenu(props: DropdownMenuProps) {
   const [highlightedValue, setHighlightedValue] = React.useState<string | null>(
     null,
   );
+  const [isKeyboard, setIsKeyboard] = React.useState(false);
 
   return (
     <DropdownMenuProvider
-      value={{ isOpen, setIsOpen, highlightedValue, setHighlightedValue }}
+      value={{
+        isOpen,
+        setIsOpen,
+        highlightedValue,
+        setHighlightedValue,
+        isKeyboard,
+        setIsKeyboard,
+      }}
     >
       <DropdownMenuPrimitive.Root
         data-slot="dropdown-menu"
@@ -63,11 +81,26 @@ type DropdownMenuTriggerProps = React.ComponentProps<
   typeof DropdownMenuPrimitive.Trigger
 >;
 
-function DropdownMenuTrigger(props: DropdownMenuTriggerProps) {
+function DropdownMenuTrigger({
+  onKeyDownCapture,
+  onPointerDownCapture,
+  ...props
+}: DropdownMenuTriggerProps) {
+  const { setIsKeyboard } = useDropdownMenu();
+
+  // Opening from the keyboard highlights the first item: it must not animate.
   return (
     <DropdownMenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
       {...props}
+      onKeyDownCapture={(event) => {
+        setIsKeyboard(true);
+        onKeyDownCapture?.(event);
+      }}
+      onPointerDownCapture={(event) => {
+        setIsKeyboard(false);
+        onPointerDownCapture?.(event);
+      }}
     />
   );
 }
@@ -191,11 +224,12 @@ function DropdownMenuSubContent({
   arrowPadding,
   sticky,
   hideWhenDetached,
-  transition = { duration: 0.2 },
+  transition = motionTransition.exit,
   style,
   container,
   ...props
 }: DropdownMenuSubContentProps) {
+  // Submenus open tens of times a day: a short fade, no scale.
   const { isOpen } = useDropdownMenuSub();
 
   return (
@@ -220,13 +254,15 @@ function DropdownMenuSubContent({
             hideWhenDetached={hideWhenDetached}
           >
             <motion.div
-              key="dropdown-menu-sub-content"
               data-slot="dropdown-menu-sub-content"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={transition}
-              style={{ willChange: 'opacity, transform', ...style }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition }}
+              exit={{ opacity: 0, transition: motionTransition.exit }}
+              style={{
+                transformOrigin:
+                  'var(--radix-dropdown-menu-content-transform-origin)',
+                ...style,
+              }}
               {...props}
             />
           </DropdownMenuPrimitive.SubContent>
@@ -244,17 +280,17 @@ type DropdownMenuHighlightProps = Omit<
 };
 
 function DropdownMenuHighlight({
-  transition = { type: 'spring', stiffness: 350, damping: 35 },
+  transition = spring.snappy,
   ...props
 }: DropdownMenuHighlightProps) {
-  const { highlightedValue } = useDropdownMenu();
+  const { highlightedValue, isKeyboard } = useDropdownMenu();
 
   return (
     <Highlight
       data-slot="dropdown-menu-highlight"
       click={false}
       controlledItems
-      transition={transition}
+      transition={isKeyboard ? motionTransition.instant : transition}
       value={highlightedValue}
       {...props}
     />
@@ -272,6 +308,26 @@ type DropdownMenuContentProps = Omit<
   HTMLMotionProps<'div'>;
 
 function DropdownMenuContent({
+  container,
+  ...props
+}: DropdownMenuContentProps) {
+  const { isOpen } = useDropdownMenu();
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <DropdownMenuPortal forceMount container={container}>
+          <ReducedMotionConfig>
+            <DropdownMenuContentMotion {...props} />
+          </ReducedMotionConfig>
+        </DropdownMenuPortal>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Rendered inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
+function DropdownMenuContentMotion({
   loop,
   onCloseAutoFocus,
   onEscapeKeyDown,
@@ -288,50 +344,69 @@ function DropdownMenuContent({
   arrowPadding,
   sticky,
   hideWhenDetached,
-  transition = { duration: 0.2 },
+  transition = motionTransition.dropdown,
   style,
-  container,
+  onKeyDownCapture,
+  onPointerDownCapture,
+  onPointerMoveCapture,
   ...props
-}: DropdownMenuContentProps) {
-  const { isOpen } = useDropdownMenu();
+}: Omit<DropdownMenuContentProps, 'container'>) {
+  const { setIsKeyboard } = useDropdownMenu();
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
 
+  // Capture phase, so the last input is known before an item highlights.
+  // Hovering moves the highlight without a press, hence pointermove too.
+  // Submenus are React children of the content, so this covers them as well.
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <DropdownMenuPortal forceMount container={container}>
-          <DropdownMenuPrimitive.Content
-            asChild
-            loop={loop}
-            onCloseAutoFocus={onCloseAutoFocus}
-            onEscapeKeyDown={onEscapeKeyDown}
-            onPointerDownOutside={onPointerDownOutside}
-            onFocusOutside={onFocusOutside}
-            onInteractOutside={onInteractOutside}
-            side={side}
-            sideOffset={sideOffset}
-            align={align}
-            alignOffset={alignOffset}
-            avoidCollisions={avoidCollisions}
-            collisionBoundary={collisionBoundary}
-            collisionPadding={collisionPadding}
-            arrowPadding={arrowPadding}
-            sticky={sticky}
-            hideWhenDetached={hideWhenDetached}
-          >
-            <motion.div
-              key="dropdown-menu-content"
-              data-slot="dropdown-menu-content"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={transition}
-              style={{ willChange: 'opacity, transform', ...style }}
-              {...props}
-            />
-          </DropdownMenuPrimitive.Content>
-        </DropdownMenuPortal>
-      )}
-    </AnimatePresence>
+    <DropdownMenuPrimitive.Content
+      asChild
+      forceMount
+      loop={loop}
+      onCloseAutoFocus={onCloseAutoFocus}
+      onEscapeKeyDown={onEscapeKeyDown}
+      onPointerDownOutside={onPointerDownOutside}
+      onFocusOutside={onFocusOutside}
+      onInteractOutside={onInteractOutside}
+      side={side}
+      sideOffset={sideOffset}
+      align={align}
+      alignOffset={alignOffset}
+      avoidCollisions={avoidCollisions}
+      collisionBoundary={collisionBoundary}
+      collisionPadding={collisionPadding}
+      arrowPadding={arrowPadding}
+      sticky={sticky}
+      hideWhenDetached={hideWhenDetached}
+    >
+      <motion.div
+        data-slot="dropdown-menu-content"
+        initial={hidden}
+        animate={{ opacity: 1, transform: 'scale(1)', transition }}
+        exit={{ ...hidden, transition: motionTransition.exit }}
+        style={{
+          transformOrigin:
+            'var(--radix-dropdown-menu-content-transform-origin)',
+          ...style,
+        }}
+        {...props}
+        onKeyDownCapture={(event) => {
+          setIsKeyboard(true);
+          onKeyDownCapture?.(event);
+        }}
+        onPointerDownCapture={(event) => {
+          setIsKeyboard(false);
+          onPointerDownCapture?.(event);
+        }}
+        onPointerMoveCapture={(event) => {
+          setIsKeyboard(false);
+          onPointerMoveCapture?.(event);
+        }}
+      />
+    </DropdownMenuPrimitive.Content>
   );
 }
 
@@ -508,13 +583,16 @@ type DropdownMenuItemIndicatorProps = Omit<
 > &
   HTMLMotionProps<'div'>;
 
-function DropdownMenuItemIndicator(props: DropdownMenuItemIndicatorProps) {
+function DropdownMenuItemIndicator({
+  transition = motionTransition.fade,
+  ...props
+}: DropdownMenuItemIndicatorProps) {
   return (
     <DropdownMenuPrimitive.ItemIndicator
       data-slot="dropdown-menu-item-indicator"
       asChild
     >
-      <motion.div {...props} />
+      <motion.div transition={transition} {...props} />
     </DropdownMenuPrimitive.ItemIndicator>
   );
 }

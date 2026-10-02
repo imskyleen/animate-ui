@@ -1,0 +1,221 @@
+---
+title: Context Menu
+description: A menu that appears at the pointer on right click or long press.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-base-context-menu" />
+
+## Installation
+
+<ComponentInstallation name="components-base-context-menu" />
+
+## Usage
+
+```tsx
+<ContextMenu>
+  <ContextMenuTrigger>Right click here</ContextMenuTrigger>
+
+  <ContextMenuPanel>
+    <ContextMenuItem>
+      Back
+      <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+    </ContextMenuItem>
+    <ContextMenuItem disabled>Forward</ContextMenuItem>
+
+    <ContextMenuSubmenu>
+      <ContextMenuSubmenuTrigger>More Tools</ContextMenuSubmenuTrigger>
+      <ContextMenuSubmenuPanel>
+        <ContextMenuItem>Save Page...</ContextMenuItem>
+        <ContextMenuItem>Developer Tools</ContextMenuItem>
+      </ContextMenuSubmenuPanel>
+    </ContextMenuSubmenu>
+
+    <ContextMenuSeparator />
+
+    <ContextMenuCheckboxItem checked>Show Bookmarks</ContextMenuCheckboxItem>
+
+    <ContextMenuSeparator />
+
+    <ContextMenuGroup>
+      <ContextMenuGroupLabel>People</ContextMenuGroupLabel>
+      <ContextMenuRadioGroup value="pedro">
+        <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+        <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+      </ContextMenuRadioGroup>
+    </ContextMenuGroup>
+  </ContextMenuPanel>
+</ContextMenu>
+```
+
+## Motion
+
+- The menu opens at the pointer: it fades in from `scale(0.96)` with `transition.dropdown` (0.2s ease-out) and closes with `transition.exit` (0.15s), growing out of the pointer through the library's transform origin.
+- Submenus only fade, with `transition.exit` both ways.
+- The item highlight follows the pointer with `spring.snappy`; arrow-key navigation moves it instantly.
+- Under reduced motion, the menu fades without scaling.
+
+## API Reference
+
+### ContextMenu
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#root"
+  text="Base UI API Reference - ContextMenu.Root"
+/>
+
+### ContextMenuTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#trigger"
+  text="Base UI API Reference - ContextMenu.Trigger"
+/>
+
+### ContextMenuPanel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#popup"
+  text="Base UI API Reference - ContextMenu.Positioner and ContextMenu.Popup"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'The entrance transition. The exit always uses the shared exit transition (0.15s ease-out).',
+      type: 'Transition',
+      required: false,
+      default: 'transition.dropdown',
+    },
+    '...props': {
+      description:
+        'The props of the context menu panel (positioner and popup).',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ContextMenuItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#item"
+  text="Base UI API Reference - ContextMenu.Item"
+/>
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'The variant of the context menu item.',
+      type: "'default' | 'destructive'",
+      required: false,
+      default: "'default'",
+    },
+    inset: {
+      description: 'Whether the context menu item is inset.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+  }}
+/>
+
+### ContextMenuCheckboxItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#checkbox-item"
+  text="Base UI API Reference - ContextMenu.CheckboxItem"
+/>
+
+### ContextMenuRadioGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#radio-group"
+  text="Base UI API Reference - ContextMenu.RadioGroup"
+/>
+
+### ContextMenuRadioItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#radio-item"
+  text="Base UI API Reference - ContextMenu.RadioItem"
+/>
+
+### ContextMenuGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#group"
+  text="Base UI API Reference - ContextMenu.Group"
+/>
+
+### ContextMenuGroupLabel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#group-label"
+  text="Base UI API Reference - ContextMenu.GroupLabel"
+/>
+
+### ContextMenuSeparator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#separator"
+  text="Base UI API Reference - ContextMenu.Separator"
+/>
+
+### ContextMenuSubmenu
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#submenu-root"
+  text="Base UI API Reference - ContextMenu.SubmenuRoot"
+/>
+
+### ContextMenuSubmenuTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#submenu-trigger"
+  text="Base UI API Reference - ContextMenu.SubmenuTrigger"
+/>
+
+### ContextMenuSubmenuPanel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/context-menu#popup"
+  text="Base UI API Reference - ContextMenu.Positioner and ContextMenu.Popup"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'The entrance transition of the submenu fade. The exit always uses the shared exit transition (0.15s ease-out).',
+      type: 'Transition',
+      required: false,
+      default: 'transition.exit',
+    },
+    '...props': {
+      description:
+        'The props of the context menu submenu panel (positioner and popup).',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ContextMenuShortcut
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the context menu shortcut.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Context Menu](https://base-ui.com/react/components/context-menu)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/context-menu) for style inspiration.

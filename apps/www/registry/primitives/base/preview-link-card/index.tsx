@@ -145,7 +145,7 @@ type PreviewLinkCardPopupProps = PreviewCardPopupPropsPrimitive &
   React.ComponentProps<'a'>;
 
 function PreviewLinkCardPopup({
-  transition = { type: 'spring', stiffness: 300, damping: 25 },
+  transition,
   href: hrefProp,
   style,
   children,

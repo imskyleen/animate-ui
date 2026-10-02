@@ -65,7 +65,7 @@ Use the `duration`/`bounce` form only. `bounce` is ignored when `stiffness` or `
 
 `transition.press`, `transition.tooltip`, `transition.dropdown`, `transition.exit`, `transition.fade` (content swaps), `transition.disclosure`, `transition.modal`, `transition.modalExit`, `transition.drawer`, `transition.drawerExit`: each pairs a duration with its curve. `transition.instant` (`{ duration: 0 }`) is the token for a deliberately instant change.
 
-Import the `transition` export as `motionTransition`, since components also take a `transition` prop.
+Import the `transition` export as `motionTransition`, since components also take a `transition` prop. That prop customizes the entrance; overlays keep `transition.exit` for the exit so closing stays fast (modals and sheets let it override both, with `transition ?? motionTransition.modalExit`).
 
 ## Reduced motion
 

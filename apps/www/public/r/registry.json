@@ -310,6 +310,25 @@
       ]
     },
     {
+      "name": "components-base-context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "A menu that appears at the pointer on right click or long press.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-context-menu"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/context-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/context-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-dialog",
       "type": "registry:ui",
       "title": "Dialog",
@@ -443,6 +462,25 @@
           "path": "registry/components/base/radio/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/radio.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-base-select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "A common form component for choosing a predefined value in a dropdown menu.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-select"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/select.tsx"
         }
       ]
     },
@@ -1058,6 +1096,25 @@
       ]
     },
     {
+      "name": "components-radix-context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "Displays a menu located at the pointer, triggered by a right click or a long press.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-context-menu"
+      ],
+      "files": [
+        {
+          "path": "registry/components/radix/context-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/radix/context-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-radix-dialog",
       "type": "registry:ui",
       "title": "Dialog",
@@ -1194,6 +1251,25 @@
           "path": "registry/components/radix/radio-group/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/radix/radio-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-radix-select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Displays a list of options for the user to pick from, triggered by a button.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-select"
+      ],
+      "files": [
+        {
+          "path": "registry/components/radix/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/radix/select.tsx"
         }
       ]
     },
@@ -1864,6 +1940,22 @@
       }
     },
     {
+      "name": "demo-components-base-context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu Demo",
+      "description": "Demo showing a context menu.",
+      "registryDependencies": [
+        "@animate-ui/components-base-context-menu"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/context-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/context-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "demo-components-base-dialog",
       "type": "registry:ui",
       "title": "Dialog Demo",
@@ -2250,6 +2342,54 @@
           "target": "components/animate-ui/demo/components/base/radio.tsx"
         }
       ]
+    },
+    {
+      "name": "demo-components-base-select",
+      "type": "registry:ui",
+      "title": "Select Demo",
+      "description": "Demo showing a select.",
+      "registryDependencies": [
+        "@animate-ui/components-base-select"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/select.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "SelectPanel": {
+            "alignItemWithTrigger": {
+              "value": true
+            },
+            "side": {
+              "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "center",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            },
+            "alignOffset": {
+              "value": 0
+            }
+          }
+        }
+      }
     },
     {
       "name": "demo-components-base-switch",
@@ -3298,6 +3438,22 @@
       }
     },
     {
+      "name": "demo-components-radix-context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu Demo",
+      "description": "Demo showing a context menu.",
+      "registryDependencies": [
+        "@animate-ui/components-radix-context-menu"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/radix/context-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/radix/context-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "demo-components-radix-dialog",
       "type": "registry:ui",
       "title": "Dialog Demo",
@@ -3674,6 +3830,58 @@
           "target": "components/animate-ui/demo/components/radix/radio-group.tsx"
         }
       ]
+    },
+    {
+      "name": "demo-components-radix-select",
+      "type": "registry:ui",
+      "title": "Select Demo",
+      "description": "Demo showing a select.",
+      "registryDependencies": [
+        "@animate-ui/components-radix-select"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/radix/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/radix/select.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "SelectContent": {
+            "position": {
+              "value": "popper",
+              "options": {
+                "popper": "popper",
+                "item-aligned": "item-aligned"
+              }
+            },
+            "side": {
+              "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 0
+            },
+            "align": {
+              "value": "start",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            },
+            "alignOffset": {
+              "value": 0
+            }
+          }
+        }
+      }
     },
     {
       "name": "demo-components-radix-sheet",
@@ -4587,6 +4795,51 @@
           "target": "components/animate-ui/demo/primitives/base/radio.tsx"
         }
       ]
+    },
+    {
+      "name": "demo-primitives-base-select",
+      "type": "registry:ui",
+      "title": "Base Select Demo",
+      "description": "Demo showing an animated base select.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-select"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/select.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "SelectPositioner": {
+            "alignItemWithTrigger": {
+              "value": true
+            },
+            "side": {
+              "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "start",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            }
+          }
+        }
+      }
     },
     {
       "name": "demo-primitives-base-switch",
@@ -6023,6 +6276,55 @@
           "target": "components/animate-ui/demo/primitives/radix/radio-group.tsx"
         }
       ]
+    },
+    {
+      "name": "demo-primitives-radix-select",
+      "type": "registry:ui",
+      "title": "Radix Select Demo",
+      "description": "Demo showing an animated radix select.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-select"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/radix/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/radix/select.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "SelectContent": {
+            "position": {
+              "value": "popper",
+              "options": {
+                "popper": "popper",
+                "item-aligned": "item-aligned"
+              }
+            },
+            "side": {
+              "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "start",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            }
+          }
+        }
+      }
     },
     {
       "name": "demo-primitives-radix-sheet",
@@ -14680,6 +14982,30 @@
       ]
     },
     {
+      "name": "primitives-base-context-menu",
+      "type": "registry:ui",
+      "title": "Base Context Menu",
+      "description": "A menu that appears at the pointer on right click or long press.",
+      "dependencies": [
+        "motion",
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/hooks-use-data-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/context-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/context-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-base-dialog",
       "type": "registry:ui",
       "title": "Base Dialog",
@@ -14733,10 +15059,11 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/lib-get-strict-context",
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/hooks-use-data-state"
+        "@animate-ui/hooks-use-data-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -14756,8 +15083,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -14777,8 +15105,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -14848,6 +15177,28 @@
           "path": "registry/primitives/base/radio/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/radio.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-base-select",
+      "type": "registry:ui",
+      "title": "Base Select",
+      "description": "A common form component for choosing a predefined value in a dropdown menu.",
+      "dependencies": [
+        "motion",
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/select.tsx"
         }
       ]
     },
@@ -15365,7 +15716,8 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15506,6 +15858,30 @@
       ]
     },
     {
+      "name": "primitives-radix-context-menu",
+      "type": "registry:ui",
+      "title": "Radix Context Menu",
+      "description": "Displays a menu located at the pointer, triggered by a right click or a long press.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/hooks-use-data-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/radix/context-menu/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/radix/context-menu.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-radix-dialog",
       "type": "registry:ui",
       "title": "Radix Dialog",
@@ -15537,10 +15913,11 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
         "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/hooks-use-data-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -15583,7 +15960,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15604,7 +15982,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15672,6 +16051,28 @@
           "path": "registry/primitives/radix/radio-group/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/radio-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-radix-select",
+      "type": "registry:ui",
+      "title": "Radix Select",
+      "description": "Displays a list of options for the user to pick from, triggered by a button.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/radix/select/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/radix/select.tsx"
         }
       ]
     },

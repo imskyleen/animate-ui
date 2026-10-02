@@ -38,6 +38,7 @@ import {
   type MenuSubmenuProps as MenuSubmenuPrimitiveProps,
   type MenuSubmenuTriggerProps as MenuSubmenuTriggerPrimitiveProps,
 } from '@/registry/primitives/base/menu';
+import { transition as motionTransition } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
 
@@ -67,7 +68,7 @@ function MenuPanel({
   id,
   children,
   sideOffset = 4,
-  transition = { duration: 0.2 },
+  transition,
   ...props
 }: MenuPanelProps) {
   return (
@@ -82,7 +83,7 @@ function MenuPanel({
           transition={transition}
           id={id}
           className={cn(
-            'bg-popover text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md outline-none',
+            'bg-popover text-popover-foreground max-h-(--available-height) min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md outline-none',
             className,
           )}
         >
@@ -175,8 +176,9 @@ function MenuCheckboxItem({
       >
         <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
           <MenuCheckboxItemIndicatorPrimitive
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={motionTransition.fade}
           >
             <CheckIcon className="size-4" />
           </MenuCheckboxItemIndicatorPrimitive>
@@ -278,7 +280,7 @@ function MenuSubmenuTrigger({
         data-inset={inset}
         className={cn(
           'focus:text-accent-foreground data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[inset]:pl-8',
-          'aria-[expanded=true]:[&_[data-slot=chevron]]:rotate-90 [&_[data-slot=chevron]]:transition-transform [&_[data-slot=chevron]]:duration-300 [&_[data-slot=chevron]]:ease-in-out',
+          'aria-[expanded=true]:[&_[data-slot=chevron]]:rotate-90 [&_[data-slot=chevron]]:transition-transform [&_[data-slot=chevron]]:duration-150 [&_[data-slot=chevron]]:ease-out-strong',
           className,
         )}
         {...props}
@@ -299,7 +301,7 @@ function MenuSubmenuPanel({
   id,
   children,
   sideOffset = 4,
-  transition = { duration: 0.2 },
+  transition,
   ...props
 }: MenuSubmenuPanelProps) {
   return (
@@ -314,7 +316,7 @@ function MenuSubmenuPanel({
           transition={transition}
           id={id}
           className={cn(
-            'bg-popover text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
+            'bg-popover text-popover-foreground max-h-(--available-height) min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
             className,
           )}
         >

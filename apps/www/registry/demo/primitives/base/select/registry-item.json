@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-select",
+  "type": "registry:ui",
+  "title": "Base Select Demo",
+  "description": "Demo showing an animated base select.",
+  "registryDependencies": ["@animate-ui/primitives-base-select"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/select/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/select.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "SelectPositioner": {
+        "alignItemWithTrigger": {
+          "value": true
+        },
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        }
+      }
+    }
+  }
+}

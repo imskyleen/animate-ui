@@ -1,0 +1,190 @@
+---
+title: Select
+description: Displays a list of options for the user to pick from, triggered by a button.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-02
+---
+
+<ComponentPreview name="demo-primitives-radix-select" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-select" />
+
+## Usage
+
+```tsx
+<Select>
+  <SelectTrigger aria-label="Fruit">
+    <SelectValue placeholder="Select a fruit" />
+    <SelectIcon />
+  </SelectTrigger>
+  <SelectPortal>
+    <SelectContent position="popper">
+      <SelectScrollUpButton />
+      <SelectViewport>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">
+            <SelectItemText>Apple</SelectItemText>
+            <SelectItemIndicator />
+          </SelectItem>
+        </SelectGroup>
+        <SelectSeparator />
+      </SelectViewport>
+      <SelectScrollDownButton />
+      <SelectArrow />
+    </SelectContent>
+  </SelectPortal>
+</Select>
+```
+
+## Motion
+
+`SelectContent` fades in from a 0.96 scale with `transition.dropdown` and exits with `transition.exit`, growing from `--radix-select-content-transform-origin`. With `position="item-aligned"` (Radix's default) it only fades, since Radix measures the content on mount to align the selected item with the trigger. Reopening while it closes retargets the animation; under reduced motion it fades without scaling. Items have no animated highlight: keyboard navigation stays instant.
+
+## API Reference
+
+### Select
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#root"
+  text="Radix UI API Reference - Select.Root"
+/>
+
+### SelectTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#trigger"
+  text="Radix UI API Reference - Select.Trigger"
+/>
+
+### SelectValue
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#value"
+  text="Radix UI API Reference - Select.Value"
+/>
+
+### SelectIcon
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#icon"
+  text="Radix UI API Reference - Select.Icon"
+/>
+
+### SelectPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#portal"
+  text="Radix UI API Reference - Select.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `SelectPortal` component:
+  `SelectContent` manages its own presence for the animation.
+</Callout>
+
+### SelectContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#content"
+  text="Radix UI API Reference - Select.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The entrance transition of the select content.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.dropdown',
+    },
+    '...props': {
+      description: 'The props of the select content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `forceMount` and `asChild` properties are not supported in the
+  `SelectContent` component, as it is used for animation.
+</Callout>
+
+### SelectViewport
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#viewport"
+  text="Radix UI API Reference - Select.Viewport"
+/>
+
+### SelectGroup
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#group"
+  text="Radix UI API Reference - Select.Group"
+/>
+
+### SelectLabel
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#label"
+  text="Radix UI API Reference - Select.Label"
+/>
+
+### SelectItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#item"
+  text="Radix UI API Reference - Select.Item"
+/>
+
+### SelectItemText
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#itemtext"
+  text="Radix UI API Reference - Select.ItemText"
+/>
+
+### SelectItemIndicator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#itemindicator"
+  text="Radix UI API Reference - Select.ItemIndicator"
+/>
+
+### SelectSeparator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#separator"
+  text="Radix UI API Reference - Select.Separator"
+/>
+
+### SelectScrollUpButton
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#scrollupbutton"
+  text="Radix UI API Reference - Select.ScrollUpButton"
+/>
+
+### SelectScrollDownButton
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#scrolldownbutton"
+  text="Radix UI API Reference - Select.ScrollDownButton"
+/>
+
+### SelectArrow
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/select#arrow"
+  text="Radix UI API Reference - Select.Arrow"
+/>
+
+## Credits
+
+- [Radix UI Select](https://www.radix-ui.com/primitives/docs/components/select)

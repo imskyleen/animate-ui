@@ -92,19 +92,83 @@ type SelectContentProps = Omit<
   transition?: Transition;
 };
 
-function SelectContent(props: SelectContentProps) {
+function getContentClassName(
+  position: SelectContentProps['position'],
+  className: string | undefined,
+) {
+  return cn(
+    'bg-popover text-popover-foreground relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border shadow-md',
+    position === 'popper' &&
+      'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
+    className,
+  );
+}
+
+function SelectContentBody({
+  position,
+  children,
+}: Pick<SelectContentProps, 'position' | 'children'>) {
+  return (
+    <>
+      <SelectScrollUpButton />
+      <SelectPrimitive.Viewport
+        className={cn(
+          'p-1',
+          position === 'popper' &&
+            'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1',
+        )}
+      >
+        {children}
+      </SelectPrimitive.Viewport>
+      <SelectScrollDownButton />
+    </>
+  );
+}
+
+function SelectContent({
+  position = 'popper',
+  transition,
+  ...props
+}: SelectContentProps) {
   const { isOpen } = useSelect();
+  // While closed, Radix renders the items off-screen (trigger label,
+  // typeahead, native <select>). Bring that fallback back once the exit
+  // animation has finished.
+  const [hasExited, setHasExited] = React.useState(!isOpen);
+  if (isOpen && hasExited) setHasExited(false);
+
+  const { className, children, ...rest } = props;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <SelectPrimitive.Portal forceMount>
-          <ReducedMotionConfig>
-            <SelectContentMotion {...props} />
-          </ReducedMotionConfig>
+    <>
+      <AnimatePresence onExitComplete={() => setHasExited(true)}>
+        {isOpen && (
+          <SelectPrimitive.Portal forceMount>
+            <ReducedMotionConfig>
+              <SelectContentMotion
+                position={position}
+                transition={transition}
+                {...props}
+              />
+            </ReducedMotionConfig>
+          </SelectPrimitive.Portal>
+        )}
+      </AnimatePresence>
+      {!isOpen && hasExited && (
+        <SelectPrimitive.Portal>
+          <SelectPrimitive.Content
+            data-slot="select-content"
+            className={getContentClassName(position, className)}
+            position={position}
+            {...rest}
+          >
+            <SelectContentBody position={position}>
+              {children}
+            </SelectContentBody>
+          </SelectPrimitive.Content>
         </SelectPrimitive.Portal>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 
@@ -112,17 +176,16 @@ function SelectContent(props: SelectContentProps) {
 function SelectContentMotion({
   className,
   children,
-  position = 'popper',
+  position,
   transition = motionTransition.dropdown,
   ...props
 }: SelectContentProps) {
   const reduce = useShouldReduceMotion();
-  const isPopper = position === 'popper';
-  // Item-aligned mode measures the content with getBoundingClientRect on
-  // mount, so a starting scale would skew its alignment: fade only there.
+  // item-aligned: the list is measured on mount and has no origin, so fade only.
+  const fadeOnly = reduce || position === 'item-aligned';
   const hidden = {
     opacity: 0,
-    transform: reduce || !isPopper ? 'scale(1)' : `scale(${scale.enter})`,
+    transform: fadeOnly ? 'scale(1)' : `scale(${scale.enter})`,
   };
 
   return (
@@ -130,12 +193,7 @@ function SelectContentMotion({
       asChild
       forceMount
       data-slot="select-content"
-      className={cn(
-        'bg-popover text-popover-foreground relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border shadow-md',
-        isPopper &&
-          'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
-        className,
-      )}
+      className={getContentClassName(position, className)}
       position={position}
       {...props}
     >
@@ -144,24 +202,14 @@ function SelectContentMotion({
         animate={{ opacity: 1, transform: 'scale(1)', transition }}
         exit={{ ...hidden, transition: motionTransition.exit }}
         style={
-          isPopper
+          position === 'popper'
             ? {
                 transformOrigin: 'var(--radix-select-content-transform-origin)',
               }
             : undefined
         }
       >
-        <SelectScrollUpButton />
-        <SelectPrimitive.Viewport
-          className={cn(
-            'p-1',
-            isPopper &&
-              'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1',
-          )}
-        >
-          {children}
-        </SelectPrimitive.Viewport>
-        <SelectScrollDownButton />
+        <SelectContentBody position={position}>{children}</SelectContentBody>
       </motion.div>
     </SelectPrimitive.Content>
   );

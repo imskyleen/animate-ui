@@ -5,6 +5,7 @@ import { HoverCard as HoverCardPrimitive } from 'radix-ui';
 import {
   AnimatePresence,
   motion,
+  useMotionTemplate,
   useMotionValue,
   useSpring,
   type MotionValue,
@@ -14,6 +15,13 @@ import {
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
+import {
+  ReducedMotionConfig,
+  scale,
+  spring,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type HoverCardContextType = {
   isOpen: boolean;
@@ -32,9 +40,14 @@ type HoverCardProps = React.ComponentProps<typeof HoverCardPrimitive.Root> & {
   followCursorSpringOptions?: SpringOptions;
 };
 
+const defaultFollowSpring: SpringOptions = {
+  duration: spring.default.duration,
+  bounce: spring.default.bounce,
+};
+
 function HoverCard({
   followCursor = false,
-  followCursorSpringOptions = { stiffness: 200, damping: 17 },
+  followCursorSpringOptions = defaultFollowSpring,
   ...props
 }: HoverCardProps) {
   const [isOpen, setIsOpen] = useControlledState({
@@ -74,6 +87,7 @@ function HoverCardTrigger({ onMouseMove, ...props }: HoverCardTriggerProps) {
 
   const handleMouseMove = (event: React.MouseEvent<HTMLAnchorElement>) => {
     onMouseMove?.(event);
+    if (!followCursor) return;
 
     const target = event.currentTarget.getBoundingClientRect();
 
@@ -104,7 +118,7 @@ type HoverCardPortalProps = Omit<
   'forceMount'
 >;
 
-function HoverCardPortal(props: HoverCardPortalProps) {
+function HoverCardPortal({ children, ...props }: HoverCardPortalProps) {
   const { isOpen } = useHoverCard();
 
   return (
@@ -114,7 +128,9 @@ function HoverCardPortal(props: HoverCardPortalProps) {
           forceMount
           data-slot="hover-card-portal"
           {...props}
-        />
+        >
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </HoverCardPrimitive.Portal>
       )}
     </AnimatePresence>
   );
@@ -137,12 +153,20 @@ function HoverCardContent({
   sticky,
   hideWhenDetached,
   style,
-  transition = { type: 'spring', stiffness: 300, damping: 25 },
+  transition = motionTransition.dropdown,
   ...props
 }: HoverCardContentProps) {
   const { x, y, followCursor, followCursorSpringOptions } = useHoverCard();
   const translateX = useSpring(x, followCursorSpringOptions);
   const translateY = useSpring(y, followCursorSpringOptions);
+  // `translate` composes with the animated `transform`, so following the
+  // cursor never interrupts the entrance.
+  const translate = useMotionTemplate`${followCursor === 'y' ? 0 : translateX}px ${followCursor === 'x' ? 0 : translateY}px`;
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
 
   return (
     <HoverCardPrimitive.Content
@@ -160,21 +184,13 @@ function HoverCardContent({
       hideWhenDetached={hideWhenDetached}
     >
       <motion.div
-        key="hover-card-content"
         data-slot="hover-card-content"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.5 }}
-        transition={transition}
+        initial={hidden}
+        animate={{ opacity: 1, transform: 'scale(1)', transition }}
+        exit={{ ...hidden, transition: motionTransition.exit }}
         style={{
-          x:
-            followCursor === 'x' || followCursor === true
-              ? translateX
-              : undefined,
-          y:
-            followCursor === 'y' || followCursor === true
-              ? translateY
-              : undefined,
+          transformOrigin: 'var(--radix-hover-card-content-transform-origin)',
+          translate: followCursor ? translate : undefined,
           ...style,
         }}
         {...props}

@@ -21,6 +21,12 @@ import {
 } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
+import {
+  ReducedMotionConfig,
+  scale,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type PopoverContextType = {
   isOpen: boolean;
@@ -42,7 +48,9 @@ function Popover<TTag extends React.ElementType = 'div'>({
     <PopoverPrimitive data-slot="popover" {...props}>
       {(bag) => (
         <PopoverProvider value={{ isOpen: bag.open }}>
-          {typeof children === 'function' ? children(bag) : children}
+          <ReducedMotionConfig>
+            {typeof children === 'function' ? children(bag) : children}
+          </ReducedMotionConfig>
         </PopoverProvider>
       )}
     </PopoverPrimitive>
@@ -95,24 +103,29 @@ function PopoverPanel<TTag extends React.ElementType = 'div'>(
   props: PopoverPanelProps<TTag>,
 ) {
   const {
-    transition = { type: 'spring', stiffness: 300, damping: 25 },
+    transition = motionTransition.dropdown,
     as = motion.div,
     ...rest
   } = props;
 
   const { isOpen } = usePopover();
+  // Rendered inside the Popover's ReducedMotionConfig.
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <PopoverPanelPrimitive
-          key="popover-panel"
           data-slot="popover-panel"
           static
           as={as}
-          initial={{ opacity: 0, scale: 0.5, transition }}
-          animate={{ opacity: 1, scale: 1, transition }}
-          exit={{ opacity: 0, scale: 0.5, transition }}
+          initial={hidden}
+          animate={{ opacity: 1, transform: 'scale(1)', transition }}
+          exit={{ ...hidden, transition: motionTransition.exit }}
           {...rest}
         />
       )}

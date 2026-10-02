@@ -13,15 +13,27 @@ import {
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 import { useDataState } from '@/registry/hooks/use-data-state';
+import {
+  ReducedMotionConfig,
+  scale,
+  spring,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type MenuActiveValueContextType = {
   highlightedValue: string | null;
   setHighlightedValue: (value: string | null) => void;
+  /** Last interaction was the keyboard: the highlight moves instantly. */
+  isKeyboard: boolean;
+  setIsKeyboard: (isKeyboard: boolean) => void;
 };
 
 type MenuContextType = {
   isOpen: boolean;
   setIsOpen: MenuProps['onOpenChange'];
+  /** Submenu popups fade only, without scale. */
+  isSubmenu: boolean;
 };
 
 const [MenuActiveValueProvider, useMenuActiveValue] =
@@ -40,10 +52,18 @@ function Menu(props: MenuProps) {
   const [highlightedValue, setHighlightedValue] = React.useState<string | null>(
     null,
   );
+  const [isKeyboard, setIsKeyboard] = React.useState(false);
 
   return (
-    <MenuActiveValueProvider value={{ highlightedValue, setHighlightedValue }}>
-      <MenuProvider value={{ isOpen, setIsOpen }}>
+    <MenuActiveValueProvider
+      value={{
+        highlightedValue,
+        setHighlightedValue,
+        isKeyboard,
+        setIsKeyboard,
+      }}
+    >
+      <MenuProvider value={{ isOpen, setIsOpen, isSubmenu: false }}>
         <MenuPrimitive.Root
           data-slot="menu"
           {...props}
@@ -65,13 +85,15 @@ type MenuPortalProps = Omit<
   'keepMounted'
 >;
 
-function MenuPortal(props: MenuPortalProps) {
+function MenuPortal({ children, ...props }: MenuPortalProps) {
   const { isOpen } = useMenu();
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <MenuPrimitive.Portal keepMounted data-slot="menu-portal" {...props} />
+        <MenuPrimitive.Portal keepMounted data-slot="menu-portal" {...props}>
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </MenuPrimitive.Portal>
       )}
     </AnimatePresence>
   );
@@ -101,7 +123,7 @@ function MenuSubmenu(props: MenuSubmenuProps) {
   });
 
   return (
-    <MenuProvider value={{ isOpen, setIsOpen }}>
+    <MenuProvider value={{ isOpen, setIsOpen, isSubmenu: true }}>
       <MenuPrimitive.SubmenuRoot
         data-slot="menu-submenu"
         {...props}
@@ -158,17 +180,17 @@ type MenuHighlightProps = Omit<
 };
 
 function MenuHighlight({
-  transition = { type: 'spring', stiffness: 350, damping: 35 },
+  transition = spring.snappy,
   ...props
 }: MenuHighlightProps) {
-  const { highlightedValue } = useMenuActiveValue();
+  const { highlightedValue, isKeyboard } = useMenuActiveValue();
 
   return (
     <Highlight
       data-slot="menu-highlight"
       click={false}
       controlledItems
-      transition={transition}
+      transition={isKeyboard ? motionTransition.instant : transition}
       value={highlightedValue}
       {...props}
     />
@@ -198,24 +220,51 @@ type MenuPopupProps = Omit<
 function MenuPopup({
   finalFocus,
   id,
-  transition = { duration: 0.2 },
+  transition,
   style,
+  onKeyDownCapture,
+  onPointerDownCapture,
+  onPointerMoveCapture,
   ...props
 }: MenuPopupProps) {
+  const { isSubmenu } = useMenu();
+  const { isKeyboard, setIsKeyboard } = useMenuActiveValue();
+  const reduce = useShouldReduceMotion();
+  // Submenus open tens of times a day: they fade only, quickly both ways.
+  const hidden =
+    isSubmenu || reduce
+      ? { opacity: 0, transform: 'scale(1)' }
+      : { opacity: 0, transform: `scale(${scale.enter})` };
+  const enter =
+    transition ??
+    (isSubmenu ? motionTransition.exit : motionTransition.dropdown);
+
   return (
     <MenuPrimitive.Popup
       finalFocus={finalFocus}
       id={id}
       render={
         <motion.div
-          key="menu-popup"
           data-slot="menu-popup"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={transition}
-          style={{ willChange: 'opacity, transform', ...style }}
+          initial={hidden}
+          animate={{ opacity: 1, transform: 'scale(1)', transition: enter }}
+          exit={{ ...hidden, transition: motionTransition.exit }}
+          style={{ transformOrigin: 'var(--transform-origin)', ...style }}
           {...props}
+          // Arrow keys move the highlight instantly; the pointer animates it.
+          // Capture phase: items may stop the propagation of their keys.
+          onKeyDownCapture={(event) => {
+            setIsKeyboard(true);
+            onKeyDownCapture?.(event);
+          }}
+          onPointerDownCapture={(event) => {
+            setIsKeyboard(false);
+            onPointerDownCapture?.(event);
+          }}
+          onPointerMoveCapture={(event) => {
+            if (isKeyboard) setIsKeyboard(false);
+            onPointerMoveCapture?.(event);
+          }}
         />
       }
     />

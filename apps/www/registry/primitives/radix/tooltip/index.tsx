@@ -190,7 +190,7 @@ function TooltipContent({
     opacity: 0,
     transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
   };
-  const visible = { opacity: 1, transform: 'scale(1)' };
+  const visible = { opacity: 1, transform: 'scale(1)', transition };
   const translate = useMotionTemplate`${followCursor === 'y' ? 0 : translateX}px ${followCursor === 'x' ? 0 : translateY}px`;
 
   return (
@@ -214,8 +214,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         initial={isWarm ? false : hidden}
         animate={visible}
-        exit={hidden}
-        transition={transition}
+        exit={{ ...hidden, transition: motionTransition.exit }}
         style={{
           transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
           translate: followCursor ? translate : undefined,

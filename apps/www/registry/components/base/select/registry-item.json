@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-select",
+  "type": "registry:ui",
+  "title": "Select",
+  "description": "A common form component for choosing a predefined value in a dropdown menu.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["@animate-ui/primitives-base-select"],
+  "files": [
+    {
+      "path": "registry/components/base/select/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/select.tsx"
+    }
+  ]
+}

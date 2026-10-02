@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-select",
+  "title": "Base Select Demo",
+  "description": "Demo showing an animated base select.",
+  "registryDependencies": [
+    "@animate-ui/primitives-base-select"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/select/index.tsx",
+      "content": "import {\n  Select,\n  SelectGroup,\n  SelectGroupLabel,\n  SelectIcon,\n  SelectItem,\n  SelectItemIndicator,\n  SelectItemText,\n  SelectList,\n  SelectPopup,\n  SelectPortal,\n  SelectPositioner,\n  SelectSeparator,\n  SelectTrigger,\n  SelectValue,\n} from '@/components/animate-ui/primitives/base/select';\n\nconst FRUITS = [\n  { label: 'Apple', value: 'apple' },\n  { label: 'Banana', value: 'banana' },\n  { label: 'Blueberry', value: 'blueberry' },\n  { label: 'Grapes', value: 'grapes' },\n  { label: 'Pineapple', value: 'pineapple' },\n];\n\nconst CITRUS = [\n  { label: 'Lemon', value: 'lemon' },\n  { label: 'Orange', value: 'orange' },\n  { label: 'Grapefruit', value: 'grapefruit' },\n];\n\ninterface BaseSelectDemoProps {\n  alignItemWithTrigger?: boolean;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n}\n\nfunction Item({ label, value }: { label: string; value: string }) {\n  return (\n    <SelectItem\n      value={value}\n      className=\"flex items-center justify-between gap-4 px-2 py-1 text-sm outline-none data-[highlighted]:bg-accent\"\n    >\n      <SelectItemText>{label}</SelectItemText>\n      <SelectItemIndicator>✓</SelectItemIndicator>\n    </SelectItem>\n  );\n}\n\nexport function BaseSelectDemo({\n  alignItemWithTrigger,\n  side,\n  sideOffset,\n  align,\n}: BaseSelectDemoProps) {\n  return (\n    <Select items={[...FRUITS, ...CITRUS]}>\n      <SelectTrigger\n        aria-label=\"Fruit\"\n        className=\"flex w-44 items-center justify-between border px-3 py-1.5 text-sm\"\n      >\n        <SelectValue placeholder=\"Select a fruit\" />\n        <SelectIcon>▾</SelectIcon>\n      </SelectTrigger>\n      <SelectPortal>\n        <SelectPositioner\n          alignItemWithTrigger={alignItemWithTrigger}\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          className=\"z-50\"\n        >\n          <SelectPopup className=\"min-w-(--anchor-width) border bg-background\">\n            <SelectList className=\"max-h-(--available-height) overflow-y-auto p-1\">\n              <SelectGroup>\n                <SelectGroupLabel className=\"px-2 py-1 text-xs text-muted-foreground\">\n                  Fruits\n                </SelectGroupLabel>\n                {FRUITS.map((fruit) => (\n                  <Item key={fruit.value} {...fruit} />\n                ))}\n              </SelectGroup>\n              <SelectSeparator className=\"my-1 h-px bg-border\" />\n              <SelectGroup>\n                <SelectGroupLabel className=\"px-2 py-1 text-xs text-muted-foreground\">\n                  Citrus\n                </SelectGroupLabel>\n                {CITRUS.map((fruit) => (\n                  <Item key={fruit.value} {...fruit} />\n                ))}\n              </SelectGroup>\n            </SelectList>\n          </SelectPopup>\n        </SelectPositioner>\n      </SelectPortal>\n    </Select>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/select.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "SelectPositioner": {
+        "alignItemWithTrigger": {
+          "value": true
+        },
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

@@ -6,6 +6,12 @@ import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
+import {
+  ReducedMotionConfig,
+  scale,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type PopoverContextType = {
   isOpen: boolean;
@@ -48,7 +54,7 @@ type PopoverPortalProps = Omit<
   'keepMounted'
 >;
 
-function PopoverPortal(props: PopoverPortalProps) {
+function PopoverPortal({ children, ...props }: PopoverPortalProps) {
   const { isOpen } = usePopover();
 
   return (
@@ -58,7 +64,9 @@ function PopoverPortal(props: PopoverPortalProps) {
           keepMounted
           data-slot="popover-portal"
           {...props}
-        />
+        >
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </PopoverPrimitive.Portal>
       )}
     </AnimatePresence>
   );
@@ -83,21 +91,27 @@ type PopoverPopupProps = Omit<
 function PopoverPopup({
   initialFocus,
   finalFocus,
-  transition = { type: 'spring', stiffness: 300, damping: 25 },
+  transition = motionTransition.dropdown,
+  style,
   ...props
 }: PopoverPopupProps) {
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
+
   return (
     <PopoverPrimitive.Popup
       initialFocus={initialFocus}
       finalFocus={finalFocus}
       render={
         <motion.div
-          key="popover-popup"
           data-slot="popover-popup"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          transition={transition}
+          initial={hidden}
+          animate={{ opacity: 1, transform: 'scale(1)', transition }}
+          exit={{ ...hidden, transition: motionTransition.exit }}
+          style={{ transformOrigin: 'var(--transform-origin)', ...style }}
           {...props}
         />
       }

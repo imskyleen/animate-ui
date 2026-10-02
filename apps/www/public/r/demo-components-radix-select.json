@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-select",
+  "title": "Select Demo",
+  "description": "Demo showing a select.",
+  "registryDependencies": [
+    "@animate-ui/components-radix-select"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/select/index.tsx",
+      "content": "import {\n  Select,\n  SelectContent,\n  SelectGroup,\n  SelectItem,\n  SelectLabel,\n  SelectSeparator,\n  SelectTrigger,\n  SelectValue,\n} from '@/components/animate-ui/components/radix/select';\n\ninterface RadixSelectDemoProps {\n  position?: 'popper' | 'item-aligned';\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport const RadixSelectDemo = ({\n  position,\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: RadixSelectDemoProps) => {\n  return (\n    <Select>\n      <SelectTrigger aria-label=\"Fruit\" className=\"w-[180px]\">\n        <SelectValue placeholder=\"Select a fruit\" />\n      </SelectTrigger>\n      <SelectContent\n        position={position}\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n      >\n        <SelectGroup>\n          <SelectLabel>Fruits</SelectLabel>\n          <SelectItem value=\"apple\">Apple</SelectItem>\n          <SelectItem value=\"banana\">Banana</SelectItem>\n          <SelectItem value=\"blueberry\">Blueberry</SelectItem>\n          <SelectItem value=\"grapes\">Grapes</SelectItem>\n          <SelectItem value=\"pineapple\">Pineapple</SelectItem>\n        </SelectGroup>\n        <SelectSeparator />\n        <SelectGroup>\n          <SelectLabel>Citrus</SelectLabel>\n          <SelectItem value=\"lemon\">Lemon</SelectItem>\n          <SelectItem value=\"orange\">Orange</SelectItem>\n          <SelectItem value=\"grapefruit\" disabled>\n            Grapefruit\n          </SelectItem>\n        </SelectGroup>\n      </SelectContent>\n    </Select>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/select.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "SelectContent": {
+        "position": {
+          "value": "popper",
+          "options": {
+            "popper": "popper",
+            "item-aligned": "item-aligned"
+          }
+        },
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 0
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

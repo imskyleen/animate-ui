@@ -50,10 +50,25 @@ function TooltipContentMotion({
 - Enter with `transition.tooltip` (0.15s) for tooltips, `transition.dropdown` (0.2s) for popovers, menus and selects. Exit with `transition.exit` (0.15s), set inside the `exit` target.
 - Scale only, no directional slide: the trigger-anchored origin already shows where it came from. Drop shadcn's `slide-in-from-*` classes.
 - Hover Card and Preview Card use popover timing (`transition.dropdown` in, `transition.exit` out). Their open delay already keeps a sweep across triggers calm, so they don't need the warm skip.
-- Select, Radix: needs `@radix-ui/react-select` 2.x (bundled in `radix-ui` 1.4+), which accepts `forceMount` on Portal and Content; older versions can't animate the exit. With `position="popper"` (shadcn's default) use the full recipe. With `position="item-aligned"`, fade only: Radix measures the list on mount to align the selected item, and there is no origin variable.
+- Select, Radix: needs `@radix-ui/react-select` 2.x (bundled in `radix-ui` 1.4+) for `forceMount`. **Don't gate the whole Portal with `AnimatePresence`**: while closed, Radix renders the items off-screen to show the selected label in the trigger, power typeahead and fill the hidden native `<select>`. Animate the open content inside its own `AnimatePresence`, and once the exit completes (`onExitComplete`) render a plain, non-`forceMount` `SelectPrimitive.Content` with the same children so that fallback comes back. Reset the flag during render when it reopens, so a controlled `open` works too:
+
+  ```tsx
+  const [hasExited, setHasExited] = React.useState(!isOpen);
+  if (isOpen && hasExited) setHasExited(false);
+  // …<AnimatePresence onExitComplete={() => setHasExited(true)}>{isOpen && animated}</AnimatePresence>
+  // {!isOpen && hasExited && <SelectPrimitive.Portal><SelectPrimitive.Content …>{body}</SelectPrimitive.Content></SelectPrimitive.Portal>}
+  ```
+
+  Share the Content body (scroll buttons, Viewport) between both paths, and omit `transformOrigin` in item-aligned mode. Test it: pick an item, close, and check the trigger shows its label.
+
+- Select, `position="item-aligned"` (Radix) or `alignItemWithTrigger` (Base UI): fade only. The list is measured on mount to line the selected item up with the trigger, and there is no origin variable.
+- Select, Base UI 1.8: its Portal has no `keepMounted`. Pass an `actionsRef` to the Root, animate the Popup on the open state, and call `actionsRef.current.unmount()` when the exit completes. Base UI may still keep a closed popup mounted: set `hidden` on it once the exit has played so it leaves the accessibility tree. `Select.Value` shows the raw value unless the Root gets `items`.
 - Everything the Content renders goes inside the `motion.div`: Select's scroll buttons and Viewport, an Arrow, etc.
 - shadcn's side offset classes (`data-[side=bottom]:translate-y-1`, …) can stay: Tailwind v4 applies them through the CSS `translate` property, which composes with the animated `transform`. With Tailwind v3 they would conflict; move the offset to `sideOffset`.
 - Reopening while the exit is still playing mounts a fresh element instead of retargeting the leaving one. That's expected for presence-gated overlays given the short exit. While it exits, Radix still blocks outside clicks for those 150ms; that's acceptable.
+- Menus (Dropdown Menu, Context Menu, Menubar): the item highlight follows hover, so leave keyboard mode on `onPointerMoveCapture` (not only pointer down), and also record a keydown on the trigger (opening from the keyboard highlights the first item). In keyboard mode set the Highlight's `exitDelay` to 0 so the old highlight doesn't linger. Give each submenu its own Highlight. Item indicators (check, radio dot) fade with `transition.fade`, no scale.
+- Radix `Content` needs `forceMount` as well as the Portal, or it unmounts on close and the exit never plays.
+- Radix Context Menu's Root takes no `open`/`defaultOpen`, only `onOpenChange`: mirror it into state for presence instead of `useControlledState`.
 - Submenus (Dropdown Menu, Context Menu, Menubar) are opened tens of times a day: fade only, no scale, with `transition.exit` both ways. They read the same `--radix-dropdown-menu-content-transform-origin`. Closing the root menu closes them; both exit together.
 - Origin: in the primitive, from the library variable (Base UI: `var(--transform-origin)`).
 - Tooltips only: skip the entrance when warm. Track the last close time in a module-level variable and compare on open:

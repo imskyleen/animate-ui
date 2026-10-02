@@ -50,7 +50,7 @@ function PreviewLinkCardPanel({
       >
         <PreviewLinkCardPopupPrimitive
           className={cn(
-            'border origin-(--transform-origin) rounded-md shadow-md outline-hidden overflow-hidden',
+            'border rounded-md shadow-md outline-hidden overflow-hidden',
             className,
           )}
           style={style}

@@ -1,0 +1,212 @@
+---
+title: Select
+description: A common form component for choosing a predefined value in a dropdown menu.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-02
+---
+
+<ComponentPreview name="demo-primitives-base-select" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-select" />
+
+## Usage
+
+```tsx
+<Select items={fruits}>
+  <SelectTrigger aria-label="Fruit">
+    <SelectValue placeholder="Select a fruit" />
+    <SelectIcon />
+  </SelectTrigger>
+  <SelectPortal>
+    <SelectPositioner>
+      <SelectPopup>
+        <SelectScrollUpArrow />
+        <SelectList>
+          <SelectGroup>
+            <SelectGroupLabel>Fruits</SelectGroupLabel>
+            <SelectItem value="apple">
+              <SelectItemText>Apple</SelectItemText>
+              <SelectItemIndicator />
+            </SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+        </SelectList>
+        <SelectScrollDownArrow />
+      </SelectPopup>
+    </SelectPositioner>
+  </SelectPortal>
+</Select>
+```
+
+## Motion
+
+`SelectPopup` fades in from a 0.96 scale with `transition.dropdown` and exits with `transition.exit`, growing from `--transform-origin`. When the positioner aligns the selected item with the trigger (`alignItemWithTrigger`, `data-side="none"`) it only fades. Base UI's Select has no `keepMounted` portal, so `Select` passes an `actionsRef` to the root and unmounts the popup once its exit animation finishes; reopening mid-exit retargets the same element. Under reduced motion it fades without scaling. Items have no animated highlight: keyboard navigation stays instant.
+
+## API Reference
+
+### Select
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#root"
+  text="Base UI API Reference - Select.Root"
+/>
+
+<Callout type="info">
+  An `actionsRef` passed to `Select` still works: its `unmount` is forwarded to
+  the root, which `Select` already controls for the exit animation.
+</Callout>
+
+### SelectLabel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#label"
+  text="Base UI API Reference - Select.Label"
+/>
+
+### SelectTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#trigger"
+  text="Base UI API Reference - Select.Trigger"
+/>
+
+### SelectValue
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#value"
+  text="Base UI API Reference - Select.Value"
+/>
+
+### SelectIcon
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#icon"
+  text="Base UI API Reference - Select.Icon"
+/>
+
+### SelectPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#portal"
+  text="Base UI API Reference - Select.Portal"
+/>
+
+### SelectBackdrop
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#backdrop"
+  text="Base UI API Reference - Select.Backdrop"
+/>
+
+### SelectPositioner
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#positioner"
+  text="Base UI API Reference - Select.Positioner"
+/>
+
+### SelectPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#popup"
+  text="Base UI API Reference - Select.Popup"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The entrance transition of the select popup.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.dropdown',
+    },
+    '...props': {
+      description: 'The props of the select popup.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `SelectPopup` component, as it
+  is used for animation.
+</Callout>
+
+### SelectList
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#list"
+  text="Base UI API Reference - Select.List"
+/>
+
+### SelectItem
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#item"
+  text="Base UI API Reference - Select.Item"
+/>
+
+### SelectItemText
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#item-text"
+  text="Base UI API Reference - Select.ItemText"
+/>
+
+### SelectItemIndicator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#item-indicator"
+  text="Base UI API Reference - Select.ItemIndicator"
+/>
+
+### SelectArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#arrow"
+  text="Base UI API Reference - Select.Arrow"
+/>
+
+### SelectScrollUpArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#scroll-up-arrow"
+  text="Base UI API Reference - Select.ScrollUpArrow"
+/>
+
+### SelectScrollDownArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#scroll-down-arrow"
+  text="Base UI API Reference - Select.ScrollDownArrow"
+/>
+
+### SelectGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#group"
+  text="Base UI API Reference - Select.Group"
+/>
+
+### SelectGroupLabel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#group-label"
+  text="Base UI API Reference - Select.GroupLabel"
+/>
+
+### SelectSeparator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#separator"
+  text="Base UI API Reference - Select.Separator"
+/>
+
+## Credits
+
+- [Base UI Select](https://base-ui.com/react/components/select)

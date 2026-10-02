@@ -107,3 +107,15 @@ for (const c of CASES.filter((c) => !only || only.includes(c.name))) {
     });
   });
 }
+
+// Behavior, not only motion: a presence-gated Select must keep showing the
+// chosen value once closed.
+test('eval: select keeps the chosen label after closing', async ({ page }) => {
+  test.skip(!!only && !only.includes('select'), 'filtered out');
+  await page.goto('/examples/eval/select', { waitUntil: 'networkidle' });
+  const trigger = page.getByRole('combobox', { name: 'Fruit' });
+  await trigger.click();
+  await page.getByRole('option', { name: 'Banana' }).click();
+  await page.waitForTimeout(400);
+  await expect(trigger).toContainText('Banana');
+});

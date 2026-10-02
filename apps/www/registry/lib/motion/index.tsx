@@ -4,7 +4,6 @@ import * as React from 'react';
 import {
   MotionConfig,
   MotionConfigContext,
-  useReducedMotionConfig,
   type Transition,
 } from 'motion/react';
 
@@ -96,6 +95,14 @@ function ReducedMotionConfig({ children }: ReducedMotionConfigProps) {
   );
 }
 
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribeToReducedMotion(onChange: () => void) {
+  const mql = window.matchMedia(REDUCED_MOTION_QUERY);
+  mql.addEventListener('change', onChange);
+  return () => mql.removeEventListener('change', onChange);
+}
+
 /**
  * True when motion should be reduced. Call it inside `ReducedMotionConfig`.
  *
@@ -103,8 +110,22 @@ function ReducedMotionConfig({ children }: ReducedMotionConfigProps) {
  * (`x`, `scale`…), not a `transform` string. Components animate `transform`
  * strings (hardware accelerated), so they neutralize them with this:
  * `const enter = reduce ? 1 : scale.enter`.
+ *
+ * Unlike Motion's `useReducedMotion`, it follows OS setting changes while the
+ * component stays mounted.
  */
-const useShouldReduceMotion = useReducedMotionConfig;
+function useShouldReduceMotion() {
+  const { reducedMotion } = React.use(MotionConfigContext);
+  const prefersReduced = React.useSyncExternalStore(
+    subscribeToReducedMotion,
+    () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
+    () => false,
+  );
+
+  if (reducedMotion === 'always') return true;
+  if (reducedMotion === 'never') return false;
+  return prefersReduced;
+}
 
 export {
   motionTokens,

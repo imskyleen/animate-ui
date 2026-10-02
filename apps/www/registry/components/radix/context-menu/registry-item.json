@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-context-menu",
+  "type": "registry:ui",
+  "title": "Context Menu",
+  "description": "Displays a menu located at the pointer, triggered by a right click or a long press.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["@animate-ui/primitives-radix-context-menu"],
+  "files": [
+    {
+      "path": "registry/components/radix/context-menu/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/context-menu.tsx"
+    }
+  ]
+}

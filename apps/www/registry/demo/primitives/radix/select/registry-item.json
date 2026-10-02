@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-select",
+  "type": "registry:ui",
+  "title": "Radix Select Demo",
+  "description": "Demo showing an animated radix select.",
+  "registryDependencies": ["@animate-ui/primitives-radix-select"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/select/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/select.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "SelectContent": {
+        "position": {
+          "value": "popper",
+          "options": {
+            "popper": "popper",
+            "item-aligned": "item-aligned"
+          }
+        },
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-context-menu",
+  "title": "Context Menu Demo",
+  "description": "Demo showing a context menu.",
+  "registryDependencies": [
+    "@animate-ui/components-radix-context-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/context-menu/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\n\nimport {\n  ContextMenu,\n  ContextMenuCheckboxItem,\n  ContextMenuContent,\n  ContextMenuItem,\n  ContextMenuLabel,\n  ContextMenuRadioGroup,\n  ContextMenuRadioItem,\n  ContextMenuSeparator,\n  ContextMenuShortcut,\n  ContextMenuSub,\n  ContextMenuSubContent,\n  ContextMenuSubTrigger,\n  ContextMenuTrigger,\n} from '@/components/animate-ui/components/radix/context-menu';\n\nexport function RadixContextMenuDemo() {\n  const [showBookmarks, setShowBookmarks] = React.useState(true);\n  const [showFullUrls, setShowFullUrls] = React.useState(false);\n  const [person, setPerson] = React.useState('pedro');\n\n  return (\n    <ContextMenu>\n      <ContextMenuTrigger className=\"flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm\">\n        Right click here\n      </ContextMenuTrigger>\n      <ContextMenuContent className=\"w-52\">\n        <ContextMenuItem inset>\n          Back\n          <ContextMenuShortcut>⌘[</ContextMenuShortcut>\n        </ContextMenuItem>\n        <ContextMenuItem inset disabled>\n          Forward\n          <ContextMenuShortcut>⌘]</ContextMenuShortcut>\n        </ContextMenuItem>\n        <ContextMenuItem inset>\n          Reload\n          <ContextMenuShortcut>⌘R</ContextMenuShortcut>\n        </ContextMenuItem>\n        <ContextMenuSub>\n          <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>\n          <ContextMenuSubContent className=\"w-44\">\n            <ContextMenuItem>Save Page...</ContextMenuItem>\n            <ContextMenuItem>Create Shortcut...</ContextMenuItem>\n            <ContextMenuItem>Name Window...</ContextMenuItem>\n            <ContextMenuSeparator />\n            <ContextMenuItem>Developer Tools</ContextMenuItem>\n            <ContextMenuSeparator />\n            <ContextMenuItem variant=\"destructive\">Delete</ContextMenuItem>\n          </ContextMenuSubContent>\n        </ContextMenuSub>\n        <ContextMenuSeparator />\n        <ContextMenuCheckboxItem\n          checked={showBookmarks}\n          onCheckedChange={setShowBookmarks}\n        >\n          Show Bookmarks\n        </ContextMenuCheckboxItem>\n        <ContextMenuCheckboxItem\n          checked={showFullUrls}\n          onCheckedChange={setShowFullUrls}\n        >\n          Show Full URLs\n        </ContextMenuCheckboxItem>\n        <ContextMenuSeparator />\n        <ContextMenuRadioGroup value={person} onValueChange={setPerson}>\n          <ContextMenuLabel inset>People</ContextMenuLabel>\n          <ContextMenuRadioItem value=\"pedro\">\n            Pedro Duarte\n          </ContextMenuRadioItem>\n          <ContextMenuRadioItem value=\"colm\">Colm Tuite</ContextMenuRadioItem>\n        </ContextMenuRadioGroup>\n      </ContextMenuContent>\n    </ContextMenu>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/context-menu.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

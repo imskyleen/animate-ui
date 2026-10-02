@@ -6,10 +6,11 @@
   "description": "Displays a menu to the user — such as a set of actions or functions — triggered by a button.",
   "dependencies": ["motion", "radix-ui"],
   "registryDependencies": [
-    "@animate-ui/primitives-effects-highlight",
     "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/hooks-use-data-state",
-    "@animate-ui/lib-get-strict-context"
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-effects-highlight"
   ],
   "files": [
     {

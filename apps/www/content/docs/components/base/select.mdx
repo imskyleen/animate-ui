@@ -1,0 +1,231 @@
+---
+title: Select
+description: A common form component for choosing a predefined value in a dropdown menu.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-02
+---
+
+<ComponentPreview name="demo-components-base-select" />
+
+## Installation
+
+<ComponentInstallation name="components-base-select" />
+
+## Usage
+
+```tsx
+const fruits = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+];
+
+<Select items={fruits}>
+  <SelectTrigger aria-label="Fruit" className="w-[180px]">
+    <SelectValue placeholder="Select a fruit" />
+  </SelectTrigger>
+  <SelectPanel>
+    <SelectGroup>
+      <SelectGroupLabel>Fruits</SelectGroupLabel>
+      {fruits.map((fruit) => (
+        <SelectItem key={fruit.value} value={fruit.value}>
+          {fruit.label}
+        </SelectItem>
+      ))}
+    </SelectGroup>
+  </SelectPanel>
+</Select>;
+```
+
+Pass `items` to `Select` so `SelectValue` shows the label of the selected item rather than its raw value.
+
+## Motion
+
+The panel grows out of the trigger: it fades in from a 0.96 scale over 0.2s and closes faster, in 0.15s. When it overlaps the trigger (`alignItemWithTrigger`, the default with a mouse) it only fades, like a native select. Moving the highlight with the arrow keys is instant, and under reduced motion the panel fades without scaling.
+
+## API Reference
+
+### Select
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#select"
+  text="Animate UI API Reference - Select Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#root"
+  text="Base UI API Reference - Select.Root"
+/>
+</div>
+
+### SelectTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selecttrigger"
+  text="Animate UI API Reference - Select Trigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#trigger"
+  text="Base UI API Reference - Select.Trigger"
+/>
+</div>
+
+<TypeTable
+  type={{
+    size: {
+      description: 'The size of the trigger.',
+      type: '"sm" | "default"',
+      required: false,
+      default: '"default"',
+    },
+  }}
+/>
+
+### SelectValue
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectvalue"
+  text="Animate UI API Reference - Select Value Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#value"
+  text="Base UI API Reference - Select.Value"
+/>
+</div>
+
+### SelectPanel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectpositioner"
+  text="Animate UI API Reference - Select Positioner Primitive"
+/>
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectpopup"
+  text="Animate UI API Reference - Select Popup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#positioner"
+  text="Base UI API Reference - Select.Positioner"
+/>
+</div>
+
+<TypeTable
+  type={{
+    alignItemWithTrigger: {
+      description:
+        'Whether the panel overlaps the trigger so the selected item lines up with the value. In this mode the panel only fades.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    transition: {
+      description: 'The entrance transition of the select panel.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.dropdown',
+    },
+    '...props': {
+      description: 'The props of the select positioner.',
+      type: 'SelectPositionerProps',
+      required: false,
+    },
+  }}
+/>
+
+### SelectGroup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectgroup"
+  text="Animate UI API Reference - Select Group Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#group"
+  text="Base UI API Reference - Select.Group"
+/>
+</div>
+
+### SelectGroupLabel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectgrouplabel"
+  text="Animate UI API Reference - Select Group Label Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#group-label"
+  text="Base UI API Reference - Select.GroupLabel"
+/>
+</div>
+
+### SelectItem
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectitem"
+  text="Animate UI API Reference - Select Item Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#item"
+  text="Base UI API Reference - Select.Item"
+/>
+</div>
+
+### SelectSeparator
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectseparator"
+  text="Animate UI API Reference - Select Separator Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#separator"
+  text="Base UI API Reference - Select.Separator"
+/>
+</div>
+
+### SelectScrollUpArrow
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectscrolluparrow"
+  text="Animate UI API Reference - Select Scroll Up Arrow Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#scroll-up-arrow"
+  text="Base UI API Reference - Select.ScrollUpArrow"
+/>
+</div>
+
+### SelectScrollDownArrow
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/select#selectscrolldownarrow"
+  text="Animate UI API Reference - Select Scroll Down Arrow Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/select#scroll-down-arrow"
+  text="Base UI API Reference - Select.ScrollDownArrow"
+/>
+</div>
+
+## Credits
+
+- [Base UI Select](https://base-ui.com/react/components/select)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/select) for style inspiration.

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-context-menu",
+  "title": "Context Menu Demo",
+  "description": "Demo showing a context menu.",
+  "registryDependencies": [
+    "@animate-ui/components-base-context-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/context-menu/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\n\nimport {\n  ContextMenu,\n  ContextMenuCheckboxItem,\n  ContextMenuGroup,\n  ContextMenuGroupLabel,\n  ContextMenuItem,\n  ContextMenuPanel,\n  ContextMenuRadioGroup,\n  ContextMenuRadioItem,\n  ContextMenuSeparator,\n  ContextMenuShortcut,\n  ContextMenuSubmenu,\n  ContextMenuSubmenuPanel,\n  ContextMenuSubmenuTrigger,\n  ContextMenuTrigger,\n} from '@/components/animate-ui/components/base/context-menu';\n\nexport function BaseContextMenuDemo() {\n  const [showBookmarks, setShowBookmarks] = React.useState(true);\n  const [showFullUrls, setShowFullUrls] = React.useState(false);\n  const [person, setPerson] = React.useState('pedro');\n\n  return (\n    <ContextMenu>\n      <ContextMenuTrigger className=\"flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm\">\n        Right click here\n      </ContextMenuTrigger>\n      <ContextMenuPanel className=\"w-52\">\n        <ContextMenuItem inset>\n          Back\n          <ContextMenuShortcut>⌘[</ContextMenuShortcut>\n        </ContextMenuItem>\n        <ContextMenuItem inset disabled>\n          Forward\n          <ContextMenuShortcut>⌘]</ContextMenuShortcut>\n        </ContextMenuItem>\n        <ContextMenuItem inset>\n          Reload\n          <ContextMenuShortcut>⌘R</ContextMenuShortcut>\n        </ContextMenuItem>\n        <ContextMenuSubmenu>\n          <ContextMenuSubmenuTrigger inset>\n            More Tools\n          </ContextMenuSubmenuTrigger>\n          <ContextMenuSubmenuPanel className=\"w-44\">\n            <ContextMenuItem>Save Page...</ContextMenuItem>\n            <ContextMenuItem>Create Shortcut...</ContextMenuItem>\n            <ContextMenuItem>Name Window...</ContextMenuItem>\n            <ContextMenuSeparator />\n            <ContextMenuItem>Developer Tools</ContextMenuItem>\n            <ContextMenuSeparator />\n            <ContextMenuItem variant=\"destructive\">Delete</ContextMenuItem>\n          </ContextMenuSubmenuPanel>\n        </ContextMenuSubmenu>\n        <ContextMenuSeparator />\n        <ContextMenuCheckboxItem\n          checked={showBookmarks}\n          onCheckedChange={setShowBookmarks}\n        >\n          Show Bookmarks\n        </ContextMenuCheckboxItem>\n        <ContextMenuCheckboxItem\n          checked={showFullUrls}\n          onCheckedChange={setShowFullUrls}\n        >\n          Show Full URLs\n        </ContextMenuCheckboxItem>\n        <ContextMenuSeparator />\n        <ContextMenuGroup>\n          <ContextMenuGroupLabel inset>People</ContextMenuGroupLabel>\n          <ContextMenuRadioGroup value={person} onValueChange={setPerson}>\n            <ContextMenuRadioItem value=\"pedro\">\n              Pedro Duarte\n            </ContextMenuRadioItem>\n            <ContextMenuRadioItem value=\"colm\">Colm Tuite</ContextMenuRadioItem>\n          </ContextMenuRadioGroup>\n        </ContextMenuGroup>\n      </ContextMenuPanel>\n    </ContextMenu>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/context-menu.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

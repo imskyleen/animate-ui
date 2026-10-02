@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-select",
+  "title": "Radix Select Demo",
+  "description": "Demo showing an animated radix select.",
+  "registryDependencies": [
+    "@animate-ui/primitives-radix-select"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/select/index.tsx",
+      "content": "import {\n  Select,\n  SelectContent,\n  SelectGroup,\n  SelectIcon,\n  SelectItem,\n  SelectItemIndicator,\n  SelectItemText,\n  SelectLabel,\n  SelectPortal,\n  SelectSeparator,\n  SelectTrigger,\n  SelectValue,\n  SelectViewport,\n} from '@/components/animate-ui/primitives/radix/select';\n\ninterface RadixSelectDemoProps {\n  position?: 'popper' | 'item-aligned';\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n}\n\nconst FRUITS = ['Apple', 'Banana', 'Blueberry', 'Grapes', 'Pineapple'];\nconst CITRUS = ['Lemon', 'Orange', 'Grapefruit'];\n\nfunction Item({ children }: { children: string }) {\n  return (\n    <SelectItem\n      value={children.toLowerCase()}\n      className=\"flex items-center justify-between gap-4 px-2 py-1 text-sm outline-none data-[highlighted]:bg-accent\"\n    >\n      <SelectItemText>{children}</SelectItemText>\n      <SelectItemIndicator>✓</SelectItemIndicator>\n    </SelectItem>\n  );\n}\n\nexport function RadixSelectDemo({\n  position,\n  side,\n  sideOffset,\n  align,\n}: RadixSelectDemoProps) {\n  return (\n    <Select>\n      <SelectTrigger\n        aria-label=\"Fruit\"\n        className=\"flex w-44 items-center justify-between border px-3 py-1.5 text-sm\"\n      >\n        <SelectValue placeholder=\"Select a fruit\" />\n        <SelectIcon>▾</SelectIcon>\n      </SelectTrigger>\n      <SelectPortal>\n        <SelectContent\n          position={position}\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          className=\"z-50 min-w-(--radix-select-trigger-width) border bg-background\"\n        >\n          <SelectViewport className=\"p-1\">\n            <SelectGroup>\n              <SelectLabel className=\"px-2 py-1 text-xs text-muted-foreground\">\n                Fruits\n              </SelectLabel>\n              {FRUITS.map((fruit) => (\n                <Item key={fruit}>{fruit}</Item>\n              ))}\n            </SelectGroup>\n            <SelectSeparator className=\"my-1 h-px bg-border\" />\n            <SelectGroup>\n              <SelectLabel className=\"px-2 py-1 text-xs text-muted-foreground\">\n                Citrus\n              </SelectLabel>\n              {CITRUS.map((fruit) => (\n                <Item key={fruit}>{fruit}</Item>\n              ))}\n            </SelectGroup>\n          </SelectViewport>\n        </SelectContent>\n      </SelectPortal>\n    </Select>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/select.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "SelectContent": {
+        "position": {
+          "value": "popper",
+          "options": {
+            "popper": "popper",
+            "item-aligned": "item-aligned"
+          }
+        },
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}
