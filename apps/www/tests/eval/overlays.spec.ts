@@ -43,6 +43,8 @@ const CASES: Case[] = [
   },
 ];
 
+// Test-only filter (EVAL_CASES=popover,select): not a build input.
+// eslint-disable-next-line turbo/no-undeclared-env-vars
 const only = process.env.EVAL_CASES?.split(',');
 
 for (const c of CASES.filter((c) => !only || only.includes(c.name))) {
