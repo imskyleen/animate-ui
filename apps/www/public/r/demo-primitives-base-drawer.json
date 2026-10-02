@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-drawer",
+  "title": "Base Drawer Demo",
+  "description": "Demo showing an animated base drawer.",
+  "registryDependencies": [
+    "@animate-ui/primitives-base-drawer"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/drawer/index.tsx",
+      "content": "import {\n  Drawer,\n  DrawerTrigger,\n  DrawerPortal,\n  DrawerBackdrop,\n  DrawerViewport,\n  DrawerPopup,\n  DrawerContent,\n  DrawerHeader,\n  DrawerTitle,\n  DrawerDescription,\n  DrawerFooter,\n  DrawerClose,\n} from '@/components/animate-ui/primitives/base/drawer';\n\nexport const BaseDrawerDemo = () => {\n  return (\n    <Drawer>\n      <DrawerTrigger className=\"bg-primary text-primary-foreground px-4 py-2 text-sm\">\n        Open Drawer\n      </DrawerTrigger>\n\n      <DrawerPortal>\n        <DrawerBackdrop className=\"fixed inset-0 z-50 bg-black/80\" />\n        <DrawerViewport className=\"fixed inset-0 z-50 flex items-end justify-center\">\n          <DrawerPopup className=\"w-full max-h-[80vh] overflow-y-auto border-t bg-background p-6\">\n            <div className=\"mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted\" />\n            <DrawerContent className=\"mx-auto w-full max-w-md\">\n              <DrawerHeader>\n                <DrawerTitle className=\"text-lg\">Notifications</DrawerTitle>\n                <DrawerDescription className=\"text-sm text-muted-foreground\">\n                  You are all caught up. Swipe down to dismiss.\n                </DrawerDescription>\n              </DrawerHeader>\n\n              <DrawerFooter className=\"mt-6 flex justify-end\">\n                <DrawerClose className=\"bg-primary text-primary-foreground px-4 py-2 text-sm\">\n                  Close\n                </DrawerClose>\n              </DrawerFooter>\n            </DrawerContent>\n          </DrawerPopup>\n        </DrawerViewport>\n      </DrawerPortal>\n    </Drawer>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/drawer.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,171 @@
+---
+title: Drawer
+description: A panel that slides in from the edge of the screen and can be swiped away.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-02
+---
+
+<ComponentPreview name="demo-components-base-drawer" />
+
+## Installation
+
+<ComponentInstallation name="components-base-drawer" />
+
+## Usage
+
+```tsx
+<Drawer>
+  <DrawerTrigger>Open Drawer</DrawerTrigger>
+  <DrawerPopup>
+    <DrawerHeader>
+      <DrawerTitle>Drawer Title</DrawerTitle>
+      <DrawerDescription>Drawer Description</DrawerDescription>
+    </DrawerHeader>
+    <p>Drawer Content</p>
+    <DrawerFooter>
+      <button>Submit</button>
+      <DrawerClose>Cancel</DrawerClose>
+    </DrawerFooter>
+  </DrawerPopup>
+</Drawer>
+```
+
+Set `swipeDirection` on `Drawer` to choose the edge: `"down"` (default, bottom drawer), `"up"`, `"left"` or `"right"`. It is also the direction that dismisses the drawer.
+
+## Motion
+
+The drawer is animated with CSS transitions, not Motion. Base UI drives the swipe gesture itself through CSS variables (`--drawer-swipe-movement-x`/`-y`, `--drawer-swipe-progress`, `--drawer-swipe-strength`) and the `data-starting-style` / `data-ending-style` attributes, so the styles read those directly and a JavaScript animation never fights the finger.
+
+- **Open:** the popup slides in by 100% of its own size with the drawer curve (`ease-drawer`) over 500ms. The backdrop fades in over 300ms.
+- **Swipe:** while dragging, transitions are disabled and the popup follows `--drawer-swipe-movement-*`; the backdrop fades with `--drawer-swipe-progress`.
+- **Close:** 300ms (backdrop 200ms), scaled by `--drawer-swipe-strength` so a fast flick finishes faster. Velocity-based dismissal is Base UI's.
+- **Reduced motion:** the drawer fades in and out in place instead of sliding.
+
+## API Reference
+
+### Drawer
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawer"
+  text="Animate UI API Reference - Drawer Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/drawer#root"
+  text="Base UI API Reference - Drawer.Root"
+/>
+</div>
+
+### DrawerTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawertrigger"
+  text="Animate UI API Reference - Drawer Trigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/drawer#trigger"
+  text="Base UI API Reference - Drawer.Trigger"
+/>
+</div>
+
+### DrawerPopup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawerpopup"
+  text="Animate UI API Reference - Drawer Popup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/drawer#popup"
+  text="Base UI API Reference - Drawer.Popup"
+/>
+</div>
+
+Renders the portal, backdrop, viewport, handle and `Drawer.Content` around its children.
+
+### DrawerClose
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawerclose"
+  text="Animate UI API Reference - Drawer Close Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/drawer#close"
+  text="Base UI API Reference - Drawer.Close"
+/>
+</div>
+
+### DrawerHeader
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawerheader"
+  text="Animate UI API Reference - Drawer Header Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the drawer header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### DrawerTitle
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawertitle"
+  text="Animate UI API Reference - Drawer Title Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/drawer#title"
+  text="Base UI API Reference - Drawer.Title"
+/>
+</div>
+
+### DrawerDescription
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawerdescription"
+  text="Animate UI API Reference - Drawer Description Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/drawer#description"
+  text="Base UI API Reference - Drawer.Description"
+/>
+</div>
+
+### DrawerFooter
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/drawer#drawerfooter"
+  text="Animate UI API Reference - Drawer Footer Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the drawer footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Drawer](https://base-ui.com/react/components/drawer)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/drawer) for style inspiration.

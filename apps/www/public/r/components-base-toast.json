@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-toast",
+  "title": "Toast",
+  "description": "A stack of short notifications that can be swiped away.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/primitives-base-toast"
+  ],
+  "files": [
+    {
+      "path": "registry/components/base/toast/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { XIcon } from 'lucide-react';\n\nimport {\n  ToastProvider as ToastProviderPrimitive,\n  ToastPortal as ToastPortalPrimitive,\n  ToastViewport as ToastViewportPrimitive,\n  Toast as ToastPrimitive,\n  ToastContent as ToastContentPrimitive,\n  ToastTitle as ToastTitlePrimitive,\n  ToastDescription as ToastDescriptionPrimitive,\n  ToastAction as ToastActionPrimitive,\n  ToastClose as ToastClosePrimitive,\n  useToastManager,\n  createToastManager,\n  type ToastPosition,\n  type ToastProviderProps as ToastProviderPrimitiveProps,\n  type ToastObject,\n  type ToastManager,\n} from '@/components/animate-ui/primitives/base/toast';\nimport { cn } from '@/lib/utils';\n\ntype ToasterProps = Omit<ToastProviderPrimitiveProps, 'children'> & {\n  children?: React.ReactNode;\n  position?: ToastPosition;\n  closeButton?: boolean;\n  className?: string;\n};\n\nfunction Toaster({\n  children,\n  position = 'bottom-right',\n  closeButton = true,\n  className,\n  ...props\n}: ToasterProps) {\n  return (\n    <ToastProviderPrimitive {...props}>\n      {children}\n      <ToastPortalPrimitive>\n        <ToastViewportPrimitive\n          position={position}\n          className={cn(\n            'fixed z-50 w-[calc(100%-2rem)] outline-none sm:w-[22rem]',\n            'data-[position^=bottom]:bottom-4 data-[position^=top]:top-4 sm:data-[position^=bottom]:bottom-6 sm:data-[position^=top]:top-6',\n            'data-[position$=right]:right-4 data-[position$=left]:left-4 sm:data-[position$=right]:right-6 sm:data-[position$=left]:left-6',\n            'data-[position$=center]:inset-x-0 data-[position$=center]:mx-auto',\n            className,\n          )}\n        >\n          <ToastList closeButton={closeButton} />\n        </ToastViewportPrimitive>\n      </ToastPortalPrimitive>\n    </ToastProviderPrimitive>\n  );\n}\n\nfunction ToastList({ closeButton }: { closeButton: boolean }) {\n  const { toasts } = useToastManager();\n\n  return toasts.map((toast) => (\n    <ToastPrimitive\n      key={toast.id}\n      toast={toast}\n      className=\"bg-popover text-popover-foreground focus-visible:ring-ring/50 rounded-lg border shadow-lg outline-none focus-visible:ring-[3px]\"\n    >\n      <ToastContentPrimitive className=\"flex items-center gap-3 p-4\">\n        <div className=\"flex min-w-0 flex-1 flex-col gap-1\">\n          <ToastTitlePrimitive className=\"text-sm leading-tight font-medium\" />\n          <ToastDescriptionPrimitive className=\"text-muted-foreground text-sm\" />\n        </div>\n        <ToastActionPrimitive className=\"bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring/50 h-7 shrink-0 rounded-md px-2.5 text-xs font-medium transition-colors outline-none focus-visible:ring-[3px]\" />\n        {closeButton && (\n          <ToastClosePrimitive\n            aria-label=\"Close\"\n            className=\"text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring/50 flex size-6 shrink-0 items-center justify-center self-start rounded-md transition-colors outline-none focus-visible:ring-[3px] [&_svg]:size-4\"\n          >\n            <XIcon />\n          </ToastClosePrimitive>\n        )}\n      </ToastContentPrimitive>\n    </ToastPrimitive>\n  ));\n}\n\nexport {\n  Toaster,\n  useToastManager,\n  createToastManager,\n  type ToasterProps,\n  type ToastPosition,\n  type ToastObject,\n  type ToastManager,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/toast.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

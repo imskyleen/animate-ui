@@ -348,6 +348,22 @@
       ]
     },
     {
+      "name": "components-base-drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "description": "A panel that slides in from the edge of the screen and can be swiped away.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-drawer"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/drawer/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/drawer.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-files",
       "type": "registry:ui",
       "title": "Files",
@@ -513,6 +529,25 @@
           "path": "registry/components/base/tabs/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-base-toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "A stack of short notifications that can be swiped away.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-toast"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/toast/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/toast.tsx"
         }
       ]
     },
@@ -1991,6 +2026,37 @@
       }
     },
     {
+      "name": "demo-components-base-drawer",
+      "type": "registry:ui",
+      "title": "Drawer Demo",
+      "description": "Demo showing a drawer.",
+      "registryDependencies": [
+        "@animate-ui/components-base-drawer"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/drawer/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/drawer.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "Drawer": {
+            "swipeDirection": {
+              "value": "down",
+              "options": {
+                "down": "down",
+                "up": "up",
+                "left": "left",
+                "right": "right"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-components-base-files",
       "type": "registry:ui",
       "title": "Files Demo",
@@ -2422,6 +2488,39 @@
           "target": "components/animate-ui/demo/components/base/tabs.tsx"
         }
       ]
+    },
+    {
+      "name": "demo-components-base-toast",
+      "type": "registry:ui",
+      "title": "Toast Demo",
+      "description": "Demo showing stacked toasts.",
+      "registryDependencies": [
+        "@animate-ui/components-base-toast"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/toast/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/toast.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "Toaster": {
+            "position": {
+              "value": "bottom-right",
+              "options": {
+                "top-left": "top-left",
+                "top-center": "top-center",
+                "top-right": "top-right",
+                "bottom-left": "bottom-left",
+                "bottom-center": "bottom-center",
+                "bottom-right": "bottom-right"
+              }
+            }
+          }
+        }
+      }
     },
     {
       "name": "demo-components-base-toggle",
@@ -4531,6 +4630,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-primitives-base-drawer",
+      "type": "registry:ui",
+      "title": "Base Drawer Demo",
+      "description": "Demo showing an animated base drawer.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-drawer"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/drawer/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/drawer.tsx"
+        }
+      ]
     },
     {
       "name": "demo-primitives-base-files",
@@ -15028,6 +15143,25 @@
       ]
     },
     {
+      "name": "primitives-base-drawer",
+      "type": "registry:ui",
+      "title": "Base Drawer",
+      "description": "A panel that slides in from the edge of the screen and can be swiped away.",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/drawer/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/drawer.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-base-files",
       "type": "registry:ui",
       "title": "Files",
@@ -15245,6 +15379,25 @@
           "path": "registry/primitives/base/tabs/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-base-toast",
+      "type": "registry:ui",
+      "title": "Base Toast",
+      "description": "A stack of short notifications that can be swiped away.",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/toast/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/toast.tsx"
         }
       ]
     },

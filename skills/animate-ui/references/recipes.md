@@ -246,7 +246,7 @@ function SheetContentMotion({
 - Percentages of the element's own size, never pixel offsets: it works whatever the sheet's width.
 - `transition.drawer` (0.5s, `ease.drawer`) in, `transition.drawerExit` (0.3s) out. The overlay fades like a modal's.
 - No fade while sliding: the slide already explains it. Under reduced motion it fades in place instead.
-- Drag to dismiss (Base UI 1.8's Drawer): dismiss on velocity (about 0.11 px/ms), not distance alone.
+- Drag to dismiss: use Base UI 1.8's Drawer with the CSS-driven recipe below; it decides dismissal on velocity itself. Don't reimplement it.
 
 ## Indicator (Tabs, Toggle Group, Navigation Menu, Sidebar active item)
 
@@ -284,3 +284,18 @@ Gate: tens of times a day. Purpose: feedback. Validated on the Switch; the scale
 - Track background color: `transition-colors duration-150`.
 - Checkbox check: responds on the same frame, no delay.
 - When Base UI renders the control as a `<button>`, pass `nativeButton`. Headless UI controls expose their state through a render prop: put `ReducedMotionConfig` outside the primitive so the root's motion element is covered too.
+
+## CSS-driven by the base library (Base UI Drawer, Toast)
+
+Gate: occasional. When the library drives a gesture (swipe to dismiss) or a stack and exposes it through CSS variables and data attributes, use CSS transitions. Validated on Animate UI's Base UI Drawer and Toast.
+
+- **One transform, built from local variables.** Write a single `transform` whose functions never change between states, and let data attributes change only the variables (`--x-y`, `--x-scale`, `--x-exit-y`, `--x-travel`). Same functions in the same order means every state interpolates, including the inline transform the library sets while swiping.
+- **Read the library's variables:** Drawer `--drawer-swipe-movement-x/y`, `--drawer-snap-point-offset`, `--drawer-swipe-progress`, `--drawer-swipe-strength`; Toast `--toast-index`, `--toast-offset-y`, `--toast-height`, `--toast-swipe-movement-x/y`.
+- **Enter / exit:** `data-starting-style:` and `data-ending-style:` set the off-screen offset, a percentage of the element's own size (`100%`). Exit faster with a `data-ending-style:duration-*` override; for a drawer scale it by the flick: `data-ending-style:duration-[calc(var(--drawer-swipe-strength)*300ms)]`.
+- **Curves and durations as utilities:** `ease-drawer` (drawer, 500ms in / 300ms out), `ease-out-strong` (toast, 400ms in / 200ms out).
+- **While swiping:** `data-swiping:duration-0` so it follows the finger, plus the compound `data-ending-style:data-swiping:duration-[…]` so a swipe dismissal still animates (both attributes have the same specificity and the later rule wins).
+- **Reduced motion:** multiply the off-screen offset by a travel variable and set it to 0 under `motion-reduce:` (`[--drawer-travel:1] motion-reduce:[--drawer-travel:0]`), rather than overriding `transform` (direction variants are more specific and would win). Keep travel at 1 during a swipe dismissal (`data-swipe-dismiss:[--drawer-travel:1]`) so a dragged drawer keeps leaving. Toasts: `motion-reduce:[--toast-travel:0%] motion-reduce:transition-opacity`.
+- **Stacks:** toasts behind scale down subtly (`max(0.9, 1 - index * 0.05)`), never below 0.9; hovering (or tapping) the viewport expands them with the same curve. Toasts fire rapidly: transitions, never keyframes. They exit through the edge they came from, or keep going in the swipe direction.
+- **Direction-specific styles** come from the library's `data-swipe-direction` / `data-side` attributes, so the primitive needs no context.
+- In Tailwind arbitrary values, write `_+_` / `_-_` around calc operators next to `var(--…)`: automatic spacing is unreliable there.
+- Test swipes with realistic gestures (small moves one frame apart): a single big jump doesn't register as a swipe.

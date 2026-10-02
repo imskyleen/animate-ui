@@ -12,7 +12,7 @@ Turns a static component into an animated one that would ship in the Animate UI 
 1. **Decide before you animate.** Run the gate in step 1. Writing zero motion code is a valid outcome.
 2. **Values come from the tokens**, never from memory: `references/tokens.md`. No hand-typed `stiffness`/`damping`, no `easeInOut` on an entrance. A deliberately instant change uses `transition.instant`.
 3. **Keep the component's API.** A shadcn component stays a drop-in replacement: same exports, same props, same `data-slot` attributes. You may add optional props (`transition`). Library props still reach the library.
-4. **Reduced motion ships with the animation.** Wrap the motion tree in `ReducedMotionConfig`, and neutralize `transform` strings with `useShouldReduceMotion()` (Motion's setting doesn't cover them).
+4. **Reduced motion ships with the animation.** With Motion: wrap the motion tree in `ReducedMotionConfig`, and neutralize `transform` strings with `useShouldReduceMotion()` (Motion's setting doesn't cover them). With CSS: zero the travel under `motion-reduce:` (CSS recipe).
 5. **Transform and opacity only.** Never animate `width`, `height`, `top`, `left`, `margin` or `padding`, except the documented height technique for disclosures (`references/recipes.md`).
 
 ## Workflow
@@ -32,16 +32,19 @@ Name the purpose in one word: feedback, spatial (where it came from), state, con
 
 ### 2. Classify the component
 
-| Kind             | Examples                                                                    | Recipe     |
-| ---------------- | --------------------------------------------------------------------------- | ---------- |
-| Anchored overlay | Popover, Tooltip, Dropdown Menu, Context Menu, Hover Card, Select, Combobox | Overlay    |
-| Centered overlay | Dialog, Alert Dialog                                                        | Modal      |
-| Edge overlay     | Sheet, Drawer                                                               | Sheet      |
-| Disclosure       | Accordion, Collapsible                                                      | Disclosure |
-| Moving indicator | Tabs, Toggle Group, Navigation Menu, Sidebar active item                    | Indicator  |
-| Pressable        | Button, Toggle, Checkbox, Switch, Radio                                     | Press      |
+| Kind                 | Examples                                                                    | Recipe                                               |
+| -------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Anchored overlay     | Popover, Tooltip, Dropdown Menu, Context Menu, Hover Card, Select, Combobox | Overlay                                              |
+| Centered overlay     | Dialog, Alert Dialog                                                        | Modal                                                |
+| Edge overlay         | Sheet, Drawer                                                               | Sheet (Base UI Drawer: CSS-driven)                   |
+| Stacked notification | Toast                                                                       | CSS-driven (Base UI Toast); Sonner already does this |
+| Disclosure           | Accordion, Collapsible                                                      | Disclosure                                           |
+| Moving indicator     | Tabs, Toggle Group, Navigation Menu, Sidebar active item                    | Indicator                                            |
+| Pressable            | Button, Toggle, Checkbox, Switch, Radio                                     | Press                                                |
 
 Load `references/recipes.md` and start from the matching recipe.
+
+**Motion or CSS?** When the base library owns a gesture or a stack and exposes it as CSS variables plus `data-starting-style`/`data-ending-style` (Base UI Drawer and Toast), animate with CSS transitions that read those variables, not Motion: layering Motion on top fights the gesture. Everything else uses Motion.
 
 ### 3. Convert the existing component
 

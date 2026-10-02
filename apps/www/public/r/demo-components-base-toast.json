@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-toast",
+  "title": "Toast Demo",
+  "description": "Demo showing stacked toasts.",
+  "registryDependencies": [
+    "@animate-ui/components-base-toast"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/toast/index.tsx",
+      "content": "'use client';\n\nimport {\n  Toaster,\n  useToastManager,\n  type ToastPosition,\n} from '@/components/animate-ui/components/base/toast';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseToastDemoProps {\n  position?: ToastPosition;\n}\n\nexport const BaseToastDemo = ({ position }: BaseToastDemoProps) => {\n  return (\n    <Toaster position={position}>\n      <ShowToastButton />\n    </Toaster>\n  );\n};\n\nfunction ShowToastButton() {\n  const toastManager = useToastManager();\n\n  function showToast() {\n    const id = toastManager.add({\n      title: 'Event created',\n      description: 'Sunday, December 03, 2023 at 9:00 AM',\n      actionProps: {\n        children: 'Undo',\n        onClick: () => toastManager.close(id),\n      },\n    });\n  }\n\n  return (\n    <Button variant=\"outline\" onClick={showToast}>\n      Show toast\n    </Button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/toast.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Toaster": {
+        "position": {
+          "value": "bottom-right",
+          "options": {
+            "top-left": "top-left",
+            "top-center": "top-center",
+            "top-right": "top-right",
+            "bottom-left": "bottom-left",
+            "bottom-center": "bottom-center",
+            "bottom-right": "bottom-right"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

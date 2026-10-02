@@ -43,6 +43,7 @@
     "base/checkbox",
     "base/collapsible",
     "base/dialog",
+    "base/drawer",
     "base/files",
     "base/menu",
     "base/popover",

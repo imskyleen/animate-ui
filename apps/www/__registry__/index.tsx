@@ -749,6 +749,43 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-base-dialog',
   },
+  'components-base-drawer': {
+    name: 'components-base-drawer',
+    description:
+      'A panel that slides in from the edge of the screen and can be swiped away.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-drawer'],
+    files: [
+      {
+        path: 'registry/components/base/drawer/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/drawer.tsx',
+        content:
+          "import * as React from 'react';\n\nimport {\n  Drawer as DrawerPrimitive,\n  DrawerTrigger as DrawerTriggerPrimitive,\n  DrawerPortal as DrawerPortalPrimitive,\n  DrawerBackdrop as DrawerBackdropPrimitive,\n  DrawerViewport as DrawerViewportPrimitive,\n  DrawerPopup as DrawerPopupPrimitive,\n  DrawerContent as DrawerContentPrimitive,\n  DrawerClose as DrawerClosePrimitive,\n  DrawerHeader as DrawerHeaderPrimitive,\n  DrawerFooter as DrawerFooterPrimitive,\n  DrawerTitle as DrawerTitlePrimitive,\n  DrawerDescription as DrawerDescriptionPrimitive,\n  type DrawerProps as DrawerPrimitiveProps,\n  type DrawerTriggerProps as DrawerTriggerPrimitiveProps,\n  type DrawerBackdropProps as DrawerBackdropPrimitiveProps,\n  type DrawerPopupProps as DrawerPopupPrimitiveProps,\n  type DrawerCloseProps as DrawerClosePrimitiveProps,\n  type DrawerHeaderProps as DrawerHeaderPrimitiveProps,\n  type DrawerFooterProps as DrawerFooterPrimitiveProps,\n  type DrawerTitleProps as DrawerTitlePrimitiveProps,\n  type DrawerDescriptionProps as DrawerDescriptionPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/drawer';\nimport { cn } from '@/lib/utils';\n\ntype DrawerProps = DrawerPrimitiveProps;\n\nfunction Drawer(props: DrawerProps) {\n  return <DrawerPrimitive {...props} />;\n}\n\ntype DrawerTriggerProps = DrawerTriggerPrimitiveProps;\n\nfunction DrawerTrigger(props: DrawerTriggerProps) {\n  return <DrawerTriggerPrimitive {...props} />;\n}\n\ntype DrawerCloseProps = DrawerClosePrimitiveProps;\n\nfunction DrawerClose(props: DrawerCloseProps) {\n  return <DrawerClosePrimitive {...props} />;\n}\n\ntype DrawerBackdropProps = DrawerBackdropPrimitiveProps;\n\nfunction DrawerBackdrop({ className, ...props }: DrawerBackdropProps) {\n  return (\n    <DrawerBackdropPrimitive\n      className={cn('fixed inset-0 z-50 bg-black/50', className)}\n      {...props}\n    />\n  );\n}\n\ntype DrawerPopupProps = DrawerPopupPrimitiveProps;\n\nfunction DrawerPopup({ className, children, ...props }: DrawerPopupProps) {\n  return (\n    <DrawerPortalPrimitive>\n      <DrawerBackdrop />\n      <DrawerViewportPrimitive className=\"fixed inset-0 z-50\">\n        <DrawerPopupPrimitive\n          className={cn(\n            'group/drawer-popup bg-background fixed z-50 flex h-auto flex-col overflow-y-auto overscroll-contain outline-none',\n            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh] data-[swipe-direction=down]:rounded-t-lg data-[swipe-direction=down]:border-t',\n            'data-[swipe-direction=up]:inset-x-0 data-[swipe-direction=up]:top-0 data-[swipe-direction=up]:mb-24 data-[swipe-direction=up]:max-h-[80vh] data-[swipe-direction=up]:rounded-b-lg data-[swipe-direction=up]:border-b',\n            'data-[swipe-direction=right]:inset-y-0 data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:w-3/4 data-[swipe-direction=right]:border-l data-[swipe-direction=right]:sm:max-w-sm',\n            'data-[swipe-direction=left]:inset-y-0 data-[swipe-direction=left]:left-0 data-[swipe-direction=left]:w-3/4 data-[swipe-direction=left]:border-r data-[swipe-direction=left]:sm:max-w-sm',\n            className,\n          )}\n          {...props}\n        >\n          <div\n            aria-hidden\n            className=\"bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[swipe-direction=down]/drawer-popup:block\"\n          />\n          <DrawerContentPrimitive className=\"flex min-h-0 flex-1 flex-col\">\n            {children}\n          </DrawerContentPrimitive>\n        </DrawerPopupPrimitive>\n      </DrawerViewportPrimitive>\n    </DrawerPortalPrimitive>\n  );\n}\n\ntype DrawerHeaderProps = DrawerHeaderPrimitiveProps;\n\nfunction DrawerHeader({ className, ...props }: DrawerHeaderProps) {\n  return (\n    <DrawerHeaderPrimitive\n      className={cn(\n        'flex flex-col gap-0.5 p-4 group-data-[swipe-direction=down]/drawer-popup:text-center group-data-[swipe-direction=up]/drawer-popup:text-center md:gap-1.5 md:text-left',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype DrawerFooterProps = DrawerFooterPrimitiveProps;\n\nfunction DrawerFooter({ className, ...props }: DrawerFooterProps) {\n  return (\n    <DrawerFooterPrimitive\n      className={cn('mt-auto flex flex-col gap-2 p-4', className)}\n      {...props}\n    />\n  );\n}\n\ntype DrawerTitleProps = DrawerTitlePrimitiveProps;\n\nfunction DrawerTitle({ className, ...props }: DrawerTitleProps) {\n  return (\n    <DrawerTitlePrimitive\n      className={cn('text-foreground font-semibold', className)}\n      {...props}\n    />\n  );\n}\n\ntype DrawerDescriptionProps = DrawerDescriptionPrimitiveProps;\n\nfunction DrawerDescription({ className, ...props }: DrawerDescriptionProps) {\n  return (\n    <DrawerDescriptionPrimitive\n      className={cn('text-muted-foreground text-sm', className)}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Drawer,\n  DrawerTrigger,\n  DrawerClose,\n  DrawerPopup,\n  DrawerHeader,\n  DrawerFooter,\n  DrawerTitle,\n  DrawerDescription,\n  type DrawerProps,\n  type DrawerTriggerProps,\n  type DrawerCloseProps,\n  type DrawerPopupProps,\n  type DrawerHeaderProps,\n  type DrawerFooterProps,\n  type DrawerTitleProps,\n  type DrawerDescriptionProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/components/base/drawer/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-drawer';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-drawer',
+  },
   'components-base-files': {
     name: 'components-base-files',
     description:
@@ -1117,6 +1154,42 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/components-base-tabs',
+  },
+  'components-base-toast': {
+    name: 'components-base-toast',
+    description: 'A stack of short notifications that can be swiped away.',
+    type: 'registry:ui',
+    dependencies: ['lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-toast'],
+    files: [
+      {
+        path: 'registry/components/base/toast/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/toast.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { XIcon } from 'lucide-react';\n\nimport {\n  ToastProvider as ToastProviderPrimitive,\n  ToastPortal as ToastPortalPrimitive,\n  ToastViewport as ToastViewportPrimitive,\n  Toast as ToastPrimitive,\n  ToastContent as ToastContentPrimitive,\n  ToastTitle as ToastTitlePrimitive,\n  ToastDescription as ToastDescriptionPrimitive,\n  ToastAction as ToastActionPrimitive,\n  ToastClose as ToastClosePrimitive,\n  useToastManager,\n  createToastManager,\n  type ToastPosition,\n  type ToastProviderProps as ToastProviderPrimitiveProps,\n  type ToastObject,\n  type ToastManager,\n} from '@/components/animate-ui/primitives/base/toast';\nimport { cn } from '@/lib/utils';\n\ntype ToasterProps = Omit<ToastProviderPrimitiveProps, 'children'> & {\n  children?: React.ReactNode;\n  position?: ToastPosition;\n  closeButton?: boolean;\n  className?: string;\n};\n\nfunction Toaster({\n  children,\n  position = 'bottom-right',\n  closeButton = true,\n  className,\n  ...props\n}: ToasterProps) {\n  return (\n    <ToastProviderPrimitive {...props}>\n      {children}\n      <ToastPortalPrimitive>\n        <ToastViewportPrimitive\n          position={position}\n          className={cn(\n            'fixed z-50 w-[calc(100%-2rem)] outline-none sm:w-[22rem]',\n            'data-[position^=bottom]:bottom-4 data-[position^=top]:top-4 sm:data-[position^=bottom]:bottom-6 sm:data-[position^=top]:top-6',\n            'data-[position$=right]:right-4 data-[position$=left]:left-4 sm:data-[position$=right]:right-6 sm:data-[position$=left]:left-6',\n            'data-[position$=center]:inset-x-0 data-[position$=center]:mx-auto',\n            className,\n          )}\n        >\n          <ToastList closeButton={closeButton} />\n        </ToastViewportPrimitive>\n      </ToastPortalPrimitive>\n    </ToastProviderPrimitive>\n  );\n}\n\nfunction ToastList({ closeButton }: { closeButton: boolean }) {\n  const { toasts } = useToastManager();\n\n  return toasts.map((toast) => (\n    <ToastPrimitive\n      key={toast.id}\n      toast={toast}\n      className=\"bg-popover text-popover-foreground focus-visible:ring-ring/50 rounded-lg border shadow-lg outline-none focus-visible:ring-[3px]\"\n    >\n      <ToastContentPrimitive className=\"flex items-center gap-3 p-4\">\n        <div className=\"flex min-w-0 flex-1 flex-col gap-1\">\n          <ToastTitlePrimitive className=\"text-sm leading-tight font-medium\" />\n          <ToastDescriptionPrimitive className=\"text-muted-foreground text-sm\" />\n        </div>\n        <ToastActionPrimitive className=\"bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring/50 h-7 shrink-0 rounded-md px-2.5 text-xs font-medium transition-colors outline-none focus-visible:ring-[3px]\" />\n        {closeButton && (\n          <ToastClosePrimitive\n            aria-label=\"Close\"\n            className=\"text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring/50 flex size-6 shrink-0 items-center justify-center self-start rounded-md transition-colors outline-none focus-visible:ring-[3px] [&_svg]:size-4\"\n          >\n            <XIcon />\n          </ToastClosePrimitive>\n        )}\n      </ToastContentPrimitive>\n    </ToastPrimitive>\n  ));\n}\n\nexport {\n  Toaster,\n  useToastManager,\n  createToastManager,\n  type ToasterProps,\n  type ToastPosition,\n  type ToastObject,\n  type ToastManager,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/components/base/toast/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-toast';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-toast',
   },
   'components-base-toggle': {
     name: 'components-base-toggle',
@@ -3835,6 +3908,50 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-base-dialog',
   },
+  'demo-components-base-drawer': {
+    name: 'demo-components-base-drawer',
+    description: 'Demo showing a drawer.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-drawer'],
+    files: [
+      {
+        path: 'registry/demo/components/base/drawer/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/drawer.tsx',
+        content:
+          'import * as React from \'react\';\n\nimport { Button } from \'@/components/ui/button\';\nimport {\n  Drawer,\n  DrawerTrigger,\n  DrawerPopup,\n  DrawerHeader,\n  DrawerTitle,\n  DrawerDescription,\n  DrawerFooter,\n  DrawerClose,\n  type DrawerProps,\n} from \'@/components/animate-ui/components/base/drawer\';\n\ninterface BaseDrawerDemoProps {\n  swipeDirection: DrawerProps[\'swipeDirection\'];\n}\n\nexport const BaseDrawerDemo = ({ swipeDirection }: BaseDrawerDemoProps) => {\n  return (\n    <Drawer swipeDirection={swipeDirection}>\n      <DrawerTrigger render={<Button variant="outline">Open Drawer</Button>} />\n\n      <DrawerPopup>\n        <div className="mx-auto flex w-full max-w-sm flex-1 flex-col">\n          <DrawerHeader>\n            <DrawerTitle>Move goal</DrawerTitle>\n            <DrawerDescription>Set your daily activity goal.</DrawerDescription>\n          </DrawerHeader>\n          <div className="flex flex-col items-center gap-1 p-4 pb-0">\n            <span className="text-7xl font-bold tracking-tighter tabular-nums">\n              350\n            </span>\n            <span className="text-muted-foreground text-[0.70rem] uppercase">\n              Calories/day\n            </span>\n          </div>\n          <DrawerFooter>\n            <Button>Submit</Button>\n            <DrawerClose render={<Button variant="outline">Cancel</Button>} />\n          </DrawerFooter>\n        </div>\n      </DrawerPopup>\n    </Drawer>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/base/drawer/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-drawer';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        Drawer: {
+          swipeDirection: {
+            value: 'down',
+            options: { down: 'down', up: 'up', left: 'left', right: 'right' },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-drawer',
+  },
   'demo-components-base-files': {
     name: 'demo-components-base-files',
     description: 'Demo showing a files.',
@@ -4429,6 +4546,57 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-base-tabs',
+  },
+  'demo-components-base-toast': {
+    name: 'demo-components-base-toast',
+    description: 'Demo showing stacked toasts.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-toast'],
+    files: [
+      {
+        path: 'registry/demo/components/base/toast/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/toast.tsx',
+        content:
+          "'use client';\n\nimport {\n  Toaster,\n  useToastManager,\n  type ToastPosition,\n} from '@/components/animate-ui/components/base/toast';\nimport { Button } from '@/components/ui/button';\n\ninterface BaseToastDemoProps {\n  position?: ToastPosition;\n}\n\nexport const BaseToastDemo = ({ position }: BaseToastDemoProps) => {\n  return (\n    <Toaster position={position}>\n      <ShowToastButton />\n    </Toaster>\n  );\n};\n\nfunction ShowToastButton() {\n  const toastManager = useToastManager();\n\n  function showToast() {\n    const id = toastManager.add({\n      title: 'Event created',\n      description: 'Sunday, December 03, 2023 at 9:00 AM',\n      actionProps: {\n        children: 'Undo',\n        onClick: () => toastManager.close(id),\n      },\n    });\n  }\n\n  return (\n    <Button variant=\"outline\" onClick={showToast}>\n      Show toast\n    </Button>\n  );\n}",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/base/toast/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-toast';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        Toaster: {
+          position: {
+            value: 'bottom-right',
+            options: {
+              'top-left': 'top-left',
+              'top-center': 'top-center',
+              'top-right': 'top-right',
+              'bottom-left': 'bottom-left',
+              'bottom-center': 'bottom-center',
+              'bottom-right': 'bottom-right',
+            },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-toast',
   },
   'demo-components-base-toggle': {
     name: 'demo-components-base-toggle',
@@ -7502,6 +7670,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-base-dialog',
+  },
+  'demo-primitives-base-drawer': {
+    name: 'demo-primitives-base-drawer',
+    description: 'Demo showing an animated base drawer.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-drawer'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/drawer/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/base/drawer.tsx',
+        content:
+          'import {\n  Drawer,\n  DrawerTrigger,\n  DrawerPortal,\n  DrawerBackdrop,\n  DrawerViewport,\n  DrawerPopup,\n  DrawerContent,\n  DrawerHeader,\n  DrawerTitle,\n  DrawerDescription,\n  DrawerFooter,\n  DrawerClose,\n} from \'@/components/animate-ui/primitives/base/drawer\';\n\nexport const BaseDrawerDemo = () => {\n  return (\n    <Drawer>\n      <DrawerTrigger className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n        Open Drawer\n      </DrawerTrigger>\n\n      <DrawerPortal>\n        <DrawerBackdrop className="fixed inset-0 z-50 bg-black/80" />\n        <DrawerViewport className="fixed inset-0 z-50 flex items-end justify-center">\n          <DrawerPopup className="w-full max-h-[80vh] overflow-y-auto border-t bg-background p-6">\n            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted" />\n            <DrawerContent className="mx-auto w-full max-w-md">\n              <DrawerHeader>\n                <DrawerTitle className="text-lg">Notifications</DrawerTitle>\n                <DrawerDescription className="text-sm text-muted-foreground">\n                  You are all caught up. Swipe down to dismiss.\n                </DrawerDescription>\n              </DrawerHeader>\n\n              <DrawerFooter className="mt-6 flex justify-end">\n                <DrawerClose className="bg-primary text-primary-foreground px-4 py-2 text-sm">\n                  Close\n                </DrawerClose>\n              </DrawerFooter>\n            </DrawerContent>\n          </DrawerPopup>\n        </DrawerViewport>\n      </DrawerPortal>\n    </Drawer>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/base/drawer/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-drawer';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-drawer',
   },
   'demo-primitives-base-files': {
     name: 'demo-primitives-base-files',
@@ -22137,6 +22342,43 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-base-dialog',
   },
+  'primitives-base-drawer': {
+    name: 'primitives-base-drawer',
+    description:
+      'A panel that slides in from the edge of the screen and can be swiped away.',
+    type: 'registry:ui',
+    dependencies: ['@base-ui/react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/lib-motion'],
+    files: [
+      {
+        path: 'registry/primitives/base/drawer/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/drawer.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';\n\nimport { cn } from '@/lib/utils';\n\n/**\n * Motion is CSS, not Motion: Base UI drives the swipe gesture itself through\n * CSS variables (`--drawer-swipe-movement-*`, `--drawer-swipe-progress`,\n * `--drawer-swipe-strength`) and `data-starting-style` / `data-ending-style`,\n * so the drawer animates with CSS transitions that read them. A JS animation\n * layered on top would fight the finger.\n */\n\ntype ClassName<State> = string | ((state: State) => string | undefined);\n\nfunction withClassName<State>(\n  base: string,\n  className: ClassName<State> | undefined,\n): ClassName<State> {\n  return typeof className === 'function'\n    ? (state) => cn(base, className(state))\n    : cn(base, className);\n}\n\n// Popup: rests at the swipe offset (so dragging follows the finger), starts\n// and ends one full popup size off its edge. The edge comes from Base UI's\n// `data-swipe-direction`; `--drawer-travel` drops to 0 under reduced motion so\n// it fades in place instead (a swipe dismissal still follows the finger out).\nconst POPUP_MOTION = [\n  '[--drawer-travel:1] motion-reduce:[--drawer-travel:0]',\n  'data-swipe-dismiss:[--drawer-travel:1]',\n  '[--drawer-dx:0] [--drawer-dy:0]',\n  'data-[swipe-direction=down]:[--drawer-dy:1] data-[swipe-direction=up]:[--drawer-dy:-1]',\n  'data-[swipe-direction=right]:[--drawer-dx:1] data-[swipe-direction=left]:[--drawer-dx:-1]',\n  '[transform:translate3d(var(--drawer-swipe-movement-x),calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y)),0)]',\n  'data-starting-style:[transform:translate3d(calc(var(--drawer-dx)*var(--drawer-travel)*100%),calc(var(--drawer-dy)*var(--drawer-travel)*100%),0)]',\n  'data-ending-style:[transform:translate3d(calc(var(--drawer-dx)*var(--drawer-travel)*100%),calc(var(--drawer-dy)*var(--drawer-travel)*100%),0)]',\n  'motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0',\n  // Open 500ms, close 300ms scaled by the release velocity, 0 while dragging.\n  'transition-[transform,opacity] duration-500 ease-drawer',\n  'data-ending-style:duration-[calc(var(--drawer-swipe-strength)*300ms)]',\n  'data-swiping:duration-0 data-swiping:select-none',\n  'data-ending-style:data-swiping:duration-[calc(var(--drawer-swipe-strength)*300ms)]',\n].join(' ');\n\n// Backdrop: fades with the swipe progress, 300ms in, 200ms out.\nconst BACKDROP_MOTION = [\n  'opacity-[calc(1-var(--drawer-swipe-progress))]',\n  'data-starting-style:opacity-0 data-ending-style:opacity-0',\n  'transition-opacity duration-300 ease-out-strong',\n  'data-ending-style:duration-[calc(var(--drawer-swipe-strength)*200ms)]',\n  'data-swiping:duration-0',\n].join(' ');\n\ntype DrawerProps = React.ComponentProps<typeof DrawerPrimitive.Root>;\n\nfunction Drawer(props: DrawerProps) {\n  return <DrawerPrimitive.Root {...props} />;\n}\n\nconst createDrawerHandle = DrawerPrimitive.createHandle;\n\ntype DrawerTriggerProps = React.ComponentProps<typeof DrawerPrimitive.Trigger>;\n\nfunction DrawerTrigger(props: DrawerTriggerProps) {\n  return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;\n}\n\ntype DrawerSwipeAreaProps = React.ComponentProps<\n  typeof DrawerPrimitive.SwipeArea\n>;\n\nfunction DrawerSwipeArea(props: DrawerSwipeAreaProps) {\n  return <DrawerPrimitive.SwipeArea data-slot=\"drawer-swipe-area\" {...props} />;\n}\n\ntype DrawerPortalProps = React.ComponentProps<typeof DrawerPrimitive.Portal>;\n\nfunction DrawerPortal(props: DrawerPortalProps) {\n  return <DrawerPrimitive.Portal data-slot=\"drawer-portal\" {...props} />;\n}\n\ntype DrawerBackdropProps = React.ComponentProps<\n  typeof DrawerPrimitive.Backdrop\n>;\n\nfunction DrawerBackdrop({ className, ...props }: DrawerBackdropProps) {\n  return (\n    <DrawerPrimitive.Backdrop\n      data-slot=\"drawer-backdrop\"\n      className={withClassName(BACKDROP_MOTION, className)}\n      {...props}\n    />\n  );\n}\n\ntype DrawerViewportProps = React.ComponentProps<\n  typeof DrawerPrimitive.Viewport\n>;\n\nfunction DrawerViewport(props: DrawerViewportProps) {\n  return <DrawerPrimitive.Viewport data-slot=\"drawer-viewport\" {...props} />;\n}\n\ntype DrawerPopupProps = React.ComponentProps<typeof DrawerPrimitive.Popup>;\n\nfunction DrawerPopup({ className, ...props }: DrawerPopupProps) {\n  return (\n    <DrawerPrimitive.Popup\n      data-slot=\"drawer-popup\"\n      className={withClassName(POPUP_MOTION, className)}\n      {...props}\n    />\n  );\n}\n\ntype DrawerContentProps = React.ComponentProps<typeof DrawerPrimitive.Content>;\n\nfunction DrawerContent(props: DrawerContentProps) {\n  return <DrawerPrimitive.Content data-slot=\"drawer-content\" {...props} />;\n}\n\ntype DrawerCloseProps = React.ComponentProps<typeof DrawerPrimitive.Close>;\n\nfunction DrawerClose(props: DrawerCloseProps) {\n  return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;\n}\n\ntype DrawerHeaderProps = React.ComponentProps<'div'>;\n\nfunction DrawerHeader(props: DrawerHeaderProps) {\n  return <div data-slot=\"drawer-header\" {...props} />;\n}\n\ntype DrawerFooterProps = React.ComponentProps<'div'>;\n\nfunction DrawerFooter(props: DrawerFooterProps) {\n  return <div data-slot=\"drawer-footer\" {...props} />;\n}\n\ntype DrawerTitleProps = React.ComponentProps<typeof DrawerPrimitive.Title>;\n\nfunction DrawerTitle(props: DrawerTitleProps) {\n  return <DrawerPrimitive.Title data-slot=\"drawer-title\" {...props} />;\n}\n\ntype DrawerDescriptionProps = React.ComponentProps<\n  typeof DrawerPrimitive.Description\n>;\n\nfunction DrawerDescription(props: DrawerDescriptionProps) {\n  return (\n    <DrawerPrimitive.Description data-slot=\"drawer-description\" {...props} />\n  );\n}\n\nexport {\n  Drawer,\n  DrawerTrigger,\n  DrawerSwipeArea,\n  DrawerPortal,\n  DrawerBackdrop,\n  DrawerViewport,\n  DrawerPopup,\n  DrawerContent,\n  DrawerClose,\n  DrawerHeader,\n  DrawerFooter,\n  DrawerTitle,\n  DrawerDescription,\n  createDrawerHandle,\n  type DrawerProps,\n  type DrawerTriggerProps,\n  type DrawerSwipeAreaProps,\n  type DrawerPortalProps,\n  type DrawerBackdropProps,\n  type DrawerViewportProps,\n  type DrawerPopupProps,\n  type DrawerContentProps,\n  type DrawerCloseProps,\n  type DrawerHeaderProps,\n  type DrawerFooterProps,\n  type DrawerTitleProps,\n  type DrawerDescriptionProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/primitives/base/drawer/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-drawer';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-drawer',
+  },
   'primitives-base-files': {
     name: 'primitives-base-files',
     description:
@@ -22442,7 +22684,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/select.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { Select as SelectPrimitive } from \'@base-ui/react/select\';\nimport { mergeProps } from \'@base-ui/react/merge-props\';\nimport { motion, type HTMLMotionProps } from \'motion/react\';\n\nimport { getStrictContext } from \'@/lib/get-strict-context\';\nimport { useControlledState } from \'@/hooks/use-controlled-state\';\nimport {\n  ReducedMotionConfig,\n  scale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from \'@/lib/motion\';\n\ntype SelectContextType = {\n  isOpen: boolean;\n  setIsOpen: (\n    isOpen: boolean,\n    eventDetails: SelectPrimitive.Root.ChangeEventDetails,\n  ) => void;\n  /** Unmounts the popup once its exit animation has finished. */\n  unmount: () => void;\n  onOpenChangeComplete?: (open: boolean) => void;\n};\n\nconst [SelectProvider, useSelect] =\n  getStrictContext<SelectContextType>(\'SelectContext\');\n\ntype SelectProps<\n  Value = unknown,\n  Multiple extends boolean | undefined = false,\n> = SelectPrimitive.Root.Props<Value, Multiple>;\n\nfunction Select<Value, Multiple extends boolean | undefined = false>({\n  actionsRef: actionsRefProp,\n  ...props\n}: SelectProps<Value, Multiple>) {\n  // Base UI\'s Select has no `keepMounted` portal: with an `actionsRef`, it\n  // keeps the popup mounted until we unmount it after the exit animation.\n  const actionsRef = React.useRef<SelectPrimitive.Root.Actions | null>(null);\n  React.useImperativeHandle(\n    actionsRefProp,\n    () => ({ unmount: () => actionsRef.current?.unmount() }),\n    [],\n  );\n  const unmount = React.useCallback(() => actionsRef.current?.unmount(), []);\n\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen ?? false,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <SelectProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        unmount,\n        onOpenChangeComplete: props?.onOpenChangeComplete,\n      }}\n    >\n      <SelectPrimitive.Root\n        data-slot="select"\n        {...props}\n        open={isOpen}\n        onOpenChange={setIsOpen}\n        actionsRef={actionsRef}\n      />\n    </SelectProvider>\n  );\n}\n\ntype SelectLabelProps = React.ComponentProps<typeof SelectPrimitive.Label>;\n\nfunction SelectLabel(props: SelectLabelProps) {\n  return <SelectPrimitive.Label data-slot="select-label" {...props} />;\n}\n\ntype SelectTriggerProps = React.ComponentProps<typeof SelectPrimitive.Trigger>;\n\nfunction SelectTrigger(props: SelectTriggerProps) {\n  return <SelectPrimitive.Trigger data-slot="select-trigger" {...props} />;\n}\n\ntype SelectValueProps = React.ComponentProps<typeof SelectPrimitive.Value>;\n\nfunction SelectValue(props: SelectValueProps) {\n  return <SelectPrimitive.Value data-slot="select-value" {...props} />;\n}\n\ntype SelectIconProps = React.ComponentProps<typeof SelectPrimitive.Icon>;\n\nfunction SelectIcon(props: SelectIconProps) {\n  return <SelectPrimitive.Icon data-slot="select-icon" {...props} />;\n}\n\ntype SelectPortalProps = React.ComponentProps<typeof SelectPrimitive.Portal>;\n\nfunction SelectPortal(props: SelectPortalProps) {\n  return <SelectPrimitive.Portal data-slot="select-portal" {...props} />;\n}\n\ntype SelectBackdropProps = React.ComponentProps<\n  typeof SelectPrimitive.Backdrop\n>;\n\nfunction SelectBackdrop(props: SelectBackdropProps) {\n  return <SelectPrimitive.Backdrop data-slot="select-backdrop" {...props} />;\n}\n\ntype SelectPositionerProps = React.ComponentProps<\n  typeof SelectPrimitive.Positioner\n>;\n\nfunction SelectPositioner(props: SelectPositionerProps) {\n  return (\n    <SelectPrimitive.Positioner data-slot="select-positioner" {...props} />\n  );\n}\n\ntype SelectPopupProps = Omit<\n  React.ComponentProps<typeof SelectPrimitive.Popup>,\n  \'render\'\n> &\n  HTMLMotionProps<\'div\'>;\n\nfunction SelectPopup(props: SelectPopupProps) {\n  return (\n    <ReducedMotionConfig>\n      <SelectPopupMotion {...props} />\n    </ReducedMotionConfig>\n  );\n}\n\n// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.\nfunction SelectPopupMotion({\n  finalFocus,\n  ref,\n  className,\n  style,\n  onAnimationComplete,\n  transition = motionTransition.dropdown,\n  ...props\n}: SelectPopupProps) {\n  const { isOpen, unmount, onOpenChangeComplete } = useSelect();\n  const reduce = useShouldReduceMotion();\n  // Base UI can mount the popup while closed (form autofill registers the\n  // items): only unmount after a close that followed an open.\n  const hasOpenedRef = React.useRef(false);\n  React.useEffect(() => {\n    if (isOpen) hasOpenedRef.current = true;\n  }, [isOpen]);\n\n  return (\n    <SelectPrimitive.Popup\n      ref={ref}\n      finalFocus={finalFocus}\n      className={className}\n      render={(renderProps, state) => {\n        // Align-with-trigger mode (`side` is "none") lays the list over the\n        // trigger like a native select: fade only, no scale.\n        const isAligned = state.side === \'none\';\n        const hidden = isAligned\n          ? { opacity: 0 }\n          : {\n              opacity: 0,\n              transform: reduce ? \'scale(1)\' : `scale(${scale.enter})`,\n            };\n        const visible = isAligned\n          ? { opacity: 1 }\n          : { opacity: 1, transform: \'scale(1)\' };\n\n        return (\n          <motion.div\n            // Chains Base UI\'s handlers with the user\'s instead of replacing them.\n            {...(mergeProps<\'div\'>(\n              renderProps,\n              props as React.ComponentProps<\'div\'>,\n            ) as HTMLMotionProps<\'div\'>)}\n            data-slot="select-popup"\n            initial={hidden}\n            // The popup stays mounted while it closes, so the same element\n            // retargets if the select reopens mid-exit.\n            animate={\n              isOpen\n                ? { ...visible, transition }\n                : { ...hidden, transition: motionTransition.exit }\n            }\n            onAnimationComplete={(definition) => {\n              onAnimationComplete?.(definition);\n              if (isOpen) {\n                onOpenChangeComplete?.(true);\n              } else if (hasOpenedRef.current) {\n                hasOpenedRef.current = false;\n                unmount();\n              }\n            }}\n            style={{\n              ...renderProps.style,\n              transformOrigin: isAligned\n                ? undefined\n                : \'var(--transform-origin)\',\n              ...style,\n            }}\n          />\n        );\n      }}\n    />\n  );\n}\n\ntype SelectListProps = React.ComponentProps<typeof SelectPrimitive.List>;\n\nfunction SelectList(props: SelectListProps) {\n  return <SelectPrimitive.List data-slot="select-list" {...props} />;\n}\n\n// No animated highlight: arrow keys move it, and keyboard navigation stays\n// instant. Style `data-highlighted` instead.\ntype SelectItemProps = React.ComponentProps<typeof SelectPrimitive.Item>;\n\nfunction SelectItem(props: SelectItemProps) {\n  return <SelectPrimitive.Item data-slot="select-item" {...props} />;\n}\n\ntype SelectItemTextProps = React.ComponentProps<\n  typeof SelectPrimitive.ItemText\n>;\n\nfunction SelectItemText(props: SelectItemTextProps) {\n  return <SelectPrimitive.ItemText data-slot="select-item-text" {...props} />;\n}\n\n// Not animated: it only mounts with the popup (choosing an item closes the\n// list), so a fade would just repeat the popup\'s.\ntype SelectItemIndicatorProps = React.ComponentProps<\n  typeof SelectPrimitive.ItemIndicator\n>;\n\nfunction SelectItemIndicator(props: SelectItemIndicatorProps) {\n  return (\n    <SelectPrimitive.ItemIndicator\n      data-slot="select-item-indicator"\n      {...props}\n    />\n  );\n}\n\ntype SelectArrowProps = React.ComponentProps<typeof SelectPrimitive.Arrow>;\n\nfunction SelectArrow(props: SelectArrowProps) {\n  return <SelectPrimitive.Arrow data-slot="select-arrow" {...props} />;\n}\n\ntype SelectScrollUpArrowProps = React.ComponentProps<\n  typeof SelectPrimitive.ScrollUpArrow\n>;\n\nfunction SelectScrollUpArrow(props: SelectScrollUpArrowProps) {\n  return (\n    <SelectPrimitive.ScrollUpArrow\n      data-slot="select-scroll-up-arrow"\n      {...props}\n    />\n  );\n}\n\ntype SelectScrollDownArrowProps = React.ComponentProps<\n  typeof SelectPrimitive.ScrollDownArrow\n>;\n\nfunction SelectScrollDownArrow(props: SelectScrollDownArrowProps) {\n  return (\n    <SelectPrimitive.ScrollDownArrow\n      data-slot="select-scroll-down-arrow"\n      {...props}\n    />\n  );\n}\n\ntype SelectGroupProps = React.ComponentProps<typeof SelectPrimitive.Group>;\n\nfunction SelectGroup(props: SelectGroupProps) {\n  return <SelectPrimitive.Group data-slot="select-group" {...props} />;\n}\n\ntype SelectGroupLabelProps = React.ComponentProps<\n  typeof SelectPrimitive.GroupLabel\n>;\n\nfunction SelectGroupLabel(props: SelectGroupLabelProps) {\n  return (\n    <SelectPrimitive.GroupLabel data-slot="select-group-label" {...props} />\n  );\n}\n\ntype SelectSeparatorProps = React.ComponentProps<\n  typeof SelectPrimitive.Separator\n>;\n\nfunction SelectSeparator(props: SelectSeparatorProps) {\n  return <SelectPrimitive.Separator data-slot="select-separator" {...props} />;\n}\n\nexport {\n  Select,\n  SelectLabel,\n  SelectTrigger,\n  SelectValue,\n  SelectIcon,\n  SelectPortal,\n  SelectBackdrop,\n  SelectPositioner,\n  SelectPopup,\n  SelectList,\n  SelectItem,\n  SelectItemText,\n  SelectItemIndicator,\n  SelectArrow,\n  SelectScrollUpArrow,\n  SelectScrollDownArrow,\n  SelectGroup,\n  SelectGroupLabel,\n  SelectSeparator,\n  useSelect,\n  type SelectProps,\n  type SelectLabelProps,\n  type SelectTriggerProps,\n  type SelectValueProps,\n  type SelectIconProps,\n  type SelectPortalProps,\n  type SelectBackdropProps,\n  type SelectPositionerProps,\n  type SelectPopupProps,\n  type SelectListProps,\n  type SelectItemProps,\n  type SelectItemTextProps,\n  type SelectItemIndicatorProps,\n  type SelectArrowProps,\n  type SelectScrollUpArrowProps,\n  type SelectScrollDownArrowProps,\n  type SelectGroupProps,\n  type SelectGroupLabelProps,\n  type SelectSeparatorProps,\n  type SelectContextType,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { Select as SelectPrimitive } from \'@base-ui/react/select\';\nimport { mergeProps } from \'@base-ui/react/merge-props\';\nimport { motion, type HTMLMotionProps } from \'motion/react\';\n\nimport { getStrictContext } from \'@/lib/get-strict-context\';\nimport { useControlledState } from \'@/hooks/use-controlled-state\';\nimport {\n  ReducedMotionConfig,\n  scale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from \'@/lib/motion\';\n\ntype SelectContextType = {\n  isOpen: boolean;\n  setIsOpen: (\n    isOpen: boolean,\n    eventDetails: SelectPrimitive.Root.ChangeEventDetails,\n  ) => void;\n  /** Unmounts the popup once its exit animation has finished. */\n  unmount: () => void;\n  onOpenChangeComplete?: (open: boolean) => void;\n};\n\nconst [SelectProvider, useSelect] =\n  getStrictContext<SelectContextType>(\'SelectContext\');\n\ntype SelectProps<\n  Value = unknown,\n  Multiple extends boolean | undefined = false,\n> = SelectPrimitive.Root.Props<Value, Multiple>;\n\nfunction Select<Value, Multiple extends boolean | undefined = false>({\n  actionsRef: actionsRefProp,\n  ...props\n}: SelectProps<Value, Multiple>) {\n  // Base UI\'s Select has no `keepMounted` portal: with an `actionsRef`, it\n  // keeps the popup mounted until we unmount it after the exit animation.\n  const actionsRef = React.useRef<SelectPrimitive.Root.Actions | null>(null);\n  React.useImperativeHandle(\n    actionsRefProp,\n    () => ({ unmount: () => actionsRef.current?.unmount() }),\n    [],\n  );\n  const unmount = React.useCallback(() => actionsRef.current?.unmount(), []);\n\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen ?? false,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <SelectProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        unmount,\n        onOpenChangeComplete: props?.onOpenChangeComplete,\n      }}\n    >\n      <SelectPrimitive.Root\n        data-slot="select"\n        {...props}\n        open={isOpen}\n        onOpenChange={setIsOpen}\n        actionsRef={actionsRef}\n      />\n    </SelectProvider>\n  );\n}\n\ntype SelectLabelProps = React.ComponentProps<typeof SelectPrimitive.Label>;\n\nfunction SelectLabel(props: SelectLabelProps) {\n  return <SelectPrimitive.Label data-slot="select-label" {...props} />;\n}\n\ntype SelectTriggerProps = React.ComponentProps<typeof SelectPrimitive.Trigger>;\n\nfunction SelectTrigger(props: SelectTriggerProps) {\n  return <SelectPrimitive.Trigger data-slot="select-trigger" {...props} />;\n}\n\ntype SelectValueProps = React.ComponentProps<typeof SelectPrimitive.Value>;\n\nfunction SelectValue(props: SelectValueProps) {\n  return <SelectPrimitive.Value data-slot="select-value" {...props} />;\n}\n\ntype SelectIconProps = React.ComponentProps<typeof SelectPrimitive.Icon>;\n\nfunction SelectIcon(props: SelectIconProps) {\n  return <SelectPrimitive.Icon data-slot="select-icon" {...props} />;\n}\n\ntype SelectPortalProps = React.ComponentProps<typeof SelectPrimitive.Portal>;\n\nfunction SelectPortal(props: SelectPortalProps) {\n  return <SelectPrimitive.Portal data-slot="select-portal" {...props} />;\n}\n\ntype SelectBackdropProps = React.ComponentProps<\n  typeof SelectPrimitive.Backdrop\n>;\n\nfunction SelectBackdrop(props: SelectBackdropProps) {\n  return <SelectPrimitive.Backdrop data-slot="select-backdrop" {...props} />;\n}\n\ntype SelectPositionerProps = React.ComponentProps<\n  typeof SelectPrimitive.Positioner\n>;\n\nfunction SelectPositioner(props: SelectPositionerProps) {\n  return (\n    <SelectPrimitive.Positioner data-slot="select-positioner" {...props} />\n  );\n}\n\ntype SelectPopupProps = Omit<\n  React.ComponentProps<typeof SelectPrimitive.Popup>,\n  \'render\'\n> &\n  HTMLMotionProps<\'div\'>;\n\nfunction SelectPopup(props: SelectPopupProps) {\n  return (\n    <ReducedMotionConfig>\n      <SelectPopupMotion {...props} />\n    </ReducedMotionConfig>\n  );\n}\n\n// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.\nfunction SelectPopupMotion({\n  finalFocus,\n  ref,\n  className,\n  style,\n  onAnimationComplete,\n  transition = motionTransition.dropdown,\n  ...props\n}: SelectPopupProps) {\n  const { isOpen, unmount, onOpenChangeComplete } = useSelect();\n  const reduce = useShouldReduceMotion();\n  // Base UI can mount the popup while closed (form autofill registers the\n  // items): only unmount after a close that followed an open.\n  const hasOpenedRef = React.useRef(false);\n  React.useEffect(() => {\n    if (isOpen) hasOpenedRef.current = true;\n  }, [isOpen]);\n\n  // Base UI keeps a closed popup mounted (it remounts it after `unmount()`):\n  // once the exit has played, hide it so it leaves the accessibility tree.\n  const [exitDone, setExitDone] = React.useState(true);\n  if (isOpen && exitDone) setExitDone(false);\n\n  return (\n    <SelectPrimitive.Popup\n      ref={ref}\n      finalFocus={finalFocus}\n      className={className}\n      render={(renderProps, state) => {\n        // Align-with-trigger mode (`side` is "none") lays the list over the\n        // trigger like a native select: fade only, no scale.\n        const isAligned = state.side === \'none\';\n        const hidden = isAligned\n          ? { opacity: 0 }\n          : {\n              opacity: 0,\n              transform: reduce ? \'scale(1)\' : `scale(${scale.enter})`,\n            };\n        const visible = isAligned\n          ? { opacity: 1 }\n          : { opacity: 1, transform: \'scale(1)\' };\n\n        return (\n          <motion.div\n            // Chains Base UI\'s handlers with the user\'s instead of replacing them.\n            {...(mergeProps<\'div\'>(\n              renderProps,\n              props as React.ComponentProps<\'div\'>,\n            ) as HTMLMotionProps<\'div\'>)}\n            data-slot="select-popup"\n            hidden={!isOpen && exitDone}\n            initial={hidden}\n            // The popup stays mounted while it closes, so the same element\n            // retargets if the select reopens mid-exit.\n            animate={\n              isOpen\n                ? { ...visible, transition }\n                : { ...hidden, transition: motionTransition.exit }\n            }\n            onAnimationComplete={(definition) => {\n              onAnimationComplete?.(definition);\n              if (isOpen) {\n                onOpenChangeComplete?.(true);\n              } else {\n                setExitDone(true);\n                if (hasOpenedRef.current) {\n                  hasOpenedRef.current = false;\n                  unmount();\n                }\n              }\n            }}\n            style={{\n              ...renderProps.style,\n              transformOrigin: isAligned\n                ? undefined\n                : \'var(--transform-origin)\',\n              ...style,\n            }}\n          />\n        );\n      }}\n    />\n  );\n}\n\ntype SelectListProps = React.ComponentProps<typeof SelectPrimitive.List>;\n\nfunction SelectList(props: SelectListProps) {\n  return <SelectPrimitive.List data-slot="select-list" {...props} />;\n}\n\n// No animated highlight: arrow keys move it, and keyboard navigation stays\n// instant. Style `data-highlighted` instead.\ntype SelectItemProps = React.ComponentProps<typeof SelectPrimitive.Item>;\n\nfunction SelectItem(props: SelectItemProps) {\n  return <SelectPrimitive.Item data-slot="select-item" {...props} />;\n}\n\ntype SelectItemTextProps = React.ComponentProps<\n  typeof SelectPrimitive.ItemText\n>;\n\nfunction SelectItemText(props: SelectItemTextProps) {\n  return <SelectPrimitive.ItemText data-slot="select-item-text" {...props} />;\n}\n\n// Not animated: it only mounts with the popup (choosing an item closes the\n// list), so a fade would just repeat the popup\'s.\ntype SelectItemIndicatorProps = React.ComponentProps<\n  typeof SelectPrimitive.ItemIndicator\n>;\n\nfunction SelectItemIndicator(props: SelectItemIndicatorProps) {\n  return (\n    <SelectPrimitive.ItemIndicator\n      data-slot="select-item-indicator"\n      {...props}\n    />\n  );\n}\n\ntype SelectArrowProps = React.ComponentProps<typeof SelectPrimitive.Arrow>;\n\nfunction SelectArrow(props: SelectArrowProps) {\n  return <SelectPrimitive.Arrow data-slot="select-arrow" {...props} />;\n}\n\ntype SelectScrollUpArrowProps = React.ComponentProps<\n  typeof SelectPrimitive.ScrollUpArrow\n>;\n\nfunction SelectScrollUpArrow(props: SelectScrollUpArrowProps) {\n  return (\n    <SelectPrimitive.ScrollUpArrow\n      data-slot="select-scroll-up-arrow"\n      {...props}\n    />\n  );\n}\n\ntype SelectScrollDownArrowProps = React.ComponentProps<\n  typeof SelectPrimitive.ScrollDownArrow\n>;\n\nfunction SelectScrollDownArrow(props: SelectScrollDownArrowProps) {\n  return (\n    <SelectPrimitive.ScrollDownArrow\n      data-slot="select-scroll-down-arrow"\n      {...props}\n    />\n  );\n}\n\ntype SelectGroupProps = React.ComponentProps<typeof SelectPrimitive.Group>;\n\nfunction SelectGroup(props: SelectGroupProps) {\n  return <SelectPrimitive.Group data-slot="select-group" {...props} />;\n}\n\ntype SelectGroupLabelProps = React.ComponentProps<\n  typeof SelectPrimitive.GroupLabel\n>;\n\nfunction SelectGroupLabel(props: SelectGroupLabelProps) {\n  return (\n    <SelectPrimitive.GroupLabel data-slot="select-group-label" {...props} />\n  );\n}\n\ntype SelectSeparatorProps = React.ComponentProps<\n  typeof SelectPrimitive.Separator\n>;\n\nfunction SelectSeparator(props: SelectSeparatorProps) {\n  return <SelectPrimitive.Separator data-slot="select-separator" {...props} />;\n}\n\nexport {\n  Select,\n  SelectLabel,\n  SelectTrigger,\n  SelectValue,\n  SelectIcon,\n  SelectPortal,\n  SelectBackdrop,\n  SelectPositioner,\n  SelectPopup,\n  SelectList,\n  SelectItem,\n  SelectItemText,\n  SelectItemIndicator,\n  SelectArrow,\n  SelectScrollUpArrow,\n  SelectScrollDownArrow,\n  SelectGroup,\n  SelectGroupLabel,\n  SelectSeparator,\n  useSelect,\n  type SelectProps,\n  type SelectLabelProps,\n  type SelectTriggerProps,\n  type SelectValueProps,\n  type SelectIconProps,\n  type SelectPortalProps,\n  type SelectBackdropProps,\n  type SelectPositionerProps,\n  type SelectPopupProps,\n  type SelectListProps,\n  type SelectItemProps,\n  type SelectItemTextProps,\n  type SelectItemIndicatorProps,\n  type SelectArrowProps,\n  type SelectScrollUpArrowProps,\n  type SelectScrollDownArrowProps,\n  type SelectGroupProps,\n  type SelectGroupLabelProps,\n  type SelectSeparatorProps,\n  type SelectContextType,\n};',
       },
     ],
     keywords: [],
@@ -22547,6 +22789,42 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-base-tabs',
+  },
+  'primitives-base-toast': {
+    name: 'primitives-base-toast',
+    description: 'A stack of short notifications that can be swiped away.',
+    type: 'registry:ui',
+    dependencies: ['@base-ui/react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/lib-motion'],
+    files: [
+      {
+        path: 'registry/primitives/base/toast/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/toast.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { Toast as ToastPrimitive } from '@base-ui/react/toast';\n\nimport { cn } from '@/lib/utils';\n\n/**\n * Motion is CSS, not Motion: Base UI drives stacking, swipe-to-dismiss and\n * enter/exit itself through CSS variables (`--toast-index`,\n * `--toast-offset-y`, `--toast-swipe-movement-*`, `--toast-height`,\n * `--toast-frontmost-height`) and `data-starting-style` / `data-ending-style`,\n * so toasts animate with CSS transitions that read them. Transitions retarget\n * when toasts are added quickly; a JS animation layered on top would fight the\n * swipe and the stack.\n */\n\ntype ClassName<State> = string | ((state: State) => string | undefined);\n\nfunction withClassName<State>(\n  base: string,\n  className: ClassName<State> | undefined,\n): ClassName<State> {\n  return typeof className === 'function'\n    ? (state) => cn(base, className(state))\n    : cn(base, className);\n}\n\ntype ToastPosition =\n  | 'top-left'\n  | 'top-center'\n  | 'top-right'\n  | 'bottom-left'\n  | 'bottom-center'\n  | 'bottom-right';\n\ntype ToastSide = 'top' | 'bottom';\n\ntype SwipeDirection = 'up' | 'down' | 'left' | 'right';\n\nconst ToastPositionContext = React.createContext<ToastPosition>('bottom-right');\n\nfunction getSide(position: ToastPosition): ToastSide {\n  return position.startsWith('top') ? 'top' : 'bottom';\n}\n\n// Swipe toward the edge the toast came from, and sideways toward the nearest\n// screen edge (vertical only when centered).\nfunction getSwipeDirection(position: ToastPosition): SwipeDirection[] {\n  const vertical: SwipeDirection = getSide(position) === 'top' ? 'up' : 'down';\n  if (position.endsWith('left')) return [vertical, 'left'];\n  if (position.endsWith('right')) return [vertical, 'right'];\n  return [vertical];\n}\n\n// Root: stacked absolutely at the viewport edge. `--toast-dir` is 1 when the\n// stack grows up from the bottom, -1 when it grows down from the top.\n//\n// Collapsed: each toast behind the front one scales down by 0.05 per step\n// (never below 0.9) and peeks out by 0.75rem. Expanded (viewport hovered or\n// focused): toasts spread out with a 0.75rem gap, full size.\n//\n// Enter and exit: one full toast height off the viewport edge (100% of its\n// own height), so a toast leaves the way it came. A swipe dismissal continues\n// in the swipe direction. `--toast-travel` drops to 0 under reduced motion:\n// toasts fade in place and the stack changes without moving.\nconst ROOT_MOTION = [\n  // Layout\n  'absolute inset-x-0 bottom-0 z-[calc(1000_-_var(--toast-index))] origin-bottom select-none',\n  'data-[side=top]:top-0 data-[side=top]:bottom-auto data-[side=top]:origin-top',\n  // Stack geometry. While collapsed every toast takes the frontmost height.\n  '[--toast-gap:0.75rem] [--toast-peek:0.75rem]',\n  '[--toast-dir:1] data-[side=top]:[--toast-dir:-1]',\n  '[--toast-scale:max(0.9,calc(1_-_var(--toast-index)*0.05))]',\n  '[--toast-clamp:var(--toast-frontmost-height,var(--toast-height,0px))]',\n  'h-[var(--toast-frontmost-height,var(--toast-height))] data-expanded:h-[var(--toast-height)]',\n  // Resting position: collapsed stack, or spread out when expanded\n  '[--toast-s:var(--toast-scale)] [--toast-y:calc(var(--toast-swipe-movement-y)_-_var(--toast-dir)*(var(--toast-index)*var(--toast-peek)_+_(1_-_var(--toast-scale))*var(--toast-clamp)))]',\n  'data-expanded:[--toast-s:1] data-expanded:[--toast-y:calc(var(--toast-swipe-movement-y)_-_var(--toast-dir)*(var(--toast-offset-y)_+_var(--toast-index)*var(--toast-gap)))]',\n  // Enter / exit offset, from and back to the viewport edge\n  '[--toast-travel:100%] motion-reduce:[--toast-travel:0%]',\n  '[--toast-exit-x:0px] [--toast-exit-y:0px]',\n  'data-starting-style:[--toast-exit-y:calc(var(--toast-dir)*var(--toast-travel))]',\n  'data-ending-style:[--toast-exit-y:calc(var(--toast-dir)*var(--toast-travel))]',\n  'data-ending-style:data-[swipe-direction=down]:[--toast-exit-y:var(--toast-travel)]',\n  'data-ending-style:data-[swipe-direction=up]:[--toast-exit-y:calc(-1*var(--toast-travel))]',\n  'data-ending-style:data-[swipe-direction=right]:[--toast-exit-y:0px] data-ending-style:data-[swipe-direction=right]:[--toast-exit-x:var(--toast-travel)]',\n  'data-ending-style:data-[swipe-direction=left]:[--toast-exit-y:0px] data-ending-style:data-[swipe-direction=left]:[--toast-exit-x:calc(-1*var(--toast-travel))]',\n  '[transform:translateX(calc(var(--toast-swipe-movement-x)_+_var(--toast-exit-x)))_translateY(calc(var(--toast-y)_+_var(--toast-exit-y)))_scale(var(--toast-s))]',\n  'data-starting-style:opacity-0 data-ending-style:opacity-0 data-limited:opacity-0',\n  // Enter and restack in 400ms, exit in 200ms, same strong ease-out. Base UI\n  // sets `transition: none` inline while the toast is being swiped.\n  'transition-[transform,opacity,height] duration-400 ease-out-strong',\n  'data-ending-style:duration-200',\n  'motion-reduce:transition-opacity',\n  // Fills the gap between expanded toasts so the stack doesn't collapse while\n  // the pointer crosses it.\n  \"after:absolute after:inset-x-0 after:top-full after:h-[calc(var(--toast-gap)_+_1px)] after:content-['']\",\n  'data-[side=top]:after:top-auto data-[side=top]:after:bottom-full',\n].join(' ');\n\n// Content: hidden behind the frontmost toast while collapsed, fades back in\n// when the stack expands.\nconst CONTENT_MOTION =\n  'overflow-hidden transition-opacity duration-250 ease-out-strong data-behind:opacity-0 data-expanded:opacity-100';\n\ntype ToastProviderProps = React.ComponentProps<typeof ToastPrimitive.Provider>;\n\nfunction ToastProvider(props: ToastProviderProps) {\n  return <ToastPrimitive.Provider {...props} />;\n}\n\ntype ToastPortalProps = React.ComponentProps<typeof ToastPrimitive.Portal>;\n\nfunction ToastPortal(props: ToastPortalProps) {\n  return <ToastPrimitive.Portal data-slot=\"toast-portal\" {...props} />;\n}\n\ntype ToastViewportProps = React.ComponentProps<\n  typeof ToastPrimitive.Viewport\n> & {\n  position?: ToastPosition;\n};\n\nfunction ToastViewport({\n  position = 'bottom-right',\n  ...props\n}: ToastViewportProps) {\n  return (\n    <ToastPositionContext value={position}>\n      <ToastPrimitive.Viewport\n        data-slot=\"toast-viewport\"\n        data-position={position}\n        {...props}\n      />\n    </ToastPositionContext>\n  );\n}\n\ntype ToastProps = React.ComponentProps<typeof ToastPrimitive.Root>;\n\nfunction Toast({ className, swipeDirection, ...props }: ToastProps) {\n  const position = React.use(ToastPositionContext);\n\n  return (\n    <ToastPrimitive.Root\n      data-slot=\"toast\"\n      data-side={getSide(position)}\n      swipeDirection={swipeDirection ?? getSwipeDirection(position)}\n      className={withClassName(ROOT_MOTION, className)}\n      {...props}\n    />\n  );\n}\n\ntype ToastContentProps = React.ComponentProps<typeof ToastPrimitive.Content>;\n\nfunction ToastContent({ className, ...props }: ToastContentProps) {\n  return (\n    <ToastPrimitive.Content\n      data-slot=\"toast-content\"\n      className={withClassName(CONTENT_MOTION, className)}\n      {...props}\n    />\n  );\n}\n\ntype ToastTitleProps = React.ComponentProps<typeof ToastPrimitive.Title>;\n\nfunction ToastTitle(props: ToastTitleProps) {\n  return <ToastPrimitive.Title data-slot=\"toast-title\" {...props} />;\n}\n\ntype ToastDescriptionProps = React.ComponentProps<\n  typeof ToastPrimitive.Description\n>;\n\nfunction ToastDescription(props: ToastDescriptionProps) {\n  return (\n    <ToastPrimitive.Description data-slot=\"toast-description\" {...props} />\n  );\n}\n\ntype ToastActionProps = React.ComponentProps<typeof ToastPrimitive.Action>;\n\nfunction ToastAction(props: ToastActionProps) {\n  return <ToastPrimitive.Action data-slot=\"toast-action\" {...props} />;\n}\n\ntype ToastCloseProps = React.ComponentProps<typeof ToastPrimitive.Close>;\n\nfunction ToastClose(props: ToastCloseProps) {\n  return <ToastPrimitive.Close data-slot=\"toast-close\" {...props} />;\n}\n\nconst useToastManager = ToastPrimitive.useToastManager;\nconst createToastManager = ToastPrimitive.createToastManager;\n\ntype ToastObject = ToastPrimitive.Root.ToastObject;\ntype ToastManager = ReturnType<typeof createToastManager>;\n\nexport {\n  ToastProvider,\n  ToastPortal,\n  ToastViewport,\n  Toast,\n  ToastContent,\n  ToastTitle,\n  ToastDescription,\n  ToastAction,\n  ToastClose,\n  useToastManager,\n  createToastManager,\n  type ToastPosition,\n  type ToastProviderProps,\n  type ToastPortalProps,\n  type ToastViewportProps,\n  type ToastProps,\n  type ToastContentProps,\n  type ToastTitleProps,\n  type ToastDescriptionProps,\n  type ToastActionProps,\n  type ToastCloseProps,\n  type ToastObject,\n  type ToastManager,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/primitives/base/toast/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-toast';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-toast',
   },
   'primitives-base-toggle': {
     name: 'primitives-base-toggle',

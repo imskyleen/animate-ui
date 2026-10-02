@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-drawer",
+  "title": "Drawer Demo",
+  "description": "Demo showing a drawer.",
+  "registryDependencies": [
+    "@animate-ui/components-base-drawer"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/drawer/index.tsx",
+      "content": "import * as React from 'react';\n\nimport { Button } from '@/components/ui/button';\nimport {\n  Drawer,\n  DrawerTrigger,\n  DrawerPopup,\n  DrawerHeader,\n  DrawerTitle,\n  DrawerDescription,\n  DrawerFooter,\n  DrawerClose,\n  type DrawerProps,\n} from '@/components/animate-ui/components/base/drawer';\n\ninterface BaseDrawerDemoProps {\n  swipeDirection: DrawerProps['swipeDirection'];\n}\n\nexport const BaseDrawerDemo = ({ swipeDirection }: BaseDrawerDemoProps) => {\n  return (\n    <Drawer swipeDirection={swipeDirection}>\n      <DrawerTrigger render={<Button variant=\"outline\">Open Drawer</Button>} />\n\n      <DrawerPopup>\n        <div className=\"mx-auto flex w-full max-w-sm flex-1 flex-col\">\n          <DrawerHeader>\n            <DrawerTitle>Move goal</DrawerTitle>\n            <DrawerDescription>Set your daily activity goal.</DrawerDescription>\n          </DrawerHeader>\n          <div className=\"flex flex-col items-center gap-1 p-4 pb-0\">\n            <span className=\"text-7xl font-bold tracking-tighter tabular-nums\">\n              350\n            </span>\n            <span className=\"text-muted-foreground text-[0.70rem] uppercase\">\n              Calories/day\n            </span>\n          </div>\n          <DrawerFooter>\n            <Button>Submit</Button>\n            <DrawerClose render={<Button variant=\"outline\">Cancel</Button>} />\n          </DrawerFooter>\n        </div>\n      </DrawerPopup>\n    </Drawer>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/drawer.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Drawer": {
+        "swipeDirection": {
+          "value": "down",
+          "options": {
+            "down": "down",
+            "up": "up",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}
