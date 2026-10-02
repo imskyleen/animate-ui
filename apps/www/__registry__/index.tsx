@@ -42,9 +42,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/avatar-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/avatar-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -84,9 +83,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/code/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/code/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -125,9 +123,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/code-tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/code-tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -164,9 +161,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/cursor/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/cursor/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -206,9 +202,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/github-stars-wheel/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/github-stars-wheel/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -245,9 +240,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -284,9 +278,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/animate/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/animate/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -323,9 +316,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/bubble/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/bubble/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -361,9 +353,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/fireworks/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/fireworks/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -400,9 +391,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/gradient/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/gradient/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -440,9 +430,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/gravity-stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/gravity-stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -479,9 +468,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/hexagon/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/hexagon/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -517,9 +505,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/hole/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/hole/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -556,9 +543,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/backgrounds/stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/backgrounds/stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -594,9 +580,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -635,9 +620,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -673,9 +657,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -821,9 +804,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -860,9 +842,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/preview-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/preview-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -898,9 +879,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -936,9 +916,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1119,9 +1098,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1152,15 +1130,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/components/base/tooltip.tsx',
         content:
-          "import * as React from 'react';\n\nimport {\n  TooltipProvider as TooltipProviderPrimitive,\n  Tooltip as TooltipPrimitive,\n  TooltipTrigger as TooltipTriggerPrimitive,\n  TooltipPositioner as TooltipPositionerPrimitive,\n  TooltipPopup as TooltipPopupPrimitive,\n  TooltipArrow as TooltipArrowPrimitive,\n  TooltipPortal as TooltipPortalPrimitive,\n  type TooltipProviderProps as TooltipProviderPrimitiveProps,\n  type TooltipProps as TooltipPrimitiveProps,\n  type TooltipTriggerProps as TooltipTriggerPrimitiveProps,\n  type TooltipPositionerProps as TooltipPositionerPrimitiveProps,\n  type TooltipPopupProps as TooltipPopupPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/tooltip';\nimport { cn } from '@/lib/utils';\n\ntype TooltipProviderProps = TooltipProviderPrimitiveProps;\n\nfunction TooltipProvider({ delay = 0, ...props }: TooltipProviderProps) {\n  return <TooltipProviderPrimitive delay={delay} {...props} />;\n}\n\ntype TooltipProps = TooltipPrimitiveProps & {\n  delay?: TooltipPrimitiveProps['delay'];\n};\n\nfunction Tooltip({ delay = 0, ...props }: TooltipProps) {\n  return (\n    <TooltipProvider delay={delay}>\n      <TooltipPrimitive {...props} />\n    </TooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = TooltipTriggerPrimitiveProps;\n\nfunction TooltipTrigger({ ...props }: TooltipTriggerProps) {\n  return <TooltipTriggerPrimitive {...props} />;\n}\n\ntype TooltipPanelProps = TooltipPositionerPrimitiveProps &\n  TooltipPopupPrimitiveProps;\n\nfunction TooltipPanel({\n  className,\n  sideOffset = 4,\n  children,\n  style,\n  ...props\n}: TooltipPanelProps) {\n  return (\n    <TooltipPortalPrimitive>\n      <TooltipPositionerPrimitive\n        sideOffset={sideOffset}\n        className=\"z-50\"\n        {...props}\n      >\n        <TooltipPopupPrimitive\n          className={cn(\n            'bg-primary text-primary-foreground w-fit origin-(--transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',\n            className,\n          )}\n          style={style}\n        >\n          {children}\n          <TooltipArrowPrimitive className=\"bg-primary fill-primary z-50 size-2.5 data-[side='bottom']:-top-[4px] data-[side='right']:-left-[4px] data-[side='left']:-right-[4px] data-[side='inline-start']:-right-[4px] data-[side='inline-end']:-left-[4px] rotate-45 rounded-[2px]\" />\n        </TooltipPopupPrimitive>\n      </TooltipPositionerPrimitive>\n    </TooltipPortalPrimitive>\n  );\n}\n\nexport {\n  Tooltip,\n  TooltipTrigger,\n  TooltipPanel,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipPanelProps,\n};",
+          "import * as React from 'react';\n\nimport {\n  TooltipProvider as TooltipProviderPrimitive,\n  Tooltip as TooltipPrimitive,\n  TooltipTrigger as TooltipTriggerPrimitive,\n  TooltipPositioner as TooltipPositionerPrimitive,\n  TooltipPopup as TooltipPopupPrimitive,\n  TooltipArrow as TooltipArrowPrimitive,\n  TooltipPortal as TooltipPortalPrimitive,\n  type TooltipProviderProps as TooltipProviderPrimitiveProps,\n  type TooltipProps as TooltipPrimitiveProps,\n  type TooltipTriggerProps as TooltipTriggerPrimitiveProps,\n  type TooltipPositionerProps as TooltipPositionerPrimitiveProps,\n  type TooltipPopupProps as TooltipPopupPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/tooltip';\nimport { cn } from '@/lib/utils';\n\ntype TooltipProviderProps = TooltipProviderPrimitiveProps;\n\nfunction TooltipProvider({ delay = 0, ...props }: TooltipProviderProps) {\n  return <TooltipProviderPrimitive delay={delay} {...props} />;\n}\n\ntype TooltipProps = TooltipPrimitiveProps & {\n  delay?: TooltipProviderProps['delay'];\n};\n\nfunction Tooltip({ delay = 0, ...props }: TooltipProps) {\n  return (\n    <TooltipProvider delay={delay}>\n      <TooltipPrimitive {...props} />\n    </TooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = TooltipTriggerPrimitiveProps;\n\nfunction TooltipTrigger({ ...props }: TooltipTriggerProps) {\n  return <TooltipTriggerPrimitive {...props} />;\n}\n\ntype TooltipPanelProps = TooltipPositionerPrimitiveProps &\n  TooltipPopupPrimitiveProps;\n\nfunction TooltipPanel({\n  className,\n  sideOffset = 4,\n  children,\n  style,\n  ...props\n}: TooltipPanelProps) {\n  return (\n    <TooltipPortalPrimitive>\n      <TooltipPositionerPrimitive\n        sideOffset={sideOffset}\n        className=\"z-50\"\n        {...props}\n      >\n        <TooltipPopupPrimitive\n          className={cn(\n            'bg-primary text-primary-foreground w-fit origin-(--transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',\n            className,\n          )}\n          style={style}\n        >\n          {children}\n          <TooltipArrowPrimitive className=\"bg-primary fill-primary z-50 size-2.5 data-[side='bottom']:-top-[4px] data-[side='right']:-left-[4px] data-[side='left']:-right-[4px] data-[side='inline-start']:-right-[4px] data-[side='inline-end']:-left-[4px] rotate-45 rounded-[2px]\" />\n        </TooltipPopupPrimitive>\n      </TooltipPositionerPrimitive>\n    </TooltipPortalPrimitive>\n  );\n}\n\nexport {\n  Tooltip,\n  TooltipTrigger,\n  TooltipPanel,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipPanelProps,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/base/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/base/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1196,9 +1173,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/button/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/button/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1238,9 +1214,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/copy/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/copy/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1279,9 +1254,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/flip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/flip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1321,9 +1295,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/github-stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/github-stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1363,9 +1336,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/icon/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/icon/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1401,9 +1373,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/liquid/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/liquid/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1442,9 +1413,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/ripple/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/ripple/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1483,9 +1453,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/buttons/theme-toggler/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/buttons/theme-toggler/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1516,15 +1485,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/components/community/flip-card.tsx',
         content:
-          '/* eslint-disable @next/next/no-img-element */\n\'use client\';\n\nimport { Button } from \'@/components/ui/button\';\nimport { easeOut, motion } from \'motion/react\';\nimport * as React from \'react\';\nimport { Github, Linkedin, Twitter } from \'lucide-react\';\n\nexport interface FlipCardData {\n  name: string;\n  username: string;\n  image: string;\n  bio: string;\n  stats: {\n    following: number;\n    followers: number;\n    posts?: number;\n  };\n  socialLinks?: {\n    linkedin?: string;\n    github?: string;\n    twitter?: string;\n  };\n}\n\ninterface FlipCardProps {\n  data: FlipCardData;\n}\n\nexport function FlipCard({ data }: FlipCardProps) {\n  const [isFlipped, setIsFlipped] = React.useState(false);\n\n  const isTouchDevice =\n    typeof window !== \'undefined\' && \'ontouchstart\' in window;\n\n  const handleClick = () => {\n    if (isTouchDevice) setIsFlipped(!isFlipped);\n  };\n\n  const handleMouseEnter = () => {\n    if (!isTouchDevice) setIsFlipped(true);\n  };\n\n  const handleMouseLeave = () => {\n    if (!isTouchDevice) setIsFlipped(false);\n  };\n\n  const cardVariants = {\n    front: { rotateY: 0, transition: { duration: 0.5, ease: easeOut } },\n    back: { rotateY: 180, transition: { duration: 0.5, ease: easeOut } },\n  };\n\n  return (\n    <div\n      className="mt-2 relative w-40 h-60 md:w-60 md:h-80 perspective-1000 cursor-pointer mx-auto"\n      onClick={handleClick}\n      onMouseEnter={handleMouseEnter}\n      onMouseLeave={handleMouseLeave}\n    >\n      {/* FRONT: Profile */}\n      <motion.div\n        className="absolute inset-0 backface-hidden rounded-md border-2 border-foreground/20 px-4 py-6 flex flex-col items-center justify-center bg-gradient-to-br from-muted via-background to-muted text-center"\n        animate={isFlipped ? \'back\' : \'front\'}\n        variants={cardVariants}\n        style={{ transformStyle: \'preserve-3d\' }}\n      >\n        <img\n          src={data.image}\n          alt={data.name}\n          className="size-20 md:size-24 rounded-full object-cover mb-4 border-2"\n        />\n        <h2 className="text-lg font-bold text-foreground">{data.name}</h2>\n        <p className="text-sm text-muted-foreground">@{data.username}</p>\n      </motion.div>\n\n      {/* BACK: Bio + Stats + Socials */}\n      <motion.div\n        className="absolute inset-0 backface-hidden rounded-md border-2 border-foreground/20 px-4 py-6 flex flex-col justify-between items-center gap-y-4 bg-gradient-to-tr from-muted via-background to-muted "\n        initial={{ rotateY: 180 }}\n        animate={isFlipped ? \'front\' : \'back\'}\n        variants={cardVariants}\n        style={{ transformStyle: \'preserve-3d\', rotateY: 180 }}\n      >\n        <p className="text-xs md:text-sm text-muted-foreground text-center">\n          {data.bio}\n        </p>\n\n        <div className="px-6 flex items-center justify-between w-full">\n          <div>\n            <p className="text-base font-bold">{data.stats.following}</p>\n            <p className="text-xs text-muted-foreground">Following</p>\n          </div>\n          <div>\n            <p className="text-base font-bold">{data.stats.followers}</p>\n            <p className="text-xs text-muted-foreground">Followers</p>\n          </div>\n          {data.stats.posts && (\n            <div>\n              <p className="text-base font-bold">{data.stats.posts}</p>\n              <p className="text-xs text-muted-foreground">Posts</p>\n            </div>\n          )}\n        </div>\n\n        {/* Social Media Icons */}\n        <div className="flex items-center justify-center gap-4">\n          {data.socialLinks?.linkedin && (\n            <a\n              href={data.socialLinks.linkedin}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Linkedin size={20} />\n            </a>\n          )}\n          {data.socialLinks?.github && (\n            <a\n              href={data.socialLinks.github}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Github size={20} />\n            </a>\n          )}\n          {data.socialLinks?.twitter && (\n            <a\n              href={data.socialLinks.twitter}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Twitter size={20} />\n            </a>\n          )}\n        </div>\n\n        <Button>Follow</Button>\n      </motion.div>\n    </div>\n  );\n}',
+          '/* eslint-disable @next/next/no-img-element */\n\'use client\';\n\nimport { Button } from \'@/components/ui/button\';\nimport { easeOut, motion } from \'motion/react\';\nimport * as React from \'react\';\n\n// Brand icons were removed from lucide-react 1.x; same outline style, inlined.\ntype BrandIconProps = React.SVGProps<SVGSVGElement> & { size?: number };\n\nfunction BrandIcon({ size = 24, children, ...props }: BrandIconProps) {\n  return (\n    <svg\n      xmlns="http://www.w3.org/2000/svg"\n      width={size}\n      height={size}\n      viewBox="0 0 24 24"\n      fill="none"\n      stroke="currentColor"\n      strokeWidth={2}\n      strokeLinecap="round"\n      strokeLinejoin="round"\n      {...props}\n    >\n      {children}\n    </svg>\n  );\n}\n\nconst Github = (props: BrandIconProps) => (\n  <BrandIcon {...props}>\n    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />\n    <path d="M9 18c-4.51 2-5-2-7-2" />\n  </BrandIcon>\n);\n\nconst Linkedin = (props: BrandIconProps) => (\n  <BrandIcon {...props}>\n    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />\n    <rect width="4" height="12" x="2" y="9" />\n    <circle cx="4" cy="4" r="2" />\n  </BrandIcon>\n);\n\nconst Twitter = (props: BrandIconProps) => (\n  <BrandIcon {...props}>\n    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />\n  </BrandIcon>\n);\n\nexport interface FlipCardData {\n  name: string;\n  username: string;\n  image: string;\n  bio: string;\n  stats: {\n    following: number;\n    followers: number;\n    posts?: number;\n  };\n  socialLinks?: {\n    linkedin?: string;\n    github?: string;\n    twitter?: string;\n  };\n}\n\ninterface FlipCardProps {\n  data: FlipCardData;\n}\n\nexport function FlipCard({ data }: FlipCardProps) {\n  const [isFlipped, setIsFlipped] = React.useState(false);\n\n  const isTouchDevice =\n    typeof window !== \'undefined\' && \'ontouchstart\' in window;\n\n  const handleClick = () => {\n    if (isTouchDevice) setIsFlipped(!isFlipped);\n  };\n\n  const handleMouseEnter = () => {\n    if (!isTouchDevice) setIsFlipped(true);\n  };\n\n  const handleMouseLeave = () => {\n    if (!isTouchDevice) setIsFlipped(false);\n  };\n\n  const cardVariants = {\n    front: { rotateY: 0, transition: { duration: 0.5, ease: easeOut } },\n    back: { rotateY: 180, transition: { duration: 0.5, ease: easeOut } },\n  };\n\n  return (\n    <div\n      className="mt-2 relative w-40 h-60 md:w-60 md:h-80 perspective-1000 cursor-pointer mx-auto"\n      onClick={handleClick}\n      onMouseEnter={handleMouseEnter}\n      onMouseLeave={handleMouseLeave}\n    >\n      {/* FRONT: Profile */}\n      <motion.div\n        className="absolute inset-0 backface-hidden rounded-md border-2 border-foreground/20 px-4 py-6 flex flex-col items-center justify-center bg-gradient-to-br from-muted via-background to-muted text-center"\n        animate={isFlipped ? \'back\' : \'front\'}\n        variants={cardVariants}\n        style={{ transformStyle: \'preserve-3d\' }}\n      >\n        <img\n          src={data.image}\n          alt={data.name}\n          className="size-20 md:size-24 rounded-full object-cover mb-4 border-2"\n        />\n        <h2 className="text-lg font-bold text-foreground">{data.name}</h2>\n        <p className="text-sm text-muted-foreground">@{data.username}</p>\n      </motion.div>\n\n      {/* BACK: Bio + Stats + Socials */}\n      <motion.div\n        className="absolute inset-0 backface-hidden rounded-md border-2 border-foreground/20 px-4 py-6 flex flex-col justify-between items-center gap-y-4 bg-gradient-to-tr from-muted via-background to-muted "\n        initial={{ rotateY: 180 }}\n        animate={isFlipped ? \'front\' : \'back\'}\n        variants={cardVariants}\n        style={{ transformStyle: \'preserve-3d\', rotateY: 180 }}\n      >\n        <p className="text-xs md:text-sm text-muted-foreground text-center">\n          {data.bio}\n        </p>\n\n        <div className="px-6 flex items-center justify-between w-full">\n          <div>\n            <p className="text-base font-bold">{data.stats.following}</p>\n            <p className="text-xs text-muted-foreground">Following</p>\n          </div>\n          <div>\n            <p className="text-base font-bold">{data.stats.followers}</p>\n            <p className="text-xs text-muted-foreground">Followers</p>\n          </div>\n          {data.stats.posts && (\n            <div>\n              <p className="text-base font-bold">{data.stats.posts}</p>\n              <p className="text-xs text-muted-foreground">Posts</p>\n            </div>\n          )}\n        </div>\n\n        {/* Social Media Icons */}\n        <div className="flex items-center justify-center gap-4">\n          {data.socialLinks?.linkedin && (\n            <a\n              href={data.socialLinks.linkedin}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Linkedin size={20} />\n            </a>\n          )}\n          {data.socialLinks?.github && (\n            <a\n              href={data.socialLinks.github}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Github size={20} />\n            </a>\n          )}\n          {data.socialLinks?.twitter && (\n            <a\n              href={data.socialLinks.twitter}\n              target="_blank"\n              rel="noopener noreferrer"\n              className="hover:scale-105 transition-transform"\n            >\n              <Twitter size={20} />\n            </a>\n          )}\n        </div>\n\n        <Button>Follow</Button>\n      </motion.div>\n    </div>\n  );\n}',
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/flip-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/flip-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1560,9 +1528,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/management-bar/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/management-bar/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1605,9 +1572,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/motion-carousel/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/motion-carousel/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1645,9 +1611,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/notification-list/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/notification-list/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1684,9 +1649,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/pin-list/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/pin-list/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1724,9 +1688,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/playful-todolist/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/playful-todolist/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1763,9 +1726,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/radial-intro/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/radial-intro/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1787,7 +1749,7 @@ export const index: Record<string, any> = {
     description:
       'A circular context menu built with Base UI, displaying actions in a clean radial layout with full keyboard support and smooth interaction.',
     type: 'registry:ui',
-    dependencies: ['motion', 'lucide-react', '@base-ui-components/react'],
+    dependencies: ['motion', 'lucide-react', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [],
     files: [
@@ -1796,15 +1758,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/components/community/radial-menu.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { LucideIcon } from 'lucide-react';\nimport { motion, AnimatePresence, type Transition } from 'motion/react';\nimport { ContextMenu } from '@base-ui-components/react/context-menu';\nimport { cn } from '@/lib/utils';\n\ntype RadialMenuProps = {\n  children?: React.ReactNode;\n  menuItems: MenuItem[];\n  size?: number;\n  iconSize?: number;\n  bandWidth?: number;\n  innerGap?: number;\n  outerGap?: number;\n  outerRingWidth?: number;\n  onSelect?: (item: MenuItem) => void;\n};\n\ntype MenuItem = {\n  id: number;\n  label: string;\n  icon: LucideIcon;\n};\n\ntype Point = { x: number; y: number };\n\nconst menuTransition: Transition = {\n  type: 'spring',\n  stiffness: 420,\n  damping: 32,\n  mass: 1,\n};\n\nconst wedgeTransition: Transition = {\n  duration: 0.05,\n  ease: 'easeOut',\n};\n\nconst FULL_CIRCLE = 360;\nconst START_ANGLE = -90;\n\nfunction degToRad(deg: number) {\n  return (deg * Math.PI) / 180;\n}\n\nfunction polarToCartesian(radius: number, angleDeg: number): Point {\n  const rad = degToRad(angleDeg);\n  return {\n    x: Math.cos(rad) * radius,\n    y: Math.sin(rad) * radius,\n  };\n}\n\nfunction slicePath(\n  index: number,\n  total: number,\n  wedgeRadius: number,\n  innerRadius: number,\n) {\n  if (total <= 0) return '';\n\n  // single item → full donut ring\n  if (total === 1) {\n    return `\n      M ${wedgeRadius} 0\n      A ${wedgeRadius} ${wedgeRadius} 0 1 1 ${-wedgeRadius} 0\n      A ${wedgeRadius} ${wedgeRadius} 0 1 1 ${wedgeRadius} 0\n      M ${innerRadius} 0\n      A ${innerRadius} ${innerRadius} 0 1 0 ${-innerRadius} 0\n      A ${innerRadius} ${innerRadius} 0 1 0 ${innerRadius} 0\n    `;\n  }\n\n  const anglePerSlice = FULL_CIRCLE / total;\n  const midDeg = START_ANGLE + anglePerSlice * index;\n  const halfSlice = anglePerSlice / 2;\n\n  const startDeg = midDeg - halfSlice;\n  const endDeg = midDeg + halfSlice;\n\n  const outerStart = polarToCartesian(wedgeRadius, startDeg);\n  const outerEnd = polarToCartesian(wedgeRadius, endDeg);\n  const innerStart = polarToCartesian(innerRadius, startDeg);\n  const innerEnd = polarToCartesian(innerRadius, endDeg);\n\n  const largeArcFlag = anglePerSlice > 180 ? 1 : 0;\n\n  return `\n    M ${outerStart.x} ${outerStart.y}\n    A ${wedgeRadius} ${wedgeRadius} 0 ${largeArcFlag} 1 ${outerEnd.x} ${outerEnd.y}\n    L ${innerEnd.x} ${innerEnd.y}\n    A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerStart.x} ${innerStart.y}\n    Z\n  `;\n}\n\nfunction RadialMenu({\n  children,\n  menuItems,\n  size = 240,\n  iconSize = 18,\n  bandWidth = 50,\n  innerGap = 8,\n  outerGap = 8,\n  outerRingWidth = 12,\n  onSelect,\n}: RadialMenuProps) {\n  const radius = size / 2;\n\n  const outerRingOuterRadius = radius;\n  const outerRingInnerRadius = outerRingOuterRadius - outerRingWidth;\n\n  const wedgeOuterRadius = outerRingInnerRadius - outerGap;\n  const wedgeInnerRadius = wedgeOuterRadius - bandWidth;\n\n  const iconRingRadius = (wedgeOuterRadius + wedgeInnerRadius) / 2;\n\n  const centerRadius = Math.max(wedgeInnerRadius - innerGap, 0);\n\n  const slice = 360 / menuItems.length;\n\n  const itemRefs = React.useRef<(HTMLElement | null)[]>([]);\n  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);\n  const [open, setOpen] = React.useState<boolean>(false);\n\n  const resetActive = () => setActiveIndex(null);\n\n  const handleOpenChange = (isOpen: boolean) => {\n    setOpen(isOpen);\n    if (!isOpen) resetActive();\n  };\n\n  return (\n    <ContextMenu.Root open={open} onOpenChange={handleOpenChange}>\n      <ContextMenu.Trigger\n        render={(triggerProps) => {\n          return (\n            <div\n              {...triggerProps}\n              className={cn('select-none outline-none', triggerProps.className)}\n            >\n              {children ? (\n                children\n              ) : (\n                <div className=\"size-80 flex justify-center items-center border-2 border-dashed rounded-lg\">\n                  Right-click here.\n                </div>\n              )}\n            </div>\n          );\n        }}\n      />\n\n      <AnimatePresence>\n        {open && (\n          <ContextMenu.Portal keepMounted>\n            <ContextMenu.Positioner\n              align=\"center\"\n              sideOffset={({ positioner }) => -positioner.height / 2}\n              className=\"outline-none\"\n            >\n              <ContextMenu.Popup\n                style={{ width: size, height: size }}\n                className=\"relative rounded-full overflow-hidden shadow-xl outline-none\"\n                render={\n                  <motion.div\n                    className=\"absolute inset-0\"\n                    initial={{ opacity: 0, scale: 0.5 }}\n                    animate={{ opacity: 1, scale: 1 }}\n                    exit={{ opacity: 0, scale: 0.5 }}\n                    transition={menuTransition}\n                  />\n                }\n              >\n                <svg\n                  className=\"absolute inset-0 size-full\"\n                  viewBox={`${-radius} ${-radius} ${radius * 2} ${radius * 2}`}\n                >\n                  {menuItems.map((item, index) => {\n                    const Icon = item.icon;\n                    const midDeg = START_ANGLE + slice * index;\n                    const { x: iconX, y: iconY } = polarToCartesian(\n                      iconRingRadius,\n                      midDeg,\n                    );\n                    const ICON_BOX = iconSize * 2;\n                    const isActive = activeIndex === index;\n\n                    return (\n                      <g\n                        key={item.id}\n                        className=\"cursor-pointer\"\n                        onClick={() => itemRefs.current[index]?.click()}\n                        onMouseEnter={() => {\n                          setActiveIndex(index);\n                          itemRefs.current[index]?.focus();\n                        }}\n                      >\n                        <motion.path\n                          d={slicePath(\n                            index,\n                            menuItems.length,\n                            outerRingOuterRadius,\n                            outerRingInnerRadius,\n                          )}\n                          className={cn({\n                            'fill-neutral-200 dark:fill-neutral-700': isActive,\n                            'fill-neutral-100 dark:fill-neutral-800': !isActive,\n                          })}\n                          initial={false}\n                          transition={wedgeTransition}\n                        />\n                        <motion.path\n                          d={slicePath(\n                            index,\n                            menuItems.length,\n                            wedgeOuterRadius,\n                            wedgeInnerRadius,\n                          )}\n                          className={cn(\n                            'stroke-neutral-300 dark:stroke-neutral-600 stroke-1',\n                            {\n                              'fill-neutral-200 dark:fill-neutral-700':\n                                isActive,\n                              'fill-neutral-100 dark:fill-neutral-800':\n                                !isActive,\n                            },\n                          )}\n                          initial={false}\n                          transition={wedgeTransition}\n                        />\n\n                        <foreignObject\n                          x={iconX - ICON_BOX / 2}\n                          y={iconY - ICON_BOX / 2}\n                          width={ICON_BOX}\n                          height={ICON_BOX}\n                        >\n                          <ContextMenu.Item\n                            ref={(el) => {\n                              itemRefs.current[index] =\n                                el as HTMLElement | null;\n                            }}\n                            onFocus={() => setActiveIndex(index)}\n                            onClick={() => {\n                              onSelect?.(item);\n                            }}\n                            aria-label={item.label}\n                            className={cn(\n                              'size-full flex items-center justify-center rounded-full outline-none text-neutral-600 dark:text-neutral-400',\n                              {\n                                'text-neutral-900 dark:text-neutral-50':\n                                  isActive,\n                              },\n                            )}\n                          >\n                            <Icon\n                              style={{ height: iconSize, width: iconSize }}\n                            />\n                          </ContextMenu.Item>\n                        </foreignObject>\n                      </g>\n                    );\n                  })}\n\n                  <circle\n                    cx={0}\n                    cy={0}\n                    r={centerRadius}\n                    className=\"fill-neutral-100 dark:fill-neutral-950 stroke-1 opacity-50 stroke-neutral-400 dark:stroke-neutral-600\"\n                  />\n                  <circle\n                    cx={0}\n                    cy={0}\n                    r={3}\n                    className=\"fill-none stroke-neutral-400 dark:stroke-neutral-600\"\n                  />\n                </svg>\n              </ContextMenu.Popup>\n            </ContextMenu.Positioner>\n          </ContextMenu.Portal>\n        )}\n      </AnimatePresence>\n    </ContextMenu.Root>\n  );\n}\n\nexport { RadialMenu };",
+          "'use client';\n\nimport * as React from 'react';\nimport { LucideIcon } from 'lucide-react';\nimport { motion, AnimatePresence, type Transition } from 'motion/react';\nimport { ContextMenu } from '@base-ui/react/context-menu';\nimport { cn } from '@/lib/utils';\n\ntype RadialMenuProps = {\n  children?: React.ReactNode;\n  menuItems: MenuItem[];\n  size?: number;\n  iconSize?: number;\n  bandWidth?: number;\n  innerGap?: number;\n  outerGap?: number;\n  outerRingWidth?: number;\n  onSelect?: (item: MenuItem) => void;\n};\n\ntype MenuItem = {\n  id: number;\n  label: string;\n  icon: LucideIcon;\n};\n\ntype Point = { x: number; y: number };\n\nconst menuTransition: Transition = {\n  type: 'spring',\n  stiffness: 420,\n  damping: 32,\n  mass: 1,\n};\n\nconst wedgeTransition: Transition = {\n  duration: 0.05,\n  ease: 'easeOut',\n};\n\nconst FULL_CIRCLE = 360;\nconst START_ANGLE = -90;\n\nfunction degToRad(deg: number) {\n  return (deg * Math.PI) / 180;\n}\n\nfunction polarToCartesian(radius: number, angleDeg: number): Point {\n  const rad = degToRad(angleDeg);\n  return {\n    x: Math.cos(rad) * radius,\n    y: Math.sin(rad) * radius,\n  };\n}\n\nfunction slicePath(\n  index: number,\n  total: number,\n  wedgeRadius: number,\n  innerRadius: number,\n) {\n  if (total <= 0) return '';\n\n  // single item → full donut ring\n  if (total === 1) {\n    return `\n      M ${wedgeRadius} 0\n      A ${wedgeRadius} ${wedgeRadius} 0 1 1 ${-wedgeRadius} 0\n      A ${wedgeRadius} ${wedgeRadius} 0 1 1 ${wedgeRadius} 0\n      M ${innerRadius} 0\n      A ${innerRadius} ${innerRadius} 0 1 0 ${-innerRadius} 0\n      A ${innerRadius} ${innerRadius} 0 1 0 ${innerRadius} 0\n    `;\n  }\n\n  const anglePerSlice = FULL_CIRCLE / total;\n  const midDeg = START_ANGLE + anglePerSlice * index;\n  const halfSlice = anglePerSlice / 2;\n\n  const startDeg = midDeg - halfSlice;\n  const endDeg = midDeg + halfSlice;\n\n  const outerStart = polarToCartesian(wedgeRadius, startDeg);\n  const outerEnd = polarToCartesian(wedgeRadius, endDeg);\n  const innerStart = polarToCartesian(innerRadius, startDeg);\n  const innerEnd = polarToCartesian(innerRadius, endDeg);\n\n  const largeArcFlag = anglePerSlice > 180 ? 1 : 0;\n\n  return `\n    M ${outerStart.x} ${outerStart.y}\n    A ${wedgeRadius} ${wedgeRadius} 0 ${largeArcFlag} 1 ${outerEnd.x} ${outerEnd.y}\n    L ${innerEnd.x} ${innerEnd.y}\n    A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerStart.x} ${innerStart.y}\n    Z\n  `;\n}\n\nfunction RadialMenu({\n  children,\n  menuItems,\n  size = 240,\n  iconSize = 18,\n  bandWidth = 50,\n  innerGap = 8,\n  outerGap = 8,\n  outerRingWidth = 12,\n  onSelect,\n}: RadialMenuProps) {\n  const radius = size / 2;\n\n  const outerRingOuterRadius = radius;\n  const outerRingInnerRadius = outerRingOuterRadius - outerRingWidth;\n\n  const wedgeOuterRadius = outerRingInnerRadius - outerGap;\n  const wedgeInnerRadius = wedgeOuterRadius - bandWidth;\n\n  const iconRingRadius = (wedgeOuterRadius + wedgeInnerRadius) / 2;\n\n  const centerRadius = Math.max(wedgeInnerRadius - innerGap, 0);\n\n  const slice = 360 / menuItems.length;\n\n  const itemRefs = React.useRef<(HTMLElement | null)[]>([]);\n  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);\n  const [open, setOpen] = React.useState<boolean>(false);\n\n  const resetActive = () => setActiveIndex(null);\n\n  const handleOpenChange = (isOpen: boolean) => {\n    setOpen(isOpen);\n    if (!isOpen) resetActive();\n  };\n\n  return (\n    <ContextMenu.Root open={open} onOpenChange={handleOpenChange}>\n      <ContextMenu.Trigger\n        render={(triggerProps) => {\n          return (\n            <div\n              {...triggerProps}\n              className={cn('select-none outline-none', triggerProps.className)}\n            >\n              {children ? (\n                children\n              ) : (\n                <div className=\"size-80 flex justify-center items-center border-2 border-dashed rounded-lg\">\n                  Right-click here.\n                </div>\n              )}\n            </div>\n          );\n        }}\n      />\n\n      <AnimatePresence>\n        {open && (\n          <ContextMenu.Portal keepMounted>\n            <ContextMenu.Positioner\n              align=\"center\"\n              sideOffset={({ positioner }) => -positioner.height / 2}\n              className=\"outline-none\"\n            >\n              <ContextMenu.Popup\n                style={{ width: size, height: size }}\n                className=\"relative rounded-full overflow-hidden shadow-xl outline-none\"\n                render={\n                  <motion.div\n                    className=\"absolute inset-0\"\n                    initial={{ opacity: 0, scale: 0.5 }}\n                    animate={{ opacity: 1, scale: 1 }}\n                    exit={{ opacity: 0, scale: 0.5 }}\n                    transition={menuTransition}\n                  />\n                }\n              >\n                <svg\n                  className=\"absolute inset-0 size-full\"\n                  viewBox={`${-radius} ${-radius} ${radius * 2} ${radius * 2}`}\n                >\n                  {menuItems.map((item, index) => {\n                    const Icon = item.icon;\n                    const midDeg = START_ANGLE + slice * index;\n                    const { x: iconX, y: iconY } = polarToCartesian(\n                      iconRingRadius,\n                      midDeg,\n                    );\n                    const ICON_BOX = iconSize * 2;\n                    const isActive = activeIndex === index;\n\n                    return (\n                      <g\n                        key={item.id}\n                        className=\"cursor-pointer\"\n                        onClick={() => itemRefs.current[index]?.click()}\n                        onMouseEnter={() => {\n                          setActiveIndex(index);\n                          itemRefs.current[index]?.focus();\n                        }}\n                      >\n                        <motion.path\n                          d={slicePath(\n                            index,\n                            menuItems.length,\n                            outerRingOuterRadius,\n                            outerRingInnerRadius,\n                          )}\n                          className={cn({\n                            'fill-neutral-200 dark:fill-neutral-700': isActive,\n                            'fill-neutral-100 dark:fill-neutral-800': !isActive,\n                          })}\n                          initial={false}\n                          transition={wedgeTransition}\n                        />\n                        <motion.path\n                          d={slicePath(\n                            index,\n                            menuItems.length,\n                            wedgeOuterRadius,\n                            wedgeInnerRadius,\n                          )}\n                          className={cn(\n                            'stroke-neutral-300 dark:stroke-neutral-600 stroke-1',\n                            {\n                              'fill-neutral-200 dark:fill-neutral-700':\n                                isActive,\n                              'fill-neutral-100 dark:fill-neutral-800':\n                                !isActive,\n                            },\n                          )}\n                          initial={false}\n                          transition={wedgeTransition}\n                        />\n\n                        <foreignObject\n                          x={iconX - ICON_BOX / 2}\n                          y={iconY - ICON_BOX / 2}\n                          width={ICON_BOX}\n                          height={ICON_BOX}\n                        >\n                          <ContextMenu.Item\n                            ref={(el) => {\n                              itemRefs.current[index] =\n                                el as HTMLElement | null;\n                            }}\n                            onFocus={() => setActiveIndex(index)}\n                            onClick={() => {\n                              onSelect?.(item);\n                            }}\n                            aria-label={item.label}\n                            className={cn(\n                              'size-full flex items-center justify-center rounded-full outline-none text-neutral-600 dark:text-neutral-400',\n                              {\n                                'text-neutral-900 dark:text-neutral-50':\n                                  isActive,\n                              },\n                            )}\n                          >\n                            <Icon\n                              style={{ height: iconSize, width: iconSize }}\n                            />\n                          </ContextMenu.Item>\n                        </foreignObject>\n                      </g>\n                    );\n                  })}\n\n                  <circle\n                    cx={0}\n                    cy={0}\n                    r={centerRadius}\n                    className=\"fill-neutral-100 dark:fill-neutral-950 stroke-1 opacity-50 stroke-neutral-400 dark:stroke-neutral-600\"\n                  />\n                  <circle\n                    cx={0}\n                    cy={0}\n                    r={3}\n                    className=\"fill-none stroke-neutral-400 dark:stroke-neutral-600\"\n                  />\n                </svg>\n              </ContextMenu.Popup>\n            </ContextMenu.Positioner>\n          </ContextMenu.Portal>\n        )}\n      </AnimatePresence>\n    </ContextMenu.Root>\n  );\n}\n\nexport { RadialMenu };",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/radial-menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/radial-menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1841,9 +1802,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/radial-nav/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/radial-nav/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1873,15 +1833,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/components/community/share-button.tsx',
         content:
-          "'use client';\nimport * as React from 'react';\nimport { Share2, Github, X, Facebook } from 'lucide-react';\nimport { cva, type VariantProps } from 'class-variance-authority';\nimport { HTMLMotionProps, motion, AnimatePresence } from 'motion/react';\n\nimport { cn } from '@/lib/utils';\n\nconst buttonVariants = cva(\n  \"relative overflow-hidden cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive\",\n  {\n    variants: {\n      size: {\n        default: 'min-w-28 h-10 px-4 py-2',\n        sm: 'min-w-24 h-9 rounded-md gap-1.5 px-3',\n        md: 'min-w-28 h-10 px-4 py-2',\n        lg: 'min-w-32 h-11 px-8',\n      },\n      icon: {\n        suffix: 'pl-4',\n        prefix: 'pr-4',\n      },\n    },\n    defaultVariants: {\n      size: 'default',\n    },\n  },\n);\n\nconst iconSizeMap = {\n  sm: 16,\n  md: 20,\n  lg: 28,\n  default: 16,\n};\n\ntype ShareButtonProps = HTMLMotionProps<'button'> & {\n  children: React.ReactNode;\n  className?: string;\n  onIconClick?: (platform: 'github' | 'x' | 'facebook') => void;\n} & VariantProps<typeof buttonVariants>;\n\nfunction ShareButton({\n  children,\n  className,\n  size,\n  icon,\n  onIconClick,\n  ...props\n}: ShareButtonProps) {\n  const [hovered, setHovered] = React.useState(false);\n  return (\n    <motion.button\n      className={cn(\n        'bg-primary text-primary-foreground hover:bg-primary/90',\n        buttonVariants({ size, className, icon }),\n      )}\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => setHovered(false)}\n      {...props}\n    >\n      <AnimatePresence initial={false} mode=\"wait\">\n        {!hovered ? (\n          <motion.div\n            key=\"content\"\n            initial={{ opacity: 1, y: 0 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: -24 }}\n            transition={{ duration: 0.3 }}\n            className=\" absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center gap-2\"\n          >\n            {icon === 'prefix' && (\n              <Share2\n                className=\"size-4\"\n                size={iconSizeMap[size as keyof typeof iconSizeMap]}\n              />\n            )}\n            {children}\n            {icon === 'suffix' && (\n              <Share2\n                className=\"size-4\"\n                size={iconSizeMap[size as keyof typeof iconSizeMap]}\n              />\n            )}\n          </motion.div>\n        ) : (\n          <motion.div\n            key=\"icons\"\n            initial={{ opacity: 0, y: 24 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: 24 }}\n            transition={{ duration: 0.3 }}\n            className=\" absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center gap-2\"\n          >\n            <ShareIconGroup size={size} onIconClick={onIconClick} />\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </motion.button>\n  );\n}\n\nconst shareIconGroupVariants = cva('flex items-center justify-center gap-3', {\n  variants: {\n    size: {\n      default: 'text-[16px]',\n      sm: 'text-[16px]',\n      md: 'text-[20px]',\n      lg: 'text-[28px]',\n    },\n  },\n  defaultVariants: {\n    size: 'default',\n  },\n});\n\ntype ShareIconGroupProps = HTMLMotionProps<'div'> & {\n  className?: string;\n  onIconClick?: (\n    platform: 'github' | 'x' | 'facebook',\n    event: React.MouseEvent<HTMLDivElement>,\n  ) => void;\n} & VariantProps<typeof shareIconGroupVariants>;\n\nfunction ShareIconGroup({\n  size = 'default',\n  className,\n  onIconClick,\n}: ShareIconGroupProps) {\n  const iconSize = iconSizeMap[size as keyof typeof iconSizeMap];\n\n  const handleIconClick = React.useCallback(\n    (\n      platform: 'github' | 'x' | 'facebook',\n      event: React.MouseEvent<HTMLDivElement>,\n    ) => {\n      onIconClick?.(platform, event);\n    },\n    [onIconClick],\n  );\n\n  return (\n    <motion.div\n      className={cn(shareIconGroupVariants({ size }), 'group', className)}\n    >\n      <motion.div\n        initial={{ opacity: 0, y: 24 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ delay: 0, duration: 0.5, type: 'spring', bounce: 0.4 }}\n        whileHover={{\n          y: -8,\n          transition: { duration: 0.2, ease: 'easeOut' },\n        }}\n        className=\"group-hover:opacity-100 cursor-pointer py-3 rounded-lg box-border\"\n        onClick={(event) => handleIconClick('github', event)}\n      >\n        <Github size={iconSize} />\n      </motion.div>\n      <motion.div\n        initial={{ opacity: 0, y: 24 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ delay: 0.1, duration: 0.5, type: 'spring', bounce: 0.4 }}\n        whileHover={{\n          y: -8,\n          transition: { duration: 0.2, ease: 'easeOut' },\n        }}\n        className=\"group-hover:opacity-100 cursor-pointer py-3 rounded-lg box-border\"\n        onClick={(event) => handleIconClick('x', event)}\n      >\n        <X size={iconSize} />\n      </motion.div>\n      <motion.div\n        initial={{ opacity: 0, y: 24 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ delay: 0.2, duration: 0.5, type: 'spring', bounce: 0.4 }}\n        whileHover={{\n          y: -8,\n          transition: { duration: 0.2, ease: 'easeOut' },\n        }}\n        className=\"group-hover:opacity-100 cursor-pointer py-3 rounded-lg box-border\"\n        onClick={(event) => handleIconClick('facebook', event)}\n      >\n        <Facebook size={iconSize} />\n      </motion.div>\n    </motion.div>\n  );\n}\n\nexport { ShareButton, type ShareButtonProps };",
+          "'use client';\nimport * as React from 'react';\nimport { Share2, X } from 'lucide-react';\nimport { cva, type VariantProps } from 'class-variance-authority';\nimport { HTMLMotionProps, motion, AnimatePresence } from 'motion/react';\n\nimport { cn } from '@/lib/utils';\n\n// Brand icons were removed from lucide-react 1.x; same outline style, inlined.\ntype BrandIconProps = React.SVGProps<SVGSVGElement> & { size?: number };\n\nfunction BrandIcon({ size = 24, children, ...props }: BrandIconProps) {\n  return (\n    <svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      {children}\n    </svg>\n  );\n}\n\nconst Github = (props: BrandIconProps) => (\n  <BrandIcon {...props}>\n    <path d=\"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4\" />\n    <path d=\"M9 18c-4.51 2-5-2-7-2\" />\n  </BrandIcon>\n);\n\nconst Facebook = (props: BrandIconProps) => (\n  <BrandIcon {...props}>\n    <path d=\"M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z\" />\n  </BrandIcon>\n);\n\nconst buttonVariants = cva(\n  \"relative overflow-hidden cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive\",\n  {\n    variants: {\n      size: {\n        default: 'min-w-28 h-10 px-4 py-2',\n        sm: 'min-w-24 h-9 rounded-md gap-1.5 px-3',\n        md: 'min-w-28 h-10 px-4 py-2',\n        lg: 'min-w-32 h-11 px-8',\n      },\n      icon: {\n        suffix: 'pl-4',\n        prefix: 'pr-4',\n      },\n    },\n    defaultVariants: {\n      size: 'default',\n    },\n  },\n);\n\nconst iconSizeMap = {\n  sm: 16,\n  md: 20,\n  lg: 28,\n  default: 16,\n};\n\ntype ShareButtonProps = HTMLMotionProps<'button'> & {\n  children: React.ReactNode;\n  className?: string;\n  onIconClick?: (platform: 'github' | 'x' | 'facebook') => void;\n} & VariantProps<typeof buttonVariants>;\n\nfunction ShareButton({\n  children,\n  className,\n  size,\n  icon,\n  onIconClick,\n  ...props\n}: ShareButtonProps) {\n  const [hovered, setHovered] = React.useState(false);\n  return (\n    <motion.button\n      className={cn(\n        'bg-primary text-primary-foreground hover:bg-primary/90',\n        buttonVariants({ size, className, icon }),\n      )}\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => setHovered(false)}\n      {...props}\n    >\n      <AnimatePresence initial={false} mode=\"wait\">\n        {!hovered ? (\n          <motion.div\n            key=\"content\"\n            initial={{ opacity: 1, y: 0 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: -24 }}\n            transition={{ duration: 0.3 }}\n            className=\" absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center gap-2\"\n          >\n            {icon === 'prefix' && (\n              <Share2\n                className=\"size-4\"\n                size={iconSizeMap[size as keyof typeof iconSizeMap]}\n              />\n            )}\n            {children}\n            {icon === 'suffix' && (\n              <Share2\n                className=\"size-4\"\n                size={iconSizeMap[size as keyof typeof iconSizeMap]}\n              />\n            )}\n          </motion.div>\n        ) : (\n          <motion.div\n            key=\"icons\"\n            initial={{ opacity: 0, y: 24 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: 24 }}\n            transition={{ duration: 0.3 }}\n            className=\" absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center gap-2\"\n          >\n            <ShareIconGroup size={size} onIconClick={onIconClick} />\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </motion.button>\n  );\n}\n\nconst shareIconGroupVariants = cva('flex items-center justify-center gap-3', {\n  variants: {\n    size: {\n      default: 'text-[16px]',\n      sm: 'text-[16px]',\n      md: 'text-[20px]',\n      lg: 'text-[28px]',\n    },\n  },\n  defaultVariants: {\n    size: 'default',\n  },\n});\n\ntype ShareIconGroupProps = HTMLMotionProps<'div'> & {\n  className?: string;\n  onIconClick?: (\n    platform: 'github' | 'x' | 'facebook',\n    event: React.MouseEvent<HTMLDivElement>,\n  ) => void;\n} & VariantProps<typeof shareIconGroupVariants>;\n\nfunction ShareIconGroup({\n  size = 'default',\n  className,\n  onIconClick,\n}: ShareIconGroupProps) {\n  const iconSize = iconSizeMap[size as keyof typeof iconSizeMap];\n\n  const handleIconClick = React.useCallback(\n    (\n      platform: 'github' | 'x' | 'facebook',\n      event: React.MouseEvent<HTMLDivElement>,\n    ) => {\n      onIconClick?.(platform, event);\n    },\n    [onIconClick],\n  );\n\n  return (\n    <motion.div\n      className={cn(shareIconGroupVariants({ size }), 'group', className)}\n    >\n      <motion.div\n        initial={{ opacity: 0, y: 24 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ delay: 0, duration: 0.5, type: 'spring', bounce: 0.4 }}\n        whileHover={{\n          y: -8,\n          transition: { duration: 0.2, ease: 'easeOut' },\n        }}\n        className=\"group-hover:opacity-100 cursor-pointer py-3 rounded-lg box-border\"\n        onClick={(event) => handleIconClick('github', event)}\n      >\n        <Github size={iconSize} />\n      </motion.div>\n      <motion.div\n        initial={{ opacity: 0, y: 24 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ delay: 0.1, duration: 0.5, type: 'spring', bounce: 0.4 }}\n        whileHover={{\n          y: -8,\n          transition: { duration: 0.2, ease: 'easeOut' },\n        }}\n        className=\"group-hover:opacity-100 cursor-pointer py-3 rounded-lg box-border\"\n        onClick={(event) => handleIconClick('x', event)}\n      >\n        <X size={iconSize} />\n      </motion.div>\n      <motion.div\n        initial={{ opacity: 0, y: 24 }}\n        animate={{ opacity: 1, y: 0 }}\n        transition={{ delay: 0.2, duration: 0.5, type: 'spring', bounce: 0.4 }}\n        whileHover={{\n          y: -8,\n          transition: { duration: 0.2, ease: 'easeOut' },\n        }}\n        className=\"group-hover:opacity-100 cursor-pointer py-3 rounded-lg box-border\"\n        onClick={(event) => handleIconClick('facebook', event)}\n      >\n        <Facebook size={iconSize} />\n      </motion.div>\n    </motion.div>\n  );\n}\n\nexport { ShareButton, type ShareButtonProps };",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/share-button/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/share-button/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1919,9 +1878,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/community/user-presence-avatar/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/community/user-presence-avatar/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1958,9 +1916,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/headless/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/headless/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -1997,9 +1954,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/headless/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/headless/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2036,9 +1992,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/headless/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/headless/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2075,9 +2030,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/headless/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/headless/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2114,9 +2068,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/headless/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/headless/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2153,9 +2106,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/headless/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/headless/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2192,9 +2144,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2234,9 +2185,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2273,9 +2223,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2312,9 +2261,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2351,9 +2299,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/dropdown-menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/dropdown-menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2427,9 +2374,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/hover-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/hover-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2465,9 +2411,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2503,9 +2448,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2542,9 +2486,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2581,9 +2524,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/radio-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/radio-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2670,9 +2612,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/sidebar/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/sidebar/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2709,9 +2650,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2784,9 +2724,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/toggle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/toggle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2826,9 +2765,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2865,9 +2803,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/components/radix/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/components/radix/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2904,9 +2841,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/avatar-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/avatar-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2942,9 +2878,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/code/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/code/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -2987,9 +2922,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/code-tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/code-tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3025,9 +2959,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/cursor/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/cursor/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3087,9 +3020,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/github-stars-wheel/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/github-stars-wheel/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3134,9 +3066,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3172,9 +3103,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/animate/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/animate/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3232,9 +3162,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/bubble/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/bubble/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3273,9 +3202,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/fireworks/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/fireworks/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3316,9 +3244,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/fireworks-circle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/fireworks-circle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3363,9 +3290,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/gradient/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/gradient/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3402,9 +3328,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/gravity-stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/gravity-stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3440,9 +3365,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/hexagon/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/hexagon/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3478,9 +3402,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/hole/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/hole/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3516,9 +3439,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/backgrounds/stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/backgrounds/stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3554,9 +3476,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3596,9 +3517,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3646,9 +3566,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3696,9 +3615,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3747,9 +3665,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/files/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/files/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3785,9 +3702,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3843,9 +3759,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/menu-checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/menu-checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3901,9 +3816,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/menu-radio/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/menu-radio/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -3959,9 +3873,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4015,9 +3928,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/preview-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/preview-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4080,9 +3992,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4139,15 +4050,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/components/base/progress.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  Progress,\n  ProgressLabel,\n  ProgressTrack,\n  ProgressValue,\n} from \'@/components/animate-ui/components/base/progress\';\n\nexport const BaseProgressDemo = () => {\n  const [progress, setProgress] = React.useState(0);\n\n  React.useEffect(() => {\n    const timer = setInterval(() => {\n      setProgress((prev) => {\n        if (prev >= 100) return 100;\n        return prev + 25;\n      });\n    }, 2000);\n    return () => clearInterval(timer);\n  }, []);\n\n  React.useEffect(() => {\n    if (progress >= 100) setTimeout(() => setProgress(0), 4000);\n  }, [progress]);\n\n  return (\n    <Progress value={progress} className="w-[300px] space-y-2">\n      <div className="flex items-center justify-between gap-1">\n        <ProgressLabel>Export data</ProgressLabel>\n        <span className="text-sm">\n          <ProgressValue /> %\n        </span>\n      </div>\n      <ProgressTrack />\n    </Progress>\n  );\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  Progress,\n  ProgressLabel,\n  ProgressTrack,\n  ProgressValue,\n} from \'@/components/animate-ui/components/base/progress\';\n\nexport const BaseProgressDemo = () => {\n  const [progress, setProgress] = React.useState(0);\n\n  React.useEffect(() => {\n    const timer = setInterval(() => {\n      setProgress((prev) => {\n        if (prev >= 100) return 100;\n        return prev + 25;\n      });\n    }, 2000);\n    return () => clearInterval(timer);\n  }, []);\n\n  React.useEffect(() => {\n    if (progress >= 100) setTimeout(() => setProgress(0), 4000);\n  }, [progress]);\n\n  return (\n    <Progress value={progress} className="w-[300px] flex flex-col gap-2">\n      <div className="flex items-center justify-between gap-1">\n        <ProgressLabel>Export data</ProgressLabel>\n        <span className="text-sm">\n          <ProgressValue /> %\n        </span>\n      </div>\n      <ProgressTrack />\n    </Progress>\n  );\n};',
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4183,9 +4093,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/radio/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/radio/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4221,9 +4130,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4259,9 +4167,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4297,9 +4204,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/toggle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/toggle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4346,9 +4252,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4396,9 +4301,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/base/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/base/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4460,9 +4364,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/button/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/button/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4524,9 +4427,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/copy/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/copy/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4581,9 +4483,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/flip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/flip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4664,9 +4565,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/github-stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/github-stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4718,9 +4618,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/icon/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/icon/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4772,9 +4671,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/liquid/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/liquid/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4832,9 +4730,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/ripple/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/ripple/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4897,9 +4794,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/buttons/theme-toggler/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/buttons/theme-toggler/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4956,9 +4852,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/flip-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/flip-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -4995,9 +4890,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/management-bar/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/management-bar/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5034,9 +4928,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/motion-carousel/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/motion-carousel/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5075,9 +4968,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/notification-list/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/notification-list/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5113,9 +5005,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/pin-list/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/pin-list/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5152,9 +5043,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/playful-todolist/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/playful-todolist/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5191,9 +5081,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/radial-intro/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/radial-intro/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5230,9 +5119,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/radial-menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/radial-menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5269,9 +5157,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/radial-nav/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/radial-nav/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5308,9 +5195,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/share-button/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/share-button/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5360,9 +5246,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/community/user-presence-avatar/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/community/user-presence-avatar/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5398,9 +5283,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/headless/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/headless/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5439,9 +5323,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/headless/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/headless/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5489,9 +5372,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/headless/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/headless/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5540,9 +5422,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/headless/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/headless/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5599,9 +5480,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/headless/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/headless/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5637,9 +5517,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/headless/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/headless/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5675,9 +5554,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5717,9 +5595,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5767,9 +5644,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5824,9 +5700,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5875,9 +5750,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/dropdown-menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/dropdown-menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5932,9 +5806,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/dropdown-menu-checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/dropdown-menu-checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -5989,9 +5862,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/dropdown-menu-radio/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/dropdown-menu-radio/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6045,9 +5917,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/files/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/files/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6083,9 +5954,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/hover-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/hover-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6145,9 +6015,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6202,9 +6071,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6265,9 +6133,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6303,9 +6170,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/radio-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/radio-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6341,9 +6207,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/sheet/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/sheet/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6391,9 +6256,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/sidebar/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/sidebar/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6429,9 +6293,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6467,9 +6330,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6505,9 +6367,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/toggle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/toggle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6554,9 +6415,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6607,9 +6467,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/components/radix/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/components/radix/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6670,9 +6529,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/avatar-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/avatar-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6708,9 +6566,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/code-block/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/code-block/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6753,9 +6610,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/cursor/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/cursor/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6815,9 +6671,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/github-stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/github-stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6856,9 +6711,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/motion-grid/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/motion-grid/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6894,9 +6748,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/pinned-list/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/pinned-list/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6933,9 +6786,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/scroll-progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/scroll-progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -6979,9 +6831,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/spring/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/spring/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7017,9 +6868,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7055,9 +6905,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/animate/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/animate/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7116,9 +6965,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7157,9 +7005,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7207,9 +7054,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7245,9 +7091,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/collapsible/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/collapsible/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7285,9 +7130,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7335,9 +7179,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/files/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/files/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7373,9 +7216,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7431,9 +7273,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7489,9 +7330,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/preview-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/preview-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7554,9 +7394,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7613,15 +7452,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/demo/primitives/base/progress.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  Progress,\n  ProgressLabel,\n  ProgressTrack,\n  ProgressValue,\n  ProgressIndicator,\n} from \'@/components/animate-ui/primitives/base/progress\';\n\nexport const BaseProgressDemo = () => {\n  const [progress, setProgress] = React.useState(0);\n\n  React.useEffect(() => {\n    const timer = setInterval(() => {\n      setProgress((prev) => {\n        if (prev >= 100) return 100;\n        return prev + 25;\n      });\n    }, 2000);\n    return () => clearInterval(timer);\n  }, []);\n\n  React.useEffect(() => {\n    if (progress >= 100) setTimeout(() => setProgress(0), 4000);\n  }, [progress]);\n\n  return (\n    <Progress value={progress} className="w-[300px] space-y-2">\n      <div className="flex items-center justify-between gap-1">\n        <ProgressLabel className="text-sm font-medium">\n          Export data\n        </ProgressLabel>\n        <span className="text-sm">\n          <ProgressValue /> %\n        </span>\n      </div>\n      <ProgressTrack className="w-[300px] h-2 border overflow-hidden">\n        <ProgressIndicator className="bg-primary" />\n      </ProgressTrack>\n    </Progress>\n  );\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  Progress,\n  ProgressLabel,\n  ProgressTrack,\n  ProgressValue,\n  ProgressIndicator,\n} from \'@/components/animate-ui/primitives/base/progress\';\n\nexport const BaseProgressDemo = () => {\n  const [progress, setProgress] = React.useState(0);\n\n  React.useEffect(() => {\n    const timer = setInterval(() => {\n      setProgress((prev) => {\n        if (prev >= 100) return 100;\n        return prev + 25;\n      });\n    }, 2000);\n    return () => clearInterval(timer);\n  }, []);\n\n  React.useEffect(() => {\n    if (progress >= 100) setTimeout(() => setProgress(0), 4000);\n  }, [progress]);\n\n  return (\n    <Progress value={progress} className="w-[300px] flex flex-col gap-2">\n      <div className="flex items-center justify-between gap-1">\n        <ProgressLabel className="text-sm font-medium">\n          Export data\n        </ProgressLabel>\n        <span className="text-sm">\n          <ProgressValue /> %\n        </span>\n      </div>\n      <ProgressTrack className="w-[300px] h-2 border overflow-hidden">\n        <ProgressIndicator className="bg-primary" />\n      </ProgressTrack>\n    </Progress>\n  );\n};',
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7657,9 +7495,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/radio/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/radio/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7695,9 +7532,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7733,9 +7569,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7778,9 +7613,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/toggle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/toggle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7816,9 +7650,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7856,9 +7689,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/base/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/base/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7920,9 +7752,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/buttons/button/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/buttons/button/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -7963,9 +7794,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/buttons/flip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/buttons/flip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8014,9 +7844,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/buttons/liquid/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/buttons/liquid/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8059,9 +7888,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/buttons/ripple/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/buttons/ripple/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8102,9 +7930,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/auto-height/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/auto-height/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8140,9 +7967,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/blur/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/blur/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8184,9 +8010,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/click/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/click/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8238,9 +8063,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/effect/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/effect/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8284,9 +8108,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/fade/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/fade/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8328,9 +8151,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/highlight/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/highlight/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8375,9 +8197,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/image-zoom/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/image-zoom/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8413,9 +8234,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/magnetic/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/magnetic/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8457,9 +8277,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/particles/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/particles/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8519,9 +8338,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/shine/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/shine/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8568,9 +8386,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/slide/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/slide/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8616,9 +8433,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/theme-toggler/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/theme-toggler/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8661,9 +8477,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/tilt/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/tilt/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8704,9 +8519,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/effects/zoom/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/effects/zoom/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8748,9 +8562,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/headless/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/headless/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8786,9 +8599,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/headless/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/headless/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8836,9 +8648,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/headless/disclosure/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/headless/disclosure/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8876,9 +8687,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/headless/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/headless/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8935,9 +8745,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/headless/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/headless/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -8973,9 +8782,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/headless/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/headless/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9018,9 +8826,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9059,9 +8866,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9109,9 +8915,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9158,9 +8963,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/collapsible/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/collapsible/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9198,9 +9002,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9248,9 +9051,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/dropdown-menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/dropdown-menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9304,9 +9106,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/files/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/files/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9342,9 +9143,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/hover-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/hover-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9404,9 +9204,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9461,9 +9260,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9524,9 +9322,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9562,9 +9359,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/radio-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/radio-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9600,9 +9396,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/sheet/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/sheet/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9650,9 +9445,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9688,9 +9482,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9733,9 +9526,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/toggle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/toggle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9771,9 +9563,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9816,9 +9607,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/radix/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/radix/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9879,9 +9669,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/counting-number/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/counting-number/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9926,9 +9715,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/gradient/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/gradient/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -9964,9 +9752,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/highlight/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/highlight/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10004,9 +9791,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/morphing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/morphing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10047,9 +9833,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/rolling/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/rolling/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10087,9 +9872,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/rotating/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/rotating/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10132,9 +9916,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/scrolling-number/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/scrolling-number/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10180,9 +9963,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/shimmering/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/shimmering/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10224,9 +10006,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/sliding-number/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/sliding-number/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10272,9 +10053,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/splitting/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/splitting/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10323,9 +10103,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/splitting-example/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/splitting-example/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10361,9 +10140,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/demo/primitives/texts/typing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/demo/primitives/texts/typing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10443,9 +10221,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/hooks/use-controlled-state/index.tsx'
-        );
+        const mod =
+          await import('@/registry/hooks/use-controlled-state/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -10553,9 +10330,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/hooks/use-motion-value-state/index.tsx'
-        );
+        const mod =
+          await import('@/registry/hooks/use-motion-value-state/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -11398,9 +11174,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/between-horizontal-end/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/between-horizontal-end/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -11460,9 +11235,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/between-horizontal-start/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/between-horizontal-start/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -11522,9 +11296,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/between-vertical-end/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/between-vertical-end/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -11584,9 +11357,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/between-vertical-start/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/between-vertical-start/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -11799,9 +11571,8 @@ export const index: Record<string, any> = {
     keywords: ['robot', 'ai', 'chat', 'assistant'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/bot-message-square/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/bot-message-square/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12102,9 +11873,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph', 'trending down'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-bar-decreasing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-bar-decreasing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12140,9 +11910,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph', 'trending up'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-bar-increasing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-bar-increasing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12214,9 +11983,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph', 'trending down'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-column-decreasing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-column-decreasing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12252,9 +12020,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph', 'trending up'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-column-increasing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-column-increasing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12326,9 +12093,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-no-axes-column/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-no-axes-column/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12365,9 +12131,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph', 'trending down'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-no-axes-column-decreasing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-no-axes-column-decreasing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12404,9 +12169,8 @@ export const index: Record<string, any> = {
     keywords: ['statistics', 'analytics', 'diagram', 'graph', 'trending up'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chart-no-axes-column-increasing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chart-no-axes-column-increasing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -12750,9 +12514,8 @@ export const index: Record<string, any> = {
     keywords: ['expand', 'horizontal', 'unfold', '<>'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/chevron-left-right/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/chevron-left-right/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -14572,9 +14335,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/ellipsis-vertical/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/ellipsis-vertical/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -14918,9 +14680,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/gallery-horizontal/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/gallery-horizontal/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -14963,9 +14724,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/gallery-vertical-end/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/gallery-vertical-end/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -15051,9 +14811,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/gallery-horizontal-end/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/gallery-horizontal-end/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -15935,9 +15694,8 @@ export const index: Record<string, any> = {
     keywords: ['security'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/lock-keyhole-open/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/lock-keyhole-open/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16277,9 +16035,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-code/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-code/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16323,9 +16080,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-dashed/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-dashed/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16375,9 +16131,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-heart/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-heart/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16427,9 +16182,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-more/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-more/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16480,9 +16234,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-off/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-off/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16526,9 +16279,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-plus/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-plus/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16572,9 +16324,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-question/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-question/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16625,9 +16376,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-circle-warning/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-circle-warning/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16766,9 +16516,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-code/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-code/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16812,9 +16561,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-dashed/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-dashed/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16868,9 +16616,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-diff/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-diff/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16915,9 +16662,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-dot/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-dot/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -16967,9 +16713,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-heart/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-heart/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17019,9 +16764,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-more/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-more/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17072,9 +16816,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-off/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-off/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17118,9 +16861,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-plus/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-plus/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17168,9 +16910,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-quote/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-quote/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17215,9 +16956,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-share/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-share/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17260,9 +17000,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-text/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-text/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17313,9 +17052,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/message-square-warning/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/message-square-warning/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17832,9 +17570,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/panel-bottom-close/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/panel-bottom-close/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -17878,9 +17615,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/panel-bottom-open/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/panel-bottom-open/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -18084,9 +17820,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/panel-right-close/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/panel-right-close/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19211,9 +18946,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/scissors-line-dashed/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/scissors-line-dashed/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19654,9 +19388,8 @@ export const index: Record<string, any> = {
     keywords: ['settings', 'filters', 'controls'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/sliders-horizontal/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/sliders-horizontal/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19810,9 +19543,8 @@ export const index: Record<string, any> = {
     keywords: ['outwards', 'direction', 'south-west', 'diagonal'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/square-arrow-out-down-left/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/square-arrow-out-down-left/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19848,9 +19580,8 @@ export const index: Record<string, any> = {
     keywords: ['outwards', 'direction', 'south-east', 'diagonal'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/square-arrow-out-down-right/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/square-arrow-out-down-right/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19886,9 +19617,8 @@ export const index: Record<string, any> = {
     keywords: ['outwards', 'direction', 'north-west', 'diagonal'],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/square-arrow-out-up-left/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/square-arrow-out-up-left/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19933,9 +19663,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/square-arrow-out-up-right/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/square-arrow-out-up-right/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -19986,9 +19715,8 @@ export const index: Record<string, any> = {
     ],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/icons/square-dashed-kanban/index.tsx'
-        );
+        const mod =
+          await import('@/registry/icons/square-dashed-kanban/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21246,9 +20974,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/avatar-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/avatar-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21285,9 +21012,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/code-block/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/code-block/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21327,9 +21053,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/cursor/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/cursor/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21372,9 +21097,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/github-stars/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/github-stars/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21413,9 +21137,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/motion-grid/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/motion-grid/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21452,9 +21175,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/pinned-list/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/pinned-list/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21495,9 +21217,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/scroll-progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/scroll-progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21534,9 +21255,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/slot/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/slot/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21577,9 +21297,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/spring/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/spring/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21620,9 +21339,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/tabs/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/tabs/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21662,9 +21380,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/animate/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/animate/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21685,7 +21402,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-accordion',
     description: 'An easily stylable accordion component.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -21697,15 +21414,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/accordion.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Accordion as AccordionPrimitive } from '@base-ui-components/react/accordion';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype AccordionContextType = {\n  value: string | string[] | undefined;\n  setValue: (value: string | string[] | undefined) => void;\n};\n\ntype AccordionItemContextType = {\n  isOpen: boolean;\n  setIsOpen: (open: boolean) => void;\n};\n\nconst [AccordionProvider, useAccordion] =\n  getStrictContext<AccordionContextType>('AccordionContext');\n\nconst [AccordionItemProvider, useAccordionItem] =\n  getStrictContext<AccordionItemContextType>('AccordionItemContext');\n\ntype AccordionProps = React.ComponentProps<typeof AccordionPrimitive.Root>;\n\nfunction Accordion(props: AccordionProps) {\n  const [value, setValue] = useControlledState<string | string[] | undefined>({\n    value: props?.value,\n    defaultValue: props?.defaultValue,\n    onChange: props?.onValueChange as (\n      value: string | string[] | undefined,\n    ) => void,\n  });\n\n  return (\n    <AccordionProvider value={{ value, setValue }}>\n      <AccordionPrimitive.Root\n        data-slot=\"accordion\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </AccordionProvider>\n  );\n}\n\ntype AccordionItemProps = React.ComponentProps<typeof AccordionPrimitive.Item>;\n\nfunction AccordionItem(props: AccordionItemProps) {\n  const { value } = useAccordion();\n  const [isOpen, setIsOpen] = React.useState(\n    value?.includes(props?.value) ?? false,\n  );\n\n  React.useEffect(() => {\n    setIsOpen(value?.includes(props?.value) ?? false);\n  }, [value, props?.value]);\n\n  return (\n    <AccordionItemProvider value={{ isOpen, setIsOpen }}>\n      <AccordionPrimitive.Item data-slot=\"accordion-item\" {...props} />\n    </AccordionItemProvider>\n  );\n}\n\ntype AccordionHeaderProps = React.ComponentProps<\n  typeof AccordionPrimitive.Header\n>;\n\nfunction AccordionHeader(props: AccordionHeaderProps) {\n  return <AccordionPrimitive.Header data-slot=\"accordion-header\" {...props} />;\n}\n\ntype AccordionTriggerProps = React.ComponentProps<\n  typeof AccordionPrimitive.Trigger\n>;\n\nfunction AccordionTrigger(props: AccordionTriggerProps) {\n  return (\n    <AccordionPrimitive.Trigger data-slot=\"accordion-trigger\" {...props} />\n  );\n}\n\ntype AccordionPanelProps = Omit<\n  React.ComponentProps<typeof AccordionPrimitive.Panel>,\n  'keepMounted' | 'render'\n> &\n  HTMLMotionProps<'div'> & {\n    keepRendered?: boolean;\n  };\n\nfunction AccordionPanel({\n  transition = { duration: 0.35, ease: 'easeInOut' },\n  hiddenUntilFound,\n  keepRendered = false,\n  ...props\n}: AccordionPanelProps) {\n  const { isOpen } = useAccordionItem();\n\n  return (\n    <AnimatePresence>\n      {keepRendered ? (\n        <AccordionPrimitive.Panel\n          hidden={false}\n          hiddenUntilFound={hiddenUntilFound}\n          keepMounted\n          render={\n            <motion.div\n              key=\"accordion-panel\"\n              data-slot=\"accordion-panel\"\n              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n              animate={\n                isOpen\n                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }\n                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }\n              }\n              transition={transition}\n              style={{\n                maskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                WebkitMaskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                overflow: 'hidden',\n              }}\n              {...props}\n            />\n          }\n        />\n      ) : (\n        isOpen && (\n          <AccordionPrimitive.Panel\n            hidden={false}\n            hiddenUntilFound={hiddenUntilFound}\n            keepMounted\n            render={\n              <motion.div\n                key=\"accordion-panel\"\n                data-slot=\"accordion-panel\"\n                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                animate={{\n                  height: 'auto',\n                  opacity: 1,\n                  '--mask-stop': '100%',\n                  y: 0,\n                }}\n                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                transition={transition}\n                style={{\n                  maskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  WebkitMaskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  overflow: 'hidden',\n                }}\n                {...props}\n              />\n            }\n          />\n        )\n      )}\n    </AnimatePresence>\n  );\n}\n\nexport {\n  Accordion,\n  AccordionItem,\n  AccordionHeader,\n  AccordionTrigger,\n  AccordionPanel,\n  useAccordionItem,\n  type AccordionProps,\n  type AccordionItemProps,\n  type AccordionHeaderProps,\n  type AccordionTriggerProps,\n  type AccordionPanelProps,\n  type AccordionItemContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Accordion as AccordionPrimitive } from '@base-ui/react/accordion';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype AccordionValue = AccordionPrimitive.Root.Props['value'];\n\ntype AccordionContextType = {\n  value: AccordionValue;\n  setValue: (value: AccordionValue) => void;\n};\n\ntype AccordionItemContextType = {\n  isOpen: boolean;\n  setIsOpen: (open: boolean) => void;\n};\n\nconst [AccordionProvider, useAccordion] =\n  getStrictContext<AccordionContextType>('AccordionContext');\n\nconst [AccordionItemProvider, useAccordionItem] =\n  getStrictContext<AccordionItemContextType>('AccordionItemContext');\n\ntype AccordionProps = React.ComponentProps<typeof AccordionPrimitive.Root>;\n\nfunction Accordion(props: AccordionProps) {\n  const [value, setValue] = useControlledState<AccordionValue>({\n    value: props?.value,\n    defaultValue: props?.defaultValue,\n    onChange: props?.onValueChange as (value: AccordionValue) => void,\n  });\n\n  return (\n    <AccordionProvider value={{ value, setValue }}>\n      <AccordionPrimitive.Root\n        data-slot=\"accordion\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </AccordionProvider>\n  );\n}\n\ntype AccordionItemProps = React.ComponentProps<typeof AccordionPrimitive.Item>;\n\nfunction AccordionItem(props: AccordionItemProps) {\n  const { value } = useAccordion();\n  const [isOpen, setIsOpen] = React.useState(\n    value?.includes(props?.value) ?? false,\n  );\n\n  React.useEffect(() => {\n    setIsOpen(value?.includes(props?.value) ?? false);\n  }, [value, props?.value]);\n\n  return (\n    <AccordionItemProvider value={{ isOpen, setIsOpen }}>\n      <AccordionPrimitive.Item data-slot=\"accordion-item\" {...props} />\n    </AccordionItemProvider>\n  );\n}\n\ntype AccordionHeaderProps = React.ComponentProps<\n  typeof AccordionPrimitive.Header\n>;\n\nfunction AccordionHeader(props: AccordionHeaderProps) {\n  return <AccordionPrimitive.Header data-slot=\"accordion-header\" {...props} />;\n}\n\ntype AccordionTriggerProps = React.ComponentProps<\n  typeof AccordionPrimitive.Trigger\n>;\n\nfunction AccordionTrigger(props: AccordionTriggerProps) {\n  return (\n    <AccordionPrimitive.Trigger data-slot=\"accordion-trigger\" {...props} />\n  );\n}\n\ntype AccordionPanelProps = Omit<\n  React.ComponentProps<typeof AccordionPrimitive.Panel>,\n  'keepMounted' | 'render'\n> &\n  HTMLMotionProps<'div'> & {\n    keepRendered?: boolean;\n  };\n\nfunction AccordionPanel({\n  transition = { duration: 0.35, ease: 'easeInOut' },\n  hiddenUntilFound,\n  keepRendered = false,\n  ...props\n}: AccordionPanelProps) {\n  const { isOpen } = useAccordionItem();\n\n  return (\n    <AnimatePresence>\n      {keepRendered ? (\n        <AccordionPrimitive.Panel\n          hidden={false}\n          hiddenUntilFound={hiddenUntilFound}\n          keepMounted\n          render={\n            <motion.div\n              key=\"accordion-panel\"\n              data-slot=\"accordion-panel\"\n              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n              animate={\n                isOpen\n                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }\n                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }\n              }\n              transition={transition}\n              style={{\n                maskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                WebkitMaskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                overflow: 'hidden',\n              }}\n              {...props}\n            />\n          }\n        />\n      ) : (\n        isOpen && (\n          <AccordionPrimitive.Panel\n            hidden={false}\n            hiddenUntilFound={hiddenUntilFound}\n            keepMounted\n            render={\n              <motion.div\n                key=\"accordion-panel\"\n                data-slot=\"accordion-panel\"\n                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                animate={{\n                  height: 'auto',\n                  opacity: 1,\n                  '--mask-stop': '100%',\n                  y: 0,\n                }}\n                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                transition={transition}\n                style={{\n                  maskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  WebkitMaskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  overflow: 'hidden',\n                }}\n                {...props}\n              />\n            }\n          />\n        )\n      )}\n    </AnimatePresence>\n  );\n}\n\nexport {\n  Accordion,\n  AccordionItem,\n  AccordionHeader,\n  AccordionTrigger,\n  AccordionPanel,\n  useAccordionItem,\n  type AccordionProps,\n  type AccordionItemProps,\n  type AccordionHeaderProps,\n  type AccordionTriggerProps,\n  type AccordionPanelProps,\n  type AccordionItemContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21726,7 +21442,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-alert-dialog',
     description: 'A dialog that requires user response to proceed.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/hooks-use-controlled-state',
@@ -21738,15 +21454,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/alert-dialog.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { AlertDialog as AlertDialogPrimitive } from '@base-ui-components/react/alert-dialog';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype AlertDialogContextType = {\n  isOpen: boolean;\n  setIsOpen: AlertDialogProps['onOpenChange'];\n};\n\nconst [AlertDialogProvider, useAlertDialog] =\n  getStrictContext<AlertDialogContextType>('AlertDialogContext');\n\ntype AlertDialogProps = React.ComponentProps<typeof AlertDialogPrimitive.Root>;\n\nfunction AlertDialog(props: AlertDialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <AlertDialogProvider value={{ isOpen, setIsOpen }}>\n      <AlertDialogPrimitive.Root\n        data-slot=\"alert-dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </AlertDialogProvider>\n  );\n}\n\ntype AlertDialogTriggerProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Trigger\n>;\n\nfunction AlertDialogTrigger(props: AlertDialogTriggerProps) {\n  return (\n    <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n  );\n}\n\ntype AlertDialogPortalProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction AlertDialogPortal(props: AlertDialogPortalProps) {\n  const { isOpen } = useAlertDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <AlertDialogPrimitive.Portal\n          data-slot=\"alert-dialog-portal\"\n          keepMounted\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype AlertDialogBackdropProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Backdrop>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction AlertDialogBackdrop({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: AlertDialogBackdropProps) {\n  return (\n    <AlertDialogPrimitive.Backdrop\n      data-slot=\"alert-dialog-backdrop\"\n      render={\n        <motion.div\n          key=\"alert-dialog-backdrop\"\n          initial={{ opacity: 0, filter: 'blur(4px)' }}\n          animate={{ opacity: 1, filter: 'blur(0px)' }}\n          exit={{ opacity: 0, filter: 'blur(4px)' }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype AlertDialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype AlertDialogPopupProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: AlertDialogFlipDirection;\n  };\n\nfunction AlertDialogPopup({\n  from = 'top',\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: AlertDialogPopupProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <AlertDialogPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"alert-dialog-popup\"\n          data-slot=\"alert-dialog-popup\"\n          initial={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          animate={{\n            opacity: 1,\n            filter: 'blur(0px)',\n            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n          }}\n          exit={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype AlertDialogCloseProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Close\n>;\n\nfunction AlertDialogClose(props: AlertDialogCloseProps) {\n  return (\n    <AlertDialogPrimitive.Close data-slot=\"alert-dialog-close\" {...props} />\n  );\n}\n\ntype AlertDialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogHeader(props: AlertDialogHeaderProps) {\n  return <div data-slot=\"alert-dialog-header\" {...props} />;\n}\n\ntype AlertDialogFooterProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogFooter(props: AlertDialogFooterProps) {\n  return <div data-slot=\"alert-dialog-footer\" {...props} />;\n}\n\ntype AlertDialogTitleProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Title\n>;\n\nfunction AlertDialogTitle(props: AlertDialogTitleProps) {\n  return (\n    <AlertDialogPrimitive.Title data-slot=\"alert-dialog-title\" {...props} />\n  );\n}\n\ntype AlertDialogDescriptionProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Description\n>;\n\nfunction AlertDialogDescription(props: AlertDialogDescriptionProps) {\n  return (\n    <AlertDialogPrimitive.Description\n      data-slot=\"alert-dialog-description\"\n      {...props}\n    />\n  );\n}\n\nexport {\n  AlertDialog,\n  AlertDialogPortal,\n  AlertDialogBackdrop,\n  AlertDialogClose,\n  AlertDialogTrigger,\n  AlertDialogPopup,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  useAlertDialog,\n  type AlertDialogProps,\n  type AlertDialogTriggerProps,\n  type AlertDialogPortalProps,\n  type AlertDialogCloseProps,\n  type AlertDialogBackdropProps,\n  type AlertDialogPopupProps,\n  type AlertDialogHeaderProps,\n  type AlertDialogFooterProps,\n  type AlertDialogTitleProps,\n  type AlertDialogDescriptionProps,\n  type AlertDialogContextType,\n  type AlertDialogFlipDirection,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype AlertDialogContextType = {\n  isOpen: boolean;\n  setIsOpen: AlertDialogProps['onOpenChange'];\n};\n\nconst [AlertDialogProvider, useAlertDialog] =\n  getStrictContext<AlertDialogContextType>('AlertDialogContext');\n\ntype AlertDialogProps = React.ComponentProps<typeof AlertDialogPrimitive.Root>;\n\nfunction AlertDialog(props: AlertDialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <AlertDialogProvider value={{ isOpen, setIsOpen }}>\n      <AlertDialogPrimitive.Root\n        data-slot=\"alert-dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </AlertDialogProvider>\n  );\n}\n\ntype AlertDialogTriggerProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Trigger\n>;\n\nfunction AlertDialogTrigger(props: AlertDialogTriggerProps) {\n  return (\n    <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n  );\n}\n\ntype AlertDialogPortalProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction AlertDialogPortal(props: AlertDialogPortalProps) {\n  const { isOpen } = useAlertDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <AlertDialogPrimitive.Portal\n          data-slot=\"alert-dialog-portal\"\n          keepMounted\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype AlertDialogBackdropProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Backdrop>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction AlertDialogBackdrop({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: AlertDialogBackdropProps) {\n  return (\n    <AlertDialogPrimitive.Backdrop\n      data-slot=\"alert-dialog-backdrop\"\n      render={\n        <motion.div\n          key=\"alert-dialog-backdrop\"\n          initial={{ opacity: 0, filter: 'blur(4px)' }}\n          animate={{ opacity: 1, filter: 'blur(0px)' }}\n          exit={{ opacity: 0, filter: 'blur(4px)' }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype AlertDialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype AlertDialogPopupProps = Omit<\n  React.ComponentProps<typeof AlertDialogPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: AlertDialogFlipDirection;\n  };\n\nfunction AlertDialogPopup({\n  from = 'top',\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: AlertDialogPopupProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <AlertDialogPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"alert-dialog-popup\"\n          data-slot=\"alert-dialog-popup\"\n          initial={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          animate={{\n            opacity: 1,\n            filter: 'blur(0px)',\n            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n          }}\n          exit={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype AlertDialogCloseProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Close\n>;\n\nfunction AlertDialogClose(props: AlertDialogCloseProps) {\n  return (\n    <AlertDialogPrimitive.Close data-slot=\"alert-dialog-close\" {...props} />\n  );\n}\n\ntype AlertDialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogHeader(props: AlertDialogHeaderProps) {\n  return <div data-slot=\"alert-dialog-header\" {...props} />;\n}\n\ntype AlertDialogFooterProps = React.ComponentProps<'div'>;\n\nfunction AlertDialogFooter(props: AlertDialogFooterProps) {\n  return <div data-slot=\"alert-dialog-footer\" {...props} />;\n}\n\ntype AlertDialogTitleProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Title\n>;\n\nfunction AlertDialogTitle(props: AlertDialogTitleProps) {\n  return (\n    <AlertDialogPrimitive.Title data-slot=\"alert-dialog-title\" {...props} />\n  );\n}\n\ntype AlertDialogDescriptionProps = React.ComponentProps<\n  typeof AlertDialogPrimitive.Description\n>;\n\nfunction AlertDialogDescription(props: AlertDialogDescriptionProps) {\n  return (\n    <AlertDialogPrimitive.Description\n      data-slot=\"alert-dialog-description\"\n      {...props}\n    />\n  );\n}\n\nexport {\n  AlertDialog,\n  AlertDialogPortal,\n  AlertDialogBackdrop,\n  AlertDialogClose,\n  AlertDialogTrigger,\n  AlertDialogPopup,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  useAlertDialog,\n  type AlertDialogProps,\n  type AlertDialogTriggerProps,\n  type AlertDialogPortalProps,\n  type AlertDialogCloseProps,\n  type AlertDialogBackdropProps,\n  type AlertDialogPopupProps,\n  type AlertDialogHeaderProps,\n  type AlertDialogFooterProps,\n  type AlertDialogTitleProps,\n  type AlertDialogDescriptionProps,\n  type AlertDialogContextType,\n  type AlertDialogFlipDirection,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21767,7 +21482,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-checkbox',
     description: 'An easily stylable checkbox component.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -21779,15 +21494,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/checkbox.tsx',
         content:
-          '\'use client\';\n\nimport * as React from \'react\';\nimport { Checkbox as CheckboxPrimitive } from \'@base-ui-components/react/checkbox\';\nimport {\n  motion,\n  type HTMLMotionProps,\n  type SVGMotionProps,\n} from \'motion/react\';\n\nimport { getStrictContext } from \'@/lib/get-strict-context\';\nimport { useControlledState } from \'@/hooks/use-controlled-state\';\n\ntype CheckboxContextType = {\n  isChecked: boolean;\n  setIsChecked: CheckboxProps[\'onCheckedChange\'];\n  isIndeterminate: boolean | undefined;\n};\n\nconst [CheckboxProvider, useCheckbox] =\n  getStrictContext<CheckboxContextType>(\'CheckboxContext\');\n\ntype CheckboxProps = Omit<\n  React.ComponentProps<typeof CheckboxPrimitive.Root>,\n  \'render\'\n> &\n  HTMLMotionProps<\'button\'>;\n\nfunction Checkbox({\n  name,\n  checked,\n  defaultChecked,\n  onCheckedChange,\n  indeterminate,\n  value,\n  nativeButton,\n  parent,\n  disabled,\n  readOnly,\n  required,\n  inputRef,\n  id,\n  ...props\n}: CheckboxProps) {\n  const [isChecked, setIsChecked] = useControlledState({\n    value: checked,\n    defaultValue: defaultChecked,\n    onChange: onCheckedChange,\n  });\n\n  return (\n    <CheckboxProvider\n      value={{ isChecked, setIsChecked, isIndeterminate: indeterminate }}\n    >\n      <CheckboxPrimitive.Root\n        name={name}\n        defaultChecked={defaultChecked}\n        checked={checked}\n        onCheckedChange={setIsChecked}\n        indeterminate={indeterminate}\n        value={value}\n        nativeButton={nativeButton}\n        parent={parent}\n        disabled={disabled}\n        readOnly={readOnly}\n        required={required}\n        inputRef={inputRef}\n        id={id}\n        render={\n          <motion.button\n            data-slot="checkbox"\n            whileTap={{ scale: 0.95 }}\n            whileHover={{ scale: 1.05 }}\n            {...props}\n          />\n        }\n      />\n    </CheckboxProvider>\n  );\n}\n\ntype CheckboxIndicatorProps = SVGMotionProps<SVGSVGElement>;\n\nfunction CheckboxIndicator(props: CheckboxIndicatorProps) {\n  const { isChecked, isIndeterminate } = useCheckbox();\n\n  return (\n    <CheckboxPrimitive.Indicator\n      keepMounted\n      render={\n        <motion.svg\n          data-slot="checkbox-indicator"\n          xmlns="http://www.w3.org/2000/svg"\n          fill="none"\n          viewBox="0 0 24 24"\n          strokeWidth="3.5"\n          stroke="currentColor"\n          initial="unchecked"\n          animate={isChecked ? \'checked\' : \'unchecked\'}\n          {...props}\n        >\n          {isIndeterminate ? (\n            <motion.line\n              x1="5"\n              y1="12"\n              x2="19"\n              y2="12"\n              strokeLinecap="round"\n              initial={{ pathLength: 0, opacity: 0 }}\n              animate={{\n                pathLength: 1,\n                opacity: 1,\n                transition: { duration: 0.2 },\n              }}\n            />\n          ) : (\n            <motion.path\n              strokeLinecap="round"\n              strokeLinejoin="round"\n              d="M4.5 12.75l6 6 9-13.5"\n              variants={{\n                checked: {\n                  pathLength: 1,\n                  opacity: 1,\n                  transition: {\n                    duration: 0.2,\n                    delay: 0.2,\n                  },\n                },\n                unchecked: {\n                  pathLength: 0,\n                  opacity: 0,\n                  transition: {\n                    duration: 0.2,\n                  },\n                },\n              }}\n            />\n          )}\n        </motion.svg>\n      }\n    ></CheckboxPrimitive.Indicator>\n  );\n}\n\nexport {\n  Checkbox,\n  CheckboxIndicator,\n  useCheckbox,\n  type CheckboxProps,\n  type CheckboxIndicatorProps,\n  type CheckboxContextType,\n};',
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { Checkbox as CheckboxPrimitive } from \'@base-ui/react/checkbox\';\nimport {\n  motion,\n  type HTMLMotionProps,\n  type SVGMotionProps,\n} from \'motion/react\';\n\nimport { getStrictContext } from \'@/lib/get-strict-context\';\nimport { useControlledState } from \'@/hooks/use-controlled-state\';\n\ntype CheckboxContextType = {\n  isChecked: boolean;\n  setIsChecked: CheckboxProps[\'onCheckedChange\'];\n  isIndeterminate: boolean | undefined;\n};\n\nconst [CheckboxProvider, useCheckbox] =\n  getStrictContext<CheckboxContextType>(\'CheckboxContext\');\n\ntype CheckboxProps = Omit<\n  React.ComponentProps<typeof CheckboxPrimitive.Root>,\n  \'render\'\n> &\n  HTMLMotionProps<\'button\'>;\n\nfunction Checkbox({\n  name,\n  checked,\n  defaultChecked,\n  onCheckedChange,\n  indeterminate,\n  value,\n  // Rendered as a motion.button: tell Base UI it\'s a native button.\n  nativeButton = true,\n  parent,\n  disabled,\n  readOnly,\n  required,\n  inputRef,\n  id,\n  ...props\n}: CheckboxProps) {\n  const [isChecked, setIsChecked] = useControlledState({\n    value: checked,\n    defaultValue: defaultChecked,\n    onChange: onCheckedChange,\n  });\n\n  return (\n    <CheckboxProvider\n      value={{ isChecked, setIsChecked, isIndeterminate: indeterminate }}\n    >\n      <CheckboxPrimitive.Root\n        name={name}\n        defaultChecked={defaultChecked}\n        checked={checked}\n        onCheckedChange={setIsChecked}\n        indeterminate={indeterminate}\n        value={value}\n        nativeButton={nativeButton}\n        parent={parent}\n        disabled={disabled}\n        readOnly={readOnly}\n        required={required}\n        inputRef={inputRef}\n        id={id}\n        render={\n          <motion.button\n            data-slot="checkbox"\n            whileTap={{ scale: 0.95 }}\n            whileHover={{ scale: 1.05 }}\n            {...props}\n          />\n        }\n      />\n    </CheckboxProvider>\n  );\n}\n\ntype CheckboxIndicatorProps = SVGMotionProps<SVGSVGElement>;\n\nfunction CheckboxIndicator(props: CheckboxIndicatorProps) {\n  const { isChecked, isIndeterminate } = useCheckbox();\n\n  return (\n    <CheckboxPrimitive.Indicator\n      keepMounted\n      render={\n        <motion.svg\n          data-slot="checkbox-indicator"\n          xmlns="http://www.w3.org/2000/svg"\n          fill="none"\n          viewBox="0 0 24 24"\n          strokeWidth="3.5"\n          stroke="currentColor"\n          initial="unchecked"\n          animate={isChecked ? \'checked\' : \'unchecked\'}\n          {...props}\n        >\n          {isIndeterminate ? (\n            <motion.line\n              x1="5"\n              y1="12"\n              x2="19"\n              y2="12"\n              strokeLinecap="round"\n              initial={{ pathLength: 0, opacity: 0 }}\n              animate={{\n                pathLength: 1,\n                opacity: 1,\n                transition: { duration: 0.2 },\n              }}\n            />\n          ) : (\n            <motion.path\n              strokeLinecap="round"\n              strokeLinejoin="round"\n              d="M4.5 12.75l6 6 9-13.5"\n              variants={{\n                checked: {\n                  pathLength: 1,\n                  opacity: 1,\n                  transition: {\n                    duration: 0.2,\n                    delay: 0.2,\n                  },\n                },\n                unchecked: {\n                  pathLength: 0,\n                  opacity: 0,\n                  transition: {\n                    duration: 0.2,\n                  },\n                },\n              }}\n            />\n          )}\n        </motion.svg>\n      }\n    ></CheckboxPrimitive.Indicator>\n  );\n}\n\nexport {\n  Checkbox,\n  CheckboxIndicator,\n  useCheckbox,\n  type CheckboxProps,\n  type CheckboxIndicatorProps,\n  type CheckboxContextType,\n};',
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21808,7 +21522,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-collapsible',
     description: 'A collapsible panel controlled by a button.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -21820,15 +21534,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/collapsible.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Collapsible as CollapsiblePrimitive } from '@base-ui-components/react/collapsible';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype CollapsibleContextType = {\n  isOpen: boolean;\n  setIsOpen: CollapsibleProps['onOpenChange'];\n};\n\nconst [CollapsibleProvider, useCollapsible] =\n  getStrictContext<CollapsibleContextType>('CollapsibleContext');\n\ntype CollapsibleProps = React.ComponentProps<typeof CollapsiblePrimitive.Root>;\n\nfunction Collapsible(props: CollapsibleProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <CollapsibleProvider value={{ isOpen, setIsOpen }}>\n      <CollapsiblePrimitive.Root\n        data-slot=\"collapsible\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </CollapsibleProvider>\n  );\n}\n\ntype CollapsibleTriggerProps = React.ComponentProps<\n  typeof CollapsiblePrimitive.Trigger\n>;\n\nfunction CollapsibleTrigger(props: CollapsibleTriggerProps) {\n  return (\n    <CollapsiblePrimitive.Trigger data-slot=\"collapsible-trigger\" {...props} />\n  );\n}\n\ntype CollapsiblePanelProps = Omit<\n  React.ComponentProps<typeof CollapsiblePrimitive.Panel>,\n  'keepMounted' | 'render'\n> &\n  HTMLMotionProps<'div'> & {\n    keepRendered?: boolean;\n  };\n\nfunction CollapsiblePanel({\n  transition = { duration: 0.35, ease: 'easeInOut' },\n  hiddenUntilFound,\n  keepRendered = false,\n  ...props\n}: CollapsiblePanelProps) {\n  const { isOpen } = useCollapsible();\n\n  return (\n    <AnimatePresence>\n      {keepRendered ? (\n        <CollapsiblePrimitive.Panel\n          hidden={false}\n          hiddenUntilFound={hiddenUntilFound}\n          keepMounted\n          render={\n            <motion.div\n              key=\"collapsible-panel\"\n              data-slot=\"collapsible-panel\"\n              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n              animate={\n                isOpen\n                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }\n                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }\n              }\n              transition={transition}\n              style={{\n                maskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                WebkitMaskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                overflow: 'hidden',\n              }}\n              {...props}\n            />\n          }\n        />\n      ) : (\n        isOpen && (\n          <CollapsiblePrimitive.Panel\n            hidden={false}\n            hiddenUntilFound={hiddenUntilFound}\n            keepMounted\n            render={\n              <motion.div\n                key=\"collapsible-panel\"\n                data-slot=\"collapsible-panel\"\n                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                animate={{\n                  height: 'auto',\n                  opacity: 1,\n                  '--mask-stop': '100%',\n                  y: 0,\n                }}\n                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                transition={transition}\n                style={{\n                  maskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  WebkitMaskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  overflow: 'hidden',\n                }}\n                {...props}\n              />\n            }\n          />\n        )\n      )}\n    </AnimatePresence>\n  );\n}\n\nexport {\n  Collapsible,\n  CollapsibleTrigger,\n  CollapsiblePanel,\n  useCollapsible,\n  type CollapsibleProps,\n  type CollapsibleTriggerProps,\n  type CollapsiblePanelProps,\n  type CollapsibleContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype CollapsibleContextType = {\n  isOpen: boolean;\n  setIsOpen: CollapsibleProps['onOpenChange'];\n};\n\nconst [CollapsibleProvider, useCollapsible] =\n  getStrictContext<CollapsibleContextType>('CollapsibleContext');\n\ntype CollapsibleProps = React.ComponentProps<typeof CollapsiblePrimitive.Root>;\n\nfunction Collapsible(props: CollapsibleProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <CollapsibleProvider value={{ isOpen, setIsOpen }}>\n      <CollapsiblePrimitive.Root\n        data-slot=\"collapsible\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </CollapsibleProvider>\n  );\n}\n\ntype CollapsibleTriggerProps = React.ComponentProps<\n  typeof CollapsiblePrimitive.Trigger\n>;\n\nfunction CollapsibleTrigger(props: CollapsibleTriggerProps) {\n  return (\n    <CollapsiblePrimitive.Trigger data-slot=\"collapsible-trigger\" {...props} />\n  );\n}\n\ntype CollapsiblePanelProps = Omit<\n  React.ComponentProps<typeof CollapsiblePrimitive.Panel>,\n  'keepMounted' | 'render'\n> &\n  HTMLMotionProps<'div'> & {\n    keepRendered?: boolean;\n  };\n\nfunction CollapsiblePanel({\n  transition = { duration: 0.35, ease: 'easeInOut' },\n  hiddenUntilFound,\n  keepRendered = false,\n  ...props\n}: CollapsiblePanelProps) {\n  const { isOpen } = useCollapsible();\n\n  return (\n    <AnimatePresence>\n      {keepRendered ? (\n        <CollapsiblePrimitive.Panel\n          hidden={false}\n          hiddenUntilFound={hiddenUntilFound}\n          keepMounted\n          render={\n            <motion.div\n              key=\"collapsible-panel\"\n              data-slot=\"collapsible-panel\"\n              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n              animate={\n                isOpen\n                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }\n                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }\n              }\n              transition={transition}\n              style={{\n                maskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                WebkitMaskImage:\n                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                overflow: 'hidden',\n              }}\n              {...props}\n            />\n          }\n        />\n      ) : (\n        isOpen && (\n          <CollapsiblePrimitive.Panel\n            hidden={false}\n            hiddenUntilFound={hiddenUntilFound}\n            keepMounted\n            render={\n              <motion.div\n                key=\"collapsible-panel\"\n                data-slot=\"collapsible-panel\"\n                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                animate={{\n                  height: 'auto',\n                  opacity: 1,\n                  '--mask-stop': '100%',\n                  y: 0,\n                }}\n                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}\n                transition={transition}\n                style={{\n                  maskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  WebkitMaskImage:\n                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',\n                  overflow: 'hidden',\n                }}\n                {...props}\n              />\n            }\n          />\n        )\n      )}\n    </AnimatePresence>\n  );\n}\n\nexport {\n  Collapsible,\n  CollapsibleTrigger,\n  CollapsiblePanel,\n  useCollapsible,\n  type CollapsibleProps,\n  type CollapsibleTriggerProps,\n  type CollapsiblePanelProps,\n  type CollapsibleContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/collapsible/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/collapsible/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -21849,7 +21562,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-dialog',
     description: 'A popup that opens on top of the entire page.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/hooks-use-controlled-state',
@@ -21861,7 +21574,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/dialog.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as DialogPrimitive } from '@base-ui-components/react/dialog';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype DialogContextType = {\n  isOpen: boolean;\n  setIsOpen: DialogProps['onOpenChange'];\n};\n\nconst [DialogProvider, useDialog] =\n  getStrictContext<DialogContextType>('DialogContext');\n\ntype DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;\n\nfunction Dialog(props: DialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <DialogProvider value={{ isOpen, setIsOpen }}>\n      <DialogPrimitive.Root\n        data-slot=\"dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </DialogProvider>\n  );\n}\n\ntype DialogTriggerProps = React.ComponentProps<typeof DialogPrimitive.Trigger>;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\ntype DialogPortalProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction DialogPortal(props: DialogPortalProps) {\n  const { isOpen } = useDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <DialogPrimitive.Portal\n          data-slot=\"dialog-portal\"\n          keepMounted\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype DialogBackdropProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Backdrop>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction DialogBackdrop({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: DialogBackdropProps) {\n  return (\n    <DialogPrimitive.Backdrop\n      data-slot=\"dialog-backdrop\"\n      render={\n        <motion.div\n          key=\"dialog-backdrop\"\n          initial={{ opacity: 0, filter: 'blur(4px)' }}\n          animate={{ opacity: 1, filter: 'blur(0px)' }}\n          exit={{ opacity: 0, filter: 'blur(4px)' }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype DialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype DialogPopupProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: DialogFlipDirection;\n  };\n\nfunction DialogPopup({\n  from = 'top',\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: DialogPopupProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <DialogPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"dialog-popup\"\n          data-slot=\"dialog-popup\"\n          initial={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          animate={{\n            opacity: 1,\n            filter: 'blur(0px)',\n            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n          }}\n          exit={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype DialogCloseProps = React.ComponentProps<typeof DialogPrimitive.Close>;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\ntype DialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction DialogHeader(props: DialogHeaderProps) {\n  return <div data-slot=\"dialog-header\" {...props} />;\n}\n\ntype DialogFooterProps = React.ComponentProps<'div'>;\n\nfunction DialogFooter(props: DialogFooterProps) {\n  return <div data-slot=\"dialog-footer\" {...props} />;\n}\n\ntype DialogTitleProps = React.ComponentProps<typeof DialogPrimitive.Title>;\n\nfunction DialogTitle(props: DialogTitleProps) {\n  return <DialogPrimitive.Title data-slot=\"dialog-title\" {...props} />;\n}\n\ntype DialogDescriptionProps = React.ComponentProps<\n  typeof DialogPrimitive.Description\n>;\n\nfunction DialogDescription(props: DialogDescriptionProps) {\n  return (\n    <DialogPrimitive.Description data-slot=\"dialog-description\" {...props} />\n  );\n}\n\nexport {\n  Dialog,\n  DialogPortal,\n  DialogBackdrop,\n  DialogClose,\n  DialogTrigger,\n  DialogPopup,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  useDialog,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogPortalProps,\n  type DialogCloseProps,\n  type DialogBackdropProps,\n  type DialogPopupProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n  type DialogContextType,\n  type DialogFlipDirection,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Dialog as DialogPrimitive } from '@base-ui/react/dialog';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype DialogContextType = {\n  isOpen: boolean;\n  setIsOpen: DialogProps['onOpenChange'];\n};\n\nconst [DialogProvider, useDialog] =\n  getStrictContext<DialogContextType>('DialogContext');\n\ntype DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;\n\nfunction Dialog(props: DialogProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <DialogProvider value={{ isOpen, setIsOpen }}>\n      <DialogPrimitive.Root\n        data-slot=\"dialog\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </DialogProvider>\n  );\n}\n\ntype DialogTriggerProps = React.ComponentProps<typeof DialogPrimitive.Trigger>;\n\nfunction DialogTrigger(props: DialogTriggerProps) {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\ntype DialogPortalProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction DialogPortal(props: DialogPortalProps) {\n  const { isOpen } = useDialog();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <DialogPrimitive.Portal\n          data-slot=\"dialog-portal\"\n          keepMounted\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype DialogBackdropProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Backdrop>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction DialogBackdrop({\n  transition = { duration: 0.2, ease: 'easeInOut' },\n  ...props\n}: DialogBackdropProps) {\n  return (\n    <DialogPrimitive.Backdrop\n      data-slot=\"dialog-backdrop\"\n      render={\n        <motion.div\n          key=\"dialog-backdrop\"\n          initial={{ opacity: 0, filter: 'blur(4px)' }}\n          animate={{ opacity: 1, filter: 'blur(0px)' }}\n          exit={{ opacity: 0, filter: 'blur(4px)' }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype DialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';\n\ntype DialogPopupProps = Omit<\n  React.ComponentProps<typeof DialogPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    from?: DialogFlipDirection;\n  };\n\nfunction DialogPopup({\n  from = 'top',\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 150, damping: 25 },\n  ...props\n}: DialogPopupProps) {\n  const initialRotation =\n    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';\n  const isVertical = from === 'top' || from === 'bottom';\n  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';\n\n  return (\n    <DialogPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"dialog-popup\"\n          data-slot=\"dialog-popup\"\n          initial={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          animate={{\n            opacity: 1,\n            filter: 'blur(0px)',\n            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,\n          }}\n          exit={{\n            opacity: 0,\n            filter: 'blur(4px)',\n            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,\n          }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype DialogCloseProps = React.ComponentProps<typeof DialogPrimitive.Close>;\n\nfunction DialogClose(props: DialogCloseProps) {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\ntype DialogHeaderProps = React.ComponentProps<'div'>;\n\nfunction DialogHeader(props: DialogHeaderProps) {\n  return <div data-slot=\"dialog-header\" {...props} />;\n}\n\ntype DialogFooterProps = React.ComponentProps<'div'>;\n\nfunction DialogFooter(props: DialogFooterProps) {\n  return <div data-slot=\"dialog-footer\" {...props} />;\n}\n\ntype DialogTitleProps = React.ComponentProps<typeof DialogPrimitive.Title>;\n\nfunction DialogTitle(props: DialogTitleProps) {\n  return <DialogPrimitive.Title data-slot=\"dialog-title\" {...props} />;\n}\n\ntype DialogDescriptionProps = React.ComponentProps<\n  typeof DialogPrimitive.Description\n>;\n\nfunction DialogDescription(props: DialogDescriptionProps) {\n  return (\n    <DialogPrimitive.Description data-slot=\"dialog-description\" {...props} />\n  );\n}\n\nexport {\n  Dialog,\n  DialogPortal,\n  DialogBackdrop,\n  DialogClose,\n  DialogTrigger,\n  DialogPopup,\n  DialogHeader,\n  DialogFooter,\n  DialogTitle,\n  DialogDescription,\n  useDialog,\n  type DialogProps,\n  type DialogTriggerProps,\n  type DialogPortalProps,\n  type DialogCloseProps,\n  type DialogBackdropProps,\n  type DialogPopupProps,\n  type DialogHeaderProps,\n  type DialogFooterProps,\n  type DialogTitleProps,\n  type DialogDescriptionProps,\n  type DialogContextType,\n  type DialogFlipDirection,\n};",
       },
     ],
     keywords: [],
@@ -21903,7 +21616,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/files.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightItemProps,\n  type HighlightProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport {\n  Accordion,\n  AccordionItem,\n  AccordionHeader,\n  AccordionTrigger,\n  AccordionPanel,\n  type AccordionProps,\n  type AccordionItemProps,\n  type AccordionHeaderProps,\n  type AccordionTriggerProps,\n  type AccordionPanelProps,\n} from '@/components/animate-ui/primitives/base/accordion';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype FilesContextType = {\n  open: string[];\n};\n\ntype FolderContextType = {\n  isOpen: boolean;\n};\n\nconst [FilesProvider, useFiles] =\n  getStrictContext<FilesContextType>('FilesContext');\n\nconst [FolderProvider, useFolder] =\n  getStrictContext<FolderContextType>('FolderContext');\n\ntype FilesProps = {\n  children: React.ReactNode;\n  defaultOpen?: string[];\n  open?: string[];\n  onOpenChange?: (open: string[]) => void;\n} & Omit<AccordionProps, 'type' | 'defaultValue' | 'value' | 'onValueChange'>;\n\nfunction Files({\n  children,\n  defaultOpen,\n  open,\n  onOpenChange,\n  style,\n  ...props\n}: FilesProps) {\n  const [openValue, setOpenValue] = useControlledState({\n    value: open,\n    defaultValue: defaultOpen,\n    onChange: onOpenChange,\n  });\n\n  return (\n    <FilesProvider value={{ open: openValue ?? [] }}>\n      <Accordion\n        data-slot=\"files\"\n        multiple\n        defaultValue={defaultOpen}\n        value={open}\n        onValueChange={setOpenValue}\n        style={{\n          position: 'relative',\n          overflow: 'auto',\n          ...style,\n        }}\n        {...props}\n      >\n        {children}\n      </Accordion>\n    </FilesProvider>\n  );\n}\n\ntype FilesHighlightProps = Omit<HighlightProps, 'controlledItems' | 'mode'>;\n\nfunction FilesHighlight({ hover = true, ...props }: FilesHighlightProps) {\n  return (\n    <Highlight\n      data-slot=\"files-highlight\"\n      controlledItems\n      mode=\"parent\"\n      hover={hover}\n      {...props}\n    />\n  );\n}\n\ntype FolderItemProps = AccordionItemProps;\n\nfunction FolderItem({ value, ...props }: FolderItemProps) {\n  const { open } = useFiles();\n\n  return (\n    <FolderProvider value={{ isOpen: open.includes(value) }}>\n      <AccordionItem data-slot=\"folder-item\" value={value} {...props} />\n    </FolderProvider>\n  );\n}\n\ntype FolderHeaderProps = AccordionHeaderProps;\n\nfunction FolderHeader(props: FolderHeaderProps) {\n  return <AccordionHeader data-slot=\"folder-header\" {...props} />;\n}\n\ntype FolderTriggerProps = AccordionTriggerProps;\n\nfunction FolderTrigger(props: FolderTriggerProps) {\n  return <AccordionTrigger data-slot=\"folder-trigger\" {...props} />;\n}\n\ntype FolderPanelProps = AccordionPanelProps;\n\nfunction FolderPanel(props: FolderPanelProps) {\n  return <AccordionPanel data-slot=\"folder-panel\" {...props} />;\n}\n\ntype FileHighlightProps = HighlightItemProps;\n\nfunction FileHighlight(props: FileHighlightProps) {\n  return <HighlightItem data-slot=\"file-highlight\" {...props} />;\n}\n\ntype FileProps = React.ComponentProps<'div'>;\n\nfunction File(props: FileProps) {\n  return <div data-slot=\"file\" {...props} />;\n}\n\ntype FileIconProps = React.ComponentProps<'span'>;\n\nfunction FileIcon(props: FileIconProps) {\n  return <span data-slot=\"file-icon\" {...props} />;\n}\n\ntype FileLabelProps = React.ComponentProps<'span'>;\n\nfunction FileLabel(props: FileLabelProps) {\n  return <span data-slot=\"file-label\" {...props} />;\n}\n\ntype FolderHighlightProps = HighlightItemProps;\n\nfunction FolderHighlight(props: FolderHighlightProps) {\n  return <HighlightItem data-slot=\"folder-highlight\" {...props} />;\n}\n\ntype FolderProps = React.ComponentProps<'div'>;\n\nfunction Folder(props: FolderProps) {\n  return <div data-slot=\"folder\" {...props} />;\n}\n\ntype FolderIconProps = HTMLMotionProps<'span'> & {\n  closeIcon: React.ReactNode;\n  openIcon: React.ReactNode;\n};\n\nfunction FolderIcon({\n  closeIcon,\n  openIcon,\n  transition = { duration: 0.15 },\n  ...props\n}: FolderIconProps) {\n  const { isOpen } = useFolder();\n\n  return (\n    <AnimatePresence mode=\"wait\">\n      <motion.span\n        key={isOpen ? 'open' : 'close'}\n        data-slot=\"folder-icon\"\n        initial={{ scale: 0.9 }}\n        animate={{ scale: 1 }}\n        exit={{ scale: 0.9 }}\n        transition={transition}\n        {...props}\n      >\n        {isOpen ? openIcon : closeIcon}\n      </motion.span>\n    </AnimatePresence>\n  );\n}\n\ntype FolderLabelProps = React.ComponentProps<'span'>;\n\nfunction FolderLabel(props: FolderLabelProps) {\n  return <span data-slot=\"folder-label\" {...props} />;\n}\n\nexport {\n  Files,\n  FilesHighlight,\n  FolderItem,\n  FolderHeader,\n  FolderTrigger,\n  FolderPanel,\n  FileHighlight,\n  File,\n  FileIcon,\n  FileLabel,\n  FolderHighlight,\n  Folder,\n  FolderIcon,\n  FolderLabel,\n  useFiles,\n  useFolder,\n  type FilesProps,\n  type FilesHighlightProps,\n  type FolderItemProps,\n  type FolderHeaderProps,\n  type FolderTriggerProps,\n  type FolderPanelProps,\n  type FileHighlightProps,\n  type FileProps,\n  type FileIconProps,\n  type FileLabelProps,\n  type FolderHighlightProps,\n  type FolderProps,\n  type FolderIconProps,\n  type FolderLabelProps,\n  type FilesContextType,\n  type FolderContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightItemProps,\n  type HighlightProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport {\n  Accordion,\n  AccordionItem,\n  AccordionHeader,\n  AccordionTrigger,\n  AccordionPanel,\n  type AccordionProps,\n  type AccordionItemProps,\n  type AccordionHeaderProps,\n  type AccordionTriggerProps,\n  type AccordionPanelProps,\n} from '@/components/animate-ui/primitives/base/accordion';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype FilesContextType = {\n  open: string[];\n};\n\ntype FolderContextType = {\n  isOpen: boolean;\n};\n\nconst [FilesProvider, useFiles] =\n  getStrictContext<FilesContextType>('FilesContext');\n\nconst [FolderProvider, useFolder] =\n  getStrictContext<FolderContextType>('FolderContext');\n\ntype FilesProps = {\n  children: React.ReactNode;\n  defaultOpen?: string[];\n  open?: string[];\n  onOpenChange?: (open: string[]) => void;\n} & Omit<AccordionProps, 'type' | 'defaultValue' | 'value' | 'onValueChange'>;\n\nfunction Files({\n  children,\n  defaultOpen,\n  open,\n  onOpenChange,\n  style,\n  ...props\n}: FilesProps) {\n  const [openValue, setOpenValue] = useControlledState({\n    value: open,\n    defaultValue: defaultOpen,\n    onChange: onOpenChange,\n  });\n\n  return (\n    <FilesProvider value={{ open: openValue ?? [] }}>\n      <Accordion\n        data-slot=\"files\"\n        multiple\n        defaultValue={defaultOpen}\n        value={open}\n        onValueChange={(value) => setOpenValue(value as string[])}\n        style={{\n          position: 'relative',\n          overflow: 'auto',\n          ...style,\n        }}\n        {...props}\n      >\n        {children}\n      </Accordion>\n    </FilesProvider>\n  );\n}\n\ntype FilesHighlightProps = Omit<HighlightProps, 'controlledItems' | 'mode'>;\n\nfunction FilesHighlight({ hover = true, ...props }: FilesHighlightProps) {\n  return (\n    <Highlight\n      data-slot=\"files-highlight\"\n      controlledItems\n      mode=\"parent\"\n      hover={hover}\n      {...props}\n    />\n  );\n}\n\ntype FolderItemProps = AccordionItemProps;\n\nfunction FolderItem({ value, ...props }: FolderItemProps) {\n  const { open } = useFiles();\n\n  return (\n    <FolderProvider value={{ isOpen: open.includes(value) }}>\n      <AccordionItem data-slot=\"folder-item\" value={value} {...props} />\n    </FolderProvider>\n  );\n}\n\ntype FolderHeaderProps = AccordionHeaderProps;\n\nfunction FolderHeader(props: FolderHeaderProps) {\n  return <AccordionHeader data-slot=\"folder-header\" {...props} />;\n}\n\ntype FolderTriggerProps = AccordionTriggerProps;\n\nfunction FolderTrigger(props: FolderTriggerProps) {\n  return <AccordionTrigger data-slot=\"folder-trigger\" {...props} />;\n}\n\ntype FolderPanelProps = AccordionPanelProps;\n\nfunction FolderPanel(props: FolderPanelProps) {\n  return <AccordionPanel data-slot=\"folder-panel\" {...props} />;\n}\n\ntype FileHighlightProps = HighlightItemProps;\n\nfunction FileHighlight(props: FileHighlightProps) {\n  return <HighlightItem data-slot=\"file-highlight\" {...props} />;\n}\n\ntype FileProps = React.ComponentProps<'div'>;\n\nfunction File(props: FileProps) {\n  return <div data-slot=\"file\" {...props} />;\n}\n\ntype FileIconProps = React.ComponentProps<'span'>;\n\nfunction FileIcon(props: FileIconProps) {\n  return <span data-slot=\"file-icon\" {...props} />;\n}\n\ntype FileLabelProps = React.ComponentProps<'span'>;\n\nfunction FileLabel(props: FileLabelProps) {\n  return <span data-slot=\"file-label\" {...props} />;\n}\n\ntype FolderHighlightProps = HighlightItemProps;\n\nfunction FolderHighlight(props: FolderHighlightProps) {\n  return <HighlightItem data-slot=\"folder-highlight\" {...props} />;\n}\n\ntype FolderProps = React.ComponentProps<'div'>;\n\nfunction Folder(props: FolderProps) {\n  return <div data-slot=\"folder\" {...props} />;\n}\n\ntype FolderIconProps = HTMLMotionProps<'span'> & {\n  closeIcon: React.ReactNode;\n  openIcon: React.ReactNode;\n};\n\nfunction FolderIcon({\n  closeIcon,\n  openIcon,\n  transition = { duration: 0.15 },\n  ...props\n}: FolderIconProps) {\n  const { isOpen } = useFolder();\n\n  return (\n    <AnimatePresence mode=\"wait\">\n      <motion.span\n        key={isOpen ? 'open' : 'close'}\n        data-slot=\"folder-icon\"\n        initial={{ scale: 0.9 }}\n        animate={{ scale: 1 }}\n        exit={{ scale: 0.9 }}\n        transition={transition}\n        {...props}\n      >\n        {isOpen ? openIcon : closeIcon}\n      </motion.span>\n    </AnimatePresence>\n  );\n}\n\ntype FolderLabelProps = React.ComponentProps<'span'>;\n\nfunction FolderLabel(props: FolderLabelProps) {\n  return <span data-slot=\"folder-label\" {...props} />;\n}\n\nexport {\n  Files,\n  FilesHighlight,\n  FolderItem,\n  FolderHeader,\n  FolderTrigger,\n  FolderPanel,\n  FileHighlight,\n  File,\n  FileIcon,\n  FileLabel,\n  FolderHighlight,\n  Folder,\n  FolderIcon,\n  FolderLabel,\n  useFiles,\n  useFolder,\n  type FilesProps,\n  type FilesHighlightProps,\n  type FolderItemProps,\n  type FolderHeaderProps,\n  type FolderTriggerProps,\n  type FolderPanelProps,\n  type FileHighlightProps,\n  type FileProps,\n  type FileIconProps,\n  type FileLabelProps,\n  type FolderHighlightProps,\n  type FolderProps,\n  type FolderIconProps,\n  type FolderLabelProps,\n  type FilesContextType,\n  type FolderContextType,\n};",
       },
     ],
     keywords: [],
@@ -21931,7 +21644,7 @@ export const index: Record<string, any> = {
     description:
       'A list of actions in a dropdown, enhanced with keyboard navigation.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/primitives-effects-highlight',
@@ -21945,7 +21658,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/menu.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Menu as MenuPrimitive } from '@base-ui-components/react/menu';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightItemProps,\n  type HighlightProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { useDataState } from '@/hooks/use-data-state';\n\ntype MenuActiveValueContextType = {\n  highlightedValue: string | null;\n  setHighlightedValue: (value: string | null) => void;\n};\n\ntype MenuContextType = {\n  isOpen: boolean;\n  setIsOpen: MenuProps['onOpenChange'];\n};\n\nconst [MenuActiveValueProvider, useMenuActiveValue] =\n  getStrictContext<MenuActiveValueContextType>('MenuActiveValueContext');\nconst [MenuProvider, useMenu] =\n  getStrictContext<MenuContextType>('MenuContext');\n\ntype MenuProps = React.ComponentProps<typeof MenuPrimitive.Root>;\n\nfunction Menu(props: MenuProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const [highlightedValue, setHighlightedValue] = React.useState<string | null>(\n    null,\n  );\n\n  return (\n    <MenuActiveValueProvider value={{ highlightedValue, setHighlightedValue }}>\n      <MenuProvider value={{ isOpen, setIsOpen }}>\n        <MenuPrimitive.Root\n          data-slot=\"menu\"\n          {...props}\n          onOpenChange={setIsOpen}\n        />\n      </MenuProvider>\n    </MenuActiveValueProvider>\n  );\n}\n\ntype MenuTriggerProps = React.ComponentProps<typeof MenuPrimitive.Trigger>;\n\nfunction MenuTrigger(props: MenuTriggerProps) {\n  return <MenuPrimitive.Trigger data-slot=\"menu-trigger\" {...props} />;\n}\n\ntype MenuPortalProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction MenuPortal(props: MenuPortalProps) {\n  const { isOpen } = useMenu();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <MenuPrimitive.Portal keepMounted data-slot=\"menu-portal\" {...props} />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype MenuGroupProps = React.ComponentProps<typeof MenuPrimitive.Group>;\n\nfunction MenuGroup(props: MenuGroupProps) {\n  return <MenuPrimitive.Group data-slot=\"menu-group\" {...props} />;\n}\n\ntype MenuGroupLabelProps = React.ComponentProps<\n  typeof MenuPrimitive.GroupLabel\n>;\n\nfunction MenuGroupLabel(props: MenuGroupLabelProps) {\n  return <MenuPrimitive.GroupLabel data-slot=\"menu-group-label\" {...props} />;\n}\n\ntype MenuSubmenuProps = React.ComponentProps<typeof MenuPrimitive.SubmenuRoot>;\n\nfunction MenuSubmenu(props: MenuSubmenuProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <MenuProvider value={{ isOpen, setIsOpen }}>\n      <MenuPrimitive.SubmenuRoot\n        data-slot=\"menu-submenu\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </MenuProvider>\n  );\n}\n\ntype MenuSubmenuTriggerProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.SubmenuTrigger>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    disabled?: boolean;\n  };\n\nfunction MenuSubmenuTrigger({\n  label,\n  id,\n  nativeButton,\n  ...props\n}: MenuSubmenuTriggerProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n\n  return (\n    <MenuPrimitive.SubmenuTrigger\n      ref={highlightedRef}\n      label={label}\n      id={id}\n      nativeButton={nativeButton}\n      data-slot=\"menu-submenu-trigger\"\n      {...props}\n    />\n  );\n}\n\ntype MenuHighlightProps = Omit<\n  HighlightProps,\n  'controlledItems' | 'enabled' | 'hover'\n> & {\n  animateOnHover?: boolean;\n};\n\nfunction MenuHighlight({\n  transition = { type: 'spring', stiffness: 350, damping: 35 },\n  ...props\n}: MenuHighlightProps) {\n  const { highlightedValue } = useMenuActiveValue();\n\n  return (\n    <Highlight\n      data-slot=\"menu-highlight\"\n      click={false}\n      controlledItems\n      transition={transition}\n      value={highlightedValue}\n      {...props}\n    />\n  );\n}\n\ntype MenuHighlightItemProps = HighlightItemProps;\n\nfunction MenuHighlightItem(props: MenuHighlightItemProps) {\n  return <HighlightItem data-slot=\"menu-highlight-item\" {...props} />;\n}\n\ntype MenuPositionerProps = React.ComponentProps<\n  typeof MenuPrimitive.Positioner\n>;\n\nfunction MenuPositioner(props: MenuPositionerProps) {\n  return <MenuPrimitive.Positioner data-slot=\"menu-positioner\" {...props} />;\n}\n\ntype MenuPopupProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuPopup({\n  finalFocus,\n  id,\n  transition = { duration: 0.2 },\n  style,\n  ...props\n}: MenuPopupProps) {\n  return (\n    <MenuPrimitive.Popup\n      finalFocus={finalFocus}\n      id={id}\n      render={\n        <motion.div\n          key=\"menu-popup\"\n          data-slot=\"menu-popup\"\n          initial={{ opacity: 0, scale: 0.95 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.95 }}\n          transition={transition}\n          style={{ willChange: 'opacity, transform', ...style }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype MenuItemProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.Item>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuItem({\n  disabled,\n  label,\n  closeOnClick,\n  nativeButton,\n  id,\n  ...props\n}: MenuItemProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n\n  return (\n    <MenuPrimitive.Item\n      ref={highlightedRef}\n      label={label}\n      closeOnClick={closeOnClick}\n      nativeButton={nativeButton}\n      disabled={disabled}\n      id={id}\n      data-slot=\"menu-item\"\n      {...props}\n    />\n  );\n}\n\ntype MenuCheckboxItemProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.CheckboxItem>,\n  'render'\n>;\n\nfunction MenuCheckboxItem({\n  label,\n  defaultChecked,\n  checked,\n  onCheckedChange,\n  disabled,\n  closeOnClick,\n  nativeButton,\n  id,\n  ...props\n}: MenuCheckboxItemProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n  return (\n    <MenuPrimitive.CheckboxItem\n      ref={highlightedRef}\n      label={label}\n      checked={checked}\n      defaultChecked={defaultChecked}\n      onCheckedChange={onCheckedChange}\n      disabled={disabled}\n      closeOnClick={closeOnClick}\n      nativeButton={nativeButton}\n      id={id}\n      data-slot=\"menu-checkbox-item\"\n      {...props}\n    />\n  );\n}\n\ntype MenuCheckboxItemIndicatorProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.CheckboxItemIndicator>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuCheckboxItemIndicator({\n  keepMounted,\n  ...props\n}: MenuCheckboxItemIndicatorProps) {\n  return (\n    <MenuPrimitive.CheckboxItemIndicator\n      data-slot=\"menu-checkbox-item-indicator\"\n      keepMounted={keepMounted}\n      render={\n        <motion.div data-slot=\"menu-checkbox-item-indicator\" {...props} />\n      }\n    />\n  );\n}\n\ntype MenuRadioGroupProps = React.ComponentProps<\n  typeof MenuPrimitive.RadioGroup\n>;\n\nfunction MenuRadioGroup(props: MenuRadioGroupProps) {\n  return <MenuPrimitive.RadioGroup data-slot=\"menu-radio-group\" {...props} />;\n}\n\ntype MenuRadioItemProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.RadioItem>,\n  'render'\n>;\n\nfunction MenuRadioItem({\n  value,\n  disabled,\n  label,\n  closeOnClick,\n  nativeButton,\n  id,\n  ...props\n}: MenuRadioItemProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n  return (\n    <MenuPrimitive.RadioItem\n      ref={highlightedRef}\n      value={value}\n      disabled={disabled}\n      label={label}\n      closeOnClick={closeOnClick}\n      nativeButton={nativeButton}\n      id={id}\n      data-slot=\"menu-radio-item\"\n      {...props}\n    />\n  );\n}\n\ntype MenuRadioItemIndicatorProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.RadioItemIndicator>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuRadioItemIndicator({\n  keepMounted,\n  ...props\n}: MenuRadioItemIndicatorProps) {\n  return (\n    <MenuPrimitive.RadioItemIndicator\n      data-slot=\"menu-radio-item-indicator\"\n      keepMounted={keepMounted}\n      render={<motion.div data-slot=\"menu-radio-item-indicator\" {...props} />}\n    />\n  );\n}\n\ntype MenuShortcutProps = React.ComponentProps<'span'>;\n\nfunction MenuShortcut(props: MenuShortcutProps) {\n  return <span data-slot=\"menu-shortcut\" {...props} />;\n}\n\ntype MenuArrowProps = React.ComponentProps<typeof MenuPrimitive.Arrow>;\n\nfunction MenuArrow(props: MenuArrowProps) {\n  return <MenuPrimitive.Arrow data-slot=\"menu-arrow\" {...props} />;\n}\n\ntype MenuSeparatorProps = React.ComponentProps<typeof MenuPrimitive.Separator>;\n\nfunction MenuSeparator(props: MenuSeparatorProps) {\n  return <MenuPrimitive.Separator data-slot=\"menu-separator\" {...props} />;\n}\n\nexport {\n  Menu,\n  MenuTrigger,\n  MenuPortal,\n  MenuPositioner,\n  MenuPopup,\n  MenuArrow,\n  MenuItem,\n  MenuCheckboxItem,\n  MenuCheckboxItemIndicator,\n  MenuRadioGroup,\n  MenuRadioItem,\n  MenuRadioItemIndicator,\n  MenuGroup,\n  MenuGroupLabel,\n  MenuSeparator,\n  MenuShortcut,\n  MenuHighlight,\n  MenuHighlightItem,\n  MenuSubmenu,\n  MenuSubmenuTrigger,\n  useMenuActiveValue,\n  useMenu,\n  type MenuProps,\n  type MenuTriggerProps,\n  type MenuPortalProps,\n  type MenuPositionerProps,\n  type MenuPopupProps,\n  type MenuArrowProps,\n  type MenuItemProps,\n  type MenuCheckboxItemProps,\n  type MenuCheckboxItemIndicatorProps,\n  type MenuRadioItemProps,\n  type MenuRadioItemIndicatorProps,\n  type MenuRadioGroupProps,\n  type MenuGroupProps,\n  type MenuGroupLabelProps,\n  type MenuSeparatorProps,\n  type MenuShortcutProps,\n  type MenuHighlightProps,\n  type MenuHighlightItemProps,\n  type MenuSubmenuProps,\n  type MenuSubmenuTriggerProps,\n  type MenuActiveValueContextType,\n  type MenuContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Menu as MenuPrimitive } from '@base-ui/react/menu';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightItemProps,\n  type HighlightProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport { useDataState } from '@/hooks/use-data-state';\n\ntype MenuActiveValueContextType = {\n  highlightedValue: string | null;\n  setHighlightedValue: (value: string | null) => void;\n};\n\ntype MenuContextType = {\n  isOpen: boolean;\n  setIsOpen: MenuProps['onOpenChange'];\n};\n\nconst [MenuActiveValueProvider, useMenuActiveValue] =\n  getStrictContext<MenuActiveValueContextType>('MenuActiveValueContext');\nconst [MenuProvider, useMenu] =\n  getStrictContext<MenuContextType>('MenuContext');\n\ntype MenuProps = React.ComponentProps<typeof MenuPrimitive.Root>;\n\nfunction Menu(props: MenuProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const [highlightedValue, setHighlightedValue] = React.useState<string | null>(\n    null,\n  );\n\n  return (\n    <MenuActiveValueProvider value={{ highlightedValue, setHighlightedValue }}>\n      <MenuProvider value={{ isOpen, setIsOpen }}>\n        <MenuPrimitive.Root\n          data-slot=\"menu\"\n          {...props}\n          onOpenChange={setIsOpen}\n        />\n      </MenuProvider>\n    </MenuActiveValueProvider>\n  );\n}\n\ntype MenuTriggerProps = React.ComponentProps<typeof MenuPrimitive.Trigger>;\n\nfunction MenuTrigger(props: MenuTriggerProps) {\n  return <MenuPrimitive.Trigger data-slot=\"menu-trigger\" {...props} />;\n}\n\ntype MenuPortalProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction MenuPortal(props: MenuPortalProps) {\n  const { isOpen } = useMenu();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <MenuPrimitive.Portal keepMounted data-slot=\"menu-portal\" {...props} />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype MenuGroupProps = React.ComponentProps<typeof MenuPrimitive.Group>;\n\nfunction MenuGroup(props: MenuGroupProps) {\n  return <MenuPrimitive.Group data-slot=\"menu-group\" {...props} />;\n}\n\ntype MenuGroupLabelProps = React.ComponentProps<\n  typeof MenuPrimitive.GroupLabel\n>;\n\nfunction MenuGroupLabel(props: MenuGroupLabelProps) {\n  return <MenuPrimitive.GroupLabel data-slot=\"menu-group-label\" {...props} />;\n}\n\ntype MenuSubmenuProps = React.ComponentProps<typeof MenuPrimitive.SubmenuRoot>;\n\nfunction MenuSubmenu(props: MenuSubmenuProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <MenuProvider value={{ isOpen, setIsOpen }}>\n      <MenuPrimitive.SubmenuRoot\n        data-slot=\"menu-submenu\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </MenuProvider>\n  );\n}\n\ntype MenuSubmenuTriggerProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.SubmenuTrigger>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    disabled?: boolean;\n  };\n\nfunction MenuSubmenuTrigger({\n  label,\n  id,\n  nativeButton,\n  ...props\n}: MenuSubmenuTriggerProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n\n  return (\n    <MenuPrimitive.SubmenuTrigger\n      ref={highlightedRef}\n      label={label}\n      id={id}\n      nativeButton={nativeButton}\n      data-slot=\"menu-submenu-trigger\"\n      {...props}\n    />\n  );\n}\n\ntype MenuHighlightProps = Omit<\n  HighlightProps,\n  'controlledItems' | 'enabled' | 'hover'\n> & {\n  animateOnHover?: boolean;\n};\n\nfunction MenuHighlight({\n  transition = { type: 'spring', stiffness: 350, damping: 35 },\n  ...props\n}: MenuHighlightProps) {\n  const { highlightedValue } = useMenuActiveValue();\n\n  return (\n    <Highlight\n      data-slot=\"menu-highlight\"\n      click={false}\n      controlledItems\n      transition={transition}\n      value={highlightedValue}\n      {...props}\n    />\n  );\n}\n\ntype MenuHighlightItemProps = HighlightItemProps;\n\nfunction MenuHighlightItem(props: MenuHighlightItemProps) {\n  return <HighlightItem data-slot=\"menu-highlight-item\" {...props} />;\n}\n\ntype MenuPositionerProps = React.ComponentProps<\n  typeof MenuPrimitive.Positioner\n>;\n\nfunction MenuPositioner(props: MenuPositionerProps) {\n  return <MenuPrimitive.Positioner data-slot=\"menu-positioner\" {...props} />;\n}\n\ntype MenuPopupProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuPopup({\n  finalFocus,\n  id,\n  transition = { duration: 0.2 },\n  style,\n  ...props\n}: MenuPopupProps) {\n  return (\n    <MenuPrimitive.Popup\n      finalFocus={finalFocus}\n      id={id}\n      render={\n        <motion.div\n          key=\"menu-popup\"\n          data-slot=\"menu-popup\"\n          initial={{ opacity: 0, scale: 0.95 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.95 }}\n          transition={transition}\n          style={{ willChange: 'opacity, transform', ...style }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype MenuItemProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.Item>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuItem({\n  disabled,\n  label,\n  closeOnClick,\n  nativeButton,\n  id,\n  ...props\n}: MenuItemProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n\n  return (\n    <MenuPrimitive.Item\n      ref={highlightedRef}\n      label={label}\n      closeOnClick={closeOnClick}\n      nativeButton={nativeButton}\n      disabled={disabled}\n      id={id}\n      data-slot=\"menu-item\"\n      {...props}\n    />\n  );\n}\n\ntype MenuCheckboxItemProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.CheckboxItem>,\n  'render'\n>;\n\nfunction MenuCheckboxItem({\n  label,\n  defaultChecked,\n  checked,\n  onCheckedChange,\n  disabled,\n  closeOnClick,\n  nativeButton,\n  id,\n  ...props\n}: MenuCheckboxItemProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n  return (\n    <MenuPrimitive.CheckboxItem\n      ref={highlightedRef}\n      label={label}\n      checked={checked}\n      defaultChecked={defaultChecked}\n      onCheckedChange={onCheckedChange}\n      disabled={disabled}\n      closeOnClick={closeOnClick}\n      nativeButton={nativeButton}\n      id={id}\n      data-slot=\"menu-checkbox-item\"\n      {...props}\n    />\n  );\n}\n\ntype MenuCheckboxItemIndicatorProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.CheckboxItemIndicator>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuCheckboxItemIndicator({\n  keepMounted,\n  ...props\n}: MenuCheckboxItemIndicatorProps) {\n  return (\n    <MenuPrimitive.CheckboxItemIndicator\n      data-slot=\"menu-checkbox-item-indicator\"\n      keepMounted={keepMounted}\n      render={\n        <motion.div data-slot=\"menu-checkbox-item-indicator\" {...props} />\n      }\n    />\n  );\n}\n\ntype MenuRadioGroupProps = React.ComponentProps<\n  typeof MenuPrimitive.RadioGroup\n>;\n\nfunction MenuRadioGroup(props: MenuRadioGroupProps) {\n  return <MenuPrimitive.RadioGroup data-slot=\"menu-radio-group\" {...props} />;\n}\n\ntype MenuRadioItemProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.RadioItem>,\n  'render'\n>;\n\nfunction MenuRadioItem({\n  value,\n  disabled,\n  label,\n  closeOnClick,\n  nativeButton,\n  id,\n  ...props\n}: MenuRadioItemProps) {\n  const { setHighlightedValue } = useMenuActiveValue();\n  const [, highlightedRef] = useDataState<HTMLDivElement>(\n    'highlighted',\n    undefined,\n    (value) => {\n      if (value === true) {\n        const el = highlightedRef.current;\n        const v = el?.dataset.value || el?.id || null;\n        if (v) setHighlightedValue(v);\n      }\n    },\n  );\n  return (\n    <MenuPrimitive.RadioItem\n      ref={highlightedRef}\n      value={value}\n      disabled={disabled}\n      label={label}\n      closeOnClick={closeOnClick}\n      nativeButton={nativeButton}\n      id={id}\n      data-slot=\"menu-radio-item\"\n      {...props}\n    />\n  );\n}\n\ntype MenuRadioItemIndicatorProps = Omit<\n  React.ComponentProps<typeof MenuPrimitive.RadioItemIndicator>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction MenuRadioItemIndicator({\n  keepMounted,\n  ...props\n}: MenuRadioItemIndicatorProps) {\n  return (\n    <MenuPrimitive.RadioItemIndicator\n      data-slot=\"menu-radio-item-indicator\"\n      keepMounted={keepMounted}\n      render={<motion.div data-slot=\"menu-radio-item-indicator\" {...props} />}\n    />\n  );\n}\n\ntype MenuShortcutProps = React.ComponentProps<'span'>;\n\nfunction MenuShortcut(props: MenuShortcutProps) {\n  return <span data-slot=\"menu-shortcut\" {...props} />;\n}\n\ntype MenuArrowProps = React.ComponentProps<typeof MenuPrimitive.Arrow>;\n\nfunction MenuArrow(props: MenuArrowProps) {\n  return <MenuPrimitive.Arrow data-slot=\"menu-arrow\" {...props} />;\n}\n\ntype MenuSeparatorProps = React.ComponentProps<typeof MenuPrimitive.Separator>;\n\nfunction MenuSeparator(props: MenuSeparatorProps) {\n  return <MenuPrimitive.Separator data-slot=\"menu-separator\" {...props} />;\n}\n\nexport {\n  Menu,\n  MenuTrigger,\n  MenuPortal,\n  MenuPositioner,\n  MenuPopup,\n  MenuArrow,\n  MenuItem,\n  MenuCheckboxItem,\n  MenuCheckboxItemIndicator,\n  MenuRadioGroup,\n  MenuRadioItem,\n  MenuRadioItemIndicator,\n  MenuGroup,\n  MenuGroupLabel,\n  MenuSeparator,\n  MenuShortcut,\n  MenuHighlight,\n  MenuHighlightItem,\n  MenuSubmenu,\n  MenuSubmenuTrigger,\n  useMenuActiveValue,\n  useMenu,\n  type MenuProps,\n  type MenuTriggerProps,\n  type MenuPortalProps,\n  type MenuPositionerProps,\n  type MenuPopupProps,\n  type MenuArrowProps,\n  type MenuItemProps,\n  type MenuCheckboxItemProps,\n  type MenuCheckboxItemIndicatorProps,\n  type MenuRadioItemProps,\n  type MenuRadioItemIndicatorProps,\n  type MenuRadioGroupProps,\n  type MenuGroupProps,\n  type MenuGroupLabelProps,\n  type MenuSeparatorProps,\n  type MenuShortcutProps,\n  type MenuHighlightProps,\n  type MenuHighlightItemProps,\n  type MenuSubmenuProps,\n  type MenuSubmenuTriggerProps,\n  type MenuActiveValueContextType,\n  type MenuContextType,\n};",
       },
     ],
     keywords: [],
@@ -21972,7 +21685,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-popover',
     description: 'An accessible popup anchored to a button.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -21984,15 +21697,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/popover.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Popover as PopoverPrimitive } from '@base-ui-components/react/popover';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype PopoverContextType = {\n  isOpen: boolean;\n  setIsOpen: PopoverProps['onOpenChange'];\n};\n\nconst [PopoverProvider, usePopover] =\n  getStrictContext<PopoverContextType>('PopoverContext');\n\ntype PopoverProps = React.ComponentProps<typeof PopoverPrimitive.Root>;\n\nfunction Popover(props: PopoverProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <PopoverProvider value={{ isOpen, setIsOpen }}>\n      <PopoverPrimitive.Root\n        data-slot=\"popover\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </PopoverProvider>\n  );\n}\n\ntype PopoverTriggerProps = React.ComponentProps<\n  typeof PopoverPrimitive.Trigger\n>;\n\nfunction PopoverTrigger(props: PopoverTriggerProps) {\n  return <PopoverPrimitive.Trigger data-slot=\"popover-trigger\" {...props} />;\n}\n\ntype PopoverPortalProps = Omit<\n  React.ComponentProps<typeof PopoverPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction PopoverPortal(props: PopoverPortalProps) {\n  const { isOpen } = usePopover();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <PopoverPrimitive.Portal\n          keepMounted\n          data-slot=\"popover-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype PopoverPositionerProps = React.ComponentProps<\n  typeof PopoverPrimitive.Positioner\n>;\n\nfunction PopoverPositioner(props: PopoverPositionerProps) {\n  return (\n    <PopoverPrimitive.Positioner data-slot=\"popover-positioner\" {...props} />\n  );\n}\n\ntype PopoverPopupProps = Omit<\n  React.ComponentProps<typeof PopoverPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction PopoverPopup({\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: PopoverPopupProps) {\n  return (\n    <PopoverPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"popover-popup\"\n          data-slot=\"popover-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype PopoverBackdropProps = React.ComponentProps<\n  typeof PopoverPrimitive.Backdrop\n>;\n\nfunction PopoverBackdrop(props: PopoverBackdropProps) {\n  return <PopoverPrimitive.Backdrop data-slot=\"popover-backdrop\" {...props} />;\n}\n\ntype PopoverArrowProps = React.ComponentProps<typeof PopoverPrimitive.Arrow>;\n\nfunction PopoverArrow(props: PopoverArrowProps) {\n  return <PopoverPrimitive.Arrow data-slot=\"popover-arrow\" {...props} />;\n}\n\ntype PopoverTitleProps = React.ComponentProps<typeof PopoverPrimitive.Title>;\n\nfunction PopoverTitle(props: PopoverTitleProps) {\n  return <PopoverPrimitive.Title data-slot=\"popover-title\" {...props} />;\n}\n\ntype PopoverDescriptionProps = React.ComponentProps<\n  typeof PopoverPrimitive.Description\n>;\n\nfunction PopoverDescription(props: PopoverDescriptionProps) {\n  return (\n    <PopoverPrimitive.Description data-slot=\"popover-description\" {...props} />\n  );\n}\n\ntype PopoverCloseProps = React.ComponentProps<typeof PopoverPrimitive.Close>;\n\nfunction PopoverClose(props: PopoverCloseProps) {\n  return <PopoverPrimitive.Close data-slot=\"popover-close\" {...props} />;\n}\n\nexport {\n  Popover,\n  PopoverTrigger,\n  PopoverPortal,\n  PopoverPositioner,\n  PopoverPopup,\n  PopoverBackdrop,\n  PopoverArrow,\n  PopoverTitle,\n  PopoverDescription,\n  PopoverClose,\n  usePopover,\n  type PopoverProps,\n  type PopoverTriggerProps,\n  type PopoverPortalProps,\n  type PopoverPositionerProps,\n  type PopoverPopupProps,\n  type PopoverBackdropProps,\n  type PopoverArrowProps,\n  type PopoverTitleProps,\n  type PopoverDescriptionProps,\n  type PopoverCloseProps,\n  type PopoverContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Popover as PopoverPrimitive } from '@base-ui/react/popover';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype PopoverContextType = {\n  isOpen: boolean;\n  setIsOpen: PopoverProps['onOpenChange'];\n};\n\nconst [PopoverProvider, usePopover] =\n  getStrictContext<PopoverContextType>('PopoverContext');\n\ntype PopoverProps = React.ComponentProps<typeof PopoverPrimitive.Root>;\n\nfunction Popover(props: PopoverProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n\n  return (\n    <PopoverProvider value={{ isOpen, setIsOpen }}>\n      <PopoverPrimitive.Root\n        data-slot=\"popover\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </PopoverProvider>\n  );\n}\n\ntype PopoverTriggerProps = React.ComponentProps<\n  typeof PopoverPrimitive.Trigger\n>;\n\nfunction PopoverTrigger(props: PopoverTriggerProps) {\n  return <PopoverPrimitive.Trigger data-slot=\"popover-trigger\" {...props} />;\n}\n\ntype PopoverPortalProps = Omit<\n  React.ComponentProps<typeof PopoverPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction PopoverPortal(props: PopoverPortalProps) {\n  const { isOpen } = usePopover();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <PopoverPrimitive.Portal\n          keepMounted\n          data-slot=\"popover-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype PopoverPositionerProps = React.ComponentProps<\n  typeof PopoverPrimitive.Positioner\n>;\n\nfunction PopoverPositioner(props: PopoverPositionerProps) {\n  return (\n    <PopoverPrimitive.Positioner data-slot=\"popover-positioner\" {...props} />\n  );\n}\n\ntype PopoverPopupProps = Omit<\n  React.ComponentProps<typeof PopoverPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction PopoverPopup({\n  initialFocus,\n  finalFocus,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: PopoverPopupProps) {\n  return (\n    <PopoverPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          key=\"popover-popup\"\n          data-slot=\"popover-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype PopoverBackdropProps = React.ComponentProps<\n  typeof PopoverPrimitive.Backdrop\n>;\n\nfunction PopoverBackdrop(props: PopoverBackdropProps) {\n  return <PopoverPrimitive.Backdrop data-slot=\"popover-backdrop\" {...props} />;\n}\n\ntype PopoverArrowProps = React.ComponentProps<typeof PopoverPrimitive.Arrow>;\n\nfunction PopoverArrow(props: PopoverArrowProps) {\n  return <PopoverPrimitive.Arrow data-slot=\"popover-arrow\" {...props} />;\n}\n\ntype PopoverTitleProps = React.ComponentProps<typeof PopoverPrimitive.Title>;\n\nfunction PopoverTitle(props: PopoverTitleProps) {\n  return <PopoverPrimitive.Title data-slot=\"popover-title\" {...props} />;\n}\n\ntype PopoverDescriptionProps = React.ComponentProps<\n  typeof PopoverPrimitive.Description\n>;\n\nfunction PopoverDescription(props: PopoverDescriptionProps) {\n  return (\n    <PopoverPrimitive.Description data-slot=\"popover-description\" {...props} />\n  );\n}\n\ntype PopoverCloseProps = React.ComponentProps<typeof PopoverPrimitive.Close>;\n\nfunction PopoverClose(props: PopoverCloseProps) {\n  return <PopoverPrimitive.Close data-slot=\"popover-close\" {...props} />;\n}\n\nexport {\n  Popover,\n  PopoverTrigger,\n  PopoverPortal,\n  PopoverPositioner,\n  PopoverPopup,\n  PopoverBackdrop,\n  PopoverArrow,\n  PopoverTitle,\n  PopoverDescription,\n  PopoverClose,\n  usePopover,\n  type PopoverProps,\n  type PopoverTriggerProps,\n  type PopoverPortalProps,\n  type PopoverPositionerProps,\n  type PopoverPopupProps,\n  type PopoverBackdropProps,\n  type PopoverArrowProps,\n  type PopoverTitleProps,\n  type PopoverDescriptionProps,\n  type PopoverCloseProps,\n  type PopoverContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22014,7 +21726,7 @@ export const index: Record<string, any> = {
     description:
       'A popup that appears when a link is hovered, showing a preview for sighted users.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22026,15 +21738,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/preview-card.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { PreviewCard as PreviewCardPrimitive } from '@base-ui-components/react/preview-card';\nimport {\n  AnimatePresence,\n  motion,\n  useMotionValue,\n  useSpring,\n  type HTMLMotionProps,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype PreviewCardContextType = {\n  isOpen: boolean;\n  setIsOpen: PreviewCardProps['onOpenChange'];\n  x: MotionValue<number>;\n  y: MotionValue<number>;\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nconst [PreviewCardProvider, usePreviewCard] =\n  getStrictContext<PreviewCardContextType>('PreviewCardContext');\n\ntype PreviewCardProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Root\n> & {\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nfunction PreviewCard({\n  followCursor = false,\n  followCursorSpringOptions = { stiffness: 200, damping: 17 },\n  ...props\n}: PreviewCardProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n\n  return (\n    <PreviewCardProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        x,\n        y,\n        followCursor,\n        followCursorSpringOptions,\n      }}\n    >\n      <PreviewCardPrimitive.Root\n        data-slot=\"preview-card\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </PreviewCardProvider>\n  );\n}\n\ntype PreviewCardTriggerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Trigger\n>;\n\nfunction PreviewCardTrigger({\n  onMouseMove,\n  ...props\n}: PreviewCardTriggerProps) {\n  const { x, y, followCursor } = usePreviewCard();\n\n  const handleMouseMove = (\n    event: Parameters<NonNullable<PreviewCardTriggerProps['onMouseMove']>>[0],\n  ) => {\n    onMouseMove?.(event);\n\n    const target = event.currentTarget.getBoundingClientRect();\n\n    if (followCursor === 'x' || followCursor === true) {\n      const eventOffsetX = event.clientX - target.left;\n      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;\n      x.set(offsetXFromCenter);\n    }\n\n    if (followCursor === 'y' || followCursor === true) {\n      const eventOffsetY = event.clientY - target.top;\n      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;\n      y.set(offsetYFromCenter);\n    }\n  };\n\n  return (\n    <PreviewCardPrimitive.Trigger\n      data-slot=\"preview-card-trigger\"\n      onMouseMove={handleMouseMove}\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPortalProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction PreviewCardPortal(props: PreviewCardPortalProps) {\n  const { isOpen } = usePreviewCard();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <PreviewCardPrimitive.Portal\n          keepMounted\n          data-slot=\"preview-card-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype PreviewCardPositionerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Positioner\n>;\n\nfunction PreviewCardPositioner(props: PreviewCardPositionerProps) {\n  return (\n    <PreviewCardPrimitive.Positioner\n      data-slot=\"preview-card-positioner\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPopupProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction PreviewCardPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  style,\n  ...props\n}: PreviewCardPopupProps) {\n  const { x, y, followCursor, followCursorSpringOptions } = usePreviewCard();\n  const translateX = useSpring(x, followCursorSpringOptions);\n  const translateY = useSpring(y, followCursorSpringOptions);\n\n  return (\n    <PreviewCardPrimitive.Popup\n      render={\n        <motion.div\n          key=\"preview-card-popup\"\n          data-slot=\"preview-card-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          style={{\n            x:\n              followCursor === 'x' || followCursor === true\n                ? translateX\n                : undefined,\n            y:\n              followCursor === 'y' || followCursor === true\n                ? translateY\n                : undefined,\n            ...style,\n          }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype PreviewCardBackdropProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Backdrop\n>;\n\nfunction PreviewCardBackdrop(props: PreviewCardBackdropProps) {\n  return (\n    <PreviewCardPrimitive.Backdrop\n      data-slot=\"preview-card-backdrop\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardArrowProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Arrow\n>;\n\nfunction PreviewCardArrow(props: PreviewCardArrowProps) {\n  return (\n    <PreviewCardPrimitive.Arrow data-slot=\"preview-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPortal,\n  PreviewCardPositioner,\n  PreviewCardPopup,\n  PreviewCardBackdrop,\n  PreviewCardArrow,\n  usePreviewCard,\n  type PreviewCardProps,\n  type PreviewCardTriggerProps,\n  type PreviewCardPortalProps,\n  type PreviewCardPositionerProps,\n  type PreviewCardPopupProps,\n  type PreviewCardBackdropProps,\n  type PreviewCardArrowProps,\n  type PreviewCardContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { PreviewCard as PreviewCardPrimitive } from '@base-ui/react/preview-card';\nimport {\n  AnimatePresence,\n  motion,\n  useMotionValue,\n  useSpring,\n  type HTMLMotionProps,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype PreviewCardContextType = {\n  isOpen: boolean;\n  setIsOpen: PreviewCardProps['onOpenChange'];\n  x: MotionValue<number>;\n  y: MotionValue<number>;\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nconst [PreviewCardProvider, usePreviewCard] =\n  getStrictContext<PreviewCardContextType>('PreviewCardContext');\n\ntype PreviewCardProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Root\n> & {\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nfunction PreviewCard({\n  followCursor = false,\n  followCursorSpringOptions = { stiffness: 200, damping: 17 },\n  ...props\n}: PreviewCardProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n\n  return (\n    <PreviewCardProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        x,\n        y,\n        followCursor,\n        followCursorSpringOptions,\n      }}\n    >\n      <PreviewCardPrimitive.Root\n        data-slot=\"preview-card\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </PreviewCardProvider>\n  );\n}\n\ntype PreviewCardTriggerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Trigger\n>;\n\nfunction PreviewCardTrigger({\n  onMouseMove,\n  ...props\n}: PreviewCardTriggerProps) {\n  const { x, y, followCursor } = usePreviewCard();\n\n  const handleMouseMove = (\n    event: Parameters<NonNullable<PreviewCardTriggerProps['onMouseMove']>>[0],\n  ) => {\n    onMouseMove?.(event);\n\n    const target = event.currentTarget.getBoundingClientRect();\n\n    if (followCursor === 'x' || followCursor === true) {\n      const eventOffsetX = event.clientX - target.left;\n      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;\n      x.set(offsetXFromCenter);\n    }\n\n    if (followCursor === 'y' || followCursor === true) {\n      const eventOffsetY = event.clientY - target.top;\n      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;\n      y.set(offsetYFromCenter);\n    }\n  };\n\n  return (\n    <PreviewCardPrimitive.Trigger\n      data-slot=\"preview-card-trigger\"\n      onMouseMove={handleMouseMove}\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPortalProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction PreviewCardPortal(props: PreviewCardPortalProps) {\n  const { isOpen } = usePreviewCard();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <PreviewCardPrimitive.Portal\n          keepMounted\n          data-slot=\"preview-card-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype PreviewCardPositionerProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Positioner\n>;\n\nfunction PreviewCardPositioner(props: PreviewCardPositionerProps) {\n  return (\n    <PreviewCardPrimitive.Positioner\n      data-slot=\"preview-card-positioner\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardPopupProps = Omit<\n  React.ComponentProps<typeof PreviewCardPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction PreviewCardPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  style,\n  ...props\n}: PreviewCardPopupProps) {\n  const { x, y, followCursor, followCursorSpringOptions } = usePreviewCard();\n  const translateX = useSpring(x, followCursorSpringOptions);\n  const translateY = useSpring(y, followCursorSpringOptions);\n\n  return (\n    <PreviewCardPrimitive.Popup\n      render={\n        <motion.div\n          key=\"preview-card-popup\"\n          data-slot=\"preview-card-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          style={{\n            x:\n              followCursor === 'x' || followCursor === true\n                ? translateX\n                : undefined,\n            y:\n              followCursor === 'y' || followCursor === true\n                ? translateY\n                : undefined,\n            ...style,\n          }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype PreviewCardBackdropProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Backdrop\n>;\n\nfunction PreviewCardBackdrop(props: PreviewCardBackdropProps) {\n  return (\n    <PreviewCardPrimitive.Backdrop\n      data-slot=\"preview-card-backdrop\"\n      {...props}\n    />\n  );\n}\n\ntype PreviewCardArrowProps = React.ComponentProps<\n  typeof PreviewCardPrimitive.Arrow\n>;\n\nfunction PreviewCardArrow(props: PreviewCardArrowProps) {\n  return (\n    <PreviewCardPrimitive.Arrow data-slot=\"preview-card-arrow\" {...props} />\n  );\n}\n\nexport {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPortal,\n  PreviewCardPositioner,\n  PreviewCardPopup,\n  PreviewCardBackdrop,\n  PreviewCardArrow,\n  usePreviewCard,\n  type PreviewCardProps,\n  type PreviewCardTriggerProps,\n  type PreviewCardPortalProps,\n  type PreviewCardPositionerProps,\n  type PreviewCardPopupProps,\n  type PreviewCardBackdropProps,\n  type PreviewCardArrowProps,\n  type PreviewCardContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/preview-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/preview-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22055,7 +21766,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-preview-link-card',
     description: 'Displays a preview image of a link when hovered.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/primitives-base-preview-card',
@@ -22073,9 +21784,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22096,7 +21806,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-progress',
     description: 'Displays the status of a task that takes a long time.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22108,15 +21818,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/progress.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Progress as ProgressPrimitives } from '@base-ui-components/react/progress';\nimport { motion } from 'motion/react';\n\nimport {\n  CountingNumber,\n  type CountingNumberProps,\n} from '@/components/animate-ui/primitives/texts/counting-number';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype ProgressContextType = {\n  value: number;\n};\n\nconst [ProgressProvider, useProgress] =\n  getStrictContext<ProgressContextType>('ProgressContext');\n\ntype ProgressProps = React.ComponentProps<typeof ProgressPrimitives.Root>;\n\nconst Progress = (props: ProgressProps) => {\n  return (\n    <ProgressProvider value={{ value: props.value ?? 0 }}>\n      <ProgressPrimitives.Root data-slot=\"progress\" {...props} />\n    </ProgressProvider>\n  );\n};\n\ntype ProgressIndicatorProps = React.ComponentProps<\n  typeof MotionProgressIndicator\n>;\n\nconst MotionProgressIndicator = motion.create(ProgressPrimitives.Indicator);\n\nfunction ProgressIndicator({\n  transition = { type: 'spring', stiffness: 100, damping: 30 },\n  ...props\n}: ProgressIndicatorProps) {\n  const { value } = useProgress();\n\n  return (\n    <MotionProgressIndicator\n      data-slot=\"progress-indicator\"\n      animate={{ width: `${value}%` }}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\ntype ProgressTrackProps = React.ComponentProps<typeof ProgressPrimitives.Track>;\n\nfunction ProgressTrack(props: ProgressTrackProps) {\n  return <ProgressPrimitives.Track data-slot=\"progress-track\" {...props} />;\n}\n\ntype ProgressLabelProps = React.ComponentProps<typeof ProgressPrimitives.Label>;\n\nfunction ProgressLabel(props: ProgressLabelProps) {\n  return <ProgressPrimitives.Label data-slot=\"progress-label\" {...props} />;\n}\n\ntype ProgressValueProps = Omit<\n  React.ComponentProps<typeof ProgressPrimitives.Value>,\n  'render'\n> &\n  Omit<CountingNumberProps, 'number'>;\n\nfunction ProgressValue({\n  transition = { stiffness: 80, damping: 20 },\n  ...props\n}: ProgressValueProps) {\n  const { value } = useProgress();\n\n  return (\n    <ProgressPrimitives.Value\n      data-slot=\"progress-value\"\n      render={\n        <CountingNumber\n          number={value ?? 0}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\nexport {\n  Progress,\n  ProgressIndicator,\n  ProgressTrack,\n  ProgressLabel,\n  ProgressValue,\n  useProgress,\n  type ProgressProps,\n  type ProgressIndicatorProps,\n  type ProgressTrackProps,\n  type ProgressLabelProps,\n  type ProgressValueProps,\n  type ProgressContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Progress as ProgressPrimitives } from '@base-ui/react/progress';\nimport { motion } from 'motion/react';\n\nimport {\n  CountingNumber,\n  type CountingNumberProps,\n} from '@/components/animate-ui/primitives/texts/counting-number';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype ProgressContextType = {\n  value: number;\n};\n\nconst [ProgressProvider, useProgress] =\n  getStrictContext<ProgressContextType>('ProgressContext');\n\ntype ProgressProps = React.ComponentProps<typeof ProgressPrimitives.Root>;\n\nconst Progress = (props: ProgressProps) => {\n  return (\n    <ProgressProvider value={{ value: props.value ?? 0 }}>\n      <ProgressPrimitives.Root data-slot=\"progress\" {...props} />\n    </ProgressProvider>\n  );\n};\n\ntype ProgressIndicatorProps = React.ComponentProps<\n  typeof MotionProgressIndicator\n>;\n\nconst MotionProgressIndicator = motion.create(ProgressPrimitives.Indicator);\n\nfunction ProgressIndicator({\n  transition = { type: 'spring', stiffness: 100, damping: 30 },\n  ...props\n}: ProgressIndicatorProps) {\n  const { value } = useProgress();\n\n  return (\n    <MotionProgressIndicator\n      data-slot=\"progress-indicator\"\n      animate={{ width: `${value}%` }}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\ntype ProgressTrackProps = React.ComponentProps<typeof ProgressPrimitives.Track>;\n\nfunction ProgressTrack(props: ProgressTrackProps) {\n  return <ProgressPrimitives.Track data-slot=\"progress-track\" {...props} />;\n}\n\ntype ProgressLabelProps = React.ComponentProps<typeof ProgressPrimitives.Label>;\n\nfunction ProgressLabel(props: ProgressLabelProps) {\n  return <ProgressPrimitives.Label data-slot=\"progress-label\" {...props} />;\n}\n\ntype ProgressValueProps = Omit<\n  React.ComponentProps<typeof ProgressPrimitives.Value>,\n  'render'\n> &\n  Omit<CountingNumberProps, 'number'>;\n\nfunction ProgressValue({\n  transition = { stiffness: 80, damping: 20 },\n  ...props\n}: ProgressValueProps) {\n  const { value } = useProgress();\n\n  return (\n    <ProgressPrimitives.Value\n      data-slot=\"progress-value\"\n      render={\n        <CountingNumber\n          number={value ?? 0}\n          transition={transition}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\nexport {\n  Progress,\n  ProgressIndicator,\n  ProgressTrack,\n  ProgressLabel,\n  ProgressValue,\n  useProgress,\n  type ProgressProps,\n  type ProgressIndicatorProps,\n  type ProgressTrackProps,\n  type ProgressLabelProps,\n  type ProgressValueProps,\n  type ProgressContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22137,7 +21846,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-radio',
     description: 'An easily stylable radio button component.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22149,7 +21858,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/radio.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { RadioGroup as RadioGroupPrimitive } from '@base-ui-components/react/radio-group';\nimport { Radio as RadioPrimitive } from '@base-ui-components/react/radio';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype RadioGroupContextType = {\n  value: RadioGroupProps['value'];\n  setValue: RadioGroupProps['onValueChange'];\n};\n\ntype RadioContextType = {\n  isChecked: boolean;\n  setIsChecked: (isChecked: boolean) => void;\n};\n\nconst [RadioGroupProvider, useRadioGroup] =\n  getStrictContext<RadioGroupContextType>('RadioGroupContext');\n\nconst [RadioProvider, useRadio] =\n  getStrictContext<RadioContextType>('RadioContext');\n\ntype RadioGroupProps = React.ComponentProps<typeof RadioGroupPrimitive>;\n\nfunction RadioGroup(props: RadioGroupProps) {\n  const [value, setValue] = useControlledState({\n    value: props.value ?? undefined,\n    defaultValue: props.defaultValue,\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <RadioGroupProvider value={{ value, setValue }}>\n      <RadioGroupPrimitive\n        data-slot=\"radio-group\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </RadioGroupProvider>\n  );\n}\n\ntype RadioIndicatorProps = Omit<\n  React.ComponentProps<typeof RadioPrimitive.Indicator>,\n  'asChild' | 'forceMount'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction RadioIndicator({\n  transition = { type: 'spring', stiffness: 200, damping: 16 },\n  ...props\n}: RadioIndicatorProps) {\n  const { isChecked } = useRadio();\n\n  return (\n    <AnimatePresence>\n      {isChecked && (\n        <RadioPrimitive.Indicator\n          data-slot=\"radio-group-indicator\"\n          keepMounted\n          render={\n            <motion.div\n              key=\"radio-group-indicator-circle\"\n              data-slot=\"radio-group-indicator-circle\"\n              initial={{ opacity: 0, scale: 0 }}\n              animate={{ opacity: 1, scale: 1 }}\n              exit={{ opacity: 0, scale: 0 }}\n              transition={transition}\n              {...props}\n            />\n          }\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype RadioProps = Omit<\n  React.ComponentProps<typeof RadioPrimitive.Root>,\n  'asChild'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Radio({\n  value: valueProps,\n  disabled,\n  required,\n  ...props\n}: RadioProps) {\n  const { value } = useRadioGroup();\n  const [isChecked, setIsChecked] = React.useState(value === valueProps);\n\n  React.useEffect(() => {\n    setIsChecked(value === valueProps);\n  }, [value, valueProps]);\n\n  return (\n    <RadioProvider value={{ isChecked, setIsChecked }}>\n      <RadioPrimitive.Root\n        value={valueProps}\n        disabled={disabled}\n        required={required}\n        render={\n          <motion.button\n            data-slot=\"radio-group-item\"\n            whileHover={{ scale: 1.05 }}\n            whileTap={{ scale: 0.95 }}\n            {...props}\n          />\n        }\n      />\n    </RadioProvider>\n  );\n}\n\nexport {\n  RadioGroup,\n  Radio,\n  RadioIndicator,\n  useRadioGroup,\n  useRadio,\n  type RadioGroupProps,\n  type RadioProps,\n  type RadioIndicatorProps,\n  type RadioGroupContextType,\n  type RadioContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';\nimport { Radio as RadioPrimitive } from '@base-ui/react/radio';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype RadioGroupContextType = {\n  value: RadioGroupProps['value'];\n  setValue: RadioGroupProps['onValueChange'];\n};\n\ntype RadioContextType = {\n  isChecked: boolean;\n  setIsChecked: (isChecked: boolean) => void;\n};\n\nconst [RadioGroupProvider, useRadioGroup] =\n  getStrictContext<RadioGroupContextType>('RadioGroupContext');\n\nconst [RadioProvider, useRadio] =\n  getStrictContext<RadioContextType>('RadioContext');\n\ntype RadioGroupProps = React.ComponentProps<typeof RadioGroupPrimitive>;\n\nfunction RadioGroup(props: RadioGroupProps) {\n  const [value, setValue] = useControlledState({\n    value: props.value ?? undefined,\n    defaultValue: props.defaultValue,\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <RadioGroupProvider value={{ value, setValue }}>\n      <RadioGroupPrimitive\n        data-slot=\"radio-group\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </RadioGroupProvider>\n  );\n}\n\ntype RadioIndicatorProps = Omit<\n  React.ComponentProps<typeof RadioPrimitive.Indicator>,\n  'asChild' | 'forceMount'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction RadioIndicator({\n  transition = { type: 'spring', stiffness: 200, damping: 16 },\n  ...props\n}: RadioIndicatorProps) {\n  const { isChecked } = useRadio();\n\n  return (\n    <AnimatePresence>\n      {isChecked && (\n        <RadioPrimitive.Indicator\n          data-slot=\"radio-group-indicator\"\n          keepMounted\n          render={\n            <motion.div\n              key=\"radio-group-indicator-circle\"\n              data-slot=\"radio-group-indicator-circle\"\n              initial={{ opacity: 0, scale: 0 }}\n              animate={{ opacity: 1, scale: 1 }}\n              exit={{ opacity: 0, scale: 0 }}\n              transition={transition}\n              {...props}\n            />\n          }\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype RadioProps = Omit<\n  React.ComponentProps<typeof RadioPrimitive.Root>,\n  'asChild'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Radio({\n  value: valueProps,\n  disabled,\n  required,\n  // Rendered as a motion.button: tell Base UI it's a native button.\n  nativeButton = true,\n  ...props\n}: RadioProps) {\n  const { value } = useRadioGroup();\n  const [isChecked, setIsChecked] = React.useState(value === valueProps);\n\n  React.useEffect(() => {\n    setIsChecked(value === valueProps);\n  }, [value, valueProps]);\n\n  return (\n    <RadioProvider value={{ isChecked, setIsChecked }}>\n      <RadioPrimitive.Root\n        value={valueProps}\n        disabled={disabled}\n        required={required}\n        nativeButton={nativeButton}\n        render={\n          <motion.button\n            data-slot=\"radio-group-item\"\n            whileHover={{ scale: 1.05 }}\n            whileTap={{ scale: 0.95 }}\n            {...props}\n          />\n        }\n      />\n    </RadioProvider>\n  );\n}\n\nexport {\n  RadioGroup,\n  Radio,\n  RadioIndicator,\n  useRadioGroup,\n  useRadio,\n  type RadioGroupProps,\n  type RadioProps,\n  type RadioIndicatorProps,\n  type RadioGroupContextType,\n  type RadioContextType,\n};",
       },
     ],
     keywords: [],
@@ -22176,7 +21885,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-switch',
     description: 'A control that indicates whether a setting is on or off.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22188,7 +21897,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/switch.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Switch as SwitchPrimitives } from '@base-ui-components/react/switch';\nimport {\n  motion,\n  type TargetAndTransition,\n  type VariantLabels,\n  type HTMLMotionProps,\n  type LegacyAnimationControls,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype SwitchContextType = {\n  isChecked: boolean;\n  setIsChecked: SwitchProps['onCheckedChange'];\n  isPressed: boolean;\n  setIsPressed: (isPressed: boolean) => void;\n};\n\nconst [SwitchProvider, useSwitch] =\n  getStrictContext<SwitchContextType>('SwitchContext');\n\ntype SwitchProps = Omit<\n  React.ComponentProps<typeof SwitchPrimitives.Root>,\n  'render'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Switch({\n  name,\n  defaultChecked,\n  checked,\n  onCheckedChange,\n  nativeButton,\n  disabled,\n  readOnly,\n  required,\n  inputRef,\n  id,\n  ...props\n}: SwitchProps) {\n  const [isPressed, setIsPressed] = React.useState(false);\n  const [isChecked, setIsChecked] = useControlledState({\n    value: checked,\n    defaultValue: defaultChecked,\n    onChange: onCheckedChange,\n  });\n\n  return (\n    <SwitchProvider\n      value={{ isChecked, setIsChecked, isPressed, setIsPressed }}\n    >\n      <SwitchPrimitives.Root\n        name={name}\n        defaultChecked={defaultChecked}\n        checked={checked}\n        onCheckedChange={setIsChecked}\n        nativeButton={nativeButton}\n        disabled={disabled}\n        readOnly={readOnly}\n        required={required}\n        inputRef={inputRef}\n        id={id}\n        render={\n          <motion.button\n            data-slot=\"switch\"\n            whileTap=\"tap\"\n            initial={false}\n            onTapStart={() => setIsPressed(true)}\n            onTapCancel={() => setIsPressed(false)}\n            onTap={() => setIsPressed(false)}\n            {...props}\n          />\n        }\n      />\n    </SwitchProvider>\n  );\n}\n\ntype SwitchThumbProps = Omit<\n  React.ComponentProps<typeof SwitchPrimitives.Thumb>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    pressedAnimation?:\n      | TargetAndTransition\n      | VariantLabels\n      | boolean\n      | LegacyAnimationControls;\n  };\n\nfunction SwitchThumb({\n  pressedAnimation,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: SwitchThumbProps) {\n  const { isPressed } = useSwitch();\n\n  return (\n    <SwitchPrimitives.Thumb\n      render={\n        <motion.div\n          data-slot=\"switch-thumb\"\n          whileTap=\"tab\"\n          layout\n          transition={transition}\n          animate={isPressed ? pressedAnimation : undefined}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype SwitchIconPosition = 'left' | 'right' | 'thumb';\n\ntype SwitchIconProps = HTMLMotionProps<'div'> & {\n  position: SwitchIconPosition;\n};\n\nfunction SwitchIcon({\n  position,\n  transition = { type: 'spring', bounce: 0 },\n  ...props\n}: SwitchIconProps) {\n  const { isChecked } = useSwitch();\n\n  const isAnimated = React.useMemo(() => {\n    if (position === 'right') return !isChecked;\n    if (position === 'left') return isChecked;\n    if (position === 'thumb') return true;\n    return false;\n  }, [position, isChecked]);\n\n  return (\n    <motion.div\n      data-slot={`switch-${position}-icon`}\n      animate={isAnimated ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Switch,\n  SwitchThumb,\n  SwitchIcon,\n  useSwitch,\n  type SwitchProps,\n  type SwitchThumbProps,\n  type SwitchIconProps,\n  type SwitchIconPosition,\n  type SwitchContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Switch as SwitchPrimitives } from '@base-ui/react/switch';\nimport {\n  motion,\n  type TargetAndTransition,\n  type VariantLabels,\n  type HTMLMotionProps,\n  type LegacyAnimationControls,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype SwitchContextType = {\n  isChecked: boolean;\n  setIsChecked: SwitchProps['onCheckedChange'];\n  isPressed: boolean;\n  setIsPressed: (isPressed: boolean) => void;\n};\n\nconst [SwitchProvider, useSwitch] =\n  getStrictContext<SwitchContextType>('SwitchContext');\n\ntype SwitchProps = Omit<\n  React.ComponentProps<typeof SwitchPrimitives.Root>,\n  'render'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Switch({\n  name,\n  defaultChecked,\n  checked,\n  onCheckedChange,\n  // Rendered as a motion.button: tell Base UI it's a native button.\n  nativeButton = true,\n  disabled,\n  readOnly,\n  required,\n  inputRef,\n  id,\n  ...props\n}: SwitchProps) {\n  const [isPressed, setIsPressed] = React.useState(false);\n  const [isChecked, setIsChecked] = useControlledState({\n    value: checked,\n    defaultValue: defaultChecked,\n    onChange: onCheckedChange,\n  });\n\n  return (\n    <SwitchProvider\n      value={{ isChecked, setIsChecked, isPressed, setIsPressed }}\n    >\n      <SwitchPrimitives.Root\n        name={name}\n        defaultChecked={defaultChecked}\n        checked={checked}\n        onCheckedChange={setIsChecked}\n        nativeButton={nativeButton}\n        disabled={disabled}\n        readOnly={readOnly}\n        required={required}\n        inputRef={inputRef}\n        id={id}\n        render={\n          <motion.button\n            data-slot=\"switch\"\n            whileTap=\"tap\"\n            initial={false}\n            onTapStart={() => setIsPressed(true)}\n            onTapCancel={() => setIsPressed(false)}\n            onTap={() => setIsPressed(false)}\n            {...props}\n          />\n        }\n      />\n    </SwitchProvider>\n  );\n}\n\ntype SwitchThumbProps = Omit<\n  React.ComponentProps<typeof SwitchPrimitives.Thumb>,\n  'render'\n> &\n  HTMLMotionProps<'div'> & {\n    pressedAnimation?:\n      TargetAndTransition | VariantLabels | boolean | LegacyAnimationControls;\n  };\n\nfunction SwitchThumb({\n  pressedAnimation,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: SwitchThumbProps) {\n  const { isPressed } = useSwitch();\n\n  return (\n    <SwitchPrimitives.Thumb\n      render={\n        <motion.div\n          data-slot=\"switch-thumb\"\n          whileTap=\"tab\"\n          layout\n          transition={transition}\n          animate={isPressed ? pressedAnimation : undefined}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype SwitchIconPosition = 'left' | 'right' | 'thumb';\n\ntype SwitchIconProps = HTMLMotionProps<'div'> & {\n  position: SwitchIconPosition;\n};\n\nfunction SwitchIcon({\n  position,\n  transition = { type: 'spring', bounce: 0 },\n  ...props\n}: SwitchIconProps) {\n  const { isChecked } = useSwitch();\n\n  const isAnimated = React.useMemo(() => {\n    if (position === 'right') return !isChecked;\n    if (position === 'left') return isChecked;\n    if (position === 'thumb') return true;\n    return false;\n  }, [position, isChecked]);\n\n  return (\n    <motion.div\n      data-slot={`switch-${position}-icon`}\n      animate={isAnimated ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Switch,\n  SwitchThumb,\n  SwitchIcon,\n  useSwitch,\n  type SwitchProps,\n  type SwitchThumbProps,\n  type SwitchIconProps,\n  type SwitchIconPosition,\n  type SwitchContextType,\n};",
       },
     ],
     keywords: [],
@@ -22216,7 +21925,7 @@ export const index: Record<string, any> = {
     description:
       'A component for toggling between related panels on the same page.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/primitives-effects-auto-height',
@@ -22230,7 +21939,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/tabs.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Tabs as TabsPrimitive } from '@base-ui-components/react/tabs';\nimport {\n  motion,\n  AnimatePresence,\n  type HTMLMotionProps,\n  type Transition,\n} from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightProps,\n  type HighlightItemProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport {\n  AutoHeight,\n  type AutoHeightProps,\n} from '@/components/animate-ui/primitives/effects/auto-height';\n\ntype TabsContextType = {\n  value: string | undefined;\n  setValue: TabsProps['onValueChange'];\n};\n\nconst [TabsProvider, useTabs] =\n  getStrictContext<TabsContextType>('TabsContext');\n\ntype TabsProps = React.ComponentProps<typeof TabsPrimitive.Root>;\n\nfunction Tabs(props: TabsProps) {\n  const [value, setValue] = useControlledState({\n    value: props.value,\n    defaultValue: props.defaultValue,\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <TabsProvider value={{ value, setValue }}>\n      <TabsPrimitive.Root\n        data-slot=\"tabs\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </TabsProvider>\n  );\n}\n\ntype TabsHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;\n\nfunction TabsHighlight({\n  transition = { type: 'spring', stiffness: 200, damping: 25 },\n  ...props\n}: TabsHighlightProps) {\n  const { value } = useTabs();\n\n  return (\n    <Highlight\n      data-slot=\"tabs-highlight\"\n      controlledItems\n      value={value}\n      transition={transition}\n      click={false}\n      {...props}\n    />\n  );\n}\n\ntype TabsListProps = React.ComponentProps<typeof TabsPrimitive.List>;\n\nfunction TabsList(props: TabsListProps) {\n  return <TabsPrimitive.List data-slot=\"tabs-list\" {...props} />;\n}\n\ntype TabsHighlightItemProps = HighlightItemProps & {\n  value: string;\n};\n\nfunction TabsHighlightItem(props: TabsHighlightItemProps) {\n  return <HighlightItem data-slot=\"tabs-highlight-item\" {...props} />;\n}\n\ntype TabsTabProps = React.ComponentProps<typeof TabsPrimitive.Tab>;\n\nfunction TabsTab(props: TabsTabProps) {\n  return <TabsPrimitive.Tab data-slot=\"tabs-tab\" {...props} />;\n}\n\ntype TabsPanelProps = React.ComponentProps<typeof TabsPrimitive.Panel> &\n  HTMLMotionProps<'div'>;\n\nfunction TabsPanel({\n  value,\n  keepMounted,\n  transition = { duration: 0.5, ease: 'easeInOut' },\n  ...props\n}: TabsPanelProps) {\n  return (\n    <AnimatePresence mode=\"wait\">\n      <TabsPrimitive.Panel\n        render={\n          <motion.div\n            data-slot=\"tabs-panel\"\n            layout\n            layoutDependency={value}\n            initial={{ opacity: 0, filter: 'blur(4px)' }}\n            animate={{ opacity: 1, filter: 'blur(0px)' }}\n            exit={{ opacity: 0, filter: 'blur(4px)' }}\n            transition={transition}\n            {...props}\n          />\n        }\n        keepMounted={keepMounted}\n        value={value}\n      />\n    </AnimatePresence>\n  );\n}\n\ntype TabsPanelsAutoProps = Omit<AutoHeightProps, 'children'> & {\n  mode?: 'auto-height';\n  children: React.ReactNode;\n  transition?: Transition;\n};\n\ntype TabsPanelsLayoutProps = Omit<HTMLMotionProps<'div'>, 'children'> & {\n  mode: 'layout';\n  children: React.ReactNode;\n  transition?: Transition;\n};\n\ntype TabsPanelsProps = TabsPanelsAutoProps | TabsPanelsLayoutProps;\n\nconst defaultTransition: Transition = {\n  type: 'spring',\n  stiffness: 200,\n  damping: 30,\n};\n\nfunction isAutoMode(props: TabsPanelsProps): props is TabsPanelsAutoProps {\n  return !props.mode || props.mode === 'auto-height';\n}\n\nfunction TabsPanels(props: TabsPanelsProps) {\n  const { value } = useTabs();\n\n  if (isAutoMode(props)) {\n    const { children, transition = defaultTransition, ...autoProps } = props;\n\n    return (\n      <AutoHeight\n        data-slot=\"tabs-panels\"\n        deps={[value]}\n        transition={transition}\n        {...autoProps}\n      >\n        <React.Fragment key={value}>{children}</React.Fragment>\n      </AutoHeight>\n    );\n  }\n\n  const {\n    children,\n    style,\n    transition = defaultTransition,\n    ...layoutProps\n  } = props;\n\n  return (\n    <motion.div\n      data-slot=\"tabs-panels\"\n      layout=\"size\"\n      layoutDependency={value}\n      transition={{ layout: transition }}\n      style={{ overflow: 'hidden', ...style }}\n      {...layoutProps}\n    >\n      <React.Fragment key={value}>{children}</React.Fragment>\n    </motion.div>\n  );\n}\n\nexport {\n  Tabs,\n  TabsHighlight,\n  TabsHighlightItem,\n  TabsList,\n  TabsTab,\n  TabsPanel,\n  TabsPanels,\n  type TabsProps,\n  type TabsHighlightProps,\n  type TabsHighlightItemProps,\n  type TabsListProps,\n  type TabsTabProps,\n  type TabsPanelProps,\n  type TabsPanelsProps,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Tabs as TabsPrimitive } from '@base-ui/react/tabs';\nimport {\n  motion,\n  AnimatePresence,\n  type HTMLMotionProps,\n  type Transition,\n} from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightProps,\n  type HighlightItemProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport {\n  AutoHeight,\n  type AutoHeightProps,\n} from '@/components/animate-ui/primitives/effects/auto-height';\n\ntype TabsContextType = {\n  value: string | undefined;\n  setValue: TabsProps['onValueChange'];\n};\n\nconst [TabsProvider, useTabs] =\n  getStrictContext<TabsContextType>('TabsContext');\n\ntype TabsProps = React.ComponentProps<typeof TabsPrimitive.Root>;\n\nfunction Tabs(props: TabsProps) {\n  const [value, setValue] = useControlledState({\n    value: props.value,\n    defaultValue: props.defaultValue,\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <TabsProvider value={{ value, setValue }}>\n      <TabsPrimitive.Root\n        data-slot=\"tabs\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </TabsProvider>\n  );\n}\n\ntype TabsHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;\n\nfunction TabsHighlight({\n  transition = { type: 'spring', stiffness: 200, damping: 25 },\n  ...props\n}: TabsHighlightProps) {\n  const { value } = useTabs();\n\n  return (\n    <Highlight\n      data-slot=\"tabs-highlight\"\n      controlledItems\n      value={value}\n      transition={transition}\n      click={false}\n      {...props}\n    />\n  );\n}\n\ntype TabsListProps = React.ComponentProps<typeof TabsPrimitive.List>;\n\nfunction TabsList(props: TabsListProps) {\n  return <TabsPrimitive.List data-slot=\"tabs-list\" {...props} />;\n}\n\ntype TabsHighlightItemProps = HighlightItemProps & {\n  value: string;\n};\n\nfunction TabsHighlightItem(props: TabsHighlightItemProps) {\n  return <HighlightItem data-slot=\"tabs-highlight-item\" {...props} />;\n}\n\ntype TabsTabProps = React.ComponentProps<typeof TabsPrimitive.Tab>;\n\nfunction TabsTab(props: TabsTabProps) {\n  return <TabsPrimitive.Tab data-slot=\"tabs-tab\" {...props} />;\n}\n\ntype TabsPanelProps = React.ComponentProps<typeof TabsPrimitive.Panel> &\n  HTMLMotionProps<'div'>;\n\nfunction TabsPanel({\n  value,\n  keepMounted,\n  transition = { duration: 0.5, ease: 'easeInOut' },\n  ...props\n}: TabsPanelProps) {\n  return (\n    <AnimatePresence mode=\"wait\">\n      <TabsPrimitive.Panel\n        render={\n          <motion.div\n            data-slot=\"tabs-panel\"\n            layout\n            layoutDependency={value}\n            initial={{ opacity: 0, filter: 'blur(4px)' }}\n            animate={{ opacity: 1, filter: 'blur(0px)' }}\n            exit={{ opacity: 0, filter: 'blur(4px)' }}\n            transition={transition}\n            {...props}\n          />\n        }\n        keepMounted={keepMounted}\n        value={value}\n      />\n    </AnimatePresence>\n  );\n}\n\ntype TabsPanelsAutoProps = Omit<AutoHeightProps, 'children'> & {\n  mode?: 'auto-height';\n  children: React.ReactNode;\n  transition?: Transition;\n};\n\ntype TabsPanelsLayoutProps = Omit<HTMLMotionProps<'div'>, 'children'> & {\n  mode: 'layout';\n  children: React.ReactNode;\n  transition?: Transition;\n};\n\ntype TabsPanelsProps = TabsPanelsAutoProps | TabsPanelsLayoutProps;\n\nconst defaultTransition: Transition = {\n  type: 'spring',\n  stiffness: 200,\n  damping: 30,\n};\n\nfunction isAutoMode(props: TabsPanelsProps): props is TabsPanelsAutoProps {\n  return !props.mode || props.mode === 'auto-height';\n}\n\nfunction TabsPanels(props: TabsPanelsProps) {\n  const { value } = useTabs();\n\n  if (isAutoMode(props)) {\n    const { children, transition = defaultTransition, ...autoProps } = props;\n\n    return (\n      <AutoHeight\n        data-slot=\"tabs-panels\"\n        deps={[value]}\n        transition={transition}\n        {...autoProps}\n      >\n        <React.Fragment key={value}>{children}</React.Fragment>\n      </AutoHeight>\n    );\n  }\n\n  const {\n    children,\n    style,\n    transition = defaultTransition,\n    ...layoutProps\n  } = props;\n\n  return (\n    <motion.div\n      data-slot=\"tabs-panels\"\n      layout=\"size\"\n      layoutDependency={value}\n      transition={{ layout: transition }}\n      style={{ overflow: 'hidden', ...style }}\n      {...layoutProps}\n    >\n      <React.Fragment key={value}>{children}</React.Fragment>\n    </motion.div>\n  );\n}\n\nexport {\n  Tabs,\n  TabsHighlight,\n  TabsHighlightItem,\n  TabsList,\n  TabsTab,\n  TabsPanel,\n  TabsPanels,\n  type TabsProps,\n  type TabsHighlightProps,\n  type TabsHighlightItemProps,\n  type TabsListProps,\n  type TabsTabProps,\n  type TabsPanelProps,\n  type TabsPanelsProps,\n};",
       },
     ],
     keywords: [],
@@ -22257,7 +21966,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-toggle',
     description: 'A two-state button that can be on or off.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22269,7 +21978,7 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/toggle.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Toggle as TogglePrimitive } from '@base-ui-components/react/toggle';\nimport { motion, AnimatePresence, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype ToggleContextType = {\n  isPressed: boolean;\n  setIsPressed: ToggleProps['onPressedChange'];\n  disabled?: boolean;\n};\n\nconst [ToggleProvider, useToggle] =\n  getStrictContext<ToggleContextType>('ToggleContext');\n\ntype ToggleProps = Omit<\n  React.ComponentProps<typeof TogglePrimitive>,\n  'render'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Toggle({\n  value,\n  pressed,\n  defaultPressed,\n  onPressedChange,\n  nativeButton,\n  disabled,\n  ...props\n}: ToggleProps) {\n  const [isPressed, setIsPressed] = useControlledState({\n    value: pressed,\n    defaultValue: defaultPressed,\n    onChange: onPressedChange,\n  });\n\n  return (\n    <ToggleProvider value={{ isPressed, setIsPressed, disabled }}>\n      <TogglePrimitive\n        value={value}\n        pressed={pressed}\n        defaultPressed={defaultPressed}\n        onPressedChange={setIsPressed}\n        nativeButton={nativeButton}\n        disabled={disabled}\n        render={\n          <motion.button\n            data-slot=\"toggle\"\n            whileTap={{ scale: 0.95 }}\n            {...props}\n          />\n        }\n      />\n    </ToggleProvider>\n  );\n}\n\ntype ToggleHighlightProps = HTMLMotionProps<'div'>;\n\nfunction ToggleHighlight({ style, ...props }: ToggleHighlightProps) {\n  const { isPressed, disabled } = useToggle();\n\n  return (\n    <AnimatePresence>\n      {isPressed && (\n        <motion.div\n          data-slot=\"toggle-highlight\"\n          aria-pressed={isPressed}\n          {...(isPressed && { 'data-pressed': true })}\n          {...(disabled && { 'data-disabled': true })}\n          style={{ position: 'absolute', zIndex: 0, inset: 0, ...style }}\n          initial={{ opacity: 0 }}\n          animate={{ opacity: 1 }}\n          exit={{ opacity: 0 }}\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype ToggleItemProps = HTMLMotionProps<'div'>;\n\nfunction ToggleItem({ style, ...props }: ToggleItemProps) {\n  const { isPressed, disabled } = useToggle();\n\n  return (\n    <motion.div\n      data-slot=\"toggle-item\"\n      aria-pressed={isPressed}\n      {...(isPressed && { 'data-pressed': true })}\n      {...(disabled && { 'data-disabled': true })}\n      style={{ position: 'relative', zIndex: 1, ...style }}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Toggle,\n  ToggleHighlight,\n  ToggleItem,\n  useToggle,\n  type ToggleProps,\n  type ToggleHighlightProps,\n  type ToggleItemProps,\n  type ToggleContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Toggle as TogglePrimitive } from '@base-ui/react/toggle';\nimport { motion, AnimatePresence, type HTMLMotionProps } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype ToggleContextType = {\n  isPressed: boolean;\n  setIsPressed: ToggleProps['onPressedChange'];\n  disabled?: boolean;\n};\n\nconst [ToggleProvider, useToggle] =\n  getStrictContext<ToggleContextType>('ToggleContext');\n\ntype ToggleProps = Omit<\n  React.ComponentProps<typeof TogglePrimitive>,\n  'render'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Toggle({\n  value,\n  pressed,\n  defaultPressed,\n  onPressedChange,\n  nativeButton,\n  disabled,\n  ...props\n}: ToggleProps) {\n  const [isPressed, setIsPressed] = useControlledState({\n    value: pressed,\n    defaultValue: defaultPressed,\n    onChange: onPressedChange,\n  });\n\n  return (\n    <ToggleProvider value={{ isPressed, setIsPressed, disabled }}>\n      <TogglePrimitive\n        value={value}\n        pressed={pressed}\n        defaultPressed={defaultPressed}\n        onPressedChange={setIsPressed}\n        nativeButton={nativeButton}\n        disabled={disabled}\n        render={\n          <motion.button\n            data-slot=\"toggle\"\n            whileTap={{ scale: 0.95 }}\n            {...props}\n          />\n        }\n      />\n    </ToggleProvider>\n  );\n}\n\ntype ToggleHighlightProps = HTMLMotionProps<'div'>;\n\nfunction ToggleHighlight({ style, ...props }: ToggleHighlightProps) {\n  const { isPressed, disabled } = useToggle();\n\n  return (\n    <AnimatePresence>\n      {isPressed && (\n        <motion.div\n          data-slot=\"toggle-highlight\"\n          aria-pressed={isPressed}\n          {...(isPressed && { 'data-pressed': true })}\n          {...(disabled && { 'data-disabled': true })}\n          style={{ position: 'absolute', zIndex: 0, inset: 0, ...style }}\n          initial={{ opacity: 0 }}\n          animate={{ opacity: 1 }}\n          exit={{ opacity: 0 }}\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype ToggleItemProps = HTMLMotionProps<'div'>;\n\nfunction ToggleItem({ style, ...props }: ToggleItemProps) {\n  const { isPressed, disabled } = useToggle();\n\n  return (\n    <motion.div\n      data-slot=\"toggle-item\"\n      aria-pressed={isPressed}\n      {...(isPressed && { 'data-pressed': true })}\n      {...(disabled && { 'data-disabled': true })}\n      style={{ position: 'relative', zIndex: 1, ...style }}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Toggle,\n  ToggleHighlight,\n  ToggleItem,\n  useToggle,\n  type ToggleProps,\n  type ToggleHighlightProps,\n  type ToggleItemProps,\n  type ToggleContextType,\n};",
       },
     ],
     keywords: [],
@@ -22296,7 +22005,7 @@ export const index: Record<string, any> = {
     name: 'primitives-base-toggle-group',
     description: 'Provides a shared state to a series of toggle buttons.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22309,15 +22018,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/toggle-group.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Toggle as TogglePrimitive } from '@base-ui-components/react/toggle';\nimport { ToggleGroup as ToggleGroupPrimitive } from '@base-ui-components/react/toggle-group';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightItemProps,\n  type HighlightProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype ToggleGroupContextType = {\n  // eslint-disable-next-line @typescript-eslint/no-explicit-any\n  value: any[];\n  setValue: ToggleGroupProps['onValueChange'];\n  multiple: boolean | undefined;\n};\n\nconst [ToggleGroupProvider, useToggleGroup] =\n  getStrictContext<ToggleGroupContextType>('ToggleGroupContext');\n\ntype ToggleGroupProps = React.ComponentProps<typeof ToggleGroupPrimitive>;\n\nfunction ToggleGroup(props: ToggleGroupProps) {\n  const [value, setValue] = useControlledState({\n    // eslint-disable-next-line @typescript-eslint/no-explicit-any\n    value: props.value as any[],\n    // eslint-disable-next-line @typescript-eslint/no-explicit-any\n    defaultValue: props.defaultValue as any[],\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <ToggleGroupProvider value={{ value, setValue, multiple: props.multiple }}>\n      <ToggleGroupPrimitive\n        data-slot=\"toggle-group\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </ToggleGroupProvider>\n  );\n}\n\ntype ToggleProps = Omit<\n  React.ComponentProps<typeof TogglePrimitive>,\n  'render'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Toggle({\n  value,\n  pressed,\n  defaultPressed,\n  onPressedChange,\n  nativeButton,\n  disabled,\n  ...props\n}: ToggleProps) {\n  return (\n    <TogglePrimitive\n      value={value}\n      disabled={disabled}\n      pressed={pressed}\n      defaultPressed={defaultPressed}\n      onPressedChange={onPressedChange}\n      nativeButton={nativeButton}\n      render={\n        <motion.button\n          data-slot=\"toggle\"\n          whileTap={{ scale: 0.95 }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype ToggleGroupHighlightProps = Omit<HighlightProps, 'controlledItems'>;\n\nfunction ToggleGroupHighlight({\n  transition = { type: 'spring', stiffness: 200, damping: 25 },\n  ...props\n}: ToggleGroupHighlightProps) {\n  const { value } = useToggleGroup();\n\n  return (\n    <Highlight\n      data-slot=\"toggle-group-highlight\"\n      controlledItems\n      value={value?.[0] ?? null}\n      exitDelay={0}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\ntype ToggleHighlightProps = HighlightItemProps &\n  HTMLMotionProps<'div'> & {\n    children: React.ReactElement;\n  };\n\nfunction ToggleHighlight({ children, style, ...props }: ToggleHighlightProps) {\n  const { multiple, value } = useToggleGroup();\n\n  if (!multiple) {\n    return (\n      <HighlightItem\n        data-slot=\"toggle-highlight\"\n        style={{ inset: 0, ...style }}\n        {...props}\n      >\n        {children}\n      </HighlightItem>\n    );\n  }\n\n  if (multiple && React.isValidElement(children)) {\n    const isActive = props.value && value && value.includes(props.value);\n\n    const element = children as React.ReactElement<React.ComponentProps<'div'>>;\n\n    return React.cloneElement(\n      children,\n      {\n        style: {\n          ...element.props.style,\n          position: 'relative',\n        },\n        ...element.props,\n      },\n      <>\n        <AnimatePresence>\n          {isActive && (\n            <motion.div\n              data-slot=\"toggle-highlight\"\n              style={{ position: 'absolute', inset: 0, zIndex: 0, ...style }}\n              initial={{ opacity: 0 }}\n              animate={{ opacity: 1 }}\n              exit={{ opacity: 0 }}\n              {...props}\n            />\n          )}\n        </AnimatePresence>\n\n        <div\n          style={{\n            position: 'relative',\n            zIndex: 1,\n          }}\n        >\n          {element.props.children}\n        </div>\n      </>,\n    );\n  }\n}\n\nexport {\n  ToggleGroup,\n  ToggleGroupHighlight,\n  Toggle,\n  ToggleHighlight,\n  useToggleGroup,\n  type ToggleGroupProps,\n  type ToggleGroupHighlightProps,\n  type ToggleProps,\n  type ToggleHighlightProps,\n  type ToggleGroupContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Toggle as TogglePrimitive } from '@base-ui/react/toggle';\nimport { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group';\nimport { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  Highlight,\n  HighlightItem,\n  type HighlightItemProps,\n  type HighlightProps,\n} from '@/components/animate-ui/primitives/effects/highlight';\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype ToggleGroupContextType = {\n  // eslint-disable-next-line @typescript-eslint/no-explicit-any\n  value: any[];\n  setValue: ToggleGroupProps['onValueChange'];\n  multiple: boolean | undefined;\n};\n\nconst [ToggleGroupProvider, useToggleGroup] =\n  getStrictContext<ToggleGroupContextType>('ToggleGroupContext');\n\ntype ToggleGroupProps = React.ComponentProps<typeof ToggleGroupPrimitive>;\n\nfunction ToggleGroup(props: ToggleGroupProps) {\n  const [value, setValue] = useControlledState({\n    // eslint-disable-next-line @typescript-eslint/no-explicit-any\n    value: props.value as any[],\n    // eslint-disable-next-line @typescript-eslint/no-explicit-any\n    defaultValue: props.defaultValue as any[],\n    onChange: props.onValueChange,\n  });\n\n  return (\n    <ToggleGroupProvider value={{ value, setValue, multiple: props.multiple }}>\n      <ToggleGroupPrimitive\n        data-slot=\"toggle-group\"\n        {...props}\n        onValueChange={setValue}\n      />\n    </ToggleGroupProvider>\n  );\n}\n\ntype ToggleProps = Omit<\n  React.ComponentProps<typeof TogglePrimitive>,\n  'render'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Toggle({\n  value,\n  pressed,\n  defaultPressed,\n  onPressedChange,\n  nativeButton,\n  disabled,\n  ...props\n}: ToggleProps) {\n  return (\n    <TogglePrimitive\n      value={value}\n      disabled={disabled}\n      pressed={pressed}\n      defaultPressed={defaultPressed}\n      onPressedChange={onPressedChange}\n      nativeButton={nativeButton}\n      render={\n        <motion.button\n          data-slot=\"toggle\"\n          whileTap={{ scale: 0.95 }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype ToggleGroupHighlightProps = Omit<HighlightProps, 'controlledItems'>;\n\nfunction ToggleGroupHighlight({\n  transition = { type: 'spring', stiffness: 200, damping: 25 },\n  ...props\n}: ToggleGroupHighlightProps) {\n  const { value } = useToggleGroup();\n\n  return (\n    <Highlight\n      data-slot=\"toggle-group-highlight\"\n      controlledItems\n      value={value?.[0] ?? null}\n      exitDelay={0}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\ntype ToggleHighlightProps = HighlightItemProps &\n  HTMLMotionProps<'div'> & {\n    children: React.ReactElement;\n  };\n\nfunction ToggleHighlight({ children, style, ...props }: ToggleHighlightProps) {\n  const { multiple, value } = useToggleGroup();\n\n  if (!multiple) {\n    return (\n      <HighlightItem\n        data-slot=\"toggle-highlight\"\n        style={{ inset: 0, ...style }}\n        {...props}\n      >\n        {children}\n      </HighlightItem>\n    );\n  }\n\n  if (multiple && React.isValidElement(children)) {\n    const isActive = props.value && value && value.includes(props.value);\n\n    const element = children as React.ReactElement<React.ComponentProps<'div'>>;\n\n    return React.cloneElement(\n      children,\n      {\n        style: {\n          ...element.props.style,\n          position: 'relative',\n        },\n        ...element.props,\n      },\n      <>\n        <AnimatePresence>\n          {isActive && (\n            <motion.div\n              data-slot=\"toggle-highlight\"\n              style={{ position: 'absolute', inset: 0, zIndex: 0, ...style }}\n              initial={{ opacity: 0 }}\n              animate={{ opacity: 1 }}\n              exit={{ opacity: 0 }}\n              {...props}\n            />\n          )}\n        </AnimatePresence>\n\n        <div\n          style={{\n            position: 'relative',\n            zIndex: 1,\n          }}\n        >\n          {element.props.children}\n        </div>\n      </>,\n    );\n  }\n}\n\nexport {\n  ToggleGroup,\n  ToggleGroupHighlight,\n  Toggle,\n  ToggleHighlight,\n  useToggleGroup,\n  type ToggleGroupProps,\n  type ToggleGroupHighlightProps,\n  type ToggleProps,\n  type ToggleHighlightProps,\n  type ToggleGroupContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22339,7 +22047,7 @@ export const index: Record<string, any> = {
     description:
       'A popup that appears when an element is hovered or focused, showing a hint for sighted users.',
     type: 'registry:ui',
-    dependencies: ['motion', '@base-ui-components/react'],
+    dependencies: ['motion', '@base-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
       '@animate-ui/lib-get-strict-context',
@@ -22351,15 +22059,14 @@ export const index: Record<string, any> = {
         type: 'registry:ui',
         target: 'components/animate-ui/primitives/base/tooltip.tsx',
         content:
-          "'use client';\n\nimport * as React from 'react';\nimport { Tooltip as TooltipPrimitive } from '@base-ui-components/react/tooltip';\nimport {\n  AnimatePresence,\n  motion,\n  useMotionValue,\n  useSpring,\n  type HTMLMotionProps,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype TooltipContextType = {\n  isOpen: boolean;\n  setIsOpen: TooltipProps['onOpenChange'];\n  x: MotionValue<number>;\n  y: MotionValue<number>;\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nconst [LocalTooltipProvider, useTooltip] =\n  getStrictContext<TooltipContextType>('TooltipContext');\n\ntype TooltipProviderProps = React.ComponentProps<\n  typeof TooltipPrimitive.Provider\n>;\n\nfunction TooltipProvider(props: TooltipProviderProps) {\n  return <TooltipPrimitive.Provider data-slot=\"tooltip-provider\" {...props} />;\n}\n\ntype TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root> & {\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nfunction Tooltip({\n  followCursor = false,\n  followCursorSpringOptions = { stiffness: 200, damping: 17 },\n  ...props\n}: TooltipProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n\n  return (\n    <LocalTooltipProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        x,\n        y,\n        followCursor,\n        followCursorSpringOptions,\n      }}\n    >\n      <TooltipPrimitive.Root\n        data-slot=\"tooltip\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </LocalTooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Trigger\n>;\n\nfunction TooltipTrigger({ onMouseMove, ...props }: TooltipTriggerProps) {\n  const { x, y, followCursor } = useTooltip();\n\n  const handleMouseMove = (\n    event: Parameters<NonNullable<TooltipTriggerProps['onMouseMove']>>[0],\n  ) => {\n    onMouseMove?.(event);\n\n    const target = event.currentTarget.getBoundingClientRect();\n\n    if (followCursor === 'x' || followCursor === true) {\n      const eventOffsetX = event.clientX - target.left;\n      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;\n      x.set(offsetXFromCenter);\n    }\n\n    if (followCursor === 'y' || followCursor === true) {\n      const eventOffsetY = event.clientY - target.top;\n      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;\n      y.set(offsetYFromCenter);\n    }\n  };\n\n  return (\n    <TooltipPrimitive.Trigger\n      data-slot=\"tooltip-trigger\"\n      onMouseMove={handleMouseMove}\n      {...props}\n    />\n  );\n}\n\ntype TooltipPortalProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction TooltipPortal(props: TooltipPortalProps) {\n  const { isOpen } = useTooltip();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <TooltipPrimitive.Portal\n          keepMounted\n          data-slot=\"tooltip-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype TooltipPositionerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Positioner\n>;\n\nfunction TooltipPositioner(props: TooltipPositionerProps) {\n  return (\n    <TooltipPrimitive.Positioner data-slot=\"tooltip-positioner\" {...props} />\n  );\n}\n\ntype TooltipPopupProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction TooltipPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  style,\n  ...props\n}: TooltipPopupProps) {\n  const { x, y, followCursor, followCursorSpringOptions } = useTooltip();\n  const translateX = useSpring(x, followCursorSpringOptions);\n  const translateY = useSpring(y, followCursorSpringOptions);\n\n  return (\n    <TooltipPrimitive.Popup\n      render={\n        <motion.div\n          key=\"tooltip-popup\"\n          data-slot=\"tooltip-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          style={{\n            x:\n              followCursor === 'x' || followCursor === true\n                ? translateX\n                : undefined,\n            y:\n              followCursor === 'y' || followCursor === true\n                ? translateY\n                : undefined,\n            ...style,\n          }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype TooltipArrowProps = React.ComponentProps<typeof TooltipPrimitive.Arrow>;\n\nfunction TooltipArrow(props: TooltipArrowProps) {\n  return <TooltipPrimitive.Arrow data-slot=\"tooltip-arrow\" {...props} />;\n}\n\nexport {\n  TooltipProvider,\n  Tooltip,\n  TooltipTrigger,\n  TooltipPortal,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipArrow,\n  useTooltip,\n  type TooltipProviderProps,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipPortalProps,\n  type TooltipPositionerProps,\n  type TooltipPopupProps,\n  type TooltipArrowProps,\n  type TooltipContextType,\n};",
+          "'use client';\n\nimport * as React from 'react';\nimport { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';\nimport {\n  AnimatePresence,\n  motion,\n  useMotionValue,\n  useSpring,\n  type HTMLMotionProps,\n  type MotionValue,\n  type SpringOptions,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype TooltipContextType = {\n  isOpen: boolean;\n  setIsOpen: TooltipProps['onOpenChange'];\n  x: MotionValue<number>;\n  y: MotionValue<number>;\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nconst [LocalTooltipProvider, useTooltip] =\n  getStrictContext<TooltipContextType>('TooltipContext');\n\ntype TooltipProviderProps = React.ComponentProps<\n  typeof TooltipPrimitive.Provider\n>;\n\nfunction TooltipProvider(props: TooltipProviderProps) {\n  return <TooltipPrimitive.Provider data-slot=\"tooltip-provider\" {...props} />;\n}\n\ntype TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root> & {\n  followCursor?: boolean | 'x' | 'y';\n  followCursorSpringOptions?: SpringOptions;\n};\n\nfunction Tooltip({\n  followCursor = false,\n  followCursorSpringOptions = { stiffness: 200, damping: 17 },\n  ...props\n}: TooltipProps) {\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen,\n    onChange: props?.onOpenChange,\n  });\n  const x = useMotionValue(0);\n  const y = useMotionValue(0);\n\n  return (\n    <LocalTooltipProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        x,\n        y,\n        followCursor,\n        followCursorSpringOptions,\n      }}\n    >\n      <TooltipPrimitive.Root\n        data-slot=\"tooltip\"\n        {...props}\n        onOpenChange={setIsOpen}\n      />\n    </LocalTooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Trigger\n>;\n\nfunction TooltipTrigger({ onMouseMove, ...props }: TooltipTriggerProps) {\n  const { x, y, followCursor } = useTooltip();\n\n  const handleMouseMove = (\n    event: Parameters<NonNullable<TooltipTriggerProps['onMouseMove']>>[0],\n  ) => {\n    onMouseMove?.(event);\n\n    const target = event.currentTarget.getBoundingClientRect();\n\n    if (followCursor === 'x' || followCursor === true) {\n      const eventOffsetX = event.clientX - target.left;\n      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;\n      x.set(offsetXFromCenter);\n    }\n\n    if (followCursor === 'y' || followCursor === true) {\n      const eventOffsetY = event.clientY - target.top;\n      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;\n      y.set(offsetYFromCenter);\n    }\n  };\n\n  return (\n    <TooltipPrimitive.Trigger\n      data-slot=\"tooltip-trigger\"\n      onMouseMove={handleMouseMove}\n      {...props}\n    />\n  );\n}\n\ntype TooltipPortalProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Portal>,\n  'keepMounted'\n>;\n\nfunction TooltipPortal(props: TooltipPortalProps) {\n  const { isOpen } = useTooltip();\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <TooltipPrimitive.Portal\n          keepMounted\n          data-slot=\"tooltip-portal\"\n          {...props}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype TooltipPositionerProps = React.ComponentProps<\n  typeof TooltipPrimitive.Positioner\n>;\n\nfunction TooltipPositioner(props: TooltipPositionerProps) {\n  return (\n    <TooltipPrimitive.Positioner data-slot=\"tooltip-positioner\" {...props} />\n  );\n}\n\ntype TooltipPopupProps = Omit<\n  React.ComponentProps<typeof TooltipPrimitive.Popup>,\n  'render'\n> &\n  HTMLMotionProps<'div'>;\n\nfunction TooltipPopup({\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  style,\n  ...props\n}: TooltipPopupProps) {\n  const { x, y, followCursor, followCursorSpringOptions } = useTooltip();\n  const translateX = useSpring(x, followCursorSpringOptions);\n  const translateY = useSpring(y, followCursorSpringOptions);\n\n  return (\n    <TooltipPrimitive.Popup\n      render={\n        <motion.div\n          key=\"tooltip-popup\"\n          data-slot=\"tooltip-popup\"\n          initial={{ opacity: 0, scale: 0.5 }}\n          animate={{ opacity: 1, scale: 1 }}\n          exit={{ opacity: 0, scale: 0.5 }}\n          transition={transition}\n          style={{\n            x:\n              followCursor === 'x' || followCursor === true\n                ? translateX\n                : undefined,\n            y:\n              followCursor === 'y' || followCursor === true\n                ? translateY\n                : undefined,\n            ...style,\n          }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype TooltipArrowProps = React.ComponentProps<typeof TooltipPrimitive.Arrow>;\n\nfunction TooltipArrow(props: TooltipArrowProps) {\n  return <TooltipPrimitive.Arrow data-slot=\"tooltip-arrow\" {...props} />;\n}\n\nexport {\n  TooltipProvider,\n  Tooltip,\n  TooltipTrigger,\n  TooltipPortal,\n  TooltipPositioner,\n  TooltipPopup,\n  TooltipArrow,\n  useTooltip,\n  type TooltipProviderProps,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipPortalProps,\n  type TooltipPositionerProps,\n  type TooltipPopupProps,\n  type TooltipArrowProps,\n  type TooltipContextType,\n};",
       },
     ],
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/base/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/base/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22395,9 +22102,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/buttons/button/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/buttons/button/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22436,9 +22142,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/buttons/flip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/buttons/flip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22477,9 +22182,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/buttons/liquid/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/buttons/liquid/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22518,9 +22222,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/buttons/ripple/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/buttons/ripple/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22560,9 +22263,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/auto-height/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/auto-height/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22602,9 +22304,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/blur/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/blur/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22641,9 +22342,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/click/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/click/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22683,9 +22383,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/effect/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/effect/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22725,9 +22424,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/fade/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/fade/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22764,9 +22462,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/highlight/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/highlight/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22802,9 +22499,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/image-zoom/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/image-zoom/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22841,9 +22537,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/magnetic/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/magnetic/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22883,9 +22578,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/particles/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/particles/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22922,9 +22616,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/shine/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/shine/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -22964,9 +22657,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/slide/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/slide/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23002,9 +22694,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/theme-toggler/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/theme-toggler/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23044,9 +22735,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/tilt/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/tilt/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23086,9 +22776,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/effects/zoom/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/effects/zoom/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23125,9 +22814,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/headless/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/headless/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23164,9 +22852,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/headless/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/headless/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23203,9 +22890,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/headless/disclosure/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/headless/disclosure/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23242,9 +22928,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/headless/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/headless/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23281,9 +22966,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/headless/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/headless/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23324,9 +23008,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/headless/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/headless/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23366,9 +23049,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/accordion/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/accordion/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23408,9 +23090,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/alert-dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/alert-dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23450,9 +23131,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/checkbox/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/checkbox/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23491,9 +23171,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/collapsible/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/collapsible/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23533,9 +23212,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/dialog/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/dialog/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23577,9 +23255,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/dropdown-menu/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/dropdown-menu/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23661,9 +23338,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/hover-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/hover-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23702,9 +23378,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/popover/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/popover/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23743,9 +23418,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/preview-link-card/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/preview-link-card/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23782,9 +23456,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/progress/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/progress/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23824,9 +23497,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/radio-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/radio-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23906,9 +23578,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/switch/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/switch/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -23989,9 +23660,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/toggle/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/toggle/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24031,9 +23701,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/toggle-group/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/toggle-group/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24073,9 +23742,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/radix/tooltip/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/radix/tooltip/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24111,9 +23779,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/counting-number/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/counting-number/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24149,9 +23816,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/gradient/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/gradient/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24187,9 +23853,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/highlight/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/highlight/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24226,9 +23891,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/morphing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/morphing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24264,9 +23928,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/rolling/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/rolling/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24305,9 +23968,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/rotating/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/rotating/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24346,9 +24008,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/scrolling-number/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/scrolling-number/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24384,9 +24045,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/shimmering/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/shimmering/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24422,9 +24082,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/sliding-number/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/sliding-number/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24460,9 +24119,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/splitting/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/splitting/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>
@@ -24501,9 +24159,8 @@ export const index: Record<string, any> = {
     keywords: [],
     component: (function () {
       const LazyComp = React.lazy(async () => {
-        const mod = await import(
-          '@/registry/primitives/texts/typing/index.tsx'
-        );
+        const mod =
+          await import('@/registry/primitives/texts/typing/index.tsx');
         const exportName =
           Object.keys(mod).find(
             (key) =>

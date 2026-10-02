@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Checkbox as CheckboxPrimitive } from '@base-ui-components/react/checkbox';
+import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import {
   motion,
   type HTMLMotionProps,
@@ -33,7 +33,8 @@ function Checkbox({
   onCheckedChange,
   indeterminate,
   value,
-  nativeButton,
+  // Rendered as a motion.button: tell Base UI it's a native button.
+  nativeButton = true,
   parent,
   disabled,
   readOnly,

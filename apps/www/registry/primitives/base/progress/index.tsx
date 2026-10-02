@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Progress as ProgressPrimitives } from '@base-ui-components/react/progress';
+import { Progress as ProgressPrimitives } from '@base-ui/react/progress';
 import { motion } from 'motion/react';
 
 import {

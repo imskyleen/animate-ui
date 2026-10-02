@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Preview Link Card",
   "description": "Displays a preview image of a link when hovered.",
-  "dependencies": ["motion", "@base-ui-components/react"],
+  "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
     "@animate-ui/primitives-base-preview-card",
     "@animate-ui/lib-get-strict-context"

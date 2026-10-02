@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { RadioGroup as RadioGroupPrimitive } from '@base-ui-components/react/radio-group';
-import { Radio as RadioPrimitive } from '@base-ui-components/react/radio';
+import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
+import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
@@ -89,6 +89,8 @@ function Radio({
   value: valueProps,
   disabled,
   required,
+  // Rendered as a motion.button: tell Base UI it's a native button.
+  nativeButton = true,
   ...props
 }: RadioProps) {
   const { value } = useRadioGroup();
@@ -104,6 +106,7 @@ function Radio({
         value={valueProps}
         disabled={disabled}
         required={required}
+        nativeButton={nativeButton}
         render={
           <motion.button
             data-slot="radio-group-item"

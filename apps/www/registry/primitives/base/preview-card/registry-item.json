@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Preview Card",
   "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
-  "dependencies": ["motion", "@base-ui-components/react"],
+  "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
     "@animate-ui/lib-get-strict-context",
     "@animate-ui/hooks-use-controlled-state"

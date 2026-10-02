@@ -4,9 +4,7 @@
   "type": "registry:ui",
   "title": "Motion Carousel Demo",
   "description": "Demo showing motion carousel.",
-  "registryDependencies": [
-    "@animate-ui/components-community-motion-carousel"
-  ],
+  "registryDependencies": ["@animate-ui/components-community-motion-carousel"],
   "files": [
     {
       "path": "registry/demo/components/community/motion-carousel/index.tsx",

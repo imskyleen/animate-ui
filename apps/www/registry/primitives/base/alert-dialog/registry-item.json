@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Alert Dialog",
   "description": "A dialog that requires user response to proceed.",
-  "dependencies": ["motion", "@base-ui-components/react"],
+  "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
     "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/lib-get-strict-context"

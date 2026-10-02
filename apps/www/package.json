@@ -17,9 +17,9 @@
     "test:visual-diff": "tsx tests/visual-diff.mts"
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-beta.4",
+    "@base-ui/react": "^1.8.0",
     "@floating-ui/react": "^0.27.15",
-    "@headlessui/react": "^2.2.6",
+    "@headlessui/react": "^2.2.10",
     "@workspace/ui": "workspace:*",
     "class-variance-authority": "catalog:",
     "date-fns": "^4.1.0",

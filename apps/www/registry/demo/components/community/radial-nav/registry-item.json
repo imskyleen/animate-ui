@@ -4,9 +4,7 @@
   "type": "registry:ui",
   "title": "Radial Nav Demo",
   "description": "Demo Radial Nav.",
-  "registryDependencies": [
-    "@animate-ui/components-community-radial-nav"
-  ],
+  "registryDependencies": ["@animate-ui/components-community-radial-nav"],
   "files": [
     {
       "path": "registry/demo/components/community/radial-nav/index.tsx",

@@ -66,7 +66,7 @@ function Files({
         multiple
         defaultValue={defaultOpen}
         value={open}
-        onValueChange={setOpenValue}
+        onValueChange={(value) => setOpenValue(value as string[])}
         style={{
           position: 'relative',
           overflow: 'auto',

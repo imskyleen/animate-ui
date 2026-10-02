@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence, type Transition } from 'motion/react';
-import { ContextMenu } from '@base-ui-components/react/context-menu';
+import { ContextMenu } from '@base-ui/react/context-menu';
 import { cn } from '@workspace/ui/lib/utils';
 
 type RadialMenuProps = {

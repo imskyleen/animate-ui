@@ -826,7 +826,7 @@
       "dependencies": [
         "motion",
         "lucide-react",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [],
       "files": [
@@ -14574,7 +14574,7 @@
       "description": "An easily stylable accordion component.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14595,7 +14595,7 @@
       "description": "A dialog that requires user response to proceed.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
@@ -14616,7 +14616,7 @@
       "description": "An easily stylable checkbox component.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14637,7 +14637,7 @@
       "description": "A collapsible panel controlled by a button.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14658,7 +14658,7 @@
       "description": "A popup that opens on top of the entire page.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
@@ -14701,7 +14701,7 @@
       "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/primitives-effects-highlight",
@@ -14724,7 +14724,7 @@
       "description": "An accessible popup anchored to a button.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14745,7 +14745,7 @@
       "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14766,7 +14766,7 @@
       "description": "Displays a preview image of a link when hovered.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/primitives-base-preview-card",
@@ -14787,7 +14787,7 @@
       "description": "Displays the status of a task that takes a long time.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14808,7 +14808,7 @@
       "description": "An easily stylable radio button component.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14829,7 +14829,7 @@
       "description": "A control that indicates whether a setting is on or off.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14850,7 +14850,7 @@
       "description": "A component for toggling between related panels on the same page.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/primitives-effects-auto-height",
@@ -14873,7 +14873,7 @@
       "description": "A two-state button that can be on or off.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14894,7 +14894,7 @@
       "description": "Provides a shared state to a series of toggle buttons.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -14916,7 +14916,7 @@
       "description": "A popup that appears when an element is hovered or focused, showing a hint for sighted users.",
       "dependencies": [
         "motion",
-        "@base-ui-components/react"
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",

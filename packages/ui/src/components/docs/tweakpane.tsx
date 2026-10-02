@@ -56,8 +56,7 @@ interface UncontrolledTweakpaneProps {
 
 type TweakpaneProps = ControlledTweakpaneProps | UncontrolledTweakpaneProps;
 
-interface NumericInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface NumericInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value: number;
   onValueChange: (value: number) => void;
   min?: number;
@@ -75,8 +74,13 @@ const NumericInput: React.FC<NumericInputProps> = ({
   ...props
 }) => {
   const [display, setDisplay] = React.useState<string>(value.toString());
+  const [prevValue, setPrevValue] = React.useState(value);
 
-  React.useEffect(() => setDisplay(value.toString()), [value]);
+  // Resync the text field when the value changes from outside.
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setDisplay(value.toString());
+  }
 
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -398,10 +402,19 @@ const Tweakpane = ({ onBindsChange, ...props }: TweakpaneProps) => {
     [onBindsChange],
   );
 
+  const controlledBinds = 'binds' in props ? props.binds : undefined;
+  const [prevBinds, setPrevBinds] = React.useState(controlledBinds);
+
+  // Resync local binds when controlled binds change.
+  if (controlledBinds !== prevBinds) {
+    setPrevBinds(controlledBinds);
+    if (controlledBinds) setLocalBinds(controlledBinds);
+  }
+
   React.useEffect(() => {
-    if ('binds' in props) setLocalBinds(props.binds);
-    setTimeout(() => setInitial(true), 500);
-  }, [props]);
+    const timeout = setTimeout(() => setInitial(true), 500);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <div className="bg-transparent pl-0 p-1.5 size-full">

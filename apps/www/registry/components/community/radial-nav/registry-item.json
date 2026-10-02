@@ -4,10 +4,7 @@
   "type": "registry:ui",
   "title": "Radial Nav",
   "description": "A circular navigation menu with animated pointer and expanding buttons for smooth interactive transitions.",
-  "dependencies": [
-    "motion",
-    "lucide-react"
-  ],
+  "dependencies": ["motion", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {

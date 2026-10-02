@@ -27,7 +27,7 @@ export const BaseProgressDemo = () => {
   }, [progress]);
 
   return (
-    <Progress value={progress} className="w-[300px] space-y-2">
+    <Progress value={progress} className="w-[300px] flex flex-col gap-2">
       <div className="flex items-center justify-between gap-1">
         <ProgressLabel className="text-sm font-medium">
           Export data

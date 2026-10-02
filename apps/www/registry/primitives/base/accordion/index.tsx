@@ -1,15 +1,17 @@
 'use client';
 
 import * as React from 'react';
-import { Accordion as AccordionPrimitive } from '@base-ui-components/react/accordion';
+import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 
+type AccordionValue = AccordionPrimitive.Root.Props['value'];
+
 type AccordionContextType = {
-  value: string | string[] | undefined;
-  setValue: (value: string | string[] | undefined) => void;
+  value: AccordionValue;
+  setValue: (value: AccordionValue) => void;
 };
 
 type AccordionItemContextType = {
@@ -26,12 +28,10 @@ const [AccordionItemProvider, useAccordionItem] =
 type AccordionProps = React.ComponentProps<typeof AccordionPrimitive.Root>;
 
 function Accordion(props: AccordionProps) {
-  const [value, setValue] = useControlledState<string | string[] | undefined>({
+  const [value, setValue] = useControlledState<AccordionValue>({
     value: props?.value,
     defaultValue: props?.defaultValue,
-    onChange: props?.onValueChange as (
-      value: string | string[] | undefined,
-    ) => void,
+    onChange: props?.onValueChange as (value: AccordionValue) => void,
   });
 
   return (

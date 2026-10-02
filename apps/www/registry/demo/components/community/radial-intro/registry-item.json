@@ -4,9 +4,7 @@
   "type": "registry:ui",
   "title": "Radial Intro Demo",
   "description": "Demo showing radial intro.",
-  "registryDependencies": [
-    "@animate-ui/components-community-radial-intro"
-  ],
+  "registryDependencies": ["@animate-ui/components-community-radial-intro"],
   "files": [
     {
       "path": "registry/demo/components/community/radial-intro/index.tsx",

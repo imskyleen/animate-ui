@@ -18,7 +18,7 @@ const CollapsibleContext = React.createContext<
 >(undefined);
 
 const useCollapsible = (): CollapsibleContextType => {
-  const context = React.useContext(CollapsibleContext);
+  const context = React.use(CollapsibleContext);
   if (!context) {
     throw new Error('useCollapsible must be used within a Collapsible');
   }
@@ -28,24 +28,21 @@ const useCollapsible = (): CollapsibleContextType => {
 type CollapsibleProps = React.ComponentProps<typeof CollapsiblePrimitive.Root>;
 
 function Collapsible({ children, ...props }: CollapsibleProps) {
-  const [isOpen, setIsOpen] = React.useState(
-    props?.open ?? props?.defaultOpen ?? false,
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(
+    props?.defaultOpen ?? false,
   );
-
-  React.useEffect(() => {
-    if (props?.open !== undefined) setIsOpen(props.open);
-  }, [props?.open]);
+  const isOpen = props?.open ?? uncontrolledOpen;
 
   const handleOpenChange = React.useCallback(
     (open: boolean) => {
-      setIsOpen(open);
+      setUncontrolledOpen(open);
       props.onOpenChange?.(open);
     },
     [props],
   );
 
   return (
-    <CollapsibleContext.Provider value={{ isOpen }}>
+    <CollapsibleContext value={{ isOpen }}>
       <CollapsiblePrimitive.Root
         data-slot="collapsible"
         {...props}
@@ -53,7 +50,7 @@ function Collapsible({ children, ...props }: CollapsibleProps) {
       >
         {children}
       </CollapsiblePrimitive.Root>
-    </CollapsibleContext.Provider>
+    </CollapsibleContext>
   );
 }
 

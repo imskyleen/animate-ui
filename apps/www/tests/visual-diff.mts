@@ -13,12 +13,18 @@ const currentDir = path.join(root, '.results/screenshots');
 const diffDir = path.join(root, '.results/diff');
 const THRESHOLD = 0.001; // share of differing pixels tolerated
 
-// Random/canvas-driven demos: never identical between two runs.
+// Random, canvas or time-driven demos: never identical between two runs.
 const NON_DETERMINISTIC = new Set([
   'demo-components-backgrounds-fireworks.png',
   'demo-components-backgrounds-fireworks-circle.png',
   'demo-components-backgrounds-gravity-stars.png',
   'demo-components-community-radial-intro.png',
+  // Time-driven text/caret animations.
+  'demo-primitives-texts-typing.png',
+  'demo-primitives-texts-scrolling-number.png',
+  'demo-components-animate-code.png',
+  'demo-components-animate-code-tabs.png',
+  'demo-components-animate-cursor.png',
 ]);
 
 if (process.argv.includes('--update')) {

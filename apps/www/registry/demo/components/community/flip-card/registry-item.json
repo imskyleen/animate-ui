@@ -4,9 +4,7 @@
   "type": "registry:ui",
   "title": "Flip Card Demo",
   "description": "Demo showing the flip card component.",
-  "registryDependencies": [
-    "@animate-ui/components-community-flip-card"
-  ],
+  "registryDependencies": ["@animate-ui/components-community-flip-card"],
   "files": [
     {
       "path": "registry/demo/components/community/flip-card/index.tsx",

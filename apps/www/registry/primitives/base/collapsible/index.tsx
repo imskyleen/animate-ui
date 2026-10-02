@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Collapsible as CollapsiblePrimitive } from '@base-ui-components/react/collapsible';
+import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';

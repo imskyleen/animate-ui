@@ -5,7 +5,7 @@
   "description": "Displays a preview image of a link when hovered.",
   "dependencies": [
     "motion",
-    "@base-ui-components/react"
+    "@base-ui/react"
   ],
   "registryDependencies": [
     "@animate-ui/primitives-base-preview-card",

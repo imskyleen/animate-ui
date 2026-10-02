@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Switch as SwitchPrimitives } from '@base-ui-components/react/switch';
+import { Switch as SwitchPrimitives } from '@base-ui/react/switch';
 import {
   motion,
   type TargetAndTransition,
@@ -34,7 +34,8 @@ function Switch({
   defaultChecked,
   checked,
   onCheckedChange,
-  nativeButton,
+  // Rendered as a motion.button: tell Base UI it's a native button.
+  nativeButton = true,
   disabled,
   readOnly,
   required,
@@ -86,10 +87,7 @@ type SwitchThumbProps = Omit<
 > &
   HTMLMotionProps<'div'> & {
     pressedAnimation?:
-      | TargetAndTransition
-      | VariantLabels
-      | boolean
-      | LegacyAnimationControls;
+      TargetAndTransition | VariantLabels | boolean | LegacyAnimationControls;
   };
 
 function SwitchThumb({
