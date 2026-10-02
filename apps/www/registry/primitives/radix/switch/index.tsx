@@ -76,7 +76,6 @@ function SwitchThumb({
     <SwitchPrimitives.Thumb asChild>
       <motion.div
         data-slot="switch-thumb"
-        whileTap="tab"
         layout
         transition={transition}
         animate={isPressed ? pressedAnimation : undefined}

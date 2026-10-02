@@ -78,7 +78,6 @@ function SwitchThumb<TTag extends React.ElementType = typeof motion.div>(
   return (
     <Component
       data-slot="switch-thumb"
-      whileTap="tab"
       layout
       transition={transition}
       animate={isPressed ? pressedAnimation : undefined}

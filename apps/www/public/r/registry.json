@@ -14348,6 +14348,29 @@
       ]
     },
     {
+      "name": "lib-motion",
+      "type": "registry:lib",
+      "title": "Motion tokens",
+      "description": "Shared motion tokens (curves, durations, springs, scales) and a reduced-motion config used by every Animate UI component.",
+      "dependencies": [
+        "motion"
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-strong": "cubic-bezier(0.23, 1, 0.32, 1)",
+          "ease-in-out-strong": "cubic-bezier(0.77, 0, 0.175, 1)",
+          "ease-drawer": "cubic-bezier(0.32, 0.72, 0, 1)"
+        }
+      },
+      "files": [
+        {
+          "path": "registry/lib/motion/index.tsx",
+          "type": "registry:lib",
+          "target": "lib/motion.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-animate-avatar-group",
       "type": "registry:ui",
       "title": "Avatar Group",

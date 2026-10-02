@@ -18,6 +18,9 @@ const NON_DETERMINISTIC = new Set([
   'demo-components-backgrounds-fireworks.png',
   'demo-components-backgrounds-fireworks-circle.png',
   'demo-components-backgrounds-gravity-stars.png',
+  'demo-components-backgrounds-bubble.png',
+  'demo-components-backgrounds-hole.png',
+  'demo-components-backgrounds-stars.png',
   'demo-components-community-radial-intro.png',
   // Time-driven text/caret animations.
   'demo-primitives-texts-typing.png',

@@ -45,6 +45,7 @@ const animations = {
           '-5%',
           '-5%',
           '-5%',
+          '-5%',
           0,
         ],
         transition: {

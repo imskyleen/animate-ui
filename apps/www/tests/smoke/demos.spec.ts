@@ -40,6 +40,8 @@ for (const name of getRegistryItems('demo-')) {
     await page.screenshot({
       path: `tests/.results/screenshots/${name}.png`,
       animations: 'disabled',
+      // The Next.js dev indicator renders differently between runs.
+      style: 'nextjs-portal { display: none !important; }',
     });
 
     expect(errors, errors.join('\n')).toEqual([]);

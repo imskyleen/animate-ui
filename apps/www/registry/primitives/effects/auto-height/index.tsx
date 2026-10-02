@@ -28,7 +28,6 @@ function AutoHeight({
     type: 'spring',
     stiffness: 300,
     damping: 30,
-    bounce: 0,
     restDelta: 0.01,
   },
   style,

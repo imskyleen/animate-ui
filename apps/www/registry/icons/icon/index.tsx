@@ -437,6 +437,7 @@ function AnimateIcon({
         animate,
         initialOnAnimateEnd,
         completeOnStop,
+        persistOnAnimateEnd,
         delay,
       }}
     >

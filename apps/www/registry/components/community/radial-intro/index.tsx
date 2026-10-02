@@ -63,7 +63,7 @@ function RadialIntro({
     const stops: Array<() => void> = [];
 
     // image lift-in
-    delay(() => animate(imgs, { top: 0 }, transition), 250);
+    stops.push(delay(() => animate(imgs, { top: 0 }, transition), 250));
 
     // build sequence for orbit placement
     const orbitPlacementSequence: AnimationSequence = [
@@ -80,10 +80,10 @@ function RadialIntro({
     ];
 
     // play placement sequence
-    delay(() => animate(orbitPlacementSequence), 700);
+    stops.push(delay(() => animate(orbitPlacementSequence), 700));
 
     // start continuous spin for arms and images
-    delay(() => {
+    const cancelSpin = delay(() => {
       // arms spin clockwise
       arms.forEach((el) => {
         const angle = angleOf(el);
@@ -103,6 +103,7 @@ function RadialIntro({
         stops.push(() => ctrl.cancel());
       });
     }, 1300);
+    stops.push(cancelSpin);
 
     return () => stops.forEach((stop) => stop());
   }, []);
