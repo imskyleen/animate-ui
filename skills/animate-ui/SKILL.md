@@ -63,7 +63,7 @@ Set `transform-origin` from the library in the primitive itself, so the primitiv
 
 ### 5. Apply tokens and rules
 
-Import from Animate UI's motion lib. The registry item is `@animate-ui/lib-motion`; it installs to the project's `lib` alias (`@/lib/motion` in a default shadcn app): check `components.json` for the actual path. Import its `transition` export as `motionTransition`, since components also take a `transition` prop. If the project doesn't use the registry, copy the values from `references/tokens.md` into one local file; never scatter them.
+Import from Animate UI's motion lib. The registry item is `@animate-ui/lib-motion`; it installs to the project's `lib` alias (`@/lib/motion` in a default shadcn app). The helpers `getStrictContext` and `useControlledState` install to the `lib` and `hooks` aliases the same way. Check `components.json` for the actual paths before importing. Import its `transition` export as `motionTransition`, since components also take a `transition` prop. If the project doesn't use the registry, copy the values from `references/tokens.md` into one local file; never scatter them.
 
 Check every rule in `references/rules.md`. The ones that matter most:
 

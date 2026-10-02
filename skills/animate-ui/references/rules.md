@@ -36,7 +36,7 @@ Reduced motion means gentler, not none: the element still fades. JavaScript loop
 
 ### 2. Hover effects only on hover-capable pointers
 
-Touch browsers fire `mouseenter` on tap and never fire `mouseleave`, so the hover state sticks. Motion's `whileHover` already ignores touch. For hand-wired hover, gate it.
+Touch browsers fire `mouseenter` on tap and never fire `mouseleave`, so the hover state sticks. Motion's `whileHover` already ignores touch, and so do hover-driven library components (Radix Tooltip and Hover Card, Base UI Tooltip and Preview Card): don't add a gate to those. Gate hand-wired hover.
 
 ```tsx
 // Avoid

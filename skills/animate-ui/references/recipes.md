@@ -49,6 +49,11 @@ function TooltipContentMotion({
 
 - Enter with `transition.tooltip` (0.15s) for tooltips, `transition.dropdown` (0.2s) for popovers, menus and selects. Exit with `transition.exit` (0.15s), set inside the `exit` target.
 - Scale only, no directional slide: the trigger-anchored origin already shows where it came from. Drop shadcn's `slide-in-from-*` classes.
+- Hover Card and Preview Card use popover timing (`transition.dropdown` in, `transition.exit` out). Their open delay already keeps a sweep across triggers calm, so they don't need the warm skip.
+- Select, Radix: needs `@radix-ui/react-select` 2.x (bundled in `radix-ui` 1.4+), which accepts `forceMount` on Portal and Content; older versions can't animate the exit. With `position="popper"` (shadcn's default) use the full recipe. With `position="item-aligned"`, fade only: Radix measures the list on mount to align the selected item, and there is no origin variable.
+- Everything the Content renders goes inside the `motion.div`: Select's scroll buttons and Viewport, an Arrow, etc.
+- shadcn's side offset classes (`data-[side=bottom]:translate-y-1`, …) can stay: Tailwind v4 applies them through the CSS `translate` property, which composes with the animated `transform`. With Tailwind v3 they would conflict; move the offset to `sideOffset`.
+- Reopening while the exit is still playing mounts a fresh element instead of retargeting the leaving one. That's expected for presence-gated overlays given the short exit. While it exits, Radix still blocks outside clicks for those 150ms; that's acceptable.
 - Submenus (Dropdown Menu, Context Menu, Menubar) are opened tens of times a day: fade only, no scale, with `transition.exit` both ways. They read the same `--radix-dropdown-menu-content-transform-origin`. Closing the root menu closes them; both exit together.
 - Origin: in the primitive, from the library variable (Base UI: `var(--transform-origin)`).
 - Tooltips only: skip the entrance when warm. Track the last close time in a module-level variable and compare on open:

@@ -128,7 +128,7 @@ function PopoverContentMotion({
 }
 ```
 
-Remove `forceMount` and `asChild` from the public props type since the component owns them.
+Remove `forceMount` and `asChild` from the public props type since the component owns them. This is the accepted exception to "same props". If the original puts a `data-slot` on the Portal (shadcn does: `data-slot="popover-portal"`), keep it next to `forceMount`.
 
 Tooltip: `TooltipContent` gets `data-state="delayed-open"` or `"instant-open"`, but shadcn's `Tooltip` gives each tooltip its own Provider, so the library never reports "instant". Track warm tooltips yourself (see the Overlay recipe).
 
