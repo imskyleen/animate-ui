@@ -14,7 +14,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "test:smoke": "playwright test tests/smoke",
     "check-types": "tsc --noEmit",
-    "test:visual-diff": "tsx tests/visual-diff.mts"
+    "test:visual-diff": "tsx tests/visual-diff.mts",
+    "test:interaction": "playwright test tests/interaction"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

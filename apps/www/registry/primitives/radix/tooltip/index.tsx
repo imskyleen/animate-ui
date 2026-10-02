@@ -5,6 +5,7 @@ import { Tooltip as TooltipPrimitive } from 'radix-ui';
 import {
   AnimatePresence,
   motion,
+  useMotionTemplate,
   useMotionValue,
   useSpring,
   type SpringOptions,
@@ -14,10 +15,23 @@ import {
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
+import {
+  ReducedMotionConfig,
+  scale,
+  spring,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
+
+// A tooltip opened within this window after another one closed is "warm":
+// it appears without an entrance animation, like moving along a toolbar.
+const WARM_WINDOW_MS = 300;
+let lastTooltipCloseAt = 0;
 
 type TooltipContextType = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  isWarm: boolean;
   x: MotionValue<number>;
   y: MotionValue<number>;
   followCursor?: boolean | 'x' | 'y';
@@ -40,11 +54,17 @@ type TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root> & {
   followCursorSpringOptions?: SpringOptions;
 };
 
+const defaultFollowSpring: SpringOptions = {
+  duration: spring.default.duration,
+  bounce: spring.default.bounce,
+};
+
 function Tooltip({
   followCursor = false,
-  followCursorSpringOptions = { stiffness: 200, damping: 17 },
+  followCursorSpringOptions = defaultFollowSpring,
   ...props
 }: TooltipProps) {
+  const [isWarm, setIsWarm] = React.useState(false);
   const [isOpen, setIsOpen] = useControlledState({
     value: props?.open,
     defaultValue: props?.defaultOpen,
@@ -53,11 +73,18 @@ function Tooltip({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
+  const handleOpenChange = (open: boolean) => {
+    if (open) setIsWarm(Date.now() - lastTooltipCloseAt < WARM_WINDOW_MS);
+    else lastTooltipCloseAt = Date.now();
+    setIsOpen(open);
+  };
+
   return (
     <LocalTooltipProvider
       value={{
         isOpen,
         setIsOpen,
+        isWarm,
         x,
         y,
         followCursor,
@@ -67,7 +94,7 @@ function Tooltip({
       <TooltipPrimitive.Root
         data-slot="tooltip"
         {...props}
-        onOpenChange={setIsOpen}
+        onOpenChange={handleOpenChange}
       />
     </LocalTooltipProvider>
   );
@@ -82,19 +109,18 @@ function TooltipTrigger({ onMouseMove, ...props }: TooltipTriggerProps) {
 
   const handleMouseMove = (event: React.MouseEvent<HTMLButtonElement>) => {
     onMouseMove?.(event);
+    if (!followCursor) return;
 
     const target = event.currentTarget.getBoundingClientRect();
 
     if (followCursor === 'x' || followCursor === true) {
       const eventOffsetX = event.clientX - target.left;
-      const offsetXFromCenter = (eventOffsetX - target.width / 2) / 2;
-      x.set(offsetXFromCenter);
+      x.set((eventOffsetX - target.width / 2) / 2);
     }
 
     if (followCursor === 'y' || followCursor === true) {
       const eventOffsetY = event.clientY - target.top;
-      const offsetYFromCenter = (eventOffsetY - target.height / 2) / 2;
-      y.set(offsetYFromCenter);
+      y.set((eventOffsetY - target.height / 2) / 2);
     }
   };
 
@@ -112,7 +138,7 @@ type TooltipPortalProps = Omit<
   'forceMount'
 >;
 
-function TooltipPortal(props: TooltipPortalProps) {
+function TooltipPortal({ children, ...props }: TooltipPortalProps) {
   const { isOpen } = useTooltip();
 
   return (
@@ -122,7 +148,9 @@ function TooltipPortal(props: TooltipPortalProps) {
           forceMount
           data-slot="tooltip-portal"
           {...props}
-        />
+        >
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </TooltipPrimitive.Portal>
       )}
     </AnimatePresence>
   );
@@ -148,12 +176,22 @@ function TooltipContent({
   sticky,
   hideWhenDetached,
   style,
-  transition = { type: 'spring', stiffness: 300, damping: 25 },
+  transition = motionTransition.tooltip,
   ...props
 }: TooltipContentProps) {
-  const { x, y, followCursor, followCursorSpringOptions } = useTooltip();
+  const { isWarm, x, y, followCursor, followCursorSpringOptions } =
+    useTooltip();
   const translateX = useSpring(x, followCursorSpringOptions);
   const translateY = useSpring(y, followCursorSpringOptions);
+  // `translate` composes with the animated `transform`, so following the
+  // cursor never interrupts the entrance.
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
+  const visible = { opacity: 1, transform: 'scale(1)' };
+  const translate = useMotionTemplate`${followCursor === 'y' ? 0 : translateX}px ${followCursor === 'x' ? 0 : translateY}px`;
 
   return (
     <TooltipPrimitive.Content
@@ -173,21 +211,14 @@ function TooltipContent({
       onPointerDownOutside={onPointerDownOutside}
     >
       <motion.div
-        key="popover-content"
-        data-slot="popover-content"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.5 }}
+        data-slot="tooltip-content"
+        initial={isWarm ? false : hidden}
+        animate={visible}
+        exit={hidden}
         transition={transition}
         style={{
-          x:
-            followCursor === 'x' || followCursor === true
-              ? translateX
-              : undefined,
-          y:
-            followCursor === 'y' || followCursor === true
-              ? translateY
-              : undefined,
+          transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
+          translate: followCursor ? translate : undefined,
           ...style,
         }}
         {...props}

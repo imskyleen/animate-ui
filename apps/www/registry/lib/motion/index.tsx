@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   MotionConfig,
   MotionConfigContext,
+  useReducedMotionConfig,
   type Transition,
 } from 'motion/react';
 
@@ -85,6 +86,16 @@ function ReducedMotionConfig({ children }: ReducedMotionConfigProps) {
   );
 }
 
+/**
+ * True when motion should be reduced. Call it inside `ReducedMotionConfig`.
+ *
+ * Motion's reduced-motion setting only skips individual transform props
+ * (`x`, `scale`…), not a `transform` string. Components animate `transform`
+ * strings (hardware accelerated), so they neutralize them with this:
+ * `const enter = reduce ? 1 : scale.enter`.
+ */
+const useShouldReduceMotion = useReducedMotionConfig;
+
 export {
   motionTokens,
   ease,
@@ -93,5 +104,6 @@ export {
   scale,
   transition,
   ReducedMotionConfig,
+  useShouldReduceMotion,
   type ReducedMotionConfigProps,
 };
