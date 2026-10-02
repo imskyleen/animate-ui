@@ -6,7 +6,7 @@ Animate UI ships its tokens as a registry item:
 npx shadcn@latest add @animate-ui/lib-motion
 ```
 
-It installs `lib/motion.tsx` and adds three Tailwind theme variables (`ease-out-strong`, `ease-in-out-strong`, `ease-drawer`). Every Animate UI component imports from it:
+It installs `lib/motion.tsx` (under the project's `lib` alias from `components.json`) and adds three Tailwind theme variables (`ease-out-strong`, `ease-in-out-strong`, `ease-drawer`). Every Animate UI component imports from it:
 
 ```tsx
 import {
@@ -39,6 +39,7 @@ Never `easeIn` on UI. Motion's built-in `easeOut` and `easeInOut` are too weak f
 | `duration.press`     | 0.12  | Press feedback                      |
 | `duration.tooltip`   | 0.15  | Tooltips, small popovers            |
 | `duration.dropdown`  | 0.2   | Dropdowns, menus, selects, popovers |
+| `duration.exit`      | 0.15  | Closing tooltips, popovers, menus   |
 | `duration.modal`     | 0.3   | Dialog entrance                     |
 | `duration.modalExit` | 0.2   | Dialog exit                         |
 
@@ -62,7 +63,9 @@ Use the `duration`/`bounce` form only. `bounce` is ignored when `stiffness` or `
 
 ## Ready-made transitions
 
-`transition.press`, `transition.tooltip`, `transition.dropdown`, `transition.modal`, `transition.modalExit`, `transition.drawer`: each pairs a duration with its curve.
+`transition.press`, `transition.tooltip`, `transition.dropdown`, `transition.exit`, `transition.disclosure`, `transition.modal`, `transition.modalExit`, `transition.drawer`: each pairs a duration with its curve. `transition.instant` (`{ duration: 0 }`) is the token for a deliberately instant change.
+
+Import the `transition` export as `motionTransition`, since components also take a `transition` prop.
 
 ## Reduced motion
 

@@ -33,6 +33,8 @@ const duration = {
   press: 0.12,
   tooltip: 0.15,
   dropdown: 0.2,
+  /** Closing tooltips, popovers and menus: faster than their entrance. */
+  exit: 0.15,
   modal: 0.3,
   /** Dismissals are the system's response: faster than the entrance. */
   modalExit: 0.2,
@@ -57,11 +59,14 @@ const transition = {
   press: { duration: duration.press, ease: ease.out },
   tooltip: { duration: duration.tooltip, ease: ease.out },
   dropdown: { duration: duration.dropdown, ease: ease.out },
+  exit: { duration: duration.exit, ease: ease.out },
   /** Accordion and collapsible height (one of the few layout animations). */
   disclosure: { duration: duration.dropdown, ease: ease.out },
   modal: { duration: duration.modal, ease: ease.out },
   modalExit: { duration: duration.modalExit, ease: ease.out },
   drawer: { duration: 0.5, ease: ease.drawer },
+  /** Deliberately no animation (e.g. keyboard-driven changes). */
+  instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;
 
 const motionTokens = { ease, duration, spring, scale, transition } as const;

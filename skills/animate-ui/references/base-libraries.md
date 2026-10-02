@@ -1,117 +1,166 @@
 # Wiring Motion into a base library
 
-An exit animation needs the element to stay mounted until the animation ends. Each library unmounts closed content on its own, so the primitive takes over: it tracks `open` itself, gates rendering with `AnimatePresence`, and asks the library to keep the content mounted.
+An exit animation needs the element to stay mounted until the animation ends. Each library unmounts closed content on its own, so the component takes over: it tracks `open` itself, gates rendering with `AnimatePresence`, and asks the library to keep the content mounted.
 
-All three patterns share the same first step: mirror the open state in context so `AnimatePresence` can read it.
+The examples use these imports (adjust the alias to the project's `components.json`):
 
 ```tsx
-const [PopoverProvider, usePopover] = getStrictContext<{
+import { AnimatePresence, motion, type Transition } from 'motion/react';
+import { getStrictContext } from '@/lib/get-strict-context';
+import { useControlledState } from '@/hooks/use-controlled-state';
+import {
+  ReducedMotionConfig,
+  scale,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/lib/motion';
+```
+
+`getStrictContext` and `useControlledState` are Animate UI registry items (`@animate-ui/lib-get-strict-context`, `@animate-ui/hooks-use-controlled-state`).
+
+## 1. The Root tracks `open`
+
+Mirror the open state in context so `AnimatePresence` can read it, and give it back to the library as `open` so there's a single source of truth. Default an uncontrolled `defaultOpen` to `false`.
+
+```tsx
+type PopoverContextType = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-}>('PopoverContext');
+};
+const [PopoverProvider, usePopover] =
+  getStrictContext<PopoverContextType>('PopoverContext');
 
-function Popover(props: PopoverProps) {
-  const [isOpen, setIsOpen] = useControlledState({
-    value: props.open,
-    defaultValue: props.defaultOpen,
-    onChange: props.onOpenChange,
+function Popover({
+  open,
+  defaultOpen,
+  onOpenChange,
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
+  const [isOpen, setIsOpen] = useControlledState<boolean>({
+    value: open,
+    defaultValue: defaultOpen ?? false,
+    onChange: onOpenChange,
   });
 
   return (
     <PopoverProvider value={{ isOpen, setIsOpen }}>
-      <PopoverPrimitive.Root {...props} onOpenChange={setIsOpen} />
+      <PopoverPrimitive.Root
+        data-slot="popover"
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        {...props}
+      />
     </PopoverProvider>
   );
 }
 ```
 
-`getStrictContext` and `useControlledState` are Animate UI registry items (`@animate-ui/lib-get-strict-context`, `@animate-ui/hooks-use-controlled-state`).
+## 2. Radix UI (`radix-ui`)
 
-## Radix UI (`radix-ui`)
-
-- Gate the Portal with `AnimatePresence` and pass `forceMount`.
-- Render the content with `asChild` and `forceMount`, around a `motion.div`. Radix forwards its props, refs and `data-state` to it.
+- Gate the Portal with `AnimatePresence` and pass `forceMount`. Keep the Portal inside the Content component, as shadcn does.
+- Put `ReducedMotionConfig` inside the Portal, and render the animated part in an inner component so `useShouldReduceMotion()` runs inside the wrapper.
+- `Content` gets `asChild` and `forceMount`, plus every library prop, `className` and `style`. Radix's Slot merges them onto the `motion.div`, which only carries the animation and `children`.
 - Origin: `var(--radix-<component>-content-transform-origin)`.
 
 ```tsx
-function PopoverPortal({ children, ...props }: PopoverPortalProps) {
+type PopoverContentProps = Omit<
+  React.ComponentProps<typeof PopoverPrimitive.Content>,
+  'forceMount' | 'asChild'
+> & {
+  transition?: Transition;
+};
+
+function PopoverContent(props: PopoverContentProps) {
   const { isOpen } = usePopover();
   return (
     <AnimatePresence>
       {isOpen && (
-        <PopoverPrimitive.Portal forceMount {...props}>
-          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        <PopoverPrimitive.Portal forceMount>
+          <ReducedMotionConfig>
+            <PopoverContentMotion {...props} />
+          </ReducedMotionConfig>
         </PopoverPrimitive.Portal>
       )}
     </AnimatePresence>
   );
 }
 
-function PopoverContent({
-  transition: contentTransition = transition.dropdown,
+// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
+function PopoverContentMotion({
+  className,
+  children,
+  align = 'center',
+  sideOffset = 4,
+  transition = motionTransition.dropdown,
   ...props
 }: PopoverContentProps) {
-  const enter = useShouldReduceMotion() ? 1 : scale.enter; // rules.md #1
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
+
   return (
-    <PopoverPrimitive.Content asChild forceMount>
+    <PopoverPrimitive.Content
+      asChild
+      forceMount
+      data-slot="popover-content"
+      align={align}
+      sideOffset={sideOffset}
+      className={cn(
+        'bg-popover text-popover-foreground z-50 w-72 rounded-md border p-4 shadow-md outline-hidden',
+        className,
+      )}
+      {...props}
+    >
       <motion.div
-        data-slot="popover-content"
-        initial={{ opacity: 0, transform: `scale(${enter})` }}
-        animate={{ opacity: 1, transform: 'scale(1)' }}
-        exit={{ opacity: 0, transform: `scale(${enter})` }}
-        transition={contentTransition}
+        initial={hidden}
+        animate={{ opacity: 1, transform: 'scale(1)', transition }}
+        exit={{ ...hidden, transition: motionTransition.exit }}
         style={{
           transformOrigin: 'var(--radix-popover-content-transform-origin)',
         }}
-        {...props}
-      />
+      >
+        {children}
+      </motion.div>
     </PopoverPrimitive.Content>
   );
 }
 ```
 
-Remove `forceMount` and `asChild` from the public props type (`Omit<…, 'forceMount' | 'asChild'>`) since the primitive owns them.
+Remove `forceMount` and `asChild` from the public props type since the component owns them.
 
-Tooltip: `TooltipContent` gets `data-state="delayed-open"` or `"instant-open"`. Skip the entrance when it's `instant-open` (rule 11).
+Tooltip: `TooltipContent` gets `data-state="delayed-open"` or `"instant-open"`, but shadcn's `Tooltip` gives each tooltip its own Provider, so the library never reports "instant". Track warm tooltips yourself (see the Overlay recipe).
 
-## Base UI (`@base-ui/react`)
+## 3. Base UI (`@base-ui/react`)
 
 - Gate the Portal with `AnimatePresence` and pass `keepMounted`.
-- Put the `motion.div` in the Popup's `render` prop.
+- Library props, `className` and `style` go on the Popup; the `motion.div` in its `render` prop carries only the animation. Base UI merges the Popup's props and children into the rendered element.
 - Origin: `var(--transform-origin)`, set by the Positioner.
 - When `render` is a `<button>` (Checkbox, Radio, Switch), pass `nativeButton` (default it to `true`): these roots render a `<span>` by default since 1.0.
 - Some parts append a visually hidden `<span>` as the last child (Progress, for example). Lay out children with `flex flex-col gap-*` rather than `space-y-*`, which adds margin to every child except the last.
 
 ```tsx
-function PopoverPortal({ children, ...props }: PopoverPortalProps) {
-  const { isOpen } = usePopover();
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <PopoverPrimitive.Portal keepMounted {...props}>
-          <ReducedMotionConfig>{children}</ReducedMotionConfig>
-        </PopoverPrimitive.Portal>
-      )}
-    </AnimatePresence>
-  );
-}
-
-function PopoverPopup({
-  transition: popupTransition = transition.dropdown,
+function PopoverPopupMotion({
+  transition = motionTransition.dropdown,
   ...props
 }: PopoverPopupProps) {
-  const enter = useShouldReduceMotion() ? 1 : scale.enter; // rules.md #1
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
+
   return (
     <PopoverPrimitive.Popup
+      data-slot="popover-popup"
+      {...props}
       render={
         <motion.div
-          data-slot="popover-popup"
-          initial={{ opacity: 0, transform: `scale(${enter})` }}
-          animate={{ opacity: 1, transform: 'scale(1)' }}
-          exit={{ opacity: 0, transform: `scale(${enter})` }}
-          transition={popupTransition}
+          initial={hidden}
+          animate={{ opacity: 1, transform: 'scale(1)', transition }}
+          exit={{ ...hidden, transition: motionTransition.exit }}
           style={{ transformOrigin: 'var(--transform-origin)' }}
-          {...props}
         />
       }
     />
@@ -119,36 +168,37 @@ function PopoverPopup({
 }
 ```
 
-Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. A warm tooltip carries `data-instant`.
+Render it inside `<AnimatePresence>{isOpen && <PopoverPrimitive.Portal keepMounted><ReducedMotionConfig><PopoverPrimitive.Positioner>…` with the same inner-component pattern as Radix.
 
-## Headless UI (`@headlessui/react`)
+Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. A warm tooltip carries `data-instant`, but as with Radix, per-tooltip Providers hide it: track warm tooltips yourself.
+
+## 4. Headless UI (`@headlessui/react`)
 
 - Gate the panel yourself with `AnimatePresence` and render it `static`, so Headless UI doesn't unmount it.
-- Pass `as={motion.div}` and put the motion props on the panel.
+- Pass `as={motion.div}` and put the motion props on the panel. Headless UI forwards the other props to it.
 - Origin: Headless UI sets `data-anchor` (`top_center`, `bottom_start`, …) on anchored panels. Map it to an origin.
 
 ```tsx
-function PopoverPanel({
-  transition: panelTransition = transition.dropdown,
+function PopoverPanelMotion({
+  transition = motionTransition.dropdown,
   ...props
 }: PopoverPanelProps) {
-  const enter = useShouldReduceMotion() ? 1 : scale.enter; // rules.md #1
-  const { isOpen } = usePopover();
+  const reduce = useShouldReduceMotion();
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
+  };
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <PopoverPanelPrimitive
-          static
-          as={motion.div}
-          data-slot="popover-panel"
-          initial={{ opacity: 0, transform: `scale(${enter})` }}
-          animate={{ opacity: 1, transform: 'scale(1)' }}
-          exit={{ opacity: 0, transform: `scale(${enter})` }}
-          transition={panelTransition}
-          {...props}
-        />
-      )}
-    </AnimatePresence>
+    <PopoverPanelPrimitive
+      static
+      as={motion.div}
+      data-slot="popover-panel"
+      initial={hidden}
+      animate={{ opacity: 1, transform: 'scale(1)', transition }}
+      exit={{ ...hidden, transition: motionTransition.exit }}
+      {...props}
+    />
   );
 }
 ```
@@ -159,10 +209,12 @@ data-[anchor=top_start]:origin-bottom-left   data-[anchor=top_center]:origin-bot
 data-[anchor=left_*]:origin-right            data-[anchor=right_*]:origin-left
 ```
 
-## Plain markup (no base library)
+A Headless UI `Dialog` root renders its children: wrap them in `ReducedMotionConfig` through its render-prop child so function children keep working.
+
+## 5. Plain markup (no base library)
 
 Gate with `AnimatePresence` on your own state. You own focus management and dismissal: for an overlay, prefer adding a base library over hand-rolling one.
 
 ## Where `ReducedMotionConfig` goes
 
-Wrap the outermost element the primitive renders: the Portal's children for overlays, the Root for in-flow components. One wrapper per component is enough. Components that call `useShouldReduceMotion()` must render inside it.
+Wrap the outermost element the component renders: inside the Portal for overlays, around the Root for in-flow components. One wrapper per component is enough. Components that call `useShouldReduceMotion()` must render inside it, which is why overlays use an inner component.

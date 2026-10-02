@@ -9,38 +9,47 @@ Every recipe assumes the base-library wiring from `base-libraries.md` (presence,
 Gate: occasional (popover, dropdown) or tens of times a day (tooltip). Purpose: spatial, it grows out of its trigger.
 
 ```tsx
-function TooltipContent({
+// Rendered inside ReducedMotionConfig (see base-libraries.md for the Portal part).
+function TooltipContentMotion({
+  className,
+  children,
   transition = motionTransition.tooltip,
-  style,
   ...props
 }: TooltipContentProps) {
+  const { isWarm } = useTooltip();
   const reduce = useShouldReduceMotion();
   const hidden = {
     opacity: 0,
     transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
   };
-  const visible = { opacity: 1, transform: 'scale(1)' };
 
   return (
-    <TooltipPrimitive.Content asChild forceMount>
+    // Library props, className and style on Content; motion only on the child.
+    <TooltipPrimitive.Content
+      asChild
+      forceMount
+      data-slot="tooltip-content"
+      className={className}
+      {...props}
+    >
       <motion.div
-        data-slot="tooltip-content"
         initial={isWarm ? false : hidden}
-        animate={visible}
-        exit={hidden}
-        transition={transition}
+        animate={{ opacity: 1, transform: 'scale(1)', transition }}
+        exit={{ ...hidden, transition: motionTransition.exit }}
         style={{
           transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
-          ...style,
         }}
-        {...props}
-      />
+      >
+        {children}
+      </motion.div>
     </TooltipPrimitive.Content>
   );
 }
 ```
 
-- Duration: `transition.tooltip` (0.15s) for tooltips, `transition.dropdown` (0.2s) for popovers, menus and selects.
+- Enter with `transition.tooltip` (0.15s) for tooltips, `transition.dropdown` (0.2s) for popovers, menus and selects. Exit with `transition.exit` (0.15s), set inside the `exit` target.
+- Scale only, no directional slide: the trigger-anchored origin already shows where it came from. Drop shadcn's `slide-in-from-*` classes.
+- Submenus (Dropdown Menu, Context Menu, Menubar) are opened tens of times a day: fade only, no scale, with `transition.exit` both ways. They read the same `--radix-dropdown-menu-content-transform-origin`. Closing the root menu closes them; both exit together.
 - Origin: in the primitive, from the library variable (Base UI: `var(--transform-origin)`).
 - Tooltips only: skip the entrance when warm. Track the last close time in a module-level variable and compare on open:
 
@@ -64,16 +73,26 @@ This works even when each tooltip has its own Provider (shadcn's `Tooltip` does)
 Gate: occasional. Purpose: state, the page is now in a modal mode. Modals stay centered: no trigger origin.
 
 ```tsx
-function DialogContent({ from, transition, ...props }: DialogContentProps) {
+// Rendered inside ReducedMotionConfig, within the Portal next to the overlay.
+function DialogContentMotion({
+  from,
+  transition,
+  children,
+  ...props
+}: DialogContentProps) {
   const reduce = useShouldReduceMotion();
   const hiddenTransform = reduce
     ? getContentTransform(from, 'visible')
     : getContentTransform(from, 'hidden');
 
   return (
-    <DialogPrimitive.Content asChild forceMount>
+    <DialogPrimitive.Content
+      asChild
+      forceMount
+      data-slot="dialog-content"
+      {...props}
+    >
       <motion.div
-        data-slot="dialog-content"
         initial={{ opacity: 0, transform: hiddenTransform }}
         animate={{
           opacity: 1,
@@ -85,8 +104,9 @@ function DialogContent({ from, transition, ...props }: DialogContentProps) {
           transform: hiddenTransform,
           transition: transition ?? motionTransition.modalExit,
         }}
-        {...props}
-      />
+      >
+        {children}
+      </motion.div>
     </DialogPrimitive.Content>
   );
 }
