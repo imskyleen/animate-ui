@@ -12,7 +12,7 @@ Turns a static component into an animated one that would ship in the Animate UI 
 1. **Decide before you animate.** Run the gate in step 1. Writing zero motion code is a valid outcome.
 2. **Values come from the tokens**, never from memory: `references/tokens.md`. No hand-typed `stiffness`/`damping`, no `easeInOut` on an entrance.
 3. **Keep the component's API.** A shadcn component stays a drop-in replacement: same exports, same props, same `data-slot` attributes. Motion props are additive.
-4. **Reduced motion ships with the animation.** Wrap the motion tree in `ReducedMotionConfig`.
+4. **Reduced motion ships with the animation.** Wrap the motion tree in `ReducedMotionConfig`, and neutralize `transform` strings with `useShouldReduceMotion()` (Motion's setting doesn't cover them).
 5. **Transform and opacity only.** Never animate `width`, `height`, `top`, `left`, `margin` or `padding`, except the documented height technique for disclosures (`references/recipes.md`).
 
 ## Workflow

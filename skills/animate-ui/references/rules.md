@@ -6,7 +6,10 @@ Each rule comes from the October 2026 audit of the Animate UI registry. The "Avo
 
 ### 1. Respect reduced motion in every component
 
-Wrap the component's motion tree in `ReducedMotionConfig`. Movement, scaling and rotation jump to their end state; opacity and color still animate. Reduced motion means gentler, not none.
+Two pieces, always together:
+
+- Wrap the component's motion tree in `ReducedMotionConfig`. Under reduced motion, Motion then skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity and color.
+- Motion does **not** skip a `transform` string, and components animate `transform` strings (rule 14). Neutralize them with `useShouldReduceMotion()`, called inside the wrapper.
 
 ```tsx
 // Avoid: nothing checks the OS setting
@@ -14,11 +17,22 @@ Wrap the component's motion tree in `ReducedMotionConfig`. Movement, scaling and
 
 // Do
 <ReducedMotionConfig>
-  <motion.div initial={{ opacity: 0, transform: 'scale(0.96)' }} animate={{ opacity: 1, transform: 'scale(1)' }} />
+  <Content />
 </ReducedMotionConfig>
+
+function Content() {
+  const reduce = useShouldReduceMotion();
+  const enter = reduce ? 1 : scale.enter;
+  return (
+    <motion.div
+      initial={{ opacity: 0, transform: `scale(${enter})` }}
+      animate={{ opacity: 1, transform: 'scale(1)' }}
+    />
+  );
+}
 ```
 
-JavaScript loops (canvas, `requestAnimationFrame`, `setInterval`) are not covered by Motion: check `useReducedMotion()` and stop them.
+Reduced motion means gentler, not none: the element still fades. JavaScript loops (canvas, `requestAnimationFrame`, `setInterval`) are not covered by Motion: stop them when `useShouldReduceMotion()` is true.
 
 ### 2. Hover effects only on hover-capable pointers
 
@@ -173,7 +187,7 @@ Defaults are sober: slide 8 to 16px, zoom from 0.96. Bigger effects (100px slide
 ## Checklist
 
 - [ ] Passed the gate (frequency tier and purpose named)
-- [ ] Wrapped in `ReducedMotionConfig`; loops stop under reduced motion
+- [ ] Wrapped in `ReducedMotionConfig`; `transform` strings neutralized with `useShouldReduceMotion()`; loops stop under reduced motion
 - [ ] No `scale(0)`; enters from 0.96
 - [ ] Anchored overlays set `transform-origin` in the primitive
 - [ ] Ease-out on enter and exit; durations within budget; exit faster than enter

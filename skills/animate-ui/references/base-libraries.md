@@ -34,11 +34,15 @@ function Popover(props: PopoverProps) {
 - Origin: `var(--radix-<component>-content-transform-origin)`.
 
 ```tsx
-function PopoverPortal(props: PopoverPortalProps) {
+function PopoverPortal({ children, ...props }: PopoverPortalProps) {
   const { isOpen } = usePopover();
   return (
     <AnimatePresence>
-      {isOpen && <PopoverPrimitive.Portal forceMount {...props} />}
+      {isOpen && (
+        <PopoverPrimitive.Portal forceMount {...props}>
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </PopoverPrimitive.Portal>
+      )}
     </AnimatePresence>
   );
 }
@@ -47,13 +51,14 @@ function PopoverContent({
   transition: contentTransition = transition.dropdown,
   ...props
 }: PopoverContentProps) {
+  const enter = useShouldReduceMotion() ? 1 : scale.enter; // rules.md #1
   return (
     <PopoverPrimitive.Content asChild forceMount>
       <motion.div
         data-slot="popover-content"
-        initial={{ opacity: 0, transform: `scale(${scale.enter})` }}
+        initial={{ opacity: 0, transform: `scale(${enter})` }}
         animate={{ opacity: 1, transform: 'scale(1)' }}
-        exit={{ opacity: 0, transform: `scale(${scale.enter})` }}
+        exit={{ opacity: 0, transform: `scale(${enter})` }}
         transition={contentTransition}
         style={{
           transformOrigin: 'var(--radix-popover-content-transform-origin)',
@@ -78,11 +83,15 @@ Tooltip: `TooltipContent` gets `data-state="delayed-open"` or `"instant-open"`. 
 - Some parts append a visually hidden `<span>` as the last child (Progress, for example). Lay out children with `flex flex-col gap-*` rather than `space-y-*`, which adds margin to every child except the last.
 
 ```tsx
-function PopoverPortal(props: PopoverPortalProps) {
+function PopoverPortal({ children, ...props }: PopoverPortalProps) {
   const { isOpen } = usePopover();
   return (
     <AnimatePresence>
-      {isOpen && <PopoverPrimitive.Portal keepMounted {...props} />}
+      {isOpen && (
+        <PopoverPrimitive.Portal keepMounted {...props}>
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </PopoverPrimitive.Portal>
+      )}
     </AnimatePresence>
   );
 }
@@ -91,14 +100,15 @@ function PopoverPopup({
   transition: popupTransition = transition.dropdown,
   ...props
 }: PopoverPopupProps) {
+  const enter = useShouldReduceMotion() ? 1 : scale.enter; // rules.md #1
   return (
     <PopoverPrimitive.Popup
       render={
         <motion.div
           data-slot="popover-popup"
-          initial={{ opacity: 0, transform: `scale(${scale.enter})` }}
+          initial={{ opacity: 0, transform: `scale(${enter})` }}
           animate={{ opacity: 1, transform: 'scale(1)' }}
-          exit={{ opacity: 0, transform: `scale(${scale.enter})` }}
+          exit={{ opacity: 0, transform: `scale(${enter})` }}
           transition={popupTransition}
           style={{ transformOrigin: 'var(--transform-origin)' }}
           {...props}
@@ -122,6 +132,7 @@ function PopoverPanel({
   transition: panelTransition = transition.dropdown,
   ...props
 }: PopoverPanelProps) {
+  const enter = useShouldReduceMotion() ? 1 : scale.enter; // rules.md #1
   const { isOpen } = usePopover();
   return (
     <AnimatePresence>
@@ -130,9 +141,9 @@ function PopoverPanel({
           static
           as={motion.div}
           data-slot="popover-panel"
-          initial={{ opacity: 0, transform: `scale(${scale.enter})` }}
+          initial={{ opacity: 0, transform: `scale(${enter})` }}
           animate={{ opacity: 1, transform: 'scale(1)' }}
-          exit={{ opacity: 0, transform: `scale(${scale.enter})` }}
+          exit={{ opacity: 0, transform: `scale(${enter})` }}
           transition={panelTransition}
           {...props}
         />
@@ -154,4 +165,4 @@ Gate with `AnimatePresence` on your own state. You own focus management and dism
 
 ## Where `ReducedMotionConfig` goes
 
-Wrap the outermost element the primitive renders: the Portal's children for overlays, the Root for in-flow components. One wrapper per component is enough.
+Wrap the outermost element the primitive renders: the Portal's children for overlays, the Root for in-flow components. One wrapper per component is enough. Components that call `useShouldReduceMotion()` must render inside it.

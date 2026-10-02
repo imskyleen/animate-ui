@@ -16,6 +16,7 @@ import {
   scale,
   transition,
   ReducedMotionConfig,
+  useShouldReduceMotion,
 } from '@/lib/motion';
 ```
 
@@ -65,6 +66,14 @@ Use the `duration`/`bounce` form only. `bounce` is ignored when `stiffness` or `
 
 ## Reduced motion
 
-`ReducedMotionConfig` wraps a component's motion tree. When the OS asks for reduced motion, Motion skips transform, size, position and layout animations (they jump to their end state) and keeps animating opacity, color and filter. It needs no app setup and keeps an app-level `<MotionConfig reducedMotion="always">`.
+`ReducedMotionConfig` wraps a component's motion tree. It needs no app setup and keeps an app-level `<MotionConfig reducedMotion="always">`. When the OS asks for reduced motion, Motion skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter.
 
-It doesn't cover JavaScript-driven loops (`requestAnimationFrame`, canvas, `setInterval`): stop those yourself with `useReducedMotion()`.
+It does not skip a `transform` string. Inside the wrapper, `useShouldReduceMotion()` returns `true` under reduced motion: use it to start from the resting transform.
+
+```tsx
+const reduce = useShouldReduceMotion();
+const enter = reduce ? 1 : scale.enter;
+initial={{ opacity: 0, transform: `scale(${enter})` }}
+```
+
+Stop JavaScript-driven loops (`requestAnimationFrame`, canvas, `setInterval`) with the same hook.
