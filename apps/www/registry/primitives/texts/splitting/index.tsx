@@ -37,8 +37,7 @@ type LinesSplittingTextProps = DefaultSplittingTextProps & {
 };
 
 type SplittingTextProps =
-  | CharsOrWordsSplittingTextProps
-  | LinesSplittingTextProps;
+  CharsOrWordsSplittingTextProps | LinesSplittingTextProps;
 
 const SplittingText: React.FC<SplittingTextProps> = ({
   ref,

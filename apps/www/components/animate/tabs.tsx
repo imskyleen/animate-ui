@@ -45,8 +45,7 @@ type ControlledTabsProps<T extends string = string> = BaseTabsProps & {
 };
 
 type TabsProps<T extends string = string> =
-  | UnControlledTabsProps<T>
-  | ControlledTabsProps<T>;
+  UnControlledTabsProps<T> | ControlledTabsProps<T>;
 
 function Tabs<T extends string = string>({
   defaultValue,

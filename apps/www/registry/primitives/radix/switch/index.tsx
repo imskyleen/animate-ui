@@ -62,10 +62,7 @@ type SwitchThumbProps = Omit<
 > &
   HTMLMotionProps<'div'> & {
     pressedAnimation?:
-      | TargetAndTransition
-      | VariantLabels
-      | boolean
-      | LegacyAnimationControls;
+      TargetAndTransition | VariantLabels | boolean | LegacyAnimationControls;
   };
 
 function SwitchThumb({

@@ -60,10 +60,7 @@ type SwitchThumbProps<TTag extends React.ElementType = typeof motion.div> =
   HTMLMotionProps<'div'> & {
     as?: TTag;
     pressedAnimation?:
-      | TargetAndTransition
-      | VariantLabels
-      | boolean
-      | LegacyAnimationControls;
+      TargetAndTransition | VariantLabels | boolean | LegacyAnimationControls;
   };
 
 function SwitchThumb<TTag extends React.ElementType = typeof motion.div>(

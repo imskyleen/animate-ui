@@ -168,8 +168,7 @@ type TabPanelsLayoutProps<TTag extends React.ElementType = typeof motion.div> =
   };
 
 type TabPanelsProps<TTag extends React.ElementType> =
-  | TabPanelsAutoProps<TTag>
-  | TabPanelsLayoutProps<TTag>;
+  TabPanelsAutoProps<TTag> | TabPanelsLayoutProps<TTag>;
 
 const defaultTransition: Transition = {
   type: 'spring',
