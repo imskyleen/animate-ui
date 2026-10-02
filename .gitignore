@@ -36,3 +36,6 @@ npm-debug.log*
 *.pem
 
 apps/www/app/(playground)
+
+# Playwright
+apps/www/tests/.results

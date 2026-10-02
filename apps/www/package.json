@@ -12,7 +12,8 @@
     "lint:fix": "next lint --fix",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:smoke": "playwright test tests/smoke"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
@@ -56,6 +57,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/mdx": "^2.0.13",
     "@types/node": "24.0.7",
