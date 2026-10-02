@@ -285,10 +285,6 @@
     @apply !w-[3px] !rounded-full -ml-px;
   }
 
-  #nd-tocnav {
-    @apply !hidden;
-  }
-
   #docs-body h1,
   #docs-body h2,
   #docs-body h3,

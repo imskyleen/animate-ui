@@ -4,7 +4,7 @@ import CommunityIcon from '@workspace/ui/components/icons/community-icon';
 import ImageIcon from '@workspace/ui/components/icons/image-icon';
 import HeadlessUIIcon from '@workspace/ui/components/icons/headlessui-icon';
 import RadixIcon from '@workspace/ui/components/icons/radix-icon';
-import type { BuildPageTreeOptions } from 'fumadocs-core/source';
+import type { PageTreeTransformer } from 'fumadocs-core/source';
 import {
   Code,
   RectangleHorizontalIcon,
@@ -39,9 +39,7 @@ export const Separator = ({
   );
 };
 
-export const attachSeparator: BuildPageTreeOptions['attachSeparator'] = (
-  node,
-) => {
+export const attachSeparator: PageTreeTransformer['separator'] = (node) => {
   switch (node.name) {
     case 'Animate UI':
       node.name = (

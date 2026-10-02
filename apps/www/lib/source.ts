@@ -1,4 +1,4 @@
-import { docs } from '@/.source';
+import { docs } from '@/.source/server';
 import { LucideIcons } from '@/components/icons/lucide-icons';
 import { attachFile } from '@/lib/attach-file';
 import { attachSeparator } from '@/lib/attach-separator';
@@ -14,10 +14,12 @@ import { createElement } from 'react';
 export const source = loader({
   baseUrl: '/docs',
   source: docs.toFumadocsSource(),
-  pageTree: {
-    attachFile,
-    attachSeparator,
-  },
+  plugins: [
+    {
+      name: 'animate-ui:page-tree',
+      transformPageTree: { file: attachFile, separator: attachSeparator },
+    },
+  ],
   icon(icon) {
     if (!icon) return;
     if (icon in icons) return createElement(icons[icon as keyof typeof icons]);

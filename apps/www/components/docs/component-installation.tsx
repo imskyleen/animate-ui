@@ -12,8 +12,7 @@ import {
 import { CodeTabs } from '@/components/docs/code-tabs';
 import { ComponentManualInstallation } from './component-manual-installation';
 
-interface ComponentInstallationProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface ComponentInstallationProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
 }
 

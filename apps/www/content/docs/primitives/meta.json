@@ -3,6 +3,7 @@
   "description": "Animated Primitives",
   "icon": "Cuboid",
   "root": true,
+  "pagesIndex": "index",
   "pages": [
     "---Animate UI---",
     "animate/avatar-group",

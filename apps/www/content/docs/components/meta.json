@@ -3,6 +3,7 @@
   "description": "Animated Components",
   "icon": "Component",
   "root": true,
+  "pagesIndex": "index",
   "pages": [
     "---Animate UI---",
     "animate/avatar-group",

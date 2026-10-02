@@ -1,4 +1,4 @@
-import { RootProvider } from 'fumadocs-ui/provider';
+import { RootProvider } from 'fumadocs-ui/provider/next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Outfit } from 'next/font/google';
 import type { ReactNode } from 'react';
