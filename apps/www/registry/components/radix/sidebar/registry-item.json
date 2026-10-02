@@ -11,8 +11,9 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-radix-checkbox",
     "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-radix-checkbox",
     "button",
     "input",
     "separator",

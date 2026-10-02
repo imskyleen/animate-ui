@@ -22,10 +22,10 @@
           "step": 100
         },
         "initialScale": {
-          "value": 0.5,
+          "value": 0.96,
           "min": 0,
           "max": 1,
-          "step": 0.1
+          "step": 0.01
         },
         "scale": {
           "value": 1,

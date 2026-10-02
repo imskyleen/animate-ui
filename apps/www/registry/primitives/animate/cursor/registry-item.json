@@ -6,8 +6,9 @@
   "description": "An animated cursor component that allows you to customize both the cursor and cursor follow elements with smooth animations.",
   "dependencies": ["motion"],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-slot",
-    "@animate-ui/lib-get-strict-context"
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-animate-slot"
   ],
   "files": [
     {

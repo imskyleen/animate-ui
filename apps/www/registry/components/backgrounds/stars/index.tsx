@@ -4,13 +4,36 @@ import * as React from 'react';
 import {
   type HTMLMotionProps,
   motion,
+  useInView,
   useMotionValue,
   useSpring,
   type SpringOptions,
   type Transition,
 } from 'motion/react';
 
+import { useShouldReduceMotion } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
+
+function subscribeToVisibility(onChange: () => void) {
+  document.addEventListener('visibilitychange', onChange);
+  return () => document.removeEventListener('visibilitychange', onChange);
+}
+
+/** False while the tab is hidden. */
+function usePageVisible() {
+  return React.useSyncExternalStore(
+    subscribeToVisibility,
+    () => document.visibilityState === 'visible',
+    () => true,
+  );
+}
+
+/**
+ * Whether the StarsBackground is on screen. A StarLayer moves outside its own
+ * box while it loops, so it reads the background's visibility instead of
+ * observing itself. Standalone layers default to visible.
+ */
+const StarsInViewContext = React.createContext(true);
 
 type StarLayerProps = HTMLMotionProps<'div'> & {
   count: number;
@@ -39,6 +62,13 @@ function StarLayer({
 }: StarLayerProps) {
   const [boxShadow, setBoxShadow] = React.useState<string>('');
 
+  // The loop pauses off screen and in a hidden tab, and stops under reduced
+  // motion.
+  const inView = React.use(StarsInViewContext);
+  const pageVisible = usePageVisible();
+  const reduce = useShouldReduceMotion();
+  const playing = inView && pageVisible && !reduce;
+
   React.useEffect(() => {
     setBoxShadow(generateStars(count, starColor));
   }, [count, starColor]);
@@ -46,8 +76,8 @@ function StarLayer({
   return (
     <motion.div
       data-slot="star-layer"
-      animate={{ y: [0, -2000] }}
-      transition={transition}
+      animate={{ y: playing ? [0, -2000] : 0 }}
+      transition={playing ? transition : { duration: 0 }}
       className={cn('absolute top-0 left-0 w-full h-[2000px]', className)}
       {...props}
     >
@@ -80,6 +110,7 @@ type StarsBackgroundProps = React.ComponentProps<'div'> & {
 };
 
 function StarsBackground({
+  ref,
   children,
   className,
   factor = 0.05,
@@ -89,6 +120,11 @@ function StarsBackground({
   pointerEvents = true,
   ...props
 }: StarsBackgroundProps) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
+  const inView = useInView(containerRef);
+  const reduce = useShouldReduceMotion();
+
   const offsetX = useMotionValue(1);
   const offsetY = useMotionValue(1);
 
@@ -97,6 +133,8 @@ function StarsBackground({
 
   const handleMouseMove = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      // No pointer parallax under reduced motion.
+      if (reduce) return;
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
       const newOffsetX = -(e.clientX - centerX) * factor;
@@ -104,11 +142,12 @@ function StarsBackground({
       offsetX.set(newOffsetX);
       offsetY.set(newOffsetY);
     },
-    [offsetX, offsetY, factor],
+    [offsetX, offsetY, factor, reduce],
   );
 
   return (
     <div
+      ref={containerRef}
       data-slot="stars-background"
       className={cn(
         'relative size-full overflow-hidden bg-[radial-gradient(ellipse_at_bottom,_#262626_0%,_#000_100%)]',
@@ -117,37 +156,39 @@ function StarsBackground({
       onMouseMove={handleMouseMove}
       {...props}
     >
-      <motion.div
-        style={{ x: springX, y: springY }}
-        className={cn({ 'pointer-events-none': !pointerEvents })}
-      >
-        <StarLayer
-          count={1000}
-          size={1}
-          transition={{ repeat: Infinity, duration: speed, ease: 'linear' }}
-          starColor={starColor}
-        />
-        <StarLayer
-          count={400}
-          size={2}
-          transition={{
-            repeat: Infinity,
-            duration: speed * 2,
-            ease: 'linear',
-          }}
-          starColor={starColor}
-        />
-        <StarLayer
-          count={200}
-          size={3}
-          transition={{
-            repeat: Infinity,
-            duration: speed * 3,
-            ease: 'linear',
-          }}
-          starColor={starColor}
-        />
-      </motion.div>
+      <StarsInViewContext value={inView}>
+        <motion.div
+          style={{ x: springX, y: springY }}
+          className={cn({ 'pointer-events-none': !pointerEvents })}
+        >
+          <StarLayer
+            count={1000}
+            size={1}
+            transition={{ repeat: Infinity, duration: speed, ease: 'linear' }}
+            starColor={starColor}
+          />
+          <StarLayer
+            count={400}
+            size={2}
+            transition={{
+              repeat: Infinity,
+              duration: speed * 2,
+              ease: 'linear',
+            }}
+            starColor={starColor}
+          />
+          <StarLayer
+            count={200}
+            size={3}
+            transition={{
+              repeat: Infinity,
+              duration: speed * 3,
+              ease: 'linear',
+            }}
+            starColor={starColor}
+          />
+        </motion.div>
+      </StarsInViewContext>
       {children}
     </div>
   );

@@ -37,7 +37,7 @@ const AVATARS = [
     tooltip: 'Jhey',
   },
   {
-    src: 'https://pbs.twimg.com/profile_images/1927474594102784000/Al0g-I6o_400x400.jpg',
+    src: 'https://github.com/DavidHDev.png?size=96',
     fallback: 'DH',
     tooltip: 'David Haz',
   },

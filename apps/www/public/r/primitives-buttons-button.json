@@ -7,12 +7,13 @@
     "motion"
   ],
   "registryDependencies": [
+    "@animate-ui/lib-motion",
     "@animate-ui/primitives-animate-slot"
   ],
   "files": [
     {
       "path": "registry/primitives/buttons/button/index.tsx",
-      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'motion/react';\n\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\n\ntype ButtonProps = WithAsChild<\n  HTMLMotionProps<'button'> & {\n    hoverScale?: number;\n    tapScale?: number;\n  }\n>;\n\nfunction Button({\n  hoverScale = 1.05,\n  tapScale = 0.95,\n  asChild = false,\n  ...props\n}: ButtonProps) {\n  const Component = asChild ? Slot : motion.button;\n\n  return (\n    <Component\n      whileTap={{ scale: tapScale }}\n      whileHover={{ scale: hoverScale }}\n      {...props}\n    />\n  );\n}\n\nexport { Button, type ButtonProps };\n",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  scale as motionScale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from '@/lib/motion';\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\n\ntype ButtonProps = WithAsChild<\n  HTMLMotionProps<'button'> & {\n    hoverScale?: number;\n    tapScale?: number;\n  }\n>;\n\nfunction Button({\n  hoverScale = 1.02,\n  tapScale = motionScale.press,\n  asChild = false,\n  ...props\n}: ButtonProps) {\n  const reduce = useShouldReduceMotion();\n  const Component = asChild ? Slot : motion.button;\n\n  return (\n    <Component\n      whileTap={{\n        scale: reduce ? 1 : tapScale,\n        transition: motionTransition.press,\n      }}\n      whileHover={{\n        scale: reduce ? 1 : hoverScale,\n        transition: motionTransition.press,\n      }}\n      transition={motionTransition.press}\n      {...props}\n    />\n  );\n}\n\nexport { Button, type ButtonProps };\n",
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/buttons/button.tsx"
     }

@@ -6,9 +6,10 @@
   "description": "A particles effect that creates a particle system.",
   "dependencies": ["motion"],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-slot",
     "@animate-ui/hooks-use-is-in-view",
-    "@animate-ui/lib-get-strict-context"
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-animate-slot"
   ],
   "files": [
     {

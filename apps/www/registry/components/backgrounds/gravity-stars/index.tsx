@@ -1,8 +1,24 @@
 'use client';
 
 import * as React from 'react';
+import { useInView } from 'motion/react';
 
+import { useShouldReduceMotion } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
+
+function subscribeToVisibility(onChange: () => void) {
+  document.addEventListener('visibilitychange', onChange);
+  return () => document.removeEventListener('visibilitychange', onChange);
+}
+
+/** False while the tab is hidden. */
+function usePageVisible() {
+  return React.useSyncExternalStore(
+    subscribeToVisibility,
+    () => document.visibilityState === 'visible',
+    () => true,
+  );
+}
 
 type MouseGravity = 'attract' | 'repel';
 type GlowAnimation = 'instant' | 'ease' | 'spring';
@@ -52,7 +68,7 @@ function GravityStarsBackground({
 }: GravityStarsProps) {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const animRef = React.useRef<number | null>(null);
+  const [color, setColor] = React.useState('#ffffff');
   const starsRef = React.useRef<Particle[]>([]);
   const mouseRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [dpr, setDpr] = React.useState(1);
@@ -61,11 +77,20 @@ function GravityStarsBackground({
     height: 600,
   });
 
+  // The loop pauses off screen and in a hidden tab, and renders a single
+  // static frame under reduced motion.
+  const inView = useInView(containerRef);
+  const pageVisible = usePageVisible();
+  const reduce = useShouldReduceMotion();
+  const playing = inView && pageVisible && !reduce;
+
+  // Reading computed styles every frame forces a style recalc: cache the
+  // color and refresh it on resize and theme changes only (a change also
+  // redraws the static frame while paused).
   const readColor = React.useCallback(() => {
     const el = containerRef.current;
-    if (!el) return '#ffffff';
-    const cs = getComputedStyle(el);
-    return cs.color || '#ffffff';
+    if (!el) return;
+    setColor(getComputedStyle(el).color || '#ffffff');
   }, []);
 
   const initStars = React.useCallback(
@@ -109,20 +134,21 @@ function GravityStarsBackground({
     canvas.style.width = `${rect.width}px`;
     canvas.style.height = `${rect.height}px`;
     setCanvasSize({ width: rect.width, height: rect.height });
+    readColor();
     if (starsRef.current.length === 0) {
       initStars(rect.width, rect.height);
     } else {
       redistributeStars(rect.width, rect.height);
     }
-  }, [initStars, redistributeStars]);
+  }, [initStars, redistributeStars, readColor]);
 
   const handlePointerMove = React.useCallback(
     (e: React.MouseEvent | React.TouchEvent) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      let clientX = 0;
-      let clientY = 0;
+      let clientX: number;
+      let clientY: number;
       if ('touches' in e) {
         const t = e.touches[0];
         if (!t) return;
@@ -268,31 +294,26 @@ function GravityStarsBackground({
   const drawStars = React.useCallback(
     (ctx: CanvasRenderingContext2D) => {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      const color = readColor();
+      // Shared state is set once per frame; only the per-star values change.
+      ctx.save();
+      ctx.shadowColor = color;
+      ctx.fillStyle = color;
+      let shadowBlur = -1;
       for (const p of starsRef.current) {
-        ctx.save();
-        ctx.shadowColor = color;
-        ctx.shadowBlur = glowIntensity * (p.glowMultiplier || 1) * 2;
+        const blur = glowIntensity * (p.glowMultiplier || 1) * 2;
+        if (blur !== shadowBlur) {
+          ctx.shadowBlur = blur;
+          shadowBlur = blur;
+        }
         ctx.globalAlpha = p.opacity;
-        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(p.x * dpr, p.y * dpr, p.size * dpr, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
       }
+      ctx.restore();
     },
-    [dpr, glowIntensity, readColor],
+    [dpr, glowIntensity, color],
   );
-
-  const animate = React.useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    updateStars();
-    drawStars(ctx);
-    animRef.current = requestAnimationFrame(animate);
-  }, [updateStars, drawStars]);
 
   React.useEffect(() => {
     resizeCanvas();
@@ -334,14 +355,38 @@ function GravityStarsBackground({
     initStars,
   ]);
 
+  // Theme switches change the inherited text color without resizing.
   React.useEffect(() => {
-    if (animRef.current) cancelAnimationFrame(animRef.current);
-    animRef.current = requestAnimationFrame(animate);
+    const observer = new MutationObserver(readColor);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'style', 'data-theme'],
+    });
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    mql.addEventListener('change', readColor);
     return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-      animRef.current = null;
+      observer.disconnect();
+      mql.removeEventListener('change', readColor);
     };
-  }, [animate]);
+  }, [readColor]);
+
+  React.useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (!ctx) return;
+    if (!playing) {
+      // Paused or reduced motion: hold a single static frame.
+      drawStars(ctx);
+      return;
+    }
+    let frameId = 0;
+    const tick = () => {
+      updateStars();
+      drawStars(ctx);
+      frameId = requestAnimationFrame(tick);
+    };
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [playing, updateStars, drawStars]);
 
   return (
     <div

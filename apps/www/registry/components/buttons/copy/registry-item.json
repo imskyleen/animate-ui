@@ -6,8 +6,9 @@
   "description": "A copy button component with a variety of styles and animations.",
   "dependencies": ["motion", "lucide-react", "class-variance-authority"],
   "registryDependencies": [
-    "@animate-ui/primitives-buttons-button",
-    "@animate-ui/hooks-use-controlled-state"
+    "@animate-ui/hooks-use-controlled-state",
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-buttons-button"
   ],
   "files": [
     {

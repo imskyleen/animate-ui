@@ -7,6 +7,7 @@
   "dependencies": ["motion"],
   "registryDependencies": [
     "@animate-ui/hooks-use-is-in-view",
+    "@animate-ui/lib-motion",
     "@animate-ui/primitives-animate-slot"
   ],
   "files": [

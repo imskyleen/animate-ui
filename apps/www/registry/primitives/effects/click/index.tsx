@@ -9,6 +9,11 @@ import {
   type SVGMotionProps,
 } from 'motion/react';
 
+import {
+  ReducedMotionConfig,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
+
 type ClickVariant = 'ripple' | 'ring' | 'crosshair' | 'burst' | 'particles';
 
 type Item = {
@@ -42,9 +47,34 @@ type SvgClickProps = SVGMotionProps<'svg'> &
 
 type ClickProps = RippleClickProps | SvgClickProps;
 
+function subscribeToNothing() {
+  return () => {};
+}
+
+/**
+ * False during SSR and hydration, true afterwards. The effect layer is a
+ * portal into `document.body`, which doesn't exist on the server: rendering
+ * it on the hydration pass would add a node the server HTML doesn't have.
+ */
+function useIsMounted() {
+  return React.useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false,
+  );
+}
+
 function Click(props: RippleClickProps): React.ReactElement | null;
 function Click(props: SvgClickProps): React.ReactElement | null;
 function Click(props: ClickProps): React.ReactElement | null {
+  return (
+    <ReducedMotionConfig>
+      <ClickInner {...props} />
+    </ReducedMotionConfig>
+  );
+}
+
+function ClickInner(props: ClickProps): React.ReactElement | null {
   const {
     children,
     variant = 'ring',
@@ -56,16 +86,18 @@ function Click(props: ClickProps): React.ReactElement | null {
   } = props as ClickProps;
   const [items, setItems] = React.useState<Item[]>([]);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const mounted = useIsMounted();
+  const reduce = useShouldReduceMotion();
 
   React.useEffect(() => {
-    if (disabled) return;
+    // Reduced motion: no click effects at all.
+    if (disabled || reduce) return;
     const target = scope?.current ?? document;
     const isDoc = target instanceof Document;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const el: any = isDoc ? document : target;
     if (!el) return;
     function onPointerUp(e: PointerEvent) {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       if (!isDoc) {
         const rect = (el as HTMLElement).getBoundingClientRect();
         if (
@@ -96,9 +128,9 @@ function Click(props: ClickProps): React.ReactElement | null {
     }
     el.addEventListener('pointerup', onPointerUp, { passive: true });
     return () => el.removeEventListener('pointerup', onPointerUp);
-  }, [scope, variant, color, size, duration, disabled]);
+  }, [scope, variant, color, size, duration, disabled, reduce]);
 
-  const portal = typeof window !== 'undefined' ? document.body : null;
+  const portal = mounted ? document.body : null;
 
   return (
     <>

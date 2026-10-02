@@ -5,6 +5,7 @@
   "title": "Bubble Background",
   "description": "An interactive background featuring smoothly animated gradient bubbles, creating a playful, dynamic, and visually engaging backdrop.",
   "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/components/backgrounds/bubble/index.tsx",

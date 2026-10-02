@@ -5,6 +5,7 @@
   "title": "Highlight",
   "description": "A highlight effect that allows you to highlight elements on hover, click or with a controlled value.",
   "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/primitives/effects/highlight/index.tsx",

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 
+import { transition as motionTransition } from '@/registry/lib/motion';
 import {
   useIsInView,
   type UseIsInViewOptions,
@@ -22,7 +23,7 @@ type FadeProps = WithAsChild<
 
 function Fade({
   ref,
-  transition = { type: 'spring', stiffness: 200, damping: 20 },
+  transition = motionTransition.modal,
   delay = 0,
   inView = false,
   inViewMargin = '0px',

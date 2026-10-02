@@ -19,7 +19,7 @@ import { cn } from '@workspace/ui/lib/utils';
 const USERS = [
   {
     id: 1,
-    src: 'https://pbs.twimg.com/profile_images/1897311929028255744/otxpL-ke_400x400.jpg',
+    src: 'https://github.com/arhamkhnz.png?size=96',
     fallback: 'AK',
     tooltip: 'Arhamkhnz',
     online: true,

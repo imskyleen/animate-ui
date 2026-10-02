@@ -4,6 +4,11 @@ import * as React from 'react';
 import { motion, type HTMLMotionProps, type Variant } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
+import {
+  scale as motionScale,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 const buildVariant = ({
@@ -45,11 +50,12 @@ type FlipButtonProps = WithAsChild<
 
 function FlipButton({
   from = 'top',
-  tapScale = 0.95,
+  tapScale = motionScale.press,
   asChild = false,
   style,
   ...props
 }: FlipButtonProps) {
+  const reduce = useShouldReduceMotion();
   const isVertical = from === 'top' || from === 'bottom';
   const rotateAxis = isVertical ? 'rotateX' : 'rotateY';
 
@@ -61,7 +67,11 @@ function FlipButton({
         data-slot="flip-button"
         initial="initial"
         whileHover="hover"
-        whileTap={{ scale: tapScale }}
+        whileTap={{
+          scale: reduce ? 1 : tapScale,
+          transition: motionTransition.press,
+        }}
+        transition={motionTransition.press}
         style={{
           display: 'inline-grid',
           placeItems: 'center',
@@ -83,6 +93,8 @@ function FlipButtonFront({
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
+  // Under reduced motion the faces crossfade without rotating or sliding.
+  const reduce = useShouldReduceMotion();
 
   const frontOffset = from === 'top' || from === 'left' ? '50%' : '-50%';
 
@@ -96,8 +108,8 @@ function FlipButtonFront({
     }),
     hover: buildVariant({
       opacity: 0,
-      rotation: 90,
-      offset: frontOffset,
+      rotation: reduce ? 0 : 90,
+      offset: reduce ? '0%' : frontOffset,
       isVertical,
       rotateAxis,
     }),
@@ -129,14 +141,16 @@ function FlipButtonBack({
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
+  // Under reduced motion the faces crossfade without rotating or sliding.
+  const reduce = useShouldReduceMotion();
 
   const backOffset = from === 'top' || from === 'left' ? '-50%' : '50%';
 
   const backVariants = {
     initial: buildVariant({
       opacity: 0,
-      rotation: 90,
-      offset: backOffset,
+      rotation: reduce ? 0 : 90,
+      offset: reduce ? '0%' : backOffset,
       isVertical,
       rotateAxis,
     }),

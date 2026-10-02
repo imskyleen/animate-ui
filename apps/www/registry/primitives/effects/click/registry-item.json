@@ -5,6 +5,7 @@
   "title": "Click",
   "description": "An effect that creates animated effects at the click position, adding interactive feedback to user actions.",
   "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/primitives/effects/click/index.tsx",

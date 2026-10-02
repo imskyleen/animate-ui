@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Theme Toggler",
   "description": "An effect that allows you to toggle the theme gradually.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/primitives/effects/theme-toggler/index.tsx",

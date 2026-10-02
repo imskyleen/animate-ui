@@ -156,6 +156,9 @@
       "dependencies": [
         "motion"
       ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
+      ],
       "files": [
         {
           "path": "registry/components/backgrounds/bubble/index.tsx",
@@ -175,6 +178,9 @@
           "type": "registry:ui",
           "target": "components/animate-ui/components/backgrounds/fireworks.tsx"
         }
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ]
     },
     {
@@ -184,6 +190,9 @@
       "description": "A background component featuring a subtle yet engaging animated gradient effect, smoothly transitioning colors to enhance visual depth.",
       "dependencies": [
         "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -200,6 +209,9 @@
       "description": "A background component featuring a subtle yet engaging animated gravity stars effect.",
       "dependencies": [
         "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -230,6 +242,9 @@
       "dependencies": [
         "motion"
       ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
+      ],
       "files": [
         {
           "path": "registry/components/backgrounds/hole/index.tsx",
@@ -245,6 +260,9 @@
       "description": "An interactive background featuring animated dots of varying sizes and speeds, simulating a dynamic and immersive starry space effect.",
       "dependencies": [
         "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -629,8 +647,9 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-buttons-button"
       ],
       "files": [
         {
@@ -1339,8 +1358,9 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-checkbox",
         "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-radix-checkbox",
         "button",
         "input",
         "separator",
@@ -5704,10 +5724,10 @@
               }
             },
             "offset": {
-              "value": 100,
+              "value": 16,
               "min": 0,
-              "max": 1000,
-              "step": 10
+              "max": 400,
+              "step": 4
             }
           }
         }
@@ -5803,10 +5823,10 @@
               "step": 100
             },
             "initialScale": {
-              "value": 0.5,
+              "value": 0.96,
               "min": 0,
               "max": 1,
-              "step": 0.1
+              "step": 0.01
             },
             "scale": {
               "value": 1,
@@ -10552,6 +10572,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -14837,8 +14858,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -14900,6 +14922,7 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -14919,9 +14942,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-motion-value-state"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15475,6 +15498,7 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15495,6 +15519,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15515,6 +15540,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15535,6 +15561,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15574,8 +15601,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15592,6 +15620,9 @@
       "description": "An effect that creates animated effects at the click position, adding interactive feedback to user actions.",
       "dependencies": [
         "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15610,8 +15641,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15630,8 +15662,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15648,6 +15681,9 @@
       "description": "A highlight effect that allows you to highlight elements on hover, click or with a controlled value.",
       "dependencies": [
         "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15682,6 +15718,7 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15701,9 +15738,10 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15738,8 +15776,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15754,6 +15793,12 @@
       "type": "registry:ui",
       "title": "Theme Toggler",
       "description": "An effect that allows you to toggle the theme gradually.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
+      ],
       "files": [
         {
           "path": "registry/primitives/effects/theme-toggler/index.tsx",
@@ -15791,8 +15836,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {

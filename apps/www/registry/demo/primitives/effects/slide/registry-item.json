@@ -31,10 +31,10 @@
           }
         },
         "offset": {
-          "value": 100,
+          "value": 16,
           "min": 0,
-          "max": 1000,
-          "step": 10
+          "max": 400,
+          "step": 4
         }
       }
     }

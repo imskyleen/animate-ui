@@ -5,6 +5,7 @@
   "title": "Gradient Background",
   "description": "A background component featuring a subtle yet engaging animated gradient effect, smoothly transitioning colors to enhance visual depth.",
   "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/components/backgrounds/gradient/index.tsx",

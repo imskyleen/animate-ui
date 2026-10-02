@@ -5,6 +5,7 @@ import {
   motion,
   useScroll,
   useSpring,
+  useTransform,
   type MotionValue,
   type HTMLMotionProps,
   type SpringOptions,
@@ -12,7 +13,10 @@ import {
 
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import { useMotionValueState } from '@/registry/hooks/use-motion-value-state';
+import {
+  ReducedMotionConfig,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type ScrollProgressDirection = 'horizontal' | 'vertical';
 
@@ -34,20 +38,31 @@ type ScrollProgressProviderProps = {
   direction?: ScrollProgressDirection;
 };
 
-function ScrollProgressProvider({
+function ScrollProgressProvider(props: ScrollProgressProviderProps) {
+  return (
+    <ReducedMotionConfig>
+      <ScrollProgressProviderInner {...props} />
+    </ReducedMotionConfig>
+  );
+}
+
+function ScrollProgressProviderInner({
   global = false,
   transition = { stiffness: 250, damping: 40, bounce: 0 },
   direction = 'vertical',
   ...props
 }: ScrollProgressProviderProps) {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const reduce = useShouldReduceMotion();
 
   const { scrollYProgress, scrollXProgress } = useScroll(
     global ? undefined : { container: containerRef },
   );
 
   const progress = direction === 'vertical' ? scrollYProgress : scrollXProgress;
-  const scale = useSpring(progress, transition);
+  const smoothed = useSpring(progress, transition);
+  // Reduced motion: the bar tracks the scroll position without easing.
+  const scale = reduce ? progress : smoothed;
 
   return (
     <LocalScrollProgressProvider
@@ -73,12 +88,17 @@ type ScrollProgressProps = WithAsChild<
 
 function ScrollProgress({
   style,
-  mode = 'width',
+  mode = 'scaleX',
   asChild = false,
   ...props
 }: ScrollProgressProps) {
   const { scale, direction, global } = useScrollProgress();
-  const scaleValue = useMotionValueState(scale);
+
+  // Both are motion values: scrolling never re-renders the component.
+  const transform = useTransform(scale, (value) =>
+    mode === 'scaleY' ? `scaleY(${value})` : `scaleX(${value})`,
+  );
+  const size = useTransform(scale, (value) => `${value * 100}%`);
 
   const Component = asChild ? Slot : motion.div;
 
@@ -90,11 +110,10 @@ function ScrollProgress({
       data-global={global}
       style={{
         ...(mode === 'width' || mode === 'height'
-          ? {
-              [mode]: scaleValue * 100 + '%',
-            }
+          ? { [mode]: size }
           : {
-              [mode]: scale,
+              transform,
+              transformOrigin: mode === 'scaleX' ? '0% 50%' : '50% 0%',
             }),
         ...style,
       }}

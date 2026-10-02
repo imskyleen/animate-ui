@@ -13,7 +13,7 @@ const ITEMS = [
   {
     id: 2,
     name: 'arhamkhnz',
-    src: 'https://pbs.twimg.com/profile_images/1897311929028255744/otxpL-ke_400x400.jpg',
+    src: 'https://github.com/arhamkhnz.png?size=96',
   },
   {
     id: 3,
@@ -43,7 +43,7 @@ const ITEMS = [
   {
     id: 8,
     name: 'David Haz',
-    src: 'https://pbs.twimg.com/profile_images/1927474594102784000/Al0g-I6o_400x400.jpg',
+    src: 'https://github.com/DavidHDev.png?size=96',
   },
   {
     id: 9,
