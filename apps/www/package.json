@@ -43,7 +43,7 @@
     "remark-gfm": "^4.0.1",
     "remark-mdx": "^3.1.1",
     "rimraf": "^6.0.1",
-    "shiki": "^3.2.1",
+    "shiki": "^4.5.0",
     "tailwind-merge": "catalog:",
     "tsx": "^4.19.3",
     "tw-animate-css": "catalog:",
