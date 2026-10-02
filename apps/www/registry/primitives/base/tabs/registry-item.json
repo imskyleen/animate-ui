@@ -6,10 +6,11 @@
   "description": "A component for toggling between related panels on the same page.",
   "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
-    "@animate-ui/primitives-effects-auto-height",
-    "@animate-ui/primitives-effects-highlight",
+    "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/hooks-use-controlled-state"
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-effects-auto-height",
+    "@animate-ui/primitives-effects-highlight"
   ],
   "files": [
     {

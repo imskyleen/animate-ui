@@ -47,10 +47,10 @@ UI motion stays under 0.3s. Only marketing or explanatory motion goes longer.
 
 ## Springs
 
-| Token            | Value                                            | Use for                                                           |
-| ---------------- | ------------------------------------------------ | ----------------------------------------------------------------- |
-| `spring.default` | `{ type: 'spring', duration: 0.5, bounce: 0.2 }` | Interruptible dynamic UI: moving indicators, layout changes, drag |
-| `spring.snappy`  | `{ type: 'spring', duration: 0.3, bounce: 0 }`   | Controls used many times a day (switch thumb, toggle)             |
+| Token            | Value                                            | Use for                                                                            |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `spring.default` | `{ type: 'spring', duration: 0.5, bounce: 0.2 }` | Larger interruptible motion: drag, layout changes, cursor following                |
+| `spring.snappy`  | `{ type: 'spring', duration: 0.3, bounce: 0 }`   | Moving indicators and controls used many times a day (tab indicator, switch thumb) |
 
 Use the `duration`/`bounce` form only. `bounce` is ignored when `stiffness` or `damping` are set, so never mix them.
 
@@ -63,7 +63,7 @@ Use the `duration`/`bounce` form only. `bounce` is ignored when `stiffness` or `
 
 ## Ready-made transitions
 
-`transition.press`, `transition.tooltip`, `transition.dropdown`, `transition.exit`, `transition.disclosure`, `transition.modal`, `transition.modalExit`, `transition.drawer`: each pairs a duration with its curve. `transition.instant` (`{ duration: 0 }`) is the token for a deliberately instant change.
+`transition.press`, `transition.tooltip`, `transition.dropdown`, `transition.exit`, `transition.fade` (content swaps), `transition.disclosure`, `transition.modal`, `transition.modalExit`, `transition.drawer`, `transition.drawerExit`: each pairs a duration with its curve. `transition.instant` (`{ duration: 0 }`) is the token for a deliberately instant change.
 
 Import the `transition` export as `motionTransition`, since components also take a `transition` prop.
 

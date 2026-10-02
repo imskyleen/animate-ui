@@ -1,6 +1,6 @@
 # Recipes
 
-Start from the recipe that matches the component kind (see the table in SKILL.md). Overlay, Modal and Disclosure are validated: they come from the rewritten Animate UI Tooltip, Dialog and Accordion, which have interaction tests for the entrance, reduced motion and timing. Sheet, Indicator and Press are provisional until their reference components are rewritten.
+Start from the recipe that matches the component kind (see the table in SKILL.md). All recipes are validated: they come from Animate UI's rewritten Tooltip, Dialog, Accordion, Sheet, Tabs and Switch, which have interaction tests for timing, reduced motion and keyboard behavior, and fresh agents used them to animate shadcn's Popover, Dropdown Menu, Hover Card and Select.
 
 Every recipe assumes the base-library wiring from `base-libraries.md` (presence, mounted content, `ReducedMotionConfig`). Snippets show Radix; swap the mounting mechanism for Base UI or Headless UI.
 
@@ -179,21 +179,93 @@ function AccordionContent({
 - Derive each item's open state from the root value; never copy it into state with an effect. With a single-value root the value is a string, so compare with `===`, not `includes` (`'item-10'.includes('item-1')` is true).
 - Chevron: `transition-transform duration-200 ease-out-strong`.
 
-## Sheet (Sheet, Drawer) — provisional
+## Sheet (Sheet, Drawer)
 
-- Slide from the edge with a percentage of the element's own size: `transform: 'translateX(100%)'` (right), `translateY(100%)` (bottom).
-- `transition.drawer` (0.5s, `ease.drawer`); exit faster.
-- Base UI 1.8's Drawer brings drag-to-dismiss: dismiss on velocity (about 0.11 px/ms), not distance alone.
+Gate: occasional. Purpose: spatial, it comes from its edge.
 
-## Indicator (Tabs, Toggle Group, Navigation Menu, Sidebar active item) — provisional
+```tsx
+const offscreen: Record<Side, string> = {
+  right: 'translateX(100%)',
+  left: 'translateX(-100%)',
+  top: 'translateY(-100%)',
+  bottom: 'translateY(100%)',
+};
 
-- A shared element with `layoutId` and `spring.default`. Never animate `top`, `left`, `width` or `height` to follow an item.
-- Tab panels switch instantly or crossfade under 200ms; no `AnimatePresence mode="wait"`.
-- Keyboard navigation moves the indicator without animation.
+function SheetContentMotion({
+  side = 'right',
+  transition,
+  children,
+  ...props
+}: SheetContentProps) {
+  const reduce = useShouldReduceMotion();
+  // Same transform function on both ends: Motion can't interpolate
+  // `translate(0, 0)` with `translateX(100%)`.
+  const shown =
+    side === 'left' || side === 'right' ? 'translateX(0%)' : 'translateY(0%)';
+  const hidden = reduce
+    ? { opacity: 0, transform: shown }
+    : { opacity: 1, transform: offscreen[side] };
 
-## Press (Button, Toggle, Checkbox, Switch, Radio) — provisional
+  return (
+    <SheetPrimitive.Content asChild forceMount {...props}>
+      <motion.div
+        data-slot="sheet-content"
+        initial={hidden}
+        animate={{
+          opacity: 1,
+          transform: shown,
+          transition: transition ?? motionTransition.drawer,
+        }}
+        exit={{
+          ...hidden,
+          transition: transition ?? motionTransition.drawerExit,
+        }}
+      >
+        {children}
+      </motion.div>
+    </SheetPrimitive.Content>
+  );
+}
+```
 
-- `whileTap={{ transform: \`scale(${scale.press})\` }}`with`transition.press`.
-- No hover scale-up on small controls.
-- Checkbox check and switch thumb respond on the same frame: no delay. Use `spring.snappy` for the thumb.
-- When Base UI renders the control as a `<button>`, pass `nativeButton`.
+- Percentages of the element's own size, never pixel offsets: it works whatever the sheet's width.
+- `transition.drawer` (0.5s, `ease.drawer`) in, `transition.drawerExit` (0.3s) out. The overlay fades like a modal's.
+- No fade while sliding: the slide already explains it. Under reduced motion it fades in place instead.
+- Drag to dismiss (Base UI 1.8's Drawer): dismiss on velocity (about 0.11 px/ms), not distance alone.
+
+## Indicator (Tabs, Toggle Group, Navigation Menu, Sidebar active item)
+
+Gate: tens of times a day. Purpose: spatial, the selection moves between items.
+
+- A shared element with `layoutId` (Animate UI's `Highlight` in children mode) and `spring.snappy`: no overshoot, and a spring keeps clicking quickly through tabs smooth because it retargets with its velocity.
+- Keyboard selection moves it instantly (`transition.instant`). Track the last input on the root with **capture-phase** handlers: Headless UI's `Tab` stops the propagation of arrow keys, so a bubbling `onKeyDown` on the group never fires.
+
+```tsx
+const [isKeyboard, setIsKeyboard] = React.useState(false);
+
+<TabsPrimitive.Root
+  {...props}
+  onKeyDownCapture={(event) => { setIsKeyboard(true); onKeyDownCapture?.(event); }}
+  onPointerDownCapture={(event) => { setIsKeyboard(false); onPointerDownCapture?.(event); }}
+/>
+
+<Highlight transition={isKeyboard ? motionTransition.instant : spring.snappy} … />
+```
+
+- Base UI Tabs don't select on focus since 1.0 (`activateOnFocus` is `false`): arrow keys move focus, Enter or Space selects.
+- Panels: the incoming panel fades in with `transition.fade` (0.15s); the outgoing one unmounts at once. No `AnimatePresence mode="wait"`, no `layout` on the panel, no blur.
+- Never follow an item by animating `top`, `left`, `width` or `height`.
+- Trigger color: `transition-colors duration-150`.
+- `ReducedMotionConfig` around the Root turns the `layoutId` move into a jump.
+
+## Press (Button, Toggle, Checkbox, Switch, Radio)
+
+Gate: tens of times a day. Purpose: feedback. Validated on the Switch; the scale guidance applies to the others.
+
+- Press feedback: `whileTap={{ transform: 'scale(0.97)' }}` (the `scale.press` token) with `transition.press`. No hover scale-up on small controls.
+- Switch thumb: `layout` with `spring.snappy`. The thumb moves because the root's justification changes, and `layout` animates that with transforms.
+- A size change on press (the iOS-style stretch) is a plain style change animated by `layout`, never a tweened `width`: set `data-pressed` on the thumb and style it (`data-pressed:w-(--switch-pressed-width)`).
+- Icons inside a control fade (`transition.fade`), no scale from 0. Use `initial={false}` so they don't animate on mount.
+- Track background color: `transition-colors duration-150`.
+- Checkbox check: responds on the same frame, no delay.
+- When Base UI renders the control as a `<button>`, pass `nativeButton`. Headless UI controls expose their state through a render prop: put `ReducedMotionConfig` outside the primitive so the root's motion element is covered too.

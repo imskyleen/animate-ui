@@ -60,11 +60,14 @@ const transition = {
   tooltip: { duration: duration.tooltip, ease: ease.out },
   dropdown: { duration: duration.dropdown, ease: ease.out },
   exit: { duration: duration.exit, ease: ease.out },
+  /** Swapping content in place (tab panels): a quick fade, no exit. */
+  fade: { duration: duration.tooltip, ease: ease.out },
   /** Accordion and collapsible height (one of the few layout animations). */
   disclosure: { duration: duration.dropdown, ease: ease.out },
   modal: { duration: duration.modal, ease: ease.out },
   modalExit: { duration: duration.modalExit, ease: ease.out },
   drawer: { duration: 0.5, ease: ease.drawer },
+  drawerExit: { duration: 0.3, ease: ease.drawer },
   /** Deliberately no animation (e.g. keyboard-driven changes). */
   instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;

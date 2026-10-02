@@ -4,13 +4,17 @@
   "type": "registry:ui",
   "title": "Gallery Horizontal End Icon",
   "description": "Gallery horizontal end icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
-  "dependencies": ["motion"],
+  "registryDependencies": [
+    "@animate-ui/icons-icon"
+  ],
+  "dependencies": [
+    "motion"
+  ],
   "files": [
     {
-      "path": "registry/icons/gallery-horizontal-end/index.tsx",
+      "path": "registry/icons/gallery-vertical-end/index.tsx",
       "type": "registry:ui",
-      "target": "components/animate-ui/icons/gallery-horizontal-end.tsx"
+      "target": "components/animate-ui/icons/gallery-vertical-end.tsx"
     }
   ],
   "meta": {

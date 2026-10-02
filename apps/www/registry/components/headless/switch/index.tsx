@@ -27,16 +27,20 @@ function Switch({
     <SwitchPrimitive
       className={cn(
         'relative peer focus-visible:border-ring focus-visible:ring-ring/50 flex h-5 w-8 px-px shrink-0 items-center justify-start rounded-full border border-transparent shadow-xs outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
-        'data-[checked]:bg-primary bg-input dark:bg-input/80 data-[checked]:justify-end',
+        'transition-colors duration-150 data-[checked]:bg-primary bg-input dark:bg-input/80 data-[checked]:justify-end',
         className,
       )}
       {...props}
     >
       <SwitchThumbPrimitive
         className={cn(
-          'relative z-10 bg-background dark:bg-foreground dark:data-[checked="true"]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0',
+          'relative z-10 bg-background dark:bg-foreground dark:data-[checked="true"]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 data-pressed:w-(--switch-pressed-width)',
         )}
-        pressedAnimation={{ width: pressedWidth }}
+        style={
+          {
+            '--switch-pressed-width': `${pressedWidth}px`,
+          } as React.CSSProperties
+        }
       >
         {thumbIcon && (
           <SwitchIconPrimitive

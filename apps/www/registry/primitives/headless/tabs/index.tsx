@@ -22,10 +22,17 @@ import {
   HighlightProps,
 } from '@/registry/primitives/effects/highlight';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
+import {
+  ReducedMotionConfig,
+  spring,
+  transition as motionTransition,
+} from '@/registry/lib/motion';
 import { AutoHeight } from '@/registry/primitives/effects/auto-height';
 
 type TabsContextType = {
   selectedIndex: number;
+  /** Last interaction was the keyboard: the indicator moves instantly. */
+  isKeyboard: boolean;
 };
 
 const [TabsProvider, useTabs] =
@@ -39,16 +46,35 @@ type TabGroupProps<TTag extends React.ElementType = 'div'> =
 
 function TabGroup<TTag extends React.ElementType = 'div'>({
   children,
+  onKeyDownCapture,
+  onPointerDownCapture,
   ...props
 }: TabGroupProps<TTag>) {
+  const [isKeyboard, setIsKeyboard] = React.useState(false);
+
   return (
-    <TabGroupPrimitive data-slot="tab-group" {...props}>
-      {(bag) => (
-        <TabsProvider value={{ selectedIndex: bag.selectedIndex }}>
-          {typeof children === 'function' ? children(bag) : children}
-        </TabsProvider>
-      )}
-    </TabGroupPrimitive>
+    <ReducedMotionConfig>
+      <TabGroupPrimitive
+        data-slot="tab-group"
+        {...props}
+        onKeyDownCapture={(event: React.KeyboardEvent<HTMLElement>) => {
+          setIsKeyboard(true);
+          onKeyDownCapture?.(event);
+        }}
+        onPointerDownCapture={(event: React.PointerEvent<HTMLElement>) => {
+          setIsKeyboard(false);
+          onPointerDownCapture?.(event);
+        }}
+      >
+        {(bag) => (
+          <TabsProvider
+            value={{ selectedIndex: bag.selectedIndex, isKeyboard }}
+          >
+            {typeof children === 'function' ? children(bag) : children}
+          </TabsProvider>
+        )}
+      </TabGroupPrimitive>
+    </ReducedMotionConfig>
   );
 }
 
@@ -67,17 +93,17 @@ function TabList<TTag extends React.ElementType = 'div'>(
 type TabHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;
 
 function TabHighlight({
-  transition = { type: 'spring', stiffness: 200, damping: 25 },
+  transition = spring.snappy,
   ...props
 }: TabHighlightProps) {
-  const { selectedIndex } = useTabs();
+  const { selectedIndex, isKeyboard } = useTabs();
 
   return (
     <Highlight
       data-slot="tab-highlight"
       controlledItems
       value={selectedIndex.toString()}
-      transition={transition}
+      transition={isKeyboard ? motionTransition.instant : transition}
       {...props}
     />
   );
@@ -135,17 +161,17 @@ function TabPanel<TTag extends React.ElementType = typeof motion.div>(
 ) {
   const {
     as = motion.div,
-    transition = { duration: 0.5, ease: 'easeInOut' },
+    transition = motionTransition.fade,
     ...rest
   } = props;
 
+  // The incoming panel fades in; the outgoing one leaves at once, so the two
+  // never overlap and nothing waits for an exit.
   return (
     <TabPanelPrimitive
       data-slot="tab-panel"
-      layout
-      initial={{ opacity: 0, filter: 'blur(4px)' }}
-      animate={{ opacity: 1, filter: 'blur(0px)' }}
-      exit={{ opacity: 0, filter: 'blur(4px)' }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={transition}
       as={as as React.ElementType}
       {...rest}
@@ -170,11 +196,7 @@ type TabPanelsLayoutProps<TTag extends React.ElementType = typeof motion.div> =
 type TabPanelsProps<TTag extends React.ElementType> =
   TabPanelsAutoProps<TTag> | TabPanelsLayoutProps<TTag>;
 
-const defaultTransition: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
-};
+const defaultTransition: Transition = spring.snappy;
 
 function TabPanels<TTag extends React.ElementType>(
   props: TabPanelsProps<TTag>,

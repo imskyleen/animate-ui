@@ -9910,9 +9910,9 @@
       ],
       "files": [
         {
-          "path": "registry/icons/gallery-vertical-end/index.tsx",
+          "path": "registry/icons/gallery-horizontal-end/index.tsx",
           "type": "registry:ui",
-          "target": "components/animate-ui/icons/gallery-vertical-end.tsx"
+          "target": "components/animate-ui/icons/gallery-horizontal-end.tsx"
         }
       ],
       "meta": {
@@ -9968,9 +9968,9 @@
       ],
       "files": [
         {
-          "path": "registry/icons/gallery-horizontal-end/index.tsx",
+          "path": "registry/icons/gallery-vertical-end/index.tsx",
           "type": "registry:ui",
-          "target": "components/animate-ui/icons/gallery-horizontal-end.tsx"
+          "target": "components/animate-ui/icons/gallery-vertical-end.tsx"
         }
       ],
       "meta": {
@@ -14861,8 +14861,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -14882,10 +14883,11 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-auto-height",
-        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-auto-height",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -15383,7 +15385,8 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15404,14 +15407,15 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/primitives-effects-auto-height"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-auto-height",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {
-          "path": "registry/primitives/headless/switch/index.tsx",
+          "path": "registry/primitives/headless/tabs/index.tsx",
           "type": "registry:ui",
-          "target": "components/animate-ui/primitives/headless/switch.tsx"
+          "target": "components/animate-ui/primitives/headless/tabs.tsx"
         }
       ]
     },
@@ -15681,8 +15685,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15702,8 +15707,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15723,10 +15729,11 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/primitives-effects-auto-height",
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-auto-height",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {

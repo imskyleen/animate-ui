@@ -6,6 +6,11 @@ import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
+import {
+  ReducedMotionConfig,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
 
 type SheetContextType = {
   isOpen: boolean;
@@ -49,13 +54,15 @@ function SheetClose(props: SheetCloseProps) {
 
 type SheetPortalProps = React.ComponentProps<typeof SheetPrimitive.Portal>;
 
-function SheetPortal(props: SheetPortalProps) {
+function SheetPortal({ children, ...props }: SheetPortalProps) {
   const { isOpen } = useSheet();
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <SheetPrimitive.Portal forceMount data-slot="sheet-portal" {...props} />
+        <SheetPrimitive.Portal forceMount data-slot="sheet-portal" {...props}>
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </SheetPrimitive.Portal>
       )}
     </AnimatePresence>
   );
@@ -67,19 +74,20 @@ type SheetOverlayProps = Omit<
 > &
   HTMLMotionProps<'div'>;
 
-function SheetOverlay({
-  transition = { duration: 0.2, ease: 'easeInOut' },
-  ...props
-}: SheetOverlayProps) {
+function SheetOverlay({ transition, ...props }: SheetOverlayProps) {
   return (
     <SheetPrimitive.Overlay asChild forceMount>
       <motion.div
-        key="sheet-overlay"
         data-slot="sheet-overlay"
-        initial={{ opacity: 0, filter: 'blur(4px)' }}
-        animate={{ opacity: 1, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, filter: 'blur(4px)' }}
-        transition={transition}
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: 1,
+          transition: transition ?? motionTransition.modal,
+        }}
+        exit={{
+          opacity: 0,
+          transition: transition ?? motionTransition.modalExit,
+        }}
         {...props}
       />
     </SheetPrimitive.Overlay>
@@ -93,44 +101,57 @@ type SheetContentProps = React.ComponentProps<typeof SheetPrimitive.Content> &
     side?: Side;
   };
 
+const offscreen: Record<Side, string> = {
+  right: 'translateX(100%)',
+  left: 'translateX(-100%)',
+  top: 'translateY(-100%)',
+  bottom: 'translateY(100%)',
+};
+
+const positionStyle: Record<Side, React.CSSProperties> = {
+  right: { insetBlock: 0, right: 0 },
+  left: { insetBlock: 0, left: 0 },
+  top: { insetInline: 0, top: 0 },
+  bottom: { insetInline: 0, bottom: 0 },
+};
+
 function SheetContent({
   side = 'right',
-  transition = { type: 'spring', stiffness: 150, damping: 22 },
+  transition,
   style,
   children,
   ...props
 }: SheetContentProps) {
-  const axis = side === 'left' || side === 'right' ? 'x' : 'y';
-
-  const offscreen: Record<Side, { x?: string; y?: string; opacity: number }> = {
-    right: { x: '100%', opacity: 0 },
-    left: { x: '-100%', opacity: 0 },
-    top: { y: '-100%', opacity: 0 },
-    bottom: { y: '100%', opacity: 0 },
-  };
-
-  const positionStyle: Record<Side, React.CSSProperties> = {
-    right: { insetBlock: 0, right: 0 },
-    left: { insetBlock: 0, left: 0 },
-    top: { insetInline: 0, top: 0 },
-    bottom: { insetInline: 0, bottom: 0 },
-  };
+  const reduce = useShouldReduceMotion();
+  // Slides in from its edge (a percentage of its own size). Under reduced
+  // motion it stays in place and fades instead. Same transform function on
+  // both ends so Motion can interpolate it.
+  const shown =
+    side === 'left' || side === 'right' ? 'translateX(0%)' : 'translateY(0%)';
+  const hidden = reduce
+    ? { opacity: 0, transform: shown }
+    : { opacity: 1, transform: offscreen[side] };
 
   return (
     <SheetPrimitive.Content asChild forceMount {...props}>
       <motion.div
-        key="sheet-content"
         data-slot="sheet-content"
         data-side={side}
-        initial={offscreen[side]}
-        animate={{ [axis]: 0, opacity: 1 }}
-        exit={offscreen[side]}
+        initial={hidden}
+        animate={{
+          opacity: 1,
+          transform: shown,
+          transition: transition ?? motionTransition.drawer,
+        }}
+        exit={{
+          ...hidden,
+          transition: transition ?? motionTransition.drawerExit,
+        }}
         style={{
           position: 'fixed',
           ...positionStyle[side],
           ...style,
         }}
-        transition={transition}
       >
         {children}
       </motion.div>

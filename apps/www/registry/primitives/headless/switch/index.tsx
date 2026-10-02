@@ -14,6 +14,11 @@ import {
 } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
+import {
+  ReducedMotionConfig,
+  spring,
+  transition as motionTransition,
+} from '@/registry/lib/motion';
 
 type SwitchContextType = {
   isChecked: boolean;
@@ -37,22 +42,23 @@ function Switch<TTag extends React.ElementType = typeof motion.button>(
   const [isPressed, setIsPressed] = React.useState(false);
 
   return (
-    <SwitchPrimitive
-      data-slot="switch"
-      whileTap="tap"
-      initial={false}
-      onTapStart={() => setIsPressed(true)}
-      onTapCancel={() => setIsPressed(false)}
-      onTap={() => setIsPressed(false)}
-      {...rest}
-      as={as}
-    >
-      {(bag) => (
-        <SwitchProvider value={{ isPressed, isChecked: bag.checked }}>
-          {typeof children === 'function' ? children(bag) : children}
-        </SwitchProvider>
-      )}
-    </SwitchPrimitive>
+    <ReducedMotionConfig>
+      <SwitchPrimitive
+        data-slot="switch"
+        initial={false}
+        onTapStart={() => setIsPressed(true)}
+        onTapCancel={() => setIsPressed(false)}
+        onTap={() => setIsPressed(false)}
+        {...rest}
+        as={as}
+      >
+        {(bag) => (
+          <SwitchProvider value={{ isPressed, isChecked: bag.checked }}>
+            {typeof children === 'function' ? children(bag) : children}
+          </SwitchProvider>
+        )}
+      </SwitchPrimitive>
+    </ReducedMotionConfig>
   );
 }
 
@@ -69,15 +75,18 @@ function SwitchThumb<TTag extends React.ElementType = typeof motion.div>(
   const { isPressed, isChecked } = useSwitch();
 
   const {
-    transition = { type: 'spring', stiffness: 300, damping: 25 },
+    transition = spring.snappy,
     pressedAnimation,
     as: Component = motion.div,
     ...rest
   } = props;
 
+  // `layout` animates position and size changes with transforms, so the
+  // pressed stretch can be a plain style change (`data-pressed`).
   return (
     <Component
       data-slot="switch-thumb"
+      data-pressed={isPressed || undefined}
       layout
       transition={transition}
       animate={isPressed ? pressedAnimation : undefined}
@@ -100,7 +109,7 @@ function SwitchIcon<TTag extends React.ElementType = typeof motion.div>(
 ) {
   const {
     position,
-    transition = { type: 'spring', bounce: 0 },
+    transition = motionTransition.fade,
     as: Component = motion.div,
     ...rest
   } = props;
@@ -116,7 +125,8 @@ function SwitchIcon<TTag extends React.ElementType = typeof motion.div>(
   return (
     <Component
       data-slot={`switch-${position}-icon`}
-      animate={isAnimated ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+      initial={false}
+      animate={{ opacity: isAnimated ? 1 : 0 }}
       transition={transition}
       {...rest}
     />

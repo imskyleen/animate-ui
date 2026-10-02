@@ -3,13 +3,14 @@
   "name": "primitives-radix-tabs",
   "type": "registry:ui",
   "title": "Radix Tabs",
-  "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "description": "A set of layered sections of content\u2014known as tab panels\u2014that are displayed one at a time.",
   "dependencies": ["motion", "radix-ui"],
   "registryDependencies": [
-    "@animate-ui/primitives-effects-highlight",
-    "@animate-ui/primitives-effects-auto-height",
+    "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/hooks-use-controlled-state"
+    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-effects-auto-height",
+    "@animate-ui/primitives-effects-highlight"
   ],
   "files": [
     {
