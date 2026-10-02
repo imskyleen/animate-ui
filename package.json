@@ -10,28 +10,22 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "registry:build": "pnpm --filter animate-ui registry:build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check-types": "turbo check-types",
+    "test:smoke": "pnpm --filter animate-ui test:smoke"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.8.0",
-    "@commitlint/config-conventional": "^19.8.0",
-    "@eslint/js": "^9.34.0",
-    "@tailwindcss/postcss": "^4.1.13",
-    "@types/node": "24.0.7",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
-    "eslint": "^9.34.1",
     "husky": "^9.1.7",
-    "postcss": "^8.5.3",
-    "prettier": "^3.5.3",
-    "tailwindcss": "^4.1.13",
-    "turbo": "^2.4.2",
-    "typescript": "^5.9.2"
+    "prettier": "catalog:",
+    "turbo": "^2.11.7",
+    "typescript": "catalog:"
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.34.6+sha512.7e1ae66a83a9143c118cc1944f37cc4f2b8acddeda4b001cfa78908f6e46e45e15292739ca6c9d026426cc757e9318cc98c5551d6a16c165097b0028ba87b4e6",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12"
   }
 }

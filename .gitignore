@@ -39,3 +39,4 @@ apps/www/app/(playground)
 
 # Playwright
 apps/www/tests/.results
+apps/www/tests/.baseline
