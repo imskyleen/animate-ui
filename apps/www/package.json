@@ -39,7 +39,6 @@
     "radix-ui": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-use-measure": "^2.1.7",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-mdx": "^3.1.1",

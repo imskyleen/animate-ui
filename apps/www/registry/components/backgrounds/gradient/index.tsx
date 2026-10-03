@@ -3,24 +3,11 @@
 import * as React from 'react';
 import { motion, useInView, type HTMLMotionProps } from 'motion/react';
 
+import { usePageVisible } from '@/registry/hooks/use-page-visible';
 import { useShouldReduceMotion } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
 
 type GradientBackgroundProps = HTMLMotionProps<'div'>;
-
-function subscribeToVisibility(onChange: () => void) {
-  document.addEventListener('visibilitychange', onChange);
-  return () => document.removeEventListener('visibilitychange', onChange);
-}
-
-/** False while the tab is hidden. */
-function usePageVisible() {
-  return React.useSyncExternalStore(
-    subscribeToVisibility,
-    () => document.visibilityState === 'visible',
-    () => true,
-  );
-}
 
 const STATIC_POSITION = '0% 50%';
 

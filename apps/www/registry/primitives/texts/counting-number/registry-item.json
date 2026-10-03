@@ -5,7 +5,10 @@
   "title": "Counting Number",
   "description": "A counting number animation.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/hooks-use-is-in-view"],
+  "registryDependencies": [
+    "@animate-ui/hooks-use-is-in-view",
+    "@animate-ui/lib-motion"
+  ],
   "files": [
     {
       "path": "registry/primitives/texts/counting-number/index.tsx",

@@ -5,7 +5,11 @@
   "title": "Morphing Text",
   "description": "A text component that smoothly morphs characters to transition between strings.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/hooks-use-is-in-view"],
+  "registryDependencies": [
+    "@animate-ui/hooks-use-is-in-view",
+    "@animate-ui/hooks-use-page-visible",
+    "@animate-ui/lib-motion"
+  ],
   "files": [
     {
       "path": "registry/primitives/texts/morphing/index.tsx",

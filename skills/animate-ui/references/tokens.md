@@ -86,6 +86,8 @@ Import the `transition` export as `motionTransition`, since components also take
 
 `ReducedMotionConfig` wraps a component's motion tree. It needs no app setup and keeps an app-level `<MotionConfig reducedMotion="always">`. When the OS asks for reduced motion, Motion skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter.
 
+Animations that play on mount (text entrances, counters, a highlight sweep) use `<ReducedMotionConfig remount>`. The server render can't know the user's preference, so `useShouldReduceMotion()` is `false` during hydration: an entrance started then would keep playing once the preference resolves. `remount` remounts the children when the preference changes, so they restart in the right mode. Overlays and other components that only animate after user input don't need it.
+
 It does not skip a `transform` string. Inside the wrapper, `useShouldReduceMotion()` returns `true` under reduced motion: use it to start from the resting transform.
 
 ```tsx

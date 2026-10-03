@@ -100,7 +100,16 @@ const motionTokens = {
   transition,
 } as const;
 
-type ReducedMotionConfigProps = { children: React.ReactNode };
+type ReducedMotionConfigProps = {
+  children: React.ReactNode;
+  /**
+   * Remount the children when the reduced-motion preference changes. Use it
+   * for animations that play on mount (text entrances, counters): the server
+   * render can't know the preference, so without it an entrance started during
+   * hydration would keep playing after the preference resolves to "reduce".
+   */
+  remount?: boolean;
+};
 
 /**
  * Makes every `motion` element inside respect the OS "reduce motion" setting:
@@ -110,15 +119,22 @@ type ReducedMotionConfigProps = { children: React.ReactNode };
  * Wrap each component's motion tree with it so this works without any app
  * setup. An app-level `<MotionConfig reducedMotion="always">` is preserved.
  */
-function ReducedMotionConfig({ children }: ReducedMotionConfigProps) {
+function ReducedMotionConfig({ children, remount }: ReducedMotionConfigProps) {
   const { reducedMotion } = React.use(MotionConfigContext);
 
   return (
     <MotionConfig
       reducedMotion={reducedMotion === 'always' ? 'always' : 'user'}
     >
-      {children}
+      {remount ? <RemountOnReduce>{children}</RemountOnReduce> : children}
     </MotionConfig>
+  );
+}
+
+function RemountOnReduce({ children }: { children: React.ReactNode }) {
+  const reduce = useShouldReduceMotion();
+  return (
+    <React.Fragment key={reduce ? 'reduce' : 'full'}>{children}</React.Fragment>
   );
 }
 

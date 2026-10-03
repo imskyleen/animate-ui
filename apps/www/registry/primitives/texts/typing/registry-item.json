@@ -7,7 +7,9 @@
   "dependencies": ["motion"],
   "registryDependencies": [
     "@animate-ui/hooks-use-is-in-view",
-    "@animate-ui/lib-get-strict-context"
+    "@animate-ui/hooks-use-page-visible",
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion"
   ],
   "files": [
     {

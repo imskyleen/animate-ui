@@ -24,6 +24,8 @@ releaseDate: 2025-09-07
 </ScrollingNumberContainer>
 ```
 
+Under reduced motion the wheel lands on the number right away. The wheel is hidden from screen readers, which read the number once from the container.
+
 ## API Reference
 
 ### ScrollingNumberContainer
@@ -107,21 +109,22 @@ releaseDate: 2025-09-07
 <TypeTable
   type={{
     delay: {
-      description: 'The delay to use.',
+      description: 'The delay before the wheel spins, in milliseconds.',
       type: 'number',
       required: false,
       default: '0',
     },
     onCompleted: {
-      description: 'The callback to use when the animation is completed.',
+      description: 'Called once when the wheel (nearly) lands on the number.',
       type: '() => void',
       required: false,
     },
     transition: {
-      description: 'The transition to use.',
-      type: 'SpringOptions',
+      description:
+        'The transition of the spin. Spring options (`stiffness`, `damping`, `bounce`, `visualDuration`…) animate as a spring; a transition with a `type` or an `ease` is used as is.',
+      type: 'Transition',
       required: false,
-      default: '{ stiffness: 90, damping: 30 }',
+      default: '{ duration: 2, ease: ease.out }',
     },
     '...props': {
       description: 'The props of the scrolling number.',

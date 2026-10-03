@@ -3,22 +3,9 @@
 import * as React from 'react';
 import { useInView } from 'motion/react';
 
+import { usePageVisible } from '@/registry/hooks/use-page-visible';
 import { useShouldReduceMotion } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
-
-function subscribeToVisibility(onChange: () => void) {
-  document.addEventListener('visibilitychange', onChange);
-  return () => document.removeEventListener('visibilitychange', onChange);
-}
-
-/** False while the tab is hidden. */
-function usePageVisible() {
-  return React.useSyncExternalStore(
-    subscribeToVisibility,
-    () => document.visibilityState === 'visible',
-    () => true,
-  );
-}
 
 const rand = (min: number, max: number): number =>
   Math.random() * (max - min) + min;

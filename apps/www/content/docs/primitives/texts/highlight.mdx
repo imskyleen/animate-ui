@@ -29,21 +29,21 @@ author:
       type: 'string',
       required: true,
     },
-    gradient: {
-      description: 'The gradient to use.',
-      type: 'string',
+    delay: {
+      description: 'The delay before the highlight starts, in milliseconds.',
+      type: 'number',
       required: false,
-      default:
-        'linear-gradient(90deg, #3b82f6 0%, #a855f7 20%, #ec4899 50%, #a855f7 80%, #3b82f6 100%)',
+      default: '0',
     },
     transition: {
       description: 'The transition to use.',
       type: 'Transition',
       required: false,
-      default: "{ duration: 2, ease: 'easeInOut' }",
+      default: '{ duration: 2, ease: ease.out }',
     },
     inView: {
-      description: 'Whether the text is in view.',
+      description:
+        'Whether to wait for the text to be in view before highlighting.',
       type: 'boolean',
       required: false,
       default: 'false',
@@ -55,7 +55,8 @@ author:
       default: '0px',
     },
     inViewOnce: {
-      description: 'Whether the text should only animate once.',
+      description:
+        'Whether the highlight only plays once. When false, it replays each time the text comes back into view.',
       type: 'boolean',
       required: false,
       default: 'true',
@@ -67,3 +68,7 @@ author:
     },
   }}
 />
+
+## Accessibility
+
+Under reduced motion the highlight is shown at once, without the sweep.

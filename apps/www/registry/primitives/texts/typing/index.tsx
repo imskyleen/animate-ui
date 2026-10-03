@@ -1,31 +1,71 @@
 'use client';
 
 import * as React from 'react';
-import { motion, type HTMLMotionProps } from 'motion/react';
+import { motion, useInView, type HTMLMotionProps } from 'motion/react';
 
 import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
+import { usePageVisible } from '@/registry/hooks/use-page-visible';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
+import {
+  ReducedMotionConfig,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
+
+/** Splits into user-perceived characters, so emoji and accents stay whole. */
+function splitGraphemes(text: string): string[] {
+  if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {
+    const segmenter = new Intl.Segmenter(undefined, {
+      granularity: 'grapheme',
+    });
+    return Array.from(segmenter.segment(text), (s) => s.segment);
+  }
+  return Array.from(text);
+}
+
+type TypingPhase = 'typing' | 'holding' | 'erasing' | 'done';
+
+type TypingState = {
+  index: number;
+  count: number;
+  phase: TypingPhase;
+};
+
+const INITIAL_STATE: TypingState = { index: 0, count: 0, phase: 'typing' };
 
 type TypingTextContextType = {
   isTyping: boolean;
   setIsTyping: (isTyping: boolean) => void;
+  /** False when the cursor should hold still (off screen, hidden tab, reduced motion). */
+  canBlink: boolean;
 };
 
 const [TypingTextProvider, useTypingText] =
   getStrictContext<TypingTextContextType>('TypingTextContext');
 
 type TypingTextProps = React.ComponentProps<'span'> & {
+  /** Delay per typed or erased character, in milliseconds. */
   duration?: number;
+  /** Delay before typing starts, in milliseconds. */
   delay?: number;
+  /** Erase the last text and start over from the first one. */
   loop?: boolean;
+  /** Pause on a fully typed text before erasing it, in milliseconds. */
   holdDelay?: number;
   text: string | string[];
 } & UseIsInViewOptions;
 
-function TypingText({
+function TypingText(props: TypingTextProps) {
+  return (
+    <ReducedMotionConfig>
+      <TypingTextContent {...props} />
+    </ReducedMotionConfig>
+  );
+}
+
+function TypingTextContent({
   ref,
   children,
   duration = 100,
@@ -47,86 +87,147 @@ function TypingText({
     },
   );
 
+  const reduce = useShouldReduceMotion();
+  const pageVisible = usePageVisible();
+  // Actual visibility, independent of the `inView` start trigger.
+  const onScreen = useInView(localRef);
+
+  // Inline arrays get a new identity every render: only restart typing when
+  // the texts themselves change.
+  const textsKey = JSON.stringify(typeof text === 'string' ? [text] : text);
+  const texts = React.useMemo(
+    () => JSON.parse(textsKey) as string[],
+    [textsKey],
+  );
+  const segments = React.useMemo(() => texts.map(splitGraphemes), [texts]);
+
   const [isTyping, setIsTyping] = React.useState(false);
   const [started, setStarted] = React.useState(false);
-  const [displayedText, setDisplayedText] = React.useState<string>('');
 
   React.useEffect(() => {
-    if (isInView) {
-      const timeoutId = setTimeout(() => {
-        setStarted(true);
-      }, delay);
-      return () => clearTimeout(timeoutId);
-    }
+    if (!isInView) return;
+    const timeoutId = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(timeoutId);
   }, [isInView, delay]);
 
+  // Timings are read when the next character is scheduled, so changing them
+  // mid-animation takes effect without restarting.
+  const timingRef = React.useRef({ duration, holdDelay });
   React.useEffect(() => {
-    if (!started) return;
+    timingRef.current = { duration, holdDelay };
+  });
 
-    const timeoutIds: Array<ReturnType<typeof setTimeout>> = [];
-    const texts: string[] = typeof text === 'string' ? [text] : text;
+  // The visible text is written straight to the DOM: typing a character
+  // never re-renders React.
+  const textRef = React.useRef<HTMLSpanElement>(null);
+  const stateRef = React.useRef<TypingState>({ ...INITIAL_STATE });
 
-    const typeText = (str: string, onComplete: () => void) => {
-      setIsTyping(true);
-      let currentIndex = 0;
-      const type = () => {
-        if (currentIndex <= str.length) {
-          setDisplayedText(str.substring(0, currentIndex));
-          currentIndex++;
-          const id = setTimeout(type, duration);
-          timeoutIds.push(id);
-        } else {
-          setIsTyping(false);
-          onComplete();
-        }
+  const write = React.useCallback(() => {
+    const el = textRef.current;
+    if (!el) return;
+    const { index, count } = stateRef.current;
+    el.textContent = (segments[index] ?? []).slice(0, count).join('');
+  }, [segments]);
+
+  // New texts restart from scratch (typing is that kind of effect). Under
+  // reduced motion the final text is shown at once.
+  React.useLayoutEffect(() => {
+    if (reduce) {
+      const last = segments.length - 1;
+      const index = loop ? 0 : last;
+      stateRef.current = {
+        index,
+        count: segments[index]?.length ?? 0,
+        phase: 'done',
       };
-      type();
+    } else {
+      stateRef.current = { ...INITIAL_STATE };
+    }
+    write();
+  }, [segments, loop, reduce, write]);
+
+  // A loop pauses off screen and in a hidden tab; a single run only in a
+  // hidden tab (it then finishes where it is, it doesn't wait to be seen).
+  const paused = !pageVisible || (loop && !onScreen);
+
+  React.useEffect(() => {
+    if (reduce || !started || paused) return;
+
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const schedule = (ms: number) => {
+      timeoutId = setTimeout(step, ms);
     };
 
-    const eraseText = (str: string, onComplete: () => void) => {
-      setIsTyping(true);
-      let currentIndex = str.length;
-      const erase = () => {
-        if (currentIndex >= 0) {
-          setDisplayedText(str.substring(0, currentIndex));
-          currentIndex--;
-          const id = setTimeout(erase, duration);
-          timeoutIds.push(id);
-        } else {
-          setIsTyping(false);
-          onComplete();
-        }
-      };
-      erase();
-    };
+    function step() {
+      const state = stateRef.current;
+      const length = segments[state.index]?.length ?? 0;
+      const isLast = state.index === segments.length - 1;
+      const timing = timingRef.current;
 
-    const animateTexts = (index: number) => {
-      typeText(texts[index] ?? '', () => {
-        const isLast = index === texts.length - 1;
-        if (isLast && !loop) {
-          return;
-        }
-        const id = setTimeout(() => {
-          eraseText(texts[index] ?? '', () => {
-            const nextIndex = isLast ? 0 : index + 1;
-            animateTexts(nextIndex);
-          });
-        }, holdDelay);
-        timeoutIds.push(id);
-      });
-    };
+      switch (state.phase) {
+        case 'typing':
+          if (state.count < length) {
+            setIsTyping(true);
+            state.count++;
+            write();
+            schedule(timing.duration);
+          } else if (isLast && !loop) {
+            setIsTyping(false);
+            state.phase = 'done';
+          } else {
+            setIsTyping(false);
+            state.phase = 'holding';
+            schedule(timing.holdDelay);
+          }
+          break;
+        case 'holding':
+          state.phase = 'erasing';
+          step();
+          break;
+        case 'erasing':
+          if (state.count > 0) {
+            setIsTyping(true);
+            state.count--;
+            write();
+            schedule(timing.duration);
+          } else {
+            state.index = isLast ? 0 : state.index + 1;
+            state.phase = 'typing';
+            schedule(timing.duration);
+          }
+          break;
+        case 'done':
+          break;
+      }
+    }
 
-    animateTexts(0);
+    // Resuming after a pause continues where it stopped.
+    const { phase } = stateRef.current;
+    if (phase !== 'done') {
+      schedule(
+        phase === 'holding'
+          ? timingRef.current.holdDelay
+          : timingRef.current.duration,
+      );
+    }
 
-    return () => {
-      timeoutIds.forEach(clearTimeout);
-    };
-  }, [text, duration, started, loop, holdDelay]);
+    return () => clearTimeout(timeoutId);
+  }, [segments, loop, reduce, started, paused, write]);
+
+  // Screen readers get every text once, never the partial ones.
+  const srText = texts.join(', ');
 
   return (
-    <TypingTextProvider value={{ isTyping, setIsTyping }}>
+    <TypingTextProvider
+      value={{
+        isTyping: isTyping && !reduce,
+        setIsTyping,
+        canBlink: !reduce && pageVisible && onScreen,
+      }}
+    >
       <span ref={localRef} data-slot="typing-text" {...props}>
-        <motion.span>{displayedText}</motion.span>
+        <span className="sr-only">{srText}</span>
+        <span ref={textRef} aria-hidden />
         {children}
       </span>
     </TypingTextProvider>
@@ -140,11 +241,12 @@ function TypingTextCursor({
   variants,
   ...props
 }: TypingTextCursorProps) {
-  const { isTyping } = useTypingText();
+  const { isTyping, canBlink } = useTypingText();
 
   return (
     <motion.span
       data-slot="typing-text-cursor"
+      aria-hidden
       variants={{
         blinking: {
           opacity: [0, 0, 1, 1],
@@ -161,7 +263,9 @@ function TypingTextCursor({
         },
         ...variants,
       }}
-      animate={isTyping ? 'visible' : 'blinking'}
+      // The blink is a loop: it holds still while typing, off screen, in a
+      // hidden tab and under reduced motion.
+      animate={isTyping || !canBlink ? 'visible' : 'blinking'}
       style={{
         display: 'inline-block',
         height: '16px',

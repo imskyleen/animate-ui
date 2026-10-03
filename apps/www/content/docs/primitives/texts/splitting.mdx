@@ -29,8 +29,9 @@ author:
 <TypeTable
   type={{
     text: {
-      description: 'The text to display.',
-      type: 'string',
+      description:
+        'The text to display (an array of lines when `type` is `lines`).',
+      type: 'string | string[]',
       required: true,
     },
     type: {
@@ -40,7 +41,7 @@ author:
       default: 'chars',
     },
     delay: {
-      description: 'The delay to use.',
+      description: 'Delay before the first piece, in milliseconds.',
       type: 'number',
       required: false,
       default: '0',
@@ -52,27 +53,30 @@ author:
       default: 'false',
     },
     stagger: {
-      description: 'The stagger to use.',
+      description: 'Delay between two pieces, in seconds.',
       type: 'number',
       required: false,
+      default: '0.05 (chars), 0.2 (words), 0.3 (lines)',
     },
     initial: {
-      description: 'The initial state to use.',
-      type: 'Variant',
+      description:
+        'Hidden state of each piece. Override it together with `animate`: the defaults use a `transform` string.',
+      type: 'TargetAndTransition',
       required: false,
-      default: '{ x: 150, opacity: 0 }',
+      default: "{ opacity: 0, transform: 'translateX(150px)' }",
     },
     animate: {
-      description: 'The animate state to use.',
-      type: 'Variant',
+      description: 'Visible state of each piece.',
+      type: 'TargetAndTransition',
       required: false,
-      default: '{ x: 0, opacity: 1 }',
+      default: "{ opacity: 1, transform: 'translateX(0px)' }",
     },
     transition: {
-      description: 'The transition to use.',
+      description:
+        'Transition of each piece. Its `delay` is added to the stagger.',
       type: 'Transition',
       required: false,
-      default: '{ duration: 0.7, ease: "easeOut" }',
+      default: '{ duration: 0.7, ease: ease.out }',
     },
     inView: {
       description: 'Whether the text is in view.',

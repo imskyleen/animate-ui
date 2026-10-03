@@ -5,7 +5,10 @@
   "title": "Shimmering Text",
   "description": "A shimmering text animation.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/hooks-use-is-in-view"],
+  "registryDependencies": [
+    "@animate-ui/hooks-use-page-visible",
+    "@animate-ui/lib-motion"
+  ],
   "files": [
     {
       "path": "registry/primitives/texts/shimmering/index.tsx",

@@ -5,6 +5,10 @@
   "title": "Gradient Text",
   "description": "A gradient text animation.",
   "dependencies": ["motion"],
+  "registryDependencies": [
+    "@animate-ui/hooks-use-page-visible",
+    "@animate-ui/lib-motion"
+  ],
   "files": [
     {
       "path": "registry/primitives/texts/gradient/index.tsx",

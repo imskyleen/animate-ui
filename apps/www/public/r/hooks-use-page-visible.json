@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks-use-page-visible",
+  "title": "usePageVisible",
+  "description": "A hook that returns false while the browser tab is hidden, to pause looping animations.",
+  "files": [
+    {
+      "path": "registry/hooks/use-page-visible/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\n\nfunction subscribeToVisibility(onChange: () => void) {\n  document.addEventListener('visibilitychange', onChange);\n  return () => document.removeEventListener('visibilitychange', onChange);\n}\n\n/**\n * False while the tab is hidden. Pair it with `useInView` and\n * `useShouldReduceMotion` to pause looping animations nobody can see.\n */\nfunction usePageVisible() {\n  return React.useSyncExternalStore(\n    subscribeToVisibility,\n    () => document.visibilityState === 'visible',\n    () => true,\n  );\n}\n\nexport { usePageVisible };\n",
+      "type": "registry:hook",
+      "target": "hooks/use-page-visible.tsx"
+    }
+  ],
+  "type": "registry:hook"
+}

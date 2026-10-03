@@ -180,6 +180,7 @@
         }
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-page-visible",
         "@animate-ui/lib-motion"
       ]
     },
@@ -192,6 +193,7 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-page-visible",
         "@animate-ui/lib-motion"
       ],
       "files": [
@@ -7114,6 +7116,19 @@
           "path": "registry/hooks/use-motion-value-state/index.tsx",
           "type": "registry:hook",
           "target": "hooks/use-motion-value-state.tsx"
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-page-visible",
+      "type": "registry:hook",
+      "title": "usePageVisible",
+      "description": "A hook that returns false while the browser tab is hidden, to pause looping animations.",
+      "files": [
+        {
+          "path": "registry/hooks/use-page-visible/index.tsx",
+          "type": "registry:hook",
+          "target": "hooks/use-page-visible.tsx"
         }
       ]
     },
@@ -16437,7 +16452,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16454,6 +16470,10 @@
       "description": "A gradient text animation.",
       "dependencies": [
         "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-page-visible",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16472,7 +16492,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16491,7 +16512,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/hooks-use-page-visible",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16510,7 +16533,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16530,7 +16554,9 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/hooks-use-page-visible",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16550,7 +16576,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16569,7 +16596,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-page-visible",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16585,11 +16613,11 @@
       "title": "Sliding Number",
       "description": "A sliding number animation.",
       "dependencies": [
-        "motion",
-        "react-use-measure"
+        "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16608,7 +16636,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/hooks-use-is-in-view",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16628,7 +16657,9 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/hooks-use-page-visible",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {

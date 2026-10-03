@@ -13,16 +13,45 @@ import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
+import {
+  ease,
+  ReducedMotionConfig,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/registry/lib/motion';
+
+let segmenter: Intl.Segmenter | null | undefined;
+
+/** Splits into user-perceived characters so emoji and accents stay whole. */
+function splitGraphemes(text: string): string[] {
+  if (segmenter === undefined) {
+    segmenter =
+      typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function'
+        ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
+        : null;
+  }
+  if (!segmenter) return Array.from(text);
+  return Array.from(segmenter.segment(text), (s) => s.segment);
+}
 
 type DefaultSplittingTextProps = Omit<
   HTMLMotionProps<'div'>,
   'children' | 'initial' | 'animate' | 'transition'
 > & {
+  /**
+   * Hidden state of each piece. Override `initial` and `animate` together:
+   * the defaults use a `transform` string, which doesn't mix with `x`/`y`.
+   */
   initial?: TargetAndTransition;
+  /** Visible state of each piece. */
   animate?: TargetAndTransition;
+  /** Transition of each piece. Its `delay` is added to the stagger. */
   transition?: Transition;
+  /** Delay between two pieces, in seconds. Defaults to 0.05 (chars), 0.2 (words), 0.3 (lines). */
   stagger?: number;
+  /** Delay before the first piece, in milliseconds. */
   delay?: number;
+  /** Renders the text in its visible state, without animating. */
   disableAnimation?: boolean;
 } & UseIsInViewOptions;
 
@@ -39,13 +68,33 @@ type LinesSplittingTextProps = DefaultSplittingTextProps & {
 type SplittingTextProps =
   CharsOrWordsSplittingTextProps | LinesSplittingTextProps;
 
-const SplittingText: React.FC<SplittingTextProps> = ({
+const DEFAULT_INITIAL: TargetAndTransition = {
+  opacity: 0,
+  transform: 'translateX(150px)',
+};
+const DEFAULT_ANIMATE: TargetAndTransition = {
+  opacity: 1,
+  transform: 'translateX(0px)',
+};
+const DEFAULT_TRANSITION: Transition = { duration: 0.7, ease: ease.out };
+
+const DEFAULT_STAGGER = { chars: 0.05, words: 0.2, lines: 0.3 } as const;
+
+const PIECE_STYLE: React.CSSProperties = { display: 'inline-block' };
+
+const SplittingText: React.FC<SplittingTextProps> = (props) => (
+  <ReducedMotionConfig remount>
+    <SplittingTextContent {...props} />
+  </ReducedMotionConfig>
+);
+
+const SplittingTextContent: React.FC<SplittingTextProps> = ({
   ref,
   text,
   type = 'chars',
-  initial = { x: 150, opacity: 0 },
-  animate = { x: 0, opacity: 1 },
-  transition = { duration: 0.7, ease: 'easeOut' },
+  initial = DEFAULT_INITIAL,
+  animate = DEFAULT_ANIMATE,
+  transition = DEFAULT_TRANSITION,
   stagger,
   delay = 0,
   inView = false,
@@ -54,25 +103,6 @@ const SplittingText: React.FC<SplittingTextProps> = ({
   disableAnimation = false,
   ...props
 }) => {
-  const containerVariants: Variants = {
-    hidden: {},
-    visible: {
-      transition: {
-        delayChildren: delay / 1000,
-        staggerChildren:
-          stagger ?? (type === 'chars' ? 0.05 : type === 'words' ? 0.2 : 0.3),
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: disableAnimation ? animate : initial,
-    visible: {
-      ...animate,
-      transition: disableAnimation ? { duration: 0 } : transition,
-    },
-  };
-
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
     {
@@ -81,102 +111,84 @@ const SplittingText: React.FC<SplittingTextProps> = ({
       inViewMargin,
     },
   );
+  const reduce = useShouldReduceMotion();
+
+  // Reduced motion: every piece shows its final state at once, nothing moves.
+  const still = disableAnimation || reduce;
+  const kind = Array.isArray(text) ? 'lines' : type;
+  const step = stagger ?? DEFAULT_STAGGER[kind];
+  const baseDelay = delay / 1000 + (transition.delay ?? 0);
+
+  // Each piece gets its index through `custom`, so its delay is explicit and
+  // doesn't depend on how pieces are nested (chars live inside word spans).
+  const itemVariants: Variants = {
+    hidden: still ? animate : initial,
+    visible: (i: number) => ({
+      ...animate,
+      transition: still
+        ? motionTransition.instant
+        : { ...transition, delay: baseDelay + i * step },
+    }),
+  };
+
+  const piece = (content: React.ReactNode, i: number, style = PIECE_STYLE) => (
+    <motion.span key={i} custom={i} variants={itemVariants} style={style}>
+      {content}
+    </motion.span>
+  );
+
+  let visual: React.ReactNode;
 
   if (Array.isArray(text)) {
-    return (
-      <motion.span
-        ref={localRef}
-        initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
-        variants={containerVariants}
-        {...props}
-      >
-        {text.map((line, i) => (
-          <React.Fragment key={`line-${i}`}>
-            <motion.span
-              variants={itemVariants}
-              style={{ display: 'inline-block' }}
-            >
-              {line}
-            </motion.span>
-            {i < text.length - 1 ? <br /> : null}
-          </React.Fragment>
-        ))}
-      </motion.span>
-    );
+    visual = text.map((line, i) => (
+      <React.Fragment key={`line-${i}`}>
+        {piece(line, i)}
+        {i < text.length - 1 ? <br /> : null}
+      </React.Fragment>
+    ));
+  } else if (kind === 'words') {
+    const tokens = text.match(/\S+\s*/g) ?? [];
+    visual = tokens.map((token, i) => (
+      <React.Fragment key={`word-${i}`}>
+        {piece(token.trim(), i)}
+        {/\s$/.test(token) ? ' ' : null}
+      </React.Fragment>
+    ));
+  } else {
+    let charIndex = 0;
+    visual = text.split(/(\s+)/).map((token, wi) => {
+      if (!token) return null;
+      if (/^\s+$/.test(token)) return <span key={`space-${wi}`}>{token}</span>;
+      // Words don't break in the middle: chars sit in a nowrap word span.
+      return (
+        <span
+          key={`word-${wi}`}
+          style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+        >
+          {splitGraphemes(token).map((char) =>
+            piece(char, charIndex++, {
+              ...PIECE_STYLE,
+              whiteSpace: 'pre',
+            }),
+          )}
+        </span>
+      );
+    });
   }
 
-  if (type === 'words') {
-    const tokens = (text as string).match(/\S+\s*/g) || [];
-    return (
-      <motion.span
-        ref={localRef}
-        initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
-        variants={containerVariants}
-        {...props}
-      >
-        {tokens.map((token, i) => (
-          <React.Fragment key={i}>
-            <motion.span
-              variants={itemVariants}
-              style={{ display: 'inline-block', whiteSpace: 'normal' }}
-            >
-              {token.trim()}
-            </motion.span>
-            {/\s$/.test(token) ? ' ' : null}
-          </React.Fragment>
-        ))}
-      </motion.span>
-    );
-  }
-
-  const tokens = (text as string).split(/(\s+)/);
-  const perChar = stagger ?? 0.05;
-  const baseDelaySec = (delay ?? 0) / 1000;
-
-  let globalIndex = 0;
+  const label = Array.isArray(text) ? text.join(' ') : text;
 
   return (
     <motion.span
       ref={localRef}
+      data-slot="splitting-text"
       initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      variants={{
-        hidden: {},
-        visible: { transition: {} },
-      }}
+      animate={isInView || still ? 'visible' : 'hidden'}
       {...props}
     >
-      {tokens.map((tok, wi) => {
-        if (/^\s+$/.test(tok)) {
-          return <span key={`space-${wi}`}>{tok}</span>;
-        }
-        const chars = Array.from(tok);
-        const wordDelay = baseDelaySec + perChar * globalIndex;
-        globalIndex += chars.length;
-
-        return (
-          <motion.span
-            key={`word-${wi}`}
-            style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
-            variants={{}}
-            transition={{ delayChildren: wordDelay, staggerChildren: perChar }}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
-          >
-            {chars.map((ch, ci) => (
-              <motion.span
-                key={`ch-${wi}-${ci}`}
-                variants={itemVariants}
-                style={{ display: 'inline-block', whiteSpace: 'pre' }}
-              >
-                {ch}
-              </motion.span>
-            ))}
-          </motion.span>
-        );
-      })}
+      {/* The pieces are visual only: assistive tech reads the sr-only copy once. */}
+      <span aria-hidden="true">{visual}</span>
+      <span className="sr-only">{label}</span>
     </motion.span>
   );
 };

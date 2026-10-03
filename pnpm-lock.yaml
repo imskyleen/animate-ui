@@ -21,9 +21,6 @@ catalogs:
     class-variance-authority:
       specifier: ^0.7.1
       version: 0.7.1
-    clsx:
-      specifier: ^2.1.1
-      version: 2.1.1
     eslint:
       specifier: ^10.11.0
       version: 10.11.0
@@ -36,9 +33,6 @@ catalogs:
     postcss:
       specifier: ^8.5.28
       version: 8.5.28
-    prettier:
-      specifier: ^3.9.9
-      version: 3.9.9
     radix-ui:
       specifier: ^1.6.7
       version: 1.6.7
@@ -155,9 +149,6 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)
-      react-use-measure:
-        specifier: ^2.1.7
-        version: 2.1.7(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       remark:
         specifier: ^15.0.1
         version: 15.0.1
@@ -3608,15 +3599,6 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
-        optional: true
-
-  react-use-measure@2.1.7:
-    resolution: {integrity: sha512-KrvcAo13I/60HpwGO5jpW7E9DfusKyLPLvuHlUyP5zqnmAPhNc6qTRjUQrdTADl0lpPpDVU2/Gg51UlOGHXbdg==}
-    peerDependencies:
-      react: '>=16.13'
-      react-dom: '>=16.13'
-    peerDependenciesMeta:
-      react-dom:
         optional: true
 
   react@19.3.0:
@@ -7609,12 +7591,6 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.3.0
-
-  react-use-measure@2.1.7(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
-    dependencies:
-      react: 19.3.0
-    optionalDependencies:
-      react-dom: 19.3.0(react@19.3.0)
 
   react@19.3.0: {}
 

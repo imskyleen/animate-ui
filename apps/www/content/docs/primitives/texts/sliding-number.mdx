@@ -18,6 +18,8 @@ author:
 <SlidingNumber number={100} />
 ```
 
+Under reduced motion the digits change without rolling. Screen readers read the target value once, not every rolled digit.
+
 ## API Reference
 
 ### SlidingNumber
@@ -30,8 +32,14 @@ author:
       required: true,
     },
     fromNumber: {
-      description: 'The number to start counting from.',
+      description:
+        'The number to start counting from. When set, the number counts to `number` with every digit rolling on the way; otherwise each digit rolls straight to its new value.',
       type: 'number',
+      required: false,
+    },
+    onNumberChange: {
+      description: 'Called with the displayed value each time it changes.',
+      type: '(number: number) => void',
       required: false,
     },
     padStart: {
@@ -47,10 +55,10 @@ author:
       default: '.',
     },
     decimalPlaces: {
-      description: 'The number of decimal places to show.',
+      description:
+        'The number of decimal places to show. Defaults to the number of decimals of `number`.',
       type: 'number',
       required: false,
-      default: '0',
     },
     thousandSeparator: {
       description: 'The separator for the thousand part.',
@@ -58,13 +66,13 @@ author:
       required: false,
     },
     transition: {
-      description: 'The transition to use.',
+      description: 'The spring of each digit roller.',
       type: 'SpringOptions',
       required: false,
-      default: '{ stiffness: 200, damping: 20, mass: 0.4 }',
+      default: '{ visualDuration: 0.25, bounce: 0 }',
     },
     delay: {
-      description: 'The delay to use.',
+      description: 'The delay before the number changes, in milliseconds.',
       type: 'number',
       required: false,
       default: '0',
