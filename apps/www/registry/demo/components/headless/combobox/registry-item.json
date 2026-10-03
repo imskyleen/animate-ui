@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-headless-combobox",
+  "type": "registry:ui",
+  "title": "Combobox Demo",
+  "description": "Demo showing a combobox.",
+  "registryDependencies": ["@animate-ui/components-headless-combobox"],
+  "files": [
+    {
+      "path": "registry/demo/components/headless/combobox/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/headless/combobox.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ComboboxOptions": {
+        "anchor": {
+          "value": "bottom start",
+          "options": {
+            "top start": "top start",
+            "top end": "top end",
+            "bottom start": "bottom start",
+            "bottom end": "bottom end"
+          }
+        },
+        "gap": {
+          "value": 6
+        }
+      }
+    }
+  }
+}

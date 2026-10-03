@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-otp-field",
+  "title": "OTP Field",
+  "description": "A one-time password input split into one input per character, with characters that pop in as they are typed.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/primitives-base-otp-field"
+  ],
+  "files": [
+    {
+      "path": "registry/components/base/otp-field/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { MinusIcon } from 'lucide-react';\n\nimport {\n  OTPField as OTPFieldPrimitive,\n  OTPFieldInput as OTPFieldInputPrimitive,\n  OTPFieldCaret as OTPFieldCaretPrimitive,\n  OTPFieldSeparator as OTPFieldSeparatorPrimitive,\n  type OTPFieldProps as OTPFieldPrimitiveProps,\n  type OTPFieldInputProps as OTPFieldInputPrimitiveProps,\n  type OTPFieldSeparatorProps as OTPFieldSeparatorPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/otp-field';\nimport { cn } from '@/lib/utils';\n\ntype OTPFieldProps = OTPFieldPrimitiveProps;\n\nfunction OTPField({ className, ...props }: OTPFieldProps) {\n  return (\n    <OTPFieldPrimitive\n      className={cn(\n        'flex items-center gap-2 has-disabled:opacity-50',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype OTPFieldGroupProps = React.ComponentProps<'div'>;\n\nfunction OTPFieldGroup({ className, ...props }: OTPFieldGroupProps) {\n  return (\n    <div\n      data-slot=\"otp-field-group\"\n      className={cn('flex items-center', className)}\n      {...props}\n    />\n  );\n}\n\ntype OTPFieldInputProps = OTPFieldInputPrimitiveProps;\n\n// The wrapper is the visible slot; the input fills it with its glyph hidden.\n// No transition on the border and ring: focus follows typing, which is\n// keyboard-driven, so it moves instantly.\nfunction OTPFieldInput({\n  className,\n  containerClassName,\n  ...props\n}: OTPFieldInputProps) {\n  return (\n    <OTPFieldInputPrimitive\n      containerClassName={cn(\n        'focus-within:border-ring focus-within:ring-ring/50 focus-within:data-invalid:ring-destructive/20 dark:focus-within:data-invalid:ring-destructive/40 data-invalid:border-destructive focus-within:data-invalid:border-destructive dark:bg-input/30 border-input relative h-9 w-9 items-center justify-center border-y border-r text-sm shadow-xs first:rounded-l-md first:border-l last:rounded-r-md focus-within:z-10 focus-within:ring-[3px]',\n        containerClassName,\n      )}\n      className={cn(\n        'size-full min-w-0 bg-transparent p-0 text-center outline-none selection:bg-transparent disabled:cursor-not-allowed',\n        className,\n      )}\n      {...props}\n    >\n      <OTPFieldCaretPrimitive className=\"bg-foreground h-4 w-px\" />\n    </OTPFieldInputPrimitive>\n  );\n}\n\ntype OTPFieldSeparatorProps = OTPFieldSeparatorPrimitiveProps;\n\nfunction OTPFieldSeparator({ children, ...props }: OTPFieldSeparatorProps) {\n  return (\n    <OTPFieldSeparatorPrimitive {...props}>\n      {children ?? <MinusIcon />}\n    </OTPFieldSeparatorPrimitive>\n  );\n}\n\nexport {\n  OTPField,\n  OTPFieldGroup,\n  OTPFieldInput,\n  OTPFieldSeparator,\n  type OTPFieldProps,\n  type OTPFieldGroupProps,\n  type OTPFieldInputProps,\n  type OTPFieldSeparatorProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/otp-field.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

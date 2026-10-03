@@ -220,6 +220,44 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-animate-github-stars-wheel',
   },
+  'components-animate-input-otp': {
+    name: 'components-animate-input-otp',
+    description:
+      'Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.',
+    type: 'registry:ui',
+    dependencies: ['lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-animate-input-otp'],
+    files: [
+      {
+        path: 'registry/components/animate/input-otp/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/animate/input-otp.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { MinusIcon } from 'lucide-react';\n\nimport {\n  InputOTP as InputOTPPrimitive,\n  InputOTPGroup as InputOTPGroupPrimitive,\n  InputOTPSlot as InputOTPSlotPrimitive,\n  InputOTPCaret as InputOTPCaretPrimitive,\n  InputOTPSeparator as InputOTPSeparatorPrimitive,\n  type InputOTPProps as InputOTPPrimitiveProps,\n  type InputOTPGroupProps as InputOTPGroupPrimitiveProps,\n  type InputOTPSlotProps as InputOTPSlotPrimitiveProps,\n  type InputOTPSeparatorProps as InputOTPSeparatorPrimitiveProps,\n} from '@/components/animate-ui/primitives/animate/input-otp';\nimport { cn } from '@/lib/utils';\n\ntype InputOTPProps = InputOTPPrimitiveProps;\n\nfunction InputOTP({ className, containerClassName, ...props }: InputOTPProps) {\n  return (\n    <InputOTPPrimitive\n      containerClassName={cn(\n        'flex items-center gap-2 has-disabled:opacity-50',\n        containerClassName,\n      )}\n      className={cn('disabled:cursor-not-allowed', className)}\n      {...props}\n    />\n  );\n}\n\ntype InputOTPGroupProps = InputOTPGroupPrimitiveProps;\n\nfunction InputOTPGroup({ className, ...props }: InputOTPGroupProps) {\n  return (\n    <InputOTPGroupPrimitive\n      className={cn('flex items-center', className)}\n      {...props}\n    />\n  );\n}\n\ntype InputOTPSlotProps = InputOTPSlotPrimitiveProps;\n\n// No transition on the border and ring: the active slot follows typing,\n// which is keyboard-driven, so it moves instantly.\nfunction InputOTPSlot({ className, ...props }: InputOTPSlotProps) {\n  return (\n    <InputOTPSlotPrimitive\n      className={cn(\n        'data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm shadow-xs outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]',\n        className,\n      )}\n      {...props}\n    >\n      <InputOTPCaretPrimitive className=\"bg-foreground pointer-events-none absolute inset-0 m-auto h-4 w-px\" />\n    </InputOTPSlotPrimitive>\n  );\n}\n\ntype InputOTPSeparatorProps = InputOTPSeparatorPrimitiveProps;\n\nfunction InputOTPSeparator({ children, ...props }: InputOTPSeparatorProps) {\n  return (\n    <InputOTPSeparatorPrimitive {...props}>\n      {children ?? <MinusIcon />}\n    </InputOTPSeparatorPrimitive>\n  );\n}\n\nexport {\n  InputOTP,\n  InputOTPGroup,\n  InputOTPSlot,\n  InputOTPSeparator,\n  type InputOTPProps,\n  type InputOTPGroupProps,\n  type InputOTPSlotProps,\n  type InputOTPSeparatorProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/components/animate/input-otp/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-animate-input-otp';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-animate-input-otp',
+  },
   'components-animate-tabs': {
     name: 'components-animate-tabs',
     description:
@@ -681,6 +719,43 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-base-checkbox',
   },
+  'components-base-combobox': {
+    name: 'components-base-combobox',
+    description: 'An input combined with a list of predefined items to select.',
+    type: 'registry:ui',
+    dependencies: ['lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-combobox'],
+    files: [
+      {
+        path: 'registry/components/base/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/combobox.tsx',
+        content:
+          "import * as React from 'react';\nimport { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';\n\nimport {\n  Combobox as ComboboxPrimitive,\n  ComboboxValue as ComboboxValuePrimitive,\n  ComboboxInputGroup as ComboboxInputGroupPrimitive,\n  ComboboxInput as ComboboxInputPrimitive,\n  ComboboxTrigger as ComboboxTriggerPrimitive,\n  ComboboxClear as ComboboxClearPrimitive,\n  ComboboxChips as ComboboxChipsPrimitive,\n  ComboboxChip as ComboboxChipPrimitive,\n  ComboboxChipRemove as ComboboxChipRemovePrimitive,\n  ComboboxPortal as ComboboxPortalPrimitive,\n  ComboboxPositioner as ComboboxPositionerPrimitive,\n  ComboboxPopup as ComboboxPopupPrimitive,\n  ComboboxEmpty as ComboboxEmptyPrimitive,\n  ComboboxList as ComboboxListPrimitive,\n  ComboboxCollection as ComboboxCollectionPrimitive,\n  ComboboxItem as ComboboxItemPrimitive,\n  ComboboxItemIndicator as ComboboxItemIndicatorPrimitive,\n  ComboboxGroup as ComboboxGroupPrimitive,\n  ComboboxGroupLabel as ComboboxGroupLabelPrimitive,\n  ComboboxSeparator as ComboboxSeparatorPrimitive,\n  type ComboboxProps as ComboboxPrimitiveProps,\n  type ComboboxValueProps as ComboboxValuePrimitiveProps,\n  type ComboboxInputProps as ComboboxInputPrimitiveProps,\n  type ComboboxTriggerProps as ComboboxTriggerPrimitiveProps,\n  type ComboboxClearProps as ComboboxClearPrimitiveProps,\n  type ComboboxChipsProps as ComboboxChipsPrimitiveProps,\n  type ComboboxChipProps as ComboboxChipPrimitiveProps,\n  type ComboboxPositionerProps as ComboboxPositionerPrimitiveProps,\n  type ComboboxPopupProps as ComboboxPopupPrimitiveProps,\n  type ComboboxEmptyProps as ComboboxEmptyPrimitiveProps,\n  type ComboboxListProps as ComboboxListPrimitiveProps,\n  type ComboboxCollectionProps as ComboboxCollectionPrimitiveProps,\n  type ComboboxItemProps as ComboboxItemPrimitiveProps,\n  type ComboboxGroupProps as ComboboxGroupPrimitiveProps,\n  type ComboboxGroupLabelProps as ComboboxGroupLabelPrimitiveProps,\n  type ComboboxSeparatorProps as ComboboxSeparatorPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/combobox';\nimport { cn } from '@/lib/utils';\n\ntype ComboboxProps<\n  Value = unknown,\n  Multiple extends boolean | undefined = false,\n> = ComboboxPrimitiveProps<Value, Multiple>;\n\nfunction Combobox<Value, Multiple extends boolean | undefined = false>(\n  props: ComboboxProps<Value, Multiple>,\n) {\n  return <ComboboxPrimitive {...props} />;\n}\n\ntype ComboboxValueProps = ComboboxValuePrimitiveProps;\n\nfunction ComboboxValue(props: ComboboxValueProps) {\n  return <ComboboxValuePrimitive {...props} />;\n}\n\nconst inputGroupButtonClassName =\n  \"text-muted-foreground hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 focus-visible:ring-ring/50 inline-flex size-6 shrink-0 items-center justify-center rounded-[calc(var(--radius)-5px)] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4\";\n\ntype ComboboxTriggerProps = ComboboxTriggerPrimitiveProps;\n\nfunction ComboboxTrigger({\n  className,\n  children,\n  ...props\n}: ComboboxTriggerProps) {\n  return (\n    <ComboboxTriggerPrimitive\n      className={cn(\"[&_svg:not([class*='size-'])]:size-4\", className)}\n      {...props}\n    >\n      {children}\n      <ChevronDownIcon\n        data-slot=\"combobox-trigger-icon\"\n        className=\"text-muted-foreground pointer-events-none size-4\"\n      />\n    </ComboboxTriggerPrimitive>\n  );\n}\n\ntype ComboboxClearProps = ComboboxClearPrimitiveProps;\n\nfunction ComboboxClear({ className, ...props }: ComboboxClearProps) {\n  return (\n    <ComboboxClearPrimitive\n      aria-label=\"Clear selection\"\n      className={cn(inputGroupButtonClassName, className)}\n      {...props}\n    >\n      <XIcon className=\"pointer-events-none\" />\n    </ComboboxClearPrimitive>\n  );\n}\n\ntype ComboboxInputProps = ComboboxInputPrimitiveProps & {\n  showTrigger?: boolean;\n  showClear?: boolean;\n};\n\nfunction ComboboxInput({\n  className,\n  children,\n  disabled = false,\n  showTrigger = true,\n  showClear = false,\n  ...props\n}: ComboboxInputProps) {\n  return (\n    <ComboboxInputGroupPrimitive\n      data-slot=\"input-group\"\n      className={cn(\n        'group/input-group border-input dark:bg-input/30 relative flex h-9 w-auto min-w-0 items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none',\n        'has-[[data-slot=combobox-input]:focus-visible]:border-ring has-[[data-slot=combobox-input]:focus-visible]:ring-ring/50 has-[[data-slot=combobox-input]:focus-visible]:ring-[3px]',\n        'has-[[aria-invalid=true]]:ring-destructive/20 dark:has-[[aria-invalid=true]]:ring-destructive/40 has-[[aria-invalid=true]]:border-destructive',\n        className,\n      )}\n    >\n      <ComboboxInputPrimitive\n        disabled={disabled}\n        className=\"placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-full w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-1 text-base outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\"\n        {...props}\n      />\n      <div\n        data-slot=\"input-group-addon\"\n        className=\"text-muted-foreground order-last mr-1.5 flex items-center gap-1\"\n      >\n        {showTrigger && (\n          <ComboboxTrigger\n            aria-label=\"Open popup\"\n            disabled={disabled}\n            className={cn(\n              inputGroupButtonClassName,\n              'group-has-data-[slot=combobox-clear]/input-group:hidden',\n            )}\n          />\n        )}\n        {showClear && <ComboboxClear disabled={disabled} />}\n      </div>\n      {children}\n    </ComboboxInputGroupPrimitive>\n  );\n}\n\ntype ComboboxContentProps = ComboboxPopupPrimitiveProps &\n  Pick<\n    ComboboxPositionerPrimitiveProps,\n    'side' | 'align' | 'sideOffset' | 'alignOffset' | 'anchor'\n  >;\n\nfunction ComboboxContent({\n  className,\n  side = 'bottom',\n  sideOffset = 6,\n  align = 'start',\n  alignOffset = 0,\n  anchor,\n  ...props\n}: ComboboxContentProps) {\n  return (\n    <ComboboxPortalPrimitive>\n      <ComboboxPositionerPrimitive\n        side={side}\n        sideOffset={sideOffset}\n        align={align}\n        alignOffset={alignOffset}\n        anchor={anchor}\n        className=\"isolate z-50\"\n      >\n        <ComboboxPopupPrimitive\n          data-chips={!!anchor}\n          className={cn(\n            'bg-popover text-popover-foreground group/combobox-content relative max-h-96 w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] overflow-hidden rounded-md border shadow-md data-[chips=true]:min-w-(--anchor-width)',\n            className,\n          )}\n          {...props}\n        />\n      </ComboboxPositionerPrimitive>\n    </ComboboxPortalPrimitive>\n  );\n}\n\ntype ComboboxListProps = ComboboxListPrimitiveProps;\n\nfunction ComboboxList({ className, ...props }: ComboboxListProps) {\n  return (\n    <ComboboxListPrimitive\n      className={cn(\n        'max-h-[min(calc(--spacing(96)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto p-1 data-empty:p-0',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype ComboboxItemProps = ComboboxItemPrimitiveProps;\n\nfunction ComboboxItem({ className, children, ...props }: ComboboxItemProps) {\n  return (\n    <ComboboxItemPrimitive\n      className={cn(\n        \"data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      <ComboboxItemIndicatorPrimitive className=\"pointer-events-none absolute right-2 flex size-4 items-center justify-center\">\n        <CheckIcon className=\"pointer-events-none size-4\" />\n      </ComboboxItemIndicatorPrimitive>\n    </ComboboxItemPrimitive>\n  );\n}\n\ntype ComboboxGroupProps = ComboboxGroupPrimitiveProps;\n\nfunction ComboboxGroup(props: ComboboxGroupProps) {\n  return <ComboboxGroupPrimitive {...props} />;\n}\n\ntype ComboboxLabelProps = ComboboxGroupLabelPrimitiveProps;\n\nfunction ComboboxLabel({ className, ...props }: ComboboxLabelProps) {\n  return (\n    <ComboboxGroupLabelPrimitive\n      className={cn('text-muted-foreground px-2 py-1.5 text-xs', className)}\n      {...props}\n    />\n  );\n}\n\ntype ComboboxCollectionProps = ComboboxCollectionPrimitiveProps;\n\nfunction ComboboxCollection(props: ComboboxCollectionProps) {\n  return <ComboboxCollectionPrimitive {...props} />;\n}\n\ntype ComboboxEmptyProps = ComboboxEmptyPrimitiveProps;\n\nfunction ComboboxEmpty({ className, ...props }: ComboboxEmptyProps) {\n  return (\n    <ComboboxEmptyPrimitive\n      // Base UI's Empty is a live region: it must stay displayed, so it\n      // collapses when it has no children instead of being hidden.\n      className={cn(\n        'text-muted-foreground flex w-full justify-center py-2 text-center text-sm empty:p-0',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype ComboboxSeparatorProps = ComboboxSeparatorPrimitiveProps;\n\nfunction ComboboxSeparator({ className, ...props }: ComboboxSeparatorProps) {\n  return (\n    <ComboboxSeparatorPrimitive\n      className={cn('bg-border -mx-1 my-1 h-px', className)}\n      {...props}\n    />\n  );\n}\n\ntype ComboboxChipsProps = ComboboxChipsPrimitiveProps;\n\nfunction ComboboxChips({ className, ...props }: ComboboxChipsProps) {\n  return (\n    <ComboboxChipsPrimitive\n      className={cn(\n        // `relative`: removed chips pop out of the flow (AnimatePresence\n        // `popLayout`) and are positioned against it while they exit.\n        'dark:bg-input/30 border-input focus-within:border-ring focus-within:ring-ring/50 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40 has-aria-invalid:border-destructive dark:has-aria-invalid:border-destructive/50 relative flex min-h-9 flex-wrap items-center gap-1.5 rounded-md border bg-transparent bg-clip-padding px-2.5 py-1.5 text-sm shadow-xs transition-[color,box-shadow] focus-within:ring-[3px] has-aria-invalid:ring-[3px] has-data-[slot=combobox-chip]:px-1.5',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype ComboboxChipProps = ComboboxChipPrimitiveProps & {\n  showRemove?: boolean;\n};\n\nfunction ComboboxChip({\n  className,\n  children,\n  showRemove = true,\n  ...props\n}: ComboboxChipProps) {\n  return (\n    <ComboboxChipPrimitive\n      className={cn(\n        'bg-muted text-foreground flex h-[calc(--spacing(5.5))] w-fit items-center justify-center gap-1 rounded-sm px-1.5 text-xs font-medium whitespace-nowrap has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-0',\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      {showRemove && (\n        <ComboboxChipRemovePrimitive\n          aria-label=\"Remove\"\n          className=\"hover:bg-accent dark:hover:bg-accent/50 -ml-1 inline-flex size-6 items-center justify-center rounded-[calc(var(--radius)-5px)] opacity-50 outline-none hover:opacity-100 [&_svg:not([class*='size-'])]:size-3.5\"\n        >\n          <XIcon className=\"pointer-events-none\" />\n        </ComboboxChipRemovePrimitive>\n      )}\n    </ComboboxChipPrimitive>\n  );\n}\n\ntype ComboboxChipsInputProps = ComboboxInputPrimitiveProps;\n\nfunction ComboboxChipsInput({ className, ...props }: ComboboxChipsInputProps) {\n  return (\n    <ComboboxInputPrimitive\n      data-slot=\"combobox-chip-input\"\n      className={cn(\n        'placeholder:text-muted-foreground min-w-16 flex-1 bg-transparent outline-none',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction useComboboxAnchor() {\n  return React.useRef<HTMLDivElement | null>(null);\n}\n\nexport {\n  Combobox,\n  ComboboxInput,\n  ComboboxContent,\n  ComboboxList,\n  ComboboxItem,\n  ComboboxGroup,\n  ComboboxLabel,\n  ComboboxCollection,\n  ComboboxEmpty,\n  ComboboxSeparator,\n  ComboboxChips,\n  ComboboxChip,\n  ComboboxChipsInput,\n  ComboboxTrigger,\n  ComboboxValue,\n  ComboboxClear,\n  useComboboxAnchor,\n  type ComboboxProps,\n  type ComboboxInputProps,\n  type ComboboxContentProps,\n  type ComboboxListProps,\n  type ComboboxItemProps,\n  type ComboboxGroupProps,\n  type ComboboxLabelProps,\n  type ComboboxCollectionProps,\n  type ComboboxEmptyProps,\n  type ComboboxSeparatorProps,\n  type ComboboxChipsProps,\n  type ComboboxChipProps,\n  type ComboboxChipsInputProps,\n  type ComboboxTriggerProps,\n  type ComboboxValueProps,\n  type ComboboxClearProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/components/base/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-combobox',
+  },
   'components-base-context-menu': {
     name: 'components-base-context-menu',
     description:
@@ -865,6 +940,44 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/components-base-menu',
+  },
+  'components-base-otp-field': {
+    name: 'components-base-otp-field',
+    description:
+      'A one-time password input split into one input per character, with characters that pop in as they are typed.',
+    type: 'registry:ui',
+    dependencies: ['lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-otp-field'],
+    files: [
+      {
+        path: 'registry/components/base/otp-field/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/otp-field.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { MinusIcon } from 'lucide-react';\n\nimport {\n  OTPField as OTPFieldPrimitive,\n  OTPFieldInput as OTPFieldInputPrimitive,\n  OTPFieldCaret as OTPFieldCaretPrimitive,\n  OTPFieldSeparator as OTPFieldSeparatorPrimitive,\n  type OTPFieldProps as OTPFieldPrimitiveProps,\n  type OTPFieldInputProps as OTPFieldInputPrimitiveProps,\n  type OTPFieldSeparatorProps as OTPFieldSeparatorPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/otp-field';\nimport { cn } from '@/lib/utils';\n\ntype OTPFieldProps = OTPFieldPrimitiveProps;\n\nfunction OTPField({ className, ...props }: OTPFieldProps) {\n  return (\n    <OTPFieldPrimitive\n      className={cn(\n        'flex items-center gap-2 has-disabled:opacity-50',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype OTPFieldGroupProps = React.ComponentProps<'div'>;\n\nfunction OTPFieldGroup({ className, ...props }: OTPFieldGroupProps) {\n  return (\n    <div\n      data-slot=\"otp-field-group\"\n      className={cn('flex items-center', className)}\n      {...props}\n    />\n  );\n}\n\ntype OTPFieldInputProps = OTPFieldInputPrimitiveProps;\n\n// The wrapper is the visible slot; the input fills it with its glyph hidden.\n// No transition on the border and ring: focus follows typing, which is\n// keyboard-driven, so it moves instantly.\nfunction OTPFieldInput({\n  className,\n  containerClassName,\n  ...props\n}: OTPFieldInputProps) {\n  return (\n    <OTPFieldInputPrimitive\n      containerClassName={cn(\n        'focus-within:border-ring focus-within:ring-ring/50 focus-within:data-invalid:ring-destructive/20 dark:focus-within:data-invalid:ring-destructive/40 data-invalid:border-destructive focus-within:data-invalid:border-destructive dark:bg-input/30 border-input relative h-9 w-9 items-center justify-center border-y border-r text-sm shadow-xs first:rounded-l-md first:border-l last:rounded-r-md focus-within:z-10 focus-within:ring-[3px]',\n        containerClassName,\n      )}\n      className={cn(\n        'size-full min-w-0 bg-transparent p-0 text-center outline-none selection:bg-transparent disabled:cursor-not-allowed',\n        className,\n      )}\n      {...props}\n    >\n      <OTPFieldCaretPrimitive className=\"bg-foreground h-4 w-px\" />\n    </OTPFieldInputPrimitive>\n  );\n}\n\ntype OTPFieldSeparatorProps = OTPFieldSeparatorPrimitiveProps;\n\nfunction OTPFieldSeparator({ children, ...props }: OTPFieldSeparatorProps) {\n  return (\n    <OTPFieldSeparatorPrimitive {...props}>\n      {children ?? <MinusIcon />}\n    </OTPFieldSeparatorPrimitive>\n  );\n}\n\nexport {\n  OTPField,\n  OTPFieldGroup,\n  OTPFieldInput,\n  OTPFieldSeparator,\n  type OTPFieldProps,\n  type OTPFieldGroupProps,\n  type OTPFieldInputProps,\n  type OTPFieldSeparatorProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/components/base/otp-field/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-otp-field';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-otp-field',
   },
   'components-base-popover': {
     name: 'components-base-popover',
@@ -1087,6 +1200,42 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/components-base-select',
+  },
+  'components-base-slider': {
+    name: 'components-base-slider',
+    description: 'An easily stylable range input.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-slider'],
+    files: [
+      {
+        path: 'registry/components/base/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/base/slider.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  Slider as SliderPrimitive,\n  SliderControl as SliderControlPrimitive,\n  SliderTrack as SliderTrackPrimitive,\n  SliderIndicator as SliderIndicatorPrimitive,\n  SliderThumb as SliderThumbPrimitive,\n  type SliderProps as SliderPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/slider';\nimport { cn } from '@/lib/utils';\n\ntype SliderProps = SliderPrimitiveProps & {\n  /** Returns the accessible name of the thumb at `index`. */\n  getAriaLabel?: (index: number) => string;\n};\n\nfunction Slider({\n  className,\n  defaultValue,\n  value,\n  min = 0,\n  max = 100,\n  getAriaLabel,\n  ...props\n}: SliderProps) {\n  const _values = React.useMemo(\n    () =>\n      Array.isArray(value)\n        ? value\n        : typeof value === 'number'\n          ? [value]\n          : Array.isArray(defaultValue)\n            ? defaultValue\n            : typeof defaultValue === 'number'\n              ? [defaultValue]\n              : [min, max],\n    [value, defaultValue, min, max],\n  );\n\n  return (\n    <SliderPrimitive\n      className={cn(\n        'data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full',\n        className,\n      )}\n      defaultValue={defaultValue}\n      value={value}\n      min={min}\n      max={max}\n      thumbAlignment=\"edge\"\n      {...props}\n    >\n      <SliderControlPrimitive className=\"relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col\">\n        <SliderTrackPrimitive className=\"bg-muted relative grow overflow-hidden rounded-full select-none data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5\">\n          <SliderIndicatorPrimitive className=\"bg-primary select-none data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full\" />\n        </SliderTrackPrimitive>\n        {Array.from({ length: _values.length }, (_, index) => (\n          <SliderThumbPrimitive\n            key={index}\n            index={index}\n            getAriaLabel={getAriaLabel}\n            className=\"border-primary ring-ring/50 block size-4 shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] select-none pointer-fine:hover:ring-4 has-[:focus-visible]:ring-4 data-[disabled]:pointer-events-none data-[disabled]:opacity-50\"\n          />\n        ))}\n      </SliderControlPrimitive>\n    </SliderPrimitive>\n  );\n}\n\nexport { Slider, type SliderProps };",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/components/base/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-base-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-base-slider',
   },
   'components-base-switch': {
     name: 'components-base-switch',
@@ -2127,6 +2276,44 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-headless-checkbox',
   },
+  'components-headless-combobox': {
+    name: 'components-headless-combobox',
+    description:
+      'Comboboxes are the foundation of accessible autocompletes and command palettes for your app, complete with robust support for keyboard navigation.',
+    type: 'registry:ui',
+    dependencies: ['lucide-react'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-headless-combobox'],
+    files: [
+      {
+        path: 'registry/components/headless/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/headless/combobox.tsx',
+        content:
+          "import * as React from 'react';\nimport { CheckIcon, ChevronDownIcon } from 'lucide-react';\n\nimport {\n  Combobox as ComboboxPrimitive,\n  ComboboxInput as ComboboxInputPrimitive,\n  ComboboxButton as ComboboxButtonPrimitive,\n  ComboboxOptions as ComboboxOptionsPrimitive,\n  ComboboxOption as ComboboxOptionPrimitive,\n  type ComboboxProps as ComboboxPrimitiveProps,\n  type ComboboxInputProps as ComboboxInputPrimitiveProps,\n  type ComboboxButtonProps as ComboboxButtonPrimitiveProps,\n  type ComboboxOptionsProps as ComboboxOptionsPrimitiveProps,\n  type ComboboxOptionProps as ComboboxOptionPrimitiveProps,\n} from '@/components/animate-ui/primitives/headless/combobox';\nimport { cn } from '@/lib/utils';\n\ntype ComboboxProps<\n  TValue = unknown,\n  TMultiple extends boolean | undefined = false,\n  TTag extends React.ElementType = typeof React.Fragment,\n> = ComboboxPrimitiveProps<TValue, TMultiple, TTag>;\n\nfunction Combobox<\n  TValue,\n  TMultiple extends boolean | undefined = false,\n  TTag extends React.ElementType = typeof React.Fragment,\n>(props: ComboboxProps<TValue, TMultiple, TTag>) {\n  return <ComboboxPrimitive {...props} />;\n}\n\ntype ComboboxInputProps<\n  TTag extends React.ElementType = 'input',\n  TType = string,\n> = ComboboxInputPrimitiveProps<TTag, TType> & {\n  className?: string;\n  showButton?: boolean;\n};\n\nfunction ComboboxInput<\n  TTag extends React.ElementType = 'input',\n  TType = string,\n>({ className, showButton = true, ...props }: ComboboxInputProps<TTag, TType>) {\n  return (\n    <div\n      data-slot=\"input-group\"\n      className={cn(\n        'group/input-group border-input dark:bg-input/30 relative flex h-9 w-auto min-w-0 items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none',\n        'has-[[data-slot=combobox-input]:focus-visible]:border-ring has-[[data-slot=combobox-input]:focus-visible]:ring-ring/50 has-[[data-slot=combobox-input]:focus-visible]:ring-[3px]',\n        'has-[[aria-invalid=true]]:ring-destructive/20 dark:has-[[aria-invalid=true]]:ring-destructive/40 has-[[aria-invalid=true]]:border-destructive',\n        className,\n      )}\n    >\n      <ComboboxInputPrimitive\n        className=\"placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-full w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-1 text-base outline-none data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50 md:text-sm\"\n        {...props}\n      />\n      {showButton && <ComboboxButton aria-label=\"Open options\" />}\n    </div>\n  );\n}\n\ntype ComboboxButtonProps<TTag extends React.ElementType = 'button'> =\n  ComboboxButtonPrimitiveProps<TTag> & {\n    className?: string;\n  };\n\nfunction ComboboxButton<TTag extends React.ElementType = 'button'>({\n  className,\n  ...props\n}: ComboboxButtonProps<TTag>) {\n  return (\n    <ComboboxButtonPrimitive\n      className={cn(\n        \"text-muted-foreground hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 data-focus:ring-ring/50 mr-1.5 inline-flex size-6 shrink-0 items-center justify-center rounded-[calc(var(--radius)-5px)] transition-[color,box-shadow] outline-none data-disabled:pointer-events-none data-disabled:opacity-50 data-focus:ring-[3px] [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4\",\n        className,\n      )}\n      {...props}\n    >\n      <ChevronDownIcon className=\"pointer-events-none size-4\" />\n    </ComboboxButtonPrimitive>\n  );\n}\n\ntype ComboboxOptionsProps<TTag extends React.ElementType = 'div'> =\n  ComboboxOptionsPrimitiveProps<TTag>;\n\nfunction ComboboxOptions<TTag extends React.ElementType = 'div'>({\n  className,\n  anchor = { to: 'bottom start', gap: 6 },\n  ...props\n}: ComboboxOptionsProps<TTag>) {\n  return (\n    <ComboboxOptionsPrimitive\n      anchor={anchor}\n      className={cn(\n        'bg-popover text-popover-foreground z-50 max-h-96 w-(--input-width) min-w-[calc(var(--input-width)+--spacing(7))] scroll-py-1 overflow-y-auto rounded-md border p-1 shadow-md outline-hidden',\n        'data-[anchor=top_center]:origin-bottom data-[anchor=top_start]:origin-bottom-left data-[anchor=top_end]:origin-bottom-right',\n        'data-[anchor=bottom_center]:origin-top data-[anchor=bottom_start]:origin-top-left data-[anchor=bottom_end]:origin-top-right',\n        'data-[anchor=left_center]:origin-right data-[anchor=left_start]:origin-top-right data-[anchor=left_end]:origin-bottom-right',\n        'data-[anchor=right_center]:origin-left data-[anchor=right_start]:origin-top-left data-[anchor=right_end]:origin-bottom-left',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\ntype ComboboxOptionProps<\n  TTag extends React.ElementType = 'div',\n  TType = unknown,\n> = ComboboxOptionPrimitiveProps<TTag, TType> & {\n  className?: string;\n};\n\n// The check is not animated: it only mounts with the list, and a single\n// selection closes it.\nfunction ComboboxOption<\n  TTag extends React.ElementType = 'div',\n  TType = unknown,\n>({ className, children, ...props }: ComboboxOptionProps<TTag, TType>) {\n  return (\n    <ComboboxOptionPrimitive\n      className={cn(\n        \"data-focus:bg-accent data-focus:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4\",\n        className,\n      )}\n      {...props}\n    >\n      {(bag) => (\n        <>\n          {typeof children === 'function' ? children(bag) : children}\n          {bag.selected && (\n            <span className=\"pointer-events-none absolute right-2 flex size-4 items-center justify-center\">\n              <CheckIcon className=\"size-4\" />\n            </span>\n          )}\n        </>\n      )}\n    </ComboboxOptionPrimitive>\n  );\n}\n\ntype ComboboxEmptyProps = React.ComponentProps<'div'>;\n\n// Not a Headless UI part: render it inside ComboboxOptions when the query\n// matches nothing. Shown instantly, like the filtered options.\nfunction ComboboxEmpty({ className, ...props }: ComboboxEmptyProps) {\n  return (\n    <div\n      data-slot=\"combobox-empty\"\n      role=\"status\"\n      className={cn(\n        'text-muted-foreground flex w-full justify-center py-2 text-center text-sm',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Combobox,\n  ComboboxInput,\n  ComboboxButton,\n  ComboboxOptions,\n  ComboboxOption,\n  ComboboxEmpty,\n  type ComboboxProps,\n  type ComboboxInputProps,\n  type ComboboxButtonProps,\n  type ComboboxOptionsProps,\n  type ComboboxOptionProps,\n  type ComboboxEmptyProps,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/components/headless/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-headless-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-headless-combobox',
+  },
   'components-headless-dialog': {
     name: 'components-headless-dialog',
     description:
@@ -2862,6 +3049,44 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/components-radix-sidebar',
   },
+  'components-radix-slider': {
+    name: 'components-radix-slider',
+    description:
+      'An input where the user selects a value from within a given range.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-radix-slider'],
+    files: [
+      {
+        path: 'registry/components/radix/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/components/radix/slider.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  Slider as SliderPrimitive,\n  SliderTrack as SliderTrackPrimitive,\n  SliderRange as SliderRangePrimitive,\n  SliderThumb as SliderThumbPrimitive,\n  type SliderProps as SliderPrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/slider';\nimport { cn } from '@/lib/utils';\n\ntype SliderProps = SliderPrimitiveProps & {\n  /** Returns the accessible name of the thumb at `index`. */\n  getAriaLabel?: (index: number) => string | undefined;\n};\n\nfunction Slider({\n  className,\n  defaultValue,\n  value,\n  min = 0,\n  max = 100,\n  getAriaLabel,\n  ...props\n}: SliderProps) {\n  const _values = React.useMemo(\n    () =>\n      Array.isArray(value)\n        ? value\n        : Array.isArray(defaultValue)\n          ? defaultValue\n          : [min, max],\n    [value, defaultValue, min, max],\n  );\n\n  return (\n    <SliderPrimitive\n      defaultValue={defaultValue}\n      value={value}\n      min={min}\n      max={max}\n      className={cn(\n        'relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col',\n        className,\n      )}\n      {...props}\n    >\n      <SliderTrackPrimitive\n        className={cn(\n          'bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5',\n        )}\n      >\n        <SliderRangePrimitive\n          className={cn(\n            'bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full',\n          )}\n        />\n      </SliderTrackPrimitive>\n      {Array.from({ length: _values.length }, (_, index) => (\n        <SliderThumbPrimitive\n          key={index}\n          aria-label={getAriaLabel?.(index)}\n          className=\"border-primary ring-ring/50 block size-4 shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] pointer-fine:hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50\"\n        />\n      ))}\n    </SliderPrimitive>\n  );\n}\n\nexport { Slider, type SliderProps };",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/components/radix/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'components-radix-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/components-radix-slider',
+  },
   'components-radix-switch': {
     name: 'components-radix-switch',
     description:
@@ -3278,6 +3503,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-animate-github-stars-wheel',
+  },
+  'demo-components-animate-input-otp': {
+    name: 'demo-components-animate-input-otp',
+    description: 'Demo showing an input OTP.',
+    type: 'registry:ui',
+    dependencies: ['input-otp'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-animate-input-otp'],
+    files: [
+      {
+        path: 'registry/demo/components/animate/input-otp/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/animate/input-otp.tsx',
+        content:
+          "import {\n  InputOTP,\n  InputOTPGroup,\n  InputOTPSeparator,\n  InputOTPSlot,\n} from '@/components/animate-ui/components/animate/input-otp';\nimport { REGEXP_ONLY_DIGITS } from 'input-otp';\n\nexport const InputOTPDemo = () => {\n  return (\n    <InputOTP\n      maxLength={6}\n      pattern={REGEXP_ONLY_DIGITS}\n      aria-label=\"One-time password\"\n    >\n      <InputOTPGroup>\n        <InputOTPSlot index={0} />\n        <InputOTPSlot index={1} />\n        <InputOTPSlot index={2} />\n      </InputOTPGroup>\n      <InputOTPSeparator />\n      <InputOTPGroup>\n        <InputOTPSlot index={3} />\n        <InputOTPSlot index={4} />\n        <InputOTPSlot index={5} />\n      </InputOTPGroup>\n    </InputOTP>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/animate/input-otp/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-animate-input-otp';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-animate-input-otp',
   },
   'demo-components-animate-tabs': {
     name: 'demo-components-animate-tabs',
@@ -3828,6 +4090,61 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-base-checkbox',
   },
+  'demo-components-base-combobox': {
+    name: 'demo-components-base-combobox',
+    description: 'Demo showing a combobox.',
+    type: 'registry:ui',
+    dependencies: ['motion'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-combobox'],
+    files: [
+      {
+        path: 'registry/demo/components/base/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/combobox.tsx',
+        content:
+          "'use client';\n\nimport { AnimatePresence } from 'motion/react';\n\nimport {\n  Combobox,\n  ComboboxChip,\n  ComboboxChips,\n  ComboboxChipsInput,\n  ComboboxContent,\n  ComboboxEmpty,\n  ComboboxInput,\n  ComboboxItem,\n  ComboboxList,\n  ComboboxValue,\n  useComboboxAnchor,\n} from '@/components/animate-ui/components/base/combobox';\n\nconst FRAMEWORKS = [\n  'Next.js',\n  'SvelteKit',\n  'Nuxt.js',\n  'Remix',\n  'Astro',\n  'Gatsby',\n  'SolidStart',\n  'Qwik City',\n];\n\ninterface BaseComboboxDemoProps {\n  multiple?: boolean;\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n}\n\nexport function BaseComboboxDemo({\n  multiple = false,\n  side,\n  sideOffset,\n  align,\n}: BaseComboboxDemoProps) {\n  if (multiple) {\n    return <BaseComboboxMultipleDemo side={side} sideOffset={sideOffset} />;\n  }\n\n  return (\n    <Combobox items={FRAMEWORKS}>\n      <ComboboxInput\n        aria-label=\"Framework\"\n        placeholder=\"Select a framework\"\n        className=\"w-64\"\n      />\n      <ComboboxContent side={side} sideOffset={sideOffset} align={align}>\n        <ComboboxEmpty>No results.</ComboboxEmpty>\n        <ComboboxList>\n          {(framework: string) => (\n            <ComboboxItem key={framework} value={framework}>\n              {framework}\n            </ComboboxItem>\n          )}\n        </ComboboxList>\n      </ComboboxContent>\n    </Combobox>\n  );\n}\n\nfunction BaseComboboxMultipleDemo({\n  side,\n  sideOffset,\n}: Pick<BaseComboboxDemoProps, 'side' | 'sideOffset'>) {\n  const anchor = useComboboxAnchor();\n\n  return (\n    <Combobox items={FRAMEWORKS} multiple defaultValue={['Next.js', 'Astro']}>\n      <ComboboxChips ref={anchor} className=\"w-80\">\n        <ComboboxValue>\n          {(values: string[]) => (\n            <>\n              <AnimatePresence mode=\"popLayout\" initial={false}>\n                {values.map((value) => (\n                  <ComboboxChip key={value}>{value}</ComboboxChip>\n                ))}\n              </AnimatePresence>\n              <ComboboxChipsInput\n                aria-label=\"Frameworks\"\n                placeholder={values.length ? '' : 'Add a framework'}\n              />\n            </>\n          )}\n        </ComboboxValue>\n      </ComboboxChips>\n      <ComboboxContent anchor={anchor} side={side} sideOffset={sideOffset}>\n        <ComboboxEmpty>No results.</ComboboxEmpty>\n        <ComboboxList>\n          {(framework: string) => (\n            <ComboboxItem key={framework} value={framework}>\n              {framework}\n            </ComboboxItem>\n          )}\n        </ComboboxList>\n      </ComboboxContent>\n    </Combobox>\n  );\n}",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/base/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        Combobox: { multiple: { value: false } },
+        ComboboxContent: {
+          side: {
+            value: 'bottom',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+          sideOffset: { value: 6 },
+          align: {
+            value: 'start',
+            options: { start: 'start', center: 'center', end: 'end' },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-combobox',
+  },
   'demo-components-base-context-menu': {
     name: 'demo-components-base-context-menu',
     description: 'Demo showing a context menu.',
@@ -4168,6 +4485,43 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-base-menu-radio',
   },
+  'demo-components-base-otp-field': {
+    name: 'demo-components-base-otp-field',
+    description: 'Demo showing an OTP field.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-otp-field'],
+    files: [
+      {
+        path: 'registry/demo/components/base/otp-field/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/otp-field.tsx',
+        content:
+          'import {\n  OTPField,\n  OTPFieldGroup,\n  OTPFieldInput,\n  OTPFieldSeparator,\n} from \'@/components/animate-ui/components/base/otp-field\';\n\nexport const BaseOTPFieldDemo = () => {\n  return (\n    <div className="flex flex-col gap-2">\n      <label htmlFor="otp-field-demo" className="text-sm font-medium">\n        Verification code\n      </label>\n      <OTPField id="otp-field-demo" length={6}>\n        <OTPFieldGroup>\n          <OTPFieldInput />\n          <OTPFieldInput aria-label="Character 2 of 6" />\n          <OTPFieldInput aria-label="Character 3 of 6" />\n        </OTPFieldGroup>\n        <OTPFieldSeparator />\n        <OTPFieldGroup>\n          <OTPFieldInput aria-label="Character 4 of 6" />\n          <OTPFieldInput aria-label="Character 5 of 6" />\n          <OTPFieldInput aria-label="Character 6 of 6" />\n        </OTPFieldGroup>\n      </OTPField>\n    </div>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/base/otp-field/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-otp-field';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-otp-field',
+  },
   'demo-components-base-popover': {
     name: 'demo-components-base-popover',
     description: 'Demo showing a popover.',
@@ -4480,6 +4834,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-components-base-select',
+  },
+  'demo-components-base-slider': {
+    name: 'demo-components-base-slider',
+    description: 'Demo showing a base slider with a single value and a range.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-base-slider'],
+    files: [
+      {
+        path: 'registry/demo/components/base/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/base/slider.tsx',
+        content:
+          "import { Slider } from '@/components/animate-ui/components/base/slider';\n\nexport const BaseSliderDemo = () => {\n  return (\n    <div className=\"flex w-[60%] flex-col gap-8\">\n      <Slider\n        defaultValue={[50]}\n        max={100}\n        step={1}\n        getAriaLabel={() => 'Volume'}\n      />\n      <Slider\n        defaultValue={[25, 75]}\n        max={100}\n        step={1}\n        getAriaLabel={(index) =>\n          index === 0 ? 'Minimum price' : 'Maximum price'\n        }\n      />\n    </div>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/base/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-base-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-base-slider',
   },
   'demo-components-base-switch': {
     name: 'demo-components-base-switch',
@@ -5774,6 +6165,56 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-headless-checkbox',
   },
+  'demo-components-headless-combobox': {
+    name: 'demo-components-headless-combobox',
+    description: 'Demo showing a combobox.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-headless-combobox'],
+    files: [
+      {
+        path: 'registry/demo/components/headless/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/headless/combobox.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  Combobox,\n  ComboboxEmpty,\n  ComboboxInput,\n  ComboboxOption,\n  ComboboxOptions,\n} from '@/components/animate-ui/components/headless/combobox';\n\nconst FRAMEWORKS = [\n  'Next.js',\n  'SvelteKit',\n  'Nuxt.js',\n  'Remix',\n  'Astro',\n  'Gatsby',\n  'SolidStart',\n  'Qwik City',\n];\n\ninterface HeadlessComboboxDemoProps {\n  anchor?: 'top start' | 'top end' | 'bottom start' | 'bottom end';\n  gap?: number;\n}\n\nexport function HeadlessComboboxDemo({\n  anchor = 'bottom start',\n  gap = 6,\n}: HeadlessComboboxDemoProps) {\n  const [selected, setSelected] = React.useState<string | null>(null);\n  const [query, setQuery] = React.useState('');\n\n  const filtered =\n    query === ''\n      ? FRAMEWORKS\n      : FRAMEWORKS.filter((framework) =>\n          framework.toLowerCase().includes(query.toLowerCase()),\n        );\n\n  return (\n    <Combobox\n      value={selected}\n      onChange={setSelected}\n      onClose={() => setQuery('')}\n    >\n      <ComboboxInput\n        aria-label=\"Framework\"\n        placeholder=\"Select a framework\"\n        className=\"w-64\"\n        displayValue={(framework: string | null) => framework ?? ''}\n        onChange={(event) => setQuery(event.target.value)}\n      />\n      <ComboboxOptions anchor={{ to: anchor, gap }}>\n        {filtered.length === 0 ? (\n          <ComboboxEmpty>No results.</ComboboxEmpty>\n        ) : (\n          filtered.map((framework) => (\n            <ComboboxOption key={framework} value={framework}>\n              {framework}\n            </ComboboxOption>\n          ))\n        )}\n      </ComboboxOptions>\n    </Combobox>\n  );\n}",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/headless/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-headless-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        ComboboxOptions: {
+          anchor: {
+            value: 'bottom start',
+            options: {
+              'top start': 'top start',
+              'top end': 'top end',
+              'bottom start': 'bottom start',
+              'bottom end': 'bottom end',
+            },
+          },
+          gap: { value: 6 },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-headless-combobox',
+  },
   'demo-components-headless-dialog': {
     name: 'demo-components-headless-dialog',
     description: 'Demo showing a dialog.',
@@ -6793,6 +7234,43 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-components-radix-sidebar',
   },
+  'demo-components-radix-slider': {
+    name: 'demo-components-radix-slider',
+    description: 'Demo showing a radix slider with a single value and a range.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/components-radix-slider'],
+    files: [
+      {
+        path: 'registry/demo/components/radix/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/components/radix/slider.tsx',
+        content:
+          "import { Slider } from '@/components/animate-ui/components/radix/slider';\n\nexport const RadixSliderDemo = () => {\n  return (\n    <div className=\"flex w-[60%] flex-col gap-8\">\n      <Slider\n        defaultValue={[50]}\n        max={100}\n        step={1}\n        getAriaLabel={() => 'Volume'}\n      />\n      <Slider\n        defaultValue={[25, 75]}\n        max={100}\n        step={1}\n        getAriaLabel={(index) =>\n          index === 0 ? 'Minimum price' : 'Maximum price'\n        }\n      />\n    </div>\n  );\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/components/radix/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-components-radix-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-components-radix-slider',
+  },
   'demo-components-radix-switch': {
     name: 'demo-components-radix-switch',
     description: 'Demo showing a radix switch.',
@@ -7207,6 +7685,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-animate-github-stars',
+  },
+  'demo-primitives-animate-input-otp': {
+    name: 'demo-primitives-animate-input-otp',
+    description: 'Demo showing an animated input OTP.',
+    type: 'registry:ui',
+    dependencies: ['input-otp'],
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-animate-input-otp'],
+    files: [
+      {
+        path: 'registry/demo/primitives/animate/input-otp/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/animate/input-otp.tsx',
+        content:
+          'import {\n  InputOTP,\n  InputOTPCaret,\n  InputOTPGroup,\n  InputOTPSeparator,\n  InputOTPSlot,\n} from \'@/components/animate-ui/primitives/animate/input-otp\';\nimport { REGEXP_ONLY_DIGITS } from \'input-otp\';\n\nconst SLOT_CLASS_NAME =\n  \'relative flex size-10 items-center justify-center rounded-md border text-base data-[active=true]:border-foreground\';\n\nfunction Slot({ index }: { index: number }) {\n  return (\n    <InputOTPSlot index={index} className={SLOT_CLASS_NAME}>\n      <InputOTPCaret className="pointer-events-none absolute inset-0 m-auto h-5 w-px bg-foreground" />\n    </InputOTPSlot>\n  );\n}\n\nexport const AnimateInputOTPDemo = () => {\n  return (\n    <InputOTP\n      maxLength={6}\n      pattern={REGEXP_ONLY_DIGITS}\n      aria-label="One-time password"\n      containerClassName="flex items-center gap-3"\n    >\n      <InputOTPGroup className="flex gap-2">\n        <Slot index={0} />\n        <Slot index={1} />\n        <Slot index={2} />\n      </InputOTPGroup>\n      <InputOTPSeparator className="h-px w-3 bg-border" />\n      <InputOTPGroup className="flex gap-2">\n        <Slot index={3} />\n        <Slot index={4} />\n        <Slot index={5} />\n      </InputOTPGroup>\n    </InputOTP>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/animate/input-otp/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-animate-input-otp';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-animate-input-otp',
   },
   'demo-primitives-animate-motion-grid': {
     name: 'demo-primitives-animate-motion-grid',
@@ -7630,6 +8145,60 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-primitives-base-collapsible',
   },
+  'demo-primitives-base-combobox': {
+    name: 'demo-primitives-base-combobox',
+    description: 'Demo showing an animated base combobox.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-combobox'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/base/combobox.tsx',
+        content:
+          "import {\n  Combobox,\n  ComboboxEmpty,\n  ComboboxInput,\n  ComboboxItem,\n  ComboboxItemIndicator,\n  ComboboxList,\n  ComboboxPopup,\n  ComboboxPortal,\n  ComboboxPositioner,\n} from '@/components/animate-ui/primitives/base/combobox';\n\nconst FRUITS = [\n  'Apple',\n  'Banana',\n  'Blueberry',\n  'Cherry',\n  'Grapes',\n  'Lemon',\n  'Mango',\n  'Orange',\n  'Pineapple',\n  'Strawberry',\n];\n\ninterface BaseComboboxDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n}\n\nexport function BaseComboboxDemo({\n  side,\n  sideOffset,\n  align,\n}: BaseComboboxDemoProps) {\n  return (\n    <Combobox items={FRUITS}>\n      <ComboboxInput\n        aria-label=\"Fruit\"\n        placeholder=\"Search a fruit\"\n        className=\"w-56 border bg-background px-3 py-1.5 text-sm outline-none\"\n      />\n      <ComboboxPortal>\n        <ComboboxPositioner\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          className=\"z-50\"\n        >\n          <ComboboxPopup className=\"w-(--anchor-width) border bg-background\">\n            <ComboboxEmpty className=\"px-3 py-2 text-sm text-muted-foreground empty:p-0\">\n              No results.\n            </ComboboxEmpty>\n            <ComboboxList className=\"max-h-[min(15rem,var(--available-height))] overflow-y-auto p-1 empty:p-0\">\n              {(fruit: string) => (\n                <ComboboxItem\n                  key={fruit}\n                  value={fruit}\n                  className=\"flex items-center justify-between gap-4 px-2 py-1 text-sm outline-none data-[highlighted]:bg-accent\"\n                >\n                  {fruit}\n                  <ComboboxItemIndicator>✓</ComboboxItemIndicator>\n                </ComboboxItem>\n              )}\n            </ComboboxList>\n          </ComboboxPopup>\n        </ComboboxPositioner>\n      </ComboboxPortal>\n    </Combobox>\n  );\n}",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/base/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        ComboboxPositioner: {
+          side: {
+            value: 'bottom',
+            options: {
+              top: 'top',
+              bottom: 'bottom',
+              left: 'left',
+              right: 'right',
+            },
+          },
+          sideOffset: { value: 4 },
+          align: {
+            value: 'start',
+            options: { start: 'start', center: 'center', end: 'end' },
+          },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-combobox',
+  },
   'demo-primitives-base-dialog': {
     name: 'demo-primitives-base-dialog',
     description: 'Demo showing an animated base dialog.',
@@ -7809,6 +8378,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-base-menu',
+  },
+  'demo-primitives-base-otp-field': {
+    name: 'demo-primitives-base-otp-field',
+    description: 'Demo showing an animated base OTP field.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-otp-field'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/otp-field/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/base/otp-field.tsx',
+        content:
+          'import {\n  OTPField,\n  OTPFieldCaret,\n  OTPFieldInput,\n  OTPFieldSeparator,\n} from \'@/components/animate-ui/primitives/base/otp-field\';\n\nfunction Input({ label }: { label?: string }) {\n  return (\n    <OTPFieldInput\n      aria-label={label}\n      containerClassName="size-10 rounded-md border text-base focus-within:border-foreground"\n      className="size-full bg-transparent text-center outline-none selection:bg-transparent"\n    >\n      <OTPFieldCaret className="h-5 w-px bg-foreground" />\n    </OTPFieldInput>\n  );\n}\n\nexport const BaseOTPFieldPrimitiveDemo = () => {\n  return (\n    <div className="flex flex-col gap-2">\n      <label htmlFor="otp-field-primitive-demo" className="text-sm font-medium">\n        Verification code\n      </label>\n      <OTPField\n        id="otp-field-primitive-demo"\n        length={6}\n        className="flex items-center gap-2"\n      >\n        <Input />\n        <Input label="Character 2 of 6" />\n        <Input label="Character 3 of 6" />\n        <OTPFieldSeparator className="h-px w-3 bg-border" />\n        <Input label="Character 4 of 6" />\n        <Input label="Character 5 of 6" />\n        <Input label="Character 6 of 6" />\n      </OTPField>\n    </div>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/base/otp-field/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-otp-field';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-otp-field',
   },
   'demo-primitives-base-popover': {
     name: 'demo-primitives-base-popover',
@@ -8123,6 +8729,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-base-select',
+  },
+  'demo-primitives-base-slider': {
+    name: 'demo-primitives-base-slider',
+    description: 'Demo showing an animated base slider.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-base-slider'],
+    files: [
+      {
+        path: 'registry/demo/primitives/base/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/base/slider.tsx',
+        content:
+          '\'use client\';\n\nimport {\n  Slider,\n  SliderControl,\n  SliderIndicator,\n  SliderLabel,\n  SliderThumb,\n  SliderTrack,\n  SliderValue,\n} from \'@/components/animate-ui/primitives/base/slider\';\n\nconst thumbClassName =\n  \'size-5 rounded-full border-2 border-primary bg-background shadow-sm has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-ring/50\';\n\nexport const BaseSliderDemo = () => {\n  return (\n    <div className="flex w-[300px] flex-col gap-8">\n      <Slider defaultValue={40} max={100} className="flex flex-col gap-3">\n        <div className="flex items-center justify-between text-sm">\n          <SliderLabel className="font-medium">Volume</SliderLabel>\n          <SliderValue className="text-muted-foreground tabular-nums" />\n        </div>\n        <SliderControl className="relative flex h-5 w-full touch-none items-center select-none">\n          <SliderTrack className="h-2 w-full overflow-hidden rounded-full bg-muted">\n            <SliderIndicator className="bg-primary" />\n          </SliderTrack>\n          <SliderThumb className={thumbClassName} />\n        </SliderControl>\n      </Slider>\n\n      <Slider\n        defaultValue={[20, 80]}\n        max={100}\n        minStepsBetweenValues={1}\n        className="flex flex-col gap-3"\n      >\n        <div className="flex items-center justify-between text-sm">\n          <SliderLabel className="font-medium">Price</SliderLabel>\n          <SliderValue className="text-muted-foreground tabular-nums">\n            {(_, values) => `$${values[0]} – $${values[1]}`}\n          </SliderValue>\n        </div>\n        <SliderControl className="relative flex h-5 w-full touch-none items-center select-none">\n          <SliderTrack className="h-2 w-full overflow-hidden rounded-full bg-muted">\n            <SliderIndicator className="bg-primary" />\n          </SliderTrack>\n          <SliderThumb index={0} className={thumbClassName} />\n          <SliderThumb index={1} className={thumbClassName} />\n        </SliderControl>\n      </Slider>\n    </div>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/base/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-base-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-base-slider',
   },
   'demo-primitives-base-switch': {
     name: 'demo-primitives-base-switch',
@@ -9191,6 +9834,56 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/demo-primitives-headless-checkbox',
   },
+  'demo-primitives-headless-combobox': {
+    name: 'demo-primitives-headless-combobox',
+    description: 'Demo showing an animated headless combobox.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-headless-combobox'],
+    files: [
+      {
+        path: 'registry/demo/primitives/headless/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/headless/combobox.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\n\nimport {\n  Combobox,\n  ComboboxInput,\n  ComboboxOption,\n  ComboboxOptions,\n} from '@/components/animate-ui/primitives/headless/combobox';\n\nconst FRUITS = [\n  'Apple',\n  'Banana',\n  'Blueberry',\n  'Cherry',\n  'Grapes',\n  'Lemon',\n  'Mango',\n  'Orange',\n  'Pineapple',\n  'Strawberry',\n];\n\ninterface HeadlessComboboxDemoProps {\n  anchor?: 'top start' | 'top end' | 'bottom start' | 'bottom end';\n  gap?: number;\n}\n\nexport function HeadlessComboboxDemo({\n  anchor = 'bottom start',\n  gap = 4,\n}: HeadlessComboboxDemoProps) {\n  const [selected, setSelected] = React.useState<string | null>(null);\n  const [query, setQuery] = React.useState('');\n\n  const filtered =\n    query === ''\n      ? FRUITS\n      : FRUITS.filter((fruit) =>\n          fruit.toLowerCase().includes(query.toLowerCase()),\n        );\n\n  return (\n    <Combobox\n      value={selected}\n      onChange={setSelected}\n      onClose={() => setQuery('')}\n    >\n      <ComboboxInput\n        aria-label=\"Fruit\"\n        placeholder=\"Search a fruit\"\n        className=\"w-56 border bg-background px-3 py-1.5 text-sm outline-none\"\n        displayValue={(fruit: string | null) => fruit ?? ''}\n        onChange={(event) => setQuery(event.target.value)}\n      />\n      <ComboboxOptions\n        anchor={{ to: anchor, gap }}\n        className=\"z-50 w-(--input-width) border bg-background p-1 data-[anchor=bottom_end]:origin-top-right data-[anchor=bottom_start]:origin-top-left data-[anchor=top_end]:origin-bottom-right data-[anchor=top_start]:origin-bottom-left\"\n      >\n        {filtered.length === 0 ? (\n          <div className=\"px-2 py-1 text-sm text-muted-foreground\">\n            No results.\n          </div>\n        ) : (\n          filtered.map((fruit) => (\n            <ComboboxOption\n              key={fruit}\n              value={fruit}\n              className=\"group flex items-center justify-between gap-4 px-2 py-1 text-sm data-focus:bg-accent\"\n            >\n              {fruit}\n              <span className=\"invisible group-data-selected:visible\">✓</span>\n            </ComboboxOption>\n          ))\n        )}\n      </ComboboxOptions>\n    </Combobox>\n  );\n}",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/headless/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-headless-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {
+        ComboboxOptions: {
+          anchor: {
+            value: 'bottom start',
+            options: {
+              'top start': 'top start',
+              'top end': 'top end',
+              'bottom start': 'bottom start',
+              'bottom end': 'bottom end',
+            },
+          },
+          gap: { value: 4 },
+        },
+      };
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-headless-combobox',
+  },
   'demo-primitives-headless-dialog': {
     name: 'demo-primitives-headless-dialog',
     description: 'Demo showing an animated headless dialog.',
@@ -10094,6 +10787,43 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/demo-primitives-radix-sheet',
+  },
+  'demo-primitives-radix-slider': {
+    name: 'demo-primitives-radix-slider',
+    description: 'Demo showing an animated radix slider.',
+    type: 'registry:ui',
+    dependencies: undefined,
+    devDependencies: undefined,
+    registryDependencies: ['@animate-ui/primitives-radix-slider'],
+    files: [
+      {
+        path: 'registry/demo/primitives/radix/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/demo/primitives/radix/slider.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport {\n  Slider,\n  SliderRange,\n  SliderThumb,\n  SliderTrack,\n} from \'@/components/animate-ui/primitives/radix/slider\';\n\nconst thumbClassName =\n  \'block size-5 rounded-full border-2 border-primary bg-background shadow-sm outline-none focus-visible:ring-4 focus-visible:ring-ring/50\';\n\nexport const RadixSliderDemo = () => {\n  const [volume, setVolume] = React.useState([40]);\n  const [price, setPrice] = React.useState([20, 80]);\n\n  return (\n    <div className="flex w-[300px] flex-col gap-8">\n      <div className="flex flex-col gap-3">\n        <div className="flex items-center justify-between text-sm">\n          <span className="font-medium">Volume</span>\n          <span className="text-muted-foreground tabular-nums">\n            {volume[0]}%\n          </span>\n        </div>\n        <Slider\n          value={volume}\n          onValueChange={setVolume}\n          max={100}\n          step={1}\n          className="relative flex h-5 w-full touch-none items-center select-none"\n        >\n          <SliderTrack className="relative h-2 grow overflow-hidden rounded-full bg-muted">\n            <SliderRange className="absolute h-full bg-primary" />\n          </SliderTrack>\n          <SliderThumb aria-label="Volume" className={thumbClassName} />\n        </Slider>\n      </div>\n\n      <div className="flex flex-col gap-3">\n        <div className="flex items-center justify-between text-sm">\n          <span className="font-medium">Price</span>\n          <span className="text-muted-foreground tabular-nums">\n            {`$${price[0]} – $${price[1]}`}\n          </span>\n        </div>\n        <Slider\n          value={price}\n          onValueChange={setPrice}\n          max={100}\n          step={1}\n          minStepsBetweenThumbs={1}\n          className="relative flex h-5 w-full touch-none items-center select-none"\n        >\n          <SliderTrack className="relative h-2 grow overflow-hidden rounded-full bg-muted">\n            <SliderRange className="absolute h-full bg-primary" />\n          </SliderTrack>\n          <SliderThumb aria-label="Minimum price" className={thumbClassName} />\n          <SliderThumb aria-label="Maximum price" className={thumbClassName} />\n        </Slider>\n      </div>\n    </div>\n  );\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/demo/primitives/radix/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'demo-primitives-radix-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/demo-primitives-radix-slider',
   },
   'demo-primitives-radix-switch': {
     name: 'demo-primitives-radix-switch',
@@ -21863,6 +22593,47 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-animate-github-stars',
   },
+  'primitives-animate-input-otp': {
+    name: 'primitives-animate-input-otp',
+    description:
+      'Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.',
+    type: 'registry:ui',
+    dependencies: ['motion', 'input-otp'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/lib-motion',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/animate/input-otp/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/animate/input-otp.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { OTPInput, OTPInputContext } from 'input-otp';\nimport { motion, type Transition } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport {\n  ReducedMotionConfig,\n  scale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from '@/lib/motion';\n\n/** Delay between characters that arrive together (paste, autofill). */\nconst STAGGER = 0.025;\n\n/** Characters of `value` in [start, end) were just typed or pasted. */\ntype InputOTPEntry = { value: string; start: number; end: number };\n\n/**\n * Finds the characters that were inserted between two values. Characters that\n * only shifted (deleting in the middle moves the following ones) are not\n * considered new, so deleting never animates.\n */\nfunction getEntry(prev: string, next: string): InputOTPEntry {\n  let start = 0;\n  while (\n    start < prev.length &&\n    start < next.length &&\n    prev[start] === next[start]\n  ) {\n    start++;\n  }\n  let end = next.length;\n  let prevEnd = prev.length;\n  while (\n    end > start &&\n    prevEnd > start &&\n    next[end - 1] === prev[prevEnd - 1]\n  ) {\n    end--;\n    prevEnd--;\n  }\n  return { value: next, start, end };\n}\n\n// The fake caret blinks with CSS; React 19 hoists and dedupes this sheet.\nconst CARET_CSS = `@keyframes animate-ui-caret-blink{0%,70%,100%{opacity:1}20%,50%{opacity:0}}[data-slot=\"input-otp-caret\"]{animation:animate-ui-caret-blink 1.25s ease-out infinite}@media (prefers-reduced-motion:reduce){[data-slot=\"input-otp-caret\"]{animation:none}}`;\n\ntype InputOTPContextType = {\n  entry: InputOTPEntry | null;\n};\n\nconst [InputOTPProvider, useInputOTP] =\n  getStrictContext<InputOTPContextType>('InputOTPContext');\n\ntype InputOTPSlotContextType = {\n  index: number;\n  char: string | null;\n  isActive: boolean;\n  hasFakeCaret: boolean;\n};\n\nconst [InputOTPSlotProvider, useInputOTPSlot] =\n  getStrictContext<InputOTPSlotContextType>('InputOTPSlotContext');\n\ntype InputOTPProps = React.ComponentProps<typeof OTPInput>;\n\nfunction InputOTP({ value, onChange, ...props }: InputOTPProps) {\n  const [entry, setEntry] = React.useState<InputOTPEntry | null>(null);\n  const prevValueRef = React.useRef(\n    value ?? (typeof props.defaultValue === 'string' ? props.defaultValue : ''),\n  );\n\n  React.useEffect(() => {\n    if (value !== undefined) prevValueRef.current = value;\n  }, [value]);\n\n  const handleChange = React.useCallback(\n    (nextValue: string) => {\n      setEntry(getEntry(prevValueRef.current, nextValue));\n      prevValueRef.current = nextValue;\n      return onChange?.(nextValue);\n    },\n    [onChange],\n  );\n\n  return (\n    <InputOTPProvider value={{ entry }}>\n      <ReducedMotionConfig>\n        <style href=\"animate-ui-input-otp-caret\" precedence=\"animate-ui\">\n          {CARET_CSS}\n        </style>\n        <OTPInput\n          data-slot=\"input-otp\"\n          value={value}\n          onChange={handleChange}\n          {...props}\n        />\n      </ReducedMotionConfig>\n    </InputOTPProvider>\n  );\n}\n\ntype InputOTPGroupProps = React.ComponentProps<'div'>;\n\nfunction InputOTPGroup(props: InputOTPGroupProps) {\n  return <div data-slot=\"input-otp-group\" {...props} />;\n}\n\ntype InputOTPSlotProps = React.ComponentProps<'div'> & {\n  index: number;\n  /** Transition of a typed character. */\n  transition?: Transition;\n};\n\nfunction InputOTPSlot({\n  index,\n  transition = motionTransition.press,\n  children,\n  ...props\n}: InputOTPSlotProps) {\n  const { slots } = React.use(OTPInputContext);\n  const { entry } = useInputOTP();\n  const reduce = useShouldReduceMotion();\n\n  const slot = slots?.[index];\n  const char = slot?.char ?? null;\n  const isActive = slot?.isActive ?? false;\n  const hasFakeCaret = slot?.hasFakeCaret ?? false;\n\n  const isEntering =\n    char !== null &&\n    entry !== null &&\n    index >= entry.start &&\n    index < entry.end &&\n    entry.value[index] === char;\n  const delay =\n    isEntering && !reduce && entry.end - entry.start > 1\n      ? (index - entry.start) * STAGGER\n      : 0;\n\n  return (\n    <InputOTPSlotProvider value={{ index, char, isActive, hasFakeCaret }}>\n      <div\n        data-slot=\"input-otp-slot\"\n        data-active={isActive}\n        data-filled={char !== null}\n        {...props}\n      >\n        {char !== null && (\n          <motion.span\n            key={char}\n            data-slot=\"input-otp-char\"\n            initial={\n              isEntering\n                ? {\n                    opacity: 0,\n                    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,\n                  }\n                : false\n            }\n            animate={{ opacity: 1, transform: 'scale(1)' }}\n            transition={{ ...transition, delay }}\n            style={{ display: 'inline-block' }}\n          >\n            {char}\n          </motion.span>\n        )}\n        {children}\n      </div>\n    </InputOTPSlotProvider>\n  );\n}\n\ntype InputOTPCaretProps = React.ComponentProps<'div'>;\n\n/**\n * A blinking caret shown in the active, empty slot. Place it inside\n * `InputOTPSlot`. It stops blinking under reduced motion.\n */\nfunction InputOTPCaret(props: InputOTPCaretProps) {\n  const { hasFakeCaret } = useInputOTPSlot();\n  if (!hasFakeCaret) return null;\n\n  return <div data-slot=\"input-otp-caret\" aria-hidden=\"true\" {...props} />;\n}\n\ntype InputOTPSeparatorProps = React.ComponentProps<'div'>;\n\nfunction InputOTPSeparator(props: InputOTPSeparatorProps) {\n  return <div data-slot=\"input-otp-separator\" role=\"separator\" {...props} />;\n}\n\nexport {\n  InputOTP,\n  InputOTPGroup,\n  InputOTPSlot,\n  InputOTPCaret,\n  InputOTPSeparator,\n  useInputOTP,\n  useInputOTPSlot,\n  type InputOTPProps,\n  type InputOTPGroupProps,\n  type InputOTPSlotProps,\n  type InputOTPCaretProps,\n  type InputOTPSeparatorProps,\n  type InputOTPContextType,\n  type InputOTPSlotContextType,\n  type InputOTPEntry,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/primitives/animate/input-otp/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-animate-input-otp';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-animate-input-otp',
+  },
   'primitives-animate-motion-grid': {
     name: 'primitives-animate-motion-grid',
     description: 'A grid that displays animations in a grid.',
@@ -22315,6 +23086,47 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-base-collapsible',
   },
+  'primitives-base-combobox': {
+    name: 'primitives-base-combobox',
+    description: 'An input combined with a list of predefined items to select.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@base-ui/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/lib-motion',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/base/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/combobox.tsx',
+        content:
+          '\'use client\';\n\nimport * as React from \'react\';\nimport { Combobox as ComboboxPrimitive } from \'@base-ui/react/combobox\';\nimport {\n  AnimatePresence,\n  motion,\n  type HTMLMotionProps,\n  type Variants,\n} from \'motion/react\';\n\nimport { getStrictContext } from \'@/lib/get-strict-context\';\nimport { useControlledState } from \'@/hooks/use-controlled-state\';\nimport {\n  ReducedMotionConfig,\n  scale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from \'@/lib/motion\';\n\ntype ComboboxContextType = {\n  isOpen: boolean;\n  setIsOpen: (\n    isOpen: boolean,\n    eventDetails: ComboboxPrimitive.Root.ChangeEventDetails,\n  ) => void;\n  /** Unmounts the popup once its exit animation has finished. */\n  unmount: () => void;\n  multiple: boolean;\n  /** Whether the last value change came from the keyboard (Backspace…). */\n  keyboardChangeRef: React.RefObject<boolean>;\n};\n\nconst [ComboboxProvider, useCombobox] =\n  getStrictContext<ComboboxContextType>(\'ComboboxContext\');\n\ntype ComboboxProps<\n  Value = unknown,\n  Multiple extends boolean | undefined = false,\n> = ComboboxPrimitive.Root.Props<Value, Multiple>;\n\nfunction Combobox<Value, Multiple extends boolean | undefined = false>({\n  actionsRef: actionsRefProp,\n  onValueChange,\n  ...props\n}: ComboboxProps<Value, Multiple>) {\n  // With an `actionsRef`, Base UI keeps the popup mounted until we unmount it\n  // after the exit animation (it resets the query and syncs the input then).\n  const actionsRef = React.useRef<ComboboxPrimitive.Root.Actions | null>(null);\n  React.useImperativeHandle(\n    actionsRefProp,\n    () => ({ unmount: () => actionsRef.current?.unmount() }),\n    [],\n  );\n  const unmount = React.useCallback(() => actionsRef.current?.unmount(), []);\n\n  const [isOpen, setIsOpen] = useControlledState({\n    value: props?.open,\n    defaultValue: props?.defaultOpen ?? false,\n    onChange: props?.onOpenChange,\n  });\n\n  const keyboardChangeRef = React.useRef(false);\n\n  const handleValueChange: ComboboxProps<Value, Multiple>[\'onValueChange\'] = (\n    value,\n    eventDetails,\n  ) => {\n    keyboardChangeRef.current = eventDetails.event?.type === \'keydown\';\n    onValueChange?.(value, eventDetails);\n  };\n\n  return (\n    <ComboboxProvider\n      value={{\n        isOpen,\n        setIsOpen,\n        unmount,\n        multiple: !!props.multiple,\n        keyboardChangeRef,\n      }}\n    >\n      <ComboboxPrimitive.Root\n        data-slot="combobox"\n        {...props}\n        open={isOpen}\n        onOpenChange={setIsOpen}\n        onValueChange={handleValueChange}\n        actionsRef={actionsRef}\n      />\n    </ComboboxProvider>\n  );\n}\n\ntype ComboboxLabelProps = React.ComponentProps<typeof ComboboxPrimitive.Label>;\n\nfunction ComboboxLabel(props: ComboboxLabelProps) {\n  return <ComboboxPrimitive.Label data-slot="combobox-label" {...props} />;\n}\n\ntype ComboboxValueProps = React.ComponentProps<typeof ComboboxPrimitive.Value>;\n\nfunction ComboboxValue(props: ComboboxValueProps) {\n  return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />;\n}\n\ntype ComboboxInputGroupProps = React.ComponentProps<\n  typeof ComboboxPrimitive.InputGroup\n>;\n\nfunction ComboboxInputGroup(props: ComboboxInputGroupProps) {\n  return (\n    <ComboboxPrimitive.InputGroup data-slot="combobox-input-group" {...props} />\n  );\n}\n\ntype ComboboxInputProps = React.ComponentProps<typeof ComboboxPrimitive.Input>;\n\nfunction ComboboxInput(props: ComboboxInputProps) {\n  return <ComboboxPrimitive.Input data-slot="combobox-input" {...props} />;\n}\n\ntype ComboboxTriggerProps = React.ComponentProps<\n  typeof ComboboxPrimitive.Trigger\n>;\n\nfunction ComboboxTrigger(props: ComboboxTriggerProps) {\n  return <ComboboxPrimitive.Trigger data-slot="combobox-trigger" {...props} />;\n}\n\ntype ComboboxIconProps = React.ComponentProps<typeof ComboboxPrimitive.Icon>;\n\nfunction ComboboxIcon(props: ComboboxIconProps) {\n  return <ComboboxPrimitive.Icon data-slot="combobox-icon" {...props} />;\n}\n\ntype ComboboxClearProps = React.ComponentProps<typeof ComboboxPrimitive.Clear>;\n\nfunction ComboboxClear(props: ComboboxClearProps) {\n  return <ComboboxPrimitive.Clear data-slot="combobox-clear" {...props} />;\n}\n\ntype ComboboxChipsProps = React.ComponentProps<typeof ComboboxPrimitive.Chips>;\n\nfunction ComboboxChips(props: ComboboxChipsProps) {\n  return <ComboboxPrimitive.Chips data-slot="combobox-chips" {...props} />;\n}\n\ntype ComboboxChipProps = Omit<\n  React.ComponentProps<typeof ComboboxPrimitive.Chip>,\n  \'render\'\n> &\n  HTMLMotionProps<\'div\'>;\n\n// Render the chips inside <AnimatePresence mode="popLayout" initial={false}>\n// so a removed chip plays its exit while the others reflow.\nfunction ComboboxChip(props: ComboboxChipProps) {\n  return (\n    <ReducedMotionConfig>\n      <ComboboxChipMotion {...props} />\n    </ReducedMotionConfig>\n  );\n}\n\n// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.\nfunction ComboboxChipMotion({\n  transition = motionTransition.change,\n  ...props\n}: ComboboxChipProps) {\n  const { keyboardChangeRef } = useCombobox();\n  const reduce = useShouldReduceMotion();\n  const hidden = {\n    opacity: 0,\n    transform: reduce ? \'scale(1)\' : `scale(${scale.enter})`,\n  };\n  const variants: Variants = {\n    hidden,\n    visible: { opacity: 1, transform: \'scale(1)\', transition },\n    // Resolved when the chip leaves, so it reads how it was removed:\n    // Backspace (keyboard) is instant, the remove button animates.\n    exit: () => ({\n      ...hidden,\n      transition: keyboardChangeRef.current\n        ? motionTransition.instant\n        : motionTransition.exit,\n    }),\n  };\n\n  return (\n    <ComboboxPrimitive.Chip\n      render={\n        <motion.div\n          data-slot="combobox-chip"\n          variants={variants}\n          initial="hidden"\n          animate="visible"\n          exit="exit"\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype ComboboxChipRemoveProps = React.ComponentProps<\n  typeof ComboboxPrimitive.ChipRemove\n>;\n\nfunction ComboboxChipRemove(props: ComboboxChipRemoveProps) {\n  return (\n    <ComboboxPrimitive.ChipRemove data-slot="combobox-chip-remove" {...props} />\n  );\n}\n\ntype ComboboxPortalProps = Omit<\n  React.ComponentProps<typeof ComboboxPrimitive.Portal>,\n  \'keepMounted\'\n>;\n\nfunction ComboboxPortal({ children, ...props }: ComboboxPortalProps) {\n  const { isOpen, unmount } = useCombobox();\n\n  return (\n    <AnimatePresence onExitComplete={unmount}>\n      {isOpen && (\n        <ComboboxPrimitive.Portal\n          keepMounted\n          data-slot="combobox-portal"\n          {...props}\n        >\n          <ReducedMotionConfig>{children}</ReducedMotionConfig>\n        </ComboboxPrimitive.Portal>\n      )}\n    </AnimatePresence>\n  );\n}\n\ntype ComboboxBackdropProps = React.ComponentProps<\n  typeof ComboboxPrimitive.Backdrop\n>;\n\nfunction ComboboxBackdrop(props: ComboboxBackdropProps) {\n  return (\n    <ComboboxPrimitive.Backdrop data-slot="combobox-backdrop" {...props} />\n  );\n}\n\ntype ComboboxPositionerProps = React.ComponentProps<\n  typeof ComboboxPrimitive.Positioner\n>;\n\nfunction ComboboxPositioner(props: ComboboxPositionerProps) {\n  return (\n    <ComboboxPrimitive.Positioner data-slot="combobox-positioner" {...props} />\n  );\n}\n\ntype ComboboxPopupProps = Omit<\n  React.ComponentProps<typeof ComboboxPrimitive.Popup>,\n  \'render\'\n> &\n  HTMLMotionProps<\'div\'>;\n\nfunction ComboboxPopup({\n  initialFocus,\n  finalFocus,\n  transition = motionTransition.dropdown,\n  style,\n  ...props\n}: ComboboxPopupProps) {\n  // Rendered inside the Portal\'s ReducedMotionConfig.\n  const reduce = useShouldReduceMotion();\n  const hidden = {\n    opacity: 0,\n    transform: reduce ? \'scale(1)\' : `scale(${scale.enter})`,\n  };\n\n  return (\n    <ComboboxPrimitive.Popup\n      initialFocus={initialFocus}\n      finalFocus={finalFocus}\n      render={\n        <motion.div\n          data-slot="combobox-popup"\n          initial={hidden}\n          animate={{ opacity: 1, transform: \'scale(1)\', transition }}\n          exit={{ ...hidden, transition: motionTransition.exit }}\n          style={{ transformOrigin: \'var(--transform-origin)\', ...style }}\n          {...props}\n        />\n      }\n    />\n  );\n}\n\ntype ComboboxArrowProps = React.ComponentProps<typeof ComboboxPrimitive.Arrow>;\n\nfunction ComboboxArrow(props: ComboboxArrowProps) {\n  return <ComboboxPrimitive.Arrow data-slot="combobox-arrow" {...props} />;\n}\n\ntype ComboboxStatusProps = React.ComponentProps<\n  typeof ComboboxPrimitive.Status\n>;\n\nfunction ComboboxStatus(props: ComboboxStatusProps) {\n  return <ComboboxPrimitive.Status data-slot="combobox-status" {...props} />;\n}\n\n// Shown instantly: filtering is keyboard-driven and high frequency.\ntype ComboboxEmptyProps = React.ComponentProps<typeof ComboboxPrimitive.Empty>;\n\nfunction ComboboxEmpty(props: ComboboxEmptyProps) {\n  return <ComboboxPrimitive.Empty data-slot="combobox-empty" {...props} />;\n}\n\n// No per-item or height animation: items appear and disappear instantly as\n// the query changes.\ntype ComboboxListProps = React.ComponentProps<typeof ComboboxPrimitive.List>;\n\nfunction ComboboxList(props: ComboboxListProps) {\n  return <ComboboxPrimitive.List data-slot="combobox-list" {...props} />;\n}\n\ntype ComboboxRowProps = React.ComponentProps<typeof ComboboxPrimitive.Row>;\n\nfunction ComboboxRow(props: ComboboxRowProps) {\n  return <ComboboxPrimitive.Row data-slot="combobox-row" {...props} />;\n}\n\ntype ComboboxCollectionProps = React.ComponentProps<\n  typeof ComboboxPrimitive.Collection\n>;\n\nfunction ComboboxCollection(props: ComboboxCollectionProps) {\n  return <ComboboxPrimitive.Collection {...props} />;\n}\n\n// No animated highlight: arrow keys move it, and keyboard navigation stays\n// instant. Style `data-highlighted` instead.\ntype ComboboxItemProps = React.ComponentProps<typeof ComboboxPrimitive.Item>;\n\nfunction ComboboxItem(props: ComboboxItemProps) {\n  return <ComboboxPrimitive.Item data-slot="combobox-item" {...props} />;\n}\n\ntype ComboboxItemIndicatorProps = Omit<\n  React.ComponentProps<typeof ComboboxPrimitive.ItemIndicator>,\n  \'render\'\n>;\n\n// Single selection: not animated, it only mounts with the list (choosing an\n// item closes it). Multiple selection keeps the list open, so toggling an item\n// fades and scales its check; it still appears instantly when the list opens.\nfunction ComboboxItemIndicator({\n  keepMounted,\n  ...props\n}: ComboboxItemIndicatorProps) {\n  const { multiple } = useCombobox();\n  const reduce = useShouldReduceMotion();\n\n  if (!multiple) {\n    return (\n      <ComboboxPrimitive.ItemIndicator\n        data-slot="combobox-item-indicator"\n        keepMounted={keepMounted}\n        {...props}\n      />\n    );\n  }\n\n  return (\n    <ComboboxPrimitive.ItemIndicator\n      data-slot="combobox-item-indicator"\n      keepMounted\n      {...props}\n      render={(renderProps, state) => (\n        <motion.span\n          {...(renderProps as HTMLMotionProps<\'span\'>)}\n          initial={false}\n          animate={\n            state.selected\n              ? {\n                  opacity: 1,\n                  transform: \'scale(1)\',\n                  transition: motionTransition.change,\n                }\n              : {\n                  opacity: 0,\n                  transform: reduce ? \'scale(1)\' : `scale(${scale.enter})`,\n                  transition: motionTransition.exit,\n                }\n          }\n        />\n      )}\n    />\n  );\n}\n\ntype ComboboxGroupProps = React.ComponentProps<typeof ComboboxPrimitive.Group>;\n\nfunction ComboboxGroup(props: ComboboxGroupProps) {\n  return <ComboboxPrimitive.Group data-slot="combobox-group" {...props} />;\n}\n\ntype ComboboxGroupLabelProps = React.ComponentProps<\n  typeof ComboboxPrimitive.GroupLabel\n>;\n\nfunction ComboboxGroupLabel(props: ComboboxGroupLabelProps) {\n  return (\n    <ComboboxPrimitive.GroupLabel data-slot="combobox-group-label" {...props} />\n  );\n}\n\ntype ComboboxSeparatorProps = React.ComponentProps<\n  typeof ComboboxPrimitive.Separator\n>;\n\nfunction ComboboxSeparator(props: ComboboxSeparatorProps) {\n  return (\n    <ComboboxPrimitive.Separator data-slot="combobox-separator" {...props} />\n  );\n}\n\nconst useComboboxFilter = ComboboxPrimitive.useFilter;\n\nexport {\n  Combobox,\n  ComboboxLabel,\n  ComboboxValue,\n  ComboboxInputGroup,\n  ComboboxInput,\n  ComboboxTrigger,\n  ComboboxIcon,\n  ComboboxClear,\n  ComboboxChips,\n  ComboboxChip,\n  ComboboxChipRemove,\n  ComboboxPortal,\n  ComboboxBackdrop,\n  ComboboxPositioner,\n  ComboboxPopup,\n  ComboboxArrow,\n  ComboboxStatus,\n  ComboboxEmpty,\n  ComboboxList,\n  ComboboxRow,\n  ComboboxCollection,\n  ComboboxItem,\n  ComboboxItemIndicator,\n  ComboboxGroup,\n  ComboboxGroupLabel,\n  ComboboxSeparator,\n  useCombobox,\n  useComboboxFilter,\n  type ComboboxProps,\n  type ComboboxLabelProps,\n  type ComboboxValueProps,\n  type ComboboxInputGroupProps,\n  type ComboboxInputProps,\n  type ComboboxTriggerProps,\n  type ComboboxIconProps,\n  type ComboboxClearProps,\n  type ComboboxChipsProps,\n  type ComboboxChipProps,\n  type ComboboxChipRemoveProps,\n  type ComboboxPortalProps,\n  type ComboboxBackdropProps,\n  type ComboboxPositionerProps,\n  type ComboboxPopupProps,\n  type ComboboxArrowProps,\n  type ComboboxStatusProps,\n  type ComboboxEmptyProps,\n  type ComboboxListProps,\n  type ComboboxRowProps,\n  type ComboboxCollectionProps,\n  type ComboboxItemProps,\n  type ComboboxItemIndicatorProps,\n  type ComboboxGroupProps,\n  type ComboboxGroupLabelProps,\n  type ComboboxSeparatorProps,\n  type ComboboxContextType,\n};',
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/primitives/base/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-combobox',
+  },
   'primitives-base-context-menu': {
     name: 'primitives-base-context-menu',
     description:
@@ -22521,6 +23333,47 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-base-menu',
+  },
+  'primitives-base-otp-field': {
+    name: 'primitives-base-otp-field',
+    description:
+      'A one-time password input split into one input per character, with characters that pop in as they are typed.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@base-ui/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/lib-motion',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/base/otp-field/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/otp-field.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { OTPField as OTPFieldPrimitive } from '@base-ui/react/otp-field';\nimport { motion, type Transition } from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport {\n  ReducedMotionConfig,\n  scale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from '@/lib/motion';\n\n/** Delay between characters that arrive together (paste, autofill). */\nconst STAGGER = 0.025;\n\n/** Characters of `value` in [start, end) were just typed or pasted. */\ntype OTPFieldEntry = { value: string; start: number; end: number };\n\n/**\n * Finds the characters that were inserted between two values. Characters that\n * only shifted (deleting in the middle moves the following ones) are not\n * considered new, so deleting never animates.\n */\nfunction getEntry(prev: string, next: string): OTPFieldEntry {\n  let start = 0;\n  while (\n    start < prev.length &&\n    start < next.length &&\n    prev[start] === next[start]\n  ) {\n    start++;\n  }\n  let end = next.length;\n  let prevEnd = prev.length;\n  while (\n    end > start &&\n    prevEnd > start &&\n    next[end - 1] === prev[prevEnd - 1]\n  ) {\n    end--;\n    prevEnd--;\n  }\n  return { value: next, start, end };\n}\n\n// The fake caret blinks with CSS; React 19 hoists and dedupes this sheet.\nconst CARET_CSS = `@keyframes animate-ui-caret-blink{0%,70%,100%{opacity:1}20%,50%{opacity:0}}[data-slot=\"otp-field-caret\"]{display:none;animation:animate-ui-caret-blink 1.25s ease-out infinite}[data-slot=\"otp-field-input\"]:focus~[data-slot=\"otp-field-caret\"]{display:block}@media (prefers-reduced-motion:reduce){[data-slot=\"otp-field-caret\"]{animation:none}}`;\n\ntype OTPFieldContextType = {\n  entry: OTPFieldEntry | null;\n};\n\nconst [OTPFieldProvider, useOTPField] =\n  getStrictContext<OTPFieldContextType>('OTPFieldContext');\n\ntype OTPFieldSlotContextType = {\n  filled: boolean;\n  index: number;\n};\n\nconst [OTPFieldSlotProvider, useOTPFieldSlot] =\n  getStrictContext<OTPFieldSlotContextType>('OTPFieldSlotContext');\n\ntype OTPFieldProps = React.ComponentProps<typeof OTPFieldPrimitive.Root>;\n\nfunction OTPField({\n  value,\n  defaultValue,\n  onValueChange,\n  children,\n  ...props\n}: OTPFieldProps) {\n  const [entry, setEntry] = React.useState<OTPFieldEntry | null>(null);\n  const prevValueRef = React.useRef(value ?? defaultValue ?? '');\n\n  React.useEffect(() => {\n    if (value !== undefined) prevValueRef.current = value;\n  }, [value]);\n\n  const handleValueChange = React.useCallback<\n    NonNullable<OTPFieldProps['onValueChange']>\n  >(\n    (nextValue, eventDetails) => {\n      setEntry(getEntry(prevValueRef.current, nextValue));\n      prevValueRef.current = nextValue;\n      onValueChange?.(nextValue, eventDetails);\n    },\n    [onValueChange],\n  );\n\n  return (\n    <OTPFieldProvider value={{ entry }}>\n      <ReducedMotionConfig>\n        <style href=\"animate-ui-otp-field-caret\" precedence=\"animate-ui\">\n          {CARET_CSS}\n        </style>\n        <OTPFieldPrimitive.Root\n          data-slot=\"otp-field\"\n          value={value}\n          defaultValue={defaultValue}\n          onValueChange={handleValueChange}\n          {...props}\n        >\n          {children}\n        </OTPFieldPrimitive.Root>\n      </ReducedMotionConfig>\n    </OTPFieldProvider>\n  );\n}\n\ntype OTPFieldInputProps = Omit<\n  React.ComponentProps<typeof OTPFieldPrimitive.Input>,\n  'render' | 'children'\n> & {\n  /** Class name of the `<span>` that wraps the input, its character and caret. */\n  containerClassName?: string;\n  /** Style of the `<span>` that wraps the input, its character and caret. */\n  containerStyle?: React.CSSProperties;\n  /** Transition of a typed character. */\n  transition?: Transition;\n  /** Rendered after the input, inside the wrapper (e.g. `OTPFieldCaret`). */\n  children?: React.ReactNode;\n};\n\nfunction OTPFieldInput({\n  containerClassName,\n  containerStyle,\n  transition = motionTransition.press,\n  children,\n  ...props\n}: OTPFieldInputProps) {\n  const { entry } = useOTPField();\n  const reduce = useShouldReduceMotion();\n\n  return (\n    <OTPFieldPrimitive.Input\n      data-slot=\"otp-field-input\"\n      {...props}\n      render={(inputProps, state) => {\n        const isEntering =\n          state.filled &&\n          entry !== null &&\n          state.index >= entry.start &&\n          state.index < entry.end &&\n          entry.value[state.index] === state.value;\n        const delay =\n          isEntering && !reduce && entry.end - entry.start > 1\n            ? (state.index - entry.start) * STAGGER\n            : 0;\n        const char = inputProps.type === 'password' ? '•' : state.value;\n\n        return (\n          <span\n            data-slot=\"otp-field-slot\"\n            data-filled={state.filled || undefined}\n            data-disabled={state.disabled || undefined}\n            data-invalid={inputProps['aria-invalid'] ? true : undefined}\n            className={containerClassName}\n            style={{\n              position: 'relative',\n              display: 'inline-flex',\n              ...containerStyle,\n            }}\n          >\n            {/* The real value stays in the input; its glyph is hidden so the\n                animated copy below can be seen. */}\n            <input\n              {...inputProps}\n              style={{\n                ...inputProps.style,\n                WebkitTextFillColor: 'transparent',\n                caretColor: 'transparent',\n              }}\n            />\n            {state.filled && (\n              <motion.span\n                key={char}\n                data-slot=\"otp-field-char\"\n                aria-hidden=\"true\"\n                initial={\n                  isEntering\n                    ? {\n                        opacity: 0,\n                        transform: reduce\n                          ? 'scale(1)'\n                          : `scale(${scale.enter})`,\n                      }\n                    : false\n                }\n                animate={{ opacity: 1, transform: 'scale(1)' }}\n                transition={{ ...transition, delay }}\n                style={{\n                  position: 'absolute',\n                  inset: 0,\n                  display: 'flex',\n                  alignItems: 'center',\n                  justifyContent: 'center',\n                  pointerEvents: 'none',\n                }}\n              >\n                {char}\n              </motion.span>\n            )}\n            <OTPFieldSlotProvider\n              value={{ filled: state.filled, index: state.index }}\n            >\n              {children}\n            </OTPFieldSlotProvider>\n          </span>\n        );\n      }}\n    />\n  );\n}\n\ntype OTPFieldCaretProps = React.ComponentProps<'span'>;\n\n/**\n * A blinking caret shown while its input is focused and empty. Place it\n * inside `OTPFieldInput`. It stops blinking under reduced motion.\n */\nfunction OTPFieldCaret({ style, ...props }: OTPFieldCaretProps) {\n  const { filled } = useOTPFieldSlot();\n  if (filled) return null;\n\n  return (\n    <span\n      data-slot=\"otp-field-caret\"\n      aria-hidden=\"true\"\n      style={{\n        position: 'absolute',\n        inset: 0,\n        margin: 'auto',\n        pointerEvents: 'none',\n        ...style,\n      }}\n      {...props}\n    />\n  );\n}\n\ntype OTPFieldSeparatorProps = React.ComponentProps<\n  typeof OTPFieldPrimitive.Separator\n>;\n\nfunction OTPFieldSeparator(props: OTPFieldSeparatorProps) {\n  return (\n    <OTPFieldPrimitive.Separator data-slot=\"otp-field-separator\" {...props} />\n  );\n}\n\nexport {\n  OTPField,\n  OTPFieldInput,\n  OTPFieldCaret,\n  OTPFieldSeparator,\n  useOTPField,\n  useOTPFieldSlot,\n  type OTPFieldProps,\n  type OTPFieldInputProps,\n  type OTPFieldCaretProps,\n  type OTPFieldSeparatorProps,\n  type OTPFieldContextType,\n  type OTPFieldSlotContextType,\n  type OTPFieldEntry,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/primitives/base/otp-field/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-otp-field';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-otp-field',
   },
   'primitives-base-popover': {
     name: 'primitives-base-popover',
@@ -22766,6 +23619,46 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-base-select',
+  },
+  'primitives-base-slider': {
+    name: 'primitives-base-slider',
+    description: 'An easily stylable range input.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@base-ui/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/lib-motion',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/base/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/base/slider.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { Slider as SliderPrimitive } from '@base-ui/react/slider';\nimport {\n  animate,\n  motion,\n  useMotionTemplate,\n  useMotionValue,\n  type AnimationPlaybackControls,\n  type MotionValue,\n  type Transition,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport {\n  ReducedMotionConfig,\n  spring,\n  useShouldReduceMotion,\n} from '@/lib/motion';\n\n/**\n * Pointer travel (px) after which a press on the track becomes a drag. A drag\n * cancels the jump animation so the thumb sits under the pointer.\n */\nconst DRAG_THRESHOLD = 3;\n\ntype SliderMotionItem = {\n  /** Records the visual (transformed) and layout box before a press. */\n  snapshot: () => void;\n  /** FLIPs from the snapshot to the new layout box. */\n  play: () => void;\n  /** Stops any running animation and jumps to the layout box. */\n  cancel: () => void;\n};\n\ntype SliderValues = number | readonly number[];\n\ntype SliderContextType = {\n  values: SliderValues;\n  isPressing: boolean;\n  register: (item: SliderMotionItem) => () => void;\n  startPress: (event: React.PointerEvent<HTMLDivElement>) => void;\n};\n\nconst [SliderProvider, useSlider] =\n  getStrictContext<SliderContextType>('SliderContext');\n\ntype SliderProps<Value extends SliderValues = SliderValues> =\n  SliderPrimitive.Root.Props<Value>;\n\nfunction Slider<Value extends SliderValues = SliderValues>(\n  props: SliderProps<Value>,\n) {\n  return (\n    <ReducedMotionConfig>\n      <SliderRoot {...(props as unknown as SliderProps)} />\n    </ReducedMotionConfig>\n  );\n}\n\ntype PressState = { x: number; y: number; moved: boolean; pending: boolean };\n\nfunction SliderRoot({\n  value,\n  defaultValue,\n  onValueChange,\n  min = 0,\n  disabled,\n  ...props\n}: SliderProps) {\n  const reduce = useShouldReduceMotion();\n  const [values, setValues] = useControlledState<\n    SliderValues,\n    [SliderPrimitive.Root.ChangeEventDetails]\n  >({\n    value,\n    defaultValue: defaultValue ?? min,\n    onChange: onValueChange,\n  });\n  const [isPressing, setIsPressing] = React.useState(false);\n\n  const itemsRef = React.useRef(new Set<SliderMotionItem>());\n  const pressRef = React.useRef<PressState | null>(null);\n  const stopListeningRef = React.useRef<(() => void) | null>(null);\n\n  const register = React.useCallback((item: SliderMotionItem) => {\n    itemsRef.current.add(item);\n    return () => {\n      itemsRef.current.delete(item);\n    };\n  }, []);\n\n  React.useEffect(() => () => stopListeningRef.current?.(), []);\n\n  const startPress = (event: React.PointerEvent<HTMLDivElement>) => {\n    if (disabled || event.button !== 0) return;\n    stopListeningRef.current?.();\n\n    const press: PressState = {\n      x: event.clientX,\n      y: event.clientY,\n      moved: false,\n      pending: !reduce,\n    };\n    pressRef.current = press;\n    if (press.pending) itemsRef.current.forEach((item) => item.snapshot());\n    setIsPressing(true);\n\n    const onMove = (moveEvent: PointerEvent) => {\n      if (press.moved) return;\n      const distance = Math.hypot(\n        moveEvent.clientX - press.x,\n        moveEvent.clientY - press.y,\n      );\n      if (distance <= DRAG_THRESHOLD) return;\n      // Direct manipulation: from now on the thumb follows the pointer.\n      press.moved = true;\n      press.pending = false;\n      itemsRef.current.forEach((item) => item.cancel());\n    };\n    const onUp = () => {\n      stopListening();\n      if (pressRef.current === press) pressRef.current = null;\n      setIsPressing(false);\n    };\n    const stopListening = () => {\n      window.removeEventListener('pointermove', onMove);\n      window.removeEventListener('pointerup', onUp);\n      window.removeEventListener('pointercancel', onUp);\n      stopListeningRef.current = null;\n    };\n\n    window.addEventListener('pointermove', onMove);\n    window.addEventListener('pointerup', onUp);\n    window.addEventListener('pointercancel', onUp);\n    stopListeningRef.current = stopListening;\n  };\n\n  const valuesKey = String(values);\n\n  React.useLayoutEffect(() => {\n    const press = pressRef.current;\n    if (press?.pending) {\n      // A press on the track (a jump): FLIP from where the parts were.\n      press.pending = false;\n      // Measure after the library's own layout-effect updates have flushed\n      // (with `thumbAlignment=\"edge\"` the thumbs are placed in a second pass).\n      queueMicrotask(() => itemsRef.current.forEach((item) => item.play()));\n    } else if (!press || press.moved) {\n      // Keyboard, drag or programmatic change: instant.\n      itemsRef.current.forEach((item) => item.cancel());\n    }\n  }, [valuesKey]);\n\n  return (\n    <SliderProvider value={{ values, isPressing, register, startPress }}>\n      <SliderPrimitive.Root\n        data-slot=\"slider\"\n        value={values}\n        onValueChange={setValues}\n        min={min}\n        disabled={disabled}\n        {...props}\n      />\n    </SliderProvider>\n  );\n}\n\ntype SliderLabelProps = React.ComponentProps<typeof SliderPrimitive.Label>;\n\nfunction SliderLabel(props: SliderLabelProps) {\n  return <SliderPrimitive.Label data-slot=\"slider-label\" {...props} />;\n}\n\ntype SliderValueProps = React.ComponentProps<typeof SliderPrimitive.Value>;\n\nfunction SliderValue(props: SliderValueProps) {\n  return <SliderPrimitive.Value data-slot=\"slider-value\" {...props} />;\n}\n\ntype SliderControlProps = React.ComponentProps<typeof SliderPrimitive.Control>;\n\nfunction SliderControl({ onPointerDownCapture, ...props }: SliderControlProps) {\n  const { startPress } = useSlider();\n\n  return (\n    <SliderPrimitive.Control\n      data-slot=\"slider-control\"\n      onPointerDownCapture={(event) => {\n        onPointerDownCapture?.(event);\n        if (!event.defaultPrevented) startPress(event);\n      }}\n      {...props}\n    />\n  );\n}\n\ntype SliderTrackProps = React.ComponentProps<typeof SliderPrimitive.Track>;\n\nfunction SliderTrack(props: SliderTrackProps) {\n  return <SliderPrimitive.Track data-slot=\"slider-track\" {...props} />;\n}\n\ntype FlipStart = { tx: number; ty: number; sx: number; sy: number };\n\nconst IDENTITY: FlipStart = { tx: 0, ty: 0, sx: 1, sy: 1 };\n\nfunction measureLayout(el: HTMLElement) {\n  const transform = el.style.transform;\n  el.style.transform = 'none';\n  const rect = el.getBoundingClientRect();\n  el.style.transform = transform;\n  return rect;\n}\n\nfunction sameBox(a: DOMRect, b: DOMRect) {\n  return (\n    Math.abs(a.left - b.left) < 0.5 &&\n    Math.abs(a.top - b.top) < 0.5 &&\n    Math.abs(a.width - b.width) < 0.5 &&\n    Math.abs(a.height - b.height) < 0.5\n  );\n}\n\n/**\n * FLIP for a part the library positions with layout (`left`/`right`/`width`\n * percentages): the layout jumps, and a transform offset springs back to\n * identity. Only jumps use it; drags and keyboard changes are instant.\n */\nfunction useSliderPartMotion(kind: 'thumb' | 'range', transition: Transition) {\n  const { register } = useSlider();\n  const ref = React.useRef<HTMLElement | null>(null);\n  const tx = useMotionValue(0);\n  const ty = useMotionValue(0);\n  const sx = useMotionValue(1);\n  const sy = useMotionValue(1);\n  // Press feedback (thumbs only).\n  const press = useMotionValue(1);\n  const transform = useMotionTemplate`translateX(${tx}px) translateY(${ty}px) scaleX(${sx}) scaleY(${sy}) scale(${press})`;\n\n  const transitionRef = React.useRef(transition);\n  React.useLayoutEffect(() => {\n    transitionRef.current = transition;\n  });\n\n  React.useEffect(() => {\n    let snapshot: { visual: DOMRect; layout: DOMRect } | null = null;\n    let controls: AnimationPlaybackControls[] = [];\n\n    const stop = () => {\n      controls.forEach((c) => c.stop());\n      controls = [];\n    };\n    const set = (start: FlipStart) => {\n      tx.jump(start.tx);\n      ty.jump(start.ty);\n      sx.jump(start.sx);\n      sy.jump(start.sy);\n      // Write it now so the first painted frame already starts from there.\n      // (The template itself updates on the next frame.)\n      if (ref.current) {\n        ref.current.style.transform = `translateX(${start.tx}px) translateY(${start.ty}px) scaleX(${start.sx}) scaleY(${start.sy}) scale(${press.get()})`;\n      }\n    };\n\n    return register({\n      snapshot() {\n        const el = ref.current;\n        snapshot = el\n          ? { visual: el.getBoundingClientRect(), layout: measureLayout(el) }\n          : null;\n      },\n      play() {\n        const el = ref.current;\n        const from = snapshot;\n        snapshot = null;\n        if (!el || !from) return;\n        const layout = measureLayout(el);\n        // This part didn't move (the other thumb of a range slider).\n        if (sameBox(layout, from.layout)) return;\n\n        stop();\n        const visual = from.visual;\n        if (kind === 'thumb') {\n          // Centers: unaffected by the press scale.\n          set({\n            tx:\n              visual.left + visual.width / 2 - (layout.left + layout.width / 2),\n            ty:\n              visual.top + visual.height / 2 - (layout.top + layout.height / 2),\n            sx: 1,\n            sy: 1,\n          });\n        } else {\n          // An empty range can't be scaled back from: show it as it is.\n          if (layout.width < 1 || layout.height < 1) {\n            set(IDENTITY);\n            return;\n          }\n          set({\n            tx: visual.left - layout.left,\n            ty: visual.top - layout.top,\n            sx: visual.width / layout.width,\n            sy: visual.height / layout.height,\n          });\n        }\n        const t = transitionRef.current;\n        controls = [\n          animate(tx, 0, t),\n          animate(ty, 0, t),\n          animate(sx, 1, t),\n          animate(sy, 1, t),\n        ];\n      },\n      cancel() {\n        snapshot = null;\n        const atRest =\n          tx.get() === 0 && ty.get() === 0 && sx.get() === 1 && sy.get() === 1;\n        if (controls.length === 0 && atRest) return;\n        stop();\n        set(IDENTITY);\n      },\n    });\n  }, [kind, register, tx, ty, sx, sy, press]);\n\n  return { ref, transform, press };\n}\n\ntype SliderIndicatorProps = Omit<\n  React.ComponentProps<typeof SliderPrimitive.Indicator>,\n  'render'\n> & {\n  transition?: Transition;\n};\n\nfunction SliderIndicator({\n  transition = spring.snappy,\n  ...props\n}: SliderIndicatorProps) {\n  const { ref, transform } = useSliderPartMotion('range', transition);\n\n  return (\n    <SliderPrimitive.Indicator\n      data-slot=\"slider-indicator\"\n      {...props}\n      render={\n        <motion.div\n          ref={ref as React.Ref<HTMLDivElement>}\n          style={{ transform, transformOrigin: '0 0' }}\n        />\n      }\n    />\n  );\n}\n\ntype SliderThumbProps = Omit<\n  React.ComponentProps<typeof SliderPrimitive.Thumb>,\n  'render'\n> & {\n  transition?: Transition;\n  /** Scale of the thumb while it is pressed or dragged. */\n  pressedScale?: number;\n};\n\nfunction SliderThumb({\n  transition = spring.snappy,\n  pressedScale = 1.15,\n  onFocus,\n  onBlur,\n  ...props\n}: SliderThumbProps) {\n  const { isPressing } = useSlider();\n  const reduce = useShouldReduceMotion();\n  const [isFocused, setIsFocused] = React.useState(false);\n  const { ref, transform, press } = useSliderPartMotion('thumb', transition);\n\n  // The library focuses the thumb it moves, so the pressed thumb is the\n  // focused one while the pointer is down.\n  const isPressed = isPressing && isFocused;\n  usePressScale(press, isPressed && !reduce ? pressedScale : 1, {\n    transition,\n    reduce,\n  });\n\n  return (\n    <SliderPrimitive.Thumb\n      data-slot=\"slider-thumb\"\n      // Base UI forwards focus handlers to the thumb's nested input.\n      onFocus={(event) => {\n        setIsFocused(true);\n        onFocus?.(event);\n      }}\n      onBlur={(event) => {\n        setIsFocused(false);\n        onBlur?.(event);\n      }}\n      {...props}\n      render={\n        <motion.div\n          ref={ref as React.Ref<HTMLDivElement>}\n          data-pressed={isPressed || undefined}\n          style={{ transform }}\n        />\n      }\n    />\n  );\n}\n\nfunction usePressScale(\n  press: MotionValue<number>,\n  target: number,\n  { transition, reduce }: { transition: Transition; reduce: boolean },\n) {\n  const transitionRef = React.useRef(transition);\n  React.useLayoutEffect(() => {\n    transitionRef.current = transition;\n  });\n\n  React.useEffect(() => {\n    if (reduce) {\n      press.jump(target);\n      return;\n    }\n    const controls = animate(press, target, transitionRef.current);\n    return () => controls.stop();\n  }, [press, target, reduce]);\n}\n\nexport {\n  Slider,\n  SliderLabel,\n  SliderValue,\n  SliderControl,\n  SliderTrack,\n  SliderIndicator,\n  SliderThumb,\n  useSlider,\n  type SliderProps,\n  type SliderLabelProps,\n  type SliderValueProps,\n  type SliderControlProps,\n  type SliderTrackProps,\n  type SliderIndicatorProps,\n  type SliderThumbProps,\n  type SliderContextType,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod = await import('@/registry/primitives/base/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-base-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-base-slider',
   },
   'primitives-base-switch': {
     name: 'primitives-base-switch',
@@ -23774,6 +24667,47 @@ export const index: Record<string, any> = {
     })(),
     command: '@animate-ui/primitives-headless-checkbox',
   },
+  'primitives-headless-combobox': {
+    name: 'primitives-headless-combobox',
+    description:
+      'Comboboxes are the foundation of accessible autocompletes and command palettes for your app, complete with robust support for keyboard navigation.',
+    type: 'registry:ui',
+    dependencies: ['motion', '@headlessui/react'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/lib-motion',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/headless/combobox/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/headless/combobox.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport {\n  Combobox as ComboboxPrimitive,\n  ComboboxInput as ComboboxInputPrimitive,\n  ComboboxButton as ComboboxButtonPrimitive,\n  ComboboxOptions as ComboboxOptionsPrimitive,\n  ComboboxOption as ComboboxOptionPrimitive,\n  type ComboboxProps as ComboboxPrimitiveProps,\n  type ComboboxInputProps as ComboboxInputPrimitiveProps,\n  type ComboboxButtonProps as ComboboxButtonPrimitiveProps,\n  type ComboboxOptionsProps as ComboboxOptionsPrimitiveProps,\n  type ComboboxOptionProps as ComboboxOptionPrimitiveProps,\n} from '@headlessui/react';\nimport {\n  AnimatePresence,\n  motion,\n  type HTMLMotionProps,\n  type Transition,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport {\n  ReducedMotionConfig,\n  scale,\n  transition as motionTransition,\n  useShouldReduceMotion,\n} from '@/lib/motion';\n\ntype ComboboxContextType = {\n  isOpen: boolean;\n};\n\nconst [ComboboxProvider, useCombobox] =\n  getStrictContext<ComboboxContextType>('ComboboxContext');\n\ntype ComboboxProps<\n  TValue = unknown,\n  TMultiple extends boolean | undefined = false,\n  TTag extends React.ElementType = typeof React.Fragment,\n> = ComboboxPrimitiveProps<TValue, TMultiple, TTag> & {\n  as?: TTag;\n};\n\nfunction Combobox<\n  TValue,\n  TMultiple extends boolean | undefined = false,\n  TTag extends React.ElementType = typeof React.Fragment,\n>({ children, ...props }: ComboboxProps<TValue, TMultiple, TTag>) {\n  return (\n    <ComboboxPrimitive\n      {...(props as ComboboxPrimitiveProps<\n        TValue,\n        TMultiple,\n        typeof React.Fragment\n      >)}\n    >\n      {(bag) => (\n        // A Fragment, so Headless UI renders the default Fragment root without\n        // trying to forward its props onto our provider.\n        <React.Fragment>\n          <ComboboxProvider value={{ isOpen: bag.open }}>\n            <ReducedMotionConfig>\n              {typeof children === 'function' ? children(bag) : children}\n            </ReducedMotionConfig>\n          </ComboboxProvider>\n        </React.Fragment>\n      )}\n    </ComboboxPrimitive>\n  );\n}\n\ntype ComboboxInputProps<\n  TTag extends React.ElementType = 'input',\n  TType = string,\n> = ComboboxInputPrimitiveProps<TTag, TType> & {\n  as?: TTag;\n};\n\nfunction ComboboxInput<\n  TTag extends React.ElementType = 'input',\n  TType = string,\n>(props: ComboboxInputProps<TTag, TType>) {\n  return <ComboboxInputPrimitive data-slot=\"combobox-input\" {...props} />;\n}\n\ntype ComboboxButtonProps<TTag extends React.ElementType = 'button'> =\n  ComboboxButtonPrimitiveProps<TTag> & {\n    as?: TTag;\n  };\n\nfunction ComboboxButton<TTag extends React.ElementType = 'button'>(\n  props: ComboboxButtonProps<TTag>,\n) {\n  return <ComboboxButtonPrimitive data-slot=\"combobox-button\" {...props} />;\n}\n\ntype ComboboxOptionsProps<TTag extends React.ElementType = 'div'> = Omit<\n  ComboboxOptionsPrimitiveProps<TTag>,\n  'transition' | 'static' | 'unmount'\n> &\n  Omit<HTMLMotionProps<'div'>, 'children'> & {\n    transition?: Transition;\n    as?: TTag;\n  };\n\n// Filtering is keyboard-driven and high frequency: options appear and\n// disappear instantly, only the list itself animates in and out. While it\n// exits, AnimatePresence keeps the last rendered options, so resetting the\n// query in `onClose` doesn't flash the unfiltered list.\nfunction ComboboxOptions<TTag extends React.ElementType = 'div'>(\n  props: ComboboxOptionsProps<TTag>,\n) {\n  const {\n    transition = motionTransition.dropdown,\n    as = motion.div,\n    ...rest\n  } = props;\n\n  const { isOpen } = useCombobox();\n  // Rendered inside the Combobox's ReducedMotionConfig.\n  const reduce = useShouldReduceMotion();\n  const hidden = {\n    opacity: 0,\n    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,\n  };\n\n  return (\n    <AnimatePresence>\n      {isOpen && (\n        <ComboboxOptionsPrimitive\n          data-slot=\"combobox-options\"\n          static\n          as={as}\n          initial={hidden}\n          animate={{ opacity: 1, transform: 'scale(1)', transition }}\n          exit={{ ...hidden, transition: motionTransition.exit }}\n          {...rest}\n        />\n      )}\n    </AnimatePresence>\n  );\n}\n\n// No animated highlight: arrow keys move it, and keyboard navigation stays\n// instant. Style `data-focus` instead.\ntype ComboboxOptionProps<\n  TTag extends React.ElementType = 'div',\n  TType = unknown,\n> = ComboboxOptionPrimitiveProps<TTag, TType> & {\n  as?: TTag;\n};\n\nfunction ComboboxOption<\n  TTag extends React.ElementType = 'div',\n  TType = unknown,\n>(props: ComboboxOptionProps<TTag, TType>) {\n  return <ComboboxOptionPrimitive data-slot=\"combobox-option\" {...props} />;\n}\n\nexport {\n  Combobox,\n  ComboboxInput,\n  ComboboxButton,\n  ComboboxOptions,\n  ComboboxOption,\n  useCombobox,\n  type ComboboxProps,\n  type ComboboxInputProps,\n  type ComboboxButtonProps,\n  type ComboboxOptionsProps,\n  type ComboboxOptionProps,\n  type ComboboxContextType,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/primitives/headless/combobox/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-headless-combobox';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-headless-combobox',
+  },
   'primitives-headless-dialog': {
     name: 'primitives-headless-dialog',
     description:
@@ -24606,6 +25540,48 @@ export const index: Record<string, any> = {
       return LazyComp;
     })(),
     command: '@animate-ui/primitives-radix-sheet',
+  },
+  'primitives-radix-slider': {
+    name: 'primitives-radix-slider',
+    description:
+      'An input where the user selects a value from within a given range.',
+    type: 'registry:ui',
+    dependencies: ['motion', 'radix-ui'],
+    devDependencies: undefined,
+    registryDependencies: [
+      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/lib-motion',
+    ],
+    files: [
+      {
+        path: 'registry/primitives/radix/slider/index.tsx',
+        type: 'registry:ui',
+        target: 'components/animate-ui/primitives/radix/slider.tsx',
+        content:
+          "'use client';\n\nimport * as React from 'react';\nimport { Slider as SliderPrimitive } from 'radix-ui';\nimport {\n  animate,\n  motion,\n  useMotionTemplate,\n  useMotionValue,\n  type AnimationPlaybackControls,\n  type MotionValue,\n  type Transition,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\nimport {\n  ReducedMotionConfig,\n  spring,\n  useShouldReduceMotion,\n} from '@/lib/motion';\n\n/**\n * Pointer travel (px) after which a press on the track becomes a drag. A drag\n * cancels the jump animation so the thumb sits under the pointer.\n */\nconst DRAG_THRESHOLD = 3;\n\ntype SliderMotionItem = {\n  /** Records the visual (transformed) and layout box before a press. */\n  snapshot: () => void;\n  /** FLIPs from the snapshot to the new layout box. */\n  play: () => void;\n  /** Stops any running animation and jumps to the layout box. */\n  cancel: () => void;\n};\n\ntype SliderContextType = {\n  values: number[];\n  isPressing: boolean;\n  register: (item: SliderMotionItem) => () => void;\n};\n\nconst [SliderProvider, useSlider] =\n  getStrictContext<SliderContextType>('SliderContext');\n\ntype SliderProps = React.ComponentProps<typeof SliderPrimitive.Root>;\n\nfunction Slider(props: SliderProps) {\n  return (\n    <ReducedMotionConfig>\n      <SliderRoot {...props} />\n    </ReducedMotionConfig>\n  );\n}\n\ntype PressState = { x: number; y: number; moved: boolean; pending: boolean };\n\nfunction SliderRoot({\n  value,\n  defaultValue,\n  onValueChange,\n  onPointerDownCapture,\n  min = 0,\n  disabled,\n  ...props\n}: SliderProps) {\n  const reduce = useShouldReduceMotion();\n  const [values, setValues] = useControlledState<number[]>({\n    value,\n    defaultValue: defaultValue ?? [min],\n    onChange: onValueChange,\n  });\n  const [isPressing, setIsPressing] = React.useState(false);\n\n  const itemsRef = React.useRef(new Set<SliderMotionItem>());\n  const pressRef = React.useRef<PressState | null>(null);\n  const stopListeningRef = React.useRef<(() => void) | null>(null);\n\n  const register = React.useCallback((item: SliderMotionItem) => {\n    itemsRef.current.add(item);\n    return () => {\n      itemsRef.current.delete(item);\n    };\n  }, []);\n\n  React.useEffect(() => () => stopListeningRef.current?.(), []);\n\n  const startPress = (event: React.PointerEvent<HTMLSpanElement>) => {\n    if (disabled || event.button !== 0) return;\n    stopListeningRef.current?.();\n\n    const press: PressState = {\n      x: event.clientX,\n      y: event.clientY,\n      moved: false,\n      pending: !reduce,\n    };\n    pressRef.current = press;\n    if (press.pending) itemsRef.current.forEach((item) => item.snapshot());\n    setIsPressing(true);\n\n    const onMove = (moveEvent: PointerEvent) => {\n      if (press.moved) return;\n      const distance = Math.hypot(\n        moveEvent.clientX - press.x,\n        moveEvent.clientY - press.y,\n      );\n      if (distance <= DRAG_THRESHOLD) return;\n      // Direct manipulation: from now on the thumb follows the pointer.\n      press.moved = true;\n      press.pending = false;\n      itemsRef.current.forEach((item) => item.cancel());\n    };\n    const onUp = () => {\n      stopListening();\n      if (pressRef.current === press) pressRef.current = null;\n      setIsPressing(false);\n    };\n    const stopListening = () => {\n      window.removeEventListener('pointermove', onMove);\n      window.removeEventListener('pointerup', onUp);\n      window.removeEventListener('pointercancel', onUp);\n      stopListeningRef.current = null;\n    };\n\n    window.addEventListener('pointermove', onMove);\n    window.addEventListener('pointerup', onUp);\n    window.addEventListener('pointercancel', onUp);\n    stopListeningRef.current = stopListening;\n  };\n\n  const valuesKey = values.join(',');\n\n  React.useLayoutEffect(() => {\n    const press = pressRef.current;\n    if (press?.pending) {\n      // A press on the track (a jump): FLIP from where the parts were.\n      press.pending = false;\n      // Measure after the library's own layout-effect updates have flushed.\n      queueMicrotask(() => itemsRef.current.forEach((item) => item.play()));\n    } else if (!press || press.moved) {\n      // Keyboard, drag or programmatic change: instant.\n      itemsRef.current.forEach((item) => item.cancel());\n    }\n  }, [valuesKey]);\n\n  return (\n    <SliderProvider value={{ values, isPressing, register }}>\n      <SliderPrimitive.Root\n        data-slot=\"slider\"\n        value={values}\n        onValueChange={setValues}\n        min={min}\n        disabled={disabled}\n        onPointerDownCapture={(event) => {\n          onPointerDownCapture?.(event);\n          if (!event.defaultPrevented) startPress(event);\n        }}\n        {...props}\n      />\n    </SliderProvider>\n  );\n}\n\ntype SliderTrackProps = React.ComponentProps<typeof SliderPrimitive.Track>;\n\nfunction SliderTrack(props: SliderTrackProps) {\n  return <SliderPrimitive.Track data-slot=\"slider-track\" {...props} />;\n}\n\ntype FlipStart = { tx: number; ty: number; sx: number; sy: number };\n\nconst IDENTITY: FlipStart = { tx: 0, ty: 0, sx: 1, sy: 1 };\n\nfunction measureLayout(el: HTMLElement) {\n  const transform = el.style.transform;\n  el.style.transform = 'none';\n  const rect = el.getBoundingClientRect();\n  el.style.transform = transform;\n  return rect;\n}\n\nfunction sameBox(a: DOMRect, b: DOMRect) {\n  return (\n    Math.abs(a.left - b.left) < 0.5 &&\n    Math.abs(a.top - b.top) < 0.5 &&\n    Math.abs(a.width - b.width) < 0.5 &&\n    Math.abs(a.height - b.height) < 0.5\n  );\n}\n\n/**\n * FLIP for a part the library positions with layout (`left`/`right`/`width`\n * percentages): the layout jumps, and a transform offset springs back to\n * identity. Only jumps use it; drags and keyboard changes are instant.\n */\nfunction useSliderPartMotion(kind: 'thumb' | 'range', transition: Transition) {\n  const { register } = useSlider();\n  const ref = React.useRef<HTMLElement | null>(null);\n  const tx = useMotionValue(0);\n  const ty = useMotionValue(0);\n  const sx = useMotionValue(1);\n  const sy = useMotionValue(1);\n  // Press feedback (thumbs only).\n  const press = useMotionValue(1);\n  const transform = useMotionTemplate`translateX(${tx}px) translateY(${ty}px) scaleX(${sx}) scaleY(${sy}) scale(${press})`;\n\n  const transitionRef = React.useRef(transition);\n  React.useLayoutEffect(() => {\n    transitionRef.current = transition;\n  });\n\n  React.useEffect(() => {\n    let snapshot: { visual: DOMRect; layout: DOMRect } | null = null;\n    let controls: AnimationPlaybackControls[] = [];\n\n    const stop = () => {\n      controls.forEach((c) => c.stop());\n      controls = [];\n    };\n    const set = (start: FlipStart) => {\n      tx.jump(start.tx);\n      ty.jump(start.ty);\n      sx.jump(start.sx);\n      sy.jump(start.sy);\n      // Write it now so the first painted frame already starts from there.\n      // (The template itself updates on the next frame.)\n      if (ref.current) {\n        ref.current.style.transform = `translateX(${start.tx}px) translateY(${start.ty}px) scaleX(${start.sx}) scaleY(${start.sy}) scale(${press.get()})`;\n      }\n    };\n\n    return register({\n      snapshot() {\n        const el = ref.current;\n        snapshot = el\n          ? { visual: el.getBoundingClientRect(), layout: measureLayout(el) }\n          : null;\n      },\n      play() {\n        const el = ref.current;\n        const from = snapshot;\n        snapshot = null;\n        if (!el || !from) return;\n        const layout = measureLayout(el);\n        // This part didn't move (the other thumb of a range slider).\n        if (sameBox(layout, from.layout)) return;\n\n        stop();\n        const visual = from.visual;\n        if (kind === 'thumb') {\n          // Centers: unaffected by the press scale.\n          set({\n            tx:\n              visual.left + visual.width / 2 - (layout.left + layout.width / 2),\n            ty:\n              visual.top + visual.height / 2 - (layout.top + layout.height / 2),\n            sx: 1,\n            sy: 1,\n          });\n        } else {\n          // An empty range can't be scaled back from: show it as it is.\n          if (layout.width < 1 || layout.height < 1) {\n            set(IDENTITY);\n            return;\n          }\n          set({\n            tx: visual.left - layout.left,\n            ty: visual.top - layout.top,\n            sx: visual.width / layout.width,\n            sy: visual.height / layout.height,\n          });\n        }\n        const t = transitionRef.current;\n        controls = [\n          animate(tx, 0, t),\n          animate(ty, 0, t),\n          animate(sx, 1, t),\n          animate(sy, 1, t),\n        ];\n      },\n      cancel() {\n        snapshot = null;\n        const atRest =\n          tx.get() === 0 && ty.get() === 0 && sx.get() === 1 && sy.get() === 1;\n        if (controls.length === 0 && atRest) return;\n        stop();\n        set(IDENTITY);\n      },\n    });\n  }, [kind, register, tx, ty, sx, sy, press]);\n\n  return { ref, transform, press };\n}\n\ntype SliderRangeProps = Omit<\n  React.ComponentProps<typeof SliderPrimitive.Range>,\n  'asChild'\n> & {\n  transition?: Transition;\n};\n\nfunction SliderRange({\n  transition = spring.snappy,\n  children,\n  ...props\n}: SliderRangeProps) {\n  const { ref, transform } = useSliderPartMotion('range', transition);\n\n  return (\n    <SliderPrimitive.Range data-slot=\"slider-range\" asChild {...props}>\n      <motion.span\n        ref={ref as React.Ref<HTMLSpanElement>}\n        style={{ transform, transformOrigin: '0 0' }}\n      >\n        {children}\n      </motion.span>\n    </SliderPrimitive.Range>\n  );\n}\n\ntype SliderThumbProps = Omit<\n  React.ComponentProps<typeof SliderPrimitive.Thumb>,\n  'asChild'\n> & {\n  transition?: Transition;\n  /** Scale of the thumb while it is pressed or dragged. */\n  pressedScale?: number;\n};\n\nfunction SliderThumb({\n  transition = spring.snappy,\n  pressedScale = 1.15,\n  onFocus,\n  onBlur,\n  children,\n  ...props\n}: SliderThumbProps) {\n  const { isPressing } = useSlider();\n  const reduce = useShouldReduceMotion();\n  const [isFocused, setIsFocused] = React.useState(false);\n  const { ref, transform, press } = useSliderPartMotion('thumb', transition);\n\n  // The library focuses the thumb it moves, so the pressed thumb is the\n  // focused one while the pointer is down.\n  const isPressed = isPressing && isFocused;\n  usePressScale(press, isPressed && !reduce ? pressedScale : 1, {\n    transition,\n    reduce,\n  });\n\n  return (\n    <SliderPrimitive.Thumb\n      data-slot=\"slider-thumb\"\n      data-pressed={isPressed || undefined}\n      asChild\n      onFocus={(event) => {\n        setIsFocused(true);\n        onFocus?.(event);\n      }}\n      onBlur={(event) => {\n        setIsFocused(false);\n        onBlur?.(event);\n      }}\n      {...props}\n    >\n      <motion.span\n        ref={ref as React.Ref<HTMLSpanElement>}\n        style={{ transform }}\n      >\n        {children}\n      </motion.span>\n    </SliderPrimitive.Thumb>\n  );\n}\n\nfunction usePressScale(\n  press: MotionValue<number>,\n  target: number,\n  { transition, reduce }: { transition: Transition; reduce: boolean },\n) {\n  const transitionRef = React.useRef(transition);\n  React.useLayoutEffect(() => {\n    transitionRef.current = transition;\n  });\n\n  React.useEffect(() => {\n    if (reduce) {\n      press.jump(target);\n      return;\n    }\n    const controls = animate(press, target, transitionRef.current);\n    return () => controls.stop();\n  }, [press, target, reduce]);\n}\n\nexport {\n  Slider,\n  SliderTrack,\n  SliderRange,\n  SliderThumb,\n  useSlider,\n  type SliderProps,\n  type SliderTrackProps,\n  type SliderRangeProps,\n  type SliderThumbProps,\n  type SliderContextType,\n};",
+      },
+    ],
+    keywords: [],
+    component: (function () {
+      const LazyComp = React.lazy(async () => {
+        const mod =
+          await import('@/registry/primitives/radix/slider/index.tsx');
+        const exportName =
+          Object.keys(mod).find(
+            (key) =>
+              typeof mod[key] === 'function' || typeof mod[key] === 'object',
+          ) || 'primitives-radix-slider';
+        const Comp = mod.default || mod[exportName];
+        if (mod.animations) {
+          (LazyComp as any).animations = mod.animations;
+        }
+        return { default: Comp };
+      });
+      LazyComp.demoProps = {};
+      return LazyComp;
+    })(),
+    command: '@animate-ui/primitives-radix-slider',
   },
   'primitives-radix-switch': {
     name: 'primitives-radix-switch',

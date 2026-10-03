@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-slider",
+  "type": "registry:ui",
+  "title": "Base Slider Demo",
+  "description": "Demo showing an animated base slider.",
+  "registryDependencies": ["@animate-ui/primitives-base-slider"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/slider/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/slider.tsx"
+    }
+  ]
+}

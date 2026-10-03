@@ -1,0 +1,61 @@
+---
+title: Slider
+description: An easily stylable range input.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-03
+---
+
+<ComponentPreview name="demo-components-base-slider" />
+
+## Installation
+
+<ComponentInstallation name="components-base-slider" />
+
+## Usage
+
+```tsx
+<Slider defaultValue={[50]} max={100} step={1} getAriaLabel={() => 'Volume'} />
+```
+
+Pass two values for a range slider:
+
+```tsx
+<Slider defaultValue={[25, 75]} max={100} step={1} />
+```
+
+## Motion
+
+Dragging the thumb follows the pointer with no lag, and the keyboard changes the value instantly. Clicking the track away from the thumb springs the thumb and the filled range to the new value; moving the pointer right after cancels that animation so the thumb stays under it. A pressed thumb grows slightly, and hovering it with a mouse shows a ring. Under reduced motion every change is instant and nothing scales.
+
+## API Reference
+
+### Slider
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/slider#slider"
+  text="Animate UI API Reference - Slider Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/slider#root"
+  text="Base UI API Reference - Slider.Root"
+/>
+</div>
+
+<TypeTable
+  type={{
+    getAriaLabel: {
+      description: 'Returns the accessible name of the thumb at `index`.',
+      type: '(index: number) => string',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Slider](https://base-ui.com/react/components/slider)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/slider) for style inspiration.

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-animate-input-otp",
+  "title": "Input OTP Demo",
+  "description": "Demo showing an input OTP.",
+  "dependencies": [
+    "input-otp"
+  ],
+  "registryDependencies": [
+    "@animate-ui/components-animate-input-otp"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/animate/input-otp/index.tsx",
+      "content": "import {\n  InputOTP,\n  InputOTPGroup,\n  InputOTPSeparator,\n  InputOTPSlot,\n} from '@/components/animate-ui/components/animate/input-otp';\nimport { REGEXP_ONLY_DIGITS } from 'input-otp';\n\nexport const InputOTPDemo = () => {\n  return (\n    <InputOTP\n      maxLength={6}\n      pattern={REGEXP_ONLY_DIGITS}\n      aria-label=\"One-time password\"\n    >\n      <InputOTPGroup>\n        <InputOTPSlot index={0} />\n        <InputOTPSlot index={1} />\n        <InputOTPSlot index={2} />\n      </InputOTPGroup>\n      <InputOTPSeparator />\n      <InputOTPGroup>\n        <InputOTPSlot index={3} />\n        <InputOTPSlot index={4} />\n        <InputOTPSlot index={5} />\n      </InputOTPGroup>\n    </InputOTP>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/animate/input-otp.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

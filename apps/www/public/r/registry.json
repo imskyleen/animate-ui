@@ -114,6 +114,25 @@
       ]
     },
     {
+      "name": "components-animate-input-otp",
+      "type": "registry:ui",
+      "title": "Input OTP",
+      "description": "Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-animate-input-otp"
+      ],
+      "files": [
+        {
+          "path": "registry/components/animate/input-otp/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/animate/input-otp.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-animate-tabs",
       "type": "registry:ui",
       "title": "Tabs",
@@ -330,6 +349,25 @@
       ]
     },
     {
+      "name": "components-base-combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "An input combined with a list of predefined items to select.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/combobox.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-base-context-menu",
       "type": "registry:ui",
       "title": "Context Menu",
@@ -415,6 +453,25 @@
           "path": "registry/components/base/menu/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-base-otp-field",
+      "type": "registry:ui",
+      "title": "OTP Field",
+      "description": "A one-time password input split into one input per character, with characters that pop in as they are typed.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-base-otp-field"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/otp-field/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/otp-field.tsx"
         }
       ]
     },
@@ -517,6 +574,22 @@
           "path": "registry/components/base/select/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "components-base-slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "An easily stylable range input.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-slider"
+      ],
+      "files": [
+        {
+          "path": "registry/components/base/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/base/slider.tsx"
         }
       ]
     },
@@ -1026,6 +1099,25 @@
       ]
     },
     {
+      "name": "components-headless-combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Comboboxes are the foundation of accessible autocompletes and command palettes for your app, complete with robust support for keyboard navigation.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-headless-combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/components/headless/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/headless/combobox.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-headless-dialog",
       "type": "registry:ui",
       "title": "Dialog",
@@ -1378,6 +1470,22 @@
       ]
     },
     {
+      "name": "components-radix-slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "An input where the user selects a value from within a given range.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-slider"
+      ],
+      "files": [
+        {
+          "path": "registry/components/radix/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/components/radix/slider.tsx"
+        }
+      ]
+    },
+    {
       "name": "components-radix-switch",
       "type": "registry:ui",
       "title": "Switch",
@@ -1635,6 +1743,25 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-components-animate-input-otp",
+      "type": "registry:ui",
+      "title": "Input OTP Demo",
+      "description": "Demo showing an input OTP.",
+      "dependencies": [
+        "input-otp"
+      ],
+      "registryDependencies": [
+        "@animate-ui/components-animate-input-otp"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/animate/input-otp/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/animate/input-otp.tsx"
+        }
+      ]
     },
     {
       "name": "demo-components-animate-tabs",
@@ -1997,6 +2124,56 @@
       }
     },
     {
+      "name": "demo-components-base-combobox",
+      "type": "registry:ui",
+      "title": "Combobox Demo",
+      "description": "Demo showing a combobox.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@animate-ui/components-base-combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/combobox.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "Combobox": {
+            "multiple": {
+              "value": false
+            }
+          },
+          "ComboboxContent": {
+            "side": {
+              "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 6
+            },
+            "align": {
+              "value": "start",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-components-base-context-menu",
       "type": "registry:ui",
       "title": "Context Menu Demo",
@@ -2234,6 +2411,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-components-base-otp-field",
+      "type": "registry:ui",
+      "title": "OTP Field Demo",
+      "description": "Demo showing an OTP field.",
+      "registryDependencies": [
+        "@animate-ui/components-base-otp-field"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/otp-field/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/otp-field.tsx"
+        }
+      ]
     },
     {
       "name": "demo-components-base-popover",
@@ -2478,6 +2671,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-components-base-slider",
+      "type": "registry:ui",
+      "title": "Base Slider Demo",
+      "description": "Demo showing a base slider with a single value and a range.",
+      "registryDependencies": [
+        "@animate-ui/components-base-slider"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/base/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/base/slider.tsx"
+        }
+      ]
     },
     {
       "name": "demo-components-base-switch",
@@ -3336,6 +3545,40 @@
       }
     },
     {
+      "name": "demo-components-headless-combobox",
+      "type": "registry:ui",
+      "title": "Combobox Demo",
+      "description": "Demo showing a combobox.",
+      "registryDependencies": [
+        "@animate-ui/components-headless-combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/headless/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/headless/combobox.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "ComboboxOptions": {
+            "anchor": {
+              "value": "bottom start",
+              "options": {
+                "top start": "top start",
+                "top end": "top end",
+                "bottom start": "bottom start",
+                "bottom end": "bottom end"
+              }
+            },
+            "gap": {
+              "value": 6
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-components-headless-dialog",
       "type": "registry:ui",
       "title": "Dialog Demo",
@@ -4052,6 +4295,22 @@
       ]
     },
     {
+      "name": "demo-components-radix-slider",
+      "type": "registry:ui",
+      "title": "Radix Slider Demo",
+      "description": "Demo showing a radix slider with a single value and a range.",
+      "registryDependencies": [
+        "@animate-ui/components-radix-slider"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/components/radix/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/components/radix/slider.tsx"
+        }
+      ]
+    },
+    {
       "name": "demo-components-radix-switch",
       "type": "registry:ui",
       "title": "Radix Switch Demo",
@@ -4354,6 +4613,25 @@
       ]
     },
     {
+      "name": "demo-primitives-animate-input-otp",
+      "type": "registry:ui",
+      "title": "Animate Input OTP Demo",
+      "description": "Demo showing an animated input OTP.",
+      "dependencies": [
+        "input-otp"
+      ],
+      "registryDependencies": [
+        "@animate-ui/primitives-animate-input-otp"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/animate/input-otp/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/animate/input-otp.tsx"
+        }
+      ]
+    },
+    {
       "name": "demo-primitives-animate-motion-grid",
       "type": "registry:ui",
       "title": "Animate Motion Grid Demo",
@@ -4623,6 +4901,48 @@
       }
     },
     {
+      "name": "demo-primitives-base-combobox",
+      "type": "registry:ui",
+      "title": "Base Combobox Demo",
+      "description": "Demo showing an animated base combobox.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/combobox.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "ComboboxPositioner": {
+            "side": {
+              "value": "bottom",
+              "options": {
+                "top": "top",
+                "bottom": "bottom",
+                "left": "left",
+                "right": "right"
+              }
+            },
+            "sideOffset": {
+              "value": 4
+            },
+            "align": {
+              "value": "start",
+              "options": {
+                "start": "start",
+                "center": "center",
+                "end": "end"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-primitives-base-dialog",
       "type": "registry:ui",
       "title": "Base Dialog Demo",
@@ -4734,6 +5054,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-primitives-base-otp-field",
+      "type": "registry:ui",
+      "title": "Base OTP Field Demo",
+      "description": "Demo showing an animated base OTP field.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-otp-field"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/otp-field/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/otp-field.tsx"
+        }
+      ]
     },
     {
       "name": "demo-primitives-base-popover",
@@ -4977,6 +5313,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-primitives-base-slider",
+      "type": "registry:ui",
+      "title": "Base Slider Demo",
+      "description": "Demo showing an animated base slider.",
+      "registryDependencies": [
+        "@animate-ui/primitives-base-slider"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/base/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/base/slider.tsx"
+        }
+      ]
     },
     {
       "name": "demo-primitives-base-switch",
@@ -5866,6 +6218,40 @@
       }
     },
     {
+      "name": "demo-primitives-headless-combobox",
+      "type": "registry:ui",
+      "title": "Headless Combobox Demo",
+      "description": "Demo showing an animated headless combobox.",
+      "registryDependencies": [
+        "@animate-ui/primitives-headless-combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/headless/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/headless/combobox.tsx"
+        }
+      ],
+      "meta": {
+        "demoProps": {
+          "ComboboxOptions": {
+            "anchor": {
+              "value": "bottom start",
+              "options": {
+                "top start": "top start",
+                "top end": "top end",
+                "bottom start": "bottom start",
+                "bottom end": "bottom end"
+              }
+            },
+            "gap": {
+              "value": 4
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "demo-primitives-headless-dialog",
       "type": "registry:ui",
       "title": "Headless Dialog Demo",
@@ -6493,6 +6879,22 @@
           }
         }
       }
+    },
+    {
+      "name": "demo-primitives-radix-slider",
+      "type": "registry:ui",
+      "title": "Radix Slider Demo",
+      "description": "Demo showing an animated radix slider.",
+      "registryDependencies": [
+        "@animate-ui/primitives-radix-slider"
+      ],
+      "files": [
+        {
+          "path": "registry/demo/primitives/radix/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/demo/primitives/radix/slider.tsx"
+        }
+      ]
     },
     {
       "name": "demo-primitives-radix-switch",
@@ -14910,6 +15312,27 @@
       ]
     },
     {
+      "name": "primitives-animate-input-otp",
+      "type": "registry:ui",
+      "title": "Input OTP",
+      "description": "Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.",
+      "dependencies": [
+        "motion",
+        "input-otp"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/animate/input-otp/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/animate/input-otp.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-animate-motion-grid",
       "type": "registry:ui",
       "title": "Motion Grid",
@@ -15140,6 +15563,28 @@
       ]
     },
     {
+      "name": "primitives-base-combobox",
+      "type": "registry:ui",
+      "title": "Base Combobox",
+      "description": "An input combined with a list of predefined items to select.",
+      "dependencies": [
+        "motion",
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/combobox.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-base-context-menu",
       "type": "registry:ui",
       "title": "Base Context Menu",
@@ -15248,6 +15693,27 @@
           "path": "registry/primitives/base/menu/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-base-otp-field",
+      "type": "registry:ui",
+      "title": "Base OTP Field",
+      "description": "A one-time password input split into one input per character, with characters that pop in as they are typed.",
+      "dependencies": [
+        "motion",
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/otp-field/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/otp-field.tsx"
         }
       ]
     },
@@ -15379,6 +15845,28 @@
           "path": "registry/primitives/base/select/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-base-slider",
+      "type": "registry:ui",
+      "title": "Base Slider",
+      "description": "An easily stylable range input.",
+      "dependencies": [
+        "motion",
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/base/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/base/slider.tsx"
         }
       ]
     },
@@ -15894,6 +16382,27 @@
       ]
     },
     {
+      "name": "primitives-headless-combobox",
+      "type": "registry:ui",
+      "title": "Headless Combobox",
+      "description": "Comboboxes are the foundation of accessible autocompletes and command palettes for your app, complete with robust support for keyboard navigation.",
+      "dependencies": [
+        "motion",
+        "@headlessui/react"
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/headless/combobox/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/headless/combobox.tsx"
+        }
+      ]
+    },
+    {
       "name": "primitives-headless-dialog",
       "type": "registry:ui",
       "title": "Headless Dialog",
@@ -16328,6 +16837,28 @@
           "path": "registry/primitives/radix/sheet/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/sheet.tsx"
+        }
+      ]
+    },
+    {
+      "name": "primitives-radix-slider",
+      "type": "registry:ui",
+      "title": "Radix Slider",
+      "description": "An input where the user selects a value from within a given range.",
+      "dependencies": [
+        "motion",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/primitives/radix/slider/index.tsx",
+          "type": "registry:ui",
+          "target": "components/animate-ui/primitives/radix/slider.tsx"
         }
       ]
     },

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-otp-field",
+  "type": "registry:ui",
+  "title": "OTP Field Demo",
+  "description": "Demo showing an OTP field.",
+  "registryDependencies": ["@animate-ui/components-base-otp-field"],
+  "files": [
+    {
+      "path": "registry/demo/components/base/otp-field/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/otp-field.tsx"
+    }
+  ]
+}

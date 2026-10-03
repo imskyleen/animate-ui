@@ -1,0 +1,372 @@
+---
+title: Combobox
+description: An input combined with a list of predefined items to select.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-03
+---
+
+<ComponentPreview name="demo-components-base-combobox" />
+
+## Installation
+
+<ComponentInstallation name="components-base-combobox" />
+
+## Usage
+
+```tsx
+const frameworks = ['Next.js', 'SvelteKit', 'Nuxt.js', 'Remix', 'Astro'];
+
+<Combobox items={frameworks}>
+  <ComboboxInput placeholder="Select a framework" />
+  <ComboboxContent>
+    <ComboboxEmpty>No results.</ComboboxEmpty>
+    <ComboboxList>
+      {(framework) => (
+        <ComboboxItem key={framework} value={framework}>
+          {framework}
+        </ComboboxItem>
+      )}
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>;
+```
+
+### Multiple
+
+Wrap the chips in `AnimatePresence` so a removed chip plays its exit:
+
+```tsx
+const anchor = useComboboxAnchor();
+
+<Combobox items={frameworks} multiple>
+  <ComboboxChips ref={anchor}>
+    <ComboboxValue>
+      {(values) => (
+        <>
+          <AnimatePresence mode="popLayout" initial={false}>
+            {values.map((value) => (
+              <ComboboxChip key={value}>{value}</ComboboxChip>
+            ))}
+          </AnimatePresence>
+          <ComboboxChipsInput />
+        </>
+      )}
+    </ComboboxValue>
+  </ComboboxChips>
+  <ComboboxContent anchor={anchor}>
+    <ComboboxEmpty>No results.</ComboboxEmpty>
+    <ComboboxList>
+      {(framework) => (
+        <ComboboxItem key={framework} value={framework}>
+          {framework}
+        </ComboboxItem>
+      )}
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>;
+```
+
+## Motion
+
+The popup grows out of the input: it fades in from a 0.95 scale over 0.6s and closes faster, in 0.4s. Typing filters the list instantly, with no per-item or height animation, and moving the highlight with the arrow keys is instant too. The check appears with the list; in multiple mode, toggling an item fades and scales it. Chips pop in and fade out when removed with the button; Backspace removes them instantly. Under reduced motion everything fades without scaling.
+
+## API Reference
+
+### Combobox
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#combobox"
+  text="Animate UI API Reference - Combobox Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#root"
+  text="Base UI API Reference - Combobox.Root"
+/>
+</div>
+
+### ComboboxInput
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxinput"
+  text="Animate UI API Reference - Combobox Input Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#input"
+  text="Base UI API Reference - Combobox.Input"
+/>
+</div>
+
+<TypeTable
+  type={{
+    showTrigger: {
+      description: 'Whether to show the button that opens the popup.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    showClear: {
+      description: 'Whether to show the button that clears the value.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+  }}
+/>
+
+### ComboboxContent
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxpopup"
+  text="Animate UI API Reference - Combobox Popup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#popup"
+  text="Base UI API Reference - Combobox.Popup"
+/>
+</div>
+
+<TypeTable
+  type={{
+    side: {
+      description: 'The side of the input the popup is placed on.',
+      type: '"top" | "bottom" | "left" | "right" | "inline-start" | "inline-end"',
+      required: false,
+      default: '"bottom"',
+    },
+    sideOffset: {
+      description: 'The distance between the input and the popup.',
+      type: 'number',
+      required: false,
+      default: '6',
+    },
+    align: {
+      description: 'How the popup is aligned with the input.',
+      type: '"start" | "center" | "end"',
+      required: false,
+      default: '"start"',
+    },
+    anchor: {
+      description:
+        'The element the popup is positioned against (use `useComboboxAnchor` with chips).',
+      type: 'Element | RefObject<Element | null>',
+      required: false,
+    },
+    transition: {
+      description: 'The entrance transition of the popup.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.dropdown',
+    },
+    '...props': {
+      description: 'The props of the combobox popup.',
+      type: 'ComboboxPopupProps',
+      required: false,
+    },
+  }}
+/>
+
+### ComboboxList
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxlist"
+  text="Animate UI API Reference - Combobox List Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#list"
+  text="Base UI API Reference - Combobox.List"
+/>
+</div>
+
+### ComboboxItem
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxitem"
+  text="Animate UI API Reference - Combobox Item Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#item"
+  text="Base UI API Reference - Combobox.Item"
+/>
+</div>
+
+### ComboboxGroup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxgroup"
+  text="Animate UI API Reference - Combobox Group Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#group"
+  text="Base UI API Reference - Combobox.Group"
+/>
+</div>
+
+### ComboboxLabel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxgrouplabel"
+  text="Animate UI API Reference - Combobox Group Label Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#group-label"
+  text="Base UI API Reference - Combobox.GroupLabel"
+/>
+</div>
+
+### ComboboxCollection
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxcollection"
+  text="Animate UI API Reference - Combobox Collection Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#collection"
+  text="Base UI API Reference - Combobox.Collection"
+/>
+</div>
+
+### ComboboxEmpty
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxempty"
+  text="Animate UI API Reference - Combobox Empty Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#empty"
+  text="Base UI API Reference - Combobox.Empty"
+/>
+</div>
+
+### ComboboxSeparator
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxseparator"
+  text="Animate UI API Reference - Combobox Separator Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#separator"
+  text="Base UI API Reference - Combobox.Separator"
+/>
+</div>
+
+### ComboboxChips
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxchips"
+  text="Animate UI API Reference - Combobox Chips Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#chips"
+  text="Base UI API Reference - Combobox.Chips"
+/>
+</div>
+
+### ComboboxChip
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxchip"
+  text="Animate UI API Reference - Combobox Chip Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#chip"
+  text="Base UI API Reference - Combobox.Chip"
+/>
+</div>
+
+<TypeTable
+  type={{
+    showRemove: {
+      description: 'Whether to show the button that removes the chip.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+  }}
+/>
+
+### ComboboxChipsInput
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxinput"
+  text="Animate UI API Reference - Combobox Input Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#input"
+  text="Base UI API Reference - Combobox.Input"
+/>
+</div>
+
+### ComboboxTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxtrigger"
+  text="Animate UI API Reference - Combobox Trigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#trigger"
+  text="Base UI API Reference - Combobox.Trigger"
+/>
+</div>
+
+### ComboboxValue
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxvalue"
+  text="Animate UI API Reference - Combobox Value Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#value"
+  text="Base UI API Reference - Combobox.Value"
+/>
+</div>
+
+### ComboboxClear
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/combobox#comboboxclear"
+  text="Animate UI API Reference - Combobox Clear Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/combobox#clear"
+  text="Base UI API Reference - Combobox.Clear"
+/>
+</div>
+
+## Credits
+
+- [Base UI Combobox](https://base-ui.com/react/components/combobox)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/combobox) for style inspiration.

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-input-otp",
+  "type": "registry:ui",
+  "title": "Animate Input OTP Demo",
+  "description": "Demo showing an animated input OTP.",
+  "dependencies": ["input-otp"],
+  "registryDependencies": ["@animate-ui/primitives-animate-input-otp"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/input-otp/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/input-otp.tsx"
+    }
+  ]
+}

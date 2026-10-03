@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-input-otp",
+  "title": "Animate Input OTP Demo",
+  "description": "Demo showing an animated input OTP.",
+  "dependencies": [
+    "input-otp"
+  ],
+  "registryDependencies": [
+    "@animate-ui/primitives-animate-input-otp"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/input-otp/index.tsx",
+      "content": "import {\n  InputOTP,\n  InputOTPCaret,\n  InputOTPGroup,\n  InputOTPSeparator,\n  InputOTPSlot,\n} from '@/components/animate-ui/primitives/animate/input-otp';\nimport { REGEXP_ONLY_DIGITS } from 'input-otp';\n\nconst SLOT_CLASS_NAME =\n  'relative flex size-10 items-center justify-center rounded-md border text-base data-[active=true]:border-foreground';\n\nfunction Slot({ index }: { index: number }) {\n  return (\n    <InputOTPSlot index={index} className={SLOT_CLASS_NAME}>\n      <InputOTPCaret className=\"pointer-events-none absolute inset-0 m-auto h-5 w-px bg-foreground\" />\n    </InputOTPSlot>\n  );\n}\n\nexport const AnimateInputOTPDemo = () => {\n  return (\n    <InputOTP\n      maxLength={6}\n      pattern={REGEXP_ONLY_DIGITS}\n      aria-label=\"One-time password\"\n      containerClassName=\"flex items-center gap-3\"\n    >\n      <InputOTPGroup className=\"flex gap-2\">\n        <Slot index={0} />\n        <Slot index={1} />\n        <Slot index={2} />\n      </InputOTPGroup>\n      <InputOTPSeparator className=\"h-px w-3 bg-border\" />\n      <InputOTPGroup className=\"flex gap-2\">\n        <Slot index={3} />\n        <Slot index={4} />\n        <Slot index={5} />\n      </InputOTPGroup>\n    </InputOTP>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/input-otp.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

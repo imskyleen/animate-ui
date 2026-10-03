@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-combobox",
+  "title": "Base Combobox Demo",
+  "description": "Demo showing an animated base combobox.",
+  "registryDependencies": [
+    "@animate-ui/primitives-base-combobox"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/combobox/index.tsx",
+      "content": "import {\n  Combobox,\n  ComboboxEmpty,\n  ComboboxInput,\n  ComboboxItem,\n  ComboboxItemIndicator,\n  ComboboxList,\n  ComboboxPopup,\n  ComboboxPortal,\n  ComboboxPositioner,\n} from '@/components/animate-ui/primitives/base/combobox';\n\nconst FRUITS = [\n  'Apple',\n  'Banana',\n  'Blueberry',\n  'Cherry',\n  'Grapes',\n  'Lemon',\n  'Mango',\n  'Orange',\n  'Pineapple',\n  'Strawberry',\n];\n\ninterface BaseComboboxDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n}\n\nexport function BaseComboboxDemo({\n  side,\n  sideOffset,\n  align,\n}: BaseComboboxDemoProps) {\n  return (\n    <Combobox items={FRUITS}>\n      <ComboboxInput\n        aria-label=\"Fruit\"\n        placeholder=\"Search a fruit\"\n        className=\"w-56 border bg-background px-3 py-1.5 text-sm outline-none\"\n      />\n      <ComboboxPortal>\n        <ComboboxPositioner\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          className=\"z-50\"\n        >\n          <ComboboxPopup className=\"w-(--anchor-width) border bg-background\">\n            <ComboboxEmpty className=\"px-3 py-2 text-sm text-muted-foreground empty:p-0\">\n              No results.\n            </ComboboxEmpty>\n            <ComboboxList className=\"max-h-[min(15rem,var(--available-height))] overflow-y-auto p-1 empty:p-0\">\n              {(fruit: string) => (\n                <ComboboxItem\n                  key={fruit}\n                  value={fruit}\n                  className=\"flex items-center justify-between gap-4 px-2 py-1 text-sm outline-none data-[highlighted]:bg-accent\"\n                >\n                  {fruit}\n                  <ComboboxItemIndicator>✓</ComboboxItemIndicator>\n                </ComboboxItem>\n              )}\n            </ComboboxList>\n          </ComboboxPopup>\n        </ComboboxPositioner>\n      </ComboboxPortal>\n    </Combobox>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/combobox.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ComboboxPositioner": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

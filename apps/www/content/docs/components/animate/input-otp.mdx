@@ -1,0 +1,98 @@
+---
+title: Input OTP
+description: Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-03
+---
+
+<ComponentPreview name="demo-components-animate-input-otp" />
+
+## Installation
+
+<ComponentInstallation name="components-animate-input-otp" />
+
+## Usage
+
+```tsx
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+
+<InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0} />
+    <InputOTPSlot index={1} />
+    <InputOTPSlot index={2} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
+    <InputOTPSlot index={3} />
+    <InputOTPSlot index={4} />
+    <InputOTPSlot index={5} />
+  </InputOTPGroup>
+</InputOTP>;
+```
+
+A drop-in replacement for shadcn/ui's `InputOTP`: same parts, same props. Pass `aria-invalid` to the slots to show the error style.
+
+## Motion
+
+A typed character pops in over 0.15s, fading in from a 0.95 scale; a pasted code staggers in by 25ms per character. Deleting is instant. The active ring jumps to the next slot without a transition, since it follows the keyboard, and the caret blinks in the active empty slot. Under reduced motion, characters only fade and the caret stops blinking.
+
+## API Reference
+
+### InputOTP
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/input-otp#inputotp"
+  text="Animate UI API Reference - Input OTP Primitive"
+/>
+
+<ExternalLink
+  href="https://github.com/guilhermerodz/input-otp#api-reference"
+  text="input-otp API Reference - OTPInput"
+/>
+</div>
+
+### InputOTPGroup
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/input-otp#inputotpgroup"
+  text="Animate UI API Reference - Input OTP Group Primitive"
+/>
+
+### InputOTPSlot
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/input-otp#inputotpslot"
+  text="Animate UI API Reference - Input OTP Slot Primitive"
+/>
+
+<TypeTable
+  type={{
+    index: {
+      description: 'The index of the character shown in the slot.',
+      type: 'number',
+      required: true,
+    },
+    transition: {
+      description: 'The transition of a typed character.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.press',
+    },
+  }}
+/>
+
+### InputOTPSeparator
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/input-otp#inputotpseparator"
+  text="Animate UI API Reference - Input OTP Separator Primitive"
+/>
+
+## Credits
+
+- [input-otp](https://github.com/guilhermerodz/input-otp) by Guilherme Rodz
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/input-otp) for style inspiration.

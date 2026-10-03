@@ -1,0 +1,122 @@
+---
+title: OTP Field
+description: A one-time password input split into one input per character, with characters that pop in as they are typed.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-03
+---
+
+<ComponentPreview name="demo-components-base-otp-field" />
+
+## Installation
+
+<ComponentInstallation name="components-base-otp-field" />
+
+## Usage
+
+```tsx
+<label htmlFor="otp">Verification code</label>
+<OTPField id="otp" length={6}>
+  <OTPFieldGroup>
+    <OTPFieldInput />
+    <OTPFieldInput aria-label="Character 2 of 6" />
+    <OTPFieldInput aria-label="Character 3 of 6" />
+  </OTPFieldGroup>
+  <OTPFieldSeparator />
+  <OTPFieldGroup>
+    <OTPFieldInput aria-label="Character 4 of 6" />
+    <OTPFieldInput aria-label="Character 5 of 6" />
+    <OTPFieldInput aria-label="Character 6 of 6" />
+  </OTPFieldGroup>
+</OTPField>
+```
+
+Label the field with a `<label>` pointing at the root's `id` (the first input's id); Base UI ignores `aria-label` on the first input. Pass `aria-invalid` to the inputs (or wrap the field in a Base UI `Field` marked invalid) to show the error style.
+
+## Motion
+
+A typed character pops in over 0.15s, fading in from a 0.95 scale; a pasted code staggers in by 25ms per character. Deleting is instant. The focus ring jumps to the next input without a transition, since it follows the keyboard, and the caret blinks in the focused empty input. Under reduced motion, characters only fade and the caret stops blinking.
+
+## API Reference
+
+### OTPField
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/otp-field#otpfield"
+  text="Animate UI API Reference - OTP Field Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/otp-field#root"
+  text="Base UI API Reference - OTPField.Root"
+/>
+</div>
+
+### OTPFieldGroup
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the group.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### OTPFieldInput
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/otp-field#otpfieldinput"
+  text="Animate UI API Reference - OTP Field Input Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/otp-field#input"
+  text="Base UI API Reference - OTPField.Input"
+/>
+</div>
+
+<TypeTable
+  type={{
+    containerClassName: {
+      description:
+        'The class name of the visible slot, the `<span>` that wraps the input.',
+      type: 'string',
+      required: false,
+    },
+    transition: {
+      description: 'The transition of a typed character.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.press',
+    },
+    '...props': {
+      description: 'The props of the OTP field input.',
+      type: 'OTPFieldInputProps',
+      required: false,
+    },
+  }}
+/>
+
+### OTPFieldSeparator
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/otp-field#otpfieldseparator"
+  text="Animate UI API Reference - OTP Field Separator Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/otp-field#separator"
+  text="Base UI API Reference - OTPField.Separator"
+/>
+</div>
+
+## Credits
+
+- [Base UI OTP Field](https://base-ui.com/react/components/otp-field)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/input-otp) for style inspiration.

@@ -1,0 +1,128 @@
+---
+title: Input OTP
+description: Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2026-10-03
+---
+
+<ComponentPreview name="demo-primitives-animate-input-otp" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-input-otp" />
+
+## Usage
+
+```tsx
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+
+<InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0}>
+      <InputOTPCaret />
+    </InputOTPSlot>
+    <InputOTPSlot index={1}>
+      <InputOTPCaret />
+    </InputOTPSlot>
+    <InputOTPSlot index={2}>
+      <InputOTPCaret />
+    </InputOTPSlot>
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
+    <InputOTPSlot index={3}>
+      <InputOTPCaret />
+    </InputOTPSlot>
+    <InputOTPSlot index={4}>
+      <InputOTPCaret />
+    </InputOTPSlot>
+    <InputOTPSlot index={5}>
+      <InputOTPCaret />
+    </InputOTPSlot>
+  </InputOTPGroup>
+</InputOTP>;
+```
+
+## Motion
+
+Built on [input-otp](https://input-otp.rodz.dev): a single transparent `<input>` holds the value, and the slots are visual. `InputOTPSlot` renders its character in a `motion.span` (`data-slot="input-otp-char"`): a typed character fades in from a 0.95 scale with `transition.press` (0.15s), and a pasted or autofilled code staggers its characters by 25ms. Deleting is instant, and characters that only shift because one before them was removed don't animate. `data-active` moves with the selection instantly, since it follows the keyboard. `InputOTPCaret` blinks with a CSS animation (keyframes injected by `InputOTP`) and stops under reduced motion; characters then only fade, without scaling or staggering.
+
+## API Reference
+
+### InputOTP
+
+<ExternalLink
+  href="https://github.com/guilhermerodz/input-otp#api-reference"
+  text="input-otp API Reference - OTPInput"
+/>
+
+### InputOTPGroup
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the group.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### InputOTPSlot
+
+<TypeTable
+  type={{
+    index: {
+      description: 'The index of the character shown in the slot.',
+      type: 'number',
+      required: true,
+    },
+    transition: {
+      description: 'The transition of a typed character.',
+      type: 'Transition',
+      required: false,
+      default: 'transition.press',
+    },
+    '...props': {
+      description:
+        'The props of the slot. It gets `data-active` and `data-filled`.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### InputOTPCaret
+
+<TypeTable
+  type={{
+    '...props': {
+      description:
+        'The props of the fake caret, rendered only in the active, empty slot. Give it a position, a size and a color.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### InputOTPSeparator
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the separator.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Accessibility
+
+The value lives in input-otp's single `<input>` (with `autocomplete="one-time-code"`): typing, paste, autofill, password managers and form submission are unchanged. The animated characters and the caret are visual only.
+
+## Credits
+
+- [input-otp](https://github.com/guilhermerodz/input-otp) by Guilherme Rodz

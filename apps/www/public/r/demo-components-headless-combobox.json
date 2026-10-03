@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-headless-combobox",
+  "title": "Combobox Demo",
+  "description": "Demo showing a combobox.",
+  "registryDependencies": [
+    "@animate-ui/components-headless-combobox"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/headless/combobox/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\n\nimport {\n  Combobox,\n  ComboboxEmpty,\n  ComboboxInput,\n  ComboboxOption,\n  ComboboxOptions,\n} from '@/components/animate-ui/components/headless/combobox';\n\nconst FRAMEWORKS = [\n  'Next.js',\n  'SvelteKit',\n  'Nuxt.js',\n  'Remix',\n  'Astro',\n  'Gatsby',\n  'SolidStart',\n  'Qwik City',\n];\n\ninterface HeadlessComboboxDemoProps {\n  anchor?: 'top start' | 'top end' | 'bottom start' | 'bottom end';\n  gap?: number;\n}\n\nexport function HeadlessComboboxDemo({\n  anchor = 'bottom start',\n  gap = 6,\n}: HeadlessComboboxDemoProps) {\n  const [selected, setSelected] = React.useState<string | null>(null);\n  const [query, setQuery] = React.useState('');\n\n  const filtered =\n    query === ''\n      ? FRAMEWORKS\n      : FRAMEWORKS.filter((framework) =>\n          framework.toLowerCase().includes(query.toLowerCase()),\n        );\n\n  return (\n    <Combobox\n      value={selected}\n      onChange={setSelected}\n      onClose={() => setQuery('')}\n    >\n      <ComboboxInput\n        aria-label=\"Framework\"\n        placeholder=\"Select a framework\"\n        className=\"w-64\"\n        displayValue={(framework: string | null) => framework ?? ''}\n        onChange={(event) => setQuery(event.target.value)}\n      />\n      <ComboboxOptions anchor={{ to: anchor, gap }}>\n        {filtered.length === 0 ? (\n          <ComboboxEmpty>No results.</ComboboxEmpty>\n        ) : (\n          filtered.map((framework) => (\n            <ComboboxOption key={framework} value={framework}>\n              {framework}\n            </ComboboxOption>\n          ))\n        )}\n      </ComboboxOptions>\n    </Combobox>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/headless/combobox.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ComboboxOptions": {
+        "anchor": {
+          "value": "bottom start",
+          "options": {
+            "top start": "top start",
+            "top end": "top end",
+            "bottom start": "bottom start",
+            "bottom end": "bottom end"
+          }
+        },
+        "gap": {
+          "value": 6
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

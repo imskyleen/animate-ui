@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-animate-input-otp",
+  "title": "Input OTP",
+  "description": "Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/primitives-animate-input-otp"
+  ],
+  "files": [
+    {
+      "path": "registry/components/animate/input-otp/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { MinusIcon } from 'lucide-react';\n\nimport {\n  InputOTP as InputOTPPrimitive,\n  InputOTPGroup as InputOTPGroupPrimitive,\n  InputOTPSlot as InputOTPSlotPrimitive,\n  InputOTPCaret as InputOTPCaretPrimitive,\n  InputOTPSeparator as InputOTPSeparatorPrimitive,\n  type InputOTPProps as InputOTPPrimitiveProps,\n  type InputOTPGroupProps as InputOTPGroupPrimitiveProps,\n  type InputOTPSlotProps as InputOTPSlotPrimitiveProps,\n  type InputOTPSeparatorProps as InputOTPSeparatorPrimitiveProps,\n} from '@/components/animate-ui/primitives/animate/input-otp';\nimport { cn } from '@/lib/utils';\n\ntype InputOTPProps = InputOTPPrimitiveProps;\n\nfunction InputOTP({ className, containerClassName, ...props }: InputOTPProps) {\n  return (\n    <InputOTPPrimitive\n      containerClassName={cn(\n        'flex items-center gap-2 has-disabled:opacity-50',\n        containerClassName,\n      )}\n      className={cn('disabled:cursor-not-allowed', className)}\n      {...props}\n    />\n  );\n}\n\ntype InputOTPGroupProps = InputOTPGroupPrimitiveProps;\n\nfunction InputOTPGroup({ className, ...props }: InputOTPGroupProps) {\n  return (\n    <InputOTPGroupPrimitive\n      className={cn('flex items-center', className)}\n      {...props}\n    />\n  );\n}\n\ntype InputOTPSlotProps = InputOTPSlotPrimitiveProps;\n\n// No transition on the border and ring: the active slot follows typing,\n// which is keyboard-driven, so it moves instantly.\nfunction InputOTPSlot({ className, ...props }: InputOTPSlotProps) {\n  return (\n    <InputOTPSlotPrimitive\n      className={cn(\n        'data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm shadow-xs outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]',\n        className,\n      )}\n      {...props}\n    >\n      <InputOTPCaretPrimitive className=\"bg-foreground pointer-events-none absolute inset-0 m-auto h-4 w-px\" />\n    </InputOTPSlotPrimitive>\n  );\n}\n\ntype InputOTPSeparatorProps = InputOTPSeparatorPrimitiveProps;\n\nfunction InputOTPSeparator({ children, ...props }: InputOTPSeparatorProps) {\n  return (\n    <InputOTPSeparatorPrimitive {...props}>\n      {children ?? <MinusIcon />}\n    </InputOTPSeparatorPrimitive>\n  );\n}\n\nexport {\n  InputOTP,\n  InputOTPGroup,\n  InputOTPSlot,\n  InputOTPSeparator,\n  type InputOTPProps,\n  type InputOTPGroupProps,\n  type InputOTPSlotProps,\n  type InputOTPSeparatorProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/animate/input-otp.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}
