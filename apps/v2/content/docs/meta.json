@@ -1,3 +1,10 @@
 {
-  "pages": ["index", "primitives", "installation"]
+  "pages": [
+    "index",
+    "primitives",
+    "icons",
+    "installation",
+    "accessibility",
+    "changelog"
+  ]
 }

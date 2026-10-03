@@ -4,3 +4,4 @@ apps/v2/demos
 apps/v2/components/ui
 packages/cli/test/fixtures
 packages/cli/test/__snapshots__
+apps/v2/registry/icons/index.ts

@@ -1,0 +1,18 @@
+---
+title: Changelog
+description: What changed in Animate UI.
+---
+
+## 2.0.0
+
+Animate UI is now an npm package. Instead of copying animated versions of shadcn/ui components, you keep your own components and swap the primitives they're built on.
+
+- **`@animate-ui/react`**: animated primitives for Radix UI, Base UI and React Aria, each with exactly its library's API, plus `transition` / `exitTransition` animation props.
+- **`@animate-ui/cli`**: `animate-ui animate <component>` swaps the primitive imports of installed shadcn/ui components and removes the CSS animations Motion replaces, whatever your base and style. `animate-ui migrate` moves a v1 project to v2.
+- **React Aria** support, and a drop-in replacement for Vaul built on the Radix Dialog. Headless UI is no longer supported.
+- **`AnimateUIProvider`**: one `tempo` to make every animation faster or slower.
+- **Icons**: the same animated icons, installed with shadcn; their core now comes from `@animate-ui/react/icons`, with a `speed` prop.
+- **Motion rules everywhere**: entrances in 600ms and exits in 400ms on a strong ease-out, transforms and opacity instead of layout, interruptible animations, nothing on keyboard navigation, reduced motion respected.
+- New documentation, with one page per primitive and a tab per library.
+
+The v1 documentation stays available at [v1.animate-ui.com](https://v1.animate-ui.com).

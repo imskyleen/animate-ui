@@ -1,0 +1,37 @@
+---
+title: Accessibility
+description: Animation that never gets in the way of anyone using your interface.
+---
+
+Animate UI primitives are the accessible primitives of Radix UI, Base UI and React Aria, with motion added on top. Roles, ARIA attributes, focus management and keyboard interactions stay exactly the library's: the animation never changes what assistive technologies see or when they see it.
+
+## Reduced motion
+
+When the operating system asks for reduced motion (`prefers-reduced-motion: reduce`), every primitive drops movement and keeps only what helps understanding:
+
+- Overlays, menus and dialogs fade in place, without scaling or sliding.
+- Disclosures change height at once.
+- Indicators, thumbs and highlights jump to their new position.
+- Icons and looping effects don't animate.
+
+It works without any setup, follows the setting live, and respects an app-level `<MotionConfig reducedMotion="always">`.
+
+## Keyboard
+
+Keyboard users move fast, so keyboard-driven changes are instant: a highlight moved with the arrow keys, a radio selected with the arrows or a tab chosen from the keyboard never waits for an animation. Focus is managed by the library, exactly as without Animate UI; menus give focus back to their trigger as soon as they close, not after their exit animation.
+
+## Pointer and touch
+
+Hover effects only run on devices that can hover with a precise pointer (`(hover: hover) and (pointer: fine)`), so a tap on a touch screen never leaves a stuck hover state. Drags (drawers, sliders, toasts) follow the finger with no added latency.
+
+## Screen readers
+
+Content kept mounted while closed (`forceMount`, `keepMounted`) is made `inert` or hidden once its exit has played, so it can't be reached with the keyboard or read out.
+
+## Timing
+
+Entrances take 600ms on a strong ease-out, so most of the movement happens in the first 150ms and the interface responds at once; exits take 400ms. If your product needs a different pace, `AnimateUIProvider` changes every duration from one place:
+
+```tsx
+<AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>
+```
