@@ -1,0 +1,123 @@
+---
+title: Combobox
+description: An input combined with a list of predefined items to select.
+---
+
+<ComponentPreview name="base-ui/combobox" />
+
+## Installation
+
+<Installation name="combobox" />
+
+shadcn/ui's Combobox uses Base UI's Combobox for every base, Radix UI included: `animate-ui animate combobox` swaps its `@base-ui/react` import in both.
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Combobox } from '@animate-ui/react/primitives/base-ui/combobox';
+
+const frameworks = ['Next.js', 'React Router', 'Astro', 'SvelteKit'];
+
+export function FrameworkPicker() {
+  return (
+    <Combobox.Root items={frameworks}>
+      <Combobox.Input
+        aria-label="Framework"
+        placeholder="Search a framework…"
+      />
+      <Combobox.Portal>
+        <Combobox.Positioner sideOffset={6}>
+          <Combobox.Popup>
+            <Combobox.Empty>No framework found.</Combobox.Empty>
+            <Combobox.List>
+              {(item: string) => (
+                <Combobox.Item key={item} value={item}>
+                  {item}
+                </Combobox.Item>
+              )}
+            </Combobox.List>
+          </Combobox.Popup>
+        </Combobox.Positioner>
+      </Combobox.Portal>
+    </Combobox.Root>
+  );
+}
+```
+
+`import { Combobox } from '@base-ui/react'` becomes `import { Combobox } from '@animate-ui/react/primitives/base-ui/combobox'`.
+
+### Multiple selection
+
+<ComponentPreview name="base-ui/combobox-multiple" />
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the input (`--transform-origin`). It closes in 400ms, then unmounts. Reopening while it closes picks up from where it is.
+- Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation. The highlight moved by the arrow keys is instant too.
+- Base UI resets the query and syncs the input when the popup unmounts, so the list doesn't change while it fades out.
+- **Chip**: a chip added to the selection fades and scales in over 600ms. Chips already selected on mount don't animate, and removing a chip (often with Backspace) is instant.
+- **ItemIndicator**, with `multiple`, fades and scales in over 600ms when an item is selected and out in 400ms when it's deselected, while the list stays open. With a single value, choosing an item closes the list, so the check is not animated.
+- Animate UI passes an `actionsRef` to the Root and unmounts the popup when its exit is over. Your own `actionsRef` still works, `onOpenChangeComplete` fires after the entrance and after the exit, and `keepMounted` on the Portal keeps the closed popup mounted and hidden.
+- Under reduced motion, the popup, chips and checks fade without scaling.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Combobox](https://base-ui.com/react/components/combobox#api-reference). Animate UI adds the animation props below.
+
+### Root, Input, InputGroup, Trigger, Clear, Value, Icon, Portal, Backdrop, Positioner, List, Row, Collection, Item, Group, GroupLabel, Empty, Status, Separator, Arrow, Label, Chips, ChipRemove
+
+[Base UI props](https://base-ui.com/react/components/combobox#root) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/combobox#popup), except `render` (Animate UI renders the popup as a `motion.div`), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Chip
+
+[Base UI props](https://base-ui.com/react/components/combobox#chip), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of a chip being added.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+  }}
+/>
+
+### ItemIndicator
+
+[Base UI props](https://base-ui.com/react/components/combobox#item-indicator), plus (used with `multiple`):
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the check appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the check leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

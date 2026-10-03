@@ -13,10 +13,11 @@ export async function ComponentPreview({ name }: { name: string }) {
   // demos/<library>/<name>.tsx: discovered by path, no registry to update.
   const { default: Demo } = await import(`@/demos/${name}`);
 
-  const code = await readFile(
-    path.join(process.cwd(), 'demos', `${name}.tsx`),
-    'utf8',
-  );
+  // Helpers built on Base UI or React Aria live in components/ui/<library>/
+  // here; in the reader's project they are plain @/components/ui/<name>.
+  const code = (
+    await readFile(path.join(process.cwd(), 'demos', `${name}.tsx`), 'utf8')
+  ).replace(/@\/components\/ui\/(?:base-ui|react-aria)\//g, '@/components/ui/');
 
   return (
     <PreviewFrame

@@ -1,0 +1,78 @@
+---
+title: Tabs
+description: Tabs organize content into multiple sections and allow users to navigate between them.
+---
+
+<ComponentPreview name="react-aria/tabs" />
+
+## Installation
+
+<Installation name="tabs" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with animated `TabList`, `Tab` and `TabPanel`. Everything else stays the same.
+
+```tsx
+import { Tab, TabList, TabPanel, Tabs } from '@animate-ui/react/primitives/react-aria';
+
+export function Settings() {
+  return (
+    <Tabs>
+      <TabList aria-label="Settings">
+        <Tab id="account">Account</Tab>
+        <Tab id="password">Password</Tab>
+      </TabList>
+      <TabPanel id="account">Make changes to your account.</TabPanel>
+      <TabPanel id="password">Change your password.</TabPanel>
+    </Tabs>
+  );
+}
+```
+
+## Animation
+
+- **The selected tab's surface glides** to the new tab with `spring.snappy` (600ms, a hint of overshoot). The TabList draws it as an indicator that copies the selected tab's own classes and data attributes, so it looks exactly like your selected tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the selected tab's own surface is hidden. Its focus ring stays on the tab.
+- Clicking quickly through tabs retargets the glide smoothly.
+- **Keyboard changes are instant**: arrow keys move the indicator and swap the panel at once (with `keyboardActivation="manual"`, Enter selects).
+- **The incoming panel fades in** over 600ms (`transition.fade`); the outgoing one leaves at once (React Aria would otherwise wait for its fade to end), so the two never overlap.
+- Nothing animates on page load.
+- With `shouldForceMount`, inactive panels stay in the DOM and `inert`, as in React Aria; they don't fade.
+- The `className`, `style` and `children` render props keep working. The indicator and the panel go through React Aria's `render` prop; a `render` of your own on `TabList` still receives the indicator, on `TabPanel` it replaces the fade.
+- Under reduced motion, the indicator jumps; panels still fade.
+
+## API Reference
+
+Every component takes exactly the props of [React Aria's Tabs](https://react-spectrum.adobe.com/react-aria/Tabs.html#props). Animate UI adds the animation props below.
+
+### Tabs, Tab
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Tabs.html#props) only.
+
+### TabList
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Tabs.html#tablist), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the indicator gliding to the selected tab (pointer changes).',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+  }}
+/>
+
+### TabPanel
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Tabs.html#tabpanel), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the incoming panel fading in.',
+      type: 'Transition',
+      default: 'transition.fade (600ms, ease-out)',
+    },
+  }}
+/>

@@ -1,0 +1,81 @@
+---
+title: Checkbox
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<ComponentPreview name="base-ui/checkbox" />
+
+## Installation
+
+<Installation name="checkbox" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Checkbox } from '@animate-ui/react/primitives/base-ui/checkbox';
+
+export function Terms() {
+  return (
+    <label className="flex items-center gap-2">
+      <Checkbox.Root defaultChecked>
+        <Checkbox.Indicator>
+          <CheckIcon />
+        </Checkbox.Indicator>
+      </Checkbox.Root>
+      Accept terms and conditions
+    </label>
+  );
+}
+```
+
+`Checkbox.Root.Props`, `Checkbox.Indicator.State` and the other type namespaces are kept.
+
+## Animation
+
+- **Indicator**: the check inside scales in from half size and fades in over 600ms with a strong ease-out. Unchecking scales it out in 400ms, then the indicator unmounts, as in Base UI. The indicator element itself never moves: its content animates, so your layout and classes stay as they are.
+- **Root** scales to 0.96 while pressed (150ms).
+- Checking with Space animates the same way: the state changes at once, the animation never delays it.
+- A box that is already checked on load renders at rest.
+- Toggling again mid-animation retargets from where the check is.
+- Under reduced motion, the check only fades and nothing scales (no press feedback either).
+- With `keepMounted`, the unchecked indicator stays in the DOM with its check hidden.
+- `indeterminate` shows the indicator like `checked`, and a parent checkbox in a `CheckboxGroup` animates the same way: the indicator follows the state Base UI computes.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Checkbox](https://base-ui.com/react/components/checkbox#api-reference). Animate UI adds the animation props below. A `render` element (or function) of your own gets Base UI's behaviour, without the animation.
+
+### Root
+
+[Base UI props](https://base-ui.com/react/components/checkbox#root), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>
+
+### Indicator
+
+[Base UI props](https://base-ui.com/react/components/checkbox#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the check appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the check leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

@@ -1,0 +1,49 @@
+---
+title: Toggle
+description: A two-state button that can be either on or off.
+---
+
+<ComponentPreview name="react-aria/toggle" />
+
+## Installation
+
+<Installation name="toggle" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with the animated controls below. Everything else stays the same. shadcn/ui's Toggle is React Aria's `ToggleButton`.
+
+```tsx
+import { ToggleButton } from '@animate-ui/react/primitives/react-aria';
+
+export function BoldToggle() {
+  return (
+    <ToggleButton aria-label="Toggle bold">
+      <BoldIcon />
+    </ToggleButton>
+  );
+}
+```
+
+The same `ToggleButton` is the item of a [Toggle Group](/docs/primitives/react-aria/toggle-group).
+
+## Animation
+
+- Pressing it, with the pointer or the keyboard (React Aria's `isPressed`), scales it to 0.96 (150ms, strong ease-out), and back on release. That's the only motion: the on/off colours stay your CSS.
+- The state changes on the click (or Space / Enter) itself: the animation never delays it.
+- Under reduced motion, there is no press scale.
+- `className` and `style` render props keep working.
+
+## API Reference
+
+`ToggleButton` takes exactly the props of [React Aria's ToggleButton](https://react-spectrum.adobe.com/react-aria/ToggleButton.html#props), plus the props below. A `render` function of your own gets React Aria's behaviour, without the press feedback.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>

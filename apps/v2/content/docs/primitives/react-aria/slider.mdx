@@ -1,0 +1,88 @@
+---
+title: Slider
+description: A slider allows a user to select one or more values within a range.
+---
+
+<ComponentPreview name="react-aria/slider" />
+
+## Installation
+
+<Installation name="slider" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with animated `Slider`, `SliderFill` and `SliderThumb`. Everything else stays the same.
+
+```tsx
+import {
+  Label,
+  Slider,
+  SliderFill,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function Volume() {
+  return (
+    <Slider defaultValue={50}>
+      <Label>Volume</Label>
+      <SliderOutput />
+      <SliderTrack>
+        <SliderFill />
+        <SliderThumb />
+      </SliderTrack>
+    </Slider>
+  );
+}
+```
+
+## Animation
+
+- **Dragging follows the pointer instantly**, and keyboard changes are instant.
+- **A press on the track glides** the thumb and the fill to the new value with `spring.snappy` (600ms). React Aria positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left` or `width`. It goes after the `translate(-50%, -50%)` React Aria centers the thumb with. With a range slider, only the thumb that moves glides.
+- Dragging right after a press cancels the glide: the thumb sits under the pointer.
+- **The dragged thumb grows** to `scale(1.15)` with `spring.snappy` (React Aria drags the thumb a press on the track moved, too), and shrinks back on release.
+- The `className`, `style` and `children` render props keep working. The fill and the thumb go through React Aria's `render` prop: a `render` of your own replaces the animated element.
+- Under reduced motion, presses jump and nothing scales.
+
+## API Reference
+
+Every component takes exactly the props of [React Aria's Slider](https://react-spectrum.adobe.com/react-aria/Slider.html#props). Animate UI adds the animation props below.
+
+### Slider, SliderTrack, SliderOutput
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Slider.html#props) only. Presses are tracked on the Slider.
+
+### SliderFill
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Slider.html#sliderfill), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fill after a press on the track.',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+  }}
+/>
+
+### SliderThumb
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Slider.html#sliderthumb), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the thumb after a press on the track, and of its press scale.',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+    pressedScale: {
+      description: 'Scale of the thumb while it is dragged.',
+      type: 'number',
+      default: '1.15',
+    },
+  }}
+/>

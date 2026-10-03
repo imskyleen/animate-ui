@@ -1,11 +1,19 @@
+import { readdirSync } from 'node:fs';
+import path from 'node:path';
+
 import { expect, test } from '@playwright/test';
 
-const PAGES = [
-  '/docs',
-  '/docs/installation',
-  '/docs/primitives',
-  '/docs/primitives/radix-ui/accordion',
-];
+// Every docs page, from content/docs.
+const CONTENT = path.join(process.cwd(), 'content', 'docs');
+const PAGES = readdirSync(CONTENT, { recursive: true, encoding: 'utf8' })
+  .filter((file) => file.endsWith('.mdx'))
+  .map((file) =>
+    `/docs/${file.replace(/\.mdx$/, '').replace(/(^|\/)index$/, '')}`.replace(
+      /\/$/,
+      '',
+    ),
+  )
+  .sort();
 
 for (const url of PAGES) {
   test(`${url} renders without errors`, async ({ page }) => {
@@ -35,8 +43,9 @@ test.describe('primitive page', () => {
     const tabs = page
       .getByRole('tablist', { name: 'Library' })
       .getByRole('tab');
-    await expect(tabs).toHaveText(['Radix UI']);
-    await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+    // In LIBRARIES order; the current one is selected.
+    await expect(tabs).toHaveText(['Base UI', 'Radix UI', 'React Aria']);
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
   });
 
   test('View code reveals the whole demo source', async ({ page }) => {

@@ -1,0 +1,78 @@
+---
+title: Drawer
+description: A panel that slides in from the edge of the screen and can be swiped away.
+---
+
+<ComponentPreview name="base-ui/drawer" />
+
+## Installation
+
+<Installation name="drawer" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same, types included (`Drawer.Popup.Props`, `Drawer.Root.SnapPoint`…).
+
+```tsx
+import { Drawer } from '@animate-ui/react/primitives/base-ui/drawer';
+
+export function DailyGoals() {
+  return (
+    <Drawer.Root>
+      <Drawer.Trigger>Daily goals</Drawer.Trigger>
+      <Drawer.Portal>
+        <Drawer.Backdrop />
+        <Drawer.Viewport>
+          <Drawer.Popup>
+            <Drawer.Content>
+              <Drawer.Title>Daily goals</Drawer.Title>
+              <Drawer.Description>Swipe down to dismiss.</Drawer.Description>
+              <Drawer.Close>Done</Drawer.Close>
+            </Drawer.Content>
+          </Drawer.Popup>
+        </Drawer.Viewport>
+      </Drawer.Portal>
+    </Drawer.Root>
+  );
+}
+```
+
+shadcn/ui's React Aria Drawer is built on Base UI's Drawer too: `animate-ui animate drawer` animates it the same way. The Radix UI Drawer is built on [Vaul](https://vaul.emilkowal.ski), which animates itself.
+
+## Animation
+
+- **Popup** slides in from its edge (`swipeDirection`, a full size of its own) over 600ms on the drawer curve, and slides back out in 400ms.
+- While you drag it, it follows the finger on the same frame: no transition runs during a swipe. Let go slowly and it eases back over 600ms; flick it and it leaves along the swipe, faster the harder the flick (the 400ms exit scaled by Base UI's `--drawer-swipe-strength`).
+- **Backdrop** fades with the swipe, then fades in and out with the same timing.
+- Snap points, nested drawers and `swipeDirection` work as in Base UI.
+- CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables, which `AnimateUIProvider tempo` reaches. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
+- Under reduced motion, the drawer fades in place; a swipe dismissal still leaves along the swipe.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/react/components/drawer#api-reference). Animate UI adds the animation props below.
+
+### Root, Provider, Trigger, Portal, Viewport, SwipeArea, Content, Title, Description, Close, Indent, IndentBackground, VirtualKeyboardProvider
+
+[Base UI props](https://base-ui.com/react/components/drawer#root) only. They are not animated.
+
+### Popup, Backdrop
+
+[Base UI props](https://base-ui.com/react/components/drawer#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Opening, and easing back after a swipe that does not dismiss. CSS-driven: only `duration` and a cubic-bezier or named `ease` apply.',
+      type: 'Transition',
+      default: 'transition.drawer (600ms, drawer curve)',
+    },
+    exitTransition: {
+      description:
+        'Closing, scaled by the release velocity of a swipe. Only `duration` and `ease` apply.',
+      type: 'Transition',
+      default: 'transition.drawerExit (400ms, drawer curve)',
+    },
+  }}
+/>

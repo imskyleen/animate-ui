@@ -1,0 +1,48 @@
+---
+title: Toggle
+description: A two-state button that can be either on or off.
+---
+
+<ComponentPreview name="base-ui/toggle" />
+
+## Installation
+
+<Installation name="toggle" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Toggle } from '@animate-ui/react/primitives/base-ui/toggle';
+
+export function BoldToggle() {
+  return (
+    <Toggle aria-label="Toggle bold">
+      <BoldIcon />
+    </Toggle>
+  );
+}
+```
+
+`Toggle.Props` and `Toggle.State` are kept. The same `Toggle` is the item of a [Toggle Group](/docs/primitives/base-ui/toggle-group).
+
+## Animation
+
+- Pressing it scales it to 0.96 (150ms, strong ease-out), and back on release. That's the only motion: the on/off colours stay your CSS.
+- The state changes on the click (or Space / Enter) itself: the animation never delays it.
+- Under reduced motion, there is no press scale.
+
+## API Reference
+
+`Toggle` takes exactly the props of [Base UI's Toggle](https://base-ui.com/react/components/toggle#api-reference), plus the props below. A `render` element (or function) of your own gets Base UI's behaviour, without the animation.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>

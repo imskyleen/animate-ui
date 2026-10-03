@@ -1,0 +1,72 @@
+---
+title: Select
+description: A select displays a collapsible list of options and allows a user to select one of them.
+---
+
+<ComponentPreview name="react-aria/select" />
+
+## Installation
+
+<Installation name="select" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`. Everything else stays the same.
+
+```tsx
+import {
+  Button,
+  ListBox,
+  ListBoxItem,
+  Popover,
+  Select,
+  SelectValue,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function FontPicker() {
+  return (
+    <Select aria-label="Font" defaultValue="geist">
+      <Button>
+        <SelectValue />
+      </Button>
+      <Popover placement="bottom start" offset={4}>
+        <ListBox>
+          <ListBoxItem id="inter">Inter</ListBoxItem>
+          <ListBoxItem id="geist">Geist</ListBoxItem>
+          <ListBoxItem id="lora">Lora</ListBoxItem>
+        </ListBox>
+      </Popover>
+    </Select>
+  );
+}
+```
+
+## Animation
+
+- **Popover**: the list fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--trigger-anchor-point`). It closes in 400ms, then unmounts. Reopening while it closes picks up from where it is. This is Animate UI's [Popover](/docs/primitives/react-aria/popover), the overlay React Aria's `Select` renders its list in.
+- **ListBox** and **ListBoxItem** are not animated: the focused item moved by the arrow keys or typeahead stays instant, and with a single value, choosing an item closes the list, so the check never animates in view. shadcn/ui renders that check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
+- Opening from the keyboard animates the same way.
+- Under reduced motion, the list only fades.
+
+## API Reference
+
+`Select`, `SelectValue`, `ListBox`, `ListBoxItem`, `ListBoxSection`, `Header` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Select.html#props) only. They are not animated.
+
+### Popover
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Popover.html#props), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

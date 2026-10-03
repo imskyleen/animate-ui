@@ -1,0 +1,67 @@
+---
+title: Checkbox
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<ComponentPreview name="react-aria/checkbox" />
+
+## Installation
+
+<Installation name="checkbox" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with the animated controls below. Everything else stays the same.
+
+```tsx
+import { Checkbox } from '@animate-ui/react/primitives/react-aria';
+
+export function Terms() {
+  return (
+    <Checkbox defaultSelected>
+      {({ isSelected }) => (
+        <>
+          <span data-slot="checkbox-indicator">
+            {isSelected && <CheckIcon />}
+          </span>
+          Accept terms and conditions
+        </>
+      )}
+    </Checkbox>
+  );
+}
+```
+
+React Aria lets you render the indicator yourself. Animate UI animates the content of the element marked `data-slot="checkbox-indicator"`, which is what shadcn/ui renders: add the attribute to your own indicator.
+
+## Animation
+
+- **Indicator**: a check that mounts scales in from half size and fades in over 600ms with a strong ease-out. When it unmounts, a copy of it scales out in 400ms in its place, then goes away: your render function stays the single source of truth, React Aria's state and render props are never delayed.
+- **Checkbox** scales to 0.96 while pressed (150ms), with the pointer or the keyboard (React Aria's `isPressed`).
+- Checking with Space animates the same way: the state changes at once, the animation never delays it.
+- A box that is already checked on load renders at rest.
+- Toggling again mid-animation retargets from where the check is.
+- Under reduced motion, the check only fades and nothing scales (no press feedback either).
+- `isIndeterminate` shows the indicator like `isSelected`. Inside a `CheckboxGroup`, each checkbox animates the same way.
+- `className` and `style` render props keep working.
+
+## API Reference
+
+`Checkbox` takes exactly the props of [React Aria's Checkbox](https://react-spectrum.adobe.com/react-aria/Checkbox.html#props), plus the props below. A `render` function of your own gets React Aria's behaviour, without the press feedback.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the check appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the check leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+The press feedback uses `transition.press` (150ms); `AnimateUIProvider`'s `tempo` changes it with everything else.

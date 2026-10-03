@@ -1,0 +1,85 @@
+---
+title: Radio Group
+description: A set of checkable buttons, known as radio buttons, where no more than one of the buttons can be checked at a time.
+---
+
+<ComponentPreview name="react-aria/radio-group" />
+
+## Installation
+
+<Installation name="radio-group" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with the animated controls below. Everything else stays the same.
+
+```tsx
+import {
+  Label,
+  Radio,
+  RadioGroup,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function Density() {
+  return (
+    <RadioGroup defaultValue="comfortable">
+      <Label>Density</Label>
+      {['default', 'comfortable', 'compact'].map((value) => (
+        <Radio key={value} value={value}>
+          {({ isSelected }) => (
+            <>
+              <span data-slot="radio-group-indicator">
+                {isSelected && (
+                  <span className="size-2 rounded-full bg-current" />
+                )}
+              </span>
+              {value}
+            </>
+          )}
+        </Radio>
+      ))}
+    </RadioGroup>
+  );
+}
+```
+
+React Aria lets you render the indicator yourself. Animate UI animates the content of the element marked `data-slot="radio-group-indicator"`, which is what shadcn/ui renders: add the attribute to your own indicator.
+
+## Animation
+
+- **Indicator**: a dot that mounts scales in from half size and fades in over 600ms with a strong ease-out. When it unmounts, a copy of it scales out in 400ms in its place, then goes away: React Aria's state and render props are never delayed.
+- **Radio** scales to 0.96 while pressed (150ms), with the pointer or the keyboard (React Aria's `isPressed`).
+- **RadioGroup** has nothing to animate: it tells its radios when a selection comes from the arrow keys.
+- Selecting with the arrow keys is keyboard navigation: the dots swap at once. Space, a click or a tap animate.
+- The dot selected on load renders at rest.
+- Under reduced motion, the dot only fades and nothing scales (no press feedback either).
+- `className` and `style` render props keep working.
+
+## API Reference
+
+`RadioGroup` and `Radio` take exactly the props of [React Aria's RadioGroup](https://react-spectrum.adobe.com/react-aria/RadioGroup.html#props). A `render` function of your own gets React Aria's behaviour, without the press feedback.
+
+### RadioGroup
+
+React Aria props only.
+
+### Radio
+
+React Aria props, plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the dot appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the dot leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+The press feedback uses `transition.press` (150ms); `AnimateUIProvider`'s `tempo` changes it with everything else.

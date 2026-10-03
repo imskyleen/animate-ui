@@ -1,0 +1,66 @@
+---
+title: Collapsible
+description: An interactive component which expands/collapses a panel.
+---
+
+<ComponentPreview name="radix-ui/collapsible" />
+
+## Installation
+
+<Installation name="collapsible" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Collapsible } from '@animate-ui/react/primitives/radix-ui/collapsible';
+
+export function Changelog() {
+  return (
+    <Collapsible.Root>
+      <Collapsible.Trigger>Show all changes</Collapsible.Trigger>
+      <Collapsible.Content>
+        Drop-in primitives for Radix UI, Base UI and React Aria.
+      </Collapsible.Content>
+    </Collapsible.Root>
+  );
+}
+```
+
+The `import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'` style works too.
+
+## Animation
+
+- **Content** grows its height and fades in over 600ms with a strong ease-out, and collapses in 400ms before it unmounts.
+- Toggling it while it moves retargets from where it is.
+- `--radix-collapsible-content-height` and `--radix-collapsible-content-width` read `auto`: classes using them follow Motion's height instead of a stale measure.
+- With `forceMount`, closed content stays in the DOM, collapsed and `inert`.
+- Under reduced motion, the height changes at once and the content only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Collapsible](https://www.radix-ui.com/primitives/docs/components/collapsible#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/collapsible#root) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/collapsible#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.disclosure (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

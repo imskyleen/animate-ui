@@ -1,0 +1,121 @@
+---
+title: Menubar
+description: A visually persistent menu common in desktop applications that provides quick access to a consistent set of commands.
+---
+
+<ComponentPreview name="radix-ui/menubar" />
+
+## Installation
+
+<Installation name="menubar" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Menubar } from '@animate-ui/react/primitives/radix-ui/menubar';
+
+export function EditorMenubar() {
+  return (
+    <Menubar.Root>
+      <Menubar.Menu>
+        <Menubar.Trigger>File</Menubar.Trigger>
+        <Menubar.Portal>
+          <Menubar.Content align="start" sideOffset={8}>
+            <Menubar.Item>New file</Menubar.Item>
+            <Menubar.Item>Save</Menubar.Item>
+          </Menubar.Content>
+        </Menubar.Portal>
+      </Menubar.Menu>
+      <Menubar.Menu>
+        <Menubar.Trigger>Edit</Menubar.Trigger>
+        <Menubar.Portal>
+          <Menubar.Content align="start" sideOffset={8}>
+            <Menubar.Item>Undo</Menubar.Item>
+            <Menubar.Item>Redo</Menubar.Item>
+          </Menubar.Content>
+        </Menubar.Portal>
+      </Menubar.Menu>
+    </Menubar.Root>
+  );
+}
+```
+
+The `import * as MenubarPrimitive from '@radix-ui/react-menubar'` style works too.
+
+## Animation
+
+- **Content** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from its trigger (`--radix-menubar-content-transform-origin`, set inline so it works without styles). It closes in 400ms, then unmounts.
+- **SubContent** grows from the side of its trigger (same origin variable, which Radix sets for submenus), in 400ms both ways: submenus open often.
+- Only opening and closing the bar animate. Moving from one open menu to another (hovering a trigger or pressing the arrow keys) is instant both ways, like a native menubar.
+- Moving the highlight with the arrow keys is never animated: items keep their own CSS highlight, which changes on the same frame.
+- When the menu closes with focus inside, focus goes back to the menu's trigger at once instead of after the exit, and the leaving menu ignores the pointer and can't dismiss anything.
+- **ItemIndicator** (the check and the radio dot) fades in over 600ms when an item gets checked and out in 400ms. Items already checked when the menu opens show at once.
+- With `forceMount` (on the Content or the Portal), the closed content stays in the DOM: it plays its exit, then is hidden (`visibility: hidden`).
+- Under reduced motion, everything only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Menubar](https://www.radix-ui.com/primitives/docs/components/menubar#api-reference). Animate UI adds the animation props below.
+
+### Root, Menu, Trigger, Portal, Group, Label, Item, CheckboxItem, RadioGroup, RadioItem, Separator, Arrow, Sub, SubTrigger
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/menubar#api-reference) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/menubar#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### SubContent
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/menubar#subcontent), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### ItemIndicator
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/menubar#itemindicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade-in when the item gets checked.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

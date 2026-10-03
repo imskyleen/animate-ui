@@ -1,0 +1,73 @@
+---
+title: Hover Card
+description: A popup that appears when a link is hovered, showing a preview for sighted users. Built on Base UI's Preview Card.
+---
+
+<ComponentPreview name="base-ui/hover-card" />
+
+## Installation
+
+shadcn/ui's Hover Card is built on Base UI's Preview Card.
+
+<Installation name="hover-card" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { PreviewCard } from '@animate-ui/react/primitives/base-ui/preview-card';
+
+export function ProfileLink() {
+  return (
+    <PreviewCard.Root>
+      <PreviewCard.Trigger href="https://github.com/imskyleen/animate-ui">
+        @animate-ui
+      </PreviewCard.Trigger>
+      <PreviewCard.Portal>
+        <PreviewCard.Positioner sideOffset={4}>
+          <PreviewCard.Popup>
+            Animated drop-in primitives for Radix UI, Base UI and React Aria.
+          </PreviewCard.Popup>
+        </PreviewCard.Positioner>
+      </PreviewCard.Portal>
+    </PreviewCard.Root>
+  );
+}
+```
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, once the trigger's `closeDelay` is over, then unmounts.
+- Its open delay already keeps a sweep across links calm, so every card plays its entrance.
+- Base UI only opens it on hover for mouse-like pointers: nothing sticks on touch screens.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM: it fades out, then is hidden.
+- Your own `render` element (or function) on the Popup is made animatable rather than replaced.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Preview Card](https://base-ui.com/react/components/preview-card#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Positioner, Arrow, Backdrop, Viewport
+
+[Base UI props](https://base-ui.com/react/components/preview-card#root) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/preview-card#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

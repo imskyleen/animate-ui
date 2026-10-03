@@ -1,0 +1,64 @@
+---
+title: Switch
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<ComponentPreview name="react-aria/switch" />
+
+## Installation
+
+<Installation name="switch" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with the animated controls below. Everything else stays the same.
+
+```tsx
+import { Switch } from '@animate-ui/react/primitives/react-aria';
+
+export function AirplaneMode() {
+  return (
+    <Switch>
+      {({ isSelected }) => (
+        <>
+          <span className="track">
+            <span
+              data-slot="switch-thumb"
+              data-selected={isSelected || undefined}
+            />
+          </span>
+          Airplane mode
+        </>
+      )}
+    </Switch>
+  );
+}
+```
+
+React Aria lets you render the thumb yourself. Animate UI glides the element marked `data-slot="switch-thumb"`, which is what shadcn/ui renders: add the attribute to your own thumb.
+
+## Animation
+
+- **Thumb** glides to its new side. The thumb's `translate` classes still decide where it rests (`data-checked:translate-x-…`): on a change, Animate UI puts it back where it was with a `transform` and springs it to its new place (`spring.snappy`, 0.6s, bounce 0.15). Only `transform` animates, never its width or position, so the track's own transitions are untouched.
+- **Switch** scales to 0.96 while pressed (150ms), with the pointer or the keyboard (React Aria's `isPressed`).
+- Toggling again mid-glide turns back from where the thumb is, without a jump.
+- Toggling with Space glides the same way: the state changes at once, the animation never delays it.
+- Under reduced motion, the thumb jumps to its side (no press feedback either).
+- shadcn/ui's `transition-transform` on the thumb tweened its `translate`; the CLI removes it (Animate UI also skips it while measuring, so a leftover class doesn't break the glide).
+- `className` and `style` render props keep working.
+
+## API Reference
+
+`Switch` takes exactly the props of [React Aria's Switch](https://react-spectrum.adobe.com/react-aria/Switch.html#props), plus the props below. A `render` function of your own gets React Aria's behaviour, without the press feedback.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the thumb gliding to its new side.',
+      type: 'Transition',
+      default: 'spring.snappy (0.6s, bounce 0.15)',
+    },
+  }}
+/>
+
+The press feedback uses `transition.press` (150ms); `AnimateUIProvider`'s `tempo` changes it with everything else.

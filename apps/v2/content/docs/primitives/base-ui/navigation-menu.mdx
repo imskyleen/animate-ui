@@ -1,0 +1,94 @@
+---
+title: Navigation Menu
+description: A collection of links and menus for website navigation.
+---
+
+<ComponentPreview name="base-ui/navigation-menu" />
+
+## Installation
+
+<Installation name="navigation-menu" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { NavigationMenu } from '@animate-ui/react/primitives/base-ui/navigation-menu';
+
+export function SiteNav() {
+  return (
+    <NavigationMenu.Root>
+      <NavigationMenu.List>
+        <NavigationMenu.Item>
+          <NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>
+          <NavigationMenu.Content>
+            <NavigationMenu.Link href="/docs">Documentation</NavigationMenu.Link>
+          </NavigationMenu.Content>
+        </NavigationMenu.Item>
+      </NavigationMenu.List>
+      <NavigationMenu.Portal>
+        <NavigationMenu.Positioner sideOffset={8}>
+          <NavigationMenu.Popup className="h-(--popup-height) w-(--popup-width)">
+            <NavigationMenu.Viewport />
+          </NavigationMenu.Popup>
+        </NavigationMenu.Positioner>
+      </NavigationMenu.Portal>
+    </NavigationMenu.Root>
+  );
+}
+```
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from its trigger (`--transform-origin`). It closes in 400ms; Base UI keeps it mounted until then, and Animate UI unmounts it once the exit has played.
+- Moving from one item to another, the Popup's size follows the new content over 600ms with the same curve: Base UI resizes it through `--popup-width`/`--popup-height`, and Animate UI sets the CSS transition of `width` and `height` inline (Base UI waits for it before it sets the size back to auto). The Positioner keeps its own transition.
+- **Content** fades in over 600ms, sliding 16px in from the side of its trigger (`activationDirection`). On the first opening, the Popup's entrance is enough.
+- Keyboard navigation between links and triggers moves focus only: nothing animates.
+- Under reduced motion, everything only fades and sizes change at once.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Navigation Menu](https://base-ui.com/react/components/navigation-menu#api-reference). Animate UI adds the animation props below. The `render` prop of the Popup and the Content is used by the animation.
+
+### Root, List, Item, Trigger, Link, Icon, Portal, Positioner, Viewport, Backdrop, Arrow
+
+[Base UI props](https://base-ui.com/react/components/navigation-menu#api-reference) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/navigation-menu#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening and of the resizing between items.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Content
+
+[Base UI props](https://base-ui.com/react/components/navigation-menu#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the entrance when moving between items.',
+      type: 'Transition',
+      default: 'transition.fade (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

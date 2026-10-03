@@ -5,7 +5,11 @@ import { Accordion as AccordionPrimitive } from 'radix-ui';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import {
+  ReducedMotionConfig,
+  useMotionTokens,
+  useShouldReduceMotion,
+} from '../../../utils/motion';
 
 // Same API as Radix's Accordion. The Root mirrors the open items (Radix keeps
 // them private) so each Content can animate its height in and out.
@@ -89,8 +93,15 @@ function Content({
   ContentAnimationProps) {
   const { open } = useItemOpen();
   const tokens = useMotionTokens();
-  const enter = transition ?? tokens.transition.disclosure;
-  const exit = exitTransition ?? tokens.transition.exit;
+  // Motion reads reduced motion once per element: a force-mounted panel
+  // follows a later change through its transitions.
+  const reduce = useShouldReduceMotion();
+  const enter = reduce
+    ? tokens.transition.instant
+    : (transition ?? tokens.transition.disclosure);
+  const exit = reduce
+    ? tokens.transition.instant
+    : (exitTransition ?? tokens.transition.exit);
 
   return (
     <AnimatePresence initial={false}>

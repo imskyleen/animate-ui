@@ -1,0 +1,81 @@
+---
+title: Checkbox
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<ComponentPreview name="radix-ui/checkbox" />
+
+## Installation
+
+<Installation name="checkbox" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Checkbox } from '@animate-ui/react/primitives/radix-ui/checkbox';
+
+export function Terms() {
+  return (
+    <label className="flex items-center gap-2">
+      <Checkbox.Root defaultChecked>
+        <Checkbox.Indicator>
+          <CheckIcon />
+        </Checkbox.Indicator>
+      </Checkbox.Root>
+      Accept terms and conditions
+    </label>
+  );
+}
+```
+
+The `import * as CheckboxPrimitive from '@radix-ui/react-checkbox'` style works too.
+
+## Animation
+
+- **Indicator**: the check inside scales in from half size and fades in over 600ms with a strong ease-out. Unchecking scales it out in 400ms, then the indicator unmounts, as in Radix. The indicator element itself never moves: its content animates, so your layout and classes stay as they are.
+- **Root** scales to 0.96 while pressed (150ms).
+- Checking with Space animates the same way: the state changes at once, the animation never delays it.
+- A box that is already checked on load renders at rest.
+- Toggling again mid-animation retargets from where the check is.
+- Under reduced motion, the check only fades and nothing scales (no press feedback either).
+- With `forceMount`, the unchecked indicator stays in the DOM with its check hidden.
+- The `indeterminate` state shows the indicator like `checked`.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Checkbox](https://www.radix-ui.com/primitives/docs/components/checkbox#api-reference). Animate UI adds the animation props below. With `asChild`, a part renders your element with Radix's behaviour, without the animation.
+
+### Root
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/checkbox#root), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>
+
+### Indicator
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/checkbox#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the check appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the check leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

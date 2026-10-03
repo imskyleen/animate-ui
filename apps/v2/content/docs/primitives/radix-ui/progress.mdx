@@ -1,0 +1,61 @@
+---
+title: Progress
+description: Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.
+---
+
+<ComponentPreview name="radix-ui/progress" />
+
+## Installation
+
+<Installation name="progress" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Progress } from '@animate-ui/react/primitives/radix-ui/progress';
+
+export function Upload({ value }: { value: number }) {
+  return (
+    <Progress.Root value={value} className="h-2 overflow-hidden rounded-full">
+      <Progress.Indicator
+        className="size-full bg-primary"
+        style={{ transform: `translateX(-${100 - value}%)` }}
+      />
+    </Progress.Root>
+  );
+}
+```
+
+The `import * as ProgressPrimitive from '@radix-ui/react-progress'` style works too.
+
+## Animation
+
+- **Indicator** animates the `transform` you give it (shadcn/ui's `translateX(-…%)`) instead of jumping to it.
+- It moves with `spring.snappy` without bounce (600ms): progress often updates in bursts, and a spring keeps its velocity when a new value retargets it, so the bar flows instead of stuttering. No overshoot, which would uncover the start of the track.
+- It starts at its value on mount, with no animation.
+- shadcn/ui's `transition-all` on the indicator would run on top of Motion: the CLI removes it.
+- Under reduced motion, the indicator jumps to each value.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Progress](https://www.radix-ui.com/primitives/docs/components/progress#api-reference). Animate UI adds the animation props below.
+
+### Root
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/progress#root) only.
+
+### Indicator
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/progress#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the indicator moving to a new value.',
+      type: 'Transition',
+      default: 'spring.snappy without bounce (600ms)',
+    },
+  }}
+/>

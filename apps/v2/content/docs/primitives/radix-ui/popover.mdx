@@ -1,0 +1,69 @@
+---
+title: Popover
+description: Displays rich content in a portal, triggered by a button.
+---
+
+<ComponentPreview name="radix-ui/popover" />
+
+## Installation
+
+<Installation name="popover" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Popover } from '@animate-ui/react/primitives/radix-ui/popover';
+
+export function SharePopover() {
+  return (
+    <Popover.Root>
+      <Popover.Trigger>Share</Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content sideOffset={4}>
+          Anyone with the link can view this document.
+          <Popover.Close aria-label="Close">×</Popover.Close>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}
+```
+
+The `import * as PopoverPrimitive from '@radix-ui/react-popover'` style works too.
+
+## Animation
+
+- **Content** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--radix-popover-content-transform-origin`, set inline so it works without styles). It closes in 400ms, then unmounts.
+- Reopening while it closes picks up from where it is.
+- Opening from the keyboard animates the same way. Focus goes back to the trigger once the exit is over.
+- With `forceMount` (on the Content or the Portal), the closed content stays in the DOM: it fades out, then is hidden and `inert`.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Popover](https://www.radix-ui.com/primitives/docs/components/popover#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Anchor, Portal, Close, Arrow
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/popover#root) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/popover#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

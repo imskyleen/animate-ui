@@ -1,0 +1,82 @@
+---
+title: Slider
+description: An input where the user selects a value from within a given range.
+---
+
+<ComponentPreview name="radix-ui/slider" />
+
+## Installation
+
+<Installation name="slider" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Slider } from '@animate-ui/react/primitives/radix-ui/slider';
+
+export function Volume() {
+  return (
+    <Slider.Root defaultValue={[50]} max={100} step={1}>
+      <Slider.Track>
+        <Slider.Range />
+      </Slider.Track>
+      <Slider.Thumb aria-label="Volume" />
+    </Slider.Root>
+  );
+}
+```
+
+The `import * as SliderPrimitive from '@radix-ui/react-slider'` style works too.
+
+## Animation
+
+- **Dragging follows the pointer instantly**, and keyboard changes are instant.
+- **A press on the track glides** the thumb and the range to the new value with `spring.snappy` (600ms). Radix positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left` or `width`. With a range slider, only the thumb that moves glides.
+- Dragging right after a press cancels the glide: the thumb sits under the pointer.
+- **The pressed thumb grows** to `scale(1.15)` with `spring.snappy`, and shrinks back on release.
+- Under reduced motion, presses jump and nothing scales.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Slider](https://www.radix-ui.com/primitives/docs/components/slider#api-reference). Animate UI adds the animation props below.
+
+### Root, Track
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/slider#root) only.
+
+### Range
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/slider#range), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the range after a press on the track.',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+  }}
+/>
+
+### Thumb
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/slider#thumb), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the thumb after a press on the track, and of its press scale.',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+    pressedScale: {
+      description: 'Scale of the thumb while it is pressed or dragged.',
+      type: 'number',
+      default: '1.15',
+    },
+  }}
+/>
+
+The pressed thumb also gets `data-pressed`.

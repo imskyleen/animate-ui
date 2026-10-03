@@ -1,0 +1,69 @@
+---
+title: Toggle Group
+description: A set of two-state buttons that can be toggled on or off.
+---
+
+<ComponentPreview name="radix-ui/toggle-group" />
+
+## Installation
+
+<Installation name="toggle-group" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { ToggleGroup } from '@animate-ui/react/primitives/radix-ui/toggle-group';
+
+export function Alignment() {
+  return (
+    <ToggleGroup.Root
+      type="single"
+      defaultValue="left"
+      aria-label="Text alignment"
+    >
+      <ToggleGroup.Item value="left" aria-label="Align left">
+        <AlignLeftIcon />
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="center" aria-label="Align center">
+        <AlignCenterIcon />
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="right" aria-label="Align right">
+        <AlignRightIcon />
+      </ToggleGroup.Item>
+    </ToggleGroup.Root>
+  );
+}
+```
+
+The `import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'` style works too.
+
+## Animation
+
+- **Item** scales to 0.96 while pressed (150ms, strong ease-out); the selection changes on the click itself.
+- The arrow keys only move the focus between items: nothing animates.
+- The selected colours stay your CSS; there is no sliding highlight.
+- Under reduced motion, there is no press scale.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Toggle Group](https://www.radix-ui.com/primitives/docs/components/toggle-group#api-reference). Animate UI adds the animation props below. With `asChild`, a part renders your element with Radix's behaviour, without the animation.
+
+### Root
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/toggle-group#root) only. It is not animated.
+
+### Item
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/toggle-group#item), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>

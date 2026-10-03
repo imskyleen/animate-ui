@@ -1,0 +1,79 @@
+---
+title: Tabs
+description: A set of layered sections of content, known as tab panels, that are displayed one at a time.
+---
+
+<ComponentPreview name="radix-ui/tabs" />
+
+## Installation
+
+<Installation name="tabs" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Tabs } from '@animate-ui/react/primitives/radix-ui/tabs';
+
+export function Settings() {
+  return (
+    <Tabs.Root defaultValue="account">
+      <Tabs.List aria-label="Settings">
+        <Tabs.Trigger value="account">Account</Tabs.Trigger>
+        <Tabs.Trigger value="password">Password</Tabs.Trigger>
+      </Tabs.List>
+      <Tabs.Content value="account">Make changes to your account.</Tabs.Content>
+      <Tabs.Content value="password">Change your password.</Tabs.Content>
+    </Tabs.Root>
+  );
+}
+```
+
+The `import * as TabsPrimitive from '@radix-ui/react-tabs'` style works too.
+
+## Animation
+
+- **The active tab's surface glides** to the new tab with `spring.snappy` (600ms, a hint of overshoot). The List draws it as an indicator that copies the active trigger's own classes and data attributes, so it looks exactly like your active trigger (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active trigger's own surface is hidden. Its focus ring stays on the trigger.
+- Clicking quickly through tabs retargets the glide smoothly.
+- **Keyboard changes are instant**: arrow keys move the indicator and swap the panel at once, and never delay focus.
+- **The incoming panel fades in** over 600ms (`transition.fade`); the outgoing one unmounts at once, so the two never overlap.
+- Nothing animates on page load.
+- With `forceMount`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
+- Under reduced motion, the indicator jumps; panels still fade.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Tabs](https://www.radix-ui.com/primitives/docs/components/tabs#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/tabs#root) only.
+
+### List
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/tabs#list), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the indicator gliding to the active tab (pointer changes).',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+  }}
+/>
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/tabs#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the incoming panel fading in.',
+      type: 'Transition',
+      default: 'transition.fade (600ms, ease-out)',
+    },
+  }}
+/>

@@ -1,0 +1,102 @@
+---
+title: Dialog
+description: An overlay shown above other content in an application. Also the primitive under shadcn/ui's Sheet.
+---
+
+<ComponentPreview name="react-aria/dialog" />
+
+## Installation
+
+<Installation name="dialog" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with animated `Modal` and `ModalOverlay`. Everything else stays the same.
+
+```tsx
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Heading,
+  Modal,
+  ModalOverlay,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function EditProfile() {
+  return (
+    <DialogTrigger>
+      <Button>Edit profile</Button>
+      <ModalOverlay isDismissable>
+        <Modal>
+          <Dialog>
+            <Heading slot="title">Edit profile</Heading>
+            <Button slot="close">Save</Button>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
+}
+```
+
+A `Modal` on its own (without a `ModalOverlay`) animates too. `DialogTrigger`, `Dialog` and `Heading` are not animated.
+
+## Sheet
+
+shadcn/ui's Sheet is the same primitive: its `Modal` carries `data-side`, and it then slides in from that edge instead of scaling. Add it with `shadcn add sheet`, then animate it with `animate-ui animate sheet`.
+
+<ComponentPreview name="react-aria/dialog-sheet" />
+
+## Animation
+
+- **ModalOverlay** fades in over 600ms with a strong ease-out, and out in 400ms.
+- **Modal** fades in and scales up from 0.95 over 600ms, around its center: modals don't grow from their trigger. It closes in 400ms, then unmounts.
+- With `data-side="top" | "right" | "bottom" | "left"`, the modal slides in from that edge (a full size of its own) over 600ms on the drawer curve, and slides back out in 400ms. React Aria renders the Modal inside the ModalOverlay, so the overlay's fade shows on it too.
+- React Aria only keeps a closing modal mounted if animations are running when it closes, before Motion starts any. Animate UI tracks the same open state React Aria reads (the `DialogTrigger`'s, or `isOpen`/`defaultOpen`) and passes `isExiting` while the exit plays, so `data-exiting` and the `isExiting` render prop stay accurate, focus stops being trapped and returns to the trigger.
+- Reopening while it closes picks up from where it is.
+- Opening from the keyboard animates the same way; focus moves into the dialog at once.
+- `className` and `style` functions keep working, and your own `render` function is made animatable rather than replaced.
+- Under reduced motion, the modal fades without scaling or sliding.
+
+## API Reference
+
+`Modal` and `ModalOverlay` take exactly the props of [React Aria's Modal](https://react-spectrum.adobe.com/react-aria/Modal.html#props), plus:
+
+### ModalOverlay
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade in.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Modal
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default:
+        'transition.modal (600ms, ease-out); with data-side: transition.drawer (600ms, drawer curve)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default:
+        'transition.modalExit (400ms, ease-out); with data-side: transition.drawerExit (400ms)',
+    },
+  }}
+/>
+
+`DialogTrigger`, `Dialog`, `Heading` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Dialog.html#props) only. They are not animated.

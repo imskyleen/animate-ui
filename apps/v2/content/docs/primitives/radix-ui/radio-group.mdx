@@ -1,0 +1,87 @@
+---
+title: Radio Group
+description: A set of checkable buttons, known as radio buttons, where no more than one of the buttons can be checked at a time.
+---
+
+<ComponentPreview name="radix-ui/radio-group" />
+
+## Installation
+
+<Installation name="radio-group" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { RadioGroup } from '@animate-ui/react/primitives/radix-ui/radio-group';
+
+export function Density() {
+  return (
+    <RadioGroup.Root defaultValue="comfortable" aria-label="Density">
+      {['default', 'comfortable', 'compact'].map((value) => (
+        <label key={value} className="flex items-center gap-2">
+          <RadioGroup.Item value={value}>
+            <RadioGroup.Indicator>
+              <span className="size-2 rounded-full bg-current" />
+            </RadioGroup.Indicator>
+          </RadioGroup.Item>
+          {value}
+        </label>
+      ))}
+    </RadioGroup.Root>
+  );
+}
+```
+
+The `import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'` style works too.
+
+## Animation
+
+- **Indicator**: the dot inside scales in from half size and fades in over 600ms with a strong ease-out, while the previous one scales out in 400ms before its indicator unmounts. The indicator element never moves: its content animates (a transform on the indicator would shift shadcn/ui's absolutely centered dot by a pixel).
+- **Item** scales to 0.96 while pressed (150ms).
+- Selecting with the arrow keys is keyboard navigation: the dots swap at once. Space, a click or a tap animate.
+- The dot selected on load renders at rest.
+- Under reduced motion, the dot only fades and nothing scales (no press feedback either).
+- With `forceMount`, unchecked indicators stay in the DOM with their dot hidden.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Radio Group](https://www.radix-ui.com/primitives/docs/components/radio-group#api-reference). Animate UI adds the animation props below. With `asChild`, a part renders your element with Radix's behaviour, without the animation.
+
+### Root
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/radio-group#root) only. It tells its items when a selection comes from the arrow keys.
+
+### Item
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/radio-group#item), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>
+
+### Indicator
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/radio-group#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the dot appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the dot leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

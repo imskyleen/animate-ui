@@ -1,0 +1,72 @@
+---
+title: Tooltip
+description: A popup that appears when an element is hovered or focused, showing a hint for sighted users.
+---
+
+<ComponentPreview name="base-ui/tooltip" />
+
+## Installation
+
+<Installation name="tooltip" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Tooltip } from '@animate-ui/react/primitives/base-ui/tooltip';
+
+export function BoldButton() {
+  return (
+    <Tooltip.Provider delay={0}>
+      <Tooltip.Root>
+        <Tooltip.Trigger aria-label="Bold">B</Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Positioner sideOffset={4}>
+            <Tooltip.Popup>
+              Bold
+              <Tooltip.Arrow />
+            </Tooltip.Popup>
+          </Tooltip.Positioner>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+}
+```
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, then unmounts.
+- Warm tooltips skip the entrance: a tooltip that opens while another one is showing, or less than a second after one closed, appears at once, like moving along a toolbar. It works across tooltips that each have their own `Provider` (as shadcn/ui's do), where Base UI's `data-instant` can't tell.
+- Base UI only opens it on hover for mouse-like pointers, and on keyboard focus.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM: it fades out, then is hidden.
+- Your own `render` element (or function) on the Popup is made animatable rather than replaced.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Tooltip](https://base-ui.com/react/components/tooltip#api-reference). Animate UI adds the animation props below.
+
+### Provider, Root, Trigger, Portal, Positioner, Arrow, Viewport
+
+[Base UI props](https://base-ui.com/react/components/tooltip#provider) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/tooltip#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening. Warm tooltips skip it.',
+      type: 'Transition',
+      default: 'transition.tooltip (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

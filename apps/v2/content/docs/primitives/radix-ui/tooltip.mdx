@@ -1,0 +1,71 @@
+---
+title: Tooltip
+description: A popup that displays information related to an element when it receives keyboard focus or the mouse hovers over it.
+---
+
+<ComponentPreview name="radix-ui/tooltip" />
+
+## Installation
+
+<Installation name="tooltip" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Tooltip } from '@animate-ui/react/primitives/radix-ui/tooltip';
+
+export function BoldButton() {
+  return (
+    <Tooltip.Provider delayDuration={0}>
+      <Tooltip.Root>
+        <Tooltip.Trigger aria-label="Bold">B</Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content sideOffset={4}>
+            Bold
+            <Tooltip.Arrow />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+}
+```
+
+The `import * as TooltipPrimitive from '@radix-ui/react-tooltip'` style works too.
+
+## Animation
+
+- **Content** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--radix-tooltip-content-transform-origin`). It closes in 400ms, then unmounts.
+- Warm tooltips skip the entrance: a tooltip that opens while another one is showing, or less than a second after one closed, appears at once, like moving along a toolbar. It works across tooltips that each have their own `Provider` (as shadcn/ui's do), where Radix can't tell.
+- Radix only opens it on hover for mouse-like pointers, and on keyboard focus.
+- With `forceMount` (on the Content or the Portal), the closed content stays in the DOM: it fades out, then is hidden and `inert`.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Tooltip](https://www.radix-ui.com/primitives/docs/components/tooltip#api-reference). Animate UI adds the animation props below.
+
+### Provider, Root, Trigger, Portal, Arrow
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/tooltip#provider) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/tooltip#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening. Warm tooltips skip it.',
+      type: 'Transition',
+      default: 'transition.tooltip (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

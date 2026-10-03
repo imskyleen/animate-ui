@@ -1,0 +1,102 @@
+---
+title: Dialog
+description: A popup that opens on top of the entire page. Also the primitive under shadcn/ui's Sheet.
+---
+
+<ComponentPreview name="base-ui/dialog" />
+
+## Installation
+
+<Installation name="dialog" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same, types included (`Dialog.Popup.Props`, `Dialog.Root.ChangeEventDetails`…).
+
+```tsx
+import { Dialog } from '@animate-ui/react/primitives/base-ui/dialog';
+
+export function EditProfile() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>Edit profile</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Popup>
+          <Dialog.Title>Edit profile</Dialog.Title>
+          <Dialog.Description>
+            Make changes to your profile here.
+          </Dialog.Description>
+          <Dialog.Close>Save</Dialog.Close>
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+```
+
+## Sheet
+
+shadcn/ui's Sheet is the same primitive: its popup carries `data-side`, and the Dialog then slides it in from that edge instead of scaling it. Add it with `shadcn add sheet`, then animate it with `animate-ui animate sheet`.
+
+<ComponentPreview name="base-ui/dialog-sheet" />
+
+## Animation
+
+- **Backdrop** fades in over 600ms with a strong ease-out, and out in 400ms.
+- **Popup** fades in and scales up from 0.95 over 600ms, around its center: modals don't grow from their trigger. It closes in 400ms, then unmounts.
+- With `data-side="top" | "right" | "bottom" | "left"`, the popup slides in from that edge (a full size of its own, without fading) over 600ms on the drawer curve, and slides back out in 400ms.
+- Base UI decides a closed popup is done before Motion's exit has started. The Portal keeps Base UI's portal mounted and the popup visible until the exit is over; clicks go through to the page as soon as it closes.
+- Reopening while it closes picks up from where it is.
+- `eventDetails.cancel()` in `onOpenChange` keeps it open, detached triggers (`handle`) open it, and opening from the keyboard animates the same way.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM: it plays its exit, then Base UI hides it.
+- Your own `render` element (or function) on the Backdrop or the Popup is made animatable rather than replaced.
+- Under reduced motion, the popup fades without scaling or sliding.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Dialog](https://base-ui.com/react/components/dialog#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Viewport, Title, Description, Close
+
+[Base UI props](https://base-ui.com/react/components/dialog#root) only. They are not animated.
+
+### Backdrop
+
+[Base UI props](https://base-ui.com/react/components/dialog#backdrop), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade in.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/dialog#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default:
+        'transition.modal (600ms, ease-out); with data-side: transition.drawer (600ms, drawer curve)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default:
+        'transition.modalExit (400ms, ease-out); with data-side: transition.drawerExit (400ms)',
+    },
+  }}
+/>

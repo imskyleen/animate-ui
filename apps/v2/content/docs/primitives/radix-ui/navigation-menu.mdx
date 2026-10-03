@@ -1,0 +1,115 @@
+---
+title: Navigation Menu
+description: A collection of links for navigating websites.
+---
+
+<ComponentPreview name="radix-ui/navigation-menu" />
+
+## Installation
+
+<Installation name="navigation-menu" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { NavigationMenu } from '@animate-ui/react/primitives/radix-ui/navigation-menu';
+
+export function SiteNav() {
+  return (
+    <NavigationMenu.Root>
+      <NavigationMenu.List>
+        <NavigationMenu.Item>
+          <NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>
+          <NavigationMenu.Content>
+            <NavigationMenu.Link href="/docs">Documentation</NavigationMenu.Link>
+          </NavigationMenu.Content>
+        </NavigationMenu.Item>
+        <NavigationMenu.Item>
+          <NavigationMenu.Link href="/blog">Blog</NavigationMenu.Link>
+        </NavigationMenu.Item>
+        <NavigationMenu.Indicator />
+      </NavigationMenu.List>
+      <NavigationMenu.Viewport className="h-(--radix-navigation-menu-viewport-height) w-(--radix-navigation-menu-viewport-width)" />
+    </NavigationMenu.Root>
+  );
+}
+```
+
+The `import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'` style works too.
+
+## Animation
+
+- **Viewport** fades in and scales up from 0.95 over 600ms with a strong ease-out, dropping from its top edge. It closes in 400ms, then unmounts.
+- Moving from one item to another, the Viewport's size follows the new content over 600ms instead of jumping: Animate UI animates `--radix-navigation-menu-viewport-width` and `--radix-navigation-menu-viewport-height`, so classes reading them resize smoothly.
+- **Content** displayed in the Viewport fades in over 600ms, sliding 16px in from the side of its trigger (Radix's `data-motion`). The previous content leaves at once. Without a Viewport, each Content scales and fades under its item like the Viewport does.
+- **Indicator** follows the active trigger with a spring (`spring.snappy`) and fades in and out.
+- Keyboard navigation between links and triggers moves focus only: nothing animates.
+- With `forceMount`, closed parts stay in the DOM: they play their exit, then are hidden (`visibility: hidden`).
+- Under reduced motion, everything only fades and sizes change at once.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Navigation Menu](https://www.radix-ui.com/primitives/docs/components/navigation-menu#api-reference). Animate UI adds the animation props below.
+
+### Root, Sub, List, Item, Trigger, Link
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/navigation-menu#api-reference) only. They are not animated.
+
+### Viewport
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/navigation-menu#viewport), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening and of the resizing between items.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/navigation-menu#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: 'transition.fade (600ms, ease-out); without a Viewport: transition.dropdown',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out) (without a Viewport)',
+    },
+  }}
+/>
+
+### Indicator
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/navigation-menu#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade-in. It moves with spring.snappy.',
+      type: 'Transition',
+      default: 'transition.fade (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

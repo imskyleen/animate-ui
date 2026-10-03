@@ -1,0 +1,80 @@
+---
+title: Tabs
+description: A component for toggling between related panels on the same page.
+---
+
+<ComponentPreview name="base-ui/tabs" />
+
+## Installation
+
+<Installation name="tabs" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Tabs } from '@animate-ui/react/primitives/base-ui/tabs';
+
+export function Settings() {
+  return (
+    <Tabs.Root defaultValue="account">
+      <Tabs.List>
+        <Tabs.Tab value="account">Account</Tabs.Tab>
+        <Tabs.Tab value="password">Password</Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="account">Make changes to your account.</Tabs.Panel>
+      <Tabs.Panel value="password">Change your password.</Tabs.Panel>
+    </Tabs.Root>
+  );
+}
+```
+
+## Animation
+
+- **The active tab's surface glides** to the new tab with `spring.snappy` (600ms, a hint of overshoot). The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
+- Clicking quickly through tabs retargets the glide smoothly.
+- **Keyboard changes are instant**: Base UI moves focus with the arrow keys and selects with Enter or Space (or on focus with `activateOnFocus`); the indicator and the panel change at once.
+- **The incoming panel fades in** over 600ms (`transition.fade`); the outgoing one leaves at once, so the two never overlap.
+- Nothing animates on page load.
+- With `keepMounted`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
+- Rendering Base UI's own `Tabs.Indicator` turns the gliding indicator off: yours is used instead.
+- Under reduced motion, the indicator jumps; panels still fade.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Tabs](https://base-ui.com/react/components/tabs#api-reference). Animate UI adds the animation props below.
+
+### Root, Tab, Indicator
+
+[Base UI props](https://base-ui.com/react/components/tabs#root) only.
+
+### List
+
+[Base UI props](https://base-ui.com/react/components/tabs#list), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the indicator gliding to the active tab (pointer changes).',
+      type: 'Transition',
+      default: 'spring.snappy (600ms, bounce 0.15)',
+    },
+  }}
+/>
+
+### Panel
+
+[Base UI props](https://base-ui.com/react/components/tabs#panel), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the incoming panel fading in.',
+      type: 'Transition',
+      default: 'transition.fade (600ms, ease-out)',
+    },
+  }}
+/>
+
+The Panel renders through Base UI's `render` prop: a `render` of your own replaces the animated element.

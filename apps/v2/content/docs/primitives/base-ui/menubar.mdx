@@ -1,0 +1,68 @@
+---
+title: Menubar
+description: A menu bar providing commands and options for your application.
+---
+
+<ComponentPreview name="base-ui/menubar" />
+
+## Installation
+
+<Installation name="menubar" />
+
+## Usage
+
+Import `Menubar` and `Menu` from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Menu } from '@animate-ui/react/primitives/base-ui/menu';
+import { Menubar } from '@animate-ui/react/primitives/base-ui/menubar';
+
+export function EditorMenubar() {
+  return (
+    <Menubar>
+      <Menu.Root>
+        <Menu.Trigger>File</Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Positioner sideOffset={8}>
+            <Menu.Popup>
+              <Menu.Item>New file</Menu.Item>
+              <Menu.Item>Save</Menu.Item>
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
+      </Menu.Root>
+      <Menu.Root>
+        <Menu.Trigger>Edit</Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Positioner sideOffset={8}>
+            <Menu.Popup>
+              <Menu.Item>Undo</Menu.Item>
+              <Menu.Item>Redo</Menu.Item>
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
+      </Menu.Root>
+    </Menubar>
+  );
+}
+```
+
+`Menubar` itself is Base UI's, re-exported as is: each menu is an animated [Menu](/docs/primitives/base-ui/dropdown-menu).
+
+## Animation
+
+- Opening the bar scales and fades the menu in over 600ms from its trigger; closing it takes 400ms.
+- Moving from one open menu to another (hovering a trigger or pressing the arrow keys) is instant both ways, like a native menubar: Base UI marks those changes as `instant`, and the Popup follows it.
+- Everything else works like the [Menu](/docs/primitives/base-ui/dropdown-menu): submenus, item indicators, focus and reduced motion.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Menubar](https://base-ui.com/react/components/menubar#api-reference) and [Menu](https://base-ui.com/react/components/menu#api-reference).
+
+### Menubar
+
+[Base UI props](https://base-ui.com/react/components/menubar#api-reference) only. It is not animated.
+
+### Menu parts
+
+See the [Menu](/docs/primitives/base-ui/dropdown-menu#api-reference) page: `Popup`, `CheckboxItemIndicator` and `RadioItemIndicator` take `transition` and `exitTransition`.

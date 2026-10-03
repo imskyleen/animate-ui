@@ -1,0 +1,92 @@
+---
+title: Alert Dialog
+description: A dialog that requires a user response to proceed.
+---
+
+<ComponentPreview name="base-ui/alert-dialog" />
+
+## Installation
+
+<Installation name="alert-dialog" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same, types included.
+
+```tsx
+import { AlertDialog } from '@animate-ui/react/primitives/base-ui/alert-dialog';
+
+export function DeleteProject() {
+  return (
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>Delete project</AlertDialog.Trigger>
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Popup>
+          <AlertDialog.Title>Delete this project?</AlertDialog.Title>
+          <AlertDialog.Description>
+            This action cannot be undone.
+          </AlertDialog.Description>
+          <AlertDialog.Close>Cancel</AlertDialog.Close>
+        </AlertDialog.Popup>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+}
+```
+
+## Animation
+
+- **Backdrop** fades in over 600ms with a strong ease-out, and out in 400ms.
+- **Popup** fades in and scales up from 0.95 over 600ms, around its center. It closes in 400ms, then unmounts.
+- The Portal keeps Base UI's portal mounted and the popup visible until the exit is over; clicks go through to the page as soon as it closes.
+- Reopening while it closes picks up from where it is.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM: it plays its exit, then Base UI hides it.
+- Your own `render` element (or function) on the Backdrop or the Popup is made animatable rather than replaced.
+- Under reduced motion, the popup fades without scaling.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Alert Dialog](https://base-ui.com/react/components/alert-dialog#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Viewport, Title, Description, Close
+
+[Base UI props](https://base-ui.com/react/components/alert-dialog#root) only. They are not animated.
+
+### Backdrop
+
+[Base UI props](https://base-ui.com/react/components/alert-dialog#backdrop), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade in.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/alert-dialog#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>

@@ -2,3 +2,22 @@
 // Everything from 'radix-ui', with Animate UI's animated primitives.
 export * from 'radix-ui';
 export { Accordion } from './accordion';
+export { AlertDialog } from './alert-dialog';
+export { Checkbox } from './checkbox';
+export { Collapsible } from './collapsible';
+export { ContextMenu } from './context-menu';
+export { Dialog } from './dialog';
+export { DropdownMenu } from './dropdown-menu';
+export { HoverCard } from './hover-card';
+export { Menubar } from './menubar';
+export { NavigationMenu } from './navigation-menu';
+export { Popover } from './popover';
+export { Progress } from './progress';
+export { RadioGroup } from './radio-group';
+export { Select } from './select';
+export { Slider } from './slider';
+export { Switch } from './switch';
+export { Tabs } from './tabs';
+export { Toggle } from './toggle';
+export { ToggleGroup } from './toggle-group';
+export { Tooltip } from './tooltip';

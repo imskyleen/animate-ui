@@ -20,10 +20,8 @@ export type Primitive = {
   exports?: string[];
 };
 
-/** Primitives Animate UI animates. Grows as primitives ship. */
-export const PRIMITIVES: Primitive[] = [
-  { library: 'radix-ui', name: 'accordion' },
-];
+/** Primitives Animate UI animates: one file each in src/primitives. */
+export const PRIMITIVES: Primitive[] = ALL;
 
 export const PACKAGE = '@animate-ui/react';
 

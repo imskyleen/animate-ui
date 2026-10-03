@@ -24,6 +24,10 @@ export type TransformResult = {
 type Edit = { start: number; end: number; text: string };
 
 // Calls whose string arguments are class lists.
+
+// Class mergers: an emptied argument can simply go.
+const MERGE_FUNCTIONS = new Set(['cn', 'clsx', 'cx', 'twMerge', 'twJoin']);
+
 const CLASS_FUNCTIONS = new Set([
   'cn',
   'clsx',
@@ -135,11 +139,11 @@ export function transform(code: string): TransformResult {
       for (const specifier of node.specifiers) {
         if (specifier.type !== 'ImportSpecifier') continue;
         const name = specifierName(specifier);
-        const primitive = findPrimitive('radix-ui', toKebab(name));
+        const primitive = findPrimitive(umbrella, toKebab(name));
         if (!primitive) {
           kept.push(specifier);
           if (!NOT_ANIMATED.has(toKebab(name)))
-            unsupported.push(`radix-ui ${name}`);
+            unsupported.push(`${source} ${name}`);
           continue;
         }
         const to = primitiveModule(primitive);
@@ -194,7 +198,11 @@ export function transform(code: string): TransformResult {
   if (swapped.length > 0) {
     const extra = swapped.flatMap((primitive) => primitive.strip ?? []);
 
+    // Strings already removed whole (emptied class-merger arguments).
+    const handled = new Set<t.Node>();
+
     const visitString = (node: t.StringLiteral | t.TemplateElement) => {
+      if (handled.has(node)) return;
       const value = node.type === 'StringLiteral' ? node.value : node.value.raw;
       const result = stripClasses(value, extra);
       if (result.removed.length === 0) return;
@@ -241,6 +249,45 @@ export function transform(code: string): TransformResult {
         CLASS_FUNCTIONS.has(n.callee.name)
       ) {
         childInClasses = true;
+        // A class-list argument left empty is dropped with its comma, so
+        // `cn("animate-in", className)` becomes `cn(className)`. cva/tv keep
+        // their (base classes) first argument.
+        if (MERGE_FUNCTIONS.has(n.callee.name)) {
+          const args = n.arguments;
+          const emptied = new Set<number>();
+          args.forEach((arg, i) => {
+            if (arg.type !== 'StringLiteral' || !arg.value.trim()) return;
+            if (stripClasses(arg.value, extra).value.trim() === '')
+              emptied.add(i);
+          });
+          if (emptied.size > 0 && emptied.size < args.length) {
+            const lastKept = Math.max(
+              ...args.map((_, i) => (emptied.has(i) ? -1 : i)),
+            );
+            args.forEach((arg, i) => {
+              if (!emptied.has(i)) return;
+              removedClasses.push(
+                ...stripClasses((arg as t.StringLiteral).value, extra).removed,
+              );
+              handled.add(arg);
+              // Before a kept argument: remove it up to the next one. After
+              // the last kept one: remove the whole trailing run at once.
+              if (i < lastKept) {
+                edits.push({
+                  start: arg.start!,
+                  end: args[i + 1]!.start!,
+                  text: '',
+                });
+              } else if (i === lastKept + 1) {
+                edits.push({
+                  start: args[lastKept]!.end!,
+                  end: args[args.length - 1]!.end!,
+                  text: '',
+                });
+              }
+            });
+          }
+        }
       }
 
       for (const key of Object.keys(n)) {

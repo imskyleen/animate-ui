@@ -1,0 +1,74 @@
+---
+title: Popover
+description: An accessible popup anchored to a button.
+---
+
+<ComponentPreview name="base-ui/popover" />
+
+## Installation
+
+<Installation name="popover" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Popover } from '@animate-ui/react/primitives/base-ui/popover';
+
+export function SharePopover() {
+  return (
+    <Popover.Root>
+      <Popover.Trigger>Share</Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Positioner sideOffset={4}>
+          <Popover.Popup>
+            <Popover.Title>Share this document</Popover.Title>
+            <Popover.Description>
+              Anyone with the link can view it.
+            </Popover.Description>
+            <Popover.Close>Done</Popover.Close>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}
+```
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, then unmounts.
+- The Portal keeps Base UI's portal mounted while the popup exits; Base UI waits for the exit before it hides the positioner, and `onOpenChangeComplete` fires once it's over.
+- Reopening while it closes picks up from where it is.
+- Opening from the keyboard animates the same way.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM: it fades out, then is hidden.
+- Your own `render` element (or function) on the Popup is made animatable rather than replaced.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Popover](https://base-ui.com/react/components/popover#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Positioner, Arrow, Backdrop, Title, Description, Close, Viewport
+
+[Base UI props](https://base-ui.com/react/components/popover#root) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/popover#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

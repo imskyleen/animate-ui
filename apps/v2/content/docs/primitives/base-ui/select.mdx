@@ -1,0 +1,104 @@
+---
+title: Select
+description: A common form component for choosing a predefined value in a dropdown menu.
+---
+
+<ComponentPreview name="base-ui/select" />
+
+## Installation
+
+<Installation name="select" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Select } from '@animate-ui/react/primitives/base-ui/select';
+
+const fonts = [
+  { label: 'Inter', value: 'inter' },
+  { label: 'Geist', value: 'geist' },
+];
+
+export function FontPicker() {
+  return (
+    <Select.Root items={fonts} defaultValue="geist">
+      <Select.Trigger aria-label="Font">
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner alignItemWithTrigger={false} sideOffset={4}>
+          <Select.Popup>
+            <Select.List>
+              {fonts.map((font) => (
+                <Select.Item key={font.value} value={font.value}>
+                  <Select.ItemText>{font.label}</Select.ItemText>
+                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                </Select.Item>
+              ))}
+            </Select.List>
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+}
+```
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, then Base UI unmounts it (or hides it, when it keeps the items mounted for typeahead on the closed trigger).
+- With `alignItemWithTrigger` (Base UI's default, and what shadcn/ui's `SelectContent` uses), the list is laid over the trigger with the selected item on the value, like a native select: it only fades.
+- Reopening while the list is closing picks up from where it is.
+- **ItemIndicator**, with `multiple`, fades and scales in over 600ms when an item is selected and out in 400ms when it's deselected, while the list stays open. Checks of already selected items show at once when the list opens. With a single value, choosing an item closes the list, so the check is not animated.
+- The highlight moved by the arrow keys and typeahead is not animated: keyboard navigation stays instant.
+- Base UI's Select has no `keepMounted`: Animate UI passes an `actionsRef` to the Root and unmounts the popup when its exit is over. Your own `actionsRef` still works, and `onOpenChangeComplete` fires after the entrance and after the exit.
+- Under reduced motion, the popup and checks fade without scaling.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Select](https://base-ui.com/react/components/select#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Value, Icon, Portal, Backdrop, Positioner, List, Item, ItemText, Group, GroupLabel, Separator, ScrollUpArrow, ScrollDownArrow, Arrow, Label
+
+[Base UI props](https://base-ui.com/react/components/select#root) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/select#popup), except `render` (Animate UI renders the popup as a `motion.div`), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### ItemIndicator
+
+[Base UI props](https://base-ui.com/react/components/select#item-indicator), plus (used with `multiple`):
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the check appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the check leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

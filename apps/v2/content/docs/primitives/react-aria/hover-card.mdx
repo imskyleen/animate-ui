@@ -1,0 +1,61 @@
+---
+title: Hover Card
+description: A preview of the content behind a link, shown on hover. Built with React Aria's PreviewTrigger and Popover.
+---
+
+<ComponentPreview name="react-aria/hover-card" />
+
+## Installation
+
+<Installation name="hover-card" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`. Everything else stays the same.
+
+```tsx
+import {
+  Link,
+  Popover,
+  PreviewTrigger,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function ProfileLink() {
+  return (
+    <PreviewTrigger>
+      <Link href="https://github.com/imskyleen/animate-ui">@animate-ui</Link>
+      <Popover placement="bottom" offset={4}>
+        Animated drop-in primitives for Radix UI, Base UI and React Aria.
+      </Popover>
+    </PreviewTrigger>
+  );
+}
+```
+
+## Animation
+
+- **Popover** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the link (`--trigger-anchor-point`). It closes in 400ms, once the trigger's close delay is over, then unmounts.
+- Moving straight from one preview to the next during `PreviewTrigger`'s warmup swaps them without animation, as React Aria intends (`shouldSkipAnimation`).
+- React Aria only opens it on hover for pointer input, and after a delay on keyboard focus: nothing sticks on touch screens.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+`Popover` takes exactly the props of [React Aria's Popover](https://react-spectrum.adobe.com/react-aria/Popover.html#props), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+`PreviewTrigger` and `Link` take React Aria props only. They are not animated.

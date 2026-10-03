@@ -1,0 +1,72 @@
+---
+title: Switch
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<ComponentPreview name="base-ui/switch" />
+
+## Installation
+
+<Installation name="switch" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Switch } from '@animate-ui/react/primitives/base-ui/switch';
+
+export function AirplaneMode() {
+  return (
+    <label className="flex items-center gap-2">
+      <Switch.Root>
+        <Switch.Thumb />
+      </Switch.Root>
+      Airplane mode
+    </label>
+  );
+}
+```
+
+`Switch.Root.Props`, `Switch.Thumb.State` and the other type namespaces are kept.
+
+## Animation
+
+- **Thumb** glides to its new side. The thumb's `translate` classes still decide where it rests (`data-checked:translate-x-…`): on a change, Animate UI puts it back where it was with a `transform` and springs it to its new place (`spring.snappy`, 0.6s, bounce 0.15). Only `transform` animates, never its width or position, so the track's own transitions are untouched.
+- **Root** scales to 0.96 while pressed (150ms).
+- Toggling again mid-glide turns back from where the thumb is, without a jump.
+- Toggling with Space glides the same way: the state changes at once, the animation never delays it.
+- Under reduced motion, the thumb jumps to its side (no press feedback either).
+- shadcn/ui's `transition-transform` on the thumb tweened its `translate`; the CLI removes it (Animate UI also skips it while measuring, so a leftover class doesn't break the glide).
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Switch](https://base-ui.com/react/components/switch#api-reference). Animate UI adds the animation props below. A `render` element (or function) of your own gets Base UI's behaviour, without the animation.
+
+### Root
+
+[Base UI props](https://base-ui.com/react/components/switch#root), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>
+
+### Thumb
+
+[Base UI props](https://base-ui.com/react/components/switch#thumb), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the thumb gliding to its new side.',
+      type: 'Transition',
+      default: 'spring.snappy (0.6s, bounce 0.15)',
+    },
+  }}
+/>

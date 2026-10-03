@@ -1,0 +1,81 @@
+---
+title: Select
+description: Displays a list of options for the user to pick from, triggered by a button.
+---
+
+<ComponentPreview name="radix-ui/select" />
+
+## Installation
+
+<Installation name="select" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Select } from '@animate-ui/react/primitives/radix-ui/select';
+
+export function FontPicker() {
+  return (
+    <Select.Root defaultValue="geist">
+      <Select.Trigger aria-label="Font">
+        <Select.Value placeholder="Choose a font" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Content position="popper" sideOffset={4}>
+          <Select.Viewport>
+            <Select.Item value="inter">
+              <Select.ItemText>Inter</Select.ItemText>
+            </Select.Item>
+            <Select.Item value="geist">
+              <Select.ItemText>Geist</Select.ItemText>
+              <Select.ItemIndicator>✓</Select.ItemIndicator>
+            </Select.Item>
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
+  );
+}
+```
+
+The `import * as SelectPrimitive from '@radix-ui/react-select'` style works too.
+
+## Animation
+
+- **Content** with `position="popper"` fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--radix-select-content-transform-origin`). It closes in 400ms, then unmounts.
+- With `position="item-aligned"` (Radix's default), the list is laid over the trigger with the selected item lined up on the value, so it only fades: there is no side to grow from, and a scale would skew Radix's measurement.
+- Reopening while the list is closing picks up from where it is. A closing list is `inert`, so it can't be clicked through.
+- The highlight moved by the arrow keys, typeahead and the items themselves are not animated: keyboard navigation stays instant.
+- After the exit, the closed list goes back to Radix, which keeps the items mounted off-screen: the trigger keeps its label, typeahead on the closed trigger and native form submission still work.
+- With `forceMount` (on `Content` or `Portal`), the closed list stays mounted, transparent and `inert`. Like in Radix, a mounted list keeps the select modal.
+- Under reduced motion, the list fades without scaling.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Select](https://www.radix-ui.com/primitives/docs/components/select#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Value, Icon, Portal, Viewport, Item, ItemText, ItemIndicator, Group, Label, Separator, ScrollUpButton, ScrollDownButton, Arrow
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/select#root) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/select#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

@@ -1,0 +1,71 @@
+---
+title: Hover Card
+description: For sighted users to preview content available behind a link.
+---
+
+<ComponentPreview name="radix-ui/hover-card" />
+
+## Installation
+
+<Installation name="hover-card" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { HoverCard } from '@animate-ui/react/primitives/radix-ui/hover-card';
+
+export function ProfileLink() {
+  return (
+    <HoverCard.Root openDelay={500}>
+      <HoverCard.Trigger href="https://github.com/imskyleen/animate-ui">
+        @animate-ui
+      </HoverCard.Trigger>
+      <HoverCard.Portal>
+        <HoverCard.Content sideOffset={4}>
+          Animated drop-in primitives for Radix UI, Base UI and React Aria.
+          <HoverCard.Arrow />
+        </HoverCard.Content>
+      </HoverCard.Portal>
+    </HoverCard.Root>
+  );
+}
+```
+
+The `import * as HoverCardPrimitive from '@radix-ui/react-hover-card'` style works too.
+
+## Animation
+
+- **Content** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--radix-hover-card-content-transform-origin`). It closes in 400ms, once Radix's `closeDelay` is over, then unmounts.
+- Its `openDelay` already keeps a sweep across links calm, so every card plays its entrance.
+- Radix only opens it for mouse-like pointers: a tap on a touch screen follows the link, nothing sticks.
+- With `forceMount` (on the Content or the Portal), the closed content stays in the DOM: it fades out, then is hidden and `inert`.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Hover Card](https://www.radix-ui.com/primitives/docs/components/hover-card#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Arrow
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/hover-card#root) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/hover-card#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

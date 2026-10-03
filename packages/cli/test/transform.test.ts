@@ -65,17 +65,17 @@ export const C = () => <AccordionPrimitive.Content className="overflow-hidden da
 });
 
 test('splits a radix-ui import with primitives it does not animate', () => {
-  const input = `import { Accordion, Slot, Dialog as DialogPrimitive } from "radix-ui"\n`;
+  const input = `import { Accordion, Slot, Avatar as AvatarPrimitive } from "radix-ui"\n`;
   const result = transform(input);
   expect(result.code).toBe(
-    `import { Slot, Dialog as DialogPrimitive } from "radix-ui"\nimport { Accordion } from "${ACCORDION}"\n`,
+    `import { Slot, Avatar as AvatarPrimitive } from "radix-ui"\nimport { Accordion } from "${ACCORDION}"\n`,
   );
-  // Slot has nothing to animate; Dialog just isn't supported yet.
-  expect(result.unsupported).toEqual(['radix-ui Dialog']);
+  // Slot has nothing to animate; Avatar isn't animated yet.
+  expect(result.unsupported).toEqual(['radix-ui Avatar']);
 });
 
 test('leaves files without a supported primitive alone, classes included', () => {
-  const input = `import { Dialog } from "radix-ui"
+  const input = `import { Avatar } from "radix-ui"
 export const C = () => <div className="data-[state=open]:animate-in fade-in-0" />
 `;
   const result = transform(input);
@@ -118,4 +118,22 @@ describe('stripClasses', () => {
       ]).value,
     ).toBe('pb-4');
   });
+});
+
+test('drops class-merger arguments left empty', () => {
+  const input = `import { Accordion } from "radix-ui"
+export const A = () => <div className={cn("data-open:animate-in", className)} />
+export const B = () => <div className={cn(
+  "px-2",
+  "data-open:fade-in-0 data-closed:fade-out-0",
+  "zoom-in-95"
+)} />
+export const C = () => <div className={cva("animate-in", { variants: {} })} />
+`;
+  const { code } = transform(input);
+  expect(code).toContain('className={cn(className)}');
+  expect(code).toContain('className={cn(\n  "px-2"\n)}');
+  // cva keeps its base argument.
+  expect(code).toContain('cva("", { variants: {} })');
+  expect(transform(code).code).toBe(code);
 });

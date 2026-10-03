@@ -38,7 +38,7 @@ for (const style of STYLES) {
   const css = readFileSync(path.join(dir, `style-${style}.css`), 'utf8');
   const rules = new Map<string, string>();
   for (const [, name, classes] of css.matchAll(
-    /\.(cn-[\w-]+)\s*\{\s*@apply\s+([^;]+);/g,
+    /\.(cn-[\w-]+)\s*\{\s*@apply\s+([^;}]+)/g,
   ))
     rules.set(name!, classes!.trim());
 

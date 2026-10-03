@@ -1,0 +1,98 @@
+---
+title: Combobox
+description: A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+---
+
+<ComponentPreview name="react-aria/combobox" />
+
+## Installation
+
+<Installation name="combobox" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`, `TagList` and `Tag`. Everything else stays the same.
+
+```tsx
+import {
+  ComboBox,
+  Input,
+  ListBox,
+  ListBoxItem,
+  Popover,
+} from '@animate-ui/react/primitives/react-aria';
+
+const frameworks = [
+  { id: 'next', name: 'Next.js' },
+  { id: 'astro', name: 'Astro' },
+  { id: 'sveltekit', name: 'SvelteKit' },
+];
+
+export function FrameworkPicker() {
+  return (
+    <ComboBox aria-label="Framework" defaultItems={frameworks}>
+      <Input placeholder="Search a framework…" />
+      <Popover placement="bottom start" offset={6}>
+        <ListBox>
+          {(item: (typeof frameworks)[number]) => (
+            <ListBoxItem id={item.id}>{item.name}</ListBoxItem>
+          )}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+}
+```
+
+### Multiple selection
+
+<ComponentPreview name="react-aria/combobox-multiple" />
+
+## Animation
+
+- **Popover**: the list fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the input (`--trigger-anchor-point`). It closes in 400ms, then unmounts. Reopening while it closes picks up from where it is. This is Animate UI's [Popover](/docs/primitives/react-aria/popover).
+- Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation. The focused item moved by the arrow keys is instant too.
+- **Tag** (shadcn/ui's chips): a tag added to the selection fades and scales in over 600ms. Tags already in the list when it mounts don't animate. Removing a tag is instant: React Aria drops it from the collection at once, and it's often Backspace.
+- **ListBox** and **ListBoxItem** are not animated. shadcn/ui renders the selected check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
+- Under reduced motion, the list and new tags only fade.
+
+## API Reference
+
+`ComboBox`, `Input`, `ListBox`, `ListBoxItem`, `TagGroup` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/ComboBox.html#props) only. They are not animated.
+
+### Popover
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Popover.html#props), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### TagList
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/TagGroup.html#taglist) only. It tells its tags which were there on mount.
+
+### Tag
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/TagGroup.html#tag), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of a tag being added.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+  }}
+/>

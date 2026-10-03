@@ -1,0 +1,94 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content and expects a response.
+---
+
+<ComponentPreview name="radix-ui/alert-dialog" />
+
+## Installation
+
+<Installation name="alert-dialog" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { AlertDialog } from '@animate-ui/react/primitives/radix-ui/alert-dialog';
+
+export function DeleteProject() {
+  return (
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>Delete project</AlertDialog.Trigger>
+      <AlertDialog.Portal>
+        <AlertDialog.Overlay />
+        <AlertDialog.Content>
+          <AlertDialog.Title>Delete this project?</AlertDialog.Title>
+          <AlertDialog.Description>
+            This action cannot be undone.
+          </AlertDialog.Description>
+          <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+          <AlertDialog.Action>Delete</AlertDialog.Action>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+}
+```
+
+The `import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'` style works too.
+
+## Animation
+
+- **Overlay** fades in over 600ms with a strong ease-out, and out in 400ms.
+- **Content** fades in and scales up from 0.95 over 600ms, around its center. It closes in 400ms, then unmounts.
+- Radix keeps the Overlay and the Content mounted while they exit; Cancel is focused as soon as it opens, and focus returns to the trigger once the exit is over.
+- Reopening while it closes picks up from where it is.
+- With `forceMount`, the closed alert dialog stays in the DOM: it plays its exit, then is hidden and `inert`.
+- Under reduced motion, the content fades without scaling.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Alert Dialog](https://www.radix-ui.com/primitives/docs/components/alert-dialog#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Title, Description, Action, Cancel
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/alert-dialog#root) only. They are not animated.
+
+### Overlay
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/alert-dialog#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade in.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/alert-dialog#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>

@@ -1,0 +1,54 @@
+---
+title: Context Menu
+description: Displays a menu at the pointer, triggered by a right click.
+---
+
+<ComponentPreview name="react-aria/context-menu" />
+
+## Installation
+
+<Installation name="context-menu" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`. Everything else stays the same.
+
+```tsx
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function CanvasMenu() {
+  return (
+    <MenuTrigger trigger="contextMenu">
+      <Button>Right click here</Button>
+      <Popover placement="bottom start">
+        <Menu>
+          <MenuItem>Undo</MenuItem>
+          <MenuItem>Duplicate</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+## Animation
+
+React Aria's menus open in a `Popover`, so they get the [animated Popover](/docs/primitives/react-aria/popover):
+
+- The menu fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the pointer (`--trigger-anchor-point`). It closes in 400ms, then unmounts.
+- Submenus (`SubmenuTrigger`) open in a Popover too: they fade in 400ms, without scaling.
+- `Menu` and `MenuItem` are React Aria's, untouched: moving the highlight with the arrow keys is never animated, and focus moves on the same frame.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+`Popover` takes exactly the props of [React Aria's Popover](https://react-spectrum.adobe.com/react-aria/Popover.html#props), plus `transition` and `exitTransition` (see the [Popover](/docs/primitives/react-aria/popover#api-reference) page).
+
+`MenuTrigger`, `Menu`, `MenuItem`, `MenuSection`, `SubmenuTrigger` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#props) only. They are not animated.

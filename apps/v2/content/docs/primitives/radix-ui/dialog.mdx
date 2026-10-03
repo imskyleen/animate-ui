@@ -1,0 +1,104 @@
+---
+title: Dialog
+description: A window overlaid on the page, rendering the content underneath inert. Also the primitive under shadcn/ui's Sheet.
+---
+
+<ComponentPreview name="radix-ui/dialog" />
+
+## Installation
+
+<Installation name="dialog" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Dialog } from '@animate-ui/react/primitives/radix-ui/dialog';
+
+export function EditProfile() {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>Edit profile</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Content>
+          <Dialog.Title>Edit profile</Dialog.Title>
+          <Dialog.Description>
+            Make changes to your profile here.
+          </Dialog.Description>
+          <Dialog.Close>Save</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+```
+
+The `import * as DialogPrimitive from '@radix-ui/react-dialog'` style works too.
+
+## Sheet
+
+shadcn/ui's Sheet is the same primitive: its content carries `data-side`, and the Dialog then slides it in from that edge instead of scaling it. Add it with `shadcn add sheet`, then animate it with `animate-ui animate sheet`.
+
+<ComponentPreview name="radix-ui/dialog-sheet" />
+
+## Animation
+
+- **Overlay** fades in over 600ms with a strong ease-out, and out in 400ms.
+- **Content** fades in and scales up from 0.95 over 600ms, around its center: modals don't grow from their trigger. It closes in 400ms, then unmounts.
+- With `data-side="top" | "right" | "bottom" | "left"`, the content slides in from that edge (a full size of its own, without fading) over 600ms on the drawer curve, and slides back out in 400ms.
+- Radix keeps the Overlay and the Content mounted while they exit. Clicks go through to the page as soon as the dialog closes, and focus returns to the trigger once the exit is over.
+- Reopening while it closes picks up from where it is.
+- Opening from the keyboard animates the same way; focus moves into the dialog at once.
+- With `forceMount` (on the Portal, Overlay or Content), the closed dialog stays in the DOM: it plays its exit, then is hidden and `inert`.
+- A Content rendered without a Portal animates on its own, and `asChild` makes your element the animated one.
+- Under reduced motion, the content fades without scaling or sliding.
+
+## API Reference
+
+Every part takes exactly the props of [Radix UI's Dialog](https://www.radix-ui.com/primitives/docs/components/dialog#api-reference). Animate UI adds the animation props below.
+
+### Root, Trigger, Portal, Title, Description, Close
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/dialog#root) only. They are not animated.
+
+### Overlay
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/dialog#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade in.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/dialog#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default:
+        'transition.modal (600ms, ease-out); with data-side: transition.drawer (600ms, drawer curve)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default:
+        'transition.modalExit (400ms, ease-out); with data-side: transition.drawerExit (400ms)',
+    },
+  }}
+/>

@@ -1,0 +1,95 @@
+---
+title: Dropdown Menu
+description: "A list of actions in a dropdown, enhanced with keyboard navigation. Built on Base UI's Menu."
+---
+
+<ComponentPreview name="base-ui/dropdown-menu" />
+
+## Installation
+
+<Installation name="dropdown-menu" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { Menu } from '@animate-ui/react/primitives/base-ui/menu';
+
+export function AccountMenu() {
+  return (
+    <Menu.Root>
+      <Menu.Trigger>Account</Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner sideOffset={4}>
+          <Menu.Popup>
+            <Menu.Item>Profile</Menu.Item>
+            <Menu.Item>Billing</Menu.Item>
+            <Menu.Separator />
+            <Menu.Item>Log out</Menu.Item>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
+  );
+}
+```
+
+shadcn/ui's Dropdown Menu is built on it.
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`, set inline so it works without styles). It closes in 400ms.
+- Submenu popups grow from the side of their trigger, in 400ms both ways: submenus open often.
+- Base UI keeps the popup mounted after it closes, and Animate UI unmounts it once the exit has played (`onOpenChangeComplete` fires then).
+- Moving the highlight with the arrow keys is never animated: items keep their own CSS highlight, which changes on the same frame.
+- When the menu closes with focus inside, focus goes back to the trigger at once instead of after the exit, and the leaving popup ignores the pointer.
+- **CheckboxItemIndicator** and **RadioItemIndicator** fade in over 600ms when an item gets checked. Items already checked when the menu opens show at once.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM and Base UI hides it after the exit.
+- Under reduced motion, everything only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Menu](https://base-ui.com/react/components/menu#api-reference). Animate UI adds the animation props below. The Popup's `render` prop is used by the animation.
+
+### Root, SubmenuRoot, Trigger, Portal, Positioner, Item, LinkItem, Group, GroupLabel, CheckboxItem, RadioGroup, RadioItem, SubmenuTrigger, Separator, Arrow, Backdrop, Viewport
+
+[Base UI props](https://base-ui.com/react/components/menu#api-reference) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/menu#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### CheckboxItemIndicator, RadioItemIndicator
+
+[Base UI props](https://base-ui.com/react/components/menu#checkbox-item-indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade-in when the item gets checked.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

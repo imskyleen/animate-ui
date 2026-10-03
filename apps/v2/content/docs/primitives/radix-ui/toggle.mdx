@@ -1,0 +1,52 @@
+---
+title: Toggle
+description: A two-state button that can be either on or off.
+---
+
+<ComponentPreview name="radix-ui/toggle" />
+
+## Installation
+
+<Installation name="toggle" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
+
+```tsx
+import { Toggle } from '@animate-ui/react/primitives/radix-ui/toggle';
+
+export function BoldToggle() {
+  return (
+    <Toggle.Root aria-label="Toggle bold">
+      <BoldIcon />
+    </Toggle.Root>
+  );
+}
+```
+
+The `import * as TogglePrimitive from '@radix-ui/react-toggle'` style works too.
+
+## Animation
+
+- Pressing it scales it to 0.96 (150ms, strong ease-out), and back on release. That's the only motion: the on/off colours stay your CSS.
+- The state changes on the click (or Space / Enter) itself: the animation never delays it.
+- Under reduced motion, there is no press scale.
+
+## API Reference
+
+`Root` takes exactly the props of [Radix UI's Toggle](https://www.radix-ui.com/primitives/docs/components/toggle#api-reference), plus the props below. With `asChild`, a part renders your element with Radix's behaviour, without the animation.
+
+### Root
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/toggle#root), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>

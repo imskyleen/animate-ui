@@ -1,0 +1,73 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content and expects a response.
+---
+
+<ComponentPreview name="react-aria/alert-dialog" />
+
+## Installation
+
+<Installation name="alert-dialog" />
+
+## Usage
+
+React Aria builds an alert dialog from a `Dialog` with `role="alertdialog"` inside a `Modal`. Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with animated `Modal` and `ModalOverlay`.
+
+```tsx
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Heading,
+  Modal,
+  ModalOverlay,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function DeleteProject() {
+  return (
+    <DialogTrigger>
+      <Button>Delete project</Button>
+      <ModalOverlay>
+        <Modal>
+          <Dialog role="alertdialog">
+            <Heading slot="title">Delete this project?</Heading>
+            <p>This action cannot be undone.</p>
+            <Button slot="close">Cancel</Button>
+            <Button slot="close">Delete</Button>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
+}
+```
+
+## Animation
+
+- **ModalOverlay** fades in over 600ms with a strong ease-out, and out in 400ms.
+- **Modal** fades in and scales up from 0.95 over 600ms, around its center. It closes in 400ms, then unmounts.
+- Animate UI passes `isExiting` while the exit plays, so React Aria keeps the modal mounted, `data-exiting` stays accurate, and focus returns to the trigger.
+- Without `isDismissable`, an outside click doesn't close it; Escape does, unless `isKeyboardDismissDisabled`.
+- Reopening while it closes picks up from where it is.
+- Under reduced motion, the modal fades without scaling.
+
+## API Reference
+
+`Modal` and `ModalOverlay` take exactly the props of [React Aria's Modal](https://react-spectrum.adobe.com/react-aria/Modal.html#props), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening (fade in, for ModalOverlay).',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing (fade out, for ModalOverlay).',
+      type: 'Transition',
+      default: 'transition.modalExit (400ms, ease-out)',
+    },
+  }}
+/>
+
+`DialogTrigger`, `Dialog`, `Heading` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Dialog.html#props) only. They are not animated.

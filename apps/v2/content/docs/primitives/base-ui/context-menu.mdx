@@ -1,0 +1,93 @@
+---
+title: Context Menu
+description: A menu that appears at the pointer on right click or long press.
+---
+
+<ComponentPreview name="base-ui/context-menu" />
+
+## Installation
+
+<Installation name="context-menu" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same.
+
+```tsx
+import { ContextMenu } from '@animate-ui/react/primitives/base-ui/context-menu';
+
+export function CanvasMenu() {
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger>Right click here</ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <ContextMenu.Positioner>
+          <ContextMenu.Popup>
+            <ContextMenu.Item>Undo</ContextMenu.Item>
+            <ContextMenu.Item>Duplicate</ContextMenu.Item>
+            <ContextMenu.Separator />
+            <ContextMenu.Item>Delete</ContextMenu.Item>
+          </ContextMenu.Popup>
+        </ContextMenu.Positioner>
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
+}
+```
+
+## Animation
+
+- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the pointer (`--transform-origin`). It closes in 400ms.
+- Submenu popups grow from the side of their trigger, in 400ms both ways.
+- Base UI keeps the popup mounted after it closes, and Animate UI unmounts it once the exit has played (`onOpenChangeComplete` fires then).
+- Moving the highlight with the arrow keys is never animated: items keep their own CSS highlight, which changes on the same frame.
+- When the menu closes with focus inside, focus goes back to where it was before the menu opened at once instead of after the exit, and the leaving popup ignores the pointer.
+- **CheckboxItemIndicator** and **RadioItemIndicator** fade in over 600ms when an item gets checked. Items already checked when the menu opens show at once.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM and Base UI hides it after the exit.
+- Under reduced motion, everything only fades.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Context Menu](https://base-ui.com/react/components/context-menu#api-reference). Animate UI adds the animation props below. The Popup's `render` prop is used by the animation.
+
+### Root, Trigger, Portal, Positioner, Item, LinkItem, Group, GroupLabel, CheckboxItem, RadioGroup, RadioItem, SubmenuRoot, SubmenuTrigger, Separator, Arrow, Backdrop
+
+[Base UI props](https://base-ui.com/react/components/context-menu#api-reference) only. They are not animated.
+
+### Popup
+
+[Base UI props](https://base-ui.com/react/components/context-menu#popup), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+### CheckboxItemIndicator, RadioItemIndicator
+
+[Base UI props](https://base-ui.com/react/components/context-menu#checkbox-item-indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade-in when the item gets checked.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

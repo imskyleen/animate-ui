@@ -28,7 +28,7 @@ if (!dir || !base || !component) {
 const css = readFileSync(path.join(dir, 'style-nova.css'), 'utf8');
 const rules = new Map<string, string>();
 for (const [, name, classes] of css.matchAll(
-  /\.(cn-[\w-]+)\s*\{\s*@apply\s+([^;]+);/g,
+  /\.(cn-[\w-]+)\s*\{\s*@apply\s+([^;}]+)/g,
 ))
   rules.set(name!, classes!.trim());
 
@@ -68,7 +68,10 @@ code = code.replace(
     : '',
 );
 
-// 3. `animate-ui animate`, with the real CLI on a throwaway project.
+// 3. shadcn's registry paths become the project paths users have.
+code = code.replace(/@\/registry\/bases\/[\w-]+\/ui\//g, '@/components/ui/');
+
+// 4. `animate-ui animate`, with the real CLI on a throwaway project.
 if (!values.raw) {
   const project = mkdtempSync(path.join(tmpdir(), 'animate-ui-demo-'));
   writeFileSync(

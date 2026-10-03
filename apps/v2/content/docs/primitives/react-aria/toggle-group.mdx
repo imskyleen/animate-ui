@@ -1,0 +1,59 @@
+---
+title: Toggle Group
+description: A set of two-state buttons that can be toggled on or off.
+---
+
+<ComponentPreview name="react-aria/toggle-group" />
+
+## Installation
+
+<Installation name="toggle-group" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with the animated controls below. Everything else stays the same. shadcn/ui's Toggle Group is React Aria's `ToggleButtonGroup`, with `ToggleButton` items.
+
+```tsx
+import {
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function Formatting() {
+  return (
+    <ToggleButtonGroup selectionMode="multiple" aria-label="Text formatting">
+      <ToggleButton id="bold" aria-label="Bold">
+        <BoldIcon />
+      </ToggleButton>
+      <ToggleButton id="italic" aria-label="Italic">
+        <ItalicIcon />
+      </ToggleButton>
+      <ToggleButton id="underline" aria-label="Underline">
+        <UnderlineIcon />
+      </ToggleButton>
+    </ToggleButtonGroup>
+  );
+}
+```
+
+## Animation
+
+- **ToggleButton** (each item) scales to 0.96 while pressed (150ms, strong ease-out), with the pointer or the keyboard (React Aria's `isPressed`); the selection changes on the press itself.
+- **ToggleButtonGroup** has nothing to animate: it is React Aria's.
+- The arrow keys only move the focus between items: nothing animates.
+- The selected colours stay your CSS; there is no sliding highlight.
+- Under reduced motion, there is no press scale.
+
+## API Reference
+
+`ToggleButtonGroup` takes exactly the props of [React Aria's ToggleButtonGroup](https://react-spectrum.adobe.com/react-aria/ToggleButtonGroup.html#props). Its items are [ToggleButtons](/docs/primitives/react-aria/toggle), which take React Aria's props, plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>

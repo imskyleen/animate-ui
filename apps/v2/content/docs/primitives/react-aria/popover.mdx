@@ -1,0 +1,72 @@
+---
+title: Popover
+description: An overlay element positioned relative to a trigger.
+---
+
+<ComponentPreview name="react-aria/popover" />
+
+## Installation
+
+<Installation name="popover" />
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`. Everything else stays the same.
+
+```tsx
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Heading,
+  Popover,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function SharePopover() {
+  return (
+    <DialogTrigger>
+      <Button>Share</Button>
+      <Popover placement="bottom" offset={4}>
+        <Dialog>
+          <Heading slot="title">Share this document</Heading>
+          Anyone with the link can view it.
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
+  );
+}
+```
+
+`Popover` is the overlay under React Aria's `Select`, `ComboBox`, `MenuTrigger`, `SubmenuTrigger`, `DatePicker` and `PreviewTrigger` too: importing them from Animate UI animates every one of them.
+
+## Animation
+
+- **Popover** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--trigger-anchor-point`, or the side facing the trigger before React Aria measures it). It closes in 400ms, then unmounts.
+- Submenus open often: they fade in 400ms, without scaling.
+- React Aria only keeps a closing popover mounted if animations are running when it closes, before Motion starts any. Animate UI tracks the same open state React Aria reads (the trigger's, or `isOpen`/`defaultOpen`) and passes `isExiting` while the exit plays, so `data-exiting` and the `isExiting` render prop stay accurate.
+- Reopening while it closes picks up from where it is.
+- `shouldSkipAnimation` (set by `PreviewTrigger` when swapping previews during its warmup) skips both the entrance and the exit.
+- Opening from the keyboard animates the same way; the highlight moved by the arrow keys in a menu or a list is not animated.
+- `className` and `style` functions keep working, and your own `render` function is made animatable rather than replaced.
+- Under reduced motion, it only fades.
+
+## API Reference
+
+`Popover` takes exactly the props of [React Aria's Popover](https://react-spectrum.adobe.com/react-aria/Popover.html#props), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
+
+`DialogTrigger`, `Dialog`, `OverlayArrow` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Popover.html#props) only. They are not animated.

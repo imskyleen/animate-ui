@@ -1,0 +1,57 @@
+---
+title: Toggle Group
+description: A set of two-state buttons that can be toggled on or off.
+---
+
+<ComponentPreview name="base-ui/toggle-group" />
+
+## Installation
+
+<Installation name="toggle-group" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same. shadcn/ui's Toggle Group uses two Base UI modules, `toggle-group` and `toggle` (its items): import both from Animate UI.
+
+```tsx
+import { Toggle } from '@animate-ui/react/primitives/base-ui/toggle';
+import { ToggleGroup } from '@animate-ui/react/primitives/base-ui/toggle-group';
+
+export function Alignment() {
+  return (
+    <ToggleGroup defaultValue={['left']} aria-label="Text alignment">
+      <Toggle value="left" aria-label="Align left">
+        <AlignLeftIcon />
+      </Toggle>
+      <Toggle value="center" aria-label="Align center">
+        <AlignCenterIcon />
+      </Toggle>
+      <Toggle value="right" aria-label="Align right">
+        <AlignRightIcon />
+      </Toggle>
+    </ToggleGroup>
+  );
+}
+```
+
+## Animation
+
+- **Toggle** (each item) scales to 0.96 while pressed (150ms, strong ease-out); the selection changes on the click itself.
+- **ToggleGroup** has nothing to animate: it is Base UI's, re-exported so both imports come from one place.
+- The arrow keys only move the focus between items: nothing animates.
+- The selected colours stay your CSS; there is no sliding highlight.
+- Under reduced motion, there is no press scale.
+
+## API Reference
+
+`ToggleGroup` takes exactly the props of [Base UI's Toggle Group](https://base-ui.com/react/components/toggle-group#api-reference). Its items are [Toggles](/docs/primitives/base-ui/toggle), which take Base UI's props, plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>

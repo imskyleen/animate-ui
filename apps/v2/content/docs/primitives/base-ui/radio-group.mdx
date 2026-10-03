@@ -1,0 +1,89 @@
+---
+title: Radio Group
+description: A set of checkable buttons, known as radio buttons, where no more than one of the buttons can be checked at a time.
+---
+
+<ComponentPreview name="base-ui/radio-group" />
+
+## Installation
+
+<Installation name="radio-group" />
+
+## Usage
+
+Import the primitive from Animate UI instead of Base UI. Everything else stays the same. shadcn/ui's Radio Group uses two Base UI modules, `radio-group` and `radio`: import both from Animate UI.
+
+```tsx
+import { Radio } from '@animate-ui/react/primitives/base-ui/radio';
+import { RadioGroup } from '@animate-ui/react/primitives/base-ui/radio-group';
+
+export function Density() {
+  return (
+    <RadioGroup defaultValue="comfortable" aria-label="Density">
+      {['default', 'comfortable', 'compact'].map((value) => (
+        <label key={value} className="flex items-center gap-2">
+          <Radio.Root value={value}>
+            <Radio.Indicator>
+              <span className="size-2 rounded-full bg-current" />
+            </Radio.Indicator>
+          </Radio.Root>
+          {value}
+        </label>
+      ))}
+    </RadioGroup>
+  );
+}
+```
+
+`RadioGroup.Props`, `Radio.Root.Props` and the other type namespaces are kept.
+
+## Animation
+
+- **Radio.Indicator**: the dot inside scales in from half size and fades in over 600ms with a strong ease-out, while the previous one scales out in 400ms before its indicator unmounts. The indicator element never moves: its content animates (a transform on the indicator would shift shadcn/ui's absolutely centered dot by a pixel).
+- **Radio.Root** scales to 0.96 while pressed (150ms).
+- **RadioGroup** has nothing to animate: it tells its radios when a selection comes from the arrow keys.
+- Selecting with the arrow keys is keyboard navigation: the dots swap at once. Space, a click or a tap animate.
+- The dot selected on load renders at rest.
+- Under reduced motion, the dot only fades and nothing scales (no press feedback either).
+- With `keepMounted`, unchecked indicators stay in the DOM with their dot hidden.
+
+## API Reference
+
+Every part takes exactly the props of [Base UI's Radio](https://base-ui.com/react/components/radio#api-reference) and [Radio Group](https://base-ui.com/react/components/radio). Animate UI adds the animation props below. A `render` element (or function) of your own gets Base UI's behaviour, without the animation.
+
+### RadioGroup
+
+[Base UI props](https://base-ui.com/react/components/radio) only.
+
+### Radio.Root
+
+[Base UI props](https://base-ui.com/react/components/radio#root), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press feedback.',
+      type: 'Transition',
+      default: 'transition.press (150ms, ease-out)',
+    },
+  }}
+/>
+
+### Radio.Indicator
+
+[Base UI props](https://base-ui.com/react/components/radio#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the dot appearing.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the dot leaving.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>
