@@ -43,12 +43,27 @@ The `import * as AccordionPrimitive from '@radix-ui/react-accordion'` style work
 
 ## API Reference
 
-The API is exactly [Radix UI's Accordion](https://www.radix-ui.com/primitives/docs/components/accordion#api-reference): same parts, same props, same data attributes.
+Every part takes exactly the props of [Radix UI's Accordion](https://www.radix-ui.com/primitives/docs/components/accordion#api-reference). Animate UI adds the animation props below.
 
-| Part                | Animated           |
-| ------------------- | ------------------ |
-| `Accordion.Root`    | No                 |
-| `Accordion.Item`    | No                 |
-| `Accordion.Header`  | No                 |
-| `Accordion.Trigger` | No                 |
-| `Accordion.Content` | Height and opacity |
+### Root, Item, Header, Trigger
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/accordion#root) only. They are not animated.
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/accordion#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: 'transition.disclosure (600ms, ease-out)',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition.exit (400ms, ease-out)',
+    },
+  }}
+/>

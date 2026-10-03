@@ -21,11 +21,12 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "node scripts/generate-primitives.mts && tsdown",
     "dev": "tsdown --watch",
     "check-types": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "node scripts/generate-primitives.mts && vitest run",
+    "gen": "node scripts/generate-primitives.mts"
   },
   "publishConfig": {
     "access": "public"

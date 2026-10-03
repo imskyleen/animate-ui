@@ -1,25 +1,20 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
 import { notFound } from 'next/navigation';
 
-import { demos } from '@/demos';
-
-// Renders one demo alone, for Playwright.
+// Renders one demo (demos/<lib>/<name>.tsx) alone, for Playwright.
 export default async function DemoTestPage({
   params,
 }: PageProps<'/tests/demos/[lib]/[name]'>) {
   const { lib, name } = await params;
-  const Demo = demos[`${lib}/${name}`];
-  if (!Demo) notFound();
+  const file = path.join(process.cwd(), 'demos', lib, `${name}.tsx`);
+  if (!existsSync(file)) notFound();
+  const { default: Demo } = await import(`@/demos/${lib}/${name}`);
 
   return (
     <main className="flex min-h-screen items-center justify-center p-10">
       <Demo />
     </main>
   );
-}
-
-export function generateStaticParams() {
-  return Object.keys(demos).map((key) => {
-    const [lib, name] = key.split('/') as [string, string];
-    return { lib, name };
-  });
 }

@@ -4,6 +4,7 @@ import type * as t from '@babel/types';
 import { stripClasses } from './classes';
 import {
   findPrimitive,
+  findReactAriaPrimitive,
   primitiveModule,
   toKebab,
   type Library,
@@ -95,9 +96,40 @@ export function transform(code: string): TransformResult {
     const semi = raw.trimEnd().endsWith(';') ? ';' : '';
     const quote = code[node.source.start!];
 
-    // `import { Accordion as AccordionPrimitive } from "radix-ui"`: one
-    // namespace per primitive, possibly several per declaration.
-    if (source === 'radix-ui') {
+    // `import { Popover, Button } from "react-aria-components"`: the whole
+    // import moves to Animate UI's mirror, which re-exports everything.
+    if (source === 'react-aria-components') {
+      const names = node.specifiers.flatMap((specifier) =>
+        specifier.type === 'ImportSpecifier' ? [specifierName(specifier)] : [],
+      );
+      const animated = names.flatMap((name) => {
+        const primitive = findReactAriaPrimitive(name);
+        return primitive ? [{ name, primitive }] : [];
+      });
+      if (animated.length === 0) continue;
+      const to = primitiveModule(animated[0]!.primitive);
+      edits.push({
+        start: node.source.start!,
+        end: node.source.end!,
+        text: `${quote}${to}${quote}`,
+      });
+      for (const { name, primitive } of animated) {
+        imports.push({ from: source, to, name });
+        swapped.push(primitive);
+      }
+      continue;
+    }
+
+    // `import { Accordion as AccordionPrimitive } from "radix-ui"` (or
+    // `{ Combobox } from "@base-ui/react"`): one namespace per primitive,
+    // possibly several per declaration.
+    const umbrella: Library | undefined =
+      source === 'radix-ui'
+        ? 'radix-ui'
+        : source === '@base-ui/react'
+          ? 'base-ui'
+          : undefined;
+    if (umbrella) {
       const moved: string[] = [];
       const kept: t.ImportSpecifier[] = [];
       for (const specifier of node.specifiers) {
@@ -121,7 +153,7 @@ export function transform(code: string): TransformResult {
       const lines = [...moved];
       if (kept.length > 0) {
         lines.unshift(
-          `import { ${kept.map(printSpecifier).join(', ')} } from ${quote}radix-ui${quote}${semi}`,
+          `import { ${kept.map(printSpecifier).join(', ')} } from ${quote}${source}${quote}${semi}`,
         );
       }
       edits.push({

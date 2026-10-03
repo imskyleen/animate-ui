@@ -5,6 +5,7 @@
   "type": "module",
   "sideEffects": false,
   "devDependencies": {
+    "@base-ui/react": "^1.8.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@workspace/eslint-config": "workspace:*",
@@ -12,6 +13,7 @@
     "motion": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",
+    "react-aria-components": "^1.21.1",
     "react-dom": "catalog:",
     "tsdown": "^0.23.0",
     "typescript": "~6.0.3"
@@ -28,10 +30,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "node scripts/generate-barrels.mts && tsdown",
     "dev": "tsdown --watch",
     "check-types": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "gen": "node scripts/generate-barrels.mts"
   },
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
@@ -53,19 +56,17 @@
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      "./*": {
+        "types": "./dist/*/index.d.ts",
+        "default": "./dist/*/index.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "exports": {
-    "./icons": "./dist/icons/index.js",
-    "./primitives/radix-ui": "./dist/primitives/radix-ui/index.js",
-    "./primitives/radix-ui/accordion": "./dist/primitives/radix-ui/accordion/index.js",
-    "./primitives/slot": "./dist/primitives/slot/index.js",
-    "./provider": "./dist/provider/index.js",
-    "./utils/motion": "./dist/utils/motion/index.js",
-    "./utils/strict-context": "./dist/utils/strict-context/index.js",
-    "./utils/use-controlled-state": "./dist/utils/use-controlled-state/index.js",
-    "./utils/use-is-in-view": "./dist/utils/use-is-in-view/index.js",
-    "./utils/use-page-visible": "./dist/utils/use-page-visible/index.js",
+    "./*": "./src/*/index.tsx",
     "./package.json": "./package.json"
   }
 }

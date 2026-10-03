@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Accordion as AccordionPrimitive } from 'radix-ui';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
@@ -26,7 +26,16 @@ type AccordionMultipleProps = AccordionPrimitive.AccordionMultipleProps;
 type AccordionItemProps = AccordionPrimitive.AccordionItemProps;
 type AccordionHeaderProps = AccordionPrimitive.AccordionHeaderProps;
 type AccordionTriggerProps = AccordionPrimitive.AccordionTriggerProps;
-type AccordionContentProps = AccordionPrimitive.AccordionContentProps;
+type AccordionContentProps = AccordionPrimitive.AccordionContentProps &
+  ContentAnimationProps;
+
+/** Animate UI's additions to `Accordion.Content`. */
+type ContentAnimationProps = {
+  /** Transition of the opening. Defaults to `transition.disclosure` (600ms). */
+  transition?: Transition;
+  /** Transition of the closing. Defaults to `transition.exit` (400ms). */
+  exitTransition?: Transition;
+};
 
 function Root(props: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   const controlled = props.value !== undefined;
@@ -73,10 +82,15 @@ const expanded = { height: 'auto', opacity: 1 };
 function Content({
   forceMount,
   children,
+  transition,
+  exitTransition,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Content> &
+  ContentAnimationProps) {
   const { open } = useItemOpen();
-  const { transition } = useMotionTokens();
+  const tokens = useMotionTokens();
+  const enter = transition ?? tokens.transition.disclosure;
+  const exit = exitTransition ?? tokens.transition.exit;
 
   return (
     <AnimatePresence initial={false}>
@@ -90,10 +104,10 @@ function Content({
             // props of its last render, when it was still open.
             animate={
               open
-                ? { ...expanded, transition: transition.disclosure }
-                : { ...collapsed, transition: transition.exit }
+                ? { ...expanded, transition: enter }
+                : { ...collapsed, transition: exit }
             }
-            exit={{ ...collapsed, transition: transition.exit }}
+            exit={{ ...collapsed, transition: exit }}
             // A force-mounted closed item stays in the DOM: keep it out of
             // the tab order and the accessibility tree.
             inert={!open}

@@ -3,8 +3,6 @@ import path from 'node:path';
 
 import { ServerCodeBlock } from 'fumadocs-ui/components/codeblock.rsc';
 
-import { demos } from '@/demos';
-
 import { PreviewFrame } from './preview-frame';
 
 /**
@@ -12,8 +10,8 @@ import { PreviewFrame } from './preview-frame';
  * The code shown is the demo file itself.
  */
 export async function ComponentPreview({ name }: { name: string }) {
-  const Demo = demos[name];
-  if (!Demo) throw new Error(`Unknown demo "${name}" (see demos/index.ts).`);
+  // demos/<library>/<name>.tsx: discovered by path, no registry to update.
+  const { default: Demo } = await import(`@/demos/${name}`);
 
   const code = await readFile(
     path.join(process.cwd(), 'demos', `${name}.tsx`),

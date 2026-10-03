@@ -376,14 +376,10 @@ importers:
         version: 8.71.0(eslint@10.11.0(jiti@2.7.0))(typescript@5.9.3)
 
   packages/react:
-    dependencies:
+    devDependencies:
       '@base-ui/react':
         specifier: ^1.8.0
         version: 1.8.0(@types/react@19.3.0)(date-fns@4.4.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      react-aria-components:
-        specifier: ^1.21.0
-        version: 1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-    devDependencies:
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -405,6 +401,9 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.3.0
+      react-aria-components:
+        specifier: ^1.21.1
+        version: 1.21.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react-dom:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)

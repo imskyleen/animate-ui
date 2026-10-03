@@ -1,3 +1,5 @@
+import { PRIMITIVES as ALL } from '../primitives';
+
 /** Where shadcn/ui components import their primitives from. */
 export type Library = 'radix-ui' | 'base-ui' | 'react-aria';
 
@@ -11,6 +13,11 @@ export type Primitive = {
    * utilities every primitive drops).
    */
   strip?: RegExp[];
+  /**
+   * React Aria only: the `react-aria-components` exports this primitive
+   * animates. A file importing any of them switches to Animate UI's mirror.
+   */
+  exports?: string[];
 };
 
 /** Primitives Animate UI animates. Grows as primitives ship. */
@@ -21,7 +28,17 @@ export const PRIMITIVES: Primitive[] = [
 export const PACKAGE = '@animate-ui/react';
 
 export function primitiveModule(primitive: Primitive) {
+  // React Aria has one package: its mirror has one entry too.
+  if (primitive.library === 'react-aria')
+    return `${PACKAGE}/primitives/react-aria`;
   return `${PACKAGE}/primitives/${primitive.library}/${primitive.name}`;
+}
+
+/** The React Aria primitive that animates `exportName`, if any. */
+export function findReactAriaPrimitive(exportName: string) {
+  return PRIMITIVES.find(
+    (p) => p.library === 'react-aria' && p.exports?.includes(exportName),
+  );
 }
 
 export function findPrimitive(library: Library, name: string) {

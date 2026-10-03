@@ -1,22 +1,20 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
 import { notFound } from 'next/navigation';
 
-import { fixtures } from '@/tests/fixtures';
-
-// API compatibility fixtures, for Playwright.
+// API compatibility fixtures (tests/fixtures/<name>.tsx), for Playwright.
 export default async function FixtureTestPage({
   params,
 }: PageProps<'/tests/fixtures/[name]'>) {
   const { name } = await params;
-  const Fixture = fixtures[name];
-  if (!Fixture) notFound();
+  const file = path.join(process.cwd(), 'tests', 'fixtures', `${name}.tsx`);
+  if (!existsSync(file)) notFound();
+  const { default: Fixture } = await import(`@/tests/fixtures/${name}`);
 
   return (
     <main className="p-10">
       <Fixture />
     </main>
   );
-}
-
-export function generateStaticParams() {
-  return Object.keys(fixtures).map((name) => ({ name }));
 }

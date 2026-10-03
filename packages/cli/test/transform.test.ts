@@ -8,26 +8,36 @@ import { transform } from '../src/lib/transform';
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 const ACCORDION = '@animate-ui/react/primitives/radix-ui/accordion';
 
-describe('shadcn/ui radix accordion, every style', () => {
-  const dir = path.join(FIXTURES, 'radix-ui');
-  for (const file of readdirSync(dir).filter((f) =>
-    f.startsWith('accordion.'),
-  )) {
-    test(file, async () => {
-      const input = readFileSync(path.join(dir, file), 'utf8');
-      const result = transform(input);
+// Every fixture: real shadcn/ui output (test/fixtures/<library>/<component>.<style>.tsx).
+describe('shadcn/ui fixtures', () => {
+  for (const library of readdirSync(FIXTURES)) {
+    for (const file of readdirSync(path.join(FIXTURES, library))) {
+      test(`${library}/${file}`, async () => {
+        const input = readFileSync(path.join(FIXTURES, library, file), 'utf8');
+        const result = transform(input);
 
-      expect(result.code).toContain(
-        `import { Accordion as AccordionPrimitive } from "${ACCORDION}"`,
-      );
-      expect(result.code).not.toMatch(/from "radix-ui"/);
-      expect(result.code).not.toMatch(/animate-accordion-(up|down)/);
-      expect(result.removedClasses.length).toBeGreaterThan(0);
-      expect(result.unsupported).toEqual([]);
-      await expect(result.code).toMatchFileSnapshot(
-        path.join('__snapshots__', 'radix-ui', `${file}.out`),
-      );
-    });
+        expect(result.imports.length).toBeGreaterThan(0);
+        for (const change of result.imports)
+          expect(result.code).toContain(change.to);
+        // Idempotent: nothing left to swap or strip.
+        const again = transform(result.code);
+        expect(again.code).toBe(result.code);
+        await expect(result.code).toMatchFileSnapshot(
+          path.join('__snapshots__', library, `${file}.out`),
+        );
+      });
+    }
+  }
+});
+
+test('radix accordion: CSS keyframes are gone', () => {
+  for (const file of readdirSync(path.join(FIXTURES, 'radix-ui'))) {
+    if (!file.startsWith('accordion.')) continue;
+    const result = transform(
+      readFileSync(path.join(FIXTURES, 'radix-ui', file), 'utf8'),
+    );
+    expect(result.code).toContain(`from "${ACCORDION}"`);
+    expect(result.code).not.toMatch(/animate-accordion-(up|down)/);
   }
 });
 
