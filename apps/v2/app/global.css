@@ -6,6 +6,8 @@
 
 @import 'fumadocs-ui/css/black.css';
 @import 'fumadocs-ui/css/preset.css';
+/* shadcn/ui's variants (data-open:, data-checked:…), as in shadcn projects. */
+@import 'shadcn/tailwind.css';
 
 :root {
   --background: oklch(1 0 0);

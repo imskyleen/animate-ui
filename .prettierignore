@@ -1,0 +1,6 @@
+
+# shadcn/ui code shown as users get it (shadcn formatting)
+apps/v2/demos
+apps/v2/components/ui
+packages/cli/test/fixtures
+packages/cli/test/__snapshots__
