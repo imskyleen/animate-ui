@@ -50,6 +50,11 @@ const NOT_ANIMATED = new Set([
   'aspect-ratio',
   'use-render',
   'merge-props',
+  'button',
+  'input',
+  'field',
+  'fieldset',
+  'form',
 ]);
 
 /** `@radix-ui/react-alert-dialog` → `alert-dialog`. */
@@ -174,6 +179,9 @@ export function transform(code: string): TransformResult {
       ['base-ui', baseUiPackageName(source)],
       // shadcn/ui's Radix Drawer imports Vaul: its replacement has its API.
       ['radix-ui', source === 'vaul' ? 'drawer' : undefined],
+      // shadcn/ui's InputOTP (every base) imports input-otp: Animate UI's
+      // own input-otp is a drop-in replacement.
+      ['animate-ui', source === 'input-otp' ? 'input-otp' : undefined],
     ];
     for (const [library, name] of perPackage) {
       if (!name) continue;

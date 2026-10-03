@@ -192,9 +192,13 @@ describe('migrate all', () => {
   type IconProps,
 } from '@animate-ui/react/icons';`);
     // A v1 primitive v2 doesn't have stays the user's, on v2 utilities.
-    const highlight = read(`${V1}/primitives/effects/highlight.tsx`);
-    expect(highlight).toContain("from '@animate-ui/react/utils/motion';");
-    expect(highlight).not.toContain("from '@/lib/motion'");
+    const disclosure = read(`${V1}/primitives/headless/disclosure.tsx`);
+    expect(disclosure).not.toContain("from '@/lib/motion'");
+    // Animate UI's own primitives ship in v2 too: their v1 copies are
+    // replaced like the library wrappers, so they are left alone.
+    expect(read(`${V1}/primitives/effects/highlight.tsx`)).toContain(
+      "from '@/lib/motion'",
+    );
     // v1 files v2 replaces are left alone.
     expect(read(`${V1}/primitives/radix/accordion.tsx`)).toContain(
       "from '@/lib/motion'",
@@ -242,7 +246,7 @@ test('--dry-run writes nothing', () => {
   const before = snapshot(root);
   const { output } = run(['all'], { dryRun: true, delete: true });
   expect(snapshot(root)).toEqual(before);
-  expect(output).toContain('8 files would be migrated');
+  expect(output).toContain('7 files would be migrated');
   expect(output).toContain(
     'Would remove (v1 files @animate-ui/react replaces):',
   );

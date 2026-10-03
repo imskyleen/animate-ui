@@ -40,3 +40,6 @@ apps/v1/app/(playground)
 # Playwright
 apps/v1/tests/.results
 apps/v1/tests/.baseline
+
+# e2e work dir
+e2e/.work

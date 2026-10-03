@@ -61,10 +61,18 @@ function v1Exports(file: string) {
   return { values, types };
 }
 
-const v1Primitives = ['radix', 'base'].flatMap((library) =>
-  readdirSync(path.join(V1, 'primitives', library)).map(
-    (name) => `${library}/${name}`,
-  ),
+// Library wrappers, plus Animate UI's own primitives that v2 ships too.
+const v1Primitives = [
+  'radix',
+  'base',
+  'texts',
+  'effects',
+  'buttons',
+  'animate',
+].flatMap((library) =>
+  readdirSync(path.join(V1, 'primitives', library))
+    .map((name) => `${library}/${name}`)
+    .filter((id) => library !== 'animate' || id in PRIMITIVES),
 );
 
 const UTILITY_FILES: Record<string, string> = {

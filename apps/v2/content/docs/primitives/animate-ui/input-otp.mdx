@@ -1,0 +1,80 @@
+---
+title: Input OTP
+description: Accessible one-time password input where typed characters pop in and a pasted code staggers in. A drop-in replacement for input-otp, with the same API.
+---
+
+<ComponentPreview name="animate-ui/input-otp" />
+
+## Installation
+
+<Installation name="input-otp" />
+
+shadcn/ui's InputOTP (with every base) is built on [input-otp](https://input-otp.rodz.dev). Animate UI's input-otp exports exactly the same API (`OTPInput`, `OTPInputContext`, the `REGEXP_*` patterns and the types) and adds the animation. `animate-ui animate input-otp` swaps the `input-otp` import for it. It is built on input-otp, so keep that dependency (`shadcn add input-otp` installs it).
+
+## Usage
+
+Import from Animate UI instead of input-otp. Everything else stays the same.
+
+```tsx
+import {
+  OTPInput,
+  OTPInputContext,
+  REGEXP_ONLY_DIGITS,
+} from '@animate-ui/react/primitives/input-otp';
+```
+
+Then use shadcn/ui's component as usual:
+
+```tsx
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { REGEXP_ONLY_DIGITS } from '@animate-ui/react/primitives/input-otp';
+
+export function VerificationCode() {
+  return (
+    <InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>
+    </InputOTP>
+  );
+}
+```
+
+## Animation
+
+- A typed character fades in while its glyph grows from 95% of its size, in 150ms with a strong ease-out (`transition.press`).
+- A pasted or autofilled code staggers its characters by 25ms.
+- Deleting is instant, and characters that only shift because one before them was removed don't animate. The active slot follows the keyboard at once.
+- `<AnimateUIProvider tempo>` paces the animation.
+- Under reduced motion, characters only fade, without growing or staggering, and the fake caret stops blinking.
+
+### How it works
+
+The slots are your markup: shadcn/ui's `InputOTPSlot` renders the `char` of `OTPInputContext` as plain text. The context keeps input-otp's values (`char` stays a string), so nothing in the component changes. Instead, `OTPInput` compares each new value with the previous one to find the characters that were just entered, and animates their slots, the `[data-slot="input-otp-slot"]` elements of its container in index order, with the Web Animations API: `color` from transparent and `font-size` from 95%, which scales the glyph alone, not the slot's box. Both end on the slot's own style, so its classes, transitions and focus ring are untouched.
+
+Custom slots animate too, as long as they carry `data-slot="input-otp-slot"`, one per index, in order. Any CSS animation inside a slot (the fake caret's blink) is turned off under reduced motion.
+
+## API Reference
+
+Every export has exactly the API of [input-otp](https://github.com/guilhermerodz/input-otp#api-reference): `OTPInput` takes its props, `render` included, and `OTPInputContext` provides its `slots`, `isFocused` and `isHovering`. Animate UI adds no props.
+
+## Accessibility
+
+The value lives in input-otp's single `<input>` (with `autocomplete="one-time-code"`): typing, paste, autofill, password managers and form submission are unchanged. The animation is visual only.
+
+## Credits
+
+- [input-otp](https://github.com/guilhermerodz/input-otp) by Guilherme Rodz.

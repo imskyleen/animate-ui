@@ -1,0 +1,195 @@
+---
+title: Tooltip
+description: "Animate UI's own tooltip: the tooltips of a provider share one popup that moves from trigger to trigger instead of closing and reopening."
+---
+
+<ComponentPreview name="animate-ui/tooltip" />
+
+## Installation
+
+<Installation />
+
+The popup is positioned with [Floating UI](https://floating-ui.com), a peer dependency of this primitive:
+
+```bash
+npm install @floating-ui/react
+```
+
+## Usage
+
+```tsx
+import {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@animate-ui/react/primitives/tooltip';
+
+export function Toolbar() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button aria-label="Bold">B</button>
+        </TooltipTrigger>
+        <TooltipContent className="rounded-md bg-foreground px-3 py-1.5 text-xs text-background">
+          <TooltipArrow className="size-2.5 fill-foreground" />
+          <p>Bold</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <Tooltip side="bottom">
+        <TooltipTrigger asChild>
+          <button aria-label="Italic">I</button>
+        </TooltipTrigger>
+        <TooltipContent className="rounded-md bg-foreground px-3 py-1.5 text-xs text-background">
+          <TooltipArrow className="size-2.5 fill-foreground" />
+          <p>Italic</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+```
+
+Unlike the library tooltips, this one is Animate UI's own: no Radix UI, Base UI or React Aria underneath. `TooltipContent` renders nothing where it is written: it declares what the provider's single popup shows when its trigger is hovered or focused. Put a `motion` element with `layout="preserve-aspect"` around the text to keep it from stretching while the popup resizes between triggers.
+
+## Animation
+
+- The popup fades in from a 0.95 scale, nudged out of its trigger by a few pixels, on a quick spring (`spring.snappy`), and leaves in 400ms with a strong ease-out.
+- Hovering the next trigger while a tooltip is showing doesn't close it: the popup and its arrow glide to the new trigger and resize to the new content (a shared layout animation), on the same spring. Right after a tooltip closes (within `closeDelay`), the next one opens without the `openDelay`.
+- `<AnimateUIProvider tempo>` paces every spring and duration.
+- Under reduced motion, the popup only fades, and moving between triggers jumps.
+
+## API Reference
+
+### TooltipProvider
+
+Holds the shared popup. Every `Tooltip` must be inside one.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The tooltips.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    id: {
+      description:
+        'Identifies the shared popup (its layout id). Defaults to a generated id.',
+      type: 'string',
+    },
+    openDelay: {
+      description: 'Delay in milliseconds before a tooltip opens.',
+      type: 'number',
+      default: '700',
+    },
+    closeDelay: {
+      description:
+        'Delay in milliseconds before a tooltip closes. A tooltip opened within this window after one closed opens at once.',
+      type: 'number',
+      default: '300',
+    },
+    transition: {
+      description:
+        'Transition of the entrance and of the move between triggers.',
+      type: 'Transition',
+      default: 'spring.snappy',
+    },
+  }}
+/>
+
+### Tooltip
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The trigger and the content.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    side: {
+      description:
+        'Which side of the trigger the popup is placed on. It flips when there is no room.',
+      type: '"top" | "bottom" | "left" | "right"',
+      default: '"top"',
+    },
+    sideOffset: {
+      description: 'Distance in pixels from the trigger.',
+      type: 'number',
+      default: '0',
+    },
+    align: {
+      description: 'How the popup is aligned on that side.',
+      type: '"start" | "center" | "end"',
+      default: '"center"',
+    },
+    alignOffset: {
+      description: 'Offset in pixels from the alignment.',
+      type: 'number',
+      default: '0',
+    },
+  }}
+/>
+
+### TooltipTrigger
+
+Opens the tooltip on hover and focus, and closes it on leave, blur, a press, <kbd>Escape</kbd>, scroll and resize. While open, it gets `aria-describedby` pointing at the popup (`role="tooltip"`).
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description:
+        'Props of the trigger. It gets `data-state`, `data-side` and `data-align`.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### TooltipContent
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description:
+        'Props of the popup, rendered in a portal. It gets `role="tooltip"`, `data-state`, `data-side` and `data-align`.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### TooltipArrow
+
+Place it inside `TooltipContent`.
+
+<TypeTable
+  type={{
+    withTransition: {
+      description: 'Glide the arrow with the popup when it moves.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description:
+        "Props of Floating UI's arrow (an `<svg>`), except `context`.",
+      type: 'React.ComponentProps<typeof FloatingArrow>',
+    },
+  }}
+/>
+
+### useGlobalTooltip, useTooltip
+
+Return the provider's and the tooltip's state: the current tooltip, `showTooltip`, `hideTooltip` and `hideImmediate`; the tooltip's side, alignment and id.

@@ -1,11 +1,17 @@
 import { PRIMITIVES as ALL } from '../primitives';
 
-/** Where shadcn/ui components import their primitives from. */
-export type Library = 'radix-ui' | 'base-ui' | 'react-aria';
+/**
+ * Where shadcn/ui components import their primitives from. `animate-ui`:
+ * packages Animate UI replaces with its own drop-in (`input-otp`).
+ */
+export type Library = 'radix-ui' | 'base-ui' | 'react-aria' | 'animate-ui';
 
 export type Primitive = {
   library: Library;
-  /** Subpath under `@animate-ui/react/primitives/<library>/`. */
+  /**
+   * Subpath under `@animate-ui/react/primitives/<library>/`, or directly
+   * under `primitives/` for Animate UI's own (`animate-ui`).
+   */
   name: string;
   /**
    * Classes the shadcn component uses to animate this primitive in CSS. They
@@ -29,6 +35,9 @@ export function primitiveModule(primitive: Primitive) {
   // React Aria has one package: its mirror has one entry too.
   if (primitive.library === 'react-aria')
     return `${PACKAGE}/primitives/react-aria`;
+  // Animate UI's own primitives have no library folder.
+  if (primitive.library === 'animate-ui')
+    return `${PACKAGE}/primitives/${primitive.name}`;
   return `${PACKAGE}/primitives/${primitive.library}/${primitive.name}`;
 }
 

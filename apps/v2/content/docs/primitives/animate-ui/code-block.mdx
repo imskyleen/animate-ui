@@ -1,0 +1,119 @@
+---
+title: Code Block
+description: A code block highlighted with Shiki that can type its code out, character by character.
+---
+
+<ComponentPreview name="animate-ui/code-block" />
+
+## Installation
+
+<Installation />
+
+The code is highlighted with [Shiki](https://shiki.style), a peer dependency of this primitive, loaded on demand:
+
+```bash
+npm install shiki
+```
+
+## Usage
+
+```tsx
+import { CodeBlock } from '@animate-ui/react/primitives/code-block';
+
+export function Snippet() {
+  return (
+    <CodeBlock
+      code="console.log('Hello, world!');"
+      lang="javascript"
+      writing
+      duration={2000}
+    />
+  );
+}
+```
+
+The block renders Shiki's `<pre>` inside a div. Style it through that div (`[&_pre]:…`, `[&_.line]:…`); `data-writing` and `data-done` let you show a cursor while it types.
+
+## Animation
+
+- With `writing`, the code appears one character at a time, evenly over `duration` (after `delay`), and the block, or `scrollContainerRef`, scrolls smoothly to follow the last line.
+- With `inView`, writing starts when the block scrolls into view.
+- Under reduced motion, the whole code is shown at once (`onDone` is still called).
+
+## API Reference
+
+### CodeBlock
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code.',
+      type: 'string',
+      required: true,
+    },
+    lang: {
+      description: 'The language of the code (a Shiki language).',
+      type: 'string',
+      required: true,
+    },
+    theme: {
+      description: 'Which of the two themes is applied by default.',
+      type: '"light" | "dark"',
+      default: '"light"',
+    },
+    themes: {
+      description: 'The Shiki themes.',
+      type: '{ light: string; dark: string }',
+      default: '{ light: "github-light", dark: "github-dark" }',
+    },
+    writing: {
+      description: 'Type the code out instead of showing it at once.',
+      type: 'boolean',
+      default: 'false',
+    },
+    duration: {
+      description: 'How long writing takes, in milliseconds.',
+      type: 'number',
+      default: '5000',
+    },
+    delay: {
+      description: 'Delay before writing starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    onDone: {
+      description: 'Called once the whole code is shown.',
+      type: '() => void',
+    },
+    onWrite: {
+      description: 'Called on each written character, and once done.',
+      type: '(info: { index: number; length: number; done: boolean }) => void',
+    },
+    scrollContainerRef: {
+      description:
+        'The element to scroll while writing. Defaults to the parent element.',
+      type: 'React.RefObject<HTMLElement | null>',
+    },
+    inView: {
+      description: 'Start writing only once the block is in view.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin around the viewport for `inView`.',
+      type: 'string',
+      default: '"0px"',
+    },
+    inViewOnce: {
+      description:
+        'With `inView`, write only the first time it comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description:
+        'Props of the container. It gets `data-writing` and `data-done`.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>

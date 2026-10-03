@@ -1,0 +1,143 @@
+---
+title: Avatar Group
+description: Overlapping avatars where the hovered one rises, with a tooltip that glides from avatar to avatar.
+---
+
+<ComponentPreview name="animate-ui/avatar-group" />
+
+## Installation
+
+<Installation />
+
+The tooltips are Animate UI's [Tooltip](/docs/primitives/animate-ui/tooltip), positioned with [Floating UI](https://floating-ui.com), a peer dependency of this primitive:
+
+```bash
+npm install @floating-ui/react
+```
+
+## Usage
+
+```tsx
+import {
+  AvatarGroup,
+  AvatarGroupTooltip,
+  AvatarGroupTooltipArrow,
+} from '@animate-ui/react/primitives/avatar-group';
+
+export function Team({ people }: { people: { name: string; src: string }[] }) {
+  return (
+    <AvatarGroup className="h-12 -space-x-3" invertOverlap>
+      {people.map((person) => (
+        <img
+          key={person.name}
+          src={person.src}
+          alt={person.name}
+          className="size-12 rounded-full border-3 border-background"
+        />
+      ))}
+    </AvatarGroup>
+  );
+}
+```
+
+Each child is an avatar. Put an `AvatarGroupTooltip` inside an avatar to give it a tooltip:
+
+```tsx
+<div className="size-12 rounded-full border-3 border-background bg-muted">
+  SK
+  <AvatarGroupTooltip className="rounded-md bg-foreground px-3 py-1.5 text-xs text-background">
+    <AvatarGroupTooltipArrow className="size-2.5 fill-foreground" />
+    <p>Skyleen</p>
+  </AvatarGroupTooltip>
+</div>
+```
+
+## Animation
+
+- The hovered (or pressed) avatar rises by `translate` on a spring (`spring.default`).
+- The tooltips share one popup ([Tooltip](/docs/primitives/animate-ui/tooltip)): it opens at once (`openDelay` is 0) and glides from avatar to avatar on `spring.snappy`.
+- `<AnimateUIProvider tempo>` paces every spring.
+- Under reduced motion, the avatar rises at once and the tooltip only fades.
+
+## API Reference
+
+### AvatarGroup
+
+Takes the [TooltipProvider](/docs/primitives/animate-ui/tooltip#tooltipprovider) and [Tooltip](/docs/primitives/animate-ui/tooltip#tooltip) props, with other defaults.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The avatars.',
+      type: 'React.ReactElement[]',
+      required: true,
+    },
+    invertOverlap: {
+      description:
+        'Stack the avatars the other way: each one above the next instead of below.',
+      type: 'boolean',
+      default: 'false',
+    },
+    translate: {
+      description: 'How far the hovered avatar rises (a `y` value).',
+      type: 'string | number',
+      default: "'-30%'",
+    },
+    transition: {
+      description: 'Transition of the rise.',
+      type: 'Transition',
+      default: 'spring.default',
+    },
+    tooltipTransition: {
+      description: 'Transition of the tooltip.',
+      type: 'Transition',
+      default: 'spring.snappy',
+    },
+    openDelay: {
+      description: 'Delay in milliseconds before a tooltip opens.',
+      type: 'number',
+      default: '0',
+    },
+    closeDelay: {
+      description: 'Delay in milliseconds before a tooltip closes.',
+      type: 'number',
+      default: '0',
+    },
+    side: {
+      description: 'Side of the avatar the tooltip is placed on.',
+      type: '"top" | "bottom" | "left" | "right"',
+      default: '"top"',
+    },
+    sideOffset: {
+      description: 'Distance in pixels from the avatar.',
+      type: 'number',
+      default: '25',
+    },
+    align: {
+      description: 'How the tooltip is aligned on that side.',
+      type: '"start" | "center" | "end"',
+      default: '"center"',
+    },
+    alignOffset: {
+      description: 'Offset in pixels from the alignment.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props of the container (a flex row).',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### AvatarGroupTooltip
+
+The [TooltipContent](/docs/primitives/animate-ui/tooltip#tooltipcontent) props.
+
+### AvatarGroupTooltipArrow
+
+The [TooltipArrow](/docs/primitives/animate-ui/tooltip#tooltiparrow) props.
+
+## Credits
+
+- Inspired by [Jhey](https://codepen.io/jh3y/pen/yyLmmMW).
