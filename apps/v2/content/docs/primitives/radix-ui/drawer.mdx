@@ -1,0 +1,102 @@
+---
+title: Drawer
+description: A panel that slides in from the edge of the screen and follows the finger. A drop-in replacement for Vaul, with the same API.
+---
+
+<ComponentPreview name="radix-ui/drawer" />
+
+## Installation
+
+<Installation name="drawer" />
+
+shadcn/ui's Radix Drawer is built on [Vaul](https://vaul.emilkowal.ski), which is no longer maintained. Animate UI's Drawer has exactly Vaul's API (the `Drawer` object and its parts, the same props, the same `data-vaul-*` attributes), built on Radix UI's Dialog and Motion. `animate-ui animate drawer` swaps the `vaul` import for it, so you can also remove the `vaul` dependency from your project.
+
+## Usage
+
+Import the primitive from Animate UI instead of Vaul. Everything else stays the same.
+
+```tsx
+import { Drawer } from '@animate-ui/react/primitives/radix-ui/drawer';
+
+export function MoveGoal() {
+  return (
+    <Drawer.Root>
+      <Drawer.Trigger>Move goal</Drawer.Trigger>
+      <Drawer.Portal>
+        <Drawer.Overlay />
+        <Drawer.Content>
+          <Drawer.Handle />
+          <Drawer.Title>Move goal</Drawer.Title>
+          <Drawer.Description>Set your daily activity goal.</Drawer.Description>
+          <Drawer.Close>Save</Drawer.Close>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </Drawer.Root>
+  );
+}
+```
+
+The `import * as Vaul from 'vaul'` style works too, as do the named exports (`Root`, `NestedRoot`, `Content`, `Overlay`, `Portal`, `Handle`) and the types (`DialogProps`, `ContentProps`, `HandleProps`, `WithFadeFromProps`, `WithoutFadeFromProps`). `direction`, `snapPoints` with `activeSnapPoint`, `setActiveSnapPoint` and `fadeFromIndex`, `dismissible`, `handleOnly`, `modal`, `closeThreshold`, `shouldScaleBackground` (on the element with `data-vaul-drawer-wrapper`), `NestedRoot`, `container`, `onDrag`, `onRelease`, `onClose` and `onAnimationEnd` behave as in Vaul, and `data-vaul-no-drag` keeps an element from starting a drag.
+
+## Animation
+
+- **Content** slides in from its edge (`direction`, its own size plus any gap to the edge) over 600ms on the drawer curve, and slides back out in 400ms. With snap points, it slides to the active one.
+- **Overlay** fades with the drawer's position: in and out with it, and along with a drag. With snap points, it fades between the snap point before `fadeFromIndex` and that one, like Vaul.
+- **Dragging** follows the pointer on the same frame: the pointer sets the position directly, with no transition and no React render. Pulled past the open position, it rubber-bands. On release, it closes past `closeThreshold` (25% of its size) or on a flick, and otherwise eases back over 600ms. With snap points, it goes to the closest one, a flick moves one point (a fast one skips to the first or last), and a flick down from the first closes it.
+- **Scrollable content** keeps scrolling: a drag doesn't start when the content under the pointer can scroll that way, nor shortly after it scrolled (`scrollLockTimeout`).
+- A drag dismissal continues from where the pointer let go; opening again while it closes picks up from where it is. The click that ends a drag doesn't activate the button under it.
+- **Nested drawers**: the parent steps back (16px towards its open edge, slightly smaller) while a nested drawer is open, and follows the nested drawer's drag.
+- **`shouldScaleBackground`** scales the `[data-vaul-drawer-wrapper]` element with the drawer's position, and paints the body black (`setBackgroundColorOnScale`, not with `noBodyStyles`).
+- With `forceMount`, the closed drawer stays in the DOM: it plays its exit, then is hidden and `inert`.
+- Under reduced motion, the drawer fades in place and settles without moving; a drag still follows the pointer.
+- `AnimateUIProvider tempo` reaches every duration.
+
+Not reproduced from Vaul: its iOS Safari workarounds (`position: fixed` on the body, so `preventScrollRestoration` and `disablePreventScroll` are accepted but have no effect; Radix's Dialog locks the scroll of a modal drawer). `repositionInputs` and `fixed` keep a bottom drawer above the on-screen keyboard, more simply than Vaul. A Handle tap on a drawer without snap points does nothing.
+
+## API Reference
+
+Every part takes exactly the props of [Vaul's Drawer](https://vaul.emilkowal.ski/api) (its Content, Overlay, Trigger, Close, Title and Description take [Radix UI's Dialog props](https://www.radix-ui.com/primitives/docs/components/dialog#api-reference)). Animate UI adds the animation props below.
+
+### Root, NestedRoot, Trigger, Portal, Handle, Title, Description, Close
+
+[Vaul props](https://vaul.emilkowal.ski/api) only.
+
+### Content
+
+[Vaul props](https://vaul.emilkowal.ski/api), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Opening, moving between snap points and settling back after a drag that does not dismiss.',
+      type: 'Transition',
+      default: 'transition.drawer (600ms, drawer curve)',
+    },
+    exitTransition: {
+      description:
+        'Closing, a drag dismissal included (it continues from the release point).',
+      type: 'Transition',
+      default: 'transition.drawerExit (400ms, drawer curve)',
+    },
+  }}
+/>
+
+### Overlay
+
+[Vaul props](https://vaul.emilkowal.ski/api), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Fade in. The opacity also follows the drag.',
+      type: 'Transition',
+      default: 'transition.drawer (600ms, drawer curve)',
+    },
+    exitTransition: {
+      description: 'Fade out.',
+      type: 'Transition',
+      default: 'transition.drawerExit (400ms, drawer curve)',
+    },
+  }}
+/>

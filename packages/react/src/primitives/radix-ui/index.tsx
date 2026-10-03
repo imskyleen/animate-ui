@@ -7,6 +7,7 @@ export { Checkbox } from './checkbox';
 export { Collapsible } from './collapsible';
 export { ContextMenu } from './context-menu';
 export { Dialog } from './dialog';
+export { Drawer } from './drawer';
 export { DropdownMenu } from './dropdown-menu';
 export { HoverCard } from './hover-card';
 export { Menubar } from './menubar';

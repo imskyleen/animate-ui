@@ -172,6 +172,8 @@ export function transform(code: string): TransformResult {
     const perPackage: [Library, string | undefined][] = [
       ['radix-ui', radixPackageName(source)],
       ['base-ui', baseUiPackageName(source)],
+      // shadcn/ui's Radix Drawer imports Vaul: its replacement has its API.
+      ['radix-ui', source === 'vaul' ? 'drawer' : undefined],
     ];
     for (const [library, name] of perPackage) {
       if (!name) continue;

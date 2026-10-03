@@ -31,6 +31,7 @@ import radixUiCheckbox from './radix-ui/checkbox';
 import radixUiCollapsible from './radix-ui/collapsible';
 import radixUiContextMenu from './radix-ui/context-menu';
 import radixUiDialog from './radix-ui/dialog';
+import radixUiDrawer from './radix-ui/drawer';
 import radixUiDropdownMenu from './radix-ui/dropdown-menu';
 import radixUiHoverCard from './radix-ui/hover-card';
 import radixUiMenubar from './radix-ui/menubar';
@@ -59,4 +60,4 @@ import reactAriaToggle from './react-aria/toggle';
 import reactAriaToggleGroup from './react-aria/toggle-group';
 import reactAriaTooltip from './react-aria/tooltip';
 
-export const PRIMITIVES: Primitive[] = [baseUiAccordion, baseUiAlertDialog, baseUiCheckbox, baseUiCollapsible, baseUiCombobox, baseUiContextMenu, baseUiDialog, baseUiDrawer, baseUiMenu, baseUiMenubar, baseUiNavigationMenu, baseUiPopover, baseUiPreviewCard, baseUiProgress, baseUiRadio, baseUiRadioGroup, baseUiSelect, baseUiSlider, baseUiSwitch, baseUiTabs, baseUiToast, baseUiToggle, baseUiToggleGroup, baseUiTooltip, radixUiAccordion, radixUiAlertDialog, radixUiCheckbox, radixUiCollapsible, radixUiContextMenu, radixUiDialog, radixUiDropdownMenu, radixUiHoverCard, radixUiMenubar, radixUiNavigationMenu, radixUiPopover, radixUiProgress, radixUiRadioGroup, radixUiSelect, radixUiSlider, radixUiSwitch, radixUiTabs, radixUiToggle, radixUiToggleGroup, radixUiTooltip, reactAriaCheckbox, reactAriaDisclosure, reactAriaModal, reactAriaPopover, reactAriaProgressBar, reactAriaRadioGroup, reactAriaSlider, reactAriaSwitch, reactAriaTabs, reactAriaTagGroup, reactAriaToggle, reactAriaToggleGroup, reactAriaTooltip];
+export const PRIMITIVES: Primitive[] = [baseUiAccordion, baseUiAlertDialog, baseUiCheckbox, baseUiCollapsible, baseUiCombobox, baseUiContextMenu, baseUiDialog, baseUiDrawer, baseUiMenu, baseUiMenubar, baseUiNavigationMenu, baseUiPopover, baseUiPreviewCard, baseUiProgress, baseUiRadio, baseUiRadioGroup, baseUiSelect, baseUiSlider, baseUiSwitch, baseUiTabs, baseUiToast, baseUiToggle, baseUiToggleGroup, baseUiTooltip, radixUiAccordion, radixUiAlertDialog, radixUiCheckbox, radixUiCollapsible, radixUiContextMenu, radixUiDialog, radixUiDrawer, radixUiDropdownMenu, radixUiHoverCard, radixUiMenubar, radixUiNavigationMenu, radixUiPopover, radixUiProgress, radixUiRadioGroup, radixUiSelect, radixUiSlider, radixUiSwitch, radixUiTabs, radixUiToggle, radixUiToggleGroup, radixUiTooltip, reactAriaCheckbox, reactAriaDisclosure, reactAriaModal, reactAriaPopover, reactAriaProgressBar, reactAriaRadioGroup, reactAriaSlider, reactAriaSwitch, reactAriaTabs, reactAriaTagGroup, reactAriaToggle, reactAriaToggleGroup, reactAriaTooltip];
