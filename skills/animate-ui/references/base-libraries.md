@@ -1,22 +1,24 @@
 # Wiring Motion into a base library
 
+`@animate-ui/react` already does this for every primitive it ships: use it when you can, and read this when you wire Motion into a part it doesn't cover (or contribute one).
+
 An exit animation needs the element to stay mounted until the animation ends. Each library unmounts closed content on its own, so the component takes over: it tracks `open` itself, gates rendering with `AnimatePresence`, and asks the library to keep the content mounted.
 
-The examples use these imports (adjust the alias to the project's `components.json`):
+The examples use these imports:
 
 ```tsx
 import { AnimatePresence, motion, type Transition } from 'motion/react';
-import { getStrictContext } from '@/lib/get-strict-context';
-import { useControlledState } from '@/hooks/use-controlled-state';
+import { getStrictContext } from '@animate-ui/react/utils/strict-context';
+import { useControlledState } from '@animate-ui/react/utils/use-controlled-state';
 import {
   ReducedMotionConfig,
   scale,
   transition as motionTransition,
   useShouldReduceMotion,
-} from '@/lib/motion';
+} from '@animate-ui/react/utils/motion';
 ```
 
-`getStrictContext` and `useControlledState` are Animate UI registry items (`@animate-ui/lib-get-strict-context`, `@animate-ui/hooks-use-controlled-state`).
+The snippets use the static `transition` defaults for brevity; in a component, read them from `useMotionTokens()` so `AnimateUIProvider`'s `tempo` applies.
 
 ## 1. The Root tracks `open`
 
@@ -172,44 +174,18 @@ Render it inside `<AnimatePresence>{isOpen && <PopoverPrimitive.Portal keepMount
 
 Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. A warm tooltip carries `data-instant`, but as with Radix, per-tooltip Providers hide it: track warm tooltips yourself.
 
-## 4. Headless UI (`@headlessui/react`)
+## 4. React Aria (`react-aria-components`)
 
-- Gate the panel yourself with `AnimatePresence` and render it `static`, so Headless UI doesn't unmount it.
-- Pass `as={motion.div}` and put the motion props on the panel. Headless UI forwards the other props to it.
-- Origin: Headless UI sets `data-anchor` (`top_center`, `bottom_start`, …) on anchored panels. Map it to an origin.
+React Aria signals overlays with `isEntering` / `isExiting` render props and `data-entering` / `data-exiting`, and keeps a closing overlay mounted only if it sees running animations at that moment. Motion hasn't started its exit yet then, so:
 
-```tsx
-function PopoverPanelMotion({
-  transition = motionTransition.dropdown,
-  ...props
-}: PopoverPanelProps) {
-  const reduce = useShouldReduceMotion();
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
-  };
+- Resolve the open state the way React Aria does: the component's own `isOpen` / `defaultOpen`, otherwise the trigger's `OverlayTriggerStateContext` (DialogTrigger, MenuTrigger, Select, ComboBox…).
+- Gate the overlay with `AnimatePresence` on that state, and pass `isExiting` while the exit plays so `data-exiting` and the render prop stay correct.
+- Render through React Aria's `render` prop (or `motion.create`), so the motion element is React Aria's own element and `className` / `style` functions keep working.
+- Origin: the placement React Aria resolves (`data-placement`), or `--trigger-anchor-point` when set.
+- Collections (Select, ComboBox) keep a hidden copy of their items while closed: when closed, still render the plain React Aria overlay so the chosen label stays.
+- Controls render their indicators yourself (render props): find them by shadcn's `data-slot` attributes and animate them, never fake the render props.
 
-  return (
-    <PopoverPanelPrimitive
-      static
-      as={motion.div}
-      data-slot="popover-panel"
-      initial={hidden}
-      animate={{ opacity: 1, transform: 'scale(1)', transition }}
-      exit={{ ...hidden, transition: motionTransition.exit }}
-      {...props}
-    />
-  );
-}
-```
-
-```txt
-data-[anchor=bottom_start]:origin-top-left   data-[anchor=bottom_center]:origin-top   data-[anchor=bottom_end]:origin-top-right
-data-[anchor=top_start]:origin-bottom-left   data-[anchor=top_center]:origin-bottom   data-[anchor=top_end]:origin-bottom-right
-data-[anchor=left_*]:origin-right            data-[anchor=right_*]:origin-left
-```
-
-A Headless UI `Dialog` root renders its children: wrap them in `ReducedMotionConfig` through its render-prop child so function children keep working.
+`@animate-ui/react/primitives/react-aria` re-exports all of React Aria with the animated overrides, so one import covers a whole component.
 
 ## 5. Plain markup (no base library)
 

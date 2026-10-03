@@ -1,26 +1,21 @@
 # Motion tokens
 
-Animate UI ships its tokens as a registry item:
-
-```bash
-npx shadcn@latest add @animate-ui/lib-motion
-```
-
-It installs `lib/motion.tsx` (under the project's `lib` alias from `components.json`) and adds three Tailwind theme variables (`ease-out-strong`, `ease-in-out-strong`, `ease-drawer`). Every Animate UI component imports from it:
+The tokens come from the package:
 
 ```tsx
 import {
+  useMotionTokens, // the tokens at the current tempo: use this in components
   ease,
-  duration,
-  spring,
   scale,
-  transition,
+  transition, // static defaults (tempo 1)
   ReducedMotionConfig,
   useShouldReduceMotion,
-} from '@/lib/motion';
+} from '@animate-ui/react/utils/motion';
+
+const { transition, spring, duration } = useMotionTokens();
 ```
 
-If the project doesn't use the registry, copy these values into a single local file, `tempo` included. The module also exports `tempo` and everything grouped as `motionTokens`.
+Inside a component, read durations, springs and transitions from `useMotionTokens()` so `AnimateUIProvider`'s `tempo` applies; the static exports are the tempo-1 defaults (handy outside React). Curves (`ease`) and `scale` don't depend on tempo. The module also exports `createMotionTokens(tempo)` and `motionTokens`.
 
 ## Curves
 
@@ -34,13 +29,15 @@ Strong ease-out is the default. Never ease-in on an entrance. Motion's built-in 
 
 ## Tempo
 
-`tempo` is a global pace multiplier, applied to every `duration` and `spring` token (and therefore every ready-made `transition`). The default is 1, Animate UI's pace. To speed up or slow down the whole library from one place, change the constant at the top of `lib/motion.tsx`:
+`tempo` multiplies every `duration` and `spring` token (and therefore every ready-made `transition`). The default is 1, Animate UI's pace. Change it for a whole app or a subtree, without touching any component:
 
 ```tsx
-const tempo = 0.8; // crisper; 1.2 feels more relaxed
+import { AnimateUIProvider } from '@animate-ui/react/provider';
+
+<AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>; // crisper; 1.2 feels more relaxed
 ```
 
-Curves, scales and `bounce` are not affected. CSS-driven components (Base UI Drawer and Toast) use Tailwind duration classes (`duration-600`, `data-ending-style:duration-400`, …) that `tempo` doesn't reach: adjust them separately.
+The provider is optional and nestable (the closest wins). Curves, scales and `bounce` are not affected. CSS-driven primitives (Base UI Drawer and Toast) read the tokens too, through CSS variables they set themselves.
 
 ## Durations (seconds, at `tempo` 1)
 

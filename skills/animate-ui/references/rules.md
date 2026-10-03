@@ -5,7 +5,7 @@ The rules come in two families:
 - **A. Quality rules** are about correctness, accessibility and performance. They are non-negotiable: breaking one is a bug, not a taste choice.
 - **B. Style rules** are Animate UI's defaults for curves, durations, scale and bounce. They are customizable (props, the `tempo` multiplier, the tokens), but a component ships with them unless the user asks otherwise.
 
-The rules come from the October 2026 audit of the Animate UI registry. The "Avoid" examples are real code that the audit flagged.
+The rules come from the October 2026 audit of the Animate UI v1 registry and are what every `@animate-ui/react` primitive follows. The "Avoid" examples are real code that the audit flagged.
 
 ## A. Quality rules (non-negotiable)
 
@@ -99,7 +99,7 @@ Popovers, tooltips, menus, hover cards and selects set `transform-origin` from t
 | ----------- | ----------------------------------------------------------------------------------------------------- |
 | Radix UI    | `var(--radix-<component>-content-transform-origin)` (e.g. `--radix-popover-content-transform-origin`) |
 | Base UI     | `var(--transform-origin)`                                                                             |
-| Headless UI | map `data-anchor` (`bottom_start` → `origin-top-left`, …)                                             |
+| React Aria  | `data-placement` (`bottom` → `origin-top`, …) or `--trigger-anchor-point`                              |
 
 #### A9. Exits are faster than entrances
 

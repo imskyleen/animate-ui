@@ -2,7 +2,7 @@
 
 Start from the recipe that matches the component kind (see the table in SKILL.md). All recipes are validated: they come from Animate UI's rewritten Tooltip, Dialog, Accordion, Sheet, Tabs and Switch, which have interaction tests for timing, reduced motion and keyboard behavior, and fresh agents used them to animate shadcn's Popover, Dropdown Menu, Hover Card and Select.
 
-Every recipe assumes the base-library wiring from `base-libraries.md` (presence, mounted content, `ReducedMotionConfig`). Snippets show Radix; swap the mounting mechanism for Base UI or Headless UI.
+Every recipe assumes the base-library wiring from `base-libraries.md` (presence, mounted content, `ReducedMotionConfig`). Snippets show Radix; swap the mounting mechanism for Base UI or React Aria. `@animate-ui/react` implements every recipe: read its primitives as reference implementations.
 
 ## Overlay (Popover, Tooltip, Dropdown Menu, Hover Card, Select)
 
@@ -253,7 +253,7 @@ function SheetContentMotion({
 Gate: used constantly (spring 0.6s visual, bounce ≤ 0.15). Purpose: spatial, the selection moves between items.
 
 - A shared element with `layoutId` (Animate UI's `Highlight` in children mode) and `spring.snappy` (0.6s visual, bounce 0.15: a hint of overshoot), and a spring keeps clicking quickly through tabs smooth because it retargets with its velocity.
-- Keyboard selection moves it instantly (`transition.instant`). Track the last input on the root with **capture-phase** handlers: Headless UI's `Tab` stops the propagation of arrow keys, so a bubbling `onKeyDown` on the group never fires.
+- Keyboard selection moves it instantly (`transition.instant`). Track the last input on the root with **capture-phase** handlers: some libraries stop the propagation of arrow keys inside their tabs, so a bubbling `onKeyDown` on the group never fires.
 
 ```tsx
 const [isKeyboard, setIsKeyboard] = React.useState(false);
@@ -283,7 +283,7 @@ Gate: used constantly. Purpose: feedback. Validated on the Switch; the scale gui
 - Icons inside a control fade (`transition.fade`), no scale from 0. Use `initial={false}` so they don't animate on mount.
 - Track background color: `transition-colors duration-150`.
 - Checkbox check: responds on the same frame, no delay.
-- When Base UI renders the control as a `<button>`, pass `nativeButton`. Headless UI controls expose their state through a render prop: put `ReducedMotionConfig` outside the primitive so the root's motion element is covered too.
+- When Base UI renders the control as a `<button>`, pass `nativeButton`. React Aria controls expose their state through render props: put `ReducedMotionConfig` outside the primitive so the root's motion element is covered too.
 
 ## CSS-driven by the base library (Base UI Drawer, Toast)
 
@@ -292,7 +292,7 @@ Gate: occasional. When the library drives a gesture (swipe to dismiss) or a stac
 - **One transform, built from local variables.** Write a single `transform` whose functions never change between states, and let data attributes change only the variables (`--x-y`, `--x-scale`, `--x-exit-y`, `--x-travel`). Same functions in the same order means every state interpolates, including the inline transform the library sets while swiping.
 - **Read the library's variables:** Drawer `--drawer-swipe-movement-x/y`, `--drawer-snap-point-offset`, `--drawer-swipe-progress`, `--drawer-swipe-strength`; Toast `--toast-index`, `--toast-offset-y`, `--toast-height`, `--toast-swipe-movement-x/y`.
 - **Enter / exit:** `data-starting-style:` and `data-ending-style:` set the off-screen offset, a percentage of the element's own size (`100%`). Exit faster with a `data-ending-style:duration-*` override; for a drawer scale it by the flick: `data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)]`.
-- **Curves and durations as utilities:** `ease-drawer` (drawer, `duration-600` in / 400ms out), `ease-out-strong` (toast, `duration-600` in / `duration-400` out). These classes mirror the `drawer`/`drawerExit` tokens but `tempo` doesn't reach them: change them by hand to change the pace.
+- **Curves and durations from the tokens:** set the transition timing as inline CSS variables computed from `useMotionTokens()` (drawer: `drawer` in / `drawerExit` out; toast: `dropdown`-length in / `exit` out), so `AnimateUIProvider`'s `tempo` reaches CSS-driven parts too. Animate UI's Base UI Drawer and Toast do exactly this.
 - **While swiping:** `data-swiping:duration-0` so it follows the finger, plus the compound `data-ending-style:data-swiping:duration-[…]` so a swipe dismissal still animates (both attributes have the same specificity and the later rule wins).
 - **Reduced motion:** multiply the off-screen offset by a travel variable and set it to 0 under `motion-reduce:` (`[--drawer-travel:1] motion-reduce:[--drawer-travel:0]`), rather than overriding `transform` (direction variants are more specific and would win). Keep travel at 1 during a swipe dismissal (`data-swipe-dismiss:[--drawer-travel:1]`) so a dragged drawer keeps leaving. Toasts: `motion-reduce:[--toast-travel:0%] motion-reduce:transition-opacity`.
 - **Stacks:** toasts behind scale down subtly (`max(0.9, 1 - index * 0.05)`), never below 0.9; hovering (or tapping) the viewport expands them with the same curve. Toasts fire rapidly: transitions, never keyframes. They exit through the edge they came from, or keep going in the swipe direction.
