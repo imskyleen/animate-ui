@@ -119,11 +119,12 @@ export function GitHubLink({ className }: { className?: string }) {
   );
 }
 
-// `slots.header` of DocsLayout: fixed and full width above the docs grid;
-// the layout reserves its height through `--fd-banner-height`.
-export function Header(props: ComponentProps<'header'>) {
+/** The site header. `menu` is the mobile control (the docs open their sidebar). */
+export function SiteHeader({
+  menu,
+  ...props
+}: ComponentProps<'header'> & { menu?: React.ReactNode }) {
   const pathname = usePathname();
-  const { setOpen } = useSidebar();
 
   return (
     <header
@@ -160,17 +161,39 @@ export function Header(props: ComponentProps<'header'>) {
             <SearchButton />
           </div>
           <GitHubLink className="max-md:hidden" />
-          <ThemeToggle className="max-md:hidden" />
-          <button
-            type="button"
-            aria-label="Open menu"
-            onClick={() => setOpen(true)}
-            className={cn(iconButton, 'md:hidden')}
-          >
-            <HugeiconsIcon icon={Menu01Icon} size={20} />
-          </button>
+          <ThemeToggle className={menu ? 'max-md:hidden' : undefined} />
+          {menu ?? (
+            <Link
+              href="/docs"
+              className="inline-flex h-8 items-center rounded-md px-3 text-sm md:hidden"
+            >
+              Docs
+            </Link>
+          )}
         </div>
       </div>
     </header>
+  );
+}
+
+// `slots.header` of DocsLayout: fixed and full width above the docs grid;
+// the layout reserves its height through `--fd-banner-height`.
+export function Header(props: ComponentProps<'header'>) {
+  const { setOpen } = useSidebar();
+
+  return (
+    <SiteHeader
+      {...props}
+      menu={
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={() => setOpen(true)}
+          className={cn(iconButton, 'md:hidden')}
+        >
+          <HugeiconsIcon icon={Menu01Icon} size={20} />
+        </button>
+      }
+    />
   );
 }

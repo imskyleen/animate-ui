@@ -1,6 +1,10 @@
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { baseOptions } from '@/lib/layout.shared';
+import { SiteHeader } from '@/components/layout/header';
 
 export default function Layout({ children }: LayoutProps<'/'>) {
-  return <HomeLayout {...baseOptions()}>{children}</HomeLayout>;
+  return (
+    <>
+      <SiteHeader />
+      <main className="flex flex-1 flex-col">{children}</main>
+    </>
+  );
 }

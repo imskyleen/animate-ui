@@ -15,7 +15,7 @@ const PAGES = readdirSync(CONTENT, { recursive: true, encoding: 'utf8' })
   )
   .sort();
 
-for (const url of PAGES) {
+for (const url of ['/', ...PAGES]) {
   test(`${url} renders without errors`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
