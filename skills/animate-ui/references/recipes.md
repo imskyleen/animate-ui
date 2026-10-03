@@ -6,7 +6,7 @@ Every recipe assumes the base-library wiring from `base-libraries.md` (presence,
 
 ## Overlay (Popover, Tooltip, Dropdown Menu, Hover Card, Select)
 
-Gate: occasional (popover, dropdown) or tens of times a day (tooltip). Purpose: spatial, it grows out of its trigger.
+Gate: occasional (popover, dropdown: 200 to 400ms) or used constantly (tooltip: up to 250ms). Purpose: spatial, it grows out of its trigger.
 
 ```tsx
 // Rendered inside ReducedMotionConfig (see base-libraries.md for the Portal part).
@@ -47,7 +47,7 @@ function TooltipContentMotion({
 }
 ```
 
-- Enter with `transition.tooltip` (0.15s) for tooltips, `transition.dropdown` (0.2s) for popovers, menus and selects. Exit with `transition.exit` (0.15s), set inside the `exit` target.
+- Enter with `transition.tooltip` (0.2s) for tooltips, `transition.dropdown` (0.3s) for popovers, menus and selects. Exit with `transition.exit` (0.2s), set inside the `exit` target.
 - Scale only, no directional slide: the trigger-anchored origin already shows where it came from. Drop shadcn's `slide-in-from-*` classes.
 - Hover Card and Preview Card use popover timing (`transition.dropdown` in, `transition.exit` out). Their open delay already keeps a sweep across triggers calm, so they don't need the warm skip.
 - Select, Radix: needs `@radix-ui/react-select` 2.x (bundled in `radix-ui` 1.4+) for `forceMount`. **Don't gate the whole Portal with `AnimatePresence`**: while closed, Radix renders the items off-screen to show the selected label in the trigger, power typeahead and fill the hidden native `<select>`. Animate the open content inside its own `AnimatePresence`, and once the exit completes (`onExitComplete`) render a plain, non-`forceMount` `SelectPrimitive.Content` with the same children so that fallback comes back. Reset the flag during render when it reopens, so a controlled `open` works too:
@@ -65,11 +65,11 @@ function TooltipContentMotion({
 - Select, Base UI 1.8: its Portal has no `keepMounted`. Pass an `actionsRef` to the Root, animate the Popup on the open state, and call `actionsRef.current.unmount()` when the exit completes. Base UI may still keep a closed popup mounted: set `hidden` on it once the exit has played so it leaves the accessibility tree. `Select.Value` shows the raw value unless the Root gets `items`.
 - Everything the Content renders goes inside the `motion.div`: Select's scroll buttons and Viewport, an Arrow, etc.
 - shadcn's side offset classes (`data-[side=bottom]:translate-y-1`, …) can stay: Tailwind v4 applies them through the CSS `translate` property, which composes with the animated `transform`. With Tailwind v3 they would conflict; move the offset to `sideOffset`.
-- Reopening while the exit is still playing mounts a fresh element instead of retargeting the leaving one. That's expected for presence-gated overlays given the short exit. While it exits, Radix still blocks outside clicks for those 150ms; that's acceptable.
+- Reopening while the exit is still playing mounts a fresh element instead of retargeting the leaving one. That's expected for presence-gated overlays given the short exit. While it exits, Radix still blocks outside clicks for those 200ms; that's acceptable.
 - Menus (Dropdown Menu, Context Menu, Menubar): the item highlight follows hover, so leave keyboard mode on `onPointerMoveCapture` (not only pointer down), and also record a keydown on the trigger (opening from the keyboard highlights the first item). In keyboard mode set the Highlight's `exitDelay` to 0 so the old highlight doesn't linger. Give each submenu its own Highlight. Item indicators (check, radio dot) fade with `transition.fade`, no scale.
 - Radix `Content` needs `forceMount` as well as the Portal, or it unmounts on close and the exit never plays.
 - Radix Context Menu's Root takes no `open`/`defaultOpen`, only `onOpenChange`: mirror it into state for presence instead of `useControlledState`.
-- Submenus (Dropdown Menu, Context Menu, Menubar) are opened tens of times a day: fade only, no scale, with `transition.exit` both ways. They read the same `--radix-dropdown-menu-content-transform-origin`. Closing the root menu closes them; both exit together.
+- Submenus (Dropdown Menu, Context Menu, Menubar) are opened dozens of times a day: fade only, no scale, with `transition.exit` (0.2s) both ways. They read the same `--radix-dropdown-menu-content-transform-origin`. Closing the root menu closes them; both exit together.
 - Origin: in the primitive, from the library variable (Base UI: `var(--transform-origin)`).
 - Tooltips only: skip the entrance when warm. Track the last close time in a module-level variable and compare on open:
 
@@ -132,7 +132,7 @@ function DialogContentMotion({
 }
 ```
 
-- Default: `scale(0.96)` and opacity. Enter with `transition.modal` (0.3s), exit with `transition.modalExit` (0.2s): put each transition inside its own target so they differ.
+- Default: `scale.enter` (0.95) and opacity. Enter with `transition.modal` (0.4s), exit with `transition.modalExit` (0.25s): put each transition inside its own target so they differ.
 - The overlay only fades, with the same pair of transitions. No blur: it costs paint and isn't visible on a translucent backdrop.
 - Expressive variants (Animate UI's `from` prop: a 20° 3D flip from an edge) are opt-in props, never the default. Build the transform with a helper so the variant and the reduced-motion case share one code path:
 
@@ -156,7 +156,7 @@ function getContentTransform(
 
 ## Disclosure (Accordion, Collapsible)
 
-Gate: tens of times a day. Purpose: continuity, content below doesn't jump. This is the one place `height` animates.
+Gate: occasional to frequent; ~300ms because the content below moves with it (budget in `rules.md`, B2). Purpose: continuity, content below doesn't jump. This is the one place `height` animates.
 
 ```tsx
 const collapsed = { height: 0, opacity: 0 };
@@ -188,11 +188,11 @@ function AccordionContent({
 }
 ```
 
-- `transition.disclosure`: 0.2s ease-out. Height only, plus opacity: no slide, no animated mask.
+- `transition.disclosure`: 0.3s ease-out. Height only, plus opacity: no slide, no animated mask.
 - `AnimatePresence initial={false}`: items open by default don't animate on page load.
 - Reduced motion: `height` is skipped by `ReducedMotionConfig` automatically (it jumps); opacity still fades. Wrap the Root.
 - Derive each item's open state from the root value; never copy it into state with an effect. With a single-value root the value is a string, so compare with `===`, not `includes` (`'item-10'.includes('item-1')` is true).
-- Chevron: `transition-transform duration-200 ease-out-strong`.
+- Chevron: `transition-transform duration-300 ease-out-strong`, matching the disclosure.
 
 ## Sheet (Sheet, Drawer)
 
@@ -250,9 +250,9 @@ function SheetContentMotion({
 
 ## Indicator (Tabs, Toggle Group, Navigation Menu, Sidebar active item)
 
-Gate: tens of times a day. Purpose: spatial, the selection moves between items.
+Gate: used constantly (springs up to ~0.4s visual, bounce ≤ 0.15). Purpose: spatial, the selection moves between items.
 
-- A shared element with `layoutId` (Animate UI's `Highlight` in children mode) and `spring.snappy`: no overshoot, and a spring keeps clicking quickly through tabs smooth because it retargets with its velocity.
+- A shared element with `layoutId` (Animate UI's `Highlight` in children mode) and `spring.snappy` (0.4s visual, bounce 0.15: a hint of overshoot), and a spring keeps clicking quickly through tabs smooth because it retargets with its velocity.
 - Keyboard selection moves it instantly (`transition.instant`). Track the last input on the root with **capture-phase** handlers: Headless UI's `Tab` stops the propagation of arrow keys, so a bubbling `onKeyDown` on the group never fires.
 
 ```tsx
@@ -268,16 +268,16 @@ const [isKeyboard, setIsKeyboard] = React.useState(false);
 ```
 
 - Base UI Tabs don't select on focus since 1.0 (`activateOnFocus` is `false`): arrow keys move focus, Enter or Space selects.
-- Panels: the incoming panel fades in with `transition.fade` (0.15s); the outgoing one unmounts at once. No `AnimatePresence mode="wait"`, no `layout` on the panel, no blur.
+- Panels: the incoming panel fades in with `transition.fade` (0.25s); the outgoing one unmounts at once. No `AnimatePresence mode="wait"`, no `layout` on the panel, no blur.
 - Never follow an item by animating `top`, `left`, `width` or `height`.
 - Trigger color: `transition-colors duration-150`.
 - `ReducedMotionConfig` around the Root turns the `layoutId` move into a jump.
 
 ## Press (Button, Toggle, Checkbox, Switch, Radio)
 
-Gate: tens of times a day. Purpose: feedback. Validated on the Switch; the scale guidance applies to the others.
+Gate: used constantly. Purpose: feedback. Validated on the Switch; the scale guidance applies to the others.
 
-- Press feedback: `whileTap={{ transform: 'scale(0.97)' }}` (the `scale.press` token) with `transition.press`. No hover scale-up on small controls.
+- Press feedback: ``whileTap={{ transform: `scale(${scale.press})` }}`` (`scale.press`, 0.96) with `transition.press` (0.15s). No hover scale-up on small controls.
 - Switch thumb: `layout` with `spring.snappy`. The thumb moves because the root's justification changes, and `layout` animates that with transforms.
 - A size change on press (the iOS-style stretch) is a plain style change animated by `layout`, never a tweened `width`: set `data-pressed` on the thumb and style it (`data-pressed:w-(--switch-pressed-width)`).
 - Icons inside a control fade (`transition.fade`), no scale from 0. Use `initial={false}` so they don't animate on mount.
@@ -292,7 +292,7 @@ Gate: occasional. When the library drives a gesture (swipe to dismiss) or a stac
 - **One transform, built from local variables.** Write a single `transform` whose functions never change between states, and let data attributes change only the variables (`--x-y`, `--x-scale`, `--x-exit-y`, `--x-travel`). Same functions in the same order means every state interpolates, including the inline transform the library sets while swiping.
 - **Read the library's variables:** Drawer `--drawer-swipe-movement-x/y`, `--drawer-snap-point-offset`, `--drawer-swipe-progress`, `--drawer-swipe-strength`; Toast `--toast-index`, `--toast-offset-y`, `--toast-height`, `--toast-swipe-movement-x/y`.
 - **Enter / exit:** `data-starting-style:` and `data-ending-style:` set the off-screen offset, a percentage of the element's own size (`100%`). Exit faster with a `data-ending-style:duration-*` override; for a drawer scale it by the flick: `data-ending-style:duration-[calc(var(--drawer-swipe-strength)*300ms)]`.
-- **Curves and durations as utilities:** `ease-drawer` (drawer, 500ms in / 300ms out), `ease-out-strong` (toast, 400ms in / 200ms out).
+- **Curves and durations as utilities:** `ease-drawer` (drawer, `duration-500` in / 300ms out), `ease-out-strong` (toast, `duration-400` in / `duration-200` out). These classes mirror the `drawer`/`drawerExit` and modal-range tokens but `tempo` doesn't reach them: change them by hand to change the pace.
 - **While swiping:** `data-swiping:duration-0` so it follows the finger, plus the compound `data-ending-style:data-swiping:duration-[…]` so a swipe dismissal still animates (both attributes have the same specificity and the later rule wins).
 - **Reduced motion:** multiply the off-screen offset by a travel variable and set it to 0 under `motion-reduce:` (`[--drawer-travel:1] motion-reduce:[--drawer-travel:0]`), rather than overriding `transform` (direction variants are more specific and would win). Keep travel at 1 during a swipe dismissal (`data-swipe-dismiss:[--drawer-travel:1]`) so a dragged drawer keeps leaving. Toasts: `motion-reduce:[--toast-travel:0%] motion-reduce:transition-opacity`.
 - **Stacks:** toasts behind scale down subtly (`max(0.9, 1 - index * 0.05)`), never below 0.9; hovering (or tapping) the viewport expands them with the same curve. Toasts fire rapidly: transitions, never keyframes. They exit through the edge they came from, or keep going in the swipe direction.

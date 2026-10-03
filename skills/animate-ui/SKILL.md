@@ -5,12 +5,14 @@ description: Turn any React component (shadcn/ui, Radix UI, Base UI, Headless UI
 
 # Animate UI
 
-Turns a static component into an animated one that would ship in the Animate UI registry. The motion philosophy is Emil Kowalski's (see NOTICE.md); this skill adds what it doesn't cover: how to wire Motion into Radix, Base UI and Headless UI primitives, and Animate UI's shared tokens.
+Turns a static component into an animated one that would ship in the Animate UI registry. The motion philosophy is based on Emil Kowalski's (see NOTICE.md), with one deliberate departure: Animate UI's timing is more permissive than his budgets. Strong ease-out stays the default curve and durations run a bit longer so the motion reads, but nothing used dozens of times a day is ever slow. This skill also adds how to wire Motion into Radix, Base UI and Headless UI primitives, and Animate UI's shared tokens.
+
+`references/rules.md` splits the rules in two families: **quality rules** (correctness, accessibility, performance: breaking one is a bug) and **style rules** (curves, durations, scale, bounce: Animate UI's defaults, customizable).
 
 ## Hard rules
 
 1. **Decide before you animate.** Run the gate in step 1. Writing zero motion code is a valid outcome.
-2. **Values come from the tokens**, never from memory: `references/tokens.md`. No hand-typed `stiffness`/`damping`, no `easeInOut` on an entrance. A deliberately instant change uses `transition.instant`.
+2. **Values come from the tokens**, never from memory: `references/tokens.md`. No hand-typed `stiffness`/`damping`, no `easeInOut` on an entrance. A deliberately instant change uses `transition.instant`. The global pace is `tempo`, not per-component tweaks.
 3. **Keep the component's API.** A shadcn component stays a drop-in replacement: same exports, same props, same `data-slot` attributes. You may add optional props (`transition`). Library props still reach the library.
 4. **Reduced motion ships with the animation.** With Motion: wrap the motion tree in `ReducedMotionConfig`, and neutralize `transform` strings with `useShouldReduceMotion()` (Motion's setting doesn't cover them). With CSS: zero the travel under `motion-reduce:` (CSS recipe).
 5. **Transform and opacity only.** Never animate `width`, `height`, `top`, `left`, `margin` or `padding`, except the documented height technique for disclosures (`references/recipes.md`).
@@ -19,14 +21,14 @@ Turns a static component into an animated one that would ship in the Animate UI 
 
 ### 1. Gate: should it animate?
 
-| How often it's used                                                 | Decision                                                                           |
-| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| 100+ times a day                                                    | No animation                                                                       |
-| Tens of times a day (tabs, toggles, checkboxes, tooltips, submenus) | Fast and subtle only: under 200ms, no bounce, fade rather than scale when in doubt |
-| Occasional (dialogs, popovers, dropdowns, sheets, toasts)           | Standard animation                                                                 |
-| Rare (onboarding, success, celebration)                             | Expressive motion allowed                                                          |
+| How often it's used                                                                            | Decision                                                                    |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 100+ times a day (command palette, keyboard shortcuts, arrow-key highlight)                    | No animation (quality rule)                                                 |
+| Used constantly, dozens of times a day (tooltips, press, tabs indicator, highlight, toggles)  | Up to 250ms; springs up to ~0.4s visual, bounce ≤ 0.15; fade when in doubt  |
+| Occasional (popovers, dropdowns, selects, hover cards / dialogs, sheets, drawers, toasts)      | Overlays 200 to 400ms; modals and sheets 300 to 600ms                       |
+| Rare (icons, effects, text, onboarding, success, delight)                                      | Expressive: 300 to 800ms, bounce up to 0.3                                  |
 
-**Keyboard:** never animate a global keyboard shortcut (command palette toggle, app hotkeys) or keyboard navigation (arrow keys moving a highlight between items). Opening an overlay animates the same way whatever the input; don't track input modality for it.
+**Keyboard (quality rule):** never animate a global keyboard shortcut (command palette toggle, app hotkeys) or keyboard navigation (arrow keys moving a highlight between items). Opening an overlay animates the same way whatever the input; don't track input modality for it.
 
 Name the purpose in one word: feedback, spatial (where it came from), state, continuity (avoids a jump) or delight (rare tier only). If you can't name one, don't animate.
 
@@ -70,16 +72,23 @@ Import from Animate UI's motion lib. The registry item is `@animate-ui/lib-motio
 
 Check every rule in `references/rules.md`. The ones that matter most:
 
-- Enter from `scale.enter` (0.96) plus `opacity: 0`. Never `scale(0)`.
-- Ease-out (`ease.out`) for entering and exiting; durations from the `duration` tokens.
-- Exits are never slower than entrances: overlays close with `transition.exit`, modals with `transition.modalExit`.
-- Write the full `transform` string on the animated element, not `x`/`y`/`scale` shorthands.
-- Hover effects only on hover-capable pointers.
+Quality (non-negotiable):
+
+- Never `scale(0)`; anchored overlays take their origin from the trigger, modals stay centered.
+- Exits are faster than entrances: overlays close with `transition.exit`, modals with `transition.modalExit`, sheets with `transition.drawerExit`.
+- Write the full `transform` string on the animated element, not `x`/`y`/`scale` shorthands. No `transition-all`.
+- Hover effects only on hover-capable pointers. Re-triggering retargets, never restarts.
 - Anything looping pauses off screen and stops under reduced motion.
+
+Style (defaults):
+
+- Strong ease-out (`ease.out`) for entering and exiting; `ease.inOut` only for on-screen movement.
+- Durations from the `duration` tokens (tooltip 0.2s, dropdown 0.3s, modal 0.4s, drawer 0.5s). Longer than Emil's on purpose: the curve front-loads the motion so the response is immediate. Nothing slow on things used dozens of times a day.
+- Enter from `scale.enter` (0.95) plus `opacity: 0`; press at `scale.press` (0.96).
 
 ### 6. Verify
 
-- Run through the checklist at the end of `references/rules.md`.
+- Run through the checklist at the end of `references/rules.md`: every quality item must pass; style deviations are named in the output.
 - Toggle the OS "reduce motion" setting (or Playwright `emulateMedia({ reducedMotion: 'reduce' })`): elements still appear and disappear, nothing moves or scales.
 - Trigger it twice quickly: the animation retargets from where it is instead of restarting.
 - Check positioning still works (`side`, `align`, `sideOffset`) and the user's `className` still applies.
@@ -87,4 +96,4 @@ Check every rule in `references/rules.md`. The ones that matter most:
 
 ## Output
 
-Write the code. Then in a few lines: the gate result (tier and purpose), the recipe used, and any rule you deliberately broke and why.
+Write the code. Then in a few lines: the gate result (tier and purpose), the recipe used, and any style default you deliberately changed and why. Quality rules are not broken.

@@ -11,12 +11,21 @@ import {
  * Animate UI motion tokens.
  *
  * Single source of truth for curves, durations and springs used by every
- * component. Values follow Emil Kowalski's animation guidelines:
- * strong ease-out for UI, UI motion under 300ms, never scale from 0.
+ * component. Strong ease-out curves, durations long enough for the motion to
+ * read, never scale from 0. Change `tempo` to speed up or slow down the whole
+ * library at once.
  *
  * Keep in sync with the `cssVars.theme` entries of registry-item.json
  * (Tailwind utilities `ease-out-strong`, `ease-in-out-strong`, `ease-drawer`).
  */
+
+/**
+ * Global pace multiplier applied to every duration and spring below.
+ * 1 is the Animate UI default; 0.8 feels crisper, 1.2 more relaxed.
+ */
+const tempo = 1;
+
+const t = (seconds: number) => seconds * tempo;
 
 const ease = {
   /** Entering / exiting UI. Starts fast so the response is immediate. */
@@ -29,28 +38,35 @@ const ease = {
 
 /** Durations in seconds (Motion's unit). */
 const duration = {
-  press: 0.12,
-  tooltip: 0.15,
-  dropdown: 0.2,
+  press: t(0.15),
+  tooltip: t(0.2),
+  /** Popovers, menus, selects, hover cards. */
+  dropdown: t(0.3),
   /** Closing tooltips, popovers and menus: faster than their entrance. */
-  exit: 0.15,
-  modal: 0.3,
+  exit: t(0.2),
+  /** Swapping content in place (tab panels). */
+  fade: t(0.25),
+  /** Accordion and collapsible height. */
+  disclosure: t(0.3),
+  modal: t(0.4),
   /** Dismissals are the system's response: faster than the entrance. */
-  modalExit: 0.2,
+  modalExit: t(0.25),
+  drawer: t(0.5),
+  drawerExit: t(0.3),
 } as const;
 
 const spring = {
-  /** Default for interruptible, dynamic UI (indicators, toggles, layout). */
-  default: { type: 'spring', duration: 0.5, bounce: 0.2 },
-  /** No overshoot: crisp controls used many times a day. */
-  snappy: { type: 'spring', duration: 0.3, bounce: 0 },
+  /** Default for interruptible, dynamic UI (cursors, magnetic, follow). */
+  default: { type: 'spring', duration: t(0.5), bounce: 0.2 },
+  /** Indicators, toggles and highlights: quick with a hint of overshoot. */
+  snappy: { type: 'spring', duration: t(0.4), bounce: 0.15 },
 } as const satisfies Record<string, Transition>;
 
 const scale = {
   /** Starting scale for anything that appears. Never 0. */
-  enter: 0.96,
+  enter: 0.95,
   /** Press feedback. */
-  press: 0.97,
+  press: 0.96,
 } as const;
 
 /** Ready-made transitions for the common cases. */
@@ -59,19 +75,26 @@ const transition = {
   tooltip: { duration: duration.tooltip, ease: ease.out },
   dropdown: { duration: duration.dropdown, ease: ease.out },
   exit: { duration: duration.exit, ease: ease.out },
-  /** Swapping content in place (tab panels): a quick fade, no exit. */
-  fade: { duration: duration.tooltip, ease: ease.out },
+  /** Swapping content in place (tab panels): a fade, no exit. */
+  fade: { duration: duration.fade, ease: ease.out },
   /** Accordion and collapsible height (one of the few layout animations). */
-  disclosure: { duration: duration.dropdown, ease: ease.out },
+  disclosure: { duration: duration.disclosure, ease: ease.out },
   modal: { duration: duration.modal, ease: ease.out },
   modalExit: { duration: duration.modalExit, ease: ease.out },
-  drawer: { duration: 0.5, ease: ease.drawer },
-  drawerExit: { duration: 0.3, ease: ease.drawer },
+  drawer: { duration: duration.drawer, ease: ease.drawer },
+  drawerExit: { duration: duration.drawerExit, ease: ease.drawer },
   /** Deliberately no animation (e.g. keyboard-driven changes). */
   instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;
 
-const motionTokens = { ease, duration, spring, scale, transition } as const;
+const motionTokens = {
+  tempo,
+  ease,
+  duration,
+  spring,
+  scale,
+  transition,
+} as const;
 
 type ReducedMotionConfigProps = { children: React.ReactNode };
 
@@ -129,6 +152,7 @@ function useShouldReduceMotion() {
 
 export {
   motionTokens,
+  tempo,
   ease,
   duration,
   spring,

@@ -72,14 +72,14 @@ const animations = {
         },
       },
       animate: {
-        x: [0, 2, 0],
-        y: [0, -2, 0],
+        x: [null, 2, 0],
+        y: [null, -2, 0],
         d: [
-          'M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2',
+          null,
           'M10 22V6H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-6H2',
           'M10 22V7c0-.6-.4-1-1-1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-5c0-.6-.4-1-1-1H2',
         ],
-        strokeLinejoin: ['round', 'miter', 'round'],
+        strokeLinejoin: [null, 'miter', 'round'],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',
@@ -99,10 +99,10 @@ const animations = {
         },
       },
       animate: {
-        x: [0, -2, 0],
-        y: [0, 2, 0],
+        x: [null, -2, 0],
+        y: [null, 2, 0],
         d: [
-          'M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',
+          null,
           'M15 2 H20 A2 2 0 0 1 22 4 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',
           'M15 2 H21 A1 1 0 0 1 22 3 V9 A1 1 0 0 1 21 10 H15 A1 1 0 0 1 14 9 V3 A1 1 0 0 1 15 2 Z',
         ],

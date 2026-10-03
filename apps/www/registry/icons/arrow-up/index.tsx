@@ -33,7 +33,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [0, '-25%', 0],
+        y: [null, '-25%', 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -70,7 +70,7 @@ const animations = {
         d: 'M12 19V5',
       },
       animate: {
-        d: ['M12 19V5', 'M12 19V10', 'M12 19V5'],
+        d: [null, 'M12 19V10', 'M12 19V5'],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -79,7 +79,7 @@ const animations = {
         d: 'm5 12 7-7 7 7',
       },
       animate: {
-        d: ['m5 12 7-7 7 7', 'm5 16 7-7 7 7', 'm5 12 7-7 7 7'],
+        d: [null, 'm5 16 7-7 7 7', 'm5 12 7-7 7 7'],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -90,7 +90,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [0, '-150%', '150%', 0],
+        y: [null, '-150%', '150%', 0],
         transition: {
           default: { ease: 'easeInOut', duration: 0.6 },
           y: {

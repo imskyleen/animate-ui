@@ -21,8 +21,8 @@ const animations = {
           y: 0,
         },
         animate: {
-          x: [0, -1, 1, 0],
-          y: [0, -1, 1, 0],
+          x: [null, -1, 1, 0],
+          y: [null, -1, 1, 0],
           transition: {
             duration: 1.4,
             ease: 'easeInOut',

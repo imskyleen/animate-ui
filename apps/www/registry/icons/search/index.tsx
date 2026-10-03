@@ -20,7 +20,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom right',
-        rotate: [0, 17, -10, 5, -1, 0],
+        rotate: [null, 17, -10, 5, -1, 0],
         transition: { duration: 0.8, ease: 'easeInOut' },
       },
     },
@@ -34,8 +34,8 @@ const animations = {
         y: 0,
       },
       animate: {
-        x: [0, '-15%', 0, 0],
-        y: [0, 0, '-15%', 0],
+        x: [null, '-15%', 0, 0],
+        y: [null, 0, '-15%', 0],
         transition: { duration: 1, ease: 'easeInOut' },
       },
     },

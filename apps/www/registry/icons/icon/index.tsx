@@ -57,6 +57,9 @@ type AnimateIconContextValue = {
   completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
+  speed?: number;
+  /** A tap is playing a single iteration: infinite repeats play once. */
+  once?: boolean;
 };
 
 type DefaultIconProps<T = string> = {
@@ -73,6 +76,12 @@ type DefaultIconProps<T = string> = {
   completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
+  /**
+   * Playback rate of the icon's animation: 2 plays it twice as fast, 0.5 at
+   * half speed. Scales every duration and delay of the icon's variants.
+   * @default 1.25
+   */
+  speed?: number;
 };
 
 type AnimateIconProps<T = string> = WithAsChild<
@@ -110,9 +119,14 @@ function useAnimateIconContext() {
       completeOnStop: undefined,
       persistOnAnimateEnd: undefined,
       delay: undefined,
+      speed: undefined,
+      once: undefined,
     };
   return context;
 }
+
+/** Icons play a little faster than authored: lively without dragging. */
+const DEFAULT_SPEED = 1.25;
 
 const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
 
@@ -183,6 +197,7 @@ function AnimateIconRoot({
   completeOnStop = false,
   persistOnAnimateEnd = false,
   delay = 0,
+  speed = DEFAULT_SPEED,
   children,
   onMouseEnter,
   onMouseLeave,
@@ -214,6 +229,8 @@ function AnimateIconRoot({
   const animateEndPromiseRef = React.useRef<Promise<void> | null>(null);
   const lastTargetRef = React.useRef<'initial' | 'animate'>('initial');
   const onceRef = React.useRef(false);
+  // Mirrors `onceRef` for rendering: variants clamp infinite repeats.
+  const [once, setOnce] = React.useState(false);
   const hoverActiveRef = React.useRef(false);
   const pointerTypeRef = React.useRef<string>('mouse');
   const pendingTapRef = React.useRef<number | null>(null);
@@ -222,6 +239,7 @@ function AnimateIconRoot({
     (trigger: TriggerProp, options: StartOptions = {}) => {
       const next = typeof trigger === 'string' ? trigger : animation;
       onceRef.current = !!options.once;
+      setOnce(!!options.once);
       if (delayRef.current) {
         clearTimeout(delayRef.current);
         delayRef.current = null;
@@ -243,6 +261,7 @@ function AnimateIconRoot({
 
   const stopAnimation = React.useCallback(() => {
     onceRef.current = false;
+    setOnce(false);
     if (delayRef.current) {
       clearTimeout(delayRef.current);
       delayRef.current = null;
@@ -478,6 +497,8 @@ function AnimateIconRoot({
         completeOnStop,
         persistOnAnimateEnd,
         delay,
+        speed,
+        once,
       }}
     >
       {content}
@@ -503,6 +524,7 @@ function IconWrapper<T extends string>({
   persistOnAnimateEnd,
   initialOnAnimateEnd,
   delay,
+  speed,
   completeOnStop,
   className,
   ...props
@@ -520,6 +542,8 @@ function IconWrapper<T extends string>({
       persistOnAnimateEnd: parentPersistOnAnimateEnd,
       initialOnAnimateEnd: parentInitialOnAnimateEnd,
       delay: parentDelay,
+      speed: parentSpeed,
+      once: parentOnce,
       completeOnStop: parentCompleteOnStop,
     } = context;
 
@@ -533,6 +557,7 @@ function IconWrapper<T extends string>({
       initialOnAnimateEnd !== undefined ||
       persistOnAnimateEnd !== undefined ||
       delay !== undefined ||
+      speed !== undefined ||
       completeOnStop !== undefined;
 
     if (hasOverrides) {
@@ -558,6 +583,7 @@ function IconWrapper<T extends string>({
           persistOnAnimateEnd={persistOnAnimateEnd ?? parentPersistOnAnimateEnd}
           initialOnAnimateEnd={initialOnAnimateEnd ?? parentInitialOnAnimateEnd}
           delay={delay ?? parentDelay}
+          speed={speed ?? parentSpeed}
           completeOnStop={completeOnStop ?? parentCompleteOnStop}
           asChild
         >
@@ -590,6 +616,8 @@ function IconWrapper<T extends string>({
           animate: parentAnimate,
           initialOnAnimateEnd: parentInitialOnAnimateEnd,
           delay: parentDelay,
+          speed: parentSpeed,
+          once: parentOnce,
           completeOnStop: parentCompleteOnStop,
         }}
       >
@@ -625,6 +653,7 @@ function IconWrapper<T extends string>({
         loop={loop}
         loopDelay={loopDelay}
         delay={delay}
+        speed={speed}
         completeOnStop={completeOnStop}
         persistOnAnimateEnd={persistOnAnimateEnd}
         initialOnAnimateEnd={initialOnAnimateEnd}
@@ -676,13 +705,92 @@ function resolveVariants<
   return result;
 }
 
-/** Returns the variants of the animation selected by the closest `AnimateIcon`. */
+const TIME_KEYS = new Set([
+  'duration',
+  'delay',
+  'repeatDelay',
+  'delayChildren',
+  'staggerChildren',
+]);
+
+function isPlainObject(value: unknown): value is AnyProps {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// Scales a transition (and its per-property transitions) by `speed`. During
+// a tap, infinite repeats play a single iteration so the tap can end.
+function timeTransition(transition: AnyProps, speed: number, once: boolean) {
+  const result: AnyProps = {};
+  for (const key in transition) {
+    const value = transition[key];
+    if (TIME_KEYS.has(key) && typeof value === 'number') {
+      result[key] = value / speed;
+    } else if (key === 'repeat' && value === Infinity && once) {
+      result[key] = 0;
+    } else if (isPlainObject(value)) {
+      result[key] = timeTransition(value, speed, once);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+// Unauthored returns to rest get a consistent ease-out instead of Motion's
+// per-value defaults.
+const restTransition = { duration: 0.3, ease: [0.23, 1, 0.32, 1] };
+
+function timeTarget(
+  target: unknown,
+  name: string,
+  speed: number,
+  once: boolean,
+): unknown {
+  if (typeof target === 'function')
+    return (...args: unknown[]) =>
+      timeTarget(
+        (target as (...a: unknown[]) => unknown)(...args),
+        name,
+        speed,
+        once,
+      );
+  if (!isPlainObject(target)) return target;
+  const transition =
+    target.transition ?? (name === 'initial' ? restTransition : undefined);
+  if (!transition) return target;
+  return { ...target, transition: timeTransition(transition, speed, once) };
+}
+
+function timeVariants<T extends Record<string, Variants>>(
+  variants: T,
+  speed: number,
+  once: boolean,
+): T {
+  const result = {} as AnyProps;
+  for (const element in variants) {
+    const elementVariants = variants[element] as AnyProps;
+    const timed: AnyProps = {};
+    for (const name in elementVariants)
+      timed[name] = timeTarget(elementVariants[name], name, speed, once);
+    result[element] = timed;
+  }
+  return result as T;
+}
+
+/**
+ * Returns the variants of the animation selected by the closest `AnimateIcon`,
+ * timed by its `speed`.
+ */
 function useIconVariants<
   V extends { default: T; [key: string]: T },
   T extends Record<string, Variants>,
 >(animations: V): T {
-  const { animation } = useAnimateIconContext();
-  return resolveVariants<V, T>(animations, animation);
+  const { animation, speed = DEFAULT_SPEED, once } = useAnimateIconContext();
+  return React.useMemo(
+    () =>
+      timeVariants(resolveVariants<V, T>(animations, animation), speed, !!once),
+    [animations, animation, speed, once],
+  );
 }
 
 /**

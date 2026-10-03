@@ -19,7 +19,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [0, '-7%', '7%', '-7%', '7%', 0],
+        x: [null, '-7%', '7%', '-7%', '7%', 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },

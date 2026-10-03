@@ -25,7 +25,7 @@ import {
 
 // A tooltip opened within this window after another one closed is "warm":
 // it appears without an entrance animation, like moving along a toolbar.
-const WARM_WINDOW_MS = 300;
+const WARM_WINDOW_MS = 500;
 let lastTooltipCloseAt = 0;
 
 type TooltipContextType = {

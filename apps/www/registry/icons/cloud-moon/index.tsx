@@ -20,8 +20,8 @@ const animations = {
         y: 0,
       },
       animate: {
-        x: [0, -1, 1, 0],
-        y: [0, -1, 1, 0],
+        x: [null, -1, 1, 0],
+        y: [null, -1, 1, 0],
         transition: {
           duration: 1.4,
           ease: 'easeInOut',
@@ -33,7 +33,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [0, 6, -8, 0],
+        rotate: [null, 6, -8, 0],
         transition: {
           duration: 1.4,
           ease: 'easeInOut',

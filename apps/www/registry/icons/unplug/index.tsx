@@ -68,7 +68,7 @@ const animations = {
       animate: {
         x: 3,
         y: -3,
-        pathLength: [1, 0],
+        pathLength: [null, 0],
         transition: {
           duration: 0.3,
           ease: 'easeInOut',
@@ -85,7 +85,7 @@ const animations = {
       animate: {
         x: 3,
         y: -3,
-        pathLength: [1, 0],
+        pathLength: [null, 0],
         transition: {
           duration: 0.3,
           ease: 'easeInOut',
@@ -100,7 +100,7 @@ const animations = {
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
       animate: {
-        d: ['m19 5 3-3', 'm16 8 6-6', 'm19 5 3-3'],
+        d: [null, 'm16 8 6-6', 'm19 5 3-3'],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -111,8 +111,8 @@ const animations = {
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
       animate: {
-        x: [0, -3, 0],
-        y: [0, 3, 0],
+        x: [null, -3, 0],
+        y: [null, 3, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -122,7 +122,7 @@ const animations = {
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
       animate: {
-        d: ['m2 22 3-3', 'm2 22 6-6', 'm2 22 3-3'],
+        d: [null, 'm2 22 6-6', 'm2 22 3-3'],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -133,8 +133,8 @@ const animations = {
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
       animate: {
-        x: [0, 3, 0],
-        y: [0, -3, 0],
+        x: [null, 3, 0],
+        y: [null, -3, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -146,9 +146,9 @@ const animations = {
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
       animate: {
-        x: [0, 3, 0],
-        y: [0, -3, 0],
-        pathLength: [1, 0, 1],
+        x: [null, 3, 0],
+        y: [null, -3, 0],
+        pathLength: [null, 0, 1],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',
@@ -163,9 +163,9 @@ const animations = {
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
       animate: {
-        x: [0, 3, 0],
-        y: [0, -3, 0],
-        pathLength: [1, 0, 1],
+        x: [null, 3, 0],
+        y: [null, -3, 0],
+        pathLength: [null, 0, 1],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',

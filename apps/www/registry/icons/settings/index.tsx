@@ -19,7 +19,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [0, 90, 180],
+        rotate: [null, 90, 180],
         transition: {
           duration: 1.25,
           ease: 'easeInOut',

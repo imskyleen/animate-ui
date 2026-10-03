@@ -23,7 +23,7 @@ const animations = {
         },
       },
       animate: {
-        rotate: [0, -30, 400, 360],
+        rotate: [null, -30, 400, 360],
         transition: {
           duration: 1.2,
           times: [0, 0.25, 0.75, 1],
@@ -42,7 +42,7 @@ const animations = {
         },
       },
       animate: {
-        rotate: [0, -30, 25, -15, 10, -5, 0],
+        rotate: [null, -30, 25, -15, 10, -5, 0],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',

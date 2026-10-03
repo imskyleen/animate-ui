@@ -20,7 +20,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom left',
-        rotate: [0, 8, -8, 2, 0],
+        rotate: [null, 8, -8, 2, 0],
         transition: {
           ease: 'easeInOut',
           duration: 0.8,
@@ -36,9 +36,9 @@ const animations = {
         pathOffset: 0,
       },
       animate: {
-        opacity: [1, 0, 1],
-        pathLength: [1, 0, 1],
-        pathOffset: [0, 1, 0],
+        opacity: [null, 0, 1],
+        pathLength: [null, 0, 1],
+        pathOffset: [null, 1, 0],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',
@@ -53,9 +53,9 @@ const animations = {
         pathOffset: 0,
       },
       animate: {
-        opacity: [1, 0, 1],
-        pathLength: [1, 0, 1],
-        pathOffset: [0, 1, 0],
+        opacity: [null, 0, 1],
+        pathLength: [null, 0, 1],
+        pathOffset: [null, 1, 0],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',

@@ -24,8 +24,8 @@ const animations = {
         scale: 1,
       },
       animate: {
-        opacity: [1, 0.5, 1, 0.5, 1],
-        scale: [1, 0.9, 1, 0.9, 1],
+        opacity: [null, 0.5, 1, 0.5, 1],
+        scale: [null, 0.9, 1, 0.9, 1],
         transition: {
           duration: 1.8,
           ease: 'easeInOut',

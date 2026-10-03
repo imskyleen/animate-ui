@@ -21,9 +21,9 @@ const animations = {
         y: 0,
       },
       animate: {
-        scale: [1, 0.8, 1, 1, 1],
-        x: [0, '-10%', '100%', '-125%', 0],
-        y: [0, '10%', '-100%', '125%', 0],
+        scale: [null, 0.8, 1, 1, 1],
+        x: [null, '-10%', '100%', '-125%', 0],
+        y: [null, '10%', '-100%', '125%', 0],
         transition: {
           default: { ease: 'easeInOut', duration: 1.2 },
           x: {

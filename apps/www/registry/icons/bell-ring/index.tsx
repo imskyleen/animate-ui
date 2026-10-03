@@ -19,7 +19,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [0, 20, -10, 10, -5, 3, 0],
+        rotate: [null, 20, -10, 10, -5, 3, 0],
         transformOrigin: 'top center',
         transition: { duration: 0.9, ease: 'easeInOut' },
       },
@@ -29,7 +29,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [0, -6, 5, -5, 4, -3, 2, 0],
+        x: [null, -6, 5, -5, 4, -3, 2, 0],
         transition: { duration: 1.1, ease: 'easeInOut' },
       },
     },
@@ -39,8 +39,8 @@ const animations = {
         scale: 1,
       },
       animate: {
-        y: [0, 1, -0.5, 0.5, -0.25, 0],
-        scale: [1, 0.8, 0.9, 1, 1],
+        y: [null, 1, -0.5, 0.5, -0.25, 0],
+        scale: [null, 0.8, 0.9, 1, 1],
 
         transition: { duration: 0.8, ease: 'easeInOut' },
       },
@@ -51,8 +51,8 @@ const animations = {
         scale: 1,
       },
       animate: {
-        y: [0, -0.5, 1, -0.5, 0.25, 0],
-        scale: [1, 0.8, 0.9, 1, 1],
+        y: [null, -0.5, 1, -0.5, 0.25, 0],
+        scale: [null, 0.8, 0.9, 1, 1],
         transition: { duration: 0.8, ease: 'easeInOut' },
       },
     },

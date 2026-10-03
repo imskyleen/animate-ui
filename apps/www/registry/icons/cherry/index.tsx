@@ -19,7 +19,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [0, -12, 7, -4, 0],
+        rotate: [null, -12, 7, -4, 0],
         transformOrigin: 'top center',
         transition: {
           duration: 0.8,

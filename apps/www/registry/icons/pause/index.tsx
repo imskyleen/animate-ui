@@ -45,7 +45,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [0, 1.5, 0],
+        x: [null, 1.5, 0],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',
@@ -57,7 +57,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [0, -1.5, 0],
+        x: [null, -1.5, 0],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',

@@ -23,10 +23,10 @@ const animations = {
         transformOrigin: 'bottom center',
       },
       animate: {
-        scale: [1, 0.75, 1, 1],
-        rotate: [0, 30, -15, 0],
-        x: [0, 0, 0, 0],
-        y: [0, -6, 0, 0],
+        scale: [null, 0.75, 1, 1],
+        rotate: [null, 30, -15, 0],
+        x: [null, 0, 0, 0],
+        y: [null, -6, 0, 0],
         transformOrigin: 'bottom center',
         transition: { ease: 'easeInOut', duration: 1 },
       },
@@ -41,7 +41,7 @@ const animations = {
         transformOrigin: 'bottom center',
       },
       animate: {
-        rotate: [0, 15, -10, 0],
+        rotate: [null, 15, -10, 0],
         transformOrigin: 'bottom center',
         transition: { ease: 'easeInOut', duration: 1 },
       },

@@ -22,7 +22,7 @@ const animations = {
           scale: 1,
         },
         animate: {
-          scale: [1, 1.1, 1],
+          scale: [null, 1.1, 1],
           transition: {
             ease: 'easeInOut',
             duration: 1.5,
@@ -41,7 +41,7 @@ const animations = {
           pathLength: 1,
         },
         animate: {
-          pathLength: [1, 0.05, 1],
+          pathLength: [null, 0.05, 1],
           transition: {
             pathLength: { duration: 1.5, ease: 'easeInOut' },
           },
@@ -57,7 +57,7 @@ const animations = {
           scale: 1,
         },
         animate: {
-          scale: [1, 1.1, 1],
+          scale: [null, 1.1, 1],
           transition: {
             ease: 'easeInOut',
             duration: 1.5,
@@ -76,7 +76,7 @@ const animations = {
           pathLength: 1,
         },
         animate: {
-          pathLength: [1, 0.05, 1],
+          pathLength: [null, 0.05, 1],
           transition: {
             pathLength: { duration: 1.5, ease: 'easeInOut' },
           },

@@ -19,7 +19,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [1, 0.9, 1.1, 1],
+        scale: [null, 0.9, 1.1, 1],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -79,7 +79,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [1, 0.9, 1.1, 1],
+        scale: [null, 0.9, 1.1, 1],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },

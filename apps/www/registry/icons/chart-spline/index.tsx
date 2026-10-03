@@ -33,8 +33,8 @@ const animations = {
     path2: {
       initial: { opacity: 1, pathLength: 1 },
       animate: {
-        opacity: [1, 0, 1],
-        pathLength: [1, 0.05, 1],
+        opacity: [null, 0, 1],
+        pathLength: [null, 0.05, 1],
         transition: {
           duration: 1.6,
           ease: 'easeInOut',

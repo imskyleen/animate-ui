@@ -29,7 +29,7 @@ const animations = {
     path: {
       initial: { pathLength: 1 },
       animate: {
-        pathLength: [1, 0.02, 1],
+        pathLength: [null, 0.02, 1],
         transition: {
           duration: 2.4,
           ease: 'easeInOut',

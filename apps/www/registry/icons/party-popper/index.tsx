@@ -45,7 +45,7 @@ const animations = {
       animate: {
         x: [-1, 1, 0],
         y: [1, -1, 0],
-        scale: [1, 0.7, 1.1, 1],
+        scale: [null, 0.7, 1.1, 1],
         transformOrigin: 'bottom left',
         transition: {
           duration: 0.6,

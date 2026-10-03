@@ -22,7 +22,7 @@ const animations = {
       animate: {
         transformOrigin: 'bottom center',
         fill: 'currentColor',
-        rotate: [0, -20, 15, -7, 0],
+        rotate: [null, -20, 15, -7, 0],
         fillOpacity: [0, 1, 0, 1, 0],
         transition: {
           duration: 0.8,
@@ -47,7 +47,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom center',
-        rotate: [0, 0, 10, -5, 0],
+        rotate: [null, 0, 10, -5, 0],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',

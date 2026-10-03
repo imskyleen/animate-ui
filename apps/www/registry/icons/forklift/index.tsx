@@ -24,8 +24,8 @@ const animations = {
         y2: 19,
       },
       animate: {
-        y1: [19, 5, 6],
-        y2: [19, 5, 6],
+        y1: [null, 5, 6],
+        y2: [null, 5, 6],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',
@@ -44,8 +44,8 @@ const animations = {
         y2: 19,
       },
       animate: {
-        y1: [19, 5, 6, 19],
-        y2: [19, 5, 6, 19],
+        y1: [null, 5, 6, 19],
+        y2: [null, 5, 6, 19],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',

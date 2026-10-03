@@ -67,9 +67,9 @@ const animations = {
         },
       },
       animate: {
-        x: [0, -1.5, 0],
-        y: [0, 1.5, 0],
-        pathLength: [1, 0.85, 1],
+        x: [null, -1.5, 0],
+        y: [null, 1.5, 0],
+        pathLength: [null, 0.85, 1],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',
@@ -87,9 +87,9 @@ const animations = {
         },
       },
       animate: {
-        x: [0, 1.5, 0],
-        y: [0, -1.5, 0],
-        pathLength: [1, 0.85, 1],
+        x: [null, 1.5, 0],
+        y: [null, -1.5, 0],
+        pathLength: [null, 0.85, 1],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',

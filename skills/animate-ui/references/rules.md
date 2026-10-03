@@ -1,15 +1,22 @@
 # Animate UI motion rules
 
-Each rule comes from the October 2026 audit of the Animate UI registry. The "Avoid" examples are real code that the audit flagged.
+The rules come in two families:
 
-## Accessibility
+- **A. Quality rules** are about correctness, accessibility and performance. They are non-negotiable: breaking one is a bug, not a taste choice.
+- **B. Style rules** are Animate UI's defaults for curves, durations, scale and bounce. They are customizable (props, the `tempo` multiplier, the tokens), but a component ships with them unless the user asks otherwise.
 
-### 1. Respect reduced motion in every component
+The rules come from the October 2026 audit of the Animate UI registry. The "Avoid" examples are real code that the audit flagged.
+
+## A. Quality rules (non-negotiable)
+
+### Accessibility
+
+#### A1. Respect reduced motion in every component
 
 Two pieces, always together:
 
 - Wrap the component's motion tree in `ReducedMotionConfig`. Under reduced motion, Motion then skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity and color.
-- Motion does **not** skip a `transform` string, and components animate `transform` strings (rule 14). Neutralize them with `useShouldReduceMotion()`, called inside the wrapper.
+- Motion does **not** skip a `transform` string, and components animate `transform` strings (A11). Neutralize them with `useShouldReduceMotion()`, called inside the wrapper.
 
 ```tsx
 // Avoid: nothing checks the OS setting
@@ -32,9 +39,15 @@ function Content() {
 }
 ```
 
-Reduced motion means gentler, not none: the element still fades. JavaScript loops (canvas, `requestAnimationFrame`, `setInterval`) are not covered by Motion: stop them when `useShouldReduceMotion()` is true.
+CSS-driven components zero their travel under `motion-reduce:` instead (CSS-driven recipe). Reduced motion means gentler, not none: the element still fades. JavaScript loops (canvas, `requestAnimationFrame`, `setInterval`) are not covered by Motion: stop them when `useShouldReduceMotion()` is true.
 
-### 2. Hover effects only on hover-capable pointers
+#### A2. Nothing animates on keyboard-driven or very high-frequency actions
+
+- Global keyboard shortcuts (command palette toggle, app hotkeys) and keyboard navigation (arrow keys moving a highlight, keyboard tab selection) are instant: `transition.instant`. Only pointer interactions animate the highlight.
+- Anything used 100+ times a day is instant whatever the input. Motion on it stops being information and becomes a wait.
+- Opening an overlay animates the same way whatever the input; don't track input modality for it.
+
+#### A3. Hover effects only on hover-capable pointers
 
 Touch browsers fire `mouseenter` on tap and never fire `mouseleave`, so the hover state sticks. Motion's `whileHover` already ignores touch, and so do hover-driven library components (Radix Tooltip and Hover Card, Base UI Tooltip and Preview Card): don't add a gate to those. Gate hand-wired hover.
 
@@ -49,15 +62,23 @@ onMouseEnter={canHover ? () => setActive(value) : undefined}
 
 In CSS: `@media (hover: hover) and (pointer: fine) { … }`.
 
-### 3. Loops pause when nobody can see them
+#### A4. Loops pause when nobody can see them
 
 Infinite animations and canvas backgrounds pause off screen (`useInView`), in a hidden tab (`document.visibilityState`) and under reduced motion.
 
-## Physicality
+#### A5. No delay on feedback
 
-### 4. Never scale from 0
+Feedback starts on the frame of the interaction. A checkbox that waits 200ms before drawing its check feels broken. Duration is a style choice; a delay before feedback is not.
 
-Nothing appears from nothing. Start at `scale.enter` (0.96) with `opacity: 0`.
+#### A6. Warm tooltips appear instantly
+
+After the first tooltip in a group opens, moving to the next one shows it without animation. Radix marks this with `data-state="instant-open"`, Base UI with `data-instant`.
+
+### Physicality
+
+#### A7. Never scale from 0
+
+Nothing appears from nothing. Start at `scale.enter` (0.95) with `opacity: 0`.
 
 ```tsx
 // Avoid
@@ -70,7 +91,7 @@ initial={{ opacity: 0, transform: `scale(${scale.enter})` }}
 
 Particle bursts and ripples are the only exception.
 
-### 5. Anchored overlays grow from their trigger
+#### A8. Anchored overlays grow from their trigger
 
 Popovers, tooltips, menus, hover cards and selects set `transform-origin` from the base library, inside the primitive. Modals are the exception: they stay centered.
 
@@ -80,60 +101,13 @@ Popovers, tooltips, menus, hover cards and selects set `transform-origin` from t
 | Base UI     | `var(--transform-origin)`                                                                             |
 | Headless UI | map `data-anchor` (`bottom_start` → `origin-top-left`, …)                                             |
 
-### 6. Press feedback is subtle and fast
+#### A9. Exits are faster than entrances
 
-`scale.press` (0.97) over `transition.press`, released faster than pressed. No hover scale-up on small controls (checkbox, radio, switch).
+Closing is the system's response to the user: it never takes longer than opening. Overlays close with `transition.exit`, modals with `transition.modalExit`, sheets with `transition.drawerExit`. Put each transition inside its own target (`animate` / `exit`) so they differ.
 
-```tsx
-// Avoid
-whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+### Performance
 
-// Do
-whileTap={{ transform: `scale(${scale.press})`, transition: transition.press }}
-```
-
-### 7. Modals: subtle scale, faster exit
-
-`scale(0.96)` and opacity, `transition.modal` in and `transition.modalExit` out. A 3D flip or a large scale is an opt-in variant, never the default.
-
-## Timing
-
-### 8. Ease-out for entering and exiting
-
-```tsx
-// Avoid
-transition={{ duration: 0.2, ease: 'easeInOut' }}
-
-// Do
-transition={transition.dropdown} // 0.2s, ease.out
-```
-
-### 9. Stay inside the duration budget
-
-| Element                         | Budget        |
-| ------------------------------- | ------------- |
-| Press feedback                  | 0.1 to 0.16s  |
-| Tooltip                         | 0.125 to 0.2s |
-| Dropdown, menu, popover, select | 0.15 to 0.25s |
-| Dialog, sheet                   | 0.2 to 0.5s   |
-
-A spring's real duration is its settle time: `{ stiffness: 300, damping: 25 }` takes about 320ms with overshoot, which is too slow for a tooltip.
-
-### 10. No delay on feedback
-
-Feedback starts on the frame of the interaction. A checkbox that waits 200ms before drawing its check feels broken.
-
-### 11. Warm tooltips appear instantly
-
-After the first tooltip in a group opens, moving to the next one shows it without animation. Radix marks this with `data-state="instant-open"`, Base UI with `data-instant`.
-
-### 12. Nothing animates on keyboard-driven actions
-
-Arrow-key navigation in a menu or list moves the highlight instantly. Only pointer interactions animate it.
-
-## Performance
-
-### 13. Animate transform and opacity only
+#### A10. Animate transform and opacity, not layout
 
 ```tsx
 // Avoid: layout on every frame
@@ -145,7 +119,7 @@ animate={{ top: bounds.top, left: bounds.left, width: bounds.width, height: boun
 
 Disclosures are the only place a height animation is allowed, with the technique in `recipes.md`.
 
-### 14. Full transform strings
+#### A11. Full transform strings
 
 Motion's `x`, `y` and `scale` shorthands run on the main thread. Write the transform on the animated element.
 
@@ -157,7 +131,7 @@ animate={{ x: '100%' }}
 animate={{ transform: 'translateX(100%)' }}
 ```
 
-### 15. Pointer and scroll values never go through React state
+#### A12. Pointer and scroll values never go through React state
 
 Drive them with motion values (`useMotionValue`, `useScroll`, `useSpring`) so nothing re-renders.
 
@@ -166,34 +140,93 @@ Drive them with motion values (`useMotionValue`, `useScroll`, `useSpring`) so no
 onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}
 ```
 
-### 16. Name the properties you transition
+#### A13. Name the properties you transition
 
-Never `transition-all`. List them: `transition-[opacity,transform]`, `transition-colors`.
+Never `transition: all` / `transition-all`. List them: `transition-[opacity,transform]`, `transition-colors`.
 
-## Cohesion
+### Behavior
 
-### 17. One token set
+#### A14. Interruptible by default
 
-Curves, durations and springs come from `lib/motion`. Two components that do the same thing use the same token.
+Re-triggering retargets from the current value; it never restarts. Use springs or tweens that retarget. Avoid keyframe arrays with a fixed first value on anything that can be re-triggered (hover, toggle), and avoid `AnimatePresence mode="wait"` on fast swaps: it plays the exit and the entrance back to back.
 
-### 18. Interruptible by default
+#### A15. Springs use the `duration`/`bounce` form
 
-Use springs or tweens that retarget from the current value. Avoid keyframe arrays with a fixed first value on anything that can be re-triggered (hover, toggle), and avoid `AnimatePresence mode="wait"` on fast swaps: it plays the exit and the entrance back to back.
+`bounce` is ignored when `stiffness` or `damping` are set, and hand-typed physics hides the real settle time. Use the `spring` tokens or `{ type: 'spring', duration, bounce }`.
 
-### 19. Restrained defaults, expressive opt-ins
+## B. Style rules (Animate UI defaults, customizable)
 
-Defaults are sober: slide 8 to 16px, zoom from 0.96. Bigger effects (100px slides, flips, long wipes) are props the user asks for.
+Animate UI deliberately runs longer than Emil Kowalski's budgets (see NOTICE.md). The strong ease-out front-loads the motion: most of the distance is covered in the first frames, so the UI responds immediately, and the longer tail lets the motion read instead of flashing by. The one firm style limit: **nothing slow on things used dozens of times a day.**
+
+### B1. Strong ease-out is the default curve
+
+- `ease.out` (`cubic-bezier(0.23, 1, 0.32, 1)`) for anything entering or exiting.
+- `ease.inOut` only for something already on screen moving or morphing.
+- `ease.drawer` for sheets and drawers.
+- Never ease-in on an entrance. Motion's built-in `easeOut`/`easeInOut` are too weak; use the tokens.
+
+```tsx
+// Avoid
+transition={{ duration: 0.2, ease: 'easeInOut' }}
+
+// Do
+transition={transition.dropdown} // 0.3s, ease.out
+```
+
+### B2. Duration budgets
+
+| Element                                                                    | Budget                                                   | Default token                                     |
+| -------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------- |
+| Used constantly: tooltip, press, tabs indicator, highlight, toggles        | up to 250ms; springs up to ~0.4s visual, bounce ≤ 0.15   | `press` 0.15s, `tooltip` 0.2s, `spring.snappy`    |
+| Content swap (tab panels fade)                                             | ~250ms                                                   | `fade` 0.25s                                      |
+| Disclosure height (accordion, collapsible)                                 | ~300ms                                                   | `disclosure` 0.3s                                 |
+| Occasional overlays: popover, dropdown/menu, select, hover card            | 200 to 400ms                                             | `dropdown` 0.3s in, `exit` 0.2s out               |
+| Modals, sheets, drawers                                                    | 300 to 600ms                                             | `modal` 0.4s / `modalExit` 0.25s, `drawer` 0.5s / `drawerExit` 0.3s |
+| Icons, effects, text, delight moments                                      | 300 to 800ms, bounce up to 0.3                           | `spring.default` (0.5s, bounce 0.2)               |
+
+A spring's real duration is its settle time: with the `duration`/`bounce` form, `duration` is the visual duration and the overshoot settles after it. Budget the visual duration.
+
+### B3. Subtle scale
+
+Enter from `scale.enter` (0.95). Press feedback: `scale.press` (0.96) over `transition.press`. No hover scale-up on small controls (checkbox, radio, switch).
+
+```tsx
+// Avoid
+whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+
+// Do
+whileTap={{ transform: `scale(${scale.press})`, transition: transition.press }}
+```
+
+### B4. Modals: subtle scale, centered
+
+`scale.enter` and opacity, `transition.modal` in and `transition.modalExit` out. A 3D flip or a large scale is an opt-in variant, never the default.
+
+### B5. Restrained defaults, expressive opt-ins
+
+Defaults are sober: slide 8 to 16px, zoom from 0.95, bounce only where B2 allows it. Bigger effects (100px slides, flips, long wipes) are props the user asks for.
+
+### B6. One token set
+
+Curves, durations and springs come from `lib/motion`. Two components that do the same thing use the same token. To change the pace of everything, change `tempo` (`tokens.md`), not individual components.
 
 ## Checklist
 
-- [ ] Passed the gate (frequency tier and purpose named)
-- [ ] Wrapped in `ReducedMotionConfig`; `transform` strings neutralized with `useShouldReduceMotion()`; loops stop under reduced motion
-- [ ] No `scale(0)`; enters from 0.96
-- [ ] Anchored overlays set `transform-origin` in the primitive
-- [ ] Ease-out on enter and exit; durations within budget; exit faster than enter
-- [ ] Only `transform` and `opacity` animate (disclosure height excepted)
-- [ ] Full `transform` strings, no `x`/`y`/`scale` shorthands
-- [ ] Hover gated to hover-capable pointers; nothing animates on keyboard navigation
-- [ ] No `transition-all`; no hand-typed springs
+Quality (any miss is a bug):
+
+- [ ] Passed the gate: frequency tier and purpose named; nothing animates on keyboard-driven or 100+/day actions
+- [ ] Wrapped in `ReducedMotionConfig`; `transform` strings neutralized with `useShouldReduceMotion()` (CSS: travel zeroed under `motion-reduce:`); loops stop under reduced motion
+- [ ] No `scale(0)`
+- [ ] Anchored overlays set `transform-origin` in the primitive; modals stay centered
+- [ ] Exit faster than enter
+- [ ] Only `transform` and `opacity` animate (disclosure height excepted); full `transform` strings, no `x`/`y`/`scale` shorthands
+- [ ] Hover gated to hover-capable pointers; no delay on feedback; warm tooltips skip the entrance
+- [ ] No `transition-all`; no hand-typed `stiffness`/`damping`
 - [ ] Re-triggering retargets instead of restarting
 - [ ] Same exports, props and `data-slot` as the original component
+
+Style (defaults; deviations named in the output):
+
+- [ ] `ease.out` on enter and exit (`ease.inOut` only for on-screen movement)
+- [ ] Durations from the tokens and within the B2 budget; nothing slow on things used dozens of times a day
+- [ ] Enters from `scale.enter` (0.95); press at `scale.press` (0.96); bounce within budget

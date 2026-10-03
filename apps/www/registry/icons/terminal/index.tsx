@@ -19,7 +19,7 @@ const animations = {
         opacity: 1,
       },
       animate: {
-        opacity: [1, 0, 1, 0, 1],
+        opacity: [null, 0, 1, 0, 1],
         transition: {
           duration: 1.5,
           ease: 'easeInOut',

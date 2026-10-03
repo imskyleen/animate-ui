@@ -17,7 +17,7 @@ for (const lib of ['radix', 'base'] as const) {
         .waitFor({ state: 'attached' });
     });
 
-    test('enters from 0.96 with ease-out, anchored to the trigger', async ({
+    test('enters from 0.95 with ease-out, anchored to the trigger', async ({
       page,
     }) => {
       const probe = await probeFirstFrame(page, CONTENT);

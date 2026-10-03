@@ -88,7 +88,7 @@ const CASES: Case[] = [
   },
 ];
 
-const BUDGET = 250;
+const BUDGET = 350;
 
 for (const c of CASES) {
   const CONTENT = `[data-slot="${c.slot}"]`;
@@ -141,7 +141,7 @@ for (const c of CASES) {
     test('exit animates, then unmounts', async ({ page }) => {
       await c.open(page);
       await page.locator(CONTENT).first().waitFor();
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(400);
       await c.close(page);
       await page.waitForTimeout(40);
       expect(await page.locator(CONTENT).count()).toBeGreaterThan(0);

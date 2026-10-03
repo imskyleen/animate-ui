@@ -17,7 +17,7 @@ const animations = {
     path1: {
       initial: { scale: 1 },
       animate: {
-        scale: [1, 0.9, 1],
+        scale: [null, 0.9, 1],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',
@@ -27,7 +27,7 @@ const animations = {
     path2: {
       initial: { pathLength: 1, opacity: 1 },
       animate: {
-        pathLength: [1, 0, 1],
+        pathLength: [null, 0, 1],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',

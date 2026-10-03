@@ -20,7 +20,7 @@ const animations = {
         y2: 16,
       },
       animate: {
-        y2: [16, 11, 14, 16],
+        y2: [null, 11, 14, 16],
         transition: { duration: 0.6, ease: 'linear' },
       },
     },
@@ -29,7 +29,7 @@ const animations = {
         y2: 11,
       },
       animate: {
-        y2: [11, 14, 16, 11],
+        y2: [null, 14, 16, 11],
         transition: { duration: 0.6, ease: 'linear' },
       },
     },
@@ -38,7 +38,7 @@ const animations = {
         y2: 14,
       },
       animate: {
-        y2: [14, 16, 11, 14],
+        y2: [null, 16, 11, 14],
         transition: { duration: 0.6, ease: 'linear' },
       },
     },
