@@ -24,16 +24,22 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "check-types": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@babel/types": "^7.29.8",
     "@types/node": "catalog:",
     "@workspace/eslint-config": "workspace:*",
     "eslint": "catalog:",
     "tsdown": "^0.23.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.29.9"
   }
 }

@@ -64,7 +64,14 @@ function AccordionContent({
       className="overflow-hidden text-sm"
       {...props}
     >
-      <div className={cn('pt-0 pb-4', className)}>{children}</div>
+      <div
+        className={cn(
+          'h-(--radix-accordion-content-height) pt-0 pb-4',
+          className,
+        )}
+      >
+        {children}
+      </div>
     </AccordionPrimitive.Content>
   );
 }

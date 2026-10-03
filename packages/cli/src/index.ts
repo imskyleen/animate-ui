@@ -2,6 +2,7 @@
 import { parseArgs } from 'node:util';
 
 import pkg from '../package.json' with { type: 'json' };
+import { animate } from './commands/animate';
 
 const HELP = `Usage: animate-ui <command> [components...] [options]
 
@@ -60,9 +61,19 @@ function main(argv: string[]) {
     return 1;
   }
 
-  // Implemented in phase 3.
-  console.error(`"${command}" is not implemented yet.`);
-  return 1;
+  try {
+    if (command === 'animate') {
+      return animate(components, {
+        cwd: values.cwd,
+        dryRun: values['dry-run'],
+      });
+    }
+    console.error(`"${command}" is not implemented yet.`);
+    return 1;
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    return 1;
+  }
 }
 
 process.exitCode = main(process.argv.slice(2));

@@ -97,7 +97,14 @@ function Content({
             // A force-mounted closed item stays in the DOM: keep it out of
             // the tab order and the accessibility tree.
             inert={!open}
-            style={{ overflow: 'hidden' }}
+            style={{
+              overflow: 'hidden',
+              // Radix measures these once; Motion owns the height now, so
+              // classes reading them (h-(--radix-accordion-content-height))
+              // follow the content instead of a stale measure.
+              ['--radix-collapsible-content-height' as string]: 'auto',
+              ['--radix-accordion-content-height' as string]: 'auto',
+            }}
           >
             {children}
           </motion.div>

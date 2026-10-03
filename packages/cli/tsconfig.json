@@ -1,15 +1,28 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "types": ["node"],
+    "lib": [
+      "ES2023"
+    ],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "types": [
+      "node"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true
+    "noEmit": true,
+    "resolveJsonModule": true
   },
-  "include": ["src", "tsdown.config.ts"]
+  "include": [
+    "src",
+    "test",
+    "tsdown.config.ts"
+  ],
+  "exclude": [
+    "test/fixtures",
+    "test/__snapshots__"
+  ]
 }
