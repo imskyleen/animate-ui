@@ -30,7 +30,7 @@ for (const lib of ['radix', 'base'] as const) {
       // Origin follows the trigger (Radix sets it per side), not the center.
       expect(first.origin).not.toBe('50% 50%');
 
-      await page.waitForTimeout(250);
+      await page.waitForTimeout(650);
       const settled = await sample(page, CONTENT);
       expect(settled.opacity).toBe(1);
       expect(settled.scale).toBeCloseTo(1, 3);

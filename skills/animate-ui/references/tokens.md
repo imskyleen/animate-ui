@@ -40,31 +40,32 @@ Strong ease-out is the default. Never ease-in on an entrance. Motion's built-in 
 const tempo = 0.8; // crisper; 1.2 feels more relaxed
 ```
 
-Curves, scales and `bounce` are not affected. CSS-driven components (Base UI Drawer and Toast) use Tailwind duration classes (`duration-500`, `data-ending-style:duration-200`, …) that `tempo` doesn't reach: adjust them separately.
+Curves, scales and `bounce` are not affected. CSS-driven components (Base UI Drawer and Toast) use Tailwind duration classes (`duration-600`, `data-ending-style:duration-400`, …) that `tempo` doesn't reach: adjust them separately.
 
 ## Durations (seconds, at `tempo` 1)
 
 | Token                 | Value | Use for                                       |
 | --------------------- | ----- | --------------------------------------------- |
 | `duration.press`      | 0.15  | Press feedback                                |
-| `duration.tooltip`    | 0.2   | Tooltips                                      |
-| `duration.dropdown`   | 0.3   | Popovers, menus, selects, hover cards         |
-| `duration.exit`       | 0.2   | Closing tooltips, popovers, menus             |
-| `duration.fade`       | 0.25  | Swapping content in place (tab panels)        |
-| `duration.disclosure` | 0.3   | Accordion and collapsible height              |
-| `duration.modal`      | 0.4   | Dialog entrance                               |
-| `duration.modalExit`  | 0.25  | Dialog exit                                   |
-| `duration.drawer`     | 0.5   | Sheet and drawer entrance                     |
-| `duration.drawerExit` | 0.3   | Sheet and drawer exit                         |
+| `duration.change`     | 0.6   | Other state changes: checkmarks, swapped icons, labels (`transition.change`) |
+| `duration.tooltip`    | 0.6   | Tooltips                                      |
+| `duration.dropdown`   | 0.6   | Popovers, menus, selects, hover cards         |
+| `duration.exit`       | 0.4   | Closing tooltips, popovers, menus             |
+| `duration.fade`       | 0.6   | Swapping content in place (tab panels)        |
+| `duration.disclosure` | 0.6   | Accordion and collapsible height              |
+| `duration.modal`      | 0.6   | Dialog entrance                               |
+| `duration.modalExit`  | 0.4   | Dialog exit                                   |
+| `duration.drawer`     | 0.6   | Sheet and drawer entrance                     |
+| `duration.drawerExit` | 0.4   | Sheet and drawer exit                         |
 
-These are longer than Emil Kowalski's budgets on purpose: `ease.out` covers most of the distance in the first frames, so the response is immediate and the tail lets the motion read. Budgets per element are in `rules.md` (B2). The firm limit: nothing used dozens of times a day goes past 250ms (springs: about 0.4s visual, bounce ≤ 0.15).
+Every entrance and state change is 0.6s, exits 0.4s (about two thirds), press 0.15s. These are longer than Emil Kowalski's budgets on purpose: `ease.out` does most of the movement in the first ~150ms, so the response is immediate and the long tail lets the motion read. Keyboard-driven and 100+/day actions stay instant (quality rule, `transition.instant`). Budgets are in `rules.md` (B2).
 
 ## Springs
 
 | Token            | Value                                             | Use for                                                                     |
 | ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
-| `spring.default` | `{ type: 'spring', duration: 0.5, bounce: 0.2 }`  | Larger interruptible motion: drag, layout changes, cursor following, magnetic |
-| `spring.snappy`  | `{ type: 'spring', duration: 0.4, bounce: 0.15 }` | Indicators, toggles and highlights (tab indicator, switch thumb)            |
+| `spring.default` | `{ type: 'spring', duration: 0.6, bounce: 0.2 }`  | Larger interruptible motion: drag, layout changes, cursor following, magnetic |
+| `spring.snappy`  | `{ type: 'spring', duration: 0.6, bounce: 0.15 }` | Indicators, toggles and highlights (tab indicator, switch thumb)            |
 
 Use the `duration`/`bounce` form only (`duration` is the visual duration). `bounce` is ignored when `stiffness` or `damping` are set, so never mix them.
 
@@ -97,4 +98,4 @@ Stop JavaScript-driven loops (`requestAnimationFrame`, canvas, `setInterval`) wi
 
 ## Icons
 
-Animated icons take a `speed` prop that multiplies their playback rate. Icons default to 1.25; set it per icon (`<Bell speed={1} />`) or for a group on a wrapping `<AnimateIcon speed={…}>`. Icon timing sits in the icons/effects budget (300 to 800ms, bounce up to 0.3).
+Animated icons take a `speed` prop that multiplies their playback rate. Icons default to 1 (their authored timing, median about 600ms); set it per icon (`<Bell speed={1.5} />`) or for a group on a wrapping `<AnimateIcon speed={…}>`. Returning to rest takes 0.4s with `ease.out`. Bounce up to 0.3.

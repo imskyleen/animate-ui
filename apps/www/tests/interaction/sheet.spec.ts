@@ -49,16 +49,16 @@ test.describe('radix sheet', () => {
     expect(frame.offset).toBeGreaterThan(0.6);
     expect(frame.opacity).toBe(1);
 
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(700);
     expect(Math.abs(await offset(page))).toBeLessThan(0.01);
   });
 
   test('closes faster than it opens', async ({ page }) => {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(700);
     await page.keyboard.press('Escape');
-    // drawerExit is 300ms, the entrance 500ms.
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 450 });
+    // drawerExit is 400ms, the entrance 600ms.
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 580 });
   });
 
   test('reduced motion: fades in place', async ({ page }) => {

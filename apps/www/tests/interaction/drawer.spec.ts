@@ -34,7 +34,7 @@ test.describe('base drawer', () => {
     await page.getByRole('button', { name: 'Open Drawer' }).click();
     await page.waitForTimeout(700);
     await page.keyboard.press('Escape');
-    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 450 });
+    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 580 });
   });
 
   test('a quick swipe down dismisses it', async ({ page }) => {

@@ -88,10 +88,10 @@ const ROOT_MOTION = [
   'data-ending-style:data-[swipe-direction=left]:[--toast-exit-y:0px] data-ending-style:data-[swipe-direction=left]:[--toast-exit-x:calc(-1*var(--toast-travel))]',
   '[transform:translateX(calc(var(--toast-swipe-movement-x)_+_var(--toast-exit-x)))_translateY(calc(var(--toast-y)_+_var(--toast-exit-y)))_scale(var(--toast-s))]',
   'data-starting-style:opacity-0 data-ending-style:opacity-0 data-limited:opacity-0',
-  // Enter and restack in 400ms, exit in 200ms, same strong ease-out. Base UI
+  // Enter and restack in 600ms, exit in 400ms, same strong ease-out. Base UI
   // sets `transition: none` inline while the toast is being swiped.
-  'transition-[transform,opacity,height] duration-400 ease-out-strong',
-  'data-ending-style:duration-200',
+  'transition-[transform,opacity,height] duration-600 ease-out-strong',
+  'data-ending-style:duration-400',
   'motion-reduce:transition-opacity',
   // Fills the gap between expanded toasts so the stack doesn't collapse while
   // the pointer crosses it.
@@ -102,7 +102,7 @@ const ROOT_MOTION = [
 // Content: hidden behind the frontmost toast while collapsed, fades back in
 // when the stack expands.
 const CONTENT_MOTION =
-  'overflow-hidden transition-opacity duration-250 ease-out-strong data-behind:opacity-0 data-expanded:opacity-100';
+  'overflow-hidden transition-opacity duration-600 ease-out-strong data-behind:opacity-0 data-expanded:opacity-100';
 
 type ToastProviderProps = React.ComponentProps<typeof ToastPrimitive.Provider>;
 

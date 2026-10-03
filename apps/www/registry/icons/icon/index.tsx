@@ -79,7 +79,7 @@ type DefaultIconProps<T = string> = {
   /**
    * Playback rate of the icon's animation: 2 plays it twice as fast, 0.5 at
    * half speed. Scales every duration and delay of the icon's variants.
-   * @default 1.25
+   * @default 1
    */
   speed?: number;
 };
@@ -125,8 +125,8 @@ function useAnimateIconContext() {
   return context;
 }
 
-/** Icons play a little faster than authored: lively without dragging. */
-const DEFAULT_SPEED = 1.25;
+/** Icons play at their authored timing (median around 600ms). */
+const DEFAULT_SPEED = 1;
 
 const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
 
@@ -738,7 +738,7 @@ function timeTransition(transition: AnyProps, speed: number, once: boolean) {
 
 // Unauthored returns to rest get a consistent ease-out instead of Motion's
 // per-value defaults.
-const restTransition = { duration: 0.3, ease: [0.23, 1, 0.32, 1] };
+const restTransition = { duration: 0.4, ease: [0.23, 1, 0.32, 1] };
 
 function timeTarget(
   target: unknown,

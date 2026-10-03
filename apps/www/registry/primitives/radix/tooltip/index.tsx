@@ -17,6 +17,7 @@ import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 import {
   ReducedMotionConfig,
+  duration,
   scale,
   spring,
   transition as motionTransition,
@@ -24,8 +25,9 @@ import {
 } from '@/registry/lib/motion';
 
 // A tooltip opened within this window after another one closed is "warm":
-// it appears without an entrance animation, like moving along a toolbar.
-const WARM_WINDOW_MS = 500;
+// it appears without an entrance animation, like moving along a toolbar. The
+// window outlasts the previous tooltip's exit.
+const WARM_WINDOW_MS = duration.exit * 1000 + 600;
 let lastTooltipCloseAt = 0;
 
 type TooltipContextType = {

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
+import { spring } from '@/registry/lib/motion';
 
 import {
   Highlight,
@@ -65,7 +66,7 @@ function ToggleGroupItem({ value, disabled, ...props }: ToggleGroupItemProps) {
 type ToggleGroupHighlightProps = Omit<HighlightProps, 'controlledItems'>;
 
 function ToggleGroupHighlight({
-  transition = { type: 'spring', stiffness: 200, damping: 25 },
+  transition = spring.snappy,
   ...props
 }: ToggleGroupHighlightProps) {
   const { value } = useToggleGroup();

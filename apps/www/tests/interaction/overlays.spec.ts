@@ -88,7 +88,7 @@ const CASES: Case[] = [
   },
 ];
 
-const BUDGET = 350;
+const BUDGET = 650;
 
 for (const c of CASES) {
   const CONTENT = `[data-slot="${c.slot}"]`;
@@ -141,12 +141,12 @@ for (const c of CASES) {
     test('exit animates, then unmounts', async ({ page }) => {
       await c.open(page);
       await page.locator(CONTENT).first().waitFor();
-      await page.waitForTimeout(400);
+      await page.waitForTimeout(700);
       await c.close(page);
       await page.waitForTimeout(40);
       expect(await page.locator(CONTENT).count()).toBeGreaterThan(0);
       // Unmounted, or (Base UI Select) kept mounted but hidden.
-      await expect(page.locator(CONTENT).first()).toBeHidden({ timeout: 500 });
+      await expect(page.locator(CONTENT).first()).toBeHidden({ timeout: 800 });
     });
   });
 }
@@ -163,7 +163,7 @@ for (const lib of ['radix', 'base'] as const) {
     const trigger = page.getByRole('combobox', { name: 'Fruit' });
     await trigger.click();
     await page.getByRole('option', { name: 'Banana' }).click();
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(700);
     await expect(trigger).toContainText('Banana');
   });
 }

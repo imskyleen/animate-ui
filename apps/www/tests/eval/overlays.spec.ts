@@ -16,28 +16,28 @@ const CASES: Case[] = [
   {
     name: 'popover',
     slot: 'popover-content',
-    budget: 350,
+    budget: 650,
     open: (page) => page.getByRole('button', { name: 'Open popover' }).click(),
     close: escape,
   },
   {
     name: 'dropdown-menu',
     slot: 'dropdown-menu-content',
-    budget: 350,
+    budget: 650,
     open: (page) => page.getByRole('button', { name: 'Open menu' }).click(),
     close: escape,
   },
   {
     name: 'hover-card',
     slot: 'hover-card-content',
-    budget: 350,
+    budget: 650,
     open: (page) => page.getByText('Hover me').hover(),
     close: (page) => page.mouse.move(5, 5, { steps: 8 }),
   },
   {
     name: 'select',
     slot: 'select-content',
-    budget: 350,
+    budget: 650,
     open: (page) => page.getByRole('combobox', { name: 'Fruit' }).click(),
     close: escape,
   },
@@ -98,12 +98,12 @@ for (const c of CASES.filter((c) => !only || only.includes(c.name))) {
 
     test('exit animates, then unmounts', async ({ page }) => {
       await c.open(page);
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(700);
       await c.close(page);
       await page.waitForTimeout(40);
       const leaving = await page.locator(CONTENT).count();
       expect(leaving).toBe(1);
-      await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 400 });
+      await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
     });
   });
 }

@@ -156,7 +156,7 @@ Re-triggering retargets from the current value; it never restarts. Use springs o
 
 ## B. Style rules (Animate UI defaults, customizable)
 
-Animate UI deliberately runs longer than Emil Kowalski's budgets (see NOTICE.md). The strong ease-out front-loads the motion: most of the distance is covered in the first frames, so the UI responds immediately, and the longer tail lets the motion read instead of flashing by. The one firm style limit: **nothing slow on things used dozens of times a day.**
+Animate UI deliberately runs longer than Emil Kowalski's budgets (see NOTICE.md). Entrances and state changes take 600ms: `ease.out` does most of the movement in the first ~150ms, so the UI responds immediately, and the long tail lets the motion read instead of flashing by. Exits take about two thirds of that (400ms), press feedback 150ms. Frequency is handled by the quality gate, not by shorter durations: keyboard-driven and 100+/day actions are instant (A2).
 
 ### B1. Strong ease-out is the default curve
 
@@ -170,19 +170,18 @@ Animate UI deliberately runs longer than Emil Kowalski's budgets (see NOTICE.md)
 transition={{ duration: 0.2, ease: 'easeInOut' }}
 
 // Do
-transition={transition.dropdown} // 0.3s, ease.out
+transition={transition.dropdown} // 0.6s, ease.out
 ```
 
 ### B2. Duration budgets
 
-| Element                                                                    | Budget                                                   | Default token                                     |
-| -------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------- |
-| Used constantly: tooltip, press, tabs indicator, highlight, toggles        | up to 250ms; springs up to ~0.4s visual, bounce ≤ 0.15   | `press` 0.15s, `tooltip` 0.2s, `spring.snappy`    |
-| Content swap (tab panels fade)                                             | ~250ms                                                   | `fade` 0.25s                                      |
-| Disclosure height (accordion, collapsible)                                 | ~300ms                                                   | `disclosure` 0.3s                                 |
-| Occasional overlays: popover, dropdown/menu, select, hover card            | 200 to 400ms                                             | `dropdown` 0.3s in, `exit` 0.2s out               |
-| Modals, sheets, drawers                                                    | 300 to 600ms                                             | `modal` 0.4s / `modalExit` 0.25s, `drawer` 0.5s / `drawerExit` 0.3s |
-| Icons, effects, text, delight moments                                      | 300 to 800ms, bounce up to 0.3                           | `spring.default` (0.5s, bounce 0.2)               |
+| Motion                                                                                  | Budget                                              | Default token                                                                           |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Entrances and state changes (overlays, modals, drawers, disclosure, fades, indicators) | 600ms (customized: ~400 to 800ms)                   | `tooltip`, `dropdown`, `fade`, `disclosure`, `modal`, `drawer` 0.6s; springs 0.6s visual |
+| Exits                                                                                   | ~2/3 of the entrance: 400ms                         | `exit`, `modalExit`, `drawerExit` 0.4s                                                  |
+| Press feedback                                                                          | 150ms                                               | `press` 0.15s                                                                           |
+| Keyboard-driven and 100+/day actions                                                    | Instant (quality rule)                              | `transition.instant`                                                                    |
+| Bounce                                                                                  | ≤ 0.15 on indicators and toggles; up to 0.3 on icons, effects, delight | `spring.snappy` (0.15), `spring.default` (0.2)                         |
 
 A spring's real duration is its settle time: with the `duration`/`bounce` form, `duration` is the visual duration and the overshoot settles after it. Budget the visual duration.
 
@@ -228,5 +227,5 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] `ease.out` on enter and exit (`ease.inOut` only for on-screen movement)
-- [ ] Durations from the tokens and within the B2 budget; nothing slow on things used dozens of times a day
+- [ ] Durations from the tokens and within the B2 budget (600ms in, 400ms out, 150ms press)
 - [ ] Enters from `scale.enter` (0.95); press at `scale.press` (0.96); bounce within budget

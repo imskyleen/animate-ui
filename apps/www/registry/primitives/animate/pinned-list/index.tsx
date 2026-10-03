@@ -15,6 +15,7 @@ import {
   scale as motionScale,
   transition as motionTransition,
   useShouldReduceMotion,
+  spring,
 } from '@/registry/lib/motion';
 
 const PINNED_LIST_HOVER_SCALE = 1.02;
@@ -79,7 +80,7 @@ type PinnedListLabelProps = WithAsChild<
 function PinnedListLabel({
   hide = false,
   asChild = false,
-  transition = { duration: 0.22, ease: 'easeInOut' },
+  transition = motionTransition.change,
   ...props
 }: PinnedListLabelProps) {
   const Component = asChild ? Slot : motion.p;
@@ -121,7 +122,7 @@ function PinnedListItem({
   id,
   asChild = false,
   customTrigger = false,
-  transition = { stiffness: 320, damping: 25, mass: 0.8, type: 'spring' },
+  transition = spring.default,
   onClick,
   ...props
 }: PinnedListItemProps) {

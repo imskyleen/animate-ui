@@ -85,9 +85,9 @@ function DropdownMenuTrigger({
 }
 
 type MotionOverlayProps = {
-  /** Entrance transition. Defaults to `transition.dropdown` (0.2s ease-out). */
+  /** Entrance transition. Defaults to `transition.dropdown` (0.6s ease-out). */
   transition?: Transition;
-  /** Exit transition. Defaults to `transition.tooltip` (0.15s ease-out). */
+  /** Exit transition. Defaults to `transition.exit` (0.4s ease-out). */
   exitTransition?: Transition;
 };
 
@@ -99,7 +99,7 @@ type MotionOverlayProps = {
 function MenuSurface({
   instant = false,
   transition = motionTransition.dropdown,
-  exitTransition = motionTransition.tooltip,
+  exitTransition = motionTransition.exit,
   ...props
 }: MotionOverlayProps & {
   instant?: boolean;

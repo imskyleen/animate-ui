@@ -14820,6 +14820,7 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-tooltip"
       ],
       "files": [
@@ -15000,9 +15001,10 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -15022,8 +15024,9 @@
         "@floating-ui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15087,8 +15090,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15108,8 +15112,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15193,10 +15198,11 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-accordion",
-        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-base-accordion",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -15306,6 +15312,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-texts-counting-number"
       ],
       "files": [
@@ -15326,8 +15333,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -15455,8 +15463,9 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
         "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion",
         "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
@@ -15581,8 +15590,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-auto-height"
+        "@animate-ui/hooks-use-auto-height",
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15863,6 +15873,9 @@
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/headless/checkbox.tsx"
         }
+      ],
+      "registryDependencies": [
+        "@animate-ui/lib-motion"
       ]
     },
     {
@@ -15895,7 +15908,8 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16025,7 +16039,8 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16045,8 +16060,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16135,10 +16151,11 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-accordion",
-        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/primitives-radix-accordion"
       ],
       "files": [
         {
@@ -16222,7 +16239,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16242,8 +16260,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16374,9 +16393,10 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
         {

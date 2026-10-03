@@ -27,7 +27,7 @@ for (const lib of ['radix', 'base', 'headless'] as const) {
       expect(first.scale).toBeLessThan(1);
       expect(first.opacity).toBeLessThan(1);
 
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(700);
       const settled = await sample(page, CONTENT);
       expect(settled.opacity).toBe(1);
       expect(settled.scale).toBeCloseTo(1, 3);
@@ -35,10 +35,10 @@ for (const lib of ['radix', 'base', 'headless'] as const) {
 
     test('exits faster than it enters', async ({ page }) => {
       await page.getByRole('button', { name: 'Open Dialog' }).click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(700);
       await page.keyboard.press('Escape');
-      // modalExit is 250ms: gone well before the 400ms entrance duration.
-      await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 380 });
+      // modalExit is 400ms: gone well before the 600ms entrance duration.
+      await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 560 });
     });
 
     test('reduced motion: no scaling, still fades', async ({ page }) => {

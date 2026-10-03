@@ -10,6 +10,7 @@ import {
   type DisclosurePanelProps as DisclosurePanelPrimitiveProps,
 } from '@headlessui/react';
 import { motion, AnimatePresence, type HTMLMotionProps } from 'motion/react';
+import { transition as motionTransition } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 
@@ -64,7 +65,7 @@ function DisclosurePanel<TTag extends React.ElementType = typeof motion.div>(
 ) {
   const {
     children,
-    transition = { duration: 0.35, ease: 'easeInOut' },
+    transition = motionTransition.disclosure,
     as = motion.div,
     unmount,
     keepRendered = false,

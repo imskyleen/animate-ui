@@ -38,19 +38,19 @@ const POPUP_MOTION = [
   'data-starting-style:[transform:translate3d(calc(var(--drawer-dx)*var(--drawer-travel)*100%),calc(var(--drawer-dy)*var(--drawer-travel)*100%),0)]',
   'data-ending-style:[transform:translate3d(calc(var(--drawer-dx)*var(--drawer-travel)*100%),calc(var(--drawer-dy)*var(--drawer-travel)*100%),0)]',
   'motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0',
-  // Open 500ms, close 300ms scaled by the release velocity, 0 while dragging.
-  'transition-[transform,opacity] duration-500 ease-drawer',
-  'data-ending-style:duration-[calc(var(--drawer-swipe-strength)*300ms)]',
+  // Open 600ms, close 400ms scaled by the release velocity, 0 while dragging.
+  'transition-[transform,opacity] duration-600 ease-drawer',
+  'data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)]',
   'data-swiping:duration-0 data-swiping:select-none',
-  'data-ending-style:data-swiping:duration-[calc(var(--drawer-swipe-strength)*300ms)]',
+  'data-ending-style:data-swiping:duration-[calc(var(--drawer-swipe-strength)*400ms)]',
 ].join(' ');
 
-// Backdrop: fades with the swipe progress, 300ms in, 200ms out.
+// Backdrop: fades with the swipe progress, 600ms in, 400ms out.
 const BACKDROP_MOTION = [
   'opacity-[calc(1-var(--drawer-swipe-progress))]',
   'data-starting-style:opacity-0 data-ending-style:opacity-0',
-  'transition-opacity duration-300 ease-out-strong',
-  'data-ending-style:duration-[calc(var(--drawer-swipe-strength)*200ms)]',
+  'transition-opacity duration-600 ease-out-strong',
+  'data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)]',
   'data-swiping:duration-0',
 ].join(' ');
 

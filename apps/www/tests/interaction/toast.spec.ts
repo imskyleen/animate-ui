@@ -30,7 +30,7 @@ test.describe('base toast', () => {
     expect(early.y).toBeGreaterThan(0.1);
     expect(early.opacity).toBeLessThan(1);
 
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(700);
     const settled = await read(page, 0);
     expect(Math.abs(settled.y)).toBeLessThan(0.02);
     expect(settled.opacity).toBe(1);

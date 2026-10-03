@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Progress as ProgressPrimitive } from 'radix-ui';
 import { motion } from 'motion/react';
+import { spring } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 
@@ -30,7 +31,7 @@ type ProgressIndicatorProps = React.ComponentProps<
 >;
 
 function ProgressIndicator({
-  transition = { type: 'spring', stiffness: 100, damping: 30 },
+  transition = spring.default,
   ...props
 }: ProgressIndicatorProps) {
   const { value } = useProgress();

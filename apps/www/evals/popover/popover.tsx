@@ -109,9 +109,8 @@ function PopoverContentMotion({
     >
       <motion.div
         initial={hidden}
-        animate={visible}
-        exit={hidden}
-        transition={transition}
+        animate={{ ...visible, transition }}
+        exit={{ ...hidden, transition: motionTransition.exit }}
         style={{
           transformOrigin: 'var(--radix-popover-content-transform-origin)',
         }}

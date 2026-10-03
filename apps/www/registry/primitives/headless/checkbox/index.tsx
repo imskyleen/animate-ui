@@ -10,6 +10,7 @@ import {
   type SVGMotionProps,
   type HTMLMotionProps,
 } from 'motion/react';
+import { transition as motionTransition } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 
@@ -83,7 +84,7 @@ function CheckboxIndicator(props: CheckboxIndicatorProps) {
           animate={{
             pathLength: 1,
             opacity: 1,
-            transition: { duration: 0.2 },
+            transition: motionTransition.change,
           }}
         />
       ) : (
@@ -96,16 +97,14 @@ function CheckboxIndicator(props: CheckboxIndicatorProps) {
               pathLength: 1,
               opacity: 1,
               transition: {
-                duration: 0.2,
+                ...motionTransition.change,
                 delay: 0.2,
               },
             },
             unchecked: {
               pathLength: 0,
               opacity: 0,
-              transition: {
-                duration: 0.2,
-              },
+              transition: motionTransition.exit,
             },
           }}
         />

@@ -7,6 +7,7 @@
   "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
     "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion",
     "@animate-ui/primitives-texts-counting-number"
   ],
   "files": [

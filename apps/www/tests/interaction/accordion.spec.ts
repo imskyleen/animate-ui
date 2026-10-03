@@ -12,7 +12,7 @@ for (const lib of ['radix', 'base'] as const) {
       });
     });
 
-    test('opens within the 300ms budget', async ({ page }) => {
+    test('opens within the 600ms budget', async ({ page }) => {
       const trigger = page.getByRole('button', {
         name: 'How is it different from other libraries?',
       });
@@ -22,7 +22,7 @@ for (const lib of ['radix', 'base'] as const) {
       const mid = await panel.evaluate(
         (el) => el.getBoundingClientRect().height,
       );
-      await page.waitForTimeout(360);
+      await page.waitForTimeout(660);
       const full = await panel.evaluate(
         (el) => el.getBoundingClientRect().height,
       );

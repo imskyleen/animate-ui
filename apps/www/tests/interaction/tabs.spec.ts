@@ -61,7 +61,7 @@ for (const lib of ['radix', 'base', 'headless'] as const) {
         .evaluate((el) => Number(getComputedStyle(el).opacity));
       expect(early).toBeLessThan(1);
 
-      await page.waitForTimeout(250);
+      await page.waitForTimeout(650);
       const settled = await page
         .locator(PANEL)
         .evaluate((el) => Number(getComputedStyle(el).opacity));

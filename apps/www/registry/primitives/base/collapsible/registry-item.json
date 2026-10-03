@@ -6,8 +6,9 @@
   "description": "A collapsible panel controlled by a button.",
   "dependencies": ["motion", "@base-ui/react"],
   "registryDependencies": [
+    "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/hooks-use-controlled-state"
+    "@animate-ui/lib-motion"
   ],
   "files": [
     {

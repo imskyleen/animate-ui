@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle';
 import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
+import { spring } from '@/registry/lib/motion';
 
 import {
   Highlight,
@@ -83,7 +84,7 @@ function Toggle({
 type ToggleGroupHighlightProps = Omit<HighlightProps, 'controlledItems'>;
 
 function ToggleGroupHighlight({
-  transition = { type: 'spring', stiffness: 200, damping: 25 },
+  transition = spring.snappy,
   ...props
 }: ToggleGroupHighlightProps) {
   const { value } = useToggleGroup();

@@ -5,7 +5,10 @@
   "title": "Headless Disclosure",
   "description": "A simple, accessible foundation for building custom UIs that show and hide content, like togglable accordion panels.",
   "dependencies": ["motion", "@headlessui/react"],
-  "registryDependencies": ["@animate-ui/lib-get-strict-context"],
+  "registryDependencies": [
+    "@animate-ui/lib-get-strict-context",
+    "@animate-ui/lib-motion"
+  ],
   "files": [
     {
       "path": "registry/primitives/headless/disclosure/index.tsx",

@@ -5,7 +5,7 @@ description: Turn any React component (shadcn/ui, Radix UI, Base UI, Headless UI
 
 # Animate UI
 
-Turns a static component into an animated one that would ship in the Animate UI registry. The motion philosophy is based on Emil Kowalski's (see NOTICE.md), with one deliberate departure: Animate UI's timing is more permissive than his budgets. Strong ease-out stays the default curve and durations run a bit longer so the motion reads, but nothing used dozens of times a day is ever slow. This skill also adds how to wire Motion into Radix, Base UI and Headless UI primitives, and Animate UI's shared tokens.
+Turns a static component into an animated one that would ship in the Animate UI registry. The motion philosophy is based on Emil Kowalski's (see NOTICE.md), with one deliberate departure: Animate UI's timing is longer than his budgets. Entrances and state changes take 600ms on a strong ease-out that does most of the movement in the first ~150ms, so the UI responds immediately and the long tail lets the motion read; exits take 400ms, press 150ms, and keyboard-driven or 100+/day actions stay instant. This skill also adds how to wire Motion into Radix, Base UI and Headless UI primitives, and Animate UI's shared tokens.
 
 `references/rules.md` splits the rules in two families: **quality rules** (correctness, accessibility, performance: breaking one is a bug) and **style rules** (curves, durations, scale, bounce: Animate UI's defaults, customizable).
 
@@ -21,12 +21,12 @@ Turns a static component into an animated one that would ship in the Animate UI 
 
 ### 1. Gate: should it animate?
 
-| How often it's used                                                                            | Decision                                                                    |
-| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| 100+ times a day (command palette, keyboard shortcuts, arrow-key highlight)                    | No animation (quality rule)                                                 |
-| Used constantly, dozens of times a day (tooltips, press, tabs indicator, highlight, toggles)  | Up to 250ms; springs up to ~0.4s visual, bounce ≤ 0.15; fade when in doubt  |
-| Occasional (popovers, dropdowns, selects, hover cards / dialogs, sheets, drawers, toasts)      | Overlays 200 to 400ms; modals and sheets 300 to 600ms                       |
-| Rare (icons, effects, text, onboarding, success, delight)                                      | Expressive: 300 to 800ms, bounce up to 0.3                                  |
+| How often it's used                                                                            | Decision                                                              |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 100+ times a day (command palette, keyboard shortcuts, arrow-key highlight)                    | No animation (quality rule)                                           |
+| Used constantly (tooltips, press, tabs indicator, highlight, toggles)                          | 600ms entrances and state changes, press 150ms; bounce ≤ 0.15         |
+| Occasional (popovers, dropdowns, selects, hover cards / dialogs, sheets, drawers, toasts)      | 600ms in, 400ms out                                                   |
+| Rare (icons, effects, text, onboarding, success, delight)                                      | Expressive: around 600ms (icons: authored timing), bounce up to 0.3   |
 
 **Keyboard (quality rule):** never animate a global keyboard shortcut (command palette toggle, app hotkeys) or keyboard navigation (arrow keys moving a highlight between items). Opening an overlay animates the same way whatever the input; don't track input modality for it.
 
@@ -83,7 +83,7 @@ Quality (non-negotiable):
 Style (defaults):
 
 - Strong ease-out (`ease.out`) for entering and exiting; `ease.inOut` only for on-screen movement.
-- Durations from the `duration` tokens (tooltip 0.2s, dropdown 0.3s, modal 0.4s, drawer 0.5s). Longer than Emil's on purpose: the curve front-loads the motion so the response is immediate. Nothing slow on things used dozens of times a day.
+- Durations from the `duration` tokens: entrances and state changes 0.6s, exits 0.4s, press 0.15s. Longer than Emil's on purpose: the curve does most of the movement in the first ~150ms, so the response is immediate and the tail lets the motion read. Keyboard-driven and 100+/day actions stay instant (quality rule).
 - Enter from `scale.enter` (0.95) plus `opacity: 0`; press at `scale.press` (0.96).
 
 ### 6. Verify

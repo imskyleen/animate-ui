@@ -11,8 +11,9 @@ import {
  * Animate UI motion tokens.
  *
  * Single source of truth for curves, durations and springs used by every
- * component. Strong ease-out curves, durations long enough for the motion to
- * read, never scale from 0. Change `tempo` to speed up or slow down the whole
+ * component. Entrances and state changes take 600ms on a strong ease-out
+ * (most of the movement happens in the first ~150ms), exits 400ms, press
+ * feedback 150ms. Never scale from 0. Change `tempo` to speed up or slow down the whole
  * library at once.
  *
  * Keep in sync with the `cssVars.theme` entries of registry-item.json
@@ -39,27 +40,29 @@ const ease = {
 /** Durations in seconds (Motion's unit). */
 const duration = {
   press: t(0.15),
-  tooltip: t(0.2),
+  /** Any other state change: checkmarks, swapped icons, labels. */
+  change: t(0.6),
+  tooltip: t(0.6),
   /** Popovers, menus, selects, hover cards. */
-  dropdown: t(0.3),
+  dropdown: t(0.6),
   /** Closing tooltips, popovers and menus: faster than their entrance. */
-  exit: t(0.2),
+  exit: t(0.4),
   /** Swapping content in place (tab panels). */
-  fade: t(0.25),
+  fade: t(0.6),
   /** Accordion and collapsible height. */
-  disclosure: t(0.3),
-  modal: t(0.4),
+  disclosure: t(0.6),
+  modal: t(0.6),
   /** Dismissals are the system's response: faster than the entrance. */
-  modalExit: t(0.25),
-  drawer: t(0.5),
-  drawerExit: t(0.3),
+  modalExit: t(0.4),
+  drawer: t(0.6),
+  drawerExit: t(0.4),
 } as const;
 
 const spring = {
   /** Default for interruptible, dynamic UI (cursors, magnetic, follow). */
-  default: { type: 'spring', duration: t(0.5), bounce: 0.2 },
+  default: { type: 'spring', duration: t(0.6), bounce: 0.2 },
   /** Indicators, toggles and highlights: quick with a hint of overshoot. */
-  snappy: { type: 'spring', duration: t(0.4), bounce: 0.15 },
+  snappy: { type: 'spring', duration: t(0.6), bounce: 0.15 },
 } as const satisfies Record<string, Transition>;
 
 const scale = {
@@ -72,6 +75,7 @@ const scale = {
 /** Ready-made transitions for the common cases. */
 const transition = {
   press: { duration: duration.press, ease: ease.out },
+  change: { duration: duration.change, ease: ease.out },
   tooltip: { duration: duration.tooltip, ease: ease.out },
   dropdown: { duration: duration.dropdown, ease: ease.out },
   exit: { duration: duration.exit, ease: ease.out },

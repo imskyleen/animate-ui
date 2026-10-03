@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { HTMLMotionProps, motion, type Transition } from 'motion/react';
+import { spring } from '@/registry/lib/motion';
 
 import {
   TooltipProvider,
@@ -71,7 +72,7 @@ function AvatarGroup({
   ref,
   children,
   id,
-  transition = { type: 'spring', stiffness: 300, damping: 17 },
+  transition = spring.default,
   invertOverlap = false,
   translate = '-30%',
   openDelay = 0,
@@ -80,7 +81,7 @@ function AvatarGroup({
   sideOffset = 25,
   align = 'center',
   alignOffset = 0,
-  tooltipTransition = { type: 'spring', stiffness: 300, damping: 35 },
+  tooltipTransition = spring.snappy,
   style,
   ...props
 }: AvatarGroupProps) {

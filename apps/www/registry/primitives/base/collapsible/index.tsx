@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
+import { transition as motionTransition } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
@@ -54,7 +55,7 @@ type CollapsiblePanelProps = Omit<
   };
 
 function CollapsiblePanel({
-  transition = { duration: 0.35, ease: 'easeInOut' },
+  transition = motionTransition.disclosure,
   hiddenUntilFound,
   keepRendered = false,
   ...props

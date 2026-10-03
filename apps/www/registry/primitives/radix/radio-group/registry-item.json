@@ -3,11 +3,12 @@
   "name": "primitives-radix-radio-group",
   "type": "registry:ui",
   "title": "Radix Radio Group",
-  "description": "A set of checkable buttons—known as radio buttons—where no more than one of the buttons can be checked at a time.",
+  "description": "A set of checkable buttons\u2014known as radio buttons\u2014where no more than one of the buttons can be checked at a time.",
   "dependencies": ["motion", "radix-ui"],
   "registryDependencies": [
+    "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/hooks-use-controlled-state"
+    "@animate-ui/lib-motion"
   ],
   "files": [
     {

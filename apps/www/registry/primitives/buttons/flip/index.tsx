@@ -8,6 +8,7 @@ import {
   scale as motionScale,
   transition as motionTransition,
   useShouldReduceMotion,
+  spring,
 } from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
@@ -87,7 +88,7 @@ function FlipButton({
 type FlipButtonFaceProps = WithAsChild<HTMLMotionProps<'span'>>;
 
 function FlipButtonFront({
-  transition = { type: 'spring', stiffness: 280, damping: 20 },
+  transition = spring.default,
   asChild = false,
   style,
   ...props
@@ -135,7 +136,7 @@ function FlipButtonFront({
 }
 
 function FlipButtonBack({
-  transition = { type: 'spring', stiffness: 280, damping: 20 },
+  transition = spring.default,
   asChild = false,
   style,
   ...props
