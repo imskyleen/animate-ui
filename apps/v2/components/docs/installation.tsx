@@ -32,8 +32,15 @@ async function Command({
   );
 }
 
-/** The three steps: packages, the shadcn/ui component, then animate it. */
-export function Installation({ name }: { name: string }) {
+/**
+ * The three steps: packages, the shadcn/ui component, then animate it.
+ * Without `name` (Animate UI's own primitives), the package is all it takes.
+ */
+export function Installation({ name }: { name?: string }) {
+  if (!name) {
+    return <Command command={(m) => `${m.add} @animate-ui/react motion`} />;
+  }
+
   return (
     <Steps>
       <Step>
