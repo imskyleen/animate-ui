@@ -6,15 +6,18 @@
   "sideEffects": false,
   "devDependencies": {
     "@base-ui/react": "^1.8.0",
+    "@floating-ui/react": "^0.27.20",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@workspace/eslint-config": "workspace:*",
     "eslint": "catalog:",
+    "input-otp": "^1.5.0",
     "motion": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",
     "react-aria-components": "^1.21.1",
     "react-dom": "catalog:",
+    "shiki": "^4.5.0",
     "tsdown": "^0.23.0",
     "typescript": "~6.0.3"
   },
@@ -38,20 +41,32 @@
   },
   "peerDependencies": {
     "@base-ui/react": "^1.8.0",
+    "@floating-ui/react": "^0.27.20",
+    "input-otp": "^1.5.0",
     "motion": "^14.0.0",
     "radix-ui": "^1.6.0",
     "react": "^19.0.0",
     "react-aria-components": "^1.21.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "shiki": "^4.5.0"
   },
   "peerDependenciesMeta": {
-    "radix-ui": {
-      "optional": true
-    },
     "@base-ui/react": {
       "optional": true
     },
+    "@floating-ui/react": {
+      "optional": true
+    },
+    "input-otp": {
+      "optional": true
+    },
+    "radix-ui": {
+      "optional": true
+    },
     "react-aria-components": {
+      "optional": true
+    },
+    "shiki": {
       "optional": true
     }
   },
