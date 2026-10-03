@@ -1,0 +1,185 @@
+---
+title: Pinned List
+description: A list whose items glide between a pinned and an unpinned group.
+---
+
+<ComponentPreview name="animate-ui/pinned-list" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import * as React from 'react';
+import {
+  PinnedList,
+  PinnedListItem,
+  PinnedListItems,
+  PinnedListLabel,
+  PinnedListPinned,
+  PinnedListTrigger,
+  PinnedListUnpinned,
+} from '@animate-ui/react/primitives/pinned-list';
+
+export function Folders() {
+  const [items, setItems] = React.useState(ITEMS);
+  const toggle = (id: string) =>
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, pinned: !i.pinned } : i)));
+
+  const pinned = items.filter((i) => i.pinned);
+  const unpinned = items.filter((i) => !i.pinned);
+
+  return (
+    <PinnedList onPinnedChange={toggle}>
+      <PinnedListPinned>
+        <PinnedListLabel hide={pinned.length === 0}>Pinned</PinnedListLabel>
+        <PinnedListItems>
+          {pinned.map((item) => (
+            <PinnedListItem key={item.id} id={item.id} customTrigger>
+              {item.name}
+              <PinnedListTrigger aria-label={`Unpin ${item.name}`}>…</PinnedListTrigger>
+            </PinnedListItem>
+          ))}
+        </PinnedListItems>
+      </PinnedListPinned>
+      <PinnedListUnpinned>
+        <PinnedListLabel hide={unpinned.length === 0}>All</PinnedListLabel>
+        <PinnedListItems>
+          {unpinned.map((item) => (
+            <PinnedListItem key={item.id} id={item.id} customTrigger>
+              {item.name}
+              <PinnedListTrigger aria-label={`Pin ${item.name}`}>…</PinnedListTrigger>
+            </PinnedListItem>
+          ))}
+        </PinnedListItems>
+      </PinnedListUnpinned>
+    </PinnedList>
+  );
+}
+```
+
+You own the pinned state: `onPinnedChange` tells you which item to move. Without `customTrigger`, clicking the whole item toggles it.
+
+## Animation
+
+- The item glides to its new place on a spring (a shared layout animation), above the other items while it moves. The others make room.
+- Labels fade in and out when a group becomes empty or filled (600ms).
+- Items and triggers respond to hover (scale 1.02) and press (scale 0.96) in 150ms.
+- `<AnimateUIProvider tempo>` paces every transition.
+- Under reduced motion, items jump to their new place and don't scale.
+
+## API Reference
+
+### PinnedList
+
+<TypeTable
+  type={{
+    onPinnedChange: {
+      description: 'Called with the id of the item to pin or unpin.',
+      type: '(id: string) => void',
+    },
+    children: {
+      description: 'The pinned and unpinned groups.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the list.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### PinnedListPinned, PinnedListUnpinned, PinnedListItems
+
+Plain `div`s that structure the groups. They take `div` props.
+
+### PinnedListLabel
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    hide: {
+      description: 'Fade the label out (when its group is empty).',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Transition of the fade.',
+      type: 'Transition',
+      default: 'transition.change (600ms, ease-out)',
+    },
+    '...props': {
+      description: 'Props of the label.',
+      type: "HTMLMotionProps<'p'>",
+    },
+  }}
+/>
+
+### PinnedListItem
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    id: {
+      description: 'Unique id of the item, passed to `onPinnedChange`.',
+      type: 'string',
+      required: true,
+    },
+    customTrigger: {
+      description:
+        'Toggle with a `PinnedListTrigger` inside instead of clicking the whole item.',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Transition of the move.',
+      type: 'Transition',
+      default: 'spring.default',
+    },
+    children: {
+      description: 'The item content.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the item.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### PinnedListTrigger
+
+A button that pins or unpins its item. Give it an accessible label.
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Based on [@arhamkhnz](https://github.com/arhamkhnz)'s Pin List.

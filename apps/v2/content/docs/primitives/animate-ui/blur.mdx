@@ -1,0 +1,119 @@
+---
+title: Blur
+description: An entrance that brings elements into focus on load or when they scroll into view.
+---
+
+<ComponentPreview name="animate-ui/blur" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { Blur, Blurs } from '@animate-ui/react/primitives/effects/blur';
+
+export function Hero() {
+  return (
+    <>
+      <Blur>
+        <h1>Animated primitives for React</h1>
+      </Blur>
+
+      {/* Staggered: each child starts 100ms after the previous one. */}
+      <Blurs holdDelay={100}>
+        <Card />
+        <Card />
+        <Card />
+      </Blurs>
+    </>
+  );
+}
+```
+
+With `asChild`, the animation is applied to your element instead of a wrapping `div`.
+
+## Animation
+
+- The element sharpens from `initialBlur` to `blur` over 600ms with a strong ease-out.
+- Under reduced motion, it fades in instead.
+- `inView` waits for the element to scroll into view, once by default.
+- `<AnimateUIProvider tempo>` paces the default transition.
+
+## API Reference
+
+### Blur
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    initialBlur: {
+      description: 'Blur the element starts from, in pixels.',
+      type: 'number',
+      default: '10',
+    },
+    blur: {
+      description: 'Blur the element ends at, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    delay: {
+      description: 'Delay before the animation starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    inView: {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the animated element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Blurs
+
+Wraps each child in a `Blur`, delaying each one a little more than the previous.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The elements to animate, each wrapped in a Blur.',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'Delay added between each blur, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props passed to every Blur.',
+      type: 'BlurProps',
+    },
+  }}
+/>

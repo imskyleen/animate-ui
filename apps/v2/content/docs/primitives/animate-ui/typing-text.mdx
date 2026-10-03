@@ -1,0 +1,108 @@
+---
+title: Typing Text
+description: Text typed character by character, with an optional blinking cursor.
+---
+
+<ComponentPreview name="animate-ui/typing-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  TypingText,
+  TypingTextCursor,
+} from '@animate-ui/react/primitives/texts/typing';
+
+export function Hero() {
+  return (
+    <TypingText text={['Design', 'Build', 'Ship']} loop>
+      <TypingTextCursor />
+    </TypingText>
+  );
+}
+```
+
+## Animation
+
+- Characters are typed every `duration` ms. With several texts, each one holds for `holdDelay`, is erased, and the next one is typed.
+- The text is written to the DOM directly: typing a character never re-renders React. Changing `duration` or `holdDelay` mid-animation takes effect without restarting.
+- A loop pauses off screen and in a hidden tab; a single run only in a hidden tab. It resumes where it stopped.
+- The cursor stays solid while typing and blinks while idle. It holds still off screen and in a hidden tab.
+- Under reduced motion, the text appears at once (the last text, or the first one with `loop`) and the cursor doesn't blink.
+- Screen readers read every text once, never the partially typed ones.
+
+## API Reference
+
+### TypingText
+
+<TypeTable
+  type={{
+    text: {
+      description:
+        'The text to type, or the texts to type one after the other (each one is erased before the next).',
+      type: 'string | string[]',
+      required: true,
+    },
+    duration: {
+      description: 'Delay per typed or erased character, in milliseconds.',
+      type: 'number',
+      default: '100',
+    },
+    delay: {
+      description: 'Delay before typing starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    loop: {
+      description: 'Erase the last text and start over from the first one.',
+      type: 'boolean',
+      default: 'false',
+    },
+    holdDelay: {
+      description:
+        'How long a fully typed text stays before it is erased, in milliseconds.',
+      type: 'number',
+      default: '1000',
+    },
+    inView: {
+      description: 'Wait for the text to be in view before typing.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    inViewOnce: {
+      description: 'Only trigger the in-view start once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description:
+        'Props of the root element. `children` render after the text (the cursor).',
+      type: "React.ComponentProps<'span'>",
+    },
+  }}
+/>
+
+### TypingTextCursor
+
+<TypeTable
+  type={{
+    variants: {
+      description:
+        'Overrides the `blinking` and `visible` variants of the cursor.',
+      type: 'Variants',
+    },
+    '...props': {
+      description: 'Props of the cursor (1px wide, 16px tall, `currentColor`).',
+      type: "Omit<HTMLMotionProps<'span'>, 'children'>",
+    },
+  }}
+/>

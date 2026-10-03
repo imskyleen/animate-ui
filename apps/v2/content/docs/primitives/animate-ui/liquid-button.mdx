@@ -1,0 +1,87 @@
+---
+title: Liquid Button
+description: A button that fills with colour from the bottom on hover.
+---
+
+<ComponentPreview name="animate-ui/liquid-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+Set the two colours with CSS variables:
+
+```tsx
+import { LiquidButton } from '@animate-ui/react/primitives/buttons/liquid';
+
+export function Start() {
+  return (
+    <LiquidButton className="[--liquid-button-background-color:var(--muted)] [--liquid-button-color:var(--primary)] hover:text-primary-foreground">
+      Get started
+    </LiquidButton>
+  );
+}
+```
+
+## Animation
+
+- On hover, a `fillHeight` line of `--liquid-button-color` slides in along the bottom, then rises to fill the button, each step taking `delay` (a CSS transition). Leaving drains it in reverse.
+- Hovering scales the button to `hoverScale`, pressing to `tapScale`, in 150ms.
+- `<AnimateUIProvider tempo>` paces the press feedback.
+- Under reduced motion, the button fills without scaling.
+
+## API Reference
+
+### LiquidButton
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'Duration of each step of the fill (a CSS time).',
+      type: 'string',
+      default: "'0.3s'",
+    },
+    fillHeight: {
+      description:
+        'Height of the line that slides in before the fill rises (a CSS length).',
+      type: 'string',
+      default: "'3px'",
+    },
+    hoverScale: {
+      description: 'Scale of the button on hover.',
+      type: 'number',
+      default: '1.02',
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.96',
+    },
+    asChild: {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### CSS variables
+
+<TypeTable
+  type={{
+    '--liquid-button-color': {
+      description: 'Colour of the liquid.',
+      type: 'color',
+    },
+    '--liquid-button-background-color': {
+      description: 'Background colour of the button at rest.',
+      type: 'color',
+    },
+  }}
+/>

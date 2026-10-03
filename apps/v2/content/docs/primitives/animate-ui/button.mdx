@@ -1,0 +1,62 @@
+---
+title: Button
+description: A button that grows a touch on hover and presses down when tapped.
+---
+
+<ComponentPreview name="animate-ui/button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { Button } from '@animate-ui/react/primitives/buttons/button';
+
+export function Save() {
+  return <Button className="rounded-md px-4 py-2">Save</Button>;
+}
+```
+
+With `asChild`, the animation lands on your own element:
+
+```tsx
+<Button asChild>
+  <a href="/docs">Docs</a>
+</Button>
+```
+
+## Animation
+
+- Hovering scales the button to `hoverScale`, pressing to `tapScale`, both in 150ms on a strong ease-out.
+- `<AnimateUIProvider tempo>` paces the press feedback.
+- Under reduced motion, the button doesn't scale.
+
+## API Reference
+
+### Button
+
+<TypeTable
+  type={{
+    hoverScale: {
+      description: 'Scale of the button on hover.',
+      type: 'number',
+      default: '1.02',
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.96',
+    },
+    asChild: {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>

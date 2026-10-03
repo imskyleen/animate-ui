@@ -1,0 +1,95 @@
+---
+title: Theme Toggler
+description: A theme switch that wipes the new theme across the page with the View Transitions API.
+---
+
+<ComponentPreview name="animate-ui/theme-toggler" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+Bring your own theme state: `ThemeToggler` takes the theme and its setter as props, so it works with any theme library. With [next-themes](https://github.com/pacocoursey/next-themes):
+
+```tsx
+import { useTheme } from 'next-themes';
+import {
+  ThemeToggler,
+  type Resolved,
+  type ThemeSelection,
+} from '@animate-ui/react/primitives/effects/theme-toggler';
+
+export function ThemeButton() {
+  const { theme, resolvedTheme, setTheme } = useTheme();
+
+  return (
+    <ThemeToggler
+      theme={theme as ThemeSelection}
+      resolvedTheme={resolvedTheme as Resolved}
+      setTheme={setTheme}
+    >
+      {({ effective, toggleTheme }) => (
+        <button onClick={() => toggleTheme(effective === 'dark' ? 'light' : 'dark')}>
+          {effective === 'dark' ? 'Light mode' : 'Dark mode'}
+        </button>
+      )}
+    </ThemeToggler>
+  );
+}
+```
+
+During the wipe, the `dark` class is toggled on `<html>`: this matches class-based dark mode (Tailwind's default, next-themes with `attribute="class"`).
+
+## Animation
+
+- The new theme is revealed with a clip-path wipe over 500ms with a strong ease-out, in `direction` (left to right by default). The old and new pages are snapshots, so nothing re-renders mid-wipe.
+- `setTheme` is called once the wipe finishes; `onImmediateChange` fires right away.
+- Switching to `system` when it resolves to the current theme changes nothing on screen, so there is no wipe.
+- Browsers without the View Transitions API swap the theme at once.
+- `<AnimateUIProvider tempo>` paces the wipe.
+- Under reduced motion, the theme swaps at once, without the wipe.
+- On the server and while hydrating, the render function receives `effective: 'system'` and `resolved: 'light'`, since the theme is only known on the client.
+
+## API Reference
+
+### ThemeToggler
+
+<TypeTable
+  type={{
+    theme: {
+      description: 'The selected theme.',
+      type: "'light' | 'dark' | 'system'",
+      required: true,
+    },
+    resolvedTheme: {
+      description: 'The theme actually shown.',
+      type: "'light' | 'dark'",
+      required: true,
+    },
+    setTheme: {
+      description: 'Applies a theme, called when the wipe ends.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: true,
+    },
+    direction: {
+      description:
+        'Direction of the wipe: bottom to top, top to bottom, left to right, right to left.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      default: "'ltr'",
+    },
+    onImmediateChange: {
+      description: 'Called as soon as a theme is chosen, before the wipe.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+    },
+    children: {
+      description: 'Content, or a function of the current state that returns it.',
+      type: "React.ReactNode | ((state: { resolved: 'light' | 'dark'; effective: 'light' | 'dark' | 'system'; toggleTheme: (theme: 'light' | 'dark' | 'system') => void }) => React.ReactNode)",
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Magic UI](https://magicui.design/docs/components/animated-theme-toggler)'s animated theme toggler.

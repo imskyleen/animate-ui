@@ -1,0 +1,149 @@
+---
+title: Spring
+description: A draggable element tied to its place by a spring coil, which pulls it back on release.
+---
+
+<ComponentPreview name="animate-ui/spring" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { Spring, SpringElement, SpringProvider } from '@animate-ui/react/primitives/spring';
+
+export function Avatar() {
+  return (
+    <SpringProvider>
+      <Spring className="text-muted-foreground" />
+      <SpringElement>
+        <img src="/avatar.png" alt="Avatar" draggable={false} />
+      </SpringElement>
+    </SpringProvider>
+  );
+}
+```
+
+<Callout type="info">
+  Add `draggable={false}` to images inside `SpringElement`, so the browser's
+  native drag image doesn't take over the drag.
+</Callout>
+
+## Animation
+
+- Dragging stretches a coil between the element's place and the element. The coil tightens as it stretches.
+- On release, the element springs back with a bounce, the coil following it.
+- `Spring` is a full-viewport SVG that never catches the pointer.
+- Under reduced motion, the element is back in place at once on release.
+
+## API Reference
+
+### SpringProvider
+
+<TypeTable
+  type={{
+    dragElastic: {
+      description:
+        'How much the element follows the pointer: lower stretches less.',
+      type: 'number',
+      default: '0.2',
+    },
+    transition: {
+      description: 'Spring pulling the element back.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 200, damping: 16 }',
+    },
+    pathConfig: {
+      description: 'Shape of the coil.',
+      type: 'SpringPathConfig',
+      default: '{}',
+    },
+    children: {
+      description: 'The coil and the element.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+  }}
+/>
+
+#### SpringPathConfig
+
+<TypeTable
+  type={{
+    coilCount: {
+      description: 'Number of coils.',
+      type: 'number',
+      default: '8',
+    },
+    amplitudeMin: {
+      description: 'Smallest coil amplitude, when stretched, in pixels.',
+      type: 'number',
+      default: '8',
+    },
+    amplitudeMax: {
+      description: 'Largest coil amplitude, at rest, in pixels.',
+      type: 'number',
+      default: '20',
+    },
+    curveRatioMin: {
+      description: 'Curve ratio when stretched.',
+      type: 'number',
+      default: '0.5',
+    },
+    curveRatioMax: {
+      description: 'Curve ratio at rest.',
+      type: 'number',
+      default: '1',
+    },
+    bezierOffset: {
+      description: 'Roundness of each coil.',
+      type: 'number',
+      default: '8',
+    },
+  }}
+/>
+
+### Spring
+
+The coil. Its color is `currentColor`.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Props of the SVG.',
+      type: 'React.SVGProps<SVGSVGElement>',
+    },
+  }}
+/>
+
+### SpringElement
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    children: {
+      description: 'The draggable element.',
+      type: 'React.ReactElement',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: "Omit<HTMLMotionProps<'div'>, 'children'>",
+    },
+  }}
+/>
+
+### useSpring
+
+Returns the spring state: the `x`/`y` and `springX`/`springY` motion values, `isDragging` and the coil `path`.
+
+## Credits
+
+- Inspired by [Anh](https://x.com/pwign)'s [post](https://x.com/pwign/status/1927760004183970067).

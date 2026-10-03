@@ -1,0 +1,105 @@
+---
+title: Ripple Button
+description: A button that sends a ripple out from where it is clicked.
+---
+
+<ComponentPreview name="animate-ui/ripple-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  RippleButton,
+  RippleButtonRipples,
+} from '@animate-ui/react/primitives/buttons/ripple';
+
+export function Send() {
+  return (
+    <RippleButton className="[--ripple-button-ripple-color:white]">
+      Send
+      <RippleButtonRipples />
+    </RippleButton>
+  );
+}
+```
+
+## Animation
+
+- Each click sends a ripple from the pointer: it grows to `scale` while fading out over 0.6s, then is removed. Rapid clicks each get their own ripple.
+- Hovering scales the button to `hoverScale`, pressing to `tapScale`, in 150ms.
+- `<AnimateUIProvider tempo>` paces the press feedback and the default ripple.
+- Under reduced motion, the ripple fades in place without growing, and the button doesn't scale.
+
+## API Reference
+
+### RippleButton
+
+<TypeTable
+  type={{
+    hoverScale: {
+      description: 'Scale of the button on hover.',
+      type: 'number',
+      default: '1.02',
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.96',
+    },
+    asChild: {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### RippleButtonRipples
+
+<TypeTable
+  type={{
+    color: {
+      description: 'Colour of the ripples.',
+      type: 'string',
+      default: "'var(--ripple-button-ripple-color)'",
+    },
+    scale: {
+      description: 'Final scale of a ripple (it starts 20px wide).',
+      type: 'number',
+      default: '10',
+    },
+    transition: {
+      description: 'Transition of a ripple.',
+      type: 'Transition',
+      default: "{ duration: 0.6, ease: 'easeOut' }",
+    },
+    asChild: {
+      description: 'Render your child element instead of a `span`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of each ripple.',
+      type: "HTMLMotionProps<'span'>",
+    },
+  }}
+/>
+
+### CSS variables
+
+<TypeTable
+  type={{
+    '--ripple-button-ripple-color': {
+      description: 'Colour of the ripples.',
+      type: 'color',
+    },
+  }}
+/>

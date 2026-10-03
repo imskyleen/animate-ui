@@ -1,0 +1,149 @@
+---
+title: Particles
+description: A burst of particles around an element, for likes, stars and other celebrations.
+---
+
+<ComponentPreview name="animate-ui/particles" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { Particles, ParticlesEffect } from '@animate-ui/react/primitives/effects/particles';
+
+export function LikeButton({ liked }: { liked: boolean }) {
+  return (
+    <Particles animate={liked}>
+      <button>Like</button>
+      <ParticlesEffect className="size-1 rounded-full bg-red-500" />
+    </Particles>
+  );
+}
+```
+
+The burst plays when `animate` becomes `true`. Remount `Particles` (with a `key`) to replay it.
+
+## Animation
+
+- `count` particles shoot out from a point on one side of the element, spread over `spread` degrees, then shrink and fade out (800ms, ease-out). Each starts `holdDelay` seconds after the previous one.
+- Particles are absolutely positioned: the layout never moves.
+- With `inView`, the burst waits for the element to be on screen.
+- Under reduced motion, the burst is skipped: it's decorative.
+
+## API Reference
+
+### Particles
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    animate: {
+      description: 'Play the burst.',
+      type: 'boolean',
+      default: 'true',
+    },
+    children: {
+      description: 'The element and its `ParticlesEffect`.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    inView: {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### ParticlesEffect
+
+Each particle is rendered with these props: style it with `className`.
+
+<TypeTable
+  type={{
+    side: {
+      description: 'Side of the element the particles start from.',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
+    sideOffset: {
+      description: 'Distance from that side, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    align: {
+      description: 'Alignment along that side.',
+      type: "'start' | 'center' | 'end'",
+      default: "'center'",
+    },
+    alignOffset: {
+      description: 'Offset along that side, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    count: {
+      description: 'Number of particles.',
+      type: 'number',
+      default: '6',
+    },
+    radius: {
+      description: 'Distance the particles travel, in pixels.',
+      type: 'number',
+      default: '30',
+    },
+    spread: {
+      description: 'Angle the particles spread over, in degrees.',
+      type: 'number',
+      default: '360',
+    },
+    duration: {
+      description: 'Duration of each particle, in seconds.',
+      type: 'number',
+      default: '0.8',
+    },
+    holdDelay: {
+      description: 'Delay between each particle, in seconds.',
+      type: 'number',
+      default: '0.05',
+    },
+    delay: {
+      description: 'Delay before the burst, in seconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Overrides the transition of each particle.',
+      type: 'Transition',
+    },
+    '...props': {
+      description: 'Props of each particle.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [SHSF UI](https://www.shsfui.com/primitives/buttons/heart-button).

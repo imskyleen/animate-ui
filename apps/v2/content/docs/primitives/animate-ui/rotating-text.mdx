@@ -1,0 +1,104 @@
+---
+title: Rotating Text
+description: Words that take turns in place, each one sliding out as the next slides in.
+---
+
+<ComponentPreview name="animate-ui/rotating-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  RotatingText,
+  RotatingTextContainer,
+} from '@animate-ui/react/primitives/texts/rotating';
+
+export function Tagline() {
+  return (
+    <RotatingTextContainer text={['Fast', 'Accessible', 'Animated']}>
+      <RotatingText />
+    </RotatingTextContainer>
+  );
+}
+```
+
+## Animation
+
+- Each word holds for `duration`, then leaves while the next one comes in from the other side: 0.3s on a strong ease-out, one after the other.
+- The cycle pauses off screen and in a hidden tab.
+- `<AnimateUIProvider tempo>` paces the default transition.
+- Under reduced motion, the words keep taking turns as a crossfade, without travel.
+- Screen readers read every word once, never the cycling one.
+
+## API Reference
+
+### RotatingTextContainer
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text, or the texts to rotate through.',
+      type: 'string | string[]',
+      required: true,
+    },
+    duration: {
+      description: 'How long each text stays on screen, in milliseconds.',
+      type: 'number',
+      default: '2000',
+    },
+    y: {
+      description:
+        'Travel of the swap, in pixels: the new text enters from `-y` and the old one leaves to `y`.',
+      type: 'number',
+      default: '-50',
+    },
+    delay: {
+      description: 'Extra delay before the first swap, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    inView: {
+      description: 'Wait for the text to be in view before rotating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    inViewOnce: {
+      description: 'Only trigger the in-view start once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### RotatingText
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of each swap.',
+      type: 'Transition',
+      default: '{ duration: 0.3, ease: ease.out }',
+    },
+    '...props': {
+      description: 'Props of the current word.',
+      type: "Omit<HTMLMotionProps<'div'>, 'children'>",
+    },
+  }}
+/>
+
+### useRotatingText
+
+Returns the container's state inside it: `{ currentText, y, isInView, label }`.

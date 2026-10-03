@@ -1,0 +1,108 @@
+---
+title: Sliding Number
+description: A number whose digits roll to their new value, like an odometer.
+---
+
+<ComponentPreview name="animate-ui/sliding-number" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { SlidingNumber } from '@animate-ui/react/primitives/texts/sliding-number';
+
+export function Price({ value }: { value: number }) {
+  return <SlidingNumber number={value} thousandSeparator="," />;
+}
+```
+
+## Animation
+
+- Each digit rolls to its new value on a quick spring without overshoot (0.25s), in the direction the number moves: up when it grows. 9 to 0 rolls one step forward, not back through every digit.
+- With `fromNumber`, the number counts to `number` over 3s on a strong ease-out, every digit rolling on the way.
+- Digits are positioned in percentages of their own height: no measuring, right on the first frame and when the font size changes. Counting doesn't re-render React per frame.
+- `<AnimateUIProvider tempo>` paces the default spring and count.
+- Under reduced motion, the digits change without rolling.
+- Screen readers read the number once, not every rolled digit.
+
+## API Reference
+
+### SlidingNumber
+
+<TypeTable
+  type={{
+    number: {
+      description: 'The number to display.',
+      type: 'number',
+      required: true,
+    },
+    fromNumber: {
+      description:
+        'When set, the number counts from it to `number`, every digit rolling on the way. Otherwise each digit rolls straight to its new value.',
+      type: 'number',
+    },
+    onNumberChange: {
+      description: 'Called with the displayed value each time it changes.',
+      type: '(number: number) => void',
+    },
+    padStart: {
+      description:
+        'Pad the number with leading zeros to the length of `number`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    decimalSeparator: {
+      description: 'The separator of the decimal part.',
+      type: 'string',
+      default: "'.'",
+    },
+    decimalPlaces: {
+      description:
+        'Decimal places to show. Defaults to the number of decimals of `number`.',
+      type: 'number',
+    },
+    thousandSeparator: {
+      description: 'The separator between groups of thousands.',
+      type: 'string',
+    },
+    transition: {
+      description: 'Spring of each digit roller.',
+      type: 'SpringOptions',
+      default: '{ visualDuration: 0.25, bounce: 0 }',
+    },
+    delay: {
+      description: 'Delay before the number changes, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    initiallyStable: {
+      description:
+        'Render `number` from the start, without rolling in. Useful with many numbers on a page.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inView: {
+      description: 'Wait for the number to be in view before rolling.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    inViewOnce: {
+      description:
+        'Only roll in once. When `false`, the digits roll in again each time the number comes back into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<HTMLMotionProps<'span'>, 'children'>",
+    },
+  }}
+/>

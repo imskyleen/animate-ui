@@ -1,0 +1,152 @@
+---
+title: Scrolling Number
+description: A wheel of numbers that spins to its value and settles under a highlight.
+---
+
+<ComponentPreview name="animate-ui/scrolling-number" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  ScrollingNumber,
+  ScrollingNumberContainer,
+  ScrollingNumberHighlight,
+  ScrollingNumberItems,
+} from '@animate-ui/react/primitives/texts/scrolling-number';
+
+export function Score() {
+  return (
+    <ScrollingNumberContainer number={1000} step={100} itemsSize={40}>
+      <ScrollingNumber>
+        <ScrollingNumberItems />
+      </ScrollingNumber>
+      <ScrollingNumberHighlight />
+    </ScrollingNumberContainer>
+  );
+}
+```
+
+## Animation
+
+- The strip spins through every step up to `number` over 2s on a strong ease-out: fast through the range, slow as it lands.
+- A new `number` retargets the spin from where it is.
+- The strip is written by a motion value, without a React render per frame. `onNumberChange` reports the value under the highlight as it passes.
+- `<AnimateUIProvider tempo>` paces the default duration.
+- Under reduced motion, the wheel lands on the number right away.
+- The strip is hidden from screen readers, which read the number once from the container.
+
+## API Reference
+
+### ScrollingNumberContainer
+
+<TypeTable
+  type={{
+    number: {
+      description: 'The number to land on.',
+      type: 'number',
+      required: true,
+    },
+    step: {
+      description: 'The gap between two items of the strip.',
+      type: 'number',
+      required: true,
+    },
+    itemsSize: {
+      description: 'Height (or width, horizontally) of each item, in pixels.',
+      type: 'number',
+      default: '30',
+    },
+    sideItemsCount: {
+      description: 'Number of items shown on each side of the highlight.',
+      type: 'number',
+      default: '2',
+    },
+    direction: {
+      description:
+        'Direction of the spin: bottom to top, top to bottom, left to right or right to left.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      default: "'btt'",
+    },
+    onNumberChange: {
+      description: 'Called with the value under the highlight as it changes.',
+      type: '(value: number) => void',
+    },
+    inView: {
+      description: 'Wait for the wheel to be in view before spinning.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    inViewOnce: {
+      description: 'Only trigger the in-view start once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### ScrollingNumber
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'Delay before the wheel spins, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    onCompleted: {
+      description: 'Called once the wheel (nearly) lands on the number.',
+      type: '() => void',
+    },
+    transition: {
+      description:
+        'Transition of the spin. Spring options (`stiffness`, `damping`, `bounce`, `visualDuration`…) animate as a spring; a transition with a `type` or an `ease` is used as is.',
+      type: 'Transition',
+      default: '{ duration: 2, ease: ease.out }',
+    },
+    '...props': {
+      description: 'Props of the strip.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### ScrollingNumberItems
+
+<TypeTable
+  type={{
+    '...props': {
+      description:
+        'Props of each item. Each one gets `data-value` with its number.',
+      type: "Omit<React.ComponentProps<'div'>, 'children'>",
+    },
+  }}
+/>
+
+### ScrollingNumberHighlight
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Props of the highlight, centered behind the landing slot.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### useScrollingNumber
+
+Returns the container's state inside it (`number`, `step`, `range`, `direction`, `isInView`…).

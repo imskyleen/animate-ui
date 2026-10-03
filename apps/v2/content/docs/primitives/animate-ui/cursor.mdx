@@ -1,0 +1,164 @@
+---
+title: Cursor
+description: A custom cursor, and a label that follows it, inside an area or across the page.
+---
+
+<ComponentPreview name="animate-ui/cursor" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  Cursor,
+  CursorContainer,
+  CursorFollow,
+  CursorProvider,
+} from '@animate-ui/react/primitives/cursor';
+
+export function Canvas() {
+  return (
+    <div className="relative h-72">
+      <CursorProvider>
+        <CursorContainer>
+          <Cursor>
+            <ArrowIcon />
+          </Cursor>
+          <CursorFollow side="bottom" align="end">
+            <span>Designer</span>
+          </CursorFollow>
+        </CursorContainer>
+      </CursorProvider>
+    </div>
+  );
+}
+```
+
+By default, the cursor lives in the parent of `CursorContainer`. With `global`, it replaces the pointer on the whole page.
+
+## Animation
+
+- Entering the area hides the native pointer and fades the cursor in (600ms); leaving fades it out (400ms) and restores the pointer.
+- `Cursor` sticks to the pointer. `CursorFollow` trails it on a spring, so it feels attached without being rigid, and appears at the pointer instead of flying in.
+- The position is driven by motion values with a hardware-accelerated `transform`: moving the pointer never re-renders React.
+- Touch pointers are ignored: a custom cursor only makes sense for pointers that hover.
+- `<AnimateUIProvider tempo>` paces the fades and the follow spring.
+- Under reduced motion, `CursorFollow` sticks to the pointer too.
+
+## API Reference
+
+### CursorProvider
+
+<TypeTable
+  type={{
+    global: {
+      description:
+        'Replace the pointer on the whole page instead of the parent of `CursorContainer`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    children: {
+      description: 'The container and cursors.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+  }}
+/>
+
+### CursorContainer
+
+Marks the area: the cursor shows inside its parent element.
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Cursor
+
+Centered on the pointer.
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    children: {
+      description: 'The cursor, an icon for instance.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the cursor.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### CursorFollow
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    side: {
+      description: 'Side of the pointer it sits on.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+      default: "'bottom'",
+    },
+    sideOffset: {
+      description: 'Distance from the pointer, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    align: {
+      description: 'Alignment along that side.',
+      type: "'start' | 'center' | 'end'",
+      default: "'end'",
+    },
+    alignOffset: {
+      description: 'Offset along that side, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description:
+        'Spring of the follow (useSpring options: duration in milliseconds).',
+      type: 'SpringOptions',
+      default: '{ duration: 600, bounce: 0.2 }',
+    },
+    children: {
+      description: 'The label.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: "Omit<HTMLMotionProps<'div'>, 'transition'>",
+    },
+  }}
+/>
+
+### useCursor
+
+Returns the cursor state: `cursorX` and `cursorY` motion values, `active`, `global`, and `cursorPos` (a snapshot of the position when read).

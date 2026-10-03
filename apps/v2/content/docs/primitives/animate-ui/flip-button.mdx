@@ -1,0 +1,111 @@
+---
+title: Flip Button
+description: A button that flips over on hover to reveal its back face.
+---
+
+<ComponentPreview name="animate-ui/flip-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  FlipButton,
+  FlipButtonBack,
+  FlipButtonFront,
+} from '@animate-ui/react/primitives/buttons/flip';
+
+export function Subscribe() {
+  return (
+    <FlipButton from="top">
+      <FlipButtonFront>Subscribe</FlipButtonFront>
+      <FlipButtonBack>It's free</FlipButtonBack>
+    </FlipButton>
+  );
+}
+```
+
+## Animation
+
+- On hover, the front face rotates away and the back face rotates in from `from`, on a spring (0.6s, a hint of bounce). Leaving flips it back.
+- The faces are stacked in the same grid cell: the button takes the size of the larger one.
+- Pressing scales the button to `tapScale` in 150ms.
+- `<AnimateUIProvider tempo>` paces the flip and the press.
+- Under reduced motion, the faces crossfade without rotating or sliding, and the button doesn't scale.
+
+## API Reference
+
+### FlipButton
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The side the back face flips in from.',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.96',
+    },
+    asChild: {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### FlipButtonFront
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the front face.',
+      type: 'Transition',
+      default: "{ type: 'spring', duration: 0.6, bounce: 0.2 }",
+    },
+    asChild: {
+      description: 'Render your child element instead of a `span`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the front face.',
+      type: "HTMLMotionProps<'span'>",
+    },
+  }}
+/>
+
+### FlipButtonBack
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the back face.',
+      type: 'Transition',
+      default: "{ type: 'spring', duration: 0.6, bounce: 0.2 }",
+    },
+    asChild: {
+      description: 'Render your child element instead of a `span`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the back face.',
+      type: "HTMLMotionProps<'span'>",
+    },
+  }}
+/>
+
+### useFlipButton
+
+Returns `{ from, isVertical, rotateAxis }` inside a `FlipButton`.

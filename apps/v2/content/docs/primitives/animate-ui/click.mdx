@@ -1,0 +1,85 @@
+---
+title: Click
+description: "A visual effect played where the pointer clicks: a ring, a ripple, a crosshair, a burst or particles."
+---
+
+<ComponentPreview name="animate-ui/click" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import * as React from 'react';
+import { Click } from '@animate-ui/react/primitives/effects/click';
+
+export function Canvas() {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={ref}>
+      <Click scope={ref} variant="ring">
+        <p>Click anywhere</p>
+      </Click>
+    </div>
+  );
+}
+```
+
+Without `scope`, every click on the page plays the effect.
+
+## Animation
+
+- On pointer up, the effect plays centered on the pointer, then is removed. It lasts `duration` (400ms by default).
+- Effects render in a fixed layer over the page that never catches the pointer, so clicks still reach what's underneath.
+- Several clicks in a row each play their own effect.
+- Under reduced motion, no effect is played.
+
+## API Reference
+
+### Click
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'The effect played on click.',
+      type: "'ring' | 'ripple' | 'crosshair' | 'burst' | 'particles'",
+      default: "'ring'",
+    },
+    color: {
+      description: 'Color of the effect.',
+      type: 'string',
+      default: "'currentColor'",
+    },
+    size: {
+      description: 'Size of the effect, in pixels.',
+      type: 'number',
+      default: '100',
+    },
+    duration: {
+      description: 'Duration of the effect, in milliseconds.',
+      type: 'number',
+      default: '400',
+    },
+    scope: {
+      description:
+        'Only clicks inside this element play the effect. Defaults to the whole page.',
+      type: 'React.RefObject<HTMLElement | null>',
+    },
+    disabled: {
+      description: 'Stop playing effects.',
+      type: 'boolean',
+      default: 'false',
+    },
+    children: {
+      description: 'Rendered as is.',
+      type: 'React.ReactNode',
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Framer University](https://x.com/learnframer/status/1967951471284195711).

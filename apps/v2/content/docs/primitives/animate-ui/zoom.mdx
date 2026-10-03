@@ -1,0 +1,119 @@
+---
+title: Zoom
+description: An entrance that scales elements up into place on load or when they scroll into view.
+---
+
+<ComponentPreview name="animate-ui/zoom" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { Zoom, Zooms } from '@animate-ui/react/primitives/effects/zoom';
+
+export function Hero() {
+  return (
+    <>
+      <Zoom>
+        <h1>Animated primitives for React</h1>
+      </Zoom>
+
+      {/* Staggered: each child starts 100ms after the previous one. */}
+      <Zooms holdDelay={100}>
+        <Card />
+        <Card />
+        <Card />
+      </Zooms>
+    </>
+  );
+}
+```
+
+With `asChild`, the animation is applied to your element instead of a wrapping `div`.
+
+## Animation
+
+- The element scales from `initialScale` to `scale` over 600ms with a strong ease-out. It starts at 0.96, never from 0.
+- Under reduced motion, it doesn't scale: it fades in instead.
+- `inView` waits for the element to scroll into view, once by default.
+- `<AnimateUIProvider tempo>` paces the default transition.
+
+## API Reference
+
+### Zoom
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    initialScale: {
+      description: 'Scale the element starts from.',
+      type: 'number',
+      default: '0.96',
+    },
+    scale: {
+      description: 'Scale the element ends at.',
+      type: 'number',
+      default: '1',
+    },
+    delay: {
+      description: 'Delay before the animation starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: 'transition.modal (600ms, ease-out)',
+    },
+    inView: {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the animated element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Zooms
+
+Wraps each child in a `Zoom`, delaying each one a little more than the previous.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The elements to animate, each wrapped in a Zoom.',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'Delay added between each zoom, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props passed to every Zoom.',
+      type: 'ZoomProps',
+    },
+  }}
+/>

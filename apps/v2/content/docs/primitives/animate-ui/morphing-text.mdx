@@ -1,0 +1,109 @@
+---
+title: Morphing Text
+description: Text that morphs from one string to the next, letters gliding to their new place.
+---
+
+<ComponentPreview name="animate-ui/morphing-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { MorphingText } from '@animate-ui/react/primitives/texts/morphing';
+
+export function Tagline() {
+  return <MorphingText text={['Fast', 'Accessible', 'Animated']} loop />;
+}
+```
+
+<Callout type="info">
+  Letters are animated one by one, so a line can break inside a word. Prefer
+  texts short enough not to wrap.
+</Callout>
+
+## Animation
+
+- Each text holds for `holdDelay`, then morphs into the next: letters both texts share glide to their new place, the others blur and scale in and out on a soft spring without overshoot.
+- Emoji and accented letters stay whole.
+- The cycle pauses off screen and in a hidden tab.
+- `<AnimateUIProvider tempo>` paces the default spring.
+- Under reduced motion, the texts keep cycling as a plain crossfade.
+- Screen readers read the current text whole, not letter by letter. It is not a live region.
+
+## API Reference
+
+### MorphingText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text, or the texts to cycle through.',
+      type: 'string | string[]',
+      required: true,
+    },
+    loop: {
+      description:
+        'Go back to the first text after the last. Only used if `text` is an array.',
+      type: 'boolean',
+      default: 'false',
+    },
+    holdDelay: {
+      description:
+        'How long each text stays on screen, in milliseconds. Only used if `text` is an array.',
+      type: 'number',
+      default: '2500',
+    },
+    delay: {
+      description:
+        'Delay before the texts start cycling, in milliseconds. Only used if `text` is an array.',
+      type: 'number',
+      default: '0',
+    },
+    initial: {
+      description: 'Entering state of each letter.',
+      type: 'TargetAndTransition | VariantLabels | boolean',
+      default: "{ opacity: 0, transform: 'scale(0.8)', filter: 'blur(10px)' }",
+    },
+    animate: {
+      description: 'Resting state of each letter.',
+      type: 'TargetAndTransition | VariantLabels | boolean',
+      default: "{ opacity: 1, transform: 'scale(1)', filter: 'blur(0px)' }",
+    },
+    exit: {
+      description: 'Exiting state of each letter.',
+      type: 'TargetAndTransition | VariantLabels',
+      default: "{ opacity: 0, transform: 'scale(0.8)', filter: 'blur(10px)' }",
+    },
+    variants: {
+      description: 'Variants of each letter, for variant labels.',
+      type: 'Variants',
+    },
+    transition: {
+      description: 'Transition of each letter.',
+      type: 'Transition',
+      default: "{ type: 'spring', duration: 0.6, bounce: 0 }",
+    },
+    inView: {
+      description: 'Wait for the text to be in view before cycling.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    inViewOnce: {
+      description: 'Only trigger the in-view start once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<HTMLMotionProps<'span'>, 'children'>",
+    },
+  }}
+/>
