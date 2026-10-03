@@ -1,0 +1,10 @@
+{
+  "name": "v1-project",
+  "private": true,
+  "dependencies": {
+    "motion": "^12.0.0",
+    "radix-ui": "^1.4.0",
+    "@base-ui/react": "^1.0.0",
+    "@headlessui/react": "^2.2.0"
+  }
+}

@@ -1,0 +1,212 @@
+'use client';
+
+import * as React from 'react';
+import { Dialog as SheetPrimitive } from 'radix-ui';
+import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
+
+import { getStrictContext } from '@/lib/get-strict-context';
+import { useControlledState } from '@/hooks/use-controlled-state';
+import {
+  ReducedMotionConfig,
+  transition as motionTransition,
+  useShouldReduceMotion,
+} from '@/lib/motion';
+
+type SheetContextType = {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+};
+
+const [SheetProvider, useSheet] =
+  getStrictContext<SheetContextType>('SheetContext');
+
+type SheetProps = React.ComponentProps<typeof SheetPrimitive.Root>;
+
+function Sheet(props: SheetProps) {
+  const [isOpen, setIsOpen] = useControlledState({
+    value: props.open,
+    defaultValue: props.defaultOpen,
+    onChange: props.onOpenChange,
+  });
+
+  return (
+    <SheetProvider value={{ isOpen, setIsOpen }}>
+      <SheetPrimitive.Root
+        data-slot="sheet"
+        {...props}
+        onOpenChange={setIsOpen}
+      />
+    </SheetProvider>
+  );
+}
+
+type SheetTriggerProps = React.ComponentProps<typeof SheetPrimitive.Trigger>;
+
+function SheetTrigger(props: SheetTriggerProps) {
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
+}
+
+type SheetCloseProps = React.ComponentProps<typeof SheetPrimitive.Close>;
+
+function SheetClose(props: SheetCloseProps) {
+  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
+}
+
+type SheetPortalProps = React.ComponentProps<typeof SheetPrimitive.Portal>;
+
+function SheetPortal({ children, ...props }: SheetPortalProps) {
+  const { isOpen } = useSheet();
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <SheetPrimitive.Portal forceMount data-slot="sheet-portal" {...props}>
+          <ReducedMotionConfig>{children}</ReducedMotionConfig>
+        </SheetPrimitive.Portal>
+      )}
+    </AnimatePresence>
+  );
+}
+
+type SheetOverlayProps = Omit<
+  React.ComponentProps<typeof SheetPrimitive.Overlay>,
+  'asChild' | 'forceMount'
+> &
+  HTMLMotionProps<'div'>;
+
+function SheetOverlay({ transition, ...props }: SheetOverlayProps) {
+  return (
+    <SheetPrimitive.Overlay asChild forceMount>
+      <motion.div
+        data-slot="sheet-overlay"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: 1,
+          transition: transition ?? motionTransition.modal,
+        }}
+        exit={{
+          opacity: 0,
+          transition: transition ?? motionTransition.modalExit,
+        }}
+        {...props}
+      />
+    </SheetPrimitive.Overlay>
+  );
+}
+
+type Side = 'top' | 'bottom' | 'left' | 'right';
+
+type SheetContentProps = React.ComponentProps<typeof SheetPrimitive.Content> &
+  HTMLMotionProps<'div'> & {
+    side?: Side;
+  };
+
+const offscreen: Record<Side, string> = {
+  right: 'translateX(100%)',
+  left: 'translateX(-100%)',
+  top: 'translateY(-100%)',
+  bottom: 'translateY(100%)',
+};
+
+const positionStyle: Record<Side, React.CSSProperties> = {
+  right: { insetBlock: 0, right: 0 },
+  left: { insetBlock: 0, left: 0 },
+  top: { insetInline: 0, top: 0 },
+  bottom: { insetInline: 0, bottom: 0 },
+};
+
+function SheetContent({
+  side = 'right',
+  transition,
+  style,
+  children,
+  ...props
+}: SheetContentProps) {
+  const reduce = useShouldReduceMotion();
+  // Slides in from its edge (a percentage of its own size). Under reduced
+  // motion it stays in place and fades instead. Same transform function on
+  // both ends so Motion can interpolate it.
+  const shown =
+    side === 'left' || side === 'right' ? 'translateX(0%)' : 'translateY(0%)';
+  const hidden = reduce
+    ? { opacity: 0, transform: shown }
+    : { opacity: 1, transform: offscreen[side] };
+
+  return (
+    <SheetPrimitive.Content asChild forceMount {...props}>
+      <motion.div
+        data-slot="sheet-content"
+        data-side={side}
+        initial={hidden}
+        animate={{
+          opacity: 1,
+          transform: shown,
+          transition: transition ?? motionTransition.drawer,
+        }}
+        exit={{
+          ...hidden,
+          transition: transition ?? motionTransition.drawerExit,
+        }}
+        style={{
+          position: 'fixed',
+          ...positionStyle[side],
+          ...style,
+        }}
+      >
+        {children}
+      </motion.div>
+    </SheetPrimitive.Content>
+  );
+}
+
+type SheetHeaderProps = React.ComponentProps<'div'>;
+
+function SheetHeader(props: SheetHeaderProps) {
+  return <div data-slot="sheet-header" {...props} />;
+}
+
+type SheetFooterProps = React.ComponentProps<'div'>;
+
+function SheetFooter(props: SheetFooterProps) {
+  return <div data-slot="sheet-footer" {...props} />;
+}
+
+type SheetTitleProps = React.ComponentProps<typeof SheetPrimitive.Title>;
+
+function SheetTitle(props: SheetTitleProps) {
+  return <SheetPrimitive.Title data-slot="sheet-title" {...props} />;
+}
+
+type SheetDescriptionProps = React.ComponentProps<
+  typeof SheetPrimitive.Description
+>;
+
+function SheetDescription(props: SheetDescriptionProps) {
+  return (
+    <SheetPrimitive.Description data-slot="sheet-description" {...props} />
+  );
+}
+
+export {
+  useSheet,
+  Sheet,
+  SheetPortal,
+  SheetOverlay,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  type SheetProps,
+  type SheetPortalProps,
+  type SheetOverlayProps,
+  type SheetTriggerProps,
+  type SheetCloseProps,
+  type SheetContentProps,
+  type SheetHeaderProps,
+  type SheetFooterProps,
+  type SheetTitleProps,
+  type SheetDescriptionProps,
+};

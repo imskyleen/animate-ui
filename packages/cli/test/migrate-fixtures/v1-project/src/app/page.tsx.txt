@@ -1,0 +1,123 @@
+'use client';
+
+import * as React from 'react';
+
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/animate-ui/components/radix/accordion';
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/animate-ui/primitives/radix/tooltip';
+import {
+  Accordion as AccordionRoot,
+  AccordionItem as Item,
+  AccordionHeader,
+  AccordionTrigger as Trigger,
+  AccordionContent as Content,
+  type AccordionProps,
+} from '@/components/animate-ui/primitives/radix/accordion';
+import { useAccordionItem } from '@/components/animate-ui/primitives/radix/accordion';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverPortal,
+  PopoverPositioner,
+  PopoverPopup,
+  type PopoverPopupProps,
+} from '@/components/animate-ui/primitives/base/popover';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/animate-ui/primitives/radix/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/animate-ui/primitives/radix/sheet';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@/components/animate-ui/primitives/headless/disclosure';
+import { transition, tempo } from '@/lib/motion';
+import { Bell } from '@/components/animate-ui/icons/bell';
+
+function OpenState() {
+  const { isOpen } = useAccordionItem();
+  return <span>{isOpen ? 'open' : 'closed'}</span>;
+}
+
+function Faq(props: AccordionProps) {
+  return (
+    <AccordionRoot {...props}>
+      <Item value="a">
+        <AccordionHeader>
+          <Trigger>What is it?</Trigger>
+        </AccordionHeader>
+        <Content keepRendered initial={{ opacity: 0 }}>
+          <OpenState />
+        </Content>
+      </Item>
+    </AccordionRoot>
+  );
+}
+
+function Panel(props: PopoverPopupProps) {
+  return (
+    <PopoverPortal>
+      <PopoverPositioner sideOffset={8}>
+        <PopoverPopup {...props} />
+      </PopoverPositioner>
+    </PopoverPortal>
+  );
+}
+
+export default function Page() {
+  const container = React.useRef<HTMLDivElement>(null);
+  return (
+    <main ref={container} style={{ transitionDuration: `${tempo}s` }}>
+      <Accordion type="single" collapsible>
+        <AccordionItem value="a">
+          <AccordionTrigger>Hello</AccordionTrigger>
+          <AccordionContent>World</AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      <Faq type="multiple" />
+      <TooltipProvider>
+        <Tooltip followCursor>
+          <TooltipTrigger>
+            <Bell animateOnHover />
+          </TooltipTrigger>
+          <TooltipContent transition={transition.tooltip}>Bell</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <Popover>
+        <PopoverTrigger>Open</PopoverTrigger>
+        <Panel>Popover</Panel>
+      </Popover>
+      <DropdownMenu>
+        <DropdownMenuTrigger>Menu</DropdownMenuTrigger>
+        <DropdownMenuContent container={container.current} sideOffset={4}>
+          <DropdownMenuItem>Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Sheet>
+        <SheetTrigger>Sheet</SheetTrigger>
+        <SheetContent>Left alone</SheetContent>
+        <SheetContent side="left">From the left</SheetContent>
+      </Sheet>
+      <Disclosure>
+        <DisclosureButton>More</DisclosureButton>
+        <DisclosurePanel>Details</DisclosurePanel>
+      </Disclosure>
+    </main>
+  );
+}

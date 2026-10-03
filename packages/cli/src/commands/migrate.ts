@@ -1,0 +1,256 @@
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { styleText } from 'node:util';
+
+import { PACKAGE } from '../lib/primitives';
+import {
+  loadMigrateProject,
+  SOURCE_EXTENSIONS,
+  stripExtension,
+  type V1Module,
+} from '../lib/migrate/project';
+import {
+  findMigration,
+  listImports,
+  moduleKey,
+  rewrite,
+  type RewriteResult,
+} from '../lib/migrate/rewrite';
+import {
+  HEADLESS_PRIMITIVES,
+  PRIMITIVES,
+  UNSUPPORTED_PRIMITIVES,
+  UTILITIES,
+} from '../lib/migrate/table';
+
+type MigrateOptions = {
+  cwd: string;
+  dryRun: boolean;
+  /** Remove the v1 files nothing imports anymore. */
+  delete?: boolean;
+  log?: (message: string) => void;
+};
+
+/** The name `migrate <name>` selects a v1 module by. */
+function selectionName(module: V1Module) {
+  if (module.kind === 'primitive') return module.name;
+  if (module.id === 'icons/icon') return 'icons';
+  return module.id.split('/')[1]!;
+}
+
+function knownNames() {
+  const names = new Set(['icons', 'icon']);
+  for (const key of [...Object.keys(PRIMITIVES), ...UNSUPPORTED_PRIMITIVES])
+    names.add(key.split('/')[1]!);
+  for (const name of HEADLESS_PRIMITIVES) names.add(name);
+  for (const id of Object.keys(UTILITIES)) {
+    if (id !== 'icons/icon') names.add(id.split('/')[1]!);
+  }
+  return names;
+}
+
+/**
+ * `animate-ui migrate <components...|all>`: moves a project from the files of
+ * Animate UI v1 to @animate-ui/react. Returns the exit code.
+ */
+export function migrate(components: string[], options: MigrateOptions) {
+  const log = options.log ?? console.log;
+  const project = loadMigrateProject(options.cwd);
+  const relative = (file: string) => path.relative(project.root, file);
+
+  let exitCode = 0;
+  const all = components.includes('all');
+  const known = knownNames();
+  const names = new Set<string>();
+  for (const name of components) {
+    if (name === 'all') continue;
+    if (!known.has(name)) {
+      exitCode = 1;
+      log(`${styleText('red', '✖')} ${name} isn't an Animate UI v1 primitive.`);
+      continue;
+    }
+    names.add(name === 'icon' ? 'icons' : name);
+  }
+  if (!all && names.size === 0) return exitCode;
+
+  const selected = (module: V1Module) =>
+    all || names.has(selectionName(module));
+
+  /** The v1 module a file is, when v2 replaces it (a deletion candidate). */
+  const replacedModule = (file: string) => {
+    const module = project.classify(stripExtension(file));
+    return module && findMigration(module) ? module : undefined;
+  };
+
+  const files = project.sourceFiles();
+  const contents = new Map<string, string>();
+  const results: { file: string; result: RewriteResult; changed: boolean }[] =
+    [];
+  const found = new Set<string>();
+
+  for (const file of files) {
+    const code = readFileSync(file, 'utf8');
+    contents.set(file, code);
+    // v1 files that v2 replaces are left alone: they go away.
+    if (replacedModule(file)) continue;
+    let result: RewriteResult;
+    try {
+      result = rewrite(code, { project, file, selected });
+    } catch (error) {
+      if (code.includes('animate-ui'))
+        log(
+          `${styleText('yellow', '!')} ${relative(file)}: couldn't parse it (${error instanceof Error ? error.message : error}), skipped.`,
+        );
+      continue;
+    }
+    result.found.forEach((key) => found.add(key));
+    const changed = result.code !== code;
+    if (!changed && result.manual.length === 0) continue;
+    if (changed) {
+      contents.set(file, result.code);
+      if (!options.dryRun) writeFileSync(file, result.code);
+    }
+    results.push({ file, result, changed });
+  }
+
+  // Per file: the imports that moved, the mechanical changes, what's left.
+  let changedFiles = 0;
+  let manualSteps = 0;
+  for (const { file, result, changed } of results) {
+    if (changed) changedFiles++;
+    manualSteps += result.manual.length;
+    log(
+      `${changed ? styleText('green', '✔') : styleText('yellow', '!')} ${relative(file)}`,
+    );
+    for (const change of result.imports) {
+      log(
+        `    ${change.names.join(', ')}: ${change.from} → ${change.to.join(', ')}`,
+      );
+    }
+    for (const change of result.changes) log(`    ${change}`);
+    for (const step of result.manual) {
+      log(
+        `    ${styleText('yellow', '!')} ${relative(file)}:${options.dryRun ? step.line : step.migratedLine} ${step.message}`,
+      );
+    }
+    const component = path
+      .relative(project.componentsDir, file)
+      .split(path.sep)
+      .join('/')
+      .match(/^animate-ui\/components\/(radix|base)\/([a-z0-9-]+)\.[jt]sx?$/);
+    if (component && result.imports.length > 0) {
+      const name = component[2]!;
+      log(
+        styleText(
+          'dim',
+          `    A v1 component: it keeps working on v2. You can also swap it for shadcn/ui's ${name} (pnpm dlx shadcn@latest add ${name}) and run animate-ui animate ${name}.`,
+        ),
+      );
+    }
+  }
+
+  for (const name of names) {
+    if (
+      ![...found].some(
+        (key) =>
+          key.split('/')[1] === name ||
+          (name === 'icons' && key === 'icons/icon'),
+      )
+    )
+      log(`${styleText('yellow', '!')} No import of the v1 ${name} found.`);
+  }
+
+  if (changedFiles === 0 && manualSteps === 0) {
+    log('Nothing to migrate: no import of Animate UI v1 left.');
+  } else {
+    const verb = options.dryRun ? 'would be migrated' : 'migrated';
+    log(
+      `\n${changedFiles} file${changedFiles === 1 ? '' : 's'} ${verb}` +
+        (manualSteps > 0
+          ? `, ${manualSteps} manual step${manualSteps === 1 ? '' : 's'} left (marked !).`
+          : '.'),
+    );
+  }
+
+  // A tempo set in v1's lib/motion goes to the provider in v2.
+  if (found.has('lib/motion')) {
+    const motionFile = SOURCE_EXTENSIONS.map((extension) =>
+      path.join(project.libDir, `motion${extension}`),
+    ).find((file) => existsSync(file));
+    const tempo = motionFile
+      ? readFileSync(motionFile, 'utf8').match(/const tempo = ([\d.]+)/)?.[1]
+      : undefined;
+    if (tempo && Number(tempo) !== 1)
+      log(
+        `${styleText('yellow', '!')} ${relative(motionFile!)} sets tempo = ${tempo}: wrap your app in <AnimateUIProvider tempo={${tempo}}> (${PACKAGE}/provider) to keep that pace.`,
+      );
+  }
+
+  // v1 files that v2 replaces and nothing imports anymore.
+  const candidates = new Map<string, string>();
+  for (const file of files) {
+    const module = replacedModule(file);
+    if (!module || !selected(module)) continue;
+    // Only what still looks like the v1 file: it defines v1's exports.
+    const code = contents.get(file)!;
+    const v1 = Object.keys(findMigration(module)!.values).every((name) =>
+      new RegExp(`\\b${name}\\b`).test(code),
+    );
+    if (v1) candidates.set(moduleKey(module), file);
+  }
+  const imports = new Map<string, string[]>();
+  for (const [file, code] of contents) {
+    let sources: string[] = [];
+    try {
+      sources = listImports(code, file);
+    } catch {
+      // Unparsable: counts as importing nothing.
+    }
+    imports.set(
+      file,
+      sources.flatMap((source) => {
+        const target = project.resolve(file, source);
+        const module =
+          target === undefined ? undefined : project.classify(target);
+        const candidate = module && candidates.get(moduleKey(module));
+        return candidate ? [candidate] : [];
+      }),
+    );
+  }
+  const candidateFiles = new Set(candidates.values());
+  const used = new Set<string>();
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const [file, targets] of imports) {
+      if (candidateFiles.has(file) && !used.has(file)) continue;
+      for (const target of targets) {
+        if (!used.has(target)) {
+          used.add(target);
+          grew = true;
+        }
+      }
+    }
+  }
+  const unused = [...candidateFiles].filter((file) => !used.has(file)).sort();
+
+  if (unused.length > 0) {
+    const remove = options.delete && !options.dryRun;
+    log(
+      `\n${remove ? 'Removed' : options.delete ? 'Would remove' : 'No longer imported'} (v1 files @animate-ui/react replaces):`,
+    );
+    for (const file of unused) {
+      log(`    ${relative(file)}`);
+      if (remove) unlinkSync(file);
+    }
+    if (!options.delete)
+      log(styleText('dim', 'Run again with --delete to remove them.'));
+  }
+
+  if (changedFiles > 0 && !project.hasPackage) {
+    log(
+      `\n${styleText('yellow', '!')} ${PACKAGE} isn't installed yet: pnpm add ${PACKAGE} motion`,
+    );
+  }
+
+  return exitCode;
+}

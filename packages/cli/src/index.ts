@@ -3,6 +3,7 @@ import { parseArgs } from 'node:util';
 
 import pkg from '../package.json' with { type: 'json' };
 import { animate } from './commands/animate';
+import { migrate } from './commands/migrate';
 
 const HELP = `Usage: animate-ui <command> [components...] [options]
 
@@ -14,6 +15,7 @@ Commands:
 Options:
   --cwd <path>    Project directory (default: current directory)
   --dry-run       Show the changes without writing them
+  --delete        migrate: remove the v1 files nothing imports anymore
   -h, --help      Show this help
   -v, --version   Show the version
 `;
@@ -32,6 +34,7 @@ function main(argv: string[]) {
     options: {
       cwd: { type: 'string', default: process.cwd() },
       'dry-run': { type: 'boolean', default: false },
+      delete: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
       version: { type: 'boolean', short: 'v', default: false },
     },
@@ -68,8 +71,11 @@ function main(argv: string[]) {
         dryRun: values['dry-run'],
       });
     }
-    console.error(`"${command}" is not implemented yet.`);
-    return 1;
+    return migrate(components, {
+      cwd: values.cwd,
+      dryRun: values['dry-run'],
+      delete: values.delete,
+    });
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     return 1;
