@@ -1,13 +1,27 @@
 ---
-title: Hello World
-description: Your first document
+title: Introduction
+description: Animated drop-in primitives for Radix UI, Base UI and React Aria, built with Motion.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+Animate UI animates the primitives your components are built on, not the components themselves. Your shadcn/ui components stay yours: same structure, same styles, same API. Only the import of their primitive changes.
 
-## What is Next?
+```tsx
+import { Accordion as AccordionPrimitive } from 'radix-ui'; // [!code --]
+import { Accordion as AccordionPrimitive } from '@animate-ui/react/primitives/radix-ui/accordion'; // [!code ++]
+```
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+## Why primitives
+
+shadcn/ui components change often, and come in many styles and bases. Animate UI doesn't copy them: each Animate UI primitive has exactly the API of its library, with Motion inside. Whatever your shadcn/ui configuration, swapping the import is enough, and one command does it for every installed component:
+
+```bash
+pnpm dlx @animate-ui/cli@latest animate all
+```
+
+## Motion that feels right
+
+Every primitive follows the same rules: a strong ease-out, entrances in 600ms and exits in 400ms, transforms and opacity rather than layout, interruptible animations, and nothing on keyboard navigation. Reduced motion is respected everywhere, without any setup.
+
+## Libraries
+
+Animate UI supports [Radix UI](https://www.radix-ui.com), [Base UI](https://base-ui.com) and [React Aria](https://react-spectrum.adobe.com/react-aria/), the three bases of shadcn/ui, plus a few primitives of its own.
