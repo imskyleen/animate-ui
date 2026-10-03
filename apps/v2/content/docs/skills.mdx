@@ -1,0 +1,38 @@
+---
+title: Skills
+description: Teach your coding agent to animate components the Animate UI way.
+---
+
+Animate UI ships an [agent skill](https://github.com/imskyleen/animate-ui/tree/main/skills/animate-ui): instructions your coding agent loads when you ask it to animate something. With it, the agent knows when to run the CLI, when to swap an import, and how to animate a custom component with the same rules as every Animate UI primitive.
+
+## Install
+
+Copy the skill into your agent's skills directory. For Claude Code, in your project:
+
+```bash
+npx degit imskyleen/animate-ui/skills/animate-ui .claude/skills/animate-ui
+```
+
+Use `~/.claude/skills/animate-ui` instead to make it available in every project. Other agents that support skills read the same folder format: point them at `skills/animate-ui/SKILL.md`.
+
+## What it does
+
+Ask your agent to animate a component, and the skill picks the right path:
+
+- **A shadcn/ui component**: it runs `@animate-ui/cli animate`, which swaps the component's primitives for Animate UI's.
+- **A component built on Radix UI, Base UI or React Aria**: it swaps the import to `@animate-ui/react` and removes the CSS animations Motion replaces.
+- **Anything else**: it decides whether the component should animate at all, then applies Animate UI's recipes (overlay, modal, sheet, disclosure, indicator, press) with the package's motion tokens, reduced-motion support and trigger-anchored origins.
+- **An Animate UI v1 project**: it runs `@animate-ui/cli migrate`.
+
+It also reviews existing motion against Animate UI's rules: quality rules (accessibility, keyboard, performance, interruptions) that must pass, and style defaults (curves, durations, scale) it can tune on purpose.
+
+## Example prompts
+
+- "Animate my shadcn dialog and dropdown menu."
+- "Make this custom notification panel slide in like an Animate UI sheet."
+- "Review the motion in `components/command-menu.tsx`."
+- "Slow every animation down a little."
+
+## Credits
+
+The motion rules build on [Emil Kowalski's](https://emilkowal.ski) animation principles, with Animate UI's own timing.
