@@ -7,19 +7,26 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint",
-    "check-types": "next typegen && tsc --noEmit"
+    "check-types": "next typegen && tsc --noEmit",
+    "test:interaction": "playwright test tests/interaction"
   },
   "dependencies": {
+    "@animate-ui/react": "workspace:*",
+    "@hugeicons/core-free-icons": "^4.3.5",
+    "@hugeicons/react": "^1.1.10",
     "cn": "^0.4.0",
     "fumadocs-core": "16.15.18",
     "fumadocs-mdx": "15.4.6",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.18",
     "lucide-react": "^1.47.0",
+    "motion": "catalog:",
     "next": "16.3.8",
+    "radix-ui": "catalog:",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/mdx": "^2.0.14",
     "@types/node": "^26.6.4",

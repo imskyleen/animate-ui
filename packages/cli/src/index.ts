@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { parseArgs } from 'node:util';
 
-import { version } from '../package.json' with { type: 'json' };
+import pkg from '../package.json' with { type: 'json' };
 
 const HELP = `Usage: animate-ui <command> [components...] [options]
 
@@ -37,7 +37,7 @@ function main(argv: string[]) {
   });
 
   if (values.version) {
-    console.log(version);
+    console.log(pkg.version);
     return 0;
   }
 

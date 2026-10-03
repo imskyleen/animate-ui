@@ -11,22 +11,14 @@ import {
  * Animate UI motion tokens.
  *
  * Single source of truth for curves, durations and springs used by every
- * component. Entrances and state changes take 600ms on a strong ease-out
+ * primitive. Entrances and state changes take 600ms on a strong ease-out
  * (most of the movement happens in the first ~150ms), exits 400ms, press
- * feedback 150ms. Never scale from 0. Change `tempo` to speed up or slow down the whole
- * library at once.
+ * feedback 150ms. Never scale from 0.
  *
- * Keep in sync with the `cssVars.theme` entries of registry-item.json
- * (Tailwind utilities `ease-out-strong`, `ease-in-out-strong`, `ease-drawer`).
+ * Primitives read them with `useMotionTokens()`, so an optional
+ * `<AnimateUIProvider tempo={…}>` can change the pace of the whole app.
+ * Without a provider, the defaults below apply.
  */
-
-/**
- * Global pace multiplier applied to every duration and spring below.
- * 1 is the Animate UI default; 0.8 feels crisper, 1.2 more relaxed.
- */
-const tempo = 1;
-
-const t = (seconds: number) => seconds * tempo;
 
 const ease = {
   /** Entering / exiting UI. Starts fast so the response is immediate. */
@@ -37,34 +29,6 @@ const ease = {
   drawer: [0.32, 0.72, 0, 1],
 } as const;
 
-/** Durations in seconds (Motion's unit). */
-const duration = {
-  press: t(0.15),
-  /** Any other state change: checkmarks, swapped icons, labels. */
-  change: t(0.6),
-  tooltip: t(0.6),
-  /** Popovers, menus, selects, hover cards. */
-  dropdown: t(0.6),
-  /** Closing tooltips, popovers and menus: faster than their entrance. */
-  exit: t(0.4),
-  /** Swapping content in place (tab panels). */
-  fade: t(0.6),
-  /** Accordion and collapsible height. */
-  disclosure: t(0.6),
-  modal: t(0.6),
-  /** Dismissals are the system's response: faster than the entrance. */
-  modalExit: t(0.4),
-  drawer: t(0.6),
-  drawerExit: t(0.4),
-} as const;
-
-const spring = {
-  /** Default for interruptible, dynamic UI (cursors, magnetic, follow). */
-  default: { type: 'spring', duration: t(0.6), bounce: 0.2 },
-  /** Indicators, toggles and highlights: quick with a hint of overshoot. */
-  snappy: { type: 'spring', duration: t(0.6), bounce: 0.15 },
-} as const satisfies Record<string, Transition>;
-
 const scale = {
   /** Starting scale for anything that appears. Never 0. */
   enter: 0.95,
@@ -72,33 +36,75 @@ const scale = {
   press: 0.96,
 } as const;
 
-/** Ready-made transitions for the common cases. */
-const transition = {
-  press: { duration: duration.press, ease: ease.out },
-  change: { duration: duration.change, ease: ease.out },
-  tooltip: { duration: duration.tooltip, ease: ease.out },
-  dropdown: { duration: duration.dropdown, ease: ease.out },
-  exit: { duration: duration.exit, ease: ease.out },
-  /** Swapping content in place (tab panels): a fade, no exit. */
-  fade: { duration: duration.fade, ease: ease.out },
-  /** Accordion and collapsible height (one of the few layout animations). */
-  disclosure: { duration: duration.disclosure, ease: ease.out },
-  modal: { duration: duration.modal, ease: ease.out },
-  modalExit: { duration: duration.modalExit, ease: ease.out },
-  drawer: { duration: duration.drawer, ease: ease.drawer },
-  drawerExit: { duration: duration.drawerExit, ease: ease.drawer },
-  /** Deliberately no animation (e.g. keyboard-driven changes). */
-  instant: { duration: 0 },
-} as const satisfies Record<string, Transition>;
+/**
+ * Builds the tokens for a pace. `tempo` multiplies every duration and spring:
+ * 1 is the default, 0.8 feels crisper, 1.2 more relaxed.
+ */
+function createMotionTokens(tempo = 1) {
+  const t = (seconds: number) => seconds * tempo;
 
-const motionTokens = {
-  tempo,
-  ease,
-  duration,
-  spring,
-  scale,
-  transition,
-} as const;
+  /** Durations in seconds (Motion's unit). */
+  const duration = {
+    press: t(0.15),
+    /** Any other state change: checkmarks, swapped icons, labels. */
+    change: t(0.6),
+    tooltip: t(0.6),
+    /** Popovers, menus, selects, hover cards. */
+    dropdown: t(0.6),
+    /** Closing tooltips, popovers and menus: faster than their entrance. */
+    exit: t(0.4),
+    /** Swapping content in place (tab panels). */
+    fade: t(0.6),
+    /** Accordion and collapsible height. */
+    disclosure: t(0.6),
+    modal: t(0.6),
+    /** Dismissals are the system's response: faster than the entrance. */
+    modalExit: t(0.4),
+    drawer: t(0.6),
+    drawerExit: t(0.4),
+  };
+
+  const spring = {
+    /** Default for interruptible, dynamic UI (cursors, magnetic, follow). */
+    default: { type: 'spring', duration: t(0.6), bounce: 0.2 },
+    /** Indicators, toggles and highlights: quick with a hint of overshoot. */
+    snappy: { type: 'spring', duration: t(0.6), bounce: 0.15 },
+  } as const satisfies Record<string, Transition>;
+
+  /** Ready-made transitions for the common cases. */
+  const transition = {
+    press: { duration: duration.press, ease: ease.out },
+    change: { duration: duration.change, ease: ease.out },
+    tooltip: { duration: duration.tooltip, ease: ease.out },
+    dropdown: { duration: duration.dropdown, ease: ease.out },
+    exit: { duration: duration.exit, ease: ease.out },
+    /** Swapping content in place (tab panels): a fade, no exit. */
+    fade: { duration: duration.fade, ease: ease.out },
+    /** Accordion and collapsible height (one of the few layout animations). */
+    disclosure: { duration: duration.disclosure, ease: ease.out },
+    modal: { duration: duration.modal, ease: ease.out },
+    modalExit: { duration: duration.modalExit, ease: ease.out },
+    drawer: { duration: duration.drawer, ease: ease.drawer },
+    drawerExit: { duration: duration.drawerExit, ease: ease.drawer },
+    /** Deliberately no animation (e.g. keyboard-driven changes). */
+    instant: { duration: 0 },
+  } as const satisfies Record<string, Transition>;
+
+  return { tempo, ease, scale, duration, spring, transition } as const;
+}
+
+type MotionTokens = ReturnType<typeof createMotionTokens>;
+
+/** The default tokens (tempo 1). */
+const motionTokens: MotionTokens = createMotionTokens();
+const { duration, spring, transition } = motionTokens;
+
+const MotionTokensContext = React.createContext<MotionTokens>(motionTokens);
+
+/** The tokens of the closest `AnimateUIProvider`, or the defaults. */
+function useMotionTokens(): MotionTokens {
+  return React.use(MotionTokensContext);
+}
 
 type ReducedMotionConfigProps = {
   children: React.ReactNode;
@@ -171,8 +177,10 @@ function useShouldReduceMotion() {
 }
 
 export {
+  createMotionTokens,
   motionTokens,
-  tempo,
+  MotionTokensContext,
+  useMotionTokens,
   ease,
   duration,
   spring,
@@ -181,4 +189,5 @@ export {
   ReducedMotionConfig,
   useShouldReduceMotion,
   type ReducedMotionConfigProps,
+  type MotionTokens,
 };

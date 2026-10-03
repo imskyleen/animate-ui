@@ -10,6 +10,7 @@
     "@workspace/eslint-config": "workspace:*",
     "eslint": "catalog:",
     "motion": "catalog:",
+    "radix-ui": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "tsdown": "^0.23.0",
@@ -33,12 +34,12 @@
     "lint": "eslint ."
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@base-ui/react": "^1.8.0",
     "motion": "^14.0.0",
     "radix-ui": "^1.6.0",
-    "@base-ui/react": "^1.8.0",
-    "react-aria-components": "^1.21.0"
+    "react": "^19.0.0",
+    "react-aria-components": "^1.21.0",
+    "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
     "radix-ui": {
@@ -55,8 +56,16 @@
     "access": "public"
   },
   "exports": {
+    "./icons": "./dist/icons/index.js",
+    "./primitives/radix-ui": "./dist/primitives/radix-ui/index.js",
+    "./primitives/radix-ui/accordion": "./dist/primitives/radix-ui/accordion/index.js",
+    "./primitives/slot": "./dist/primitives/slot/index.js",
+    "./provider": "./dist/provider/index.js",
     "./utils/motion": "./dist/utils/motion/index.js",
     "./utils/strict-context": "./dist/utils/strict-context/index.js",
+    "./utils/use-controlled-state": "./dist/utils/use-controlled-state/index.js",
+    "./utils/use-is-in-view": "./dist/utils/use-is-in-view/index.js",
+    "./utils/use-page-visible": "./dist/utils/use-page-visible/index.js",
     "./package.json": "./package.json"
   }
 }
