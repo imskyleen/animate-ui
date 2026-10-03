@@ -9,10 +9,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "registry:build": "pnpm --filter animate-ui registry:build",
+    "registry:build": "pnpm --filter v1 registry:build",
     "prepare": "husky",
     "check-types": "turbo check-types",
-    "test:smoke": "pnpm --filter animate-ui test:smoke"
+    "test:smoke": "pnpm --filter v1 test:smoke"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",

@@ -89,7 +89,7 @@ pnpm dev
 
 ## Components
 
-We use the shadcn/ui registry system for developing components. You can find the source code for the components under `apps/www/registry`. The components are organized by categories.
+We use the shadcn/ui registry system for developing components. You can find the source code for the components under `apps/v1/registry`. The components are organized by categories.
 
 Each component is in a folder organized as follows:
 
@@ -267,7 +267,7 @@ Select:
 
 ### Documentation
 
-The documentation is located in the `apps/www/content` folder and follows a structure similar to the registry folder.
+The documentation is located in the `apps/v1/content` folder and follows a structure similar to the registry folder.
 
 ```
 apps

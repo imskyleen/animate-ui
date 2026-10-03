@@ -1,0 +1,39 @@
+{
+  "name": "@animate-ui/cli",
+  "version": "2.0.0-next.0",
+  "private": true,
+  "description": "Swap your shadcn/ui primitives for Animate UI's animated ones, and migrate from Animate UI v1.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imskyleen/animate-ui.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://animate-ui.com",
+  "type": "module",
+  "bin": {
+    "animate-ui": "./dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@workspace/eslint-config": "workspace:*",
+    "eslint": "catalog:",
+    "tsdown": "^0.23.0",
+    "typescript": "~6.0.3"
+  }
+}

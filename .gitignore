@@ -35,8 +35,8 @@ npm-debug.log*
 .DS_Store
 *.pem
 
-apps/www/app/(playground)
+apps/v1/app/(playground)
 
 # Playwright
-apps/www/tests/.results
-apps/www/tests/.baseline
+apps/v1/tests/.results
+apps/v1/tests/.baseline
