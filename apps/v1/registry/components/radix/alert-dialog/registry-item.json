@@ -5,8 +5,8 @@
   "title": "Alert Dialog",
   "description": "A modal dialog that interrupts the user with important content and expects a response.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-alert-dialog",
-    "@animate-ui/components-buttons-button"
+    "@animate-ui/v1/primitives-radix-alert-dialog",
+    "@animate-ui/v1/components-buttons-button"
   ],
   "files": [
     {

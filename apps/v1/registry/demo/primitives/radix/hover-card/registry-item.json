@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Hover Card Demo",
   "description": "Demo showing an animated radix hover card.",
-  "registryDependencies": ["@animate-ui/primitives-radix-hover-card"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-hover-card"],
   "files": [
     {
       "path": "registry/demo/primitives/radix/hover-card/index.tsx",

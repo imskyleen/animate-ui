@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Message Square Heart Icon",
   "description": "Message square heart icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Rotating Text Demo",
   "description": "Demo showing an animated rotating text.",
-  "registryDependencies": ["@animate-ui/primitives-texts-rotating"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-rotating"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/rotating/index.tsx",

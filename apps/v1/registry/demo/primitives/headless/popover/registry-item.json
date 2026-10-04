@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Headless Popover Demo",
   "description": "Demo showing an animated headless popover.",
-  "registryDependencies": ["@animate-ui/primitives-headless-popover"],
+  "registryDependencies": ["@animate-ui/v1/primitives-headless-popover"],
   "files": [
     {
       "path": "registry/demo/primitives/headless/popover/index.tsx",

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Particles Demo",
   "description": "Demo showing an animated particles.",
-  "registryDependencies": ["@animate-ui/primitives-effects-particles"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-particles"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/particles/index.tsx",

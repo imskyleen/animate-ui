@@ -4,7 +4,7 @@
   "title": "Base Dialog Demo",
   "description": "Demo showing an animated base dialog.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-dialog"
+    "@animate-ui/v1/primitives-base-dialog"
   ],
   "files": [
     {

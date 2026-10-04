@@ -4,7 +4,7 @@
   "title": "Preview Card",
   "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-preview-card"
+    "@animate-ui/v1/primitives-base-preview-card"
   ],
   "files": [
     {

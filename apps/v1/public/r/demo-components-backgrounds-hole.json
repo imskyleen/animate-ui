@@ -4,7 +4,7 @@
   "title": "Hole Background Demo",
   "description": "Demo showing a hole background.",
   "registryDependencies": [
-    "@animate-ui/components-backgrounds-hole"
+    "@animate-ui/v1/components-backgrounds-hole"
   ],
   "files": [
     {

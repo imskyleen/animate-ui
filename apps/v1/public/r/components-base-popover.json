@@ -4,7 +4,7 @@
   "title": "Popover",
   "description": "An accessible popup anchored to a button.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-popover"
+    "@animate-ui/v1/primitives-base-popover"
   ],
   "files": [
     {

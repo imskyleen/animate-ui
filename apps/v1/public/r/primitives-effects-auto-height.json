@@ -7,8 +7,8 @@
     "motion"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-slot",
-    "@animate-ui/hooks-use-auto-height"
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/hooks-use-auto-height"
   ],
   "files": [
     {

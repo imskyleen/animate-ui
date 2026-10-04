@@ -7,7 +7,7 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-base-files"
+    "@animate-ui/v1/primitives-base-files"
   ],
   "files": [
     {

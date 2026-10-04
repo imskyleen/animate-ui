@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Panel Top Open Icon",
   "description": "Panel top open icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

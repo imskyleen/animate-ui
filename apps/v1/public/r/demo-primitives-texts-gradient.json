@@ -4,7 +4,7 @@
   "title": "Gradient Text Demo",
   "description": "Demo showing an animated gradient text.",
   "registryDependencies": [
-    "@animate-ui/primitives-texts-gradient"
+    "@animate-ui/v1/primitives-texts-gradient"
   ],
   "files": [
     {

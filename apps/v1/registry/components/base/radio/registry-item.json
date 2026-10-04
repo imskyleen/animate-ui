@@ -5,7 +5,7 @@
   "title": "Base Radio",
   "description": "An easily stylable radio button component.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["@animate-ui/primitives-base-radio"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-radio"],
   "files": [
     {
       "path": "registry/components/base/radio/index.tsx",

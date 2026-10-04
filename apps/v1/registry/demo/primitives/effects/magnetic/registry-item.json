@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Magnetic Demo",
   "description": "Demo showing a magnetic effect.",
-  "registryDependencies": ["@animate-ui/primitives-effects-magnetic"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-magnetic"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/magnetic/index.tsx",

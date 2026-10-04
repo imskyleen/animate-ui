@@ -4,7 +4,7 @@
   "title": "Animate Tooltip Demo",
   "description": "Demo showing an animated tooltip.",
   "registryDependencies": [
-    "@animate-ui/components-animate-tooltip"
+    "@animate-ui/v1/components-animate-tooltip"
   ],
   "files": [
     {

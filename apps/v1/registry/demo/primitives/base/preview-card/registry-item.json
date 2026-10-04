@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Preview Card Demo",
   "description": "Demo showing an animated base preview card.",
-  "registryDependencies": ["@animate-ui/primitives-base-preview-card"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-preview-card"],
   "files": [
     {
       "path": "registry/demo/primitives/base/preview-card/index.tsx",

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Headless Tabs Demo",
   "description": "Demo showing an animated headless tabs.",
-  "registryDependencies": ["@animate-ui/primitives-headless-tabs"],
+  "registryDependencies": ["@animate-ui/v1/primitives-headless-tabs"],
   "files": [
     {
       "path": "registry/demo/primitives/headless/tabs/index.tsx",

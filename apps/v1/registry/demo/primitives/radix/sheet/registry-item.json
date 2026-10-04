@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Sheet Demo",
   "description": "Demo showing an animated radix sheet.",
-  "registryDependencies": ["@animate-ui/primitives-radix-sheet"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-sheet"],
   "files": [
     {
       "path": "registry/demo/primitives/radix/sheet/index.tsx",

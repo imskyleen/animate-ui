@@ -5,7 +5,7 @@
   "title": "Sheet",
   "description": "Extends the Dialog component to display content that complements the main content of the screen.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["@animate-ui/primitives-radix-sheet"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-sheet"],
   "files": [
     {
       "path": "registry/components/radix/sheet/index.tsx",

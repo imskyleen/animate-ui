@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Icon Button Demo",
   "description": "Demo showing an icon button.",
-  "registryDependencies": ["@animate-ui/components-buttons-icon"],
+  "registryDependencies": ["@animate-ui/v1/components-buttons-icon"],
   "files": [
     {
       "path": "registry/demo/components/buttons/icon/index.tsx",

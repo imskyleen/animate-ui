@@ -6,9 +6,9 @@
   "description": "Easily create accessible, fully customizable tab interfaces, with robust focus management and keyboard navigation support.",
   "dependencies": ["motion", "@headlessui/react"],
   "registryDependencies": [
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/primitives-effects-highlight",
-    "@animate-ui/primitives-effects-auto-height"
+    "@animate-ui/v1/lib-get-strict-context",
+    "@animate-ui/v1/primitives-effects-highlight",
+    "@animate-ui/v1/primitives-effects-auto-height"
   ],
   "files": [
     {

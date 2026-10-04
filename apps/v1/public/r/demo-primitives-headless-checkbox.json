@@ -4,7 +4,7 @@
   "title": "Headless Checkbox Demo",
   "description": "Demo showing an animated headless checkbox.",
   "registryDependencies": [
-    "@animate-ui/primitives-headless-checkbox"
+    "@animate-ui/v1/primitives-headless-checkbox"
   ],
   "files": [
     {

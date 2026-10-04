@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Playful Todolist Demo",
   "description": "Demo showing a playful todolist.",
-  "registryDependencies": ["@animate-ui/components-community-playful-todolist"],
+  "registryDependencies": ["@animate-ui/v1/components-community-playful-todolist"],
   "files": [
     {
       "path": "registry/demo/components/community/playful-todolist/index.tsx",

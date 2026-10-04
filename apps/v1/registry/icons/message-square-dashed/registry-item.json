@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Message Square Dashed Icon",
   "description": "Message square dashed icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

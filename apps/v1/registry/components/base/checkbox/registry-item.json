@@ -5,7 +5,7 @@
   "title": "Checkbox",
   "description": "An easily stylable checkbox component.",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["@animate-ui/primitives-base-checkbox"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-checkbox"],
   "files": [
     {
       "path": "registry/components/base/checkbox/index.tsx",

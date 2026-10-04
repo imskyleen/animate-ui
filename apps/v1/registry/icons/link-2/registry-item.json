@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Link 2 Icon",
   "description": "Link 2 icon with connect/unlink animations.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

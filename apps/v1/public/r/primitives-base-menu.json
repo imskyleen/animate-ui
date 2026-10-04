@@ -8,10 +8,10 @@
     "@base-ui-components/react"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-effects-highlight",
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/hooks-use-controlled-state",
-    "@animate-ui/hooks-use-data-state"
+    "@animate-ui/v1/primitives-effects-highlight",
+    "@animate-ui/v1/lib-get-strict-context",
+    "@animate-ui/v1/hooks-use-controlled-state",
+    "@animate-ui/v1/hooks-use-data-state"
   ],
   "files": [
     {

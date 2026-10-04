@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Theme Toggler Demo",
   "description": "Demo showing a theme toggler.",
-  "registryDependencies": ["@animate-ui/primitives-effects-theme-toggler"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-theme-toggler"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/theme-toggler/index.tsx",

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Signal High Icon",
   "description": "Signal high icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

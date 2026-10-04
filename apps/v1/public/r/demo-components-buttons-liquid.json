@@ -7,7 +7,7 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "@animate-ui/components-buttons-liquid"
+    "@animate-ui/v1/components-buttons-liquid"
   ],
   "files": [
     {

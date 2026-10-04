@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Animate Spring Demo",
   "description": "Demo showing an animated spring.",
-  "registryDependencies": ["@animate-ui/primitives-animate-spring"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-spring"],
   "files": [
     {
       "path": "registry/demo/primitives/animate/spring/index.tsx",

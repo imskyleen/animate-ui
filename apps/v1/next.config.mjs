@@ -33,6 +33,11 @@ const config = {
         source: '/docs/:path*.mdx',
         destination: '/llms.mdx/:path*',
       },
+      // `shadcn add @animate-ui/v1/<item>` resolves to /r/v1/<item>.json.
+      {
+        source: '/r/v1/:path*',
+        destination: '/r/:path*',
+      },
     ];
   },
   async redirects() {

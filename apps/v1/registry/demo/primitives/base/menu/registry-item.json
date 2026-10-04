@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Menu Demo",
   "description": "Demo showing an animated base menu.",
-  "registryDependencies": ["@animate-ui/primitives-base-menu"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-menu"],
   "files": [
     {
       "path": "registry/demo/primitives/base/menu/index.tsx",

@@ -5,7 +5,7 @@
   "title": "Dialog",
   "description": "A fully-managed, renderless dialog component jam-packed with accessibility and keyboard features, perfect for building completely custom dialogs and alerts.",
   "dependencies": ["lucide-react", "motion"],
-  "registryDependencies": ["@animate-ui/primitives-headless-dialog"],
+  "registryDependencies": ["@animate-ui/v1/primitives-headless-dialog"],
   "files": [
     {
       "path": "registry/components/headless/dialog/index.tsx",

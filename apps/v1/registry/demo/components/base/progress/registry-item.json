@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Progress Demo",
   "description": "Demo showing a progress bar.",
-  "registryDependencies": ["@animate-ui/components-base-progress"],
+  "registryDependencies": ["@animate-ui/v1/components-base-progress"],
   "files": [
     {
       "path": "registry/demo/components/base/progress/index.tsx",

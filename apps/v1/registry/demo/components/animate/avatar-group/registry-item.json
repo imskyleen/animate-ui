@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Avatar Group Demo",
   "description": "Demo showing a avatar group.",
-  "registryDependencies": ["@animate-ui/components-animate-avatar-group"],
+  "registryDependencies": ["@animate-ui/v1/components-animate-avatar-group"],
   "files": [
     {
       "path": "registry/demo/components/animate/avatar-group/index.tsx",

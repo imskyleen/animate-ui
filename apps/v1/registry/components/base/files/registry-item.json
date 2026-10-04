@@ -5,7 +5,7 @@
   "title": "Files",
   "description": "A component that allows you to display a list of files and folders.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["@animate-ui/primitives-base-files"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-files"],
   "files": [
     {
       "path": "registry/components/base/files/index.tsx",

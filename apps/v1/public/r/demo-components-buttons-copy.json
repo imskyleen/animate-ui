@@ -4,7 +4,7 @@
   "title": "Copy Button Demo",
   "description": "Demo showing a copy button.",
   "registryDependencies": [
-    "@animate-ui/components-buttons-copy"
+    "@animate-ui/v1/components-buttons-copy"
   ],
   "files": [
     {

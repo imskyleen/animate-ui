@@ -4,7 +4,7 @@
   "title": "Files Demo",
   "description": "Demo showing a files.",
   "registryDependencies": [
-    "@animate-ui/components-radix-files"
+    "@animate-ui/v1/components-radix-files"
   ],
   "files": [
     {

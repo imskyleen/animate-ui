@@ -6,8 +6,8 @@
   "description": "A clickable button that links to a GitHub repository and displays the number of stars.",
   "dependencies": ["lucide-react"],
   "registryDependencies": [
-    "@animate-ui/primitives-buttons-button",
-    "@animate-ui/primitives-animate-github-stars"
+    "@animate-ui/v1/primitives-buttons-button",
+    "@animate-ui/v1/primitives-animate-github-stars"
   ],
   "files": [
     {

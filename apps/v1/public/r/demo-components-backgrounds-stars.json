@@ -4,7 +4,7 @@
   "title": "Stars Background Demo",
   "description": "Demo showing a stars background.",
   "registryDependencies": [
-    "@animate-ui/components-backgrounds-stars"
+    "@animate-ui/v1/components-backgrounds-stars"
   ],
   "files": [
     {

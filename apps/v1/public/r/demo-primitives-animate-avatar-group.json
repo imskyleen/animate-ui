@@ -7,7 +7,7 @@
     "motion"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-avatar-group"
+    "@animate-ui/v1/primitives-animate-avatar-group"
   ],
   "files": [
     {

@@ -4,7 +4,7 @@
   "title": "Radix Alert Dialog Demo",
   "description": "Demo showing an animated radix alert dialog.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-alert-dialog"
+    "@animate-ui/v1/primitives-radix-alert-dialog"
   ],
   "files": [
     {

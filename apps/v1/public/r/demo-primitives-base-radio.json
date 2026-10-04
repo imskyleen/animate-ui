@@ -4,7 +4,7 @@
   "title": "Base Radio Demo",
   "description": "Demo showing an animated base radio.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-radio"
+    "@animate-ui/v1/primitives-base-radio"
   ],
   "files": [
     {

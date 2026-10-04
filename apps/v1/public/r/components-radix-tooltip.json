@@ -4,7 +4,7 @@
   "title": "Tooltip",
   "description": "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-tooltip"
+    "@animate-ui/v1/primitives-radix-tooltip"
   ],
   "files": [
     {

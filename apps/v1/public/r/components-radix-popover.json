@@ -4,7 +4,7 @@
   "title": "Popover",
   "description": "Displays rich content in a portal, triggered by a button.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-popover"
+    "@animate-ui/v1/primitives-radix-popover"
   ],
   "files": [
     {

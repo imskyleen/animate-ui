@@ -4,7 +4,7 @@
   "title": "Radix Tooltip Demo",
   "description": "Demo showing an animated radix tooltip.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-tooltip"
+    "@animate-ui/v1/primitives-radix-tooltip"
   ],
   "files": [
     {

@@ -4,7 +4,7 @@
   "title": "Headless Popover Demo",
   "description": "Demo showing an animated headless popover.",
   "registryDependencies": [
-    "@animate-ui/primitives-headless-popover"
+    "@animate-ui/v1/primitives-headless-popover"
   ],
   "files": [
     {

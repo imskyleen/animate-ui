@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Alert Dialog Demo",
   "description": "Demo showing an animated base alert dialog.",
-  "registryDependencies": ["@animate-ui/primitives-base-alert-dialog"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-alert-dialog"],
   "files": [
     {
       "path": "registry/demo/primitives/base/alert-dialog/index.tsx",

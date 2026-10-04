@@ -4,7 +4,7 @@
   "title": "Accordion Demo",
   "description": "Demo showing a accordion.",
   "registryDependencies": [
-    "@animate-ui/components-headless-accordion"
+    "@animate-ui/v1/components-headless-accordion"
   ],
   "files": [
     {

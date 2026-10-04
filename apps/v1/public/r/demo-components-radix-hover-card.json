@@ -4,7 +4,7 @@
   "title": "Hover Card Demo",
   "description": "Demo showing a hover card.",
   "registryDependencies": [
-    "@animate-ui/components-radix-hover-card"
+    "@animate-ui/v1/components-radix-hover-card"
   ],
   "files": [
     {

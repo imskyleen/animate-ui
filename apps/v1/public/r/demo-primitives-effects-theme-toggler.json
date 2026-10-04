@@ -4,7 +4,7 @@
   "title": "Theme Toggler Demo",
   "description": "Demo showing a theme toggler.",
   "registryDependencies": [
-    "@animate-ui/primitives-effects-theme-toggler"
+    "@animate-ui/v1/primitives-effects-theme-toggler"
   ],
   "files": [
     {

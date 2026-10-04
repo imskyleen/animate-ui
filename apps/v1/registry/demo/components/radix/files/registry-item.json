@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Files Demo",
   "description": "Demo showing a files.",
-  "registryDependencies": ["@animate-ui/components-radix-files"],
+  "registryDependencies": ["@animate-ui/v1/components-radix-files"],
   "files": [
     {
       "path": "registry/demo/components/radix/files/index.tsx",

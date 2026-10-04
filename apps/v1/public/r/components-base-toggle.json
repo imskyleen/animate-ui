@@ -4,7 +4,7 @@
   "title": "Toggle",
   "description": "A two-state button that can be on or off.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-toggle"
+    "@animate-ui/v1/primitives-base-toggle"
   ],
   "files": [
     {

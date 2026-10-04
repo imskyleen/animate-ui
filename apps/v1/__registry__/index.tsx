@@ -20,7 +20,7 @@ export const index: Record<string, any> = {
     files: [],
     keywords: [],
     component: null,
-    command: '@animate-ui/index',
+    command: '@animate-ui/v1/index',
   },
   'components-animate-avatar-group': {
     name: 'components-animate-avatar-group',
@@ -29,7 +29,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-avatar-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-avatar-group'],
     files: [
       {
         path: 'registry/components/animate/avatar-group/index.tsx',
@@ -59,7 +59,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-avatar-group',
+    command: '@animate-ui/v1/components-animate-avatar-group',
   },
   'components-animate-code': {
     name: 'components-animate-code',
@@ -68,9 +68,9 @@ export const index: Record<string, any> = {
     dependencies: ['next-themes'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-code-block',
-      '@animate-ui/components-buttons-copy',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-code-block',
+      '@animate-ui/v1/components-buttons-copy',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -101,7 +101,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-code',
+    command: '@animate-ui/v1/components-animate-code',
   },
   'components-animate-code-tabs': {
     name: 'components-animate-code-tabs',
@@ -110,8 +110,8 @@ export const index: Record<string, any> = {
     dependencies: ['shiki'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-tabs',
-      '@animate-ui/components-buttons-copy',
+      '@animate-ui/v1/primitives-animate-tabs',
+      '@animate-ui/v1/components-buttons-copy',
     ],
     files: [
       {
@@ -142,7 +142,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-code-tabs',
+    command: '@animate-ui/v1/components-animate-code-tabs',
   },
   'components-animate-cursor': {
     name: 'components-animate-cursor',
@@ -151,7 +151,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-cursor'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-cursor'],
     files: [
       {
         path: 'registry/components/animate/cursor/index.tsx',
@@ -181,7 +181,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-cursor',
+    command: '@animate-ui/v1/components-animate-cursor',
   },
   'components-animate-github-stars-wheel': {
     name: 'components-animate-github-stars-wheel',
@@ -190,8 +190,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-particles',
-      '@animate-ui/primitives-texts-scrolling-number',
+      '@animate-ui/v1/primitives-effects-particles',
+      '@animate-ui/v1/primitives-texts-scrolling-number',
     ],
     files: [
       {
@@ -223,7 +223,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-github-stars-wheel',
+    command: '@animate-ui/v1/components-animate-github-stars-wheel',
   },
   'components-animate-tabs': {
     name: 'components-animate-tabs',
@@ -232,7 +232,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-tabs'],
     files: [
       {
         path: 'registry/components/animate/tabs/index.tsx',
@@ -262,7 +262,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-tabs',
+    command: '@animate-ui/v1/components-animate-tabs',
   },
   'components-animate-tooltip': {
     name: 'components-animate-tooltip',
@@ -271,7 +271,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-tooltip'],
     files: [
       {
         path: 'registry/components/animate/tooltip/index.tsx',
@@ -301,7 +301,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-animate-tooltip',
+    command: '@animate-ui/v1/components-animate-tooltip',
   },
   'components-backgrounds-bubble': {
     name: 'components-backgrounds-bubble',
@@ -340,7 +340,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-bubble',
+    command: '@animate-ui/v1/components-backgrounds-bubble',
   },
   'components-backgrounds-fireworks': {
     name: 'components-backgrounds-fireworks',
@@ -378,7 +378,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-fireworks',
+    command: '@animate-ui/v1/components-backgrounds-fireworks',
   },
   'components-backgrounds-gradient': {
     name: 'components-backgrounds-gradient',
@@ -417,7 +417,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-gradient',
+    command: '@animate-ui/v1/components-backgrounds-gradient',
   },
   'components-backgrounds-gravity-stars': {
     name: 'components-backgrounds-gravity-stars',
@@ -457,7 +457,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-gravity-stars',
+    command: '@animate-ui/v1/components-backgrounds-gravity-stars',
   },
   'components-backgrounds-hexagon': {
     name: 'components-backgrounds-hexagon',
@@ -496,7 +496,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-hexagon',
+    command: '@animate-ui/v1/components-backgrounds-hexagon',
   },
   'components-backgrounds-hole': {
     name: 'components-backgrounds-hole',
@@ -534,7 +534,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-hole',
+    command: '@animate-ui/v1/components-backgrounds-hole',
   },
   'components-backgrounds-stars': {
     name: 'components-backgrounds-stars',
@@ -573,7 +573,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-backgrounds-stars',
+    command: '@animate-ui/v1/components-backgrounds-stars',
   },
   'components-base-accordion': {
     name: 'components-base-accordion',
@@ -581,7 +581,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-accordion'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-accordion'],
     files: [
       {
         path: 'registry/components/base/accordion/index.tsx',
@@ -611,7 +611,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-accordion',
+    command: '@animate-ui/v1/components-base-accordion',
   },
   'components-base-alert-dialog': {
     name: 'components-base-alert-dialog',
@@ -620,8 +620,8 @@ export const index: Record<string, any> = {
     dependencies: undefined,
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-base-alert-dialog',
-      '@animate-ui/components-buttons-button',
+      '@animate-ui/v1/primitives-base-alert-dialog',
+      '@animate-ui/v1/components-buttons-button',
     ],
     files: [
       {
@@ -652,7 +652,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-alert-dialog',
+    command: '@animate-ui/v1/components-base-alert-dialog',
   },
   'components-base-checkbox': {
     name: 'components-base-checkbox',
@@ -660,7 +660,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-checkbox'],
     files: [
       {
         path: 'registry/components/base/checkbox/index.tsx',
@@ -690,7 +690,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-checkbox',
+    command: '@animate-ui/v1/components-base-checkbox',
   },
   'components-base-dialog': {
     name: 'components-base-dialog',
@@ -698,7 +698,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-dialog'],
     files: [
       {
         path: 'registry/components/base/dialog/index.tsx',
@@ -726,7 +726,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-dialog',
+    command: '@animate-ui/v1/components-base-dialog',
   },
   'components-base-files': {
     name: 'components-base-files',
@@ -735,7 +735,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-files'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-files'],
     files: [
       {
         path: 'registry/components/base/files/index.tsx',
@@ -763,7 +763,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-files',
+    command: '@animate-ui/v1/components-base-files',
   },
   'components-base-menu': {
     name: 'components-base-menu',
@@ -772,7 +772,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-menu'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-menu'],
     files: [
       {
         path: 'registry/components/base/menu/index.tsx',
@@ -800,7 +800,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-menu',
+    command: '@animate-ui/v1/components-base-menu',
   },
   'components-base-popover': {
     name: 'components-base-popover',
@@ -808,7 +808,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-popover'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-popover'],
     files: [
       {
         path: 'registry/components/base/popover/index.tsx',
@@ -838,7 +838,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-popover',
+    command: '@animate-ui/v1/components-base-popover',
   },
   'components-base-preview-card': {
     name: 'components-base-preview-card',
@@ -847,7 +847,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-preview-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-preview-card'],
     files: [
       {
         path: 'registry/components/base/preview-card/index.tsx',
@@ -877,7 +877,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-preview-card',
+    command: '@animate-ui/v1/components-base-preview-card',
   },
   'components-base-preview-link-card': {
     name: 'components-base-preview-link-card',
@@ -885,7 +885,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-preview-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-preview-card'],
     files: [
       {
         path: 'registry/components/base/preview-link-card/index.tsx',
@@ -915,7 +915,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-preview-link-card',
+    command: '@animate-ui/v1/components-base-preview-link-card',
   },
   'components-base-progress': {
     name: 'components-base-progress',
@@ -923,7 +923,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-progress'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-progress'],
     files: [
       {
         path: 'registry/components/base/progress/index.tsx',
@@ -953,7 +953,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-progress',
+    command: '@animate-ui/v1/components-base-progress',
   },
   'components-base-radio': {
     name: 'components-base-radio',
@@ -961,7 +961,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-radio'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-radio'],
     files: [
       {
         path: 'registry/components/base/radio/index.tsx',
@@ -989,7 +989,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-radio',
+    command: '@animate-ui/v1/components-base-radio',
   },
   'components-base-switch': {
     name: 'components-base-switch',
@@ -997,7 +997,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-switch'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-switch'],
     files: [
       {
         path: 'registry/components/base/switch/index.tsx',
@@ -1025,7 +1025,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-switch',
+    command: '@animate-ui/v1/components-base-switch',
   },
   'components-base-tabs': {
     name: 'components-base-tabs',
@@ -1034,7 +1034,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-tabs'],
     files: [
       {
         path: 'registry/components/base/tabs/index.tsx',
@@ -1062,7 +1062,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-tabs',
+    command: '@animate-ui/v1/components-base-tabs',
   },
   'components-base-toggle': {
     name: 'components-base-toggle',
@@ -1070,7 +1070,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-toggle'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-toggle'],
     files: [
       {
         path: 'registry/components/base/toggle/index.tsx',
@@ -1098,7 +1098,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-toggle',
+    command: '@animate-ui/v1/components-base-toggle',
   },
   'components-base-toggle-group': {
     name: 'components-base-toggle-group',
@@ -1106,7 +1106,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-toggle-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-toggle-group'],
     files: [
       {
         path: 'registry/components/base/toggle-group/index.tsx',
@@ -1136,7 +1136,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-toggle-group',
+    command: '@animate-ui/v1/components-base-toggle-group',
   },
   'components-base-tooltip': {
     name: 'components-base-tooltip',
@@ -1145,7 +1145,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-tooltip'],
     files: [
       {
         path: 'registry/components/base/tooltip/index.tsx',
@@ -1175,7 +1175,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-base-tooltip',
+    command: '@animate-ui/v1/components-base-tooltip',
   },
   'components-buttons-button': {
     name: 'components-buttons-button',
@@ -1183,7 +1183,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-button'],
+    registryDependencies: ['@animate-ui/v1/primitives-buttons-button'],
     files: [
       {
         path: 'registry/components/buttons/button/index.tsx',
@@ -1213,7 +1213,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-button',
+    command: '@animate-ui/v1/components-buttons-button',
   },
   'components-buttons-copy': {
     name: 'components-buttons-copy',
@@ -1223,8 +1223,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'lucide-react', 'class-variance-authority'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-buttons-button',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-buttons-button',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -1255,7 +1255,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-copy',
+    command: '@animate-ui/v1/components-buttons-copy',
   },
   'components-buttons-flip': {
     name: 'components-buttons-flip',
@@ -1264,8 +1264,8 @@ export const index: Record<string, any> = {
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/components-buttons-button',
-      '@animate-ui/primitives-buttons-flip',
+      '@animate-ui/v1/components-buttons-button',
+      '@animate-ui/v1/primitives-buttons-flip',
     ],
     files: [
       {
@@ -1296,7 +1296,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-flip',
+    command: '@animate-ui/v1/components-buttons-flip',
   },
   'components-buttons-github-stars': {
     name: 'components-buttons-github-stars',
@@ -1306,8 +1306,8 @@ export const index: Record<string, any> = {
     dependencies: ['lucide-react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-buttons-button',
-      '@animate-ui/primitives-animate-github-stars',
+      '@animate-ui/v1/primitives-buttons-button',
+      '@animate-ui/v1/primitives-animate-github-stars',
     ],
     files: [
       {
@@ -1338,7 +1338,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-github-stars',
+    command: '@animate-ui/v1/components-buttons-github-stars',
   },
   'components-buttons-icon': {
     name: 'components-buttons-icon',
@@ -1348,8 +1348,8 @@ export const index: Record<string, any> = {
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-buttons-button',
-      '@animate-ui/primitives-effects-particles',
+      '@animate-ui/v1/primitives-buttons-button',
+      '@animate-ui/v1/primitives-effects-particles',
     ],
     files: [
       {
@@ -1380,7 +1380,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-icon',
+    command: '@animate-ui/v1/components-buttons-icon',
   },
   'components-buttons-liquid': {
     name: 'components-buttons-liquid',
@@ -1388,7 +1388,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-liquid'],
+    registryDependencies: ['@animate-ui/v1/primitives-buttons-liquid'],
     files: [
       {
         path: 'registry/components/buttons/liquid/index.tsx',
@@ -1418,7 +1418,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-liquid',
+    command: '@animate-ui/v1/components-buttons-liquid',
   },
   'components-buttons-ripple': {
     name: 'components-buttons-ripple',
@@ -1427,8 +1427,8 @@ export const index: Record<string, any> = {
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/components-buttons-button',
-      '@animate-ui/primitives-buttons-ripple',
+      '@animate-ui/v1/components-buttons-button',
+      '@animate-ui/v1/primitives-buttons-ripple',
     ],
     files: [
       {
@@ -1459,7 +1459,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-ripple',
+    command: '@animate-ui/v1/components-buttons-ripple',
   },
   'components-buttons-theme-toggler': {
     name: 'components-buttons-theme-toggler',
@@ -1468,8 +1468,8 @@ export const index: Record<string, any> = {
     dependencies: ['next-themes', 'class-variance-authority', 'lucide-react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-theme-toggler',
-      '@animate-ui/components-buttons-icon',
+      '@animate-ui/v1/primitives-effects-theme-toggler',
+      '@animate-ui/v1/components-buttons-icon',
     ],
     files: [
       {
@@ -1500,7 +1500,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-buttons-theme-toggler',
+    command: '@animate-ui/v1/components-buttons-theme-toggler',
   },
   'components-community-flip-card': {
     name: 'components-community-flip-card',
@@ -1539,7 +1539,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-flip-card',
+    command: '@animate-ui/v1/components-community-flip-card',
   },
   'components-community-management-bar': {
     name: 'components-community-management-bar',
@@ -1547,7 +1547,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion', 'lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-sliding-number'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-sliding-number'],
     files: [
       {
         path: 'registry/components/community/management-bar/index.tsx',
@@ -1577,7 +1577,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-management-bar',
+    command: '@animate-ui/v1/components-community-management-bar',
   },
   'components-community-motion-carousel': {
     name: 'components-community-motion-carousel',
@@ -1591,7 +1591,7 @@ export const index: Record<string, any> = {
       'embla-carousel-react',
     ],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-button'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-button'],
     files: [
       {
         path: 'registry/components/community/motion-carousel/index.tsx',
@@ -1622,7 +1622,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-motion-carousel',
+    command: '@animate-ui/v1/components-community-motion-carousel',
   },
   'components-community-notification-list': {
     name: 'components-community-notification-list',
@@ -1662,7 +1662,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-notification-list',
+    command: '@animate-ui/v1/components-community-notification-list',
   },
   'components-community-pin-list': {
     name: 'components-community-pin-list',
@@ -1701,7 +1701,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-pin-list',
+    command: '@animate-ui/v1/components-community-pin-list',
   },
   'components-community-playful-todolist': {
     name: 'components-community-playful-todolist',
@@ -1710,7 +1710,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-checkbox'],
     files: [
       {
         path: 'registry/components/community/playful-todolist/index.tsx',
@@ -1741,7 +1741,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-playful-todolist',
+    command: '@animate-ui/v1/components-community-playful-todolist',
   },
   'components-community-radial-intro': {
     name: 'components-community-radial-intro',
@@ -1780,7 +1780,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-radial-intro',
+    command: '@animate-ui/v1/components-community-radial-intro',
   },
   'components-community-radial-menu': {
     name: 'components-community-radial-menu',
@@ -1819,7 +1819,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-radial-menu',
+    command: '@animate-ui/v1/components-community-radial-menu',
   },
   'components-community-radial-nav': {
     name: 'components-community-radial-nav',
@@ -1858,7 +1858,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-radial-nav',
+    command: '@animate-ui/v1/components-community-radial-nav',
   },
   'components-community-share-button': {
     name: 'components-community-share-button',
@@ -1896,7 +1896,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-share-button',
+    command: '@animate-ui/v1/components-community-share-button',
   },
   'components-community-user-presence-avatar': {
     name: 'components-community-user-presence-avatar',
@@ -1905,7 +1905,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-tooltip'],
+    registryDependencies: ['@animate-ui/v1/components-animate-tooltip'],
     files: [
       {
         path: 'registry/components/community/user-presence-avatar/index.tsx',
@@ -1936,7 +1936,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-community-user-presence-avatar',
+    command: '@animate-ui/v1/components-community-user-presence-avatar',
   },
   'components-headless-accordion': {
     name: 'components-headless-accordion',
@@ -1945,7 +1945,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-disclosure'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-disclosure'],
     files: [
       {
         path: 'registry/components/headless/accordion/index.tsx',
@@ -1975,7 +1975,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-headless-accordion',
+    command: '@animate-ui/v1/components-headless-accordion',
   },
   'components-headless-checkbox': {
     name: 'components-headless-checkbox',
@@ -1984,7 +1984,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority', 'motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-checkbox'],
     files: [
       {
         path: 'registry/components/headless/checkbox/index.tsx',
@@ -2014,7 +2014,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-headless-checkbox',
+    command: '@animate-ui/v1/components-headless-checkbox',
   },
   'components-headless-dialog': {
     name: 'components-headless-dialog',
@@ -2023,7 +2023,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react', 'motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-dialog'],
     files: [
       {
         path: 'registry/components/headless/dialog/index.tsx',
@@ -2053,7 +2053,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-headless-dialog',
+    command: '@animate-ui/v1/components-headless-dialog',
   },
   'components-headless-popover': {
     name: 'components-headless-popover',
@@ -2062,7 +2062,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-popover'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-popover'],
     files: [
       {
         path: 'registry/components/headless/popover/index.tsx',
@@ -2092,7 +2092,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-headless-popover',
+    command: '@animate-ui/v1/components-headless-popover',
   },
   'components-headless-switch': {
     name: 'components-headless-switch',
@@ -2101,7 +2101,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-switch'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-switch'],
     files: [
       {
         path: 'registry/components/headless/switch/index.tsx',
@@ -2131,7 +2131,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-headless-switch',
+    command: '@animate-ui/v1/components-headless-switch',
   },
   'components-headless-tabs': {
     name: 'components-headless-tabs',
@@ -2140,7 +2140,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-tabs'],
     files: [
       {
         path: 'registry/components/headless/tabs/index.tsx',
@@ -2170,7 +2170,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-headless-tabs',
+    command: '@animate-ui/v1/components-headless-tabs',
   },
   'components-radix-accordion': {
     name: 'components-radix-accordion',
@@ -2179,7 +2179,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-accordion'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-accordion'],
     files: [
       {
         path: 'registry/components/radix/accordion/index.tsx',
@@ -2209,7 +2209,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-accordion',
+    command: '@animate-ui/v1/components-radix-accordion',
   },
   'components-radix-alert-dialog': {
     name: 'components-radix-alert-dialog',
@@ -2219,8 +2219,8 @@ export const index: Record<string, any> = {
     dependencies: undefined,
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-radix-alert-dialog',
-      '@animate-ui/components-buttons-button',
+      '@animate-ui/v1/primitives-radix-alert-dialog',
+      '@animate-ui/v1/components-buttons-button',
     ],
     files: [
       {
@@ -2251,7 +2251,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-alert-dialog',
+    command: '@animate-ui/v1/components-radix-alert-dialog',
   },
   'components-radix-checkbox': {
     name: 'components-radix-checkbox',
@@ -2260,7 +2260,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-checkbox'],
     files: [
       {
         path: 'registry/components/radix/checkbox/index.tsx',
@@ -2290,7 +2290,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-checkbox',
+    command: '@animate-ui/v1/components-radix-checkbox',
   },
   'components-radix-dialog': {
     name: 'components-radix-dialog',
@@ -2299,7 +2299,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-dialog'],
     files: [
       {
         path: 'registry/components/radix/dialog/index.tsx',
@@ -2329,7 +2329,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-dialog',
+    command: '@animate-ui/v1/components-radix-dialog',
   },
   'components-radix-dropdown-menu': {
     name: 'components-radix-dropdown-menu',
@@ -2338,7 +2338,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-dropdown-menu'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-dropdown-menu'],
     files: [
       {
         path: 'registry/components/radix/dropdown-menu/index.tsx',
@@ -2368,7 +2368,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-dropdown-menu',
+    command: '@animate-ui/v1/components-radix-dropdown-menu',
   },
   'components-radix-files': {
     name: 'components-radix-files',
@@ -2377,7 +2377,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-files'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-files'],
     files: [
       {
         path: 'registry/components/radix/files/index.tsx',
@@ -2405,7 +2405,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-files',
+    command: '@animate-ui/v1/components-radix-files',
   },
   'components-radix-hover-card': {
     name: 'components-radix-hover-card',
@@ -2414,7 +2414,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-hover-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-hover-card'],
     files: [
       {
         path: 'registry/components/radix/hover-card/index.tsx',
@@ -2444,7 +2444,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-hover-card',
+    command: '@animate-ui/v1/components-radix-hover-card',
   },
   'components-radix-popover': {
     name: 'components-radix-popover',
@@ -2452,7 +2452,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-popover'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-popover'],
     files: [
       {
         path: 'registry/components/radix/popover/index.tsx',
@@ -2482,7 +2482,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-popover',
+    command: '@animate-ui/v1/components-radix-popover',
   },
   'components-radix-preview-link-card': {
     name: 'components-radix-preview-link-card',
@@ -2490,7 +2490,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-preview-link-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-preview-link-card'],
     files: [
       {
         path: 'registry/components/radix/preview-link-card/index.tsx',
@@ -2520,7 +2520,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-preview-link-card',
+    command: '@animate-ui/v1/components-radix-preview-link-card',
   },
   'components-radix-progress': {
     name: 'components-radix-progress',
@@ -2529,7 +2529,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-progress'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-progress'],
     files: [
       {
         path: 'registry/components/radix/progress/index.tsx',
@@ -2559,7 +2559,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-progress',
+    command: '@animate-ui/v1/components-radix-progress',
   },
   'components-radix-radio-group': {
     name: 'components-radix-radio-group',
@@ -2568,7 +2568,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-radio-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-radio-group'],
     files: [
       {
         path: 'registry/components/radix/radio-group/index.tsx',
@@ -2598,7 +2598,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-radio-group',
+    command: '@animate-ui/v1/components-radix-radio-group',
   },
   'components-radix-sheet': {
     name: 'components-radix-sheet',
@@ -2607,7 +2607,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-sheet'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-sheet'],
     files: [
       {
         path: 'registry/components/radix/sheet/index.tsx',
@@ -2635,7 +2635,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-sheet',
+    command: '@animate-ui/v1/components-radix-sheet',
   },
   'components-radix-sidebar': {
     name: 'components-radix-sidebar',
@@ -2650,8 +2650,8 @@ export const index: Record<string, any> = {
     ],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-radix-checkbox',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-radix-checkbox',
+      '@animate-ui/v1/lib-get-strict-context',
       'button',
       'input',
       'separator',
@@ -2687,7 +2687,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-sidebar',
+    command: '@animate-ui/v1/components-radix-sidebar',
   },
   'components-radix-switch': {
     name: 'components-radix-switch',
@@ -2696,7 +2696,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-switch'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-switch'],
     files: [
       {
         path: 'registry/components/radix/switch/index.tsx',
@@ -2726,7 +2726,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-switch',
+    command: '@animate-ui/v1/components-radix-switch',
   },
   'components-radix-tabs': {
     name: 'components-radix-tabs',
@@ -2735,7 +2735,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-tabs'],
     files: [
       {
         path: 'registry/components/radix/tabs/index.tsx',
@@ -2763,7 +2763,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-tabs',
+    command: '@animate-ui/v1/components-radix-tabs',
   },
   'components-radix-toggle': {
     name: 'components-radix-toggle',
@@ -2771,7 +2771,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-toggle'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-toggle'],
     files: [
       {
         path: 'registry/components/radix/toggle/index.tsx',
@@ -2801,7 +2801,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-toggle',
+    command: '@animate-ui/v1/components-radix-toggle',
   },
   'components-radix-toggle-group': {
     name: 'components-radix-toggle-group',
@@ -2810,9 +2810,9 @@ export const index: Record<string, any> = {
     dependencies: ['class-variance-authority'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-radix-toggle-group',
-      '@animate-ui/components-radix-toggle',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-radix-toggle-group',
+      '@animate-ui/v1/components-radix-toggle',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -2843,7 +2843,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-toggle-group',
+    command: '@animate-ui/v1/components-radix-toggle-group',
   },
   'components-radix-tooltip': {
     name: 'components-radix-tooltip',
@@ -2852,7 +2852,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-tooltip'],
     files: [
       {
         path: 'registry/components/radix/tooltip/index.tsx',
@@ -2882,7 +2882,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/components-radix-tooltip',
+    command: '@animate-ui/v1/components-radix-tooltip',
   },
   'demo-components-animate-avatar-group': {
     name: 'demo-components-animate-avatar-group',
@@ -2890,7 +2890,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-avatar-group'],
+    registryDependencies: ['@animate-ui/v1/components-animate-avatar-group'],
     files: [
       {
         path: 'registry/demo/components/animate/avatar-group/index.tsx',
@@ -2921,7 +2921,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-avatar-group',
+    command: '@animate-ui/v1/demo-components-animate-avatar-group',
   },
   'demo-components-animate-code': {
     name: 'demo-components-animate-code',
@@ -2929,7 +2929,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-code'],
+    registryDependencies: ['@animate-ui/v1/components-animate-code'],
     files: [
       {
         path: 'registry/demo/components/animate/code/index.tsx',
@@ -2966,7 +2966,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-code',
+    command: '@animate-ui/v1/demo-components-animate-code',
   },
   'demo-components-animate-code-tabs': {
     name: 'demo-components-animate-code-tabs',
@@ -2974,7 +2974,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-code-tabs'],
+    registryDependencies: ['@animate-ui/v1/components-animate-code-tabs'],
     files: [
       {
         path: 'registry/demo/components/animate/code-tabs/index.tsx',
@@ -3004,7 +3004,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-code-tabs',
+    command: '@animate-ui/v1/demo-components-animate-code-tabs',
   },
   'demo-components-animate-cursor': {
     name: 'demo-components-animate-cursor',
@@ -3012,7 +3012,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-cursor'],
+    registryDependencies: ['@animate-ui/v1/components-animate-cursor'],
     files: [
       {
         path: 'registry/demo/components/animate/cursor/index.tsx',
@@ -3065,7 +3065,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-cursor',
+    command: '@animate-ui/v1/demo-components-animate-cursor',
   },
   'demo-components-animate-github-stars-wheel': {
     name: 'demo-components-animate-github-stars-wheel',
@@ -3073,7 +3073,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-github-stars-wheel'],
+    registryDependencies: ['@animate-ui/v1/components-animate-github-stars-wheel'],
     files: [
       {
         path: 'registry/demo/components/animate/github-stars-wheel/index.tsx',
@@ -3113,7 +3113,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-github-stars-wheel',
+    command: '@animate-ui/v1/demo-components-animate-github-stars-wheel',
   },
   'demo-components-animate-tabs': {
     name: 'demo-components-animate-tabs',
@@ -3121,7 +3121,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-tabs'],
+    registryDependencies: ['@animate-ui/v1/components-animate-tabs'],
     files: [
       {
         path: 'registry/demo/components/animate/tabs/index.tsx',
@@ -3151,7 +3151,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-tabs',
+    command: '@animate-ui/v1/demo-components-animate-tabs',
   },
   'demo-components-animate-tooltip': {
     name: 'demo-components-animate-tooltip',
@@ -3159,7 +3159,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-animate-tooltip'],
+    registryDependencies: ['@animate-ui/v1/components-animate-tooltip'],
     files: [
       {
         path: 'registry/demo/components/animate/tooltip/index.tsx',
@@ -3211,7 +3211,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-animate-tooltip',
+    command: '@animate-ui/v1/demo-components-animate-tooltip',
   },
   'demo-components-backgrounds-bubble': {
     name: 'demo-components-backgrounds-bubble',
@@ -3219,7 +3219,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-bubble'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-bubble'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/bubble/index.tsx',
@@ -3251,7 +3251,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-bubble',
+    command: '@animate-ui/v1/demo-components-backgrounds-bubble',
   },
   'demo-components-backgrounds-fireworks': {
     name: 'demo-components-backgrounds-fireworks',
@@ -3259,7 +3259,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-fireworks'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-fireworks'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/fireworks/index.tsx',
@@ -3294,7 +3294,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-fireworks',
+    command: '@animate-ui/v1/demo-components-backgrounds-fireworks',
   },
   'demo-components-backgrounds-fireworks-circle': {
     name: 'demo-components-backgrounds-fireworks-circle',
@@ -3302,7 +3302,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-fireworks'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-fireworks'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/fireworks-circle/index.tsx',
@@ -3341,7 +3341,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-fireworks-circle',
+    command: '@animate-ui/v1/demo-components-backgrounds-fireworks-circle',
   },
   'demo-components-backgrounds-gradient': {
     name: 'demo-components-backgrounds-gradient',
@@ -3349,7 +3349,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-gradient'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-gradient'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/gradient/index.tsx',
@@ -3380,7 +3380,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-gradient',
+    command: '@animate-ui/v1/demo-components-backgrounds-gradient',
   },
   'demo-components-backgrounds-gravity-stars': {
     name: 'demo-components-backgrounds-gravity-stars',
@@ -3388,7 +3388,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-gravity-stars'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-gravity-stars'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/gravity-stars/index.tsx',
@@ -3419,7 +3419,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-gravity-stars',
+    command: '@animate-ui/v1/demo-components-backgrounds-gravity-stars',
   },
   'demo-components-backgrounds-hexagon': {
     name: 'demo-components-backgrounds-hexagon',
@@ -3427,7 +3427,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-hexagon'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-hexagon'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/hexagon/index.tsx',
@@ -3457,7 +3457,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-hexagon',
+    command: '@animate-ui/v1/demo-components-backgrounds-hexagon',
   },
   'demo-components-backgrounds-hole': {
     name: 'demo-components-backgrounds-hole',
@@ -3465,7 +3465,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-hole'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-hole'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/hole/index.tsx',
@@ -3495,7 +3495,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-hole',
+    command: '@animate-ui/v1/demo-components-backgrounds-hole',
   },
   'demo-components-backgrounds-stars': {
     name: 'demo-components-backgrounds-stars',
@@ -3503,7 +3503,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-backgrounds-stars'],
+    registryDependencies: ['@animate-ui/v1/components-backgrounds-stars'],
     files: [
       {
         path: 'registry/demo/components/backgrounds/stars/index.tsx',
@@ -3533,7 +3533,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-backgrounds-stars',
+    command: '@animate-ui/v1/demo-components-backgrounds-stars',
   },
   'demo-components-base-accordion': {
     name: 'demo-components-base-accordion',
@@ -3541,7 +3541,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-accordion'],
+    registryDependencies: ['@animate-ui/v1/components-base-accordion'],
     files: [
       {
         path: 'registry/demo/components/base/accordion/index.tsx',
@@ -3575,7 +3575,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-accordion',
+    command: '@animate-ui/v1/demo-components-base-accordion',
   },
   'demo-components-base-alert-dialog': {
     name: 'demo-components-base-alert-dialog',
@@ -3583,7 +3583,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-alert-dialog'],
+    registryDependencies: ['@animate-ui/v1/components-base-alert-dialog'],
     files: [
       {
         path: 'registry/demo/components/base/alert-dialog/index.tsx',
@@ -3625,7 +3625,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-alert-dialog',
+    command: '@animate-ui/v1/demo-components-base-alert-dialog',
   },
   'demo-components-base-checkbox': {
     name: 'demo-components-base-checkbox',
@@ -3633,7 +3633,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-checkbox'],
+    registryDependencies: ['@animate-ui/v1/components-base-checkbox'],
     files: [
       {
         path: 'registry/demo/components/base/checkbox/index.tsx',
@@ -3675,7 +3675,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-checkbox',
+    command: '@animate-ui/v1/demo-components-base-checkbox',
   },
   'demo-components-base-dialog': {
     name: 'demo-components-base-dialog',
@@ -3683,7 +3683,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-dialog'],
+    registryDependencies: ['@animate-ui/v1/components-base-dialog'],
     files: [
       {
         path: 'registry/demo/components/base/dialog/index.tsx',
@@ -3726,7 +3726,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-dialog',
+    command: '@animate-ui/v1/demo-components-base-dialog',
   },
   'demo-components-base-files': {
     name: 'demo-components-base-files',
@@ -3734,7 +3734,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-files'],
+    registryDependencies: ['@animate-ui/v1/components-base-files'],
     files: [
       {
         path: 'registry/demo/components/base/files/index.tsx',
@@ -3764,7 +3764,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-files',
+    command: '@animate-ui/v1/demo-components-base-files',
   },
   'demo-components-base-menu': {
     name: 'demo-components-base-menu',
@@ -3772,7 +3772,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-menu'],
+    registryDependencies: ['@animate-ui/v1/components-base-menu'],
     files: [
       {
         path: 'registry/demo/components/base/menu/index.tsx',
@@ -3822,7 +3822,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-menu',
+    command: '@animate-ui/v1/demo-components-base-menu',
   },
   'demo-components-base-menu-checkbox': {
     name: 'demo-components-base-menu-checkbox',
@@ -3830,7 +3830,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-menu'],
+    registryDependencies: ['@animate-ui/v1/components-base-menu'],
     files: [
       {
         path: 'registry/demo/components/base/menu-checkbox/index.tsx',
@@ -3880,7 +3880,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-menu-checkbox',
+    command: '@animate-ui/v1/demo-components-base-menu-checkbox',
   },
   'demo-components-base-menu-radio': {
     name: 'demo-components-base-menu-radio',
@@ -3888,7 +3888,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-menu'],
+    registryDependencies: ['@animate-ui/v1/components-base-menu'],
     files: [
       {
         path: 'registry/demo/components/base/menu-radio/index.tsx',
@@ -3938,7 +3938,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-menu-radio',
+    command: '@animate-ui/v1/demo-components-base-menu-radio',
   },
   'demo-components-base-popover': {
     name: 'demo-components-base-popover',
@@ -3946,7 +3946,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-popover'],
+    registryDependencies: ['@animate-ui/v1/components-base-popover'],
     files: [
       {
         path: 'registry/demo/components/base/popover/index.tsx',
@@ -3994,7 +3994,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-popover',
+    command: '@animate-ui/v1/demo-components-base-popover',
   },
   'demo-components-base-preview-card': {
     name: 'demo-components-base-preview-card',
@@ -4002,7 +4002,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-preview-card'],
+    registryDependencies: ['@animate-ui/v1/components-base-preview-card'],
     files: [
       {
         path: 'registry/demo/components/base/preview-card/index.tsx',
@@ -4058,7 +4058,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-preview-card',
+    command: '@animate-ui/v1/demo-components-base-preview-card',
   },
   'demo-components-base-preview-link-card': {
     name: 'demo-components-base-preview-link-card',
@@ -4066,7 +4066,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-preview-link-card'],
+    registryDependencies: ['@animate-ui/v1/components-base-preview-link-card'],
     files: [
       {
         path: 'registry/demo/components/base/preview-link-card/index.tsx',
@@ -4124,7 +4124,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-preview-link-card',
+    command: '@animate-ui/v1/demo-components-base-preview-link-card',
   },
   'demo-components-base-progress': {
     name: 'demo-components-base-progress',
@@ -4132,7 +4132,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-progress'],
+    registryDependencies: ['@animate-ui/v1/components-base-progress'],
     files: [
       {
         path: 'registry/demo/components/base/progress/index.tsx',
@@ -4162,7 +4162,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-progress',
+    command: '@animate-ui/v1/demo-components-base-progress',
   },
   'demo-components-base-radio': {
     name: 'demo-components-base-radio',
@@ -4170,7 +4170,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-radio'],
+    registryDependencies: ['@animate-ui/v1/components-base-radio'],
     files: [
       {
         path: 'registry/demo/components/base/radio/index.tsx',
@@ -4200,7 +4200,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-radio',
+    command: '@animate-ui/v1/demo-components-base-radio',
   },
   'demo-components-base-switch': {
     name: 'demo-components-base-switch',
@@ -4208,7 +4208,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-switch'],
+    registryDependencies: ['@animate-ui/v1/components-base-switch'],
     files: [
       {
         path: 'registry/demo/components/base/switch/index.tsx',
@@ -4238,7 +4238,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-switch',
+    command: '@animate-ui/v1/demo-components-base-switch',
   },
   'demo-components-base-tabs': {
     name: 'demo-components-base-tabs',
@@ -4246,7 +4246,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-tabs'],
+    registryDependencies: ['@animate-ui/v1/components-base-tabs'],
     files: [
       {
         path: 'registry/demo/components/base/tabs/index.tsx',
@@ -4276,7 +4276,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-tabs',
+    command: '@animate-ui/v1/demo-components-base-tabs',
   },
   'demo-components-base-toggle': {
     name: 'demo-components-base-toggle',
@@ -4284,7 +4284,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-toggle'],
+    registryDependencies: ['@animate-ui/v1/components-base-toggle'],
     files: [
       {
         path: 'registry/demo/components/base/toggle/index.tsx',
@@ -4325,7 +4325,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-toggle',
+    command: '@animate-ui/v1/demo-components-base-toggle',
   },
   'demo-components-base-toggle-group': {
     name: 'demo-components-base-toggle-group',
@@ -4333,7 +4333,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-toggle-group'],
+    registryDependencies: ['@animate-ui/v1/components-base-toggle-group'],
     files: [
       {
         path: 'registry/demo/components/base/toggle-group/index.tsx',
@@ -4375,7 +4375,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-toggle-group',
+    command: '@animate-ui/v1/demo-components-base-toggle-group',
   },
   'demo-components-base-tooltip': {
     name: 'demo-components-base-tooltip',
@@ -4383,7 +4383,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-base-tooltip'],
+    registryDependencies: ['@animate-ui/v1/components-base-tooltip'],
     files: [
       {
         path: 'registry/demo/components/base/tooltip/index.tsx',
@@ -4439,7 +4439,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-base-tooltip',
+    command: '@animate-ui/v1/demo-components-base-tooltip',
   },
   'demo-components-buttons-button': {
     name: 'demo-components-buttons-button',
@@ -4447,7 +4447,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-button'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-button'],
     files: [
       {
         path: 'registry/demo/components/buttons/button/index.tsx',
@@ -4503,7 +4503,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-button',
+    command: '@animate-ui/v1/demo-components-buttons-button',
   },
   'demo-components-buttons-copy': {
     name: 'demo-components-buttons-copy',
@@ -4511,7 +4511,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-copy'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-copy'],
     files: [
       {
         path: 'registry/demo/components/buttons/copy/index.tsx',
@@ -4560,7 +4560,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-copy',
+    command: '@animate-ui/v1/demo-components-buttons-copy',
   },
   'demo-components-buttons-flip': {
     name: 'demo-components-buttons-flip',
@@ -4568,7 +4568,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-flip'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-flip'],
     files: [
       {
         path: 'registry/demo/components/buttons/flip/index.tsx',
@@ -4642,7 +4642,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-flip',
+    command: '@animate-ui/v1/demo-components-buttons-flip',
   },
   'demo-components-buttons-github-stars': {
     name: 'demo-components-buttons-github-stars',
@@ -4650,7 +4650,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-github-stars'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-github-stars'],
     files: [
       {
         path: 'registry/demo/components/buttons/github-stars/index.tsx',
@@ -4697,7 +4697,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-github-stars',
+    command: '@animate-ui/v1/demo-components-buttons-github-stars',
   },
   'demo-components-buttons-icon': {
     name: 'demo-components-buttons-icon',
@@ -4705,7 +4705,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-icon'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-icon'],
     files: [
       {
         path: 'registry/demo/components/buttons/icon/index.tsx',
@@ -4751,7 +4751,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-icon',
+    command: '@animate-ui/v1/demo-components-buttons-icon',
   },
   'demo-components-buttons-liquid': {
     name: 'demo-components-buttons-liquid',
@@ -4759,7 +4759,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-liquid'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-liquid'],
     files: [
       {
         path: 'registry/demo/components/buttons/liquid/index.tsx',
@@ -4811,7 +4811,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-liquid',
+    command: '@animate-ui/v1/demo-components-buttons-liquid',
   },
   'demo-components-buttons-ripple': {
     name: 'demo-components-buttons-ripple',
@@ -4819,7 +4819,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-ripple'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-ripple'],
     files: [
       {
         path: 'registry/demo/components/buttons/ripple/index.tsx',
@@ -4875,7 +4875,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-ripple',
+    command: '@animate-ui/v1/demo-components-buttons-ripple',
   },
   'demo-components-buttons-theme-toggler': {
     name: 'demo-components-buttons-theme-toggler',
@@ -4883,7 +4883,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-buttons-theme-toggler'],
+    registryDependencies: ['@animate-ui/v1/components-buttons-theme-toggler'],
     files: [
       {
         path: 'registry/demo/components/buttons/theme-toggler/index.tsx',
@@ -4935,7 +4935,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-buttons-theme-toggler',
+    command: '@animate-ui/v1/demo-components-buttons-theme-toggler',
   },
   'demo-components-community-flip-card': {
     name: 'demo-components-community-flip-card',
@@ -4943,7 +4943,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-flip-card'],
+    registryDependencies: ['@animate-ui/v1/components-community-flip-card'],
     files: [
       {
         path: 'registry/demo/components/community/flip-card/index.tsx',
@@ -4973,7 +4973,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-flip-card',
+    command: '@animate-ui/v1/demo-components-community-flip-card',
   },
   'demo-components-community-management-bar': {
     name: 'demo-components-community-management-bar',
@@ -4981,7 +4981,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-management-bar'],
+    registryDependencies: ['@animate-ui/v1/components-community-management-bar'],
     files: [
       {
         path: 'registry/demo/components/community/management-bar/index.tsx',
@@ -5012,7 +5012,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-management-bar',
+    command: '@animate-ui/v1/demo-components-community-management-bar',
   },
   'demo-components-community-motion-carousel': {
     name: 'demo-components-community-motion-carousel',
@@ -5020,7 +5020,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-motion-carousel'],
+    registryDependencies: ['@animate-ui/v1/components-community-motion-carousel'],
     files: [
       {
         path: 'registry/demo/components/community/motion-carousel/index.tsx',
@@ -5051,7 +5051,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-motion-carousel',
+    command: '@animate-ui/v1/demo-components-community-motion-carousel',
   },
   'demo-components-community-notification-list': {
     name: 'demo-components-community-notification-list',
@@ -5060,7 +5060,7 @@ export const index: Record<string, any> = {
     dependencies: undefined,
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/components-community-notification-list',
+      '@animate-ui/v1/components-community-notification-list',
     ],
     files: [
       {
@@ -5092,7 +5092,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-notification-list',
+    command: '@animate-ui/v1/demo-components-community-notification-list',
   },
   'demo-components-community-pin-list': {
     name: 'demo-components-community-pin-list',
@@ -5100,7 +5100,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-pin-list'],
+    registryDependencies: ['@animate-ui/v1/components-community-pin-list'],
     files: [
       {
         path: 'registry/demo/components/community/pin-list/index.tsx',
@@ -5130,7 +5130,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-pin-list',
+    command: '@animate-ui/v1/demo-components-community-pin-list',
   },
   'demo-components-community-playful-todolist': {
     name: 'demo-components-community-playful-todolist',
@@ -5138,7 +5138,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-playful-todolist'],
+    registryDependencies: ['@animate-ui/v1/components-community-playful-todolist'],
     files: [
       {
         path: 'registry/demo/components/community/playful-todolist/index.tsx',
@@ -5169,7 +5169,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-playful-todolist',
+    command: '@animate-ui/v1/demo-components-community-playful-todolist',
   },
   'demo-components-community-radial-intro': {
     name: 'demo-components-community-radial-intro',
@@ -5177,7 +5177,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-radial-intro'],
+    registryDependencies: ['@animate-ui/v1/components-community-radial-intro'],
     files: [
       {
         path: 'registry/demo/components/community/radial-intro/index.tsx',
@@ -5208,7 +5208,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-radial-intro',
+    command: '@animate-ui/v1/demo-components-community-radial-intro',
   },
   'demo-components-community-radial-menu': {
     name: 'demo-components-community-radial-menu',
@@ -5216,7 +5216,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-radial-menu'],
+    registryDependencies: ['@animate-ui/v1/components-community-radial-menu'],
     files: [
       {
         path: 'registry/demo/components/community/radial-menu/index.tsx',
@@ -5247,7 +5247,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-radial-menu',
+    command: '@animate-ui/v1/demo-components-community-radial-menu',
   },
   'demo-components-community-radial-nav': {
     name: 'demo-components-community-radial-nav',
@@ -5255,7 +5255,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-radial-nav'],
+    registryDependencies: ['@animate-ui/v1/components-community-radial-nav'],
     files: [
       {
         path: 'registry/demo/components/community/radial-nav/index.tsx',
@@ -5286,7 +5286,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-radial-nav',
+    command: '@animate-ui/v1/demo-components-community-radial-nav',
   },
   'demo-components-community-share-button': {
     name: 'demo-components-community-share-button',
@@ -5294,7 +5294,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-community-share-button'],
+    registryDependencies: ['@animate-ui/v1/components-community-share-button'],
     files: [
       {
         path: 'registry/demo/components/community/share-button/index.tsx',
@@ -5336,7 +5336,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-share-button',
+    command: '@animate-ui/v1/demo-components-community-share-button',
   },
   'demo-components-community-user-presence-avatar': {
     name: 'demo-components-community-user-presence-avatar',
@@ -5345,7 +5345,7 @@ export const index: Record<string, any> = {
     dependencies: undefined,
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/components-community-user-presence-avatar',
+      '@animate-ui/v1/components-community-user-presence-avatar',
     ],
     files: [
       {
@@ -5377,7 +5377,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-community-user-presence-avatar',
+    command: '@animate-ui/v1/demo-components-community-user-presence-avatar',
   },
   'demo-components-headless-accordion': {
     name: 'demo-components-headless-accordion',
@@ -5385,7 +5385,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-headless-accordion'],
+    registryDependencies: ['@animate-ui/v1/components-headless-accordion'],
     files: [
       {
         path: 'registry/demo/components/headless/accordion/index.tsx',
@@ -5418,7 +5418,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-headless-accordion',
+    command: '@animate-ui/v1/demo-components-headless-accordion',
   },
   'demo-components-headless-checkbox': {
     name: 'demo-components-headless-checkbox',
@@ -5426,7 +5426,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-headless-checkbox'],
+    registryDependencies: ['@animate-ui/v1/components-headless-checkbox'],
     files: [
       {
         path: 'registry/demo/components/headless/checkbox/index.tsx',
@@ -5468,7 +5468,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-headless-checkbox',
+    command: '@animate-ui/v1/demo-components-headless-checkbox',
   },
   'demo-components-headless-dialog': {
     name: 'demo-components-headless-dialog',
@@ -5476,7 +5476,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-headless-dialog'],
+    registryDependencies: ['@animate-ui/v1/components-headless-dialog'],
     files: [
       {
         path: 'registry/demo/components/headless/dialog/index.tsx',
@@ -5519,7 +5519,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-headless-dialog',
+    command: '@animate-ui/v1/demo-components-headless-dialog',
   },
   'demo-components-headless-popover': {
     name: 'demo-components-headless-popover',
@@ -5527,7 +5527,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-headless-popover'],
+    registryDependencies: ['@animate-ui/v1/components-headless-popover'],
     files: [
       {
         path: 'registry/demo/components/headless/popover/index.tsx',
@@ -5578,7 +5578,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-headless-popover',
+    command: '@animate-ui/v1/demo-components-headless-popover',
   },
   'demo-components-headless-switch': {
     name: 'demo-components-headless-switch',
@@ -5586,7 +5586,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-headless-switch'],
+    registryDependencies: ['@animate-ui/v1/components-headless-switch'],
     files: [
       {
         path: 'registry/demo/components/headless/switch/index.tsx',
@@ -5616,7 +5616,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-headless-switch',
+    command: '@animate-ui/v1/demo-components-headless-switch',
   },
   'demo-components-headless-tabs': {
     name: 'demo-components-headless-tabs',
@@ -5624,7 +5624,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-headless-tabs'],
+    registryDependencies: ['@animate-ui/v1/components-headless-tabs'],
     files: [
       {
         path: 'registry/demo/components/headless/tabs/index.tsx',
@@ -5654,7 +5654,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-headless-tabs',
+    command: '@animate-ui/v1/demo-components-headless-tabs',
   },
   'demo-components-radix-accordion': {
     name: 'demo-components-radix-accordion',
@@ -5662,7 +5662,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-accordion'],
+    registryDependencies: ['@animate-ui/v1/components-radix-accordion'],
     files: [
       {
         path: 'registry/demo/components/radix/accordion/index.tsx',
@@ -5696,7 +5696,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-accordion',
+    command: '@animate-ui/v1/demo-components-radix-accordion',
   },
   'demo-components-radix-alert-dialog': {
     name: 'demo-components-radix-alert-dialog',
@@ -5704,7 +5704,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-alert-dialog'],
+    registryDependencies: ['@animate-ui/v1/components-radix-alert-dialog'],
     files: [
       {
         path: 'registry/demo/components/radix/alert-dialog/index.tsx',
@@ -5746,7 +5746,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-alert-dialog',
+    command: '@animate-ui/v1/demo-components-radix-alert-dialog',
   },
   'demo-components-radix-checkbox': {
     name: 'demo-components-radix-checkbox',
@@ -5754,7 +5754,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-checkbox'],
+    registryDependencies: ['@animate-ui/v1/components-radix-checkbox'],
     files: [
       {
         path: 'registry/demo/components/radix/checkbox/index.tsx',
@@ -5803,7 +5803,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-checkbox',
+    command: '@animate-ui/v1/demo-components-radix-checkbox',
   },
   'demo-components-radix-dialog': {
     name: 'demo-components-radix-dialog',
@@ -5811,7 +5811,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-dialog'],
+    registryDependencies: ['@animate-ui/v1/components-radix-dialog'],
     files: [
       {
         path: 'registry/demo/components/radix/dialog/index.tsx',
@@ -5854,7 +5854,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-dialog',
+    command: '@animate-ui/v1/demo-components-radix-dialog',
   },
   'demo-components-radix-dropdown-menu': {
     name: 'demo-components-radix-dropdown-menu',
@@ -5862,7 +5862,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-dropdown-menu'],
+    registryDependencies: ['@animate-ui/v1/components-radix-dropdown-menu'],
     files: [
       {
         path: 'registry/demo/components/radix/dropdown-menu/index.tsx',
@@ -5910,7 +5910,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-dropdown-menu',
+    command: '@animate-ui/v1/demo-components-radix-dropdown-menu',
   },
   'demo-components-radix-dropdown-menu-checkbox': {
     name: 'demo-components-radix-dropdown-menu-checkbox',
@@ -5918,7 +5918,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-dropdown-menu'],
+    registryDependencies: ['@animate-ui/v1/components-radix-dropdown-menu'],
     files: [
       {
         path: 'registry/demo/components/radix/dropdown-menu-checkbox/index.tsx',
@@ -5967,7 +5967,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-dropdown-menu-checkbox',
+    command: '@animate-ui/v1/demo-components-radix-dropdown-menu-checkbox',
   },
   'demo-components-radix-dropdown-menu-radio': {
     name: 'demo-components-radix-dropdown-menu-radio',
@@ -5975,7 +5975,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-dropdown-menu'],
+    registryDependencies: ['@animate-ui/v1/components-radix-dropdown-menu'],
     files: [
       {
         path: 'registry/demo/components/radix/dropdown-menu-radio/index.tsx',
@@ -6024,7 +6024,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-dropdown-menu-radio',
+    command: '@animate-ui/v1/demo-components-radix-dropdown-menu-radio',
   },
   'demo-components-radix-files': {
     name: 'demo-components-radix-files',
@@ -6032,7 +6032,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-files'],
+    registryDependencies: ['@animate-ui/v1/components-radix-files'],
     files: [
       {
         path: 'registry/demo/components/radix/files/index.tsx',
@@ -6062,7 +6062,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-files',
+    command: '@animate-ui/v1/demo-components-radix-files',
   },
   'demo-components-radix-hover-card': {
     name: 'demo-components-radix-hover-card',
@@ -6070,7 +6070,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-hover-card'],
+    registryDependencies: ['@animate-ui/v1/components-radix-hover-card'],
     files: [
       {
         path: 'registry/demo/components/radix/hover-card/index.tsx',
@@ -6124,7 +6124,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-hover-card',
+    command: '@animate-ui/v1/demo-components-radix-hover-card',
   },
   'demo-components-radix-popover': {
     name: 'demo-components-radix-popover',
@@ -6132,7 +6132,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-popover'],
+    registryDependencies: ['@animate-ui/v1/components-radix-popover'],
     files: [
       {
         path: 'registry/demo/components/radix/popover/index.tsx',
@@ -6180,7 +6180,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-popover',
+    command: '@animate-ui/v1/demo-components-radix-popover',
   },
   'demo-components-radix-preview-link-card': {
     name: 'demo-components-radix-preview-link-card',
@@ -6188,7 +6188,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-preview-link-card'],
+    registryDependencies: ['@animate-ui/v1/components-radix-preview-link-card'],
     files: [
       {
         path: 'registry/demo/components/radix/preview-link-card/index.tsx',
@@ -6244,7 +6244,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-preview-link-card',
+    command: '@animate-ui/v1/demo-components-radix-preview-link-card',
   },
   'demo-components-radix-progress': {
     name: 'demo-components-radix-progress',
@@ -6252,7 +6252,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-progress'],
+    registryDependencies: ['@animate-ui/v1/components-radix-progress'],
     files: [
       {
         path: 'registry/demo/components/radix/progress/index.tsx',
@@ -6282,7 +6282,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-progress',
+    command: '@animate-ui/v1/demo-components-radix-progress',
   },
   'demo-components-radix-radio-group': {
     name: 'demo-components-radix-radio-group',
@@ -6290,7 +6290,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-radio-group'],
+    registryDependencies: ['@animate-ui/v1/components-radix-radio-group'],
     files: [
       {
         path: 'registry/demo/components/radix/radio-group/index.tsx',
@@ -6320,7 +6320,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-radio-group',
+    command: '@animate-ui/v1/demo-components-radix-radio-group',
   },
   'demo-components-radix-sheet': {
     name: 'demo-components-radix-sheet',
@@ -6328,7 +6328,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-sheet'],
+    registryDependencies: ['@animate-ui/v1/components-radix-sheet'],
     files: [
       {
         path: 'registry/demo/components/radix/sheet/index.tsx',
@@ -6370,7 +6370,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-sheet',
+    command: '@animate-ui/v1/demo-components-radix-sheet',
   },
   'demo-components-radix-sidebar': {
     name: 'demo-components-radix-sidebar',
@@ -6378,7 +6378,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-sidebar'],
+    registryDependencies: ['@animate-ui/v1/components-radix-sidebar'],
     files: [
       {
         path: 'registry/demo/components/radix/sidebar/index.tsx',
@@ -6408,7 +6408,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-sidebar',
+    command: '@animate-ui/v1/demo-components-radix-sidebar',
   },
   'demo-components-radix-switch': {
     name: 'demo-components-radix-switch',
@@ -6416,7 +6416,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-switch'],
+    registryDependencies: ['@animate-ui/v1/components-radix-switch'],
     files: [
       {
         path: 'registry/demo/components/radix/switch/index.tsx',
@@ -6446,7 +6446,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-switch',
+    command: '@animate-ui/v1/demo-components-radix-switch',
   },
   'demo-components-radix-tabs': {
     name: 'demo-components-radix-tabs',
@@ -6454,7 +6454,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-tabs'],
+    registryDependencies: ['@animate-ui/v1/components-radix-tabs'],
     files: [
       {
         path: 'registry/demo/components/radix/tabs/index.tsx',
@@ -6484,7 +6484,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-tabs',
+    command: '@animate-ui/v1/demo-components-radix-tabs',
   },
   'demo-components-radix-toggle': {
     name: 'demo-components-radix-toggle',
@@ -6492,7 +6492,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-toggle'],
+    registryDependencies: ['@animate-ui/v1/components-radix-toggle'],
     files: [
       {
         path: 'registry/demo/components/radix/toggle/index.tsx',
@@ -6533,7 +6533,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-toggle',
+    command: '@animate-ui/v1/demo-components-radix-toggle',
   },
   'demo-components-radix-toggle-group': {
     name: 'demo-components-radix-toggle-group',
@@ -6541,7 +6541,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-toggle-group'],
+    registryDependencies: ['@animate-ui/v1/components-radix-toggle-group'],
     files: [
       {
         path: 'registry/demo/components/radix/toggle-group/index.tsx',
@@ -6586,7 +6586,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-toggle-group',
+    command: '@animate-ui/v1/demo-components-radix-toggle-group',
   },
   'demo-components-radix-tooltip': {
     name: 'demo-components-radix-tooltip',
@@ -6594,7 +6594,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/components-radix-tooltip'],
+    registryDependencies: ['@animate-ui/v1/components-radix-tooltip'],
     files: [
       {
         path: 'registry/demo/components/radix/tooltip/index.tsx',
@@ -6648,7 +6648,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-components-radix-tooltip',
+    command: '@animate-ui/v1/demo-components-radix-tooltip',
   },
   'demo-primitives-animate-avatar-group': {
     name: 'demo-primitives-animate-avatar-group',
@@ -6656,7 +6656,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-avatar-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-avatar-group'],
     files: [
       {
         path: 'registry/demo/primitives/animate/avatar-group/index.tsx',
@@ -6687,7 +6687,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-avatar-group',
+    command: '@animate-ui/v1/demo-primitives-animate-avatar-group',
   },
   'demo-primitives-animate-code-block': {
     name: 'demo-primitives-animate-code-block',
@@ -6695,7 +6695,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-code-block'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-code-block'],
     files: [
       {
         path: 'registry/demo/primitives/animate/code-block/index.tsx',
@@ -6732,7 +6732,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-code-block',
+    command: '@animate-ui/v1/demo-primitives-animate-code-block',
   },
   'demo-primitives-animate-cursor': {
     name: 'demo-primitives-animate-cursor',
@@ -6740,7 +6740,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-cursor'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-cursor'],
     files: [
       {
         path: 'registry/demo/primitives/animate/cursor/index.tsx',
@@ -6793,7 +6793,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-cursor',
+    command: '@animate-ui/v1/demo-primitives-animate-cursor',
   },
   'demo-primitives-animate-github-stars': {
     name: 'demo-primitives-animate-github-stars',
@@ -6801,7 +6801,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-github-stars'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-github-stars'],
     files: [
       {
         path: 'registry/demo/primitives/animate/github-stars/index.tsx',
@@ -6832,7 +6832,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-github-stars',
+    command: '@animate-ui/v1/demo-primitives-animate-github-stars',
   },
   'demo-primitives-animate-motion-grid': {
     name: 'demo-primitives-animate-motion-grid',
@@ -6841,8 +6841,8 @@ export const index: Record<string, any> = {
     dependencies: undefined,
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-motion-grid',
-      '@animate-ui/primitives-texts-rotating',
+      '@animate-ui/v1/primitives-animate-motion-grid',
+      '@animate-ui/v1/primitives-texts-rotating',
     ],
     files: [
       {
@@ -6873,7 +6873,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-motion-grid',
+    command: '@animate-ui/v1/demo-primitives-animate-motion-grid',
   },
   'demo-primitives-animate-pinned-list': {
     name: 'demo-primitives-animate-pinned-list',
@@ -6881,7 +6881,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-pinned-list'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-pinned-list'],
     files: [
       {
         path: 'registry/demo/primitives/animate/pinned-list/index.tsx',
@@ -6911,7 +6911,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-pinned-list',
+    command: '@animate-ui/v1/demo-primitives-animate-pinned-list',
   },
   'demo-primitives-animate-scroll-progress': {
     name: 'demo-primitives-animate-scroll-progress',
@@ -6919,7 +6919,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-scroll-progress'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-scroll-progress'],
     files: [
       {
         path: 'registry/demo/primitives/animate/scroll-progress/index.tsx',
@@ -6958,7 +6958,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-scroll-progress',
+    command: '@animate-ui/v1/demo-primitives-animate-scroll-progress',
   },
   'demo-primitives-animate-spring': {
     name: 'demo-primitives-animate-spring',
@@ -6966,7 +6966,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-spring'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-spring'],
     files: [
       {
         path: 'registry/demo/primitives/animate/spring/index.tsx',
@@ -6996,7 +6996,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-spring',
+    command: '@animate-ui/v1/demo-primitives-animate-spring',
   },
   'demo-primitives-animate-tabs': {
     name: 'demo-primitives-animate-tabs',
@@ -7004,7 +7004,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-tabs'],
     files: [
       {
         path: 'registry/demo/primitives/animate/tabs/index.tsx',
@@ -7034,7 +7034,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-tabs',
+    command: '@animate-ui/v1/demo-primitives-animate-tabs',
   },
   'demo-primitives-animate-tooltip': {
     name: 'demo-primitives-animate-tooltip',
@@ -7042,7 +7042,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-tooltip'],
     files: [
       {
         path: 'registry/demo/primitives/animate/tooltip/index.tsx',
@@ -7095,7 +7095,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-animate-tooltip',
+    command: '@animate-ui/v1/demo-primitives-animate-tooltip',
   },
   'demo-primitives-base-accordion': {
     name: 'demo-primitives-base-accordion',
@@ -7103,7 +7103,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-accordion'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-accordion'],
     files: [
       {
         path: 'registry/demo/primitives/base/accordion/index.tsx',
@@ -7136,7 +7136,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-accordion',
+    command: '@animate-ui/v1/demo-primitives-base-accordion',
   },
   'demo-primitives-base-alert-dialog': {
     name: 'demo-primitives-base-alert-dialog',
@@ -7144,7 +7144,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-alert-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-alert-dialog'],
     files: [
       {
         path: 'registry/demo/primitives/base/alert-dialog/index.tsx',
@@ -7186,7 +7186,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-alert-dialog',
+    command: '@animate-ui/v1/demo-primitives-base-alert-dialog',
   },
   'demo-primitives-base-checkbox': {
     name: 'demo-primitives-base-checkbox',
@@ -7194,7 +7194,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-checkbox'],
     files: [
       {
         path: 'registry/demo/primitives/base/checkbox/index.tsx',
@@ -7224,7 +7224,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = { Checkbox: { indeterminate: { value: false } } };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-checkbox',
+    command: '@animate-ui/v1/demo-primitives-base-checkbox',
   },
   'demo-primitives-base-collapsible': {
     name: 'demo-primitives-base-collapsible',
@@ -7232,7 +7232,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-collapsible'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-collapsible'],
     files: [
       {
         path: 'registry/demo/primitives/base/collapsible/index.tsx',
@@ -7264,7 +7264,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-collapsible',
+    command: '@animate-ui/v1/demo-primitives-base-collapsible',
   },
   'demo-primitives-base-dialog': {
     name: 'demo-primitives-base-dialog',
@@ -7272,7 +7272,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-dialog'],
     files: [
       {
         path: 'registry/demo/primitives/base/dialog/index.tsx',
@@ -7314,7 +7314,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-dialog',
+    command: '@animate-ui/v1/demo-primitives-base-dialog',
   },
   'demo-primitives-base-files': {
     name: 'demo-primitives-base-files',
@@ -7322,7 +7322,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-files'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-files'],
     files: [
       {
         path: 'registry/demo/primitives/base/files/index.tsx',
@@ -7352,7 +7352,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-files',
+    command: '@animate-ui/v1/demo-primitives-base-files',
   },
   'demo-primitives-base-menu': {
     name: 'demo-primitives-base-menu',
@@ -7360,7 +7360,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-menu'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-menu'],
     files: [
       {
         path: 'registry/demo/primitives/base/menu/index.tsx',
@@ -7410,7 +7410,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-menu',
+    command: '@animate-ui/v1/demo-primitives-base-menu',
   },
   'demo-primitives-base-popover': {
     name: 'demo-primitives-base-popover',
@@ -7418,7 +7418,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-popover'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-popover'],
     files: [
       {
         path: 'registry/demo/primitives/base/popover/index.tsx',
@@ -7468,7 +7468,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-popover',
+    command: '@animate-ui/v1/demo-primitives-base-popover',
   },
   'demo-primitives-base-preview-card': {
     name: 'demo-primitives-base-preview-card',
@@ -7476,7 +7476,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-preview-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-preview-card'],
     files: [
       {
         path: 'registry/demo/primitives/base/preview-card/index.tsx',
@@ -7532,7 +7532,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-preview-card',
+    command: '@animate-ui/v1/demo-primitives-base-preview-card',
   },
   'demo-primitives-base-preview-link-card': {
     name: 'demo-primitives-base-preview-link-card',
@@ -7540,7 +7540,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-preview-link-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-preview-link-card'],
     files: [
       {
         path: 'registry/demo/primitives/base/preview-link-card/index.tsx',
@@ -7598,7 +7598,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-preview-link-card',
+    command: '@animate-ui/v1/demo-primitives-base-preview-link-card',
   },
   'demo-primitives-base-progress': {
     name: 'demo-primitives-base-progress',
@@ -7606,7 +7606,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-progress'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-progress'],
     files: [
       {
         path: 'registry/demo/primitives/base/progress/index.tsx',
@@ -7636,7 +7636,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-progress',
+    command: '@animate-ui/v1/demo-primitives-base-progress',
   },
   'demo-primitives-base-radio': {
     name: 'demo-primitives-base-radio',
@@ -7644,7 +7644,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-radio'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-radio'],
     files: [
       {
         path: 'registry/demo/primitives/base/radio/index.tsx',
@@ -7674,7 +7674,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-radio',
+    command: '@animate-ui/v1/demo-primitives-base-radio',
   },
   'demo-primitives-base-switch': {
     name: 'demo-primitives-base-switch',
@@ -7682,7 +7682,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-switch'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-switch'],
     files: [
       {
         path: 'registry/demo/primitives/base/switch/index.tsx',
@@ -7712,7 +7712,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-switch',
+    command: '@animate-ui/v1/demo-primitives-base-switch',
   },
   'demo-primitives-base-tabs': {
     name: 'demo-primitives-base-tabs',
@@ -7720,7 +7720,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-tabs'],
     files: [
       {
         path: 'registry/demo/primitives/base/tabs/index.tsx',
@@ -7757,7 +7757,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-tabs',
+    command: '@animate-ui/v1/demo-primitives-base-tabs',
   },
   'demo-primitives-base-toggle': {
     name: 'demo-primitives-base-toggle',
@@ -7765,7 +7765,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-toggle'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-toggle'],
     files: [
       {
         path: 'registry/demo/primitives/base/toggle/index.tsx',
@@ -7795,7 +7795,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-toggle',
+    command: '@animate-ui/v1/demo-primitives-base-toggle',
   },
   'demo-primitives-base-toggle-group': {
     name: 'demo-primitives-base-toggle-group',
@@ -7803,7 +7803,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-toggle-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-toggle-group'],
     files: [
       {
         path: 'registry/demo/primitives/base/toggle-group/index.tsx',
@@ -7835,7 +7835,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-toggle-group',
+    command: '@animate-ui/v1/demo-primitives-base-toggle-group',
   },
   'demo-primitives-base-tooltip': {
     name: 'demo-primitives-base-tooltip',
@@ -7843,7 +7843,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-base-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-base-tooltip'],
     files: [
       {
         path: 'registry/demo/primitives/base/tooltip/index.tsx',
@@ -7899,7 +7899,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-base-tooltip',
+    command: '@animate-ui/v1/demo-primitives-base-tooltip',
   },
   'demo-primitives-buttons-button': {
     name: 'demo-primitives-buttons-button',
@@ -7907,7 +7907,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-button'],
+    registryDependencies: ['@animate-ui/v1/primitives-buttons-button'],
     files: [
       {
         path: 'registry/demo/primitives/buttons/button/index.tsx',
@@ -7942,7 +7942,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-buttons-button',
+    command: '@animate-ui/v1/demo-primitives-buttons-button',
   },
   'demo-primitives-buttons-flip': {
     name: 'demo-primitives-buttons-flip',
@@ -7950,7 +7950,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-flip'],
+    registryDependencies: ['@animate-ui/v1/primitives-buttons-flip'],
     files: [
       {
         path: 'registry/demo/primitives/buttons/flip/index.tsx',
@@ -7993,7 +7993,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-buttons-flip',
+    command: '@animate-ui/v1/demo-primitives-buttons-flip',
   },
   'demo-primitives-buttons-liquid': {
     name: 'demo-primitives-buttons-liquid',
@@ -8001,7 +8001,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-liquid'],
+    registryDependencies: ['@animate-ui/v1/primitives-buttons-liquid'],
     files: [
       {
         path: 'registry/demo/primitives/buttons/liquid/index.tsx',
@@ -8038,7 +8038,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-buttons-liquid',
+    command: '@animate-ui/v1/demo-primitives-buttons-liquid',
   },
   'demo-primitives-buttons-ripple': {
     name: 'demo-primitives-buttons-ripple',
@@ -8046,7 +8046,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-buttons-ripple'],
+    registryDependencies: ['@animate-ui/v1/primitives-buttons-ripple'],
     files: [
       {
         path: 'registry/demo/primitives/buttons/ripple/index.tsx',
@@ -8081,7 +8081,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-buttons-ripple',
+    command: '@animate-ui/v1/demo-primitives-buttons-ripple',
   },
   'demo-primitives-effects-auto-height': {
     name: 'demo-primitives-effects-auto-height',
@@ -8089,7 +8089,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-auto-height'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-auto-height'],
     files: [
       {
         path: 'registry/demo/primitives/effects/auto-height/index.tsx',
@@ -8119,7 +8119,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-auto-height',
+    command: '@animate-ui/v1/demo-primitives-effects-auto-height',
   },
   'demo-primitives-effects-blur': {
     name: 'demo-primitives-effects-blur',
@@ -8127,7 +8127,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-blur'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-blur'],
     files: [
       {
         path: 'registry/demo/primitives/effects/blur/index.tsx',
@@ -8163,7 +8163,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-blur',
+    command: '@animate-ui/v1/demo-primitives-effects-blur',
   },
   'demo-primitives-effects-click': {
     name: 'demo-primitives-effects-click',
@@ -8171,7 +8171,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-click'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-click'],
     files: [
       {
         path: 'registry/demo/primitives/effects/click/index.tsx',
@@ -8217,7 +8217,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-click',
+    command: '@animate-ui/v1/demo-primitives-effects-click',
   },
   'demo-primitives-effects-effect': {
     name: 'demo-primitives-effects-effect',
@@ -8225,7 +8225,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-effect'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-effect'],
     files: [
       {
         path: 'registry/demo/primitives/effects/effect/index.tsx',
@@ -8263,7 +8263,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-effect',
+    command: '@animate-ui/v1/demo-primitives-effects-effect',
   },
   'demo-primitives-effects-fade': {
     name: 'demo-primitives-effects-fade',
@@ -8271,7 +8271,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-fade'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-fade'],
     files: [
       {
         path: 'registry/demo/primitives/effects/fade/index.tsx',
@@ -8307,7 +8307,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-fade',
+    command: '@animate-ui/v1/demo-primitives-effects-fade',
   },
   'demo-primitives-effects-highlight': {
     name: 'demo-primitives-effects-highlight',
@@ -8315,7 +8315,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-highlight'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-highlight'],
     files: [
       {
         path: 'registry/demo/primitives/effects/highlight/index.tsx',
@@ -8354,7 +8354,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-highlight',
+    command: '@animate-ui/v1/demo-primitives-effects-highlight',
   },
   'demo-primitives-effects-image-zoom': {
     name: 'demo-primitives-effects-image-zoom',
@@ -8362,7 +8362,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-image-zoom'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-image-zoom'],
     files: [
       {
         path: 'registry/demo/primitives/effects/image-zoom/index.tsx',
@@ -8392,7 +8392,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-image-zoom',
+    command: '@animate-ui/v1/demo-primitives-effects-image-zoom',
   },
   'demo-primitives-effects-magnetic': {
     name: 'demo-primitives-effects-magnetic',
@@ -8400,7 +8400,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-magnetic'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-magnetic'],
     files: [
       {
         path: 'registry/demo/primitives/effects/magnetic/index.tsx',
@@ -8436,7 +8436,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-magnetic',
+    command: '@animate-ui/v1/demo-primitives-effects-magnetic',
   },
   'demo-primitives-effects-particles': {
     name: 'demo-primitives-effects-particles',
@@ -8444,7 +8444,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-particles'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-particles'],
     files: [
       {
         path: 'registry/demo/primitives/effects/particles/index.tsx',
@@ -8498,7 +8498,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-particles',
+    command: '@animate-ui/v1/demo-primitives-effects-particles',
   },
   'demo-primitives-effects-shine': {
     name: 'demo-primitives-effects-shine',
@@ -8506,7 +8506,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-shine'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-shine'],
     files: [
       {
         path: 'registry/demo/primitives/effects/shine/index.tsx',
@@ -8547,7 +8547,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-shine',
+    command: '@animate-ui/v1/demo-primitives-effects-shine',
   },
   'demo-primitives-effects-slide': {
     name: 'demo-primitives-effects-slide',
@@ -8555,7 +8555,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-slide'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-slide'],
     files: [
       {
         path: 'registry/demo/primitives/effects/slide/index.tsx',
@@ -8594,7 +8594,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-slide',
+    command: '@animate-ui/v1/demo-primitives-effects-slide',
   },
   'demo-primitives-effects-theme-toggler': {
     name: 'demo-primitives-effects-theme-toggler',
@@ -8602,7 +8602,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-theme-toggler'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-theme-toggler'],
     files: [
       {
         path: 'registry/demo/primitives/effects/theme-toggler/index.tsx',
@@ -8640,7 +8640,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-theme-toggler',
+    command: '@animate-ui/v1/demo-primitives-effects-theme-toggler',
   },
   'demo-primitives-effects-tilt': {
     name: 'demo-primitives-effects-tilt',
@@ -8648,7 +8648,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-tilt'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-tilt'],
     files: [
       {
         path: 'registry/demo/primitives/effects/tilt/index.tsx',
@@ -8683,7 +8683,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-tilt',
+    command: '@animate-ui/v1/demo-primitives-effects-tilt',
   },
   'demo-primitives-effects-zoom': {
     name: 'demo-primitives-effects-zoom',
@@ -8691,7 +8691,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-effects-zoom'],
+    registryDependencies: ['@animate-ui/v1/primitives-effects-zoom'],
     files: [
       {
         path: 'registry/demo/primitives/effects/zoom/index.tsx',
@@ -8727,7 +8727,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-effects-zoom',
+    command: '@animate-ui/v1/demo-primitives-effects-zoom',
   },
   'demo-primitives-headless-checkbox': {
     name: 'demo-primitives-headless-checkbox',
@@ -8735,7 +8735,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-checkbox'],
     files: [
       {
         path: 'registry/demo/primitives/headless/checkbox/index.tsx',
@@ -8765,7 +8765,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = { Checkbox: { indeterminate: { value: false } } };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-headless-checkbox',
+    command: '@animate-ui/v1/demo-primitives-headless-checkbox',
   },
   'demo-primitives-headless-dialog': {
     name: 'demo-primitives-headless-dialog',
@@ -8773,7 +8773,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-dialog'],
     files: [
       {
         path: 'registry/demo/primitives/headless/dialog/index.tsx',
@@ -8815,7 +8815,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-headless-dialog',
+    command: '@animate-ui/v1/demo-primitives-headless-dialog',
   },
   'demo-primitives-headless-disclosure': {
     name: 'demo-primitives-headless-disclosure',
@@ -8823,7 +8823,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-disclosure'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-disclosure'],
     files: [
       {
         path: 'registry/demo/primitives/headless/disclosure/index.tsx',
@@ -8855,7 +8855,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-headless-disclosure',
+    command: '@animate-ui/v1/demo-primitives-headless-disclosure',
   },
   'demo-primitives-headless-popover': {
     name: 'demo-primitives-headless-popover',
@@ -8863,7 +8863,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-popover'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-popover'],
     files: [
       {
         path: 'registry/demo/primitives/headless/popover/index.tsx',
@@ -8914,7 +8914,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-headless-popover',
+    command: '@animate-ui/v1/demo-primitives-headless-popover',
   },
   'demo-primitives-headless-switch': {
     name: 'demo-primitives-headless-switch',
@@ -8922,7 +8922,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-switch'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-switch'],
     files: [
       {
         path: 'registry/demo/primitives/headless/switch/index.tsx',
@@ -8952,7 +8952,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-headless-switch',
+    command: '@animate-ui/v1/demo-primitives-headless-switch',
   },
   'demo-primitives-headless-tabs': {
     name: 'demo-primitives-headless-tabs',
@@ -8960,7 +8960,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-headless-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-headless-tabs'],
     files: [
       {
         path: 'registry/demo/primitives/headless/tabs/index.tsx',
@@ -8997,7 +8997,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-headless-tabs',
+    command: '@animate-ui/v1/demo-primitives-headless-tabs',
   },
   'demo-primitives-radix-accordion': {
     name: 'demo-primitives-radix-accordion',
@@ -9005,7 +9005,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-accordion'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-accordion'],
     files: [
       {
         path: 'registry/demo/primitives/radix/accordion/index.tsx',
@@ -9038,7 +9038,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-accordion',
+    command: '@animate-ui/v1/demo-primitives-radix-accordion',
   },
   'demo-primitives-radix-alert-dialog': {
     name: 'demo-primitives-radix-alert-dialog',
@@ -9046,7 +9046,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-alert-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-alert-dialog'],
     files: [
       {
         path: 'registry/demo/primitives/radix/alert-dialog/index.tsx',
@@ -9088,7 +9088,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-alert-dialog',
+    command: '@animate-ui/v1/demo-primitives-radix-alert-dialog',
   },
   'demo-primitives-radix-checkbox': {
     name: 'demo-primitives-radix-checkbox',
@@ -9096,7 +9096,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-checkbox'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-checkbox'],
     files: [
       {
         path: 'registry/demo/primitives/radix/checkbox/index.tsx',
@@ -9137,7 +9137,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-checkbox',
+    command: '@animate-ui/v1/demo-primitives-radix-checkbox',
   },
   'demo-primitives-radix-collapsible': {
     name: 'demo-primitives-radix-collapsible',
@@ -9145,7 +9145,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-collapsible'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-collapsible'],
     files: [
       {
         path: 'registry/demo/primitives/radix/collapsible/index.tsx',
@@ -9177,7 +9177,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-collapsible',
+    command: '@animate-ui/v1/demo-primitives-radix-collapsible',
   },
   'demo-primitives-radix-dialog': {
     name: 'demo-primitives-radix-dialog',
@@ -9185,7 +9185,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-dialog'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-dialog'],
     files: [
       {
         path: 'registry/demo/primitives/radix/dialog/index.tsx',
@@ -9227,7 +9227,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-dialog',
+    command: '@animate-ui/v1/demo-primitives-radix-dialog',
   },
   'demo-primitives-radix-dropdown-menu': {
     name: 'demo-primitives-radix-dropdown-menu',
@@ -9235,7 +9235,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-dropdown-menu'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-dropdown-menu'],
     files: [
       {
         path: 'registry/demo/primitives/radix/dropdown-menu/index.tsx',
@@ -9283,7 +9283,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-dropdown-menu',
+    command: '@animate-ui/v1/demo-primitives-radix-dropdown-menu',
   },
   'demo-primitives-radix-files': {
     name: 'demo-primitives-radix-files',
@@ -9291,7 +9291,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['lucide-react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-files'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-files'],
     files: [
       {
         path: 'registry/demo/primitives/radix/files/index.tsx',
@@ -9321,7 +9321,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-files',
+    command: '@animate-ui/v1/demo-primitives-radix-files',
   },
   'demo-primitives-radix-hover-card': {
     name: 'demo-primitives-radix-hover-card',
@@ -9329,7 +9329,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-hover-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-hover-card'],
     files: [
       {
         path: 'registry/demo/primitives/radix/hover-card/index.tsx',
@@ -9383,7 +9383,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-hover-card',
+    command: '@animate-ui/v1/demo-primitives-radix-hover-card',
   },
   'demo-primitives-radix-popover': {
     name: 'demo-primitives-radix-popover',
@@ -9391,7 +9391,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-popover'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-popover'],
     files: [
       {
         path: 'registry/demo/primitives/radix/popover/index.tsx',
@@ -9439,7 +9439,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-popover',
+    command: '@animate-ui/v1/demo-primitives-radix-popover',
   },
   'demo-primitives-radix-preview-link-card': {
     name: 'demo-primitives-radix-preview-link-card',
@@ -9447,7 +9447,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-preview-link-card'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-preview-link-card'],
     files: [
       {
         path: 'registry/demo/primitives/radix/preview-link-card/index.tsx',
@@ -9503,7 +9503,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-preview-link-card',
+    command: '@animate-ui/v1/demo-primitives-radix-preview-link-card',
   },
   'demo-primitives-radix-progress': {
     name: 'demo-primitives-radix-progress',
@@ -9511,7 +9511,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-progress'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-progress'],
     files: [
       {
         path: 'registry/demo/primitives/radix/progress/index.tsx',
@@ -9541,7 +9541,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-progress',
+    command: '@animate-ui/v1/demo-primitives-radix-progress',
   },
   'demo-primitives-radix-radio-group': {
     name: 'demo-primitives-radix-radio-group',
@@ -9549,7 +9549,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-radio-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-radio-group'],
     files: [
       {
         path: 'registry/demo/primitives/radix/radio-group/index.tsx',
@@ -9579,7 +9579,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-radio-group',
+    command: '@animate-ui/v1/demo-primitives-radix-radio-group',
   },
   'demo-primitives-radix-sheet': {
     name: 'demo-primitives-radix-sheet',
@@ -9587,7 +9587,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-sheet'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-sheet'],
     files: [
       {
         path: 'registry/demo/primitives/radix/sheet/index.tsx',
@@ -9629,7 +9629,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-sheet',
+    command: '@animate-ui/v1/demo-primitives-radix-sheet',
   },
   'demo-primitives-radix-switch': {
     name: 'demo-primitives-radix-switch',
@@ -9637,7 +9637,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-switch'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-switch'],
     files: [
       {
         path: 'registry/demo/primitives/radix/switch/index.tsx',
@@ -9667,7 +9667,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-switch',
+    command: '@animate-ui/v1/demo-primitives-radix-switch',
   },
   'demo-primitives-radix-tabs': {
     name: 'demo-primitives-radix-tabs',
@@ -9675,7 +9675,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-tabs'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-tabs'],
     files: [
       {
         path: 'registry/demo/primitives/radix/tabs/index.tsx',
@@ -9712,7 +9712,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-tabs',
+    command: '@animate-ui/v1/demo-primitives-radix-tabs',
   },
   'demo-primitives-radix-toggle': {
     name: 'demo-primitives-radix-toggle',
@@ -9720,7 +9720,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-toggle'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-toggle'],
     files: [
       {
         path: 'registry/demo/primitives/radix/toggle/index.tsx',
@@ -9750,7 +9750,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-toggle',
+    command: '@animate-ui/v1/demo-primitives-radix-toggle',
   },
   'demo-primitives-radix-toggle-group': {
     name: 'demo-primitives-radix-toggle-group',
@@ -9758,7 +9758,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-toggle-group'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-toggle-group'],
     files: [
       {
         path: 'registry/demo/primitives/radix/toggle-group/index.tsx',
@@ -9795,7 +9795,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-toggle-group',
+    command: '@animate-ui/v1/demo-primitives-radix-toggle-group',
   },
   'demo-primitives-radix-tooltip': {
     name: 'demo-primitives-radix-tooltip',
@@ -9803,7 +9803,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-radix-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-radix-tooltip'],
     files: [
       {
         path: 'registry/demo/primitives/radix/tooltip/index.tsx',
@@ -9857,7 +9857,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-radix-tooltip',
+    command: '@animate-ui/v1/demo-primitives-radix-tooltip',
   },
   'demo-primitives-texts-counting-number': {
     name: 'demo-primitives-texts-counting-number',
@@ -9865,7 +9865,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-counting-number'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-counting-number'],
     files: [
       {
         path: 'registry/demo/primitives/texts/counting-number/index.tsx',
@@ -9905,7 +9905,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-counting-number',
+    command: '@animate-ui/v1/demo-primitives-texts-counting-number',
   },
   'demo-primitives-texts-gradient': {
     name: 'demo-primitives-texts-gradient',
@@ -9913,7 +9913,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-gradient'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-gradient'],
     files: [
       {
         path: 'registry/demo/primitives/texts/gradient/index.tsx',
@@ -9943,7 +9943,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = { GradientText: { neon: { value: false } } };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-gradient',
+    command: '@animate-ui/v1/demo-primitives-texts-gradient',
   },
   'demo-primitives-texts-highlight': {
     name: 'demo-primitives-texts-highlight',
@@ -9951,7 +9951,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-highlight'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-highlight'],
     files: [
       {
         path: 'registry/demo/primitives/texts/highlight/index.tsx',
@@ -9983,7 +9983,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-highlight',
+    command: '@animate-ui/v1/demo-primitives-texts-highlight',
   },
   'demo-primitives-texts-morphing': {
     name: 'demo-primitives-texts-morphing',
@@ -9991,7 +9991,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-morphing'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-morphing'],
     files: [
       {
         path: 'registry/demo/primitives/texts/morphing/index.tsx',
@@ -10026,7 +10026,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-morphing',
+    command: '@animate-ui/v1/demo-primitives-texts-morphing',
   },
   'demo-primitives-texts-rolling': {
     name: 'demo-primitives-texts-rolling',
@@ -10034,7 +10034,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-rolling'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-rolling'],
     files: [
       {
         path: 'registry/demo/primitives/texts/rolling/index.tsx',
@@ -10066,7 +10066,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-rolling',
+    command: '@animate-ui/v1/demo-primitives-texts-rolling',
   },
   'demo-primitives-texts-rotating': {
     name: 'demo-primitives-texts-rotating',
@@ -10074,7 +10074,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-rotating'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-rotating'],
     files: [
       {
         path: 'registry/demo/primitives/texts/rotating/index.tsx',
@@ -10110,7 +10110,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-rotating',
+    command: '@animate-ui/v1/demo-primitives-texts-rotating',
   },
   'demo-primitives-texts-scrolling-number': {
     name: 'demo-primitives-texts-scrolling-number',
@@ -10118,7 +10118,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-scrolling-number'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-scrolling-number'],
     files: [
       {
         path: 'registry/demo/primitives/texts/scrolling-number/index.tsx',
@@ -10159,7 +10159,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-scrolling-number',
+    command: '@animate-ui/v1/demo-primitives-texts-scrolling-number',
   },
   'demo-primitives-texts-shimmering': {
     name: 'demo-primitives-texts-shimmering',
@@ -10167,7 +10167,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-shimmering'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-shimmering'],
     files: [
       {
         path: 'registry/demo/primitives/texts/shimmering/index.tsx',
@@ -10202,7 +10202,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-shimmering',
+    command: '@animate-ui/v1/demo-primitives-texts-shimmering',
   },
   'demo-primitives-texts-sliding-number': {
     name: 'demo-primitives-texts-sliding-number',
@@ -10210,7 +10210,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-sliding-number'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-sliding-number'],
     files: [
       {
         path: 'registry/demo/primitives/texts/sliding-number/index.tsx',
@@ -10251,7 +10251,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-sliding-number',
+    command: '@animate-ui/v1/demo-primitives-texts-sliding-number',
   },
   'demo-primitives-texts-splitting': {
     name: 'demo-primitives-texts-splitting',
@@ -10259,7 +10259,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-splitting'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-splitting'],
     files: [
       {
         path: 'registry/demo/primitives/texts/splitting/index.tsx',
@@ -10301,7 +10301,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-splitting',
+    command: '@animate-ui/v1/demo-primitives-texts-splitting',
   },
   'demo-primitives-texts-splitting-example': {
     name: 'demo-primitives-texts-splitting-example',
@@ -10309,7 +10309,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-splitting'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-splitting'],
     files: [
       {
         path: 'registry/demo/primitives/texts/splitting-example/index.tsx',
@@ -10340,7 +10340,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-splitting-example',
+    command: '@animate-ui/v1/demo-primitives-texts-splitting-example',
   },
   'demo-primitives-texts-typing': {
     name: 'demo-primitives-texts-typing',
@@ -10348,7 +10348,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: undefined,
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-texts-typing'],
+    registryDependencies: ['@animate-ui/v1/primitives-texts-typing'],
     files: [
       {
         path: 'registry/demo/primitives/texts/typing/index.tsx',
@@ -10385,7 +10385,7 @@ export const index: Record<string, any> = {
       };
       return LazyComp;
     })(),
-    command: '@animate-ui/demo-primitives-texts-typing',
+    command: '@animate-ui/v1/demo-primitives-texts-typing',
   },
   'hooks-use-auto-height': {
     name: 'hooks-use-auto-height',
@@ -10422,7 +10422,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/hooks-use-auto-height',
+    command: '@animate-ui/v1/hooks-use-auto-height',
   },
   'hooks-use-controlled-state': {
     name: 'hooks-use-controlled-state',
@@ -10460,7 +10460,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/hooks-use-controlled-state',
+    command: '@animate-ui/v1/hooks-use-controlled-state',
   },
   'hooks-use-data-state': {
     name: 'hooks-use-data-state',
@@ -10496,7 +10496,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/hooks-use-data-state',
+    command: '@animate-ui/v1/hooks-use-data-state',
   },
   'hooks-use-is-in-view': {
     name: 'hooks-use-is-in-view',
@@ -10532,7 +10532,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/hooks-use-is-in-view',
+    command: '@animate-ui/v1/hooks-use-is-in-view',
   },
   'hooks-use-motion-value-state': {
     name: 'hooks-use-motion-value-state',
@@ -10570,7 +10570,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/hooks-use-motion-value-state',
+    command: '@animate-ui/v1/hooks-use-motion-value-state',
   },
   'icons-accessibility': {
     name: 'icons-accessibility',
@@ -10578,7 +10578,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/accessibility/index.tsx',
@@ -10606,7 +10606,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-accessibility',
+    command: '@animate-ui/v1/icons-accessibility',
   },
   'icons-activity': {
     name: 'icons-activity',
@@ -10614,7 +10614,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/activity/index.tsx',
@@ -10660,7 +10660,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-activity',
+    command: '@animate-ui/v1/icons-activity',
   },
   'icons-airplay': {
     name: 'icons-airplay',
@@ -10668,7 +10668,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/airplay/index.tsx',
@@ -10704,7 +10704,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-airplay',
+    command: '@animate-ui/v1/icons-airplay',
   },
   'icons-alarm-clock': {
     name: 'icons-alarm-clock',
@@ -10712,7 +10712,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/alarm-clock/index.tsx',
@@ -10740,7 +10740,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-alarm-clock',
+    command: '@animate-ui/v1/icons-alarm-clock',
   },
   'icons-arrow-down': {
     name: 'icons-arrow-down',
@@ -10748,7 +10748,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/arrow-down/index.tsx',
@@ -10776,7 +10776,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-arrow-down',
+    command: '@animate-ui/v1/icons-arrow-down',
   },
   'icons-arrow-left': {
     name: 'icons-arrow-left',
@@ -10784,7 +10784,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/arrow-left/index.tsx',
@@ -10812,7 +10812,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-arrow-left',
+    command: '@animate-ui/v1/icons-arrow-left',
   },
   'icons-arrow-right': {
     name: 'icons-arrow-right',
@@ -10820,7 +10820,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/arrow-right/index.tsx',
@@ -10848,7 +10848,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-arrow-right',
+    command: '@animate-ui/v1/icons-arrow-right',
   },
   'icons-arrow-up': {
     name: 'icons-arrow-up',
@@ -10856,7 +10856,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/arrow-up/index.tsx',
@@ -10884,7 +10884,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-arrow-up',
+    command: '@animate-ui/v1/icons-arrow-up',
   },
   'icons-arrow-up-down': {
     name: 'icons-arrow-up-down',
@@ -10892,7 +10892,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/arrow-up-down/index.tsx',
@@ -10920,7 +10920,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-arrow-up-down',
+    command: '@animate-ui/v1/icons-arrow-up-down',
   },
   'icons-audio-lines': {
     name: 'icons-audio-lines',
@@ -10928,7 +10928,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/audio-lines/index.tsx',
@@ -10980,7 +10980,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-audio-lines',
+    command: '@animate-ui/v1/icons-audio-lines',
   },
   'icons-axe': {
     name: 'icons-axe',
@@ -10988,7 +10988,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/axe/index.tsx',
@@ -11029,7 +11029,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-axe',
+    command: '@animate-ui/v1/icons-axe',
   },
   'icons-axis-3d': {
     name: 'icons-axis-3d',
@@ -11037,7 +11037,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/axis-3d/index.tsx',
@@ -11065,7 +11065,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-axis-3d',
+    command: '@animate-ui/v1/icons-axis-3d',
   },
   'icons-badge-check': {
     name: 'icons-badge-check',
@@ -11073,7 +11073,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/badge-check/index.tsx',
@@ -11101,7 +11101,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-badge-check',
+    command: '@animate-ui/v1/icons-badge-check',
   },
   'icons-battery-charging': {
     name: 'icons-battery-charging',
@@ -11109,7 +11109,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/battery-charging/index.tsx',
@@ -11137,7 +11137,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-battery-charging',
+    command: '@animate-ui/v1/icons-battery-charging',
   },
   'icons-battery-full': {
     name: 'icons-battery-full',
@@ -11145,7 +11145,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/battery-full/index.tsx',
@@ -11173,7 +11173,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-battery-full',
+    command: '@animate-ui/v1/icons-battery-full',
   },
   'icons-battery-low': {
     name: 'icons-battery-low',
@@ -11181,7 +11181,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/battery-low/index.tsx',
@@ -11209,7 +11209,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-battery-low',
+    command: '@animate-ui/v1/icons-battery-low',
   },
   'icons-battery-medium': {
     name: 'icons-battery-medium',
@@ -11217,7 +11217,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/battery-medium/index.tsx',
@@ -11245,7 +11245,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-battery-medium',
+    command: '@animate-ui/v1/icons-battery-medium',
   },
   'icons-bell': {
     name: 'icons-bell',
@@ -11253,7 +11253,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/bell/index.tsx',
@@ -11281,7 +11281,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-bell',
+    command: '@animate-ui/v1/icons-bell',
   },
   'icons-bell-off': {
     name: 'icons-bell-off',
@@ -11289,7 +11289,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/bell-off/index.tsx',
@@ -11317,7 +11317,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-bell-off',
+    command: '@animate-ui/v1/icons-bell-off',
   },
   'icons-bell-ring': {
     name: 'icons-bell-ring',
@@ -11325,7 +11325,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/bell-ring/index.tsx',
@@ -11353,7 +11353,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-bell-ring',
+    command: '@animate-ui/v1/icons-bell-ring',
   },
   'icons-between-horizontal-end': {
     name: 'icons-between-horizontal-end',
@@ -11361,7 +11361,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/between-horizontal-end/index.tsx',
@@ -11415,7 +11415,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-between-horizontal-end',
+    command: '@animate-ui/v1/icons-between-horizontal-end',
   },
   'icons-between-horizontal-start': {
     name: 'icons-between-horizontal-start',
@@ -11423,7 +11423,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/between-horizontal-start/index.tsx',
@@ -11477,7 +11477,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-between-horizontal-start',
+    command: '@animate-ui/v1/icons-between-horizontal-start',
   },
   'icons-between-vertical-end': {
     name: 'icons-between-vertical-end',
@@ -11485,7 +11485,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/between-vertical-end/index.tsx',
@@ -11539,7 +11539,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-between-vertical-end',
+    command: '@animate-ui/v1/icons-between-vertical-end',
   },
   'icons-between-vertical-start': {
     name: 'icons-between-vertical-start',
@@ -11547,7 +11547,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/between-vertical-start/index.tsx',
@@ -11601,7 +11601,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-between-vertical-start',
+    command: '@animate-ui/v1/icons-between-vertical-start',
   },
   'icons-binary': {
     name: 'icons-binary',
@@ -11609,7 +11609,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/binary/index.tsx',
@@ -11637,7 +11637,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-binary',
+    command: '@animate-ui/v1/icons-binary',
   },
   'icons-blend': {
     name: 'icons-blend',
@@ -11645,7 +11645,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/blend/index.tsx',
@@ -11692,7 +11692,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-blend',
+    command: '@animate-ui/v1/icons-blend',
   },
   'icons-blocks': {
     name: 'icons-blocks',
@@ -11700,7 +11700,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/blocks/index.tsx',
@@ -11742,7 +11742,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-blocks',
+    command: '@animate-ui/v1/icons-blocks',
   },
   'icons-bot': {
     name: 'icons-bot',
@@ -11750,7 +11750,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/bot/index.tsx',
@@ -11778,7 +11778,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-bot',
+    command: '@animate-ui/v1/icons-bot',
   },
   'icons-bot-message-square': {
     name: 'icons-bot-message-square',
@@ -11786,7 +11786,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/bot-message-square/index.tsx',
@@ -11816,7 +11816,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-bot-message-square',
+    command: '@animate-ui/v1/icons-bot-message-square',
   },
   'icons-bot-off': {
     name: 'icons-bot-off',
@@ -11824,7 +11824,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/bot-off/index.tsx',
@@ -11852,7 +11852,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-bot-off',
+    command: '@animate-ui/v1/icons-bot-off',
   },
   'icons-brush': {
     name: 'icons-brush',
@@ -11860,7 +11860,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/brush/index.tsx',
@@ -11897,7 +11897,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-brush',
+    command: '@animate-ui/v1/icons-brush',
   },
   'icons-brush-cleaning': {
     name: 'icons-brush-cleaning',
@@ -11905,7 +11905,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/brush-cleaning/index.tsx',
@@ -11965,7 +11965,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-brush-cleaning',
+    command: '@animate-ui/v1/icons-brush-cleaning',
   },
   'icons-cast': {
     name: 'icons-cast',
@@ -11973,7 +11973,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cast/index.tsx',
@@ -12001,7 +12001,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cast',
+    command: '@animate-ui/v1/icons-cast',
   },
   'icons-cctv': {
     name: 'icons-cctv',
@@ -12009,7 +12009,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cctv/index.tsx',
@@ -12045,7 +12045,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cctv',
+    command: '@animate-ui/v1/icons-cctv',
   },
   'icons-chart-bar': {
     name: 'icons-chart-bar',
@@ -12053,7 +12053,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-bar/index.tsx',
@@ -12081,7 +12081,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-bar',
+    command: '@animate-ui/v1/icons-chart-bar',
   },
   'icons-chart-bar-decreasing': {
     name: 'icons-chart-bar-decreasing',
@@ -12089,7 +12089,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-bar-decreasing/index.tsx',
@@ -12119,7 +12119,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-bar-decreasing',
+    command: '@animate-ui/v1/icons-chart-bar-decreasing',
   },
   'icons-chart-bar-increasing': {
     name: 'icons-chart-bar-increasing',
@@ -12127,7 +12127,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-bar-increasing/index.tsx',
@@ -12157,7 +12157,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-bar-increasing',
+    command: '@animate-ui/v1/icons-chart-bar-increasing',
   },
   'icons-chart-column': {
     name: 'icons-chart-column',
@@ -12165,7 +12165,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-column/index.tsx',
@@ -12193,7 +12193,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-column',
+    command: '@animate-ui/v1/icons-chart-column',
   },
   'icons-chart-column-decreasing': {
     name: 'icons-chart-column-decreasing',
@@ -12201,7 +12201,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-column-decreasing/index.tsx',
@@ -12231,7 +12231,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-column-decreasing',
+    command: '@animate-ui/v1/icons-chart-column-decreasing',
   },
   'icons-chart-column-increasing': {
     name: 'icons-chart-column-increasing',
@@ -12239,7 +12239,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-column-increasing/index.tsx',
@@ -12269,7 +12269,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-column-increasing',
+    command: '@animate-ui/v1/icons-chart-column-increasing',
   },
   'icons-chart-line': {
     name: 'icons-chart-line',
@@ -12277,7 +12277,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-line/index.tsx',
@@ -12305,7 +12305,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-line',
+    command: '@animate-ui/v1/icons-chart-line',
   },
   'icons-chart-no-axes-column': {
     name: 'icons-chart-no-axes-column',
@@ -12313,7 +12313,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-no-axes-column/index.tsx',
@@ -12343,7 +12343,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-no-axes-column',
+    command: '@animate-ui/v1/icons-chart-no-axes-column',
   },
   'icons-chart-no-axes-column-decreasing': {
     name: 'icons-chart-no-axes-column-decreasing',
@@ -12351,7 +12351,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-no-axes-column-decreasing/index.tsx',
@@ -12382,7 +12382,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-no-axes-column-decreasing',
+    command: '@animate-ui/v1/icons-chart-no-axes-column-decreasing',
   },
   'icons-chart-no-axes-column-increasing': {
     name: 'icons-chart-no-axes-column-increasing',
@@ -12390,7 +12390,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-no-axes-column-increasing/index.tsx',
@@ -12421,7 +12421,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-no-axes-column-increasing',
+    command: '@animate-ui/v1/icons-chart-no-axes-column-increasing',
   },
   'icons-chart-scatter': {
     name: 'icons-chart-scatter',
@@ -12429,7 +12429,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-scatter/index.tsx',
@@ -12457,7 +12457,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-scatter',
+    command: '@animate-ui/v1/icons-chart-scatter',
   },
   'icons-chart-spline': {
     name: 'icons-chart-spline',
@@ -12465,7 +12465,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chart-spline/index.tsx',
@@ -12505,7 +12505,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chart-spline',
+    command: '@animate-ui/v1/icons-chart-spline',
   },
   'icons-check': {
     name: 'icons-check',
@@ -12513,7 +12513,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/check/index.tsx',
@@ -12541,7 +12541,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-check',
+    command: '@animate-ui/v1/icons-check',
   },
   'icons-check-check': {
     name: 'icons-check-check',
@@ -12549,7 +12549,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/check-check/index.tsx',
@@ -12585,7 +12585,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-check-check',
+    command: '@animate-ui/v1/icons-check-check',
   },
   'icons-check-line': {
     name: 'icons-check-line',
@@ -12593,7 +12593,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/check-line/index.tsx',
@@ -12621,7 +12621,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-check-line',
+    command: '@animate-ui/v1/icons-check-line',
   },
   'icons-cherry': {
     name: 'icons-cherry',
@@ -12629,7 +12629,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cherry/index.tsx',
@@ -12657,7 +12657,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cherry',
+    command: '@animate-ui/v1/icons-cherry',
   },
   'icons-chevron-down': {
     name: 'icons-chevron-down',
@@ -12665,7 +12665,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chevron-down/index.tsx',
@@ -12693,7 +12693,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chevron-down',
+    command: '@animate-ui/v1/icons-chevron-down',
   },
   'icons-chevron-left': {
     name: 'icons-chevron-left',
@@ -12701,7 +12701,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chevron-left/index.tsx',
@@ -12729,7 +12729,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chevron-left',
+    command: '@animate-ui/v1/icons-chevron-left',
   },
   'icons-chevron-left-right': {
     name: 'icons-chevron-left-right',
@@ -12737,7 +12737,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chevron-left-right/index.tsx',
@@ -12767,7 +12767,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chevron-left-right',
+    command: '@animate-ui/v1/icons-chevron-left-right',
   },
   'icons-chevron-right': {
     name: 'icons-chevron-right',
@@ -12775,7 +12775,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chevron-right/index.tsx',
@@ -12816,7 +12816,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chevron-right',
+    command: '@animate-ui/v1/icons-chevron-right',
   },
   'icons-chevron-up': {
     name: 'icons-chevron-up',
@@ -12824,7 +12824,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chevron-up/index.tsx',
@@ -12865,7 +12865,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chevron-up',
+    command: '@animate-ui/v1/icons-chevron-up',
   },
   'icons-chevron-up-down': {
     name: 'icons-chevron-up-down',
@@ -12873,7 +12873,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/chevron-up-down/index.tsx',
@@ -12901,7 +12901,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-chevron-up-down',
+    command: '@animate-ui/v1/icons-chevron-up-down',
   },
   'icons-circle-check': {
     name: 'icons-circle-check',
@@ -12909,7 +12909,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/circle-check/index.tsx',
@@ -12937,7 +12937,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-circle-check',
+    command: '@animate-ui/v1/icons-circle-check',
   },
   'icons-circle-check-big': {
     name: 'icons-circle-check-big',
@@ -12945,7 +12945,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/circle-check-big/index.tsx',
@@ -12973,7 +12973,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-circle-check-big',
+    command: '@animate-ui/v1/icons-circle-check-big',
   },
   'icons-circle-plus': {
     name: 'icons-circle-plus',
@@ -12981,7 +12981,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/circle-plus/index.tsx',
@@ -13022,7 +13022,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-circle-plus',
+    command: '@animate-ui/v1/icons-circle-plus',
   },
   'icons-circle-x': {
     name: 'icons-circle-x',
@@ -13030,7 +13030,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/circle-x/index.tsx',
@@ -13070,7 +13070,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-circle-x',
+    command: '@animate-ui/v1/icons-circle-x',
   },
   'icons-circuit-board': {
     name: 'icons-circuit-board',
@@ -13078,7 +13078,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/circuit-board/index.tsx',
@@ -13106,7 +13106,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-circuit-board',
+    command: '@animate-ui/v1/icons-circuit-board',
   },
   'icons-clapperboard': {
     name: 'icons-clapperboard',
@@ -13114,7 +13114,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clapperboard/index.tsx',
@@ -13154,7 +13154,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clapperboard',
+    command: '@animate-ui/v1/icons-clapperboard',
   },
   'icons-clipboard': {
     name: 'icons-clipboard',
@@ -13162,7 +13162,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clipboard/index.tsx',
@@ -13190,7 +13190,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clipboard',
+    command: '@animate-ui/v1/icons-clipboard',
   },
   'icons-clipboard-check': {
     name: 'icons-clipboard-check',
@@ -13198,7 +13198,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clipboard-check/index.tsx',
@@ -13226,7 +13226,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clipboard-check',
+    command: '@animate-ui/v1/icons-clipboard-check',
   },
   'icons-clipboard-list': {
     name: 'icons-clipboard-list',
@@ -13234,7 +13234,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clipboard-list/index.tsx',
@@ -13262,7 +13262,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clipboard-list',
+    command: '@animate-ui/v1/icons-clipboard-list',
   },
   'icons-clock': {
     name: 'icons-clock',
@@ -13270,7 +13270,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock/index.tsx',
@@ -13298,7 +13298,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock',
+    command: '@animate-ui/v1/icons-clock',
   },
   'icons-clock-1': {
     name: 'icons-clock-1',
@@ -13306,7 +13306,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-1/index.tsx',
@@ -13334,7 +13334,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-1',
+    command: '@animate-ui/v1/icons-clock-1',
   },
   'icons-clock-10': {
     name: 'icons-clock-10',
@@ -13342,7 +13342,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-10/index.tsx',
@@ -13370,7 +13370,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-10',
+    command: '@animate-ui/v1/icons-clock-10',
   },
   'icons-clock-11': {
     name: 'icons-clock-11',
@@ -13378,7 +13378,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-11/index.tsx',
@@ -13406,7 +13406,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-11',
+    command: '@animate-ui/v1/icons-clock-11',
   },
   'icons-clock-12': {
     name: 'icons-clock-12',
@@ -13414,7 +13414,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-12/index.tsx',
@@ -13442,7 +13442,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-12',
+    command: '@animate-ui/v1/icons-clock-12',
   },
   'icons-clock-2': {
     name: 'icons-clock-2',
@@ -13450,7 +13450,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-2/index.tsx',
@@ -13478,7 +13478,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-2',
+    command: '@animate-ui/v1/icons-clock-2',
   },
   'icons-clock-3': {
     name: 'icons-clock-3',
@@ -13486,7 +13486,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-3/index.tsx',
@@ -13514,7 +13514,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-3',
+    command: '@animate-ui/v1/icons-clock-3',
   },
   'icons-clock-4': {
     name: 'icons-clock-4',
@@ -13522,7 +13522,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-4/index.tsx',
@@ -13550,7 +13550,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-4',
+    command: '@animate-ui/v1/icons-clock-4',
   },
   'icons-clock-5': {
     name: 'icons-clock-5',
@@ -13558,7 +13558,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-5/index.tsx',
@@ -13586,7 +13586,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-5',
+    command: '@animate-ui/v1/icons-clock-5',
   },
   'icons-clock-6': {
     name: 'icons-clock-6',
@@ -13594,7 +13594,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-6/index.tsx',
@@ -13622,7 +13622,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-6',
+    command: '@animate-ui/v1/icons-clock-6',
   },
   'icons-clock-7': {
     name: 'icons-clock-7',
@@ -13630,7 +13630,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-7/index.tsx',
@@ -13658,7 +13658,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-7',
+    command: '@animate-ui/v1/icons-clock-7',
   },
   'icons-clock-8': {
     name: 'icons-clock-8',
@@ -13666,7 +13666,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-8/index.tsx',
@@ -13694,7 +13694,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-8',
+    command: '@animate-ui/v1/icons-clock-8',
   },
   'icons-clock-9': {
     name: 'icons-clock-9',
@@ -13702,7 +13702,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/clock-9/index.tsx',
@@ -13730,7 +13730,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-clock-9',
+    command: '@animate-ui/v1/icons-clock-9',
   },
   'icons-cloud-download': {
     name: 'icons-cloud-download',
@@ -13738,7 +13738,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-download/index.tsx',
@@ -13766,7 +13766,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-download',
+    command: '@animate-ui/v1/icons-cloud-download',
   },
   'icons-cloud-drizzle': {
     name: 'icons-cloud-drizzle',
@@ -13774,7 +13774,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-drizzle/index.tsx',
@@ -13802,7 +13802,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-drizzle',
+    command: '@animate-ui/v1/icons-cloud-drizzle',
   },
   'icons-cloud-hail': {
     name: 'icons-cloud-hail',
@@ -13810,7 +13810,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-hail/index.tsx',
@@ -13838,7 +13838,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-hail',
+    command: '@animate-ui/v1/icons-cloud-hail',
   },
   'icons-cloud-lightning': {
     name: 'icons-cloud-lightning',
@@ -13846,7 +13846,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-lightning/index.tsx',
@@ -13874,7 +13874,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-lightning',
+    command: '@animate-ui/v1/icons-cloud-lightning',
   },
   'icons-cloud-moon': {
     name: 'icons-cloud-moon',
@@ -13882,7 +13882,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-moon/index.tsx',
@@ -13910,7 +13910,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-moon',
+    command: '@animate-ui/v1/icons-cloud-moon',
   },
   'icons-cloud-moon-rain': {
     name: 'icons-cloud-moon-rain',
@@ -13918,7 +13918,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-moon-rain/index.tsx',
@@ -13946,7 +13946,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-moon-rain',
+    command: '@animate-ui/v1/icons-cloud-moon-rain',
   },
   'icons-cloud-rain': {
     name: 'icons-cloud-rain',
@@ -13954,7 +13954,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-rain/index.tsx',
@@ -13982,7 +13982,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-rain',
+    command: '@animate-ui/v1/icons-cloud-rain',
   },
   'icons-cloud-rain-wind': {
     name: 'icons-cloud-rain-wind',
@@ -13990,7 +13990,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-rain-wind/index.tsx',
@@ -14018,7 +14018,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-rain-wind',
+    command: '@animate-ui/v1/icons-cloud-rain-wind',
   },
   'icons-cloud-snow': {
     name: 'icons-cloud-snow',
@@ -14026,7 +14026,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-snow/index.tsx',
@@ -14054,7 +14054,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-snow',
+    command: '@animate-ui/v1/icons-cloud-snow',
   },
   'icons-cloud-sun': {
     name: 'icons-cloud-sun',
@@ -14062,7 +14062,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-sun/index.tsx',
@@ -14090,7 +14090,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-sun',
+    command: '@animate-ui/v1/icons-cloud-sun',
   },
   'icons-cloud-sun-rain': {
     name: 'icons-cloud-sun-rain',
@@ -14098,7 +14098,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-sun-rain/index.tsx',
@@ -14126,7 +14126,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-sun-rain',
+    command: '@animate-ui/v1/icons-cloud-sun-rain',
   },
   'icons-cloud-upload': {
     name: 'icons-cloud-upload',
@@ -14134,7 +14134,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cloud-upload/index.tsx',
@@ -14162,7 +14162,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cloud-upload',
+    command: '@animate-ui/v1/icons-cloud-upload',
   },
   'icons-cog': {
     name: 'icons-cog',
@@ -14170,7 +14170,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cog/index.tsx',
@@ -14211,7 +14211,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cog',
+    command: '@animate-ui/v1/icons-cog',
   },
   'icons-compass': {
     name: 'icons-compass',
@@ -14219,7 +14219,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/compass/index.tsx',
@@ -14255,7 +14255,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-compass',
+    command: '@animate-ui/v1/icons-compass',
   },
   'icons-contrast': {
     name: 'icons-contrast',
@@ -14263,7 +14263,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/contrast/index.tsx',
@@ -14291,7 +14291,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-contrast',
+    command: '@animate-ui/v1/icons-contrast',
   },
   'icons-copy': {
     name: 'icons-copy',
@@ -14299,7 +14299,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/copy/index.tsx',
@@ -14327,7 +14327,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-copy',
+    command: '@animate-ui/v1/icons-copy',
   },
   'icons-crop': {
     name: 'icons-crop',
@@ -14335,7 +14335,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/crop/index.tsx',
@@ -14363,7 +14363,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-crop',
+    command: '@animate-ui/v1/icons-crop',
   },
   'icons-cross': {
     name: 'icons-cross',
@@ -14371,7 +14371,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/cross/index.tsx',
@@ -14399,7 +14399,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-cross',
+    command: '@animate-ui/v1/icons-cross',
   },
   'icons-disc-3': {
     name: 'icons-disc-3',
@@ -14407,7 +14407,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/disc-3/index.tsx',
@@ -14446,7 +14446,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-disc-3',
+    command: '@animate-ui/v1/icons-disc-3',
   },
   'icons-download': {
     name: 'icons-download',
@@ -14454,7 +14454,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/download/index.tsx',
@@ -14482,7 +14482,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-download',
+    command: '@animate-ui/v1/icons-download',
   },
   'icons-ellipsis': {
     name: 'icons-ellipsis',
@@ -14490,7 +14490,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/ellipsis/index.tsx',
@@ -14540,7 +14540,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-ellipsis',
+    command: '@animate-ui/v1/icons-ellipsis',
   },
   'icons-ellipsis-vertical': {
     name: 'icons-ellipsis-vertical',
@@ -14548,7 +14548,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/ellipsis-vertical/index.tsx',
@@ -14589,7 +14589,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-ellipsis-vertical',
+    command: '@animate-ui/v1/icons-ellipsis-vertical',
   },
   'icons-equal-not': {
     name: 'icons-equal-not',
@@ -14597,7 +14597,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/equal-not/index.tsx',
@@ -14625,7 +14625,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-equal-not',
+    command: '@animate-ui/v1/icons-equal-not',
   },
   'icons-ev-charger': {
     name: 'icons-ev-charger',
@@ -14633,7 +14633,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/ev-charger/index.tsx',
@@ -14674,7 +14674,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-ev-charger',
+    command: '@animate-ui/v1/icons-ev-charger',
   },
   'icons-expand': {
     name: 'icons-expand',
@@ -14682,7 +14682,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/expand/index.tsx',
@@ -14710,7 +14710,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-expand',
+    command: '@animate-ui/v1/icons-expand',
   },
   'icons-external-link': {
     name: 'icons-external-link',
@@ -14718,7 +14718,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/external-link/index.tsx',
@@ -14746,7 +14746,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-external-link',
+    command: '@animate-ui/v1/icons-external-link',
   },
   'icons-fan': {
     name: 'icons-fan',
@@ -14754,7 +14754,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/fan/index.tsx',
@@ -14782,7 +14782,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-fan',
+    command: '@animate-ui/v1/icons-fan',
   },
   'icons-fingerprint': {
     name: 'icons-fingerprint',
@@ -14790,7 +14790,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/fingerprint/index.tsx',
@@ -14818,7 +14818,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-fingerprint',
+    command: '@animate-ui/v1/icons-fingerprint',
   },
   'icons-forklift': {
     name: 'icons-forklift',
@@ -14826,7 +14826,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/forklift/index.tsx',
@@ -14854,7 +14854,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-forklift',
+    command: '@animate-ui/v1/icons-forklift',
   },
   'icons-frame': {
     name: 'icons-frame',
@@ -14862,7 +14862,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/frame/index.tsx',
@@ -14890,7 +14890,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-frame',
+    command: '@animate-ui/v1/icons-frame',
   },
   'icons-gallery-horizontal': {
     name: 'icons-gallery-horizontal',
@@ -14898,7 +14898,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/gallery-horizontal/index.tsx',
@@ -14935,7 +14935,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-gallery-horizontal',
+    command: '@animate-ui/v1/icons-gallery-horizontal',
   },
   'icons-gallery-vertical-end': {
     name: 'icons-gallery-vertical-end',
@@ -14943,7 +14943,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/gallery-vertical-end/index.tsx',
@@ -14980,7 +14980,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-gallery-vertical-end',
+    command: '@animate-ui/v1/icons-gallery-vertical-end',
   },
   'icons-gallery-vertical': {
     name: 'icons-gallery-vertical',
@@ -14988,7 +14988,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/gallery-vertical/index.tsx',
@@ -15023,7 +15023,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-gallery-vertical',
+    command: '@animate-ui/v1/icons-gallery-vertical',
   },
   'icons-gallery-horizontal-end': {
     name: 'icons-gallery-horizontal-end',
@@ -15031,7 +15031,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/gallery-horizontal-end/index.tsx',
@@ -15068,7 +15068,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-gallery-horizontal-end',
+    command: '@animate-ui/v1/icons-gallery-horizontal-end',
   },
   'icons-gauge': {
     name: 'icons-gauge',
@@ -15076,7 +15076,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/gauge/index.tsx',
@@ -15112,7 +15112,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-gauge',
+    command: '@animate-ui/v1/icons-gauge',
   },
   'icons-gavel': {
     name: 'icons-gavel',
@@ -15120,7 +15120,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/gavel/index.tsx',
@@ -15148,7 +15148,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-gavel',
+    command: '@animate-ui/v1/icons-gavel',
   },
   'icons-hammer': {
     name: 'icons-hammer',
@@ -15156,7 +15156,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/hammer/index.tsx',
@@ -15184,7 +15184,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-hammer',
+    command: '@animate-ui/v1/icons-hammer',
   },
   'icons-heart': {
     name: 'icons-heart',
@@ -15192,7 +15192,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/heart/index.tsx',
@@ -15220,7 +15220,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-heart',
+    command: '@animate-ui/v1/icons-heart',
   },
   'icons-house-wifi': {
     name: 'icons-house-wifi',
@@ -15228,7 +15228,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/house-wifi/index.tsx',
@@ -15256,7 +15256,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-house-wifi',
+    command: '@animate-ui/v1/icons-house-wifi',
   },
   'icons-icon': {
     name: 'icons-icon',
@@ -15265,8 +15265,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-is-in-view',
-      '@animate-ui/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
+      '@animate-ui/v1/primitives-animate-slot',
     ],
     files: [
       {
@@ -15295,7 +15295,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-icon',
+    command: '@animate-ui/v1/icons-icon',
   },
   'icons-kanban': {
     name: 'icons-kanban',
@@ -15303,7 +15303,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/kanban/index.tsx',
@@ -15346,7 +15346,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-kanban',
+    command: '@animate-ui/v1/icons-kanban',
   },
   'icons-key': {
     name: 'icons-key',
@@ -15354,7 +15354,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/key/index.tsx',
@@ -15391,7 +15391,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-key',
+    command: '@animate-ui/v1/icons-key',
   },
   'icons-layers': {
     name: 'icons-layers',
@@ -15399,7 +15399,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/layers/index.tsx',
@@ -15435,7 +15435,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-layers',
+    command: '@animate-ui/v1/icons-layers',
   },
   'icons-layers-2': {
     name: 'icons-layers-2',
@@ -15443,7 +15443,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/layers-2/index.tsx',
@@ -15482,7 +15482,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-layers-2',
+    command: '@animate-ui/v1/icons-layers-2',
   },
   'icons-layout-dashboard': {
     name: 'icons-layout-dashboard',
@@ -15490,7 +15490,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/layout-dashboard/index.tsx',
@@ -15518,7 +15518,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-layout-dashboard',
+    command: '@animate-ui/v1/icons-layout-dashboard',
   },
   'icons-lightbulb': {
     name: 'icons-lightbulb',
@@ -15526,7 +15526,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/lightbulb/index.tsx',
@@ -15554,7 +15554,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-lightbulb',
+    command: '@animate-ui/v1/icons-lightbulb',
   },
   'icons-lightbulb-off': {
     name: 'icons-lightbulb-off',
@@ -15562,7 +15562,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/lightbulb-off/index.tsx',
@@ -15590,7 +15590,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-lightbulb-off',
+    command: '@animate-ui/v1/icons-lightbulb-off',
   },
   'icons-link': {
     name: 'icons-link',
@@ -15598,7 +15598,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/link/index.tsx',
@@ -15626,7 +15626,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-link',
+    command: '@animate-ui/v1/icons-link',
   },
   'icons-link-2': {
     name: 'icons-link-2',
@@ -15634,7 +15634,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/link-2/index.tsx',
@@ -15670,7 +15670,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-link-2',
+    command: '@animate-ui/v1/icons-link-2',
   },
   'icons-list': {
     name: 'icons-list',
@@ -15678,7 +15678,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/list/index.tsx',
@@ -15706,7 +15706,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-list',
+    command: '@animate-ui/v1/icons-list',
   },
   'icons-loader': {
     name: 'icons-loader',
@@ -15714,7 +15714,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/loader/index.tsx',
@@ -15750,7 +15750,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-loader',
+    command: '@animate-ui/v1/icons-loader',
   },
   'icons-loader-circle': {
     name: 'icons-loader-circle',
@@ -15758,7 +15758,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/loader-circle/index.tsx',
@@ -15795,7 +15795,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-loader-circle',
+    command: '@animate-ui/v1/icons-loader-circle',
   },
   'icons-loader-pinwheel': {
     name: 'icons-loader-pinwheel',
@@ -15803,7 +15803,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/loader-pinwheel/index.tsx',
@@ -15842,7 +15842,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-loader-pinwheel',
+    command: '@animate-ui/v1/icons-loader-pinwheel',
   },
   'icons-lock': {
     name: 'icons-lock',
@@ -15850,7 +15850,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/lock/index.tsx',
@@ -15878,7 +15878,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-lock',
+    command: '@animate-ui/v1/icons-lock',
   },
   'icons-lock-keyhole': {
     name: 'icons-lock-keyhole',
@@ -15886,7 +15886,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/lock-keyhole/index.tsx',
@@ -15914,7 +15914,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-lock-keyhole',
+    command: '@animate-ui/v1/icons-lock-keyhole',
   },
   'icons-lock-keyhole-open': {
     name: 'icons-lock-keyhole-open',
@@ -15922,7 +15922,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/lock-keyhole-open/index.tsx',
@@ -15952,7 +15952,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-lock-keyhole-open',
+    command: '@animate-ui/v1/icons-lock-keyhole-open',
   },
   'icons-lock-open': {
     name: 'icons-lock-open',
@@ -15960,7 +15960,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/lock-open/index.tsx',
@@ -15988,7 +15988,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-lock-open',
+    command: '@animate-ui/v1/icons-lock-open',
   },
   'icons-log-in': {
     name: 'icons-log-in',
@@ -15996,7 +15996,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/log-in/index.tsx',
@@ -16024,7 +16024,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-log-in',
+    command: '@animate-ui/v1/icons-log-in',
   },
   'icons-log-out': {
     name: 'icons-log-out',
@@ -16032,7 +16032,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/log-out/index.tsx',
@@ -16060,7 +16060,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-log-out',
+    command: '@animate-ui/v1/icons-log-out',
   },
   'icons-map-pin': {
     name: 'icons-map-pin',
@@ -16068,7 +16068,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/map-pin/index.tsx',
@@ -16096,7 +16096,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-map-pin',
+    command: '@animate-ui/v1/icons-map-pin',
   },
   'icons-map-pin-off': {
     name: 'icons-map-pin-off',
@@ -16104,7 +16104,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/map-pin-off/index.tsx',
@@ -16132,7 +16132,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-map-pin-off',
+    command: '@animate-ui/v1/icons-map-pin-off',
   },
   'icons-maximize': {
     name: 'icons-maximize',
@@ -16140,7 +16140,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/maximize/index.tsx',
@@ -16168,7 +16168,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-maximize',
+    command: '@animate-ui/v1/icons-maximize',
   },
   'icons-menu': {
     name: 'icons-menu',
@@ -16176,7 +16176,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/menu/index.tsx',
@@ -16204,7 +16204,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-menu',
+    command: '@animate-ui/v1/icons-menu',
   },
   'icons-message-circle': {
     name: 'icons-message-circle',
@@ -16212,7 +16212,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle/index.tsx',
@@ -16247,7 +16247,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle',
+    command: '@animate-ui/v1/icons-message-circle',
   },
   'icons-message-circle-code': {
     name: 'icons-message-circle-code',
@@ -16255,7 +16255,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-code/index.tsx',
@@ -16294,7 +16294,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-code',
+    command: '@animate-ui/v1/icons-message-circle-code',
   },
   'icons-message-circle-dashed': {
     name: 'icons-message-circle-dashed',
@@ -16302,7 +16302,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-dashed/index.tsx',
@@ -16340,7 +16340,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-dashed',
+    command: '@animate-ui/v1/icons-message-circle-dashed',
   },
   'icons-message-circle-heart': {
     name: 'icons-message-circle-heart',
@@ -16348,7 +16348,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-heart/index.tsx',
@@ -16392,7 +16392,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-heart',
+    command: '@animate-ui/v1/icons-message-circle-heart',
   },
   'icons-message-circle-more': {
     name: 'icons-message-circle-more',
@@ -16400,7 +16400,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-more/index.tsx',
@@ -16444,7 +16444,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-more',
+    command: '@animate-ui/v1/icons-message-circle-more',
   },
   'icons-message-circle-off': {
     name: 'icons-message-circle-off',
@@ -16452,7 +16452,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-off/index.tsx',
@@ -16497,7 +16497,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-off',
+    command: '@animate-ui/v1/icons-message-circle-off',
   },
   'icons-message-circle-plus': {
     name: 'icons-message-circle-plus',
@@ -16505,7 +16505,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-plus/index.tsx',
@@ -16543,7 +16543,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-plus',
+    command: '@animate-ui/v1/icons-message-circle-plus',
   },
   'icons-message-circle-question': {
     name: 'icons-message-circle-question',
@@ -16551,7 +16551,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-question/index.tsx',
@@ -16589,7 +16589,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-question',
+    command: '@animate-ui/v1/icons-message-circle-question',
   },
   'icons-message-circle-warning': {
     name: 'icons-message-circle-warning',
@@ -16597,7 +16597,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-warning/index.tsx',
@@ -16642,7 +16642,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-warning',
+    command: '@animate-ui/v1/icons-message-circle-warning',
   },
   'icons-message-circle-x': {
     name: 'icons-message-circle-x',
@@ -16650,7 +16650,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-circle-x/index.tsx',
@@ -16693,7 +16693,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-circle-x',
+    command: '@animate-ui/v1/icons-message-circle-x',
   },
   'icons-message-square': {
     name: 'icons-message-square',
@@ -16701,7 +16701,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square/index.tsx',
@@ -16736,7 +16736,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square',
+    command: '@animate-ui/v1/icons-message-square',
   },
   'icons-message-square-code': {
     name: 'icons-message-square-code',
@@ -16744,7 +16744,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-code/index.tsx',
@@ -16783,7 +16783,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-code',
+    command: '@animate-ui/v1/icons-message-square-code',
   },
   'icons-message-square-dashed': {
     name: 'icons-message-square-dashed',
@@ -16791,7 +16791,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-dashed/index.tsx',
@@ -16829,7 +16829,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-dashed',
+    command: '@animate-ui/v1/icons-message-square-dashed',
   },
   'icons-message-square-diff': {
     name: 'icons-message-square-diff',
@@ -16837,7 +16837,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-diff/index.tsx',
@@ -16885,7 +16885,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-diff',
+    command: '@animate-ui/v1/icons-message-square-diff',
   },
   'icons-message-square-dot': {
     name: 'icons-message-square-dot',
@@ -16893,7 +16893,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-dot/index.tsx',
@@ -16932,7 +16932,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-dot',
+    command: '@animate-ui/v1/icons-message-square-dot',
   },
   'icons-message-square-heart': {
     name: 'icons-message-square-heart',
@@ -16940,7 +16940,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-heart/index.tsx',
@@ -16984,7 +16984,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-heart',
+    command: '@animate-ui/v1/icons-message-square-heart',
   },
   'icons-message-square-more': {
     name: 'icons-message-square-more',
@@ -16992,7 +16992,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-more/index.tsx',
@@ -17036,7 +17036,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-more',
+    command: '@animate-ui/v1/icons-message-square-more',
   },
   'icons-message-square-off': {
     name: 'icons-message-square-off',
@@ -17044,7 +17044,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-off/index.tsx',
@@ -17089,7 +17089,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-off',
+    command: '@animate-ui/v1/icons-message-square-off',
   },
   'icons-message-square-plus': {
     name: 'icons-message-square-plus',
@@ -17097,7 +17097,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-plus/index.tsx',
@@ -17135,7 +17135,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-plus',
+    command: '@animate-ui/v1/icons-message-square-plus',
   },
   'icons-message-square-quote': {
     name: 'icons-message-square-quote',
@@ -17143,7 +17143,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-quote/index.tsx',
@@ -17185,7 +17185,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-quote',
+    command: '@animate-ui/v1/icons-message-square-quote',
   },
   'icons-message-square-share': {
     name: 'icons-message-square-share',
@@ -17193,7 +17193,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-share/index.tsx',
@@ -17232,7 +17232,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-share',
+    command: '@animate-ui/v1/icons-message-square-share',
   },
   'icons-message-square-text': {
     name: 'icons-message-square-text',
@@ -17240,7 +17240,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-text/index.tsx',
@@ -17277,7 +17277,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-text',
+    command: '@animate-ui/v1/icons-message-square-text',
   },
   'icons-message-square-warning': {
     name: 'icons-message-square-warning',
@@ -17285,7 +17285,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-warning/index.tsx',
@@ -17330,7 +17330,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-warning',
+    command: '@animate-ui/v1/icons-message-square-warning',
   },
   'icons-message-square-x': {
     name: 'icons-message-square-x',
@@ -17338,7 +17338,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/message-square-x/index.tsx',
@@ -17381,7 +17381,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-message-square-x',
+    command: '@animate-ui/v1/icons-message-square-x',
   },
   'icons-minimize': {
     name: 'icons-minimize',
@@ -17389,7 +17389,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/minimize/index.tsx',
@@ -17417,7 +17417,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-minimize',
+    command: '@animate-ui/v1/icons-minimize',
   },
   'icons-moon': {
     name: 'icons-moon',
@@ -17425,7 +17425,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/moon/index.tsx',
@@ -17453,7 +17453,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-moon',
+    command: '@animate-ui/v1/icons-moon',
   },
   'icons-moon-star': {
     name: 'icons-moon-star',
@@ -17461,7 +17461,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/moon-star/index.tsx',
@@ -17489,7 +17489,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-moon-star',
+    command: '@animate-ui/v1/icons-moon-star',
   },
   'icons-move-down': {
     name: 'icons-move-down',
@@ -17497,7 +17497,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/move-down/index.tsx',
@@ -17525,7 +17525,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-move-down',
+    command: '@animate-ui/v1/icons-move-down',
   },
   'icons-move-left': {
     name: 'icons-move-left',
@@ -17533,7 +17533,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/move-left/index.tsx',
@@ -17570,7 +17570,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-move-left',
+    command: '@animate-ui/v1/icons-move-left',
   },
   'icons-move-right': {
     name: 'icons-move-right',
@@ -17578,7 +17578,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/move-right/index.tsx',
@@ -17615,7 +17615,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-move-right',
+    command: '@animate-ui/v1/icons-move-right',
   },
   'icons-move-up': {
     name: 'icons-move-up',
@@ -17623,7 +17623,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/move-up/index.tsx',
@@ -17651,7 +17651,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-move-up',
+    command: '@animate-ui/v1/icons-move-up',
   },
   'icons-nfc': {
     name: 'icons-nfc',
@@ -17659,7 +17659,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/nfc/index.tsx',
@@ -17687,7 +17687,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-nfc',
+    command: '@animate-ui/v1/icons-nfc',
   },
   'icons-orbit': {
     name: 'icons-orbit',
@@ -17695,7 +17695,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/orbit/index.tsx',
@@ -17723,7 +17723,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-orbit',
+    command: '@animate-ui/v1/icons-orbit',
   },
   'icons-paintbrush': {
     name: 'icons-paintbrush',
@@ -17731,7 +17731,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/paintbrush/index.tsx',
@@ -17767,7 +17767,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-paintbrush',
+    command: '@animate-ui/v1/icons-paintbrush',
   },
   'icons-panel-bottom': {
     name: 'icons-panel-bottom',
@@ -17775,7 +17775,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-bottom/index.tsx',
@@ -17803,7 +17803,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-bottom',
+    command: '@animate-ui/v1/icons-panel-bottom',
   },
   'icons-panel-bottom-close': {
     name: 'icons-panel-bottom-close',
@@ -17811,7 +17811,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-bottom-close/index.tsx',
@@ -17849,7 +17849,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-bottom-close',
+    command: '@animate-ui/v1/icons-panel-bottom-close',
   },
   'icons-panel-bottom-open': {
     name: 'icons-panel-bottom-open',
@@ -17857,7 +17857,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-bottom-open/index.tsx',
@@ -17895,7 +17895,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-bottom-open',
+    command: '@animate-ui/v1/icons-panel-bottom-open',
   },
   'icons-panel-left': {
     name: 'icons-panel-left',
@@ -17903,7 +17903,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-left/index.tsx',
@@ -17931,7 +17931,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-left',
+    command: '@animate-ui/v1/icons-panel-left',
   },
   'icons-panel-left-close': {
     name: 'icons-panel-left-close',
@@ -17939,7 +17939,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-left-close/index.tsx',
@@ -17975,7 +17975,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-left-close',
+    command: '@animate-ui/v1/icons-panel-left-close',
   },
   'icons-panel-left-open': {
     name: 'icons-panel-left-open',
@@ -17983,7 +17983,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-left-open/index.tsx',
@@ -18019,7 +18019,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-left-open',
+    command: '@animate-ui/v1/icons-panel-left-open',
   },
   'icons-panel-right': {
     name: 'icons-panel-right',
@@ -18027,7 +18027,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-right/index.tsx',
@@ -18055,7 +18055,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-right',
+    command: '@animate-ui/v1/icons-panel-right',
   },
   'icons-panel-right-close': {
     name: 'icons-panel-right-close',
@@ -18063,7 +18063,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-right-close/index.tsx',
@@ -18101,7 +18101,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-right-close',
+    command: '@animate-ui/v1/icons-panel-right-close',
   },
   'icons-panel-right-open': {
     name: 'icons-panel-right-open',
@@ -18109,7 +18109,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-right-open/index.tsx',
@@ -18145,7 +18145,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-right-open',
+    command: '@animate-ui/v1/icons-panel-right-open',
   },
   'icons-panel-top': {
     name: 'icons-panel-top',
@@ -18153,7 +18153,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-top/index.tsx',
@@ -18181,7 +18181,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-top',
+    command: '@animate-ui/v1/icons-panel-top',
   },
   'icons-panel-top-close': {
     name: 'icons-panel-top-close',
@@ -18189,7 +18189,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-top-close/index.tsx',
@@ -18225,7 +18225,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-top-close',
+    command: '@animate-ui/v1/icons-panel-top-close',
   },
   'icons-panel-top-open': {
     name: 'icons-panel-top-open',
@@ -18233,7 +18233,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/panel-top-open/index.tsx',
@@ -18269,7 +18269,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-panel-top-open',
+    command: '@animate-ui/v1/icons-panel-top-open',
   },
   'icons-paperclip': {
     name: 'icons-paperclip',
@@ -18277,7 +18277,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/paperclip/index.tsx',
@@ -18305,7 +18305,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-paperclip',
+    command: '@animate-ui/v1/icons-paperclip',
   },
   'icons-party-popper': {
     name: 'icons-party-popper',
@@ -18313,7 +18313,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/party-popper/index.tsx',
@@ -18353,7 +18353,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-party-popper',
+    command: '@animate-ui/v1/icons-party-popper',
   },
   'icons-pause': {
     name: 'icons-pause',
@@ -18361,7 +18361,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/pause/index.tsx',
@@ -18389,7 +18389,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-pause',
+    command: '@animate-ui/v1/icons-pause',
   },
   'icons-phone-call': {
     name: 'icons-phone-call',
@@ -18397,7 +18397,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/phone-call/index.tsx',
@@ -18436,7 +18436,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-phone-call',
+    command: '@animate-ui/v1/icons-phone-call',
   },
   'icons-pickaxe': {
     name: 'icons-pickaxe',
@@ -18444,7 +18444,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/pickaxe/index.tsx',
@@ -18482,7 +18482,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-pickaxe',
+    command: '@animate-ui/v1/icons-pickaxe',
   },
   'icons-pin': {
     name: 'icons-pin',
@@ -18490,7 +18490,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/pin/index.tsx',
@@ -18518,7 +18518,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-pin',
+    command: '@animate-ui/v1/icons-pin',
   },
   'icons-pin-off': {
     name: 'icons-pin-off',
@@ -18526,7 +18526,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/pin-off/index.tsx',
@@ -18554,7 +18554,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-pin-off',
+    command: '@animate-ui/v1/icons-pin-off',
   },
   'icons-play': {
     name: 'icons-play',
@@ -18562,7 +18562,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/play/index.tsx',
@@ -18590,7 +18590,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-play',
+    command: '@animate-ui/v1/icons-play',
   },
   'icons-plug-zap': {
     name: 'icons-plug-zap',
@@ -18598,7 +18598,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/plug-zap/index.tsx',
@@ -18634,7 +18634,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-plug-zap',
+    command: '@animate-ui/v1/icons-plug-zap',
   },
   'icons-plus': {
     name: 'icons-plus',
@@ -18642,7 +18642,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/plus/index.tsx',
@@ -18682,7 +18682,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-plus',
+    command: '@animate-ui/v1/icons-plus',
   },
   'icons-radio': {
     name: 'icons-radio',
@@ -18690,7 +18690,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/radio/index.tsx',
@@ -18718,7 +18718,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-radio',
+    command: '@animate-ui/v1/icons-radio',
   },
   'icons-radio-tower': {
     name: 'icons-radio-tower',
@@ -18726,7 +18726,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/radio-tower/index.tsx',
@@ -18754,7 +18754,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-radio-tower',
+    command: '@animate-ui/v1/icons-radio-tower',
   },
   'icons-refresh-ccw': {
     name: 'icons-refresh-ccw',
@@ -18762,7 +18762,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/refresh-ccw/index.tsx',
@@ -18798,7 +18798,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-refresh-ccw',
+    command: '@animate-ui/v1/icons-refresh-ccw',
   },
   'icons-refresh-ccw-dot': {
     name: 'icons-refresh-ccw-dot',
@@ -18806,7 +18806,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/refresh-ccw-dot/index.tsx',
@@ -18846,7 +18846,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-refresh-ccw-dot',
+    command: '@animate-ui/v1/icons-refresh-ccw-dot',
   },
   'icons-refresh-cw': {
     name: 'icons-refresh-cw',
@@ -18854,7 +18854,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/refresh-cw/index.tsx',
@@ -18890,7 +18890,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-refresh-cw',
+    command: '@animate-ui/v1/icons-refresh-cw',
   },
   'icons-refresh-cw-off': {
     name: 'icons-refresh-cw-off',
@@ -18898,7 +18898,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/refresh-cw-off/index.tsx',
@@ -18940,7 +18940,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-refresh-cw-off',
+    command: '@animate-ui/v1/icons-refresh-cw-off',
   },
   'icons-rotate-ccw': {
     name: 'icons-rotate-ccw',
@@ -18948,7 +18948,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/rotate-ccw/index.tsx',
@@ -18992,7 +18992,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-rotate-ccw',
+    command: '@animate-ui/v1/icons-rotate-ccw',
   },
   'icons-rotate-ccw-key': {
     name: 'icons-rotate-ccw-key',
@@ -19000,7 +19000,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/rotate-ccw-key/index.tsx',
@@ -19028,7 +19028,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-rotate-ccw-key',
+    command: '@animate-ui/v1/icons-rotate-ccw-key',
   },
   'icons-rotate-cw': {
     name: 'icons-rotate-cw',
@@ -19036,7 +19036,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/rotate-cw/index.tsx',
@@ -19073,7 +19073,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-rotate-cw',
+    command: '@animate-ui/v1/icons-rotate-cw',
   },
   'icons-route': {
     name: 'icons-route',
@@ -19081,7 +19081,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/route/index.tsx',
@@ -19109,7 +19109,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-route',
+    command: '@animate-ui/v1/icons-route',
   },
   'icons-router': {
     name: 'icons-router',
@@ -19117,7 +19117,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/router/index.tsx',
@@ -19145,7 +19145,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-router',
+    command: '@animate-ui/v1/icons-router',
   },
   'icons-scissors': {
     name: 'icons-scissors',
@@ -19153,7 +19153,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/scissors/index.tsx',
@@ -19181,7 +19181,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-scissors',
+    command: '@animate-ui/v1/icons-scissors',
   },
   'icons-scissors-line-dashed': {
     name: 'icons-scissors-line-dashed',
@@ -19189,7 +19189,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/scissors-line-dashed/index.tsx',
@@ -19228,7 +19228,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-scissors-line-dashed',
+    command: '@animate-ui/v1/icons-scissors-line-dashed',
   },
   'icons-search': {
     name: 'icons-search',
@@ -19236,7 +19236,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/search/index.tsx',
@@ -19264,7 +19264,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-search',
+    command: '@animate-ui/v1/icons-search',
   },
   'icons-send': {
     name: 'icons-send',
@@ -19272,7 +19272,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/send/index.tsx',
@@ -19300,7 +19300,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-send',
+    command: '@animate-ui/v1/icons-send',
   },
   'icons-send-horizontal': {
     name: 'icons-send-horizontal',
@@ -19308,7 +19308,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/send-horizontal/index.tsx',
@@ -19336,7 +19336,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-send-horizontal',
+    command: '@animate-ui/v1/icons-send-horizontal',
   },
   'icons-settings': {
     name: 'icons-settings',
@@ -19344,7 +19344,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/settings/index.tsx',
@@ -19372,7 +19372,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-settings',
+    command: '@animate-ui/v1/icons-settings',
   },
   'icons-shrink': {
     name: 'icons-shrink',
@@ -19380,7 +19380,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/shrink/index.tsx',
@@ -19408,7 +19408,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-shrink',
+    command: '@animate-ui/v1/icons-shrink',
   },
   'icons-signal': {
     name: 'icons-signal',
@@ -19416,7 +19416,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/signal/index.tsx',
@@ -19453,7 +19453,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-signal',
+    command: '@animate-ui/v1/icons-signal',
   },
   'icons-signal-high': {
     name: 'icons-signal-high',
@@ -19461,7 +19461,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/signal-high/index.tsx',
@@ -19498,7 +19498,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-signal-high',
+    command: '@animate-ui/v1/icons-signal-high',
   },
   'icons-signal-low': {
     name: 'icons-signal-low',
@@ -19506,7 +19506,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/signal-low/index.tsx',
@@ -19543,7 +19543,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-signal-low',
+    command: '@animate-ui/v1/icons-signal-low',
   },
   'icons-signal-medium': {
     name: 'icons-signal-medium',
@@ -19551,7 +19551,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/signal-medium/index.tsx',
@@ -19588,7 +19588,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-signal-medium',
+    command: '@animate-ui/v1/icons-signal-medium',
   },
   'icons-signal-zero': {
     name: 'icons-signal-zero',
@@ -19596,7 +19596,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/signal-zero/index.tsx',
@@ -19633,7 +19633,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-signal-zero',
+    command: '@animate-ui/v1/icons-signal-zero',
   },
   'icons-sliders-horizontal': {
     name: 'icons-sliders-horizontal',
@@ -19641,7 +19641,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sliders-horizontal/index.tsx',
@@ -19671,7 +19671,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sliders-horizontal',
+    command: '@animate-ui/v1/icons-sliders-horizontal',
   },
   'icons-sliders-vertical': {
     name: 'icons-sliders-vertical',
@@ -19679,7 +19679,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sliders-vertical/index.tsx',
@@ -19707,7 +19707,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sliders-vertical',
+    command: '@animate-ui/v1/icons-sliders-vertical',
   },
   'icons-sparkle': {
     name: 'icons-sparkle',
@@ -19715,7 +19715,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sparkle/index.tsx',
@@ -19753,7 +19753,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sparkle',
+    command: '@animate-ui/v1/icons-sparkle',
   },
   'icons-sparkles': {
     name: 'icons-sparkles',
@@ -19761,7 +19761,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sparkles/index.tsx',
@@ -19789,7 +19789,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sparkles',
+    command: '@animate-ui/v1/icons-sparkles',
   },
   'icons-square-arrow-out-down-left': {
     name: 'icons-square-arrow-out-down-left',
@@ -19797,7 +19797,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-arrow-out-down-left/index.tsx',
@@ -19827,7 +19827,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-arrow-out-down-left',
+    command: '@animate-ui/v1/icons-square-arrow-out-down-left',
   },
   'icons-square-arrow-out-down-right': {
     name: 'icons-square-arrow-out-down-right',
@@ -19835,7 +19835,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-arrow-out-down-right/index.tsx',
@@ -19865,7 +19865,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-arrow-out-down-right',
+    command: '@animate-ui/v1/icons-square-arrow-out-down-right',
   },
   'icons-square-arrow-out-up-left': {
     name: 'icons-square-arrow-out-up-left',
@@ -19873,7 +19873,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-arrow-out-up-left/index.tsx',
@@ -19903,7 +19903,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-arrow-out-up-left',
+    command: '@animate-ui/v1/icons-square-arrow-out-up-left',
   },
   'icons-square-arrow-out-up-right': {
     name: 'icons-square-arrow-out-up-right',
@@ -19911,7 +19911,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-arrow-out-up-right/index.tsx',
@@ -19950,7 +19950,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-arrow-out-up-right',
+    command: '@animate-ui/v1/icons-square-arrow-out-up-right',
   },
   'icons-square-dashed-kanban': {
     name: 'icons-square-dashed-kanban',
@@ -19958,7 +19958,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-dashed-kanban/index.tsx',
@@ -20003,7 +20003,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-dashed-kanban',
+    command: '@animate-ui/v1/icons-square-dashed-kanban',
   },
   'icons-square-kanban': {
     name: 'icons-square-kanban',
@@ -20011,7 +20011,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-kanban/index.tsx',
@@ -20054,7 +20054,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-kanban',
+    command: '@animate-ui/v1/icons-square-kanban',
   },
   'icons-square-plus': {
     name: 'icons-square-plus',
@@ -20062,7 +20062,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-plus/index.tsx',
@@ -20104,7 +20104,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-plus',
+    command: '@animate-ui/v1/icons-square-plus',
   },
   'icons-square-x': {
     name: 'icons-square-x',
@@ -20112,7 +20112,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/square-x/index.tsx',
@@ -20152,7 +20152,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-square-x',
+    command: '@animate-ui/v1/icons-square-x',
   },
   'icons-star': {
     name: 'icons-star',
@@ -20160,7 +20160,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/star/index.tsx',
@@ -20188,7 +20188,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-star',
+    command: '@animate-ui/v1/icons-star',
   },
   'icons-sun': {
     name: 'icons-sun',
@@ -20196,7 +20196,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sun/index.tsx',
@@ -20224,7 +20224,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sun',
+    command: '@animate-ui/v1/icons-sun',
   },
   'icons-sun-dim': {
     name: 'icons-sun-dim',
@@ -20232,7 +20232,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sun-dim/index.tsx',
@@ -20260,7 +20260,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sun-dim',
+    command: '@animate-ui/v1/icons-sun-dim',
   },
   'icons-sun-medium': {
     name: 'icons-sun-medium',
@@ -20268,7 +20268,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sun-medium/index.tsx',
@@ -20296,7 +20296,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sun-medium',
+    command: '@animate-ui/v1/icons-sun-medium',
   },
   'icons-sun-moon': {
     name: 'icons-sun-moon',
@@ -20304,7 +20304,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/sun-moon/index.tsx',
@@ -20342,7 +20342,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-sun-moon',
+    command: '@animate-ui/v1/icons-sun-moon',
   },
   'icons-terminal': {
     name: 'icons-terminal',
@@ -20350,7 +20350,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/terminal/index.tsx',
@@ -20378,7 +20378,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-terminal',
+    command: '@animate-ui/v1/icons-terminal',
   },
   'icons-thumbs-down': {
     name: 'icons-thumbs-down',
@@ -20386,7 +20386,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/thumbs-down/index.tsx',
@@ -20414,7 +20414,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-thumbs-down',
+    command: '@animate-ui/v1/icons-thumbs-down',
   },
   'icons-thumbs-up': {
     name: 'icons-thumbs-up',
@@ -20422,7 +20422,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/thumbs-up/index.tsx',
@@ -20450,7 +20450,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-thumbs-up',
+    command: '@animate-ui/v1/icons-thumbs-up',
   },
   'icons-timer': {
     name: 'icons-timer',
@@ -20458,7 +20458,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/timer/index.tsx',
@@ -20486,7 +20486,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-timer',
+    command: '@animate-ui/v1/icons-timer',
   },
   'icons-timer-off': {
     name: 'icons-timer-off',
@@ -20494,7 +20494,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/timer-off/index.tsx',
@@ -20522,7 +20522,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-timer-off',
+    command: '@animate-ui/v1/icons-timer-off',
   },
   'icons-toggle-left': {
     name: 'icons-toggle-left',
@@ -20530,7 +20530,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/toggle-left/index.tsx',
@@ -20558,7 +20558,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-toggle-left',
+    command: '@animate-ui/v1/icons-toggle-left',
   },
   'icons-toggle-right': {
     name: 'icons-toggle-right',
@@ -20566,7 +20566,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/toggle-right/index.tsx',
@@ -20594,7 +20594,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-toggle-right',
+    command: '@animate-ui/v1/icons-toggle-right',
   },
   'icons-trash': {
     name: 'icons-trash',
@@ -20602,7 +20602,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/trash/index.tsx',
@@ -20630,7 +20630,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-trash',
+    command: '@animate-ui/v1/icons-trash',
   },
   'icons-trash-2': {
     name: 'icons-trash-2',
@@ -20638,7 +20638,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/trash-2/index.tsx',
@@ -20666,7 +20666,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-trash-2',
+    command: '@animate-ui/v1/icons-trash-2',
   },
   'icons-unplug': {
     name: 'icons-unplug',
@@ -20674,7 +20674,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/unplug/index.tsx',
@@ -20709,7 +20709,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-unplug',
+    command: '@animate-ui/v1/icons-unplug',
   },
   'icons-upload': {
     name: 'icons-upload',
@@ -20717,7 +20717,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/upload/index.tsx',
@@ -20745,7 +20745,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-upload',
+    command: '@animate-ui/v1/icons-upload',
   },
   'icons-user': {
     name: 'icons-user',
@@ -20753,7 +20753,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/user/index.tsx',
@@ -20781,7 +20781,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-user',
+    command: '@animate-ui/v1/icons-user',
   },
   'icons-user-round': {
     name: 'icons-user-round',
@@ -20789,7 +20789,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/user-round/index.tsx',
@@ -20817,7 +20817,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-user-round',
+    command: '@animate-ui/v1/icons-user-round',
   },
   'icons-users': {
     name: 'icons-users',
@@ -20825,7 +20825,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/users/index.tsx',
@@ -20853,7 +20853,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-users',
+    command: '@animate-ui/v1/icons-users',
   },
   'icons-users-round': {
     name: 'icons-users-round',
@@ -20861,7 +20861,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/users-round/index.tsx',
@@ -20889,7 +20889,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-users-round',
+    command: '@animate-ui/v1/icons-users-round',
   },
   'icons-volume-1': {
     name: 'icons-volume-1',
@@ -20897,7 +20897,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/volume-1/index.tsx',
@@ -20925,7 +20925,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-volume-1',
+    command: '@animate-ui/v1/icons-volume-1',
   },
   'icons-volume-2': {
     name: 'icons-volume-2',
@@ -20933,7 +20933,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/volume-2/index.tsx',
@@ -20961,7 +20961,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-volume-2',
+    command: '@animate-ui/v1/icons-volume-2',
   },
   'icons-volume-off': {
     name: 'icons-volume-off',
@@ -20969,7 +20969,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/volume-off/index.tsx',
@@ -20997,7 +20997,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-volume-off',
+    command: '@animate-ui/v1/icons-volume-off',
   },
   'icons-wifi': {
     name: 'icons-wifi',
@@ -21005,7 +21005,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/wifi/index.tsx',
@@ -21033,7 +21033,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-wifi',
+    command: '@animate-ui/v1/icons-wifi',
   },
   'icons-wifi-high': {
     name: 'icons-wifi-high',
@@ -21041,7 +21041,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/wifi-high/index.tsx',
@@ -21069,7 +21069,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-wifi-high',
+    command: '@animate-ui/v1/icons-wifi-high',
   },
   'icons-wifi-low': {
     name: 'icons-wifi-low',
@@ -21077,7 +21077,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/wifi-low/index.tsx',
@@ -21105,7 +21105,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-wifi-low',
+    command: '@animate-ui/v1/icons-wifi-low',
   },
   'icons-wifi-zero': {
     name: 'icons-wifi-zero',
@@ -21113,7 +21113,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/wifi-zero/index.tsx',
@@ -21141,7 +21141,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-wifi-zero',
+    command: '@animate-ui/v1/icons-wifi-zero',
   },
   'icons-x': {
     name: 'icons-x',
@@ -21149,7 +21149,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/icons-icon'],
+    registryDependencies: ['@animate-ui/v1/icons-icon'],
     files: [
       {
         path: 'registry/icons/x/index.tsx',
@@ -21188,7 +21188,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/icons-x',
+    command: '@animate-ui/v1/icons-x',
   },
   'lib-get-strict-context': {
     name: 'lib-get-strict-context',
@@ -21224,7 +21224,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/lib-get-strict-context',
+    command: '@animate-ui/v1/lib-get-strict-context',
   },
   'primitives-animate-avatar-group': {
     name: 'primitives-animate-avatar-group',
@@ -21233,7 +21233,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-tooltip'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-tooltip'],
     files: [
       {
         path: 'registry/primitives/animate/avatar-group/index.tsx',
@@ -21263,7 +21263,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-avatar-group',
+    command: '@animate-ui/v1/primitives-animate-avatar-group',
   },
   'primitives-animate-code-block': {
     name: 'primitives-animate-code-block',
@@ -21272,7 +21272,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['shiki'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/animate/code-block/index.tsx',
@@ -21302,7 +21302,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-code-block',
+    command: '@animate-ui/v1/primitives-animate-code-block',
   },
   'primitives-animate-cursor': {
     name: 'primitives-animate-cursor',
@@ -21312,8 +21312,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21344,7 +21344,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-cursor',
+    command: '@animate-ui/v1/primitives-animate-cursor',
   },
   'primitives-animate-github-stars': {
     name: 'primitives-animate-github-stars',
@@ -21354,11 +21354,11 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/primitives-texts-sliding-number',
-      '@animate-ui/primitives-effects-particles',
-      '@animate-ui/hooks-use-is-in-view',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/primitives-texts-sliding-number',
+      '@animate-ui/v1/primitives-effects-particles',
+      '@animate-ui/v1/hooks-use-is-in-view',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21389,7 +21389,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-github-stars',
+    command: '@animate-ui/v1/primitives-animate-github-stars',
   },
   'primitives-animate-motion-grid': {
     name: 'primitives-animate-motion-grid',
@@ -21398,8 +21398,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21430,7 +21430,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-motion-grid',
+    command: '@animate-ui/v1/primitives-animate-motion-grid',
   },
   'primitives-animate-pinned-list': {
     name: 'primitives-animate-pinned-list',
@@ -21439,7 +21439,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-slot'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-slot'],
     files: [
       {
         path: 'registry/primitives/animate/pinned-list/index.tsx',
@@ -21469,7 +21469,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-pinned-list',
+    command: '@animate-ui/v1/primitives-animate-pinned-list',
   },
   'primitives-animate-scroll-progress': {
     name: 'primitives-animate-scroll-progress',
@@ -21479,9 +21479,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-motion-value-state',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-motion-value-state',
     ],
     files: [
       {
@@ -21512,7 +21512,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-scroll-progress',
+    command: '@animate-ui/v1/primitives-animate-scroll-progress',
   },
   'primitives-animate-slot': {
     name: 'primitives-animate-slot',
@@ -21551,7 +21551,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-slot',
+    command: '@animate-ui/v1/primitives-animate-slot',
   },
   'primitives-animate-spring': {
     name: 'primitives-animate-spring',
@@ -21561,9 +21561,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-motion-value-state',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-motion-value-state',
     ],
     files: [
       {
@@ -21594,7 +21594,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-spring',
+    command: '@animate-ui/v1/primitives-animate-spring',
   },
   'primitives-animate-tabs': {
     name: 'primitives-animate-tabs',
@@ -21604,9 +21604,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21637,7 +21637,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-tabs',
+    command: '@animate-ui/v1/primitives-animate-tabs',
   },
   'primitives-animate-tooltip': {
     name: 'primitives-animate-tooltip',
@@ -21647,8 +21647,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@floating-ui/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21679,7 +21679,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-animate-tooltip',
+    command: '@animate-ui/v1/primitives-animate-tooltip',
   },
   'primitives-base-accordion': {
     name: 'primitives-base-accordion',
@@ -21688,8 +21688,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -21720,7 +21720,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-accordion',
+    command: '@animate-ui/v1/primitives-base-accordion',
   },
   'primitives-base-alert-dialog': {
     name: 'primitives-base-alert-dialog',
@@ -21729,8 +21729,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21761,7 +21761,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-alert-dialog',
+    command: '@animate-ui/v1/primitives-base-alert-dialog',
   },
   'primitives-base-checkbox': {
     name: 'primitives-base-checkbox',
@@ -21770,8 +21770,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -21802,7 +21802,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-checkbox',
+    command: '@animate-ui/v1/primitives-base-checkbox',
   },
   'primitives-base-collapsible': {
     name: 'primitives-base-collapsible',
@@ -21811,8 +21811,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -21843,7 +21843,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-collapsible',
+    command: '@animate-ui/v1/primitives-base-collapsible',
   },
   'primitives-base-dialog': {
     name: 'primitives-base-dialog',
@@ -21852,8 +21852,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -21882,7 +21882,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-dialog',
+    command: '@animate-ui/v1/primitives-base-dialog',
   },
   'primitives-base-files': {
     name: 'primitives-base-files',
@@ -21892,10 +21892,10 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-base-accordion',
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-base-accordion',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -21924,7 +21924,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-files',
+    command: '@animate-ui/v1/primitives-base-files',
   },
   'primitives-base-menu': {
     name: 'primitives-base-menu',
@@ -21934,10 +21934,10 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/hooks-use-data-state',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/hooks-use-data-state',
     ],
     files: [
       {
@@ -21966,7 +21966,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-menu',
+    command: '@animate-ui/v1/primitives-base-menu',
   },
   'primitives-base-popover': {
     name: 'primitives-base-popover',
@@ -21975,8 +21975,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22007,7 +22007,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-popover',
+    command: '@animate-ui/v1/primitives-base-popover',
   },
   'primitives-base-preview-card': {
     name: 'primitives-base-preview-card',
@@ -22017,8 +22017,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22049,7 +22049,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-preview-card',
+    command: '@animate-ui/v1/primitives-base-preview-card',
   },
   'primitives-base-preview-link-card': {
     name: 'primitives-base-preview-link-card',
@@ -22058,8 +22058,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-base-preview-card',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-base-preview-card',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -22090,7 +22090,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-preview-link-card',
+    command: '@animate-ui/v1/primitives-base-preview-link-card',
   },
   'primitives-base-progress': {
     name: 'primitives-base-progress',
@@ -22099,8 +22099,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/primitives-texts-counting-number',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/primitives-texts-counting-number',
     ],
     files: [
       {
@@ -22131,7 +22131,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-progress',
+    command: '@animate-ui/v1/primitives-base-progress',
   },
   'primitives-base-radio': {
     name: 'primitives-base-radio',
@@ -22140,8 +22140,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22170,7 +22170,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-radio',
+    command: '@animate-ui/v1/primitives-base-radio',
   },
   'primitives-base-switch': {
     name: 'primitives-base-switch',
@@ -22179,8 +22179,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22209,7 +22209,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-switch',
+    command: '@animate-ui/v1/primitives-base-switch',
   },
   'primitives-base-tabs': {
     name: 'primitives-base-tabs',
@@ -22219,10 +22219,10 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-auto-height',
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-effects-auto-height',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22251,7 +22251,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-tabs',
+    command: '@animate-ui/v1/primitives-base-tabs',
   },
   'primitives-base-toggle': {
     name: 'primitives-base-toggle',
@@ -22260,8 +22260,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22290,7 +22290,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-toggle',
+    command: '@animate-ui/v1/primitives-base-toggle',
   },
   'primitives-base-toggle-group': {
     name: 'primitives-base-toggle-group',
@@ -22299,9 +22299,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/primitives-effects-highlight',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-effects-highlight',
     ],
     files: [
       {
@@ -22332,7 +22332,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-toggle-group',
+    command: '@animate-ui/v1/primitives-base-toggle-group',
   },
   'primitives-base-tooltip': {
     name: 'primitives-base-tooltip',
@@ -22342,8 +22342,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@base-ui-components/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -22374,7 +22374,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-base-tooltip',
+    command: '@animate-ui/v1/primitives-base-tooltip',
   },
   'primitives-buttons-button': {
     name: 'primitives-buttons-button',
@@ -22382,7 +22382,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-slot'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-slot'],
     files: [
       {
         path: 'registry/primitives/buttons/button/index.tsx',
@@ -22412,7 +22412,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-buttons-button',
+    command: '@animate-ui/v1/primitives-buttons-button',
   },
   'primitives-buttons-flip': {
     name: 'primitives-buttons-flip',
@@ -22421,8 +22421,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
     ],
     files: [
       {
@@ -22453,7 +22453,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-buttons-flip',
+    command: '@animate-ui/v1/primitives-buttons-flip',
   },
   'primitives-buttons-liquid': {
     name: 'primitives-buttons-liquid',
@@ -22462,8 +22462,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
     ],
     files: [
       {
@@ -22494,7 +22494,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-buttons-liquid',
+    command: '@animate-ui/v1/primitives-buttons-liquid',
   },
   'primitives-buttons-ripple': {
     name: 'primitives-buttons-ripple',
@@ -22503,8 +22503,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
     ],
     files: [
       {
@@ -22535,7 +22535,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-buttons-ripple',
+    command: '@animate-ui/v1/primitives-buttons-ripple',
   },
   'primitives-effects-auto-height': {
     name: 'primitives-effects-auto-height',
@@ -22545,8 +22545,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-auto-height',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-auto-height',
     ],
     files: [
       {
@@ -22577,7 +22577,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-auto-height',
+    command: '@animate-ui/v1/primitives-effects-auto-height',
   },
   'primitives-effects-blur': {
     name: 'primitives-effects-blur',
@@ -22587,8 +22587,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-is-in-view',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
     ],
     files: [
       {
@@ -22619,7 +22619,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-blur',
+    command: '@animate-ui/v1/primitives-effects-blur',
   },
   'primitives-effects-click': {
     name: 'primitives-effects-click',
@@ -22658,7 +22658,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-click',
+    command: '@animate-ui/v1/primitives-effects-click',
   },
   'primitives-effects-effect': {
     name: 'primitives-effects-effect',
@@ -22668,8 +22668,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-is-in-view',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
     ],
     files: [
       {
@@ -22700,7 +22700,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-effect',
+    command: '@animate-ui/v1/primitives-effects-effect',
   },
   'primitives-effects-fade': {
     name: 'primitives-effects-fade',
@@ -22710,8 +22710,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-is-in-view',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
     ],
     files: [
       {
@@ -22742,7 +22742,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-fade',
+    command: '@animate-ui/v1/primitives-effects-fade',
   },
   'primitives-effects-highlight': {
     name: 'primitives-effects-highlight',
@@ -22781,7 +22781,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-highlight',
+    command: '@animate-ui/v1/primitives-effects-highlight',
   },
   'primitives-effects-image-zoom': {
     name: 'primitives-effects-image-zoom',
@@ -22819,7 +22819,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-image-zoom',
+    command: '@animate-ui/v1/primitives-effects-image-zoom',
   },
   'primitives-effects-magnetic': {
     name: 'primitives-effects-magnetic',
@@ -22828,7 +22828,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/primitives-animate-slot'],
+    registryDependencies: ['@animate-ui/v1/primitives-animate-slot'],
     files: [
       {
         path: 'registry/primitives/effects/magnetic/index.tsx',
@@ -22858,7 +22858,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-magnetic',
+    command: '@animate-ui/v1/primitives-effects-magnetic',
   },
   'primitives-effects-particles': {
     name: 'primitives-effects-particles',
@@ -22867,9 +22867,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-is-in-view',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -22900,7 +22900,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-particles',
+    command: '@animate-ui/v1/primitives-effects-particles',
   },
   'primitives-effects-shine': {
     name: 'primitives-effects-shine',
@@ -22939,7 +22939,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-shine',
+    command: '@animate-ui/v1/primitives-effects-shine',
   },
   'primitives-effects-slide': {
     name: 'primitives-effects-slide',
@@ -22949,8 +22949,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-is-in-view',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
     ],
     files: [
       {
@@ -22981,7 +22981,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-slide',
+    command: '@animate-ui/v1/primitives-effects-slide',
   },
   'primitives-effects-theme-toggler': {
     name: 'primitives-effects-theme-toggler',
@@ -23019,7 +23019,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-theme-toggler',
+    command: '@animate-ui/v1/primitives-effects-theme-toggler',
   },
   'primitives-effects-tilt': {
     name: 'primitives-effects-tilt',
@@ -23029,8 +23029,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23061,7 +23061,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-tilt',
+    command: '@animate-ui/v1/primitives-effects-tilt',
   },
   'primitives-effects-zoom': {
     name: 'primitives-effects-zoom',
@@ -23071,8 +23071,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-animate-slot',
-      '@animate-ui/hooks-use-is-in-view',
+      '@animate-ui/v1/primitives-animate-slot',
+      '@animate-ui/v1/hooks-use-is-in-view',
     ],
     files: [
       {
@@ -23103,7 +23103,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-effects-zoom',
+    command: '@animate-ui/v1/primitives-effects-zoom',
   },
   'primitives-headless-checkbox': {
     name: 'primitives-headless-checkbox',
@@ -23142,7 +23142,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-headless-checkbox',
+    command: '@animate-ui/v1/primitives-headless-checkbox',
   },
   'primitives-headless-dialog': {
     name: 'primitives-headless-dialog',
@@ -23181,7 +23181,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-headless-dialog',
+    command: '@animate-ui/v1/primitives-headless-dialog',
   },
   'primitives-headless-disclosure': {
     name: 'primitives-headless-disclosure',
@@ -23190,7 +23190,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion', '@headlessui/react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/lib-get-strict-context'],
+    registryDependencies: ['@animate-ui/v1/lib-get-strict-context'],
     files: [
       {
         path: 'registry/primitives/headless/disclosure/index.tsx',
@@ -23220,7 +23220,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-headless-disclosure',
+    command: '@animate-ui/v1/primitives-headless-disclosure',
   },
   'primitives-headless-popover': {
     name: 'primitives-headless-popover',
@@ -23229,7 +23229,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion', '@headlessui/react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/lib-get-strict-context'],
+    registryDependencies: ['@animate-ui/v1/lib-get-strict-context'],
     files: [
       {
         path: 'registry/primitives/headless/popover/index.tsx',
@@ -23259,7 +23259,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-headless-popover',
+    command: '@animate-ui/v1/primitives-headless-popover',
   },
   'primitives-headless-switch': {
     name: 'primitives-headless-switch',
@@ -23268,7 +23268,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion', '@headlessui/react'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/lib-get-strict-context'],
+    registryDependencies: ['@animate-ui/v1/lib-get-strict-context'],
     files: [
       {
         path: 'registry/primitives/headless/switch/index.tsx',
@@ -23298,7 +23298,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-headless-switch',
+    command: '@animate-ui/v1/primitives-headless-switch',
   },
   'primitives-headless-tabs': {
     name: 'primitives-headless-tabs',
@@ -23308,9 +23308,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion', '@headlessui/react'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/primitives-effects-auto-height',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/primitives-effects-auto-height',
     ],
     files: [
       {
@@ -23341,7 +23341,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-headless-tabs',
+    command: '@animate-ui/v1/primitives-headless-tabs',
   },
   'primitives-radix-accordion': {
     name: 'primitives-radix-accordion',
@@ -23351,8 +23351,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23383,7 +23383,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-accordion',
+    command: '@animate-ui/v1/primitives-radix-accordion',
   },
   'primitives-radix-alert-dialog': {
     name: 'primitives-radix-alert-dialog',
@@ -23393,8 +23393,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23425,7 +23425,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-alert-dialog',
+    command: '@animate-ui/v1/primitives-radix-alert-dialog',
   },
   'primitives-radix-checkbox': {
     name: 'primitives-radix-checkbox',
@@ -23435,8 +23435,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23467,7 +23467,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-checkbox',
+    command: '@animate-ui/v1/primitives-radix-checkbox',
   },
   'primitives-radix-collapsible': {
     name: 'primitives-radix-collapsible',
@@ -23476,8 +23476,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -23508,7 +23508,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-collapsible',
+    command: '@animate-ui/v1/primitives-radix-collapsible',
   },
   'primitives-radix-dialog': {
     name: 'primitives-radix-dialog',
@@ -23518,8 +23518,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23550,7 +23550,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-dialog',
+    command: '@animate-ui/v1/primitives-radix-dialog',
   },
   'primitives-radix-dropdown-menu': {
     name: 'primitives-radix-dropdown-menu',
@@ -23560,10 +23560,10 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/hooks-use-data-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/hooks-use-data-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23594,7 +23594,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-dropdown-menu',
+    command: '@animate-ui/v1/primitives-radix-dropdown-menu',
   },
   'primitives-radix-files': {
     name: 'primitives-radix-files',
@@ -23604,10 +23604,10 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-radix-accordion',
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-radix-accordion',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -23636,7 +23636,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-files',
+    command: '@animate-ui/v1/primitives-radix-files',
   },
   'primitives-radix-hover-card': {
     name: 'primitives-radix-hover-card',
@@ -23646,8 +23646,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23678,7 +23678,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-hover-card',
+    command: '@animate-ui/v1/primitives-radix-hover-card',
   },
   'primitives-radix-popover': {
     name: 'primitives-radix-popover',
@@ -23687,8 +23687,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23719,7 +23719,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-popover',
+    command: '@animate-ui/v1/primitives-radix-popover',
   },
   'primitives-radix-preview-link-card': {
     name: 'primitives-radix-preview-link-card',
@@ -23728,8 +23728,8 @@ export const index: Record<string, any> = {
     dependencies: ['radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-radix-hover-card',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/primitives-radix-hover-card',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -23760,7 +23760,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-preview-link-card',
+    command: '@animate-ui/v1/primitives-radix-preview-link-card',
   },
   'primitives-radix-progress': {
     name: 'primitives-radix-progress',
@@ -23769,7 +23769,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/lib-get-strict-context'],
+    registryDependencies: ['@animate-ui/v1/lib-get-strict-context'],
     files: [
       {
         path: 'registry/primitives/radix/progress/index.tsx',
@@ -23799,7 +23799,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-progress',
+    command: '@animate-ui/v1/primitives-radix-progress',
   },
   'primitives-radix-radio-group': {
     name: 'primitives-radix-radio-group',
@@ -23809,8 +23809,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -23841,7 +23841,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-radio-group',
+    command: '@animate-ui/v1/primitives-radix-radio-group',
   },
   'primitives-radix-sheet': {
     name: 'primitives-radix-sheet',
@@ -23851,8 +23851,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -23881,7 +23881,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-sheet',
+    command: '@animate-ui/v1/primitives-radix-sheet',
   },
   'primitives-radix-switch': {
     name: 'primitives-radix-switch',
@@ -23891,8 +23891,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -23923,7 +23923,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-switch',
+    command: '@animate-ui/v1/primitives-radix-switch',
   },
   'primitives-radix-tabs': {
     name: 'primitives-radix-tabs',
@@ -23933,10 +23933,10 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/primitives-effects-auto-height',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/primitives-effects-auto-height',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -23965,7 +23965,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-tabs',
+    command: '@animate-ui/v1/primitives-radix-tabs',
   },
   'primitives-radix-toggle': {
     name: 'primitives-radix-toggle',
@@ -23974,8 +23974,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -24006,7 +24006,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-toggle',
+    command: '@animate-ui/v1/primitives-radix-toggle',
   },
   'primitives-radix-toggle-group': {
     name: 'primitives-radix-toggle-group',
@@ -24015,9 +24015,9 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/primitives-effects-highlight',
-      '@animate-ui/lib-get-strict-context',
-      '@animate-ui/hooks-use-controlled-state',
+      '@animate-ui/v1/primitives-effects-highlight',
+      '@animate-ui/v1/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
     ],
     files: [
       {
@@ -24048,7 +24048,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-toggle-group',
+    command: '@animate-ui/v1/primitives-radix-toggle-group',
   },
   'primitives-radix-tooltip': {
     name: 'primitives-radix-tooltip',
@@ -24058,8 +24058,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion', 'radix-ui'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-controlled-state',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-controlled-state',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -24090,7 +24090,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-radix-tooltip',
+    command: '@animate-ui/v1/primitives-radix-tooltip',
   },
   'primitives-texts-counting-number': {
     name: 'primitives-texts-counting-number',
@@ -24098,7 +24098,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/counting-number/index.tsx',
@@ -24128,7 +24128,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-counting-number',
+    command: '@animate-ui/v1/primitives-texts-counting-number',
   },
   'primitives-texts-gradient': {
     name: 'primitives-texts-gradient',
@@ -24166,7 +24166,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-gradient',
+    command: '@animate-ui/v1/primitives-texts-gradient',
   },
   'primitives-texts-highlight': {
     name: 'primitives-texts-highlight',
@@ -24174,7 +24174,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/highlight/index.tsx',
@@ -24204,7 +24204,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-highlight',
+    command: '@animate-ui/v1/primitives-texts-highlight',
   },
   'primitives-texts-morphing': {
     name: 'primitives-texts-morphing',
@@ -24213,7 +24213,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/morphing/index.tsx',
@@ -24243,7 +24243,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-morphing',
+    command: '@animate-ui/v1/primitives-texts-morphing',
   },
   'primitives-texts-rolling': {
     name: 'primitives-texts-rolling',
@@ -24251,7 +24251,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/rolling/index.tsx',
@@ -24281,7 +24281,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-rolling',
+    command: '@animate-ui/v1/primitives-texts-rolling',
   },
   'primitives-texts-rotating': {
     name: 'primitives-texts-rotating',
@@ -24290,8 +24290,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-is-in-view',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-is-in-view',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -24322,7 +24322,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-rotating',
+    command: '@animate-ui/v1/primitives-texts-rotating',
   },
   'primitives-texts-scrolling-number': {
     name: 'primitives-texts-scrolling-number',
@@ -24331,8 +24331,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-is-in-view',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-is-in-view',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -24363,7 +24363,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-scrolling-number',
+    command: '@animate-ui/v1/primitives-texts-scrolling-number',
   },
   'primitives-texts-shimmering': {
     name: 'primitives-texts-shimmering',
@@ -24371,7 +24371,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/shimmering/index.tsx',
@@ -24401,7 +24401,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-shimmering',
+    command: '@animate-ui/v1/primitives-texts-shimmering',
   },
   'primitives-texts-sliding-number': {
     name: 'primitives-texts-sliding-number',
@@ -24409,7 +24409,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion', 'react-use-measure'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/sliding-number/index.tsx',
@@ -24439,7 +24439,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-sliding-number',
+    command: '@animate-ui/v1/primitives-texts-sliding-number',
   },
   'primitives-texts-splitting': {
     name: 'primitives-texts-splitting',
@@ -24447,7 +24447,7 @@ export const index: Record<string, any> = {
     type: 'registry:ui',
     dependencies: ['motion'],
     devDependencies: undefined,
-    registryDependencies: ['@animate-ui/hooks-use-is-in-view'],
+    registryDependencies: ['@animate-ui/v1/hooks-use-is-in-view'],
     files: [
       {
         path: 'registry/primitives/texts/splitting/index.tsx',
@@ -24477,7 +24477,7 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-splitting',
+    command: '@animate-ui/v1/primitives-texts-splitting',
   },
   'primitives-texts-typing': {
     name: 'primitives-texts-typing',
@@ -24486,8 +24486,8 @@ export const index: Record<string, any> = {
     dependencies: ['motion'],
     devDependencies: undefined,
     registryDependencies: [
-      '@animate-ui/hooks-use-is-in-view',
-      '@animate-ui/lib-get-strict-context',
+      '@animate-ui/v1/hooks-use-is-in-view',
+      '@animate-ui/v1/lib-get-strict-context',
     ],
     files: [
       {
@@ -24518,6 +24518,6 @@ export const index: Record<string, any> = {
       LazyComp.demoProps = {};
       return LazyComp;
     })(),
-    command: '@animate-ui/primitives-texts-typing',
+    command: '@animate-ui/v1/primitives-texts-typing',
   },
 };

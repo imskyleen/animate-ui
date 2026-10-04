@@ -4,7 +4,7 @@
   "title": "Menu Checkbox Demo",
   "description": "Demo showing a menu checkbox.",
   "registryDependencies": [
-    "@animate-ui/components-base-menu"
+    "@animate-ui/v1/components-base-menu"
   ],
   "files": [
     {

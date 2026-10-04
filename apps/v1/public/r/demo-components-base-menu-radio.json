@@ -4,7 +4,7 @@
   "title": "Menu Radio Demo",
   "description": "Demo showing a menu radio.",
   "registryDependencies": [
-    "@animate-ui/components-base-menu"
+    "@animate-ui/v1/components-base-menu"
   ],
   "files": [
     {

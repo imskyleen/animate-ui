@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Ripple Button Demo",
   "description": "Demo showing a ripple button.",
-  "registryDependencies": ["@animate-ui/primitives-buttons-ripple"],
+  "registryDependencies": ["@animate-ui/v1/primitives-buttons-ripple"],
   "files": [
     {
       "path": "registry/demo/primitives/buttons/ripple/index.tsx",

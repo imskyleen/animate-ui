@@ -4,7 +4,7 @@
   "title": "Blur Demo",
   "description": "Demo showing an animated blur.",
   "registryDependencies": [
-    "@animate-ui/primitives-effects-blur"
+    "@animate-ui/v1/primitives-effects-blur"
   ],
   "files": [
     {

@@ -5,7 +5,7 @@
   "title": "Liquid Button",
   "description": "A button that fills on hover.",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["@animate-ui/primitives-buttons-liquid"],
+  "registryDependencies": ["@animate-ui/v1/primitives-buttons-liquid"],
   "files": [
     {
       "path": "registry/components/buttons/liquid/index.tsx",

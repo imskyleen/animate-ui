@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Animate Scroll Progress Demo",
   "description": "Demo showing an animated scroll progress.",
-  "registryDependencies": ["@animate-ui/primitives-animate-scroll-progress"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-scroll-progress"],
   "files": [
     {
       "path": "registry/demo/primitives/animate/scroll-progress/index.tsx",

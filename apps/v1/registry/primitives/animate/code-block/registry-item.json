@@ -5,7 +5,7 @@
   "title": "Code Block",
   "description": "A code block component that animates the code as it is written.",
   "dependencies": ["shiki"],
-  "registryDependencies": ["@animate-ui/hooks-use-is-in-view"],
+  "registryDependencies": ["@animate-ui/v1/hooks-use-is-in-view"],
   "files": [
     {
       "path": "registry/primitives/animate/code-block/index.tsx",

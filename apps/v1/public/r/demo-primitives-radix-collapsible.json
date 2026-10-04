@@ -4,7 +4,7 @@
   "title": "Radix Collapsible Demo",
   "description": "Demo showing an animated radix collapsible.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-collapsible"
+    "@animate-ui/v1/primitives-radix-collapsible"
   ],
   "files": [
     {

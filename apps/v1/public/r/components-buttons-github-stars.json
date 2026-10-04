@@ -7,8 +7,8 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-buttons-button",
-    "@animate-ui/primitives-animate-github-stars"
+    "@animate-ui/v1/primitives-buttons-button",
+    "@animate-ui/v1/primitives-animate-github-stars"
   ],
   "files": [
     {

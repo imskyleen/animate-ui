@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Dialog Demo",
   "description": "Demo showing a dialog.",
-  "registryDependencies": ["@animate-ui/components-base-dialog"],
+  "registryDependencies": ["@animate-ui/v1/components-base-dialog"],
   "files": [
     {
       "path": "registry/demo/components/base/dialog/index.tsx",

@@ -4,7 +4,7 @@
   "title": "Morphing Text Demo",
   "description": "Demo showing an animated morphing text.",
   "registryDependencies": [
-    "@animate-ui/primitives-texts-morphing"
+    "@animate-ui/v1/primitives-texts-morphing"
   ],
   "files": [
     {

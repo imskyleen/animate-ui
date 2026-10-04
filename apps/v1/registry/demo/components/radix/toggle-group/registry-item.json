@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Toggle Group Demo",
   "description": "Demo showing a radix toggle group.",
-  "registryDependencies": ["@animate-ui/components-radix-toggle-group"],
+  "registryDependencies": ["@animate-ui/v1/components-radix-toggle-group"],
   "files": [
     {
       "path": "registry/demo/components/radix/toggle-group/index.tsx",

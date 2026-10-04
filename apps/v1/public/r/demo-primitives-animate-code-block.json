@@ -4,7 +4,7 @@
   "title": "Animate Code Block Demo",
   "description": "Demo showing an animated code block.",
   "registryDependencies": [
-    "@animate-ui/primitives-animate-code-block"
+    "@animate-ui/v1/primitives-animate-code-block"
   ],
   "files": [
     {

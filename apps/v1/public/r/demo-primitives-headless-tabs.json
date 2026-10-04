@@ -4,7 +4,7 @@
   "title": "Headless Tabs Demo",
   "description": "Demo showing an animated headless tabs.",
   "registryDependencies": [
-    "@animate-ui/primitives-headless-tabs"
+    "@animate-ui/v1/primitives-headless-tabs"
   ],
   "files": [
     {

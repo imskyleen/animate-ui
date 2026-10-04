@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Collapsible Demo",
   "description": "Demo showing an animated base collapsible.",
-  "registryDependencies": ["@animate-ui/primitives-base-collapsible"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-collapsible"],
   "files": [
     {
       "path": "registry/demo/primitives/base/collapsible/index.tsx",

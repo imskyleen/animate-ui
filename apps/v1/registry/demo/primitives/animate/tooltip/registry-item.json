@@ -5,7 +5,7 @@
   "title": "Animate Tooltip Demo",
   "description": "Demo showing an animated tooltip.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/primitives-animate-tooltip"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-tooltip"],
   "files": [
     {
       "path": "registry/demo/primitives/animate/tooltip/index.tsx",

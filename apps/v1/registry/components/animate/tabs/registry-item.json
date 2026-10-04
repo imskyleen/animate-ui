@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Tabs",
   "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  "registryDependencies": ["@animate-ui/primitives-animate-tabs"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-tabs"],
   "files": [
     {
       "path": "registry/components/animate/tabs/index.tsx",

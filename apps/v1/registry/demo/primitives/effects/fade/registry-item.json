@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Fade Demo",
   "description": "Demo showing an animated fade.",
-  "registryDependencies": ["@animate-ui/primitives-effects-fade"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-fade"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/fade/index.tsx",

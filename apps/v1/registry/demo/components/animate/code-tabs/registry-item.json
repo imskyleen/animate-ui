@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Code Tabs Demo",
   "description": "Demo showing a code tabs.",
-  "registryDependencies": ["@animate-ui/components-animate-code-tabs"],
+  "registryDependencies": ["@animate-ui/v1/components-animate-code-tabs"],
   "files": [
     {
       "path": "registry/demo/components/animate/code-tabs/index.tsx",

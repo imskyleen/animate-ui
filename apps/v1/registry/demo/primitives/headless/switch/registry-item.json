@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Headless Switch Demo",
   "description": "Demo showing an animated headless switch.",
-  "registryDependencies": ["@animate-ui/primitives-headless-switch"],
+  "registryDependencies": ["@animate-ui/v1/primitives-headless-switch"],
   "files": [
     {
       "path": "registry/demo/primitives/headless/switch/index.tsx",

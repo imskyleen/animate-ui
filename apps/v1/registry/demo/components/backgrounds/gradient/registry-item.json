@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Gradient Background Demo",
   "description": "Demo showing a gradient background.",
-  "registryDependencies": ["@animate-ui/components-backgrounds-gradient"],
+  "registryDependencies": ["@animate-ui/v1/components-backgrounds-gradient"],
   "files": [
     {
       "path": "registry/demo/components/backgrounds/gradient/index.tsx",

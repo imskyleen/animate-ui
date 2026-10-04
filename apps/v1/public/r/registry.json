@@ -26,7 +26,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-avatar-group"
+        "@animate-ui/v1/primitives-animate-avatar-group"
       ],
       "files": [
         {
@@ -45,9 +45,9 @@
         "next-themes"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-code-block",
-        "@animate-ui/components-buttons-copy",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-code-block",
+        "@animate-ui/v1/components-buttons-copy",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -66,8 +66,8 @@
         "shiki"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-tabs",
-        "@animate-ui/components-buttons-copy"
+        "@animate-ui/v1/primitives-animate-tabs",
+        "@animate-ui/v1/components-buttons-copy"
       ],
       "files": [
         {
@@ -83,7 +83,7 @@
       "title": "Cursor",
       "description": "An animated cursor component that allows you to customize both the cursor and cursor follow elements with smooth animations.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-cursor"
+        "@animate-ui/v1/primitives-animate-cursor"
       ],
       "files": [
         {
@@ -102,8 +102,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-particles",
-        "@animate-ui/primitives-texts-scrolling-number"
+        "@animate-ui/v1/primitives-effects-particles",
+        "@animate-ui/v1/primitives-texts-scrolling-number"
       ],
       "files": [
         {
@@ -119,7 +119,7 @@
       "title": "Tabs",
       "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-tabs"
+        "@animate-ui/v1/primitives-animate-tabs"
       ],
       "files": [
         {
@@ -138,7 +138,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-tooltip"
+        "@animate-ui/v1/primitives-animate-tooltip"
       ],
       "files": [
         {
@@ -263,7 +263,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-accordion"
+        "@animate-ui/v1/primitives-base-accordion"
       ],
       "files": [
         {
@@ -279,8 +279,8 @@
       "title": "Alert Dialog",
       "description": "A dialog that requires user response to proceed.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-alert-dialog",
-        "@animate-ui/components-buttons-button"
+        "@animate-ui/v1/primitives-base-alert-dialog",
+        "@animate-ui/v1/components-buttons-button"
       ],
       "files": [
         {
@@ -299,7 +299,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-checkbox"
+        "@animate-ui/v1/primitives-base-checkbox"
       ],
       "files": [
         {
@@ -318,7 +318,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-dialog"
+        "@animate-ui/v1/primitives-base-dialog"
       ],
       "files": [
         {
@@ -337,7 +337,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-files"
+        "@animate-ui/v1/primitives-base-files"
       ],
       "files": [
         {
@@ -353,7 +353,7 @@
       "title": "Menu",
       "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-menu"
+        "@animate-ui/v1/primitives-base-menu"
       ],
       "files": [
         {
@@ -369,7 +369,7 @@
       "title": "Popover",
       "description": "An accessible popup anchored to a button.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-popover"
+        "@animate-ui/v1/primitives-base-popover"
       ],
       "files": [
         {
@@ -385,7 +385,7 @@
       "title": "Preview Card",
       "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-preview-card"
+        "@animate-ui/v1/primitives-base-preview-card"
       ],
       "files": [
         {
@@ -401,7 +401,7 @@
       "title": "Preview Link Card",
       "description": "Displays a preview image of a link when hovered.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-preview-card"
+        "@animate-ui/v1/primitives-base-preview-card"
       ],
       "files": [
         {
@@ -417,7 +417,7 @@
       "title": "Progress",
       "description": "Displays the status of a task that takes a long time.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-progress"
+        "@animate-ui/v1/primitives-base-progress"
       ],
       "files": [
         {
@@ -436,7 +436,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-radio"
+        "@animate-ui/v1/primitives-base-radio"
       ],
       "files": [
         {
@@ -452,7 +452,7 @@
       "title": "Switch",
       "description": "A control that indicates whether a setting is on or off.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-switch"
+        "@animate-ui/v1/primitives-base-switch"
       ],
       "files": [
         {
@@ -468,7 +468,7 @@
       "title": "Tabs",
       "description": "A component for toggling between related panels on the same page.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-tabs"
+        "@animate-ui/v1/primitives-base-tabs"
       ],
       "files": [
         {
@@ -484,7 +484,7 @@
       "title": "Toggle",
       "description": "A two-state button that can be on or off.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-toggle"
+        "@animate-ui/v1/primitives-base-toggle"
       ],
       "files": [
         {
@@ -500,7 +500,7 @@
       "title": "Toggle Group",
       "description": "Provides a shared state to a series of toggle buttons.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-toggle-group"
+        "@animate-ui/v1/primitives-base-toggle-group"
       ],
       "files": [
         {
@@ -516,7 +516,7 @@
       "title": "Tooltip",
       "description": "A popup that appears when an element is hovered or focused, showing a hint for sighted users.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-tooltip"
+        "@animate-ui/v1/primitives-base-tooltip"
       ],
       "files": [
         {
@@ -535,7 +535,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button"
+        "@animate-ui/v1/primitives-buttons-button"
       ],
       "files": [
         {
@@ -556,8 +556,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/primitives-buttons-button",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -576,8 +576,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-button",
-        "@animate-ui/primitives-buttons-flip"
+        "@animate-ui/v1/components-buttons-button",
+        "@animate-ui/v1/primitives-buttons-flip"
       ],
       "files": [
         {
@@ -596,8 +596,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button",
-        "@animate-ui/primitives-animate-github-stars"
+        "@animate-ui/v1/primitives-buttons-button",
+        "@animate-ui/v1/primitives-animate-github-stars"
       ],
       "files": [
         {
@@ -616,8 +616,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button",
-        "@animate-ui/primitives-effects-particles"
+        "@animate-ui/v1/primitives-buttons-button",
+        "@animate-ui/v1/primitives-effects-particles"
       ],
       "files": [
         {
@@ -636,7 +636,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-liquid"
+        "@animate-ui/v1/primitives-buttons-liquid"
       ],
       "files": [
         {
@@ -655,8 +655,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-button",
-        "@animate-ui/primitives-buttons-ripple"
+        "@animate-ui/v1/components-buttons-button",
+        "@animate-ui/v1/primitives-buttons-ripple"
       ],
       "files": [
         {
@@ -677,8 +677,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-theme-toggler",
-        "@animate-ui/components-buttons-icon"
+        "@animate-ui/v1/primitives-effects-theme-toggler",
+        "@animate-ui/v1/components-buttons-icon"
       ],
       "files": [
         {
@@ -716,7 +716,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-texts-sliding-number"
+        "@animate-ui/v1/primitives-texts-sliding-number"
       ],
       "files": [
         {
@@ -738,7 +738,7 @@
         "embla-carousel-react"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-button"
+        "@animate-ui/v1/components-buttons-button"
       ],
       "files": [
         {
@@ -791,7 +791,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-checkbox"
+        "@animate-ui/v1/primitives-radix-checkbox"
       ],
       "files": [
         {
@@ -882,7 +882,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/components-animate-tooltip"
+        "@animate-ui/v1/components-animate-tooltip"
       ],
       "files": [
         {
@@ -901,7 +901,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-headless-disclosure"
+        "@animate-ui/v1/primitives-headless-disclosure"
       ],
       "files": [
         {
@@ -921,7 +921,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-headless-checkbox"
+        "@animate-ui/v1/primitives-headless-checkbox"
       ],
       "files": [
         {
@@ -941,7 +941,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-headless-dialog"
+        "@animate-ui/v1/primitives-headless-dialog"
       ],
       "files": [
         {
@@ -957,7 +957,7 @@
       "title": "Popover",
       "description": "Popovers are perfect for floating panels with arbitrary content like navigation menus, mobile menus and flyout menus.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-popover"
+        "@animate-ui/v1/primitives-headless-popover"
       ],
       "files": [
         {
@@ -973,7 +973,7 @@
       "title": "Switch",
       "description": "Switches are a pleasant interface for toggling a value between two states, and offer the same semantics and keyboard navigation as native checkbox elements.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-switch"
+        "@animate-ui/v1/primitives-headless-switch"
       ],
       "files": [
         {
@@ -992,7 +992,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-headless-tabs"
+        "@animate-ui/v1/primitives-headless-tabs"
       ],
       "files": [
         {
@@ -1011,7 +1011,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-accordion"
+        "@animate-ui/v1/primitives-radix-accordion"
       ],
       "files": [
         {
@@ -1027,8 +1027,8 @@
       "title": "Alert Dialog",
       "description": "A modal dialog that interrupts the user with important content and expects a response.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-alert-dialog",
-        "@animate-ui/components-buttons-button"
+        "@animate-ui/v1/primitives-radix-alert-dialog",
+        "@animate-ui/v1/components-buttons-button"
       ],
       "files": [
         {
@@ -1047,7 +1047,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-checkbox"
+        "@animate-ui/v1/primitives-radix-checkbox"
       ],
       "files": [
         {
@@ -1066,7 +1066,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-dialog"
+        "@animate-ui/v1/primitives-radix-dialog"
       ],
       "files": [
         {
@@ -1085,7 +1085,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-dropdown-menu"
+        "@animate-ui/v1/primitives-radix-dropdown-menu"
       ],
       "files": [
         {
@@ -1104,7 +1104,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-files"
+        "@animate-ui/v1/primitives-radix-files"
       ],
       "files": [
         {
@@ -1120,7 +1120,7 @@
       "title": "Hover Card",
       "description": "For sighted users to preview content available behind a link.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-hover-card"
+        "@animate-ui/v1/primitives-radix-hover-card"
       ],
       "files": [
         {
@@ -1136,7 +1136,7 @@
       "title": "Popover",
       "description": "Displays rich content in a portal, triggered by a button.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-popover"
+        "@animate-ui/v1/primitives-radix-popover"
       ],
       "files": [
         {
@@ -1152,7 +1152,7 @@
       "title": "Preview Link Card",
       "description": "Displays a preview image of a link when hovered.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-preview-link-card"
+        "@animate-ui/v1/primitives-radix-preview-link-card"
       ],
       "files": [
         {
@@ -1168,7 +1168,7 @@
       "title": "Progress",
       "description": "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-progress"
+        "@animate-ui/v1/primitives-radix-progress"
       ],
       "files": [
         {
@@ -1187,7 +1187,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-radio-group"
+        "@animate-ui/v1/primitives-radix-radio-group"
       ],
       "files": [
         {
@@ -1206,7 +1206,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-sheet"
+        "@animate-ui/v1/primitives-radix-sheet"
       ],
       "files": [
         {
@@ -1228,8 +1228,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-checkbox",
-        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/v1/primitives-radix-checkbox",
+        "@animate-ui/v1/lib-get-strict-context",
         "button",
         "input",
         "separator",
@@ -1250,7 +1250,7 @@
       "title": "Switch",
       "description": "A control that allows the user to toggle between checked and not checked.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-switch"
+        "@animate-ui/v1/primitives-radix-switch"
       ],
       "files": [
         {
@@ -1266,7 +1266,7 @@
       "title": "Tabs",
       "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-tabs"
+        "@animate-ui/v1/primitives-radix-tabs"
       ],
       "files": [
         {
@@ -1285,7 +1285,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-toggle"
+        "@animate-ui/v1/primitives-radix-toggle"
       ],
       "files": [
         {
@@ -1304,9 +1304,9 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-toggle-group",
-        "@animate-ui/components-radix-toggle",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-radix-toggle-group",
+        "@animate-ui/v1/components-radix-toggle",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -1322,7 +1322,7 @@
       "title": "Tooltip",
       "description": "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-tooltip"
+        "@animate-ui/v1/primitives-radix-tooltip"
       ],
       "files": [
         {
@@ -1338,7 +1338,7 @@
       "title": "Avatar Group Demo",
       "description": "Demo showing a avatar group.",
       "registryDependencies": [
-        "@animate-ui/components-animate-avatar-group"
+        "@animate-ui/v1/components-animate-avatar-group"
       ],
       "files": [
         {
@@ -1354,7 +1354,7 @@
       "title": "Code Demo",
       "description": "Demo showing a code.",
       "registryDependencies": [
-        "@animate-ui/components-animate-code"
+        "@animate-ui/v1/components-animate-code"
       ],
       "files": [
         {
@@ -1394,7 +1394,7 @@
       "title": "Code Tabs Demo",
       "description": "Demo showing a code tabs.",
       "registryDependencies": [
-        "@animate-ui/components-animate-code-tabs"
+        "@animate-ui/v1/components-animate-code-tabs"
       ],
       "files": [
         {
@@ -1410,7 +1410,7 @@
       "title": "Cursor Demo",
       "description": "Demo showing a cursor.",
       "registryDependencies": [
-        "@animate-ui/components-animate-cursor"
+        "@animate-ui/v1/components-animate-cursor"
       ],
       "files": [
         {
@@ -1466,7 +1466,7 @@
       "title": "Animate GitHub Stars Wheel Demo",
       "description": "Demo showing an animated github stars wheel.",
       "registryDependencies": [
-        "@animate-ui/components-animate-github-stars-wheel"
+        "@animate-ui/v1/components-animate-github-stars-wheel"
       ],
       "files": [
         {
@@ -1509,7 +1509,7 @@
       "title": "Animate Tabs Demo",
       "description": "Demo showing an animated tabs.",
       "registryDependencies": [
-        "@animate-ui/components-animate-tabs"
+        "@animate-ui/v1/components-animate-tabs"
       ],
       "files": [
         {
@@ -1525,7 +1525,7 @@
       "title": "Animate Tooltip Demo",
       "description": "Demo showing an animated tooltip.",
       "registryDependencies": [
-        "@animate-ui/components-animate-tooltip"
+        "@animate-ui/v1/components-animate-tooltip"
       ],
       "files": [
         {
@@ -1578,7 +1578,7 @@
       "title": "Bubble Background Demo",
       "description": "Demo showing a bubble background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-bubble"
+        "@animate-ui/v1/components-backgrounds-bubble"
       ],
       "files": [
         {
@@ -1603,7 +1603,7 @@
       "title": "Fireworks Background Demo",
       "description": "Demo showing a fireworks background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-fireworks"
+        "@animate-ui/v1/components-backgrounds-fireworks"
       ],
       "files": [
         {
@@ -1631,7 +1631,7 @@
       "title": "Fireworks Circle Background Demo",
       "description": "Demo showing a fireworks circle background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-fireworks"
+        "@animate-ui/v1/components-backgrounds-fireworks"
       ],
       "files": [
         {
@@ -1683,7 +1683,7 @@
       "title": "Gradient Background Demo",
       "description": "Demo showing a gradient background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-gradient"
+        "@animate-ui/v1/components-backgrounds-gradient"
       ],
       "files": [
         {
@@ -1699,7 +1699,7 @@
       "title": "Gravity Stars Background Demo",
       "description": "Demo showing a gravity stars background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-gravity-stars"
+        "@animate-ui/v1/components-backgrounds-gravity-stars"
       ],
       "files": [
         {
@@ -1715,7 +1715,7 @@
       "title": "Hexagon Background Demo",
       "description": "Demo showing a hexagon background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-hexagon"
+        "@animate-ui/v1/components-backgrounds-hexagon"
       ],
       "files": [
         {
@@ -1731,7 +1731,7 @@
       "title": "Hole Background Demo",
       "description": "Demo showing a hole background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-hole"
+        "@animate-ui/v1/components-backgrounds-hole"
       ],
       "files": [
         {
@@ -1747,7 +1747,7 @@
       "title": "Stars Background Demo",
       "description": "Demo showing a stars background.",
       "registryDependencies": [
-        "@animate-ui/components-backgrounds-stars"
+        "@animate-ui/v1/components-backgrounds-stars"
       ],
       "files": [
         {
@@ -1763,7 +1763,7 @@
       "title": "Accordion Demo",
       "description": "Demo showing a accordion.",
       "registryDependencies": [
-        "@animate-ui/components-base-accordion"
+        "@animate-ui/v1/components-base-accordion"
       ],
       "files": [
         {
@@ -1798,7 +1798,7 @@
       "title": "Alert Dialog Demo",
       "description": "Demo showing a alert dialog.",
       "registryDependencies": [
-        "@animate-ui/components-base-alert-dialog"
+        "@animate-ui/v1/components-base-alert-dialog"
       ],
       "files": [
         {
@@ -1829,7 +1829,7 @@
       "title": "Checkbox Demo",
       "description": "Demo showing a checkbox.",
       "registryDependencies": [
-        "@animate-ui/components-base-checkbox"
+        "@animate-ui/v1/components-base-checkbox"
       ],
       "files": [
         {
@@ -1869,7 +1869,7 @@
       "title": "Dialog Demo",
       "description": "Demo showing a dialog.",
       "registryDependencies": [
-        "@animate-ui/components-base-dialog"
+        "@animate-ui/v1/components-base-dialog"
       ],
       "files": [
         {
@@ -1903,7 +1903,7 @@
       "title": "Files Demo",
       "description": "Demo showing a files.",
       "registryDependencies": [
-        "@animate-ui/components-base-files"
+        "@animate-ui/v1/components-base-files"
       ],
       "files": [
         {
@@ -1919,7 +1919,7 @@
       "title": "Menu Demo",
       "description": "Demo showing a menu.",
       "registryDependencies": [
-        "@animate-ui/components-base-menu"
+        "@animate-ui/v1/components-base-menu"
       ],
       "files": [
         {
@@ -1966,7 +1966,7 @@
       "title": "Menu Checkbox Demo",
       "description": "Demo showing a menu checkbox.",
       "registryDependencies": [
-        "@animate-ui/components-base-menu"
+        "@animate-ui/v1/components-base-menu"
       ],
       "files": [
         {
@@ -2013,7 +2013,7 @@
       "title": "Menu Radio Demo",
       "description": "Demo showing a menu radio.",
       "registryDependencies": [
-        "@animate-ui/components-base-menu"
+        "@animate-ui/v1/components-base-menu"
       ],
       "files": [
         {
@@ -2060,7 +2060,7 @@
       "title": "Popover Demo",
       "description": "Demo showing a popover.",
       "registryDependencies": [
-        "@animate-ui/components-base-popover"
+        "@animate-ui/v1/components-base-popover"
       ],
       "files": [
         {
@@ -2105,7 +2105,7 @@
       "title": "Preview Card Demo",
       "description": "Demo showing a preview card.",
       "registryDependencies": [
-        "@animate-ui/components-base-preview-card"
+        "@animate-ui/v1/components-base-preview-card"
       ],
       "files": [
         {
@@ -2163,7 +2163,7 @@
       "title": "Preview Link Card Demo",
       "description": "Demo showing a preview link card.",
       "registryDependencies": [
-        "@animate-ui/components-base-preview-link-card"
+        "@animate-ui/v1/components-base-preview-link-card"
       ],
       "files": [
         {
@@ -2224,7 +2224,7 @@
       "title": "Progress Demo",
       "description": "Demo showing a progress bar.",
       "registryDependencies": [
-        "@animate-ui/components-base-progress"
+        "@animate-ui/v1/components-base-progress"
       ],
       "files": [
         {
@@ -2240,7 +2240,7 @@
       "title": "Base Radio Demo",
       "description": "Demo showing a base radio.",
       "registryDependencies": [
-        "@animate-ui/components-base-radio"
+        "@animate-ui/v1/components-base-radio"
       ],
       "files": [
         {
@@ -2256,7 +2256,7 @@
       "title": "Switch Demo",
       "description": "Demo showing a switch.",
       "registryDependencies": [
-        "@animate-ui/components-base-switch"
+        "@animate-ui/v1/components-base-switch"
       ],
       "files": [
         {
@@ -2272,7 +2272,7 @@
       "title": "Base Tabs Demo",
       "description": "Demo showing a base tabs.",
       "registryDependencies": [
-        "@animate-ui/components-base-tabs"
+        "@animate-ui/v1/components-base-tabs"
       ],
       "files": [
         {
@@ -2288,7 +2288,7 @@
       "title": "Toggle Demo",
       "description": "Demo showing a toggle.",
       "registryDependencies": [
-        "@animate-ui/components-base-toggle"
+        "@animate-ui/v1/components-base-toggle"
       ],
       "files": [
         {
@@ -2326,7 +2326,7 @@
       "title": "Toggle Group Demo",
       "description": "Demo showing a toggle group.",
       "registryDependencies": [
-        "@animate-ui/components-base-toggle-group"
+        "@animate-ui/v1/components-base-toggle-group"
       ],
       "files": [
         {
@@ -2367,7 +2367,7 @@
       "title": "Tooltip Demo",
       "description": "Demo showing a tooltip.",
       "registryDependencies": [
-        "@animate-ui/components-base-tooltip"
+        "@animate-ui/v1/components-base-tooltip"
       ],
       "files": [
         {
@@ -2428,7 +2428,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-button"
+        "@animate-ui/v1/components-buttons-button"
       ],
       "files": [
         {
@@ -2473,7 +2473,7 @@
       "title": "Copy Button Demo",
       "description": "Demo showing a copy button.",
       "registryDependencies": [
-        "@animate-ui/components-buttons-copy"
+        "@animate-ui/v1/components-buttons-copy"
       ],
       "files": [
         {
@@ -2519,7 +2519,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-flip"
+        "@animate-ui/v1/components-buttons-flip"
       ],
       "files": [
         {
@@ -2587,7 +2587,7 @@
       "title": "GitHub Stars Button Demo",
       "description": "Demo showing a GitHub stars button.",
       "registryDependencies": [
-        "@animate-ui/components-buttons-github-stars"
+        "@animate-ui/v1/components-buttons-github-stars"
       ],
       "files": [
         {
@@ -2626,7 +2626,7 @@
       "title": "Icon Button Demo",
       "description": "Demo showing an icon button.",
       "registryDependencies": [
-        "@animate-ui/components-buttons-icon"
+        "@animate-ui/v1/components-buttons-icon"
       ],
       "files": [
         {
@@ -2668,7 +2668,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-liquid"
+        "@animate-ui/v1/components-buttons-liquid"
       ],
       "files": [
         {
@@ -2712,7 +2712,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-ripple"
+        "@animate-ui/v1/components-buttons-ripple"
       ],
       "files": [
         {
@@ -2760,7 +2760,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/components-buttons-theme-toggler"
+        "@animate-ui/v1/components-buttons-theme-toggler"
       ],
       "files": [
         {
@@ -2811,7 +2811,7 @@
       "title": "Flip Card Demo",
       "description": "Demo showing the flip card component.",
       "registryDependencies": [
-        "@animate-ui/components-community-flip-card"
+        "@animate-ui/v1/components-community-flip-card"
       ],
       "files": [
         {
@@ -2827,7 +2827,7 @@
       "title": "Management Bar Demo",
       "description": "Demo showing a management bar.",
       "registryDependencies": [
-        "@animate-ui/components-community-management-bar"
+        "@animate-ui/v1/components-community-management-bar"
       ],
       "files": [
         {
@@ -2843,7 +2843,7 @@
       "title": "Motion Carousel Demo",
       "description": "Demo showing motion carousel.",
       "registryDependencies": [
-        "@animate-ui/components-community-motion-carousel"
+        "@animate-ui/v1/components-community-motion-carousel"
       ],
       "files": [
         {
@@ -2859,7 +2859,7 @@
       "title": "Notification List Demo",
       "description": "Demo showing a notification list.",
       "registryDependencies": [
-        "@animate-ui/components-community-notification-list"
+        "@animate-ui/v1/components-community-notification-list"
       ],
       "files": [
         {
@@ -2875,7 +2875,7 @@
       "title": "Pin List Demo",
       "description": "Demo showing a pin list.",
       "registryDependencies": [
-        "@animate-ui/components-community-pin-list"
+        "@animate-ui/v1/components-community-pin-list"
       ],
       "files": [
         {
@@ -2891,7 +2891,7 @@
       "title": "Playful Todolist Demo",
       "description": "Demo showing a playful todolist.",
       "registryDependencies": [
-        "@animate-ui/components-community-playful-todolist"
+        "@animate-ui/v1/components-community-playful-todolist"
       ],
       "files": [
         {
@@ -2907,7 +2907,7 @@
       "title": "Radial Intro Demo",
       "description": "Demo showing radial intro.",
       "registryDependencies": [
-        "@animate-ui/components-community-radial-intro"
+        "@animate-ui/v1/components-community-radial-intro"
       ],
       "files": [
         {
@@ -2923,7 +2923,7 @@
       "title": "Radial Menu Demo",
       "description": "Demo Radial Menu.",
       "registryDependencies": [
-        "@animate-ui/components-community-radial-menu"
+        "@animate-ui/v1/components-community-radial-menu"
       ],
       "files": [
         {
@@ -2939,7 +2939,7 @@
       "title": "Radial Nav Demo",
       "description": "Demo Radial Nav.",
       "registryDependencies": [
-        "@animate-ui/components-community-radial-nav"
+        "@animate-ui/v1/components-community-radial-nav"
       ],
       "files": [
         {
@@ -2955,7 +2955,7 @@
       "title": "Share Button Demo",
       "description": "Demo showing a share button.",
       "registryDependencies": [
-        "@animate-ui/components-community-share-button"
+        "@animate-ui/v1/components-community-share-button"
       ],
       "files": [
         {
@@ -2993,7 +2993,7 @@
       "title": "User Presence Avatar Demo",
       "description": "Demo showing a user presence avatar.",
       "registryDependencies": [
-        "@animate-ui/components-community-user-presence-avatar"
+        "@animate-ui/v1/components-community-user-presence-avatar"
       ],
       "files": [
         {
@@ -3009,7 +3009,7 @@
       "title": "Accordion Demo",
       "description": "Demo showing a accordion.",
       "registryDependencies": [
-        "@animate-ui/components-headless-accordion"
+        "@animate-ui/v1/components-headless-accordion"
       ],
       "files": [
         {
@@ -3039,7 +3039,7 @@
       "title": "Checkbox Demo",
       "description": "Demo showing a checkbox.",
       "registryDependencies": [
-        "@animate-ui/components-headless-checkbox"
+        "@animate-ui/v1/components-headless-checkbox"
       ],
       "files": [
         {
@@ -3079,7 +3079,7 @@
       "title": "Dialog Demo",
       "description": "Demo showing a dialog.",
       "registryDependencies": [
-        "@animate-ui/components-headless-dialog"
+        "@animate-ui/v1/components-headless-dialog"
       ],
       "files": [
         {
@@ -3113,7 +3113,7 @@
       "title": "Popover Demo",
       "description": "Demo showing a popover.",
       "registryDependencies": [
-        "@animate-ui/components-headless-popover"
+        "@animate-ui/v1/components-headless-popover"
       ],
       "files": [
         {
@@ -3155,7 +3155,7 @@
       "title": "Headless Switch Demo",
       "description": "Demo showing a headless switch.",
       "registryDependencies": [
-        "@animate-ui/components-headless-switch"
+        "@animate-ui/v1/components-headless-switch"
       ],
       "files": [
         {
@@ -3171,7 +3171,7 @@
       "title": "Headless Tabs Demo",
       "description": "Demo showing a headless tabs.",
       "registryDependencies": [
-        "@animate-ui/components-headless-tabs"
+        "@animate-ui/v1/components-headless-tabs"
       ],
       "files": [
         {
@@ -3187,7 +3187,7 @@
       "title": "Accordion Demo",
       "description": "Demo showing a accordion.",
       "registryDependencies": [
-        "@animate-ui/components-radix-accordion"
+        "@animate-ui/v1/components-radix-accordion"
       ],
       "files": [
         {
@@ -3225,7 +3225,7 @@
       "title": "Alert Dialog Demo",
       "description": "Demo showing a alert dialog.",
       "registryDependencies": [
-        "@animate-ui/components-radix-alert-dialog"
+        "@animate-ui/v1/components-radix-alert-dialog"
       ],
       "files": [
         {
@@ -3256,7 +3256,7 @@
       "title": "Checkbox Demo",
       "description": "Demo showing a checkbox.",
       "registryDependencies": [
-        "@animate-ui/components-radix-checkbox"
+        "@animate-ui/v1/components-radix-checkbox"
       ],
       "files": [
         {
@@ -3301,7 +3301,7 @@
       "title": "Dialog Demo",
       "description": "Demo showing a dialog.",
       "registryDependencies": [
-        "@animate-ui/components-radix-dialog"
+        "@animate-ui/v1/components-radix-dialog"
       ],
       "files": [
         {
@@ -3335,7 +3335,7 @@
       "title": "Dropdown Menu Demo",
       "description": "Demo showing a dropdown menu.",
       "registryDependencies": [
-        "@animate-ui/components-radix-dropdown-menu"
+        "@animate-ui/v1/components-radix-dropdown-menu"
       ],
       "files": [
         {
@@ -3380,7 +3380,7 @@
       "title": "Dropdown Menu Checkbox Demo",
       "description": "Demo showing a dropdown menu with a checkbox.",
       "registryDependencies": [
-        "@animate-ui/components-radix-dropdown-menu"
+        "@animate-ui/v1/components-radix-dropdown-menu"
       ],
       "files": [
         {
@@ -3425,7 +3425,7 @@
       "title": "Dropdown Menu Radio Demo",
       "description": "Demo showing a dropdown menu with a radio.",
       "registryDependencies": [
-        "@animate-ui/components-radix-dropdown-menu"
+        "@animate-ui/v1/components-radix-dropdown-menu"
       ],
       "files": [
         {
@@ -3470,7 +3470,7 @@
       "title": "Files Demo",
       "description": "Demo showing a files.",
       "registryDependencies": [
-        "@animate-ui/components-radix-files"
+        "@animate-ui/v1/components-radix-files"
       ],
       "files": [
         {
@@ -3486,7 +3486,7 @@
       "title": "Hover Card Demo",
       "description": "Demo showing a hover card.",
       "registryDependencies": [
-        "@animate-ui/components-radix-hover-card"
+        "@animate-ui/v1/components-radix-hover-card"
       ],
       "files": [
         {
@@ -3542,7 +3542,7 @@
       "title": "Popover Demo",
       "description": "Demo showing a popover.",
       "registryDependencies": [
-        "@animate-ui/components-radix-popover"
+        "@animate-ui/v1/components-radix-popover"
       ],
       "files": [
         {
@@ -3587,7 +3587,7 @@
       "title": "Preview Link Card Demo",
       "description": "Demo showing a preview link card.",
       "registryDependencies": [
-        "@animate-ui/components-radix-preview-link-card"
+        "@animate-ui/v1/components-radix-preview-link-card"
       ],
       "files": [
         {
@@ -3646,7 +3646,7 @@
       "title": "Radix Progress Demo",
       "description": "Demo showing a radix progress.",
       "registryDependencies": [
-        "@animate-ui/components-radix-progress"
+        "@animate-ui/v1/components-radix-progress"
       ],
       "files": [
         {
@@ -3662,7 +3662,7 @@
       "title": "Radix Radio Group Demo",
       "description": "Demo showing a radix radio group.",
       "registryDependencies": [
-        "@animate-ui/components-radix-radio-group"
+        "@animate-ui/v1/components-radix-radio-group"
       ],
       "files": [
         {
@@ -3678,7 +3678,7 @@
       "title": "Radix Sheet Demo",
       "description": "Demo showing a radix sheet.",
       "registryDependencies": [
-        "@animate-ui/components-radix-sheet"
+        "@animate-ui/v1/components-radix-sheet"
       ],
       "files": [
         {
@@ -3709,7 +3709,7 @@
       "title": "Radix Sidebar Demo",
       "description": "Demo showing a radix sidebar.",
       "registryDependencies": [
-        "@animate-ui/components-radix-sidebar"
+        "@animate-ui/v1/components-radix-sidebar"
       ],
       "files": [
         {
@@ -3725,7 +3725,7 @@
       "title": "Radix Switch Demo",
       "description": "Demo showing a radix switch.",
       "registryDependencies": [
-        "@animate-ui/components-radix-switch"
+        "@animate-ui/v1/components-radix-switch"
       ],
       "files": [
         {
@@ -3741,7 +3741,7 @@
       "title": "Radix Tabs Demo",
       "description": "Demo showing a radix tabs.",
       "registryDependencies": [
-        "@animate-ui/components-radix-tabs"
+        "@animate-ui/v1/components-radix-tabs"
       ],
       "files": [
         {
@@ -3757,7 +3757,7 @@
       "title": "Radix Toggle Demo",
       "description": "Demo showing a radix toggle.",
       "registryDependencies": [
-        "@animate-ui/components-radix-toggle"
+        "@animate-ui/v1/components-radix-toggle"
       ],
       "files": [
         {
@@ -3795,7 +3795,7 @@
       "title": "Radix Toggle Group Demo",
       "description": "Demo showing a radix toggle group.",
       "registryDependencies": [
-        "@animate-ui/components-radix-toggle-group"
+        "@animate-ui/v1/components-radix-toggle-group"
       ],
       "files": [
         {
@@ -3840,7 +3840,7 @@
       "title": "Radix Tooltip Demo",
       "description": "Demo showing a radix tooltip.",
       "registryDependencies": [
-        "@animate-ui/components-radix-tooltip"
+        "@animate-ui/v1/components-radix-tooltip"
       ],
       "files": [
         {
@@ -3899,7 +3899,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-avatar-group"
+        "@animate-ui/v1/primitives-animate-avatar-group"
       ],
       "files": [
         {
@@ -3915,7 +3915,7 @@
       "title": "Animate Code Block Demo",
       "description": "Demo showing an animated code block.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-code-block"
+        "@animate-ui/v1/primitives-animate-code-block"
       ],
       "files": [
         {
@@ -3955,7 +3955,7 @@
       "title": "Animate Cursor Demo",
       "description": "Demo showing an animated cursor.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-cursor"
+        "@animate-ui/v1/primitives-animate-cursor"
       ],
       "files": [
         {
@@ -4011,7 +4011,7 @@
       "title": "GitHub Stars Demo",
       "description": "Demo showing an animated github stars counter.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-github-stars"
+        "@animate-ui/v1/primitives-animate-github-stars"
       ],
       "files": [
         {
@@ -4027,8 +4027,8 @@
       "title": "Animate Motion Grid Demo",
       "description": "Demo showing an animated motion grid.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-motion-grid",
-        "@animate-ui/primitives-texts-rotating"
+        "@animate-ui/v1/primitives-animate-motion-grid",
+        "@animate-ui/v1/primitives-texts-rotating"
       ],
       "files": [
         {
@@ -4044,7 +4044,7 @@
       "title": "Animate Pinned List Demo",
       "description": "Demo showing an animated pinned list.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-pinned-list"
+        "@animate-ui/v1/primitives-animate-pinned-list"
       ],
       "files": [
         {
@@ -4060,7 +4060,7 @@
       "title": "Animate Scroll Progress Demo",
       "description": "Demo showing an animated scroll progress.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-scroll-progress"
+        "@animate-ui/v1/primitives-animate-scroll-progress"
       ],
       "files": [
         {
@@ -4092,7 +4092,7 @@
       "title": "Animate Spring Demo",
       "description": "Demo showing an animated spring.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-spring"
+        "@animate-ui/v1/primitives-animate-spring"
       ],
       "files": [
         {
@@ -4108,7 +4108,7 @@
       "title": "Animate Tabs Demo",
       "description": "Demo showing an animated tabs.",
       "registryDependencies": [
-        "@animate-ui/primitives-animate-tabs"
+        "@animate-ui/v1/primitives-animate-tabs"
       ],
       "files": [
         {
@@ -4127,7 +4127,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-tooltip"
+        "@animate-ui/v1/primitives-animate-tooltip"
       ],
       "files": [
         {
@@ -4185,7 +4185,7 @@
       "title": "Base Accordion Demo",
       "description": "Demo showing an animated base accordion.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-accordion"
+        "@animate-ui/v1/primitives-base-accordion"
       ],
       "files": [
         {
@@ -4215,7 +4215,7 @@
       "title": "Base Alert Dialog Demo",
       "description": "Demo showing an animated base alert dialog.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-alert-dialog"
+        "@animate-ui/v1/primitives-base-alert-dialog"
       ],
       "files": [
         {
@@ -4246,7 +4246,7 @@
       "title": "Base Checkbox Demo",
       "description": "Demo showing an animated base checkbox.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-checkbox"
+        "@animate-ui/v1/primitives-base-checkbox"
       ],
       "files": [
         {
@@ -4271,7 +4271,7 @@
       "title": "Base Collapsible Demo",
       "description": "Demo showing an animated base collapsible.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-collapsible"
+        "@animate-ui/v1/primitives-base-collapsible"
       ],
       "files": [
         {
@@ -4296,7 +4296,7 @@
       "title": "Base Dialog Demo",
       "description": "Demo showing an animated base dialog.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-dialog"
+        "@animate-ui/v1/primitives-base-dialog"
       ],
       "files": [
         {
@@ -4330,7 +4330,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-files"
+        "@animate-ui/v1/primitives-base-files"
       ],
       "files": [
         {
@@ -4346,7 +4346,7 @@
       "title": "Base Menu Demo",
       "description": "Demo showing an animated base menu.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-menu"
+        "@animate-ui/v1/primitives-base-menu"
       ],
       "files": [
         {
@@ -4393,7 +4393,7 @@
       "title": "Base Popover Demo",
       "description": "Demo showing an animated base popover.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-popover"
+        "@animate-ui/v1/primitives-base-popover"
       ],
       "files": [
         {
@@ -4440,7 +4440,7 @@
       "title": "Base Preview Card Demo",
       "description": "Demo showing an animated base preview card.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-preview-card"
+        "@animate-ui/v1/primitives-base-preview-card"
       ],
       "files": [
         {
@@ -4498,7 +4498,7 @@
       "title": "Base Preview Link Card Demo",
       "description": "Demo showing an animated base preview link card.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-preview-link-card"
+        "@animate-ui/v1/primitives-base-preview-link-card"
       ],
       "files": [
         {
@@ -4559,7 +4559,7 @@
       "title": "Base Progress Demo",
       "description": "Demo showing an animated base progress.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-progress"
+        "@animate-ui/v1/primitives-base-progress"
       ],
       "files": [
         {
@@ -4575,7 +4575,7 @@
       "title": "Base Radio Demo",
       "description": "Demo showing an animated base radio.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-radio"
+        "@animate-ui/v1/primitives-base-radio"
       ],
       "files": [
         {
@@ -4591,7 +4591,7 @@
       "title": "Base Switch Demo",
       "description": "Demo showing an animated base switch.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-switch"
+        "@animate-ui/v1/primitives-base-switch"
       ],
       "files": [
         {
@@ -4607,7 +4607,7 @@
       "title": "Base Tabs Demo",
       "description": "Demo showing an animated base tabs.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-tabs"
+        "@animate-ui/v1/primitives-base-tabs"
       ],
       "files": [
         {
@@ -4636,7 +4636,7 @@
       "title": "Base Toggle Demo",
       "description": "Demo showing an animated base toggle.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-toggle"
+        "@animate-ui/v1/primitives-base-toggle"
       ],
       "files": [
         {
@@ -4652,7 +4652,7 @@
       "title": "Base Toggle Group Demo",
       "description": "Demo showing an animated base toggle group.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-toggle-group"
+        "@animate-ui/v1/primitives-base-toggle-group"
       ],
       "files": [
         {
@@ -4677,7 +4677,7 @@
       "title": "Base Tooltip Demo",
       "description": "Demo showing an animated base tooltip.",
       "registryDependencies": [
-        "@animate-ui/primitives-base-tooltip"
+        "@animate-ui/v1/primitives-base-tooltip"
       ],
       "files": [
         {
@@ -4735,7 +4735,7 @@
       "title": "Button Demo",
       "description": "Demo showing a button.",
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-button"
+        "@animate-ui/v1/primitives-buttons-button"
       ],
       "files": [
         {
@@ -4769,7 +4769,7 @@
       "title": "Flip Button Demo",
       "description": "Demo showing an animated flip button.",
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-flip"
+        "@animate-ui/v1/primitives-buttons-flip"
       ],
       "files": [
         {
@@ -4806,7 +4806,7 @@
       "title": "Liquid Button Demo",
       "description": "Demo showing an animated liquid button.",
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-liquid"
+        "@animate-ui/v1/primitives-buttons-liquid"
       ],
       "files": [
         {
@@ -4852,7 +4852,7 @@
       "title": "Ripple Button Demo",
       "description": "Demo showing a ripple button.",
       "registryDependencies": [
-        "@animate-ui/primitives-buttons-ripple"
+        "@animate-ui/v1/primitives-buttons-ripple"
       ],
       "files": [
         {
@@ -4889,7 +4889,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-auto-height"
+        "@animate-ui/v1/primitives-effects-auto-height"
       ],
       "files": [
         {
@@ -4905,7 +4905,7 @@
       "title": "Blur Demo",
       "description": "Demo showing an animated blur.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-blur"
+        "@animate-ui/v1/primitives-effects-blur"
       ],
       "files": [
         {
@@ -4945,7 +4945,7 @@
       "title": "Click Demo",
       "description": "Demo showing an animated click.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-click"
+        "@animate-ui/v1/primitives-effects-click"
       ],
       "files": [
         {
@@ -4992,7 +4992,7 @@
       "title": "Effect Demo",
       "description": "Demo showing an animated effect.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-effect"
+        "@animate-ui/v1/primitives-effects-effect"
       ],
       "files": [
         {
@@ -5032,7 +5032,7 @@
       "title": "Fade Demo",
       "description": "Demo showing an animated fade.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-fade"
+        "@animate-ui/v1/primitives-effects-fade"
       ],
       "files": [
         {
@@ -5072,7 +5072,7 @@
       "title": "Highlight Demo",
       "description": "Demo showing an animated highlight.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/v1/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -5110,7 +5110,7 @@
       "title": "Image Zoom Demo",
       "description": "Demo showing a image zoom effect.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-image-zoom"
+        "@animate-ui/v1/primitives-effects-image-zoom"
       ],
       "files": [
         {
@@ -5126,7 +5126,7 @@
       "title": "Magnetic Demo",
       "description": "Demo showing a magnetic effect.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-magnetic"
+        "@animate-ui/v1/primitives-effects-magnetic"
       ],
       "files": [
         {
@@ -5160,7 +5160,7 @@
       "title": "Particles Demo",
       "description": "Demo showing an animated particles.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-particles"
+        "@animate-ui/v1/primitives-effects-particles"
       ],
       "files": [
         {
@@ -5247,7 +5247,7 @@
       "title": "Shine Demo",
       "description": "Demo showing an animated shine.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-shine"
+        "@animate-ui/v1/primitives-effects-shine"
       ],
       "files": [
         {
@@ -5305,7 +5305,7 @@
       "title": "Slide Demo",
       "description": "Demo showing an animated slide.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-slide"
+        "@animate-ui/v1/primitives-effects-slide"
       ],
       "files": [
         {
@@ -5348,7 +5348,7 @@
       "title": "Theme Toggler Demo",
       "description": "Demo showing a theme toggler.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-theme-toggler"
+        "@animate-ui/v1/primitives-effects-theme-toggler"
       ],
       "files": [
         {
@@ -5379,7 +5379,7 @@
       "title": "Tilt Demo",
       "description": "Demo showing an animated tilt.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-tilt"
+        "@animate-ui/v1/primitives-effects-tilt"
       ],
       "files": [
         {
@@ -5413,7 +5413,7 @@
       "title": "Zoom Demo",
       "description": "Demo showing an animated zoom.",
       "registryDependencies": [
-        "@animate-ui/primitives-effects-zoom"
+        "@animate-ui/v1/primitives-effects-zoom"
       ],
       "files": [
         {
@@ -5453,7 +5453,7 @@
       "title": "Headless Checkbox Demo",
       "description": "Demo showing an animated headless checkbox.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-checkbox"
+        "@animate-ui/v1/primitives-headless-checkbox"
       ],
       "files": [
         {
@@ -5478,7 +5478,7 @@
       "title": "Headless Dialog Demo",
       "description": "Demo showing an animated headless dialog.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-dialog"
+        "@animate-ui/v1/primitives-headless-dialog"
       ],
       "files": [
         {
@@ -5509,7 +5509,7 @@
       "title": "Headless Disclosure Demo",
       "description": "Demo showing an animated headless disclosure.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-disclosure"
+        "@animate-ui/v1/primitives-headless-disclosure"
       ],
       "files": [
         {
@@ -5534,7 +5534,7 @@
       "title": "Headless Popover Demo",
       "description": "Demo showing an animated headless popover.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-popover"
+        "@animate-ui/v1/primitives-headless-popover"
       ],
       "files": [
         {
@@ -5576,7 +5576,7 @@
       "title": "Headless Switch Demo",
       "description": "Demo showing an animated headless switch.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-switch"
+        "@animate-ui/v1/primitives-headless-switch"
       ],
       "files": [
         {
@@ -5592,7 +5592,7 @@
       "title": "Headless Tabs Demo",
       "description": "Demo showing an animated headless tabs.",
       "registryDependencies": [
-        "@animate-ui/primitives-headless-tabs"
+        "@animate-ui/v1/primitives-headless-tabs"
       ],
       "files": [
         {
@@ -5621,7 +5621,7 @@
       "title": "Radix Accordion Demo",
       "description": "Demo showing an animated radix accordion.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-accordion"
+        "@animate-ui/v1/primitives-radix-accordion"
       ],
       "files": [
         {
@@ -5654,7 +5654,7 @@
       "title": "Radix Alert Dialog Demo",
       "description": "Demo showing an animated radix alert dialog.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-alert-dialog"
+        "@animate-ui/v1/primitives-radix-alert-dialog"
       ],
       "files": [
         {
@@ -5685,7 +5685,7 @@
       "title": "Radix Checkbox Demo",
       "description": "Demo showing an animated radix checkbox.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-checkbox"
+        "@animate-ui/v1/primitives-radix-checkbox"
       ],
       "files": [
         {
@@ -5715,7 +5715,7 @@
       "title": "Radix Collapsible Demo",
       "description": "Demo showing an animated radix collapsible.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-collapsible"
+        "@animate-ui/v1/primitives-radix-collapsible"
       ],
       "files": [
         {
@@ -5740,7 +5740,7 @@
       "title": "Radix Dialog Demo",
       "description": "Demo showing an animated radix dialog.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-dialog"
+        "@animate-ui/v1/primitives-radix-dialog"
       ],
       "files": [
         {
@@ -5771,7 +5771,7 @@
       "title": "Radix Dropdown Menu Demo",
       "description": "Demo showing an animated radix dropdown menu.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-dropdown-menu"
+        "@animate-ui/v1/primitives-radix-dropdown-menu"
       ],
       "files": [
         {
@@ -5819,7 +5819,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-files"
+        "@animate-ui/v1/primitives-radix-files"
       ],
       "files": [
         {
@@ -5835,7 +5835,7 @@
       "title": "Radix Hover Card Demo",
       "description": "Demo showing an animated radix hover card.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-hover-card"
+        "@animate-ui/v1/primitives-radix-hover-card"
       ],
       "files": [
         {
@@ -5891,7 +5891,7 @@
       "title": "Radix Popover Demo",
       "description": "Demo showing an animated radix popover.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-popover"
+        "@animate-ui/v1/primitives-radix-popover"
       ],
       "files": [
         {
@@ -5936,7 +5936,7 @@
       "title": "Radix Preview Link Card Demo",
       "description": "Demo showing an animated radix preview link card.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-preview-link-card"
+        "@animate-ui/v1/primitives-radix-preview-link-card"
       ],
       "files": [
         {
@@ -5995,7 +5995,7 @@
       "title": "Radix Progress Demo",
       "description": "Demo showing an animated radix progress.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-progress"
+        "@animate-ui/v1/primitives-radix-progress"
       ],
       "files": [
         {
@@ -6011,7 +6011,7 @@
       "title": "Radix Radio Group Demo",
       "description": "Demo showing an animated radix radio group.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-radio-group"
+        "@animate-ui/v1/primitives-radix-radio-group"
       ],
       "files": [
         {
@@ -6027,7 +6027,7 @@
       "title": "Radix Sheet Demo",
       "description": "Demo showing an animated radix sheet.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-sheet"
+        "@animate-ui/v1/primitives-radix-sheet"
       ],
       "files": [
         {
@@ -6058,7 +6058,7 @@
       "title": "Radix Switch Demo",
       "description": "Demo showing an animated radix switch.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-switch"
+        "@animate-ui/v1/primitives-radix-switch"
       ],
       "files": [
         {
@@ -6074,7 +6074,7 @@
       "title": "Radix Tabs Demo",
       "description": "Demo showing an animated radix tabs.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-tabs"
+        "@animate-ui/v1/primitives-radix-tabs"
       ],
       "files": [
         {
@@ -6103,7 +6103,7 @@
       "title": "Radix Toggle Demo",
       "description": "Demo showing an animated radix toggle.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-toggle"
+        "@animate-ui/v1/primitives-radix-toggle"
       ],
       "files": [
         {
@@ -6119,7 +6119,7 @@
       "title": "Radix Toggle Group Demo",
       "description": "Demo showing an animated radix toggle group.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-toggle-group"
+        "@animate-ui/v1/primitives-radix-toggle-group"
       ],
       "files": [
         {
@@ -6148,7 +6148,7 @@
       "title": "Radix Tooltip Demo",
       "description": "Demo showing an animated radix tooltip.",
       "registryDependencies": [
-        "@animate-ui/primitives-radix-tooltip"
+        "@animate-ui/v1/primitives-radix-tooltip"
       ],
       "files": [
         {
@@ -6204,7 +6204,7 @@
       "title": "Counting Number Demo",
       "description": "Demo showing an animated counting number.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-counting-number"
+        "@animate-ui/v1/primitives-texts-counting-number"
       ],
       "files": [
         {
@@ -6247,7 +6247,7 @@
       "title": "Gradient Text Demo",
       "description": "Demo showing an animated gradient text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-gradient"
+        "@animate-ui/v1/primitives-texts-gradient"
       ],
       "files": [
         {
@@ -6272,7 +6272,7 @@
       "title": "Highlight Text Demo",
       "description": "Demo showing an animated highlight text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-highlight"
+        "@animate-ui/v1/primitives-texts-highlight"
       ],
       "files": [
         {
@@ -6300,7 +6300,7 @@
       "title": "Morphing Text Demo",
       "description": "Demo showing an animated morphing text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-morphing"
+        "@animate-ui/v1/primitives-texts-morphing"
       ],
       "files": [
         {
@@ -6331,7 +6331,7 @@
       "title": "Rolling Text Demo",
       "description": "Demo showing an animated rolling text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-rolling"
+        "@animate-ui/v1/primitives-texts-rolling"
       ],
       "files": [
         {
@@ -6359,7 +6359,7 @@
       "title": "Rotating Text Demo",
       "description": "Demo showing an animated rotating text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-rotating"
+        "@animate-ui/v1/primitives-texts-rotating"
       ],
       "files": [
         {
@@ -6399,7 +6399,7 @@
       "title": "Scrolling Number Demo",
       "description": "Demo showing an animated scrolling number.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-scrolling-number"
+        "@animate-ui/v1/primitives-texts-scrolling-number"
       ],
       "files": [
         {
@@ -6438,7 +6438,7 @@
       "title": "Shimmering Text Demo",
       "description": "Demo showing an animated shimmering text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-shimmering"
+        "@animate-ui/v1/primitives-texts-shimmering"
       ],
       "files": [
         {
@@ -6469,7 +6469,7 @@
       "title": "Sliding Number Demo",
       "description": "Demo showing an animated sliding number.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-sliding-number"
+        "@animate-ui/v1/primitives-texts-sliding-number"
       ],
       "files": [
         {
@@ -6515,7 +6515,7 @@
       "title": "Splitting Text Demo",
       "description": "Demo showing an animated splitting text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-splitting"
+        "@animate-ui/v1/primitives-texts-splitting"
       ],
       "files": [
         {
@@ -6559,7 +6559,7 @@
       "title": "Splitting Text Demo",
       "description": "Demo showing an animated splitting text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-splitting"
+        "@animate-ui/v1/primitives-texts-splitting"
       ],
       "files": [
         {
@@ -6575,7 +6575,7 @@
       "title": "Typing Text Demo",
       "description": "Demo showing an animated typing text.",
       "registryDependencies": [
-        "@animate-ui/primitives-texts-typing"
+        "@animate-ui/v1/primitives-texts-typing"
       ],
       "files": [
         {
@@ -6683,7 +6683,7 @@
       "title": "Accessibility Icon",
       "description": "Accessibility icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6710,7 +6710,7 @@
       "title": "Activity Icon",
       "description": "Activity icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6750,7 +6750,7 @@
       "title": "Airplay Icon",
       "description": "Airplay icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6780,7 +6780,7 @@
       "title": "Alarm Clock Icon",
       "description": "Alarm clock icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6804,7 +6804,7 @@
       "title": "Arrow Down Icon",
       "description": "Arrow down icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6832,7 +6832,7 @@
       "title": "Arrow Left Icon",
       "description": "Arrow left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6862,7 +6862,7 @@
       "title": "Arrow Right Icon",
       "description": "Arrow right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6892,7 +6892,7 @@
       "title": "Arrow Up Icon",
       "description": "Arrow up icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6920,7 +6920,7 @@
       "title": "Arrow Up Down Icon",
       "description": "Arrow up down icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6949,7 +6949,7 @@
       "title": "Audio Lines Icon",
       "description": "Audio Lines icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -6995,7 +6995,7 @@
       "title": "Axe Icon",
       "description": "Axe icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7030,7 +7030,7 @@
       "title": "Axis 3D Icon",
       "description": "Axis 3D icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7055,7 +7055,7 @@
       "title": "Badge Check Icon",
       "description": "Badge check icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7080,7 +7080,7 @@
       "title": "Battery Charging Icon",
       "description": "Battery Charging icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7108,7 +7108,7 @@
       "title": "Battery Full Icon",
       "description": "Battery Full icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7136,7 +7136,7 @@
       "title": "Battery Low Icon",
       "description": "Battery Low icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7164,7 +7164,7 @@
       "title": "Battery Medium Icon",
       "description": "Battery Medium icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7192,7 +7192,7 @@
       "title": "Bell Icon",
       "description": "Bell icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7219,7 +7219,7 @@
       "title": "Bell Off Icon",
       "description": "Bell off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7246,7 +7246,7 @@
       "title": "Bell Ring Icon",
       "description": "Bell ring icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7273,7 +7273,7 @@
       "title": "Between Horizontal End Icon",
       "description": "Between horizontal end icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7319,7 +7319,7 @@
       "title": "Between Horizontal Start Icon",
       "description": "Between horizontal start icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7365,7 +7365,7 @@
       "title": "Between Vertical End Icon",
       "description": "Between vertical end icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7411,7 +7411,7 @@
       "title": "Between Vertical Start Icon",
       "description": "Between vertical start icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7457,7 +7457,7 @@
       "title": "Binary Icon",
       "description": "Binary icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7486,7 +7486,7 @@
       "title": "Blend Icon",
       "description": "Blend icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7527,7 +7527,7 @@
       "title": "Blocks Icon",
       "description": "Blocks icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7563,7 +7563,7 @@
       "title": "Bot Icon",
       "description": "Bot icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7590,7 +7590,7 @@
       "title": "Bot Message Square Icon",
       "description": "Bot message square icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7617,7 +7617,7 @@
       "title": "Bot Off Icon",
       "description": "Bot off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7644,7 +7644,7 @@
       "title": "Brush Icon",
       "description": "Brush icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7675,7 +7675,7 @@
       "title": "Brush Cleaning Icon",
       "description": "Brush cleaning icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7729,7 +7729,7 @@
       "title": "Cast Icon",
       "description": "Cast icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7755,7 +7755,7 @@
       "title": "CCTV Icon",
       "description": "CCTV icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7785,7 +7785,7 @@
       "title": "Chart Bar Icon",
       "description": "Chart bar icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7812,7 +7812,7 @@
       "title": "Chart Bar Decreasing Icon",
       "description": "Chart bar decreasing icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7840,7 +7840,7 @@
       "title": "Chart Bar Increasing Icon",
       "description": "Chart bar increasing icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7868,7 +7868,7 @@
       "title": "Chart Column Icon",
       "description": "Chart column icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7895,7 +7895,7 @@
       "title": "Chart Column Decreasing Icon",
       "description": "Chart column decreasing icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7923,7 +7923,7 @@
       "title": "Chart Column Increasing Icon",
       "description": "Chart column increasing icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7951,7 +7951,7 @@
       "title": "Chart Line Icon",
       "description": "Chart line icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -7978,7 +7978,7 @@
       "title": "Chart No Axes Column Icon",
       "description": "Chart no axes column icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8005,7 +8005,7 @@
       "title": "Chart No Axes Column Decreasing Icon",
       "description": "Chart no axes column decreasing icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8033,7 +8033,7 @@
       "title": "Chart No Axes Column Increasing Icon",
       "description": "Chart no axes column increasing icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8061,7 +8061,7 @@
       "title": "Chart Scatter Icon",
       "description": "Chart scatter icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8088,7 +8088,7 @@
       "title": "Chart Spline Icon",
       "description": "Chart spline icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8122,7 +8122,7 @@
       "title": "Check Icon",
       "description": "Check icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8150,7 +8150,7 @@
       "title": "Check Check Icon",
       "description": "Check check icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8180,7 +8180,7 @@
       "title": "Check Line Icon",
       "description": "Check line icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8208,7 +8208,7 @@
       "title": "Cherry Icon",
       "description": "Cherry icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8233,7 +8233,7 @@
       "title": "Chevron Down Icon",
       "description": "Chevron down icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8260,7 +8260,7 @@
       "title": "Chevron Left Icon",
       "description": "Chevron left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8289,7 +8289,7 @@
       "title": "Chevron Left Right Icon",
       "description": "Chevron left right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8316,7 +8316,7 @@
       "title": "Chevron Right Icon",
       "description": "Chevron right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8351,7 +8351,7 @@
       "title": "Chevron Up Icon",
       "description": "Chevron up icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8386,7 +8386,7 @@
       "title": "Chevron Up Down Icon",
       "description": "Chevron up down icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8412,7 +8412,7 @@
       "title": "Circle Check Icon",
       "description": "Circle check icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8440,7 +8440,7 @@
       "title": "Circle Check Big Icon",
       "description": "Circle check big icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8468,7 +8468,7 @@
       "title": "Circle Plus Icon",
       "description": "Circle plus icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8503,7 +8503,7 @@
       "title": "Circle X Icon",
       "description": "Circle x icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8537,7 +8537,7 @@
       "title": "Circuit Board Icon",
       "description": "Circuit Board icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8563,7 +8563,7 @@
       "title": "Clapperboard Icon",
       "description": "Clapperboard icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8597,7 +8597,7 @@
       "title": "Clipboard Icon",
       "description": "Clipboard icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8622,7 +8622,7 @@
       "title": "Clipboard Check Icon",
       "description": "Clipboard Check icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8652,7 +8652,7 @@
       "title": "Clipboard List Icon",
       "description": "Clipboard List icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8678,7 +8678,7 @@
       "title": "Clock Icon",
       "description": "Clock icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8706,7 +8706,7 @@
       "title": "Clock 1 Icon",
       "description": "Clock 1 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8734,7 +8734,7 @@
       "title": "Clock 10 Icon",
       "description": "Clock 10 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8762,7 +8762,7 @@
       "title": "Clock 11 Icon",
       "description": "Clock 11 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8790,7 +8790,7 @@
       "title": "Clock 12 Icon",
       "description": "Clock 12 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8818,7 +8818,7 @@
       "title": "Clock 2 Icon",
       "description": "Clock 2 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8846,7 +8846,7 @@
       "title": "Clock 3 Icon",
       "description": "Clock 3 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8874,7 +8874,7 @@
       "title": "Clock 4 Icon",
       "description": "Clock 4 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8902,7 +8902,7 @@
       "title": "Clock 5 Icon",
       "description": "Clock 5 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8930,7 +8930,7 @@
       "title": "Clock 6 Icon",
       "description": "Clock 6 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8958,7 +8958,7 @@
       "title": "Clock 7 Icon",
       "description": "Clock 7 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -8986,7 +8986,7 @@
       "title": "Clock 8 Icon",
       "description": "Clock 8 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9014,7 +9014,7 @@
       "title": "Clock 9 Icon",
       "description": "Clock 9 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9042,7 +9042,7 @@
       "title": "Cloud Download Icon",
       "description": "Cloud download icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9066,7 +9066,7 @@
       "title": "Cloud Drizzle Icon",
       "description": "Cloud drizzle icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9091,7 +9091,7 @@
       "title": "Cloud Hail Icon",
       "description": "Cloud hail icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9116,7 +9116,7 @@
       "title": "Cloud Lightning Icon",
       "description": "Cloud lightning icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9141,7 +9141,7 @@
       "title": "Cloud Moon Icon",
       "description": "Cloud moon icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9166,7 +9166,7 @@
       "title": "Cloud Moon Rain Icon",
       "description": "Cloud moon rain icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9193,7 +9193,7 @@
       "title": "Cloud Rain Icon",
       "description": "Cloud rain icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9218,7 +9218,7 @@
       "title": "Cloud Rain Wind Icon",
       "description": "Cloud rain wind icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9243,7 +9243,7 @@
       "title": "Cloud Snow Icon",
       "description": "Cloud snow icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9268,7 +9268,7 @@
       "title": "Cloud Sun Icon",
       "description": "Cloud sun icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9293,7 +9293,7 @@
       "title": "Cloud Sun Rain Icon",
       "description": "Cloud sun rain icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9319,7 +9319,7 @@
       "title": "Cloud Upload Icon",
       "description": "Cloud upload icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9343,7 +9343,7 @@
       "title": "Cog Icon",
       "description": "Cog icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9378,7 +9378,7 @@
       "title": "Compass Icon",
       "description": "Compass icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9408,7 +9408,7 @@
       "title": "Contrast Icon",
       "description": "Contrast icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9433,7 +9433,7 @@
       "title": "Copy Icon",
       "description": "Copy icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9459,7 +9459,7 @@
       "title": "Crop Icon",
       "description": "Crop icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9484,7 +9484,7 @@
       "title": "Cross Icon",
       "description": "Cross icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9509,7 +9509,7 @@
       "title": "Disc 3 Icon",
       "description": "Disc 3 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9542,7 +9542,7 @@
       "title": "Download Icon",
       "description": "Download icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9568,7 +9568,7 @@
       "title": "Ellipsis Icon",
       "description": "Ellipsis icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9612,7 +9612,7 @@
       "title": "Ellipsis Vertical Icon",
       "description": "Ellipsis vertical icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9645,7 +9645,7 @@
       "title": "Equal Not Icon",
       "description": "Equal not icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9674,7 +9674,7 @@
       "title": "EV Charger Icon",
       "description": "EV Charger icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9709,7 +9709,7 @@
       "title": "Expand Icon",
       "description": "Expand icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9737,7 +9737,7 @@
       "title": "External Link Icon",
       "description": "External link icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9763,7 +9763,7 @@
       "title": "Fan Icon",
       "description": "Fan icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9791,7 +9791,7 @@
       "title": "Fingerprint Icon",
       "description": "Fingerprint icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9819,7 +9819,7 @@
       "title": "Forklift Icon",
       "description": "Forklift icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9845,7 +9845,7 @@
       "title": "Frame Icon",
       "description": "Frame icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9871,7 +9871,7 @@
       "title": "Gallery Horizontal Icon",
       "description": "Gallery horizontal icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9900,7 +9900,7 @@
       "title": "Gallery Vertical End Icon",
       "description": "Gallery vertical end icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9929,7 +9929,7 @@
       "title": "Gallery Vertical Icon",
       "description": "Gallery vertical icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9958,7 +9958,7 @@
       "title": "Gallery Horizontal End Icon",
       "description": "Gallery horizontal end icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -9987,7 +9987,7 @@
       "title": "Gauge Icon",
       "description": "Gauge icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10017,7 +10017,7 @@
       "title": "Gavel Icon",
       "description": "Gavel icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10042,7 +10042,7 @@
       "title": "Hammer Icon",
       "description": "Hammer icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10071,7 +10071,7 @@
       "title": "Heart Icon",
       "description": "Heart icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10100,7 +10100,7 @@
       "title": "House Wifi Icon",
       "description": "House wifi icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10131,8 +10131,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/hooks-use-is-in-view",
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -10148,7 +10148,7 @@
       "title": "Kanban Icon",
       "description": "Kanban icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10185,7 +10185,7 @@
       "title": "Key Icon",
       "description": "Key icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10216,7 +10216,7 @@
       "title": "Layers Icon",
       "description": "Layers icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10246,7 +10246,7 @@
       "title": "Layers 2 Icon",
       "description": "Layers 2 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10279,7 +10279,7 @@
       "title": "Layout Dashboard Icon",
       "description": "Layout dashboard icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10304,7 +10304,7 @@
       "title": "Lightbulb Icon",
       "description": "Lightbulb icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10330,7 +10330,7 @@
       "title": "Lightbulb Off Icon",
       "description": "Lightbulb off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10354,7 +10354,7 @@
       "title": "Link Icon",
       "description": "Link icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10379,7 +10379,7 @@
       "title": "Link 2 Icon",
       "description": "Link 2 icon with connect/unlink animations.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10409,7 +10409,7 @@
       "title": "List Icon",
       "description": "List icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10433,7 +10433,7 @@
       "title": "Loader Icon",
       "description": "Loader icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10463,7 +10463,7 @@
       "title": "Loader Circle Icon",
       "description": "Loader circle icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10494,7 +10494,7 @@
       "title": "Loader Pinwheel Icon",
       "description": "Loader pinwheel icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10527,7 +10527,7 @@
       "title": "Lock Icon",
       "description": "Lock icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10554,7 +10554,7 @@
       "title": "Lock Keyhole Icon",
       "description": "Lock keyhole icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10581,7 +10581,7 @@
       "title": "Lock Keyhole Open Icon",
       "description": "Lock keyhole open icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10605,7 +10605,7 @@
       "title": "Lock Open Icon",
       "description": "Lock open icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10629,7 +10629,7 @@
       "title": "Log In Icon",
       "description": "Log in icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10656,7 +10656,7 @@
       "title": "Log Out Icon",
       "description": "Log out icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10683,7 +10683,7 @@
       "title": "Map Pin Icon",
       "description": "Map pin icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10712,7 +10712,7 @@
       "title": "Map Pin Off Icon",
       "description": "Map pin off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10739,7 +10739,7 @@
       "title": "Maximize Icon",
       "description": "Maximize icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10765,7 +10765,7 @@
       "title": "Menu Icon",
       "description": "Menu icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10792,7 +10792,7 @@
       "title": "Message Circle Icon",
       "description": "Message circle icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10821,7 +10821,7 @@
       "title": "Message Circle Code Icon",
       "description": "Message circle code icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10852,7 +10852,7 @@
       "title": "Message Circle Dashed Icon",
       "description": "Message circle dashed icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10882,7 +10882,7 @@
       "title": "Message Circle Heart Icon",
       "description": "Message circle heart icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10918,7 +10918,7 @@
       "title": "Message Circle More Icon",
       "description": "Message circle more icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10954,7 +10954,7 @@
       "title": "Message Circle Off Icon",
       "description": "Message circle off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -10991,7 +10991,7 @@
       "title": "Message Circle Plus Icon",
       "description": "Message circle plus icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11021,7 +11021,7 @@
       "title": "Message Circle Question Icon",
       "description": "Message circle question icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11051,7 +11051,7 @@
       "title": "Message Circle Warning Icon",
       "description": "Message circle warning icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11088,7 +11088,7 @@
       "title": "Message Circle X Icon",
       "description": "Message circle x icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11125,7 +11125,7 @@
       "title": "Message Square Icon",
       "description": "Message square icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11154,7 +11154,7 @@
       "title": "Message Square Code Icon",
       "description": "Message square code icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11185,7 +11185,7 @@
       "title": "Message Square Dashed Icon",
       "description": "Message square dashed icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11215,7 +11215,7 @@
       "title": "Message Square Diff Icon",
       "description": "Message square diff icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11255,7 +11255,7 @@
       "title": "Message Square Dot Icon",
       "description": "Message square dot icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11286,7 +11286,7 @@
       "title": "Message Square Heart Icon",
       "description": "Message square heart icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11322,7 +11322,7 @@
       "title": "Message Square More Icon",
       "description": "Message square more icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11358,7 +11358,7 @@
       "title": "Message Square Off Icon",
       "description": "Message square off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11395,7 +11395,7 @@
       "title": "Message Square Plus Icon",
       "description": "Message square plus icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11425,7 +11425,7 @@
       "title": "Message Square Quote Icon",
       "description": "Message square quote icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11459,7 +11459,7 @@
       "title": "Message Square Share Icon",
       "description": "Message square share icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11490,7 +11490,7 @@
       "title": "Message Square Text Icon",
       "description": "Message square text icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11519,7 +11519,7 @@
       "title": "Message Square Warning Icon",
       "description": "Message square warning icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11556,7 +11556,7 @@
       "title": "Message Square X Icon",
       "description": "Message square x icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11593,7 +11593,7 @@
       "title": "Minimize Icon",
       "description": "Minimize icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11619,7 +11619,7 @@
       "title": "Moon Icon",
       "description": "Moon icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11644,7 +11644,7 @@
       "title": "Moon Star Icon",
       "description": "Moon star icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11670,7 +11670,7 @@
       "title": "Move Down Icon",
       "description": "Move down icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11699,7 +11699,7 @@
       "title": "Move Left Icon",
       "description": "Move left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11730,7 +11730,7 @@
       "title": "Move Right Icon",
       "description": "Move right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11761,7 +11761,7 @@
       "title": "Move Up Icon",
       "description": "Move up icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11790,7 +11790,7 @@
       "title": "Nfc Icon",
       "description": "Nfc icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11817,7 +11817,7 @@
       "title": "Orbit Icon",
       "description": "Orbit icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11845,7 +11845,7 @@
       "title": "Paintbrush Icon",
       "description": "Paintbrush icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11875,7 +11875,7 @@
       "title": "Panel Bottom Icon",
       "description": "Panel bottom icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11904,7 +11904,7 @@
       "title": "Panel Bottom Close Icon",
       "description": "Panel bottom close icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11934,7 +11934,7 @@
       "title": "Panel Bottom Open Icon",
       "description": "Panel bottom open icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11964,7 +11964,7 @@
       "title": "Panel Left Icon",
       "description": "Panel left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -11993,7 +11993,7 @@
       "title": "Panel Left Close Icon",
       "description": "Panel left close icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12023,7 +12023,7 @@
       "title": "Panel Left Open Icon",
       "description": "Panel left open icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12053,7 +12053,7 @@
       "title": "Panel Right Icon",
       "description": "Panel right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12082,7 +12082,7 @@
       "title": "Panel Right Close Icon",
       "description": "Panel right close icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12112,7 +12112,7 @@
       "title": "Panel Right Open Icon",
       "description": "Panel right open icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12142,7 +12142,7 @@
       "title": "Panel Top Icon",
       "description": "Panel top icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12171,7 +12171,7 @@
       "title": "Panel Top Close Icon",
       "description": "Panel top close icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12201,7 +12201,7 @@
       "title": "Panel Top Open Icon",
       "description": "Panel top open icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12231,7 +12231,7 @@
       "title": "Paperclip Icon",
       "description": "Paperclip icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12256,7 +12256,7 @@
       "title": "Party Popper Icon",
       "description": "Party popper icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12290,7 +12290,7 @@
       "title": "Pause Icon",
       "description": "Pause icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12315,7 +12315,7 @@
       "title": "Phone Call Icon",
       "description": "Phone call icon with animated waves.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12348,7 +12348,7 @@
       "title": "Pickaxe Icon",
       "description": "Pickaxe icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12380,7 +12380,7 @@
       "title": "Pin Icon",
       "description": "Pin icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12409,7 +12409,7 @@
       "title": "Pin Off Icon",
       "description": "Pin off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12438,7 +12438,7 @@
       "title": "Play Icon",
       "description": "Play icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12466,7 +12466,7 @@
       "title": "Plug Zap Icon",
       "description": "Plug Zap icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12496,7 +12496,7 @@
       "title": "Plus Icon",
       "description": "Plus icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12530,7 +12530,7 @@
       "title": "Radio Icon",
       "description": "Radio icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12559,7 +12559,7 @@
       "title": "Radio Tower Icon",
       "description": "Radio tower icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12588,7 +12588,7 @@
       "title": "Refresh Ccw Icon",
       "description": "Refresh ccw icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12618,7 +12618,7 @@
       "title": "Refresh Ccw Dot Icon",
       "description": "Refresh ccw dot icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12652,7 +12652,7 @@
       "title": "Refresh Cw Icon",
       "description": "Refresh cw icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12682,7 +12682,7 @@
       "title": "Refresh Cw Off Icon",
       "description": "Refresh cw off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12718,7 +12718,7 @@
       "title": "Rotate Ccw Icon",
       "description": "Rotate ccw icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12756,7 +12756,7 @@
       "title": "Rotate Ccw Key Icon",
       "description": "Rotate Ccw Key icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12783,7 +12783,7 @@
       "title": "Rotate Cw Icon",
       "description": "Rotate cw icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12814,7 +12814,7 @@
       "title": "Route Icon",
       "description": "Route icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12843,7 +12843,7 @@
       "title": "Router Icon",
       "description": "Router icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12869,7 +12869,7 @@
       "title": "Scissors Icon",
       "description": "Scissors icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12897,7 +12897,7 @@
       "title": "Scissors Line Dashed Icon",
       "description": "Scissors line dashed icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12928,7 +12928,7 @@
       "title": "Search Icon",
       "description": "Search icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12956,7 +12956,7 @@
       "title": "Send Icon",
       "description": "Send icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -12985,7 +12985,7 @@
       "title": "Send Horizontal Icon",
       "description": "Send horizontal icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13014,7 +13014,7 @@
       "title": "Settings Icon",
       "description": "Settings icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13041,7 +13041,7 @@
       "title": "Shrink Icon",
       "description": "Shrink icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13069,7 +13069,7 @@
       "title": "Signal Icon",
       "description": "Signal icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13100,7 +13100,7 @@
       "title": "Signal High Icon",
       "description": "Signal high icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13131,7 +13131,7 @@
       "title": "Signal Low Icon",
       "description": "Signal low icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13162,7 +13162,7 @@
       "title": "Signal Medium Icon",
       "description": "Signal medium icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13193,7 +13193,7 @@
       "title": "Signal Zero Icon",
       "description": "Signal zero icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13224,7 +13224,7 @@
       "title": "Sliders Horizontal Icon",
       "description": "Sliders horizontal icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13250,7 +13250,7 @@
       "title": "Sliders Vertical Icon",
       "description": "Sliders vertical icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13275,7 +13275,7 @@
       "title": "Sparkle Icon",
       "description": "Sparkle icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13307,7 +13307,7 @@
       "title": "Sparkles Icon",
       "description": "Sparkles icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13335,7 +13335,7 @@
       "title": "Square Arrow Out Down Left Icon",
       "description": "Square arrow out down left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13362,7 +13362,7 @@
       "title": "Square Arrow Out Down Right Icon",
       "description": "Square arrow out down right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13389,7 +13389,7 @@
       "title": "Square Arrow Out Up Left Icon",
       "description": "Square arrow out up left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13416,7 +13416,7 @@
       "title": "Square Arrow Out Up Right Icon",
       "description": "Square arrow out up right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13447,7 +13447,7 @@
       "title": "Square Dashed Kanban Icon",
       "description": "Square Dashed Kanban icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13484,7 +13484,7 @@
       "title": "Square Kanban Icon",
       "description": "Square Kanban icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13521,7 +13521,7 @@
       "title": "Square Plus Icon",
       "description": "Square plus icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13557,7 +13557,7 @@
       "title": "Square X Icon",
       "description": "Square x icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13591,7 +13591,7 @@
       "title": "Star Icon",
       "description": "Star icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13619,7 +13619,7 @@
       "title": "Sun Icon",
       "description": "Sun icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13646,7 +13646,7 @@
       "title": "Sun Dim Icon",
       "description": "Sun dim icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13673,7 +13673,7 @@
       "title": "Sun Medium Icon",
       "description": "Sun medium icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13698,7 +13698,7 @@
       "title": "Sun Moon Icon",
       "description": "Sun moon icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13730,7 +13730,7 @@
       "title": "Terminal Icon",
       "description": "Terminal icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13757,7 +13757,7 @@
       "title": "Thumbs Down Icon",
       "description": "Thumbs down icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13783,7 +13783,7 @@
       "title": "Thumbs Up Icon",
       "description": "Thumbs up icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13809,7 +13809,7 @@
       "title": "Timer Icon",
       "description": "Timer icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13835,7 +13835,7 @@
       "title": "Timer Off Icon",
       "description": "Timer off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13861,7 +13861,7 @@
       "title": "Toggle Left Icon",
       "description": "Toggle left icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13888,7 +13888,7 @@
       "title": "Toggle Right Icon",
       "description": "Toggle right icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13915,7 +13915,7 @@
       "title": "Trash Icon",
       "description": "Trash icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13942,7 +13942,7 @@
       "title": "Trash 2 Icon",
       "description": "Trash 2 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13969,7 +13969,7 @@
       "title": "Unplug Icon",
       "description": "Unplug icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -13998,7 +13998,7 @@
       "title": "Upload Icon",
       "description": "Upload icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14022,7 +14022,7 @@
       "title": "User Icon",
       "description": "User icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14048,7 +14048,7 @@
       "title": "User Round Icon",
       "description": "User round icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14074,7 +14074,7 @@
       "title": "Users Icon",
       "description": "Users icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14099,7 +14099,7 @@
       "title": "Users Round Icon",
       "description": "Users round icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14124,7 +14124,7 @@
       "title": "Volume 1 Icon",
       "description": "Volume 1 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14150,7 +14150,7 @@
       "title": "Volume 2 Icon",
       "description": "Volume 2 icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14176,7 +14176,7 @@
       "title": "Volume Off Icon",
       "description": "Volume off icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14203,7 +14203,7 @@
       "title": "Wifi Icon",
       "description": "Wifi icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14229,7 +14229,7 @@
       "title": "Wifi High Icon",
       "description": "Wifi high icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14255,7 +14255,7 @@
       "title": "Wifi Low Icon",
       "description": "Wifi low icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14281,7 +14281,7 @@
       "title": "Wifi Zero Icon",
       "description": "Wifi zero icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14307,7 +14307,7 @@
       "title": "X Icon",
       "description": "X icon component.",
       "registryDependencies": [
-        "@animate-ui/icons-icon"
+        "@animate-ui/v1/icons-icon"
       ],
       "dependencies": [
         "motion"
@@ -14356,7 +14356,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-tooltip"
+        "@animate-ui/v1/primitives-animate-tooltip"
       ],
       "files": [
         {
@@ -14375,7 +14375,7 @@
         "shiki"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -14394,8 +14394,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14414,11 +14414,11 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/primitives-texts-sliding-number",
-        "@animate-ui/primitives-effects-particles",
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/primitives-texts-sliding-number",
+        "@animate-ui/v1/primitives-effects-particles",
+        "@animate-ui/v1/hooks-use-is-in-view",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14437,8 +14437,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14457,7 +14457,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -14476,9 +14476,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-motion-value-state"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-motion-value-state"
       ],
       "files": [
         {
@@ -14513,9 +14513,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-motion-value-state"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-motion-value-state"
       ],
       "files": [
         {
@@ -14534,9 +14534,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14556,8 +14556,8 @@
         "@floating-ui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14577,8 +14577,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14598,8 +14598,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14619,8 +14619,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14640,8 +14640,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14661,8 +14661,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14681,10 +14681,10 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-accordion",
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/primitives-base-accordion",
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14704,10 +14704,10 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/hooks-use-data-state"
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/hooks-use-data-state"
       ],
       "files": [
         {
@@ -14727,8 +14727,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14748,8 +14748,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14769,8 +14769,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-base-preview-card",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-base-preview-card",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -14790,8 +14790,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/primitives-texts-counting-number"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/primitives-texts-counting-number"
       ],
       "files": [
         {
@@ -14811,8 +14811,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14832,8 +14832,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14853,10 +14853,10 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-auto-height",
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/primitives-effects-auto-height",
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14876,8 +14876,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14897,9 +14897,9 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/primitives-effects-highlight"
       ],
       "files": [
         {
@@ -14919,8 +14919,8 @@
         "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -14939,7 +14939,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -14958,8 +14958,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -14978,8 +14978,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -14998,8 +14998,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15018,8 +15018,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-auto-height"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-auto-height"
       ],
       "files": [
         {
@@ -15038,8 +15038,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15074,8 +15074,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15094,8 +15094,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15146,7 +15146,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/v1/primitives-animate-slot"
       ],
       "files": [
         {
@@ -15165,9 +15165,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-is-in-view",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15202,8 +15202,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15235,8 +15235,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15255,8 +15255,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-animate-slot",
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/primitives-animate-slot",
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15310,7 +15310,7 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15330,7 +15330,7 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15350,7 +15350,7 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15370,9 +15370,9 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/primitives-effects-auto-height"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/primitives-effects-auto-height"
       ],
       "files": [
         {
@@ -15392,8 +15392,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15413,8 +15413,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15434,8 +15434,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15455,8 +15455,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15476,8 +15476,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15497,10 +15497,10 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/hooks-use-data-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/hooks-use-data-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15519,10 +15519,10 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-accordion",
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/primitives-radix-accordion",
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15542,8 +15542,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15563,8 +15563,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15583,8 +15583,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-radix-hover-card",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/primitives-radix-hover-card",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15604,7 +15604,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15624,8 +15624,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15645,8 +15645,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15666,8 +15666,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15687,10 +15687,10 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/primitives-effects-auto-height",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/primitives-effects-auto-height",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15710,8 +15710,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15731,9 +15731,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/hooks-use-controlled-state"
+        "@animate-ui/v1/primitives-effects-highlight",
+        "@animate-ui/v1/lib-get-strict-context",
+        "@animate-ui/v1/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15753,8 +15753,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-controlled-state",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15773,7 +15773,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15808,7 +15808,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15827,7 +15827,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15846,7 +15846,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15865,8 +15865,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-is-in-view",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15885,8 +15885,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-is-in-view",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15905,7 +15905,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15925,7 +15925,7 @@
         "react-use-measure"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15944,7 +15944,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view"
+        "@animate-ui/v1/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -15963,8 +15963,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context"
+        "@animate-ui/v1/hooks-use-is-in-view",
+        "@animate-ui/v1/lib-get-strict-context"
       ],
       "files": [
         {

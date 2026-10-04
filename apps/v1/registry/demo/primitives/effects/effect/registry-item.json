@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Effect Demo",
   "description": "Demo showing an animated effect.",
-  "registryDependencies": ["@animate-ui/primitives-effects-effect"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-effect"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/effect/index.tsx",

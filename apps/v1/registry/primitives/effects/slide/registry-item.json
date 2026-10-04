@@ -6,8 +6,8 @@
   "description": "An effect that allows you to animate elements with a slide effect on first view or load.",
   "dependencies": ["motion"],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-slot",
-    "@animate-ui/hooks-use-is-in-view"
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/hooks-use-is-in-view"
   ],
   "files": [
     {

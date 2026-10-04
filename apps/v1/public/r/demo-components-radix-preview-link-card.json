@@ -4,7 +4,7 @@
   "title": "Preview Link Card Demo",
   "description": "Demo showing a preview link card.",
   "registryDependencies": [
-    "@animate-ui/components-radix-preview-link-card"
+    "@animate-ui/v1/components-radix-preview-link-card"
   ],
   "files": [
     {

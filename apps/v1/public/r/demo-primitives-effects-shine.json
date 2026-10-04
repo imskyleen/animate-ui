@@ -4,7 +4,7 @@
   "title": "Shine Demo",
   "description": "Demo showing an animated shine.",
   "registryDependencies": [
-    "@animate-ui/primitives-effects-shine"
+    "@animate-ui/v1/primitives-effects-shine"
   ],
   "files": [
     {

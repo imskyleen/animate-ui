@@ -11,7 +11,7 @@
     "embla-carousel-react"
   ],
   "registryDependencies": [
-    "@animate-ui/components-buttons-button"
+    "@animate-ui/v1/components-buttons-button"
   ],
   "files": [
     {

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Popover",
   "description": "Displays rich content in a portal, triggered by a button.",
-  "registryDependencies": ["@animate-ui/primitives-radix-popover"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-popover"],
   "files": [
     {
       "path": "registry/components/radix/popover/index.tsx",

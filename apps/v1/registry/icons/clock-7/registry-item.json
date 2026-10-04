@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Clock 7 Icon",
   "description": "Clock 7 icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

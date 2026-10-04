@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Circle Check Big Icon",
   "description": "Circle check big icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

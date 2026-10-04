@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Animate GitHub Stars Wheel Demo",
   "description": "Demo showing an animated github stars wheel.",
-  "registryDependencies": ["@animate-ui/components-animate-github-stars-wheel"],
+  "registryDependencies": ["@animate-ui/v1/components-animate-github-stars-wheel"],
   "files": [
     {
       "path": "registry/demo/components/animate/github-stars-wheel/index.tsx",

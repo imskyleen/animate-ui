@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Pin List Demo",
   "description": "Demo showing a pin list.",
-  "registryDependencies": ["@animate-ui/components-community-pin-list"],
+  "registryDependencies": ["@animate-ui/v1/components-community-pin-list"],
   "files": [
     {
       "path": "registry/demo/components/community/pin-list/index.tsx",

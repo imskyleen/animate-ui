@@ -4,7 +4,7 @@
   "title": "Checkbox Demo",
   "description": "Demo showing a checkbox.",
   "registryDependencies": [
-    "@animate-ui/components-base-checkbox"
+    "@animate-ui/v1/components-base-checkbox"
   ],
   "files": [
     {

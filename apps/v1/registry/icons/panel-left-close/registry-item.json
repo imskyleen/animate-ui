@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Panel Left Close Icon",
   "description": "Panel left close icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

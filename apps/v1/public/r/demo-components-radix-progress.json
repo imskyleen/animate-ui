@@ -4,7 +4,7 @@
   "title": "Radix Progress Demo",
   "description": "Demo showing a radix progress.",
   "registryDependencies": [
-    "@animate-ui/components-radix-progress"
+    "@animate-ui/v1/components-radix-progress"
   ],
   "files": [
     {

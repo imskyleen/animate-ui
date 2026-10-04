@@ -4,7 +4,7 @@
   "title": "Alert Dialog Demo",
   "description": "Demo showing a alert dialog.",
   "registryDependencies": [
-    "@animate-ui/components-radix-alert-dialog"
+    "@animate-ui/v1/components-radix-alert-dialog"
   ],
   "files": [
     {

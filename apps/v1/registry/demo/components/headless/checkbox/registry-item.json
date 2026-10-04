@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Checkbox Demo",
   "description": "Demo showing a checkbox.",
-  "registryDependencies": ["@animate-ui/components-headless-checkbox"],
+  "registryDependencies": ["@animate-ui/v1/components-headless-checkbox"],
   "files": [
     {
       "path": "registry/demo/components/headless/checkbox/index.tsx",

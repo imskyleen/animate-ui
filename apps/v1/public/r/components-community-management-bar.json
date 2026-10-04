@@ -8,7 +8,7 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-texts-sliding-number"
+    "@animate-ui/v1/primitives-texts-sliding-number"
   ],
   "files": [
     {

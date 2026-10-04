@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Tooltip Demo",
   "description": "Demo showing an animated base tooltip.",
-  "registryDependencies": ["@animate-ui/primitives-base-tooltip"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-tooltip"],
   "files": [
     {
       "path": "registry/demo/primitives/base/tooltip/index.tsx",

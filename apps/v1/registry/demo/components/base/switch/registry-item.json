@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Switch Demo",
   "description": "Demo showing a switch.",
-  "registryDependencies": ["@animate-ui/components-base-switch"],
+  "registryDependencies": ["@animate-ui/v1/components-base-switch"],
   "files": [
     {
       "path": "registry/demo/components/base/switch/index.tsx",

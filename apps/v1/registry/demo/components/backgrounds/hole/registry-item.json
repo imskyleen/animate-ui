@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Hole Background Demo",
   "description": "Demo showing a hole background.",
-  "registryDependencies": ["@animate-ui/components-backgrounds-hole"],
+  "registryDependencies": ["@animate-ui/v1/components-backgrounds-hole"],
   "files": [
     {
       "path": "registry/demo/components/backgrounds/hole/index.tsx",

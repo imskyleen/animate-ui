@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Move Up Icon",
   "description": "Move up icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

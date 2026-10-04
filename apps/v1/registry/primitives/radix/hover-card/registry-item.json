@@ -6,8 +6,8 @@
   "description": "For sighted users to preview content available behind a link.",
   "dependencies": ["motion", "radix-ui"],
   "registryDependencies": [
-    "@animate-ui/hooks-use-controlled-state",
-    "@animate-ui/lib-get-strict-context"
+    "@animate-ui/v1/hooks-use-controlled-state",
+    "@animate-ui/v1/lib-get-strict-context"
   ],
   "files": [
     {

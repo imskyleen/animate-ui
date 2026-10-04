@@ -5,8 +5,8 @@
   "title": "Alert Dialog",
   "description": "A dialog that requires user response to proceed.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-alert-dialog",
-    "@animate-ui/components-buttons-button"
+    "@animate-ui/v1/primitives-base-alert-dialog",
+    "@animate-ui/v1/components-buttons-button"
   ],
   "files": [
     {

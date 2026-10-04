@@ -5,7 +5,7 @@
   "title": "Radial Intro Demo",
   "description": "Demo showing radial intro.",
   "registryDependencies": [
-    "@animate-ui/components-community-radial-intro"
+    "@animate-ui/v1/components-community-radial-intro"
   ],
   "files": [
     {

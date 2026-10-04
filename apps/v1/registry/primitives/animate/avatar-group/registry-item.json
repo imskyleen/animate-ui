@@ -5,7 +5,7 @@
   "title": "Avatar Group",
   "description": "An animated avatar group that displays overlapping user images and smoothly shifts each avatar forward on hover to highlight it.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/primitives-animate-tooltip"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-tooltip"],
   "files": [
     {
       "path": "registry/primitives/animate/avatar-group/index.tsx",

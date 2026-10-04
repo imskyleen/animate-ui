@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Tabs Demo",
   "description": "Demo showing an animated radix tabs.",
-  "registryDependencies": ["@animate-ui/primitives-radix-tabs"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-tabs"],
   "files": [
     {
       "path": "registry/demo/primitives/radix/tabs/index.tsx",

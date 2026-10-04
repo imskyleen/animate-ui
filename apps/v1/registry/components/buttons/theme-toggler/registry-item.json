@@ -6,8 +6,8 @@
   "description": "A button that toggles the theme gradually.",
   "dependencies": ["next-themes", "class-variance-authority", "lucide-react"],
   "registryDependencies": [
-    "@animate-ui/primitives-effects-theme-toggler",
-    "@animate-ui/components-buttons-icon"
+    "@animate-ui/v1/primitives-effects-theme-toggler",
+    "@animate-ui/v1/components-buttons-icon"
   ],
   "files": [
     {

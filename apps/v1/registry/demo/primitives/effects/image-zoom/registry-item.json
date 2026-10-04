@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Image Zoom Demo",
   "description": "Demo showing a image zoom effect.",
-  "registryDependencies": ["@animate-ui/primitives-effects-image-zoom"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-image-zoom"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/image-zoom/index.tsx",

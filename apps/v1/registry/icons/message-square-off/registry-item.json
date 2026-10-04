@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Message Square Off Icon",
   "description": "Message square off icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

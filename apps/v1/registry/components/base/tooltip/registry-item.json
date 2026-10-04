@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Tooltip",
   "description": "A popup that appears when an element is hovered or focused, showing a hint for sighted users.",
-  "registryDependencies": ["@animate-ui/primitives-base-tooltip"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-tooltip"],
   "files": [
     {
       "path": "registry/components/base/tooltip/index.tsx",

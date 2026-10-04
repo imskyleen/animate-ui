@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Slide Demo",
   "description": "Demo showing an animated slide.",
-  "registryDependencies": ["@animate-ui/primitives-effects-slide"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-slide"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/slide/index.tsx",

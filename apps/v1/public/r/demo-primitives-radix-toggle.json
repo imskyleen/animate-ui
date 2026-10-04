@@ -4,7 +4,7 @@
   "title": "Radix Toggle Demo",
   "description": "Demo showing an animated radix toggle.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-toggle"
+    "@animate-ui/v1/primitives-radix-toggle"
   ],
   "files": [
     {

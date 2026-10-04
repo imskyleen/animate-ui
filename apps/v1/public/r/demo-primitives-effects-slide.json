@@ -4,7 +4,7 @@
   "title": "Slide Demo",
   "description": "Demo showing an animated slide.",
   "registryDependencies": [
-    "@animate-ui/primitives-effects-slide"
+    "@animate-ui/v1/primitives-effects-slide"
   ],
   "files": [
     {

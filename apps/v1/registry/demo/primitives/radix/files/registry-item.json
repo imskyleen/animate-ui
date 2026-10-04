@@ -5,7 +5,7 @@
   "title": "Radix Files Demo",
   "description": "Demo showing an animated radix files.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["@animate-ui/primitives-radix-files"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-files"],
   "files": [
     {
       "path": "registry/demo/primitives/radix/files/index.tsx",

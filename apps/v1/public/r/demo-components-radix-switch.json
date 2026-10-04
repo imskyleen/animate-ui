@@ -4,7 +4,7 @@
   "title": "Radix Switch Demo",
   "description": "Demo showing a radix switch.",
   "registryDependencies": [
-    "@animate-ui/components-radix-switch"
+    "@animate-ui/v1/components-radix-switch"
   ],
   "files": [
     {

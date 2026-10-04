@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Headless Dialog Demo",
   "description": "Demo showing an animated headless dialog.",
-  "registryDependencies": ["@animate-ui/primitives-headless-dialog"],
+  "registryDependencies": ["@animate-ui/v1/primitives-headless-dialog"],
   "files": [
     {
       "path": "registry/demo/primitives/headless/dialog/index.tsx",

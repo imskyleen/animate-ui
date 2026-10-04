@@ -5,7 +5,7 @@
   "title": "Theme Toggler Button Demo",
   "description": "Demo showing a theme toggler button.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["@animate-ui/components-buttons-theme-toggler"],
+  "registryDependencies": ["@animate-ui/v1/components-buttons-theme-toggler"],
   "files": [
     {
       "path": "registry/demo/components/buttons/theme-toggler/index.tsx",

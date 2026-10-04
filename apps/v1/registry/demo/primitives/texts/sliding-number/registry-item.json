@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Sliding Number Demo",
   "description": "Demo showing an animated sliding number.",
-  "registryDependencies": ["@animate-ui/primitives-texts-sliding-number"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-sliding-number"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/sliding-number/index.tsx",

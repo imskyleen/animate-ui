@@ -12,6 +12,7 @@ import { ThemeSwitcher } from '../animate/theme-switcher';
 import XIcon from '@workspace/ui/components/icons/x-icon';
 import { GithubStarsLogo } from '@/registry/primitives/animate/github-stars';
 import { Menu } from '@/registry/icons/menu';
+import { VersionMenu } from './version-menu';
 
 export const NAV_ITEMS = [
   {
@@ -75,6 +76,8 @@ export const Nav = () => {
         </div>
 
         <div className="flex items-center md:gap-3 gap-2">
+          <VersionMenu />
+
           <button
             className="pl-3 pr-1.5 h-8 w-48 lg:w-56 xl:w-64 bg-accent hover:bg-accent/70 transition-colors duration-200 ease-in-out text-sm text-muted-foreground rounded-md flex items-center justify-between"
             onClick={() => setOpenSearch(true)}

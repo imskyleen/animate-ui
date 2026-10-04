@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Progress",
   "description": "Displays the status of a task that takes a long time.",
-  "registryDependencies": ["@animate-ui/primitives-base-progress"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-progress"],
   "files": [
     {
       "path": "registry/components/base/progress/index.tsx",

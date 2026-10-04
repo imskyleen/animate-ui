@@ -6,6 +6,7 @@ import { Logo } from '@/components/logo';
 import XIcon from '@workspace/ui/components/icons/x-icon';
 import { useIsMobile } from '@workspace/ui/hooks/use-mobile';
 import { ThemeSwitcher } from './animate/theme-switcher';
+import { VersionMenu } from './docs/version-menu';
 import { StarIcon } from 'lucide-react';
 import {
   GithubStars,
@@ -85,6 +86,8 @@ export const Header = ({ transition }: { transition: boolean }) => {
           transition={{ type: 'spring', stiffness: 200, damping: 30 }}
           className="absolute z-110 flex items-center gap-x-4"
         >
+          <VersionMenu className="sm:mt-1" />
+
           <div className="hidden xs:flex items-center gap-x-1">
             <GithubStars
               username="imskyleen"

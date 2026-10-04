@@ -4,7 +4,7 @@
   "title": "User Presence Avatar Demo",
   "description": "Demo showing a user presence avatar.",
   "registryDependencies": [
-    "@animate-ui/components-community-user-presence-avatar"
+    "@animate-ui/v1/components-community-user-presence-avatar"
   ],
   "files": [
     {

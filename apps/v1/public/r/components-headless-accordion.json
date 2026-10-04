@@ -7,7 +7,7 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-headless-disclosure"
+    "@animate-ui/v1/primitives-headless-disclosure"
   ],
   "files": [
     {

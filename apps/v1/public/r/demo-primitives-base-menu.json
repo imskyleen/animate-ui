@@ -4,7 +4,7 @@
   "title": "Base Menu Demo",
   "description": "Demo showing an animated base menu.",
   "registryDependencies": [
-    "@animate-ui/primitives-base-menu"
+    "@animate-ui/v1/primitives-base-menu"
   ],
   "files": [
     {

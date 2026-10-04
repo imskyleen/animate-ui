@@ -5,7 +5,7 @@
   "title": "Auto Height Demo",
   "description": "Demo showing an animated auto height.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/primitives-effects-auto-height"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-auto-height"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/auto-height/index.tsx",

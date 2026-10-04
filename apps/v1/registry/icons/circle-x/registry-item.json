@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Circle X Icon",
   "description": "Circle x icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

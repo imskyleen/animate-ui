@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Cursor",
   "description": "An animated cursor component that allows you to customize both the cursor and cursor follow elements with smooth animations.",
-  "registryDependencies": ["@animate-ui/primitives-animate-cursor"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-cursor"],
   "files": [
     {
       "path": "registry/components/animate/cursor/index.tsx",

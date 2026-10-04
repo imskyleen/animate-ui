@@ -4,7 +4,7 @@
   "title": "Fireworks Circle Background Demo",
   "description": "Demo showing a fireworks circle background.",
   "registryDependencies": [
-    "@animate-ui/components-backgrounds-fireworks"
+    "@animate-ui/v1/components-backgrounds-fireworks"
   ],
   "files": [
     {

@@ -4,7 +4,7 @@
   "title": "Scrolling Number Demo",
   "description": "Demo showing an animated scrolling number.",
   "registryDependencies": [
-    "@animate-ui/primitives-texts-scrolling-number"
+    "@animate-ui/v1/primitives-texts-scrolling-number"
   ],
   "files": [
     {

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Animate Tabs Demo",
   "description": "Demo showing an animated tabs.",
-  "registryDependencies": ["@animate-ui/components-animate-tabs"],
+  "registryDependencies": ["@animate-ui/v1/components-animate-tabs"],
   "files": [
     {
       "path": "registry/demo/components/animate/tabs/index.tsx",

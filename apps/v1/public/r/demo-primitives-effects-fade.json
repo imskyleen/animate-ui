@@ -4,7 +4,7 @@
   "title": "Fade Demo",
   "description": "Demo showing an animated fade.",
   "registryDependencies": [
-    "@animate-ui/primitives-effects-fade"
+    "@animate-ui/v1/primitives-effects-fade"
   ],
   "files": [
     {

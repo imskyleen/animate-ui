@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Panel Bottom Open Icon",
   "description": "Panel bottom open icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

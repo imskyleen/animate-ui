@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Animate Cursor Demo",
   "description": "Demo showing an animated cursor.",
-  "registryDependencies": ["@animate-ui/primitives-animate-cursor"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-cursor"],
   "files": [
     {
       "path": "registry/demo/primitives/animate/cursor/index.tsx",

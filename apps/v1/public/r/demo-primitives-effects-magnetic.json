@@ -4,7 +4,7 @@
   "title": "Magnetic Demo",
   "description": "Demo showing a magnetic effect.",
   "registryDependencies": [
-    "@animate-ui/primitives-effects-magnetic"
+    "@animate-ui/v1/primitives-effects-magnetic"
   ],
   "files": [
     {

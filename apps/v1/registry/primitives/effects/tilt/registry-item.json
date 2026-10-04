@@ -6,8 +6,8 @@
   "description": "An effect that allows you to animate elements with a tilt effect on mouse hover.",
   "dependencies": ["motion"],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-slot",
-    "@animate-ui/lib-get-strict-context"
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/lib-get-strict-context"
   ],
   "files": [
     {

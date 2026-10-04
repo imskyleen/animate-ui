@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Splitting Text Demo",
   "description": "Demo showing an animated splitting text.",
-  "registryDependencies": ["@animate-ui/primitives-texts-splitting"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-splitting"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/splitting/index.tsx",

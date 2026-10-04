@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Tilt Demo",
   "description": "Demo showing an animated tilt.",
-  "registryDependencies": ["@animate-ui/primitives-effects-tilt"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-tilt"],
   "files": [
     {
       "path": "registry/demo/primitives/effects/tilt/index.tsx",

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Between Vertical Start Icon",
   "description": "Between vertical start icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

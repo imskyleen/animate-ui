@@ -4,7 +4,7 @@
   "title": "Flip Button Demo",
   "description": "Demo showing an animated flip button.",
   "registryDependencies": [
-    "@animate-ui/primitives-buttons-flip"
+    "@animate-ui/v1/primitives-buttons-flip"
   ],
   "files": [
     {

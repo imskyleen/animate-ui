@@ -4,7 +4,7 @@
   "title": "Share Button Demo",
   "description": "Demo showing a share button.",
   "registryDependencies": [
-    "@animate-ui/components-community-share-button"
+    "@animate-ui/v1/components-community-share-button"
   ],
   "files": [
     {

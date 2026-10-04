@@ -5,7 +5,7 @@
   "title": "Sliding Number",
   "description": "A sliding number animation.",
   "dependencies": ["motion", "react-use-measure"],
-  "registryDependencies": ["@animate-ui/hooks-use-is-in-view"],
+  "registryDependencies": ["@animate-ui/v1/hooks-use-is-in-view"],
   "files": [
     {
       "path": "registry/primitives/texts/sliding-number/index.tsx",

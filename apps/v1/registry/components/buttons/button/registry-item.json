@@ -5,7 +5,7 @@
   "title": "Button",
   "description": "A button component with a variety of styles and animations.",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["@animate-ui/primitives-buttons-button"],
+  "registryDependencies": ["@animate-ui/v1/primitives-buttons-button"],
   "files": [
     {
       "path": "registry/components/buttons/button/index.tsx",

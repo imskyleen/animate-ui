@@ -5,7 +5,7 @@
   "title": "User Presence Avatar",
   "description": "A compact avatar group for showing online and offline users, with smooth animated transitions when presence changes.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/components-animate-tooltip"],
+  "registryDependencies": ["@animate-ui/v1/components-animate-tooltip"],
   "files": [
     {
       "path": "registry/components/community/user-presence-avatar/index.tsx",

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Typing Text Demo",
   "description": "Demo showing an animated typing text.",
-  "registryDependencies": ["@animate-ui/primitives-texts-typing"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-typing"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/typing/index.tsx",

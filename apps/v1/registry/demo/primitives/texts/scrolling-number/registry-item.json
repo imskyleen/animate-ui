@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Scrolling Number Demo",
   "description": "Demo showing an animated scrolling number.",
-  "registryDependencies": ["@animate-ui/primitives-texts-scrolling-number"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-scrolling-number"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/scrolling-number/index.tsx",

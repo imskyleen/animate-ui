@@ -5,7 +5,7 @@
   "title": "Dropdown Menu",
   "description": "Displays a menu to the user — such as a set of actions or functions — triggered by a button.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["@animate-ui/primitives-radix-dropdown-menu"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-dropdown-menu"],
   "files": [
     {
       "path": "registry/components/radix/dropdown-menu/index.tsx",

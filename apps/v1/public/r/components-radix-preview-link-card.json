@@ -4,7 +4,7 @@
   "title": "Preview Link Card",
   "description": "Displays a preview image of a link when hovered.",
   "registryDependencies": [
-    "@animate-ui/primitives-radix-preview-link-card"
+    "@animate-ui/v1/primitives-radix-preview-link-card"
   ],
   "files": [
     {

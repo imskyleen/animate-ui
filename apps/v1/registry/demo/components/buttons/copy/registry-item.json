@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Copy Button Demo",
   "description": "Demo showing a copy button.",
-  "registryDependencies": ["@animate-ui/components-buttons-copy"],
+  "registryDependencies": ["@animate-ui/v1/components-buttons-copy"],
   "files": [
     {
       "path": "registry/demo/components/buttons/copy/index.tsx",

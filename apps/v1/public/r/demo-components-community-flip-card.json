@@ -4,7 +4,7 @@
   "title": "Flip Card Demo",
   "description": "Demo showing the flip card component.",
   "registryDependencies": [
-    "@animate-ui/components-community-flip-card"
+    "@animate-ui/v1/components-community-flip-card"
   ],
   "files": [
     {

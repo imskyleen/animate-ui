@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Dropdown Menu Checkbox Demo",
   "description": "Demo showing a dropdown menu with a checkbox.",
-  "registryDependencies": ["@animate-ui/components-radix-dropdown-menu"],
+  "registryDependencies": ["@animate-ui/v1/components-radix-dropdown-menu"],
   "files": [
     {
       "path": "registry/demo/components/radix/dropdown-menu-checkbox/index.tsx",

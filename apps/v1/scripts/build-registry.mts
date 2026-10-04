@@ -197,7 +197,7 @@ export const index: Record<string, any> = {`;
     })()`
         : 'null'
     },
-    command: '@animate-ui/${item.name}',
+    command: '@animate-ui/v1/${item.name}',
   },`;
   }
 

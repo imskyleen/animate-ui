@@ -7,8 +7,8 @@
     "shiki"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-animate-tabs",
-    "@animate-ui/components-buttons-copy"
+    "@animate-ui/v1/primitives-animate-tabs",
+    "@animate-ui/v1/components-buttons-copy"
   ],
   "files": [
     {

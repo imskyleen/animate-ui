@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Arrow Left Icon",
   "description": "Arrow left icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

@@ -7,7 +7,7 @@
     "motion"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-headless-tabs"
+    "@animate-ui/v1/primitives-headless-tabs"
   ],
   "files": [
     {

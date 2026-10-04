@@ -4,7 +4,7 @@
   "title": "Animate Cursor Demo",
   "description": "Demo showing an animated cursor.",
   "registryDependencies": [
-    "@animate-ui/primitives-animate-cursor"
+    "@animate-ui/v1/primitives-animate-cursor"
   ],
   "files": [
     {

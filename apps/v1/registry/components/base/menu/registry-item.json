@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Menu",
   "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
-  "registryDependencies": ["@animate-ui/primitives-base-menu"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-menu"],
   "files": [
     {
       "path": "registry/components/base/menu/index.tsx",

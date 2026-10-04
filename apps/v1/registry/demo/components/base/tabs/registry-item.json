@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Tabs Demo",
   "description": "Demo showing a base tabs.",
-  "registryDependencies": ["@animate-ui/components-base-tabs"],
+  "registryDependencies": ["@animate-ui/v1/components-base-tabs"],
   "files": [
     {
       "path": "registry/demo/components/base/tabs/index.tsx",

@@ -5,7 +5,7 @@
   "title": "Tabs",
   "description": "Easily create accessible, fully customizable tab interfaces, with robust focus management and keyboard navigation support.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/primitives-headless-tabs"],
+  "registryDependencies": ["@animate-ui/v1/primitives-headless-tabs"],
   "files": [
     {
       "path": "registry/components/headless/tabs/index.tsx",

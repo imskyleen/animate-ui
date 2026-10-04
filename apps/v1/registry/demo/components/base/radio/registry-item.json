@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Radio Demo",
   "description": "Demo showing a base radio.",
-  "registryDependencies": ["@animate-ui/components-base-radio"],
+  "registryDependencies": ["@animate-ui/v1/components-base-radio"],
   "files": [
     {
       "path": "registry/demo/components/base/radio/index.tsx",

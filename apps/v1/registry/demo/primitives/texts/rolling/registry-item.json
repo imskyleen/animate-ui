@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Rolling Text Demo",
   "description": "Demo showing an animated rolling text.",
-  "registryDependencies": ["@animate-ui/primitives-texts-rolling"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-rolling"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/rolling/index.tsx",

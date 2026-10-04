@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Scissors Line Dashed Icon",
   "description": "Scissors line dashed icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

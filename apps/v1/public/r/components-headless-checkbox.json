@@ -8,7 +8,7 @@
     "motion"
   ],
   "registryDependencies": [
-    "@animate-ui/primitives-headless-checkbox"
+    "@animate-ui/v1/primitives-headless-checkbox"
   ],
   "files": [
     {

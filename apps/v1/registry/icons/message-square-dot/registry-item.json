@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Message Square Dot Icon",
   "description": "Message square dot icon component.",
-  "registryDependencies": ["@animate-ui/icons-icon"],
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
   "dependencies": ["motion"],
   "files": [
     {

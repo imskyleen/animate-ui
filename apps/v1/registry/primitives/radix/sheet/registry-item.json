@@ -6,8 +6,8 @@
   "description": "Extends the Dialog component to display content that complements the main content of the screen.",
   "dependencies": ["motion", "radix-ui"],
   "registryDependencies": [
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/hooks-use-controlled-state"
+    "@animate-ui/v1/lib-get-strict-context",
+    "@animate-ui/v1/hooks-use-controlled-state"
   ],
   "files": [
     {

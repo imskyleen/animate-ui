@@ -4,7 +4,7 @@
   "title": "Animate Pinned List Demo",
   "description": "Demo showing an animated pinned list.",
   "registryDependencies": [
-    "@animate-ui/primitives-animate-pinned-list"
+    "@animate-ui/v1/primitives-animate-pinned-list"
   ],
   "files": [
     {

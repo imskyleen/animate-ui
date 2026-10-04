@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Switch Demo",
   "description": "Demo showing a radix switch.",
-  "registryDependencies": ["@animate-ui/components-radix-switch"],
+  "registryDependencies": ["@animate-ui/v1/components-radix-switch"],
   "files": [
     {
       "path": "registry/demo/components/radix/switch/index.tsx",

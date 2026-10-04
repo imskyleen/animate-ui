@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "GitHub Stars Button Demo",
   "description": "Demo showing a GitHub stars button.",
-  "registryDependencies": ["@animate-ui/components-buttons-github-stars"],
+  "registryDependencies": ["@animate-ui/v1/components-buttons-github-stars"],
   "files": [
     {
       "path": "registry/demo/components/buttons/github-stars/index.tsx",

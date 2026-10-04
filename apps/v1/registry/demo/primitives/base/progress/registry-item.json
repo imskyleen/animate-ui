@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Base Progress Demo",
   "description": "Demo showing an animated base progress.",
-  "registryDependencies": ["@animate-ui/primitives-base-progress"],
+  "registryDependencies": ["@animate-ui/v1/primitives-base-progress"],
   "files": [
     {
       "path": "registry/demo/primitives/base/progress/index.tsx",

@@ -4,7 +4,7 @@
   "title": "Typing Text Demo",
   "description": "Demo showing an animated typing text.",
   "registryDependencies": [
-    "@animate-ui/primitives-texts-typing"
+    "@animate-ui/v1/primitives-texts-typing"
   ],
   "files": [
     {

@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Tooltip Demo",
   "description": "Demo showing an animated radix tooltip.",
-  "registryDependencies": ["@animate-ui/primitives-radix-tooltip"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-tooltip"],
   "files": [
     {
       "path": "registry/demo/primitives/radix/tooltip/index.tsx",

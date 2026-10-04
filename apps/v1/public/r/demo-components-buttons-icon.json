@@ -4,7 +4,7 @@
   "title": "Icon Button Demo",
   "description": "Demo showing an icon button.",
   "registryDependencies": [
-    "@animate-ui/components-buttons-icon"
+    "@animate-ui/v1/components-buttons-icon"
   ],
   "files": [
     {

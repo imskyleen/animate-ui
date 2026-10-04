@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Radix Sidebar Demo",
   "description": "Demo showing a radix sidebar.",
-  "registryDependencies": ["@animate-ui/components-radix-sidebar"],
+  "registryDependencies": ["@animate-ui/v1/components-radix-sidebar"],
   "files": [
     {
       "path": "registry/demo/components/radix/sidebar/index.tsx",

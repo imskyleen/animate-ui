@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Highlight Text Demo",
   "description": "Demo showing an animated highlight text.",
-  "registryDependencies": ["@animate-ui/primitives-texts-highlight"],
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-highlight"],
   "files": [
     {
       "path": "registry/demo/primitives/texts/highlight/index.tsx",
