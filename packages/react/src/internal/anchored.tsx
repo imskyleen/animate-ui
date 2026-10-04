@@ -29,6 +29,13 @@ import {
 //
 // A popup open from the start (`defaultOpen`, or `open` on the first render)
 // plays its entrance on page load, like v1.
+//
+// Tooltips warm up (Emil Kowalski's "don't delay subsequent tooltips"): once
+// one is open, the next one shows at once, without its entrance, and the one
+// it replaces goes at once too; 300ms after the last one closed, they play
+// their entrance again. shadcn/ui gives each tooltip its own Provider, so the
+// libraries' own grouping never sees it: Animate UI tracks it for all of its
+// Radix UI and Base UI tooltips. React Aria warms up by itself (`instant`).
 
 /** The spring of tooltips, popovers and hover cards, both ways. */
 const POPOVER_TRANSITION = motionTokens.spring.pop;
@@ -79,8 +86,88 @@ type AnchoredMotionProps = {
   initial: false | TargetAndTransition;
   animate: TargetAndTransition;
   exit: TargetAndTransition;
+  /** Set when a warm tooltip replaced this one: merge it into the style. */
+  style?: React.CSSProperties;
   onAnimationComplete?: (definition: unknown) => void;
 };
+
+/** How long after the last tooltip closed the next one still shows at once. */
+const WARM_WINDOW = 300;
+
+/** The tooltips' warm-up, shared by every Radix UI and Base UI tooltip. */
+const tooltipGroup = {
+  /** Tooltips open right now. */
+  open: new Set<symbol>(),
+  /** A tooltip is open, or the last one closed less than WARM_WINDOW ago. */
+  warm: false,
+  coolDown: undefined as ReturnType<typeof setTimeout> | undefined,
+  /** Tooltips playing their exit, hidden at once when a warm one opens. */
+  leaving: new Map<symbol, () => void>(),
+};
+
+/**
+ * Whether a tooltip shows or goes at once: opening while another tooltip is
+ * open or has just closed, or closing while another one has taken over.
+ */
+function useWarmTooltip(open: boolean, enabled: boolean) {
+  const [id] = React.useState(() => Symbol('tooltip'));
+  // Decided on each change of `open` (the motion props depend on it): warm
+  // when opening, replaced when closing.
+  const [change, setChange] = React.useState(() => ({
+    open,
+    atOnce: enabled && open && tooltipGroup.warm,
+  }));
+  if (change.open !== open) {
+    setChange({
+      open,
+      atOnce:
+        enabled &&
+        (open
+          ? tooltipGroup.warm
+          : [...tooltipGroup.open].some((other) => other !== id)),
+    });
+  }
+  // A warm tooltip opened while this one was leaving.
+  const [cut, setCut] = React.useState(false);
+  if (open && cut) setCut(false);
+  const atOnceRef = React.useRef(change.atOnce);
+  React.useLayoutEffect(() => {
+    atOnceRef.current = change.atOnce;
+  });
+
+  React.useEffect(() => {
+    if (!enabled || !open) return;
+    tooltipGroup.open.add(id);
+    tooltipGroup.warm = true;
+    clearTimeout(tooltipGroup.coolDown);
+    // Shown at once, it replaces the tooltips still leaving.
+    if (atOnceRef.current)
+      for (const hide of tooltipGroup.leaving.values()) hide();
+    return () => {
+      tooltipGroup.open.delete(id);
+      if (tooltipGroup.open.size > 0) return;
+      clearTimeout(tooltipGroup.coolDown);
+      tooltipGroup.coolDown = setTimeout(() => {
+        tooltipGroup.warm = false;
+      }, WARM_WINDOW);
+    };
+  }, [enabled, open, id]);
+
+  React.useEffect(() => {
+    if (!enabled || open) return;
+    tooltipGroup.leaving.set(id, () => setCut(true));
+    return () => {
+      tooltipGroup.leaving.delete(id);
+    };
+  }, [enabled, open, id]);
+
+  return {
+    /** Opening warm: no entrance. */
+    appearAtOnce: open && change.atOnce,
+    /** Closing replaced by another tooltip: hidden at once. */
+    hideAtOnce: !open && (change.atOnce || cut),
+  };
+}
 
 /**
  * Motion props of an anchored popup. Call it inside `ReducedMotionConfig`:
@@ -95,6 +182,10 @@ function useAnchoredMotion({
   exitTransition,
 }: AnchoredMotionOptions): AnchoredMotionProps {
   const reduce = useShouldReduceMotion();
+  // React Aria tooltips pass `instant` (their own warm-up); the others use
+  // Animate UI's.
+  const warmsUp = kind === 'tooltip' && instant === undefined;
+  const warm = useWarmTooltip(open, warmsUp);
   const enter = useTempoTransition(transition ?? DEFAULT_TRANSITION[kind]);
   const leave = useTempoTransition(
     exitTransition ?? transition ?? DEFAULT_TRANSITION[kind],
@@ -113,16 +204,18 @@ function useAnchoredMotion({
   );
   if (open && settledClosed) setSettledClosed(false);
 
+  const appearAtOnce = instant || warm.appearAtOnce;
+
   return {
     // A popup that mounts open plays its entrance, even on page load (v1). A
     // kept-mounted popup that mounts closed starts hidden, in place.
-    initial: instant || !open ? false : hidden,
+    initial: appearAtOnce || !open ? false : hidden,
     // Transitions live in the targets: an exiting element keeps the props of
     // its last render, when it was still open.
     animate: open
       ? {
           ...shown,
-          transition: instant ? none : enter,
+          transition: appearAtOnce ? none : enter,
           ...(keepMounted && { visibility: 'visible' }),
         }
       : {
@@ -131,6 +224,10 @@ function useAnchoredMotion({
           ...(keepMounted && settledClosed && { visibility: 'hidden' }),
         },
     exit: { ...hidden, transition: instant ? none : leave },
+    // Replaced by a warm tooltip, it disappears at once while its exit plays
+    // out unseen. A style, not a target: a leaving element keeps the targets
+    // of its last render, but its style still follows.
+    style: warm.hideAtOnce ? { visibility: 'hidden' } : undefined,
     onAnimationComplete: keepMounted
       ? (definition) => {
           const target = definition as { opacity?: number };

@@ -132,7 +132,7 @@ function PopoverContentMotion({
 
 Remove `forceMount` and `asChild` from the public props type since the component owns them. This is the accepted exception to "same props". If the original puts a `data-slot` on the Portal (shadcn does: `data-slot="popover-portal"`), keep it next to `forceMount`.
 
-Tooltip: the same, from `scale.tooltip` (0.7). shadcn's `Tooltip` gives each tooltip its own Provider, so Radix's grouping (`data-state="instant-open"`) never applies: every tooltip plays its entrance, which is what Animate UI's primitives do too.
+Tooltip: the same, from `scale.tooltip` (0.7). shadcn's `Tooltip` gives each tooltip its own Provider, so Radix's grouping (`data-state="instant-open"`) never applies: track the warm-up yourself (see the Overlay recipe).
 
 ## 3. Base UI (`@base-ui/react`)
 
@@ -167,7 +167,7 @@ function PopoverPopupMotion({ transition, ...props }: PopoverPopupProps) {
 
 Render it inside `<AnimatePresence>{isOpen && <PopoverPrimitive.Portal keepMounted><ReducedMotionConfig><PopoverPrimitive.Positioner>…` with the same inner-component pattern as Radix.
 
-Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. Tooltips start from `scale.tooltip` (0.7), preview cards from `scale.popover` (0.8).
+Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. Tooltips start from `scale.tooltip` (0.7), preview cards from `scale.popover` (0.8). A warm tooltip carries `data-instant`, but per-tooltip Providers hide it too: track the warm-up yourself.
 
 ## 4. React Aria (`react-aria-components`)
 

@@ -138,6 +138,7 @@ function AnimatedPopover({
           style: {
             transformOrigin: originFor(values.placement),
             ...domProps.style,
+            ...motionProps.style,
           },
         };
         return render ? (

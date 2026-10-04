@@ -130,7 +130,11 @@ Re-triggering retargets from the current value; it never restarts. Springs carry
 
 Animate the element the library renders (Radix `asChild`, Base UI `render`, React Aria `render` or `motion.create`) so its `data-*` attributes, `className` and `style` still apply. Same exports, props and `data-slot` as the original component.
 
-#### A14. Open from the start, it still animates
+#### A14. Warm tooltips show at once
+
+Once a tooltip is open, moving to the next one shows it at once, without its entrance, and hides the previous one at once: the first tooltip's animation says "help is here", the next ones would only slow the reading down. 300ms after the last one closed, they play their entrance again. (Animate UI's own Tooltip glides its one popup from trigger to trigger instead.)
+
+#### A15. Open from the start, it still animates
 
 A popup or panel open on the first render (`defaultOpen`, a controlled `open`) plays its entrance on mount, page load included.
 
@@ -215,6 +219,7 @@ Quality (any miss is a bug):
 - [ ] Hover gated to hover-capable pointers; the control answers on the frame of the interaction
 - [ ] No `transition-all`; pointer values in motion values, not state
 - [ ] Re-triggering retargets instead of restarting
+- [ ] Warm tooltips show (and the previous one goes) at once
 - [ ] Open from the start, it plays its entrance
 - [ ] Same exports, props and `data-slot` as the original component
 

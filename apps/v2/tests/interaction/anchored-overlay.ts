@@ -334,22 +334,36 @@ export async function probeFirstFrameOf(
 }
 
 /**
- * A toolbar of tooltips (Bold, Italic, Underline). As in Animate UI v1, every
- * tooltip plays its entrance: moving along the toolbar, the next one grows in
- * while the previous one shrinks away.
+ * A toolbar of tooltips (Bold, Italic, Underline). Tooltips warm up: once one
+ * is open, moving along the toolbar shows the next one at once (no entrance)
+ * and hides the previous one at once. Once they have all gone, the next one
+ * plays its entrance again.
  */
 export function describeToolbarTooltips(
   name: string,
   path: string,
   selector: string,
 ) {
+  /** Whether a tooltip whose text includes `text` can be seen. */
+  const shows = (page: Page, text: string) =>
+    page.evaluate(
+      ({ selector, text }) =>
+        [...document.querySelectorAll(selector)].some(
+          (el) =>
+            el.textContent?.includes(text) &&
+            getComputedStyle(el).visibility !== 'hidden' &&
+            Number(getComputedStyle(el).opacity) > 0.05,
+        ),
+      { selector, text },
+    );
+
   test.describe(name, () => {
     test.describe.configure({ timeout: 180_000 });
     test.beforeEach(async ({ page }) => {
       await gotoReady(page, path);
     });
 
-    test('the next tooltip along the toolbar plays its entrance', async ({
+    test('the next tooltip along the toolbar shows at once, the previous one goes at once', async ({
       page,
     }) => {
       await page.getByRole('button', { name: 'Bold' }).hover();
@@ -365,11 +379,16 @@ export function describeToolbarTooltips(
         steps: 8,
       });
       const first = await probe.firstFrame();
-      expect(first.opacity).toBeLessThan(1);
-      expect(first.scale).toBeLessThan(0.8);
+      expect(first.opacity).toBe(1);
+      expect(first.scale).toBeCloseTo(1, 3);
+      // The previous one doesn't shrink away next to it: hidden at once
+      // (its exit would keep it visible for ~400ms).
+      await expect
+        .poll(() => shows(page, 'Bold'), { intervals: [16], timeout: 150 })
+        .toBe(false);
     });
 
-    test('reopening right after closing plays the entrance again', async ({
+    test('once they have all gone, the next one plays its entrance again', async ({
       page,
     }) => {
       const bold = page.getByRole('button', { name: 'Bold' });
@@ -378,6 +397,8 @@ export function describeToolbarTooltips(
       await expect(page.locator(selector)).toBeVisible();
       await page.mouse.move(5, 5, { steps: 2 });
       await expect(page.locator(selector)).toHaveCount(0);
+      // Past the warm-up's 300ms.
+      await page.waitForTimeout(100);
       const probe = await probeFirstFrameOf(page, selector, 'Bold');
       // Straight back (no actionability checks in between).
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {

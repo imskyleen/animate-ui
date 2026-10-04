@@ -86,6 +86,50 @@ test.describe('animate-ui tooltip', () => {
     expect(last.scale).toBeCloseTo(1, 2);
   });
 
+  test('the arrow stays under the popup from its first frame', async ({
+    page,
+  }) => {
+    await open(page);
+    // Popup and arrow centers on every frame of the entrance: the arrow
+    // never flies in from where Floating UI first renders the popup.
+    const frames = page.evaluate(
+      () =>
+        new Promise<{ dx: number; gap: number; opacity: number }[]>(
+          (resolve) => {
+            const seen: { dx: number; gap: number; opacity: number }[] = [];
+            const t0 = performance.now();
+            const tick = () => {
+              const content = document.querySelector(
+                '[data-slot="tooltip-content"]',
+              );
+              const arrow = document.querySelector(
+                '[data-slot="tooltip-arrow"]',
+              );
+              if (content && arrow) {
+                const c = content.getBoundingClientRect();
+                const a = arrow.getBoundingClientRect();
+                seen.push({
+                  dx: a.left + a.width / 2 - (c.left + c.width / 2),
+                  gap: a.top - c.bottom,
+                  opacity: Number(getComputedStyle(content).opacity),
+                });
+              }
+              if (performance.now() - t0 < 900) requestAnimationFrame(tick);
+              else resolve(seen);
+            };
+            tick();
+          },
+        ),
+    );
+    await trigger(page, 'Bold').hover();
+    const visible = (await frames).filter((f) => f.opacity > 0.02);
+    expect(visible.length).toBeGreaterThan(5);
+    for (const frame of visible) {
+      expect(Math.abs(frame.dx)).toBeLessThan(2);
+      expect(Math.abs(frame.gap)).toBeLessThan(3);
+    }
+  });
+
   test('grows from the point facing its trigger', async ({ page }) => {
     await open(page);
     await trigger(page, 'Bold').hover();

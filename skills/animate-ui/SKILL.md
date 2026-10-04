@@ -89,6 +89,7 @@ Keyboard navigation animates like the pointer. Name the purpose in one word (fee
 - Tweens: ease-out for what enters and leaves, ease-in-out for what moves on screen, `ease` for color; never ease-in. A light blur bridges a swap.
 - The exit replays the entrance, its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
 - Keep the library element as the animated element (Radix `asChild`, Base UI `render`, React Aria `render`/`motion.create`) so `data-*` attributes and styles still apply.
+- Warm tooltips show at once (and the one they replace goes at once).
 - The keyboard animates like the pointer; hover only on hover-capable fine pointers; re-triggering retargets, never restarts; loops pause off screen.
 
 ## D. Animate UI v1 projects: migrate

@@ -87,6 +87,7 @@ const FAMILIES: Family[] = [
       'popovers, hover cards : scale 0,8 → 1 + fondu',
       'ressort 300/25, à l’aller comme au retour, origine = le déclencheur',
       'Tooltip Animate UI : comme ceux des libs (0,7 depuis le déclencheur), et glisse d’un déclencheur à l’autre',
+      'tooltips Radix, Base UI, React Aria : une fois l’un ouvert, le suivant apparaît d’un coup et le précédent disparaît d’un coup (300ms de répit après le dernier)',
     ],
     demos: [
       { demo: 'radix-ui/popover', label: 'Popover' },

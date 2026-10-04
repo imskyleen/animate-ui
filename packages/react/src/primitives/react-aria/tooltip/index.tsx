@@ -112,6 +112,7 @@ function AnimatedTooltip({
           style: {
             transformOrigin: originFor(values.placement),
             ...domProps.style,
+            ...motionProps.style,
           },
         };
         return render ? (

@@ -216,6 +216,8 @@ type RenderedTooltipContextType = {
   side: Side;
   align: Align;
   open: boolean;
+  /** Floating UI has placed the popup (it's measured unseen until then). */
+  positioned: boolean;
 };
 
 const [RenderedTooltipProvider, useRenderedTooltip] =
@@ -243,7 +245,7 @@ function TooltipArrow({
   withTransition = true,
   ...props
 }: TooltipArrowProps) {
-  const { side, align, open } = useRenderedTooltip();
+  const { side, align, open, positioned } = useRenderedTooltip();
   const { context, arrowRef } = useFloatingContext();
   const { transition, globalId } = useGlobalTooltip();
   React.useImperativeHandle(ref, () => arrowRef.current as SVGSVGElement);
@@ -259,7 +261,11 @@ function TooltipArrow({
       data-align={align}
       data-slot="tooltip-arrow"
       style={{ rotate: deg }}
-      layoutId={withTransition ? `tooltip-arrow-${globalId}` : undefined}
+      // Like the popup's: no layoutId while it's measured at 0, 0, or the
+      // arrow would fly in from there.
+      layoutId={
+        withTransition && positioned ? `tooltip-arrow-${globalId}` : undefined
+      }
       transition={withTransition ? transition : undefined}
       {...props}
     />
@@ -355,6 +361,7 @@ function TooltipOverlay() {
                   side: resolvedSide,
                   align: rendered.data.align,
                   open: rendered.open,
+                  positioned: isPositioned,
                 }}
               >
                 <Component
