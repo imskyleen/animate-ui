@@ -5,9 +5,26 @@ import { Tilt, TiltContent } from "@animate-ui/react/primitives/effects/tilt"
 
 const COLORS = ["bg-neutral-800", "bg-red-950", "bg-blue-950"]
 
-export default function TiltDemo() {
+export const controls = {
+  Tilt: {
+    maxTilt: { value: 10, min: 0, max: 50, step: 1 },
+    perspective: { value: 800, min: 200, max: 5000, step: 10 },
+  },
+}
+
+export default function TiltDemo({
+  maxTilt = 10,
+  perspective = 800,
+}: {
+  maxTilt?: number
+  perspective?: number
+}) {
   return (
-    <Tilt maxTilt={10} perspective={800} className="w-full max-w-60">
+    <Tilt
+      maxTilt={maxTilt}
+      perspective={perspective}
+      className="w-full max-w-60"
+    >
       <TiltContent className="flex flex-col gap-3 rounded-2xl border bg-card p-2 pb-5 shadow-sm">
         <Image
           src="/demos/mug.webp"

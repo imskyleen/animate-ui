@@ -313,7 +313,29 @@ const FRAMEWORKS = [
   "SolidStart",
 ]
 
-export default function ComboboxDemo() {
+export const controls = {
+  ComboboxContent: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 6 },
+    align: {
+      value: "start",
+      options: { start: "start", center: "center", end: "end" },
+    },
+  },
+}
+
+export default function ComboboxDemo({
+  side = "bottom",
+  sideOffset = 6,
+  align = "start",
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+}) {
   return (
     <Combobox items={FRAMEWORKS}>
       <ComboboxInput
@@ -321,7 +343,11 @@ export default function ComboboxDemo() {
         aria-label="Framework"
         className="w-56"
       />
-      <ComboboxContent>
+      <ComboboxContent
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+      >
         <ComboboxEmpty>No framework found.</ComboboxEmpty>
         <ComboboxList>
           {(item: string) => (

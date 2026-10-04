@@ -44,7 +44,32 @@ function HoverCardContent({
 
 export { HoverCard, HoverCardTrigger, HoverCardContent }
 
-export default function HoverCardDemo() {
+export const controls = {
+  HoverCardContent: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+export default function HoverCardDemo({
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -52,7 +77,13 @@ export default function HoverCardDemo() {
           @animate-ui
         </a>
       </HoverCardTrigger>
-      <HoverCardContent className="w-80">
+      <HoverCardContent
+        className="w-80"
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
+      >
         <div className="flex gap-3">
           <div className="bg-primary text-primary-foreground flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
             AU

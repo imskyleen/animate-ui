@@ -90,11 +90,36 @@ function ToggleGroupItem({
 
 export { ToggleGroup, ToggleGroupItem }
 
-export default function ToggleGroupDemo() {
+export const controls = {
+  ToggleGroup: {
+    multiple: { value: false },
+    variant: {
+      value: "outline",
+      options: { default: "default", outline: "outline" },
+    },
+    size: {
+      value: "default",
+      options: { default: "default", sm: "sm", lg: "lg" },
+    },
+  },
+}
+
+export default function ToggleGroupDemo({
+  multiple = false,
+  variant = "outline",
+  size = "default",
+}: {
+  /** Several items pressed at once. */
+  multiple?: boolean
+  variant?: "default" | "outline"
+  size?: "default" | "sm" | "lg"
+}) {
   return (
     <ToggleGroup
       defaultValue={["left"]}
-      variant="outline"
+      multiple={multiple}
+      variant={variant}
+      size={size}
       spacing={0}
       aria-label="Text alignment"
     >

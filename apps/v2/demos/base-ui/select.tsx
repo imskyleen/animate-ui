@@ -206,13 +206,48 @@ const FONTS = [
   { label: "Monospace", items: ["Geist Mono", "JetBrains Mono"] },
 ]
 
-export default function SelectDemo() {
+export const controls = {
+  SelectContent: {
+    alignItemWithTrigger: { value: false },
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+export default function SelectDemo({
+  alignItemWithTrigger = false,
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+}: {
+  /** Overlaps the trigger with the selected item; side and align apply when off. */
+  alignItemWithTrigger?: boolean
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <Select defaultValue="Geist">
       <SelectTrigger className="w-48" aria-label="Font">
         <SelectValue placeholder="Choose a font" />
       </SelectTrigger>
-      <SelectContent alignItemWithTrigger={false}>
+      <SelectContent
+        alignItemWithTrigger={alignItemWithTrigger}
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
+      >
         {FONTS.map((group, index) => (
           <React.Fragment key={group.label}>
             {index > 0 && <SelectSeparator />}

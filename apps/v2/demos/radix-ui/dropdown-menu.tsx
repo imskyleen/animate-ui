@@ -274,7 +274,32 @@ export {
 }
 
 
-export default function DropdownMenuDemo() {
+export const controls = {
+  DropdownMenuContent: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "start",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+export default function DropdownMenuDemo({
+  side = "bottom",
+  sideOffset = 4,
+  align = "start",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   const [showStatusBar, setShowStatusBar] = React.useState(true)
   const [showActivity, setShowActivity] = React.useState(false)
   const [position, setPosition] = React.useState("bottom")
@@ -284,7 +309,13 @@ export default function DropdownMenuDemo() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline">Open menu</Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent
+        className="w-56"
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
+      >
         <DropdownMenuLabel>My account</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownMenuItem>

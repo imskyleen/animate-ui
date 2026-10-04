@@ -15,9 +15,27 @@ const VARIANTS: ClickVariant[] = [
   "particles",
 ]
 
-export default function ClickDemo() {
+export const controls = {
+  Click: {
+    global: { value: false },
+    duration: { value: 400, min: 0, max: 3000, step: 100 },
+    size: { value: 100, min: 0, max: 300, step: 10 },
+  },
+}
+
+export default function ClickDemo({
+  global = false,
+  duration = 400,
+  size = 100,
+}: {
+  /** Listen to clicks on the whole page, not only this area. */
+  global?: boolean
+  duration?: number
+  size?: number
+}) {
   const scopeRef = React.useRef<HTMLDivElement>(null)
   const [variant, setVariant] = React.useState<ClickVariant>("ring")
+  const scope = global ? undefined : scopeRef
 
   const area = (
     <p className="text-lg font-medium text-muted-foreground select-none">
@@ -34,14 +52,21 @@ export default function ClickDemo() {
         {variant === "ripple" ? (
           <Click
             variant="ripple"
-            scope={scopeRef}
+            scope={scope}
             color="var(--color-primary)"
-            size={100}
+            size={size}
+            duration={duration}
           >
             {area}
           </Click>
         ) : (
-          <Click variant={variant} scope={scopeRef} color="currentColor">
+          <Click
+            variant={variant}
+            scope={scope}
+            color="currentColor"
+            size={size}
+            duration={duration}
+          >
             {area}
           </Click>
         )}

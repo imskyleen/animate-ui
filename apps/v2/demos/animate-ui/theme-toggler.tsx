@@ -2,6 +2,7 @@
 
 import {
   ThemeToggler,
+  type Direction,
   type Resolved,
   type ThemeSelection,
 } from "@animate-ui/react/primitives/effects/theme-toggler"
@@ -23,7 +24,20 @@ const NEXT: Record<ThemeSelection, ThemeSelection> = {
 
 const ICONS = { light: Sun03Icon, dark: Moon02Icon, system: ComputerIcon }
 
-export default function ThemeTogglerDemo() {
+export const controls = {
+  ThemeToggler: {
+    direction: {
+      value: "ltr",
+      options: { btt: "btt", ttb: "ttb", ltr: "ltr", rtl: "rtl" },
+    },
+  },
+}
+
+export default function ThemeTogglerDemo({
+  direction = "ltr",
+}: {
+  direction?: Direction
+}) {
   const { theme, resolvedTheme, setTheme } = useTheme()
 
   return (
@@ -31,7 +45,7 @@ export default function ThemeTogglerDemo() {
       theme={(theme ?? "system") as ThemeSelection}
       resolvedTheme={(resolvedTheme ?? "light") as Resolved}
       setTheme={setTheme}
-      direction="ltr"
+      direction={direction}
     >
       {({ effective, toggleTheme }) => (
         <Button

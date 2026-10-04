@@ -34,11 +34,31 @@ function Checkbox({
 
 export { Checkbox }
 
-export default function CheckboxDemo() {
+export const controls = {
+  Checkbox: {
+    checked: {
+      value: true,
+      options: { true: true, false: false, indeterminate: "indeterminate" },
+    },
+  },
+}
+
+export default function CheckboxDemo({
+  checked: checkedProp = true,
+}: {
+  checked?: boolean | "indeterminate"
+}) {
+  const [checked, setChecked] = React.useState(checkedProp)
+  const [prev, setPrev] = React.useState(checkedProp)
+  if (checkedProp !== prev) {
+    setPrev(checkedProp)
+    setChecked(checkedProp)
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <Label>
-        <Checkbox defaultChecked />
+        <Checkbox checked={checked} onCheckedChange={setChecked} />
         Accept terms and conditions
       </Label>
       <Label className="items-start">

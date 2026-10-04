@@ -77,7 +77,39 @@ const TOOLS = [
   { label: "Underline", shortcut: "⌘U", icon: TextUnderlineIcon },
 ]
 
-export default function TooltipDemo() {
+export const controls = {
+  TooltipContent: {
+    side: {
+      value: "top",
+      options: {
+        top: "top",
+        bottom: "bottom",
+        left: "left",
+        right: "right",
+        "inline-start": "inline-start",
+        "inline-end": "inline-end",
+      },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+export default function TooltipDemo({
+  side = "top",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <TooltipProvider>
       <div className="flex items-center gap-1 rounded-xl border p-1">
@@ -90,7 +122,12 @@ export default function TooltipDemo() {
             >
               <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent
+              side={side}
+              sideOffset={sideOffset}
+              align={align}
+              alignOffset={alignOffset}
+            >
               {tool.label}
               <span className="opacity-60">{tool.shortcut}</span>
             </TooltipContent>

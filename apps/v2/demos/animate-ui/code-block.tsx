@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { cn } from "cn"
 import { RefreshIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CodeBlock } from "@animate-ui/react/primitives/code-block"
@@ -26,7 +27,27 @@ function MyComponent(props: MyComponentProps) {
 
 export { MyComponent, type MyComponentProps };`
 
-export default function CodeBlockDemo() {
+export const controls = {
+  CodeBlock: {
+    delay: { value: 0, min: 0, max: 3000, step: 100 },
+    duration: { value: 4000, min: 0, max: 30000, step: 1000 },
+    writing: { value: true },
+    cursor: { value: true },
+  },
+}
+
+export default function CodeBlockDemo({
+  delay = 0,
+  duration = 4000,
+  writing = true,
+  cursor = true,
+}: {
+  delay?: number
+  duration?: number
+  writing?: boolean
+  /** A blinking caret at the end while it writes. */
+  cursor?: boolean
+}) {
   const { resolvedTheme } = useTheme()
   const [key, setKey] = React.useState(0)
 
@@ -34,13 +55,18 @@ export default function CodeBlockDemo() {
     <div className="relative w-[420px] max-w-full">
       <div className="h-[372px] overflow-auto rounded-xl bg-accent p-4 text-sm">
         <CodeBlock
-          key={key}
+          key={`${key}-${delay}-${duration}-${writing}`}
           code={CODE}
           lang="tsx"
           theme={resolvedTheme === "dark" ? "dark" : "light"}
-          writing
-          duration={4000}
-          className="[&_code]:text-[13px]! [&>pre,_&_code]:border-none [&>pre,_&_code]:bg-transparent! data-[done=false]:[&_.line:last-of-type::after]:inline-block data-[done=false]:[&_.line:last-of-type::after]:w-[1ch] data-[done=false]:[&_.line:last-of-type::after]:content-['|']"
+          writing={writing}
+          delay={delay}
+          duration={duration}
+          className={cn(
+            "[&_code]:text-[13px]! [&>pre,_&_code]:border-none [&>pre,_&_code]:bg-transparent!",
+            cursor &&
+              "data-[done=false]:[&_.line:last-of-type::after]:inline-block data-[done=false]:[&_.line:last-of-type::after]:w-[1ch] data-[done=false]:[&_.line:last-of-type::after]:content-['|']"
+          )}
         />
       </div>
       <Button

@@ -156,13 +156,23 @@ const FIELDS = [
   { id: "username", label: "Username", defaultValue: "@peduarte" },
 ]
 
-export default function DialogDemo() {
+export const controls = {
+  DialogContent: {
+    showCloseButton: { value: true },
+  },
+}
+
+export default function DialogDemo({
+  showCloseButton = true,
+}: {
+  showCloseButton?: boolean
+}) {
   return (
     <Dialog>
       <DialogTrigger render={<Button variant="outline" />}>
         Edit profile
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent showCloseButton={showCloseButton}>
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>

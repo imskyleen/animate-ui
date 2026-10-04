@@ -7,13 +7,20 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Button } from "@/components/ui/button"
 
-export default function RollingTextDemo() {
+export const controls = {
+  RollingText: {
+    delay: { value: 0, min: 0, max: 3000, step: 100 },
+  },
+}
+
+export default function RollingTextDemo({ delay = 0 }: { delay?: number }) {
   const [run, setRun] = React.useState(0)
 
   return (
     <div className="flex flex-col items-center gap-6">
       <RollingText
-        key={run}
+        key={`${run}-${delay}`}
+        delay={delay}
         className="text-4xl font-semibold"
         text="Rolling Text"
       />

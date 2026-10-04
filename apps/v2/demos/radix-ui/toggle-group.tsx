@@ -90,12 +90,43 @@ function ToggleGroupItem({
 
 export { ToggleGroup, ToggleGroupItem }
 
-export default function ToggleGroupDemo() {
+export const controls = {
+  ToggleGroup: {
+    type: {
+      value: "single",
+      options: { single: "single", multiple: "multiple" },
+    },
+    variant: {
+      value: "outline",
+      options: { default: "default", outline: "outline" },
+    },
+    size: {
+      value: "default",
+      options: { default: "default", sm: "sm", lg: "lg" },
+    },
+  },
+}
+
+export default function ToggleGroupDemo({
+  type = "single",
+  variant = "outline",
+  size = "default",
+}: {
+  type?: "single" | "multiple"
+  variant?: "default" | "outline"
+  size?: "default" | "sm" | "lg"
+}) {
+  const props =
+    type === "multiple"
+      ? { type: "multiple" as const, defaultValue: ["left"] }
+      : { type: "single" as const, defaultValue: "left" }
+
   return (
     <ToggleGroup
-      type="single"
-      defaultValue="left"
-      variant="outline"
+      key={type}
+      {...props}
+      variant={variant}
+      size={size}
       spacing={0}
       aria-label="Text alignment"
     >

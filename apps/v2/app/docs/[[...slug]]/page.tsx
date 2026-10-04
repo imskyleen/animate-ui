@@ -5,6 +5,10 @@ import {
   DocsPage,
   DocsTitle,
 } from 'fumadocs-ui/layouts/docs/page';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -19,7 +23,12 @@ import { LibraryTabs } from '@/components/docs/library-tabs';
 import { CopyPage, PageNavigation } from '@/components/docs/page-actions';
 import { getMDXComponents } from '@/components/mdx';
 import { getNeighbours, getPrimitive, getPrimitiveUrls } from '@/lib/docs';
-import { getPageImageUrl, getPageMarkdownUrl } from '@/lib/shared';
+import {
+  getPageImageUrl,
+  getPageMarkdownUrl,
+  gitConfig,
+  siteUrl,
+} from '@/lib/shared';
 import { source } from '@/lib/source';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
@@ -30,6 +39,20 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const MDX = page.data.body;
   const primitive = getPrimitive(page);
   const { previous, next } = getNeighbours(page);
+
+  // Edit on GitHub, and Open in v0 for pages with a demo (its registry item
+  // comes from scripts/build-demos.mts).
+  const contentPath = path.join('apps/v2/content/docs', page.path);
+  const githubUrl = `https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/${contentPath}`;
+  const demo = (
+    await readFile(path.join(process.cwd(), 'content/docs', page.path), 'utf8')
+  ).match(/<ComponentPreview name="([^"]+)"/)?.[1];
+  const demoItem = demo && `demo-${demo.replace('/', '-')}`;
+  const v0Url =
+    demoItem &&
+    existsSync(path.join(process.cwd(), 'public/r', `${demoItem}.json`))
+      ? `${siteUrl}/r/${demoItem}.json`
+      : undefined;
 
   return (
     <DocsPage
@@ -47,7 +70,11 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       <div className="flex items-start justify-between gap-4">
         <DocsTitle className="font-medium">{page.data.title}</DocsTitle>
         <div className="flex shrink-0 items-center gap-2">
-          <CopyPage markdownUrl={getPageMarkdownUrl(page).url} />
+          <CopyPage
+            markdownUrl={getPageMarkdownUrl(page).url}
+            githubUrl={githubUrl}
+            v0Url={v0Url}
+          />
           <PageNavigation previous={previous} next={next} />
         </div>
       </div>

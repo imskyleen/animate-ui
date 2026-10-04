@@ -234,9 +234,22 @@ const GOALS = [
   { label: "Stand", value: "10 h" },
 ]
 
-export default function DrawerDemo() {
+export const controls = {
+  Drawer: {
+    swipeDirection: {
+      value: "down",
+      options: { down: "down", up: "up", left: "left", right: "right" },
+    },
+  },
+}
+
+export default function DrawerDemo({
+  swipeDirection = "down",
+}: {
+  swipeDirection?: "down" | "up" | "left" | "right"
+}) {
   return (
-    <Drawer showSwipeHandle>
+    <Drawer showSwipeHandle swipeDirection={swipeDirection}>
       <DrawerTrigger render={<Button variant="outline" />}>
         Daily goals
       </DrawerTrigger>

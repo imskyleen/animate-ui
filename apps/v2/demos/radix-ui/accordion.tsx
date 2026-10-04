@@ -107,9 +107,28 @@ const ITEMS = [
   },
 ]
 
-export default function AccordionDemo() {
+export const controls = {
+  Accordion: {
+    multiple: { value: false },
+    collapsible: { value: true },
+  },
+}
+
+export default function AccordionDemo({
+  multiple = false,
+  collapsible = true,
+}: {
+  /** type="multiple": several items open at once. */
+  multiple?: boolean
+  /** type="single": the open item can close. */
+  collapsible?: boolean
+}) {
+  const props = multiple
+    ? { type: "multiple" as const, defaultValue: ["what"] }
+    : { type: "single" as const, collapsible, defaultValue: "what" }
+
   return (
-    <Accordion type="single" collapsible defaultValue="what" className="max-w-md">
+    <Accordion key={props.type} {...props} className="max-w-md">
       {ITEMS.map((item) => (
         <AccordionItem key={item.value} value={item.value}>
           <AccordionTrigger>{item.question}</AccordionTrigger>

@@ -11,7 +11,7 @@
     "test:interaction": "playwright test tests/interaction",
     "test": "playwright test",
     "icons": "node scripts/build-icons.mts",
-    "registry": "node scripts/build-icons.mts && node scripts/build-backgrounds.mts"
+    "registry": "node scripts/build-icons.mts && node scripts/build-backgrounds.mts && node scripts/build-demos.mts"
   },
   "dependencies": {
     "@animate-ui/react": "workspace:*",

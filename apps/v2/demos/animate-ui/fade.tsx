@@ -9,13 +9,29 @@ import { Button } from "@/components/ui/button"
 
 const ITEMS = ["Design", "Build", "Ship"]
 
-export default function FadeDemo() {
+export const controls = {
+  Fade: {
+    delay: { value: 0, min: 0, max: 3000, step: 100 },
+    initialOpacity: { value: 0, min: 0, max: 1, step: 0.1 },
+    opacity: { value: 1, min: 0, max: 1, step: 0.1 },
+  },
+}
+
+export default function FadeDemo({
+  delay = 0,
+  initialOpacity = 0,
+  opacity = 1,
+}: {
+  delay?: number
+  initialOpacity?: number
+  opacity?: number
+}) {
   const [key, setKey] = React.useState(0)
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div key={key} className="flex gap-3">
-        <Fades holdDelay={100}>
+      <div key={`${key}-${delay}-${initialOpacity}-${opacity}`} className="flex gap-3">
+        <Fades holdDelay={100} delay={delay} initialOpacity={initialOpacity} opacity={opacity}>
           {ITEMS.map((item) => (
             <div
               key={item}

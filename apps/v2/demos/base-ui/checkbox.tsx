@@ -30,11 +30,21 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
 
 export { Checkbox }
 
-export default function CheckboxDemo() {
+export const controls = {
+  Checkbox: {
+    indeterminate: { value: false },
+  },
+}
+
+export default function CheckboxDemo({
+  indeterminate = false,
+}: {
+  indeterminate?: boolean
+}) {
   return (
     <div className="flex flex-col gap-5">
       <Label>
-        <Checkbox defaultChecked />
+        <Checkbox defaultChecked indeterminate={indeterminate} />
         Accept terms and conditions
       </Label>
       <Label className="items-start">
