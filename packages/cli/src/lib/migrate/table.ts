@@ -10,8 +10,8 @@
  *   v1 name becomes a local alias: `const PopoverTrigger = Popover.Trigger`.
  * - `ComponentProps<Root>`: the props of a part (types only), for the v1
  *   prop types v2 doesn't name.
- * - `Select.Root.Props<Value = unknown>`: a generic type: the local alias
- *   declares these parameters and passes them on.
+ * - `DialogContentProps & { side?: … }`: a type plus the v1 props it lacks
+ *   (types only), declared as a local type alias.
  */
 export type Target = string;
 
@@ -342,28 +342,6 @@ export const PRIMITIVES: Record<string, Migration> = {
     },
     unmapped: [],
   },
-  'animate/input-otp': {
-    module: 'primitives/input-otp',
-    values: {},
-    types: {},
-    unmapped: [
-      'InputOTP',
-      'InputOTPCaret',
-      'InputOTPCaretProps',
-      'InputOTPContextType',
-      'InputOTPEntry',
-      'InputOTPGroup',
-      'InputOTPGroupProps',
-      'InputOTPProps',
-      'InputOTPSeparator',
-      'InputOTPSeparatorProps',
-      'InputOTPSlot',
-      'InputOTPSlotContextType',
-      'InputOTPSlotProps',
-      'useInputOTP',
-      'useInputOTPSlot',
-    ],
-  },
   'animate/motion-grid': {
     module: 'primitives/motion-grid',
     values: { MotionGrid: 'MotionGrid', MotionGridCells: 'MotionGridCells' },
@@ -578,55 +556,6 @@ export const PRIMITIVES: Record<string, Migration> = {
     },
     unmapped: ['useCollapsible', 'CollapsibleContextType'],
   },
-  'radix/context-menu': {
-    module: 'primitives/radix-ui/context-menu',
-    values: {
-      ContextMenu: 'Root',
-      ContextMenuTrigger: 'Trigger',
-      ContextMenuPortal: 'Portal',
-      ContextMenuContent: 'Content',
-      ContextMenuItem: 'Item',
-      ContextMenuCheckboxItem: 'CheckboxItem',
-      ContextMenuRadioGroup: 'RadioGroup',
-      ContextMenuRadioItem: 'RadioItem',
-      ContextMenuItemIndicator: 'ItemIndicator',
-      ContextMenuLabel: 'Label',
-      ContextMenuSeparator: 'Separator',
-      ContextMenuGroup: 'Group',
-      ContextMenuSub: 'Sub',
-      ContextMenuSubTrigger: 'SubTrigger',
-      ContextMenuSubContent: 'SubContent',
-    },
-    types: {
-      ContextMenuProps: 'ContextMenuProps',
-      ContextMenuTriggerProps: 'ContextMenuTriggerProps',
-      ContextMenuPortalProps: 'ContextMenuPortalProps',
-      ContextMenuContentProps: 'ContextMenuContentProps',
-      ContextMenuItemProps: 'ContextMenuItemProps',
-      ContextMenuCheckboxItemProps: 'ContextMenuCheckboxItemProps',
-      ContextMenuRadioGroupProps: 'ContextMenuRadioGroupProps',
-      ContextMenuRadioItemProps: 'ContextMenuRadioItemProps',
-      ContextMenuItemIndicatorProps: 'ContextMenuItemIndicatorProps',
-      ContextMenuLabelProps: 'ContextMenuLabelProps',
-      ContextMenuSeparatorProps: 'ContextMenuSeparatorProps',
-      ContextMenuGroupProps: 'ContextMenuGroupProps',
-      ContextMenuSubProps: 'ContextMenuSubProps',
-      ContextMenuSubTriggerProps: 'ContextMenuSubTriggerProps',
-      ContextMenuSubContentProps: 'ContextMenuSubContentProps',
-    },
-    unmapped: [
-      'ContextMenuHighlight',
-      'ContextMenuHighlightItem',
-      'ContextMenuShortcut',
-      'useContextMenu',
-      'useContextMenuSub',
-      'ContextMenuHighlightProps',
-      'ContextMenuHighlightItemProps',
-      'ContextMenuShortcutProps',
-      'ContextMenuContextType',
-      'ContextMenuSubContextType',
-    ],
-  },
   'radix/dialog': {
     module: 'primitives/radix-ui/dialog',
     values: {
@@ -779,46 +708,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'RadioGroupItemContextType',
     ],
   },
-  'radix/select': {
-    module: 'primitives/radix-ui/select',
-    values: {
-      Select: 'Root',
-      SelectTrigger: 'Trigger',
-      SelectValue: 'Value',
-      SelectIcon: 'Icon',
-      SelectPortal: 'Portal',
-      SelectContent: 'Content',
-      SelectViewport: 'Viewport',
-      SelectGroup: 'Group',
-      SelectLabel: 'Label',
-      SelectItem: 'Item',
-      SelectItemText: 'ItemText',
-      SelectItemIndicator: 'ItemIndicator',
-      SelectSeparator: 'Separator',
-      SelectScrollUpButton: 'ScrollUpButton',
-      SelectScrollDownButton: 'ScrollDownButton',
-      SelectArrow: 'Arrow',
-    },
-    types: {
-      SelectProps: 'SelectProps',
-      SelectTriggerProps: 'SelectTriggerProps',
-      SelectValueProps: 'SelectValueProps',
-      SelectIconProps: 'SelectIconProps',
-      SelectPortalProps: 'SelectPortalProps',
-      SelectContentProps: 'SelectContentProps',
-      SelectViewportProps: 'SelectViewportProps',
-      SelectGroupProps: 'SelectGroupProps',
-      SelectLabelProps: 'SelectLabelProps',
-      SelectItemProps: 'SelectItemProps',
-      SelectItemTextProps: 'SelectItemTextProps',
-      SelectItemIndicatorProps: 'SelectItemIndicatorProps',
-      SelectSeparatorProps: 'SelectSeparatorProps',
-      SelectScrollUpButtonProps: 'SelectScrollUpButtonProps',
-      SelectScrollDownButtonProps: 'SelectScrollDownButtonProps',
-      SelectArrowProps: 'SelectArrowProps',
-    },
-    unmapped: ['useSelect', 'SelectContextType'],
-  },
   'radix/sheet': {
     module: 'primitives/radix-ui/dialog',
     values: {
@@ -837,7 +726,9 @@ export const PRIMITIVES: Record<string, Migration> = {
       SheetOverlayProps: 'DialogOverlayProps',
       SheetTriggerProps: 'DialogTriggerProps',
       SheetCloseProps: 'DialogCloseProps',
-      SheetContentProps: 'DialogContentProps',
+      // v1's `side`, which v2 reads as `data-side`: v1 components take it.
+      SheetContentProps:
+        "DialogContentProps & { side?: 'top' | 'right' | 'bottom' | 'left' }",
       SheetTitleProps: 'DialogTitleProps',
       SheetDescriptionProps: 'DialogDescriptionProps',
     },
@@ -848,22 +739,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'SheetHeaderProps',
       'SheetFooterProps',
     ],
-  },
-  'radix/slider': {
-    module: 'primitives/radix-ui/slider',
-    values: {
-      Slider: 'Root',
-      SliderTrack: 'Track',
-      SliderRange: 'Range',
-      SliderThumb: 'Thumb',
-    },
-    types: {
-      SliderProps: 'SliderProps',
-      SliderTrackProps: 'SliderTrackProps',
-      SliderRangeProps: 'SliderRangeProps',
-      SliderThumbProps: 'SliderThumbProps',
-    },
-    unmapped: ['useSlider', 'SliderContextType'],
   },
   'radix/switch': {
     module: 'primitives/radix-ui/switch',
@@ -1038,123 +913,6 @@ export const PRIMITIVES: Record<string, Migration> = {
     },
     unmapped: ['useCollapsible', 'CollapsibleContextType'],
   },
-  'base/combobox': {
-    module: 'primitives/base-ui/combobox',
-    values: {
-      Combobox: 'Combobox.Root',
-      ComboboxLabel: 'Combobox.Label',
-      ComboboxValue: 'Combobox.Value',
-      ComboboxInputGroup: 'Combobox.InputGroup',
-      ComboboxInput: 'Combobox.Input',
-      ComboboxTrigger: 'Combobox.Trigger',
-      ComboboxIcon: 'Combobox.Icon',
-      ComboboxClear: 'Combobox.Clear',
-      ComboboxChips: 'Combobox.Chips',
-      ComboboxChip: 'Combobox.Chip',
-      ComboboxChipRemove: 'Combobox.ChipRemove',
-      ComboboxPortal: 'Combobox.Portal',
-      ComboboxBackdrop: 'Combobox.Backdrop',
-      ComboboxPositioner: 'Combobox.Positioner',
-      ComboboxPopup: 'Combobox.Popup',
-      ComboboxArrow: 'Combobox.Arrow',
-      ComboboxStatus: 'Combobox.Status',
-      ComboboxEmpty: 'Combobox.Empty',
-      ComboboxList: 'Combobox.List',
-      ComboboxRow: 'Combobox.Row',
-      ComboboxCollection: 'Combobox.Collection',
-      ComboboxItem: 'Combobox.Item',
-      ComboboxItemIndicator: 'Combobox.ItemIndicator',
-      ComboboxGroup: 'Combobox.Group',
-      ComboboxGroupLabel: 'Combobox.GroupLabel',
-      ComboboxSeparator: 'Combobox.Separator',
-      useComboboxFilter: 'Combobox.useFilter',
-    },
-    types: {
-      ComboboxProps:
-        'Combobox.Root.Props<Value = unknown, Multiple extends boolean | undefined = false>',
-      ComboboxLabelProps: 'Combobox.Label.Props',
-      ComboboxValueProps: 'Combobox.Value.Props',
-      ComboboxInputGroupProps: 'Combobox.InputGroup.Props',
-      ComboboxInputProps: 'Combobox.Input.Props',
-      ComboboxTriggerProps: 'Combobox.Trigger.Props',
-      ComboboxIconProps: 'Combobox.Icon.Props',
-      ComboboxClearProps: 'Combobox.Clear.Props',
-      ComboboxChipsProps: 'Combobox.Chips.Props',
-      ComboboxChipProps: 'Combobox.Chip.Props',
-      ComboboxChipRemoveProps: 'Combobox.ChipRemove.Props',
-      ComboboxPortalProps: 'Combobox.Portal.Props',
-      ComboboxBackdropProps: 'Combobox.Backdrop.Props',
-      ComboboxPositionerProps: 'Combobox.Positioner.Props',
-      ComboboxPopupProps: 'Combobox.Popup.Props',
-      ComboboxArrowProps: 'Combobox.Arrow.Props',
-      ComboboxStatusProps: 'Combobox.Status.Props',
-      ComboboxEmptyProps: 'Combobox.Empty.Props',
-      ComboboxListProps: 'Combobox.List.Props',
-      ComboboxRowProps: 'Combobox.Row.Props',
-      ComboboxCollectionProps: 'Combobox.Collection.Props',
-      ComboboxItemProps: 'Combobox.Item.Props',
-      ComboboxItemIndicatorProps: 'Combobox.ItemIndicator.Props',
-      ComboboxGroupProps: 'Combobox.Group.Props',
-      ComboboxGroupLabelProps: 'Combobox.GroupLabel.Props',
-      ComboboxSeparatorProps: 'Combobox.Separator.Props',
-    },
-    unmapped: ['useCombobox', 'ComboboxContextType'],
-  },
-  'base/context-menu': {
-    module: 'primitives/base-ui/context-menu',
-    values: {
-      ContextMenu: 'ContextMenu.Root',
-      ContextMenuTrigger: 'ContextMenu.Trigger',
-      ContextMenuPortal: 'ContextMenu.Portal',
-      ContextMenuPositioner: 'ContextMenu.Positioner',
-      ContextMenuPopup: 'ContextMenu.Popup',
-      ContextMenuArrow: 'ContextMenu.Arrow',
-      ContextMenuItem: 'ContextMenu.Item',
-      ContextMenuCheckboxItem: 'ContextMenu.CheckboxItem',
-      ContextMenuCheckboxItemIndicator: 'ContextMenu.CheckboxItemIndicator',
-      ContextMenuRadioGroup: 'ContextMenu.RadioGroup',
-      ContextMenuRadioItem: 'ContextMenu.RadioItem',
-      ContextMenuRadioItemIndicator: 'ContextMenu.RadioItemIndicator',
-      ContextMenuGroup: 'ContextMenu.Group',
-      ContextMenuGroupLabel: 'ContextMenu.GroupLabel',
-      ContextMenuSeparator: 'ContextMenu.Separator',
-      ContextMenuSubmenu: 'ContextMenu.SubmenuRoot',
-      ContextMenuSubmenuTrigger: 'ContextMenu.SubmenuTrigger',
-    },
-    types: {
-      ContextMenuProps: 'ContextMenu.Root.Props',
-      ContextMenuTriggerProps: 'ContextMenu.Trigger.Props',
-      ContextMenuPortalProps: 'ContextMenu.Portal.Props',
-      ContextMenuPositionerProps: 'ContextMenu.Positioner.Props',
-      ContextMenuPopupProps: 'ContextMenu.Popup.Props',
-      ContextMenuArrowProps: 'ContextMenu.Arrow.Props',
-      ContextMenuItemProps: 'ContextMenu.Item.Props',
-      ContextMenuCheckboxItemProps: 'ContextMenu.CheckboxItem.Props',
-      ContextMenuCheckboxItemIndicatorProps:
-        'ContextMenu.CheckboxItemIndicator.Props',
-      ContextMenuRadioGroupProps: 'ContextMenu.RadioGroup.Props',
-      ContextMenuRadioItemProps: 'ContextMenu.RadioItem.Props',
-      ContextMenuRadioItemIndicatorProps:
-        'ContextMenu.RadioItemIndicator.Props',
-      ContextMenuGroupProps: 'ContextMenu.Group.Props',
-      ContextMenuGroupLabelProps: 'ContextMenu.GroupLabel.Props',
-      ContextMenuSeparatorProps: 'ContextMenu.Separator.Props',
-      ContextMenuSubmenuProps: 'ContextMenu.SubmenuRoot.Props',
-      ContextMenuSubmenuTriggerProps: 'ContextMenu.SubmenuTrigger.Props',
-    },
-    unmapped: [
-      'ContextMenuHighlight',
-      'ContextMenuHighlightItem',
-      'ContextMenuShortcut',
-      'useContextMenu',
-      'useContextMenuActiveValue',
-      'ContextMenuHighlightProps',
-      'ContextMenuHighlightItemProps',
-      'ContextMenuShortcutProps',
-      'ContextMenuActiveValueContextType',
-      'ContextMenuContextType',
-    ],
-  },
   'base/dialog': {
     module: 'primitives/base-ui/dialog',
     values: {
@@ -1185,42 +943,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'DialogFooterProps',
       'DialogContextType',
       'DialogFlipDirection',
-    ],
-  },
-  'base/drawer': {
-    module: 'primitives/base-ui/drawer',
-    values: {
-      Drawer: 'Drawer.Root',
-      DrawerTrigger: 'Drawer.Trigger',
-      DrawerSwipeArea: 'Drawer.SwipeArea',
-      DrawerPortal: 'Drawer.Portal',
-      DrawerBackdrop: 'Drawer.Backdrop',
-      DrawerViewport: 'Drawer.Viewport',
-      DrawerPopup: 'Drawer.Popup',
-      DrawerContent: 'Drawer.Content',
-      DrawerClose: 'Drawer.Close',
-      DrawerTitle: 'Drawer.Title',
-      DrawerDescription: 'Drawer.Description',
-      createDrawerHandle: 'Drawer.createHandle',
-    },
-    types: {
-      DrawerProps: 'Drawer.Root.Props',
-      DrawerTriggerProps: 'Drawer.Trigger.Props',
-      DrawerSwipeAreaProps: 'Drawer.SwipeArea.Props',
-      DrawerPortalProps: 'Drawer.Portal.Props',
-      DrawerBackdropProps: 'Drawer.Backdrop.Props',
-      DrawerViewportProps: 'Drawer.Viewport.Props',
-      DrawerPopupProps: 'Drawer.Popup.Props',
-      DrawerContentProps: 'Drawer.Content.Props',
-      DrawerCloseProps: 'Drawer.Close.Props',
-      DrawerTitleProps: 'Drawer.Title.Props',
-      DrawerDescriptionProps: 'Drawer.Description.Props',
-    },
-    unmapped: [
-      'DrawerHeader',
-      'DrawerFooter',
-      'DrawerHeaderProps',
-      'DrawerFooterProps',
     ],
   },
   'base/menu': {
@@ -1363,76 +1085,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'RadioContextType',
     ],
   },
-  'base/select': {
-    module: 'primitives/base-ui/select',
-    values: {
-      Select: 'Select.Root',
-      SelectLabel: 'Select.Label',
-      SelectTrigger: 'Select.Trigger',
-      SelectValue: 'Select.Value',
-      SelectIcon: 'Select.Icon',
-      SelectPortal: 'Select.Portal',
-      SelectBackdrop: 'Select.Backdrop',
-      SelectPositioner: 'Select.Positioner',
-      SelectPopup: 'Select.Popup',
-      SelectList: 'Select.List',
-      SelectItem: 'Select.Item',
-      SelectItemText: 'Select.ItemText',
-      SelectItemIndicator: 'Select.ItemIndicator',
-      SelectArrow: 'Select.Arrow',
-      SelectScrollUpArrow: 'Select.ScrollUpArrow',
-      SelectScrollDownArrow: 'Select.ScrollDownArrow',
-      SelectGroup: 'Select.Group',
-      SelectGroupLabel: 'Select.GroupLabel',
-      SelectSeparator: 'Select.Separator',
-    },
-    types: {
-      SelectProps:
-        'Select.Root.Props<Value = unknown, Multiple extends boolean | undefined = false>',
-      SelectLabelProps: 'Select.Label.Props',
-      SelectTriggerProps: 'Select.Trigger.Props',
-      SelectValueProps: 'Select.Value.Props',
-      SelectIconProps: 'Select.Icon.Props',
-      SelectPortalProps: 'Select.Portal.Props',
-      SelectBackdropProps: 'Select.Backdrop.Props',
-      SelectPositionerProps: 'Select.Positioner.Props',
-      SelectPopupProps: 'Select.Popup.Props',
-      SelectListProps: 'Select.List.Props',
-      SelectItemProps: 'Select.Item.Props',
-      SelectItemTextProps: 'Select.ItemText.Props',
-      SelectItemIndicatorProps: 'Select.ItemIndicator.Props',
-      SelectArrowProps: 'Select.Arrow.Props',
-      SelectScrollUpArrowProps: 'Select.ScrollUpArrow.Props',
-      SelectScrollDownArrowProps: 'Select.ScrollDownArrow.Props',
-      SelectGroupProps: 'Select.Group.Props',
-      SelectGroupLabelProps: 'Select.GroupLabel.Props',
-      SelectSeparatorProps: 'Select.Separator.Props',
-    },
-    unmapped: ['useSelect', 'SelectContextType'],
-  },
-  'base/slider': {
-    module: 'primitives/base-ui/slider',
-    values: {
-      Slider: 'Slider.Root',
-      SliderLabel: 'Slider.Label',
-      SliderValue: 'Slider.Value',
-      SliderControl: 'Slider.Control',
-      SliderTrack: 'Slider.Track',
-      SliderIndicator: 'Slider.Indicator',
-      SliderThumb: 'Slider.Thumb',
-    },
-    types: {
-      SliderProps:
-        'Slider.Root.Props<Value extends number | readonly number[] = number | readonly number[]>',
-      SliderLabelProps: 'Slider.Label.Props',
-      SliderValueProps: 'Slider.Value.Props',
-      SliderControlProps: 'Slider.Control.Props',
-      SliderTrackProps: 'Slider.Track.Props',
-      SliderIndicatorProps: 'Slider.Indicator.Props',
-      SliderThumbProps: 'Slider.Thumb.Props',
-    },
-    unmapped: ['useSlider', 'SliderContextType'],
-  },
   'base/switch': {
     module: 'primitives/base-ui/switch',
     values: {
@@ -1473,36 +1125,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'TabsHighlightItemProps',
       'TabsPanelsProps',
     ],
-  },
-  'base/toast': {
-    module: 'primitives/base-ui/toast',
-    values: {
-      ToastProvider: 'Toast.Provider',
-      ToastPortal: 'Toast.Portal',
-      ToastViewport: 'Toast.Viewport',
-      Toast: 'Toast.Root',
-      ToastContent: 'Toast.Content',
-      ToastTitle: 'Toast.Title',
-      ToastDescription: 'Toast.Description',
-      ToastAction: 'Toast.Action',
-      ToastClose: 'Toast.Close',
-      useToastManager: 'Toast.useToastManager',
-      createToastManager: 'Toast.createToastManager',
-    },
-    types: {
-      ToastProviderProps: 'Toast.Provider.Props',
-      ToastPortalProps: 'Toast.Portal.Props',
-      ToastViewportProps: 'Toast.Viewport.Props',
-      ToastProps: 'Toast.Root.Props',
-      ToastContentProps: 'Toast.Content.Props',
-      ToastTitleProps: 'Toast.Title.Props',
-      ToastDescriptionProps: 'Toast.Description.Props',
-      ToastActionProps: 'Toast.Action.Props',
-      ToastCloseProps: 'Toast.Close.Props',
-      ToastObject: 'Toast.Root.ToastObject',
-      ToastManager: 'ToastManager',
-    },
-    unmapped: ['ToastPosition'],
   },
   'base/toggle': {
     module: 'primitives/base-ui/toggle',
@@ -1569,14 +1191,12 @@ export const UNSUPPORTED_PRIMITIVES = [
   'radix/files',
   'radix/preview-link-card',
   'base/files',
-  'base/otp-field',
   'base/preview-link-card',
 ];
 
 /** Headless UI is dropped in v2. */
 export const HEADLESS_PRIMITIVES = [
   'checkbox',
-  'combobox',
   'dialog',
   'disclosure',
   'popover',
@@ -1595,10 +1215,21 @@ const FOLLOW_CURSOR: Record<string, PropRule> = {
   },
 };
 
+/** Base UI's Tooltip can follow the cursor itself, without v1's spring. */
+const BASE_FOLLOW_CURSOR: Record<string, PropRule> = {
+  followCursor: {
+    manual:
+      'v2 keeps the library API: v1\'s spring-follow is gone. Base UI\'s `trackCursorAxis` ("x", "y" or "both") makes the popup track the cursor instead; or drop the prop.',
+  },
+  followCursorSpringOptions: {
+    manual: "v1's spring-follow is gone: drop the prop.",
+  },
+};
+
 const FLIP: Record<string, PropRule> = {
   from: {
     manual:
-      "v1's opt-in 3D flip is gone: v2 scales the content in. Drop the prop.",
+      "v1 flipped the content in 3D from this side (`top` by default); v2 doesn't flip it. Drop the prop.",
   },
 };
 
@@ -1616,8 +1247,68 @@ const PORTAL_CONTAINER: Record<string, PropRule> = {
   },
 };
 
+/** v1 rendered a motion element; the v2 part isn't animated. */
+const NOT_ANIMATED: Record<string, PropRule> = {
+  transition: {
+    manual:
+      "this part isn't animated in v2 (v1 rendered a motion element): drop it.",
+  },
+};
+
 const CHECKBOX_INDICATOR =
   "v1 drew its own animated check (an <svg>); v2's Indicator animates what you put in it: add your check icon as its child.";
+
+// v1's Base UI primitives were built on @base-ui-components/react
+// 1.0.0-beta.4. Base UI 1 (@base-ui/react, which v2 uses) renamed, moved or
+// inverted some of their props, and changed some defaults.
+
+/** Base UI 1 renamed `loop` to `loopFocus`. */
+const LOOP_FOCUS: Record<string, PropRule> = { loop: { rename: 'loopFocus' } };
+
+/** Base UI 1 moved these props from the Root to the trigger. */
+function movedToTrigger(trigger: string, props: string[], or = '') {
+  return Object.fromEntries(
+    props.map((prop): [string, PropRule] => [
+      prop,
+      {
+        manual: `Base UI 1 moved it to the trigger: move it to <${trigger}>${or}.`,
+      },
+    ]),
+  );
+}
+
+/** Base UI 1 replaced a boolean with its opposite. */
+function inverted(prop: string, replacement: string): Record<string, PropRule> {
+  return {
+    [prop]: {
+      manual: `Base UI 1 replaced it with \`${replacement}\`: \`${prop}={false}\` becomes \`${replacement}\`, otherwise drop it (the default).`,
+    },
+  };
+}
+
+const TRACK_ANCHOR = inverted('trackAnchor', 'disableAnchorTracking');
+
+/** v1's ProgressValue rendered a CountingNumber, and took its props. */
+const COUNTING_NUMBER: Record<string, PropRule> = Object.fromEntries(
+  [
+    'fromNumber',
+    'padStart',
+    'decimalSeparator',
+    'decimalPlaces',
+    'delay',
+    'initiallyStable',
+    'inView',
+    'inViewMargin',
+    'inViewOnce',
+    'transition',
+  ].map((prop): [string, PropRule] => [
+    prop,
+    {
+      manual:
+        "v1's ProgressValue counted with a CountingNumber; v2's is Base UI's Value: pass it to a CountingNumber rendered as its child (`{(_, value) => <CountingNumber number={value ?? 0} />}`), or drop it.",
+    },
+  ]),
+);
 
 const EXTRAS: Record<string, Partial<Migration>> = {
   'radix/accordion': {
@@ -1627,30 +1318,112 @@ const EXTRAS: Record<string, Partial<Migration>> = {
     props: { CollapsibleContent: { keepRendered: { rename: 'forceMount' } } },
   },
   'base/accordion': {
-    props: { AccordionPanel: { keepRendered: { rename: 'keepMounted' } } },
+    props: {
+      Accordion: LOOP_FOCUS,
+      AccordionPanel: { keepRendered: { rename: 'keepMounted' } },
+    },
+    // Base UI's beta opened several items at once by default.
+    defaults: { Accordion: { multiple: 'multiple' } },
   },
   'base/collapsible': {
     props: { CollapsiblePanel: { keepRendered: { rename: 'keepMounted' } } },
   },
   'radix/dialog': { props: { DialogContent: FLIP } },
   'radix/alert-dialog': { props: { AlertDialogContent: FLIP } },
-  'base/dialog': { props: { DialogPopup: FLIP } },
+  'base/dialog': {
+    props: {
+      Dialog: inverted('dismissible', 'disablePointerDismissal'),
+      DialogPopup: FLIP,
+    },
+  },
   'base/alert-dialog': { props: { AlertDialogPopup: FLIP } },
   'radix/tooltip': { props: { Tooltip: FOLLOW_CURSOR } },
   'radix/hover-card': { props: { HoverCard: FOLLOW_CURSOR } },
-  'base/tooltip': { props: { Tooltip: FOLLOW_CURSOR } },
-  'base/preview-card': { props: { PreviewCard: FOLLOW_CURSOR } },
+  'base/tooltip': {
+    props: {
+      Tooltip: {
+        ...BASE_FOLLOW_CURSOR,
+        ...movedToTrigger(
+          'TooltipTrigger',
+          ['delay', 'closeDelay'],
+          ' (or set it on <TooltipProvider>)',
+        ),
+        ...inverted('hoverable', 'disableHoverablePopup'),
+      },
+      TooltipPositioner: TRACK_ANCHOR,
+    },
+    notes: {
+      TooltipProps:
+        "`TooltipProps` is Base UI 1's Tooltip.Root props: `delay` and `closeDelay` moved to <TooltipTrigger> (<TooltipProvider> keeps them) and `hoverable` became `disableHoverablePopup`: update the types that read them.",
+    },
+  },
+  'base/preview-card': {
+    props: {
+      PreviewCard: {
+        ...FOLLOW_CURSOR,
+        ...movedToTrigger('PreviewCardTrigger', ['delay', 'closeDelay']),
+      },
+      PreviewCardPositioner: TRACK_ANCHOR,
+    },
+  },
+  'base/popover': {
+    props: {
+      Popover: movedToTrigger('PopoverTrigger', [
+        'openOnHover',
+        'delay',
+        'closeDelay',
+      ]),
+      PopoverPositioner: TRACK_ANCHOR,
+    },
+  },
+  'base/menu': {
+    props: {
+      Menu: {
+        ...LOOP_FOCUS,
+        ...movedToTrigger('MenuTrigger', [
+          'openOnHover',
+          'delay',
+          'closeDelay',
+        ]),
+      },
+      MenuSubmenu: {
+        ...LOOP_FOCUS,
+        ...movedToTrigger('MenuSubmenuTrigger', [
+          'openOnHover',
+          'delay',
+          'closeDelay',
+        ]),
+      },
+      MenuPositioner: TRACK_ANCHOR,
+      MenuItem: NOT_ANIMATED,
+      MenuSubmenuTrigger: NOT_ANIMATED,
+    },
+  },
+  'base/tabs': {
+    props: { TabsList: LOOP_FOCUS },
+    // Base UI's beta activated a tab when it got focus.
+    defaults: { TabsList: { activateOnFocus: 'activateOnFocus' } },
+    notes: {
+      TabsTab:
+        "Base UI 1 requires `value` on every tab (its beta fell back to the index) and renamed the selected tab's `data-selected` to `data-active`: give each tab a value and update your `data-[selected]` styles.",
+      TabsPanel:
+        'Base UI 1 requires `value` on every panel (its beta fell back to the index): give each panel the value of its tab.',
+    },
+  },
+  'base/toggle-group': { props: { ToggleGroup: LOOP_FOCUS } },
   'radix/switch': { props: { SwitchThumb: PRESSED_ANIMATION } },
   'base/switch': { props: { SwitchThumb: PRESSED_ANIMATION } },
   'radix/checkbox': { notes: { CheckboxIndicator: CHECKBOX_INDICATOR } },
   'base/checkbox': { notes: { CheckboxIndicator: CHECKBOX_INDICATOR } },
   'radix/dropdown-menu': {
     wrap: { DropdownMenuContent: { in: 'Portal', move: ['container'] } },
-    props: { DropdownMenuSubContent: PORTAL_CONTAINER },
-  },
-  'radix/context-menu': {
-    wrap: { ContextMenuContent: { in: 'Portal', move: ['container'] } },
-    props: { ContextMenuSubContent: PORTAL_CONTAINER },
+    props: {
+      DropdownMenuSubContent: PORTAL_CONTAINER,
+      DropdownMenuItem: NOT_ANIMATED,
+      DropdownMenuCheckboxItem: NOT_ANIMATED,
+      DropdownMenuRadioItem: NOT_ANIMATED,
+      DropdownMenuSubTrigger: NOT_ANIMATED,
+    },
   },
   'radix/sheet': {
     props: { SheetContent: { side: { rename: 'data-side' } } },
@@ -1661,19 +1434,10 @@ const EXTRAS: Record<string, Partial<Migration>> = {
     },
   },
   'base/progress': {
+    props: { ProgressValue: COUNTING_NUMBER },
     notes: {
       ProgressValue:
         "v1's ProgressValue counted up to the value (a CountingNumber); v2's is Base UI's Value.",
-    },
-  },
-  'base/toast': {
-    props: {
-      ToastViewport: {
-        position: {
-          manual:
-            "v1's `position` placed the toasts and set their swipe direction: position the viewport with classes and pass `swipeDirection` to each Toast.",
-        },
-      },
     },
   },
 };
@@ -1696,7 +1460,6 @@ export const UTILITIES: Record<string, Migration> = {
       AnimateIcon: 'AnimateIcon',
       IconWrapper: 'IconWrapper',
       useAnimateIconContext: 'useAnimateIconContext',
-      useIconVariants: 'useIconVariants',
       getVariants: 'getVariants',
     },
     types: {
@@ -1705,22 +1468,6 @@ export const UTILITIES: Record<string, Migration> = {
       AnimateIconProps: 'AnimateIconProps',
       AnimateIconContextValue: 'AnimateIconContextValue',
     },
-    unmapped: [],
-  },
-  'lib/motion': {
-    module: 'utils/motion',
-    values: {
-      motionTokens: 'motionTokens',
-      tempo: 'motionTokens.tempo',
-      ease: 'ease',
-      duration: 'duration',
-      spring: 'spring',
-      scale: 'scale',
-      transition: 'transition',
-      ReducedMotionConfig: 'ReducedMotionConfig',
-      useShouldReduceMotion: 'useShouldReduceMotion',
-    },
-    types: { ReducedMotionConfigProps: 'ReducedMotionConfigProps' },
     unmapped: [],
   },
   'lib/get-strict-context': {
@@ -1741,10 +1488,14 @@ export const UTILITIES: Record<string, Migration> = {
     types: { UseIsInViewOptions: 'UseIsInViewOptions' },
     unmapped: [],
   },
-  'hooks/use-page-visible': {
-    module: 'utils/use-page-visible',
-    values: { usePageVisible: 'usePageVisible' },
-    types: {},
-    unmapped: [],
-  },
 };
+
+/**
+ * v1 hooks v2 doesn't ship (its primitives keep theirs private). They only
+ * import React and Motion: the files stay the user's and keep working.
+ */
+export const UNSUPPORTED_UTILITIES = [
+  'hooks/use-auto-height',
+  'hooks/use-data-state',
+  'hooks/use-motion-value-state',
+];

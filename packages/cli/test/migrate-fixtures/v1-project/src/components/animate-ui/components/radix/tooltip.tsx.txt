@@ -54,7 +54,7 @@ function TooltipContent({
       <TooltipContentPrimitive
         sideOffset={sideOffset}
         className={cn(
-          'bg-primary text-primary-foreground z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance',
+          'bg-primary text-primary-foreground z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',
           className,
         )}
         {...props}

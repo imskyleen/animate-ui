@@ -1,7 +1,8 @@
-// `animate-ui migrate` on a v1 project: copies of the v1 registry files as
-// shadcn installs them (test/migrate-fixtures/v1-project, `.txt` so tsc and
-// eslint skip them), the v1 components built on them, and an app using both.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+// `animate-ui migrate` on a v1 project: the production v1 registry files
+// (apps/v1/public/r) where shadcn installs them, with the registry
+// dependencies they bring (test/migrate-fixtures/v1-project, `.txt` so tsc
+// and eslint skip them), and an app using them.
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { beforeEach, describe, expect, test } from 'vitest';
 
@@ -14,8 +15,31 @@ const read = (file: string) => readFileSync(path.join(root, file), 'utf8');
 const PAGE = 'src/app/page.tsx';
 const V1 = 'src/components/animate-ui';
 
+/** The production registry's files, by where shadcn installs them. */
+const production = new Map<string, string>();
+const REGISTRY = path.resolve(import.meta.dirname, '../../../apps/v1/public/r');
+for (const name of readdirSync(REGISTRY)) {
+  if (!name.endsWith('.json') || name.startsWith('demo-')) continue;
+  const item = JSON.parse(readFileSync(path.join(REGISTRY, name), 'utf8'));
+  for (const file of item.files ?? [])
+    if (file.target) production.set(`src/${file.target}`, file.content);
+}
+
 beforeEach(() => {
   root = copyFixture();
+});
+
+test("the fixture's v1 files are the production registry's", () => {
+  const own = [PAGE, 'src/lib/utils.ts'];
+  const files = Object.keys(snapshot(root)).filter((file) =>
+    file.startsWith('src/'),
+  );
+  for (const file of files) {
+    if (own.includes(file)) continue;
+    expect(read(file), file).toBe(production.get(file));
+  }
+  // What the installed items' registry dependencies bring along.
+  expect(files).toContain('src/hooks/use-data-state.tsx');
 });
 
 const run = async (
@@ -77,11 +101,10 @@ describe('migrate all', () => {
   Trigger as SheetTrigger,
 } from '@animate-ui/react/primitives/radix-ui/dialog';`);
 
-    // lib/motion: `tempo` lives in the tokens.
+    // A v1 hook v2 ships.
     expect(page).toContain(
-      "import { motionTokens, transition } from '@animate-ui/react/utils/motion';",
+      "import { useControlledState } from '@animate-ui/react/utils/use-controlled-state';",
     );
-    expect(page).toContain('const tempo = motionTokens.tempo;');
 
     // No v1 import left but the ones v2 can't replace.
     expect(page).not.toContain('primitives/radix/tooltip');
@@ -91,6 +114,9 @@ describe('migrate all', () => {
     );
     expect(page).toContain(
       "} from '@/components/animate-ui/primitives/headless/disclosure';",
+    );
+    expect(page).toContain(
+      "import { useDataState } from '@/hooks/use-data-state';",
     );
   });
 
@@ -137,6 +163,14 @@ describe('migrate all', () => {
     );
     expect(output).toContain(
       'v1 placed the sheet at its edge itself (position: fixed)',
+    );
+    // A v1 hook v2 doesn't ship.
+    expect(output).toContain(
+      `${PAGE}:${lineOf("from '@/hooks/use-data-state'")} hooks/use-data-state has no v2 equivalent: it keeps importing from the v1 file, which stays yours.`,
+    );
+    // v1's Base UI primitives were built on Base UI's beta.
+    expect(output).toContain(
+      `${PAGE}:${lineOf('<Popover openOnHover')} <Popover> \`openOnHover\`: Base UI 1 moved it to the trigger: move it to <PopoverTrigger>.`,
     );
   });
 
@@ -206,12 +240,34 @@ describe('migrate all', () => {
         `    ${V1}/primitives/radix/accordion.tsx: still imported by ${PAGE}, kept.`,
         `    ${V1}/primitives/radix/dialog.tsx: still imported by ${V1}/components/radix/dialog.tsx, kept.`,
         `    ${V1}/primitives/radix/dropdown-menu.tsx: still imported by ${V1}/components/radix/dropdown-menu.tsx, kept.`,
-        '    and the 4 v1 files they import, kept.',
+        '    and the 3 v1 files they import, kept.',
       ].join('\n'),
     );
   });
 
+  test("a v1 primitive v2 doesn't replace stays on the v1 primitives it's built on", async () => {
+    // Files: v1's own, on v1's Accordion (whose API v2's doesn't keep).
+    const files = `${V1}/primitives/radix/files.tsx`;
+    writeFileSync(path.join(root, files), production.get(files)!);
+    const { output } = await run(['all']);
+    const code = read(files);
+    expect(code).toContain(
+      "} from '@/components/animate-ui/primitives/radix/accordion';",
+    );
+    // v2's utilities and own primitives keep v1's API: those move.
+    expect(code).toContain(
+      "} from '@animate-ui/react/primitives/effects/highlight';",
+    );
+    expect(code).toContain(
+      "import { getStrictContext } from '@animate-ui/react/utils/strict-context';",
+    );
+    expect(output).toContain(
+      `    ${V1}/primitives/radix/accordion.tsx: still imported by ${PAGE}, ${files}, kept.`,
+    );
+  });
+
   test('rewrites the icon core, libs and hooks everywhere else', async () => {
+    const before = snapshot(root);
     await run(['all']);
     expect(read(`${V1}/icons/bell.tsx`)).toContain(`import {
   getVariants,
@@ -221,16 +277,18 @@ describe('migrate all', () => {
 } from '@animate-ui/react/icons';`);
     // A v1 primitive v2 doesn't have stays the user's, on v2 utilities.
     const disclosure = read(`${V1}/primitives/headless/disclosure.tsx`);
-    expect(disclosure).not.toContain("from '@/lib/motion'");
+    expect(disclosure).toContain(
+      "import { getStrictContext } from '@animate-ui/react/utils/strict-context';",
+    );
+    expect(disclosure).not.toContain("from '@/lib/get-strict-context'");
     // Animate UI's own primitives ship in v2 too: their v1 copies are
     // replaced like the library wrappers, so they are left alone.
-    expect(read(`${V1}/primitives/effects/highlight.tsx`)).toContain(
-      "from '@/lib/motion'",
-    );
+    const highlight = `${V1}/primitives/effects/highlight.tsx`;
+    expect(read(highlight)).toBe(before[highlight]);
     // v1 files v2 replaces are left alone.
-    expect(read(`${V1}/primitives/radix/accordion.tsx`)).toContain(
-      "from '@/lib/motion'",
-    );
+    const accordion = `${V1}/primitives/radix/accordion.tsx`;
+    expect(read(accordion)).toBe(before[accordion]);
+    expect(read(accordion)).toContain("from '@/lib/get-strict-context'");
   });
 
   test('lists the v1 files nothing imports anymore, deletes none', async () => {
@@ -251,14 +309,31 @@ describe('migrate all', () => {
   });
 
   test('warns when @animate-ui/react is not installed', async () => {
+    // v1's Base UI primitives came with @base-ui-components/react: v2's use
+    // @base-ui/react.
+    const { output } = await run(['all']);
+    expect(output).toContain(
+      "@animate-ui/react isn't installed yet: pnpm add @animate-ui/react motion @base-ui/react\n    @base-ui/react is Base UI 1, which v2's Base UI primitives use (v1's were built on its beta, @base-ui-components/react).",
+    );
+    const install = (...names: string[]) => {
+      root = copyFixture();
+      const pkg = JSON.parse(read('package.json'));
+      for (const name of names) pkg.dependencies[name] = '^2.0.0';
+      writeFileSync(path.join(root, 'package.json'), JSON.stringify(pkg));
+    };
+    install('@animate-ui/react');
     expect((await run(['all'])).output).toContain(
+      "@base-ui/react isn't installed yet: pnpm add @base-ui/react\n",
+    );
+    install('@animate-ui/react', '@base-ui/react');
+    expect((await run(['all'])).output).not.toContain("isn't installed yet");
+    // No Base UI primitive migrated: no need for it.
+    root = copyFixture();
+    const tooltip = (await run(['tooltip'])).output;
+    expect(tooltip).toContain(
       "@animate-ui/react isn't installed yet: pnpm add @animate-ui/react motion",
     );
-    root = copyFixture();
-    const pkg = JSON.parse(read('package.json'));
-    pkg.dependencies['@animate-ui/react'] = '^2.0.0';
-    writeFileSync(path.join(root, 'package.json'), JSON.stringify(pkg));
-    expect((await run(['all'])).output).not.toContain("isn't installed yet");
+    expect(tooltip).not.toContain('@base-ui/react');
   });
 });
 
@@ -298,8 +373,9 @@ test('--delete removes the v1 files nothing imports anymore', async () => {
     `${V1}/primitives/radix/dialog.tsx`,
     `${V1}/primitives/radix/dropdown-menu.tsx`,
     `${V1}/primitives/headless/disclosure.tsx`,
-    'src/lib/motion.tsx',
     'src/lib/get-strict-context.tsx',
+    // A v1 hook v2 doesn't ship is never a candidate.
+    'src/hooks/use-data-state.tsx',
   ])
     expect(existsSync(path.join(root, file)), file).toBe(true);
   // And a second run has nothing left to remove.
@@ -326,7 +402,9 @@ test('migrate <name> only touches the imports of that primitive', async () => {
   expect(page).toContain(
     "} from '@/components/animate-ui/primitives/radix/accordion';",
   );
-  expect(page).toContain("import { transition, tempo } from '@/lib/motion';");
+  expect(page).toContain(
+    "import { useControlledState } from '@/hooks/use-controlled-state';",
+  );
   expect(read(`${V1}/icons/bell.tsx`)).toContain(
     "from '@/components/animate-ui/icons/icon';",
   );
@@ -347,23 +425,11 @@ test('an unknown name fails, a known one without imports warns', async () => {
   const unknown = await run(['nope']);
   expect(unknown.code).toBe(1);
   expect(unknown.output).toContain("nope isn't an Animate UI v1 primitive.");
-  const missing = await run(['slider']);
+  // Production v1 has no slider, select or context menu.
+  expect((await run(['slider'])).code).toBe(1);
+  const missing = await run(['progress']);
   expect(missing.code).toBe(0);
-  expect(missing.output).toContain('No import of the v1 slider found.');
-});
-
-test('a tempo set in v1 lib/motion is carried to the provider', async () => {
-  const file = path.join(root, 'src/lib/motion.tsx');
-  writeFileSync(
-    file,
-    readFileSync(file, 'utf8').replace(
-      'const tempo = 1;',
-      'const tempo = 0.8;',
-    ),
-  );
-  expect((await run(['all'])).output).toContain(
-    'src/lib/motion.tsx sets tempo = 0.8: wrap your app in <AnimateUIProvider tempo={0.8}>',
-  );
+  expect(missing.output).toContain('No import of the v1 progress found.');
 });
 
 test('the migrated code type-checks against v2, but for what was reported', async () => {

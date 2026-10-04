@@ -7,12 +7,14 @@ import { loadProject } from '../project';
 export type V1Module =
   /** `components/animate-ui/primitives/<library>/<name>`. */
   | { kind: 'primitive'; library: string; name: string }
-  /** `components/animate-ui/icons/icon`, `lib/motion`, `hooks/use-…`. */
+  /** `components/animate-ui/icons/icon`, `lib/get-strict-context`, `hooks/use-…`. */
   | { kind: 'utility'; id: string };
 
 export type MigrateProject = {
   root: string;
   hasPackage: boolean;
+  /** Whether package.json lists a package (dependencies or devDependencies). */
+  hasDependency: (name: string) => boolean;
   componentsDir: string;
   libDir: string;
   hooksDir: string;
@@ -107,6 +109,11 @@ export function loadMigrateProject(cwd: string): MigrateProject {
   // Validates the shadcn/ui project (components.json) and reads package.json.
   const { root, hasPackage } = loadProject(cwd);
   const aliases = readJson(path.join(root, 'components.json')).aliases ?? {};
+  const pkg = readJson(path.join(root, 'package.json'));
+  const dependencies = new Set([
+    ...Object.keys(pkg.dependencies ?? {}),
+    ...Object.keys(pkg.devDependencies ?? {}),
+  ]);
   const mappings = readPathMappings(root);
 
   const resolveAlias = (specifier: string) => {
@@ -167,9 +174,9 @@ export function loadMigrateProject(cwd: string): MigrateProject {
       return { kind: 'primitive', library: primitive[1]!, name: primitive[2]! };
     if (fromComponents === 'animate-ui/icons/icon')
       return { kind: 'utility', id: 'icons/icon' };
-    const inLib = path.relative(libDir, target);
-    if (inLib === 'motion' || inLib === 'get-strict-context')
-      return { kind: 'utility', id: `lib/${inLib}` };
+    // v1's one lib (`lib/utils` is shadcn/ui's).
+    if (path.relative(libDir, target) === 'get-strict-context')
+      return { kind: 'utility', id: 'lib/get-strict-context' };
     const inHooks = path.relative(hooksDir, target);
     if (/^use-[a-z-]+$/.test(inHooks))
       return { kind: 'utility', id: `hooks/${inHooks}` };
@@ -200,6 +207,7 @@ export function loadMigrateProject(cwd: string): MigrateProject {
   return {
     root,
     hasPackage,
+    hasDependency: (name) => dependencies.has(name),
     componentsDir,
     libDir,
     hooksDir,

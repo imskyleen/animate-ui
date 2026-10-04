@@ -1,5 +1,6 @@
-// The migration table against both ends: every export of every v1 Radix and
-// Base UI primitive is accounted for, and every v2 name it maps to exists
+// The migration table against both ends: every v1 module the production
+// registry installs (apps/v1, the files Animate UI v1 users have) is handled,
+// every export of each is accounted for, and every v2 name it maps to exists
 // (checked by TypeScript on the code `migrate` generates).
 import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -10,22 +11,17 @@ import { describe, expect, test } from 'vitest';
 import type { V1Module } from '../src/lib/migrate/project';
 import { rewrite } from '../src/lib/migrate/rewrite';
 import {
+  HEADLESS_PRIMITIVES,
   PRIMITIVES,
   UNSUPPORTED_PRIMITIVES,
+  UNSUPPORTED_UTILITIES,
   UTILITIES,
   type Migration,
 } from '../src/lib/migrate/table';
 import { typecheck } from './migrate-fixtures/helpers';
 
-const V1 = path.resolve(
-  import.meta.dirname,
-  '..',
-  '..',
-  '..',
-  'apps',
-  'v1',
-  'registry',
-);
+const APP = path.resolve(import.meta.dirname, '..', '..', '..', 'apps', 'v1');
+const V1 = path.join(APP, 'registry');
 
 /** The value and type exports of a v1 registry file. */
 function v1Exports(file: string) {
@@ -61,28 +57,23 @@ function v1Exports(file: string) {
   return { values, types };
 }
 
-// Library wrappers, plus Animate UI's own primitives that v2 ships too.
-const v1Primitives = [
-  'radix',
-  'base',
-  'texts',
-  'effects',
-  'buttons',
-  'animate',
-].flatMap((library) =>
-  readdirSync(path.join(V1, 'primitives', library))
-    .map((name) => `${library}/${name}`)
-    .filter((id) => library !== 'animate' || id in PRIMITIVES),
+const dirs = (dir: string) =>
+  readdirSync(path.join(V1, dir), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+
+/** Every v1 primitive: `<library>/<name>`. */
+const v1Primitives = dirs('primitives').flatMap((library) =>
+  dirs(`primitives/${library}`).map((name) => `${library}/${name}`),
 );
 
-const UTILITY_FILES: Record<string, string> = {
-  'icons/icon': 'icons/icon/index.tsx',
-  'lib/motion': 'lib/motion/index.tsx',
-  'lib/get-strict-context': 'lib/get-strict-context/index.tsx',
-  'hooks/use-controlled-state': 'hooks/use-controlled-state/index.tsx',
-  'hooks/use-is-in-view': 'hooks/use-is-in-view/index.tsx',
-  'hooks/use-page-visible': 'hooks/use-page-visible/index.tsx',
-};
+/** The v1 libs, hooks and icon core: `icons/icon`, `hooks/<name>`, `lib/<name>`. */
+const v1Utilities = [
+  'icons/icon',
+  ...dirs('hooks').map((name) => `hooks/${name}`),
+  ...dirs('lib').map((name) => `lib/${name}`),
+];
 
 function expectCovers(migration: Migration, file: string) {
   const { values, types } = v1Exports(file);
@@ -99,8 +90,14 @@ function expectCovers(migration: Migration, file: string) {
     expect(types, `${name} is a type in v1`).toContain(name);
 }
 
-describe('every v1 export is mapped or reported', () => {
+describe('every v1 module is handled', () => {
   test.each(v1Primitives)('%s', (id) => {
+    const [library, name] = id.split('/') as [string, string];
+    if (library === 'headless') {
+      expect(HEADLESS_PRIMITIVES).toContain(name);
+      expect(PRIMITIVES[id]).toBeUndefined();
+      return;
+    }
     if (UNSUPPORTED_PRIMITIVES.includes(id)) {
       expect(PRIMITIVES[id]).toBeUndefined();
       return;
@@ -109,20 +106,63 @@ describe('every v1 export is mapped or reported', () => {
     expectCovers(PRIMITIVES[id]!, path.join(V1, 'primitives', id, 'index.tsx'));
   });
 
-  test.each(Object.keys(UTILITY_FILES))('%s', (id) => {
-    expectCovers(UTILITIES[id]!, path.join(V1, UTILITY_FILES[id]!));
+  test.each(v1Utilities)('%s', (id) => {
+    if (UNSUPPORTED_UTILITIES.includes(id)) {
+      expect(UTILITIES[id]).toBeUndefined();
+      return;
+    }
+    expect(UTILITIES[id], `${id} has no entry`).toBeDefined();
+    expectCovers(UTILITIES[id]!, path.join(V1, id, 'index.tsx'));
   });
 
-  test('animate/slot', () => {
-    expectCovers(
-      PRIMITIVES['animate/slot']!,
-      path.join(V1, 'primitives', 'animate', 'slot', 'index.tsx'),
-    );
+  test('the table has no v1 module production lacks', () => {
+    for (const id of [
+      ...Object.keys(PRIMITIVES),
+      ...UNSUPPORTED_PRIMITIVES,
+      ...HEADLESS_PRIMITIVES.map((name) => `headless/${name}`),
+    ])
+      expect(v1Primitives).toContain(id);
+    for (const id of [...Object.keys(UTILITIES), ...UNSUPPORTED_UTILITIES])
+      expect(v1Utilities).toContain(id);
   });
 
-  test('the table has no v1 primitive the registry lacks', () => {
-    for (const id of Object.keys(PRIMITIVES))
-      expect([...v1Primitives, 'animate/slot']).toContain(id);
+  test('the registry installs nothing else', () => {
+    const registry = path.join(APP, 'public', 'r');
+    const modules = new Set([
+      ...v1Primitives.map((id) => `components/animate-ui/primitives/${id}`),
+      'components/animate-ui/icons/icon',
+      ...v1Utilities.filter((id) => !id.startsWith('icons/')),
+    ]);
+    for (const name of readdirSync(registry)) {
+      if (!name.endsWith('.json') || name.startsWith('demo-')) continue;
+      const item = JSON.parse(readFileSync(path.join(registry, name), 'utf8'));
+      for (const { target } of item.files ?? []) {
+        if (!target) continue;
+        const module = target.replace(/\.tsx?$/, '');
+        // Components and icons are the user's: they import the modules.
+        if (/^components\/animate-ui\/(components|icons)\//.test(module))
+          continue;
+        expect(modules, `${name}: ${target}`).toContain(module);
+      }
+    }
+  });
+
+  test('the parts the rules name are v1 exports', () => {
+    for (const [id, migration] of Object.entries(PRIMITIVES)) {
+      const { values, types } = v1Exports(
+        path.join(V1, 'primitives', id, 'index.tsx'),
+      );
+      const parts = [
+        ...Object.keys(migration.props ?? {}),
+        ...Object.keys(migration.defaults ?? {}),
+        ...Object.keys(migration.wrap ?? {}),
+      ];
+      for (const part of parts) expect(values, `${id} ${part}`).toContain(part);
+      for (const name of Object.keys(migration.notes ?? {}))
+        expect([...values, ...types], `${id} ${name}`).toContain(name);
+      for (const { in: wrapper } of Object.values(migration.wrap ?? {}))
+        expect(Object.values(migration.values)).toContain(wrapper);
+    }
   });
 });
 

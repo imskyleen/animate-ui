@@ -138,16 +138,16 @@ describe('rewrite', () => {
   test('a Content inline in JSX gets an inline Portal', () => {
     const { code } = run(
       [
-        "import { ContextMenuContent } from '@/components/animate-ui/primitives/radix/context-menu';",
-        'export const a = <ContextMenuContent container={el} />;',
+        "import { DropdownMenuContent } from '@/components/animate-ui/primitives/radix/dropdown-menu';",
+        'export const a = <DropdownMenuContent container={el} />;',
         '',
       ].join('\n'),
     );
     expect(code).toContain(
-      'export const a = <ContextMenuPortal container={el}><ContextMenuContent /></ContextMenuPortal>;',
+      'export const a = <DropdownMenuPortal container={el}><DropdownMenuContent /></DropdownMenuPortal>;',
     );
     expect(code).toContain(
-      '  Content as ContextMenuContent,\n  Portal as ContextMenuPortal,\n',
+      '  Content as DropdownMenuContent,\n  Portal as DropdownMenuPortal,\n',
     );
   });
 
@@ -163,14 +163,33 @@ describe('rewrite', () => {
     expect(code).not.toContain('DropdownMenuPortal');
   });
 
-  test('a generic v1 type stays generic', () => {
-    const { code } = run(
-      "import type { SelectProps } from '@/components/animate-ui/primitives/base/select';\n",
-      '/app/select.ts',
+  test("SheetContentProps keeps v1's side, which v1 components read", () => {
+    const { code, changes } = run(
+      [
+        "import { SheetContent, type SheetContentProps } from '@/components/animate-ui/primitives/radix/sheet';",
+        '',
+        "export function Content({ side = 'right', ...props }: SheetContentProps) {",
+        '  return <SheetContent side={side} {...props} />;',
+        '}',
+        '',
+      ].join('\n'),
     );
-    expect(code).toContain(
-      'type SelectProps<Value = unknown, Multiple extends boolean | undefined = false> = SelectPrimitive.Root.Props<Value, Multiple>;',
+    expect(code).toBe(
+      [
+        'import {',
+        '  type DialogContentProps,',
+        '  Content as SheetContent,',
+        "} from '@animate-ui/react/primitives/radix-ui/dialog';",
+        '',
+        "type SheetContentProps = DialogContentProps & { side?: 'top' | 'right' | 'bottom' | 'left' };",
+        '',
+        "export function Content({ side = 'right', ...props }: SheetContentProps) {",
+        '  return <SheetContent data-side={side} {...props} />;',
+        '}',
+        '',
+      ].join('\n'),
     );
+    expect(changes).toEqual(['line 4: <SheetContent> side → data-side']);
   });
 
   test('a v1 primitive with two v2 modules', () => {
@@ -186,11 +205,80 @@ describe('rewrite', () => {
     expect(code).toContain('const Radio = RadioPrimitive.Root;');
   });
 
-  test("a user's own lib/motion is left alone", () => {
-    const source = "import { fadeIn, transition } from '@/lib/motion';\n";
+  test("a user's own file at a v1 hook path is left alone", () => {
+    const source =
+      "import { useControlledState, useToggle } from '@/hooks/use-controlled-state';\n";
     const { code, manual } = run(source);
     expect(code).toBe(source);
     expect(manual).toEqual([]);
+  });
+
+  test("a v1 hook v2 doesn't ship stays, reported", () => {
+    const source = "import { useAutoHeight } from '@/hooks/use-auto-height';\n";
+    const { code, manual, found } = run(source);
+    expect(code).toBe(source);
+    expect(manual.map((step) => step.message)).toEqual([
+      'hooks/use-auto-height has no v2 equivalent: it keeps importing from the v1 file, which stays yours.',
+    ]);
+    expect(found).toEqual(['hooks/use-auto-height']);
+  });
+
+  test("Base UI 1's renames and defaults (v1 was built on its beta)", () => {
+    const { code, changes, manual } = run(
+      [
+        "import { Accordion, AccordionPanel } from '@/components/animate-ui/primitives/base/accordion';",
+        "import { TabsList, TabsTab } from '@/components/animate-ui/primitives/base/tabs';",
+        "import { Tooltip, TooltipPositioner } from '@/components/animate-ui/primitives/base/tooltip';",
+        'export const a = (',
+        '  <Accordion loop={false}>',
+        '    <AccordionPanel keepRendered />',
+        '  </Accordion>',
+        ');',
+        'export const b = (',
+        '  <TabsList>',
+        '    <TabsTab value="a">A</TabsTab>',
+        '  </TabsList>',
+        ');',
+        'export const c = (',
+        '  <Tooltip delay={100} hoverable={false}>',
+        '    <TooltipPositioner trackAnchor={false} />',
+        '  </Tooltip>',
+        ');',
+        '',
+      ].join('\n'),
+    );
+    expect(code).toContain('<Accordion multiple loopFocus={false}>');
+    expect(code).toContain('<AccordionPanel keepMounted />');
+    expect(code).toContain('<TabsList activateOnFocus>');
+    expect(changes).toEqual([
+      'line 5: <Accordion> loop → loopFocus',
+      "line 5: <Accordion> multiple (v1's default)",
+      'line 6: <AccordionPanel> keepRendered → keepMounted',
+      "line 10: <TabsList> activateOnFocus (v1's default)",
+    ]);
+    expect(manual.map((step) => `${step.line} ${step.message}`)).toEqual([
+      "2 Base UI 1 requires `value` on every tab (its beta fell back to the index) and renamed the selected tab's `data-selected` to `data-active`: give each tab a value and update your `data-[selected]` styles.",
+      '15 <Tooltip> `delay`: Base UI 1 moved it to the trigger: move it to <TooltipTrigger> (or set it on <TooltipProvider>).',
+      '15 <Tooltip> `hoverable`: Base UI 1 replaced it with `disableHoverablePopup`: `hoverable={false}` becomes `disableHoverablePopup`, otherwise drop it (the default).',
+      '16 <TooltipPositioner> `trackAnchor`: Base UI 1 replaced it with `disableAnchorTracking`: `trackAnchor={false}` becomes `disableAnchorTracking`, otherwise drop it (the default).',
+    ]);
+  });
+
+  test('Motion props: reported on library parts, kept on Animate UI primitives', () => {
+    const { manual } = run(
+      [
+        "import { DropdownMenuItem } from '@/components/animate-ui/primitives/radix/dropdown-menu';",
+        "import { Particles } from '@/components/animate-ui/primitives/effects/particles';",
+        'export const a = <DropdownMenuItem transition={{ duration: 0.1 }} whileTap={{ scale: 0.9 }} />;',
+        'export const b = <Particles animate transition={{ duration: 0.1 }} />;',
+        '',
+      ].join('\n'),
+    );
+    // v1's items were motion elements; v2's aren't animated at all.
+    expect(manual.map((step) => step.message)).toEqual([
+      "<DropdownMenuItem> `transition`: this part isn't animated in v2 (v1 rendered a motion element): drop it.",
+      "<DropdownMenuItem> `whileTap` is a Motion prop: v2 parts aren't motion components (animated parts take `transition` and `exitTransition`). Drop it, or animate an element of your own inside the part.",
+    ]);
   });
 
   test('unselected modules are left alone', () => {

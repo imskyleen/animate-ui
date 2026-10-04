@@ -47,7 +47,8 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@/components/animate-ui/primitives/headless/disclosure';
-import { transition, tempo } from '@/lib/motion';
+import { useControlledState } from '@/hooks/use-controlled-state';
+import { useDataState } from '@/hooks/use-data-state';
 import { Bell } from '@/components/animate-ui/icons/bell';
 
 function OpenState() {
@@ -80,10 +81,27 @@ function Panel(props: PopoverPopupProps) {
   );
 }
 
+function Counter(props: {
+  value?: number;
+  onChange?: (value: number) => void;
+}) {
+  const [count, setCount] = useControlledState({ ...props, defaultValue: 0 });
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+
+function Status() {
+  const [state, ref] = useDataState<HTMLSpanElement>('state');
+  return (
+    <span ref={ref} data-state="idle">
+      {String(state)}
+    </span>
+  );
+}
+
 export default function Page() {
   const container = React.useRef<HTMLDivElement>(null);
   return (
-    <main ref={container} style={{ transitionDuration: `${tempo}s` }}>
+    <main ref={container}>
       <Accordion type="single" collapsible>
         <AccordionItem value="a">
           <AccordionTrigger>Hello</AccordionTrigger>
@@ -91,15 +109,17 @@ export default function Page() {
         </AccordionItem>
       </Accordion>
       <Faq type="multiple" />
+      <Counter />
+      <Status />
       <TooltipProvider>
         <Tooltip followCursor>
           <TooltipTrigger>
             <Bell animateOnHover />
           </TooltipTrigger>
-          <TooltipContent transition={transition.tooltip}>Bell</TooltipContent>
+          <TooltipContent transition={{ duration: 0.2 }}>Bell</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <Popover>
+      <Popover openOnHover>
         <PopoverTrigger>Open</PopoverTrigger>
         <Panel>Popover</Panel>
       </Popover>

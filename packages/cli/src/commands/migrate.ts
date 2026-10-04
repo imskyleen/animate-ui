@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { styleText } from 'node:util';
 
@@ -6,7 +6,6 @@ import { PACKAGE } from '../lib/primitives';
 import { PromptAbortedError, select, type Ask } from '../lib/prompt';
 import {
   loadMigrateProject,
-  SOURCE_EXTENSIONS,
   stripExtension,
   type V1Module,
 } from '../lib/migrate/project';
@@ -21,6 +20,7 @@ import {
   HEADLESS_PRIMITIVES,
   PRIMITIVES,
   UNSUPPORTED_PRIMITIVES,
+  UNSUPPORTED_UTILITIES,
   UTILITIES,
 } from '../lib/migrate/table';
 
@@ -50,11 +50,24 @@ function knownNames() {
   for (const key of [...Object.keys(PRIMITIVES), ...UNSUPPORTED_PRIMITIVES])
     names.add(key.split('/')[1]!);
   for (const name of HEADLESS_PRIMITIVES) names.add(name);
-  for (const id of Object.keys(UTILITIES)) {
+  for (const id of [...Object.keys(UTILITIES), ...UNSUPPORTED_UTILITIES]) {
     if (id !== 'icons/icon') names.add(id.split('/')[1]!);
   }
   return names;
 }
+
+/**
+ * The shadcn/ui component to swap a v1 component for, when its name differs
+ * (`null`: none `animate` animates).
+ */
+const SHADCN_COMPONENTS: Record<string, string | null> = {
+  menu: 'dropdown-menu',
+  radio: 'radio-group',
+  'preview-card': 'hover-card',
+  files: null,
+  'preview-link-card': null,
+  sidebar: null,
+};
 
 /**
  * `animate-ui migrate <components...|all>`: moves a project from the files of
@@ -89,6 +102,23 @@ export async function migrate(components: string[], options: MigrateOptions) {
     return module && findMigration(module) ? module : undefined;
   };
 
+  /**
+   * A v1 primitive v2 doesn't replace (Files, Preview Link Card, Headless UI)
+   * stays the user's and keeps working: it moves to v2's utilities and own
+   * primitives, which keep v1's API, but stays on the v1 Radix UI and Base
+   * UI primitives it is built on (v2's take the library's API).
+   */
+  const isKeptPrimitive = (file: string) => {
+    const module = project.classify(stripExtension(file));
+    return module?.kind === 'primitive' && !findMigration(module);
+  };
+  const selectedInKeptPrimitive = (module: V1Module) =>
+    selected(module) &&
+    !(
+      module.kind === 'primitive' &&
+      (module.library === 'radix' || module.library === 'base')
+    );
+
   const files = project.sourceFiles();
   const contents = new Map<string, string>();
   const results: { file: string; result: RewriteResult; changed: boolean }[] =
@@ -102,7 +132,11 @@ export async function migrate(components: string[], options: MigrateOptions) {
     if (replacedModule(file)) continue;
     let result: RewriteResult;
     try {
-      result = rewrite(code, { project, file, selected });
+      result = rewrite(code, {
+        project,
+        file,
+        selected: isKeptPrimitive(file) ? selectedInKeptPrimitive : selected,
+      });
     } catch (error) {
       if (code.includes('animate-ui'))
         log(
@@ -147,10 +181,11 @@ export async function migrate(components: string[], options: MigrateOptions) {
       .match(/^animate-ui\/components\/(radix|base)\/([a-z0-9-]+)\.[jt]sx?$/);
     if (component && result.imports.length > 0) {
       const name = component[2]!;
+      const shadcn = name in SHADCN_COMPONENTS ? SHADCN_COMPONENTS[name] : name;
       log(
         styleText(
           'dim',
-          `    A v1 component: it keeps working on v2. You can also swap it for shadcn/ui's ${name} (pnpm dlx shadcn@latest add ${name}) and run animate-ui animate ${name}.`,
+          `    A v1 component: it keeps working on v2.${shadcn ? ` You can also swap it for shadcn/ui's ${shadcn} (pnpm dlx shadcn@latest add ${shadcn}) and run animate-ui animate ${shadcn}.` : ''}`,
         ),
       );
     }
@@ -177,20 +212,6 @@ export async function migrate(components: string[], options: MigrateOptions) {
           ? `, ${manualSteps} manual step${manualSteps === 1 ? '' : 's'} left (marked !).`
           : '.'),
     );
-  }
-
-  // A tempo set in v1's lib/motion goes to the provider in v2.
-  if (found.has('lib/motion')) {
-    const motionFile = SOURCE_EXTENSIONS.map((extension) =>
-      path.join(project.libDir, `motion${extension}`),
-    ).find((file) => existsSync(file));
-    const tempo = motionFile
-      ? readFileSync(motionFile, 'utf8').match(/const tempo = ([\d.]+)/)?.[1]
-      : undefined;
-    if (tempo && Number(tempo) !== 1)
-      log(
-        `${styleText('yellow', '!')} ${relative(motionFile!)} sets tempo = ${tempo}: wrap your app in <AnimateUIProvider tempo={${tempo}}> (${PACKAGE}/provider) to keep that pace.`,
-      );
   }
 
   // v1 files that v2 replaces and nothing imports anymore.
@@ -346,10 +367,30 @@ export async function migrate(components: string[], options: MigrateOptions) {
     }
   }
 
-  if (changedFiles > 0 && !project.hasPackage) {
-    log(
-      `\n${styleText('yellow', '!')} ${PACKAGE} isn't installed yet: pnpm add ${PACKAGE} motion`,
+  // v2's Base UI primitives import @base-ui/react (Base UI 1). v1's were
+  // built on its beta, @base-ui-components/react.
+  const baseUI =
+    !project.hasDependency('@base-ui/react') &&
+    results.some(({ result }) =>
+      result.imports.some((change) =>
+        change.to.some((to) => to.startsWith(`${PACKAGE}/primitives/base-ui/`)),
+      ),
     );
+  const missing = [
+    ...(changedFiles > 0 && !project.hasPackage ? [PACKAGE, 'motion'] : []),
+    ...(baseUI ? ['@base-ui/react'] : []),
+  ];
+  if (missing.length > 0) {
+    log(
+      `\n${styleText('yellow', '!')} ${missing[0]} isn't installed yet: pnpm add ${missing.join(' ')}`,
+    );
+    if (baseUI)
+      log(
+        styleText(
+          'dim',
+          "    @base-ui/react is Base UI 1, which v2's Base UI primitives use (v1's were built on its beta, @base-ui-components/react).",
+        ),
+      );
   }
 
   return exitCode;

@@ -7,6 +7,7 @@ import {
   HEADLESS_PRIMITIVES,
   PRIMITIVES,
   UNSUPPORTED_PRIMITIVES,
+  UNSUPPORTED_UTILITIES,
   UTILITIES,
   type Migration,
 } from './table';
@@ -33,7 +34,7 @@ export type RewriteResult = {
   /** Mechanical changes beyond the imports (renamed props, added Portals…). */
   changes: string[];
   manual: ManualStep[];
-  /** The selected v1 modules this file imports (`radix/accordion`, `lib/motion`…). */
+  /** The selected v1 modules this file imports (`radix/accordion`, `hooks/use-is-in-view`…). */
   found: string[];
 };
 
@@ -46,7 +47,10 @@ export type RewriteContext = {
 
 type Edit = { start: number; end: number; text: string };
 
-/** Props only a Motion component takes: v2 parts are the library's. */
+/**
+ * Props only a Motion component takes. v2's Radix UI and Base UI parts are
+ * the library's (Animate UI's own primitives keep v1's Motion props).
+ */
 const MOTION_PROPS = new Set([
   'initial',
   'animate',
@@ -91,7 +95,7 @@ const MOTION_PROPS = new Set([
   'transformTemplate',
 ]);
 
-/** The key of a v1 module in the tables (`radix/accordion`, `lib/motion`). */
+/** The key of a v1 module in the tables (`radix/accordion`, `lib/get-strict-context`). */
 export function moduleKey(module: V1Module) {
   return module.kind === 'primitive'
     ? `${module.library}/${module.name}`
@@ -146,34 +150,33 @@ type ParsedTarget = {
   head: string;
   rest: string[];
   componentProps: boolean;
-  /** Type parameters the local type alias declares and passes on. */
-  generics?: { params: string; args: string };
+  /** What the local type alias adds to the v2 type (`{ side?: … }`). */
+  extra?: string;
 };
 
 function parseTarget(target: string, migration: Migration): ParsedTarget {
-  const [module, ref] = target.includes('#')
-    ? (target.split('#') as [string, string])
-    : [migration.module, target];
+  const at = target.indexOf(' & ');
+  const [ref0, extra] =
+    at < 0 ? [target, undefined] : [target.slice(0, at), target.slice(at + 3)];
+  const [module, ref] = ref0.includes('#')
+    ? (ref0.split('#') as [string, string])
+    : [migration.module, ref0];
   const props = ref.match(/^ComponentProps<(.+)>$/);
-  const generic = props ? undefined : ref.match(/^([\w.]+)<(.+)>$/);
-  const path = props ? props[1]! : generic ? generic[1]! : ref;
+  const path = props ? props[1]! : ref;
   const [head, ...rest] = path.split('.');
-  return {
-    module,
-    head: head!,
-    rest,
-    componentProps: Boolean(props),
-    generics: generic
-      ? {
-          params: generic[2]!,
-          // `Value = unknown, Multiple extends … = false` → `Value, Multiple`.
-          args: generic[2]!
-            .split(/,(?![^<]*>)/)
-            .map((param) => param.trim().split(/\s/)[0]!)
-            .join(', '),
-        }
-      : undefined,
-  };
+  return { module, head: head!, rest, componentProps: Boolean(props), extra };
+}
+
+/** Whether a target is printed as a local alias rather than imported as is. */
+function needsDeclaration(target: ParsedTarget) {
+  return (
+    target.rest.length > 0 || target.componentProps || Boolean(target.extra)
+  );
+}
+
+/** v2's Radix UI and Base UI parts: the library's props, and no Motion props. */
+function isLibraryModule(migration: Migration) {
+  return /^primitives\/(radix-ui|base-ui)\//.test(migration.module);
 }
 
 /** Calls `visit` on every node, with its parent. */
@@ -315,7 +318,10 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       );
       return undefined;
     }
-    if (UNSUPPORTED_PRIMITIVES.includes(key)) {
+    if (
+      UNSUPPORTED_PRIMITIVES.includes(key) ||
+      UNSUPPORTED_UTILITIES.includes(key)
+    ) {
       found.add(key);
       manual(
         node,
@@ -349,7 +355,8 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       if (!module) continue;
       const migration = migrationFor(module, node);
       if (!migration) continue;
-      // `@/lib/motion` may be the user's own: v1's exports or nothing.
+      // A v1 lib or hook path may hold the user's own file: v1's exports
+      // or nothing.
       if (
         module.kind === 'utility' &&
         node.specifiers.some(
@@ -407,11 +414,7 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         const parsed = parseTarget(target, migration);
         const isType = valueTarget === undefined;
         plan.names.push(name);
-        if (
-          parsed.rest.length === 0 &&
-          !parsed.componentProps &&
-          !parsed.generics
-        ) {
+        if (!needsDeclaration(parsed)) {
           const list = plan.named.get(parsed.module) ?? [];
           list.push({ head: parsed.head, local, type: isType || typeSyntax });
           plan.named.set(parsed.module, list);
@@ -456,17 +459,12 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         const valueTarget = migration.values[name];
         const target = valueTarget ?? migration.types[name];
         const parsed = target ? parseTarget(target, migration) : undefined;
-        if (
-          !parsed ||
-          parsed.rest.length > 0 ||
-          parsed.componentProps ||
-          parsed.generics
-        ) {
+        if (!parsed || needsDeclaration(parsed)) {
           plan.kept.push(name === exported ? name : `${name} as ${exported}`);
           if (parsed)
             manual(
               specifier,
-              `\`${name}\` is \`${target}\` in v2: export it from a declaration of your own (\`const ${exported} = …\`).`,
+              `\`${name}\` is \`${target}\` in v2: export it from a declaration of your own (\`${valueTarget === undefined ? 'type' : 'const'} ${exported} = …\`).`,
             );
           else
             unmapped.push({
@@ -567,7 +565,7 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         );
       } else if (rule) {
         manual(attribute, `<${node.name.name}> \`${prop}\`: ${rule.manual}`);
-      } else if (MOTION_PROPS.has(prop)) {
+      } else if (MOTION_PROPS.has(prop) && isLibraryModule(migration)) {
         manual(
           attribute,
           `<${node.name.name}> \`${prop}\` is a Motion prop: v2 parts aren't motion components (animated parts take \`transition\` and \`exitTransition\`). Drop it, or animate an element of your own inside the part.`,
@@ -689,7 +687,9 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       const local = freeName(
         /^[A-Z]/.test(base)
           ? [
-              ...(declaration.target.componentProps ? [base] : []),
+              ...(declaration.target.componentProps || declaration.target.extra
+                ? [base]
+                : []),
               `${base}Primitive`,
               `Animated${base}`,
             ]
@@ -781,15 +781,14 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     edits.push({ start: node.start!, end: node.end!, text: lines.join('\n') });
 
     for (const declaration of plan.declarations) {
-      const { module, head, rest, generics } = declaration.target;
+      const { module, head, rest, extra } = declaration.target;
       const alias = aliases.get(`${module}#${head}`)!.local;
       const path = [alias, ...rest].join('.');
+      const value = declaration.target.componentProps
+        ? `${componentProps}<typeof ${path}>`
+        : path;
       declarations.push(
-        declaration.target.componentProps
-          ? `type ${declaration.local} = ${componentProps}<typeof ${path}>${semi}`
-          : generics
-            ? `type ${declaration.local}<${generics.params}> = ${path}<${generics.args}>${semi}`
-            : `${declaration.type ? 'type' : 'const'} ${declaration.local} = ${path}${semi}`,
+        `${declaration.type ? 'type' : 'const'} ${declaration.local} = ${value}${extra ? ` & ${extra}` : ''}${semi}`,
       );
     }
 

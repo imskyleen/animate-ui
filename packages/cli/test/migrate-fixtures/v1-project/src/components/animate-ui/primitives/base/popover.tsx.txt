@@ -1,17 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
+import { Popover as PopoverPrimitive } from '@base-ui-components/react/popover';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/lib/get-strict-context';
 import { useControlledState } from '@/hooks/use-controlled-state';
-import {
-  ReducedMotionConfig,
-  scale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/lib/motion';
 
 type PopoverContextType = {
   isOpen: boolean;
@@ -54,7 +48,7 @@ type PopoverPortalProps = Omit<
   'keepMounted'
 >;
 
-function PopoverPortal({ children, ...props }: PopoverPortalProps) {
+function PopoverPortal(props: PopoverPortalProps) {
   const { isOpen } = usePopover();
 
   return (
@@ -64,9 +58,7 @@ function PopoverPortal({ children, ...props }: PopoverPortalProps) {
           keepMounted
           data-slot="popover-portal"
           {...props}
-        >
-          <ReducedMotionConfig>{children}</ReducedMotionConfig>
-        </PopoverPrimitive.Portal>
+        />
       )}
     </AnimatePresence>
   );
@@ -91,27 +83,21 @@ type PopoverPopupProps = Omit<
 function PopoverPopup({
   initialFocus,
   finalFocus,
-  transition = motionTransition.dropdown,
-  style,
+  transition = { type: 'spring', stiffness: 300, damping: 25 },
   ...props
 }: PopoverPopupProps) {
-  const reduce = useShouldReduceMotion();
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
-  };
-
   return (
     <PopoverPrimitive.Popup
       initialFocus={initialFocus}
       finalFocus={finalFocus}
       render={
         <motion.div
+          key="popover-popup"
           data-slot="popover-popup"
-          initial={hidden}
-          animate={{ opacity: 1, transform: 'scale(1)', transition }}
-          exit={{ ...hidden, transition: motionTransition.exit }}
-          style={{ transformOrigin: 'var(--transform-origin)', ...style }}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={transition}
           {...props}
         />
       }
