@@ -177,7 +177,9 @@ export function DocsTabs({
           <TabsContent
             key={tab.value}
             value={tab.value}
-            className="outline-none"
+            // The tab row sets the spacing: a panel's own block margins
+            // (code blocks, steps) would add to it.
+            className="outline-none *:first:mt-0 *:last:mb-0 [&_.fd-step:first-child>h3:first-child]:mt-0"
           >
             {!lazy || visited.has(tab.value) || tab.value === active
               ? tab.content
@@ -245,10 +247,10 @@ export function CodeTabs({
         />
       </div>
       {/* The ref sits here: TabsContents keeps its own ref to measure. */}
-      <div ref={contentsRef} className="px-1.5 pb-1.5">
+      <div ref={contentsRef} className="px-1 pb-1">
         <InCodeTabsContext value>
           <TabsContents
-            className="rounded-md bg-background"
+            className="rounded-lg bg-background"
             transition={ready ? undefined : INSTANT}
           >
             {tabs.map((tab) => (

@@ -125,13 +125,13 @@ export function CodeBlock({
         </div>
       ) : (
         copy && (
-          <div className="absolute top-0 right-0 z-2 rounded-bl-xl bg-accent p-1.5">
+          <div className="absolute top-0 right-0 z-2 rounded-bl-xl bg-accent p-1">
             <CopyButton getText={() => getPreText(areaRef.current)} />
           </div>
         )
       )}
-      <div className={cn('p-1.5', title && 'pt-0')}>
-        <div className="overflow-hidden rounded-md bg-background">
+      <div className={cn('p-1', title && 'pt-0')}>
+        <div className="overflow-hidden rounded-lg bg-background">
           {viewport}
         </div>
       </div>

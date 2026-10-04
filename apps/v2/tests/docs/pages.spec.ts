@@ -48,12 +48,21 @@ test.describe('primitive page', () => {
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
   });
 
-  test('the Code tab reveals the whole demo source', async ({ page }) => {
-    const code = page
-      .getByRole('tablist', { name: 'Preview' })
-      .getByRole('tab', { name: 'Code', exact: true });
-    await code.click();
-    await expect(code).toHaveAttribute('aria-selected', 'true');
+  test('the code sits under the demo; View code unfolds it', async ({
+    page,
+  }) => {
+    const code = page.locator('[data-slot="preview-code"]');
+    const height = async () => (await code.boundingBox())!.height;
+    const collapsed = await height();
+    expect(collapsed).toBeLessThan(200);
+    // Below the demo, in the same frame.
+    const preview = await page.locator('[data-slot="preview"]').boundingBox();
+    expect((await code.boundingBox())!.y).toBeGreaterThan(preview!.y);
+    await code.getByRole('button', { name: 'View code' }).click();
+    await expect(code.getByRole('button', { name: 'View code' })).toHaveCount(
+      0,
+    );
+    await expect.poll(height).toBeGreaterThan(collapsed + 100);
     await expect(
       page.getByText('export default function AccordionDemo'),
     ).toBeVisible();
@@ -204,4 +213,25 @@ test('the sidebar and TOC fade only where there is more to scroll', async ({
         .evaluate((el) => el.style.getPropertyValue('--scroll-fade-top')),
     )
     .toMatch(/^0(\.0+)?$|^$/);
+});
+
+test('a page released in the last 30 days has a "new" badge', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives/animate-ui/scroll-fade');
+  await expect(
+    page.locator('#nd-sidebar a', { hasText: 'Scroll Fade' }),
+  ).toContainText('new');
+});
+
+test('the TOC line stays put while the page scrolls', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/docs/backgrounds/hexagon');
+  const scroller = page.locator('#nd-toc .overscroll-none');
+  for (let i = 0; i < 4; i++) {
+    await page.mouse.move(700, 500);
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(300);
+    expect(await scroller.evaluate((el) => el.scrollLeft)).toBe(0);
+  }
 });

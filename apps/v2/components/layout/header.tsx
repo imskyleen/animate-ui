@@ -167,8 +167,10 @@ export function SiteHeader({
           <div className="max-md:hidden">
             <SearchButton />
           </div>
-          <GitHubLink className="max-md:hidden" />
-          <ThemeToggle className={menu ? 'max-md:hidden' : undefined} />
+          <div className="flex items-center gap-1.5">
+            <GitHubLink className="max-md:hidden" />
+            <ThemeToggle className={menu ? 'max-md:hidden' : undefined} />
+          </div>
           {menu ?? (
             <Link
               href="/docs"

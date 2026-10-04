@@ -27,7 +27,9 @@ function Item({ item, active }: { item: TOCItemType; active: boolean }) {
     <TOCItem
       href={item.url}
       data-toc-item={item.url}
-      className="relative flex items-center py-1.5 pl-4 text-start [overflow-wrap:anywhere]"
+      // pr-1: room for the label's 3px shift, or the list overflows sideways
+      // and the scroll spy scrolls it (the line then jumps by 3px).
+      className="relative flex items-center py-1.5 pr-1 pl-4 text-start [overflow-wrap:anywhere]"
       {...hoverProps}
     >
       <NavItemContent
@@ -130,7 +132,7 @@ export function TOC({ container }: TOCProps) {
       </p>
       <TOCScrollArea
         ref={scroll}
-        className="overscroll-none px-2 pt-0 mask-none"
+        className="overscroll-none px-0 pt-0 mask-none"
       >
         <AnimatedNav>
           <div ref={list} className="relative ml-2 flex flex-col">

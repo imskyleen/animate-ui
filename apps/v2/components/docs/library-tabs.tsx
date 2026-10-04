@@ -29,7 +29,8 @@ export function LibraryTabs({
     <div
       role="tablist"
       aria-label="Library"
-      className="flex flex-wrap items-center gap-1"
+      // Sits right on top of the preview, like a tab list on its panel.
+      className="-mb-2 flex flex-wrap items-center gap-1"
     >
       <Highlight
         controlledItems

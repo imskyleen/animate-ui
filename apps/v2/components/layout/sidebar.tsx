@@ -133,7 +133,7 @@ function Item({ id, name, url, active }: Link & { id: string }) {
     <SidebarItem
       href={url}
       active={active}
-      className="relative ml-2 flex items-center py-1.5 pl-4 text-start"
+      className="relative ml-2 flex items-center py-1.5 pr-1 pl-4 text-start"
       {...hoverProps}
     >
       <NavItemContent active={active} hovered={hovered}>
@@ -169,7 +169,7 @@ function SidebarScroll({ children }: { children: ReactNode }) {
   return (
     <ScrollFade
       size={24}
-      className="min-h-0 flex-1 overflow-y-auto overscroll-none p-4 px-2 pb-4 [scrollbar-width:none] max-md:pt-4 md:pb-14"
+      className="min-h-0 flex-1 overflow-y-auto overscroll-none px-6 pt-4 pb-8 [scrollbar-width:none] max-md:pt-8 md:pb-18"
     >
       {children}
     </ScrollFade>

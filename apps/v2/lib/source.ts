@@ -3,10 +3,23 @@ import { docsRoute } from './shared';
 import { defineDocs } from 'fumadocs-mdx/macro';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 
+import { attachBadge } from './page-badges';
+
+// Optional flags, typed like Fumadocs' own (`full`, `description`).
+const flag = pageSchema.shape.full;
+
 const docs = defineDocs({
   dir: 'content/docs',
   docs: {
-    schema: pageSchema,
+    // Sidebar badges, as in v1: `releaseDate: "YYYY-MM-DD"` (new for 30
+    // days), `alpha`, `beta`, `updated`, `deprecated`.
+    schema: pageSchema.extend({
+      releaseDate: pageSchema.shape.description,
+      alpha: flag,
+      beta: flag,
+      updated: flag,
+      deprecated: flag,
+    }),
     lastModified: true,
     postprocess: {
       includeProcessedMarkdown: true,
@@ -21,6 +34,9 @@ const docs = defineDocs({
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
+  plugins: [
+    { name: 'animate-ui:badges', transformPageTree: { file: attachBadge } },
+  ],
 });
 
 export const docsLlms = llms(source, {

@@ -79,8 +79,9 @@ function Info({ name, item }: { name: string; item: TypeNode }) {
 }
 
 /**
- * v1's API table: Prop, Type, Default, the description in Animate UI's
- * tooltip. Same props as Fumadocs' TypeTable.
+ * The API table: Prop, Type, Default in the accent frame, each prop a
+ * rounded row on the background, the description in Animate UI's tooltip.
+ * Same props as Fumadocs' TypeTable.
  */
 export function TypeTable({
   id,
@@ -96,25 +97,22 @@ export function TypeTable({
       <div
         id={id}
         className={cn(
-          'not-prose my-6 overflow-x-auto overscroll-x-none rounded-xl border bg-card',
+          'not-prose my-6 overflow-x-auto overscroll-x-none rounded-xl bg-accent px-1 [h3+&]:mt-3 [h4+&]:mt-3',
           className,
         )}
       >
-        <table className="w-full min-w-xl text-left text-sm text-muted-foreground">
-          <thead className="bg-accent/60 text-foreground">
+        {/* Rows are separate rounded cards: the cells carry the background. */}
+        <table className="w-full min-w-xl border-separate border-spacing-x-0 border-spacing-y-1 text-left text-sm text-muted-foreground [&_tbody_td]:bg-background [&_tbody_td:first-child]:rounded-l-lg [&_tbody_td:last-child]:rounded-r-lg">
+          <thead className="text-foreground">
             <tr>
-              <th className="w-[30%] px-3 py-2.5 font-medium">Prop</th>
-              <th className="w-[35%] px-3 py-2.5 font-medium">Type</th>
-              <th className="w-[35%] px-3 py-2.5 font-medium">Default</th>
+              <th className="w-[30%] px-3 pt-1.5 pb-1 font-medium">Prop</th>
+              <th className="w-[35%] px-3 pt-1.5 pb-1 font-medium">Type</th>
+              <th className="w-[35%] px-3 pt-1.5 pb-1 font-medium">Default</th>
             </tr>
           </thead>
           <tbody>
             {Object.entries(type).map(([name, item]) => (
-              <tr
-                key={name}
-                id={id ? `${id}-${name}` : undefined}
-                className="border-t"
-              >
+              <tr key={name} id={id ? `${id}-${name}` : undefined}>
                 <td className="px-3 py-2.5 whitespace-nowrap">
                   <div className="inline-flex items-center gap-1">
                     <code
