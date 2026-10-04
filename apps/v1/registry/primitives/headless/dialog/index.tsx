@@ -21,13 +21,6 @@ import {
   type HTMLMotionProps,
 } from 'motion/react';
 
-import {
-  ReducedMotionConfig,
-  scale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
-
 type DialogProps<TTag extends React.ElementType = 'div'> = Omit<
   DialogPrimitiveProps<TTag>,
   'static'
@@ -38,7 +31,6 @@ type DialogProps<TTag extends React.ElementType = 'div'> = Omit<
 
 function Dialog<TTag extends React.ElementType = 'div'>({
   className,
-  children,
   ...props
 }: DialogProps<TTag>) {
   return (
@@ -49,13 +41,7 @@ function Dialog<TTag extends React.ElementType = 'div'>({
           className={className}
           {...props}
           static
-        >
-          {(bag) => (
-            <ReducedMotionConfig>
-              {typeof children === 'function' ? children(bag) : children}
-            </ReducedMotionConfig>
-          )}
-        </DialogPrimitive>
+        />
       )}
     </AnimatePresence>
   );
@@ -70,21 +56,20 @@ type DialogBackdropProps<TTag extends React.ElementType = typeof motion.div> =
 function DialogBackdrop<TTag extends React.ElementType = typeof motion.div>(
   props: DialogBackdropProps<TTag>,
 ) {
-  const { as = motion.div, transition, ...rest } = props;
+  const {
+    as = motion.div,
+    transition = { duration: 0.2, ease: 'easeInOut' },
+    ...rest
+  } = props;
 
   return (
     <DialogBackdropPrimitive
+      key="dialog-backdrop"
       data-slot="dialog-backdrop"
       as={as as React.ElementType}
-      initial={{ opacity: 0 }}
-      animate={{
-        opacity: 1,
-        transition: transition ?? motionTransition.modal,
-      }}
-      exit={{
-        opacity: 0,
-        transition: transition ?? motionTransition.modalExit,
-      }}
+      initial={{ opacity: 0, filter: 'blur(4px)', transition }}
+      animate={{ opacity: 1, filter: 'blur(0px)', transition }}
+      exit={{ opacity: 0, filter: 'blur(4px)', transition }}
       {...rest}
     />
   );
@@ -95,53 +80,49 @@ type DialogFlipDirection = 'top' | 'bottom' | 'left' | 'right';
 type DialogPanelProps<TTag extends React.ElementType = typeof motion.div> =
   Omit<DialogPanelPrimitiveProps<TTag>, 'transition'> &
     Omit<HTMLMotionProps<'div'>, 'children'> & {
-      /** Opt-in 3D flip from this edge. Default: a subtle scale. */
       from?: DialogFlipDirection;
       transition?: Transition;
       as?: TTag;
     };
 
-function getContentTransform(
-  from: DialogFlipDirection | undefined,
-  progress: 'hidden' | 'visible',
-) {
-  const scaleValue = progress === 'hidden' ? scale.enter : 1;
-  if (!from) return `scale(${scaleValue})`;
-
-  const axis = from === 'top' || from === 'bottom' ? 'rotateX' : 'rotateY';
-  const angle =
-    progress === 'hidden'
-      ? from === 'bottom' || from === 'left'
-        ? '20deg'
-        : '-20deg'
-      : '0deg';
-  return `perspective(500px) ${axis}(${angle}) scale(${scaleValue})`;
-}
-
 function DialogPanel<TTag extends React.ElementType = typeof motion.div>(
   props: DialogPanelProps<TTag>,
 ) {
-  const { children, as = motion.div, from, transition, ...rest } = props;
+  const {
+    children,
+    as = motion.div,
+    from = 'top',
+    transition = { type: 'spring', stiffness: 150, damping: 25 },
+    ...rest
+  } = props;
 
-  const reduce = useShouldReduceMotion();
-  const hiddenTransform = reduce
-    ? getContentTransform(from, 'visible')
-    : getContentTransform(from, 'hidden');
+  const initialRotation =
+    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';
+  const isVertical = from === 'top' || from === 'bottom';
+  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';
 
   return (
     <DialogPanelPrimitive
+      key="dialog-panel"
       data-slot="dialog-panel"
       as={as as React.ElementType}
-      initial={{ opacity: 0, transform: hiddenTransform }}
+      initial={{
+        opacity: 0,
+        filter: 'blur(4px)',
+        transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,
+        transition,
+      }}
       animate={{
         opacity: 1,
-        transform: getContentTransform(from, 'visible'),
-        transition: transition ?? motionTransition.modal,
+        filter: 'blur(0px)',
+        transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,
+        transition,
       }}
       exit={{
         opacity: 0,
-        transform: hiddenTransform,
-        transition: transition ?? motionTransition.modalExit,
+        filter: 'blur(4px)',
+        transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,
+        transition,
       }}
       {...rest}
     >

@@ -4,7 +4,9 @@
   "type": "registry:ui",
   "title": "Radial Menu Demo",
   "description": "Demo Radial Menu.",
-  "registryDependencies": ["@animate-ui/components-community-radial-menu"],
+  "registryDependencies": [
+    "@animate-ui/components-community-radial-menu"
+  ],
   "files": [
     {
       "path": "registry/demo/components/community/radial-menu/index.tsx",

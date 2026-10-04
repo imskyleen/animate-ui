@@ -8,7 +8,7 @@ type ZoomDemoProps = {
 
 export default function ZoomDemo({
   delay = 0,
-  initialScale = 0.96,
+  initialScale = 0.5,
   scale = 1,
 }: ZoomDemoProps) {
   return (

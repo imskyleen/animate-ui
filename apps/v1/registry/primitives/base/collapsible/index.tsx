@@ -1,9 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible';
+import { Collapsible as CollapsiblePrimitive } from '@base-ui-components/react/collapsible';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
-import { transition as motionTransition } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
@@ -55,7 +54,7 @@ type CollapsiblePanelProps = Omit<
   };
 
 function CollapsiblePanel({
-  transition = motionTransition.disclosure,
+  transition = { duration: 0.35, ease: 'easeInOut' },
   hiddenUntilFound,
   keepRendered = false,
   ...props

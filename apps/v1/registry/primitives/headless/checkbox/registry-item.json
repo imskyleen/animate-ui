@@ -11,6 +11,5 @@
       "type": "registry:ui",
       "target": "components/animate-ui/primitives/headless/checkbox.tsx"
     }
-  ],
-  "registryDependencies": ["@animate-ui/lib-motion"]
+  ]
 }

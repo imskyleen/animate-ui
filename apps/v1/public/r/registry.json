@@ -114,25 +114,6 @@
       ]
     },
     {
-      "name": "components-animate-input-otp",
-      "type": "registry:ui",
-      "title": "Input OTP",
-      "description": "Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-animate-input-otp"
-      ],
-      "files": [
-        {
-          "path": "registry/components/animate/input-otp/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/animate/input-otp.tsx"
-        }
-      ]
-    },
-    {
       "name": "components-animate-tabs",
       "type": "registry:ui",
       "title": "Tabs",
@@ -175,9 +156,6 @@
       "dependencies": [
         "motion"
       ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
-      ],
       "files": [
         {
           "path": "registry/components/backgrounds/bubble/index.tsx",
@@ -197,10 +175,6 @@
           "type": "registry:ui",
           "target": "components/animate-ui/components/backgrounds/fireworks.tsx"
         }
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-motion"
       ]
     },
     {
@@ -210,10 +184,6 @@
       "description": "A background component featuring a subtle yet engaging animated gradient effect, smoothly transitioning colors to enhance visual depth.",
       "dependencies": [
         "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -230,9 +200,6 @@
       "description": "A background component featuring a subtle yet engaging animated gravity stars effect.",
       "dependencies": [
         "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -263,9 +230,6 @@
       "dependencies": [
         "motion"
       ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
-      ],
       "files": [
         {
           "path": "registry/components/backgrounds/hole/index.tsx",
@@ -281,9 +245,6 @@
       "description": "An interactive background featuring animated dots of varying sizes and speeds, simulating a dynamic and immersive starry space effect.",
       "dependencies": [
         "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -349,44 +310,6 @@
       ]
     },
     {
-      "name": "components-base-combobox",
-      "type": "registry:ui",
-      "title": "Combobox",
-      "description": "An input combined with a list of predefined items to select.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-base-combobox"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/combobox.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-base-context-menu",
-      "type": "registry:ui",
-      "title": "Context Menu",
-      "description": "A menu that appears at the pointer on right click or long press.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-base-context-menu"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/context-menu/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/context-menu.tsx"
-        }
-      ]
-    },
-    {
       "name": "components-base-dialog",
       "type": "registry:ui",
       "title": "Dialog",
@@ -402,22 +325,6 @@
           "path": "registry/components/base/dialog/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/dialog.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-base-drawer",
-      "type": "registry:ui",
-      "title": "Drawer",
-      "description": "A panel that slides in from the edge of the screen and can be swiped away.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-drawer"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/drawer/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/drawer.tsx"
         }
       ]
     },
@@ -453,25 +360,6 @@
           "path": "registry/components/base/menu/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/menu.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-base-otp-field",
-      "type": "registry:ui",
-      "title": "OTP Field",
-      "description": "A one-time password input split into one input per character, with characters that pop in as they are typed.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-base-otp-field"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/otp-field/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/otp-field.tsx"
         }
       ]
     },
@@ -559,41 +447,6 @@
       ]
     },
     {
-      "name": "components-base-select",
-      "type": "registry:ui",
-      "title": "Select",
-      "description": "A common form component for choosing a predefined value in a dropdown menu.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-base-select"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/select.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-base-slider",
-      "type": "registry:ui",
-      "title": "Slider",
-      "description": "An easily stylable range input.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-slider"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/slider.tsx"
-        }
-      ]
-    },
-    {
       "name": "components-base-switch",
       "type": "registry:ui",
       "title": "Switch",
@@ -622,25 +475,6 @@
           "path": "registry/components/base/tabs/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/base/tabs.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-base-toast",
-      "type": "registry:ui",
-      "title": "Toast",
-      "description": "A stack of short notifications that can be swiped away.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-base-toast"
-      ],
-      "files": [
-        {
-          "path": "registry/components/base/toast/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/base/toast.tsx"
         }
       ]
     },
@@ -722,9 +556,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-buttons-button"
+        "@animate-ui/primitives-buttons-button",
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -993,7 +826,7 @@
       "dependencies": [
         "motion",
         "lucide-react",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [],
       "files": [
@@ -1095,25 +928,6 @@
           "path": "registry/components/headless/checkbox/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/headless/checkbox.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-headless-combobox",
-      "type": "registry:ui",
-      "title": "Combobox",
-      "description": "Comboboxes are the foundation of accessible autocompletes and command palettes for your app, complete with robust support for keyboard navigation.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-headless-combobox"
-      ],
-      "files": [
-        {
-          "path": "registry/components/headless/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/headless/combobox.tsx"
         }
       ]
     },
@@ -1240,25 +1054,6 @@
           "path": "registry/components/radix/checkbox/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/radix/checkbox.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-radix-context-menu",
-      "type": "registry:ui",
-      "title": "Context Menu",
-      "description": "Displays a menu located at the pointer, triggered by a right click or a long press.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-radix-context-menu"
-      ],
-      "files": [
-        {
-          "path": "registry/components/radix/context-menu/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/radix/context-menu.tsx"
         }
       ]
     },
@@ -1403,25 +1198,6 @@
       ]
     },
     {
-      "name": "components-radix-select",
-      "type": "registry:ui",
-      "title": "Select",
-      "description": "Displays a list of options for the user to pick from, triggered by a button.",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-radix-select"
-      ],
-      "files": [
-        {
-          "path": "registry/components/radix/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/radix/select.tsx"
-        }
-      ]
-    },
-    {
       "name": "components-radix-sheet",
       "type": "registry:ui",
       "title": "Sheet",
@@ -1452,9 +1228,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-radix-checkbox",
+        "@animate-ui/lib-get-strict-context",
         "button",
         "input",
         "separator",
@@ -1466,22 +1241,6 @@
           "path": "registry/components/radix/sidebar/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/components/radix/sidebar.tsx"
-        }
-      ]
-    },
-    {
-      "name": "components-radix-slider",
-      "type": "registry:ui",
-      "title": "Slider",
-      "description": "An input where the user selects a value from within a given range.",
-      "registryDependencies": [
-        "@animate-ui/primitives-radix-slider"
-      ],
-      "files": [
-        {
-          "path": "registry/components/radix/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/components/radix/slider.tsx"
         }
       ]
     },
@@ -1743,25 +1502,6 @@
           }
         }
       }
-    },
-    {
-      "name": "demo-components-animate-input-otp",
-      "type": "registry:ui",
-      "title": "Input OTP Demo",
-      "description": "Demo showing an input OTP.",
-      "dependencies": [
-        "input-otp"
-      ],
-      "registryDependencies": [
-        "@animate-ui/components-animate-input-otp"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/animate/input-otp/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/animate/input-otp.tsx"
-        }
-      ]
     },
     {
       "name": "demo-components-animate-tabs",
@@ -2124,72 +1864,6 @@
       }
     },
     {
-      "name": "demo-components-base-combobox",
-      "type": "registry:ui",
-      "title": "Combobox Demo",
-      "description": "Demo showing a combobox.",
-      "dependencies": [
-        "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/components-base-combobox"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/combobox.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "Combobox": {
-            "multiple": {
-              "value": false
-            }
-          },
-          "ComboboxContent": {
-            "side": {
-              "value": "bottom",
-              "options": {
-                "top": "top",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "right"
-              }
-            },
-            "sideOffset": {
-              "value": 6
-            },
-            "align": {
-              "value": "start",
-              "options": {
-                "start": "start",
-                "center": "center",
-                "end": "end"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "demo-components-base-context-menu",
-      "type": "registry:ui",
-      "title": "Context Menu Demo",
-      "description": "Demo showing a context menu.",
-      "registryDependencies": [
-        "@animate-ui/components-base-context-menu"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/context-menu/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/context-menu.tsx"
-        }
-      ]
-    },
-    {
       "name": "demo-components-base-dialog",
       "type": "registry:ui",
       "title": "Dialog Demo",
@@ -2208,9 +1882,8 @@
         "demoProps": {
           "DialogPopup": {
             "from": {
-              "value": "none",
+              "value": "top",
               "options": {
-                "none": "none",
                 "top": "top",
                 "bottom": "bottom",
                 "left": "left",
@@ -2219,37 +1892,6 @@
             },
             "showCloseButton": {
               "value": true
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "demo-components-base-drawer",
-      "type": "registry:ui",
-      "title": "Drawer Demo",
-      "description": "Demo showing a drawer.",
-      "registryDependencies": [
-        "@animate-ui/components-base-drawer"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/drawer/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/drawer.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "Drawer": {
-            "swipeDirection": {
-              "value": "down",
-              "options": {
-                "down": "down",
-                "up": "up",
-                "left": "left",
-                "right": "right"
-              }
             }
           }
         }
@@ -2411,22 +2053,6 @@
           }
         }
       }
-    },
-    {
-      "name": "demo-components-base-otp-field",
-      "type": "registry:ui",
-      "title": "OTP Field Demo",
-      "description": "Demo showing an OTP field.",
-      "registryDependencies": [
-        "@animate-ui/components-base-otp-field"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/otp-field/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/otp-field.tsx"
-        }
-      ]
     },
     {
       "name": "demo-components-base-popover",
@@ -2625,70 +2251,6 @@
       ]
     },
     {
-      "name": "demo-components-base-select",
-      "type": "registry:ui",
-      "title": "Select Demo",
-      "description": "Demo showing a select.",
-      "registryDependencies": [
-        "@animate-ui/components-base-select"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/select.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "SelectPanel": {
-            "alignItemWithTrigger": {
-              "value": true
-            },
-            "side": {
-              "value": "bottom",
-              "options": {
-                "top": "top",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "right"
-              }
-            },
-            "sideOffset": {
-              "value": 4
-            },
-            "align": {
-              "value": "center",
-              "options": {
-                "start": "start",
-                "center": "center",
-                "end": "end"
-              }
-            },
-            "alignOffset": {
-              "value": 0
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "demo-components-base-slider",
-      "type": "registry:ui",
-      "title": "Base Slider Demo",
-      "description": "Demo showing a base slider with a single value and a range.",
-      "registryDependencies": [
-        "@animate-ui/components-base-slider"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/slider.tsx"
-        }
-      ]
-    },
-    {
       "name": "demo-components-base-switch",
       "type": "registry:ui",
       "title": "Switch Demo",
@@ -2719,39 +2281,6 @@
           "target": "components/animate-ui/demo/components/base/tabs.tsx"
         }
       ]
-    },
-    {
-      "name": "demo-components-base-toast",
-      "type": "registry:ui",
-      "title": "Toast Demo",
-      "description": "Demo showing stacked toasts.",
-      "registryDependencies": [
-        "@animate-ui/components-base-toast"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/base/toast/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/base/toast.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "Toaster": {
-            "position": {
-              "value": "bottom-right",
-              "options": {
-                "top-left": "top-left",
-                "top-center": "top-center",
-                "top-right": "top-right",
-                "bottom-left": "bottom-left",
-                "bottom-center": "bottom-center",
-                "bottom-right": "bottom-right"
-              }
-            }
-          }
-        }
-      }
     },
     {
       "name": "demo-components-base-toggle",
@@ -3545,40 +3074,6 @@
       }
     },
     {
-      "name": "demo-components-headless-combobox",
-      "type": "registry:ui",
-      "title": "Combobox Demo",
-      "description": "Demo showing a combobox.",
-      "registryDependencies": [
-        "@animate-ui/components-headless-combobox"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/headless/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/headless/combobox.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "ComboboxOptions": {
-            "anchor": {
-              "value": "bottom start",
-              "options": {
-                "top start": "top start",
-                "top end": "top end",
-                "bottom start": "bottom start",
-                "bottom end": "bottom end"
-              }
-            },
-            "gap": {
-              "value": 6
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "demo-components-headless-dialog",
       "type": "registry:ui",
       "title": "Dialog Demo",
@@ -3597,9 +3092,8 @@
         "demoProps": {
           "DialogPanel": {
             "from": {
-              "value": "none",
+              "value": "top",
               "options": {
-                "none": "none",
                 "top": "top",
                 "bottom": "bottom",
                 "left": "left",
@@ -3802,22 +3296,6 @@
       }
     },
     {
-      "name": "demo-components-radix-context-menu",
-      "type": "registry:ui",
-      "title": "Context Menu Demo",
-      "description": "Demo showing a context menu.",
-      "registryDependencies": [
-        "@animate-ui/components-radix-context-menu"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/radix/context-menu/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/radix/context-menu.tsx"
-        }
-      ]
-    },
-    {
       "name": "demo-components-radix-dialog",
       "type": "registry:ui",
       "title": "Dialog Demo",
@@ -3836,9 +3314,8 @@
         "demoProps": {
           "DialogContent": {
             "from": {
-              "value": "none",
+              "value": "top",
               "options": {
-                "none": "none",
                 "top": "top",
                 "bottom": "bottom",
                 "left": "left",
@@ -4196,58 +3673,6 @@
       ]
     },
     {
-      "name": "demo-components-radix-select",
-      "type": "registry:ui",
-      "title": "Select Demo",
-      "description": "Demo showing a select.",
-      "registryDependencies": [
-        "@animate-ui/components-radix-select"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/radix/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/radix/select.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "SelectContent": {
-            "position": {
-              "value": "popper",
-              "options": {
-                "popper": "popper",
-                "item-aligned": "item-aligned"
-              }
-            },
-            "side": {
-              "value": "bottom",
-              "options": {
-                "top": "top",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "right"
-              }
-            },
-            "sideOffset": {
-              "value": 0
-            },
-            "align": {
-              "value": "start",
-              "options": {
-                "start": "start",
-                "center": "center",
-                "end": "end"
-              }
-            },
-            "alignOffset": {
-              "value": 0
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "demo-components-radix-sheet",
       "type": "registry:ui",
       "title": "Radix Sheet Demo",
@@ -4291,22 +3716,6 @@
           "path": "registry/demo/components/radix/sidebar/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/components/radix/sidebar.tsx"
-        }
-      ]
-    },
-    {
-      "name": "demo-components-radix-slider",
-      "type": "registry:ui",
-      "title": "Radix Slider Demo",
-      "description": "Demo showing a radix slider with a single value and a range.",
-      "registryDependencies": [
-        "@animate-ui/components-radix-slider"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/components/radix/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/components/radix/slider.tsx"
         }
       ]
     },
@@ -4613,25 +4022,6 @@
       ]
     },
     {
-      "name": "demo-primitives-animate-input-otp",
-      "type": "registry:ui",
-      "title": "Animate Input OTP Demo",
-      "description": "Demo showing an animated input OTP.",
-      "dependencies": [
-        "input-otp"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-animate-input-otp"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/animate/input-otp/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/animate/input-otp.tsx"
-        }
-      ]
-    },
-    {
       "name": "demo-primitives-animate-motion-grid",
       "type": "registry:ui",
       "title": "Animate Motion Grid Demo",
@@ -4901,48 +4291,6 @@
       }
     },
     {
-      "name": "demo-primitives-base-combobox",
-      "type": "registry:ui",
-      "title": "Base Combobox Demo",
-      "description": "Demo showing an animated base combobox.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-combobox"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/base/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/base/combobox.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "ComboboxPositioner": {
-            "side": {
-              "value": "bottom",
-              "options": {
-                "top": "top",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "right"
-              }
-            },
-            "sideOffset": {
-              "value": 4
-            },
-            "align": {
-              "value": "start",
-              "options": {
-                "start": "start",
-                "center": "center",
-                "end": "end"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "demo-primitives-base-dialog",
       "type": "registry:ui",
       "title": "Base Dialog Demo",
@@ -4972,22 +4320,6 @@
           }
         }
       }
-    },
-    {
-      "name": "demo-primitives-base-drawer",
-      "type": "registry:ui",
-      "title": "Base Drawer Demo",
-      "description": "Demo showing an animated base drawer.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-drawer"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/base/drawer/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/base/drawer.tsx"
-        }
-      ]
     },
     {
       "name": "demo-primitives-base-files",
@@ -5054,22 +4386,6 @@
           }
         }
       }
-    },
-    {
-      "name": "demo-primitives-base-otp-field",
-      "type": "registry:ui",
-      "title": "Base OTP Field Demo",
-      "description": "Demo showing an animated base OTP field.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-otp-field"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/base/otp-field/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/base/otp-field.tsx"
-        }
-      ]
     },
     {
       "name": "demo-primitives-base-popover",
@@ -5266,67 +4582,6 @@
           "path": "registry/demo/primitives/base/radio/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/demo/primitives/base/radio.tsx"
-        }
-      ]
-    },
-    {
-      "name": "demo-primitives-base-select",
-      "type": "registry:ui",
-      "title": "Base Select Demo",
-      "description": "Demo showing an animated base select.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-select"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/base/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/base/select.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "SelectPositioner": {
-            "alignItemWithTrigger": {
-              "value": true
-            },
-            "side": {
-              "value": "bottom",
-              "options": {
-                "top": "top",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "right"
-              }
-            },
-            "sideOffset": {
-              "value": 4
-            },
-            "align": {
-              "value": "start",
-              "options": {
-                "start": "start",
-                "center": "center",
-                "end": "end"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "demo-primitives-base-slider",
-      "type": "registry:ui",
-      "title": "Base Slider Demo",
-      "description": "Demo showing an animated base slider.",
-      "registryDependencies": [
-        "@animate-ui/primitives-base-slider"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/base/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/base/slider.tsx"
         }
       ]
     },
@@ -6078,10 +5333,10 @@
               }
             },
             "offset": {
-              "value": 16,
+              "value": 100,
               "min": 0,
-              "max": 400,
-              "step": 4
+              "max": 1000,
+              "step": 10
             }
           }
         }
@@ -6177,10 +5432,10 @@
               "step": 100
             },
             "initialScale": {
-              "value": 0.96,
+              "value": 0.5,
               "min": 0,
               "max": 1,
-              "step": 0.01
+              "step": 0.1
             },
             "scale": {
               "value": 1,
@@ -6212,40 +5467,6 @@
           "Checkbox": {
             "indeterminate": {
               "value": false
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "demo-primitives-headless-combobox",
-      "type": "registry:ui",
-      "title": "Headless Combobox Demo",
-      "description": "Demo showing an animated headless combobox.",
-      "registryDependencies": [
-        "@animate-ui/primitives-headless-combobox"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/headless/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/headless/combobox.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "ComboboxOptions": {
-            "anchor": {
-              "value": "bottom start",
-              "options": {
-                "top start": "top start",
-                "top end": "top end",
-                "bottom start": "bottom start",
-                "bottom end": "bottom end"
-              }
-            },
-            "gap": {
-              "value": 4
             }
           }
         }
@@ -6801,55 +6022,6 @@
       ]
     },
     {
-      "name": "demo-primitives-radix-select",
-      "type": "registry:ui",
-      "title": "Radix Select Demo",
-      "description": "Demo showing an animated radix select.",
-      "registryDependencies": [
-        "@animate-ui/primitives-radix-select"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/radix/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/radix/select.tsx"
-        }
-      ],
-      "meta": {
-        "demoProps": {
-          "SelectContent": {
-            "position": {
-              "value": "popper",
-              "options": {
-                "popper": "popper",
-                "item-aligned": "item-aligned"
-              }
-            },
-            "side": {
-              "value": "bottom",
-              "options": {
-                "top": "top",
-                "bottom": "bottom",
-                "left": "left",
-                "right": "right"
-              }
-            },
-            "sideOffset": {
-              "value": 4
-            },
-            "align": {
-              "value": "start",
-              "options": {
-                "start": "start",
-                "center": "center",
-                "end": "end"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "demo-primitives-radix-sheet",
       "type": "registry:ui",
       "title": "Radix Sheet Demo",
@@ -6879,22 +6051,6 @@
           }
         }
       }
-    },
-    {
-      "name": "demo-primitives-radix-slider",
-      "type": "registry:ui",
-      "title": "Radix Slider Demo",
-      "description": "Demo showing an animated radix slider.",
-      "registryDependencies": [
-        "@animate-ui/primitives-radix-slider"
-      ],
-      "files": [
-        {
-          "path": "registry/demo/primitives/radix/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/demo/primitives/radix/slider.tsx"
-        }
-      ]
     },
     {
       "name": "demo-primitives-radix-switch",
@@ -7518,19 +6674,6 @@
           "path": "registry/hooks/use-motion-value-state/index.tsx",
           "type": "registry:hook",
           "target": "hooks/use-motion-value-state.tsx"
-        }
-      ]
-    },
-    {
-      "name": "hooks-use-page-visible",
-      "type": "registry:hook",
-      "title": "usePageVisible",
-      "description": "A hook that returns false while the browser tab is hidden, to pause looping animations.",
-      "files": [
-        {
-          "path": "registry/hooks/use-page-visible/index.tsx",
-          "type": "registry:hook",
-          "target": "hooks/use-page-visible.tsx"
         }
       ]
     },
@@ -10764,9 +9907,9 @@
       ],
       "files": [
         {
-          "path": "registry/icons/gallery-horizontal-end/index.tsx",
+          "path": "registry/icons/gallery-vertical-end/index.tsx",
           "type": "registry:ui",
-          "target": "components/animate-ui/icons/gallery-horizontal-end.tsx"
+          "target": "components/animate-ui/icons/gallery-vertical-end.tsx"
         }
       ],
       "meta": {
@@ -10822,9 +9965,9 @@
       ],
       "files": [
         {
-          "path": "registry/icons/gallery-vertical-end/index.tsx",
+          "path": "registry/icons/gallery-horizontal-end/index.tsx",
           "type": "registry:ui",
-          "target": "components/animate-ui/icons/gallery-vertical-end.tsx"
+          "target": "components/animate-ui/icons/gallery-horizontal-end.tsx"
         }
       ],
       "meta": {
@@ -10989,7 +10132,6 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15206,29 +14348,6 @@
       ]
     },
     {
-      "name": "lib-motion",
-      "type": "registry:lib",
-      "title": "Motion tokens",
-      "description": "Shared motion tokens (curves, durations, springs, scales) and a reduced-motion config used by every Animate UI component.",
-      "dependencies": [
-        "motion"
-      ],
-      "cssVars": {
-        "theme": {
-          "ease-out-strong": "cubic-bezier(0.23, 1, 0.32, 1)",
-          "ease-in-out-strong": "cubic-bezier(0.77, 0, 0.175, 1)",
-          "ease-drawer": "cubic-bezier(0.32, 0.72, 0, 1)"
-        }
-      },
-      "files": [
-        {
-          "path": "registry/lib/motion/index.tsx",
-          "type": "registry:lib",
-          "target": "lib/motion.tsx"
-        }
-      ]
-    },
-    {
       "name": "primitives-animate-avatar-group",
       "type": "registry:ui",
       "title": "Avatar Group",
@@ -15237,7 +14356,6 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-tooltip"
       ],
       "files": [
@@ -15276,9 +14394,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15312,27 +14429,6 @@
       ]
     },
     {
-      "name": "primitives-animate-input-otp",
-      "type": "registry:ui",
-      "title": "Input OTP",
-      "description": "Accessible one-time password component with copy paste functionality, with characters that pop in as they are typed.",
-      "dependencies": [
-        "motion",
-        "input-otp"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/animate/input-otp/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/animate/input-otp.tsx"
-        }
-      ]
-    },
-    {
       "name": "primitives-animate-motion-grid",
       "type": "registry:ui",
       "title": "Motion Grid",
@@ -15361,7 +14457,6 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -15381,9 +14476,9 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/primitives-animate-slot",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/hooks-use-motion-value-state"
       ],
       "files": [
         {
@@ -15439,10 +14534,9 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-highlight",
         "@animate-ui/primitives-animate-slot",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15462,9 +14556,8 @@
         "@floating-ui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15481,12 +14574,11 @@
       "description": "An easily stylable accordion component.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15503,12 +14595,11 @@
       "description": "A dialog that requires user response to proceed.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -15525,12 +14616,11 @@
       "description": "An easily stylable checkbox component.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15547,12 +14637,11 @@
       "description": "A collapsible panel controlled by a button.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15563,89 +14652,23 @@
       ]
     },
     {
-      "name": "primitives-base-combobox",
-      "type": "registry:ui",
-      "title": "Base Combobox",
-      "description": "An input combined with a list of predefined items to select.",
-      "dependencies": [
-        "motion",
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/combobox.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-base-context-menu",
-      "type": "registry:ui",
-      "title": "Base Context Menu",
-      "description": "A menu that appears at the pointer on right click or long press.",
-      "dependencies": [
-        "motion",
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/hooks-use-data-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/context-menu/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/context-menu.tsx"
-        }
-      ]
-    },
-    {
       "name": "primitives-base-dialog",
       "type": "registry:ui",
       "title": "Base Dialog",
       "description": "A popup that opens on top of the entire page.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
           "path": "registry/primitives/base/dialog/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/base/dialog.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-base-drawer",
-      "type": "registry:ui",
-      "title": "Base Drawer",
-      "description": "A panel that slides in from the edge of the screen and can be swiped away.",
-      "dependencies": [
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/drawer/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/drawer.tsx"
         }
       ]
     },
@@ -15658,11 +14681,10 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-base-accordion",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15679,14 +14701,13 @@
       "description": "A list of actions in a dropdown, enhanced with keyboard navigation.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/hooks-use-data-state",
+        "@animate-ui/primitives-effects-highlight",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/hooks-use-data-state"
       ],
       "files": [
         {
@@ -15697,39 +14718,17 @@
       ]
     },
     {
-      "name": "primitives-base-otp-field",
-      "type": "registry:ui",
-      "title": "Base OTP Field",
-      "description": "A one-time password input split into one input per character, with characters that pop in as they are typed.",
-      "dependencies": [
-        "motion",
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/otp-field/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/otp-field.tsx"
-        }
-      ]
-    },
-    {
       "name": "primitives-base-popover",
       "type": "registry:ui",
       "title": "Base Popover",
       "description": "An accessible popup anchored to a button.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15746,12 +14745,11 @@
       "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15768,7 +14766,7 @@
       "description": "Displays a preview image of a link when hovered.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
         "@animate-ui/primitives-base-preview-card",
@@ -15789,11 +14787,10 @@
       "description": "Displays the status of a task that takes a long time.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-texts-counting-number"
       ],
       "files": [
@@ -15811,12 +14808,11 @@
       "description": "An easily stylable radio button component.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15827,62 +14823,17 @@
       ]
     },
     {
-      "name": "primitives-base-select",
-      "type": "registry:ui",
-      "title": "Base Select",
-      "description": "A common form component for choosing a predefined value in a dropdown menu.",
-      "dependencies": [
-        "motion",
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/select.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-base-slider",
-      "type": "registry:ui",
-      "title": "Base Slider",
-      "description": "An easily stylable range input.",
-      "dependencies": [
-        "motion",
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/slider.tsx"
-        }
-      ]
-    },
-    {
       "name": "primitives-base-switch",
       "type": "registry:ui",
       "title": "Base Switch",
       "description": "A control that indicates whether a setting is on or off.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15899,14 +14850,13 @@
       "description": "A component for toggling between related panels on the same page.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-effects-auto-height",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -15917,32 +14867,13 @@
       ]
     },
     {
-      "name": "primitives-base-toast",
-      "type": "registry:ui",
-      "title": "Base Toast",
-      "description": "A stack of short notifications that can be swiped away.",
-      "dependencies": [
-        "@base-ui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/base/toast/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/base/toast.tsx"
-        }
-      ]
-    },
-    {
       "name": "primitives-base-toggle",
       "type": "registry:ui",
       "title": "Base Toggle",
       "description": "A two-state button that can be on or off.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
@@ -15963,12 +14894,11 @@
       "description": "Provides a shared state to a series of toggle buttons.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
+        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/primitives-effects-highlight"
       ],
       "files": [
@@ -15986,12 +14916,11 @@
       "description": "A popup that appears when an element is hovered or focused, showing a hint for sighted users.",
       "dependencies": [
         "motion",
-        "@base-ui/react"
+        "@base-ui-components/react"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -16010,7 +14939,6 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -16031,7 +14959,6 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -16052,7 +14979,6 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -16073,7 +14999,6 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -16093,9 +15018,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-auto-height",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/hooks-use-auto-height"
       ],
       "files": [
         {
@@ -16114,9 +15038,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -16133,9 +15056,6 @@
       "description": "An effect that creates animated effects at the click position, adding interactive feedback to user actions.",
       "dependencies": [
         "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16154,9 +15074,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -16175,9 +15094,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -16194,9 +15112,6 @@
       "description": "A highlight effect that allows you to highlight elements on hover, click or with a controlled value.",
       "dependencies": [
         "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16231,7 +15146,6 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-motion",
         "@animate-ui/primitives-animate-slot"
       ],
       "files": [
@@ -16251,10 +15165,9 @@
         "motion"
       ],
       "registryDependencies": [
+        "@animate-ui/primitives-animate-slot",
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16289,9 +15202,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -16306,12 +15218,6 @@
       "type": "registry:ui",
       "title": "Theme Toggler",
       "description": "An effect that allows you to toggle the theme gradually.",
-      "dependencies": [
-        "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
-      ],
       "files": [
         {
           "path": "registry/primitives/effects/theme-toggler/index.tsx",
@@ -16349,9 +15255,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-animate-slot"
+        "@animate-ui/primitives-animate-slot",
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -16376,30 +15281,6 @@
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/headless/checkbox.tsx"
         }
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
-      ]
-    },
-    {
-      "name": "primitives-headless-combobox",
-      "type": "registry:ui",
-      "title": "Headless Combobox",
-      "description": "Comboboxes are the foundation of accessible autocompletes and command palettes for your app, complete with robust support for keyboard navigation.",
-      "dependencies": [
-        "motion",
-        "@headlessui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/headless/combobox/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/headless/combobox.tsx"
-        }
       ]
     },
     {
@@ -16410,9 +15291,6 @@
       "dependencies": [
         "motion",
         "@headlessui/react"
-      ],
-      "registryDependencies": [
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -16432,8 +15310,7 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16453,8 +15330,7 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16474,8 +15350,7 @@
         "@headlessui/react"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16496,15 +15371,14 @@
       ],
       "registryDependencies": [
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-effects-auto-height",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/primitives-effects-highlight",
+        "@animate-ui/primitives-effects-auto-height"
       ],
       "files": [
         {
-          "path": "registry/primitives/headless/tabs/index.tsx",
+          "path": "registry/primitives/headless/switch/index.tsx",
           "type": "registry:ui",
-          "target": "components/animate-ui/primitives/headless/tabs.tsx"
+          "target": "components/animate-ui/primitives/headless/switch.tsx"
         }
       ]
     },
@@ -16519,8 +15393,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16541,8 +15414,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16563,8 +15435,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16584,39 +15455,14 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
           "path": "registry/primitives/radix/collapsible/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/collapsible.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-radix-context-menu",
-      "type": "registry:ui",
-      "title": "Radix Context Menu",
-      "description": "Displays a menu located at the pointer, triggered by a right click or a long press.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/hooks-use-data-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/radix/context-menu/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/radix/context-menu.tsx"
         }
       ]
     },
@@ -16631,8 +15477,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16652,11 +15497,10 @@
         "radix-ui"
       ],
       "registryDependencies": [
+        "@animate-ui/primitives-effects-highlight",
         "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/hooks-use-data-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16675,11 +15519,10 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-radix-accordion",
         "@animate-ui/primitives-effects-highlight",
-        "@animate-ui/primitives-radix-accordion"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -16700,8 +15543,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16722,8 +15564,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16763,8 +15604,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16784,37 +15624,14 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
           "path": "registry/primitives/radix/radio-group/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/radio-group.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-radix-select",
-      "type": "registry:ui",
-      "title": "Radix Select",
-      "description": "Displays a list of options for the user to pick from, triggered by a button.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/radix/select/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/radix/select.tsx"
         }
       ]
     },
@@ -16828,37 +15645,14 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
           "path": "registry/primitives/radix/sheet/index.tsx",
           "type": "registry:ui",
           "target": "components/animate-ui/primitives/radix/sheet.tsx"
-        }
-      ]
-    },
-    {
-      "name": "primitives-radix-slider",
-      "type": "registry:ui",
-      "title": "Radix Slider",
-      "description": "An input where the user selects a value from within a given range.",
-      "dependencies": [
-        "motion",
-        "radix-ui"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/primitives/radix/slider/index.tsx",
-          "type": "registry:ui",
-          "target": "components/animate-ui/primitives/radix/slider.tsx"
         }
       ]
     },
@@ -16872,9 +15666,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -16894,11 +15687,10 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
+        "@animate-ui/primitives-effects-highlight",
         "@animate-ui/primitives-effects-auto-height",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/lib-get-strict-context",
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -16939,10 +15731,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-controlled-state",
+        "@animate-ui/primitives-effects-highlight",
         "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion",
-        "@animate-ui/primitives-effects-highlight"
+        "@animate-ui/hooks-use-controlled-state"
       ],
       "files": [
         {
@@ -16963,8 +15754,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-controlled-state",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -16983,8 +15773,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17001,10 +15790,6 @@
       "description": "A gradient text animation.",
       "dependencies": [
         "motion"
-      ],
-      "registryDependencies": [
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-motion"
       ],
       "files": [
         {
@@ -17023,8 +15808,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17043,9 +15827,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17064,8 +15846,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17085,9 +15866,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -17107,8 +15886,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {
@@ -17127,8 +15905,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17144,11 +15921,11 @@
       "title": "Sliding Number",
       "description": "A sliding number animation.",
       "dependencies": [
-        "motion"
+        "motion",
+        "react-use-measure"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17167,8 +15944,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/lib-motion"
+        "@animate-ui/hooks-use-is-in-view"
       ],
       "files": [
         {
@@ -17188,9 +15964,7 @@
       ],
       "registryDependencies": [
         "@animate-ui/hooks-use-is-in-view",
-        "@animate-ui/hooks-use-page-visible",
-        "@animate-ui/lib-get-strict-context",
-        "@animate-ui/lib-motion"
+        "@animate-ui/lib-get-strict-context"
       ],
       "files": [
         {

@@ -7,15 +7,14 @@
   "dependencies": ["motion", "@headlessui/react"],
   "registryDependencies": [
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion",
-    "@animate-ui/primitives-effects-auto-height",
-    "@animate-ui/primitives-effects-highlight"
+    "@animate-ui/primitives-effects-highlight",
+    "@animate-ui/primitives-effects-auto-height"
   ],
   "files": [
     {
-      "path": "registry/primitives/headless/tabs/index.tsx",
+      "path": "registry/primitives/headless/switch/index.tsx",
       "type": "registry:ui",
-      "target": "components/animate-ui/primitives/headless/tabs.tsx"
+      "target": "components/animate-ui/primitives/headless/switch.tsx"
     }
   ]
 }

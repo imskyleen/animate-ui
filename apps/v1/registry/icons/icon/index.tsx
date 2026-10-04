@@ -13,10 +13,6 @@ import {
 
 import { cn } from '@workspace/ui/lib/utils';
 import { useIsInView } from '@/registry/hooks/use-is-in-view';
-import {
-  ReducedMotionConfig,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 const staticAnimations = {
@@ -57,9 +53,6 @@ type AnimateIconContextValue = {
   completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
-  speed?: number;
-  /** A tap is playing a single iteration: infinite repeats play once. */
-  once?: boolean;
 };
 
 type DefaultIconProps<T = string> = {
@@ -76,12 +69,6 @@ type DefaultIconProps<T = string> = {
   completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
-  /**
-   * Playback rate of the icon's animation: 2 plays it twice as fast, 0.5 at
-   * half speed. Scales every duration and delay of the icon's variants.
-   * @default 1
-   */
-  speed?: number;
 };
 
 type AnimateIconProps<T = string> = WithAsChild<
@@ -106,7 +93,7 @@ const AnimateIconContext = React.createContext<AnimateIconContextValue | null>(
 );
 
 function useAnimateIconContext() {
-  const context = React.use(AnimateIconContext);
+  const context = React.useContext(AnimateIconContext);
   if (!context)
     return {
       controls: undefined,
@@ -119,70 +106,24 @@ function useAnimateIconContext() {
       completeOnStop: undefined,
       persistOnAnimateEnd: undefined,
       delay: undefined,
-      speed: undefined,
-      once: undefined,
     };
   return context;
 }
 
-/** Icons play at their authored timing (median around 600ms). */
-const DEFAULT_SPEED = 1;
-
-const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
-
-function subscribeToHover(onChange: () => void) {
-  const mql = window.matchMedia(HOVER_QUERY);
-  mql.addEventListener('change', onChange);
-  return () => mql.removeEventListener('change', onChange);
-}
-
-/**
- * True when the primary pointer can hover (mouse, trackpad). Touch browsers
- * fire `mouseenter` on tap and never fire `mouseleave`, so hover animations
- * are gated on this to avoid starting (and sticking) on tap.
- */
-function useCanHover() {
-  return React.useSyncExternalStore(
-    subscribeToHover,
-    () => window.matchMedia(HOVER_QUERY).matches,
-    () => false,
-  );
+function composeEventHandlers<E extends React.SyntheticEvent<unknown>>(
+  theirs?: (event: E) => void,
+  ours?: (event: E) => void,
+) {
+  return (event: E) => {
+    theirs?.(event);
+    ours?.(event);
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
 
-type StartOptions = {
-  /** Play one full iteration, then return to rest (taps). */
-  once?: boolean;
-};
-
-/**
- * Wraps the icon tree in `ReducedMotionConfig` so reduced motion works
- * without any app setup. Under reduced motion icons never animate, whatever
- * the trigger: they stay in their `initial` state.
- */
-function AnimateIcon(props: AnimateIconProps) {
-  return (
-    <ReducedMotionConfig>
-      <AnimateIconRoot {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-/**
- * Triggers:
- * - `animateOnHover`: plays while a hover-capable fine pointer is over the
- *   icon. Ignored on touch (and for touch input on hybrid devices).
- * - `animateOnTap`: a tap plays the whole animation once, then returns to
- *   rest (one iteration when `loop` is set). Mouse plays on press for
- *   immediate feedback; touch and pen play on release, so a scroll gesture
- *   (`pointercancel`) never starts it. Tapping again replays it. Pressing
- *   while a hover animation runs replays it and keeps it running until the
- *   pointer leaves. There is no press-and-hold mode.
- * - `animateOnView`, `animate`: unchanged.
- */
-function AnimateIconRoot({
+function AnimateIcon({
   asChild = false,
   animate = false,
   animateOnHover = false,
@@ -197,71 +138,57 @@ function AnimateIconRoot({
   completeOnStop = false,
   persistOnAnimateEnd = false,
   delay = 0,
-  speed = DEFAULT_SPEED,
   children,
-  onMouseEnter,
-  onMouseLeave,
-  onPointerEnter,
-  onPointerDown,
-  onPointerUp,
-  onPointerCancel,
   ...props
 }: AnimateIconProps) {
   const controls = useAnimation();
-  const reduceMotion = useShouldReduceMotion();
-  const canHover = useCanHover();
 
   const [localAnimate, setLocalAnimate] = React.useState<boolean>(() => {
     if (animate === undefined || animate === false) return false;
     return delay <= 0;
   });
-  // Bumped on every start so that re-triggering while active replays.
-  const [runId, setRunId] = React.useState(0);
   const [currentAnimation, setCurrentAnimation] = React.useState<
     string | StaticAnimations
   >(typeof animate === 'string' ? animate : animation);
-
-  const playing = localAnimate && !reduceMotion;
+  const [status, setStatus] = React.useState<'initial' | 'animate'>('initial');
 
   const delayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const loopDelayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const isAnimateInProgressRef = React.useRef<boolean>(false);
   const animateEndPromiseRef = React.useRef<Promise<void> | null>(null);
-  const lastTargetRef = React.useRef<'initial' | 'animate'>('initial');
-  const onceRef = React.useRef(false);
-  // Mirrors `onceRef` for rendering: variants clamp infinite repeats.
-  const [once, setOnce] = React.useState(false);
-  const hoverActiveRef = React.useRef(false);
-  const pointerTypeRef = React.useRef<string>('mouse');
-  const pendingTapRef = React.useRef<number | null>(null);
+  const resolveAnimateEndRef = React.useRef<(() => void) | null>(null);
+  const activeRef = React.useRef<boolean>(localAnimate);
+
+  const runGenRef = React.useRef(0);
+  const cancelledRef = React.useRef(false);
+
+  const bumpGeneration = React.useCallback(() => {
+    runGenRef.current++;
+  }, []);
 
   const startAnimation = React.useCallback(
-    (trigger: TriggerProp, options: StartOptions = {}) => {
+    (trigger: TriggerProp) => {
       const next = typeof trigger === 'string' ? trigger : animation;
-      onceRef.current = !!options.once;
-      setOnce(!!options.once);
+      bumpGeneration();
       if (delayRef.current) {
         clearTimeout(delayRef.current);
         delayRef.current = null;
       }
       setCurrentAnimation(next);
-      setRunId((id) => id + 1);
       if (delay > 0) {
         setLocalAnimate(false);
         delayRef.current = setTimeout(() => {
-          delayRef.current = null;
           setLocalAnimate(true);
         }, delay);
       } else {
         setLocalAnimate(true);
       }
     },
-    [animation, delay],
+    [animation, delay, bumpGeneration],
   );
 
   const stopAnimation = React.useCallback(() => {
-    onceRef.current = false;
-    setOnce(false);
+    bumpGeneration();
     if (delayRef.current) {
       clearTimeout(delayRef.current);
       delayRef.current = null;
@@ -271,7 +198,11 @@ function AnimateIconRoot({
       loopDelayRef.current = null;
     }
     setLocalAnimate(false);
-  }, []);
+  }, [bumpGeneration]);
+
+  React.useEffect(() => {
+    activeRef.current = localAnimate;
+  }, [localAnimate]);
 
   React.useEffect(() => {
     if (animate === undefined) return;
@@ -297,9 +228,9 @@ function AnimateIconRoot({
 
   const startAnim = React.useCallback(
     async (anim: 'initial' | 'animate', method: 'start' | 'set' = 'start') => {
-      lastTargetRef.current = anim;
       try {
         await controls[method](anim);
+        setStatus(anim);
       } catch {
         return;
       }
@@ -314,66 +245,84 @@ function AnimateIconRoot({
   }, [isInView, animateOnView, startAnimation, stopAnimation]);
 
   React.useEffect(() => {
-    // Each run owns `controls` until a newer run starts (or unmount): a stale
-    // run returns without touching them, so it never fights the newer one.
-    let stale = false;
-    const isStale = () => stale;
+    const gen = ++runGenRef.current;
+    cancelledRef.current = false;
 
-    async function rest() {
-      if (reduceMotion) {
-        await startAnim('initial', 'set');
+    async function run() {
+      if (cancelledRef.current || gen !== runGenRef.current) {
+        await startAnim('initial');
         return;
       }
-      if (
-        completeOnStop &&
-        isAnimateInProgressRef.current &&
-        animateEndPromiseRef.current
-      ) {
-        await animateEndPromiseRef.current;
-        if (isStale()) return;
+
+      if (!localAnimate) {
+        if (
+          completeOnStop &&
+          isAnimateInProgressRef.current &&
+          animateEndPromiseRef.current
+        ) {
+          try {
+            await animateEndPromiseRef.current;
+          } catch {
+            // noop
+          }
+        }
+        if (!persistOnAnimateEnd) {
+          if (cancelledRef.current || gen !== runGenRef.current) {
+            await startAnim('initial');
+            return;
+          }
+          await startAnim('initial');
+        }
+        return;
       }
-      if (!persistOnAnimateEnd) await startAnim('initial');
-    }
 
-    async function play() {
-      for (let iteration = 0; ; iteration++) {
-        // Loops restart from rest. The first iteration skips this when the
-        // icon is at rest or returning to it, so re-hovering mid-return
-        // retargets from the current values instead of snapping.
-        if (loop && (iteration > 0 || lastTargetRef.current === 'animate')) {
-          await startAnim('initial', 'set');
-          if (isStale()) return;
-        }
-
-        let resolveEnd!: () => void;
-        const endPromise = new Promise<void>((resolve) => {
-          resolveEnd = resolve;
-        });
-        isAnimateInProgressRef.current = true;
-        animateEndPromiseRef.current = endPromise;
-
-        await startAnim('animate');
-
-        resolveEnd();
-        if (animateEndPromiseRef.current === endPromise) {
-          isAnimateInProgressRef.current = false;
-          animateEndPromiseRef.current = null;
-        }
-        if (isStale()) return;
-
-        if (initialOnAnimateEnd) {
-          await startAnim('initial', 'set');
-          if (isStale()) return;
-        }
-
-        if (onceRef.current) {
-          onceRef.current = false;
-          setLocalAnimate(false);
+      if (loop) {
+        if (cancelledRef.current || gen !== runGenRef.current) {
+          await startAnim('initial');
           return;
         }
+        await startAnim('initial', 'set');
+      }
 
-        if (!loop) return;
+      isAnimateInProgressRef.current = true;
+      animateEndPromiseRef.current = new Promise<void>((resolve) => {
+        resolveAnimateEndRef.current = resolve;
+      });
 
+      if (cancelledRef.current || gen !== runGenRef.current) {
+        isAnimateInProgressRef.current = false;
+        resolveAnimateEndRef.current?.();
+        resolveAnimateEndRef.current = null;
+        animateEndPromiseRef.current = null;
+        await startAnim('initial');
+        return;
+      }
+
+      await startAnim('animate');
+
+      if (cancelledRef.current || gen !== runGenRef.current) {
+        isAnimateInProgressRef.current = false;
+        resolveAnimateEndRef.current?.();
+        resolveAnimateEndRef.current = null;
+        animateEndPromiseRef.current = null;
+        await startAnim('initial');
+        return;
+      }
+
+      isAnimateInProgressRef.current = false;
+      resolveAnimateEndRef.current?.();
+      resolveAnimateEndRef.current = null;
+      animateEndPromiseRef.current = null;
+
+      if (initialOnAnimateEnd) {
+        if (cancelledRef.current || gen !== runGenRef.current) {
+          await startAnim('initial');
+          return;
+        }
+        await startAnim('initial', 'set');
+      }
+
+      if (loop) {
         if (loopDelay > 0) {
           await new Promise<void>((resolve) => {
             loopDelayRef.current = setTimeout(() => {
@@ -381,128 +330,118 @@ function AnimateIconRoot({
               resolve();
             }, loopDelay);
           });
-          if (isStale()) return;
+
+          if (cancelledRef.current || gen !== runGenRef.current) {
+            await startAnim('initial');
+            return;
+          }
+          if (!activeRef.current) {
+            if (status !== 'initial' && !persistOnAnimateEnd)
+              await startAnim('initial');
+            return;
+          }
+        } else {
+          if (!activeRef.current) {
+            if (status !== 'initial' && !persistOnAnimateEnd)
+              await startAnim('initial');
+            return;
+          }
         }
+        if (cancelledRef.current || gen !== runGenRef.current) {
+          await startAnim('initial');
+          return;
+        }
+        await run();
       }
     }
 
-    void (playing ? play() : rest());
+    void run();
 
     return () => {
-      stale = true;
+      cancelledRef.current = true;
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
       if (loopDelayRef.current) {
         clearTimeout(loopDelayRef.current);
         loopDelayRef.current = null;
       }
     };
-  }, [
-    playing,
-    runId,
-    reduceMotion,
-    startAnim,
-    loop,
-    loopDelay,
-    completeOnStop,
-    persistOnAnimateEnd,
-    initialOnAnimateEnd,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localAnimate, controls]);
 
-  // With `asChild`, the Slot's handlers replace the child's: call them here.
   const childProps = (
-    asChild && React.isValidElement(children)
-      ? (children as React.ReactElement).props
-      : {}
+    React.isValidElement(children) ? (children as React.ReactElement).props : {}
   ) as AnyProps;
 
-  const playTap = () => {
-    if (!animateOnTap) return;
-    startAnimation(animateOnTap, { once: !hoverActiveRef.current });
-  };
+  const handleMouseEnter = composeEventHandlers<React.MouseEvent<HTMLElement>>(
+    childProps.onMouseEnter,
+    () => {
+      if (animateOnHover) startAnimation(animateOnHover);
+    },
+  );
 
-  const handlePointerEnter = (event: React.PointerEvent<HTMLElement>) => {
-    childProps.onPointerEnter?.(event);
-    onPointerEnter?.(event);
-    pointerTypeRef.current = event.pointerType;
-  };
+  const handleMouseLeave = composeEventHandlers<React.MouseEvent<HTMLElement>>(
+    childProps.onMouseLeave,
+    () => {
+      if (animateOnHover || animateOnTap) stopAnimation();
+    },
+  );
 
-  const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
-    childProps.onMouseEnter?.(event);
-    onMouseEnter?.(event);
-    if (!animateOnHover || !canHover || pointerTypeRef.current === 'touch')
-      return;
-    hoverActiveRef.current = true;
-    startAnimation(animateOnHover);
-  };
+  const handlePointerDown = composeEventHandlers<
+    React.PointerEvent<HTMLElement>
+  >(childProps.onPointerDown, () => {
+    if (animateOnTap) startAnimation(animateOnTap);
+  });
 
-  const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
-    childProps.onMouseLeave?.(event);
-    onMouseLeave?.(event);
-    if (!hoverActiveRef.current) return;
-    hoverActiveRef.current = false;
-    stopAnimation();
-  };
-
-  const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
-    childProps.onPointerDown?.(event);
-    onPointerDown?.(event);
-    pointerTypeRef.current = event.pointerType;
-    if (!animateOnTap || reduceMotion || event.button !== 0) return;
-    if (event.pointerType === 'mouse') playTap();
-    else pendingTapRef.current = event.pointerId;
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLElement>) => {
-    childProps.onPointerUp?.(event);
-    onPointerUp?.(event);
-    if (pendingTapRef.current !== event.pointerId) return;
-    pendingTapRef.current = null;
-    playTap();
-  };
-
-  const handlePointerCancel = (event: React.PointerEvent<HTMLElement>) => {
-    childProps.onPointerCancel?.(event);
-    onPointerCancel?.(event);
-    if (pendingTapRef.current === event.pointerId) pendingTapRef.current = null;
-  };
-
-  const handlers = {
-    onPointerEnter: handlePointerEnter,
-    onMouseEnter: handleMouseEnter,
-    onMouseLeave: handleMouseLeave,
-    onPointerDown: handlePointerDown,
-    onPointerUp: handlePointerUp,
-    onPointerCancel: handlePointerCancel,
-  };
+  const handlePointerUp = composeEventHandlers<React.PointerEvent<HTMLElement>>(
+    childProps.onPointerUp,
+    () => {
+      if (animateOnTap) stopAnimation();
+    },
+  );
 
   const content = asChild ? (
-    <Slot ref={inViewRef} {...props} {...handlers}>
+    <Slot
+      ref={inViewRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      {...props}
+    >
       {children}
     </Slot>
   ) : (
-    <motion.span ref={inViewRef} {...props} {...handlers}>
+    <motion.span
+      ref={inViewRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      {...props}
+    >
       {children}
     </motion.span>
   );
 
   return (
-    <AnimateIconContext
+    <AnimateIconContext.Provider
       value={{
         controls,
         animation: currentAnimation,
         loop,
         loopDelay,
-        active: playing,
+        active: localAnimate,
         animate,
         initialOnAnimateEnd,
         completeOnStop,
-        persistOnAnimateEnd,
         delay,
-        speed,
-        once,
       }}
     >
       {content}
-    </AnimateIconContext>
+    </AnimateIconContext.Provider>
   );
 }
 
@@ -524,12 +463,11 @@ function IconWrapper<T extends string>({
   persistOnAnimateEnd,
   initialOnAnimateEnd,
   delay,
-  speed,
   completeOnStop,
   className,
   ...props
 }: IconWrapperProps<T>) {
-  const context = React.use(AnimateIconContext);
+  const context = React.useContext(AnimateIconContext);
 
   if (context) {
     const {
@@ -542,8 +480,6 @@ function IconWrapper<T extends string>({
       persistOnAnimateEnd: parentPersistOnAnimateEnd,
       initialOnAnimateEnd: parentInitialOnAnimateEnd,
       delay: parentDelay,
-      speed: parentSpeed,
-      once: parentOnce,
       completeOnStop: parentCompleteOnStop,
     } = context;
 
@@ -557,7 +493,6 @@ function IconWrapper<T extends string>({
       initialOnAnimateEnd !== undefined ||
       persistOnAnimateEnd !== undefined ||
       delay !== undefined ||
-      speed !== undefined ||
       completeOnStop !== undefined;
 
     if (hasOverrides) {
@@ -583,7 +518,6 @@ function IconWrapper<T extends string>({
           persistOnAnimateEnd={persistOnAnimateEnd ?? parentPersistOnAnimateEnd}
           initialOnAnimateEnd={initialOnAnimateEnd ?? parentInitialOnAnimateEnd}
           delay={delay ?? parentDelay}
-          speed={speed ?? parentSpeed}
           completeOnStop={completeOnStop ?? parentCompleteOnStop}
           asChild
         >
@@ -606,7 +540,7 @@ function IconWrapper<T extends string>({
     const loopDelayToUse = parentLoopDelay;
 
     return (
-      <AnimateIconContext
+      <AnimateIconContext.Provider
         value={{
           controls,
           animation: animationToUse,
@@ -616,8 +550,6 @@ function IconWrapper<T extends string>({
           animate: parentAnimate,
           initialOnAnimateEnd: parentInitialOnAnimateEnd,
           delay: parentDelay,
-          speed: parentSpeed,
-          once: parentOnce,
           completeOnStop: parentCompleteOnStop,
         }}
       >
@@ -630,7 +562,7 @@ function IconWrapper<T extends string>({
           )}
           {...props}
         />
-      </AnimateIconContext>
+      </AnimateIconContext.Provider>
     );
   }
 
@@ -653,10 +585,7 @@ function IconWrapper<T extends string>({
         loop={loop}
         loopDelay={loopDelay}
         delay={delay}
-        speed={speed}
         completeOnStop={completeOnStop}
-        persistOnAnimateEnd={persistOnAnimateEnd}
-        initialOnAnimateEnd={initialOnAnimateEnd}
         asChild
       >
         <IconComponent
@@ -685,119 +614,32 @@ function IconWrapper<T extends string>({
   );
 }
 
-function resolveVariants<
-  V extends { default: T; [key: string]: T },
-  T extends Record<string, Variants>,
->(animations: V, animationType: string): T {
-  if (!(animationType in staticAnimations))
-    return (animations[animationType as keyof V] as T) ?? animations.default;
-
-  const variant = staticAnimations[animationType as StaticAnimations];
-  const result = {} as T;
-  for (const key in animations.default) {
-    if (
-      (animationType === 'path' || animationType === 'path-loop') &&
-      key.includes('group')
-    )
-      continue;
-    result[key] = variant as T[Extract<keyof T, string>];
-  }
-  return result;
-}
-
-const TIME_KEYS = new Set([
-  'duration',
-  'delay',
-  'repeatDelay',
-  'delayChildren',
-  'staggerChildren',
-]);
-
-function isPlainObject(value: unknown): value is AnyProps {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-// Scales a transition (and its per-property transitions) by `speed`. During
-// a tap, infinite repeats play a single iteration so the tap can end.
-function timeTransition(transition: AnyProps, speed: number, once: boolean) {
-  const result: AnyProps = {};
-  for (const key in transition) {
-    const value = transition[key];
-    if (TIME_KEYS.has(key) && typeof value === 'number') {
-      result[key] = value / speed;
-    } else if (key === 'repeat' && value === Infinity && once) {
-      result[key] = 0;
-    } else if (isPlainObject(value)) {
-      result[key] = timeTransition(value, speed, once);
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-
-// Unauthored returns to rest get a consistent ease-out instead of Motion's
-// per-value defaults.
-const restTransition = { duration: 0.4, ease: [0.23, 1, 0.32, 1] };
-
-function timeTarget(
-  target: unknown,
-  name: string,
-  speed: number,
-  once: boolean,
-): unknown {
-  if (typeof target === 'function')
-    return (...args: unknown[]) =>
-      timeTarget(
-        (target as (...a: unknown[]) => unknown)(...args),
-        name,
-        speed,
-        once,
-      );
-  if (!isPlainObject(target)) return target;
-  const transition =
-    target.transition ?? (name === 'initial' ? restTransition : undefined);
-  if (!transition) return target;
-  return { ...target, transition: timeTransition(transition, speed, once) };
-}
-
-function timeVariants<T extends Record<string, Variants>>(
-  variants: T,
-  speed: number,
-  once: boolean,
-): T {
-  const result = {} as AnyProps;
-  for (const element in variants) {
-    const elementVariants = variants[element] as AnyProps;
-    const timed: AnyProps = {};
-    for (const name in elementVariants)
-      timed[name] = timeTarget(elementVariants[name], name, speed, once);
-    result[element] = timed;
-  }
-  return result as T;
-}
-
-/**
- * Returns the variants of the animation selected by the closest `AnimateIcon`,
- * timed by its `speed`.
- */
-function useIconVariants<
+function getVariants<
   V extends { default: T; [key: string]: T },
   T extends Record<string, Variants>,
 >(animations: V): T {
-  const { animation, speed = DEFAULT_SPEED, once } = useAnimateIconContext();
-  return React.useMemo(
-    () =>
-      timeVariants(resolveVariants<V, T>(animations, animation), speed, !!once),
-    [animations, animation, speed, once],
-  );
-}
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { animation: animationType } = useAnimateIconContext();
 
-/**
- * @deprecated Use `useIconVariants`. It is a hook: call it unconditionally at
- * the top level of the icon component.
- */
-const getVariants = useIconVariants;
+  let result: T;
+
+  if (animationType in staticAnimations) {
+    const variant = staticAnimations[animationType as StaticAnimations];
+    result = {} as T;
+    for (const key in animations.default) {
+      if (
+        (animationType === 'path' || animationType === 'path-loop') &&
+        key.includes('group')
+      )
+        continue;
+      result[key] = variant as T[Extract<keyof T, string>];
+    }
+  } else {
+    result = (animations[animationType as keyof V] as T) ?? animations.default;
+  }
+
+  return result;
+}
 
 export {
   pathClassName,
@@ -805,7 +647,6 @@ export {
   AnimateIcon,
   IconWrapper,
   useAnimateIconContext,
-  useIconVariants,
   getVariants,
   type IconProps,
   type IconWrapperProps,

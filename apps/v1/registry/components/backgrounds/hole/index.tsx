@@ -3,24 +3,9 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useInView } from 'motion/react';
+import { motion } from 'motion/react';
 
-import { useShouldReduceMotion } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
-
-function subscribeToVisibility(onChange: () => void) {
-  document.addEventListener('visibilitychange', onChange);
-  return () => document.removeEventListener('visibilitychange', onChange);
-}
-
-/** False while the tab is hidden. */
-function usePageVisible() {
-  return React.useSyncExternalStore(
-    subscribeToVisibility,
-    () => document.visibilityState === 'visible',
-    () => true,
-  );
-}
 
 type HoleBackgroundProps = React.ComponentProps<'div'> & {
   strokeColor?: string;
@@ -39,14 +24,7 @@ function HoleBackground({
   ...props
 }: HoleBackgroundProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const [particleR, particleG, particleB] = particleRGBColor;
-
-  // The canvas loop and the aurora pause off screen and in a hidden tab, and
-  // render a single static frame under reduced motion.
-  const inView = useInView(canvasRef);
-  const pageVisible = usePageVisible();
-  const reduce = useShouldReduceMotion();
-  const playing = inView && pageVisible && !reduce;
+  const animationFrameIdRef = React.useRef<number>(0);
   const stateRef = React.useRef<any>({
     discs: [] as any[],
     lines: [] as any[],
@@ -205,10 +183,10 @@ function HoleBackground({
         vy,
         p: 0,
         r,
-        c: `rgba(${particleR}, ${particleG}, ${particleB}, ${Math.random()})`,
+        c: `rgba(${particleRGBColor[0]}, ${particleRGBColor[1]}, ${particleRGBColor[2]}, ${Math.random()})`,
       };
     },
-    [particleR, particleG, particleB],
+    [particleRGBColor],
   );
 
   const setParticles = React.useCallback(() => {
@@ -302,7 +280,7 @@ function HoleBackground({
     });
   }, [initParticle]);
 
-  const draw = React.useCallback(() => {
+  const tick = React.useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -310,11 +288,14 @@ function HoleBackground({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.scale(stateRef.current.render.dpi, stateRef.current.render.dpi);
+    moveDiscs();
+    moveParticles();
     drawDiscs(ctx);
     drawLines(ctx);
     drawParticles(ctx);
     ctx.restore();
-  }, [drawDiscs, drawLines, drawParticles]);
+    animationFrameIdRef.current = requestAnimationFrame(tick);
+  }, [moveDiscs, moveParticles, drawDiscs, drawLines, drawParticles]);
 
   const init = React.useCallback(() => {
     setSize();
@@ -326,28 +307,20 @@ function HoleBackground({
   React.useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    init();
+    tick();
     const handleResize = () => {
-      init();
-      draw();
+      setSize();
+      setDiscs();
+      setLines();
+      setParticles();
     };
-    handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [init, draw]);
-
-  React.useEffect(() => {
-    // Paused or reduced motion: the last (or first) frame stays on screen.
-    if (!playing) return;
-    let frameId = 0;
-    const tick = () => {
-      moveDiscs();
-      moveParticles();
-      draw();
-      frameId = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameIdRef.current);
     };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
-  }, [playing, moveDiscs, moveParticles, draw]);
+  }, [init, tick, setSize, setDiscs, setLines, setParticles]);
 
   return (
     <div
@@ -370,12 +343,8 @@ function HoleBackground({
           'absolute top-[-71.5%] left-1/2 z-[3] w-[30%] h-[140%] rounded-b-full blur-3xl opacity-75 dark:mix-blend-plus-lighter mix-blend-plus-darker [transform:translate3d(-50%,0,0)] [background-position:0%_100%] [background-size:100%_200%]',
           'dark:[background:linear-gradient(20deg,#00f8f1,#ffbd1e20_16.5%,#fe848f_33%,#fe848f20_49.5%,#00f8f1_66%,#00f8f160_85.5%,#ffbd1e_100%)_0_100%_/_100%_200%] [background:linear-gradient(20deg,#00f8f1,#ffbd1e40_16.5%,#fe848f_33%,#fe848f40_49.5%,#00f8f1_66%,#00f8f180_85.5%,#ffbd1e_100%)_0_100%_/_100%_200%]',
         )}
-        animate={{ backgroundPosition: playing ? '0% 300%' : '0% 100%' }}
-        transition={
-          playing
-            ? { duration: 5, ease: 'linear', repeat: Infinity }
-            : { duration: 0 }
-        }
+        animate={{ backgroundPosition: '0% 300%' }}
+        transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
       />
       <div className="absolute top-0 left-0 z-[7] size-full dark:[background:repeating-linear-gradient(transparent,transparent_1px,white_1px,white_2px)] mix-blend-overlay opacity-50" />
     </div>

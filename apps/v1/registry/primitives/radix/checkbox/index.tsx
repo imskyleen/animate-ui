@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Checkbox as CheckboxPrimitive } from 'radix-ui';
 import { motion, SVGMotionProps, type HTMLMotionProps } from 'motion/react';
-import { transition as motionTransition } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
@@ -87,7 +86,7 @@ function CheckboxIndicator(props: CheckboxIndicatorProps) {
             animate={{
               pathLength: 1,
               opacity: 1,
-              transition: motionTransition.change,
+              transition: { duration: 0.2 },
             }}
           />
         ) : (
@@ -100,14 +99,16 @@ function CheckboxIndicator(props: CheckboxIndicatorProps) {
                 pathLength: 1,
                 opacity: 1,
                 transition: {
-                  ...motionTransition.change,
+                  duration: 0.2,
                   delay: 0.2,
                 },
               },
               unchecked: {
                 pathLength: 0,
                 opacity: 0,
-                transition: motionTransition.exit,
+                transition: {
+                  duration: 0.2,
+                },
               },
             }}
           />

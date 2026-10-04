@@ -4,7 +4,11 @@
   "type": "registry:ui",
   "title": "Flip Card",
   "description": "A 3D animated card component that flips to reveal content on the back.",
-  "dependencies": ["motion", "class-variance-authority", "lucide-react"],
+  "dependencies": [
+    "motion",
+    "class-variance-authority",
+    "lucide-react"
+  ],
   "files": [
     {
       "path": "registry/components/community/flip-card/index.tsx",

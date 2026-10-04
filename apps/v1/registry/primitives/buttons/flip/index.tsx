@@ -4,12 +4,6 @@ import * as React from 'react';
 import { motion, type HTMLMotionProps, type Variant } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  scale as motionScale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-  spring,
-} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 const buildVariant = ({
@@ -51,12 +45,11 @@ type FlipButtonProps = WithAsChild<
 
 function FlipButton({
   from = 'top',
-  tapScale = motionScale.press,
+  tapScale = 0.95,
   asChild = false,
   style,
   ...props
 }: FlipButtonProps) {
-  const reduce = useShouldReduceMotion();
   const isVertical = from === 'top' || from === 'bottom';
   const rotateAxis = isVertical ? 'rotateX' : 'rotateY';
 
@@ -68,11 +61,7 @@ function FlipButton({
         data-slot="flip-button"
         initial="initial"
         whileHover="hover"
-        whileTap={{
-          scale: reduce ? 1 : tapScale,
-          transition: motionTransition.press,
-        }}
-        transition={motionTransition.press}
+        whileTap={{ scale: tapScale }}
         style={{
           display: 'inline-grid',
           placeItems: 'center',
@@ -88,14 +77,12 @@ function FlipButton({
 type FlipButtonFaceProps = WithAsChild<HTMLMotionProps<'span'>>;
 
 function FlipButtonFront({
-  transition = spring.default,
+  transition = { type: 'spring', stiffness: 280, damping: 20 },
   asChild = false,
   style,
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
-  // Under reduced motion the faces crossfade without rotating or sliding.
-  const reduce = useShouldReduceMotion();
 
   const frontOffset = from === 'top' || from === 'left' ? '50%' : '-50%';
 
@@ -109,8 +96,8 @@ function FlipButtonFront({
     }),
     hover: buildVariant({
       opacity: 0,
-      rotation: reduce ? 0 : 90,
-      offset: reduce ? '0%' : frontOffset,
+      rotation: 90,
+      offset: frontOffset,
       isVertical,
       rotateAxis,
     }),
@@ -136,22 +123,20 @@ function FlipButtonFront({
 }
 
 function FlipButtonBack({
-  transition = spring.default,
+  transition = { type: 'spring', stiffness: 280, damping: 20 },
   asChild = false,
   style,
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
-  // Under reduced motion the faces crossfade without rotating or sliding.
-  const reduce = useShouldReduceMotion();
 
   const backOffset = from === 'top' || from === 'left' ? '-50%' : '50%';
 
   const backVariants = {
     initial: buildVariant({
       opacity: 0,
-      rotation: reduce ? 0 : 90,
-      offset: reduce ? '0%' : backOffset,
+      rotation: 90,
+      offset: backOffset,
       isVertical,
       rotateAxis,
     }),

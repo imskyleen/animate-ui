@@ -4,12 +4,6 @@ import * as React from 'react';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { cn } from '@workspace/ui/lib/utils';
-import {
-  ReducedMotionConfig,
-  spring,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 type HighlightMode = 'children' | 'parent';
 
@@ -47,94 +41,6 @@ type HighlightContextType<T extends string> = {
   exitDelay?: number;
   forceUpdateBounds?: boolean;
 };
-
-const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
-
-function subscribeToHoverCapability(onChange: () => void) {
-  const mql = window.matchMedia(HOVER_QUERY);
-  mql.addEventListener('change', onChange);
-  return () => mql.removeEventListener('change', onChange);
-}
-
-/**
- * True only on devices whose primary pointer can hover precisely (mouse,
- * trackpad). Touch taps fire emulated `mouseenter` without a matching
- * `mouseleave`, which would leave a hover highlight stuck on screen.
- */
-function useCanHover() {
-  return React.useSyncExternalStore(
-    subscribeToHoverCapability,
-    () => window.matchMedia(HOVER_QUERY).matches,
-    () => false,
-  );
-}
-
-type ParentHighlightProps = {
-  bounds: Bounds | null;
-  transition: Transition;
-  exitDelay: number;
-  className?: string;
-  style?: React.CSSProperties;
-};
-
-/**
- * Parent mode indicator. It stays pinned at `top: 0; left: 0` and moves with
- * a `transform: translate()` string, so following the pointer never triggers
- * layout. `width`/`height` are plain styles: they jump to the new item's size
- * instead of tweening (items in lists and sidebars mostly share a width, and
- * tweening size would mean layout every frame).
- *
- * Rendered inside `ReducedMotionConfig`, so `useShouldReduceMotion` sees the
- * OS setting: under reduced motion the translate jumps and only opacity fades.
- */
-function ParentHighlight({
-  bounds,
-  transition,
-  exitDelay,
-  className,
-  style,
-}: ParentHighlightProps) {
-  const reduceMotion = useShouldReduceMotion();
-  const moveTransition: Transition = reduceMotion
-    ? { ...transition, transform: motionTransition.instant }
-    : transition;
-
-  return (
-    <AnimatePresence initial={false} mode="wait">
-      {bounds && (
-        <motion.div
-          data-slot="motion-highlight"
-          initial={{
-            transform: `translate(${bounds.left}px, ${bounds.top}px)`,
-            opacity: 0,
-          }}
-          animate={{
-            transform: `translate(${bounds.left}px, ${bounds.top}px)`,
-            opacity: 1,
-          }}
-          exit={{
-            opacity: 0,
-            transition: {
-              ...transition,
-              delay: (transition?.delay ?? 0) + (exitDelay ?? 0) / 1000,
-            },
-          }}
-          transition={moveTransition}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 0,
-            ...style,
-            width: bounds.width,
-            height: bounds.height,
-          }}
-          className={className}
-        />
-      )}
-    </AnimatePresence>
-  );
-}
 
 const HighlightContext = React.createContext<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -223,7 +129,7 @@ function Highlight<T extends React.ElementType = 'div'>({
     onValueChange,
     className,
     style,
-    transition = spring.snappy,
+    transition = { type: 'spring', stiffness: 350, damping: 35 },
     hover = false,
     click = true,
     enabled = true,
@@ -355,13 +261,37 @@ function Highlight<T extends React.ElementType = 'div'>({
           style={{ position: 'relative', zIndex: 1 }}
           className={(props as ParentModeHighlightProps)?.containerClassName}
         >
-          <ParentHighlight
-            bounds={boundsState}
-            transition={transition}
-            exitDelay={exitDelay}
-            style={style}
-            className={cn(className, activeClassNameState)}
-          />
+          <AnimatePresence initial={false} mode="wait">
+            {boundsState && (
+              <motion.div
+                data-slot="motion-highlight"
+                animate={{
+                  top: boundsState.top,
+                  left: boundsState.left,
+                  width: boundsState.width,
+                  height: boundsState.height,
+                  opacity: 1,
+                }}
+                initial={{
+                  top: boundsState.top,
+                  left: boundsState.left,
+                  width: boundsState.width,
+                  height: boundsState.height,
+                  opacity: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  transition: {
+                    ...transition,
+                    delay: (transition?.delay ?? 0) + (exitDelay ?? 0) / 1000,
+                  },
+                }}
+                transition={transition}
+                style={{ position: 'absolute', zIndex: 0, ...style }}
+                className={cn(className, activeClassNameState)}
+              />
+            )}
+          </AnimatePresence>
           {children}
         </Component>
       );
@@ -393,19 +323,17 @@ function Highlight<T extends React.ElementType = 'div'>({
           ?.forceUpdateBounds,
       }}
     >
-      <ReducedMotionConfig>
-        {enabled
-          ? controlledItems
-            ? render(children)
-            : render(
-                React.Children.map(children, (child, index) => (
-                  <HighlightItem key={index} className={props?.itemsClassName}>
-                    {child}
-                  </HighlightItem>
-                )),
-              )
-          : children}
-      </ReducedMotionConfig>
+      {enabled
+        ? controlledItems
+          ? render(children)
+          : render(
+              React.Children.map(children, (child, index) => (
+                <HighlightItem key={index} className={props?.itemsClassName}>
+                  {child}
+                </HighlightItem>
+              )),
+            )
+        : children}
     </HighlightContext.Provider>
   );
 }
@@ -495,8 +423,6 @@ function HighlightItem<T extends React.ElementType>({
   const isDisabled = disabled === undefined ? contextDisabled : disabled;
   const itemTransition = transition ?? contextTransition;
 
-  const canHover = useCanHover();
-
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
@@ -506,57 +432,41 @@ function HighlightItem<T extends React.ElementType>({
 
   React.useEffect(() => {
     if (mode !== 'parent') return;
-
-    if (!isActive) {
-      if (!activeValue) clearBounds();
-      return;
-    }
-
-    const node = localRef.current;
-    if (!node) return;
-
-    setBounds(node.getBoundingClientRect());
-    setActiveClassName(activeClassName ?? '');
-
+    let rafId: number;
+    let previousBounds: Bounds | null = null;
     const shouldUpdateBounds =
       forceUpdateBounds === true ||
       (contextForceUpdateBounds && forceUpdateBounds !== false);
-    if (!shouldUpdateBounds) return;
 
-    // Re-measure only when something can actually move the item: a size
-    // change of the item or any ancestor up to the highlight container
-    // (siblings expanding, sidebar collapsing), a scroll in any scroller, or a
-    // window resize. Bursts are coalesced into one measure per frame.
-    let rafId = 0;
-    const scheduleUpdate = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        if (localRef.current)
-          setBounds(localRef.current.getBoundingClientRect());
-      });
+    const updateBounds = () => {
+      if (!localRef.current) return;
+
+      const bounds = localRef.current.getBoundingClientRect();
+
+      if (shouldUpdateBounds) {
+        if (
+          previousBounds &&
+          previousBounds.top === bounds.top &&
+          previousBounds.left === bounds.left &&
+          previousBounds.width === bounds.width &&
+          previousBounds.height === bounds.height
+        ) {
+          rafId = requestAnimationFrame(updateBounds);
+          return;
+        }
+        previousBounds = bounds;
+        rafId = requestAnimationFrame(updateBounds);
+      }
+
+      setBounds(bounds);
     };
 
-    const resizeObserver = new ResizeObserver(scheduleUpdate);
-    let ancestor: HTMLElement | null = node;
-    while (ancestor) {
-      resizeObserver.observe(ancestor);
-      if (ancestor.dataset.slot === 'motion-highlight-container') break;
-      ancestor = ancestor.parentElement;
-    }
+    if (isActive) {
+      updateBounds();
+      setActiveClassName(activeClassName ?? '');
+    } else if (!activeValue) clearBounds();
 
-    window.addEventListener('resize', scheduleUpdate, { passive: true });
-    window.addEventListener('scroll', scheduleUpdate, {
-      passive: true,
-      capture: true,
-    });
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', scheduleUpdate);
-      window.removeEventListener('scroll', scheduleUpdate, { capture: true });
-    };
+    if (shouldUpdateBounds) return () => cancelAnimationFrame(rafId);
   }, [
     mode,
     isActive,
@@ -580,18 +490,16 @@ function HighlightItem<T extends React.ElementType>({
   };
 
   const commonHandlers = hover
-    ? canHover
-      ? {
-          onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
-            setActiveValue(childValue);
-            element.props.onMouseEnter?.(e);
-          },
-          onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
-            setActiveValue(null);
-            element.props.onMouseLeave?.(e);
-          },
-        }
-      : {}
+    ? {
+        onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
+          setActiveValue(childValue);
+          element.props.onMouseEnter?.(e);
+        },
+        onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
+          setActiveValue(null);
+          element.props.onMouseLeave?.(e);
+        },
+      }
     : click
       ? {
           onClick: (e: React.MouseEvent<HTMLDivElement>) => {

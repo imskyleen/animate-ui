@@ -1,10 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
-import { Radio as RadioPrimitive } from '@base-ui/react/radio';
+import { RadioGroup as RadioGroupPrimitive } from '@base-ui-components/react/radio-group';
+import { Radio as RadioPrimitive } from '@base-ui-components/react/radio';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
-import { spring } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
@@ -52,7 +51,7 @@ type RadioIndicatorProps = Omit<
   HTMLMotionProps<'div'>;
 
 function RadioIndicator({
-  transition = spring.default,
+  transition = { type: 'spring', stiffness: 200, damping: 16 },
   ...props
 }: RadioIndicatorProps) {
   const { isChecked } = useRadio();
@@ -90,8 +89,6 @@ function Radio({
   value: valueProps,
   disabled,
   required,
-  // Rendered as a motion.button: tell Base UI it's a native button.
-  nativeButton = true,
   ...props
 }: RadioProps) {
   const { value } = useRadioGroup();
@@ -107,7 +104,6 @@ function Radio({
         value={valueProps}
         disabled={disabled}
         required={required}
-        nativeButton={nativeButton}
         render={
           <motion.button
             data-slot="radio-group-item"

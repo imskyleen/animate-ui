@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
-import { spring } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
@@ -51,7 +50,7 @@ type RadioGroupIndicatorProps = Omit<
   HTMLMotionProps<'div'>;
 
 function RadioGroupIndicator({
-  transition = spring.default,
+  transition = { type: 'spring', stiffness: 200, damping: 16 },
   ...props
 }: RadioGroupIndicatorProps) {
   const { isChecked } = useRadioGroupItem();

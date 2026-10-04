@@ -1,11 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { PreviewCard as PreviewCardPrimitive } from '@base-ui/react/preview-card';
+import { PreviewCard as PreviewCardPrimitive } from '@base-ui-components/react/preview-card';
 import {
   AnimatePresence,
   motion,
-  useMotionTemplate,
   useMotionValue,
   useSpring,
   type HTMLMotionProps,
@@ -15,13 +14,6 @@ import {
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
-import {
-  ReducedMotionConfig,
-  scale,
-  spring,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 type PreviewCardContextType = {
   isOpen: boolean;
@@ -42,14 +34,9 @@ type PreviewCardProps = React.ComponentProps<
   followCursorSpringOptions?: SpringOptions;
 };
 
-const defaultFollowSpring: SpringOptions = {
-  duration: spring.default.duration,
-  bounce: spring.default.bounce,
-};
-
 function PreviewCard({
   followCursor = false,
-  followCursorSpringOptions = defaultFollowSpring,
+  followCursorSpringOptions = { stiffness: 200, damping: 17 },
   ...props
 }: PreviewCardProps) {
   const [isOpen, setIsOpen] = useControlledState({
@@ -94,7 +81,6 @@ function PreviewCardTrigger({
     event: Parameters<NonNullable<PreviewCardTriggerProps['onMouseMove']>>[0],
   ) => {
     onMouseMove?.(event);
-    if (!followCursor) return;
 
     const target = event.currentTarget.getBoundingClientRect();
 
@@ -125,7 +111,7 @@ type PreviewCardPortalProps = Omit<
   'keepMounted'
 >;
 
-function PreviewCardPortal({ children, ...props }: PreviewCardPortalProps) {
+function PreviewCardPortal(props: PreviewCardPortalProps) {
   const { isOpen } = usePreviewCard();
 
   return (
@@ -135,9 +121,7 @@ function PreviewCardPortal({ children, ...props }: PreviewCardPortalProps) {
           keepMounted
           data-slot="preview-card-portal"
           {...props}
-        >
-          <ReducedMotionConfig>{children}</ReducedMotionConfig>
-        </PreviewCardPrimitive.Portal>
+        />
       )}
     </AnimatePresence>
   );
@@ -163,33 +147,33 @@ type PreviewCardPopupProps = Omit<
   HTMLMotionProps<'div'>;
 
 function PreviewCardPopup({
-  transition = motionTransition.dropdown,
+  transition = { type: 'spring', stiffness: 300, damping: 25 },
   style,
   ...props
 }: PreviewCardPopupProps) {
   const { x, y, followCursor, followCursorSpringOptions } = usePreviewCard();
   const translateX = useSpring(x, followCursorSpringOptions);
   const translateY = useSpring(y, followCursorSpringOptions);
-  const reduce = useShouldReduceMotion();
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
-  };
-  // `translate` composes with the animated `transform`, so following the
-  // cursor never interrupts the entrance.
-  const translate = useMotionTemplate`${followCursor === 'y' ? 0 : translateX}px ${followCursor === 'x' ? 0 : translateY}px`;
 
   return (
     <PreviewCardPrimitive.Popup
       render={
         <motion.div
+          key="preview-card-popup"
           data-slot="preview-card-popup"
-          initial={hidden}
-          animate={{ opacity: 1, transform: 'scale(1)', transition }}
-          exit={{ ...hidden, transition: motionTransition.exit }}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={transition}
           style={{
-            transformOrigin: 'var(--transform-origin)',
-            translate: followCursor ? translate : undefined,
+            x:
+              followCursor === 'x' || followCursor === true
+                ? translateX
+                : undefined,
+            y:
+              followCursor === 'y' || followCursor === true
+                ? translateY
+                : undefined,
             ...style,
           }}
           {...props}

@@ -4,10 +4,9 @@
   "type": "registry:ui",
   "title": "Base Progress",
   "description": "Displays the status of a task that takes a long time.",
-  "dependencies": ["motion", "@base-ui/react"],
+  "dependencies": ["motion", "@base-ui-components/react"],
   "registryDependencies": [
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion",
     "@animate-ui/primitives-texts-counting-number"
   ],
   "files": [

@@ -6,12 +6,6 @@ import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
-import {
-  ReducedMotionConfig,
-  scale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 type PopoverContextType = {
   isOpen: boolean;
@@ -54,7 +48,7 @@ type PopoverPortalProps = Omit<
   'forceMount'
 >;
 
-function PopoverPortal({ children, ...props }: PopoverPortalProps) {
+function PopoverPortal(props: PopoverPortalProps) {
   const { isOpen } = usePopover();
 
   return (
@@ -64,9 +58,7 @@ function PopoverPortal({ children, ...props }: PopoverPortalProps) {
           forceMount
           data-slot="popover-portal"
           {...props}
-        >
-          <ReducedMotionConfig>{children}</ReducedMotionConfig>
-        </PopoverPrimitive.Portal>
+        />
       )}
     </AnimatePresence>
   );
@@ -95,16 +87,9 @@ function PopoverContent({
   arrowPadding,
   sticky,
   hideWhenDetached,
-  style,
-  transition = motionTransition.dropdown,
+  transition = { type: 'spring', stiffness: 300, damping: 25 },
   ...props
 }: PopoverContentProps) {
-  const reduce = useShouldReduceMotion();
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
-  };
-
   return (
     <PopoverPrimitive.Content
       asChild
@@ -127,14 +112,12 @@ function PopoverContent({
       onFocusOutside={onFocusOutside}
     >
       <motion.div
+        key="popover-content"
         data-slot="popover-content"
-        initial={hidden}
-        animate={{ opacity: 1, transform: 'scale(1)', transition }}
-        exit={{ ...hidden, transition: motionTransition.exit }}
-        style={{
-          transformOrigin: 'var(--radix-popover-content-transform-origin)',
-          ...style,
-        }}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.5 }}
+        transition={transition}
         {...props}
       />
     </PopoverPrimitive.Content>

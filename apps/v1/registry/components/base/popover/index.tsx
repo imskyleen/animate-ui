@@ -58,7 +58,7 @@ function PopoverPanel({
           initialFocus={initialFocus}
           finalFocus={finalFocus}
           className={cn(
-            'bg-popover text-popover-foreground w-72 rounded-md border p-4 shadow-md outline-hidden',
+            'bg-popover text-popover-foreground w-72 rounded-md border p-4 shadow-md outline-hidden origin-(--transform-origin)',
             className,
           )}
           style={style}

@@ -5,30 +5,16 @@ import {
   motion,
   useMotionValue,
   useSpring,
-  useTransform,
   AnimatePresence,
   type HTMLMotionProps,
-  type MotionValue,
   type SpringOptions,
 } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  ReducedMotionConfig,
-  spring,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 type CursorContextType = {
-  /**
-   * Snapshot of the pointer position when read. Pointer moves don't
-   * re-render: subscribe to `cursorX` / `cursorY` to follow them.
-   */
   cursorPos: { x: number; y: number };
-  cursorX: MotionValue<number>;
-  cursorY: MotionValue<number>;
   active: boolean;
   global: boolean;
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -44,18 +30,8 @@ type CursorProviderProps = {
 };
 
 function CursorProvider({ children, global = false }: CursorProviderProps) {
-  const cursorX = useMotionValue(0);
-  const cursorY = useMotionValue(0);
-  const [activeState, setActiveState] = React.useState(false);
-  const active = activeState;
-  const activeRef = React.useRef(false);
-
-  // Pointer moves only re-render when the cursor shows or hides.
-  const setActive = React.useCallback((next: boolean) => {
-    if (activeRef.current === next) return;
-    activeRef.current = next;
-    setActiveState(next);
-  }, []);
+  const [cursorPos, setCursorPos] = React.useState({ x: 0, y: 0 });
+  const [active, setActive] = React.useState(false);
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const cursorRef = React.useRef<HTMLDivElement>(null);
@@ -77,10 +53,7 @@ function CursorProvider({ children, global = false }: CursorProviderProps) {
 
     if (global) {
       const handlePointerMove = (e: PointerEvent) => {
-        // A custom cursor only makes sense for pointers that hover.
-        if (e.pointerType === 'touch') return;
-        cursorX.set(e.clientX);
-        cursorY.set(e.clientY);
+        setCursorPos({ x: e.clientX, y: e.clientY });
         setActive(true);
       };
 
@@ -123,10 +96,8 @@ function CursorProvider({ children, global = false }: CursorProviderProps) {
       }
 
       const handlePointerMove = (e: PointerEvent) => {
-        if (e.pointerType === 'touch') return;
         const rect = parent.getBoundingClientRect();
-        cursorX.set(e.clientX - rect.left);
-        cursorY.set(e.clientY - rect.top);
+        setCursorPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
         setActive(true);
       };
 
@@ -155,26 +126,13 @@ function CursorProvider({ children, global = false }: CursorProviderProps) {
     }
 
     return removeListeners;
-  }, [global, cursorX, cursorY, setActive]);
-
-  const value = React.useMemo<CursorContextType>(
-    () => ({
-      get cursorPos() {
-        return { x: cursorX.get(), y: cursorY.get() };
-      },
-      cursorX,
-      cursorY,
-      active,
-      global,
-      containerRef,
-      cursorRef,
-    }),
-    [cursorX, cursorY, active, global],
-  );
+  }, [global]);
 
   return (
-    <LocalCursorProvider value={value}>
-      <ReducedMotionConfig>{children}</ReducedMotionConfig>
+    <LocalCursorProvider
+      value={{ cursorPos, active, global, containerRef, cursorRef }}
+    >
+      {children}
     </LocalCursorProvider>
   );
 }
@@ -208,17 +166,12 @@ type CursorProps = WithAsChild<
   }
 >;
 
-function toTransform([x, y]: number[]) {
-  return `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
-}
-
 function Cursor({ ref, asChild = false, style, ...props }: CursorProps) {
-  const { cursorX, cursorY, active, containerRef, cursorRef, global } =
-    useCursor();
+  const { cursorPos, active, containerRef, cursorRef, global } = useCursor();
   React.useImperativeHandle(ref, () => cursorRef.current as HTMLDivElement);
 
-  // Follows the pointer through a motion value: no re-render per move.
-  const transform = useTransform([cursorX, cursorY], toTransform);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
   React.useEffect(() => {
     const target = global
@@ -238,6 +191,11 @@ function Cursor({ ref, asChild = false, style, ...props }: CursorProps) {
     };
   }, [active, global, containerRef]);
 
+  React.useEffect(() => {
+    x.set(cursorPos.x);
+    y.set(cursorPos.y);
+  }, [cursorPos, x, y]);
+
   const Component = asChild ? Slot : motion.div;
 
   return (
@@ -249,18 +207,17 @@ function Cursor({ ref, asChild = false, style, ...props }: CursorProps) {
           data-global={global}
           data-active={active}
           style={{
-            transform,
+            transform: 'translate(-50%,-50%)',
             pointerEvents: 'none',
             zIndex: 9999,
             position: global ? 'fixed' : 'absolute',
-            top: 0,
-            left: 0,
+            top: y,
+            left: x,
             ...style,
           }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: motionTransition.exit }}
-          transition={motionTransition.tooltip}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
           {...props}
         />
       )}
@@ -282,11 +239,6 @@ type CursorFollowProps = WithAsChild<
   }
 >;
 
-const DEFAULT_FOLLOW_TRANSITION: SpringOptions = {
-  duration: spring.default.duration,
-  bounce: spring.default.bounce,
-};
-
 function CursorFollow({
   ref,
   asChild = false,
@@ -295,11 +247,10 @@ function CursorFollow({
   align = 'end',
   alignOffset = 0,
   style,
-  transition = DEFAULT_FOLLOW_TRANSITION,
+  transition = { stiffness: 500, damping: 50, bounce: 0 },
   ...props
 }: CursorFollowProps) {
-  const { cursorX, cursorY, active, cursorRef, global } = useCursor();
-  const reduce = useShouldReduceMotion();
+  const { cursorPos, active, cursorRef, global } = useCursor();
   const cursorFollowRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(
     ref,
@@ -311,9 +262,6 @@ function CursorFollow({
 
   const springX = useSpring(x, transition);
   const springY = useSpring(y, transition);
-
-  const springTransform = useTransform([springX, springY], toTransform);
-  const directTransform = useTransform([x, y], toTransform);
 
   const calculateOffset = React.useCallback(() => {
     const rect = cursorFollowRef.current?.getBoundingClientRect();
@@ -389,41 +337,14 @@ function CursorFollow({
   }, [side, align, sideOffset, alignOffset]);
 
   React.useEffect(() => {
-    if (!active) return;
+    const offset = calculateOffset();
+    const cursorRect = cursorRef.current?.getBoundingClientRect();
+    const cursorWidth = cursorRect?.width ?? 20;
+    const cursorHeight = cursorRect?.height ?? 20;
 
-    const update = () => {
-      const offset = calculateOffset();
-      const cursorRect = cursorRef.current?.getBoundingClientRect();
-      const cursorWidth = cursorRect?.width ?? 20;
-      const cursorHeight = cursorRect?.height ?? 20;
-
-      x.set(cursorX.get() - offset.x + cursorWidth / 2);
-      y.set(cursorY.get() - offset.y + cursorHeight / 2);
-    };
-
-    // Appear at the pointer instead of springing in from the last position.
-    update();
-    springX.jump(x.get());
-    springY.jump(y.get());
-
-    const unsubscribeX = cursorX.on('change', update);
-    const unsubscribeY = cursorY.on('change', update);
-
-    return () => {
-      unsubscribeX();
-      unsubscribeY();
-    };
-  }, [
-    active,
-    calculateOffset,
-    cursorRef,
-    cursorX,
-    cursorY,
-    x,
-    y,
-    springX,
-    springY,
-  ]);
+    x.set(cursorPos.x - offset.x + cursorWidth / 2);
+    y.set(cursorPos.y - offset.y + cursorHeight / 2);
+  }, [calculateOffset, cursorPos, cursorRef, x, y]);
 
   const Component = asChild ? Slot : motion.div;
 
@@ -436,18 +357,17 @@ function CursorFollow({
           data-global={global}
           data-active={active}
           style={{
-            transform: reduce ? directTransform : springTransform,
+            transform: 'translate(-50%,-50%)',
             pointerEvents: 'none',
             zIndex: 9998,
             position: global ? 'fixed' : 'absolute',
-            top: 0,
-            left: 0,
+            top: springY,
+            left: springX,
             ...style,
           }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: motionTransition.exit }}
-          transition={motionTransition.tooltip}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
           {...props}
         />
       )}

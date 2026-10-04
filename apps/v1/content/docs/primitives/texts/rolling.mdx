@@ -30,11 +30,10 @@ author:
       required: true,
     },
     transition: {
-      description:
-        'The transition of each letter. Its `delay` is the stagger between letters (in seconds), not a start delay.',
+      description: 'The transition to use.',
       type: 'Transition',
       required: false,
-      default: '{ duration: 0.5, delay: 0.1, ease: ease.out }',
+      default: "{ duration: 2, ease: 'easeInOut' }",
     },
     inView: {
       description: 'Whether the text is in view.',
@@ -55,7 +54,7 @@ author:
       default: 'true',
     },
     delay: {
-      description: 'Delay before the first letter rolls, in milliseconds.',
+      description: 'The delay to use.',
       type: 'number',
       required: false,
       default: '0',

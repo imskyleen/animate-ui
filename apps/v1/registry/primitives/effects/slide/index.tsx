@@ -4,11 +4,6 @@ import * as React from 'react';
 import { motion, type HTMLMotionProps, type Variant } from 'motion/react';
 
 import {
-  ReducedMotionConfig,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
-import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
@@ -27,23 +22,15 @@ type SlideProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
-function Slide(props: SlideProps) {
-  return (
-    <ReducedMotionConfig>
-      <SlideInner {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function SlideInner({
+function Slide({
   ref,
-  transition = motionTransition.modal,
+  transition = { type: 'spring', stiffness: 200, damping: 20 },
   delay = 0,
   inView = false,
   inViewMargin = '0px',
   inViewOnce = true,
   direction = 'up',
-  offset = 16,
+  offset = 100,
   asChild = false,
   ...props
 }: SlideProps) {
@@ -56,22 +43,11 @@ function SlideInner({
     },
   );
 
-  const reduce = useShouldReduceMotion();
-
-  const value =
-    direction === 'right' || direction === 'down' ? -offset : offset;
-  const vertical = direction === 'up' || direction === 'down';
-  // Reduced motion: no travel, a fade instead.
-  const hidden: Variant = reduce
-    ? { opacity: 0 }
-    : {
-        transform: vertical
-          ? `translate3d(0px, ${value}px, 0)`
-          : `translate3d(${value}px, 0px, 0)`,
-      };
-  const visible: Variant = reduce
-    ? { opacity: 1 }
-    : { transform: 'translate3d(0px, 0px, 0)' };
+  const axis = direction === 'up' || direction === 'down' ? 'y' : 'x';
+  const hidden: Variant = {
+    [axis]: direction === 'right' || direction === 'down' ? -offset : offset,
+  };
+  const visible: Variant = { [axis]: 0 };
 
   const Component = asChild ? Slot : motion.div;
 

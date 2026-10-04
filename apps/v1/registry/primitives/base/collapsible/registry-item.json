@@ -4,11 +4,10 @@
   "type": "registry:ui",
   "title": "Base Collapsible",
   "description": "A collapsible panel controlled by a button.",
-  "dependencies": ["motion", "@base-ui/react"],
+  "dependencies": ["motion", "@base-ui-components/react"],
   "registryDependencies": [
-    "@animate-ui/hooks-use-controlled-state",
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion"
+    "@animate-ui/hooks-use-controlled-state"
   ],
   "files": [
     {

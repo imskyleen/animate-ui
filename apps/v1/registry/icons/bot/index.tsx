@@ -24,8 +24,8 @@ const animations = {
         y: 0,
       },
       animate: {
-        x: [null, -1.5, 1.5, 0],
-        y: [null, 1.5, 1.5, 0],
+        x: [0, -1.5, 1.5, 0],
+        y: [0, 1.5, 1.5, 0],
         transition: {
           ease: 'easeInOut',
           duration: 1.3,
@@ -38,8 +38,8 @@ const animations = {
         y: 0,
       },
       animate: {
-        x: [null, -1.5, 1.5, 0],
-        y: [null, 1.5, 1.5, 0],
+        x: [0, -1.5, 1.5, 0],
+        y: [0, 1.5, 1.5, 0],
         transition: {
           ease: 'easeInOut',
           duration: 1.3,
@@ -57,7 +57,7 @@ const animations = {
         scaleY: 1,
       },
       animate: {
-        scaleY: [null, 0.5, 1],
+        scaleY: [1, 0.5, 1],
         transition: {
           ease: 'easeInOut',
           duration: 0.6,
@@ -69,7 +69,7 @@ const animations = {
         scaleY: 1,
       },
       animate: {
-        scaleY: [null, 0.5, 1],
+        scaleY: [1, 0.5, 1],
         transition: {
           ease: 'easeInOut',
           duration: 0.6,
@@ -87,7 +87,7 @@ const animations = {
         scaleY: 1,
       },
       animate: {
-        scaleY: [null, 0.5, 1],
+        scaleY: [1, 0.5, 1],
         transition: {
           ease: 'easeInOut',
           duration: 0.6,

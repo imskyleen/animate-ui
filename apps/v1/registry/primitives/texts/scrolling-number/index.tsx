@@ -2,13 +2,12 @@
 
 import * as React from 'react';
 import {
-  animate,
   motion,
   useMotionValue,
-  useMotionValueEvent,
+  useSpring,
   useTransform,
+  type MotionValue,
   type HTMLMotionProps,
-  type Transition,
 } from 'motion/react';
 
 import {
@@ -16,12 +15,6 @@ import {
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  ease,
-  tempo,
-  ReducedMotionConfig,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 const formatter = new Intl.NumberFormat('en-US');
 
@@ -77,7 +70,6 @@ function ScrollingNumberContainer({
   inViewOnce = true,
   onNumberChange,
   style,
-  children,
   ...props
 }: ScrollingNumberContainerProps) {
   const { ref: localRef, isInView } = useIsInView(
@@ -129,11 +121,7 @@ function ScrollingNumberContainer({
           ...style,
         }}
         {...props}
-      >
-        {children}
-        {/* The wheel is aria-hidden: screen readers get the number once. */}
-        <span className="sr-only">{formatter.format(number)}</span>
-      </div>
+      />
     </ScrollingNumberProvider>
   );
 }
@@ -165,51 +153,12 @@ function ScrollingNumberHighlight({
 }
 
 type ScrollingNumberProps = HTMLMotionProps<'div'> & {
-  /** Delay before the wheel spins, in milliseconds. */
   delay?: number;
-  /** Called once the wheel (nearly) lands on `number`. */
   onCompleted?: () => void;
 };
 
-/**
- * Spins fast through the range and settles on the target with a strong
- * ease-out tail.
- */
-const DEFAULT_TRANSITION: Transition = {
-  duration: 2 * tempo,
-  ease: ease.out,
-};
-
-/**
- * A `transition` without a `type` or an `ease` is a set of spring options
- * (the original API, fed to a spring): animate it as a spring.
- */
-function resolveTransition(transition: Transition | undefined): Transition {
-  if (!transition) return DEFAULT_TRANSITION;
-  if ('type' in transition || 'ease' in transition) return transition;
-  return { type: 'spring', ...transition } as Transition;
-}
-
-const DIRECTION_FLEX: Record<
-  ScrollingNumberDirection,
-  React.CSSProperties['flexDirection']
-> = {
-  btt: 'column',
-  ttb: 'column-reverse',
-  rtl: 'row',
-  ltr: 'row-reverse',
-};
-
-function ScrollingNumber(props: ScrollingNumberProps) {
-  return (
-    <ReducedMotionConfig remount>
-      <ScrollingNumberContent {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function ScrollingNumberContent({
-  transition,
+function ScrollingNumber({
+  transition = { stiffness: 90, damping: 30 },
   delay = 0,
   onCompleted,
   style,
@@ -227,79 +176,89 @@ function ScrollingNumberContent({
     number,
     onNumberChange,
   } = useScrollingNumber();
-  const reduce = useShouldReduceMotion();
 
-  // btt / rtl move the strip forward (positive), ttb / ltr backward.
-  const sign = direction === 'ttb' || direction === 'ltr' ? -1 : 1;
-  const initialPosition = -sign * itemsSize * sideItemsCount;
-  const finalPosition = sign * itemsSize * (range.length - displayedItemsCount);
+  const motionKey: 'x' | 'y' = isVertical ? 'y' : 'x';
+  const initialOffset = itemsSize * sideItemsCount;
+  const travel = itemsSize * (range.length - displayedItemsCount);
 
-  const position = useMotionValue(initialPosition);
-  const transform = useTransform(position, (p) =>
-    isVertical ? `translateY(${p}px)` : `translateX(${p}px)`,
-  );
+  let initialPosition: number;
+  let finalPosition: number;
 
-  // Read when the spin starts: a new inline transition object on every
-  // render must not restart it.
-  const transitionRef = React.useRef(transition);
-  React.useEffect(() => {
-    transitionRef.current = transition;
-  });
+  switch (direction) {
+    case 'btt':
+      initialPosition = -initialOffset;
+      finalPosition = travel;
+      break;
+    case 'ttb':
+      initialPosition = initialOffset;
+      finalPosition = -travel;
+      break;
+    case 'rtl':
+      initialPosition = -initialOffset;
+      finalPosition = travel;
+      break;
+    case 'ltr':
+      initialPosition = initialOffset;
+      finalPosition = -travel;
+      break;
+    default:
+      initialPosition = -initialOffset;
+      finalPosition = travel;
+  }
+
+  const posMotion: MotionValue<number> = useMotionValue(initialPosition);
+  const posSpring = useSpring(posMotion, transition);
 
   React.useEffect(() => {
     if (!isInView) return;
-
-    // Under reduced motion the wheel lands on the number right away.
-    if (reduce) {
-      position.jump(finalPosition);
-      return;
-    }
-
-    // animate() starts from the current position and replaces the running
-    // animation, so a new `number` retargets mid-spin.
     const timer = setTimeout(() => {
-      animate(
-        position,
-        finalPosition,
-        resolveTransition(transitionRef.current),
-      );
+      posMotion.set(finalPosition);
     }, delay);
     return () => clearTimeout(timer);
-  }, [isInView, finalPosition, position, delay, reduce]);
+  }, [isInView, finalPosition, posMotion, delay]);
 
-  React.useEffect(() => () => position.stop(), [position]);
+  const currentIndex = useTransform(
+    posSpring,
+    (p) => Math.abs(p) / itemsSize + sideItemsCount,
+  );
+  const currentValue = useTransform(currentIndex, (idx) => idx * step);
+  const snappedValue = useTransform(
+    currentIndex,
+    (idx) => Math.round(idx) * step,
+  );
 
-  // Index of the range item (counted from the smallest value) under the
-  // center slot.
-  const indexAt = (p: number) => (sign * p) / itemsSize + sideItemsCount;
-  const lastNumberRef = React.useRef<number | null>(null);
-  const completedRef = React.useRef(false);
+  const completedTransform = useTransform(
+    currentValue,
+    (val) => val >= number * 0.99,
+  );
 
   React.useEffect(() => {
-    completedRef.current = false;
-  }, [number]);
+    const unsubscribe = completedTransform.on('change', (latest) => {
+      if (latest) onCompleted?.();
+    });
+    return unsubscribe;
+  }, [completedTransform, onCompleted]);
 
-  useMotionValueEvent(position, 'change', (p) => {
-    const index = indexAt(p);
-    const snapped = Math.min(Math.max(Math.round(index) * step, 0), number);
-    if (snapped !== lastNumberRef.current) {
-      lastNumberRef.current = snapped;
-      onNumberChange?.(snapped);
-    }
+  React.useEffect(() => {
+    const unsub = snappedValue.on('change', (val) => {
+      const bounded = val < 0 ? 0 : val > number ? number : val;
+      onNumberChange?.(bounded);
+    });
+    return unsub;
+  }, [snappedValue, onNumberChange, number]);
 
-    const total = finalPosition - initialPosition;
-    const progress = total === 0 ? 1 : (p - initialPosition) / total;
-    if (!completedRef.current && progress >= 0.99) {
-      completedRef.current = true;
-      onCompleted?.();
-    }
-  });
+  const directionMap: Record<
+    ScrollingNumberDirection,
+    React.CSSProperties['flexDirection']
+  > = {
+    btt: 'column',
+    ttb: 'column-reverse',
+    rtl: 'row',
+    ltr: 'row-reverse',
+  };
 
   return (
     <motion.div
-      // The strip lists every value it passes: screen readers read the
-      // container's final number instead.
-      aria-hidden="true"
       data-slot="scrolling-number"
       style={{
         position: 'absolute',
@@ -311,8 +270,8 @@ function ScrollingNumberContent({
         height: !isVertical ? '100%' : undefined,
         display: 'flex',
         zIndex: 1,
-        flexDirection: DIRECTION_FLEX[direction],
-        transform,
+        flexDirection: directionMap[direction],
+        [motionKey]: posSpring,
         ...style,
       }}
       {...props}

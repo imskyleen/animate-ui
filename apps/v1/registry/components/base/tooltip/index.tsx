@@ -23,7 +23,7 @@ function TooltipProvider({ delay = 0, ...props }: TooltipProviderProps) {
 }
 
 type TooltipProps = TooltipPrimitiveProps & {
-  delay?: TooltipProviderProps['delay'];
+  delay?: TooltipPrimitiveProps['delay'];
 };
 
 function Tooltip({ delay = 0, ...props }: TooltipProps) {
@@ -59,7 +59,7 @@ function TooltipPanel({
       >
         <TooltipPopupPrimitive
           className={cn(
-            'bg-primary text-primary-foreground w-fit rounded-md px-3 py-1.5 text-xs text-balance',
+            'bg-primary text-primary-foreground w-fit origin-(--transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',
             className,
           )}
           style={style}

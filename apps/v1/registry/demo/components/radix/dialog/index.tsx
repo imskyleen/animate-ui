@@ -16,7 +16,7 @@ import { Label } from '@workspace/ui/components/ui/label';
 import { Input } from '@workspace/ui/components/ui/input';
 
 interface RadixDialogDemoProps {
-  from: DialogContentProps['from'] | 'none';
+  from: DialogContentProps['from'];
   showCloseButton: boolean;
 }
 
@@ -31,7 +31,7 @@ export const RadixDialogDemo = ({
           <Button variant="outline">Open Dialog</Button>
         </DialogTrigger>
         <DialogContent
-          from={from === 'none' ? undefined : from}
+          from={from}
           showCloseButton={showCloseButton}
           className="sm:max-w-[425px]"
         >

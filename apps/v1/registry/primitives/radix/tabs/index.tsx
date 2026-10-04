@@ -2,7 +2,12 @@
 
 import * as React from 'react';
 import { Tabs as TabsPrimitive } from 'radix-ui';
-import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
+import {
+  motion,
+  AnimatePresence,
+  type HTMLMotionProps,
+  type Transition,
+} from 'motion/react';
 
 import {
   Highlight,
@@ -13,11 +18,6 @@ import {
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 import {
-  ReducedMotionConfig,
-  spring,
-  transition as motionTransition,
-} from '@/registry/lib/motion';
-import {
   AutoHeight,
   type AutoHeightProps,
 } from '@/registry/primitives/effects/auto-height';
@@ -25,8 +25,6 @@ import {
 type TabsContextType = {
   value: string | undefined;
   setValue: TabsProps['onValueChange'];
-  /** Last interaction was the keyboard: the indicator moves instantly. */
-  isKeyboard: boolean;
 };
 
 const [TabsProvider, useTabs] =
@@ -34,31 +32,20 @@ const [TabsProvider, useTabs] =
 
 type TabsProps = React.ComponentProps<typeof TabsPrimitive.Root>;
 
-function Tabs({ onKeyDownCapture, onPointerDownCapture, ...props }: TabsProps) {
+function Tabs(props: TabsProps) {
   const [value, setValue] = useControlledState({
     value: props.value,
     defaultValue: props.defaultValue,
     onChange: props.onValueChange,
   });
-  const [isKeyboard, setIsKeyboard] = React.useState(false);
 
   return (
-    <TabsProvider value={{ value, setValue, isKeyboard }}>
-      <ReducedMotionConfig>
-        <TabsPrimitive.Root
-          data-slot="tabs"
-          {...props}
-          onKeyDownCapture={(event) => {
-            setIsKeyboard(true);
-            onKeyDownCapture?.(event);
-          }}
-          onPointerDownCapture={(event) => {
-            setIsKeyboard(false);
-            onPointerDownCapture?.(event);
-          }}
-          onValueChange={setValue}
-        />
-      </ReducedMotionConfig>
+    <TabsProvider value={{ value, setValue }}>
+      <TabsPrimitive.Root
+        data-slot="tabs"
+        {...props}
+        onValueChange={setValue}
+      />
     </TabsProvider>
   );
 }
@@ -66,17 +53,17 @@ function Tabs({ onKeyDownCapture, onPointerDownCapture, ...props }: TabsProps) {
 type TabsHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;
 
 function TabsHighlight({
-  transition = spring.snappy,
+  transition = { type: 'spring', stiffness: 200, damping: 25 },
   ...props
 }: TabsHighlightProps) {
-  const { value, isKeyboard } = useTabs();
+  const { value } = useTabs();
 
   return (
     <Highlight
       data-slot="tabs-highlight"
       controlledItems
       value={value}
-      transition={isKeyboard ? motionTransition.instant : transition}
+      transition={transition}
       click={false}
       {...props}
     />
@@ -109,21 +96,24 @@ type TabsContentProps = React.ComponentProps<typeof TabsPrimitive.Content> &
 function TabsContent({
   value,
   forceMount,
-  transition = motionTransition.fade,
+  transition = { duration: 0.5, ease: 'easeInOut' },
   ...props
 }: TabsContentProps) {
-  // The incoming panel fades in; the outgoing one leaves at once, so the two
-  // never overlap and nothing waits for an exit.
   return (
-    <TabsPrimitive.Content asChild forceMount={forceMount} value={value}>
-      <motion.div
-        data-slot="tabs-content"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={transition}
-        {...props}
-      />
-    </TabsPrimitive.Content>
+    <AnimatePresence mode="wait">
+      <TabsPrimitive.Content asChild forceMount={forceMount} value={value}>
+        <motion.div
+          data-slot="tabs-content"
+          layout
+          layoutDependency={value}
+          initial={{ opacity: 0, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, filter: 'blur(4px)' }}
+          transition={transition}
+          {...props}
+        />
+      </TabsPrimitive.Content>
+    </AnimatePresence>
   );
 }
 
@@ -141,7 +131,11 @@ type TabsContentsLayoutProps = Omit<HTMLMotionProps<'div'>, 'transition'> & {
 
 type TabsContentsProps = TabsContentsAutoProps | TabsContentsLayoutProps;
 
-const defaultTransition: Transition = spring.snappy;
+const defaultTransition: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 30,
+};
 
 function isAutoMode(props: TabsContentsProps): props is TabsContentsAutoProps {
   return !('mode' in props) || props.mode === 'auto-height';

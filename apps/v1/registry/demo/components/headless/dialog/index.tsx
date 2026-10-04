@@ -14,7 +14,7 @@ import { Label } from '@workspace/ui/components/ui/label';
 import { Input } from '@workspace/ui/components/ui/input';
 
 interface HeadlessDialogDemoProps {
-  from: DialogPanelProps['from'] | 'none';
+  from: DialogPanelProps['from'];
   showCloseButton: boolean;
 }
 
@@ -32,7 +32,7 @@ export const HeadlessDialogDemo = ({
 
       <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
         <DialogPanel
-          from={from === 'none' ? undefined : from}
+          from={from}
           showCloseButton={showCloseButton}
           className="sm:max-w-[425px]"
         >

@@ -8,7 +8,6 @@ import {
   type TargetAndTransition,
   type Transition,
 } from 'motion/react';
-import { spring } from '@/registry/lib/motion';
 
 import { useAutoHeight } from '@/registry/hooks/use-auto-height';
 import { Slot, WithAsChild } from '@/registry/primitives/animate/slot';
@@ -25,7 +24,13 @@ type AutoHeightProps = WithAsChild<
 function AutoHeight({
   children,
   deps = [],
-  transition = { ...spring.snappy, restDelta: 0.01 },
+  transition = {
+    type: 'spring',
+    stiffness: 300,
+    damping: 30,
+    bounce: 0,
+    restDelta: 0.01,
+  },
   style,
   animate,
   asChild = false,

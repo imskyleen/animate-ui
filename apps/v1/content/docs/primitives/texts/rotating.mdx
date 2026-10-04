@@ -32,14 +32,13 @@ author:
       required: true,
     },
     duration: {
-      description: 'How long each text stays on screen, in milliseconds.',
+      description: 'The duration of the animation.',
       type: 'number',
       required: false,
       default: '2000',
     },
     y: {
-      description:
-        'Travel of the swap, in pixels: the new text enters from `-y` and the old one leaves to `y`.',
+      description: 'The y position of the text.',
       type: 'number',
       required: false,
       default: '-50',
@@ -63,7 +62,7 @@ author:
       default: 'true',
     },
     delay: {
-      description: 'Extra delay before the first swap, in milliseconds.',
+      description: 'The delay to use.',
       type: 'number',
       required: false,
       default: '0',
@@ -84,7 +83,7 @@ author:
       description: 'The transition to use.',
       type: 'Transition',
       required: false,
-      default: '{ duration: 0.3, ease: ease.out }',
+      default: "{ duration: 0.3, ease: 'easeInOut' }",
     },
     '...props': {
       description: 'The props of the rotating text.',

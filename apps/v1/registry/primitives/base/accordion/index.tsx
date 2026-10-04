@@ -1,22 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion';
+import { Accordion as AccordionPrimitive } from '@base-ui-components/react/accordion';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
-import {
-  ReducedMotionConfig,
-  transition as motionTransition,
-} from '@/registry/lib/motion';
-
-type AccordionValue = AccordionPrimitive.Root.Props['value'];
 
 type AccordionContextType = {
-  value: AccordionValue;
-  setValue: (value: AccordionValue) => void;
-  multiple: boolean;
+  value: string | string[] | undefined;
+  setValue: (value: string | string[] | undefined) => void;
 };
 
 type AccordionItemContextType = {
@@ -33,23 +26,21 @@ const [AccordionItemProvider, useAccordionItem] =
 type AccordionProps = React.ComponentProps<typeof AccordionPrimitive.Root>;
 
 function Accordion(props: AccordionProps) {
-  const [value, setValue] = useControlledState<AccordionValue>({
+  const [value, setValue] = useControlledState<string | string[] | undefined>({
     value: props?.value,
     defaultValue: props?.defaultValue,
-    onChange: props?.onValueChange as (value: AccordionValue) => void,
+    onChange: props?.onValueChange as (
+      value: string | string[] | undefined,
+    ) => void,
   });
 
   return (
-    <AccordionProvider
-      value={{ value, setValue, multiple: props.multiple ?? false }}
-    >
-      <ReducedMotionConfig>
-        <AccordionPrimitive.Root
-          data-slot="accordion"
-          {...props}
-          onValueChange={setValue}
-        />
-      </ReducedMotionConfig>
+    <AccordionProvider value={{ value, setValue }}>
+      <AccordionPrimitive.Root
+        data-slot="accordion"
+        {...props}
+        onValueChange={setValue}
+      />
     </AccordionProvider>
   );
 }
@@ -57,14 +48,14 @@ function Accordion(props: AccordionProps) {
 type AccordionItemProps = React.ComponentProps<typeof AccordionPrimitive.Item>;
 
 function AccordionItem(props: AccordionItemProps) {
-  const { value, setValue, multiple } = useAccordion();
-  const isOpen = value?.includes(props.value) ?? false;
+  const { value } = useAccordion();
+  const [isOpen, setIsOpen] = React.useState(
+    value?.includes(props?.value) ?? false,
+  );
 
-  const setIsOpen = (open: boolean) => {
-    const current = value ?? [];
-    if (open) setValue(multiple ? [...current, props.value] : [props.value]);
-    else setValue(current.filter((v) => v !== props.value));
-  };
+  React.useEffect(() => {
+    setIsOpen(value?.includes(props?.value) ?? false);
+  }, [value, props?.value]);
 
   return (
     <AccordionItemProvider value={{ isOpen, setIsOpen }}>
@@ -99,21 +90,16 @@ type AccordionPanelProps = Omit<
     keepRendered?: boolean;
   };
 
-// Height is one of the few layout animations allowed: keep it short.
-const collapsed = { height: 0, opacity: 0 };
-const expanded = { height: 'auto', opacity: 1 };
-
 function AccordionPanel({
-  transition = motionTransition.disclosure,
+  transition = { duration: 0.35, ease: 'easeInOut' },
   hiddenUntilFound,
   keepRendered = false,
-  style,
   ...props
 }: AccordionPanelProps) {
   const { isOpen } = useAccordionItem();
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {keepRendered ? (
         <AccordionPrimitive.Panel
           hidden={false}
@@ -121,11 +107,22 @@ function AccordionPanel({
           keepMounted
           render={
             <motion.div
+              key="accordion-panel"
               data-slot="accordion-panel"
-              initial={false}
-              animate={isOpen ? expanded : collapsed}
+              initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
+              animate={
+                isOpen
+                  ? { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 }
+                  : { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }
+              }
               transition={transition}
-              style={{ overflow: 'hidden', ...style }}
+              style={{
+                maskImage:
+                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
+                WebkitMaskImage:
+                  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
+                overflow: 'hidden',
+              }}
               {...props}
             />
           }
@@ -138,12 +135,24 @@ function AccordionPanel({
             keepMounted
             render={
               <motion.div
+                key="accordion-panel"
                 data-slot="accordion-panel"
-                initial={collapsed}
-                animate={expanded}
-                exit={collapsed}
+                initial={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
+                animate={{
+                  height: 'auto',
+                  opacity: 1,
+                  '--mask-stop': '100%',
+                  y: 0,
+                }}
+                exit={{ height: 0, opacity: 0, '--mask-stop': '0%', y: 20 }}
                 transition={transition}
-                style={{ overflow: 'hidden', ...style }}
+                style={{
+                  maskImage:
+                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
+                  WebkitMaskImage:
+                    'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
+                  overflow: 'hidden',
+                }}
                 {...props}
               />
             }

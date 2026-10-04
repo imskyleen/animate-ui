@@ -80,7 +80,8 @@ const DATA = {
   user: {
     name: 'Skyleen',
     email: 'skyleen@example.com',
-    avatar: 'https://github.com/imskyleen.png?size=96',
+    avatar:
+      'https://pbs.twimg.com/profile_images/1909615404789506048/MTqvRsjo_400x400.jpg',
   },
   teams: [
     {

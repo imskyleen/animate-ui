@@ -1,9 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Progress as ProgressPrimitives } from '@base-ui/react/progress';
+import { Progress as ProgressPrimitives } from '@base-ui-components/react/progress';
 import { motion } from 'motion/react';
-import { spring } from '@/registry/lib/motion';
 
 import {
   CountingNumber,
@@ -35,7 +34,7 @@ type ProgressIndicatorProps = React.ComponentProps<
 const MotionProgressIndicator = motion.create(ProgressPrimitives.Indicator);
 
 function ProgressIndicator({
-  transition = spring.default,
+  transition = { type: 'spring', stiffness: 100, damping: 30 },
   ...props
 }: ProgressIndicatorProps) {
   const { value } = useProgress();

@@ -10,7 +10,6 @@ import { z } from 'zod';
 // see https://fumadocs.vercel.app/docs/mdx/collections#define-docs
 export const docs = defineDocs({
   docs: {
-    lastModified: true,
     schema: frontmatterSchema.extend({
       releaseDate: z.coerce.date().optional(),
       beta: z.boolean().optional(),
@@ -31,5 +30,6 @@ export const docs = defineDocs({
 });
 
 export default defineConfig({
+  lastModifiedTime: 'git',
   mdxOptions: {},
 });

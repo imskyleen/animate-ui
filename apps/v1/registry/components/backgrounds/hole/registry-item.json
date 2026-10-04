@@ -5,7 +5,6 @@
   "title": "Hole Background",
   "description": "A background component featuring an animated hole grid.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/components/backgrounds/hole/index.tsx",

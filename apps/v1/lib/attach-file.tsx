@@ -1,4 +1,4 @@
-import type { PageTreeTransformer } from 'fumadocs-core/source';
+import type { BuildPageTreeOptions } from 'fumadocs-core/source';
 import { cn } from '@workspace/ui/lib/utils';
 import { Dancing_Script } from 'next/font/google';
 
@@ -28,14 +28,9 @@ const Badge = ({
   );
 };
 
-// Adds a status badge (new, alpha, beta…) to sidebar items from frontmatter.
-export const attachFile: PageTreeTransformer['file'] = function (
-  node,
-  filePath,
-) {
-  const file = filePath ? this.storage.read(filePath) : undefined;
-  if (!file || file.format !== 'page') return node;
-  const data = file.data as Record<string, unknown>;
+export const attachFile: BuildPageTreeOptions['attachFile'] = (node, file) => {
+  if (!file) return node;
+  const data = file.data;
 
   if ('releaseDate' in data) {
     const now = new Date();

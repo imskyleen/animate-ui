@@ -50,7 +50,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [null, 1.5, 1],
+        scale: [1, 1.5, 1],
         transition: {
           duration: 1,
           delay: 0.4,
@@ -63,7 +63,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [null, 1.5, 1],
+        scale: [1, 1.5, 1],
         transition: {
           duration: 1,
           delay: 0.2,
@@ -76,7 +76,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [null, 1.5, 1],
+        scale: [1, 1.5, 1],
         transition: {
           duration: 1,
           ease: 'easeInOut',

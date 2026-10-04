@@ -33,7 +33,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [null, '25%', 0],
+        y: [0, '25%', 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -70,7 +70,7 @@ const animations = {
         d: 'M12 5v14',
       },
       animate: {
-        d: [null, 'M12 5v10', 'M12 5v14'],
+        d: ['M12 5v14', 'M12 5v10', 'M12 5v14'],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -79,7 +79,7 @@ const animations = {
         d: 'm19 12-7 7-7-7',
       },
       animate: {
-        d: [null, 'm19 8.5-7 7-7-7', 'm19 12-7 7-7-7'],
+        d: ['m19 12-7 7-7-7', 'm19 8.5-7 7-7-7', 'm19 12-7 7-7-7'],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -90,7 +90,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [null, '150%', '-150%', 0],
+        y: [0, '150%', '-150%', 0],
         transition: {
           default: { ease: 'easeInOut', duration: 0.6 },
           y: {

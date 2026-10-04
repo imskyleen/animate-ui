@@ -49,21 +49,21 @@ const animations = {
     leftRect: {
       initial: { x: 0 },
       animate: {
-        x: [null, -2, 0],
+        x: [0, -2, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
     rightRect: {
       initial: { x: 0 },
       animate: {
-        x: [null, 2, 0],
+        x: [0, 2, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
     arrow: {
       initial: { y: 0 },
       animate: {
-        y: [null, -3, 0],
+        y: [0, -3, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },

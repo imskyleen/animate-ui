@@ -20,81 +20,43 @@ author:
 
 ## API Reference
 
-### TypingText
+### SplittingText
 
 <TypeTable
   type={{
     text: {
-      description:
-        'The text to type. Pass an array to type several texts one after the other (each one is erased before the next).',
-      type: 'string | string[]',
+      description: 'The text to display.',
+      type: 'string',
       required: true,
     },
-    duration: {
-      description: 'The delay per typed or erased character, in milliseconds.',
-      type: 'number',
-      required: false,
-      default: '100',
-    },
     delay: {
-      description: 'The delay before typing starts, in milliseconds.',
+      description: 'The delay to use.',
       type: 'number',
       required: false,
       default: '0',
     },
-    loop: {
-      description:
-        'Whether to erase the last text and start over. The loop pauses off screen and in a hidden tab.',
-      type: 'boolean',
-      required: false,
-      default: 'false',
-    },
-    holdDelay: {
-      description:
-        'How long a fully typed text stays before it is erased, in milliseconds.',
-      type: 'number',
-      required: false,
-      default: '1000',
-    },
     inView: {
-      description: 'Whether to wait for the text to be in view before typing.',
+      description: 'Whether the text is in view.',
       type: 'boolean',
       required: false,
       default: 'false',
     },
     inViewOnce: {
-      description: 'Whether the in view detection only triggers once.',
+      description: 'Whether the text should only animate once.',
       type: 'boolean',
       required: false,
       default: 'true',
     },
     inViewMargin: {
-      description: 'The margin to use for the in view detection.',
+      description: 'The margin to use.',
       type: 'string',
       required: false,
       default: '0px',
     },
     '...props': {
-      description: 'The props of the typing text.',
-      type: 'React.ComponentProps<"span">',
+      description: 'The props of the splitting text.',
+      type: 'HTMLMotionProps<"div">',
       required: false,
     },
   }}
 />
-
-### TypingTextCursor
-
-<TypeTable
-  type={{
-    '...props': {
-      description:
-        'The props of the cursor. It blinks while idle and stays visible while typing, off screen, in a hidden tab and under reduced motion.',
-      type: 'Omit<HTMLMotionProps<"span">, "children">',
-      required: false,
-    },
-  }}
-/>
-
-## Accessibility
-
-Screen readers read the full text once (all texts, when `text` is an array), never the partially typed one. Under reduced motion the text appears at once, without typing: the last text, or the first one when `loop` is set.

@@ -13,8 +13,6 @@ const processor = remark()
   .use(remarkGfm);
 
 export async function getLLMText(page: InferPageType<typeof source>) {
-  if (!page.absolutePath) throw new Error(`No file for page ${page.url}`);
-
   const processed = await processor.process({
     path: page.absolutePath,
     value: await fs.readFile(page.absolutePath),

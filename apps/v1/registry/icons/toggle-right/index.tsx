@@ -20,7 +20,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [null, -7, -6],
+        x: [0, -7, -6],
         transition: {
           duration: 0.5,
           ease: 'easeInOut',
@@ -35,7 +35,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [null, -7, -6, 1, 0],
+        x: [0, -7, -6, 1, 0],
         transition: {
           duration: 1,
           ease: 'easeInOut',

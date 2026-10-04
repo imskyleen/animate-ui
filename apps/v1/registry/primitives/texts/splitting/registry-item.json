@@ -5,10 +5,7 @@
   "title": "Splitting Text",
   "description": "A splitting text animation.",
   "dependencies": ["motion"],
-  "registryDependencies": [
-    "@animate-ui/hooks-use-is-in-view",
-    "@animate-ui/lib-motion"
-  ],
+  "registryDependencies": ["@animate-ui/hooks-use-is-in-view"],
   "files": [
     {
       "path": "registry/primitives/texts/splitting/index.tsx",

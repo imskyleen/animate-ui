@@ -7,28 +7,8 @@ import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
-import {
-  ease,
-  ReducedMotionConfig,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
-let segmenter: Intl.Segmenter | null | undefined;
-
-/** Splits into user-perceived characters so emoji and accents stay whole. */
-function splitGraphemes(text: string): string[] {
-  if (segmenter === undefined) {
-    segmenter =
-      typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function'
-        ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
-        : null;
-  }
-  if (!segmenter) return Array.from(text);
-  return Array.from(segmenter.segment(text), (s) => s.segment);
-}
-
-const formatCharacter = (char: string) => (char === ' ' ? ' ' : char);
+const formatCharacter = (char: string) => (char === ' ' ? '\u00A0' : char);
 
 const CHAR_STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -36,46 +16,19 @@ const CHAR_STYLE: React.CSSProperties = {
   backfaceVisibility: 'hidden',
 };
 
-// The front copy rolls away from its upper quarter while the back copy rolls
-// in from its baseline, 0.3s later, which reads as the letter turning over.
-const FRONT_REST = 'rotateX(0deg)';
-const FRONT_ROLLED = 'rotateX(90deg)';
-const BACK_REST = 'rotateX(90deg)';
-const BACK_ROLLED = 'rotateX(0deg)';
-const BACK_OFFSET = 0.3;
-
-const DEFAULT_TRANSITION: Transition = {
-  duration: 0.5,
-  delay: 0.1,
-  ease: ease.out,
-};
-
 type RollingTextProps = Omit<React.ComponentProps<'span'>, 'children'> & {
   text: string;
-  /**
-   * Transition of each letter. Its `delay` is the stagger between letters
-   * (in seconds), not a start delay: use the `delay` prop for that.
-   */
   transition?: Transition;
-  /** Delay before the first letter rolls, in milliseconds. */
   delay?: number;
 } & UseIsInViewOptions;
 
-function RollingText(props: RollingTextProps) {
-  return (
-    <ReducedMotionConfig remount>
-      <RollingTextContent {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function RollingTextContent({
+function RollingText({
   ref,
   text,
   inView = false,
   inViewMargin = '0px',
   inViewOnce = true,
-  transition = DEFAULT_TRANSITION,
+  transition = { duration: 0.5, delay: 0.1, ease: 'easeOut' },
   delay = 0,
   ...props
 }: RollingTextProps) {
@@ -87,87 +40,77 @@ function RollingTextContent({
       inViewMargin,
     },
   );
-  const reduce = useShouldReduceMotion();
 
-  // Reduced motion: no rotation at all, the letters sit in their final state.
-  // Once rolled, the text stays rolled (leaving the viewport doesn't reverse it).
-  const rolled = isInView || reduce;
-
-  const words = React.useMemo(
-    () =>
-      text
-        .split(/(\s+)/)
-        .filter(Boolean)
-        .map((part) =>
-          /^\s+$/.test(part)
-            ? { space: true as const, part }
-            : { space: false as const, chars: splitGraphemes(part) },
-        ),
-    [text],
-  );
-  const stepDelay = transition.delay ?? 0;
+  const parts = React.useMemo(() => text.split(/(\s+)/), [text]);
+  const stepDelay = transition?.delay ?? 0;
 
   let charIdx = 0;
 
   return (
     <span ref={localRef} data-slot="rolling-text" {...props}>
-      {/* The letters are visual only: assistive tech reads the sr-only copy once. */}
-      <span aria-hidden="true">
-        {words.map((word, wi) => {
-          if (word.space) return <span key={`space-${wi}`}>{word.part}</span>;
+      {parts.map((part, wi) => {
+        if (/^\s+$/.test(part)) {
+          return <span key={`space-${wi}`}>{part}</span>;
+        }
 
-          return (
-            <span
-              key={`word-${wi}`}
-              style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
-            >
-              {word.chars.map((char, ci) => {
-                const charDelay = delay / 1000 + charIdx++ * stepDelay;
-                const label = formatCharacter(char);
-
-                return (
-                  <span
-                    key={`c-${wi}-${ci}`}
+        const chars = Array.from(part);
+        return (
+          <span
+            key={`word-${wi}`}
+            style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+          >
+            {chars.map((char, ci) => {
+              const thisIdx = charIdx++;
+              const charDelay = delay / 1000 + thisIdx * stepDelay;
+              return (
+                <span
+                  key={`c-${wi}-${ci}`}
+                  style={{
+                    position: 'relative',
+                    display: 'inline-block',
+                    perspective: '9999999px',
+                    transformStyle: 'preserve-3d',
+                    width: 'auto',
+                  }}
+                  aria-hidden="true"
+                >
+                  <motion.span
                     style={{
-                      position: 'relative',
-                      display: 'inline-block',
-                      perspective: '9999999px',
-                      transformStyle: 'preserve-3d',
+                      ...CHAR_STYLE,
+                      transformOrigin: '50% 25%',
+                    }}
+                    initial={{ rotateX: 0 }}
+                    animate={isInView ? { rotateX: 90 } : undefined}
+                    transition={{
+                      ...transition,
+                      delay: charDelay,
                     }}
                   >
-                    <motion.span
-                      style={{ ...CHAR_STYLE, transformOrigin: '50% 25%' }}
-                      initial={reduce ? false : { transform: FRONT_REST }}
-                      animate={rolled ? { transform: FRONT_ROLLED } : undefined}
-                      transition={
-                        reduce
-                          ? motionTransition.instant
-                          : { ...transition, delay: charDelay }
-                      }
-                    >
-                      {label}
-                    </motion.span>
-                    <motion.span
-                      style={{ ...CHAR_STYLE, transformOrigin: '50% 100%' }}
-                      initial={reduce ? false : { transform: BACK_REST }}
-                      animate={rolled ? { transform: BACK_ROLLED } : undefined}
-                      transition={
-                        reduce
-                          ? motionTransition.instant
-                          : { ...transition, delay: charDelay + BACK_OFFSET }
-                      }
-                    >
-                      {label}
-                    </motion.span>
-                    {/* Reserves the letter's width, the copies are absolute. */}
-                    <span style={{ visibility: 'hidden' }}>{label}</span>
+                    {formatCharacter(char)}
+                  </motion.span>
+                  <motion.span
+                    style={{
+                      ...CHAR_STYLE,
+                      transformOrigin: '50% 100%',
+                    }}
+                    initial={{ rotateX: 90 }}
+                    animate={isInView ? { rotateX: 0 } : undefined}
+                    transition={{
+                      ...transition,
+                      delay: charDelay + 0.3,
+                    }}
+                  >
+                    {formatCharacter(char)}
+                  </motion.span>
+                  <span style={{ visibility: 'hidden' }}>
+                    {formatCharacter(char)}
                   </span>
-                );
-              })}
-            </span>
-          );
-        })}
-      </span>
+                </span>
+              );
+            })}
+          </span>
+        );
+      })}
 
       <span className="sr-only">{text}</span>
     </span>

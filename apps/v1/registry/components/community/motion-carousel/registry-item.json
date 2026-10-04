@@ -10,7 +10,9 @@
     "embla-carousel",
     "embla-carousel-react"
   ],
-  "registryDependencies": ["@animate-ui/components-buttons-button"],
+  "registryDependencies": [
+    "@animate-ui/components-buttons-button"
+  ],
   "files": [
     {
       "path": "registry/components/community/motion-carousel/index.tsx",

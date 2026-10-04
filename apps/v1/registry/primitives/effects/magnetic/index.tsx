@@ -5,16 +5,10 @@ import {
   motion,
   useMotionValue,
   useSpring,
-  useTransform,
   type SpringOptions,
   type HTMLMotionProps,
 } from 'motion/react';
 
-import {
-  ReducedMotionConfig,
-  spring,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 type MagneticProps = WithAsChild<
@@ -29,41 +23,11 @@ type MagneticProps = WithAsChild<
   } & HTMLMotionProps<'div'>
 >;
 
-const DEFAULT_SPRING_OPTIONS: SpringOptions = {
-  duration: spring.default.duration,
-  bounce: spring.default.bounce,
-};
-
-const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
-
-function subscribeToHoverCapability(onChange: () => void) {
-  const mql = window.matchMedia(HOVER_QUERY);
-  mql.addEventListener('change', onChange);
-  return () => mql.removeEventListener('change', onChange);
-}
-
-/** True only when the primary pointer can hover precisely (mouse, trackpad). */
-function useCanHover() {
-  return React.useSyncExternalStore(
-    subscribeToHoverCapability,
-    () => window.matchMedia(HOVER_QUERY).matches,
-    () => false,
-  );
-}
-
-function Magnetic(props: MagneticProps) {
-  return (
-    <ReducedMotionConfig>
-      <MagneticInner {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function MagneticInner({
+function Magnetic({
   ref,
   strength = 0.5,
   range = 120,
-  springOptions = DEFAULT_SPRING_OPTIONS,
+  springOptions = { stiffness: 100, damping: 10, mass: 0.5 },
   onlyOnHover = false,
   disableOnTouch = true,
   style,
@@ -76,129 +40,66 @@ function MagneticInner({
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
-  const canHover = useCanHover();
-  const reduce = useShouldReduceMotion();
-  const enabled = !reduce && (canHover || !disableOnTouch);
+  const isTouchDevice = React.useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(pointer:coarse)').matches;
+  }, []);
 
-  const activeRef = React.useRef(!onlyOnHover);
-  // Untransformed center of the element, measured lazily after scroll/resize.
-  const centerRef = React.useRef<{ x: number; y: number } | null>(null);
+  const [active, setActive] = React.useState(!onlyOnHover);
 
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
   const x = useSpring(rawX, springOptions);
   const y = useSpring(rawY, springOptions);
-  const transform = useTransform(
-    [x, y],
-    ([latestX, latestY]: number[]) =>
-      `translate3d(${latestX}px, ${latestY}px, 0)`,
-  );
-
-  const reset = React.useCallback(() => {
-    rawX.set(0);
-    rawY.set(0);
-  }, [rawX, rawY]);
 
   const compute = React.useCallback(
     (e: MouseEvent | React.MouseEvent) => {
-      const el = localRef.current;
-      if (!el) return;
-
-      if (!centerRef.current) {
-        const { left, top, width, height } = el.getBoundingClientRect();
-        // Remove the current magnetic offset so the pull doesn't feed back.
-        centerRef.current = {
-          x: left - x.get() + width / 2,
-          y: top - y.get() + height / 2,
-        };
-      }
-
-      const dx = e.clientX - centerRef.current.x;
-      const dy = e.clientY - centerRef.current.y;
+      if (!localRef.current) return;
+      const { left, top, width, height } =
+        localRef.current.getBoundingClientRect();
+      const cx = left + width / 2;
+      const cy = top + height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
       const dist = Math.hypot(dx, dy);
 
-      if (activeRef.current && dist <= range) {
+      if ((active || !onlyOnHover) && dist <= range) {
         const factor = (1 - dist / range) * strength;
         rawX.set(dx * factor);
         rawY.set(dy * factor);
       } else {
-        reset();
+        rawX.set(0);
+        rawY.set(0);
       }
     },
-    [range, strength, rawX, rawY, x, y, reset],
+    [active, onlyOnHover, range, strength, rawX, rawY],
   );
 
   React.useEffect(() => {
-    activeRef.current = !onlyOnHover;
-  }, [onlyOnHover]);
-
-  React.useEffect(() => {
-    if (!enabled) {
-      reset();
-      return;
-    }
-
-    const invalidate = () => {
-      centerRef.current = null;
-    };
-    window.addEventListener('scroll', invalidate, {
-      passive: true,
-      capture: true,
-    });
-    window.addEventListener('resize', invalidate, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', invalidate, { capture: true });
-      window.removeEventListener('resize', invalidate);
-    };
-  }, [enabled, reset]);
-
-  React.useEffect(() => {
-    // `onlyOnHover` reads the pointer from the element's own events.
-    const el = localRef.current;
-    if (!enabled || onlyOnHover || !el) return;
-
-    let inView = false;
-    // Only track the pointer while the element is on screen.
-    const handleMove = (e: PointerEvent) => {
-      if (inView) compute(e);
-    };
-
-    const observer = new IntersectionObserver(([entry]) => {
-      inView = entry?.isIntersecting ?? false;
-      centerRef.current = null;
-      if (!inView) reset();
-    });
-    observer.observe(el);
-    window.addEventListener('pointermove', handleMove, { passive: true });
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('pointermove', handleMove);
-      reset();
-    };
-  }, [compute, enabled, onlyOnHover, reset]);
+    if (disableOnTouch && isTouchDevice) return;
+    const handle = (e: MouseEvent) => compute(e);
+    window.addEventListener('mousemove', handle);
+    return () => window.removeEventListener('mousemove', handle);
+  }, [compute, disableOnTouch, isTouchDevice]);
 
   const Component = asChild ? Slot : motion.div;
 
   return (
     <Component
       ref={localRef}
-      style={{ display: 'inline-block', ...style, transform }}
+      style={{ display: 'inline-block', ...style, x, y }}
       onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
-        if (onlyOnHover && enabled) {
-          activeRef.current = true;
-          centerRef.current = null;
-        }
+        if (onlyOnHover) setActive(true);
         onMouseEnter?.(e);
       }}
       onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
-        if (onlyOnHover) activeRef.current = false;
-        reset();
+        if (onlyOnHover) setActive(false);
+        rawX.set(0);
+        rawY.set(0);
         onMouseLeave?.(e);
       }}
       onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {
-        if (onlyOnHover && enabled) compute(e);
+        if (onlyOnHover) compute(e);
         onMouseMove?.(e);
       }}
       {...props}

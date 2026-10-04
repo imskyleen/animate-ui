@@ -20,7 +20,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom left',
-        rotate: [null, 8, -8, 2, 0],
+        rotate: [0, 8, -8, 2, 0],
         transition: {
           ease: 'easeInOut',
           duration: 0.8,
@@ -46,8 +46,8 @@ const animations = {
         paths[`path${i}`] = {
           initial: { opacity: 0, scale: 0 },
           animate: {
-            opacity: [null, 1],
-            scale: [null, 1],
+            opacity: [0, 1],
+            scale: [0, 1],
             transition: {
               delay: i * 0.2,
               duration: 0.4,

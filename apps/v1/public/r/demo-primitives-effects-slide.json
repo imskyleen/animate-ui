@@ -9,7 +9,7 @@
   "files": [
     {
       "path": "registry/demo/primitives/effects/slide/index.tsx",
-      "content": "import {\n  Slide,\n  type SlideDirection,\n} from '@/components/animate-ui/primitives/effects/slide';\n\ntype SlideDemoProps = {\n  delay?: number;\n  direction?: SlideDirection;\n  offset?: number;\n};\n\nexport default function SlideDemo({\n  delay = 0,\n  direction = 'up',\n  offset = 16,\n}: SlideDemoProps) {\n  return (\n    <Slide\n      delay={delay}\n      direction={direction}\n      offset={offset}\n      className=\"px-6 py-4 bg-accent\"\n    >\n      Slide\n    </Slide>\n  );\n}\n",
+      "content": "import {\n  Slide,\n  type SlideDirection,\n} from '@/components/animate-ui/primitives/effects/slide';\n\ntype SlideDemoProps = {\n  delay?: number;\n  direction?: SlideDirection;\n  offset?: number;\n};\n\nexport default function SlideDemo({\n  delay = 0,\n  direction = 'up',\n  offset = 100,\n}: SlideDemoProps) {\n  return (\n    <Slide\n      delay={delay}\n      direction={direction}\n      offset={offset}\n      className=\"px-6 py-4 bg-accent\"\n    >\n      Slide\n    </Slide>\n  );\n}\n",
       "type": "registry:ui",
       "target": "components/animate-ui/demo/primitives/effects/slide.tsx"
     }
@@ -33,10 +33,10 @@
           }
         },
         "offset": {
-          "value": 16,
+          "value": 100,
           "min": 0,
-          "max": 400,
-          "step": 4
+          "max": 1000,
+          "step": 10
         }
       }
     }

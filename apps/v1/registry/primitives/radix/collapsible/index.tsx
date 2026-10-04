@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
-import { transition as motionTransition } from '@/registry/lib/motion';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
@@ -56,7 +55,7 @@ type CollapsibleContentProps = Omit<
 
 function CollapsibleContent({
   keepRendered = false,
-  transition = motionTransition.disclosure,
+  transition = { duration: 0.35, ease: 'easeInOut' },
   ...props
 }: CollapsibleContentProps) {
   const { isOpen } = useCollapsible();

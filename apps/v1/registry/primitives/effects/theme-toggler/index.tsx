@@ -3,12 +3,6 @@
 import * as React from 'react';
 import { flushSync } from 'react-dom';
 
-import {
-  ease,
-  ReducedMotionConfig,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
-
 type ThemeSelection = 'light' | 'dark' | 'system';
 type Resolved = 'light' | 'dark';
 type Direction = 'btt' | 'ttb' | 'ltr' | 'rtl';
@@ -52,41 +46,7 @@ type ThemeTogglerProps = {
   children?: ChildrenRender;
 };
 
-const WIPE_DURATION = 500;
-const WIPE_EASING = `cubic-bezier(${ease.out.join(', ')})`;
-
-function subscribeToNothing() {
-  return () => {};
-}
-
-/**
- * False during SSR and hydration, true afterwards. Theme libraries (e.g.
- * next-themes) only know the theme on the client, so rendering it on the
- * first pass makes the server HTML and the hydrating client disagree.
- */
-function useIsMounted() {
-  return React.useSyncExternalStore(
-    subscribeToNothing,
-    () => true,
-    () => false,
-  );
-}
-
-/** Rendered on the server and while hydrating, before the theme is known. */
-const PLACEHOLDER_STATE = {
-  effective: 'system',
-  resolved: 'light',
-} as const satisfies { effective: ThemeSelection; resolved: Resolved };
-
-function ThemeToggler(props: ThemeTogglerProps) {
-  return (
-    <ReducedMotionConfig>
-      <ThemeTogglerInner {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function ThemeTogglerInner({
+function ThemeToggler({
   theme,
   resolvedTheme,
   setTheme,
@@ -95,8 +55,6 @@ function ThemeTogglerInner({
   children,
   ...props
 }: ThemeTogglerProps) {
-  const mounted = useIsMounted();
-  const reduce = useShouldReduceMotion();
   const [preview, setPreview] = React.useState<null | {
     effective: ThemeSelection;
     resolved: Resolved;
@@ -133,8 +91,7 @@ function ThemeTogglerInner({
         return;
       }
 
-      // Reduced motion: swap instantly, no wipe.
-      if (reduce || !document.startViewTransition) {
+      if (!document.startViewTransition) {
         flushSync(() => {
           setPreview({ effective: theme, resolved });
         });
@@ -156,8 +113,8 @@ function ThemeTogglerInner({
         .animate(
           { clipPath: [fromClip, toClip] },
           {
-            duration: WIPE_DURATION,
-            easing: WIPE_EASING,
+            duration: 700,
+            easing: 'ease-in-out',
             pseudoElement: '::view-transition-new(root)',
           },
         )
@@ -165,17 +122,15 @@ function ThemeTogglerInner({
           setTheme(theme);
         });
     },
-    [onImmediateChange, resolvedTheme, fromClip, toClip, setTheme, reduce],
+    [onImmediateChange, resolvedTheme, fromClip, toClip, setTheme],
   );
-
-  const state = mounted ? current : PLACEHOLDER_STATE;
 
   return (
     <React.Fragment {...props}>
       {typeof children === 'function'
         ? children({
-            effective: state.effective,
-            resolved: state.resolved,
+            effective: current.effective,
+            resolved: current.resolved,
             toggleTheme,
           })
         : children}

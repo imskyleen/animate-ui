@@ -22,7 +22,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom right',
-        rotate: [null, 20, 0],
+        rotate: [0, 20, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },

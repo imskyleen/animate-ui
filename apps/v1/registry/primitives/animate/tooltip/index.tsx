@@ -8,7 +8,6 @@ import {
   type Transition,
   type HTMLMotionProps,
 } from 'motion/react';
-import { spring } from '@/registry/lib/motion';
 import {
   useFloating,
   autoUpdate,
@@ -97,7 +96,7 @@ function TooltipProvider({
   id,
   openDelay = 700,
   closeDelay = 300,
-  transition = spring.snappy,
+  transition = { type: 'spring', stiffness: 300, damping: 35 },
 }: TooltipProviderProps) {
   const globalId = React.useId();
   const [currentTooltip, setCurrentTooltip] =

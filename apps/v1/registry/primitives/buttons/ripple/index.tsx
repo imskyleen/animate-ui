@@ -4,11 +4,6 @@ import * as React from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  scale as motionScale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 type Ripple = {
@@ -35,15 +30,14 @@ type RippleButtonProps = WithAsChild<
 function RippleButton({
   ref,
   onClick,
-  hoverScale = 1.02,
-  tapScale = motionScale.press,
+  hoverScale = 1.05,
+  tapScale = 0.95,
   asChild = false,
   style,
   ...props
 }: RippleButtonProps) {
   const [ripples, setRipples] = React.useState<Ripple[]>([]);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const reduce = useShouldReduceMotion();
   React.useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
 
   const createRipple = React.useCallback(
@@ -88,15 +82,8 @@ function RippleButton({
         ref={buttonRef}
         data-slot="ripple-button"
         onClick={handleClick}
-        whileTap={{
-          scale: reduce ? 1 : tapScale,
-          transition: motionTransition.press,
-        }}
-        whileHover={{
-          scale: reduce ? 1 : hoverScale,
-          transition: motionTransition.press,
-        }}
-        transition={motionTransition.press}
+        whileTap={{ scale: tapScale }}
+        whileHover={{ scale: hoverScale }}
         style={{
           position: 'relative',
           overflow: 'hidden',
@@ -124,15 +111,13 @@ function RippleButtonRipples({
   ...props
 }: RippleButtonRipplesProps) {
   const { ripples } = useRippleButton();
-  // Under reduced motion the ripple fades in place instead of growing.
-  const reduce = useShouldReduceMotion();
 
   const Component = asChild ? Slot : motion.span;
 
   return ripples.map((ripple) => (
     <Component
       key={ripple.id}
-      initial={{ scale: reduce ? scale : 0, opacity: 0.5 }}
+      initial={{ scale: 0, opacity: 0.5 }}
       animate={{ scale, opacity: 0 }}
       transition={transition}
       style={{

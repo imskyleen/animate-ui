@@ -45,7 +45,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [null, -3, 0],
+        y: [0, -3, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -54,7 +54,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [null, 3, 0],
+        y: [0, 3, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -69,7 +69,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [null, -24, 24, 0],
+        y: [0, -24, 24, 0],
         transition: {
           default: { ease: 'easeInOut', duration: 0.6 },
           y: {
@@ -85,7 +85,7 @@ const animations = {
         y: 0,
       },
       animate: {
-        y: [null, 24, -24, 0],
+        y: [0, 24, -24, 0],
         transition: {
           default: { ease: 'easeInOut', duration: 0.6 },
           y: {

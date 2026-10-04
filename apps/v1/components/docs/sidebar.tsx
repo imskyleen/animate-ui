@@ -2,75 +2,217 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import {
-  SidebarContent,
-  SidebarDrawerContent,
-  SidebarDrawerOverlay,
+  Sidebar,
+  SidebarComponents,
+  SidebarFolder,
+  SidebarFolderContent,
+  SidebarFolderLink,
+  SidebarFolderTrigger,
+  SidebarFooter,
   SidebarItem,
   SidebarSeparator,
   SidebarViewport,
-} from 'fumadocs-ui/components/sidebar/base';
-import type { SidebarProps } from 'fumadocs-ui/layouts/docs/slots/sidebar';
-import { useTreeContext } from 'fumadocs-ui/contexts/tree';
-import type * as PageTree from 'fumadocs-core/page-tree';
-import { usePathname } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { SquareMenu } from 'lucide-react';
-import { Separator } from '@/lib/attach-separator';
-import { baseOptions } from '@/app/layout.config';
-import { NAV_ITEMS, SocialLinks } from './nav';
+} from 'fumadocs-ui/components/layout/sidebar';
+import { HideIfEmpty } from 'fumadocs-core/hide-if-empty';
+import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { getSidebarTabsFromOptions } from 'fumadocs-ui/layouts/docs/shared';
+import { BaseLinkItem, LinkItemType } from 'fumadocs-ui/layouts/links';
+import { DocsLayoutProps } from 'fumadocs-ui/layouts/docs';
+import { Fragment, useMemo, useState } from 'react';
+import { getLinks } from 'fumadocs-ui/layouts/shared';
 import { ThemeSwitcher } from '../animate/theme-switcher';
+import { PageTree } from 'fumadocs-core/server';
+import { useTreeContext } from 'fumadocs-ui/provider';
+import { usePathname } from 'next/navigation';
+import { isActive } from 'fumadocs-ui/utils/is-active';
+import { AnimatePresence, motion } from 'motion/react';
+import { Separator } from '@/lib/attach-separator';
+import { NAV_ITEMS } from './nav';
+import { SquareMenu } from 'lucide-react';
+import { useIsMobile } from '@workspace/ui/hooks/use-mobile';
 
-type SidebarLink =
-  | { type: 'separator'; name: string; icon: ReactNode }
-  | { type?: 'main'; text: string; url: string };
-
-// Guide links come from the shared layout config (separator + pages).
-const GUIDE_LINKS = (baseOptions.links ?? []) as SidebarLink[];
-
-// On mobile the top navigation is hidden: its sections move into the drawer.
-const MENU_LINKS: SidebarLink[] = [
-  { type: 'separator', name: 'Menu', icon: <SquareMenu /> },
+const MENU_ITEMS = [
+  {
+    name: 'Menu',
+    type: 'separator',
+    icon: <SquareMenu />,
+  },
   ...NAV_ITEMS.filter((item) => item.title !== 'Docs').map((item) => ({
     text: item.title,
     url: item.url,
   })),
 ];
 
-const isActivePath = (pathname: string, href: string) =>
-  pathname === href || pathname === `${href}/`;
+const sidebarItemClassName =
+  'relative hover:bg-transparent !bg-transparent ml-2 !pl-4 data-[active=true]:bg-transparent';
 
-const indicatorTransition = {
-  type: 'spring',
-  stiffness: 500,
-  damping: 35,
-} as const;
+const getIsActive = (pathname: string, href: string) => {
+  return href !== undefined && isActive(href, pathname, false);
+};
 
-function AnimatedItem({
-  url,
-  external,
-  children,
-  hoveredUrl,
-  onHover,
-}: {
-  url: string;
-  external?: boolean;
-  children: ReactNode;
-  hoveredUrl: string | null;
-  onHover: (url: string | null) => void;
+export function SidebarPageTree(props: {
+  components?: Partial<SidebarComponents>;
 }) {
+  const { root } = useTreeContext();
   const pathname = usePathname();
-  const isActive = isActivePath(pathname, url);
-  const isHovered = hoveredUrl === url;
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+  return useMemo(() => {
+    const { Separator, Item, Folder } = props.components ?? {};
+
+    function renderSidebarList(items: PageTree.Node[]): React.ReactNode[] {
+      return items.map((item, i) => {
+        if (item.type === 'separator') {
+          // @ts-ignore
+          if (Separator) return <Separator key={i} item={item} />;
+          return (
+            <SidebarSeparator
+              key={i}
+              className={cn(i === 0 ? 'mb-2 mt-4' : 'mb-2 mt-8')}
+            >
+              {item.icon}
+              {item.name}
+            </SidebarSeparator>
+          );
+        }
+
+        // @ts-ignore
+        if (Item || Folder) return <Item key={item.url} item={item} />;
+
+        // @ts-ignore
+        const url = item.index?.url ?? item.url;
+        const isActive = getIsActive(pathname, url);
+        const isHovered = hoveredItem === url;
+
+        return (
+          <SidebarItem
+            key={url}
+            title={item.name as string}
+            href={url}
+            className={sidebarItemClassName}
+            onMouseEnter={() => setHoveredItem(url)}
+            onMouseLeave={() => setHoveredItem(null)}
+          >
+            <span className="h-full w-px bg-border absolute left-[9px] inset-y-0" />
+
+            <AnimatePresence initial={false} mode="wait">
+              {isActive && (
+                <motion.span
+                  layoutId="sidebar-item-active-indicator"
+                  className="pointer-events-none absolute z-11 left-[8px] top-1/2 h-[56%] w-[3px] -translate-y-1/2 rounded-full bg-primary"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 500,
+                    damping: 35,
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence initial={false} mode="wait">
+              {isHovered && (
+                <motion.span
+                  layoutId="sidebar-item-hover-indicator"
+                  className="pointer-events-none absolute z-10 left-[8px] top-1/2 h-[56%] w-[3px] -translate-y-1/2 rounded-full dark:bg-neutral-600 bg-neutral-300"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 500,
+                    damping: 35,
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            <motion.span
+              className={cn(
+                'text-sm w-full pl-[12px] text-neutral-700 dark:text-neutral-200',
+                (isActive || isHovered) && 'text-black dark:text-white',
+              )}
+              animate={{
+                x: isHovered || isActive ? 3 : 0,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 200,
+                damping: 20,
+              }}
+            >
+              {item.name as string}
+            </motion.span>
+          </SidebarItem>
+        );
+      });
+    }
+
+    return (
+      // @ts-ignore
+      <Fragment key={root.$id}>{renderSidebarList(root.children, 1)}</Fragment>
+    );
+  }, [props.components, root, hoveredItem, pathname]);
+}
+
+export function SidebarLinkItem({
+  item,
+  ...props
+}: {
+  item: LinkItemType;
+  className?: string;
+}) {
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  if (item.type === 'menu')
+    return (
+      <SidebarFolder {...props}>
+        {item.url ? (
+          <SidebarFolderLink href={item.url}>
+            {item.icon}
+            {item.text}
+          </SidebarFolderLink>
+        ) : (
+          <SidebarFolderTrigger>
+            {item.icon}
+            {item.text}
+          </SidebarFolderTrigger>
+        )}
+        <SidebarFolderContent>
+          {item.items.map((child, i) => (
+            <SidebarLinkItem key={i} item={child} />
+          ))}
+        </SidebarFolderContent>
+      </SidebarFolder>
+    );
+
+  if (item.type === 'custom') {
+    return <div {...props}>{item.children as React.ReactNode}</div>;
+  }
+
+  if (item.type === ('separator' as any)) {
+    return (
+      <SidebarSeparator className={cn('mb-2', props.className, '!pl-0')}>
+        <Separator icon={item.icon} name={(item as any).name} />
+      </SidebarSeparator>
+    );
+  }
+
+  const isHovered = hoveredItem === item.url;
+  const isActive = getIsActive(pathname, item.url);
 
   return (
     <SidebarItem
-      href={url}
-      external={external}
-      active={isActive}
-      className="relative flex items-center ml-2 py-1.5 pl-4 text-start"
-      onMouseEnter={() => onHover(url)}
-      onMouseLeave={() => onHover(null)}
+      href={item.url}
+      icon={item.icon}
+      external={item.external}
+      className={sidebarItemClassName}
+      onMouseEnter={() => setHoveredItem(item.url)}
+      onMouseLeave={() => setHoveredItem(null)}
+      {...props}
     >
       <span className="h-full w-px bg-border absolute left-[9px] inset-y-0" />
 
@@ -82,7 +224,11 @@ function AnimatedItem({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={indicatorTransition}
+            transition={{
+              type: 'spring',
+              stiffness: 500,
+              damping: 35,
+            }}
           />
         )}
       </AnimatePresence>
@@ -95,7 +241,11 @@ function AnimatedItem({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={indicatorTransition}
+            transition={{
+              type: 'spring',
+              stiffness: 500,
+              damping: 35,
+            }}
           />
         )}
       </AnimatePresence>
@@ -105,167 +255,121 @@ function AnimatedItem({
           'text-sm w-full pl-[12px] text-neutral-700 dark:text-neutral-200',
           (isActive || isHovered) && 'text-black dark:text-white',
         )}
-        animate={{ x: isHovered || isActive ? 3 : 0 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        animate={{
+          x: isHovered || isActive ? 3 : 0,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 200,
+          damping: 20,
+        }}
       >
-        {children}
+        {item.text as string}
       </motion.span>
     </SidebarItem>
   );
 }
 
-function SidebarLinks({
-  links,
-  className,
-  hoveredUrl,
-  onHover,
-}: {
-  links: SidebarLink[];
-  className?: string;
-  hoveredUrl: string | null;
-  onHover: (url: string | null) => void;
-}) {
-  return (
-    <div className={cn('flex flex-col mb-4', className)}>
-      {links.map((link, i) =>
-        link.type === 'separator' ? (
-          <SidebarSeparator key={i} className="mb-2 px-2">
-            <Separator icon={link.icon} name={link.name} />
-          </SidebarSeparator>
-        ) : (
-          <AnimatedItem
-            key={link.url}
-            url={link.url}
-            hoveredUrl={hoveredUrl}
-            onHover={onHover}
-          >
-            {link.text}
-          </AnimatedItem>
-        ),
-      )}
-    </div>
+export const DocsSidebar = ({
+  nav: { transparentMode, ...nav } = {},
+  sidebar: {
+    tabs: sidebarTabs,
+    footer: sidebarFooter,
+    banner: sidebarBanner,
+    enabled: sidebarEnabled = true,
+    collapsible: sidebarCollapsible = true,
+    component: sidebarComponent,
+    components: sidebarComponents,
+    ...sidebarProps
+  } = {},
+  searchToggle = {},
+  disableThemeSwitch = false,
+  themeSwitch = { enabled: !disableThemeSwitch },
+  i18n = false,
+  children,
+  ...props
+}: DocsLayoutProps) => {
+  const tabs = useMemo(
+    () => getSidebarTabsFromOptions(sidebarTabs, props.tree) ?? [],
+    [sidebarTabs, props.tree],
   );
-}
-
-// A folder links to its index page, or to its shortest page URL when the index
-// is listed as a regular page (e.g. Icons).
-function getFolderUrl(folder: PageTree.Folder): string | undefined {
-  if (folder.index) return folder.index.url;
-  return folder.children
-    .flatMap((child) => (child.type === 'page' ? [child.url] : []))
-    .sort((a, b) => a.length - b.length)[0];
-}
-
-function PageTreeNodes({
-  nodes,
-  hoveredUrl,
-  onHover,
-}: {
-  nodes: PageTree.Node[];
-  hoveredUrl: string | null;
-  onHover: (url: string | null) => void;
-}) {
-  return nodes.map((node, i) => {
-    if (node.type === 'separator') {
-      return (
-        <SidebarSeparator
-          key={i}
-          className={cn('px-2', i === 0 ? 'mb-2 mt-4' : 'mb-2 mt-8')}
-        >
-          {node.icon}
-          {node.name}
-        </SidebarSeparator>
-      );
-    }
-
-    // Folders (components, primitives, icons) link to their index page;
-    // their content lives in their own sidebar tab.
-    const url = node.type === 'folder' ? getFolderUrl(node) : node.url;
-    if (!url) return null;
-
-    return (
-      <AnimatedItem
-        key={url}
-        url={url}
-        external={node.type === 'page' ? node.external : undefined}
-        hoveredUrl={hoveredUrl}
-        onHover={onHover}
-      >
-        {node.name}
-      </AnimatedItem>
-    );
-  });
-}
-
-function SidebarBody({ mobile }: { mobile: boolean }) {
-  const { root } = useTreeContext();
   const pathname = usePathname();
-  const [hoveredUrl, setHoveredUrl] = useState<string | null>(null);
+  const links = getLinks(props.links ?? [], props.githubUrl);
+  const isMenu =
+    !pathname.startsWith('/docs/primitives') &&
+    !pathname.startsWith('/docs/components') &&
+    !pathname.startsWith('/docs/icons');
+  const isMobile = useIsMobile();
 
-  // Outside of components/primitives/icons, mobile only shows the menu.
-  const isSection = [
-    '/docs/primitives',
-    '/docs/components',
-    '/docs/icons',
-  ].some((prefix) => pathname.startsWith(prefix));
-
-  return (
-    <SidebarViewport viewport={{ className: 'md:pb-14 pb-4 max-md:pt-2 px-2' }}>
-      <SidebarLinks
-        links={GUIDE_LINKS}
-        hoveredUrl={hoveredUrl}
-        onHover={setHoveredUrl}
-      />
-      {mobile && (
-        <SidebarLinks
-          links={MENU_LINKS}
-          className="mt-4"
-          hoveredUrl={hoveredUrl}
-          onHover={setHoveredUrl}
-        />
-      )}
-      {(!mobile || isSection) && (
-        <PageTreeNodes
-          key={root.$id}
-          nodes={root.children}
-          hoveredUrl={hoveredUrl}
-          onHover={setHoveredUrl}
-        />
-      )}
-    </SidebarViewport>
-  );
-}
-
-// Custom `slots.sidebar.root` for DocsLayout: same placement as Fumadocs'
-// default sidebar, with Animate UI's animated items.
-export function DocsSidebar({ className }: SidebarProps) {
   return (
     <>
-      <SidebarContent>
-        {({ ref }) => (
-          <div className="sticky top-(--fd-docs-row-1) z-20 [grid-area:sidebar] h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] md:layout:[--fd-sidebar-width:268px] max-md:hidden">
-            <aside
-              id="nd-sidebar"
-              ref={ref as React.Ref<HTMLElement>}
-              className={cn(
-                'absolute flex flex-col w-full inset-s-0 inset-y-0 items-end text-sm *:w-(--fd-sidebar-width)',
-                className,
-              )}
-            >
-              <SidebarBody mobile={false} />
-            </aside>
-          </div>
-        )}
-      </SidebarContent>
+      <Sidebar
+        collapsible={false}
+        className="md:mt-20 3xl:!absolute"
+        {...sidebarProps}
+      >
+        <SidebarViewport className="md:[&_[data-radix-scroll-area-viewport]]:pb-14 [&_[data-radix-scroll-area-viewport]]:pb-4 max-md:pt-2">
+          {links
+            .filter((v) => v.type !== 'icon')
+            .map((item, i, list) => (
+              <SidebarLinkItem
+                key={i}
+                item={item}
+                className={cn(
+                  item.type !== 'custom' && sidebarItemClassName,
+                  i === list.length - 1 && 'mb-4',
+                )}
+              />
+            ))}
 
-      <SidebarDrawerOverlay className="fixed z-40 inset-0 backdrop-blur-xs data-[state=open]:animate-fd-fade-in data-[state=closed]:animate-fd-fade-out" />
-      <SidebarDrawerContent className="fixed text-[0.9375rem] flex flex-col shadow-lg border-s inset-e-0 inset-y-0 w-[85%] max-w-[380px] z-40 bg-fd-background data-[state=open]:animate-fd-sidebar-in data-[state=closed]:animate-fd-sidebar-out">
-        <SidebarBody mobile />
-        <div className="flex items-center justify-between border-t p-3">
-          <SocialLinks />
-          <ThemeSwitcher />
-        </div>
-      </SidebarDrawerContent>
+          {isMobile && (
+            <div>
+              {MENU_ITEMS.map((item, i) => (
+                <SidebarLinkItem
+                  key={i}
+                  item={item as LinkItemType}
+                  className={cn(
+                    sidebarItemClassName,
+                    i === 0 && 'mt-4',
+                    i === MENU_ITEMS.length - 1 && 'mb-4',
+                  )}
+                />
+              ))}
+            </div>
+          )}
+
+          {((!isMenu && isMobile) || !isMobile) && (
+            <SidebarPageTree components={sidebarComponents} />
+          )}
+        </SidebarViewport>
+
+        <HideIfEmpty>
+          <SidebarFooter className="data-[empty=true]:hidden md:hidden border-0">
+            <div className="flex items-center justify-end empty:hidden">
+              {links
+                .filter((item) => item.type === 'icon')
+                .map((item, i, arr) => (
+                  // @ts-ignore
+                  <BaseLinkItem
+                    key={i}
+                    item={item}
+                    className={cn(
+                      buttonVariants({ size: 'icon', color: 'ghost' }),
+                      'text-fd-muted-foreground md:[&_svg]:size-4.5',
+                      i === arr.length - 1 && 'me-auto',
+                    )}
+                    aria-label={item.label}
+                  >
+                    {item.icon}
+                  </BaseLinkItem>
+                ))}
+
+              <ThemeSwitcher />
+            </div>
+            {sidebarFooter}
+          </SidebarFooter>
+        </HideIfEmpty>
+      </Sidebar>
     </>
   );
-}
+};

@@ -20,7 +20,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom left',
-        rotate: [null, 8, -8, 2, 0],
+        rotate: [0, 8, -8, 2, 0],
         transition: {
           ease: 'easeInOut',
           duration: 0.8,
@@ -35,8 +35,8 @@ const animations = {
         y2: 12,
       },
       animate: {
-        y1: [null, 10.5, 12],
-        y2: [null, 13.5, 12],
+        y1: [12, 10.5, 12],
+        y2: [12, 13.5, 12],
         transition: { ease: 'easeInOut', duration: 0.6, delay: 0.2 },
       },
     },
@@ -46,8 +46,8 @@ const animations = {
         y2: 12,
       },
       animate: {
-        y1: [null, 10.5, 12],
-        y2: [null, 13.5, 12],
+        y1: [12, 10.5, 12],
+        y2: [12, 13.5, 12],
         transition: { ease: 'easeInOut', duration: 0.6, delay: 0.1 },
       },
     },
@@ -57,8 +57,8 @@ const animations = {
         y2: 12,
       },
       animate: {
-        y1: [null, 10.5, 12],
-        y2: [null, 13.5, 12],
+        y1: [12, 10.5, 12],
+        y2: [12, 13.5, 12],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -71,7 +71,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [null, 1.5, 1],
+        scale: [1, 1.5, 1],
         transition: {
           duration: 1,
           delay: 0.4,
@@ -84,7 +84,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [null, 1.5, 1],
+        scale: [1, 1.5, 1],
         transition: {
           duration: 1,
           delay: 0.2,
@@ -97,7 +97,7 @@ const animations = {
         scale: 1,
       },
       animate: {
-        scale: [null, 1.5, 1],
+        scale: [1, 1.5, 1],
         transition: {
           duration: 1,
           ease: 'easeInOut',

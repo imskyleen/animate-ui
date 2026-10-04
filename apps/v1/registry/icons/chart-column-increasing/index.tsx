@@ -65,8 +65,8 @@ const animations = {
       animation[`path${i}`] = {
         initial: { opacity: 1, pathLength: 1 },
         animate: {
-          pathLength: [null, 1, 0, 0, 1],
-          opacity: [null, 1, 0, 0, 1],
+          pathLength: [1, 1, 0, 0, 1],
+          opacity: [1, 1, 0, 0, 1],
           transition: {
             ease: 'easeInOut',
             duration: totalDuration,

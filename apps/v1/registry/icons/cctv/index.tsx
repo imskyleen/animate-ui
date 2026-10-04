@@ -21,9 +21,9 @@ const animations = {
         x: 0,
       },
       animate: {
-        rotate: [null, -20, -20, 15, 15, 0],
-        y: [null, -0.5, -0.5, 0, 0, 0],
-        x: [null, 0, 0, 0.5, 0.5, 0],
+        rotate: [0, -20, -20, 15, 15, 0],
+        y: [0, -0.5, -0.5, 0, 0, 0],
+        x: [0, 0, 0, 0.5, 0.5, 0],
         transition: {
           duration: 1.8,
           ease: 'easeInOut',
@@ -37,7 +37,7 @@ const animations = {
         opacity: 1,
       },
       animate: {
-        opacity: [null, 0, 1, 0, 1, 0, 1],
+        opacity: [1, 0, 1, 0, 1, 0, 1],
         transition: {
           duration: 1.8,
           ease: 'easeInOut',

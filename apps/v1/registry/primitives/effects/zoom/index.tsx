@@ -4,11 +4,6 @@ import * as React from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 
 import {
-  ReducedMotionConfig,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
-import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
@@ -25,22 +20,14 @@ type ZoomProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
-function Zoom(props: ZoomProps) {
-  return (
-    <ReducedMotionConfig>
-      <ZoomInner {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function ZoomInner({
+function Zoom({
   ref,
-  transition = motionTransition.modal,
+  transition = { type: 'spring', stiffness: 200, damping: 20 },
   delay = 0,
   inView = false,
   inViewMargin = '0px',
   inViewOnce = true,
-  initialScale = 0.96,
+  initialScale = 0.5,
   scale = 1,
   asChild = false,
   ...props
@@ -53,7 +40,6 @@ function ZoomInner({
       inViewMargin,
     },
   );
-  const reduce = useShouldReduceMotion();
 
   const Component = asChild ? Slot : motion.div;
 
@@ -63,15 +49,10 @@ function ZoomInner({
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       exit="hidden"
-      variants={
-        reduce
-          ? // Reduced motion: no scale, a fade instead.
-            { hidden: { opacity: 0 }, visible: { opacity: 1 } }
-          : {
-              hidden: { transform: `scale(${initialScale})` },
-              visible: { transform: `scale(${scale})` },
-            }
-      }
+      variants={{
+        hidden: { scale: initialScale },
+        visible: { scale },
+      }}
       transition={{
         ...transition,
         delay: (transition?.delay ?? 0) + delay / 1000,

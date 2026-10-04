@@ -18,8 +18,6 @@ author:
 <CountingNumber number={100} />
 ```
 
-Under reduced motion the number shows its target right away. Screen readers read the target value once, not the ticking values.
-
 ## API Reference
 
 ### CountingNumber
@@ -50,23 +48,16 @@ Under reduced motion the number shows its target right away. Screen readers read
       default: '.',
     },
     decimalPlaces: {
-      description:
-        'The number of decimal places to show. Defaults to the number of decimals of `number`.',
-      type: 'number',
-      required: false,
-    },
-    transition: {
-      description:
-        'The transition of the count. Spring options (`stiffness`, `damping`, `bounce`, `visualDuration`…) animate as a spring; a transition with a `type` or an `ease` is used as is.',
-      type: 'SpringOptions | Transition',
-      required: false,
-      default: '{ duration: 3, ease: ease.out }',
-    },
-    delay: {
-      description: 'The delay before counting, in milliseconds.',
+      description: 'The number of decimal places to show.',
       type: 'number',
       required: false,
       default: '0',
+    },
+    transition: {
+      description: 'The transition of the counting number.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 90, damping: 50 }',
     },
     initiallyStable: {
       description:

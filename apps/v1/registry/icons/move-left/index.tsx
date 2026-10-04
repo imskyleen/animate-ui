@@ -34,7 +34,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [null, '-15%', 0],
+        x: [0, '-15%', 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -74,7 +74,7 @@ const animations = {
         d: 'M2 12H22',
       },
       animate: {
-        d: [null, 'M12 12H22', 'M2 12H22'],
+        d: ['M2 12H22', 'M12 12H22', 'M2 12H22'],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -83,7 +83,7 @@ const animations = {
         d: 'M6 8L2 12L6 16',
       },
       animate: {
-        d: [null, 'M15 8L11 12L15 16', 'M6 8L2 12L6 16'],
+        d: ['M6 8L2 12L6 16', 'M15 8L11 12L15 16', 'M6 8L2 12L6 16'],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -95,7 +95,7 @@ const animations = {
         x: 0,
       },
       animate: {
-        x: [null, '-150%', '150%', 0],
+        x: [0, '-150%', '150%', 0],
         transition: {
           default: { ease: 'easeInOut', duration: 0.6 },
           x: {

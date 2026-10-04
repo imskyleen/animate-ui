@@ -131,7 +131,7 @@ function PreviewLinkCardContent({
   arrowPadding,
   sticky,
   hideWhenDetached,
-  transition,
+  transition = { type: 'spring', stiffness: 300, damping: 25 },
   asChild,
   children,
   href: hrefProp,

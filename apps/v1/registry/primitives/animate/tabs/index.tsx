@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { motion, type Transition, type HTMLMotionProps } from 'motion/react';
-import { transition as motionTransition, spring } from '@/registry/lib/motion';
 
 import {
   Highlight,
@@ -62,7 +61,8 @@ function Tabs({
       !initialSet.current
     ) {
       const firstTab = triggersRef.current.keys().next().value as
-        string | undefined;
+        | string
+        | undefined;
       if (firstTab !== undefined) {
         setActiveValue(firstTab);
         initialSet.current = true;
@@ -111,7 +111,7 @@ function Tabs({
 type TabsHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;
 
 function TabsHighlight({
-  transition = spring.snappy,
+  transition = { type: 'spring', stiffness: 200, damping: 25 },
   ...props
 }: TabsHighlightProps) {
   const { activeValue } = useTabs();
@@ -188,7 +188,13 @@ type TabsContentsProps = HTMLMotionProps<'div'> & {
 
 function TabsContents({
   children,
-  transition = { ...spring.snappy, restDelta: 0.01 },
+  transition = {
+    type: 'spring',
+    stiffness: 300,
+    damping: 30,
+    bounce: 0,
+    restDelta: 0.01,
+  },
   ...props
 }: TabsContentsProps) {
   const { activeValue } = useTabs();
@@ -323,7 +329,7 @@ function TabsContent({
       initial={{ filter: 'blur(0px)' }}
       animate={{ filter: isActive ? 'blur(0px)' : 'blur(4px)' }}
       exit={{ filter: 'blur(0px)' }}
-      transition={motionTransition.change}
+      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
       {...props}
     />
   );

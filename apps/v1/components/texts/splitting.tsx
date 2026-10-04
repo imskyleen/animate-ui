@@ -35,7 +35,8 @@ type LinesSplittingTextProps = DefaultSplittingTextProps & {
 };
 
 type SplittingTextProps =
-  CharsOrWordsSplittingTextProps | LinesSplittingTextProps;
+  | CharsOrWordsSplittingTextProps
+  | LinesSplittingTextProps;
 
 const defaultItemVariant: Variants = {
   hidden: { x: 150, opacity: 0 },

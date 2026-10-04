@@ -1,32 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import {
-  motion,
-  AnimatePresence,
-  useInView,
-  type HTMLMotionProps,
-  type Transition,
-} from 'motion/react';
+import { motion, AnimatePresence, type HTMLMotionProps } from 'motion/react';
 
 import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
-import { usePageVisible } from '@/registry/hooks/use-page-visible';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  ease,
-  ReducedMotionConfig,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 type RotatingTextContextType = {
   currentText: string;
   y: number;
   isInView: boolean;
-  /** What assistive tech reads: every word once, never the cycling one. */
-  label: string;
 };
 
 const [RotatingTextProvider, useRotatingText] =
@@ -34,11 +20,8 @@ const [RotatingTextProvider, useRotatingText] =
 
 type RotatingTextContainerProps = React.ComponentProps<'div'> & {
   text: string | string[];
-  /** How long each text stays on screen, in milliseconds. */
   duration?: number;
-  /** Travel of the swap, in pixels: the new text enters from `-y` and the old one leaves to `y`. */
   y?: number;
-  /** Extra delay before the first swap, in milliseconds. */
   delay?: number;
 } & UseIsInViewOptions;
 
@@ -55,7 +38,6 @@ function RotatingTextContainer({
   ...props
 }: RotatingTextContainerProps) {
   const [index, setIndex] = React.useState(0);
-  const [hasRotated, setHasRotated] = React.useState(false);
 
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLDivElement>,
@@ -66,43 +48,32 @@ function RotatingTextContainer({
     },
   );
 
-  // The cycle pauses off screen and in a hidden tab. Under reduced motion it
-  // keeps cycling, as a plain crossfade (see RotatingText): the words are
-  // content, stopping would hide all but the first one.
-  const onScreen = useInView(localRef);
-  const pageVisible = usePageVisible();
-
-  const texts = Array.isArray(text) ? text : [text];
-  const count = texts.length;
-  const playing = count > 1 && isInView && onScreen && pageVisible;
-
   React.useEffect(() => {
-    if (!playing) return;
-    // Each text holds for `duration`; the very first one also waits `delay`.
-    const timeoutId = setTimeout(
-      () => {
-        setHasRotated(true);
-        setIndex((prev) => (prev + 1) % count);
-      },
-      hasRotated ? duration : delay + duration,
-    );
-    return () => clearTimeout(timeoutId);
-  }, [playing, index, count, duration, delay, hasRotated]);
+    if (!Array.isArray(text)) return;
+    if (inView && !isInView) return;
 
-  // The array can shrink while the index points past its end.
-  const currentText = texts[index % count] ?? '';
-  const label = texts.join(', ');
+    let intervalId: ReturnType<typeof setInterval> | undefined;
 
-  const value = React.useMemo(
-    () => ({ currentText, y, isInView, label }),
-    [currentText, y, isInView, label],
-  );
+    const timeoutId = setTimeout(() => {
+      setIndex((prev) => (prev + 1) % text.length);
+      intervalId = setInterval(
+        () => setIndex((prev) => (prev + 1) % text.length),
+        duration,
+      );
+    }, delay);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [text, duration, delay, inView, isInView]);
+
+  const currentText = Array.isArray(text) ? text[index] : text;
 
   return (
-    <RotatingTextProvider value={value}>
+    <RotatingTextProvider value={{ currentText, y, isInView }}>
       <div
         ref={localRef}
-        data-slot="rotating-text-container"
         style={{
           overflow: 'hidden',
           paddingBlock: '0.25rem',
@@ -116,47 +87,27 @@ function RotatingTextContainer({
 
 type RotatingTextProps = Omit<HTMLMotionProps<'div'>, 'children'>;
 
-const DEFAULT_TRANSITION: Transition = { duration: 0.3, ease: ease.out };
-
-function RotatingText(props: RotatingTextProps) {
-  return (
-    <ReducedMotionConfig>
-      <RotatingTextContent {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function RotatingTextContent({
-  transition = DEFAULT_TRANSITION,
+function RotatingText({
+  transition = { duration: 0.3, ease: 'easeOut' },
   ...props
 }: RotatingTextProps) {
-  const { currentText, y, isInView, label } = useRotatingText();
-  const reduce = useShouldReduceMotion();
-  // Reduced motion: no travel, the texts crossfade in place.
-  const travel = reduce ? 0 : y;
+  const { currentText, y, isInView } = useRotatingText();
 
   return (
-    <>
-      <span className="sr-only">{label}</span>
-      {/* mode="wait": the old text leaves before the new one comes in, which
-          is the effect itself (swaps are seconds apart, not rapid). */}
-      <AnimatePresence mode="wait">
-        {isInView && (
-          <motion.div
-            key={currentText}
-            data-slot="rotating-text"
-            aria-hidden="true"
-            transition={transition}
-            initial={{ opacity: 0, transform: `translateY(${-travel}px)` }}
-            animate={{ opacity: 1, transform: 'translateY(0px)' }}
-            exit={{ opacity: 0, transform: `translateY(${travel}px)` }}
-            {...props}
-          >
-            {currentText}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+    <AnimatePresence mode="wait">
+      {isInView && (
+        <motion.div
+          key={currentText}
+          transition={transition}
+          initial={{ opacity: 0, y: -y }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y }}
+          {...props}
+        >
+          {currentText}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

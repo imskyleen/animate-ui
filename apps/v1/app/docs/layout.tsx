@@ -1,34 +1,45 @@
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
-} from 'fumadocs-ui/layouts/docs/slots/sidebar';
 import type { ReactNode } from 'react';
 import { DocsSidebar } from '@/components/docs/sidebar';
+import { DocsLayoutProps } from 'fumadocs-ui/layouts/docs';
+import { baseOptions } from '@/app/layout.config';
 import { source } from '@/lib/source';
+import { ThemeSwitcher } from '@/components/animate/theme-switcher';
+import XIcon from '@workspace/ui/components/icons/x-icon';
 import { SIDEBAR_TABS } from '@/lib/sidebar';
 import { Nav } from '@/components/docs/nav';
+
+const DOCS_LAYOUT_PROPS: DocsLayoutProps = {
+  tree: source.pageTree,
+  sidebar: {
+    tabs: SIDEBAR_TABS,
+  },
+
+  githubUrl: 'https://github.com/imskyleen/animate-ui',
+  themeSwitch: {
+    component: <ThemeSwitcher />,
+  },
+  ...baseOptions,
+  links: [
+    ...(baseOptions.links || []),
+    {
+      icon: <XIcon />,
+      url: 'https://x.com/animate_ui',
+      text: 'X',
+      type: 'icon',
+    },
+  ],
+};
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
-      tree={source.getPageTree()}
-      tabs={SIDEBAR_TABS}
-      githubUrl="https://github.com/imskyleen/animate-ui"
-      slots={{
-        header: Nav,
-        sidebar: {
-          provider: SidebarProvider,
-          root: DocsSidebar,
-          trigger: SidebarTrigger,
-          useSidebar,
-        },
+      {...DOCS_LAYOUT_PROPS}
+      sidebar={{
+        component: <DocsSidebar {...DOCS_LAYOUT_PROPS} />,
       }}
-      containerProps={{
-        // Reserve room for the fixed, full-width <Nav />.
-        className:
-          '[--fd-banner-height:--spacing(14)] md:[--fd-banner-height:--spacing(17)] pt-(--fd-banner-height) max-w-[1670px] mx-auto',
+      nav={{
+        component: <Nav />,
       }}
     >
       {children}

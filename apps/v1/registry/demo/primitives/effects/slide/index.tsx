@@ -12,7 +12,7 @@ type SlideDemoProps = {
 export default function SlideDemo({
   delay = 0,
   direction = 'up',
-  offset = 16,
+  offset = 100,
 }: SlideDemoProps) {
   return (
     <Slide

@@ -6,9 +6,9 @@
   "description": "A scroll progress component that allows you to track the progress of a scrollable element.",
   "dependencies": ["motion"],
   "registryDependencies": [
+    "@animate-ui/primitives-animate-slot",
     "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion",
-    "@animate-ui/primitives-animate-slot"
+    "@animate-ui/hooks-use-motion-value-state"
   ],
   "files": [
     {

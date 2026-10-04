@@ -7,8 +7,7 @@
   "dependencies": ["motion", "radix-ui"],
   "registryDependencies": [
     "@animate-ui/hooks-use-controlled-state",
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion"
+    "@animate-ui/lib-get-strict-context"
   ],
   "files": [
     {

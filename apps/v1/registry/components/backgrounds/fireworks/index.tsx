@@ -1,10 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useInView } from 'motion/react';
 
-import { usePageVisible } from '@/registry/hooks/use-page-visible';
-import { useShouldReduceMotion } from '@/registry/lib/motion';
 import { cn } from '@workspace/ui/lib/utils';
 
 const rand = (min: number, max: number): number =>
@@ -229,37 +226,6 @@ function FireworksBackground({
   const containerRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
-  // Fireworks launch and animate only while on screen, in a visible tab and
-  // without reduced motion. Paused, the last frame stays on the canvas.
-  const inView = useInView(containerRef);
-  const pageVisible = usePageVisible();
-  const reduce = useShouldReduceMotion();
-  const playing = inView && pageVisible && !reduce;
-
-  const optionsRef = React.useRef({
-    population,
-    color,
-    fireworkSpeed,
-    fireworkSize,
-    particleSpeed,
-    particleSize,
-  });
-  React.useEffect(() => {
-    optionsRef.current = {
-      population,
-      color,
-      fireworkSpeed,
-      fireworkSize,
-      particleSpeed,
-      particleSize,
-    };
-  });
-
-  const engineRef = React.useRef<{
-    start: () => void;
-    stop: () => void;
-  } | null>(null);
-
   React.useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -267,109 +233,119 @@ function FireworksBackground({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let maxX = 0;
-    let maxY = 0;
-
-    const explosions: ParticleType[] = [];
-    const fireworks: FireworkType[] = [];
-
-    let running = false;
-    let frameId = 0;
-    let launchTimeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    const render = () => {
-      ctx.clearRect(0, 0, maxX, maxY);
-      for (const firework of fireworks) firework.draw(ctx);
-      for (const particle of explosions) particle.draw(ctx);
-    };
+    let maxX = window.innerWidth;
+    let ratio = container.offsetHeight / container.offsetWidth;
+    let maxY = maxX * ratio;
+    canvas.width = maxX;
+    canvas.height = maxY;
 
     const setCanvasSize = () => {
       maxX = window.innerWidth;
-      const ratio = container.offsetHeight / container.offsetWidth;
+      ratio = container.offsetHeight / container.offsetWidth;
       maxY = maxX * ratio;
       canvas.width = maxX;
       canvas.height = maxY;
-      // Resizing clears the canvas: redraw the held frame while paused.
-      if (!running) render();
     };
-    setCanvasSize();
     window.addEventListener('resize', setCanvasSize);
+
+    const explosions: ParticleType[] = [];
+    const fireworks: FireworkType[] = [];
 
     const handleExplosion = (particles: ParticleType[]) => {
       explosions.push(...particles);
     };
 
-    const addFirework = (x: number, targetY: number) => {
-      const options = optionsRef.current;
+    const launchFirework = () => {
+      const x = rand(maxX * 0.1, maxX * 0.9);
+      const y = maxY;
+      const targetY = rand(maxY * 0.1, maxY * 0.4);
+      const fireworkColor = getColor(color);
+      const speed = getValueByRange(fireworkSpeed);
+      const size = getValueByRange(fireworkSize);
       fireworks.push(
         createFirework(
           x,
-          maxY,
+          y,
           targetY,
-          getColor(options.color),
-          getValueByRange(options.fireworkSpeed),
-          getValueByRange(options.fireworkSize),
-          options.particleSpeed,
-          options.particleSize,
+          fireworkColor,
+          speed,
+          size,
+          particleSpeed,
+          particleSize,
+          handleExplosion,
+        ),
+      );
+      const timeout = rand(300, 800) / population;
+      setTimeout(launchFirework, timeout);
+    };
+
+    launchFirework();
+
+    let animationFrameId: number;
+    const animate = () => {
+      ctx.clearRect(0, 0, maxX, maxY);
+
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const firework = fireworks[i];
+        if (!firework?.update()) {
+          fireworks.splice(i, 1);
+        } else {
+          firework.draw(ctx);
+        }
+      }
+
+      for (let i = explosions.length - 1; i >= 0; i--) {
+        const particle = explosions[i];
+        particle?.update();
+        if (particle?.isAlive()) {
+          particle.draw(ctx);
+        } else {
+          explosions.splice(i, 1);
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const handleClick = (event: MouseEvent) => {
+      const x = event.clientX;
+      const y = maxY;
+      const targetY = event.clientY;
+      const fireworkColor = getColor(color);
+      const speed = getValueByRange(fireworkSpeed);
+      const size = getValueByRange(fireworkSize);
+      fireworks.push(
+        createFirework(
+          x,
+          y,
+          targetY,
+          fireworkColor,
+          speed,
+          size,
+          particleSpeed,
+          particleSize,
           handleExplosion,
         ),
       );
     };
 
-    const launchFirework = () => {
-      addFirework(rand(maxX * 0.1, maxX * 0.9), rand(maxY * 0.1, maxY * 0.4));
-      const timeout = rand(300, 800) / optionsRef.current.population;
-      launchTimeoutId = setTimeout(launchFirework, timeout);
-    };
-
-    const step = () => {
-      for (let i = fireworks.length - 1; i >= 0; i--) {
-        if (!fireworks[i]?.update()) fireworks.splice(i, 1);
-      }
-      for (let i = explosions.length - 1; i >= 0; i--) {
-        const particle = explosions[i];
-        particle?.update();
-        if (!particle?.isAlive()) explosions.splice(i, 1);
-      }
-      render();
-      frameId = requestAnimationFrame(step);
-    };
-
-    const start = () => {
-      if (running) return;
-      running = true;
-      launchFirework();
-      step();
-    };
-
-    const stop = () => {
-      running = false;
-      clearTimeout(launchTimeoutId);
-      cancelAnimationFrame(frameId);
-    };
-
-    const handleClick = (event: MouseEvent) => {
-      if (!running) return;
-      addFirework(event.clientX, event.clientY);
-    };
     container.addEventListener('click', handleClick);
 
-    engineRef.current = { start, stop };
-
     return () => {
-      stop();
-      engineRef.current = null;
       window.removeEventListener('resize', setCanvasSize);
       container.removeEventListener('click', handleClick);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, []);
-
-  React.useEffect(() => {
-    const engine = engineRef.current;
-    if (!playing || !engine) return;
-    engine.start();
-    return engine.stop;
-  }, [playing]);
+  }, [
+    population,
+    color,
+    fireworkSpeed,
+    fireworkSize,
+    particleSpeed,
+    particleSize,
+  ]);
 
   return (
     <div

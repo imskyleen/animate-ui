@@ -16,9 +16,8 @@
     "demoProps": {
       "DialogPanel": {
         "from": {
-          "value": "none",
+          "value": "top",
           "options": {
-            "none": "none",
             "top": "top",
             "bottom": "bottom",
             "left": "left",

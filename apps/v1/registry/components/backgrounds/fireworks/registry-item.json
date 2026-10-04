@@ -10,9 +10,5 @@
       "type": "registry:ui",
       "target": "components/animate-ui/components/backgrounds/fireworks.tsx"
     }
-  ],
-  "registryDependencies": [
-    "@animate-ui/hooks-use-page-visible",
-    "@animate-ui/lib-motion"
   ]
 }

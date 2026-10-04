@@ -5,7 +5,6 @@
   "title": "Gravity Stars Background",
   "description": "A background component featuring a subtle yet engaging animated gravity stars effect.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/components/backgrounds/gravity-stars/index.tsx",

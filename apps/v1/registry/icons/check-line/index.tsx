@@ -23,7 +23,7 @@ const animations = {
       animate: {
         pathLength: [0, 1],
         opacity: [0, 1],
-        scale: [null, 1.1, 1],
+        scale: [1, 1.1, 1],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',

@@ -10,15 +10,6 @@ import {
 
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  ReducedMotionConfig,
-  scale as motionScale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-  spring,
-} from '@/registry/lib/motion';
-
-const PINNED_LIST_HOVER_SCALE = 1.02;
 
 type PinnedListContextType = {
   movingId: string | null;
@@ -46,11 +37,9 @@ function PinnedList({ children, onPinnedChange, ...props }: PinnedListProps) {
 
   return (
     <PinnedListProvider value={{ movingId, setMovingId, onPinnedChange }}>
-      <ReducedMotionConfig>
-        <motion.div data-slot="pinned-list" {...props}>
-          <LayoutGroup>{children}</LayoutGroup>
-        </motion.div>
-      </ReducedMotionConfig>
+      <motion.div data-slot="pinned-list" {...props}>
+        <LayoutGroup>{children}</LayoutGroup>
+      </motion.div>
     </PinnedListProvider>
   );
 }
@@ -80,7 +69,7 @@ type PinnedListLabelProps = WithAsChild<
 function PinnedListLabel({
   hide = false,
   asChild = false,
-  transition = motionTransition.change,
+  transition = { duration: 0.22, ease: 'easeInOut' },
   ...props
 }: PinnedListLabelProps) {
   const Component = asChild ? Slot : motion.p;
@@ -122,12 +111,11 @@ function PinnedListItem({
   id,
   asChild = false,
   customTrigger = false,
-  transition = spring.default,
+  transition = { stiffness: 320, damping: 25, mass: 0.8, type: 'spring' },
   onClick,
   ...props
 }: PinnedListItemProps) {
   const { movingId, setMovingId, onPinnedChange } = usePinnedList();
-  const reduce = useShouldReduceMotion();
 
   const Component = asChild ? Slot : motion.div;
 
@@ -151,22 +139,8 @@ function PinnedListItem({
           onClick?.(e);
         }}
         transition={transition}
-        whileHover={
-          !customTrigger
-            ? {
-                scale: reduce ? 1 : PINNED_LIST_HOVER_SCALE,
-                transition: motionTransition.press,
-              }
-            : undefined
-        }
-        whileTap={
-          !customTrigger
-            ? {
-                scale: reduce ? 1 : motionScale.press,
-                transition: motionTransition.press,
-              }
-            : undefined
-        }
+        whileHover={!customTrigger ? { scale: 1.05 } : undefined}
+        whileTap={!customTrigger ? { scale: 0.95 } : undefined}
         {...props}
       />
     </PinnedListItemProvider>
@@ -182,7 +156,6 @@ function PinnedListTrigger({
 }: PinnedListTriggerProps) {
   const { setMovingId, onPinnedChange } = usePinnedList();
   const { id } = usePinnedListItem();
-  const reduce = useShouldReduceMotion();
 
   const Component = asChild ? Slot : motion.button;
 
@@ -195,15 +168,8 @@ function PinnedListTrigger({
         onPinnedChange?.(id);
         onClick?.(e);
       }}
-      whileHover={{
-        scale: reduce ? 1 : PINNED_LIST_HOVER_SCALE,
-        transition: motionTransition.press,
-      }}
-      whileTap={{
-        scale: reduce ? 1 : motionScale.press,
-        transition: motionTransition.press,
-      }}
-      transition={motionTransition.press}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       {...props}
     />
   );

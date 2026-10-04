@@ -1,17 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+import { Dialog as DialogPrimitive } from '@base-ui-components/react/dialog';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  ReducedMotionConfig,
-  scale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 type DialogContextType = {
   isOpen: boolean;
@@ -52,7 +46,7 @@ type DialogPortalProps = Omit<
   'keepMounted'
 >;
 
-function DialogPortal({ children, ...props }: DialogPortalProps) {
+function DialogPortal(props: DialogPortalProps) {
   const { isOpen } = useDialog();
 
   return (
@@ -62,9 +56,7 @@ function DialogPortal({ children, ...props }: DialogPortalProps) {
           data-slot="dialog-portal"
           keepMounted
           {...props}
-        >
-          <ReducedMotionConfig>{children}</ReducedMotionConfig>
-        </DialogPrimitive.Portal>
+        />
       )}
     </AnimatePresence>
   );
@@ -76,21 +68,20 @@ type DialogBackdropProps = Omit<
 > &
   HTMLMotionProps<'div'>;
 
-function DialogBackdrop({ transition, ...props }: DialogBackdropProps) {
+function DialogBackdrop({
+  transition = { duration: 0.2, ease: 'easeInOut' },
+  ...props
+}: DialogBackdropProps) {
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-backdrop"
       render={
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: 1,
-            transition: transition ?? motionTransition.modal,
-          }}
-          exit={{
-            opacity: 0,
-            transition: transition ?? motionTransition.modalExit,
-          }}
+          key="dialog-backdrop"
+          initial={{ opacity: 0, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, filter: 'blur(4px)' }}
+          transition={transition}
           {...props}
         />
       }
@@ -105,38 +96,20 @@ type DialogPopupProps = Omit<
   'render'
 > &
   HTMLMotionProps<'div'> & {
-    /** Opt-in 3D flip from this edge. Default: a subtle scale. */
     from?: DialogFlipDirection;
   };
 
-function getContentTransform(
-  from: DialogFlipDirection | undefined,
-  progress: 'hidden' | 'visible',
-) {
-  const scaleValue = progress === 'hidden' ? scale.enter : 1;
-  if (!from) return `scale(${scaleValue})`;
-
-  const axis = from === 'top' || from === 'bottom' ? 'rotateX' : 'rotateY';
-  const angle =
-    progress === 'hidden'
-      ? from === 'bottom' || from === 'left'
-        ? '20deg'
-        : '-20deg'
-      : '0deg';
-  return `perspective(500px) ${axis}(${angle}) scale(${scaleValue})`;
-}
-
 function DialogPopup({
-  from,
+  from = 'top',
   initialFocus,
   finalFocus,
-  transition,
+  transition = { type: 'spring', stiffness: 150, damping: 25 },
   ...props
 }: DialogPopupProps) {
-  const reduce = useShouldReduceMotion();
-  const hiddenTransform = reduce
-    ? getContentTransform(from, 'visible')
-    : getContentTransform(from, 'hidden');
+  const initialRotation =
+    from === 'bottom' || from === 'left' ? '20deg' : '-20deg';
+  const isVertical = from === 'top' || from === 'bottom';
+  const rotateAxis = isVertical ? 'rotateX' : 'rotateY';
 
   return (
     <DialogPrimitive.Popup
@@ -144,18 +117,24 @@ function DialogPopup({
       finalFocus={finalFocus}
       render={
         <motion.div
+          key="dialog-popup"
           data-slot="dialog-popup"
-          initial={{ opacity: 0, transform: hiddenTransform }}
+          initial={{
+            opacity: 0,
+            filter: 'blur(4px)',
+            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,
+          }}
           animate={{
             opacity: 1,
-            transform: getContentTransform(from, 'visible'),
-            transition: transition ?? motionTransition.modal,
+            filter: 'blur(0px)',
+            transform: `perspective(500px) ${rotateAxis}(0deg) scale(1)`,
           }}
           exit={{
             opacity: 0,
-            transform: hiddenTransform,
-            transition: transition ?? motionTransition.modalExit,
+            filter: 'blur(4px)',
+            transform: `perspective(500px) ${rotateAxis}(${initialRotation}) scale(0.8)`,
           }}
+          transition={transition}
           {...props}
         />
       }

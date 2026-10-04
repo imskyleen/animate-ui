@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
-import { transition as motionTransition } from '@/registry/lib/motion';
 
 import {
   Highlight,
@@ -67,7 +66,7 @@ function Files({
         multiple
         defaultValue={defaultOpen}
         value={open}
-        onValueChange={(value) => setOpenValue(value as string[])}
+        onValueChange={setOpenValue}
         style={{
           position: 'relative',
           overflow: 'auto',
@@ -169,7 +168,7 @@ type FolderIconProps = HTMLMotionProps<'span'> & {
 function FolderIcon({
   closeIcon,
   openIcon,
-  transition = motionTransition.change,
+  transition = { duration: 0.15 },
   ...props
 }: FolderIconProps) {
   const { isOpen } = useFolder();

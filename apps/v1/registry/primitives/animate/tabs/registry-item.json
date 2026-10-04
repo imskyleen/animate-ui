@@ -3,13 +3,12 @@
   "name": "primitives-animate-tabs",
   "type": "registry:ui",
   "title": "Tabs",
-  "description": "A set of layered sections of content\u2014known as tab panels\u2014that are displayed one at a time.",
+  "description": "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   "dependencies": ["motion"],
   "registryDependencies": [
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion",
+    "@animate-ui/primitives-effects-highlight",
     "@animate-ui/primitives-animate-slot",
-    "@animate-ui/primitives-effects-highlight"
+    "@animate-ui/lib-get-strict-context"
   ],
   "files": [
     {

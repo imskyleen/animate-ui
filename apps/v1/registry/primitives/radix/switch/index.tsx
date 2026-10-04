@@ -12,11 +12,6 @@ import {
 
 import { getStrictContext } from '@/registry/lib/get-strict-context';
 import { useControlledState } from '@/registry/hooks/use-controlled-state';
-import {
-  ReducedMotionConfig,
-  spring,
-  transition as motionTransition,
-} from '@/registry/lib/motion';
 
 type SwitchContextType = {
   isChecked: boolean;
@@ -46,22 +41,17 @@ function Switch(props: SwitchProps) {
     <SwitchProvider
       value={{ isChecked, setIsChecked, isPressed, setIsPressed }}
     >
-      <ReducedMotionConfig>
-        <SwitchPrimitives.Root
+      <SwitchPrimitives.Root {...props} onCheckedChange={setIsChecked} asChild>
+        <motion.button
+          data-slot="switch"
+          whileTap="tap"
+          initial={false}
+          onTapStart={() => setIsPressed(true)}
+          onTapCancel={() => setIsPressed(false)}
+          onTap={() => setIsPressed(false)}
           {...props}
-          onCheckedChange={setIsChecked}
-          asChild
-        >
-          <motion.button
-            data-slot="switch"
-            initial={false}
-            onTapStart={() => setIsPressed(true)}
-            onTapCancel={() => setIsPressed(false)}
-            onTap={() => setIsPressed(false)}
-            {...props}
-          />
-        </SwitchPrimitives.Root>
-      </ReducedMotionConfig>
+        />
+      </SwitchPrimitives.Root>
     </SwitchProvider>
   );
 }
@@ -72,23 +62,24 @@ type SwitchThumbProps = Omit<
 > &
   HTMLMotionProps<'div'> & {
     pressedAnimation?:
-      TargetAndTransition | VariantLabels | boolean | LegacyAnimationControls;
+      | TargetAndTransition
+      | VariantLabels
+      | boolean
+      | LegacyAnimationControls;
   };
 
 function SwitchThumb({
   pressedAnimation,
-  transition = spring.snappy,
+  transition = { type: 'spring', stiffness: 300, damping: 25 },
   ...props
 }: SwitchThumbProps) {
   const { isPressed } = useSwitch();
 
-  // `layout` animates position and size changes with transforms, so the
-  // pressed stretch can be a plain style change (`data-pressed`).
   return (
     <SwitchPrimitives.Thumb asChild>
       <motion.div
         data-slot="switch-thumb"
-        data-pressed={isPressed || undefined}
+        whileTap="tab"
         layout
         transition={transition}
         animate={isPressed ? pressedAnimation : undefined}
@@ -106,7 +97,7 @@ type SwitchIconProps = HTMLMotionProps<'div'> & {
 
 function SwitchIcon({
   position,
-  transition = motionTransition.fade,
+  transition = { type: 'spring', bounce: 0 },
   ...props
 }: SwitchIconProps) {
   const { isChecked } = useSwitch();
@@ -121,8 +112,7 @@ function SwitchIcon({
   return (
     <motion.div
       data-slot={`switch-${position}-icon`}
-      initial={false}
-      animate={{ opacity: isAnimated ? 1 : 0 }}
+      animate={isAnimated ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
       transition={transition}
       {...props}
     />

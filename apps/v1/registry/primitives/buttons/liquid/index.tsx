@@ -3,11 +3,6 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 
-import {
-  scale as motionScale,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 import { Slot, type WithAsChild } from '@/registry/primitives/animate/slot';
 
 type LiquidButtonProps = WithAsChild<
@@ -22,33 +17,27 @@ type LiquidButtonProps = WithAsChild<
 function LiquidButton({
   delay = '0.3s',
   fillHeight = '3px',
-  hoverScale = 1.02,
-  tapScale = motionScale.press,
+  hoverScale = 1.05,
+  tapScale = 0.95,
   asChild = false,
   ...props
 }: LiquidButtonProps) {
-  const reduce = useShouldReduceMotion();
   const Component = asChild ? Slot : motion.button;
 
   return (
     <Component
-      whileTap={{
-        scale: reduce ? 1 : tapScale,
-        transition: motionTransition.press,
-      }}
+      whileTap={{ scale: tapScale }}
       whileHover={{
-        scale: reduce ? 1 : hoverScale,
+        scale: hoverScale,
         '--liquid-button-fill-width': '100%',
         '--liquid-button-fill-height': '100%',
         '--liquid-button-delay': delay,
         transition: {
-          scale: motionTransition.press,
           '--liquid-button-fill-width': { duration: 0 },
           '--liquid-button-fill-height': { duration: 0 },
           '--liquid-button-delay': { duration: 0 },
         },
       }}
-      transition={motionTransition.press}
       style={
         {
           '--liquid-button-fill-width': '-1%',

@@ -44,9 +44,9 @@ const animations = {
         scale: 0,
       },
       animate: {
-        pathLength: [null, 1, 1, 1],
-        pathOffset: [null, 0, 0, 1],
-        opacity: [null, 1, 1, 0],
+        pathLength: [0, 1, 1, 1],
+        pathOffset: [0, 0, 0, 1],
+        opacity: [0, 1, 1, 0],
         scale: [1.1, 1, 1, 1],
         transition: {
           duration: 1.8,

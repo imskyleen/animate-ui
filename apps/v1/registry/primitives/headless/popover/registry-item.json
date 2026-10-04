@@ -5,10 +5,7 @@
   "title": "Headless Popover",
   "description": "Popovers are perfect for floating panels with arbitrary content like navigation menus, mobile menus and flyout menus.",
   "dependencies": ["motion", "@headlessui/react"],
-  "registryDependencies": [
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion"
-  ],
+  "registryDependencies": ["@animate-ui/lib-get-strict-context"],
   "files": [
     {
       "path": "registry/primitives/headless/popover/index.tsx",

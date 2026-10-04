@@ -5,7 +5,6 @@
   "title": "Stars Background",
   "description": "An interactive background featuring animated dots of varying sizes and speeds, simulating a dynamic and immersive starry space effect.",
   "dependencies": ["motion"],
-  "registryDependencies": ["@animate-ui/lib-motion"],
   "files": [
     {
       "path": "registry/components/backgrounds/stars/index.tsx",

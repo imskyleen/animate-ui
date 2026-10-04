@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
-import { transition as motionTransition } from '@/registry/lib/motion';
 
 import {
   Highlight,
@@ -157,7 +156,7 @@ type FolderIconProps = HTMLMotionProps<'span'> & {
 function FolderIcon({
   closeIcon,
   openIcon,
-  transition = motionTransition.change,
+  transition = { duration: 0.15 },
   ...props
 }: FolderIconProps) {
   const { isOpen } = useFolder();

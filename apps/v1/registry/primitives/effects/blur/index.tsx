@@ -4,11 +4,6 @@ import * as React from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 
 import {
-  ReducedMotionConfig,
-  transition as motionTransition,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
-import {
   useIsInView,
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
@@ -25,17 +20,9 @@ type BlurProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
-function Blur(props: BlurProps) {
-  return (
-    <ReducedMotionConfig>
-      <BlurInner {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function BlurInner({
+function Blur({
   ref,
-  transition = motionTransition.modal,
+  transition = { type: 'spring', stiffness: 200, damping: 20 },
   delay = 0,
   inView = false,
   inViewMargin = '0px',
@@ -53,7 +40,6 @@ function BlurInner({
       inViewMargin,
     },
   );
-  const reduce = useShouldReduceMotion();
 
   const Component = asChild ? Slot : motion.div;
 
@@ -63,15 +49,10 @@ function BlurInner({
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       exit="hidden"
-      variants={
-        reduce
-          ? // Reduced motion: a fade instead of the blur.
-            { hidden: { opacity: 0 }, visible: { opacity: 1 } }
-          : {
-              hidden: { filter: `blur(${initialBlur}px)` },
-              visible: { filter: `blur(${blur}px)` },
-            }
-      }
+      variants={{
+        hidden: { filter: `blur(${initialBlur}px)` },
+        visible: { filter: `blur(${blur}px)` },
+      }}
       transition={{
         ...transition,
         delay: (transition?.delay ?? 0) + delay / 1000,

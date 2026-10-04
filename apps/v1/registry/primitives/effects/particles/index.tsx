@@ -9,10 +9,6 @@ import {
   type UseIsInViewOptions,
 } from '@/registry/hooks/use-is-in-view';
 import { getStrictContext } from '@/registry/lib/get-strict-context';
-import {
-  ReducedMotionConfig,
-  useShouldReduceMotion,
-} from '@/registry/lib/motion';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
@@ -52,15 +48,13 @@ function Particles({
 
   return (
     <ParticlesProvider value={{ animate, isInView }}>
-      <ReducedMotionConfig>
-        <Component
-          ref={localRef}
-          style={{ position: 'relative', ...style }}
-          {...props}
-        >
-          {children}
-        </Component>
-      </ReducedMotionConfig>
+      <Component
+        ref={localRef}
+        style={{ position: 'relative', ...style }}
+        {...props}
+      >
+        {children}
+      </Component>
     </ParticlesProvider>
   );
 }
@@ -94,8 +88,6 @@ function ParticlesEffect({
   ...props
 }: ParticlesEffectProps) {
   const { animate, isInView } = useParticles();
-  // Reduced motion: decorative bursts are skipped entirely.
-  const reduce = useShouldReduceMotion();
 
   const isVertical = side === 'top' || side === 'bottom';
   const alignPct = align === 'start' ? '0%' : align === 'end' ? '100%' : '50%';
@@ -125,7 +117,6 @@ function ParticlesEffect({
     <AnimatePresence>
       {animate &&
         isInView &&
-        !reduce &&
         [...Array(count)].map((_, i) => {
           const angle = i * angleStep;
           const x = Math.cos(angle) * radius;

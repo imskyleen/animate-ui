@@ -6,9 +6,8 @@
   "description": "An animated tooltip that shows contextual info on hover or focus and smoothly glides to the next element without disappearing between transitions.",
   "dependencies": ["motion", "@floating-ui/react"],
   "registryDependencies": [
-    "@animate-ui/lib-get-strict-context",
-    "@animate-ui/lib-motion",
-    "@animate-ui/primitives-animate-slot"
+    "@animate-ui/primitives-animate-slot",
+    "@animate-ui/lib-get-strict-context"
   ],
   "files": [
     {

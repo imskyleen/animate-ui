@@ -37,8 +37,8 @@ const animations = {
         y: 0,
       },
       animate: {
-        x: [null, 2, 0],
-        y: [null, 2, 0],
+        x: [0, 2, 0],
+        y: [0, 2, 0],
         transition: { duration: 0.8, ease: 'easeInOut' },
       },
     },

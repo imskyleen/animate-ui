@@ -22,8 +22,8 @@ const animations = {
         originY: '12px',
       },
       animate: {
-        rotate: [null, -20, 0],
-        scale: [null, 0.95, 1],
+        rotate: [0, -20, 0],
+        scale: [1, 0.95, 1],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',
@@ -43,7 +43,7 @@ const animations = {
         originY: '12px',
       },
       animate: {
-        rotate: [null, -10, 10, -10, 0],
+        rotate: [0, -10, 10, -10, 0],
         transition: {
           duration: 0.5,
           ease: 'easeInOut',
