@@ -11,6 +11,13 @@ const config = {
   // serve keep resolving from the v1 site.
   async rewrites() {
     return {
+      // v1's registry items are installed as `@animate-ui/v1/<item>`.
+      beforeFiles: [
+        {
+          source: '/r/v1/:path*',
+          destination: 'https://v1.animate-ui.com/r/:path*',
+        },
+      ],
       fallback: [
         {
           source: '/r/:path*',

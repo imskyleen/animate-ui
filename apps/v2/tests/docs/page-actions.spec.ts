@@ -48,7 +48,7 @@ test('the version menu links v2 and v1 (local servers in development)', async ({
     'href',
     'http://localhost:3300',
   );
-  await expect(page.getByRole('menuitem', { name: 'v1' })).toHaveAttribute(
+  await expect(page.getByRole('menuitem', { name: 'v1.0.27' })).toHaveAttribute(
     'href',
     'http://localhost:3200',
   );

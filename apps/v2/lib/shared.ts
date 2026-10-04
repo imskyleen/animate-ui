@@ -17,14 +17,14 @@ export const docsVersions = [
   {
     id: 'v2',
     label: 'v2.0',
-    note: 'latest',
+    note: undefined,
     url:
       process.env.NEXT_PUBLIC_V2_URL ??
       (isDev ? 'http://localhost:3300' : 'https://animate-ui.com'),
   },
   {
     id: 'v1',
-    label: 'v1',
+    label: 'v1.0.27',
     note: undefined,
     url:
       process.env.NEXT_PUBLIC_V1_URL ??
