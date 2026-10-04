@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import {
+  DIALOG_SPRING,
   expectSheetEntrance,
   expectSheetExit,
   expectSheetSettled,
@@ -8,13 +9,28 @@ import {
   readState,
   recordTimeline,
 } from './modal-timeline';
+import { expectCssSpring } from './spring-curves';
 
-// The drawer moves like Animate UI v1's Sheet: it slides and fades on v1's
-// sheet spring (stiffness 150, damping 22), and its backdrop fades and
-// un-blurs in 200ms (easeInOut), both ways.
+// The drawer moves like Animate UI v1's Sheet: it slides and fades on the
+// dialog's spring (stiffness 150, damping 25), run by CSS transitions as
+// Motion's `linear()` curve for it, and its backdrop fades and un-blurs in
+// 200ms (easeInOut), both ways.
 
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
+
+/** The first duration and the timing function of its CSS transitions. */
+const timing = (page: Page, selector: string) =>
+  page
+    .locator(selector)
+    .first()
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return {
+        duration: cs.transitionDuration.split(',')[0]!.trim(),
+        easing: cs.transitionTimingFunction,
+      };
+    });
 
 /** Vertical/horizontal offset in px, and opacity. */
 const state = (page: Page, selector: string) =>
@@ -60,17 +76,42 @@ test.describe('base-ui drawer demo', () => {
     const rest = await readState(page, OVERLAY);
     expect(rest.opacity).toBe(1);
     expect(rest.blur).toBe(0);
+
+    // The spring as CSS: the duration and `linear()` curve Motion computes
+    // for the dialog's spring.
+    expectCssSpring(await timing(page, POPUP), DIALOG_SPRING);
   });
 
   test('closes the same way, the backdrop gone first, then unmounts', async ({
     page,
   }) => {
     await open(page);
+    // The exit's timing, read as soon as Base UI marks the popup as ending.
+    await page.locator(POPUP).evaluate((el) => {
+      (window as unknown as { __exit: Promise<unknown> }).__exit = new Promise(
+        (resolve) => {
+          const observer = new MutationObserver(() => {
+            if (!el.hasAttribute('data-ending-style')) return;
+            observer.disconnect();
+            const cs = getComputedStyle(el);
+            resolve({
+              duration: cs.transitionDuration.split(',')[0]!.trim(),
+              easing: cs.transitionTimingFunction,
+            });
+          });
+          observer.observe(el, { attributes: true });
+        },
+      );
+    });
     const timeline = await recordTimeline(page, {
       content: POPUP,
       overlay: OVERLAY,
     });
     await page.keyboard.press('Escape');
+    const exit = (await page.evaluate(
+      () => (window as unknown as { __exit: Promise<unknown> }).__exit,
+    )) as { duration: string; easing: string };
+    expectCssSpring(exit, DIALOG_SPRING);
     await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
     const frames = await timeline.stop();
     expectSheetExit(frames, 'bottom');

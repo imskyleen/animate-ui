@@ -23,8 +23,8 @@ import {
 // - the tabs' text color changes over 500ms (v1's `transition-colors
 //   duration-500 ease-in-out`);
 // - the incoming panel fades in from a 4px blur over 500ms while its height
-//   springs from the previous panel's (v1's TabsContents); the outgoing one
-//   leaves at once.
+//   springs from the previous panel's (v1's TabsContents), on the spring of
+//   Auto Height and Animate UI's own Tabs; the outgoing one leaves at once.
 // Keyboard changes animate like clicks.
 //
 // shadcn/ui styles the active tab itself (its background, border, shadow and,
@@ -287,6 +287,14 @@ function useTabsIndicator(
 
 /** v1's panel entrance: a fade from a 4px blur, 500ms ease-in-out. */
 const PANEL_TRANSITION: Transition = { duration: 0.5, ease: 'easeInOut' };
+/** The panels' height: the spring of Auto Height and Animate UI's own Tabs. */
+const HEIGHT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 30,
+  bounce: 0,
+  restDelta: 0.01,
+};
 const PANEL_HIDDEN = { opacity: 0, filter: 'blur(4px)' };
 // Keyframes: a force-mounted panel becoming active again starts from hidden
 // too. The blur is dropped at rest: `filter` would make the panel the
@@ -304,8 +312,6 @@ const panelHeights = new WeakMap<Element, number>();
 type PanelMotionOptions = {
   /** The user's `transition`, if any. */
   transition: Transition | undefined;
-  /** v1's height spring of the library's panels container. */
-  heightTransition: Transition;
 };
 
 /**
@@ -323,14 +329,11 @@ type PanelMotionOptions = {
  * `transition` covers both: the fade, and `transition.height` (or the whole
  * transition) for the height.
  */
-function usePanelMotion(
-  active: boolean,
-  { transition, heightTransition }: PanelMotionOptions,
-) {
+function usePanelMotion(active: boolean, { transition }: PanelMotionOptions) {
   const ref = React.useRef<HTMLElement | null>(null);
   const reduce = useShouldReduceMotion();
   const panelTransition = useTempoTransition(
-    transition ?? { ...PANEL_TRANSITION, height: heightTransition },
+    transition ?? { ...PANEL_TRANSITION, height: HEIGHT_TRANSITION },
   );
   const heightSpring =
     (panelTransition as { height?: Transition }).height ?? panelTransition;

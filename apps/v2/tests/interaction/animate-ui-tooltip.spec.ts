@@ -1,8 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { probeFirstFrame } from './motion-probe';
+import { overshootOf } from './spring-curves';
 
 const CONTENT = '[data-slot="tooltip-content"]';
+
+/** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
+const POP_SPRING = { stiffness: 300, damping: 25 };
 
 const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/tooltip', { waitUntil: 'networkidle' });
@@ -10,13 +14,12 @@ const open = (page: Page) =>
 const trigger = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });
 
+/** Horizontal center of the popup as drawn (its layout animation included). */
 const contentX = (page: Page) =>
-  page
-    .locator(CONTENT)
-    .evaluate(
-      (el) =>
-        el.getBoundingClientRect().left + (el as HTMLElement).offsetWidth / 2,
-    );
+  page.locator(CONTENT).evaluate((el) => {
+    const rect = el.getBoundingClientRect();
+    return rect.left + rect.width / 2;
+  });
 
 test.describe('animate-ui tooltip', () => {
   test.describe.configure({ timeout: 180_000 });
@@ -68,12 +71,19 @@ test.describe('animate-ui tooltip', () => {
     );
     await trigger(page, 'Bold').hover();
     const seen = await frames;
-    // v1: from scale 0 and 15px below (side "top"), on a critically damped
-    // spring (stiffness 300, damping 35): no overshoot.
+    // v1: from scale 0 and 15px below (side "top").
     expect(seen[0]!.scale).toBeLessThan(0.3);
     expect(seen[0]!.y).toBeGreaterThan(5);
     expect(seen[0]!.opacity).toBeLessThan(1);
-    expect(Math.max(...seen.map((f) => f.scale))).toBeLessThanOrEqual(1.001);
+    // On the pop spring: past full size and past its place by the spring's
+    // overshoot (frames may miss the very peak), then back.
+    const overshoot = overshootOf(POP_SPRING);
+    const peak = Math.max(...seen.map((f) => f.scale));
+    expect(peak).toBeGreaterThan(1 + overshoot * 0.7);
+    expect(peak).toBeLessThan(1 + overshoot + 0.003);
+    const highest = Math.min(...seen.map((f) => f.y));
+    expect(highest).toBeLessThan(-15 * overshoot * 0.7);
+    expect(highest).toBeGreaterThan(-15 * overshoot - 0.05);
     const last = seen.at(-1)!;
     expect(last.opacity).toBe(1);
     expect(last.scale).toBeCloseTo(1, 2);
@@ -116,17 +126,43 @@ test.describe('animate-ui tooltip', () => {
     await open(page);
     await trigger(page, 'Bold').hover();
     await expect(page.getByRole('tooltip')).toContainText('Bold');
-    await page.waitForTimeout(800);
+    // Settled: Motion drops the transform once the spring rests.
+    await expect(page.locator(CONTENT)).toHaveCSS('transform', 'none');
     const from = await contentX(page);
 
+    // Its center on every frame of the glide.
+    const glide = page.evaluate(
+      (selector) =>
+        new Promise<number[]>((resolve) => {
+          const centers: number[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const rect = document
+              .querySelector(selector)!
+              .getBoundingClientRect();
+            centers.push(rect.left + rect.width / 2);
+            if (performance.now() - t0 < 1000) requestAnimationFrame(tick);
+            else resolve(centers);
+          };
+          tick();
+        }),
+      CONTENT,
+    );
     await trigger(page, 'Insert link').hover();
     await expect(page.getByRole('tooltip')).toContainText('Insert link');
     // One popup all along: it moved instead of closing and reopening.
     await expect(page.locator(CONTENT)).toHaveCount(1);
     await expect(page.locator(CONTENT)).toHaveAttribute('data-state', 'open');
-    await page.waitForTimeout(800);
+    const centers = await glide;
+    await expect(page.locator(CONTENT)).toHaveCSS('transform', 'none');
     const to = await contentX(page);
     expect(to - from).toBeGreaterThan(100);
+    // On the same spring: a little past the new trigger, by the spring's
+    // overshoot of the distance, then back.
+    const expected = overshootOf(POP_SPRING) * (to - from);
+    const past = Math.max(...centers) - to;
+    expect(past).toBeGreaterThan(expected * 0.7);
+    expect(past).toBeLessThan(expected + 1);
   });
 
   test('closes after the pointer leaves, and with Escape', async ({ page }) => {

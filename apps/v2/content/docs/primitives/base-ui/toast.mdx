@@ -47,9 +47,9 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-Animate UI v1 had no toast. Its motion comes from v1's Sheet (it enters and leaves through its edge with a fade, on v1's sheet spring: stiffness 150, damping 22), v1's Popover for anchored toasts, and v1's 200ms easeInOut fade.
+Animate UI v1 had no toast. Its motion comes from v1's Sheet (it enters and leaves through its edge with a fade, on the sheet spring: stiffness 150, damping 25, the dialog's), v1's Popover for anchored toasts, and v1's 200ms easeInOut fade.
 
-Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), springs written as the `linear()` curve Motion itself would use (550ms for v1's sheet spring), and sets them itself from its state, so `AnimateUIProvider tempo` applies.
+Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), springs written as the `linear()` curve Motion itself would use (750ms for the sheet spring), and sets them itself from its state, so `AnimateUIProvider tempo` applies.
 
 - **A toast enters from its edge**, a full toast height away, sliding and fading in on the spring.
 - **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, easeInOut. Hovering or focusing the viewport expands the stack with a 0.75rem gap and fades the contents back in. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
@@ -77,7 +77,7 @@ Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/reac
       description: 'Transition of the entrance and the stack.',
       type: 'Transition',
       default:
-        "{ type: 'spring', stiffness: 150, damping: 22 }; anchored: { type: 'spring', stiffness: 300, damping: 25 }",
+        "{ type: 'spring', stiffness: 150, damping: 25 }; anchored: { type: 'spring', stiffness: 300, damping: 25 }",
     },
     exitTransition: {
       description: 'Transition of the exit.',

@@ -45,11 +45,11 @@ shadcn/ui's React Aria Drawer is built on Base UI's Drawer too: `animate-ui anim
 
 Animate UI v1 had no drawer: the motion is v1's Sheet, with Base UI's swipe on top.
 
-- **Popup** slides in from its edge (`swipeDirection`, a full size of its own) and fades in, on v1's sheet spring (stiffness 150, damping 22), and slides and fades back out the same way.
+- **Popup** slides in from its edge (`swipeDirection`, a full size of its own) and fades in, on the sheet spring (stiffness 150, damping 25, the dialog's), and slides and fades back out the same way.
 - While you drag it, it follows the finger on the same frame: no transition runs during a swipe. Let go slowly and it springs back; flick it and it leaves along the swipe, faster the harder the flick (the exit scaled by Base UI's `--drawer-swipe-strength`).
 - **Backdrop** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way; it follows the swipe in between.
 - Snap points, nested drawers and `swipeDirection` work as in Base UI.
-- CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables: a spring becomes the `linear()` curve Motion itself would use (550ms for v1's sheet spring), and `AnimateUIProvider tempo` reaches it. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
+- CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables: a spring becomes the `linear()` curve Motion itself would use (750ms for the sheet spring), and `AnimateUIProvider tempo` reaches it. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
 - Under reduced motion, the drawer fades in place; a swipe dismissal still leaves along the swipe.
 
 ## API Reference
@@ -70,7 +70,7 @@ Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/rea
       description:
         'Opening (slide and fade in), snapping and springing back after a swipe that does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier or named `ease`.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 150, damping: 22 }",
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
     },
     exitTransition: {
       description:

@@ -1,11 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { present, recordTimeline } from './modal-timeline';
+import { DIALOG_SPRING, present, recordTimeline } from './modal-timeline';
+import { expectCssSpring } from './spring-curves';
 
 // Animate UI v1 had no toast: it moves like v1's Sheet (from its edge by its
-// own size, fading, on a spring of stiffness 150 and damping 22, which the
-// CSS transitions run as a 550ms `linear()` curve), and its content fades
-// behind the front toast with v1's 200ms easeInOut.
+// own size, fading, on the dialog's spring, stiffness 150 and damping 25,
+// which the CSS transitions run as Motion's `linear()` curve for it), and its
+// content fades behind the front toast with v1's 200ms easeInOut.
 
 const TOAST = '[data-slot="toast"]';
 
@@ -65,10 +66,9 @@ test.describe('base-ui toast demo', () => {
     const midway = shown.find((frame) => frame.samples.toast!.y < 0.5)!;
     expect(midway.samples.toast!.opacity).toBeGreaterThan(0.2);
     expect(midway.samples.toast!.opacity).toBeLessThan(0.95);
-    // The spring as CSS: v1's sheet spring settles in 550ms.
-    const enter = await timing(page, TOAST);
-    expect(enter.duration).toBe('0.55s');
-    expect(enter.easing).toMatch(/^linear\(/);
+    // The spring as CSS: the duration and `linear()` curve Motion computes
+    // for the dialog's spring.
+    expectCssSpring(await timing(page, TOAST), DIALOG_SPRING);
   });
 
   test('stacks: toasts behind are scaled down, hover expands them', async ({
@@ -142,8 +142,7 @@ test.describe('base-ui toast demo', () => {
     const exit = (await page.evaluate(
       () => (window as unknown as { __exit: Promise<unknown> }).__exit,
     )) as { duration: string; easing: string };
-    expect(exit.duration).toBe('0.55s');
-    expect(exit.easing).toMatch(/^linear\(/);
+    expectCssSpring(exit, DIALOG_SPRING);
     await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 2500 });
     // Down through its edge, fading out.
     const last = present(await timeline.stop(), 'toast').at(-1)!.samples.toast!;

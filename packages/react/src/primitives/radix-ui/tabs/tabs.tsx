@@ -35,15 +35,8 @@ type ListAnimationProps = {
 
 /** Animate UI's additions to `Tabs.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 200, damping 30). */
+  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 300, damping 30). */
   transition?: Transition;
-};
-
-/** v1's TabsContents spring: the panels' height. */
-const HEIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 30,
 };
 
 function Root(props: React.ComponentProps<typeof TabsPrimitive.Root>) {
@@ -115,10 +108,7 @@ function Content({
 }: React.ComponentProps<typeof TabsPrimitive.Content> & ContentAnimationProps) {
   const { value } = useValue();
   const active = value === props.value;
-  const { ref, initial, animate } = usePanelMotion(active, {
-    transition,
-    heightTransition: HEIGHT_TRANSITION,
-  });
+  const { ref, initial, animate } = usePanelMotion(active, { transition });
 
   return (
     // Radix's props (className, style, data-state, hidden…) land on the

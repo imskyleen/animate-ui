@@ -1,5 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { overshootOf } from './spring-curves';
+
+/** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
+const POP_SPRING = { stiffness: 300, damping: 25 };
+
 const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/avatar-group', {
     waitUntil: 'networkidle',
@@ -45,6 +50,37 @@ test.describe('animate-ui avatar-group', () => {
     expect(Math.min(...values)).toBeLessThan(-16);
     expect(Math.min(...values)).toBeGreaterThan(-18);
     await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeCloseTo(-14.4, 0);
+  });
+
+  test("the tooltip pops in on the Tooltip's spring, a little past full size", async ({
+    page,
+  }) => {
+    await open(page);
+    const sampling = page.evaluate(
+      () =>
+        new Promise<number[]>((resolve) => {
+          const scales: number[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const el = document.querySelector('[data-slot="tooltip-content"]');
+            if (el)
+              scales.push(new DOMMatrix(getComputedStyle(el).transform).a);
+            if (performance.now() - t0 < 1200) requestAnimationFrame(tick);
+            else resolve(scales);
+          };
+          tick();
+        }),
+    );
+    await avatar(page, 'Adam Wathan').hover();
+    const scales = await sampling;
+    // From nothing, past full size by the spring's overshoot (frames may miss
+    // the very peak), then at rest.
+    expect(scales[0]!).toBeLessThan(0.3);
+    const overshoot = overshootOf(POP_SPRING);
+    const peak = Math.max(...scales);
+    expect(peak).toBeGreaterThan(1 + overshoot * 0.7);
+    expect(peak).toBeLessThan(1 + overshoot + 0.003);
+    expect(scales.at(-1)!).toBeCloseTo(1, 2);
   });
 
   test('one tooltip glides between avatars; leaving lowers them', async ({

@@ -19,8 +19,8 @@ import { useTempoTransition } from '../utils/motion';
 //   and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on a
 //   spring (stiffness 150, damping 25), and leaves the same way.
 // - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
-//   from that edge by its own size and fades in, on a spring (stiffness 150,
-//   damping 22), and leaves the same way.
+//   from that edge by its own size and fades in, on the dialog's spring
+//   (stiffness 150, damping 25), and leaves the same way.
 //
 // v1 used one transition both ways: `exitTransition` defaults to `transition`.
 
@@ -37,12 +37,11 @@ export const DIALOG_TRANSITION = {
   damping: 25,
 } as const satisfies Transition;
 
-/** v1's sheet spring. */
-export const SHEET_TRANSITION = {
-  type: 'spring',
-  stiffness: 150,
-  damping: 22,
-} as const satisfies Transition;
+/**
+ * Sheets, drawers and the toasts that enter from an edge: the dialog's spring
+ * (v1's sheet had damping 22).
+ */
+export const SHEET_TRANSITION = DIALOG_TRANSITION;
 
 /** Animate UI's additions to an overlay or a modal's content. */
 export type ModalAnimationProps = {

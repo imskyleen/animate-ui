@@ -37,7 +37,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 - **The active tab's surface slides** to the new tab on a spring (stiffness 200, damping 25), like Animate UI v1's highlight: the new surface fades in as it slides from the previous one, which follows it and fades out 200ms later. The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
 - **The tabs' colors change over 500ms** (Tailwind's `ease-in-out`), as in v1, whatever transition your tabs set.
 - Clicking quickly through tabs retargets the slide smoothly.
-- **The incoming panel fades in from a 4px blur** over 500ms ease-in-out, while its height springs from the previous panel's to its own (stiffness 200, damping 30), like v1's tab contents. The panels share an element (the tabs root, usually), which remembers the selected panel's height. The outgoing panel leaves at once, so the two never overlap.
+- **The incoming panel fades in from a 4px blur** over 500ms ease-in-out, while its height springs from the previous panel's to its own, like v1's tab contents, on the spring of [Auto Height](/docs/primitives/animate-ui/auto-height) and Animate UI's [Tabs](/docs/primitives/animate-ui/tabs) (stiffness 300, damping 30). The panels share an element (the tabs root, usually), which remembers the selected panel's height. The outgoing panel leaves at once, so the two never overlap.
 - The selected panel fades in on mount (page load) too, as in v1.
 - Keyboard changes animate like clicks, as in v1: Base UI moves focus with the arrow keys and selects with Enter or Space (or on focus with `activateOnFocus`), and the surface slides and the panel fades in.
 - With `keepMounted`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
@@ -79,7 +79,7 @@ Every part takes exactly the props of [Base UI's Tabs](https://base-ui.com/react
         'Transition of the incoming panel: its fade from a blur, and its height (in `height`, or the whole transition when it has none).',
       type: 'Transition',
       default:
-        "{ duration: 0.5, ease: 'easeInOut', height: { type: 'spring', stiffness: 200, damping: 30 } }",
+        "{ duration: 0.5, ease: 'easeInOut', height: { type: 'spring', stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01 } }",
     },
   }}
 />

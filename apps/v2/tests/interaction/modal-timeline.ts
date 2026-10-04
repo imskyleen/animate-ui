@@ -1,5 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
+import { expectSpringPace, type Sample } from './spring-curves';
+
 // Frame-by-frame recording of the modal primitives (Dialog, Alert Dialog,
 // Sheet), sampled in the page on every animation frame so it holds up on a
 // busy machine, plus the assertions of Animate UI v1's modal motion:
@@ -9,8 +11,11 @@ import { expect, type Page } from '@playwright/test';
 //   blur(4px) and transparent, on a spring (stiffness 150, damping 25) that
 //   settles well after the overlay; it leaves the same way, still visible
 //   once the overlay is gone;
-// - sheet: slides from its edge by its own size and fades, on a spring
-//   (stiffness 150, damping 22).
+// - sheet: slides from its edge by its own size and fades, on the same
+//   spring.
+
+/** v1's dialog spring: sheets, drawers and edge toasts move on it too. */
+export const DIALOG_SPRING = { stiffness: 150, damping: 25 };
 
 export type ModalSample = {
   opacity: number;
@@ -225,7 +230,10 @@ export const SHEET_TRAVEL = {
   left: { axis: 'x', sign: -1 },
 } as const;
 
-/** v1's sheet entrance: from its edge, by its own size, fading in. */
+/**
+ * v1's sheet entrance: from its edge, by its own size, fading in, on the
+ * dialog's spring.
+ */
 export function expectSheetEntrance(
   frames: ModalFrame[],
   side: keyof typeof SHEET_TRAVEL,
@@ -242,6 +250,13 @@ export function expectSheetEntrance(
   )!;
   expect(midway.samples[name]!.opacity).toBeGreaterThan(0.2);
   expect(midway.samples[name]!.opacity).toBeLessThan(0.95);
+  // From a full size away to its edge: from 10% to 98% of the way in the
+  // time the spring takes.
+  expectSpringPace(
+    shown.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]),
+    DIALOG_SPRING,
+    { from: 1, to: 0, a: 0.9, b: 0.02 },
+  );
 }
 
 /** v1's sheet exit: back to its edge, fading out. */

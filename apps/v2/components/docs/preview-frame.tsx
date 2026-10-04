@@ -191,7 +191,7 @@ export function PreviewFrame({
           data-slot="preview-code"
           className="relative overflow-hidden rounded-lg bg-background"
         >
-          <div className="absolute top-1.5 right-1.5 z-2">
+          <div className="absolute top-3 right-3 z-2">
             <CopyButton getText={() => getPreText(codeRef.current)} />
           </div>
           <motion.div

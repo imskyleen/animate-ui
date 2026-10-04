@@ -31,9 +31,10 @@ import { Slot, type WithAsChild } from '../slot';
 // Animate UI's own tooltip: every tooltip of a provider shares one popup,
 // positioned with Floating UI. Moving from a trigger to the next one glides
 // the popup (a shared layout animation) instead of closing and reopening it.
-// The motion is Animate UI v1's: the popup grows from nothing and rises 15px
-// out of its trigger on a spring (stiffness 300, damping 35), and goes back
-// the same way when it closes.
+// The popup grows from nothing and rises 15px out of its trigger (Animate UI
+// v1's motion), and goes back the same way when it closes, on the spring of
+// the library tooltips and popovers (stiffness 300, damping 25), which
+// overshoots a little.
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
@@ -94,11 +95,14 @@ function getResolvedSide(placement: Side | `${Side}-${Align}`) {
 /** The popup comes out of its trigger: 15px from that side (v1). */
 const NUDGE = 15;
 
-/** v1's spring: the entrance, the exit and the glide between triggers. */
+/**
+ * The library tooltips' and popovers' spring: the entrance, the exit and the
+ * glide between triggers.
+ */
 const TOOLTIP_TRANSITION = {
   type: 'spring',
   stiffness: 300,
-  damping: 35,
+  damping: 25,
 } as const satisfies Transition;
 
 function initialFromSide(side: Side): Partial<Record<'x' | 'y', number>> {

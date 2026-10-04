@@ -26,10 +26,11 @@ const DEFAULT_TRANSITION: Transition = {
   stiffness: 300,
   damping: 17,
 };
+/** Animate UI's Tooltip spring (the library tooltips' and popovers'). */
 const DEFAULT_TOOLTIP_TRANSITION: Transition = {
   type: 'spring',
   stiffness: 300,
-  damping: 35,
+  damping: 25,
 };
 
 type AvatarProps = Omit<HTMLMotionProps<'div'>, 'translate'> & {

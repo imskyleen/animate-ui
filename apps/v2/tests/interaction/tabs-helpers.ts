@@ -1,9 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { expectSpringPace, type Sample } from './spring-curves';
+
 // Shared by the Radix UI, Base UI and React Aria tabs specs.
 
 export const INDICATOR = '[data-slot="tabs-indicator"]';
 export const PANEL = '[role="tabpanel"]';
+
+/** The panels' height: the spring of Auto Height and Animate UI's Tabs. */
+const HEIGHT_SPRING = { stiffness: 300, damping: 30, restDelta: 0.01 };
 
 /**
  * Waits until React has hydrated the tabs (in dev, `networkidle` can come
@@ -277,6 +282,18 @@ export function describeTabsDemo(
       expect(panels.some((p) => p.o > 0 && p.o < 1 && p.blur > 0)).toBe(true);
       expect(panels.some((p) => p.h > before + 1 && p.h < after - 1)).toBe(
         true,
+      );
+      // On the height spring: from 10% to 90% of the way in the time it
+      // takes.
+      expectSpringPace(
+        frames.flatMap((f): Sample[] => (f.panel ? [[f.t, f.panel.h]] : [])),
+        HEIGHT_SPRING,
+        {
+          from: before,
+          to: after,
+          a: before + (after - before) * 0.1,
+          b: before + (after - before) * 0.9,
+        },
       );
       // Never taller than its own height (no flash of the full panel).
       const entered = panels.filter((p) => p.o < 0.5);

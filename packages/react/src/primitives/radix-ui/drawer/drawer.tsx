@@ -43,11 +43,11 @@ import {
 //
 // Its motion is Animate UI v1's Sheet (v1 had no drawer): every move of the
 // position (opening, closing, snapping, settling back after a drag) runs on
-// v1's sheet spring (stiffness 150, damping 22), and the drawer fades in and
-// out with it as v1's sheet did (opacity 0 ↔ 1, never during a drag). The
-// overlay fades and un-blurs like v1's (opacity 0 → 1, blur(4px) → blur(0px),
-// 200ms easeInOut); once a drag has moved the drawer, or with snap points, it
-// also follows the position, like Vaul's.
+// the sheet spring (stiffness 150, damping 25, the dialog's), and the drawer
+// fades in and out with it as v1's sheet did (opacity 0 ↔ 1, never during a
+// drag). The overlay fades and un-blurs like v1's (opacity 0 → 1, blur(4px)
+// → blur(0px), 200ms easeInOut); once a drag has moved the drawer, or with
+// snap points, it also follows the position, like Vaul's.
 
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
@@ -196,7 +196,7 @@ type ContentAnimationProps = {
   /**
    * Opening (slide and fade in), moving between snap points and settling back
    * after a drag that doesn't dismiss.
-   * @default { type: 'spring', stiffness: 150, damping: 22 }
+   * @default { type: 'spring', stiffness: 150, damping: 25 }
    */
   transition?: Transition;
   /**
@@ -403,7 +403,7 @@ function DrawerRoot({
   autoFocus = false,
 }: DialogProps) {
   const reduce = useShouldReduceMotion();
-  // v1's sheet spring, for the nested step back and the snap point reset.
+  // The sheet spring, for the nested step back and the snap point reset.
   const sheet = useTempoTransition<Transition>(SHEET_TRANSITION);
   // The drawer this one is nested in, if any.
   const parent = React.use(DrawerContext);
@@ -849,7 +849,7 @@ function ContentMotion({
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
   const reduce = useShouldReduceMotion();
-  // v1's sheet spring, both ways unless `exitTransition` is given.
+  // The sheet spring, both ways unless `exitTransition` is given.
   const enter = useTempoTransition(transition ?? SHEET_TRANSITION);
   const exit = useTempoTransition(
     exitTransition ?? transition ?? SHEET_TRANSITION,

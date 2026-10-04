@@ -214,7 +214,7 @@ export function CodeTabs({
         className,
       )}
     >
-      <div className="flex h-10 items-center justify-between gap-2 pr-2.5 pl-4">
+      <div className="flex h-10 items-center justify-between gap-2 pr-1.5 pl-4">
         <TabsHighlight
           className="absolute inset-0 z-0 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-t-full after:bg-foreground after:content-['']"
           transition={ready ? undefined : INSTANT}

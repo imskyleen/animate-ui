@@ -37,9 +37,9 @@ type OverlayAnimationProps = {
 /** Animate UI's additions to `Dialog.Content`. */
 type ContentAnimationProps = {
   /**
-   * Transition of the opening: `{ type: 'spring', stiffness: 150, damping: 25 }`
-   * by default, or `{ type: 'spring', stiffness: 150, damping: 22 }` when the
-   * content has `data-side`.
+   * Transition of the opening, a sheet's slide from its `data-side` edge
+   * included.
+   * @default { type: 'spring', stiffness: 150, damping: 25 }
    */
   transition?: ModalAnimationProps['transition'];
   /** Transition of the closing. Defaults to `transition`. */

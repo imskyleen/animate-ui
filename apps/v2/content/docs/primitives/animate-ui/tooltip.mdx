@@ -57,9 +57,9 @@ Unlike the library tooltips, this one is Animate UI's own: no Radix UI, Base UI 
 
 ## Animation
 
-The motion of Animate UI v1's Tooltip, value for value:
+The motion of Animate UI v1's Tooltip, on the spring of the library tooltips and popovers:
 
-- The popup grows from nothing and rises 15px out of its trigger (from the side it's placed on) as it fades in, on a critically damped spring (stiffness 300, damping 35), and goes back the same way when it closes.
+- The popup grows from nothing and rises 15px out of its trigger (from the side it's placed on) as it fades in, on a spring (stiffness 300, damping 25) that takes it about 4% past full size before it settles, and goes back the same way when it closes.
 - Hovering the next trigger while a tooltip is showing doesn't close it: the popup and its arrow glide to the new trigger and resize to the new content (a shared layout animation), on the same spring. Right after a tooltip closes (within `closeDelay`), the next one opens without the `openDelay`.
 - `<AnimateUIProvider tempo>` paces the spring.
 - Under reduced motion, the popup only fades, and moving between triggers jumps.
@@ -97,7 +97,7 @@ Holds the shared popup. Every `Tooltip` must be inside one.
       description:
         'Transition of the entrance, of the exit and of the move between triggers.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 35 }",
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
     },
   }}
 />

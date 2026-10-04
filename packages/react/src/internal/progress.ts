@@ -11,8 +11,9 @@ import {
 // Shared by the Radix UI, Base UI and React Aria progress bars, which move
 // like Animate UI v1's: the indicator springs to a new value (stiffness 100,
 // damping 30, no bounce), as v1's Radix `ProgressIndicator` (its `x`) and
-// Base UI `ProgressIndicator` (its `width`) did; v1's Base UI `ProgressValue`
-// counted to the new value on a spring (stiffness 80, damping 20).
+// Base UI `ProgressIndicator` (its `width`) did. The Base UI `ProgressValue`
+// counts to the new value like v1's (a `CountingNumber`), on the spring of
+// Animate UI's Counting Number (stiffness 90, damping 50).
 
 /** v1's `ProgressIndicator` transition. */
 const PROGRESS_TRANSITION: Transition = {
@@ -21,11 +22,11 @@ const PROGRESS_TRANSITION: Transition = {
   damping: 30,
 };
 
-/** v1's Base UI `ProgressValue` (a `CountingNumber`) spring. */
+/** The Base UI `ProgressValue` count: Counting Number's spring. */
 const VALUE_TRANSITION: Transition = {
   type: 'spring',
-  stiffness: 80,
-  damping: 20,
+  stiffness: 90,
+  damping: 50,
 };
 
 /**

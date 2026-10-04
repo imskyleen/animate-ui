@@ -33,10 +33,10 @@ import {
 // curve Motion itself would use, which `tempo` reaches:
 //
 // - Popup: v1's sheet. It rests at the swipe offset, starts and ends one full
-//   size off its edge and transparent, and slides and fades on v1's sheet
-//   spring (stiffness 150, damping 22) both ways; a swipe dismissal's exit is
-//   scaled by the release velocity, and nothing transitions while the finger
-//   (or a nested drawer) drags it.
+//   size off its edge and transparent, and slides and fades on the sheet
+//   spring (stiffness 150, damping 25, the dialog's) both ways; a swipe
+//   dismissal's exit is scaled by the release velocity, and nothing
+//   transitions while the finger (or a nested drawer) drags it.
 // - Backdrop: v1's overlay. It fades and un-blurs (opacity 0 → 1, blur(4px)
 //   → blur(0px)) in 200ms, easeInOut, both ways, and follows the swipe.
 // - Reduced motion: it fades in place; a swipe dismissal still leaves along
@@ -105,7 +105,7 @@ type PopupAnimationProps = {
    * Opening (slide and fade in), snapping and easing back after a swipe that
    * does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a
    * tween keeps its `duration` and cubic-bezier or named `ease`.
-   * @default { type: 'spring', stiffness: 150, damping: 22 }
+   * @default { type: 'spring', stiffness: 150, damping: 25 }
    */
   transition?: Transition;
   /**

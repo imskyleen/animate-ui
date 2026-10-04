@@ -19,8 +19,9 @@ import {
 
 // Same API as Base UI's Progress, animated like Animate UI v1's progress: the
 // Indicator's width (Base UI sizes it with a percentage width) springs to a
-// new value (stiffness 100, damping 30), and the Value counts to it (stiffness
-// 80, damping 20), from 0 when it appears, as v1's `CountingNumber` did.
+// new value (stiffness 100, damping 30), and the Value counts to it on
+// Counting Number's spring (stiffness 90, damping 50), from 0 when it
+// appears, as v1's `CountingNumber` did.
 
 /** Animate UI's additions to `Progress.Indicator`. */
 type IndicatorAnimationProps = {
@@ -35,7 +36,7 @@ type IndicatorAnimationProps = {
 type ValueAnimationProps = {
   /**
    * Transition of the number counting to a new value. Defaults to a spring
-   * (stiffness 80, damping 20).
+   * (stiffness 90, damping 50).
    */
   transition?: Transition;
 };

@@ -25,15 +25,8 @@ type ListAnimationProps = {
 
 /** Animate UI's additions to `Tabs.Panel`. */
 type PanelAnimationProps = {
-  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 200, damping 30). */
+  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 300, damping 30). */
   transition?: Transition;
-};
-
-/** v1's TabsPanels spring: the panels' height. */
-const HEIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 30,
 };
 
 // When the user renders Base UI's own `Tabs.Indicator`, the list doesn't
@@ -164,10 +157,7 @@ function PanelMotion({
     ref: localRef,
     initial,
     animate,
-  } = usePanelMotion(active, {
-    transition: panelTransition,
-    heightTransition: HEIGHT_TRANSITION,
-  });
+  } = usePanelMotion(active, { transition: panelTransition });
   useFinishAnimationsWhen(localRef, !active);
 
   return (

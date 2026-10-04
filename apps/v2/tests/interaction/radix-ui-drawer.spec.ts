@@ -1,9 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { gotoHydrated } from './disclosure-timeline';
+import { DIALOG_SPRING } from './modal-timeline';
+import { expectSpringPace, type Sample } from './spring-curves';
 
 // The drawer moves like Animate UI v1's Sheet: every move of its position on
-// v1's sheet spring (stiffness 150, damping 22), fading in and out with it
+// the dialog's spring (stiffness 150, damping 25), fading in and out with it
 // when it opens and closes; its overlay fades and un-blurs in 200ms
 // (easeInOut), and follows the drag like Vaul's.
 
@@ -184,6 +186,14 @@ test.describe('radix-ui drawer demo', () => {
     const overlayIn = frames.find((frame) => frame.overlay >= 0.99)!;
     expect(overlayIn.share).toBeGreaterThan(0.05);
     expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
+    // On the dialog's spring: from 10% to 98% of the way in the time it
+    // takes.
+    const start = frames[0]!.share;
+    expectSpringPace(
+      frames.map((frame): Sample => [frame.t, frame.share]),
+      DIALOG_SPRING,
+      { from: start, to: 0, a: start * 0.9, b: start * 0.02 },
+    );
 
     const content = page.locator(CONTENT);
     await expect(content).toHaveAttribute(

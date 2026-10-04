@@ -32,15 +32,8 @@ type ListAnimationProps = {
 };
 
 type PanelAnimationProps = {
-  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 200, damping 25). */
+  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 300, damping 30). */
   transition?: Transition;
-};
-
-/** v1's Headless UI TabPanels spring: the panels' height. */
-const HEIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
 };
 
 type TabListProps<T> = AriaTabListProps<T> & ListAnimationProps;
@@ -134,10 +127,7 @@ function PanelMotion({
     ref: localRef,
     initial,
     animate,
-  } = usePanelMotion(active, {
-    transition: panelTransition,
-    heightTransition: HEIGHT_TRANSITION,
-  });
+  } = usePanelMotion(active, { transition: panelTransition });
   // React Aria waits for running animations before removing an exiting
   // panel: finish the fade so the old panel leaves at once.
   useFinishAnimationsWhen(localRef, isExiting);
