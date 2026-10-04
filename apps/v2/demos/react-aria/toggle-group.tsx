@@ -107,13 +107,13 @@ export default function ToggleGroupDemo() {
       aria-label="Text formatting"
     >
       <ToggleGroupItem id="bold" aria-label="Bold">
-        <HugeiconsIcon icon={TextBoldIcon} />
+        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
       </ToggleGroupItem>
       <ToggleGroupItem id="italic" aria-label="Italic">
-        <HugeiconsIcon icon={TextItalicIcon} />
+        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
       </ToggleGroupItem>
       <ToggleGroupItem id="underline" aria-label="Underline">
-        <HugeiconsIcon icon={TextUnderlineIcon} />
+        <HugeiconsIcon icon={TextUnderlineIcon} strokeWidth={2} />
       </ToggleGroupItem>
     </ToggleGroup>
   )

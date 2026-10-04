@@ -127,7 +127,7 @@ function ToastClose({
       {...props}
     >
       {children ?? (
-        <HugeiconsIcon icon={Cancel01Icon}
+        <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2}
           aria-hidden="true"
         />
       )}
@@ -140,7 +140,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "success") {
     icon = (
-      <HugeiconsIcon icon={CheckmarkCircle02Icon}
+      <HugeiconsIcon icon={CheckmarkCircle02Icon} strokeWidth={2}
         aria-hidden="true"
       />
     )
@@ -148,7 +148,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "info") {
     icon = (
-      <HugeiconsIcon icon={InformationCircleIcon}
+      <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2}
         aria-hidden="true"
       />
     )
@@ -156,7 +156,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "warning") {
     icon = (
-      <HugeiconsIcon icon={Alert02Icon}
+      <HugeiconsIcon icon={Alert02Icon} strokeWidth={2}
         aria-hidden="true"
       />
     )
@@ -164,7 +164,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "error") {
     icon = (
-      <HugeiconsIcon icon={MultiplicationSignCircleIcon}
+      <HugeiconsIcon icon={MultiplicationSignCircleIcon} strokeWidth={2}
         className="text-destructive"
         aria-hidden="true"
       />
@@ -173,7 +173,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "loading") {
     icon = (
-      <HugeiconsIcon icon={Loading03Icon}
+      <HugeiconsIcon icon={Loading03Icon} strokeWidth={2}
         className="animate-spin"
         aria-hidden="true"
       />

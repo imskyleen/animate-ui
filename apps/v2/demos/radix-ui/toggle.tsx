@@ -50,13 +50,13 @@ export default function ToggleDemo() {
   return (
     <div className="flex items-center gap-2">
       <Toggle aria-label="Toggle bold" defaultPressed>
-        <HugeiconsIcon icon={TextBoldIcon} />
+        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
       </Toggle>
       <Toggle aria-label="Toggle italic" variant="outline">
-        <HugeiconsIcon icon={TextItalicIcon} />
+        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
       </Toggle>
       <Toggle aria-label="Toggle bookmark" variant="outline">
-        <HugeiconsIcon icon={Bookmark01Icon} data-icon="inline-start" />
+        <HugeiconsIcon icon={Bookmark01Icon} strokeWidth={2} data-icon="inline-start" />
         Bookmark
       </Toggle>
     </div>

@@ -13,7 +13,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 function Star(
   props: Omit<React.ComponentProps<typeof HugeiconsIcon>, "icon">
 ) {
-  return <HugeiconsIcon icon={StarIcon} {...props} />
+  return <HugeiconsIcon icon={StarIcon} strokeWidth={2} {...props} />
 }
 
 export default function GithubStarsDemo() {

@@ -94,7 +94,7 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={UnfoldMoreIcon}
+      <HugeiconsIcon icon={UnfoldMoreIcon} strokeWidth={2}
         className="text-muted-foreground size-4 pointer-events-none"
       />
     </ButtonPrimitive>
@@ -189,7 +189,7 @@ function SelectInput({ className, ...props }: SearchFieldProps) {
           className="[&::-webkit-search-cancel-button]:hidden"
         />
         <InputGroupAddon>
-          <HugeiconsIcon icon={SearchIcon}
+          <HugeiconsIcon icon={SearchIcon} strokeWidth={2}
             className="size-4 shrink-0 opacity-50"
           />
         </InputGroupAddon>
@@ -233,7 +233,7 @@ function SelectItem({
           </span>
           <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
             {isSelected ? (
-              <HugeiconsIcon icon={Tick02Icon}
+              <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
                 className="pointer-events-none"
               />
             ) : null}

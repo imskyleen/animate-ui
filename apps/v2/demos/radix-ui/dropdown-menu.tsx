@@ -112,7 +112,7 @@ function DropdownMenuCheckboxItem({
         data-slot="dropdown-menu-checkbox-item-indicator"
       >
         <DropdownMenuPrimitive.ItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon}
+          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
           />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
@@ -155,7 +155,7 @@ function DropdownMenuRadioItem({
         data-slot="dropdown-menu-radio-item-indicator"
       >
         <DropdownMenuPrimitive.ItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon}
+          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
           />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
@@ -232,7 +232,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={ArrowRight01Icon}
+      <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2}
         className="ml-auto"
       />
     </DropdownMenuPrimitive.SubTrigger>

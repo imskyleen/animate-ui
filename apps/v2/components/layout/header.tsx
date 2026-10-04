@@ -45,7 +45,7 @@ function VersionMenu() {
     <Popover>
       <PopoverTrigger className="inline-flex h-6 items-center gap-1 rounded-md bg-accent px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
         v2.0
-        <HugeiconsIcon icon={ArrowDown01Icon} size={12} />
+        <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} size={12} />
       </PopoverTrigger>
       <PopoverContent align="end" className="flex w-40 flex-col p-1 text-sm">
         <span className="rounded-sm bg-accent px-2 py-1.5 font-medium">
@@ -74,7 +74,7 @@ function SearchButton() {
       <span>Search...</span>
       <span className="flex items-center gap-1">
         <kbd className="flex size-5 items-center justify-center rounded-[4px] border bg-background">
-          <HugeiconsIcon icon={CommandIcon} size={10} />
+          <HugeiconsIcon icon={CommandIcon} strokeWidth={2} size={10} />
         </kbd>
         <kbd className="flex size-5 items-center justify-center rounded-[4px] border bg-background text-[0.625rem] leading-none">
           K
@@ -95,9 +95,15 @@ export function ThemeToggle({ className }: { className?: string }) {
       className={cn(iconButton, className)}
     >
       {/* Both icons render; CSS shows the right one, so SSR matches. */}
-      <HugeiconsIcon icon={SunMediumIcon} size={18} className="dark:hidden" />
+      <HugeiconsIcon
+        icon={SunMediumIcon}
+        strokeWidth={2}
+        size={18}
+        className="dark:hidden"
+      />
       <HugeiconsIcon
         icon={Moon02Icon}
+        strokeWidth={2}
         size={18}
         className="hidden dark:block"
       />
@@ -114,7 +120,7 @@ export function GitHubLink({ className }: { className?: string }) {
       aria-label="GitHub"
       className={cn(iconButton, className)}
     >
-      <HugeiconsIcon icon={GithubIcon} size={18} />
+      <HugeiconsIcon icon={GithubIcon} strokeWidth={2} size={18} />
     </a>
   );
 }
@@ -191,7 +197,7 @@ export function Header(props: ComponentProps<'header'>) {
           onClick={() => setOpen(true)}
           className={cn(iconButton, 'md:hidden')}
         >
-          <HugeiconsIcon icon={Menu01Icon} size={20} />
+          <HugeiconsIcon icon={Menu01Icon} strokeWidth={2} size={20} />
         </button>
       }
     />

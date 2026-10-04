@@ -40,7 +40,7 @@ export default function ThemeTogglerDemo() {
           aria-label={`Theme: ${effective}. Switch to ${NEXT[effective]}`}
           onClick={() => toggleTheme(NEXT[effective])}
         >
-          <HugeiconsIcon icon={ICONS[effective]} />
+          <HugeiconsIcon icon={ICONS[effective]} strokeWidth={2} />
         </Button>
       )}
     </ThemeToggler>

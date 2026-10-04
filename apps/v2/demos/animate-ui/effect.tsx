@@ -27,7 +27,7 @@ export default function EffectDemo() {
         </Effects>
       </div>
       <Button variant="outline" size="sm" onClick={() => setKey((k) => k + 1)}>
-        <HugeiconsIcon icon={RepeatIcon} />
+        <HugeiconsIcon icon={RepeatIcon} strokeWidth={2} />
         Replay
       </Button>
     </div>

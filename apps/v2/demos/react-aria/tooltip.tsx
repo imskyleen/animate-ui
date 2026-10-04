@@ -98,7 +98,7 @@ export default function TooltipDemo() {
       {TOOLS.map((tool) => (
         <TooltipTrigger key={tool.label}>
           <Button variant="ghost" size="icon" aria-label={tool.label}>
-            <HugeiconsIcon icon={tool.icon} />
+            <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
           </Button>
           <Tooltip>
             {tool.label}

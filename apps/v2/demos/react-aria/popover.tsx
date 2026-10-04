@@ -103,7 +103,7 @@ export default function PopoverDemo() {
         </PopoverHeader>
         <div className="flex items-center gap-2">
           <div className="bg-muted text-muted-foreground flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg px-2.5 text-sm">
-            <HugeiconsIcon icon={Link01Icon} className="size-4 shrink-0" />
+            <HugeiconsIcon icon={Link01Icon} strokeWidth={2} className="size-4 shrink-0" />
             <span className="truncate">animate-ui.com/d/q3-roadmap</span>
           </div>
           <Button className={buttonVariants({ size: "sm" })}>Copy link</Button>

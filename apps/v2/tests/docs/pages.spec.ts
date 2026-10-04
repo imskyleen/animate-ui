@@ -96,3 +96,38 @@ test.describe('primitive page', () => {
     await expect(link).toHaveAttribute('data-active', 'true');
   });
 });
+
+test('the sidebar groups primitives into sections', async ({ page }) => {
+  await page.goto('/docs/primitives/animate-ui/cursor');
+  const section = (title: string) =>
+    page
+      .locator('#nd-sidebar > * > div')
+      .filter({
+        has: page.locator('p', { hasText: new RegExp(`^${title}$`) }),
+      });
+  const titles = await page.locator('#nd-sidebar p').allTextContents();
+  expect(titles).toEqual([
+    'Guide',
+    'Components',
+    'Animate UI',
+    'Buttons',
+    'Texts',
+    'Effects',
+  ]);
+  // Primitives with a library page, Animate UI's Tabs and Tooltip included.
+  await expect(
+    section('Components').getByRole('link', { name: 'Tooltip' }),
+  ).toBeVisible();
+  await expect(
+    section('Animate UI').getByRole('link', { name: 'Cursor' }),
+  ).toHaveAttribute('data-active', 'true');
+  await expect(
+    section('Buttons').getByRole('link', { name: 'Ripple Button' }),
+  ).toBeVisible();
+  await expect(
+    section('Texts').getByRole('link', { name: 'Typing Text' }),
+  ).toBeVisible();
+  await expect(
+    section('Effects').getByRole('link', { name: 'Shine' }),
+  ).toBeVisible();
+});

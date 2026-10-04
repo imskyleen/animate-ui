@@ -159,7 +159,7 @@ export default function DrawerDemo() {
               onClick={() => setGoal((value) => Math.max(200, value - STEP))}
               disabled={goal <= 200}
             >
-              <HugeiconsIcon icon={MinusSignIcon} />
+              <HugeiconsIcon icon={MinusSignIcon} strokeWidth={2} />
               <span className="sr-only">Decrease</span>
             </Button>
             <div className="w-28 text-center">
@@ -177,7 +177,7 @@ export default function DrawerDemo() {
               onClick={() => setGoal((value) => Math.min(600, value + STEP))}
               disabled={goal >= 600}
             >
-              <HugeiconsIcon icon={PlusSignIcon} />
+              <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
               <span className="sr-only">Increase</span>
             </Button>
           </div>

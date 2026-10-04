@@ -26,7 +26,7 @@ export default function ParticlesDemo() {
         }}
       >
         <HugeiconsIcon
-          icon={FavouriteIcon}
+          icon={FavouriteIcon} strokeWidth={2}
           className={liked ? "fill-red-500 text-red-500" : undefined}
         />
         {liked ? "Liked" : "Like"}

@@ -34,7 +34,7 @@ function Row({ item }: { item: Item }) {
         aria-label={item.pinned ? `Unpin ${item.name}` : `Pin ${item.name}`}
         className="-mr-2 flex size-8 items-center justify-center rounded-lg bg-background text-muted-foreground"
       >
-        <HugeiconsIcon icon={item.pinned ? PinOffIcon : PinIcon} size={16} />
+        <HugeiconsIcon icon={item.pinned ? PinOffIcon : PinIcon} strokeWidth={2} size={16} />
       </PinnedListTrigger>
     </PinnedListItem>
   )

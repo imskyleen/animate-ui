@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   GithubStars,
@@ -6,14 +6,12 @@ import {
   GithubStarsLogo,
   GithubStarsNumber,
   GithubStarsParticles,
-} from "@animate-ui/react/primitives/github-stars"
-import { StarIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from '@animate-ui/react/primitives/github-stars';
+import { StarIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 
-function Star(
-  props: Omit<React.ComponentProps<typeof HugeiconsIcon>, "icon">
-) {
-  return <HugeiconsIcon icon={StarIcon} {...props} />
+function Star(props: Omit<React.ComponentProps<typeof HugeiconsIcon>, 'icon'>) {
+  return <HugeiconsIcon icon={StarIcon} strokeWidth={2} {...props} />;
 }
 
 // The demo without a fixed value: it fetches the count (mocked in tests).
@@ -36,5 +34,5 @@ export default function GithubStarsDemo() {
         </GithubStarsParticles>
       </div>
     </GithubStars>
-  )
+  );
 }

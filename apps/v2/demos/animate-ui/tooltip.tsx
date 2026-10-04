@@ -35,7 +35,7 @@ export default function TooltipDemo() {
           <Tooltip key={tool.label} sideOffset={6}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" aria-label={tool.label}>
-                <HugeiconsIcon icon={tool.icon} />
+                <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
               </Button>
             </TooltipTrigger>
             <TooltipContent className="rounded-md bg-foreground px-3 py-1.5 text-xs text-background">

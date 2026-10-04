@@ -143,7 +143,7 @@ function DropdownMenuItem({
                 }
               >
                 {isSelected ? (
-                  <HugeiconsIcon icon={Tick02Icon}
+                  <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
                   />
                 ) : null}
               </span>
@@ -184,7 +184,7 @@ function DropdownMenuSubTrigger({
       {composeRenderProps(children, (children) => (
         <>
           {children}
-          <HugeiconsIcon icon={ArrowRight01Icon}
+          <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2}
             className="ml-auto"
           />
         </>

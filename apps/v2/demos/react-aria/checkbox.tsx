@@ -30,7 +30,7 @@ function Checkbox({ className, children, ...props }: CheckboxProps) {
               className="[&>svg]:size-3.5 grid place-content-center text-current transition-none"
             >
               {(isSelected || isIndeterminate) && (
-                <HugeiconsIcon icon={Tick02Icon}
+                <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
                 />
               )}
             </span>

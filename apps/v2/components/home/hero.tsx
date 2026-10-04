@@ -37,6 +37,7 @@ function CopyCommand() {
       <span className="truncate">{COMMAND}</span>
       <HugeiconsIcon
         icon={copied ? Tick02Icon : Copy01Icon}
+        strokeWidth={2}
         size={16}
         className="shrink-0 text-muted-foreground group-hover:text-foreground"
       />

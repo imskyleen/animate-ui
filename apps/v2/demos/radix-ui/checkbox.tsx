@@ -25,7 +25,7 @@ function Checkbox({
         data-slot="checkbox-indicator"
         className="[&>svg]:size-3.5 grid place-content-center text-current transition-none"
       >
-        <HugeiconsIcon icon={Tick02Icon}
+        <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
         />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

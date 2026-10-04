@@ -76,7 +76,7 @@ export default function TooltipDemo() {
           <Tooltip key={tool.label}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" aria-label={tool.label}>
-                <HugeiconsIcon icon={tool.icon} />
+                <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>

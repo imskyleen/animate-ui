@@ -59,7 +59,11 @@ export function CopyPage({ markdownUrl }: { markdownUrl: string }) {
         onClick={copy}
         className={cn(button, 'rounded-l-md pr-3 pl-2.5')}
       >
-        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} size={14} />
+        <HugeiconsIcon
+          icon={copied ? Tick02Icon : Copy01Icon}
+          strokeWidth={2}
+          size={14}
+        />
         Copy page
       </button>
       <Popover>
@@ -67,7 +71,7 @@ export function CopyPage({ markdownUrl }: { markdownUrl: string }) {
           aria-label="More page actions"
           className={cn(button, 'w-8 rounded-r-md border-l border-background')}
         >
-          <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
+          <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} size={14} />
         </PopoverTrigger>
         <PopoverContent align="end" className="flex w-48 flex-col p-1 text-sm">
           {items.map((item) => (
@@ -78,7 +82,7 @@ export function CopyPage({ markdownUrl }: { markdownUrl: string }) {
               rel="noreferrer noopener"
               className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
-              <HugeiconsIcon icon={item.icon} size={14} />
+              <HugeiconsIcon icon={item.icon} strokeWidth={2} size={14} />
               {item.title}
             </a>
           ))}
@@ -105,11 +109,11 @@ export function PageNavigation({
         title={target.name}
         className={cn(button, 'w-8 rounded-md')}
       >
-        <HugeiconsIcon icon={icon} size={14} />
+        <HugeiconsIcon icon={icon} strokeWidth={2} size={14} />
       </Link>
     ) : (
       <span className={cn(button, 'w-8 rounded-md opacity-40')} aria-hidden>
-        <HugeiconsIcon icon={icon} size={14} />
+        <HugeiconsIcon icon={icon} strokeWidth={2} size={14} />
       </span>
     );
 

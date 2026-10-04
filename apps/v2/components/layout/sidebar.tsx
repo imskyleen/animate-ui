@@ -3,7 +3,11 @@
 import {
   AiElementsIcon,
   BookOpen02Icon,
+  Cursor01Icon,
+  MagicWand01Icon,
   Menu01Icon,
+  SparklesIcon,
+  TextFontIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import { cn } from 'cn';
@@ -22,12 +26,28 @@ import { useMemo, type ReactNode } from 'react';
 
 import { LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { usePreferredLibrary } from '@/lib/preferred-library';
+import {
+  primitiveSection,
+  type PrimitiveSection,
+} from '@/lib/primitive-sections';
 
 import { GitHubLink, NAV_ITEMS, ThemeToggle } from './header';
 
 type Link = { name: ReactNode; url: string; active: boolean };
 
 const PRIMITIVES_URL = '/docs/primitives';
+
+const PRIMITIVE_SECTIONS: {
+  id: PrimitiveSection;
+  title: string;
+  icon: IconSvgElement;
+}[] = [
+  { id: 'components', title: 'Components', icon: AiElementsIcon },
+  { id: 'animate-ui', title: 'Animate UI', icon: SparklesIcon },
+  { id: 'buttons', title: 'Buttons', icon: Cursor01Icon },
+  { id: 'texts', title: 'Texts', icon: TextFontIcon },
+  { id: 'effects', title: 'Effects', icon: MagicWand01Icon },
+];
 
 /** One entry per primitive, with the URL of each library that has it. */
 type PrimitiveEntry = {
@@ -62,7 +82,7 @@ function SectionTitle({
   return (
     <p className="mb-2 flex items-center gap-2 px-2">
       <span className="relative flex size-5 items-center justify-center rounded-[5px] bg-border text-muted-foreground">
-        <HugeiconsIcon icon={icon} size={12} />
+        <HugeiconsIcon icon={icon} strokeWidth={2} size={12} />
         <span className="absolute top-full left-1/2 h-2 w-px translate-x-[calc(-50%-0.5px)] bg-border" />
       </span>
       <span className="text-[13px] text-neutral-500">{children}</span>
@@ -138,15 +158,21 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
     return { guide, primitives: collectPrimitives(primitivesFolder) };
   }, [root]);
 
-  const primitiveLinks = primitives.map((entry) => {
+  const sections = new Map<PrimitiveSection, Link[]>();
+  for (const entry of primitives) {
     const libraries = LIBRARIES.filter((library) => entry.urls[library.id]);
     const library = libraries.find((l) => l.id === preferred) ?? libraries[0]!;
-    return {
-      name: entry.name,
-      url: entry.urls[library.id]!,
-      active: Object.values(entry.urls).includes(pathname),
-    };
-  });
+    const onlyAnimateUI = libraries.every((l) => l.id === 'animate-ui');
+    const section = primitiveSection(entry.slug, onlyAnimateUI);
+    sections.set(section, [
+      ...(sections.get(section) ?? []),
+      {
+        name: entry.name,
+        url: entry.urls[library.id]!,
+        active: Object.values(entry.urls).includes(pathname),
+      },
+    ]);
+  }
 
   return (
     <SidebarViewport className="px-2 pb-4 max-md:pt-4 md:pb-14">
@@ -169,11 +195,14 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
           active: pathname === link.url,
         }))}
       />
-      <Section
-        title="Primitives"
-        icon={AiElementsIcon}
-        links={primitiveLinks}
-      />
+      {PRIMITIVE_SECTIONS.map((section) => (
+        <Section
+          key={section.id}
+          title={section.title}
+          icon={section.icon}
+          links={sections.get(section.id) ?? []}
+        />
+      ))}
     </SidebarViewport>
   );
 }

@@ -50,7 +50,7 @@ export default function CodeBlockDemo() {
         aria-label="Replay"
         onClick={() => setKey((value) => value + 1)}
       >
-        <HugeiconsIcon icon={RefreshIcon} />
+        <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} />
       </Button>
     </div>
   )

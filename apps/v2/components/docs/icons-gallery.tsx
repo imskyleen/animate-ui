@@ -127,7 +127,7 @@ function IconDetail({
           onClick={() => setRun((r) => r + 1)}
           className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
-          <HugeiconsIcon icon={RefreshIcon} size={14} />
+          <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} size={14} />
         </button>
       </div>
 
@@ -145,7 +145,7 @@ function IconDetail({
             onClick={onClose}
             className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            <HugeiconsIcon icon={Cancel01Icon} size={14} />
+            <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} size={14} />
           </button>
         </div>
 
@@ -204,6 +204,7 @@ export function IconsGallery() {
       <label className="mb-4 flex h-10 items-center gap-2 rounded-lg border bg-background px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
         <HugeiconsIcon
           icon={Search01Icon}
+          strokeWidth={2}
           size={16}
           className="text-muted-foreground"
         />

@@ -63,7 +63,7 @@ export default function HoverCardDemo() {
               Animated drop-in primitives for Radix UI, Base UI and React Aria.
             </p>
             <p className="text-muted-foreground flex items-center gap-1.5 pt-1 text-xs">
-              <HugeiconsIcon icon={Calendar03Icon} className="size-3.5" />
+              <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} className="size-3.5" />
               Open source since 2024
             </p>
           </div>

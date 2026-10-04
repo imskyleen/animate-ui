@@ -18,7 +18,7 @@ export default function SlidingNumberDemo() {
         aria-label="Decrease"
         onClick={() => setValue((n) => n - 25)}
       >
-        <HugeiconsIcon icon={MinusSignIcon} />
+        <HugeiconsIcon icon={MinusSignIcon} strokeWidth={2} />
       </Button>
       <SlidingNumber
         number={value}
@@ -31,7 +31,7 @@ export default function SlidingNumberDemo() {
         aria-label="Increase"
         onClick={() => setValue((n) => n + 25)}
       >
-        <HugeiconsIcon icon={PlusSignIcon} />
+        <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
       </Button>
     </div>
   )

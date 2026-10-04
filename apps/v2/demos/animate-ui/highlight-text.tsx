@@ -18,7 +18,7 @@ export default function HighlightTextDemo() {
         text="Highlight Text"
       />
       <Button variant="outline" size="sm" onClick={() => setRun((n) => n + 1)}>
-        <HugeiconsIcon icon={RefreshIcon} data-icon="inline-start" />
+        <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} data-icon="inline-start" />
         Replay
       </Button>
     </div>

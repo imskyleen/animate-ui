@@ -121,7 +121,7 @@ function ContextMenuSubTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={ArrowRight01Icon}
+      <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2}
         className="ml-auto"
       />
     </ContextMenuPrimitive.SubTrigger>
@@ -166,7 +166,7 @@ function ContextMenuCheckboxItem({
     >
       <span className="absolute right-2 pointer-events-none">
         <ContextMenuPrimitive.ItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon}
+          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
           />
         </ContextMenuPrimitive.ItemIndicator>
       </span>
@@ -195,7 +195,7 @@ function ContextMenuRadioItem({
     >
       <span className="absolute right-2 pointer-events-none">
         <ContextMenuPrimitive.ItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon}
+          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
           />
         </ContextMenuPrimitive.ItemIndicator>
       </span>

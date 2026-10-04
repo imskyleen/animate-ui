@@ -88,7 +88,7 @@ export default function TooltipDemo() {
                 <Button variant="ghost" size="icon" aria-label={tool.label} />
               }
             >
-              <HugeiconsIcon icon={tool.icon} />
+              <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
             </TooltipTrigger>
             <TooltipContent>
               {tool.label}

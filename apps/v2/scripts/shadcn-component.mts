@@ -48,7 +48,7 @@ code = code.replace(
   },
 );
 
-// 2. Hugeicons: <IconPlaceholder lucide="…" hugeicons="X" …/> → <HugeiconsIcon icon={X} …/>.
+// 2. Hugeicons: <IconPlaceholder lucide="…" hugeicons="X" …/> → <HugeiconsIcon icon={X} strokeWidth={2} …/>.
 const icons = new Set<string>();
 code = code.replace(/<IconPlaceholder([\s\S]*?)\/>/g, (_, attrs: string) => {
   const icon = attrs.match(/hugeicons="([^"]+)"/)?.[1];
@@ -59,7 +59,9 @@ code = code.replace(/<IconPlaceholder([\s\S]*?)\/>/g, (_, attrs: string) => {
     /\s*(lucide|tabler|hugeicons|phosphor|remixicon)="[^"]*"/g,
     '',
   );
-  return `<HugeiconsIcon icon={${icon}}${rest}/>`;
+  // Animate UI's Hugeicons always use a stroke of 2.
+  const stroke = /strokeWidth=/.test(rest) ? '' : ' strokeWidth={2}';
+  return `<HugeiconsIcon icon={${icon}}${stroke}${rest}/>`;
 });
 code = code.replace(
   /import \{ IconPlaceholder \} from "[^"]+"\n/,

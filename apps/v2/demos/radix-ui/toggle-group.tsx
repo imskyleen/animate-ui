@@ -100,13 +100,13 @@ export default function ToggleGroupDemo() {
       aria-label="Text alignment"
     >
       <ToggleGroupItem value="left" aria-label="Align left">
-        <HugeiconsIcon icon={TextAlignLeftIcon} />
+        <HugeiconsIcon icon={TextAlignLeftIcon} strokeWidth={2} />
       </ToggleGroupItem>
       <ToggleGroupItem value="center" aria-label="Align center">
-        <HugeiconsIcon icon={TextAlignCenterIcon} />
+        <HugeiconsIcon icon={TextAlignCenterIcon} strokeWidth={2} />
       </ToggleGroupItem>
       <ToggleGroupItem value="right" aria-label="Align right">
-        <HugeiconsIcon icon={TextAlignRightIcon} />
+        <HugeiconsIcon icon={TextAlignRightIcon} strokeWidth={2} />
       </ToggleGroupItem>
     </ToggleGroup>
   )

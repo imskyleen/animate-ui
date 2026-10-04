@@ -93,7 +93,7 @@ function Dialog({
               className="absolute top-2 right-2"
               size="icon-sm"
             >
-              <HugeiconsIcon icon={Cancel01Icon}
+              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2}
               />
               <span className="sr-only">Close</span>
             </DialogClose>

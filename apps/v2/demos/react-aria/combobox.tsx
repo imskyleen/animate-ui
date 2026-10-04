@@ -61,7 +61,7 @@ function ComboboxTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={ArrowDown01Icon}
+      <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2}
         className="text-muted-foreground size-4 pointer-events-none"
       />
     </ButtonPrimitive>
@@ -90,7 +90,7 @@ function ComboboxClear({
       slot={null}
       {...props}
     >
-      <HugeiconsIcon icon={Cancel01Icon}
+      <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2}
         className="pointer-events-none"
       />
     </InputGroupButton>
@@ -120,7 +120,7 @@ function ComboboxInput({
             className="[&_svg:not([class*='size-'])]:size-4 group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
             isDisabled={disabled}
           >
-            <HugeiconsIcon icon={ArrowDown01Icon}
+            <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2}
               className="text-muted-foreground size-4 pointer-events-none"
             />
           </InputGroupButton>
@@ -199,7 +199,7 @@ function ComboboxItem<T extends object>({
           {children}
           <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
             {isSelected ? (
-              <HugeiconsIcon icon={Tick02Icon}
+              <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
                 className="pointer-events-none"
               />
             ) : null}
@@ -321,7 +321,7 @@ function ComboboxChip({
           className="-ml-1 opacity-50 hover:opacity-100"
           data-slot="combobox-chip-remove"
         >
-          <HugeiconsIcon icon={Cancel01Icon}
+          <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2}
             className="pointer-events-none"
           />
         </Button>
