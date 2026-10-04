@@ -1,0 +1,69 @@
+---
+title: Hole Background
+description: A background component featuring an animated hole grid.
+---
+
+<ComponentPreview name="backgrounds/hole" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-hole" />
+
+## Usage
+
+```tsx
+import { HoleBackground } from '@/components/animate-ui/backgrounds/hole';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <HoleBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- Rings slide down into a tunnel drawn on a canvas while particles rise out of it, under a glowing aurora that scrolls through its colors every 5s.
+- The canvas is sized to its container at the device pixel ratio, and runs at the same speed on 60Hz and 120Hz screens.
+- It pauses off screen and while the tab is hidden.
+- Under reduced motion, the tunnel, the particles and the aurora hold still.
+
+## API Reference
+
+### HoleBackground
+
+<TypeTable
+  type={{
+    strokeColor: {
+      description: 'Color of the tunnel lines.',
+      type: 'string',
+      default: "'#737373'",
+    },
+    numberOfLines: {
+      description: 'Number of lines running down the tunnel.',
+      type: 'number',
+      default: '50',
+    },
+    numberOfDiscs: {
+      description: 'Number of rings in the tunnel (one in five is drawn).',
+      type: 'number',
+      default: '50',
+    },
+    particleRGBColor: {
+      description: 'Color of the particles, as [r, g, b].',
+      type: '[number, number, number]',
+      default: '[255, 255, 255]',
+    },
+    '...props': {
+      description:
+        'Props of the container div. children render below the canvas.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Antoine Wodniack](https://codepen.io/wodniack/pen/VYwGEGg) for the inspiration

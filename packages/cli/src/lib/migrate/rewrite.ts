@@ -105,11 +105,6 @@ export function findMigration(module: V1Module): Migration | undefined {
     : UTILITIES[module.id];
 }
 
-/** v1-only parts that are plain elements: they work next to v2 parts. */
-function isStandalone(name: string) {
-  return /(Header|Footer|Shortcut)(Props)?$/.test(name);
-}
-
 function isV1Export(name: string, migration: Migration) {
   return (
     name in migration.values ||
@@ -118,22 +113,31 @@ function isV1Export(name: string, migration: Migration) {
   );
 }
 
-function looksLikeType(name: string) {
-  return /(Props|Type|Direction|Position)$/.test(name);
-}
-
-function unmappedMessage(name: string, migration: Migration) {
+/**
+ * What to do about a v1 name v2 doesn't have. `parentMigrated`: the file's
+ * other imports of the module moved to v2, so a part or hook reading the v1
+ * contexts has no v1 provider above it anymore.
+ */
+function unmappedMessage(
+  name: string,
+  migration: Migration,
+  parentMigrated: boolean,
+) {
   const to = `${PACKAGE}/${migration.module}`;
   if (/(Header|Footer)(Props)?$/.test(name))
     return `\`${name}\` has no v2 equivalent (a plain <div> in v1): replace it with a <div> to drop the v1 file.`;
   if (/Shortcut(Props)?$/.test(name))
     return `\`${name}\` has no v2 equivalent (a plain <span> in v1): replace it with a <span> to drop the v1 file.`;
   if (/^use[A-Z]/.test(name))
-    return `\`${name}\` is a v1 context hook: v2 parts keep the library's API and don't share it. It throws once its v1 parent is migrated: read the part's data attributes (data-state…) or control the state yourself.`;
+    return parentMigrated
+      ? `\`${name}\` is a v1 context hook, left on v1: its v1 parent is now v2, so it throws at runtime. Remove it: read the part's data attributes (data-state…) or control the state yourself, or replace the component with shadcn/ui's + \`animate-ui animate\`.`
+      : `\`${name}\` is a v1 context hook: v2 parts keep the library's API and don't share it. It throws once its v1 parent is migrated: read the part's data attributes (data-state…) or control the state yourself.`;
   if (/ContextType$/.test(name))
     return `\`${name}\` is a v1 context type with no v2 equivalent: remove it.`;
   if (/^[A-Z]/.test(name) && !/Props$|Type$|Direction$|Position$/.test(name))
-    return `\`${name}\` is a v1-only part with no equivalent in ${to}: remove it (v2 parts animate themselves), or keep the v1 component and replace it with shadcn/ui's + \`animate-ui animate\`.`;
+    return parentMigrated
+      ? `\`${name}\` is a v1-only part with no equivalent in ${to}, left on v1: its v1 parent is now v2, so it throws at runtime. Remove it (v2 parts animate themselves; style their data-state attributes or control the state yourself), or replace the component with shadcn/ui's + \`animate-ui animate\`.`
+      : `\`${name}\` is a v1-only part with no equivalent in ${to}: remove it (v2 parts animate themselves), or keep the v1 component and replace it with shadcn/ui's + \`animate-ui animate\`.`;
   return `\`${name}\` has no equivalent in ${to}: remove it or define it yourself.`;
 }
 
@@ -327,6 +331,16 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   const plans: Plan[] = [];
   /** Mapped value parts by local name: their JSX gets checked. */
   const parts = new Map<string, { name: string; plan: Plan }>();
+  /** v1 names v2 doesn't have: reported once we know what moved to v2. */
+  const unmapped: {
+    node: t.Node;
+    name: string;
+    local?: string;
+    migration: Migration;
+    key: string;
+  }[] = [];
+  /** The v1 modules some of whose imports moved to v2. */
+  const migratedModules = new Set<string>();
 
   for (const node of ast.program.body) {
     // import { … } from '<v1>'
@@ -355,7 +369,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         declarations: [],
         names: [],
       };
-      const blockers: string[] = [];
       const notes: [t.Node, string, string][] = [];
       for (const specifier of node.specifiers) {
         if (specifier.type === 'ImportNamespaceSpecifier') {
@@ -363,7 +376,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
             specifier,
             `\`import * as ${specifier.local.name}\` from a v1 module: import the parts you use from ${PACKAGE}/${migration.module} by hand.`,
           );
-          blockers.push(specifier.local.name);
           continue;
         }
         if (specifier.type === 'ImportDefaultSpecifier') {
@@ -381,12 +393,15 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
             `${specifier.importKind === 'type' ? 'type ' : ''}${name === local ? name : `${name} as ${local}`}`,
           );
         if (!target) {
+          // Stays on the v1 file; its siblings move to v2 all the same.
           keep();
-          manual(specifier, unmappedMessage(name, migration), local);
-          // A v1-only part (or hook) reads the v1 contexts: moving its
-          // siblings to v2 would break it at runtime.
-          if (!typeSyntax && !isStandalone(name) && !looksLikeType(name))
-            blockers.push(name);
+          unmapped.push({
+            node: specifier,
+            name,
+            local,
+            migration,
+            key: moduleKey(module),
+          });
           continue;
         }
         const parsed = parseTarget(target, migration);
@@ -409,19 +424,10 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       }
 
       if (plan.names.length === 0) continue;
-      if (blockers.length > 0) {
-        // Leave the whole import on v1: report why, once.
-        for (const [local, part] of parts)
-          if (part.plan === plan) parts.delete(local);
-        manual(
-          node,
-          `This import stays on v1 because of ${blockers.map((b) => `\`${b}\``).join(', ')}. Remove ${blockers.length > 1 ? 'them' : 'it'} (or replace the component with shadcn/ui's + \`animate-ui animate\`) and run migrate again.`,
-        );
-        continue;
-      }
       for (const [specifier, note, local] of notes)
         manual(specifier, note, local);
       plans.push(plan);
+      migratedModules.add(moduleKey(module));
       continue;
     }
 
@@ -457,12 +463,18 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
           parsed.generics
         ) {
           plan.kept.push(name === exported ? name : `${name} as ${exported}`);
-          manual(
-            specifier,
-            parsed
-              ? `\`${name}\` is \`${target}\` in v2: export it from a declaration of your own (\`const ${exported} = …\`).`
-              : unmappedMessage(name, migration),
-          );
+          if (parsed)
+            manual(
+              specifier,
+              `\`${name}\` is \`${target}\` in v2: export it from a declaration of your own (\`const ${exported} = …\`).`,
+            );
+          else
+            unmapped.push({
+              node: specifier,
+              name,
+              migration,
+              key: moduleKey(module),
+            });
           continue;
         }
         plan.names.push(name);
@@ -477,7 +489,10 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         });
         plan.named.set(parsed.module, list);
       }
-      if (plan.names.length > 0) plans.push(plan);
+      if (plan.names.length > 0) {
+        plans.push(plan);
+        migratedModules.add(moduleKey(module));
+      }
       continue;
     }
 
@@ -493,6 +508,13 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         );
     }
   }
+
+  for (const { node, name, local, migration, key } of unmapped)
+    manual(
+      node,
+      unmappedMessage(name, migration, migratedModules.has(key)),
+      local,
+    );
 
   // import('<v1>')
   walk(ast.program, (node) => {
@@ -629,7 +651,7 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   }
 
   if (plans.length === 0) {
-    result.manual.sort((a, b) => a.line - b.line);
+    result.manual.sort((a, b) => a.line - b.line || a.offset - b.offset);
     result.found = [...found];
     return result;
   }
@@ -814,7 +836,7 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     }
     step.migratedLine = output.slice(0, offset).split('\n').length;
   }
-  result.manual.sort((a, b) => a.line - b.line);
+  result.manual.sort((a, b) => a.line - b.line || a.offset - b.offset);
   result.found = [...found];
   return result;
 }

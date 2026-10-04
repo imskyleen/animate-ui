@@ -1,9 +1,9 @@
 // Sidebar sections of Animate UI's own primitives, by docs slug. Navigation
 // only: imports stay `@animate-ui/react/primitives/<name>` (or
 // `primitives/texts/…`, `buttons/…`, `effects/…`). Primitives with a Radix UI,
-// Base UI or React Aria page (Tabs and Tooltip included) go under Components.
+// Base UI or React Aria page (Tabs and Tooltip included) go under Libraries.
 export type PrimitiveSection =
-  'components' | 'animate-ui' | 'buttons' | 'texts' | 'effects';
+  'libraries' | 'animate-ui' | 'buttons' | 'texts' | 'effects';
 
 // Anything else with only an Animate UI page goes under Animate UI.
 const SECTIONS: Record<string, 'buttons' | 'texts' | 'effects'> = {
@@ -45,6 +45,6 @@ export function primitiveSection(
   slug: string,
   onlyAnimateUI: boolean,
 ): PrimitiveSection {
-  if (!onlyAnimateUI) return 'components';
+  if (!onlyAnimateUI) return 'libraries';
   return SECTIONS[slug] ?? 'animate-ui';
 }

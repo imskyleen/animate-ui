@@ -6,15 +6,22 @@ import { useState, type ReactNode } from 'react';
 export function PreviewFrame({
   children,
   code,
+  fullBleed = false,
 }: {
   children: ReactNode;
   code: ReactNode;
+  fullBleed?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="not-prose my-6 overflow-hidden rounded-2xl border-2 border-neutral-200 dark:border-neutral-800">
-      <div className="flex min-h-[340px] items-center justify-center px-6 py-14">
+      <div
+        className={cn(
+          'flex min-h-[340px] items-center justify-center',
+          fullBleed ? 'relative h-[420px] overflow-hidden' : 'px-6 py-14',
+        )}
+      >
         {children}
       </div>
 

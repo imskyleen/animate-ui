@@ -15,7 +15,9 @@ Commands:
 Options:
   --cwd <path>    Project directory (default: current directory)
   --dry-run       Show the changes without writing them
-  --delete        migrate: remove the v1 files nothing imports anymore
+  --delete        migrate: delete the v1 files nothing imports anymore,
+                  without asking (in a terminal, migrate asks)
+  --keep          migrate: keep them, without asking
   -h, --help      Show this help
   -v, --version   Show the version
 `;
@@ -27,7 +29,7 @@ function isCommand(value: string | undefined): value is Command {
   return COMMANDS.includes(value as Command);
 }
 
-function main(argv: string[]) {
+async function main(argv: string[]) {
   const { values, positionals } = parseArgs({
     args: argv,
     allowPositionals: true,
@@ -35,6 +37,7 @@ function main(argv: string[]) {
       cwd: { type: 'string', default: process.cwd() },
       'dry-run': { type: 'boolean', default: false },
       delete: { type: 'boolean', default: false },
+      keep: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
       version: { type: 'boolean', short: 'v', default: false },
     },
@@ -71,10 +74,15 @@ function main(argv: string[]) {
         dryRun: values['dry-run'],
       });
     }
-    return migrate(components, {
+    if (values.delete && values.keep) {
+      console.error('Pass --delete or --keep, not both.');
+      return 1;
+    }
+    return await migrate(components, {
       cwd: values.cwd,
       dryRun: values['dry-run'],
       delete: values.delete,
+      keep: values.keep,
     });
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
@@ -82,4 +90,4 @@ function main(argv: string[]) {
   }
 }
 
-process.exitCode = main(process.argv.slice(2));
+process.exitCode = await main(process.argv.slice(2));

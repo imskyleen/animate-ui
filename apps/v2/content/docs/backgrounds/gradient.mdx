@@ -1,0 +1,49 @@
+---
+title: Gradient Background
+description: A background component featuring a subtle yet engaging animated gradient effect, smoothly transitioning colors to enhance visual depth.
+---
+
+<ComponentPreview name="backgrounds/gradient" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-gradient" />
+
+## Usage
+
+```tsx
+import { GradientBackground } from '@/components/animate-ui/backgrounds/gradient';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <GradientBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- A large gradient slides back and forth behind the container (`background-position`), one round trip every 15s.
+- It pauses off screen and while the tab is hidden.
+- Under reduced motion, it holds its first frame.
+
+## API Reference
+
+### GradientBackground
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the loop.',
+      type: 'Transition',
+      default: "{ duration: 15, ease: 'easeInOut', repeat: Infinity }",
+    },
+    '...props': {
+      description:
+        'Props of the motion div. Set the gradient with Tailwind classes: from-*, via-*, to-*.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>

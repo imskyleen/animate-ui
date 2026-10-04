@@ -1,0 +1,92 @@
+---
+title: Fireworks Background
+description: A background component that displays a fireworks animation.
+---
+
+<ComponentPreview name="backgrounds/fireworks" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-fireworks" />
+
+## Usage
+
+```tsx
+import { FireworksBackground } from '@/components/animate-ui/backgrounds/fireworks';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <FireworksBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Examples
+
+### Fireworks Circle
+
+<ComponentPreview name="backgrounds/fireworks-circle" fullBleed />
+
+## Animation
+
+- Rockets launch from the bottom edge every 300 to 800ms (divided by `population`), trail upwards and burst into 50 to 150 particles that slow down, fall and fade.
+- A click launches a rocket towards the pointer.
+- It draws on a canvas sized to its container at the device pixel ratio, and runs at the same speed on 60Hz and 120Hz screens.
+- It pauses off screen and while the tab is hidden: nothing launches and the last frame stays.
+- Under reduced motion, it shows a still frame of three bursts and clicks do nothing.
+
+## API Reference
+
+### FireworksBackground
+
+<TypeTable
+  type={{
+    population: {
+      description: 'How many rockets launch: 2 launches twice as often.',
+      type: 'number',
+      default: '1',
+    },
+    color: {
+      description:
+        'Color of the rockets and their bursts. With an array, each rocket picks one.',
+      type: 'string | string[]',
+      default: 'a random hue per rocket',
+    },
+    fireworkSpeed: {
+      description:
+        'Launch speed of the rockets, in pixels per frame (at 60 fps).',
+      type: 'number | { min: number; max: number }',
+      default: '{ min: 4, max: 8 }',
+    },
+    fireworkSize: {
+      description: 'Width of the rocket trails, in pixels.',
+      type: 'number | { min: number; max: number }',
+      default: '{ min: 2, max: 5 }',
+    },
+    particleSpeed: {
+      description:
+        'Speed of the burst particles, in pixels per frame (at 60 fps).',
+      type: 'number | { min: number; max: number }',
+      default: '{ min: 2, max: 7 }',
+    },
+    particleSize: {
+      description: 'Radius of the burst particles, in pixels.',
+      type: 'number | { min: number; max: number }',
+      default: '{ min: 1, max: 5 }',
+    },
+    canvasProps: {
+      description: 'Props of the canvas.',
+      type: "React.ComponentProps<'canvas'>",
+    },
+    '...props': {
+      description: 'Props of the container div.',
+      type: "Omit<React.ComponentProps<'div'>, 'color'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Matt Cannon](https://codepen.io/matt-cannon/pen/YPKGBGm) for the inspiration

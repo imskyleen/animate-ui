@@ -1,0 +1,63 @@
+---
+title: Hexagon Background
+description: A background component featuring an interactive hexagon grid.
+---
+
+<ComponentPreview name="backgrounds/hexagon" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-hexagon" />
+
+## Usage
+
+```tsx
+import { HexagonBackground } from '@/components/animate-ui/backgrounds/hexagon';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <HexagonBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- A grid of hexagons that fills its container and recounts its cells when the container resizes.
+- A hovered hexagon lights up instantly, and fades back over 1s when the pointer leaves, leaving a trail. Hover only applies to devices that can hover, so a tap doesn't leave a cell lit.
+- Nothing loops, so there is nothing to pause.
+- Reduced motion keeps the fade: it's a color change, not movement.
+
+## API Reference
+
+### HexagonBackground
+
+<TypeTable
+  type={{
+    hexagonSize: {
+      description: 'Width of a hexagon, in pixels. Keep it above 50.',
+      type: 'number',
+      default: '75',
+    },
+    hexagonMargin: {
+      description: 'Gap between hexagons, in pixels.',
+      type: 'number',
+      default: '3',
+    },
+    hexagonProps: {
+      description: 'Props of every hexagon.',
+      type: "React.ComponentProps<'div'>",
+    },
+    '...props': {
+      description:
+        'Props of the container div. children render above the grid.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Denis Klak](https://codepen.io/d3nis031/pen/QWyeNYx) for the inspiration

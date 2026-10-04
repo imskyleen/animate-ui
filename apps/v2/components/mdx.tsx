@@ -5,6 +5,7 @@ import type { MDXComponents } from 'mdx/types';
 import { ComponentPreview } from './docs/component-preview';
 import { IconsGallery } from './docs/icons-gallery';
 import { Installation } from './docs/installation';
+import { RegistryInstallation } from './docs/registry-installation';
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
@@ -12,6 +13,7 @@ export function getMDXComponents(components?: MDXComponents) {
     ComponentPreview,
     IconsGallery,
     Installation,
+    RegistryInstallation,
     TypeTable,
     ...components,
   } satisfies MDXComponents;

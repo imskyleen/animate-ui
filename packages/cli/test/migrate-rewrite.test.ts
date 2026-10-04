@@ -199,6 +199,55 @@ describe('rewrite', () => {
     expect(run(source, '/app/page.tsx', () => false).code).toBe(source);
   });
 
+  test('a mixed import: the mappable parts move, the v1-only ones stay', () => {
+    const { code, imports, manual } = run(
+      [
+        'import {',
+        '  DropdownMenu,',
+        '  DropdownMenuItem,',
+        '  DropdownMenuHighlight,',
+        '  useDropdownMenu,',
+        "} from '@/components/animate-ui/primitives/radix/dropdown-menu';",
+        '',
+      ].join('\n'),
+    );
+    expect(code).toBe(
+      [
+        'import {',
+        '  Root as DropdownMenu,',
+        '  Item as DropdownMenuItem,',
+        "} from '@animate-ui/react/primitives/radix-ui/dropdown-menu';",
+        'import {',
+        '  DropdownMenuHighlight,',
+        '  useDropdownMenu,',
+        "} from '@/components/animate-ui/primitives/radix/dropdown-menu';",
+        '',
+      ].join('\n'),
+    );
+    expect(imports[0]!.names).toEqual(['DropdownMenu', 'DropdownMenuItem']);
+    // One step per name left on v1, pointing at it in the new code.
+    expect(manual.map((step) => [step.line, step.migratedLine])).toEqual([
+      [4, 6],
+      [5, 7],
+    ]);
+    expect(manual[0]!.message).toBe(
+      "`DropdownMenuHighlight` is a v1-only part with no equivalent in @animate-ui/react/primitives/radix-ui/dropdown-menu, left on v1: its v1 parent is now v2, so it throws at runtime. Remove it (v2 parts animate themselves; style their data-state attributes or control the state yourself), or replace the component with shadcn/ui's + `animate-ui animate`.",
+    );
+    expect(manual[1]!.message).toContain(
+      '`useDropdownMenu` is a v1 context hook, left on v1: its v1 parent is now v2, so it throws at runtime.',
+    );
+  });
+
+  test('a v1-only import alone warns that it throws once the parent moves', () => {
+    const source =
+      "import { useAccordionItem } from '@/components/animate-ui/primitives/radix/accordion';\n";
+    const { code, manual } = run(source);
+    expect(code).toBe(source);
+    expect(manual[0]!.message).toContain(
+      'It throws once its v1 parent is migrated',
+    );
+  });
+
   test('dynamic imports of v1 are reported', () => {
     const { manual } = run(
       "const m = import('@/components/animate-ui/primitives/radix/tooltip');\n",

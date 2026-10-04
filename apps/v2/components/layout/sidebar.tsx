@@ -4,6 +4,7 @@ import {
   AiElementsIcon,
   BookOpen02Icon,
   Cursor01Icon,
+  Image02Icon,
   MagicWand01Icon,
   Menu01Icon,
   SparklesIcon,
@@ -36,13 +37,14 @@ import { GitHubLink, NAV_ITEMS, ThemeToggle } from './header';
 type Link = { name: ReactNode; url: string; active: boolean };
 
 const PRIMITIVES_URL = '/docs/primitives';
+const BACKGROUNDS_URL = '/docs/backgrounds';
 
 const PRIMITIVE_SECTIONS: {
   id: PrimitiveSection;
   title: string;
   icon: IconSvgElement;
 }[] = [
-  { id: 'components', title: 'Components', icon: AiElementsIcon },
+  { id: 'libraries', title: 'Libraries', icon: AiElementsIcon },
   { id: 'animate-ui', title: 'Animate UI', icon: SparklesIcon },
   { id: 'buttons', title: 'Buttons', icon: Cursor01Icon },
   { id: 'texts', title: 'Texts', icon: TextFontIcon },
@@ -145,17 +147,33 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
   const pathname = usePathname();
   const preferred = usePreferredLibrary();
 
-  const { guide, primitives } = useMemo(() => {
+  const { guide, primitives, backgrounds } = useMemo(() => {
     const guide: Omit<Link, 'active'>[] = [];
     let primitivesFolder: PageTree.Folder | undefined;
+    const backgrounds: Omit<Link, 'active'>[] = [];
     for (const node of root.children) {
       if (node.type === 'page') guide.push({ name: node.name, url: node.url });
       if (node.type === 'folder' && node.index) {
         guide.push({ name: node.name, url: node.index.url });
         if (node.index.url === PRIMITIVES_URL) primitivesFolder = node;
+        if (node.index.url === BACKGROUNDS_URL)
+          for (const page of node.children)
+            if (page.type === 'page')
+              // The section says it: "Bubble", not "Bubble Background".
+              backgrounds.push({
+                name:
+                  typeof page.name === 'string'
+                    ? page.name.replace(/ Background$/, '')
+                    : page.name,
+                url: page.url,
+              });
       }
     }
-    return { guide, primitives: collectPrimitives(primitivesFolder) };
+    return {
+      guide,
+      primitives: collectPrimitives(primitivesFolder),
+      backgrounds,
+    };
   }, [root]);
 
   const sections = new Map<PrimitiveSection, Link[]>();
@@ -203,6 +221,14 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
           links={sections.get(section.id) ?? []}
         />
       ))}
+      <Section
+        title="Backgrounds"
+        icon={Image02Icon}
+        links={backgrounds.map((link) => ({
+          ...link,
+          active: pathname === link.url,
+        }))}
+      />
     </SidebarViewport>
   );
 }

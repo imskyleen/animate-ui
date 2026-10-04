@@ -9,12 +9,12 @@ Animate UI animates the primitives components are built on. Its package, `@anima
 
 ## 1. Pick the path
 
-| The component is…                                              | Do this                                         |
-| -------------------------------------------------------------- | ----------------------------------------------- |
-| A shadcn/ui component (the project has `components.json`)      | **A. Run the CLI**                              |
-| Hand-built on Radix UI, Base UI or React Aria                  | **B. Swap the import**                          |
+| The component is…                                                              | Do this                          |
+| ------------------------------------------------------------------------------ | -------------------------------- |
+| A shadcn/ui component (the project has `components.json`)                      | **A. Run the CLI**               |
+| Hand-built on Radix UI, Base UI or React Aria                                  | **B. Swap the import**           |
 | Custom, plain markup, another library, or a primitive Animate UI doesn't cover | **C. Animate it with the rules** |
-| An Animate UI v1 project (`components/animate-ui/...` files)   | **D. Migrate**                                  |
+| An Animate UI v1 project (`components/animate-ui/...` files)                   | **D. Migrate**                   |
 
 Whatever the path, run the gate first (§ Gate): writing zero motion code is a valid outcome.
 
@@ -31,11 +31,11 @@ The CLI finds the components through `components.json`, swaps their primitive im
 ## B. Built on Radix UI, Base UI or React Aria: swap the import
 
 ```tsx
-import { Dialog } from 'radix-ui';                                       // before
-import { Dialog } from '@animate-ui/react/primitives/radix-ui/dialog';   // after
-import { Dialog } from '@base-ui/react/dialog';                          // before
-import { Dialog } from '@animate-ui/react/primitives/base-ui/dialog';    // after
-import { Popover, Button } from 'react-aria-components';                 // before
+import { Dialog } from 'radix-ui'; // before
+import { Dialog } from '@animate-ui/react/primitives/radix-ui/dialog'; // after
+import { Dialog } from '@base-ui/react/dialog'; // before
+import { Dialog } from '@animate-ui/react/primitives/base-ui/dialog'; // after
+import { Popover, Button } from 'react-aria-components'; // before
 import { Popover, Button } from '@animate-ui/react/primitives/react-aria'; // after (re-exports all of React Aria)
 ```
 
@@ -50,26 +50,26 @@ Then remove the component's own CSS animation classes (same list as the CLI) so 
 
 ### Gate: should it animate?
 
-| How often it's used                                                       | Decision                                                      |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| 100+ times a day (command palette, keyboard shortcuts, arrow-key highlight) | No animation (quality rule)                                  |
-| Used constantly (tooltips, press, tabs indicator, toggles)                | 600ms entrances and state changes, press 150ms; bounce ≤ 0.15 |
-| Occasional (popovers, menus, selects, dialogs, sheets, drawers, toasts)   | 600ms in, 400ms out                                           |
-| Rare (icons, effects, text, onboarding, success, delight)                 | Expressive: around 600ms, bounce up to 0.3                    |
+| How often it's used                                                         | Decision                                                      |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 100+ times a day (command palette, keyboard shortcuts, arrow-key highlight) | No animation (quality rule)                                   |
+| Used constantly (tooltips, press, tabs indicator, toggles)                  | 600ms entrances and state changes, press 150ms; bounce ≤ 0.15 |
+| Occasional (popovers, menus, selects, dialogs, sheets, drawers, toasts)     | 600ms in, 400ms out                                           |
+| Rare (icons, effects, text, onboarding, success, delight)                   | Expressive: around 600ms, bounce up to 0.3                    |
 
 Never animate keyboard navigation or global shortcuts. Name the purpose in one word (feedback, spatial, state, continuity, delight); if you can't, don't animate.
 
 ### Kinds of component
 
-| Kind               | Examples                                                         | Recipe     |
-| ------------------ | ---------------------------------------------------------------- | ---------- |
-| Anchored overlay   | Popover, Tooltip, Menu, Hover Card, Select, Combobox             | Overlay    |
-| Centered overlay   | Dialog, Alert Dialog                                             | Modal      |
-| Edge overlay       | Sheet, Drawer                                                    | Sheet      |
-| Disclosure         | Accordion, Collapsible                                           | Disclosure |
-| Moving indicator   | Tabs, Toggle Group, Navigation Menu                              | Indicator  |
-| Pressable          | Button, Toggle, Checkbox, Switch, Radio                          | Press      |
-| Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) | | CSS-driven |
+| Kind                                                                           | Examples                                             | Recipe     |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------- | ---------- |
+| Anchored overlay                                                               | Popover, Tooltip, Menu, Hover Card, Select, Combobox | Overlay    |
+| Centered overlay                                                               | Dialog, Alert Dialog                                 | Modal      |
+| Edge overlay                                                                   | Sheet, Drawer                                        | Sheet      |
+| Disclosure                                                                     | Accordion, Collapsible                               | Disclosure |
+| Moving indicator                                                               | Tabs, Toggle Group, Navigation Menu                  | Indicator  |
+| Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio              | Press      |
+| Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                      | CSS-driven |
 
 ### Non-negotiable rules (summary)
 
@@ -87,7 +87,9 @@ pnpm dlx @animate-ui/cli@latest migrate all --dry-run
 pnpm dlx @animate-ui/cli@latest migrate all
 ```
 
-It rewrites imports of the copied v1 primitives, icon core and libs to `@animate-ui/react`, maps v1 export names to the v2 parts, and lists manual steps (v1-only props, Headless UI primitives, which v2 doesn't support). `--delete` removes the v1 files nothing imports anymore.
+It rewrites imports of the copied v1 primitives, icon core and libs to `@animate-ui/react`, maps v1 export names to the v2 parts, and lists manual steps (v1-only props, Headless UI primitives, which v2 doesn't support). The migration is partial where it must be: in an import mixing mappable parts with v1-only ones (`DropdownMenuHighlight`, context hooks like `useAccordionItem`), the mappable parts move to v2 and the v1-only names stay imported from the v1 file, each with a manual step. Those read v1's context, so they throw at runtime once their parent is v2: remove them (v2 parts animate themselves; use `data-state` attributes or controlled state), or replace the component with shadcn/ui's + `animate-ui animate`.
+
+At the end it lists the v1 files `@animate-ui/react` replaces that nothing imports anymore (and the ones still imported, by what). In a terminal it asks about each one (delete it, delete it and all the others, keep it, keep them all); `--delete` deletes them all and `--keep` keeps them all without asking. Non-interactive runs (CI, an agent's shell) keep them: pass `--delete` once the manual steps are done.
 
 ## Verify
 

@@ -29,6 +29,7 @@ export const NAV_ITEMS = [
   { title: 'Home', url: '/' },
   { title: 'Docs', url: '/docs' },
   { title: 'Primitives', url: '/docs/primitives' },
+  { title: 'Backgrounds', url: '/docs/backgrounds' },
   { title: 'Icons', url: '/docs/icons' },
 ];
 

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { styleText } from 'node:util';
 
 import { PACKAGE } from '../lib/primitives';
+import { PromptAbortedError, select, type Ask } from '../lib/prompt';
 import {
   loadMigrateProject,
   SOURCE_EXTENSIONS,
@@ -23,11 +24,17 @@ import {
   UTILITIES,
 } from '../lib/migrate/table';
 
-type MigrateOptions = {
+export type MigrateOptions = {
   cwd: string;
   dryRun: boolean;
-  /** Remove the v1 files nothing imports anymore. */
+  /** Remove the v1 files nothing imports anymore, without asking. */
   delete?: boolean;
+  /** Keep them all, without asking. */
+  keep?: boolean;
+  /** Whether to ask about them (default: stdin and stdout are TTYs). */
+  interactive?: boolean;
+  /** How to ask (default: an arrow-key select in the terminal). */
+  ask?: Ask;
   log?: (message: string) => void;
 };
 
@@ -51,9 +58,9 @@ function knownNames() {
 
 /**
  * `animate-ui migrate <components...|all>`: moves a project from the files of
- * Animate UI v1 to @animate-ui/react. Returns the exit code.
+ * Animate UI v1 to @animate-ui/react. Resolves with the exit code.
  */
-export function migrate(components: string[], options: MigrateOptions) {
+export async function migrate(components: string[], options: MigrateOptions) {
   const log = options.log ?? console.log;
   const project = loadMigrateProject(options.cwd);
   const relative = (file: string) => path.relative(project.root, file);
@@ -233,17 +240,110 @@ export function migrate(components: string[], options: MigrateOptions) {
   }
   const unused = [...candidateFiles].filter((file) => !used.has(file)).sort();
 
-  if (unused.length > 0) {
-    const remove = options.delete && !options.dryRun;
-    log(
-      `\n${remove ? 'Removed' : options.delete ? 'Would remove' : 'No longer imported'} (v1 files @animate-ui/react replaces):`,
-    );
-    for (const file of unused) {
-      log(`    ${relative(file)}`);
-      if (remove) unlinkSync(file);
+  // Replaced, but still imported: by v1-only parts left on them. The v1
+  // files those import stay with them.
+  const importersOf = (file: string) =>
+    [...imports]
+      .filter(
+        ([importer, targets]) =>
+          !candidateFiles.has(importer) && targets.includes(file),
+      )
+      .map(([importer]) => relative(importer))
+      .sort();
+  const stillImported = [...used]
+    .sort()
+    .filter((file) => importersOf(file).length > 0);
+  if (stillImported.length > 0) {
+    log('\nStill imported (v1 files @animate-ui/react replaces):');
+    for (const file of stillImported) {
+      const importers = importersOf(file);
+      const more =
+        importers.length > 3 ? ` and ${importers.length - 3} more` : '';
+      log(
+        `    ${relative(file)}: still imported by ${importers.slice(0, 3).join(', ')}${more}, kept.`,
+      );
     }
-    if (!options.delete)
-      log(styleText('dim', 'Run again with --delete to remove them.'));
+    const along = used.size - stillImported.length;
+    if (along > 0)
+      log(
+        `    and the ${along} v1 file${along === 1 ? '' : 's'} ${stillImported.length === 1 ? 'it imports' : 'they import'}, kept.`,
+      );
+  }
+
+  if (unused.length > 0) {
+    const interactive =
+      options.interactive ??
+      Boolean(process.stdin.isTTY && process.stdout.isTTY);
+    const header = (verb: string) =>
+      log(`\n${verb} (v1 files @animate-ui/react replaces):`);
+    const list = () => {
+      for (const file of unused) log(`    ${relative(file)}`);
+    };
+
+    if (options.dryRun) {
+      header(options.delete ? 'Would remove' : 'No longer imported');
+      list();
+      if (!options.delete)
+        log(styleText('dim', 'Run again with --delete to remove them.'));
+    } else if (options.delete) {
+      header('Removed');
+      for (const file of unused) {
+        log(`    ${relative(file)}`);
+        unlinkSync(file);
+      }
+    } else if (options.keep || !interactive) {
+      header('No longer imported');
+      list();
+      if (!options.keep)
+        log(styleText('dim', 'Run again with --delete to remove them.'));
+    } else {
+      header('No longer imported');
+      list();
+      log('');
+      const ask = options.ask ?? select;
+      const removed: string[] = [];
+      try {
+        for (let i = 0; i < unused.length; i++) {
+          const file = relative(unused[i]!);
+          const others = unused.length - i - 1;
+          const choices: [string, 'delete' | 'keep', 'one' | 'all'][] = [
+            [`Delete ${file}`, 'delete', 'one'],
+          ];
+          if (others > 0)
+            choices.push([
+              `Delete ${file} and the ${others} other unused v1 file${others === 1 ? '' : 's'}`,
+              'delete',
+              'all',
+            ]);
+          choices.push([`Keep ${file}`, 'keep', 'one']);
+          if (others > 0) choices.push(['Keep every v1 file', 'keep', 'all']);
+          const [, action, scope] =
+            choices[
+              await ask(
+                `Nothing imports ${file} anymore (${i + 1}/${unused.length}).`,
+                choices.map(([label]) => label),
+              )
+            ]!;
+          const files = scope === 'all' ? unused.slice(i) : [unused[i]!];
+          if (action === 'delete')
+            for (const target of files) {
+              unlinkSync(target);
+              removed.push(target);
+            }
+          if (scope === 'all') break;
+        }
+      } catch (error) {
+        if (!(error instanceof PromptAbortedError)) throw error;
+        log(
+          `${styleText('yellow', '!')} Aborted: ${removed.length === 0 ? 'no v1 file removed' : `removed ${removed.map(relative).join(', ')}`}, the rest kept.`,
+        );
+        return 130;
+      }
+      const kept = unused.length - removed.length;
+      log(
+        `${removed.length} v1 file${removed.length === 1 ? '' : 's'} removed, ${kept} kept.`,
+      );
+    }
   }
 
   if (changedFiles > 0 && !project.hasPackage) {

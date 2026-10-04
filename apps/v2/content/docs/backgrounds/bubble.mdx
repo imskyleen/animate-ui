@@ -1,0 +1,66 @@
+---
+title: Bubble Background
+description: An interactive background featuring smoothly animated gradient bubbles, creating a playful, dynamic, and visually engaging backdrop.
+---
+
+<ComponentPreview name="backgrounds/bubble" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-bubble" />
+
+## Usage
+
+```tsx
+import { BubbleBackground } from '@/components/animate-ui/backgrounds/bubble';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <BubbleBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- Five blurred, color-blended bubbles drift and orbit on slow loops (20 to 40s), with hardware-accelerated `transform`s.
+- With `interactive`, a sixth bubble follows the mouse on a spring (`transition`). It follows a mouse only: a tap doesn't move it.
+- The loops pause off screen and while the tab is hidden.
+- Under reduced motion, the bubbles hold a still frame and the follower stays put.
+
+## API Reference
+
+### BubbleBackground
+
+<TypeTable
+  type={{
+    interactive: {
+      description: 'Add a bubble that follows the mouse.',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Spring of the bubble that follows the mouse.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 100, damping: 20 }',
+    },
+    colors: {
+      description:
+        'Colors of the six bubbles, as r,g,b strings. sixth is the bubble that follows the mouse.',
+      type: '{ first: string; second: string; third: string; fourth: string; fifth: string; sixth: string }',
+      default:
+        "{ first: '18,113,255', second: '221,74,255', third: '0,220,255', fourth: '200,50,50', fifth: '180,180,50', sixth: '140,100,255' }",
+    },
+    '...props': {
+      description:
+        'Props of the container div. children render above the bubbles.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [GlitchWorker](https://codepen.io/glitchworker/pen/jENZGOV) for the inspiration

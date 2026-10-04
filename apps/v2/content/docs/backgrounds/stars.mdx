@@ -1,0 +1,76 @@
+---
+title: Stars Background
+description: An interactive background featuring animated dots of varying sizes and speeds, simulating a dynamic and immersive starry space effect.
+---
+
+<ComponentPreview name="backgrounds/stars" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-stars" />
+
+## Usage
+
+```tsx
+import { StarsBackground } from '@/components/animate-ui/backgrounds/stars';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <StarsBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- Three layers of stars (1, 2 and 3px) scroll upwards in a loop at different speeds, for depth: the smallest crosses 2000px in `speed` seconds, the others take two and three times longer. They move with hardware-accelerated `transform`s.
+- The sky shifts away from the mouse on a spring (`factor`, `transition`), for parallax. It follows a mouse only: a tap doesn't shift it.
+- The loops pause off screen and while the tab is hidden.
+- Under reduced motion, the stars hold still and there is no parallax.
+
+## API Reference
+
+### StarsBackground
+
+<TypeTable
+  type={{
+    factor: {
+      description:
+        'Strength of the parallax: how far the sky shifts per pixel of mouse movement.',
+      type: 'number',
+      default: '0.05',
+    },
+    speed: {
+      description:
+        'Duration of a loop of the smallest stars, in seconds. Higher is slower.',
+      type: 'number',
+      default: '50',
+    },
+    transition: {
+      description: 'Spring of the parallax.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 50, damping: 20 }',
+    },
+    starColor: {
+      description: 'Color of the stars.',
+      type: 'string',
+      default: "'#fff'",
+    },
+    pointerEvents: {
+      description: 'Let the star layers receive pointer events.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description:
+        'Props of the container div. children render above the stars.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [umangladani](https://codepen.io/umangladani/pen/wvgwgjK) for the inspiration

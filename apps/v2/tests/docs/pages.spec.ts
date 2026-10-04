@@ -100,23 +100,22 @@ test.describe('primitive page', () => {
 test('the sidebar groups primitives into sections', async ({ page }) => {
   await page.goto('/docs/primitives/animate-ui/cursor');
   const section = (title: string) =>
-    page
-      .locator('#nd-sidebar > * > div')
-      .filter({
-        has: page.locator('p', { hasText: new RegExp(`^${title}$`) }),
-      });
+    page.locator('#nd-sidebar > * > div').filter({
+      has: page.locator('p', { hasText: new RegExp(`^${title}$`) }),
+    });
   const titles = await page.locator('#nd-sidebar p').allTextContents();
   expect(titles).toEqual([
     'Guide',
-    'Components',
+    'Libraries',
     'Animate UI',
     'Buttons',
     'Texts',
     'Effects',
+    'Backgrounds',
   ]);
   // Primitives with a library page, Animate UI's Tabs and Tooltip included.
   await expect(
-    section('Components').getByRole('link', { name: 'Tooltip' }),
+    section('Libraries').getByRole('link', { name: 'Tooltip' }),
   ).toBeVisible();
   await expect(
     section('Animate UI').getByRole('link', { name: 'Cursor' }),
@@ -130,4 +129,7 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   await expect(
     section('Effects').getByRole('link', { name: 'Shine' }),
   ).toBeVisible();
+  await expect(
+    section('Backgrounds').getByRole('link', { name: 'Bubble', exact: true }),
+  ).toHaveAttribute('href', '/docs/backgrounds/bubble');
 });

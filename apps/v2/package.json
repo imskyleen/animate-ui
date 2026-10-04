@@ -3,14 +3,15 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "build": "node scripts/build-icons.mts && next build",
-    "dev": "node scripts/build-icons.mts && next dev",
+    "build": "pnpm registry && next build",
+    "dev": "pnpm registry && next dev",
     "start": "next start",
     "lint": "eslint",
     "check-types": "next typegen && tsc --noEmit",
     "test:interaction": "playwright test tests/interaction",
     "test": "playwright test",
-    "icons": "node scripts/build-icons.mts"
+    "icons": "node scripts/build-icons.mts",
+    "registry": "node scripts/build-icons.mts && node scripts/build-backgrounds.mts"
   },
   "dependencies": {
     "@animate-ui/react": "workspace:*",
