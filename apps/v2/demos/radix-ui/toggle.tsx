@@ -3,7 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
-import { Toggle as TogglePrimitive } from "@animate-ui/react/primitives/radix-ui/toggle"
+import { Toggle as TogglePrimitive } from "@animate-ui/react/primitives/radix-ui"
 import { Bookmark01Icon, TextBoldIcon, TextItalicIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 

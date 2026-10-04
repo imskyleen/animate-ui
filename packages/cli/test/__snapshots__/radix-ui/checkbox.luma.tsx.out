@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Checkbox as CheckboxPrimitive } from "@animate-ui/react/primitives/radix-ui/checkbox"
+import { Checkbox as CheckboxPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { IconPlaceholder } from "@/app/(create)/components/icon-placeholder"
 

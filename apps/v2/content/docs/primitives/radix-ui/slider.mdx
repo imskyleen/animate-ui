@@ -14,7 +14,7 @@ description: An input where the user selects a value from within a given range.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Slider } from '@animate-ui/react/primitives/radix-ui/slider';
+import { Slider } from '@animate-ui/react/primitives/radix-ui';
 
 export function Volume() {
   return (
@@ -28,7 +28,7 @@ export function Volume() {
 }
 ```
 
-The `import * as SliderPrimitive from '@radix-ui/react-slider'` style works too.
+Coming from the `@radix-ui/react-slider` package? Use the subpath: `import * as SliderPrimitive from '@animate-ui/react/primitives/radix-ui/slider'`.
 
 ## Animation
 
@@ -67,7 +67,8 @@ Every part takes exactly the props of [Radix UI's Slider](https://www.radix-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the thumb after a press on the track, and of its press scale.',
+      description:
+        'Transition of the thumb after a press on the track, and of its press scale.',
       type: 'Transition',
       default: 'spring.snappy (600ms, bounce 0.15)',
     },

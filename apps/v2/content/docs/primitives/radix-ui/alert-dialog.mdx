@@ -14,7 +14,7 @@ description: A modal dialog that interrupts the user with important content and 
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { AlertDialog } from '@animate-ui/react/primitives/radix-ui/alert-dialog';
+import { AlertDialog } from '@animate-ui/react/primitives/radix-ui';
 
 export function DeleteProject() {
   return (
@@ -36,7 +36,7 @@ export function DeleteProject() {
 }
 ```
 
-The `import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'` style works too.
+Coming from the `@radix-ui/react-alert-dialog` package? Use the subpath: `import * as AlertDialogPrimitive from '@animate-ui/react/primitives/radix-ui/alert-dialog'`.
 
 ## Animation
 

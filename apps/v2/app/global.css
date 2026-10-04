@@ -245,9 +245,15 @@
     @apply border-border outline-ring/50;
   }
 
+  /* No rubber-band bounce: the page is scrolled by html (the viewport),
+     so it carries overscroll-behavior, not body. */
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+
   body {
     @apply bg-background text-foreground;
-    overscroll-behavior: none;
   }
 }
 

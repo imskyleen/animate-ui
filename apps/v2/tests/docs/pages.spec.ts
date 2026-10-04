@@ -135,8 +135,12 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     section('Backgrounds').getByRole('link', { name: 'Bubble', exact: true }),
   ).toHaveAttribute('href', '/docs/backgrounds/bubble');
   await expect(
-    section('Icons').getByRole('link', { name: 'Lucide' }),
-  ).toHaveAttribute('href', '/docs/icons/lucide');
+    section('Icons').getByRole('link', { name: 'Get Started' }),
+  ).toHaveAttribute('href', '/docs/icons/get-started');
+  // Icon libraries show their logo.
+  const lucide = section('Icons').getByRole('link', { name: 'Lucide Icons' });
+  await expect(lucide).toHaveAttribute('href', '/docs/icons/lucide-icons');
+  await expect(lucide.locator('svg')).toBeVisible();
   // Animate UI's own section shows the Animate UI logo.
   await expect(
     page.locator('#nd-sidebar p', { hasText: /^Animate UI$/ }).locator('svg'),
@@ -151,4 +155,53 @@ test('the TOC marks one heading, and the page ends with the footer', async ({
   await expect(page.locator('#nd-toc .bg-primary')).toHaveCount(1);
   await expect(page.getByText('Built by')).toBeVisible();
   await expect(page.getByText('Last updated:')).toBeVisible();
+});
+
+test('the TOC bar covers every heading in view', async ({ page }) => {
+  // Tall enough for several sections of the introduction at once.
+  await page.setViewportSize({ width: 1440, height: 1600 });
+  await page.goto('/docs');
+  const bar = page.locator('#nd-toc span.bg-primary');
+  const items = page.locator('#nd-toc a[data-active="true"]');
+  await expect.poll(() => items.count()).toBeGreaterThan(1);
+  // From the first active heading to the last one.
+  await expect
+    .poll(async () => {
+      const box = await bar.boundingBox();
+      const first = await items.first().boundingBox();
+      const last = await items.last().boundingBox();
+      return (
+        box!.y >= first!.y &&
+        box!.y + box!.height <= last!.y + last!.height &&
+        box!.y + box!.height > last!.y
+      );
+    })
+    .toBe(true);
+});
+
+test('the sidebar and TOC fade only where there is more to scroll', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/docs/primitives/radix-ui/accordion');
+  const mask = (selector: string) =>
+    page
+      .locator(selector)
+      .evaluate(
+        (el) =>
+          getComputedStyle(el).maskImage ||
+          getComputedStyle(el).webkitMaskImage,
+      );
+  // The TOC fits: no fade, so its first item isn't dimmed.
+  await expect.poll(() => mask('#nd-toc .overscroll-none')).toBe('none');
+  // The sidebar is long: it fades at the bottom only, at the top of the list.
+  const sidebar = '#nd-sidebar [data-slot="scroll-fade"]';
+  await expect.poll(() => mask(sidebar)).not.toBe('none');
+  await expect
+    .poll(() =>
+      page
+        .locator(sidebar)
+        .evaluate((el) => el.style.getPropertyValue('--scroll-fade-top')),
+    )
+    .toMatch(/^0(\.0+)?$|^$/);
 });

@@ -14,7 +14,7 @@ description: A two-state button that can be either on or off.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Toggle } from '@animate-ui/react/primitives/radix-ui/toggle';
+import { Toggle } from '@animate-ui/react/primitives/radix-ui';
 
 export function BoldToggle() {
   return (
@@ -25,7 +25,7 @@ export function BoldToggle() {
 }
 ```
 
-The `import * as TogglePrimitive from '@radix-ui/react-toggle'` style works too.
+Coming from the `@radix-ui/react-toggle` package? Use the subpath: `import * as TogglePrimitive from '@animate-ui/react/primitives/radix-ui/toggle'`.
 
 ## Animation
 

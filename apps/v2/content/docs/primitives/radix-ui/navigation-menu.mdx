@@ -14,7 +14,7 @@ description: A collection of links for navigating websites.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { NavigationMenu } from '@animate-ui/react/primitives/radix-ui/navigation-menu';
+import { NavigationMenu } from '@animate-ui/react/primitives/radix-ui';
 
 export function SiteNav() {
   return (
@@ -23,7 +23,9 @@ export function SiteNav() {
         <NavigationMenu.Item>
           <NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>
           <NavigationMenu.Content>
-            <NavigationMenu.Link href="/docs">Documentation</NavigationMenu.Link>
+            <NavigationMenu.Link href="/docs">
+              Documentation
+            </NavigationMenu.Link>
           </NavigationMenu.Content>
         </NavigationMenu.Item>
         <NavigationMenu.Item>
@@ -37,7 +39,7 @@ export function SiteNav() {
 }
 ```
 
-The `import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'` style works too.
+Coming from the `@radix-ui/react-navigation-menu` package? Use the subpath: `import * as NavigationMenuPrimitive from '@animate-ui/react/primitives/radix-ui/navigation-menu'`.
 
 ## Animation
 
@@ -64,7 +66,8 @@ Every part takes exactly the props of [Radix UI's Navigation Menu](https://www.r
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening and of the resizing between items.',
+      description:
+        'Transition of the opening and of the resizing between items.',
       type: 'Transition',
       default: 'transition.dropdown (600ms, ease-out)',
     },
@@ -85,7 +88,8 @@ Every part takes exactly the props of [Radix UI's Navigation Menu](https://www.r
     transition: {
       description: 'Transition of the entrance.',
       type: 'Transition',
-      default: 'transition.fade (600ms, ease-out); without a Viewport: transition.dropdown',
+      default:
+        'transition.fade (600ms, ease-out); without a Viewport: transition.dropdown',
     },
     exitTransition: {
       description: 'Transition of the closing.',

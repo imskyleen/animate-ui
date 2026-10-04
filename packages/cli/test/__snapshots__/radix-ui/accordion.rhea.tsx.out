@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Accordion as AccordionPrimitive } from "@animate-ui/react/primitives/radix-ui/accordion"
+import { Accordion as AccordionPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { IconPlaceholder } from "@/app/(create)/components/icon-placeholder"
 

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { cn } from "cn"
 import { ChevronDownIcon } from "lucide-react"
-import { Accordion as AccordionPrimitive } from "@animate-ui/react/primitives/radix-ui/accordion"
+import { Accordion as AccordionPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 function Accordion({
   ...props

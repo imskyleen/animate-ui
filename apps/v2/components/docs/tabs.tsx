@@ -217,7 +217,7 @@ export function CodeTabs({
           className="absolute inset-0 z-0 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-t-full after:bg-foreground after:content-['']"
           transition={ready ? undefined : INSTANT}
         >
-          <TabsList className="flex h-full gap-x-3 overflow-x-auto">
+          <TabsList className="flex h-full gap-x-3 overflow-x-auto overscroll-x-none">
             {tabs.map((tab) => (
               <TabsHighlightItem
                 key={tab.value}

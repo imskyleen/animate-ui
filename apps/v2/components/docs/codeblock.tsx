@@ -63,7 +63,7 @@ export function CodeBlock({
       tabIndex={0}
       data-slot="codeblock-viewport"
       className={cn(
-        'fd-scroll-container max-h-[600px] overflow-auto py-3.5 text-[13px] leading-relaxed focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-inset',
+        'fd-scroll-container max-h-[600px] overflow-auto overscroll-x-none py-3.5 text-[13px] leading-relaxed focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-inset',
         viewportClassName,
       )}
       style={

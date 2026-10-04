@@ -35,6 +35,8 @@ export function AccountMenu() {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Menu } from '@animate-ui/react/primitives/base-ui'`.
+
 shadcn/ui's Dropdown Menu is built on it.
 
 ## Animation
@@ -65,7 +67,8 @@ Every part takes exactly the props of [Base UI's Menu](https://base-ui.com/react
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
+      default:
+        'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
     },
     exitTransition: {
       description: 'Transition of the closing.',

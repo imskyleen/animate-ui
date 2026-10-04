@@ -14,7 +14,7 @@ description: Displays a menu to the user, such as a set of actions or functions,
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui/dropdown-menu';
+import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui';
 
 export function AccountMenu() {
   return (
@@ -33,7 +33,7 @@ export function AccountMenu() {
 }
 ```
 
-The `import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'` style works too.
+Coming from the `@radix-ui/react-dropdown-menu` package? Use the subpath: `import * as DropdownMenuPrimitive from '@animate-ui/react/primitives/radix-ui/dropdown-menu'`.
 
 ## Animation
 

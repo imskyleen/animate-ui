@@ -43,6 +43,8 @@ export function Toaster({ children }: { children: React.ReactNode }) {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Toast } from '@animate-ui/react/primitives/base-ui'`.
+
 ## Animation
 
 Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), but writes them itself from its state and Animate UI's tokens, so `AnimateUIProvider tempo` applies.

@@ -14,7 +14,7 @@ description: Displays rich content in a portal, triggered by a button.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Popover } from '@animate-ui/react/primitives/radix-ui/popover';
+import { Popover } from '@animate-ui/react/primitives/radix-ui';
 
 export function SharePopover() {
   return (
@@ -31,7 +31,7 @@ export function SharePopover() {
 }
 ```
 
-The `import * as PopoverPrimitive from '@radix-ui/react-popover'` style works too.
+Coming from the `@radix-ui/react-popover` package? Use the subpath: `import * as PopoverPrimitive from '@animate-ui/react/primitives/radix-ui/popover'`.
 
 ## Animation
 

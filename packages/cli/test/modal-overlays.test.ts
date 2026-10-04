@@ -12,8 +12,8 @@ const files = (library: string, component: RegExp) =>
   readdirSync(path.join(FIXTURES, library)).filter((f) => component.test(f));
 
 const MODULE: Record<string, (component: string) => string> = {
-  'radix-ui': (component) =>
-    `@animate-ui/react/primitives/radix-ui/${component === 'sheet' ? 'dialog' : component}`,
+  // shadcn imports the `radix-ui` umbrella: it moves to the barrel.
+  'radix-ui': () => '@animate-ui/react/primitives/radix-ui',
   'base-ui': (component) =>
     `@animate-ui/react/primitives/base-ui/${component === 'sheet' ? 'dialog' : component}`,
   'react-aria': () => '@animate-ui/react/primitives/react-aria',

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { ContextMenu as ContextMenuPrimitive } from "@animate-ui/react/primitives/radix-ui/context-menu"
+import { ContextMenu as ContextMenuPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"

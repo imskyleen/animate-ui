@@ -14,7 +14,7 @@ description: A control that allows the user to toggle between checked and not ch
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Checkbox } from '@animate-ui/react/primitives/radix-ui/checkbox';
+import { Checkbox } from '@animate-ui/react/primitives/radix-ui';
 
 export function Terms() {
   return (
@@ -30,7 +30,7 @@ export function Terms() {
 }
 ```
 
-The `import * as CheckboxPrimitive from '@radix-ui/react-checkbox'` style works too.
+Coming from the `@radix-ui/react-checkbox` package? Use the subpath: `import * as CheckboxPrimitive from '@animate-ui/react/primitives/radix-ui/checkbox'`.
 
 ## Animation
 

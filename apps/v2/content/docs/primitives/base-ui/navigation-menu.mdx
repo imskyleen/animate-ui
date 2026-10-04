@@ -23,7 +23,9 @@ export function SiteNav() {
         <NavigationMenu.Item>
           <NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>
           <NavigationMenu.Content>
-            <NavigationMenu.Link href="/docs">Documentation</NavigationMenu.Link>
+            <NavigationMenu.Link href="/docs">
+              Documentation
+            </NavigationMenu.Link>
           </NavigationMenu.Content>
         </NavigationMenu.Item>
       </NavigationMenu.List>
@@ -38,6 +40,8 @@ export function SiteNav() {
   );
 }
 ```
+
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { NavigationMenu } from '@animate-ui/react/primitives/base-ui'`.
 
 ## Animation
 
@@ -62,7 +66,8 @@ Every part takes exactly the props of [Base UI's Navigation Menu](https://base-u
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening and of the resizing between items.',
+      description:
+        'Transition of the opening and of the resizing between items.',
       type: 'Transition',
       default: 'transition.dropdown (600ms, ease-out)',
     },

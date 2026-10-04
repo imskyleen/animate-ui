@@ -7,6 +7,7 @@ import { transform } from '../src/lib/transform';
 
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 const ACCORDION = '@animate-ui/react/primitives/radix-ui/accordion';
+const RADIX = '@animate-ui/react/primitives/radix-ui';
 
 // Every fixture: real shadcn/ui output (test/fixtures/<library>/<component>.<style>.tsx).
 describe('shadcn/ui fixtures', () => {
@@ -36,7 +37,7 @@ test('radix accordion: CSS keyframes are gone', () => {
     const result = transform(
       readFileSync(path.join(FIXTURES, 'radix-ui', file), 'utf8'),
     );
-    expect(result.code).toContain(`from "${ACCORDION}"`);
+    expect(result.code).toContain(`from "${RADIX}"`);
     expect(result.code).not.toMatch(/animate-accordion-(up|down)/);
   }
 });
@@ -64,12 +65,19 @@ export const C = () => <AccordionPrimitive.Content className="overflow-hidden da
   expect(result.code).toContain('className="overflow-hidden"');
 });
 
-test('splits a radix-ui import with primitives it does not animate', () => {
+test('moves a whole radix-ui import to the barrel, unanimated names included', () => {
   const input = `import { Accordion, Slot, Avatar as AvatarPrimitive } from "radix-ui"\n`;
   const result = transform(input);
   expect(result.code).toBe(
-    `import { Slot, Avatar as AvatarPrimitive } from "radix-ui"\nimport { Accordion } from "${ACCORDION}"\n`,
+    `import { Accordion, Slot, Avatar as AvatarPrimitive } from "@animate-ui/react/primitives/radix-ui"\n`,
   );
+  expect(result.imports).toEqual([
+    {
+      from: 'radix-ui',
+      to: '@animate-ui/react/primitives/radix-ui',
+      name: 'Accordion',
+    },
+  ]);
   // Slot has nothing to animate; Avatar isn't animated yet.
   expect(result.unsupported).toEqual(['radix-ui Avatar']);
 });

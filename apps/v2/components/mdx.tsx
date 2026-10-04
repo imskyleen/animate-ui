@@ -9,6 +9,7 @@ import {
   CalloutTitle,
 } from './docs/callout';
 import { Card, Cards } from './docs/cards';
+import { LucideLogo } from '@/lib/icon-libraries';
 import { CodeBlock, Pre, type CodeBlockProps } from './docs/codeblock';
 import { ComponentPreview } from './docs/component-preview';
 import { IconsGallery } from './docs/icons-gallery';
@@ -45,6 +46,7 @@ export function getMDXComponents(components?: MDXComponents) {
     CalloutDescription,
     CalloutTitle,
     Card,
+    LucideLogo,
     Cards,
     ComponentPreview,
     IconsGallery,

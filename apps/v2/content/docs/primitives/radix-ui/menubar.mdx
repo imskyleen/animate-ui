@@ -14,7 +14,7 @@ description: A visually persistent menu common in desktop applications that prov
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Menubar } from '@animate-ui/react/primitives/radix-ui/menubar';
+import { Menubar } from '@animate-ui/react/primitives/radix-ui';
 
 export function EditorMenubar() {
   return (
@@ -42,7 +42,7 @@ export function EditorMenubar() {
 }
 ```
 
-The `import * as MenubarPrimitive from '@radix-ui/react-menubar'` style works too.
+Coming from the `@radix-ui/react-menubar` package? Use the subpath: `import * as MenubarPrimitive from '@animate-ui/react/primitives/radix-ui/menubar'`.
 
 ## Animation
 

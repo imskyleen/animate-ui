@@ -30,6 +30,8 @@ export function Settings() {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Tabs } from '@animate-ui/react/primitives/base-ui'`.
+
 ## Animation
 
 - **The active tab's surface glides** to the new tab with `spring.snappy` (600ms, a hint of overshoot). The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
@@ -56,7 +58,8 @@ Every part takes exactly the props of [Base UI's Tabs](https://base-ui.com/react
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the indicator gliding to the active tab (pointer changes).',
+      description:
+        'Transition of the indicator gliding to the active tab (pointer changes).',
       type: 'Transition',
       default: 'spring.snappy (600ms, bounce 0.15)',
     },

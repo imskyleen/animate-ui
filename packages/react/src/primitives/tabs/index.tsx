@@ -17,10 +17,33 @@ import {
 import { getStrictContext } from '../../utils/strict-context';
 import { Slot, type WithAsChild } from '../slot';
 
+type TabsOrientation = 'horizontal' | 'vertical';
+
 type TabsContextType = {
   activeValue: string;
   handleValueChange: (value: string) => void;
   registerTrigger: (value: string, node: HTMLElement | null) => void;
+  /** Arrow keys follow it: Left/Right when horizontal, Up/Down when vertical. */
+  orientation: TabsOrientation;
+  /** Id of a trigger, referenced by its panel's `aria-labelledby`. */
+  getTriggerId: (value: string) => string;
+  /** Id of a panel, referenced by its trigger's `aria-controls`. */
+  getContentId: (value: string) => string;
+  /** Value of a registered trigger element. */
+  getTriggerValue: (node: HTMLElement) => string | undefined;
+  /** Records a trigger's or panel's own `id`, so its pair references it. */
+  registerId: (
+    kind: 'trigger' | 'content',
+    value: string,
+    id: string | undefined,
+  ) => void;
+  /**
+   * The last selection came from the keyboard: the highlight and panels jump
+   * instead of animating (keyboard navigation is instant).
+   */
+  instant: boolean;
+  /** Selects a tab, recording whether it came from the keyboard. */
+  selectValue: (value: string, input: 'keyboard' | 'pointer') => void;
 };
 
 const [TabsProvider, useTabs] =
@@ -28,6 +51,8 @@ const [TabsProvider, useTabs] =
 
 type BaseTabsProps = React.ComponentProps<'div'> & {
   children: React.ReactNode;
+  /** Which arrow keys move between triggers. */
+  orientation?: TabsOrientation;
 };
 
 type UnControlledTabsProps = BaseTabsProps & {
@@ -48,9 +73,11 @@ function Tabs({
   defaultValue,
   value,
   onValueChange,
+  orientation = 'horizontal',
   children,
   ...props
 }: TabsProps) {
+  const baseId = React.useId();
   const [activeValue, setActiveValue] = React.useState<string | undefined>(
     defaultValue,
   );
@@ -97,16 +124,62 @@ function Tabs({
     [isControlled, onValueChange],
   );
 
+  const [instant, setInstant] = React.useState(false);
+  const selectValue = React.useCallback(
+    (val: string, input: 'keyboard' | 'pointer') => {
+      // Batched with the value change: one render, already instant.
+      setInstant(input === 'keyboard');
+      handleValueChange(val);
+    },
+    [handleValueChange],
+  );
+
+  // Own ids passed to triggers and panels, by value.
+  const [customIds, setCustomIds] = React.useState<
+    Record<string, { trigger?: string; content?: string }>
+  >({});
+  const registerId = React.useCallback(
+    (kind: 'trigger' | 'content', val: string, id: string | undefined) => {
+      setCustomIds((prev) => {
+        if (prev[val]?.[kind] === id) return prev;
+        return { ...prev, [val]: { ...prev[val], [kind]: id } };
+      });
+    },
+    [],
+  );
+
+  const getTriggerId = React.useCallback(
+    (val: string) =>
+      customIds[val]?.trigger ?? `${baseId}-trigger-${toIdPart(val)}`,
+    [baseId, customIds],
+  );
+  const getContentId = React.useCallback(
+    (val: string) =>
+      customIds[val]?.content ?? `${baseId}-content-${toIdPart(val)}`,
+    [baseId, customIds],
+  );
+  const getTriggerValue = React.useCallback((node: HTMLElement) => {
+    for (const [val, el] of triggersRef.current) if (el === node) return val;
+    return undefined;
+  }, []);
+
   return (
     <TabsProvider
       value={{
         activeValue: (value ?? activeValue) as string,
         handleValueChange,
         registerTrigger,
+        orientation,
+        getTriggerId,
+        getContentId,
+        getTriggerValue,
+        registerId,
+        instant,
+        selectValue,
       }}
     >
       <ReducedMotionConfig>
-        <div data-slot="tabs" {...props}>
+        <div data-slot="tabs" data-orientation={orientation} {...props}>
           {children}
         </div>
       </ReducedMotionConfig>
@@ -114,18 +187,38 @@ function Tabs({
   );
 }
 
+/** Ids can't hold whitespace. */
+function toIdPart(value: string) {
+  return value.replace(/\s+/g, '-');
+}
+
+function isEnabled(tab: HTMLElement) {
+  return (
+    !tab.hasAttribute('disabled') &&
+    tab.getAttribute('aria-disabled') !== 'true'
+  );
+}
+
 type TabsHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;
 
-function TabsHighlight({ transition, ...props }: TabsHighlightProps) {
-  const { activeValue } = useTabs();
-  const { spring } = useMotionTokens();
+function TabsHighlight({
+  transition,
+  exitDelay,
+  ...props
+}: TabsHighlightProps) {
+  const { activeValue, instant } = useTabs();
+  const { spring, transition: tokenTransition } = useMotionTokens();
 
   return (
     <Highlight
       data-slot="tabs-highlight"
       controlledItems
       value={activeValue}
-      transition={transition ?? spring.snappy}
+      // Keyboard selection jumps, and the previous highlight leaves at once.
+      transition={
+        instant ? tokenTransition.instant : (transition ?? spring.snappy)
+      }
+      exitDelay={instant ? 0 : exitDelay}
       click={false}
       {...props}
     />
@@ -137,7 +230,16 @@ type TabsListProps = React.ComponentProps<'div'> & {
 };
 
 function TabsList(props: TabsListProps) {
-  return <div role="tablist" data-slot="tabs-list" {...props} />;
+  const { orientation } = useTabs();
+  return (
+    <div
+      role="tablist"
+      aria-orientation={orientation}
+      data-slot="tabs-list"
+      data-orientation={orientation}
+      {...props}
+    />
+  );
 }
 
 type TabsHighlightItemProps = HighlightItemProps & {
@@ -158,10 +260,28 @@ type TabsTriggerProps = WithAsChild<
 function TabsTrigger({
   ref,
   value,
+  id,
   asChild = false,
+  onClick,
+  onKeyDown,
   ...props
 }: TabsTriggerProps) {
-  const { activeValue, handleValueChange, registerTrigger } = useTabs();
+  const {
+    activeValue,
+    selectValue,
+    registerTrigger,
+    registerId,
+    orientation,
+    getTriggerId,
+    getContentId,
+    getTriggerValue,
+  } = useTabs();
+  const isActive = activeValue === value;
+
+  React.useEffect(() => {
+    registerId('trigger', value, id);
+    return () => registerId('trigger', value, undefined);
+  }, [registerId, value, id]);
 
   const localRef = React.useRef<HTMLButtonElement | null>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLButtonElement);
@@ -171,18 +291,79 @@ function TabsTrigger({
     return () => registerTrigger(value, null);
   }, [value, registerTrigger]);
 
+  // WAI-ARIA tabs pattern: arrows move between the enabled triggers of the
+  // list (wrapping), Home/End jump to the ends, and the focused tab is
+  // selected at once (automatic activation, like Radix UI). The selection
+  // animates as on click, with no delay.
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+      return;
+
+    const current = event.currentTarget;
+    const list = current.closest('[role="tablist"]');
+    if (!list) return;
+
+    const rtl = getComputedStyle(list).direction === 'rtl';
+    const next =
+      orientation === 'vertical'
+        ? 'ArrowDown'
+        : rtl
+          ? 'ArrowLeft'
+          : 'ArrowRight';
+    const prev =
+      orientation === 'vertical' ? 'ArrowUp' : rtl ? 'ArrowRight' : 'ArrowLeft';
+    if (![next, prev, 'Home', 'End'].includes(event.key)) return;
+
+    // The enabled triggers of this list (not of nested ones), in DOM order.
+    const tabs = Array.from(
+      list.querySelectorAll<HTMLElement>('[role="tab"]'),
+    ).filter(
+      (tab) =>
+        tab.closest('[role="tablist"]') === list &&
+        (tab === current || isEnabled(tab)),
+    );
+    const index = tabs.indexOf(current);
+    if (index === -1) return;
+
+    const count = tabs.length;
+    const targetIndex =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? count - 1
+          : (index + (event.key === next ? 1 : -1) + count) % count;
+    const target = tabs[targetIndex];
+
+    event.preventDefault();
+    if (!target) return;
+    target.focus();
+    const targetValue = getTriggerValue(target);
+    if (targetValue !== undefined) selectValue(targetValue, 'keyboard');
+  };
+
   const Component = asChild ? Slot : motion.button;
 
   return (
     <Component
       ref={localRef}
+      id={id ?? getTriggerId(value)}
       data-slot="tabs-trigger"
       role="tab"
       type="button"
-      aria-selected={activeValue === value}
-      onClick={() => handleValueChange(value)}
-      data-state={activeValue === value ? 'active' : 'inactive'}
+      aria-selected={isActive}
+      aria-controls={getContentId(value)}
+      // Roving tabindex: Tab enters the list on the selected trigger only.
+      tabIndex={isActive ? 0 : -1}
+      data-state={isActive ? 'active' : 'inactive'}
+      data-orientation={orientation}
       {...props}
+      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) selectValue(value, 'pointer');
+      }}
+      onKeyDown={handleKeyDown}
     />
   );
 }
@@ -199,13 +380,15 @@ function TabsContents({
   style,
   ...props
 }: TabsContentsProps) {
-  const { activeValue } = useTabs();
+  const { activeValue, instant } = useTabs();
   const tokens = useMotionTokens();
-  // Reduced motion: the panel and the height change at once.
+  // Reduced motion and keyboard selection: the panel and the height change
+  // at once.
   const reduce = useShouldReduceMotion();
-  const transition: Transition = reduce
-    ? tokens.transition.instant
-    : (transitionProp ?? { ...tokens.spring.snappy, restDelta: 0.01 });
+  const transition: Transition =
+    reduce || instant
+      ? tokens.transition.instant
+      : (transitionProp ?? { ...tokens.spring.snappy, restDelta: 0.01 });
   const childrenArray = React.Children.toArray(children);
   const activeIndex = childrenArray.findIndex(
     (child): child is React.ReactElement<{ value: string }> =>
@@ -329,26 +512,37 @@ type TabsContentProps = WithAsChild<
 
 function TabsContent({
   value,
+  id,
   style,
   asChild = false,
   ...props
 }: TabsContentProps) {
-  const { activeValue } = useTabs();
+  const { activeValue, getTriggerId, getContentId, registerId, instant } =
+    useTabs();
   const { transition: motionTransition } = useMotionTokens();
   const isActive = activeValue === value;
+
+  React.useEffect(() => {
+    registerId('content', value, id);
+    return () => registerId('content', value, undefined);
+  }, [registerId, value, id]);
 
   const Component = asChild ? Slot : motion.div;
 
   return (
     <Component
       role="tabpanel"
+      id={id ?? getContentId(value)}
+      aria-labelledby={getTriggerId(value)}
+      tabIndex={isActive ? 0 : -1}
       data-slot="tabs-content"
+      data-state={isActive ? 'active' : 'inactive'}
       inert={!isActive}
       style={{ overflow: 'hidden', ...style }}
       initial={{ filter: 'blur(0px)' }}
       animate={{ filter: isActive ? 'blur(0px)' : 'blur(4px)' }}
       exit={{ filter: 'blur(0px)' }}
-      transition={motionTransition.change}
+      transition={instant ? motionTransition.instant : motionTransition.change}
       {...props}
     />
   );
@@ -371,4 +565,5 @@ export {
   type TabsContentsProps,
   type TabsContentProps,
   type TabsContextType,
+  type TabsOrientation,
 };

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Popover as PopoverPrimitive } from "@animate-ui/react/primitives/radix-ui/popover"
+import { Popover as PopoverPrimitive } from "@animate-ui/react/primitives/radix-ui"
 import { Button } from "@/components/ui/button"
 import { Link01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"

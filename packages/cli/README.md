@@ -11,6 +11,8 @@ pnpm dlx @animate-ui/cli@latest migrate all
 
 Pass `--dry-run` to preview the changes.
 
+`animate` only changes import sources, mirroring each library's style: `import { Accordion, Slot } from "radix-ui"` becomes `import { Accordion, Slot } from "@animate-ui/react/primitives/radix-ui"` (the barrel re-exports everything else from `radix-ui`), `@base-ui/react` moves to `@animate-ui/react/primitives/base-ui`, `react-aria-components` to `@animate-ui/react/primitives/react-aria`, and per-package imports (`@radix-ui/react-accordion`, `@base-ui/react/accordion`, `vaul`, `input-otp`) to the matching per-primitive path (`@animate-ui/react/primitives/radix-ui/accordion`…). An import with nothing Animate UI animates is left alone.
+
 `migrate` moves every import it can to `@animate-ui/react`. In an import mixing mappable parts with v1-only ones (a highlight part, a context hook), the mappable parts move and the v1-only names stay on the v1 file, each reported as a manual step: once their parent is v2 they throw at runtime, so remove them or replace the component with shadcn/ui's + `animate-ui animate`.
 
 At the end, `migrate` lists the v1 files `@animate-ui/react` replaces that nothing imports anymore. In a terminal it asks before deleting them (one by one, or all at once); `--delete` deletes them and `--keep` keeps them without asking. Outside a terminal (CI, piped) they're kept unless you pass `--delete`.

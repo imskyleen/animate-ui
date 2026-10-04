@@ -1,0 +1,92 @@
+---
+title: Scroll Fade
+description: A scroll container whose edges fade only where there is more to scroll, animated as you scroll.
+---
+
+<ComponentPreview name="animate-ui/scroll-fade" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { ScrollFade } from '@animate-ui/react/primitives/effects/scroll-fade';
+
+export function Changelog() {
+  return (
+    <ScrollFade className="h-64">
+      <ul>{/* … */}</ul>
+    </ScrollFade>
+  );
+}
+```
+
+`orientation="horizontal"` fades the left and right edges, `"both"` all four. With `asChild`, the child element becomes the scroll container.
+
+To fade a scroll element you don't render yourself (a library's viewport), pass its ref to `useScrollFade`:
+
+```tsx
+import { useScrollFade } from '@animate-ui/react/primitives/effects/scroll-fade';
+
+function Sidebar() {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  useScrollFade(viewportRef, { size: 32 });
+  return <ScrollArea.Viewport ref={viewportRef}>{/* … */}</ScrollArea.Viewport>;
+}
+```
+
+## Animation
+
+- An edge fades only when there is content past it: none at the edge you're at, none at all when nothing overflows. The fade grows over the first `size` pixels of scroll, then a spring without bounce (600ms) smooths it.
+- On page load, the fade is already in place: nothing animates in.
+- It's a `mask-image`, so the content itself dissolves: it works on any background, in light and dark.
+- Scrolling never re-renders React: the amounts are motion values written to CSS variables (`--scroll-fade-top`, `--scroll-fade-bottom`, `--scroll-fade-left`, `--scroll-fade-right`, from 0 to 1).
+- Under reduced motion, the fade still follows the scroll position, without the spring.
+
+## API Reference
+
+### ScrollFade
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Make the child element the scroll container instead of a wrapping div, merging their props and refs.',
+      type: 'boolean',
+      default: 'false',
+    },
+    orientation: {
+      description:
+        'Which edges fade. Also sets the overflow of that axis to `auto`.',
+      type: "'vertical' | 'horizontal' | 'both'",
+      default: "'vertical'",
+    },
+    size: {
+      description:
+        'Depth of the fade, in pixels. Also the scroll distance over which an edge fades in.',
+      type: 'number',
+      default: '40',
+    },
+    transition: {
+      description:
+        'Spring of the fade (`useSpring` options, `duration` in milliseconds).',
+      type: 'SpringOptions',
+      default: '{ duration: 600, bounce: 0 }',
+    },
+    enabled: {
+      description: 'Apply the fade.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the scroll container.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### useScrollFade
+
+`useScrollFade(ref, options)` applies the fade to the element of `ref`. It takes the options of `ScrollFade` (`orientation`, `size`, `transition`, `enabled`) and returns the springs of each edge (`top`, `bottom`, `left`, `right`). It doesn't set the overflow: the element must already scroll.

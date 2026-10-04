@@ -36,7 +36,9 @@ export function Settings() {
         </TabsList>
       </TabsHighlight>
       <TabsContents>
-        <TabsContent value="account">Make changes to your account here.</TabsContent>
+        <TabsContent value="account">
+          Make changes to your account here.
+        </TabsContent>
         <TabsContent value="password">Change your password here.</TabsContent>
       </TabsContents>
     </Tabs>
@@ -50,6 +52,7 @@ Unlike the library tabs, these are Animate UI's own: no Radix UI, Base UI or Rea
 
 - The highlight glides to the selected trigger on a quick spring with a hint of overshoot ([Highlight](/docs/primitives/animate-ui/highlight)).
 - Panels sit side by side and slide to the selected one, on the same spring; the container's height follows the active panel. Inactive panels are blurred and `inert`.
+- Keyboard: arrow keys move to the next or previous enabled trigger (wrapping) and select it, Home and End jump to the ends; only the selected trigger is in the Tab order. Keyboard selection is instant: the highlight, panels and height jump; clicks animate.
 - `<AnimateUIProvider tempo>` paces every spring.
 - Under reduced motion, the highlight, panels and height change at once.
 
@@ -71,6 +74,12 @@ Unlike the library tabs, these are Animate UI's own: no Radix UI, Base UI or Rea
     onValueChange: {
       description: 'Called with the tab to select (controlled).',
       type: '(value: string) => void',
+    },
+    orientation: {
+      description:
+        'Arrow keys that move between triggers: Left/Right (mirrored in RTL) or Up/Down. Sets `aria-orientation` on the list.',
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
     },
     '...props': {
       description: 'Props of the root.',
@@ -134,7 +143,8 @@ Takes the [HighlightItem](/docs/primitives/animate-ui/highlight#highlightitem) p
       required: true,
     },
     '...props': {
-      description: 'Props of the button (`role="tab"`, `aria-selected`).',
+      description:
+        'Props of the button (`role="tab"`, `aria-selected`, `aria-controls`). `disabled` triggers are skipped by the arrow keys; an own `id` is kept and referenced by the panel.',
       type: "HTMLMotionProps<'button'>",
     },
   }}
@@ -174,7 +184,8 @@ Holds the panels and animates between them.
       required: true,
     },
     '...props': {
-      description: 'Props of the panel (`role="tabpanel"`).',
+      description:
+        'Props of the panel (`role="tabpanel"`, `aria-labelledby`). An own `id` is kept and referenced by the trigger.',
       type: "HTMLMotionProps<'div'>",
     },
   }}

@@ -10,8 +10,8 @@ import { transform } from '../src/lib/transform';
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 const COMPONENT = /^(popover|hover-card|tooltip)\./;
 const MODULE: Record<string, (component: string) => string> = {
-  'radix-ui': (component) =>
-    `@animate-ui/react/primitives/radix-ui/${component}`,
+  // shadcn imports the `radix-ui` umbrella: it moves to the barrel.
+  'radix-ui': () => '@animate-ui/react/primitives/radix-ui',
   'base-ui': (component) =>
     `@animate-ui/react/primitives/base-ui/${component === 'hover-card' ? 'preview-card' : component}`,
   'react-aria': () => '@animate-ui/react/primitives/react-aria',

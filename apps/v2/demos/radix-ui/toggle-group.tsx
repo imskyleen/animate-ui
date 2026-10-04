@@ -3,7 +3,7 @@
 import * as React from "react"
 import { type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
-import { ToggleGroup as ToggleGroupPrimitive } from "@animate-ui/react/primitives/radix-ui/toggle-group"
+import { ToggleGroup as ToggleGroupPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { toggleVariants } from "@/components/ui/toggle"
 import { TextAlignCenterIcon, TextAlignLeftIcon, TextAlignRightIcon } from "@hugeicons/core-free-icons"

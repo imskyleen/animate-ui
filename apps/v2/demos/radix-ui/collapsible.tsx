@@ -1,6 +1,6 @@
 "use client"
 
-import { Collapsible as CollapsiblePrimitive } from "@animate-ui/react/primitives/radix-ui/collapsible"
+import { Collapsible as CollapsiblePrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"

@@ -14,7 +14,7 @@ description: For sighted users to preview content available behind a link.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { HoverCard } from '@animate-ui/react/primitives/radix-ui/hover-card';
+import { HoverCard } from '@animate-ui/react/primitives/radix-ui';
 
 export function ProfileLink() {
   return (
@@ -33,7 +33,7 @@ export function ProfileLink() {
 }
 ```
 
-The `import * as HoverCardPrimitive from '@radix-ui/react-hover-card'` style works too.
+Coming from the `@radix-ui/react-hover-card` package? Use the subpath: `import * as HoverCardPrimitive from '@animate-ui/react/primitives/radix-ui/hover-card'`.
 
 ## Animation
 

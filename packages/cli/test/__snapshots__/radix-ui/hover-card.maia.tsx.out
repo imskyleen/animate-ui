@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { HoverCard as HoverCardPrimitive } from "@animate-ui/react/primitives/radix-ui/hover-card"
+import { HoverCard as HoverCardPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 function HoverCard({
   ...props

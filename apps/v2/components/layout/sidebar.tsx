@@ -11,13 +11,13 @@ import {
   TextFontIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
+import { ScrollFade } from '@animate-ui/react/primitives/effects/scroll-fade';
 import { cn } from 'cn';
 import {
   SidebarContent,
   SidebarDrawerContent,
   SidebarDrawerOverlay,
   SidebarItem,
-  SidebarViewport,
 } from 'fumadocs-ui/components/sidebar/base';
 import { useTreeContext } from 'fumadocs-ui/contexts/tree';
 import type { SidebarProps } from 'fumadocs-ui/layouts/docs/slots/sidebar';
@@ -26,6 +26,7 @@ import { usePathname } from 'next/navigation';
 import { useMemo, type ReactNode } from 'react';
 
 import { AnimateUILogo, LIBRARIES, type LibraryId } from '@/lib/libraries';
+import { ICON_LIBRARY_LOGOS } from '@/lib/icon-libraries';
 import { usePreferredLibrary } from '@/lib/preferred-library';
 import {
   primitiveSection,
@@ -162,6 +163,19 @@ function Section({
   );
 }
 
+// The scrolling list: no rubber-band bounce, and edges that fade only where
+// there's more to scroll (Fumadocs' viewport masks them all the time).
+function SidebarScroll({ children }: { children: ReactNode }) {
+  return (
+    <ScrollFade
+      size={24}
+      className="min-h-0 flex-1 overflow-y-auto overscroll-none p-4 px-2 pb-4 [scrollbar-width:none] max-md:pt-4 md:pb-14"
+    >
+      {children}
+    </ScrollFade>
+  );
+}
+
 function SidebarBody({ mobile }: { mobile: boolean }) {
   const { root } = useTreeContext();
   const pathname = usePathname();
@@ -180,7 +194,21 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
         // The section says it: "Bubble", not "Bubble Background".
         if (node.index.url === BACKGROUNDS_URL)
           backgrounds = folderLinks(node, / Background$/);
-        if (node.index.url === ICONS_URL) icons = folderLinks(node);
+        // Icon libraries show their logo before their name.
+        if (node.index.url === ICONS_URL)
+          icons = folderLinks(node).map((link) =>
+            ICON_LIBRARY_LOGOS[link.url]
+              ? {
+                  ...link,
+                  name: (
+                    <span className="flex items-center gap-2">
+                      {ICON_LIBRARY_LOGOS[link.url]}
+                      {link.name}
+                    </span>
+                  ),
+                }
+              : link,
+          );
       }
     }
     return {
@@ -208,7 +236,7 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
   }
 
   return (
-    <SidebarViewport className="px-2 pb-4 max-md:pt-4 md:pb-14">
+    <SidebarScroll>
       <AnimatedNav>
         {mobile && (
           <Section
@@ -255,7 +283,7 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
           }))}
         />
       </AnimatedNav>
-    </SidebarViewport>
+    </SidebarScroll>
   );
 }
 

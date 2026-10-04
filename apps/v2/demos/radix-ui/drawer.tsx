@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Drawer as DrawerPrimitive } from "@animate-ui/react/primitives/radix-ui/drawer"
+import { Drawer as DrawerPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Button } from "@/components/ui/button"
 import { MinusSignIcon, PlusSignIcon } from "@hugeicons/core-free-icons"

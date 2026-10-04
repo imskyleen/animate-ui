@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { ContextMenu as ContextMenuPrimitive } from "@animate-ui/react/primitives/radix-ui/context-menu"
+import { ContextMenu as ContextMenuPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { IconPlaceholder } from "@/app/(create)/components/icon-placeholder"
 

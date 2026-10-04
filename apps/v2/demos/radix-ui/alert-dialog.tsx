@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { AlertDialog as AlertDialogPrimitive } from "@animate-ui/react/primitives/radix-ui/alert-dialog"
+import { AlertDialog as AlertDialogPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Button } from "@/components/ui/button"
 

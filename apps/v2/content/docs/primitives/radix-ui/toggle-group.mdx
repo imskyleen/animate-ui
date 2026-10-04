@@ -14,7 +14,7 @@ description: A set of two-state buttons that can be toggled on or off.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { ToggleGroup } from '@animate-ui/react/primitives/radix-ui/toggle-group';
+import { ToggleGroup } from '@animate-ui/react/primitives/radix-ui';
 
 export function Alignment() {
   return (
@@ -37,7 +37,7 @@ export function Alignment() {
 }
 ```
 
-The `import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'` style works too.
+Coming from the `@radix-ui/react-toggle-group` package? Use the subpath: `import * as ToggleGroupPrimitive from '@animate-ui/react/primitives/radix-ui/toggle-group'`.
 
 ## Animation
 

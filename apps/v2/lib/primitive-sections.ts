@@ -33,6 +33,7 @@ const SECTIONS: Record<string, 'buttons' | 'texts' | 'effects'> = {
   'image-zoom': 'effects',
   magnetic: 'effects',
   particles: 'effects',
+  'scroll-fade': 'effects',
   shine: 'effects',
   slide: 'effects',
   'theme-toggler': 'effects',

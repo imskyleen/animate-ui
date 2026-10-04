@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Dialog as DialogPrimitive } from "@animate-ui/react/primitives/radix-ui/dialog"
+import { Dialog as DialogPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Button } from "@/components/ui/button"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"

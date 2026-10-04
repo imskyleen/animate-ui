@@ -31,13 +31,19 @@ The CLI finds the components through `components.json`, swaps their primitive im
 ## B. Built on Radix UI, Base UI or React Aria: swap the import
 
 ```tsx
-import { Dialog } from 'radix-ui'; // before
-import { Dialog } from '@animate-ui/react/primitives/radix-ui/dialog'; // after
+import { Dialog, Slot } from 'radix-ui'; // before
+import { Dialog, Slot } from '@animate-ui/react/primitives/radix-ui'; // after (re-exports all of radix-ui)
+import * as DialogPrimitive from '@radix-ui/react-dialog'; // before
+import * as DialogPrimitive from '@animate-ui/react/primitives/radix-ui/dialog'; // after
 import { Dialog } from '@base-ui/react/dialog'; // before
 import { Dialog } from '@animate-ui/react/primitives/base-ui/dialog'; // after
+import { Dialog, Field } from '@base-ui/react'; // before
+import { Dialog, Field } from '@animate-ui/react/primitives/base-ui'; // after (re-exports all of Base UI)
 import { Popover, Button } from 'react-aria-components'; // before
 import { Popover, Button } from '@animate-ui/react/primitives/react-aria'; // after (re-exports all of React Aria)
 ```
+
+Mirror the library's import style: an umbrella import (`radix-ui`, `@base-ui/react`, `react-aria-components`) keeps its specifiers and only changes source; a per-package or subpath import (`@radix-ui/react-*`, `@base-ui/react/*`, `vaul` → `radix-ui/drawer`, `input-otp`) uses the per-primitive path.
 
 Then remove the component's own CSS animation classes (same list as the CLI) so they don't run on top of Motion. Everything else stays: parts, props, data attributes, `forceMount`/`keepMounted`, render props. Animated parts accept two optional props, `transition` and `exitTransition` (Motion `Transition`s). To change the pace of every animation at once, wrap the app in `<AnimateUIProvider tempo={1.2}>` (`@animate-ui/react/provider`); without it the defaults apply.
 

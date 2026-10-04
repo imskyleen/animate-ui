@@ -96,7 +96,7 @@ export function TypeTable({
       <div
         id={id}
         className={cn(
-          'not-prose my-6 overflow-x-auto rounded-xl border bg-card',
+          'not-prose my-6 overflow-x-auto overscroll-x-none rounded-xl border bg-card',
           className,
         )}
       >

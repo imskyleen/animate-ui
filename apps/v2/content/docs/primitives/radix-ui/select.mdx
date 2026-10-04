@@ -14,7 +14,7 @@ description: Displays a list of options for the user to pick from, triggered by 
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Select } from '@animate-ui/react/primitives/radix-ui/select';
+import { Select } from '@animate-ui/react/primitives/radix-ui';
 
 export function FontPicker() {
   return (
@@ -41,7 +41,7 @@ export function FontPicker() {
 }
 ```
 
-The `import * as SelectPrimitive from '@radix-ui/react-select'` style works too.
+Coming from the `@radix-ui/react-select` package? Use the subpath: `import * as SelectPrimitive from '@animate-ui/react/primitives/radix-ui/select'`.
 
 ## Animation
 

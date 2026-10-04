@@ -29,6 +29,8 @@ export function Upload({ value }: { value: number }) {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Progress } from '@animate-ui/react/primitives/base-ui'`.
+
 ## Animation
 
 - **Indicator**: Base UI sizes it with a percentage `width`. Animate UI keeps it full width and reveals the value with an animated `transform` instead (no layout on every frame); the track clips it, as shadcn/ui's `overflow-x-hidden` track does. Right-to-left (`DirectionProvider`) is handled.

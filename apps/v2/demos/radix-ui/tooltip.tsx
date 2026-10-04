@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Tooltip as TooltipPrimitive } from "@animate-ui/react/primitives/radix-ui/tooltip"
+import { Tooltip as TooltipPrimitive } from "@animate-ui/react/primitives/radix-ui"
 import { Button } from "@/components/ui/button"
 import {
   TextBoldIcon,

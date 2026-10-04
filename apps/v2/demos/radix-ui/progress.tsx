@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Progress as ProgressPrimitive } from "@animate-ui/react/primitives/radix-ui/progress"
+import { Progress as ProgressPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Button } from "@/components/ui/button"
 

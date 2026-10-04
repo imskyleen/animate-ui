@@ -30,6 +30,8 @@ export function Volume() {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Slider } from '@animate-ui/react/primitives/base-ui'`.
+
 ## Animation
 
 - **Dragging follows the pointer instantly**, and keyboard changes are instant.
@@ -68,7 +70,8 @@ Every part takes exactly the props of [Base UI's Slider](https://base-ui.com/rea
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the thumb after a press on the track, and of its press scale.',
+      description:
+        'Transition of the thumb after a press on the track, and of its press scale.',
       type: 'Transition',
       default: 'spring.snappy (600ms, bounce 0.15)',
     },

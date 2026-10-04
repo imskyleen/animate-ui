@@ -15,7 +15,7 @@ import {
 // The sidebar's and the TOC's lists: a vertical line, and two bars that glide
 // from item to item (layoutId): the active one, and the hovered one.
 
-const indicatorTransition = {
+export const indicatorTransition = {
   type: 'spring',
   stiffness: 500,
   damping: 35,
@@ -63,10 +63,13 @@ export function NavItemContent({
   active,
   hovered,
   depth = 0,
+  activeBar = true,
   children,
 }: {
   active: boolean;
   hovered: boolean;
+  /** False when the list draws its own active bar (the TOC's range). */
+  activeBar?: boolean;
   /** TOC: nested headings are indented. */
   depth?: number;
   children: ReactNode;
@@ -75,7 +78,7 @@ export function NavItemContent({
     <>
       <span className="absolute inset-y-0 left-[9px] w-px bg-border" />
       <AnimatePresence initial={false}>
-        {active && (
+        {active && activeBar && (
           <motion.span
             layoutId="active-indicator"
             className="pointer-events-none absolute top-1/2 left-[8px] z-11 h-[56%] w-[3px] -translate-y-1/2 rounded-full bg-primary"

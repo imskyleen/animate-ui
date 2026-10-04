@@ -47,6 +47,8 @@ export function FontPicker() {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Select } from '@animate-ui/react/primitives/base-ui'`.
+
 ## Animation
 
 - **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, then Base UI unmounts it (or hides it, when it keeps the items mounted for typeahead on the closed trigger).

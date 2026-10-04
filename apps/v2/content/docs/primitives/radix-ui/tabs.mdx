@@ -14,7 +14,7 @@ description: A set of layered sections of content, known as tab panels, that are
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Tabs } from '@animate-ui/react/primitives/radix-ui/tabs';
+import { Tabs } from '@animate-ui/react/primitives/radix-ui';
 
 export function Settings() {
   return (
@@ -30,7 +30,7 @@ export function Settings() {
 }
 ```
 
-The `import * as TabsPrimitive from '@radix-ui/react-tabs'` style works too.
+Coming from the `@radix-ui/react-tabs` package? Use the subpath: `import * as TabsPrimitive from '@animate-ui/react/primitives/radix-ui/tabs'`.
 
 ## Animation
 
@@ -57,7 +57,8 @@ Every part takes exactly the props of [Radix UI's Tabs](https://www.radix-ui.com
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the indicator gliding to the active tab (pointer changes).',
+      description:
+        'Transition of the indicator gliding to the active tab (pointer changes).',
       type: 'Transition',
       default: 'spring.snappy (600ms, bounce 0.15)',
     },

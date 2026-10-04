@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Select as SelectPrimitive } from "@animate-ui/react/primitives/radix-ui/select"
+import { Select as SelectPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { IconPlaceholder } from "@/app/(create)/components/icon-placeholder"
 

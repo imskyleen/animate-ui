@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { HoverCard as HoverCardPrimitive } from "@animate-ui/react/primitives/radix-ui/hover-card"
+import { HoverCard as HoverCardPrimitive } from "@animate-ui/react/primitives/radix-ui"
 import { Calendar03Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 

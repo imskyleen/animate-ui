@@ -578,9 +578,11 @@ function HighlightItem<T extends React.ElementType>({
 
   if (!React.isValidElement(children)) return children;
 
+  // Visual state only: Highlight is an effect, not a widget, so it sets no
+  // ARIA (`aria-selected` is invalid on links and buttons). Components that
+  // are real tabs or options (e.g. Tabs' triggers) set it themselves.
   const dataAttributes = {
     'data-active': isActive ? 'true' : 'false',
-    'aria-selected': isActive,
     'data-disabled': isDisabled,
     'data-value': childValue,
     'data-highlight': true,

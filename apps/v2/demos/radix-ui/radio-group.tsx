@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { RadioGroup as RadioGroupPrimitive } from "@animate-ui/react/primitives/radix-ui/radio-group"
+import { RadioGroup as RadioGroupPrimitive } from "@animate-ui/react/primitives/radix-ui"
 import { Label } from "@/components/ui/label"
 
 function RadioGroup({

@@ -35,6 +35,8 @@ export function CanvasMenu() {
 }
 ```
 
+Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { ContextMenu } from '@animate-ui/react/primitives/base-ui'`.
+
 ## Animation
 
 - **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the pointer (`--transform-origin`). It closes in 400ms.
@@ -63,7 +65,8 @@ Every part takes exactly the props of [Base UI's Context Menu](https://base-ui.c
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
+      default:
+        'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
     },
     exitTransition: {
       description: 'Transition of the closing.',

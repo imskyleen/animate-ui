@@ -14,7 +14,7 @@ description: A set of checkable buttons, known as radio buttons, where no more t
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { RadioGroup } from '@animate-ui/react/primitives/radix-ui/radio-group';
+import { RadioGroup } from '@animate-ui/react/primitives/radix-ui';
 
 export function Density() {
   return (
@@ -34,7 +34,7 @@ export function Density() {
 }
 ```
 
-The `import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'` style works too.
+Coming from the `@radix-ui/react-radio-group` package? Use the subpath: `import * as RadioGroupPrimitive from '@animate-ui/react/primitives/radix-ui/radio-group'`.
 
 ## Animation
 

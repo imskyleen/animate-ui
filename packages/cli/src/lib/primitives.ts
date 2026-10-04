@@ -41,6 +41,14 @@ export function primitiveModule(primitive: Primitive) {
   return `${PACKAGE}/primitives/${primitive.library}/${primitive.name}`;
 }
 
+/**
+ * The mirror of a library's umbrella package (`radix-ui`, `@base-ui/react`):
+ * everything it exports, with Animate UI's animated primitives.
+ */
+export function barrelModule(library: 'radix-ui' | 'base-ui' | 'react-aria') {
+  return `${PACKAGE}/primitives/${library}`;
+}
+
 /** The React Aria primitive that animates `exportName`, if any. */
 export function findReactAriaPrimitive(exportName: string) {
   return PRIMITIVES.find(

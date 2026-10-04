@@ -55,7 +55,7 @@ test('animate <component> rewrites the file and says what changed', () => {
   const { code, output } = run(['accordion']);
   expect(code).toBe(0);
   expect(readFileSync(uiFile(), 'utf8')).toContain(
-    '@animate-ui/react/primitives/radix-ui/accordion',
+    'from "@animate-ui/react/primitives/radix-ui"',
   );
   expect(output).toContain('src/components/ui/accordion.tsx');
   expect(output).toContain('pnpm add @animate-ui/react motion');

@@ -14,7 +14,7 @@ description: A control that allows the user to toggle between checked and not ch
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Switch } from '@animate-ui/react/primitives/radix-ui/switch';
+import { Switch } from '@animate-ui/react/primitives/radix-ui';
 
 export function AirplaneMode() {
   return (
@@ -28,7 +28,7 @@ export function AirplaneMode() {
 }
 ```
 
-The `import * as SwitchPrimitive from '@radix-ui/react-switch'` style works too.
+Coming from the `@radix-ui/react-switch` package? Use the subpath: `import * as SwitchPrimitive from '@animate-ui/react/primitives/radix-ui/switch'`.
 
 ## Animation
 

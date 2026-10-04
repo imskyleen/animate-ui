@@ -14,7 +14,7 @@ description: An interactive component which expands/collapses a panel.
 Import the primitive from Animate UI instead of Radix UI. Everything else stays the same.
 
 ```tsx
-import { Collapsible } from '@animate-ui/react/primitives/radix-ui/collapsible';
+import { Collapsible } from '@animate-ui/react/primitives/radix-ui';
 
 export function Changelog() {
   return (
@@ -28,7 +28,7 @@ export function Changelog() {
 }
 ```
 
-The `import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'` style works too.
+Coming from the `@radix-ui/react-collapsible` package? Use the subpath: `import * as CollapsiblePrimitive from '@animate-ui/react/primitives/radix-ui/collapsible'`.
 
 ## Animation
 

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "cn"
-import { Checkbox as CheckboxPrimitive } from "@animate-ui/react/primitives/radix-ui/checkbox"
+import { Checkbox as CheckboxPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"

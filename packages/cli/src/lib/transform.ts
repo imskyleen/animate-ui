@@ -4,6 +4,7 @@ import type * as t from '@babel/types';
 import { stripClasses } from './classes';
 import {
   findPrimitive,
+  barrelModule,
   findReactAriaPrimitive,
   primitiveModule,
   toKebab,
@@ -73,15 +74,6 @@ function specifierName(specifier: t.ImportSpecifier) {
     : specifier.imported.value;
 }
 
-function printSpecifier(specifier: t.ImportSpecifier) {
-  const imported = specifierName(specifier);
-  const local = specifier.local.name;
-  const typePrefix = specifier.importKind === 'type' ? 'type ' : '';
-  return local === imported
-    ? `${typePrefix}${imported}`
-    : `${typePrefix}${imported} as ${local}`;
-}
-
 /**
  * Swaps the primitive imports of one file for Animate UI's and removes the
  * CSS animation classes they made redundant. Pure: returns the new code.
@@ -101,8 +93,6 @@ export function transform(code: string): TransformResult {
     if (node.type !== 'ImportDeclaration' || node.importKind === 'type')
       continue;
     const source = node.source.value;
-    const raw = code.slice(node.start!, node.end!);
-    const semi = raw.trimEnd().endsWith(';') ? ';' : '';
     const quote = code[node.source.start!];
 
     // `import { Popover, Button } from "react-aria-components"`: the whole
@@ -129,9 +119,9 @@ export function transform(code: string): TransformResult {
       continue;
     }
 
-    // `import { Accordion as AccordionPrimitive } from "radix-ui"` (or
-    // `{ Combobox } from "@base-ui/react"`): one namespace per primitive,
-    // possibly several per declaration.
+    // `import { Accordion as AccordionPrimitive, Slot } from "radix-ui"` (or
+    // `{ Combobox } from "@base-ui/react"`): the library's barrel mirror
+    // re-exports everything it doesn't animate, so only the source changes.
     const umbrella: Library | undefined =
       source === 'radix-ui'
         ? 'radix-ui'
@@ -139,37 +129,26 @@ export function transform(code: string): TransformResult {
           ? 'base-ui'
           : undefined;
     if (umbrella) {
-      const moved: string[] = [];
-      const kept: t.ImportSpecifier[] = [];
+      const to = barrelModule(umbrella);
+      const animated: { name: string; primitive: Primitive }[] = [];
       for (const specifier of node.specifiers) {
         if (specifier.type !== 'ImportSpecifier') continue;
         const name = specifierName(specifier);
         const primitive = findPrimitive(umbrella, toKebab(name));
-        if (!primitive) {
-          kept.push(specifier);
-          if (!NOT_ANIMATED.has(toKebab(name)))
-            unsupported.push(`${source} ${name}`);
-          continue;
-        }
-        const to = primitiveModule(primitive);
-        moved.push(
-          `import { ${printSpecifier(specifier)} } from ${quote}${to}${quote}${semi}`,
-        );
+        if (primitive) animated.push({ name, primitive });
+        else if (!NOT_ANIMATED.has(toKebab(name)))
+          unsupported.push(`${source} ${name}`);
+      }
+      if (animated.length === 0) continue;
+      edits.push({
+        start: node.source.start!,
+        end: node.source.end!,
+        text: `${quote}${to}${quote}`,
+      });
+      for (const { name, primitive } of animated) {
         imports.push({ from: source, to, name });
         swapped.push(primitive);
       }
-      if (moved.length === 0) continue;
-      const lines = [...moved];
-      if (kept.length > 0) {
-        lines.unshift(
-          `import { ${kept.map(printSpecifier).join(', ')} } from ${quote}${source}${quote}${semi}`,
-        );
-      }
-      edits.push({
-        start: node.start!,
-        end: node.end!,
-        text: lines.join('\n'),
-      });
       continue;
     }
 

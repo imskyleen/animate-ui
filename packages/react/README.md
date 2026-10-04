@@ -8,8 +8,10 @@ Each primitive has exactly the API of its library: swap the import and your comp
 // Before
 import { Accordion as AccordionPrimitive } from 'radix-ui';
 // After
-import { Accordion as AccordionPrimitive } from '@animate-ui/react/primitives/radix-ui/accordion';
+import { Accordion as AccordionPrimitive } from '@animate-ui/react/primitives/radix-ui';
 ```
+
+Imports mirror the library's: `radix-ui` → `@animate-ui/react/primitives/radix-ui`, `@radix-ui/react-accordion` → `@animate-ui/react/primitives/radix-ui/accordion`, `@base-ui/react[/accordion]` → `@animate-ui/react/primitives/base-ui[/accordion]`, `react-aria-components` → `@animate-ui/react/primitives/react-aria`.
 
 Or let the CLI do it for every installed shadcn/ui component:
 

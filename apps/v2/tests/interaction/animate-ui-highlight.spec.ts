@@ -20,6 +20,15 @@ test.describe('animate-ui highlight', () => {
     ).toHaveAttribute('data-active', 'true');
   });
 
+  test('sets no ARIA state: it is a visual effect', async ({ page }) => {
+    await open(page);
+    // aria-selected is invalid on buttons and links; the state is data-active.
+    await expect(page.locator('[aria-selected]')).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: 'Activity' }),
+    ).toHaveAttribute('data-active', 'false');
+  });
+
   test('clicking an item glides the highlight to it', async ({ page }) => {
     await open(page);
     const target = page.getByRole('button', { name: 'Settings' });
