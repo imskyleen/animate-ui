@@ -6,13 +6,15 @@ import { motion, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
-import { progressTransition } from '../../../internal/progress';
+import { PROGRESS_TRANSITION } from '../../../internal/progress';
 
-// Same API as Radix's Progress. Radix leaves the indicator's position to
-// you: shadcn/ui moves it with `style={{ transform: translateX(…) }}`. The
+// Same API as Radix's Progress, animated like Animate UI v1's progress: the
+// indicator springs to a new value (stiffness 100, damping 30). Radix leaves
+// the indicator's position to you: shadcn/ui moves it with
+// `style={{ transform: translateX(…) }}` (v1 animated the same `x`). The
 // Indicator animates that transform instead of jumping to it.
 
 type ProgressProps = ProgressPrimitive.ProgressProps;
@@ -22,8 +24,8 @@ type ProgressIndicatorProps = ProgressPrimitive.ProgressIndicatorProps &
 /** Animate UI's additions to `Progress.Indicator`. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the indicator moving to a new value. Defaults to
-   * `spring.snappy` without bounce (600ms), which retargets smoothly.
+   * Transition of the indicator moving to a new value. Defaults to a spring
+   * (stiffness 100, damping 30).
    */
   transition?: Transition;
 };
@@ -48,12 +50,17 @@ function IndicatorMotion({
   ...props
 }: React.ComponentProps<typeof ProgressPrimitive.Indicator> &
   IndicatorAnimationProps) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
+  const spring = useTempoTransition(transition ?? PROGRESS_TRANSITION);
   const { transform, ...rest } = style ?? {};
-  const move = reduce
-    ? tokens.transition.instant
-    : (transition ?? progressTransition(tokens));
+  const move = reduce ? { duration: 0 } : spring;
+  // v1 animated `x`: a retarget keeps the indicator's momentum (a `transform`
+  // string would restart from rest). Other transforms animate as they are.
+  const x =
+    typeof transform === 'string'
+      ? /^\s*translateX\((-?[\d.]+%)\)\s*$/.exec(transform)?.[1]
+      : undefined;
+  const target = x !== undefined ? { x } : transform ? { transform } : null;
 
   return (
     // Radix's props (className, data-state, data-value…) land on the
@@ -63,7 +70,7 @@ function IndicatorMotion({
         style={rest}
         // No animation on mount: it starts where the value is.
         initial={false}
-        animate={transform ? { transform, transition: move } : undefined}
+        animate={target ? { ...target, transition: move } : undefined}
       >
         {children}
       </motion.div>

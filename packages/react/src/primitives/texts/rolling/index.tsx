@@ -9,9 +9,10 @@ import {
 } from '../../../utils/use-is-in-view';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   transition as motionTransition,
+  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN, splitGraphemes } from '../_text';
 
@@ -23,12 +24,14 @@ const CHAR_STYLE: React.CSSProperties = {
   backfaceVisibility: 'hidden',
 };
 
+const DEFAULT_TRANSITION: Transition = {
+  duration: 0.5,
+  delay: 0.1,
+  ease: 'easeOut',
+};
+
 // The front copy rolls away from its upper quarter while the back copy rolls
 // in from its baseline, 0.3s later, which reads as the letter turning over.
-const FRONT_REST = 'rotateX(0deg)';
-const FRONT_ROLLED = 'rotateX(90deg)';
-const BACK_REST = 'rotateX(90deg)';
-const BACK_ROLLED = 'rotateX(0deg)';
 const BACK_OFFSET = 0.3;
 
 type RollingTextProps = Omit<React.ComponentProps<'span'>, 'children'> & {
@@ -69,13 +72,9 @@ function RollingTextContent({
     },
   );
   const reduce = useShouldReduceMotion();
-  const tokens = useMotionTokens();
-  // 0.5s per letter, 0.1s apart, paced by the provider's tempo.
-  const transition: Transition = transitionProp ?? {
-    duration: 0.5 * tokens.tempo,
-    delay: 0.1,
-    ease: tokens.ease.out,
-  };
+  const { tempo } = useMotionTokens();
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const transition = transitionProp ?? defaultTransition;
 
   // Reduced motion: no rotation at all, the letters sit in their final state.
   // Once rolled, the text stays rolled (leaving the viewport doesn't reverse it).
@@ -121,12 +120,13 @@ function RollingTextContent({
                       display: 'inline-block',
                       perspective: '9999999px',
                       transformStyle: 'preserve-3d',
+                      width: 'auto',
                     }}
                   >
                     <motion.span
                       style={{ ...CHAR_STYLE, transformOrigin: '50% 25%' }}
-                      initial={reduce ? false : { transform: FRONT_REST }}
-                      animate={rolled ? { transform: FRONT_ROLLED } : undefined}
+                      initial={reduce ? false : { rotateX: 0 }}
+                      animate={rolled ? { rotateX: 90 } : undefined}
                       transition={
                         reduce
                           ? motionTransition.instant
@@ -137,12 +137,15 @@ function RollingTextContent({
                     </motion.span>
                     <motion.span
                       style={{ ...CHAR_STYLE, transformOrigin: '50% 100%' }}
-                      initial={reduce ? false : { transform: BACK_REST }}
-                      animate={rolled ? { transform: BACK_ROLLED } : undefined}
+                      initial={reduce ? false : { rotateX: 90 }}
+                      animate={rolled ? { rotateX: 0 } : undefined}
                       transition={
                         reduce
                           ? motionTransition.instant
-                          : { ...transition, delay: charDelay + BACK_OFFSET }
+                          : {
+                              ...transition,
+                              delay: charDelay + BACK_OFFSET * tempo,
+                            }
                       }
                     >
                       {label}

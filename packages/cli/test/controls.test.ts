@@ -10,16 +10,20 @@ const STYLES = ['luma', 'lyra', 'maia', 'mira', 'nova', 'rhea', 'sera', 'vega'];
 // Switch thumbs: Motion glides them now, so their `transition-transform`
 // goes, while the track's colour transition (`transition-all`) stays.
 for (const library of ['radix-ui', 'base-ui', 'react-aria']) {
-  test(`${library} switch: only the thumb's transition-transform is removed`, () => {
+  test(`${library} switch: the thumb's and the track's CSS transitions are removed`, () => {
     for (const style of STYLES) {
       const input = readFileSync(
         path.join(FIXTURES, library, `switch.${style}.tsx`),
         'utf8',
       );
       const result = transform(input);
-      expect(result.removedClasses).toEqual(['transition-transform']);
-      expect(result.code).toContain('transition-all');
-      expect(result.code).not.toMatch(/\btransition-transform\b/);
+      // The thumb glides on a spring and the track's colour changes at once,
+      // as in v1.
+      expect([...result.removedClasses].sort()).toEqual([
+        'transition-all',
+        'transition-transform',
+      ]);
+      expect(result.code).not.toMatch(/\btransition-(all|transform)\b/);
     }
   });
 }

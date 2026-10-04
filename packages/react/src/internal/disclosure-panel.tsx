@@ -4,40 +4,57 @@ import * as React from 'react';
 import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
-import { useMotionTokens, useShouldReduceMotion } from '../utils/motion';
+import { useShouldReduceMotion, useTempoTransition } from '../utils/motion';
 
-// Shared by the Base UI Collapsible and Accordion panels and React Aria's
-// DisclosurePanel: the libraries hide a closed panel the moment it closes,
-// these helpers keep it visible until Motion's exit is over.
+// Shared by every disclosure panel (Radix UI Accordion and Collapsible, Base
+// UI Accordion and Collapsible, React Aria's DisclosurePanel). The libraries
+// hide a closed panel the moment it closes: these helpers keep it visible
+// until Motion's exit is over.
 
-// Height is one of the few layout animations worth its cost: the content
-// pushes what follows, so it has to grow.
-const collapsed = { height: 0, opacity: 0 };
-const expanded = { height: 'auto', opacity: 1 };
+// Animate UI v1's panel: its height grows from 0 while the content fades in
+// and rises 20px, revealed top to bottom by a mask (`--mask-stop`).
+const collapsed = { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 };
+const expanded = { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 };
+
+const MASK =
+  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))';
+
+/** The mask `--mask-stop` animates (v1's reveal). */
+const maskStyle = { maskImage: MASK, WebkitMaskImage: MASK };
+
+/** v1's transition, for the opening and the closing alike. */
+const DISCLOSURE_TRANSITION: Transition = { duration: 0.35, ease: 'easeInOut' };
+
+const INSTANT: Transition = { duration: 0 };
 
 type HiddenMode = 'until-found' | false;
 
 /**
- * Under reduced motion the height jumps and only the fade plays. Motion
- * applies its reduced-motion setting when an element mounts; a panel that
- * stays mounted (React Aria, keepMounted) must also follow a preference
- * changed later, so the height's duration is zeroed here too.
+ * The opening and closing transitions: v1's 350ms ease-in-out both ways
+ * (`exitTransition` defaults to `transition`), paced by the provider's tempo.
+ *
+ * Under reduced motion the height and the 20px rise jump, while the fade and
+ * the mask still play. Motion applies its reduced-motion setting when an
+ * element mounts; a panel that stays mounted (React Aria, keepMounted,
+ * forceMount) must also follow a preference changed later, so their
+ * durations are zeroed here too.
  */
 function useDisclosureTransitions(
   transition: Transition | undefined,
   exitTransition: Transition | undefined,
-  revealedByFind: boolean,
+  revealedByFind = false,
 ) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
-  const instantHeight = (t: Transition): Transition =>
-    reduce ? { ...t, height: { duration: 0 } } : t;
+  const enter = useTempoTransition(transition ?? DISCLOSURE_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? DISCLOSURE_TRANSITION,
+  );
+  const instantMoves = (t: Transition): Transition =>
+    reduce ? { ...t, height: INSTANT, y: INSTANT } : t;
   return {
     // Find-in-page reveals the match at once, as the libraries do.
-    enter: revealedByFind
-      ? tokens.transition.instant
-      : instantHeight(transition ?? tokens.transition.disclosure),
-    exit: instantHeight(exitTransition ?? tokens.transition.exit),
+    enter: revealedByFind ? INSTANT : instantMoves(enter),
+    exit: instantMoves(exit),
   };
 }
 
@@ -186,9 +203,9 @@ function motionRender<T extends RenderProp>(
 
 /** Animate UI's additions to a disclosure panel. */
 type PanelAnimationProps = {
-  /** Transition of the opening. Defaults to `transition.disclosure` (600ms). */
+  /** Transition of the opening. Defaults to 350ms ease-in-out. */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition.exit` (400ms). */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -244,6 +261,7 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
     inert: !open && !(untilFound && panel.settled),
     style: {
       overflow: 'hidden',
+      ...maskStyle,
       // Base UI measures these for CSS transitions; Motion owns the height
       // now, so classes reading them follow the content.
       [sizeVars[0]]: 'auto',
@@ -262,7 +280,8 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
   } as unknown as P;
 
   return (
-    <AnimatePresence initial={false}>
+    // Open on mount (an item open by default), it animates open, as in v1.
+    <AnimatePresence>
       {(open || persistent) && <Panel {...panelProps} />}
     </AnimatePresence>
   );
@@ -271,6 +290,7 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
 export {
   collapsed,
   expanded,
+  maskStyle,
   useDisclosurePanel,
   useDisclosureTransitions,
   asMotion,

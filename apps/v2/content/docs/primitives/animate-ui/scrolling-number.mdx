@@ -33,10 +33,10 @@ export function Score() {
 
 ## Animation
 
-- The strip spins through every step up to `number` over 2s on a strong ease-out: fast through the range, slow as it lands.
-- A new `number` retargets the spin from where it is.
+- After `delay`, the strip spins through every step up to `number` on a spring (`stiffness: 90, damping: 30`): fast through the range, then it settles without overshoot.
+- A new `number` springs on from where the strip is.
 - The strip is written by a motion value, without a React render per frame. `onNumberChange` reports the value under the highlight as it passes.
-- `<AnimateUIProvider tempo>` paces the default duration.
+- `<AnimateUIProvider tempo>` paces the default spring.
 - Under reduced motion, the wheel lands on the number right away.
 - The strip is hidden from screen readers, which read the number once from the container.
 
@@ -113,9 +113,9 @@ export function Score() {
     },
     transition: {
       description:
-        'Transition of the spin. Spring options (`stiffness`, `damping`, `bounce`, `visualDuration`…) animate as a spring; a transition with a `type` or an `ease` is used as is.',
+        'Transition of the spin. Spring options (`stiffness`, `damping`, `mass`…) animate as a spring; a transition with a `type` or an `ease` is used as is.',
       type: 'Transition',
-      default: '{ duration: 2, ease: ease.out }',
+      default: '{ stiffness: 90, damping: 30 }',
     },
     '...props': {
       description: 'Props of the strip.',

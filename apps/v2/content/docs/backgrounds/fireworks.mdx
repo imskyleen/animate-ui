@@ -33,7 +33,8 @@ export function Hero() {
 
 - Rockets launch from the bottom edge every 300 to 800ms (divided by `population`), trail upwards and burst into 50 to 150 particles that slow down, fall and fade.
 - A click launches a rocket towards the pointer.
-- It draws on a canvas sized to its container at the device pixel ratio, and runs at the same speed on 60Hz and 120Hz screens.
+- The show takes place in a space as wide as the window, with the container's aspect ratio, scaled down to the container: in a container narrower than the window, rockets and particles are smaller and slower. The canvas is drawn at the device pixel ratio.
+- The simulation advances one step per displayed frame, so it runs faster on 120Hz screens.
 - It pauses off screen and while the tab is hidden: nothing launches and the last frame stays.
 - Under reduced motion, it shows a still frame of three bursts and clicks do nothing.
 
@@ -56,23 +57,25 @@ export function Hero() {
     },
     fireworkSpeed: {
       description:
-        'Launch speed of the rockets, in pixels per frame (at 60 fps).',
+        'Launch speed of the rockets, in pixels per frame (pixels of the window-wide space).',
       type: 'number | { min: number; max: number }',
       default: '{ min: 4, max: 8 }',
     },
     fireworkSize: {
-      description: 'Width of the rocket trails, in pixels.',
+      description:
+        'Width of the rocket trails, in pixels of the window-wide space.',
       type: 'number | { min: number; max: number }',
       default: '{ min: 2, max: 5 }',
     },
     particleSpeed: {
       description:
-        'Speed of the burst particles, in pixels per frame (at 60 fps).',
+        'Speed of the burst particles, in pixels per frame (pixels of the window-wide space).',
       type: 'number | { min: number; max: number }',
       default: '{ min: 2, max: 7 }',
     },
     particleSize: {
-      description: 'Radius of the burst particles, in pixels.',
+      description:
+        'Radius of the burst particles, in pixels of the window-wide space.',
       type: 'number | { min: number; max: number }',
       default: '{ min: 1, max: 5 }',
     },

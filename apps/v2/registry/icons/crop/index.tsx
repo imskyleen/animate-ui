@@ -22,10 +22,10 @@ const animations = {
         pathOffset: 0,
       },
       animate: {
-        pathLength: [null, 0.8, 1],
-        pathOffset: [null, 0.1, 0],
-        x: [null, 3, 0],
-        y: [null, -3, 0],
+        pathLength: [1, 0.8, 1],
+        pathOffset: [0, 0.1, 0],
+        x: [0, 3, 0],
+        y: [0, -3, 0],
         transition: {
           duration: 1,
           ease: 'easeInOut',
@@ -40,10 +40,10 @@ const animations = {
         pathOffset: 0,
       },
       animate: {
-        pathLength: [null, 0.8, 1],
-        pathOffset: [null, 0.1, 0],
-        x: [null, -3, 0],
-        y: [null, 3, 0],
+        pathLength: [1, 0.8, 1],
+        pathOffset: [0, 0.1, 0],
+        x: [0, -3, 0],
+        y: [0, 3, 0],
         transition: {
           duration: 1,
           ease: 'easeInOut',

@@ -1,17 +1,19 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const POPUP = '[data-slot="select-content"]';
 
 test.describe('base-ui select demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/base-ui/select', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and a fade from the trigger, then settles', async ({
+  test('opens with a 200ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, POPUP);
@@ -23,21 +25,24 @@ test.describe('base-ui select demo', () => {
     // Below the trigger: it grows from its top edge (minus the side offset).
     expect(parseFloat(first.origin.split(' ')[1]!)).toBeLessThanOrEqual(0);
 
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
     const settled = await sample(page, POPUP);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
   });
 
-  test('closes faster than it opens, then unmounts', async ({ page }) => {
+  test('closes the same way, then unmounts', async ({ page }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
     await trigger.click();
     await page.waitForTimeout(650);
     await page.getByRole('option', { name: 'Lora' }).click();
 
-    await page.waitForTimeout(60);
-    await expect(page.locator(POPUP)).toHaveCount(1);
-    expect((await sample(page, POPUP)).opacity).toBeLessThan(1);
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, POPUP)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
     await expect(trigger).toHaveText('Lora');
   });
@@ -46,19 +51,26 @@ test.describe('base-ui select demo', () => {
     page,
   }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
+    // Measured first: an open select hides the page from assistive tech.
+    const box = (await trigger.boundingBox())!;
     await trigger.click();
     await page.waitForTimeout(650);
+    const element = await page.locator(POPUP).elementHandle();
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(80);
-    await trigger.click();
-    await page.waitForTimeout(16);
-    expect((await sample(page, POPUP)).opacity).toBeGreaterThan(0.2);
+    await expect
+      .poll(async () => (await sample(page, POPUP)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(0.95);
+    // Straight back, without actionability waits: the exit takes 200ms.
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await page.waitForTimeout(650);
-    await expect(page.locator(POPUP)).toHaveCount(1);
+    // The same element: it retargeted instead of remounting.
+    expect(await element!.evaluate((el) => el.isConnected)).toBe(true);
     expect((await sample(page, POPUP)).opacity).toBe(1);
   });
 
-  test('keyboard: arrows move the highlight instantly', async ({ page }) => {
+  test('keyboard: arrows move the highlight', async ({ page }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
     await trigger.focus();
     await page.keyboard.press('ArrowDown');
@@ -70,7 +82,6 @@ test.describe('base-ui select demo', () => {
     await expect(page.getByRole('option', { name: 'Satoshi' })).toHaveAttribute(
       'data-highlighted',
       '',
-      { timeout: 50 },
     );
     await page.keyboard.press('Escape');
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
@@ -88,6 +99,7 @@ test.describe('base-ui select demo', () => {
 });
 
 test.describe('base-ui select API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/base-ui-select', {
       waitUntil: 'networkidle',
@@ -134,12 +146,12 @@ test.describe('base-ui select API', () => {
     });
   });
 
-  test('multiple: the list stays open and checks animate in and out', async ({
+  test('multiple: the list stays open, checks pop in and go at once', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Multiple' }).click();
     await page.waitForTimeout(650);
-    // Already selected: shown at once, no entrance.
+    // Already selected: its check popped in as the list opened.
     expect((await sample(page, '[data-testid="check-apple"]')).opacity).toBe(1);
 
     await page.getByRole('option', { name: 'Multiple Cherry' }).click();
@@ -155,8 +167,10 @@ test.describe('base-ui select API', () => {
 
     await page.getByRole('option', { name: 'Multiple Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('cherry');
-    await page.waitForTimeout(500);
-    expect((await sample(page, '[data-testid="check-apple"]')).opacity).toBe(0);
+    // Deselected: the check goes at once, like v1's checkbox items.
+    await expect(page.getByTestId('check-apple')).toHaveCount(0, {
+      timeout: 150,
+    });
     await expect(page.getByTestId('multiple-popup')).toBeVisible();
   });
 
@@ -186,4 +200,17 @@ test('base-ui select docs page renders without errors', async ({ page }) => {
   expect(response?.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Select');
   expect(errors).toEqual([]);
+});
+
+describeMenuHighlight('base-ui select highlight', {
+  path: '/tests/demos/base-ui/select',
+  open: async (page) => {
+    await page.getByRole('combobox', { name: 'Font' }).click();
+    await page.waitForTimeout(400);
+  },
+  // Geist is the value: Base UI highlights it as the list opens.
+  first: (page) => page.getByRole('option', { name: 'Geist', exact: true }),
+  second: (page) => page.getByRole('option', { name: 'Satoshi' }),
+  keyboardNext: 'ArrowDown',
+  highlightedOnOpen: true,
 });

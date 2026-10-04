@@ -14,6 +14,7 @@ import { usePageVisible } from '../../../utils/use-page-visible';
 import {
   ReducedMotionConfig,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 
 const DEFAULT_GRADIENT =
@@ -50,9 +51,11 @@ function GradientTextContent({
   style,
   gradient = DEFAULT_GRADIENT,
   neon = false,
-  transition = DEFAULT_TRANSITION,
+  transition: transitionProp,
   ...props
 }: GradientTextProps) {
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const transition = transitionProp ?? defaultTransition;
   const localRef = React.useRef<HTMLSpanElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLSpanElement);
 

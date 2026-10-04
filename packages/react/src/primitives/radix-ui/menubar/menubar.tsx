@@ -7,18 +7,21 @@ import {
   MenuStateContext,
   createCheckboxItem,
   createContent,
+  createItem,
   createItemIndicator,
   createOpenRoot,
   createPortal,
   createRadioGroup,
   createRadioItem,
+  type IndicatorAnimationProps,
   type PresenceAnimationProps,
 } from '../_menu/menu';
 
 // Same API as Radix's Menubar. The Root mirrors which menu is open (Radix
 // keeps it private) so each Content can play an exit before it unmounts.
-// Moving from one open menu to another (hover or arrow keys) is instant, like
-// native menubars: only opening the bar and closing it animate.
+// Radix's Menubar has no Animate UI v1 counterpart: each menu moves like v1's
+// DropdownMenu (a 200ms fade and scale, a highlight gliding behind the
+// highlighted item), including when moving from one open menu to another.
 
 type MenubarProps = MenubarPrimitive.MenubarProps;
 type MenubarMenuProps = MenubarPrimitive.MenubarMenuProps;
@@ -33,7 +36,7 @@ type MenubarCheckboxItemProps = MenubarPrimitive.MenubarCheckboxItemProps;
 type MenubarRadioGroupProps = MenubarPrimitive.MenubarRadioGroupProps;
 type MenubarRadioItemProps = MenubarPrimitive.MenubarRadioItemProps;
 type MenubarItemIndicatorProps = MenubarPrimitive.MenubarItemIndicatorProps &
-  PresenceAnimationProps;
+  IndicatorAnimationProps;
 type MenubarSeparatorProps = MenubarPrimitive.MenubarSeparatorProps;
 type MenubarArrowProps = MenubarPrimitive.MenubarArrowProps;
 type MenubarSubProps = MenubarPrimitive.MenubarSubProps;
@@ -42,9 +45,8 @@ type MenubarSubContentProps = MenubarPrimitive.MenubarSubContentProps &
   PresenceAnimationProps;
 
 type MenubarState = {
+  /** The value of the open menu ('' when none is). */
   value: string;
-  /** The value went from one menu straight to another. */
-  switching: boolean;
 };
 
 const MenubarStateContext = React.createContext<MenubarState | null>(null);
@@ -59,20 +61,8 @@ function Root({
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? '');
   const value = controlled ? valueProp : uncontrolled;
 
-  // Derived from the previous value during render (not in an effect), so
-  // the closing and the opening menus both read it on the same render.
-  const [state, setState] = React.useState<MenubarState>({
-    value,
-    switching: false,
-  });
-  let current = state;
-  if (state.value !== value) {
-    current = { value, switching: Boolean(state.value) && Boolean(value) };
-    setState(current);
-  }
-
   return (
-    <MenubarStateContext value={current}>
+    <MenubarStateContext value={{ value }}>
       <MenubarPrimitive.Root
         {...props}
         value={value}
@@ -97,9 +87,7 @@ function Menu({
   if (!menubar) return <MenubarPrimitive.Menu {...props} value={valueProp} />;
 
   return (
-    <MenuStateContext
-      value={{ open: menubar.value === value, instant: menubar.switching }}
-    >
+    <MenuStateContext value={{ open: menubar.value === value }}>
       <MenubarPrimitive.Menu {...props} value={value} />
     </MenuStateContext>
   );
@@ -113,7 +101,7 @@ const Content = createContent(MenubarPrimitive.Content, {
 });
 const Group = MenubarPrimitive.Group;
 const Label = MenubarPrimitive.Label;
-const Item = MenubarPrimitive.Item;
+const Item = createItem(MenubarPrimitive.Item);
 const CheckboxItem = createCheckboxItem(MenubarPrimitive.CheckboxItem);
 const RadioGroup = createRadioGroup(MenubarPrimitive.RadioGroup);
 const RadioItem = createRadioItem(MenubarPrimitive.RadioItem);
@@ -121,7 +109,7 @@ const ItemIndicator = createItemIndicator(MenubarPrimitive.ItemIndicator);
 const Separator = MenubarPrimitive.Separator;
 const Arrow = MenubarPrimitive.Arrow;
 const Sub = createOpenRoot(MenubarPrimitive.Sub);
-const SubTrigger = MenubarPrimitive.SubTrigger;
+const SubTrigger = createItem(MenubarPrimitive.SubTrigger);
 const SubContent = createContent(MenubarPrimitive.SubContent, {
   origin: '--radix-menubar-content-transform-origin',
   sub: true,

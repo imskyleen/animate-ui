@@ -1,7 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { gotoHydrated } from './disclosure-timeline';
+
 const open = (page: Page) =>
-  page.goto('/tests/demos/animate-ui/highlight', { waitUntil: 'networkidle' });
+  gotoHydrated(page, '/tests/demos/animate-ui/highlight');
 
 const HIGHLIGHT = '[data-slot="motion-highlight"]';
 

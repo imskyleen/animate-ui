@@ -23,7 +23,9 @@ export function Article() {
   return (
     <ScrollProgressProvider>
       <ScrollProgress className="h-1 bg-foreground" />
-      <ScrollProgressContainer className="h-96 overflow-y-auto">…</ScrollProgressContainer>
+      <ScrollProgressContainer className="h-96 overflow-y-auto">
+        …
+      </ScrollProgressContainer>
     </ScrollProgressProvider>
   );
 }
@@ -40,8 +42,8 @@ export function PageProgress() {
 
 ## Animation
 
-- The bar follows the scroll position on a spring without overshoot, so it glides instead of jumping on wheel steps.
-- It scales with a hardware-accelerated `transform` by default (`mode="scaleX"`); `width` and `height` modes resize it instead.
+- The bar follows the scroll position on a spring without overshoot (stiffness 250, damping 40), so it glides instead of jumping on wheel steps.
+- By default it grows in width (`mode="width"`, from 0 to 100%), so rounded ends keep their shape; `height` does the same vertically. `scaleX` and `scaleY` scale it with a transform instead, from its `transform-origin` (the center unless you set one, e.g. `origin-left`).
 - Scrolling never re-renders React: the bar is driven by motion values.
 - Under reduced motion, the bar tracks the scroll position without easing.
 
@@ -87,8 +89,8 @@ export function PageProgress() {
     },
     mode: {
       description: 'How the bar shows the progress.',
-      type: "'scaleX' | 'scaleY' | 'width' | 'height'",
-      default: "'scaleX'",
+      type: "'width' | 'height' | 'scaleX' | 'scaleY'",
+      default: "'width'",
     },
     '...props': {
       description: 'Props of the bar.',

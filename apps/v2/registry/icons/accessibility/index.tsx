@@ -19,7 +19,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [null, 5, -5, 0],
+        rotate: [0, 5, -5, 0],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',
@@ -45,8 +45,8 @@ const animations = {
         x: 0,
       },
       animate: {
-        y: [null, 1, -1, 0],
-        x: [null, 1, -1, 0],
+        y: [0, 1, -1, 0],
+        x: [0, 1, -1, 0],
         transition: {
           duration: 0.8,
           ease: 'easeInOut',
@@ -61,8 +61,8 @@ const animations = {
         d: 'M8 5 L5 8',
       },
       animate: {
-        rotate: [null, -60, 0],
-        d: [null, 'M8 5 L4 9', 'M8 5 L5 8'],
+        rotate: [0, -60, 0],
+        d: ['M8 5 L5 8', 'M8 5 L4 9', 'M8 5 L5 8'],
         transition: {
           duration: 0.4,
           delay: 0.2,

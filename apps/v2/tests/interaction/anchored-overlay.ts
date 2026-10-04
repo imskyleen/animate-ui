@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { probeFirstFrame, sample } from './motion-probe';
+import { probeFirstFrame } from './motion-probe';
 
 // The grading grid of an anchored overlay (popover, hover card, tooltip):
 // shared by every library's demo spec.
@@ -27,9 +27,13 @@ export async function gotoReady(page: Page, path: string) {
   await page.mouse.move(2, 2);
 }
 
-/** Budgets (ms): entrances settle by 600, exits by 400. */
-export const ENTER_BUDGET = 650;
-export const EXIT_BUDGET = 450;
+/**
+ * Animate UI v1's popover spring (stiffness 300, damping 25): it overshoots
+ * to ~1.02 around 280ms and settles by ~500ms, both ways. Budgets leave room
+ * for a loaded machine.
+ */
+export const SETTLE_BUDGET = 900;
+export const UNMOUNT_BUDGET = 1000;
 
 /** True when the transform origin is off-centre (anchored to the trigger). */
 export async function originIsAnchored(page: Page, selector: string) {
@@ -45,50 +49,171 @@ export async function originIsAnchored(page: Page, selector: string) {
     });
 }
 
+export type Frame = {
+  t: number;
+  present: boolean;
+  opacity: number;
+  scale: number;
+};
+
+/**
+ * Starts recording the popup frame by frame (its computed opacity and scale)
+ * for `duration` ms: call it right before the interaction, then await it.
+ */
+export function recordFrames(page: Page, selector: string, duration: number) {
+  return page.evaluate(
+    ({ selector, duration }) =>
+      new Promise<Frame[]>((resolve) => {
+        const frames: Frame[] = [];
+        const t0 = performance.now();
+        const tick = () => {
+          const t = performance.now() - t0;
+          const el = document.querySelector<HTMLElement>(selector);
+          const hidden =
+            !el ||
+            getComputedStyle(el).visibility === 'hidden' ||
+            el.closest('[hidden]') !== null;
+          if (hidden) frames.push({ t, present: false, opacity: 0, scale: 0 });
+          else {
+            const cs = getComputedStyle(el);
+            const match = cs.transform.match(/matrix\(([^,]+)/);
+            frames.push({
+              t,
+              present: true,
+              opacity: Number(cs.opacity),
+              scale: match ? Number(match[1]) : 1,
+            });
+          }
+          if (t < duration) requestAnimationFrame(tick);
+          else resolve(frames);
+        };
+        tick();
+      }),
+    { selector, duration },
+  );
+}
+
+const shown = (frames: Frame[]) => frames.filter((f) => f.present);
+
 /**
  * Starts watching the popup's exit, frame by frame: call it right before
- * closing, then await the result. `fadeMs` runs from the first frame below
- * full opacity to the frame it's gone (unmounted or hidden).
+ * closing, then await the result. `goneAt` is when it unmounted (or hid).
  */
 export function recordExit(page: Page, selector: string, timeout = 3000) {
   return page.evaluate(
     ({ selector, timeout }) =>
-      new Promise<{ sawFade: boolean; fadeMs: number; timedOut: boolean }>(
-        (resolve) => {
-          const t0 = performance.now();
-          let fadeStart: number | undefined;
-          let sawFade = false;
-          const tick = () => {
-            const el = document.querySelector<HTMLElement>(selector);
-            const gone =
-              !el ||
-              getComputedStyle(el).visibility === 'hidden' ||
-              el.closest('[hidden]') !== null;
-            const t = performance.now();
-            if (gone) {
-              resolve({
-                sawFade,
-                fadeMs: fadeStart === undefined ? 0 : t - fadeStart,
-                timedOut: false,
-              });
-              return;
-            }
-            const opacity = Number(getComputedStyle(el).opacity);
-            if (opacity < 0.99 && fadeStart === undefined) fadeStart = t;
-            if (opacity > 0.02 && opacity < 0.98) sawFade = true;
-            if (t - t0 > timeout) {
-              resolve({ sawFade, fadeMs: -1, timedOut: true });
-              return;
-            }
-            requestAnimationFrame(tick);
-          };
-          tick();
-        },
-      ),
+      new Promise<{
+        sawFade: boolean;
+        minScale: number;
+        goneAt: number;
+        timedOut: boolean;
+      }>((resolve) => {
+        const t0 = performance.now();
+        let sawFade = false;
+        let minScale = 1;
+        const tick = () => {
+          const el = document.querySelector<HTMLElement>(selector);
+          const gone =
+            !el ||
+            getComputedStyle(el).visibility === 'hidden' ||
+            el.closest('[hidden]') !== null;
+          const t = performance.now() - t0;
+          if (gone) {
+            resolve({ sawFade, minScale, goneAt: t, timedOut: false });
+            return;
+          }
+          const cs = getComputedStyle(el);
+          const opacity = Number(cs.opacity);
+          const match = cs.transform.match(/matrix\(([^,]+)/);
+          const scale = match ? Number(match[1]) : 1;
+          if (opacity > 0.02 && opacity < 0.98) sawFade = true;
+          minScale = Math.min(minScale, scale);
+          if (t > timeout) {
+            resolve({ sawFade, minScale, goneAt: -1, timedOut: true });
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        tick();
+      }),
     { selector, timeout },
   );
 }
 
+/**
+ * How an overlay enters: v1's popover spring (from half its size, with an
+ * overshoot), v1's menu timing (from 0.95 in 200ms), or a fade alone (lists
+ * laid over their trigger).
+ */
+export type EntranceKind = 'popover' | 'menu' | 'fade';
+
+/**
+ * Loads `path` and checks that the popup open from the start (`defaultOpen`)
+ * plays v1's entrance on page load. It's recorded frame by frame from its
+ * first frame in the DOM (an init script, before anything hydrates).
+ * `reduced`: under reduced motion, it only fades.
+ */
+export async function expectEntranceOnLoad(
+  page: Page,
+  path: string,
+  selector: string,
+  kind: EntranceKind,
+  { reduced = false }: { reduced?: boolean } = {},
+) {
+  if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript((selector) => {
+    const w = window as unknown as { __onLoad: [number, number][] };
+    w.__onLoad = [];
+    const tick = () => {
+      const el = document.querySelector<HTMLElement>(selector);
+      if (el) {
+        const cs = getComputedStyle(el);
+        const match = cs.transform.match(/matrix\(([^,]+)/);
+        w.__onLoad.push([Number(cs.opacity), match ? Number(match[1]) : 1]);
+      }
+      if (w.__onLoad.length < 600) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, selector);
+  await gotoReady(page, path);
+  const popup = page.locator(selector).first();
+  await expect(popup).toHaveCSS('opacity', '1', { timeout: 5000 });
+  // Settled: Motion writes `transform: none` once the scale is back to 1.
+  if (kind !== 'fade')
+    await expect(popup).toHaveCSS('transform', 'none', { timeout: 5000 });
+  const frames = await page.evaluate(
+    () => (window as unknown as { __onLoad: [number, number][] }).__onLoad,
+  );
+  const scales = frames.map(([, scale]) => scale);
+  const [firstOpacity, firstScale] = frames[0]!;
+
+  // It appears transparent, then fades in: not at full opacity at once.
+  expect(firstOpacity).toBeLessThan(0.5);
+  expect(frames.some(([o]) => o > 0.02 && o < 0.98)).toBe(true);
+  if (reduced || kind === 'fade') {
+    // No scale while it can be seen (a popup rendered on the server starts
+    // from its hidden scale, transparent, until it hydrates).
+    expect(frames.filter(([o]) => o > 0.02).every(([, s]) => s === 1)).toBe(
+      true,
+    );
+  } else if (kind === 'popover') {
+    // From half its size, past full size (the spring's overshoot), back to 1.
+    expect(firstScale).toBeLessThan(0.75);
+    expect(Math.max(...scales)).toBeGreaterThan(1.005);
+    expect(Math.max(...scales)).toBeLessThan(1.05);
+  } else {
+    // From 0.95, without overshoot (a tween).
+    expect(firstScale).toBeGreaterThanOrEqual(0.94);
+    expect(firstScale).toBeLessThan(0.98);
+    expect(Math.max(...scales)).toBeLessThanOrEqual(1.001);
+  }
+}
+
+/**
+ * The grading grid of a popover, hover card or tooltip: Animate UI v1's
+ * motion. It grows from half its size and fades in from its trigger on a
+ * spring that overshoots a little, and shrinks back the same way.
+ */
 export function describeAnchoredOverlay(name: string, c: OverlayCase) {
   test.describe(name, () => {
     test.describe.configure({ timeout: 180_000 });
@@ -96,37 +221,47 @@ export function describeAnchoredOverlay(name: string, c: OverlayCase) {
       await gotoReady(page, c.path);
     });
 
-    test('enters from scale.enter with a fade, from the trigger', async ({
+    test('grows from half its size with a fade, from the trigger', async ({
       page,
     }) => {
       const probe = await probeFirstFrame(page, c.selector);
       await c.open(page);
       const first = await probe.firstFrame();
-      expect(first.scale).toBeGreaterThanOrEqual(0.94);
-      expect(first.scale).toBeLessThan(1);
+      expect(first.scale).toBeGreaterThanOrEqual(0.49);
+      expect(first.scale).toBeLessThan(0.65);
       expect(first.opacity).toBeLessThan(1);
       expect(await originIsAnchored(page, c.selector)).toBe(true);
     });
 
-    test('settles within the budget', async ({ page }) => {
+    test('springs a little past full size, then settles', async ({ page }) => {
       await c.open(page);
       await page.locator(c.selector).first().waitFor();
-      await page.waitForTimeout(ENTER_BUDGET);
-      const settled = await sample(page, c.selector);
-      expect(settled.opacity).toBe(1);
-      expect(settled.scale).toBeCloseTo(1, 3);
+      const frames = shown(await recordFrames(page, c.selector, SETTLE_BUDGET));
+      const peak = Math.max(...frames.map((f) => f.scale));
+      // The spring's overshoot (~1.02), not an ease that stops at 1.
+      expect(peak).toBeGreaterThan(1.005);
+      expect(peak).toBeLessThan(1.05);
+      const last = frames.at(-1)!;
+      expect(last.opacity).toBe(1);
+      expect(last.scale).toBeCloseTo(1, 2);
     });
 
-    test('exits faster than it enters, then unmounts', async ({ page }) => {
+    test('shrinks back to half its size with a fade, then unmounts', async ({
+      page,
+    }) => {
       await c.open(page);
       await page.locator(c.selector).first().waitFor();
-      await page.waitForTimeout(ENTER_BUDGET);
-      const exit = recordExit(page, c.selector, (c.closeDelay ?? 0) + 2000);
+      await page.waitForTimeout(SETTLE_BUDGET);
+      const exit = recordExit(page, c.selector, (c.closeDelay ?? 0) + 3000);
       await c.close(page);
       const result = await exit;
       expect(result.timedOut).toBe(false);
       expect(result.sawFade).toBe(true);
-      expect(result.fadeMs).toBeLessThanOrEqual(EXIT_BUDGET);
+      // The same spring, undershooting half size a little (~0.48).
+      expect(result.minScale).toBeLessThan(0.55);
+      expect(result.goneAt).toBeLessThanOrEqual(
+        (c.closeDelay ?? 0) + UNMOUNT_BUDGET,
+      );
       await expect(page.locator(c.selector)).toHaveCount(0);
     });
 
@@ -186,8 +321,12 @@ export async function probeFirstFrameOf(
   };
 }
 
-/** A toolbar of tooltips (Bold, Italic, Underline): warm tooltips skip the entrance. */
-export function describeWarmTooltips(
+/**
+ * A toolbar of tooltips (Bold, Italic, Underline). As in Animate UI v1, every
+ * tooltip plays its entrance: moving along the toolbar, the next one grows in
+ * while the previous one shrinks away.
+ */
+export function describeToolbarTooltips(
   name: string,
   path: string,
   selector: string,
@@ -198,12 +337,12 @@ export function describeWarmTooltips(
       await gotoReady(page, path);
     });
 
-    test('the next tooltip along the toolbar appears at once', async ({
+    test('the next tooltip along the toolbar plays its entrance', async ({
       page,
     }) => {
       await page.getByRole('button', { name: 'Bold' }).hover();
       await expect(page.locator(selector)).toBeVisible();
-      await page.waitForTimeout(ENTER_BUDGET);
+      await page.waitForTimeout(SETTLE_BUDGET);
       const probe = await probeFirstFrameOf(page, selector, 'Italic');
       // A real sweep: Radix ignores a single jump while the pointer is in
       // transit towards the previous tooltip.
@@ -214,11 +353,13 @@ export function describeWarmTooltips(
         steps: 8,
       });
       const first = await probe.firstFrame();
-      expect(first.opacity).toBe(1);
-      expect(first.scale).toBeCloseTo(1, 3);
+      expect(first.opacity).toBeLessThan(1);
+      expect(first.scale).toBeLessThan(0.65);
     });
 
-    test('reopening right after closing appears at once', async ({ page }) => {
+    test('reopening right after closing plays the entrance again', async ({
+      page,
+    }) => {
       const bold = page.getByRole('button', { name: 'Bold' });
       const box = (await bold.boundingBox())!;
       await bold.hover();
@@ -231,22 +372,8 @@ export function describeWarmTooltips(
         steps: 2,
       });
       const first = await probe.firstFrame();
-      expect(first.opacity).toBe(1);
-      expect(first.scale).toBeCloseTo(1, 3);
-    });
-
-    test('a cold tooltip plays its entrance again', async ({ page }) => {
-      const bold = page.getByRole('button', { name: 'Bold' });
-      await bold.hover();
-      await expect(page.locator(selector)).toBeVisible();
-      await page.mouse.move(5, 5, { steps: 4 });
-      await expect(page.locator(selector)).toHaveCount(0);
-      await page.waitForTimeout(1200);
-      const probe = await probeFirstFrameOf(page, selector, 'Underline');
-      await page.getByRole('button', { name: 'Underline' }).hover();
-      const first = await probe.firstFrame();
       expect(first.opacity).toBeLessThan(1);
-      expect(first.scale).toBeLessThan(1);
+      expect(first.scale).toBeLessThan(0.65);
     });
   });
 }

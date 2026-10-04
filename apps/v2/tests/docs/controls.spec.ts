@@ -59,7 +59,8 @@ test.describe('demo controls', () => {
     const number = stage(page).locator(
       '[data-slot="counting-number"] > [aria-hidden="true"]',
     );
-    await expect(number).toHaveText('2025');
+    // v1's counting spring lands about 4.5s after mount.
+    await expect(number).toHaveText('2025', { timeout: 10_000 });
     await toggle(page).click();
     const field = panel(page).getByLabel('number', { exact: true });
     await field.fill('42');

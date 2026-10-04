@@ -43,7 +43,7 @@ test.describe('base-ui popover API', () => {
     await expect(page.getByTestId('completed')).toHaveText('opened');
     await page.getByRole('button', { name: 'Close controlled' }).click();
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
     // Fires once the exit is over, not when it starts.
     await expect(page.getByTestId('completed')).toHaveText('opened,closed');
     await page.getByRole('button', { name: 'Open from outside' }).click();
@@ -59,7 +59,7 @@ test.describe('base-ui popover API', () => {
     await page.waitForTimeout(500);
     await expect(content).toBeVisible();
     await page.getByRole('button', { name: 'Close sticky' }).click();
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
   });
 
   test('keepMounted keeps the closed popup mounted and hidden', async ({
@@ -89,7 +89,7 @@ test.describe('base-ui popover API', () => {
     expect(
       await content.evaluate((el) => Number(getComputedStyle(el).opacity)),
     ).toBeLessThan(1);
-    // A 200ms entrance instead of 600ms.
+    // A 200ms entrance instead of the spring.
     await page.waitForTimeout(260);
     expect(
       await content.evaluate((el) => Number(getComputedStyle(el).opacity)),

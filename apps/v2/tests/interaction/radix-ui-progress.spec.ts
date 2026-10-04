@@ -22,11 +22,11 @@ test.describe('radix-ui progress API', () => {
     );
     await page.getByRole('button', { name: 'Complete' }).click();
     await expect(bar).toHaveAttribute('data-state', 'complete');
-    await page.waitForTimeout(700);
-    expect(await revealed(page, '[data-testid="main-indicator"]')).toBeCloseTo(
-      1,
-      2,
-    );
+    await expect
+      .poll(() => revealed(page, '[data-testid="main-indicator"]'), {
+        timeout: 3000,
+      })
+      .toBeGreaterThan(0.995);
   });
 
   test('indeterminate with the import * style', async ({ page }) => {

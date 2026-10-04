@@ -32,7 +32,7 @@ test.describe('animate-ui shine', () => {
 
   test('with loop, it sweeps again', async ({ page }) => {
     await open(page);
-    // Wait for a sweep to finish (1.2s), then for the next to start (1.5s).
+    // Wait for a sweep to finish (1.2s), then for the next to start (0.5s).
     await expect
       .poll(() => position(page), { timeout: 4000 })
       .toBeLessThan(-80);

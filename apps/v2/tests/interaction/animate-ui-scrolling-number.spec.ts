@@ -1,13 +1,35 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const open = (page: Page) =>
-  page.goto('/tests/demos/animate-ui/scrolling-number', {
+const open = async (page: Page) => {
+  await page.goto('/tests/demos/animate-ui/scrolling-number', {
     waitUntil: 'networkidle',
   });
+  await hydrated(page, '[data-slot="scrolling-number-container"]');
+};
+
+/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
+async function hydrated(page: Page, selector: string) {
+  await page.waitForFunction((sel) => {
+    const el = document.querySelector(sel);
+    return (
+      !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
+    );
+  }, selector);
+  // Effects (Motion's gesture listeners, timers) run after the commit.
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+}
 
 const strip = (page: Page) => page.locator('[data-slot="scrolling-number"]');
 const transform = (page: Page) =>
   strip(page).evaluate((el) => getComputedStyle(el).transform);
+/** translateY of the strip, in px. */
+const offset = (page: Page) =>
+  strip(page).evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).f);
 
 /** The value under the highlight. */
 const centered = (page: Page) =>
@@ -37,14 +59,19 @@ test.describe('animate-ui scrolling number', () => {
     ).toHaveText('1,000');
   });
 
-  test('spins to its target and settles there', async ({ page }) => {
+  test('waits a second, spins to its target and settles there', async ({
+    page,
+  }) => {
     await open(page);
-    const start = await transform(page);
-    await page.waitForTimeout(600);
-    expect(await transform(page)).not.toBe(start);
-    // 13 items of 40px, 5 shown: the strip ends 320px down, 1000 centered.
+    await page.getByRole('button', { name: 'Replay' }).click();
+    // The demo's 1s delay: the strip waits on 0 (two items above it).
+    await page.waitForTimeout(500);
+    expect(await offset(page)).toBe(-80);
+    // Then a spring (stiffness 90, damping 30), no overshoot. 13 items of
+    // 40px, 5 shown: the strip ends 320px down, 1000 centered.
+    await expect.poll(() => offset(page), { timeout: 3000 }).toBeGreaterThan(0);
     await expect
-      .poll(() => transform(page), { timeout: 5000 })
+      .poll(() => transform(page), { timeout: 8000 })
       .toBe('matrix(1, 0, 0, 1, 0, 320)');
     expect(await centered(page)).toBe('1000');
     await page.waitForTimeout(300);

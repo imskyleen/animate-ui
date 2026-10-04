@@ -27,7 +27,7 @@ The content is measured with a `ResizeObserver`, so the height also follows chan
 
 ## Animation
 
-- The height springs to the content's height (quick, a hint of overshoot), clipping the content while it moves.
+- The height springs to the content's height (stiffness 300, damping 30, no bounce), clipping the content while it moves.
 - The container's padding and border are included in the measured height.
 - `<AnimateUIProvider tempo>` paces the default spring.
 - Under reduced motion, the height changes at once.
@@ -53,7 +53,8 @@ The content is measured with a `ResizeObserver`, so the height also follows chan
     transition: {
       description: 'Transition of the height.',
       type: 'Transition',
-      default: '{ ...spring.snappy, restDelta: 0.01 }',
+      default:
+        "{ type: 'spring', stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01 }",
     },
     animate: {
       description: 'Extra values to animate along with the height.',

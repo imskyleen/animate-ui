@@ -38,12 +38,15 @@ Coming from the `@radix-ui/react-radio-group` package? Use the subpath: `import 
 
 ## Animation
 
-- **Indicator**: the dot inside scales in from half size and fades in over 600ms with a strong ease-out, while the previous one scales out in 400ms before its indicator unmounts. The indicator element never moves: its content animates (a transform on the indicator would shift shadcn/ui's absolutely centered dot by a pixel).
-- **Item** scales to 0.96 while pressed (150ms).
-- Selecting with the arrow keys is keyboard navigation: the dots swap at once. Space, a click or a tap animate.
-- The dot selected on load renders at rest.
-- Under reduced motion, the dot only fades and nothing scales (no press feedback either).
-- With `forceMount`, unchecked indicators stay in the DOM with their dot hidden.
+The motion of Animate UI v1's radio group:
+
+- **Indicator**: the dot pops in. Its scale and its opacity spring from 0 to 1 (stiffness 200, damping 16: it overshoots a little before settling), and back to 0 the same way when another item is selected, then the indicator unmounts, as in Radix. The indicator element itself never moves: its content (the dot) animates, so shadcn/ui's centered dot stays centered.
+- **Item** scales to 1.05 while hovered and to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30).
+- The item selected when the group mounts pops its dot in too, as v1's did. The indicator stays hidden until then, so a server-rendered page doesn't flash the dot first.
+- Selecting with the arrow keys animates like a click, as v1's did.
+- Selecting again mid-animation turns back from where the dot is.
+- Under reduced motion, the dot only fades and nothing scales.
+- With `forceMount`, an unselected item's indicator stays in the DOM with its dot hidden.
 
 ## API Reference
 
@@ -51,7 +54,7 @@ Every part takes exactly the props of [Radix UI's Radio Group](https://www.radix
 
 ### Root
 
-[Radix UI props](https://www.radix-ui.com/primitives/docs/components/radio-group#root) only. It tells its items when a selection comes from the arrow keys.
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/radio-group#root) only: nothing animates on the group itself.
 
 ### Item
 
@@ -60,9 +63,9 @@ Every part takes exactly the props of [Radix UI's Radio Group](https://www.radix
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the press feedback.',
+      description: 'Transition of the hover and press scale.',
       type: 'Transition',
-      default: 'transition.press (150ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 550, damping: 30 }",
     },
   }}
 />
@@ -76,12 +79,14 @@ Every part takes exactly the props of [Radix UI's Radio Group](https://www.radix
     transition: {
       description: 'Transition of the dot appearing.',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 200, damping: 16 }",
     },
     exitTransition: {
       description: 'Transition of the dot leaving.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'the same spring as transition',
     },
   }}
 />
+
+`AnimateUIProvider`'s `tempo` scales these transitions with everything else.

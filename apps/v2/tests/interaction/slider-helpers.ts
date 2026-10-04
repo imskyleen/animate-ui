@@ -1,7 +1,8 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-// Shared by the Radix UI, Base UI and React Aria slider specs (ported from
-// Animate UI v1's slider tests).
+// Shared by the Radix UI, Base UI and React Aria slider specs. Animate UI v1
+// had no slider: they move like v1's switch thumb (a pressed thumb stretches
+// along the track, a press on the track glides it, spring 300/25).
 
 const ROOT = '[data-slot="slider"]';
 const THUMB = '[data-slot="slider-thumb"]';
@@ -26,6 +27,16 @@ const thumbScale = (locator: Locator) =>
     const match = getComputedStyle(el).transform.match(/matrix\(([^,]+)/);
     return match ? Number(match[1]) : 1;
   });
+
+const sizeOf = (locator: Locator) =>
+  locator.evaluate((el) => ({
+    width: (el as HTMLElement).offsetWidth,
+    height: (el as HTMLElement).offsetHeight,
+    exactWidth: el.getBoundingClientRect().width,
+  }));
+
+/** v1's styled switch stretched its 16px thumb to 19px while pressed. */
+const STRETCH = 19 / 16;
 
 /**
  * Records the visual center x of `selector` (nth match inside the nth slider)
@@ -132,18 +143,26 @@ export function describeSliderDemo(library: string) {
       await page.mouse.up();
     });
 
-    test('a pressed thumb scales up, then back on release', async ({
+    test('a pressed thumb stretches along the track, then back on release', async ({
       page,
     }) => {
       const thumb = slider(page, 0).locator(THUMB).first();
+      const rest = await sizeOf(thumb);
+      const center = await centerX(thumb);
       const box = (await thumb.boundingBox())!;
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
       await page.waitForTimeout(650);
-      expect(await thumbScale(thumb)).toBeCloseTo(1.15, 1);
+      const held = await sizeOf(thumb);
+      // Its real width (no scale), as v1's switch thumb; its height kept.
+      expect(held.exactWidth).toBeCloseTo(rest.width * STRETCH, 0);
+      expect(held.height).toBe(rest.height);
+      expect(await thumbScale(thumb)).toBe(1);
+      // Still on its value: it grows on both sides.
+      expect(Math.abs((await centerX(thumb)) - center)).toBeLessThan(1.5);
       await page.mouse.up();
       await page.waitForTimeout(650);
-      expect(await thumbScale(thumb)).toBeCloseTo(1, 2);
+      expect(await sizeOf(thumb)).toEqual(rest);
     });
 
     test('keyboard changes are instant', async ({ page }) => {
@@ -180,12 +199,13 @@ export function describeSliderDemo(library: string) {
       ).toBeLessThan(0.5);
     });
 
-    test('reduced motion: jumps are instant and nothing scales', async ({
+    test('reduced motion: jumps are instant and nothing stretches', async ({
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.reload({ waitUntil: 'networkidle' });
       const thumb = slider(page, 0).locator(THUMB).first();
+      const rest = await sizeOf(thumb);
       const target = await trackPoint(page, 0, 0.95);
 
       await page.mouse.move(target.x, target.y);
@@ -195,6 +215,7 @@ export function describeSliderDemo(library: string) {
       await page.waitForTimeout(400);
       expect(Math.abs(early - (await centerX(thumb)))).toBeLessThan(0.5);
       expect(await thumbScale(thumb)).toBeCloseTo(1, 2);
+      expect(await sizeOf(thumb)).toEqual(rest);
       await page.mouse.up();
     });
   });

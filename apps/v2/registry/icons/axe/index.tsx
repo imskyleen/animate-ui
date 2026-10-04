@@ -20,7 +20,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom left',
-        rotate: [null, 25, -5, 0],
+        rotate: [0, 25, -5, 0],
       },
     },
     path1: {},

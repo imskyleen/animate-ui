@@ -9,7 +9,7 @@ export const controls = {
   TypingText: {
     delay: { value: 0, min: 0, max: 3000, step: 100 },
     holdDelay: { value: 1000, min: 0, max: 3000, step: 100 },
-    loop: { value: true },
+    loop: { value: false },
     cursor: { value: true },
   },
 }
@@ -17,7 +17,7 @@ export const controls = {
 export default function TypingTextDemo({
   delay = 0,
   holdDelay = 1000,
-  loop = true,
+  loop = false,
   cursor = true,
 }: {
   delay?: number
@@ -27,9 +27,9 @@ export default function TypingTextDemo({
 }) {
   return (
     <TypingText
-      key={`${delay}-${holdDelay}-${loop}`}
+      key={`${delay}-${holdDelay}-${loop}-${cursor}`}
       className="text-4xl font-semibold"
-      text={["Typing Text", "Made with Motion", "Easy to customize"]}
+      text="Typing Text component made with Motion. Highly customizable and easy to use."
       delay={delay}
       holdDelay={holdDelay}
       loop={loop}

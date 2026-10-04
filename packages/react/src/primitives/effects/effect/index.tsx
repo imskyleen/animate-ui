@@ -10,8 +10,8 @@ import {
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import {
   useIsInView,
@@ -52,13 +52,18 @@ type EffectProps = WithAsChild<
 >;
 
 const DEFAULT_SLIDE_DIRECTION: SlideDirection = 'up';
-const DEFAULT_SLIDE_OFFSET: number = 16;
+const DEFAULT_SLIDE_OFFSET: number = 100;
 const DEFAULT_FADE_INITIAL_OPACITY: number = 0;
 const DEFAULT_FADE_OPACITY: number = 1;
-const DEFAULT_ZOOM_INITIAL_SCALE: number = 0.96;
+const DEFAULT_ZOOM_INITIAL_SCALE: number = 0.5;
 const DEFAULT_ZOOM_SCALE: number = 1;
 const DEFAULT_BLUR_INITIAL_BLUR: number = 10;
 const DEFAULT_BLUR_BLUR: number = 0;
+const DEFAULT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 20,
+};
 
 function Effect(props: EffectProps) {
   return (
@@ -82,8 +87,8 @@ function EffectInner({
   asChild = false,
   ...props
 }: EffectProps) {
-  const tokens = useMotionTokens();
-  const baseTransition: Transition = transition ?? tokens.transition.modal;
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const baseTransition: Transition = transition ?? defaultTransition;
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
     {
@@ -97,6 +102,21 @@ function EffectInner({
   const hiddenVariant: Variant = {};
   const visibleVariant: Variant = {};
 
+  if (slide && !reduce) {
+    const offset =
+      typeof slide === 'boolean'
+        ? DEFAULT_SLIDE_OFFSET
+        : (slide.offset ?? DEFAULT_SLIDE_OFFSET);
+    const direction =
+      typeof slide === 'boolean'
+        ? DEFAULT_SLIDE_DIRECTION
+        : (slide.direction ?? DEFAULT_SLIDE_DIRECTION);
+    const axis = direction === 'up' || direction === 'down' ? 'y' : 'x';
+    hiddenVariant[axis] =
+      direction === 'right' || direction === 'down' ? -offset : offset;
+    visibleVariant[axis] = 0;
+  }
+
   if (fade) {
     hiddenVariant.opacity =
       typeof fade === 'boolean'
@@ -108,59 +128,32 @@ function EffectInner({
         : (fade.opacity ?? DEFAULT_FADE_OPACITY);
   }
 
-  if (reduce) {
-    // Reduced motion: no travel, scale or blur. The element still fades in.
-    if (slide || zoom || blur) {
-      hiddenVariant.opacity ??= DEFAULT_FADE_INITIAL_OPACITY;
-      visibleVariant.opacity ??= DEFAULT_FADE_OPACITY;
-    }
-  } else {
-    if (slide || zoom) {
-      let translateX = 0;
-      let translateY = 0;
-      let initialScale = DEFAULT_ZOOM_SCALE;
-      let finalScale = DEFAULT_ZOOM_SCALE;
+  if (zoom && !reduce) {
+    hiddenVariant.scale =
+      typeof zoom === 'boolean'
+        ? DEFAULT_ZOOM_INITIAL_SCALE
+        : (zoom.initialScale ?? DEFAULT_ZOOM_INITIAL_SCALE);
+    visibleVariant.scale =
+      typeof zoom === 'boolean'
+        ? DEFAULT_ZOOM_SCALE
+        : (zoom.scale ?? DEFAULT_ZOOM_SCALE);
+  }
 
-      if (slide) {
-        const offset =
-          typeof slide === 'boolean'
-            ? DEFAULT_SLIDE_OFFSET
-            : (slide.offset ?? DEFAULT_SLIDE_OFFSET);
-        const direction =
-          typeof slide === 'boolean'
-            ? DEFAULT_SLIDE_DIRECTION
-            : (slide.direction ?? DEFAULT_SLIDE_DIRECTION);
-        const value =
-          direction === 'right' || direction === 'down' ? -offset : offset;
-        if (direction === 'up' || direction === 'down') translateY = value;
-        else translateX = value;
-      }
+  if (blur && !reduce) {
+    hiddenVariant.filter =
+      typeof blur === 'boolean'
+        ? `blur(${DEFAULT_BLUR_INITIAL_BLUR}px)`
+        : `blur(${blur.initialBlur ?? DEFAULT_BLUR_INITIAL_BLUR}px)`;
+    visibleVariant.filter =
+      typeof blur === 'boolean'
+        ? `blur(${DEFAULT_BLUR_BLUR}px)`
+        : `blur(${blur.blur ?? DEFAULT_BLUR_BLUR}px)`;
+  }
 
-      if (zoom) {
-        initialScale =
-          typeof zoom === 'boolean'
-            ? DEFAULT_ZOOM_INITIAL_SCALE
-            : (zoom.initialScale ?? DEFAULT_ZOOM_INITIAL_SCALE);
-        finalScale =
-          typeof zoom === 'boolean'
-            ? DEFAULT_ZOOM_SCALE
-            : (zoom.scale ?? DEFAULT_ZOOM_SCALE);
-      }
-
-      hiddenVariant.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${initialScale})`;
-      visibleVariant.transform = `translate3d(0px, 0px, 0) scale(${finalScale})`;
-    }
-
-    if (blur) {
-      hiddenVariant.filter =
-        typeof blur === 'boolean'
-          ? `blur(${DEFAULT_BLUR_INITIAL_BLUR}px)`
-          : `blur(${blur.initialBlur ?? DEFAULT_BLUR_INITIAL_BLUR}px)`;
-      visibleVariant.filter =
-        typeof blur === 'boolean'
-          ? `blur(${DEFAULT_BLUR_BLUR}px)`
-          : `blur(${blur.blur ?? DEFAULT_BLUR_BLUR}px)`;
-    }
+  // Reduced motion: no travel, scale or blur. The element still fades in.
+  if (reduce && (slide || zoom || blur)) {
+    hiddenVariant.opacity ??= DEFAULT_FADE_INITIAL_OPACITY;
+    visibleVariant.opacity ??= DEFAULT_FADE_OPACITY;
   }
 
   const Component = asChild ? Slot : motion.div;

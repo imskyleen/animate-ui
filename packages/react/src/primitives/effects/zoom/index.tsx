@@ -5,8 +5,8 @@ import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import {
   useIsInView,
@@ -25,6 +25,12 @@ type ZoomProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
+const DEFAULT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 20,
+};
+
 function Zoom(props: ZoomProps) {
   return (
     <ReducedMotionConfig>
@@ -40,13 +46,13 @@ function ZoomInner({
   inView = false,
   inViewMargin = '0px',
   inViewOnce = true,
-  initialScale = 0.96,
+  initialScale = 0.5,
   scale = 1,
   asChild = false,
   ...props
 }: ZoomProps) {
-  const tokens = useMotionTokens();
-  const baseTransition: Transition = transition ?? tokens.transition.modal;
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const baseTransition: Transition = transition ?? defaultTransition;
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
     {
@@ -70,8 +76,8 @@ function ZoomInner({
           ? // Reduced motion: no scale, a fade instead.
             { hidden: { opacity: 0 }, visible: { opacity: 1 } }
           : {
-              hidden: { transform: `scale(${initialScale})` },
-              visible: { transform: `scale(${scale})` },
+              hidden: { scale: initialScale },
+              visible: { scale },
             }
       }
       transition={{

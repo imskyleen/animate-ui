@@ -45,10 +45,13 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from its trigger (`--transform-origin`). It closes in 400ms; Base UI keeps it mounted until then, and Animate UI unmounts it once the exit has played.
-- Moving from one item to another, the Popup's size follows the new content over 600ms with the same curve: Base UI resizes it through `--popup-width`/`--popup-height`, and Animate UI sets the CSS transition of `width` and `height` inline (Base UI waits for it before it sets the size back to auto). The Positioner keeps its own transition.
-- **Content** fades in over 600ms, sliding 16px in from the side of its trigger (`activationDirection`). On the first opening, the Popup's entrance is enough.
+Base UI's Navigation Menu has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.
+
+- **Popup** fades and scales in from 0.95, from its trigger (`--transform-origin`), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way; Base UI keeps it mounted until then, and Animate UI unmounts it once the exit has played.
+- Moving from one item to another, the Popup's size follows the new content in 200ms with the same curve: Base UI resizes it through `--popup-width`/`--popup-height`, and Animate UI sets the CSS transition of `width` and `height` inline (Base UI waits for it before it sets the size back to auto). The Positioner keeps its own transition.
+- **Content** fades in, in 200ms, when moving between items, while the previous one fades out. On the first opening, the Popup's entrance is enough.
 - Keyboard navigation between links and triggers moves focus only: nothing animates.
+- An item open from the start (`defaultValue`) shows with the Popup's entrance on page load.
 - Under reduced motion, everything only fades and sizes change at once.
 
 ## API Reference
@@ -67,14 +70,14 @@ Every part takes exactly the props of [Base UI's Navigation Menu](https://base-u
   type={{
     transition: {
       description:
-        'Transition of the opening and of the resizing between items.',
+        'Transition of the opening and of the resizing between items, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />
@@ -88,12 +91,12 @@ Every part takes exactly the props of [Base UI's Navigation Menu](https://base-u
     transition: {
       description: 'Transition of the entrance when moving between items.',
       type: 'Transition',
-      default: 'transition.fade (600ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
-      description: 'Transition of the closing.',
+      description: 'Transition of the fade-out when moving to another item.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

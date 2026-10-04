@@ -1,25 +1,63 @@
 'use client';
 
-import type { Transition } from 'motion/react';
+import * as React from 'react';
+import {
+  animate,
+  motionValue,
+  type AnimationPlaybackControls,
+  type Transition,
+} from 'motion/react';
 
-import type { MotionTokens } from '../utils/motion';
+// Shared by the Radix UI, Base UI and React Aria progress bars, which move
+// like Animate UI v1's: the indicator springs to a new value (stiffness 100,
+// damping 30, no bounce), as v1's Radix `ProgressIndicator` (its `x`) and
+// Base UI `ProgressIndicator` (its `width`) did; v1's Base UI `ProgressValue`
+// counted to the new value on a spring (stiffness 80, damping 20).
 
-// Shared by the Radix UI, Base UI and React Aria progress bars.
-//
-// The indicator moves with a transform. Progress updates arrive in bursts
-// (uploads, steps), so it uses a spring that keeps its velocity when a new
-// value retargets it, with no bounce: an overshoot would uncover the start of
-// the track.
+/** v1's `ProgressIndicator` transition. */
+const PROGRESS_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 100,
+  damping: 30,
+};
 
-/** The indicator's default transition: `spring.snappy` without its bounce. */
-function progressTransition(tokens: MotionTokens): Transition {
-  return { ...tokens.spring.snappy, bounce: 0 };
+/** v1's Base UI `ProgressValue` (a `CountingNumber`) spring. */
+const VALUE_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 80,
+  damping: 20,
+};
+
+/**
+ * A number that springs to `target`, re-rendering on each frame (v1's
+ * `CountingNumber`, which started from 0 when it mounted).
+ */
+function useCountingNumber(target: number, transition: Transition, from = 0) {
+  const [shown, setShown] = React.useState(from);
+  const [value] = React.useState(() => motionValue(from));
+  // Read when the target changes: a new transition object each render (a
+  // tempo) mustn't restart the count.
+  const transitionRef = React.useRef(transition);
+  React.useLayoutEffect(() => {
+    transitionRef.current = transition;
+  });
+
+  React.useEffect(() => value.on('change', setShown), [value]);
+
+  React.useEffect(() => {
+    let controls: AnimationPlaybackControls | undefined;
+    // v1's CountingNumber set its value in a `setTimeout` (its `delay`, 0):
+    // the count starts with the bar's own animation, not ahead of it.
+    const timeout = setTimeout(() => {
+      controls = animate(value, target, transitionRef.current);
+    }, 0);
+    return () => {
+      clearTimeout(timeout);
+      controls?.stop();
+    };
+  }, [value, target]);
+
+  return shown;
 }
 
-/** `translateX` that reveals `percentage` of a full-width indicator. */
-function revealTransform(percentage: number, rtl = false) {
-  const hidden = 100 - Math.min(100, Math.max(0, percentage));
-  return `translateX(${rtl ? hidden : -hidden}%)`;
-}
-
-export { progressTransition, revealTransform };
+export { PROGRESS_TRANSITION, VALUE_TRANSITION, useCountingNumber };

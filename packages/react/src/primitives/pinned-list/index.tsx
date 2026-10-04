@@ -6,17 +6,34 @@ import {
   LayoutGroup,
   AnimatePresence,
   type HTMLMotionProps,
+  type Transition,
 } from 'motion/react';
 
 import { Slot, type WithAsChild } from '../slot';
 import { getStrictContext } from '../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../utils/motion';
 
-const PINNED_LIST_HOVER_SCALE = 1.02;
+const LABEL_TRANSITION: Transition = { duration: 0.22, ease: 'easeInOut' };
+const ITEM_TRANSITION: Transition = {
+  stiffness: 320,
+  damping: 25,
+  mass: 0.8,
+  type: 'spring',
+};
+/**
+ * Motion's default for a `scale` target other than 0 (the trigger has no
+ * transition of its own), written out so the tempo applies to it.
+ */
+const TRIGGER_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 550,
+  damping: 30,
+  restSpeed: 10,
+};
 
 type PinnedListContextType = {
   movingId: string | null;
@@ -81,7 +98,7 @@ function PinnedListLabel({
   transition,
   ...props
 }: PinnedListLabelProps) {
-  const tokens = useMotionTokens();
+  const defaultTransition = useTempoTransition(LABEL_TRANSITION);
   const Component = asChild ? Slot : motion.p;
 
   return (
@@ -93,7 +110,7 @@ function PinnedListLabel({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={transition ?? tokens.transition.change}
+          transition={transition ?? defaultTransition}
           {...props}
         />
       )}
@@ -125,11 +142,7 @@ function PinnedListItem({
   onClick,
   ...props
 }: PinnedListItemProps) {
-  const {
-    spring,
-    scale: motionScale,
-    transition: motionTransition,
-  } = useMotionTokens();
+  const defaultTransition = useTempoTransition(ITEM_TRANSITION);
   const { movingId, setMovingId, onPinnedChange } = usePinnedList();
   const reduce = useShouldReduceMotion();
 
@@ -154,23 +167,10 @@ function PinnedListItem({
           }
           onClick?.(e);
         }}
-        transition={transition ?? spring.default}
-        whileHover={
-          !customTrigger
-            ? {
-                scale: reduce ? 1 : PINNED_LIST_HOVER_SCALE,
-                transition: motionTransition.press,
-              }
-            : undefined
-        }
-        whileTap={
-          !customTrigger
-            ? {
-                scale: reduce ? 1 : motionScale.press,
-                transition: motionTransition.press,
-              }
-            : undefined
-        }
+        transition={transition ?? defaultTransition}
+        // Reduced motion: no hover or press scale.
+        whileHover={!customTrigger && !reduce ? { scale: 1.05 } : undefined}
+        whileTap={!customTrigger && !reduce ? { scale: 0.95 } : undefined}
         {...props}
       />
     </PinnedListItemProvider>
@@ -184,8 +184,7 @@ function PinnedListTrigger({
   onClick,
   ...props
 }: PinnedListTriggerProps) {
-  const { scale: motionScale, transition: motionTransition } =
-    useMotionTokens();
+  const defaultTransition = useTempoTransition(TRIGGER_TRANSITION);
   const { setMovingId, onPinnedChange } = usePinnedList();
   const { id } = usePinnedListItem();
   const reduce = useShouldReduceMotion();
@@ -201,15 +200,10 @@ function PinnedListTrigger({
         onPinnedChange?.(id);
         onClick?.(e);
       }}
-      whileHover={{
-        scale: reduce ? 1 : PINNED_LIST_HOVER_SCALE,
-        transition: motionTransition.press,
-      }}
-      whileTap={{
-        scale: reduce ? 1 : motionScale.press,
-        transition: motionTransition.press,
-      }}
-      transition={motionTransition.press}
+      // Reduced motion: no hover or press scale.
+      whileHover={reduce ? undefined : { scale: 1.05 }}
+      whileTap={reduce ? undefined : { scale: 0.95 }}
+      transition={defaultTransition}
       {...props}
     />
   );

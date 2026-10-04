@@ -39,12 +39,16 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, then unmounts.
-- Warm tooltips skip the entrance: a tooltip that opens while another one is showing, or less than a second after one closed, appears at once, like moving along a toolbar. It works across tooltips that each have their own `Provider` (as shadcn/ui's do), where Base UI's `data-instant` can't tell.
+The motion of Animate UI v1's Base UI Tooltip, value for value:
+
+- **Popup** grows from half its size and fades in, from the trigger (`--transform-origin`), on a spring (stiffness 300, damping 25) that overshoots a little before it settles.
+- It closes the same way: it shrinks back to half its size on the same spring while it fades out, then unmounts.
+- Every tooltip plays its entrance: moving along a toolbar, the next one grows in while the previous one shrinks away.
 - Base UI only opens it on hover for mouse-like pointers, and on keyboard focus.
-- With `keepMounted` on the Portal, the closed popup stays in the DOM: it fades out, then is hidden.
+- With `keepMounted` on the Portal, the closed popup stays in the DOM: it plays its exit, then is hidden.
 - Your own `render` element (or function) on the Popup is made animatable rather than replaced.
-- Under reduced motion, it only fades.
+- Open from the start (`defaultOpen`), it plays the same entrance on page load, like v1.
+- Under reduced motion, it only fades (no scale).
 
 ## API Reference
 
@@ -61,14 +65,15 @@ Every part takes exactly the props of [Base UI's Tooltip](https://base-ui.com/re
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening. Warm tooltips skip it.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.tooltip (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

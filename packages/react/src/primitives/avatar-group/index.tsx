@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { useMotionTokens } from '../../utils/motion';
+import { useTempoTransition } from '../../utils/motion';
 import {
   TooltipProvider,
   Tooltip,
@@ -20,6 +20,17 @@ import {
 // one popup that glides from avatar to avatar (Animate UI's Tooltip). The
 // rise is a transform, so it's skipped under reduced motion (the Tooltip's
 // provider sets that up for the whole group).
+
+const DEFAULT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 17,
+};
+const DEFAULT_TOOLTIP_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 35,
+};
 
 type AvatarProps = Omit<HTMLMotionProps<'div'>, 'translate'> & {
   children: React.ReactNode;
@@ -90,9 +101,12 @@ function AvatarGroup({
   style,
   ...props
 }: AvatarGroupProps) {
-  const tokens = useMotionTokens();
-  const transition = transitionProp ?? tokens.spring.default;
-  const tooltipTransition = tooltipTransitionProp ?? tokens.spring.snappy;
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const defaultTooltipTransition = useTempoTransition(
+    DEFAULT_TOOLTIP_TRANSITION,
+  );
+  const transition = transitionProp ?? defaultTransition;
+  const tooltipTransition = tooltipTransitionProp ?? defaultTooltipTransition;
 
   return (
     <TooltipProvider

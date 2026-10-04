@@ -9,12 +9,15 @@ import {
 } from '../../../utils/use-is-in-view';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
+  transition as motionTransition,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 
 const HIDDEN_SIZE = '0% 100%';
 const VISIBLE_SIZE = '100% 100%';
+
+const DEFAULT_TRANSITION: Transition = { duration: 2, ease: 'easeInOut' };
 
 type HighlightTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   text: string;
@@ -41,12 +44,8 @@ function HighlightTextContent({
   delay = 0,
   ...props
 }: HighlightTextProps) {
-  const tokens = useMotionTokens();
-  // A 2s strong ease-out by default, paced by the provider's tempo.
-  const transition: Transition = transitionProp ?? {
-    duration: 2 * tokens.tempo,
-    ease: tokens.ease.out,
-  };
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const transition = transitionProp ?? defaultTransition;
 
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
@@ -72,7 +71,7 @@ function HighlightTextContent({
       animate={{ backgroundSize: shown ? VISIBLE_SIZE : HIDDEN_SIZE }}
       transition={
         reduce || !shown
-          ? tokens.transition.instant
+          ? motionTransition.instant
           : { ...transition, delay: (transition?.delay ?? 0) + delay / 1000 }
       }
       style={{

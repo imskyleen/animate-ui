@@ -13,26 +13,34 @@ import {
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
+import { MENU_TRANSITION } from '../../../internal/anchored';
+import { HIGHLIGHT_TRANSITION } from '../../../internal/item-highlight';
 
 // Same API as Radix's Navigation Menu. The Root (and each Sub) mirrors the
 // open value (Radix keeps it private) so the Viewport, the Content and the
 // Indicator can play an exit before they unmount.
 //
-// - The Viewport scales and fades in from the top, and its size follows the
-//   active content smoothly when moving from one item to another.
-// - Content swapped inside the Viewport fades in from the side it comes from;
-//   the previous one leaves at once. Without a Viewport, each Content scales
-//   and fades on its own.
-// - The Indicator follows the active trigger with a spring.
+// It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu.
+// - The Viewport fades and scales from 0.95 in 200ms, both ways, like v1's
+//   menu content, and its size follows the active content in 200ms too.
+// - Content swapped inside the Viewport fades in, in 200ms; the previous one
+//   leaves at once. Without a Viewport, each Content fades and scales on its
+//   own, like a menu.
+// - The Indicator follows the active trigger like v1's menu highlight: a
+//   spring (stiffness 350, damping 35), fading in on it and out 200ms later.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
-  /** Transition of the entrance. */
+  /**
+   * Transition of the entrance, and of the exit unless `exitTransition` is
+   * set. Defaults to `{ duration: 0.2 }` (the Indicator: v1's highlight
+   * spring).
+   */
   transition?: Transition;
-  /** Transition of the exit. */
+  /** Transition of the exit. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -48,8 +56,7 @@ type NavigationMenuContentProps =
 type NavigationMenuViewportProps =
   NavigationMenuPrimitive.NavigationMenuViewportProps & PresenceAnimationProps;
 type NavigationMenuIndicatorProps =
-  NavigationMenuPrimitive.NavigationMenuIndicatorProps &
-    PresenceAnimationProps;
+  NavigationMenuPrimitive.NavigationMenuIndicatorProps & PresenceAnimationProps;
 
 type MenuState = {
   value: string;
@@ -100,7 +107,9 @@ function useMenuState(
   return [state, onChange] as const;
 }
 
-function Root(props: React.ComponentProps<typeof NavigationMenuPrimitive.Root>) {
+function Root(
+  props: React.ComponentProps<typeof NavigationMenuPrimitive.Root>,
+) {
   const dir = Direction.useDirection(props.dir);
   const [state, onValueChange] = useMenuState(props, dir);
   return (
@@ -219,46 +228,21 @@ function ViewportContentMotion(
   );
 }
 
-const SLIDE = 16;
-
 function ViewportContentMotionInner({
   transition,
   ...props
 }: SlotChildProps & { transition?: Transition }) {
-  const tokens = useMotionTokens();
-  const reduce = useShouldReduceMotion();
-  const menu = React.use(MenuStateContext);
-  // Radix's `data-motion` says where the content comes from when moving
-  // between items: from-start or from-end. Read once, on mount.
-  const [from] = React.useState(props['data-motion']);
-  const vertical = props['data-orientation'] === 'vertical';
-  const towardsEnd = (menu?.dir ?? 'ltr') === 'rtl' && !vertical ? -1 : 1;
-  const offset =
-    from === 'from-end'
-      ? SLIDE * towardsEnd
-      : from === 'from-start'
-        ? -SLIDE * towardsEnd
-        : 0;
-  const axis = vertical ? 'translateY' : 'translateX';
-  const shown = `${axis}(0px)`;
+  const fade = useTempoTransition(transition ?? MENU_TRANSITION);
+  // Radix's `data-motion` is set when moving between items (from-start or
+  // from-end): read once, on mount. The first opening has none: the
+  // Viewport's entrance is enough.
+  const [swapped] = React.useState(Boolean(props['data-motion']));
 
   return (
     <motion.div
       {...(props as React.ComponentProps<typeof motion.div>)}
-      // First opening: the Viewport's entrance is enough.
-      initial={
-        offset
-          ? {
-              opacity: 0,
-              transform: reduce ? shown : `${axis}(${offset}px)`,
-            }
-          : false
-      }
-      animate={{
-        opacity: 1,
-        transform: shown,
-        transition: transition ?? tokens.transition.fade,
-      }}
+      initial={swapped ? { opacity: 0 } : false}
+      animate={{ opacity: 1, transition: fade }}
     />
   );
 }
@@ -273,15 +257,13 @@ function InlineContentMotion({
   ...props
 }: SlotChildProps &
   PresenceAnimationProps & { open: boolean; keepMounted: boolean }) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
   const menu = React.use(MenuStateContext);
-  const enter = transition ?? tokens.transition.dropdown;
-  const exit = exitTransition ?? tokens.transition.exit;
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${tokens.scale.enter})`,
-  };
+  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? MENU_TRANSITION,
+  );
+  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
 
@@ -291,7 +273,7 @@ function InlineContentMotion({
       initial={hidden}
       animate={
         open
-          ? { opacity: 1, transform: 'scale(1)', transition: enter }
+          ? { opacity: 1, scale: 1, transition: enter }
           : { ...hidden, transition: exit }
       }
       exit={{ ...hidden, transition: exit }}
@@ -323,7 +305,9 @@ function Viewport({
   const registerViewport = menu?.registerViewport;
   React.useLayoutEffect(() => registerViewport?.(), [registerViewport]);
   if (!menu) {
-    return <NavigationMenuPrimitive.Viewport {...props} forceMount={forceMount} />;
+    return (
+      <NavigationMenuPrimitive.Viewport {...props} forceMount={forceMount} />
+    );
   }
 
   const open = Boolean(menu.value);
@@ -356,16 +340,14 @@ function ViewportMotion({
   ...props
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Viewport> &
   PresenceAnimationProps & { open: boolean; keepMounted: boolean }) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
   const menu = React.use(MenuStateContext);
   const ref = React.useRef<HTMLDivElement>(null);
-  const enter = transition ?? tokens.transition.dropdown;
-  const exit = exitTransition ?? tokens.transition.exit;
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${tokens.scale.enter})`,
-  };
+  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? MENU_TRANSITION,
+  );
+  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
 
@@ -373,6 +355,35 @@ function ViewportMotion({
     transition: enter,
     reduce,
   });
+
+  // Radix measures the active content and sets these variables at once:
+  // Animate UI animates them instead, so classes reading them
+  // (h-(--radix-navigation-menu-viewport-height)) resize smoothly. Written
+  // on the element directly, every frame, and again whenever Radix writes
+  // its own value (it would show for a frame).
+  React.useEffect(() => {
+    const node = ref.current;
+    if (!node || !measured) return;
+    const write = () => {
+      for (const [name, value] of [
+        [WIDTH, width.get()],
+        [HEIGHT, height.get()],
+      ] as const) {
+        if (node.style.getPropertyValue(name) !== value)
+          node.style.setProperty(name, value);
+      }
+    };
+    write();
+    const stopWidth = width.on('change', write);
+    const stopHeight = height.on('change', write);
+    const observer = new MutationObserver(write);
+    observer.observe(node, { attributes: true, attributeFilter: ['style'] });
+    return () => {
+      stopWidth();
+      stopHeight();
+      observer.disconnect();
+    };
+  }, [measured, width, height]);
 
   return (
     <MotionViewport
@@ -383,7 +394,7 @@ function ViewportMotion({
       initial={hidden}
       animate={
         open
-          ? { opacity: 1, transform: 'scale(1)', transition: enter }
+          ? { opacity: 1, scale: 1, transition: enter }
           : { ...hidden, transition: exit }
       }
       exit={{ ...hidden, transition: exit }}
@@ -398,10 +409,6 @@ function ViewportMotion({
               ? 'center right'
               : 'center left'
             : 'top center',
-        // Radix measures the active content and sets these at once: Animate
-        // UI animates them instead, so classes reading them
-        // (h-(--radix-navigation-menu-viewport-height)) resize smoothly.
-        ...(measured ? { [WIDTH]: width, [HEIGHT]: height } : null),
         ...(keepMounted && settledClosed && !open
           ? { visibility: 'hidden' as const }
           : null),
@@ -531,7 +538,6 @@ function IndicatorMotion({
   ...props
 }: React.ComponentProps<'div'> &
   PresenceAnimationProps & { visible: boolean }) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
   const { transform, width, height, ...rest } = style ?? {};
   const position = Object.fromEntries(
@@ -539,9 +545,14 @@ function IndicatorMotion({
       ([, value]) => value !== undefined,
     ),
   );
-  const move = reduce ? tokens.transition.instant : tokens.spring.snappy;
-  const enter = transition ?? tokens.transition.fade;
-  const exit = exitTransition ?? tokens.transition.exit;
+  // v1's menu highlight: one spring to move and to fade in, and a fade out
+  // that waits 200ms.
+  const spring = useTempoTransition(transition ?? HIGHLIGHT_TRANSITION);
+  const move = reduce ? { duration: 0 } : spring;
+  const enter = spring;
+  const exit = useTempoTransition(
+    exitTransition ?? { ...HIGHLIGHT_TRANSITION, delay: 0.2 },
+  );
 
   return (
     <motion.div

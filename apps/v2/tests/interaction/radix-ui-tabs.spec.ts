@@ -1,14 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-import { INDICATOR, PANEL, describeTabsDemo } from './tabs-helpers';
+import { INDICATOR, PANEL, describeTabsDemo, gotoTabs } from './tabs-helpers';
 
 describeTabsDemo('radix-ui', { selectKeys: ['ArrowRight'] });
 
 test.describe('radix-ui tabs API', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/radix-ui-tabs', {
-      waitUntil: 'networkidle',
-    });
+    await gotoTabs(page, '/tests/fixtures/radix-ui-tabs');
   });
 
   test('controlled value and onValueChange', async ({ page }) => {

@@ -13,8 +13,9 @@ import {
   type AnchoredAnimationProps,
 } from './base-anchored';
 
-// Same API as Base UI's Popover. The Popup scales up from the trigger and
-// fades in, and leaves faster than it came.
+// Same API as Base UI's Popover. The Popup grows from half its size and fades
+// in from the trigger on a spring, and shrinks back the same way (Animate UI
+// v1's Popover).
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Popover.Root',
@@ -95,7 +96,6 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
       popupProps={props}
       open={open}
       keepMounted={React.use(KeepMountedContext)}
-      kind="dropdown"
       transition={transition}
       exitTransition={exitTransition}
     />

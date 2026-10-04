@@ -1,16 +1,20 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
 test.describe('base-ui menu demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/base-ui/dropdown-menu', { waitUntil: 'networkidle' });
+    await page.goto('/tests/demos/base-ui/dropdown-menu', {
+      waitUntil: 'networkidle',
+    });
   });
 
-  test('opens with a scale and fade from the trigger, then settles', async ({
+  test('opens with a 200ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);
@@ -23,19 +27,25 @@ test.describe('base-ui menu demo', () => {
     // offsets the origin by the side offset).
     expect(first.origin).toMatch(/^0px -?\d/);
 
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
     const settled = await sample(page, CONTENT);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
   });
 
-  test('closes faster than it opens, then unmounts', async ({ page }) => {
+  test('closes the same way, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(60);
-    expect((await sample(page, CONTENT)).opacity).toBeLessThan(1);
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 450 });
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, CONTENT)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
+    const leaving = await sample(page, CONTENT);
+    expect(leaving.scale).toBeLessThan(1);
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
   });
 
   test('Escape gives focus back to the trigger at once', async ({ page }) => {
@@ -45,21 +55,6 @@ test.describe('base-ui menu demo', () => {
     await page.waitForTimeout(100);
     await page.keyboard.press('Escape');
     await expect(trigger).toBeFocused({ timeout: 50 });
-  });
-
-  test('the keyboard moves the highlight instantly', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open menu' }).focus();
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(700);
-    await page.keyboard.press('ArrowDown');
-    const highlighted = page.locator('[role="menuitem"]:focus');
-    await expect(highlighted).toHaveCount(1);
-    // Same frame: no transition on the highlight.
-    expect(
-      await highlighted.evaluate(
-        (el) => getComputedStyle(el).transitionDuration,
-      ),
-    ).toBe('0s');
   });
 
   test('a submenu grows from its side', async ({ page }) => {
@@ -74,28 +69,35 @@ test.describe('base-ui menu demo', () => {
     expect(first.origin).toMatch(/^-?0px/);
   });
 
-  test('checking an item fades its check in', async ({ page }) => {
+  test('checking an item pops its check in from half its size', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.waitForTimeout(700);
-    const opacities = await page.evaluate(async () => {
+    await page.waitForTimeout(500);
+    const frames = await page.evaluate(async () => {
       const item = [
         ...document.querySelectorAll<HTMLElement>('[role="menuitemcheckbox"]'),
       ].find((el) => el.textContent?.includes('Activity panel'))!;
       item.click();
-      const read = () =>
-        Number(
-          getComputedStyle(
-            item.querySelector('[data-slot$="indicator"] > span')!,
-          ).opacity,
-        );
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
-      const early = read();
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      return { early, settled: read() };
+      const seen: { opacity: number; scale: number }[] = [];
+      const t0 = performance.now();
+      while (performance.now() - t0 < 700) {
+        await new Promise(requestAnimationFrame);
+        const check = item.querySelector('[data-slot$="indicator"] > span');
+        if (!check) continue;
+        const cs = getComputedStyle(check);
+        const match = cs.transform.match(/matrix\(([^,]+)/);
+        seen.push({
+          opacity: Number(cs.opacity),
+          scale: match ? Number(match[1]) : 1,
+        });
+      }
+      return seen;
     });
-    expect(opacities.early).toBeLessThan(1);
-    expect(opacities.settled).toBe(1);
+    expect(frames[0]!.opacity).toBeLessThan(1);
+    expect(frames[0]!.scale).toBeLessThan(0.75);
+    expect(Math.max(...frames.map((f) => f.scale))).toBeGreaterThan(1.01);
+    expect(frames.at(-1)).toEqual({ opacity: 1, scale: 1 });
   });
 
   test('reduced motion: it fades without scaling', async ({ page }) => {
@@ -109,6 +111,7 @@ test.describe('base-ui menu demo', () => {
 });
 
 test.describe('base-ui menu API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/base-ui-menu', {
       waitUntil: 'networkidle',
@@ -169,4 +172,15 @@ test.describe('base-ui menu API', () => {
     await page.getByRole('menuitemcheckbox', { name: 'Bold' }).click();
     await expect(page.getByTestId('bold')).toHaveText('true');
   });
+});
+
+describeMenuHighlight('base-ui menu highlight', {
+  path: '/tests/demos/base-ui/dropdown-menu',
+  open: async (page) => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.waitForTimeout(400);
+  },
+  first: (page) => page.getByRole('menuitem', { name: /Profile/ }),
+  second: (page) => page.getByRole('menuitem', { name: /Billing/ }),
+  keyboardNext: 'ArrowDown',
 });

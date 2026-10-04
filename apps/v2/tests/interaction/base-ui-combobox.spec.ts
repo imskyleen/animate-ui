@@ -1,19 +1,19 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const POPUP = '[data-slot="combobox-content"]';
 
 test.describe('base-ui combobox demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/base-ui/combobox', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and a fade from the input, then settles', async ({
-    page,
-  }) => {
+  test('opens with a 200ms scale and fade from the input', async ({ page }) => {
     const probe = await probeFirstFrame(page, POPUP);
     await page.getByRole('combobox', { name: 'Framework' }).click();
     await page.keyboard.press('ArrowDown');
@@ -44,29 +44,31 @@ test.describe('base-ui combobox demo', () => {
     await expect(page.locator(POPUP)).toHaveCount(1);
   });
 
-  test('picking an item closes it faster than it opened', async ({ page }) => {
+  test('picking an item closes it the same way', async ({ page }) => {
     const input = page.getByRole('combobox', { name: 'Framework' });
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     await page.getByRole('option', { name: 'Astro' }).click();
 
-    await page.waitForTimeout(60);
-    expect((await sample(page, POPUP)).opacity).toBeLessThan(1);
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, POPUP)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
     await expect(input).toHaveValue('Astro');
   });
 
-  test('keyboard: arrows move the highlight instantly, Enter picks', async ({
-    page,
-  }) => {
+  test('keyboard: arrows move the highlight, Enter picks', async ({ page }) => {
     const input = page.getByRole('combobox', { name: 'Framework' });
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     await page.keyboard.press('ArrowDown');
     const highlighted = page.locator('[role="option"][data-highlighted]');
-    await expect(highlighted).toHaveCount(1, { timeout: 50 });
+    await expect(highlighted).toHaveCount(1);
     const name = await highlighted.textContent();
     await page.keyboard.press('Enter');
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
@@ -85,6 +87,7 @@ test.describe('base-ui combobox demo', () => {
 });
 
 test.describe('base-ui combobox chips demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/base-ui/combobox-multiple', {
       waitUntil: 'networkidle',
@@ -107,13 +110,13 @@ test.describe('base-ui combobox chips demo', () => {
     await page.waitForTimeout(40);
     const entering = await sample(page, chip('Nuxt'));
     expect(entering.opacity).toBeLessThan(1);
-    expect(entering.scale).toBeLessThan(1);
-    expect(entering.scale).toBeGreaterThanOrEqual(0.95);
+    // From half its size, like v1's checkbox check.
+    expect(entering.scale).toBeLessThan(0.9);
     await page.waitForTimeout(650);
     expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
   });
 
-  test('checks animate with the selection, Backspace removes instantly', async ({
+  test('checks pop in with the selection, Backspace removes instantly', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
@@ -137,6 +140,7 @@ test.describe('base-ui combobox chips demo', () => {
 });
 
 test.describe('base-ui combobox API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/base-ui-combobox', {
       waitUntil: 'networkidle',
@@ -184,8 +188,10 @@ test.describe('base-ui combobox API', () => {
 
     await page.getByRole('option', { name: 'Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('Grape');
-    await page.waitForTimeout(500);
-    expect((await sample(page, '[data-testid="check-Apple"]')).opacity).toBe(0);
+    // Deselected: the check goes at once, like v1's checkbox items.
+    await expect(page.getByTestId('check-Apple')).toHaveCount(0, {
+      timeout: 150,
+    });
     await expect(page.getByTestId('chip-Apple')).toHaveCount(0);
   });
 
@@ -231,4 +237,14 @@ test('base-ui combobox docs page renders without errors', async ({ page }) => {
   expect(response?.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Combobox');
   expect(errors).toEqual([]);
+});
+
+describeMenuHighlight('base-ui combobox highlight', {
+  path: '/tests/demos/base-ui/combobox',
+  open: async (page) => {
+    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await page.waitForTimeout(400);
+  },
+  first: (page) => page.getByRole('option').nth(0),
+  second: (page) => page.getByRole('option').nth(1),
 });

@@ -15,40 +15,28 @@ import {
 } from '../../../utils/use-is-in-view';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
-  type MotionTokens,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN } from '../_text';
 
-/**
- * Strong ease-out: the count races through the bulk of the range and
- * slows down on the last digits, so the final value is readable as it lands.
- */
-const defaultTransition = (tokens: MotionTokens): Transition => ({
-  duration: 3 * tokens.tempo,
-  ease: tokens.ease.out,
-});
+const DEFAULT_TRANSITION: SpringOptions = { stiffness: 90, damping: 50 };
 
 /**
  * A `transition` without a `type` or an `ease` is a set of spring options
- * (the original `SpringOptions` API): animate it as a spring.
+ * (the original `SpringOptions` API): animate it as a spring, with
+ * `useSpring`'s rest thresholds so it settles exactly like one.
  */
-function resolveTransition(
-  transition: SpringOptions | Transition | undefined,
-  tokens: MotionTokens,
-): Transition {
-  if (!transition) return defaultTransition(tokens);
+function resolveTransition(transition: SpringOptions | Transition): Transition {
   if ('type' in transition || 'ease' in transition) {
     return transition as Transition;
   }
-  return { type: 'spring', ...transition } as Transition;
-}
-
-function countDecimals(value: number) {
-  if (!Number.isFinite(value)) return 0;
-  const [, fraction = ''] = String(value).split('.');
-  return Math.min(fraction.length, 20);
+  return {
+    type: 'spring',
+    restDelta: 0.001,
+    restSpeed: 0.01,
+    ...transition,
+  } as Transition;
 }
 
 type FormatOptions = {
@@ -77,15 +65,11 @@ type CountingNumberProps = Omit<React.ComponentProps<'span'>, 'children'> & {
   fromNumber?: number;
   padStart?: boolean;
   decimalSeparator?: string;
-  /**
-   * Decimal places to show. Defaults to the number of decimals of `number`
-   * (`12.5` shows one decimal, `2025` none).
-   */
   decimalPlaces?: number;
   /**
    * Transition of the count. Spring options (`stiffness`, `damping`,
-   * `bounce`, `visualDuration`…) animate as a spring; any Motion transition
-   * with a `type` or an `ease` is used as is. Defaults to a 3s strong ease-out.
+   * `mass`…) animate as a spring; any Motion transition with a `type` or an
+   * `ease` is used as is. Defaults to a `{ stiffness: 90, damping: 50 }` spring.
    */
   transition?: SpringOptions | Transition;
   /** Delay before counting, in milliseconds. */
@@ -110,8 +94,8 @@ function CountingNumberContent({
   inViewMargin = '0px',
   inViewOnce = true,
   decimalSeparator = '.',
-  transition,
-  decimalPlaces,
+  transition: transitionProp,
+  decimalPlaces = 0,
   delay = 0,
   initiallyStable = false,
   ...props
@@ -122,10 +106,13 @@ function CountingNumberContent({
   );
   const visualRef = React.useRef<HTMLSpanElement>(null);
   const reduce = useShouldReduceMotion();
-  const tokens = useMotionTokens();
+  const defaultTransition = useTempoTransition(
+    DEFAULT_TRANSITION as Transition,
+  );
+  const transition = transitionProp ?? defaultTransition;
 
   const formatOptions: FormatOptions = {
-    decimals: decimalPlaces ?? countDecimals(number),
+    decimals: decimalPlaces,
     decimalSeparator,
     padLength: padStart ? Math.floor(Math.abs(number)).toString().length : 0,
   };
@@ -144,9 +131,9 @@ function CountingNumberContent({
 
   // Read when the count starts: a new inline transition object on every
   // render must not restart it.
-  const transitionRef = React.useRef({ transition, tokens });
+  const transitionRef = React.useRef(transition);
   React.useEffect(() => {
-    transitionRef.current = { transition, tokens };
+    transitionRef.current = transition;
   });
 
   React.useEffect(() => {
@@ -158,11 +145,10 @@ function CountingNumberContent({
       return;
     }
 
-    // animate() starts from the current value and replaces the running
-    // animation, so a new `number` retargets mid-count instead of restarting.
+    // animate() starts from the current value and velocity, replacing the
+    // running animation: a new `number` retargets the spring mid-count.
     const timeoutId = setTimeout(() => {
-      const { transition, tokens } = transitionRef.current;
-      animate(value, number, resolveTransition(transition, tokens));
+      animate(value, number, resolveTransition(transitionRef.current));
     }, delay);
 
     return () => clearTimeout(timeoutId);

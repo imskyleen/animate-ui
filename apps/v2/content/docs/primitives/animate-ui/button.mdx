@@ -29,8 +29,9 @@ With `asChild`, the animation lands on your own element:
 
 ## Animation
 
-- Hovering scales the button to `hoverScale`, pressing to `tapScale`, both in 150ms on a strong ease-out.
-- `<AnimateUIProvider tempo>` paces the press feedback.
+- Hovering scales the button to `hoverScale`, pressing to `tapScale`, on Motion's spring for scale (`stiffness: 550, damping: 30`): quick, with a slight overshoot.
+- `transition` replaces that spring.
+- `<AnimateUIProvider tempo>` paces the default spring.
 - Under reduced motion, the button doesn't scale.
 
 ## API Reference
@@ -42,12 +43,17 @@ With `asChild`, the animation lands on your own element:
     hoverScale: {
       description: 'Scale of the button on hover.',
       type: 'number',
-      default: '1.02',
+      default: '1.05',
     },
     tapScale: {
       description: 'Scale of the button while pressed.',
       type: 'number',
-      default: '0.96',
+      default: '0.95',
+    },
+    transition: {
+      description: 'Transition of the hover and tap scales.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
     },
     asChild: {
       description: 'Render your child element instead of a `button`.',

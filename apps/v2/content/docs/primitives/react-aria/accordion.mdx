@@ -40,11 +40,13 @@ export function FAQ() {
 
 ## Animation
 
-- **DisclosurePanel** grows its height and fades in over 600ms with a strong ease-out, and collapses in 400ms.
+- **DisclosurePanel** opens like Animate UI v1's (Headless UI) disclosure: its height grows from 0 while the content fades in, rises 20px and is revealed top to bottom by a mask, over 350ms ease-in-out. It closes the same way, in reverse.
 - Opening another disclosure while one is closing retargets smoothly.
+- A disclosure expanded by default animates open on mount (page load), as in v1.
 - React Aria keeps closed panels mounted with `hidden="until-found"`: the panel stays visible (and `inert`) while it collapses, then gets `hidden="until-found"` back, so find-in-page can still reveal it. A panel revealed by find-in-page opens at once, as in React Aria.
 - Motion animates the panel itself: shadcn/ui's `h-(--disclosure-panel-height) transition-[height]` classes are no longer needed (the CLI removes them). `--disclosure-panel-height` and `--disclosure-panel-width` read `auto`.
-- Under reduced motion, the height changes at once and the panel only fades.
+- `<AnimateUIProvider tempo>` paces both transitions.
+- Under reduced motion, the height and the rise change at once; the fade and the mask still play.
 
 ## API Reference
 
@@ -63,12 +65,12 @@ Every component takes exactly the props of [React Aria's DisclosureGroup](https:
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: 'transition.disclosure (600ms, ease-out)',
+      default: "{ duration: 0.35, ease: 'easeInOut' }",
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

@@ -8,18 +8,20 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import { usePressMotion } from '../../../internal/controls/press';
 import {
   IndicatorPresence,
-  KeyboardSelectionContext,
-  useKeyboardSelection,
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
-// Same API as Radix's Radio Group. Items give press feedback; the Indicator's
-// dot scales in, and stays mounted while it scales out. Selecting with the
-// arrow keys (keyboard navigation) swaps the dots at once.
+// Same API as Radix's Radio Group, animated like Animate UI v1's radio group:
+// items scale to 1.05 while hovered and 0.95 while pressed, and the
+// Indicator's dot pops in (scale and opacity from 0, spring stiffness 200,
+// damping 16) and out the same way, staying mounted until it has left.
 
 /** Animate UI's additions to `RadioGroup.Item`. */
 type ItemAnimationProps = {
-  /** Transition of the press feedback. Defaults to `transition.press` (150ms). */
+  /**
+   * Transition of the hover and press scale. Defaults to a spring (stiffness
+   * 550, damping 30).
+   */
   transition?: Transition;
 };
 
@@ -29,24 +31,8 @@ type RadioGroupItemProps = RadioGroupPrimitive.RadioGroupItemProps &
 type RadioGroupIndicatorProps = RadioGroupPrimitive.RadioGroupIndicatorProps &
   IndicatorAnimationProps;
 
-function Root({
-  onKeyDownCapture,
-  onPointerDownCapture,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
-  const { keyboard, handlers } = useKeyboardSelection(
-    onKeyDownCapture,
-    onPointerDownCapture,
-  );
-
-  return (
-    <KeyboardSelectionContext value={keyboard}>
-      <ReducedMotionConfig>
-        <RadioGroupPrimitive.Root {...props} {...handlers} />
-      </ReducedMotionConfig>
-    </KeyboardSelectionContext>
-  );
-}
+// Nothing animates on the group itself.
+const Root = RadioGroupPrimitive.Root;
 
 function Item(
   props: React.ComponentProps<typeof RadioGroupPrimitive.Item> &
@@ -65,7 +51,11 @@ function AnimatedItem({
   children,
   ...props
 }: React.ComponentProps<typeof RadioGroupPrimitive.Item> & ItemAnimationProps) {
-  const press = usePressMotion(transition);
+  const press = usePressMotion({
+    hover: true,
+    disabled: props.disabled,
+    transition,
+  });
   if (asChild)
     return (
       <RadioGroupPrimitive.Item {...props} asChild>
@@ -114,12 +104,19 @@ function Indicator({
 }
 
 function RadixIndicator(
-  props: Omit<React.ComponentProps<typeof IndicatorPresence>, 'checked'> & {
+  props: Omit<
+    React.ComponentProps<typeof IndicatorPresence>,
+    'checked' | 'kind'
+  > & {
     'data-state'?: string;
   },
 ) {
   return (
-    <IndicatorPresence {...props} checked={props['data-state'] === 'checked'} />
+    <IndicatorPresence
+      {...props}
+      kind="dot"
+      checked={props['data-state'] === 'checked'}
+    />
   );
 }
 

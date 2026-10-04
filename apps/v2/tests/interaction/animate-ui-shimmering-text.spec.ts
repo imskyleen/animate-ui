@@ -1,9 +1,28 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const open = (page: Page) =>
-  page.goto('/tests/demos/animate-ui/shimmering-text', {
+const open = async (page: Page) => {
+  await page.goto('/tests/demos/animate-ui/shimmering-text', {
     waitUntil: 'networkidle',
   });
+  await hydrated(page, '[data-slot="shimmering-text"]');
+};
+
+/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
+async function hydrated(page: Page, selector: string) {
+  await page.waitForFunction((sel) => {
+    const el = document.querySelector(sel);
+    return (
+      !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
+    );
+  }, selector);
+  // Effects (Motion's gesture listeners, timers) run after the commit.
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+}
 
 const root = (page: Page) => page.locator('[data-slot="shimmering-text"]');
 

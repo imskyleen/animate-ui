@@ -16,7 +16,7 @@ import { Shine } from '@animate-ui/react/primitives/effects/shine';
 
 export function GetStarted() {
   return (
-    <Shine asChild loop loopDelay={1500} color="white" opacity={0.4}>
+    <Shine asChild loop loopDelay={500}>
       <button>Get started</button>
     </Shine>
   );
@@ -27,7 +27,7 @@ export function GetStarted() {
 
 ## Animation
 
-- A skewed gradient sweeps from left to right over `duration` (1.2s), clipped to the element. It never catches the pointer.
+- A skewed gradient of `color` (the text color by default) sweeps from left to right over `duration` (1.2s, `cubic-bezier(0.4, 0, 0.2, 1)`), clipped to the element. It never catches the pointer.
 - With `loop`, it sweeps again after `loopDelay`. With `enableOnHover` and `loop`, it keeps sweeping while hovered.
 - It moves with a hardware-accelerated `transform`.
 - Under reduced motion, there is no shine: it's decorative.

@@ -7,9 +7,10 @@ import { motion, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
+import { MENU_TRANSITION } from '../../../internal/anchored';
 
 // Untouched parts: the import alias keeps both the component and its type
 // namespace (`NavigationMenu.Trigger.Props`).
@@ -24,24 +25,31 @@ import Arrow = NavigationMenuPrimitive.Arrow;
 import Link = NavigationMenuPrimitive.Link;
 import Icon = NavigationMenuPrimitive.Icon;
 
-// Same API as Base UI's Navigation Menu.
+// Same API as Base UI's Navigation Menu. It has no Animate UI v1
+// counterpart: it moves like v1's Base UI Menu.
 //
-// - The Popup scales and fades in from its trigger. Base UI resizes it to the
-//   active content through `--popup-width`/`--popup-height`: Animate UI
-//   transitions that size with its own timing (Base UI drives it with CSS
-//   transitions, which it waits for).
-// - Moving between items, the new Content fades in from the side of its
-//   trigger while the previous one fades out towards the other side.
+// - The Popup fades and scales from 0.95 in 200ms, both ways, from its
+//   trigger. Base UI resizes it to the active content through
+//   `--popup-width`/`--popup-height`: Animate UI transitions that size in
+//   200ms too (Base UI drives it with CSS transitions, which it waits for).
+// - Moving between items, the new Content fades in while the previous one
+//   fades out, in 200ms.
 // - The Root asks Base UI to keep the popup mounted after it closes, and the
 //   Popup unmounts it once its exit has played.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
-  /** Transition of the entrance (and of the resizing, for the Popup). */
+  /**
+   * Transition of the entrance (and of the resizing, for the Popup), and of
+   * the exit unless `exitTransition` is set. Defaults to `{ duration: 0.2 }`.
+   */
   transition?: Transition;
-  /** Transition of the exit. */
+  /** Transition of the exit. Defaults to `transition`. */
   exitTransition?: Transition;
 };
+
+/** Motion's `easeOut` (the ease of a tween without one), for CSS. */
+const EASE_OUT_CSS = 'cubic-bezier(0, 0, 0.58, 1)';
 
 type HTMLProps = React.HTMLAttributes<HTMLElement> & {
   ref?: React.Ref<HTMLElement>;
@@ -141,7 +149,8 @@ function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
   const root = React.use(RootContext);
   const enableManualUnmount = root?.enableManualUnmount;
   React.useLayoutEffect(() => enableManualUnmount?.(), [enableManualUnmount]);
-  if (!root) return <NavigationMenuPrimitive.Popup {...props} render={render} />;
+  if (!root)
+    return <NavigationMenuPrimitive.Popup {...props} render={render} />;
 
   return (
     <NavigationMenuPrimitive.Popup
@@ -182,30 +191,34 @@ function PopupMotion({
   state: Popup.State;
   unmount: () => void;
 }) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
-  // Base UI marks the first frame of an opening `starting`.
-  const [entering] = React.useState(state.transitionStatus === 'starting');
+  // A popup that mounts open plays its entrance: when it opens, and when an
+  // item is open from the start (defaultValue), on page load. One that mounts
+  // closed starts hidden, in place.
+  const [entering] = React.useState(state.open);
   const openRef = React.useRef(state.open);
   React.useLayoutEffect(() => {
     openRef.current = state.open;
   });
 
-  const enter = transition ?? tokens.transition.dropdown;
-  const exit = exitTransition ?? tokens.transition.exit;
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${tokens.scale.enter})`,
-  };
+  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? MENU_TRANSITION,
+  );
+  // `scale` (like v1's menus): `transform: none` once settled.
+  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
   // Only the size is left to CSS (Base UI waits for these transitions before
   // it sets the size back to auto); opacity and transform are Motion's.
+  const { duration, ease } = enter as { duration?: unknown; ease?: unknown };
   const sizeDuration =
-    typeof enter.duration === 'number' ? enter.duration : tokens.duration.dropdown;
-  const sizeEase = Array.isArray(enter.ease) ? enter.ease : tokens.ease.out;
+    typeof duration === 'number' ? duration : MENU_TRANSITION.duration;
+  const sizeEase = Array.isArray(ease)
+    ? `cubic-bezier(${ease.join(', ')})`
+    : EASE_OUT_CSS;
   const ref = useInlineTransition(htmlProps, {
     property: reduce ? 'none' : 'width, height',
     duration: `${sizeDuration}s`,
-    easing: `cubic-bezier(${sizeEase.join(', ')})`,
+    easing: sizeEase,
   });
 
   return (
@@ -217,7 +230,7 @@ function PopupMotion({
       // Transitions live in the targets: each direction keeps its own.
       animate={
         state.open
-          ? { opacity: 1, transform: 'scale(1)', transition: enter }
+          ? { opacity: 1, scale: 1, transition: enter }
           : { ...hidden, transition: exit }
       }
       onAnimationComplete={() => {
@@ -238,7 +251,8 @@ function Content({
   ...props
 }: Content.Props) {
   const root = React.use(RootContext);
-  if (!root) return <NavigationMenuPrimitive.Content {...props} render={render} />;
+  if (!root)
+    return <NavigationMenuPrimitive.Content {...props} render={render} />;
 
   return (
     <NavigationMenuPrimitive.Content
@@ -264,24 +278,6 @@ namespace Content {
   export type State = NavigationMenuPrimitive.Content.State;
 }
 
-const SLIDE = 16;
-
-/** Where content sits on the side of an item: `right` means after it. */
-function offset(direction: Content.State['activationDirection'], sign: 1 | -1) {
-  switch (direction) {
-    case 'right':
-      return `translateX(${SLIDE * sign}px)`;
-    case 'left':
-      return `translateX(${-SLIDE * sign}px)`;
-    case 'down':
-      return `translateY(${SLIDE * sign}px)`;
-    case 'up':
-      return `translateY(${-SLIDE * sign}px)`;
-    default:
-      return undefined;
-  }
-}
-
 // Rendered inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
 function ContentMotion({
   htmlProps,
@@ -289,41 +285,32 @@ function ContentMotion({
   transition,
   exitTransition,
 }: PresenceAnimationProps & { htmlProps: HTMLProps; state: Content.State }) {
-  const tokens = useMotionTokens();
-  const reduce = useShouldReduceMotion();
-  const direction = state.activationDirection;
-  const vertical = direction === 'up' || direction === 'down';
-  const shown = vertical ? 'translateY(0px)' : 'translateX(0px)';
-  // Switching items: in from the side of the new item. The first opening
-  // has no direction; the Popup's entrance is enough.
-  const [from] = React.useState(() =>
-    state.transitionStatus === 'starting' ? offset(direction, 1) : undefined,
+  const fadeIn = useTempoTransition(transition ?? MENU_TRANSITION);
+  const fadeOut = useTempoTransition(
+    exitTransition ?? transition ?? MENU_TRANSITION,
   );
-  // Leaving towards the other side. Closing the whole menu has no direction:
-  // the content stays put while the Popup leaves.
-  const to = !state.open ? offset(direction, -1) : undefined;
-  // Motion owns opacity and transform: no CSS transition on top.
+  // Switching items gives a direction. The first opening has none: the
+  // Popup's entrance is enough.
+  const [swapped] = React.useState(
+    () =>
+      state.transitionStatus === 'starting' &&
+      Boolean(state.activationDirection),
+  );
+  // Leaving for another item. Closing the whole menu has no direction: the
+  // content stays put while the Popup leaves.
+  const leaving = !state.open && Boolean(state.activationDirection);
+  // Motion owns opacity: no CSS transition on top.
   const ref = useInlineTransition(htmlProps, { property: 'none' });
 
   return (
     <motion.div
       {...(htmlProps as React.ComponentProps<typeof motion.div>)}
       ref={ref}
-      initial={
-        from ? { opacity: 0, transform: reduce ? shown : from } : false
-      }
+      initial={swapped ? { opacity: 0 } : false}
       animate={
-        to
-          ? {
-              opacity: 0,
-              transform: reduce ? shown : to,
-              transition: exitTransition ?? tokens.transition.exit,
-            }
-          : {
-              opacity: 1,
-              transform: shown,
-              transition: transition ?? tokens.transition.fade,
-            }
+        leaving
+          ? { opacity: 0, transition: fadeOut }
+          : { opacity: 1, transition: fadeIn }
       }
       style={htmlProps.style}
     />

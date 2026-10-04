@@ -1,15 +1,27 @@
 'use client';
 
 import * as React from 'react';
-import { motion, type HTMLMotionProps, type Variant } from 'motion/react';
+import {
+  motion,
+  type HTMLMotionProps,
+  type Transition,
+  type Variant,
+} from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
+import { SCALE_SPRING } from '../_button';
+
+const FACE_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 280,
+  damping: 20,
+};
 
 const buildVariant = ({
   opacity,
@@ -58,13 +70,14 @@ function FlipButton(props: FlipButtonProps) {
 
 function FlipButtonContent({
   from = 'top',
-  tapScale,
+  tapScale = 0.95,
   asChild = false,
+  transition,
   style,
   ...props
 }: FlipButtonProps) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
+  const defaultTransition = useTempoTransition(SCALE_SPRING);
   const isVertical = from === 'top' || from === 'bottom';
   const rotateAxis = isVertical ? 'rotateX' : 'rotateY';
 
@@ -76,11 +89,8 @@ function FlipButtonContent({
         data-slot="flip-button"
         initial="initial"
         whileHover="hover"
-        whileTap={{
-          scale: reduce ? 1 : (tapScale ?? tokens.scale.press),
-          transition: tokens.transition.press,
-        }}
-        transition={tokens.transition.press}
+        whileTap={{ scale: reduce ? 1 : tapScale }}
+        transition={transition ?? defaultTransition}
         style={{
           display: 'inline-grid',
           placeItems: 'center',
@@ -102,7 +112,7 @@ function FlipButtonFront({
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
-  const tokens = useMotionTokens();
+  const defaultTransition = useTempoTransition(FACE_TRANSITION);
   // Under reduced motion the faces crossfade without rotating or sliding.
   const reduce = useShouldReduceMotion();
 
@@ -131,7 +141,7 @@ function FlipButtonFront({
     <Component
       data-slot="flip-button-front"
       variants={frontVariants}
-      transition={transition ?? tokens.spring.default}
+      transition={transition ?? defaultTransition}
       style={{
         gridArea: '1 / 1',
         display: 'inline-flex',
@@ -151,7 +161,7 @@ function FlipButtonBack({
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
-  const tokens = useMotionTokens();
+  const defaultTransition = useTempoTransition(FACE_TRANSITION);
   // Under reduced motion the faces crossfade without rotating or sliding.
   const reduce = useShouldReduceMotion();
 
@@ -180,7 +190,7 @@ function FlipButtonBack({
     <Component
       data-slot="flip-button-back"
       variants={backVariants}
-      transition={transition ?? tokens.spring.default}
+      transition={transition ?? defaultTransition}
       style={{
         gridArea: '1 / 1',
         display: 'inline-flex',

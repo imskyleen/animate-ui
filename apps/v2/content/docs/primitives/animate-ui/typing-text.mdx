@@ -28,10 +28,10 @@ export function Hero() {
 
 ## Animation
 
-- Characters are typed every `duration` ms. With several texts, each one holds for `holdDelay`, is erased, and the next one is typed.
+- Characters are typed every `duration` ms (100). With several texts (or `loop`), a typed text holds for `holdDelay`, is erased at the same pace, and the next one is typed.
 - The text is written to the DOM directly: typing a character never re-renders React. Changing `duration` or `holdDelay` mid-animation takes effect without restarting.
 - A loop pauses off screen and in a hidden tab; a single run only in a hidden tab. It resumes where it stopped.
-- The cursor stays solid while typing and blinks while idle. It holds still off screen and in a hidden tab.
+- The cursor fades in as typing starts (0.3s), stays solid while typing or erasing, and blinks once a text is typed (a 1s on/off loop). It holds still off screen and in a hidden tab.
 - Under reduced motion, the text appears at once (the last text, or the first one with `loop`) and the cursor doesn't blink.
 - Screen readers read every text once, never the partially typed ones.
 

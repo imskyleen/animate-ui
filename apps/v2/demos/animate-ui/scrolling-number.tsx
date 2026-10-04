@@ -10,6 +10,7 @@ import {
 } from "@animate-ui/react/primitives/texts/scrolling-number"
 import { RefreshIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
 
@@ -21,18 +22,19 @@ export const controls = {
     },
   },
   ScrollingNumber: {
-    delay: { value: 300, min: 0, max: 3000, step: 100 },
+    delay: { value: 1000, min: 0, max: 3000, step: 100 },
   },
 }
 
 export default function ScrollingNumberDemo({
   direction = "btt",
-  delay = 300,
+  delay = 1000,
 }: {
   direction?: ScrollingNumberDirection
   delay?: number
 }) {
   const [run, setRun] = React.useState(0)
+  const isVertical = direction === "btt" || direction === "ttb"
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -41,8 +43,11 @@ export default function ScrollingNumberDemo({
         direction={direction}
         number={1000}
         step={100}
-        itemsSize={40}
-        className="w-20 text-lg font-medium tabular-nums"
+        itemsSize={isVertical ? 40 : 75}
+        className={cn(
+          "text-lg font-medium tabular-nums",
+          isVertical ? "w-18" : "h-10"
+        )}
       >
         <ScrollingNumber delay={delay}>
           <ScrollingNumberItems className="text-muted-foreground flex items-center justify-center" />

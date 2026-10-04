@@ -14,15 +14,15 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   asMotion,
   useAnchoredMotion,
-  useTooltipWarmth,
   type AnchoredAnimationProps,
 } from '../../../internal/anchored';
 import { originFor } from '../popover/origin';
 
-// Same API as React Aria's Tooltip. It scales up from the trigger and fades
-// in, and leaves faster than it came. A tooltip opened right after another
-// one closed is warm: it appears at once, like moving along a toolbar, and
-// one replaced by its neighbour leaves at once (React Aria's warmup).
+// Same API as React Aria's Tooltip. React Aria has no Animate UI v1
+// counterpart: it moves like v1's Radix Tooltip, growing from half its size
+// and fading in from the trigger on a spring, and shrinking back the same way.
+// When React Aria swaps two tooltips during its warmup (it asks to skip the
+// animations), they swap at once.
 //
 // Like the Popover, it gates itself with AnimatePresence on the open state
 // React Aria reads, and passes `isExiting` while the exit plays.
@@ -63,7 +63,7 @@ function Tooltip({
 
   return (
     <ReducedMotionConfig>
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {open && (
           <AnimatedTooltip
             key="tooltip"
@@ -91,16 +91,9 @@ function AnimatedTooltip({
   // because it swaps with another one.
   const instant = React.use(TooltipTriggerStateContext)?.shouldSkipAnimation;
   const [openedInstantly] = React.useState(Boolean(instant));
-  const warm = useTooltipWarmth({
-    enabled: true,
-    open: isPresent,
-    shown: true,
-  });
   const motionProps = useAnchoredMotion({
-    kind: 'tooltip',
     open: true,
-    skipEnter: warm || openedInstantly,
-    skipExit: Boolean(instant),
+    instant: isPresent ? openedInstantly : Boolean(instant),
     transition,
     exitTransition,
   });

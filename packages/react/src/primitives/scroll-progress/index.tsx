@@ -85,16 +85,13 @@ type ScrollProgressProps = WithAsChild<
 
 function ScrollProgress({
   style,
-  mode = 'scaleX',
+  mode = 'width',
   asChild = false,
   ...props
 }: ScrollProgressProps) {
   const { scale, direction, global } = useScrollProgress();
 
-  // Both are motion values: scrolling never re-renders the component.
-  const transform = useTransform(scale, (value) =>
-    mode === 'scaleY' ? `scaleY(${value})` : `scaleX(${value})`,
-  );
+  // A motion value: scrolling never re-renders the component.
   const size = useTransform(scale, (value) => `${value * 100}%`);
 
   const Component = asChild ? Slot : motion.div;
@@ -108,10 +105,7 @@ function ScrollProgress({
       style={{
         ...(mode === 'width' || mode === 'height'
           ? { [mode]: size }
-          : {
-              transform,
-              transformOrigin: mode === 'scaleX' ? '0% 50%' : '50% 0%',
-            }),
+          : { [mode]: scale }),
         ...style,
       }}
       {...props}

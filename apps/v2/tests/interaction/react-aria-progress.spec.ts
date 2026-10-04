@@ -20,13 +20,17 @@ test.describe('react-aria progress API', () => {
 
     await page.getByRole('button', { name: 'Complete' }).click();
     await expect(page.getByTestId('value-text')).toHaveText('100%');
-    await page.waitForTimeout(700);
+    // Its width springs there (v1's Base UI progress), then rests at 100%.
+    await expect
+      .poll(
+        () =>
+          page
+            .getByTestId('bar')
+            .evaluate((el) => (el as HTMLElement).style.width),
+        { timeout: 3000 },
+      )
+      .toBe('100%');
     expect(await revealed(page, '[data-testid="bar"]')).toBeCloseTo(1, 2);
-    // Moved with a transform: the bar keeps the full width.
-    const style = await page
-      .getByTestId('bar')
-      .evaluate((el) => (el as HTMLElement).style.width);
-    expect(style).toBe('calc(100%)');
   });
 
   test('indeterminate', async ({ page }) => {

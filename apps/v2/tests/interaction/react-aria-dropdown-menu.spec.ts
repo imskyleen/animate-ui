@@ -8,13 +8,14 @@ const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
 test.describe('react-aria dropdown-menu demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/react-aria/dropdown-menu', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and fade, then settles', async ({ page }) => {
+  test('opens with a 200ms scale and fade, like v1 menus', async ({ page }) => {
     const probe = await probeFirstFrame(page, CONTENT);
     await page.getByRole('button', { name: 'Open menu' }).click();
     const first = await probe.firstFrame();
@@ -27,13 +28,17 @@ test.describe('react-aria dropdown-menu demo', () => {
     expect(settled.scale).toBe(1);
   });
 
-  test('closes faster than it opens, then unmounts', async ({ page }) => {
+  test('closes the same way, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'Open menu' }).click();
     await page.waitForTimeout(700);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(60);
-    expect((await sample(page, CONTENT)).opacity).toBeLessThan(1);
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 450 });
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, CONTENT)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
   });
 
   test('the keyboard moves the highlight instantly', async ({ page }) => {

@@ -9,8 +9,9 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import type { AnchoredAnimationProps } from '../../../internal/anchored';
 import { RadixAnchoredContent, useRadixOpenState } from './radix-anchored';
 
-// Same API as Radix's Popover. The Content scales up from the trigger and
-// fades in, and leaves faster than it came.
+// Same API as Radix's Popover. The Content grows from half its size and fades
+// in from the trigger on a spring, and shrinks back the same way (Animate UI
+// v1's Popover).
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Popover.Root',
@@ -71,7 +72,7 @@ function Content({
   const keepMounted = Boolean(forceMount) || React.use(PortalForceMountContext);
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {(open || keepMounted) && (
         <RadixAnchoredContent
           key="content"
@@ -79,7 +80,6 @@ function Content({
           contentProps={props}
           open={open}
           keepMounted={keepMounted}
-          kind="dropdown"
           origin="var(--radix-popover-content-transform-origin)"
           transition={transition}
           exitTransition={exitTransition}

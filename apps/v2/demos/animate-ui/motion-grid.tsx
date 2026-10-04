@@ -10,8 +10,7 @@ import {
   RotatingText,
   RotatingTextContainer,
 } from "@animate-ui/react/primitives/texts/rotating"
-
-import { Button } from "@/components/ui/button"
+import { motion } from "motion/react"
 
 const importingFrames = [
   [[2, 2]],
@@ -140,17 +139,37 @@ export default function MotionGridDemo() {
   }, [])
 
   return (
-    <Button size="lg" className="relative min-w-40 justify-start gap-3 px-3">
-      <MotionGrid
-        gridSize={[5, 5]}
-        frames={states[state].frames}
-        className="w-fit gap-0.5"
+    // The button resizes with its label (a layout animation) and responds to
+    // hover and press.
+    <motion.button
+      type="button"
+      layout
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="relative inline-flex h-11 items-center justify-center gap-x-3 rounded-lg bg-primary px-3 text-sm font-medium"
+    >
+      <motion.div layout="preserve-aspect">
+        <MotionGrid
+          gridSize={[5, 5]}
+          frames={states[state].frames}
+          className="w-fit gap-0.5"
+        >
+          <MotionGridCells className="aspect-square size-[3px] rounded-full bg-primary-foreground/20 data-[active=true]:bg-primary-foreground/80" />
+        </MotionGrid>
+      </motion.div>
+      <RotatingTextContainer
+        text={states[state].label}
+        className="absolute top-1/2 left-[46px] -translate-y-1/2"
       >
-        <MotionGridCells className="aspect-square size-[3px] rounded-full bg-primary-foreground/20 data-[active=true]:bg-primary-foreground/80" />
-      </MotionGrid>
-      <RotatingTextContainer text={states[state].label}>
-        <RotatingText />
+        <RotatingText
+          layout="preserve-aspect"
+          className="text-primary-foreground"
+        />
       </RotatingTextContainer>
-    </Button>
+      {/* Sizes the button to the current label. */}
+      <span className="invisible opacity-0" aria-hidden>
+        {states[state].label}
+      </span>
+    </motion.button>
   )
 }

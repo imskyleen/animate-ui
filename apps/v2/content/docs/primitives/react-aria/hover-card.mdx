@@ -34,10 +34,14 @@ export function ProfileLink() {
 
 ## Animation
 
-- **Popover** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the link (`--trigger-anchor-point`). It closes in 400ms, once the trigger's close delay is over, then unmounts.
+React Aria has no Animate UI v1 counterpart: under a `PreviewTrigger`, the Popover moves like v1's Hover Card.
+
+- **Popover** grows from half its size and fades in, from the link (`--trigger-anchor-point`), on a spring (stiffness 300, damping 25) that overshoots a little before it settles.
+- Once the trigger's close delay is over, it closes the same way: it shrinks back to half its size on the same spring while it fades out, then unmounts.
 - Moving straight from one preview to the next during `PreviewTrigger`'s warmup swaps them without animation, as React Aria intends (`shouldSkipAnimation`).
 - React Aria only opens it on hover for pointer input, and after a delay on keyboard focus: nothing sticks on touch screens.
-- Under reduced motion, it only fades.
+- Open from the start (`defaultOpen` on the `PreviewTrigger`), it plays its entrance on page load, like v1.
+- Under reduced motion, it only fades (no scale).
 
 ## API Reference
 
@@ -46,14 +50,15 @@ export function ProfileLink() {
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

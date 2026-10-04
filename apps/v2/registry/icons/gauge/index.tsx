@@ -35,7 +35,7 @@ const animations = {
       },
       animate: {
         transformOrigin: 'bottom left',
-        rotate: [null, 70, 0],
+        rotate: [0, 70, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },

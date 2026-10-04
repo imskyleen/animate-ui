@@ -21,12 +21,29 @@ test.describe('animate-ui avatar-group', () => {
     await open(page);
     expect(await riseOf(page, 'Adam Wathan')).toBe(0);
     await avatar(page, 'Adam Wathan').hover();
-    await page.waitForTimeout(60);
-    const during = await riseOf(page, 'Adam Wathan');
-    // -30% of the 48px avatar.
-    expect(during).toBeLessThan(0);
-    expect(during).toBeGreaterThan(-14.4);
+    await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeLessThan(0);
     await expect(page.getByRole('tooltip')).toContainText('Adam Wathan');
+    // -30% of the 48px avatar, once the spring settles.
+    await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeCloseTo(-14.4, 0);
+  });
+
+  test('the rise overshoots on a bouncy spring', async ({ page }) => {
+    await open(page);
+    const wrapper = avatar(page, 'Adam Wathan').locator('..');
+    const sampling = wrapper.evaluate(async (el) => {
+      const values: number[] = [];
+      const t0 = performance.now();
+      while (performance.now() - t0 < 1500) {
+        await new Promise((r) => requestAnimationFrame(r));
+        values.push(new DOMMatrix(getComputedStyle(el).transform).m42);
+      }
+      return values;
+    });
+    await avatar(page, 'Adam Wathan').hover();
+    const values = await sampling;
+    // The v1 spring (stiffness 300, damping 17) rises ~17% past -14.4px.
+    expect(Math.min(...values)).toBeLessThan(-16);
+    expect(Math.min(...values)).toBeGreaterThan(-18);
     await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeCloseTo(-14.4, 0);
   });
 

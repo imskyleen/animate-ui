@@ -13,6 +13,19 @@ const center = async (page: Page, selector: string) => {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
+/** The cursor's scale on every frame for `ms`, from now. */
+const scales = (page: Page, ms: number) =>
+  page.evaluate(async (ms) => {
+    const values: number[] = [];
+    const t0 = performance.now();
+    while (performance.now() - t0 < ms) {
+      await new Promise((r) => requestAnimationFrame(r));
+      const el = document.querySelector('[data-slot="cursor"]');
+      if (el) values.push(new DOMMatrix(getComputedStyle(el).transform).a);
+    }
+    return values;
+  }, ms);
+
 test.describe('animate-ui cursor', () => {
   test('hidden until the pointer enters the area', async ({ page }) => {
     await open(page);
@@ -30,14 +43,43 @@ test.describe('animate-ui cursor', () => {
     await expect(follow(page)).toBeVisible();
     await expect(area(page)).toHaveClass(/animate-ui-cursor-none/);
     await expect(area(page)).toHaveCSS('cursor', 'none');
-    await page.mouse.move(box.x + 160, box.y + 120, { steps: 2 });
-    const c = await center(page, '[data-slot="cursor"]');
-    expect(Math.abs(c.x - (box.x + 160))).toBeLessThan(1.5);
-    expect(Math.abs(c.y - (box.y + 120))).toBeLessThan(1.5);
-    // The label settles below and to the right of the pointer.
+    // The label's offset includes half the cursor's size as rendered: let the
+    // cursor finish popping in first.
     await expect
-      .poll(async () => (await center(page, '[data-slot="cursor-follow"]')).y)
-      .toBeGreaterThan(box.y + 120);
+      .poll(() =>
+        cursor(page).evaluate(
+          (el) => new DOMMatrix(getComputedStyle(el).transform).a,
+        ),
+      )
+      .toBe(1);
+    await page.mouse.move(box.x + 160, box.y + 120, { steps: 2 });
+    // Its top-left corner is on the pointer (the arrow's tip).
+    await expect
+      .poll(async () => {
+        const c = (await cursor(page).boundingBox())!;
+        return [Math.round(c.x - box.x), Math.round(c.y - box.y)];
+      })
+      .toEqual([160, 120]);
+    // The label settles below and to the right of the pointer: offset by
+    // alignOffset 5 / sideOffset 15, plus half the 24px cursor.
+    await expect
+      .poll(async () => {
+        const f = (await follow(page).boundingBox())!;
+        return [Math.round(f.x - box.x), Math.round(f.y - box.y)];
+      })
+      .toEqual([160 + 5 + 12, 120 + 15 + 12]);
+  });
+
+  test('the cursor pops in on a spring', async ({ page }) => {
+    await open(page);
+    const box = (await area(page).boundingBox())!;
+    const sampling = scales(page, 600);
+    await page.mouse.move(box.x + 100, box.y + 80);
+    const values = await sampling;
+    // From 0, past 1 (Motion's default scale spring overshoots ~7%), to 1.
+    expect(Math.min(...values)).toBeLessThan(0.9);
+    expect(Math.max(...values)).toBeGreaterThan(1.03);
+    expect(values.at(-1)).toBeCloseTo(1, 2);
   });
 
   test('leaving the area restores the pointer', async ({ page }) => {

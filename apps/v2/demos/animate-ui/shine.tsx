@@ -9,7 +9,7 @@ export const controls = {
     delay: { value: 0, min: 0, max: 3000, step: 100 },
     duration: { value: 1200, min: 0, max: 3000, step: 100 },
     loop: { value: true },
-    loopDelay: { value: 1500, min: 0, max: 3000, step: 100 },
+    loopDelay: { value: 500, min: 0, max: 3000, step: 100 },
     deg: { value: -15, min: -50, max: 50, step: 5 },
     enable: { value: true },
     enableOnHover: { value: false },
@@ -21,7 +21,7 @@ export default function ShineDemo({
   delay = 0,
   duration = 1200,
   loop = true,
-  loopDelay = 1500,
+  loopDelay = 500,
   deg = -15,
   enable = true,
   enableOnHover = false,
@@ -39,8 +39,6 @@ export default function ShineDemo({
   return (
     <Shine
       asChild
-      color="white"
-      opacity={0.4}
       delay={delay}
       duration={duration}
       loop={loop}

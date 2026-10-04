@@ -22,6 +22,7 @@ export function Title() {
 ## Animation
 
 - The gradient sweeps across the text in a 50s linear loop, driven by one motion value: no React render per frame.
+- `<AnimateUIProvider tempo>` paces the default loop.
 - The sweep pauses off screen and in a hidden tab, and resumes where it stopped.
 - Under reduced motion, the gradient holds still.
 - `neon` adds a blurred copy of the text as a glow. It is decorative and hidden from screen readers, which read the text once.

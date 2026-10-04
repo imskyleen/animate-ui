@@ -43,9 +43,12 @@ export function FontPicker() {
 
 ## Animation
 
-- **Popover**: the list fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--trigger-anchor-point`). It closes in 400ms, then unmounts. Reopening while it closes picks up from where it is. This is Animate UI's [Popover](/docs/primitives/react-aria/popover), the overlay React Aria's `Select` renders its list in.
-- **ListBox** and **ListBoxItem** are not animated: the focused item moved by the arrow keys or typeahead stays instant, and with a single value, choosing an item closes the list, so the check never animates in view. shadcn/ui renders that check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
+React Aria's Select has no Animate UI v1 counterpart: its list opens in Animate UI's [Popover](/docs/primitives/react-aria/popover), which moves like v1's Dropdown Menu content under a select.
+
+- **Popover**: the list fades and scales in from 0.95, from the trigger (`--trigger-anchor-point`), in 200ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
+- **ListBox** and **ListBoxItem** are React Aria's, untouched: their highlight is your CSS, and shadcn/ui renders the selected check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
 - Opening from the keyboard animates the same way.
+- Open from the start (`defaultOpen`), the list plays its entrance on page load.
 - Under reduced motion, the list only fades.
 
 ## API Reference
@@ -59,14 +62,15 @@ export function FontPicker() {
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

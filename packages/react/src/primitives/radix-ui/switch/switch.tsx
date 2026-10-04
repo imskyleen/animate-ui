@@ -2,45 +2,33 @@
 
 import * as React from 'react';
 import { Switch as SwitchPrimitive } from 'radix-ui';
-import { motion, type Transition } from 'motion/react';
+import { motion } from 'motion/react';
 
 import { ReducedMotionConfig } from '../../../utils/motion';
-import { usePressMotion } from '../../../internal/controls/press';
 import { mergeRefs } from '../../../internal/controls/indicator';
 import {
-  useThumbGlide,
+  SwitchPressedContext,
+  useSwitchThumb,
   type ThumbAnimationProps,
 } from '../../../internal/controls/thumb';
 
-// Same API as Radix's Switch. The Root gives press feedback; the Thumb glides
-// to its new side with a spring, through a transform.
+// Same API as Radix's Switch, animated like Animate UI v1's switch: while the
+// switch is pressed, the Thumb stretches toward the middle of the track; when
+// it changes, the Thumb springs to its new side (stiffness 300, damping 25).
+// The Root itself doesn't move, and its colours are the component's CSS.
 
-/** Animate UI's additions to `Switch.Root`. */
-type RootAnimationProps = {
-  /** Transition of the press feedback. Defaults to `transition.press` (150ms). */
-  transition?: Transition;
-};
-
-type SwitchProps = SwitchPrimitive.SwitchProps & RootAnimationProps;
+type SwitchProps = SwitchPrimitive.SwitchProps;
 type SwitchThumbProps = SwitchPrimitive.SwitchThumbProps & ThumbAnimationProps;
 
-function Root(
-  props: React.ComponentProps<typeof SwitchPrimitive.Root> & RootAnimationProps,
-) {
-  return (
-    <ReducedMotionConfig>
-      <AnimatedRoot {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function AnimatedRoot({
-  transition,
+function Root({
   asChild,
   children,
   ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root> & RootAnimationProps) {
-  const press = usePressMotion(transition);
+}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+  const [pressed, setPressed] = React.useState(false);
+
+  // The user's own element: Radix's behaviour, and a Thumb that still
+  // glides (without the press stretch).
   if (asChild)
     return (
       <SwitchPrimitive.Root {...props} asChild>
@@ -49,9 +37,22 @@ function AnimatedRoot({
     );
 
   return (
-    <SwitchPrimitive.Root {...props} asChild>
-      <motion.button {...press}>{children}</motion.button>
-    </SwitchPrimitive.Root>
+    <SwitchPressedContext value={pressed}>
+      {/* Radix's props (className, data-state, handlers…) land on the
+          motion.button through asChild. Its press gesture is v1's: pointer,
+          and Enter on the keyboard. */}
+      <SwitchPrimitive.Root {...props} asChild>
+        <motion.button
+          onTapStart={() => {
+            if (!props.disabled) setPressed(true);
+          }}
+          onTap={() => setPressed(false)}
+          onTapCancel={() => setPressed(false)}
+        >
+          {children}
+        </motion.button>
+      </SwitchPrimitive.Root>
+    </SwitchPressedContext>
   );
 }
 
@@ -73,13 +74,13 @@ function Thumb({
       {/* Radix's props (className, data-state…) land on the span through
           asChild, which re-renders it on every change. */}
       <SwitchPrimitive.Thumb {...props} asChild>
-        <GlidingThumb transition={transition}>{children}</GlidingThumb>
+        <AnimatedThumb transition={transition}>{children}</AnimatedThumb>
       </SwitchPrimitive.Thumb>
     </ReducedMotionConfig>
   );
 }
 
-function GlidingThumb({
+function AnimatedThumb({
   transition,
   ref,
   ...props
@@ -87,7 +88,9 @@ function GlidingThumb({
   ThumbAnimationProps & { 'data-state'?: string }) {
   const localRef = React.useRef<HTMLSpanElement>(null);
   const mergedRef = React.useMemo(() => mergeRefs(ref, localRef), [ref]);
-  useThumbGlide(() => localRef.current, props['data-state'] === 'checked', {
+  useSwitchThumb(() => localRef.current, {
+    checked: props['data-state'] === 'checked',
+    pressed: React.use(SwitchPressedContext),
     transition,
   });
   return <span {...props} ref={mergedRef} />;

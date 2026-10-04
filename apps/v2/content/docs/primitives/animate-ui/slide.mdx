@@ -36,11 +36,11 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
 
 ## Animation
 
-- The element travels `offset` pixels into place over 600ms with a strong ease-out, using a hardware-accelerated `transform`.
+- The element travels `offset` pixels (100 by default) into place on a spring (stiffness 200, damping 20), overshooting by about 4% before it settles. It moves with `x` / `y`, a hardware-accelerated transform.
 - `direction` is the direction it moves in: `up` starts below its place.
 - Under reduced motion, it doesn't travel: it fades in instead.
 - `inView` waits for the element to scroll into view, once by default.
-- `<AnimateUIProvider tempo>` paces the default transition.
+- `<AnimateUIProvider tempo>` paces the default spring.
 
 ## API Reference
 
@@ -62,7 +62,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
     offset: {
       description: 'Distance travelled, in pixels.',
       type: 'number',
-      default: '16',
+      default: '100',
     },
     delay: {
       description: 'Delay before the animation starts, in milliseconds.',
@@ -72,7 +72,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
     transition: {
       description: 'Transition of the entrance.',
       type: 'Transition',
-      default: 'transition.modal (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
     },
     inView: {
       description: 'Wait for the element to be in view before animating.',

@@ -17,10 +17,12 @@ import { usePageVisible } from '../../../utils/use-page-visible';
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN } from '../_text';
+
+const DEFAULT_TRANSITION: Transition = { duration: 0.3, ease: 'easeOut' };
 
 type RotatingTextContextType = {
   currentText: string;
@@ -35,11 +37,11 @@ const [RotatingTextProvider, useRotatingText] =
 
 type RotatingTextContainerProps = React.ComponentProps<'div'> & {
   text: string | string[];
-  /** How long each text stays on screen, in milliseconds. */
+  /** Interval between two swaps, in milliseconds. */
   duration?: number;
   /** Travel of the swap, in pixels: the new text enters from `-y` and the old one leaves to `y`. */
   y?: number;
-  /** Extra delay before the first swap, in milliseconds. */
+  /** Delay before the first swap, in milliseconds. */
   delay?: number;
 } & UseIsInViewOptions;
 
@@ -79,13 +81,14 @@ function RotatingTextContainer({
 
   React.useEffect(() => {
     if (!playing) return;
-    // Each text holds for `duration`; the very first one also waits `delay`.
+    // The first swap comes after `delay` (right away by default), then one
+    // every `duration`.
     const timeoutId = setTimeout(
       () => {
         setHasRotated(true);
         setIndex((prev) => (prev + 1) % count);
       },
-      hasRotated ? duration : delay + duration,
+      hasRotated ? duration : delay,
     );
     return () => clearTimeout(timeoutId);
   }, [playing, index, count, duration, delay, hasRotated]);
@@ -129,11 +132,8 @@ function RotatingTextContent({
   transition: transitionProp,
   ...props
 }: RotatingTextProps) {
-  const tokens = useMotionTokens();
-  const transition: Transition = transitionProp ?? {
-    duration: 0.3 * tokens.tempo,
-    ease: tokens.ease.out,
-  };
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const transition = transitionProp ?? defaultTransition;
   const { currentText, y, isInView, label } = useRotatingText();
   const reduce = useShouldReduceMotion();
   // Reduced motion: no travel, the texts crossfade in place.
@@ -144,8 +144,7 @@ function RotatingTextContent({
       <span className="sr-only" style={VISUALLY_HIDDEN}>
         {label}
       </span>
-      {/* mode="wait": the old text leaves before the new one comes in, which
-          is the effect itself (swaps are seconds apart, not rapid). */}
+      {/* mode="wait": the old text leaves before the new one comes in. */}
       <AnimatePresence mode="wait">
         {isInView && (
           <motion.div
@@ -153,9 +152,9 @@ function RotatingTextContent({
             data-slot="rotating-text"
             aria-hidden="true"
             transition={transition}
-            initial={{ opacity: 0, transform: `translateY(${-travel}px)` }}
-            animate={{ opacity: 1, transform: 'translateY(0px)' }}
-            exit={{ opacity: 0, transform: `translateY(${travel}px)` }}
+            initial={{ opacity: 0, y: -travel }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: travel }}
             {...props}
           >
             {currentText}

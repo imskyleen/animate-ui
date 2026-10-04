@@ -21,10 +21,10 @@ export function Title() {
 
 ## Animation
 
-- Each letter turns over in 3D: its front copy rolls away while the back copy rolls in 0.3s later, 0.5s each on a strong ease-out.
+- Each letter turns over in 3D (`rotateX`): its front copy rolls away from its upper quarter while the back copy rolls in from its baseline 0.3s later, 0.5s each on an ease-out.
 - Letters start 0.1s apart (the `delay` of `transition`). Words never break in the middle; emoji and accented letters stay whole.
 - Once rolled, the text stays rolled: leaving the viewport doesn't reverse it.
-- `<AnimateUIProvider tempo>` paces the default duration.
+- `<AnimateUIProvider tempo>` paces the default transition and the 0.3s offset.
 - Under reduced motion, the letters sit in their final state at once.
 - Screen readers read the text once, not letter by letter.
 
@@ -43,7 +43,7 @@ export function Title() {
       description:
         'Transition of each letter. Its `delay` is the stagger between letters (in seconds), not a start delay: use the `delay` prop for that.',
       type: 'Transition',
-      default: '{ duration: 0.5, delay: 0.1, ease: ease.out }',
+      default: "{ duration: 0.5, delay: 0.1, ease: 'easeOut' }",
     },
     delay: {
       description: 'Delay before the first letter rolls, in milliseconds.',

@@ -6,11 +6,12 @@ import { animate, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import {
   IndicatorMotion,
+  useHighlightedItem,
   usePopupRender,
   useRootMotion,
   type IndicatorAnimationProps,
@@ -19,10 +20,11 @@ import {
   type RootMotion,
 } from '../select/motion';
 
-// Same API as Base UI's Combobox. With an `actionsRef`, Base UI keeps the
-// popup mounted until we unmount it after the exit animation; it also waits
-// until then to reset the query and sync the input, so the list doesn't
-// change while it fades out.
+// Same API as Base UI's Combobox, animated like Animate UI v1's Base UI Menu
+// (see ../select/motion.tsx); a chip added to the selection pops in like v1's
+// checkbox check. With an `actionsRef`, Base UI keeps the popup mounted until
+// we unmount it after the exit animation; it also waits until then to reset
+// the query and sync the input, so the list doesn't change while it fades out.
 
 const RootContext = React.createContext<RootMotion | null>(null);
 /** True once the Chips container has mounted: later chips were just added. */
@@ -88,44 +90,39 @@ function PopupMotion({ transition, exitTransition, ...props }: Popup.Props) {
   return <ComboboxPrimitive.Popup {...props} render={render} />;
 }
 
-// Single selection: not animated, it only mounts with the list (choosing an
-// item closes it). Multiple selection keeps the list open, so toggling an item
-// fades and scales its check.
-function ItemIndicator({
-  keepMounted,
-  render,
-  transition,
-  exitTransition,
-  ...props
-}: ItemIndicator.Props) {
+// Single selection: the check glides to the chosen item while the list
+// closes. Multiple selection keeps the list open: a selected item's check
+// pops in.
+function ItemIndicator({ render, transition, ...props }: ItemIndicator.Props) {
   const root = React.use(RootContext);
-
-  if (!root?.multiple) {
-    return (
-      <ComboboxPrimitive.ItemIndicator
-        {...props}
-        keepMounted={keepMounted}
-        render={render}
-      />
-    );
+  if (!root) {
+    return <ComboboxPrimitive.ItemIndicator {...props} render={render} />;
   }
 
   return (
     <ComboboxPrimitive.ItemIndicator
       {...props}
-      // Mounted unselected too, so the check can leave with an animation.
-      keepMounted
       render={(elementProps, state) => (
         <IndicatorMotion
           render={render as IndicatorRender}
           props={elementProps as Record<string, unknown>}
           state={state}
+          multiple={root.multiple}
           transition={transition}
-          exitTransition={exitTransition}
         />
       )}
     />
   );
+}
+
+/** Takes part in the list's highlight (pointer and arrow keys alike). */
+function Item(props: Item.Props) {
+  return <ComboboxPrimitive.Item {...useHighlightedItem(props)} />;
+}
+
+declare namespace Item {
+  type Props = ComboboxPrimitive.Item.Props;
+  type State = ComboboxPrimitive.Item.State;
 }
 
 declare namespace ItemIndicator {
@@ -156,12 +153,22 @@ declare namespace Chips {
 
 /** Animate UI's additions to `Chip`. */
 type ChipAnimationProps = {
-  /** Transition of a chip being added. Defaults to `transition.change` (600ms). */
+  /**
+   * Transition of a chip being added. Defaults to Motion's defaults, as v1's
+   * checkbox check.
+   */
   transition?: Transition;
 };
 
-// A chip added to the selection pops in; chips already there on mount don't.
-// Removing one is instant: it's often Backspace, and its neighbours reflow.
+/** Motion's defaults, which v1's checkbox check used: written out for the tempo. */
+const CHIP_TRANSITION = {
+  scale: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
+  opacity: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
+} as const satisfies Transition;
+
+// A chip added to the selection pops in from half its size, like v1's
+// checkbox check; chips already there on mount don't. Removing one is
+// instant: it's often Backspace, and its neighbours reflow.
 function Chip(props: Chip.Props) {
   return (
     <ReducedMotionConfig>
@@ -176,7 +183,7 @@ function AnimatedChip({ ref, transition, ...props }: Chip.Props) {
   const [entering] = React.useState(() => chips?.current === true);
   const elementRef = React.useRef<HTMLDivElement | null>(null);
   const reduce = useShouldReduceMotion();
-  const tokens = useMotionTokens();
+  const pop = useTempoTransition(transition ?? CHIP_TRANSITION);
 
   // Before paint, so the chip never flashes at full opacity first.
   React.useLayoutEffect(() => {
@@ -184,11 +191,8 @@ function AnimatedChip({ ref, transition, ...props }: Chip.Props) {
     if (!entering || !element) return undefined;
     const controls = animate(
       element,
-      {
-        opacity: [0, 1],
-        transform: [`scale(${reduce ? 1 : tokens.scale.enter})`, 'scale(1)'],
-      },
-      transition ?? tokens.transition.change,
+      { opacity: [0, 1], scale: [reduce ? 1 : 0.5, 1] },
+      pop,
     );
     return () => controls.stop();
     // Plays once, when the chip mounts.
@@ -231,9 +235,6 @@ export import Arrow = ComboboxPrimitive.Arrow;
 export import Icon = ComboboxPrimitive.Icon;
 export import Group = ComboboxPrimitive.Group;
 export import GroupLabel = ComboboxPrimitive.GroupLabel;
-// No animated highlight: arrow keys move it, and keyboard navigation stays
-// instant. Style `data-highlighted` instead.
-export import Item = ComboboxPrimitive.Item;
 export import ChipRemove = ComboboxPrimitive.ChipRemove;
 export import Row = ComboboxPrimitive.Row;
 export import Collection = ComboboxPrimitive.Collection;
@@ -244,4 +245,4 @@ export import useFilter = ComboboxPrimitive.useFilter;
 export import useFilteredItems = ComboboxPrimitive.useFilteredItems;
 export import createItems = ComboboxPrimitive.createItems;
 
-export { Root, Popup, ItemIndicator, Chips, Chip };
+export { Root, Popup, Item, ItemIndicator, Chips, Chip };

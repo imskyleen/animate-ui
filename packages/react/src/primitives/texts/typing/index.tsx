@@ -79,8 +79,10 @@ function TypingTextContent({
 
   const reduce = useShouldReduceMotion();
   const pageVisible = usePageVisible();
-  // Actual visibility, independent of the `inView` start trigger.
-  const onScreen = useInView(localRef);
+  // Actual visibility, independent of the `inView` start trigger. Assumed
+  // visible until measured, so the cursor starts blinking on mount and fades
+  // in as typing begins.
+  const onScreen = useInView(localRef, { initial: true });
 
   // Inline arrays get a new identity every render: only restart typing when
   // the texts themselves change.
@@ -148,6 +150,9 @@ function TypingTextContent({
       timeoutId = setTimeout(step, ms);
     };
 
+    // One tick per `duration`: a typed (or erased) character per tick, plus
+    // one tick on the full (or empty) text before holding (or typing the
+    // next one). The cursor turns solid as soon as a text starts.
     function step() {
       const state = stateRef.current;
       const length = segments[state.index]?.length ?? 0;
@@ -157,7 +162,6 @@ function TypingTextContent({
       switch (state.phase) {
         case 'typing':
           if (state.count < length) {
-            setIsTyping(true);
             state.count++;
             write();
             schedule(timing.duration);
@@ -171,20 +175,19 @@ function TypingTextContent({
           }
           break;
         case 'holding':
+          setIsTyping(true);
           state.phase = 'erasing';
-          step();
+          schedule(timing.duration);
           break;
         case 'erasing':
           if (state.count > 0) {
-            setIsTyping(true);
             state.count--;
             write();
-            schedule(timing.duration);
           } else {
             state.index = isLast ? 0 : state.index + 1;
             state.phase = 'typing';
-            schedule(timing.duration);
           }
+          schedule(timing.duration);
           break;
         case 'done':
           break;
@@ -192,7 +195,8 @@ function TypingTextContent({
     }
 
     // Resuming after a pause continues where it stopped.
-    const { phase } = stateRef.current;
+    const { phase, count } = stateRef.current;
+    if (phase === 'typing' && count === 0) setIsTyping(true);
     if (phase !== 'done') {
       schedule(
         phase === 'holding'

@@ -1,11 +1,33 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const open = (page: Page) =>
-  page.goto('/tests/demos/animate-ui/ripple-button', {
+import { sample } from './motion-probe';
+
+const open = async (page: Page) => {
+  await page.goto('/tests/demos/animate-ui/ripple-button', {
     waitUntil: 'networkidle',
   });
+  await hydrated(page, '[data-slot="ripple-button"]');
+};
 
-const button = (page: Page) => page.locator('[data-slot="ripple-button"]');
+/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
+async function hydrated(page: Page, selector: string) {
+  await page.waitForFunction((sel) => {
+    const el = document.querySelector(sel);
+    return (
+      !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
+    );
+  }, selector);
+  // Effects (Motion's gesture listeners, timers) run after the commit.
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+}
+
+const SELECTOR = '[data-slot="ripple-button"]';
+const button = (page: Page) => page.locator(SELECTOR);
 const ripples = (page: Page) => button(page).locator('> span');
 
 const scaleOf = (page: Page) =>
@@ -36,6 +58,22 @@ test.describe('animate-ui ripple button', () => {
     await button(page).click();
     await expect(ripples(page)).toHaveCount(2);
     await expect(ripples(page)).toHaveCount(0, { timeout: 2000 });
+  });
+
+  test('grows on hover, shrinks while pressed', async ({ page }) => {
+    await open(page);
+    await button(page).hover();
+    await expect
+      .poll(async () => (await sample(page, SELECTOR)).scale)
+      .toBeCloseTo(1.05, 3);
+    await page.mouse.down();
+    await expect
+      .poll(async () => (await sample(page, SELECTOR)).scale)
+      .toBeCloseTo(0.95, 3);
+    await page.mouse.up();
+    await expect
+      .poll(async () => (await sample(page, SELECTOR)).scale)
+      .toBeCloseTo(1.05, 3);
   });
 
   test('reduced motion: the ripple fades in place without growing', async ({

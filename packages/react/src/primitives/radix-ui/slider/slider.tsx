@@ -4,19 +4,21 @@ import * as React from 'react';
 import { Slider as SliderPrimitive } from 'radix-ui';
 import { motion, type Transition } from 'motion/react';
 
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import { ReducedMotionConfig, useTempoTransition } from '../../../utils/motion';
 import {
-  PRESSED_SCALE,
+  SLIDER_TRANSITION,
   SliderMotionProvider,
   useSliderMotion,
-  usePressScale,
   useSliderPartMotion,
   useSliderRootMotion,
+  useThumbStretch,
 } from '../../../internal/slider';
 
-// Same API as Radix's Slider. Dragging and the keyboard follow instantly; a
-// press on the track glides the thumb and the range to the new value (FLIP on
-// transforms, see ../../../internal/slider), and the pressed thumb grows.
+// Same API as Radix's Slider, animated like Animate UI v1's switch thumb (v1
+// had no slider): the pressed (or dragged) thumb stretches along the track,
+// and a press on the track glides the thumb and the range to the new value,
+// on v1's spring (stiffness 300, damping 25; see ../../../internal/slider).
+// Dragging and the keyboard follow instantly.
 
 type SliderProps = SliderPrimitive.SliderProps;
 type SliderTrackProps = SliderPrimitive.SliderTrackProps;
@@ -25,16 +27,20 @@ type SliderThumbProps = SliderPrimitive.SliderThumbProps & ThumbAnimationProps;
 
 /** Animate UI's additions to `Slider.Range`. */
 type RangeAnimationProps = {
-  /** Transition of the range after a press on the track. Defaults to `spring.snappy`. */
+  /**
+   * Transition of the range after a press on the track. Defaults to a spring
+   * (stiffness 300, damping 25).
+   */
   transition?: Transition;
 };
 
 /** Animate UI's additions to `Slider.Thumb`. */
 type ThumbAnimationProps = {
-  /** Transition of the thumb after a press on the track, and of its press scale. Defaults to `spring.snappy`. */
+  /**
+   * Transition of the thumb after a press on the track, and of its stretch
+   * while pressed. Defaults to a spring (stiffness 300, damping 25).
+   */
   transition?: Transition;
-  /** Scale of the thumb while it is pressed or dragged. Defaults to `1.15`. */
-  pressedScale?: number;
 };
 
 function Root(props: React.ComponentProps<typeof SliderPrimitive.Root>) {
@@ -84,11 +90,8 @@ function Range({
   children,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Range> & RangeAnimationProps) {
-  const tokens = useMotionTokens();
-  const { ref, transform } = useSliderPartMotion(
-    'range',
-    transition ?? tokens.spring.snappy,
-  );
+  const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
+  const { ref, transform } = useSliderPartMotion('range', spring);
 
   return (
     // Radix's props (className, style, data-*…) land on the motion.span
@@ -106,22 +109,20 @@ function Range({
 
 function Thumb({
   transition,
-  pressedScale = PRESSED_SCALE,
   onFocus,
   onBlur,
   children,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Thumb> & ThumbAnimationProps) {
-  const tokens = useMotionTokens();
-  const t = transition ?? tokens.spring.snappy;
+  const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
   const { isPressing } = useSliderMotion();
   const [isFocused, setIsFocused] = React.useState(false);
-  const { ref, transform, press } = useSliderPartMotion('thumb', t);
+  const { ref, transform } = useSliderPartMotion('thumb', spring);
 
   // Radix focuses the thumb it moves, so the pressed thumb is the focused
   // one while the pointer is down.
   const isPressed = isPressing && isFocused;
-  usePressScale(press, isPressed, { transition: t, pressedScale });
+  useThumbStretch(ref, isPressed, spring);
 
   return (
     <SliderPrimitive.Thumb

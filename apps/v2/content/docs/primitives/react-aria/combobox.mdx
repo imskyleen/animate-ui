@@ -50,10 +50,10 @@ export function FrameworkPicker() {
 
 ## Animation
 
-- **Popover**: the list fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the input (`--trigger-anchor-point`). It closes in 400ms, then unmounts. Reopening while it closes picks up from where it is. This is Animate UI's [Popover](/docs/primitives/react-aria/popover).
+- **Popover**: React Aria's ComboBox has no Animate UI v1 counterpart. Its list opens in Animate UI's [Popover](/docs/primitives/react-aria/popover), which moves like v1's Dropdown Menu content under a combobox: it fades and scales in from 0.95, from the input (`--trigger-anchor-point`), in 200ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
 - Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation. The focused item moved by the arrow keys is instant too.
 - **Tag** (shadcn/ui's chips): a tag added to the selection fades and scales in over 600ms. Tags already in the list when it mounts don't animate. Removing a tag is instant: React Aria drops it from the collection at once, and it's often Backspace.
-- **ListBox** and **ListBoxItem** are not animated. shadcn/ui renders the selected check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
+- **ListBox** and **ListBoxItem** are React Aria's, untouched: their highlight is your CSS, and shadcn/ui renders the selected check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
 - Under reduced motion, the list and new tags only fade.
 
 ## API Reference
@@ -67,14 +67,15 @@ export function FrameworkPicker() {
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

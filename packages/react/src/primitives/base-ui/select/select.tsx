@@ -6,6 +6,7 @@ import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   IndicatorMotion,
+  useHighlightedItem,
   usePopupRender,
   useRootMotion,
   type IndicatorAnimationProps,
@@ -14,9 +15,10 @@ import {
   type RootMotion,
 } from './motion';
 
-// Same API as Base UI's Select. Base UI has no `keepMounted` for this popup:
-// with an `actionsRef`, it keeps the popup mounted until we unmount it, after
-// the exit animation.
+// Same API as Base UI's Select, animated like Animate UI v1's Base UI Menu
+// (see motion.tsx). Base UI has no `keepMounted` for this popup: with an
+// `actionsRef`, it keeps the popup mounted until we unmount it, after the exit
+// animation.
 
 const RootContext = React.createContext<RootMotion | null>(null);
 
@@ -73,44 +75,38 @@ function PopupMotion({ transition, exitTransition, ...props }: Popup.Props) {
   return <SelectPrimitive.Popup {...props} render={render} />;
 }
 
-// Single selection: not animated, it only mounts with the list (choosing an
-// item closes it). Multiple selection keeps the list open, so toggling an item
-// fades and scales its check.
-function ItemIndicator({
-  keepMounted,
-  render,
-  transition,
-  exitTransition,
-  ...props
-}: ItemIndicator.Props) {
+// Single selection: the check glides to the chosen item while the list
+// closes. Multiple selection keeps the list open: a selected item's check
+// pops in.
+function ItemIndicator({ render, transition, ...props }: ItemIndicator.Props) {
   const root = React.use(RootContext);
-
-  if (!root?.multiple) {
-    return (
-      <SelectPrimitive.ItemIndicator
-        {...props}
-        keepMounted={keepMounted}
-        render={render}
-      />
-    );
-  }
+  if (!root)
+    return <SelectPrimitive.ItemIndicator {...props} render={render} />;
 
   return (
     <SelectPrimitive.ItemIndicator
       {...props}
-      // Mounted unselected too, so the check can leave with an animation.
-      keepMounted
       render={(elementProps, state) => (
         <IndicatorMotion
           render={render as IndicatorRender}
           props={elementProps as Record<string, unknown>}
           state={state}
+          multiple={root.multiple}
           transition={transition}
-          exitTransition={exitTransition}
         />
       )}
     />
   );
+}
+
+/** Takes part in the list's highlight (pointer and arrow keys alike). */
+function Item(props: Item.Props) {
+  return <SelectPrimitive.Item {...useHighlightedItem(props)} />;
+}
+
+declare namespace Item {
+  type Props = SelectPrimitive.Item.Props;
+  type State = SelectPrimitive.Item.State;
 }
 
 declare namespace ItemIndicator {
@@ -127,9 +123,6 @@ export import Portal = SelectPrimitive.Portal;
 export import Backdrop = SelectPrimitive.Backdrop;
 export import Positioner = SelectPrimitive.Positioner;
 export import List = SelectPrimitive.List;
-// No animated highlight: arrow keys move it, and keyboard navigation stays
-// instant. Style `data-highlighted` instead.
-export import Item = SelectPrimitive.Item;
 export import ItemText = SelectPrimitive.ItemText;
 export import Arrow = SelectPrimitive.Arrow;
 export import ScrollDownArrow = SelectPrimitive.ScrollDownArrow;
@@ -138,4 +131,4 @@ export import Group = SelectPrimitive.Group;
 export import GroupLabel = SelectPrimitive.GroupLabel;
 export import Separator = SelectPrimitive.Separator;
 
-export { Root, Popup, ItemIndicator };
+export { Root, Popup, Item, ItemIndicator };

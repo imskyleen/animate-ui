@@ -196,11 +196,13 @@ test.describe('backgrounds', () => {
       });
     }
 
+    // As in v1, the follower listens to mousemove, which browsers also fire
+    // for a tap.
     test.describe('touch', () => {
       test.use({ hasTouch: true });
 
       for (const [name, selector] of Object.entries(follower)) {
-        test(`${name}: a tap doesn't move the follower`, async ({ page }) => {
+        test(`${name}: a tap moves the follower`, async ({ page }) => {
           await open(page);
           const section = page.getByTestId(name);
           await show(section);
@@ -210,11 +212,28 @@ test.describe('backgrounds', () => {
           const before = await read();
           const box = (await section.boundingBox())!;
           await page.touchscreen.tap(box.x + 30, box.y + 30);
-          await page.waitForTimeout(500);
-          expect(await read()).toBe(before);
+          await expect.poll(read).not.toBe(before);
         });
       }
     });
+  });
+
+  test('fireworks: drawn in a window-wide space scaled to the container', async ({
+    page,
+  }) => {
+    await open(page);
+    const section = page.getByTestId('fireworks');
+    await show(section);
+    await expectMoving(section);
+    // As in v1, sizes and speeds are in pixels of a space as wide as the
+    // window: the 640px container shows it at 640 / window width.
+    const { scale, expected } = await section
+      .locator('canvas')
+      .evaluate((canvas: HTMLCanvasElement) => ({
+        scale: canvas.getContext('2d')!.getTransform().a,
+        expected: canvas.width / window.innerWidth,
+      }));
+    expect(scale).toBeCloseTo(expected, 5);
   });
 
   test.describe('hexagon', () => {

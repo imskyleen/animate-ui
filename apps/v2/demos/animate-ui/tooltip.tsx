@@ -30,7 +30,7 @@ const TOOLS = [
 
 export const controls = {
   TooltipProvider: {
-    openDelay: { value: 300 },
+    openDelay: { value: 0 },
     closeDelay: { value: 300 },
   },
   Tooltip: {
@@ -38,7 +38,7 @@ export const controls = {
       value: "top",
       options: { top: "top", bottom: "bottom", left: "left", right: "right" },
     },
-    sideOffset: { value: 6 },
+    sideOffset: { value: 10 },
     align: {
       value: "center",
       options: { start: "start", center: "center", end: "end" },
@@ -51,10 +51,10 @@ export const controls = {
 }
 
 export default function TooltipDemo({
-  openDelay = 300,
+  openDelay = 0,
   closeDelay = 300,
   side = "top",
-  sideOffset = 6,
+  sideOffset = 10,
   align = "center",
   alignOffset = 0,
   withTransition = true,

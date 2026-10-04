@@ -6,16 +6,16 @@ export const controls = {
   LiquidButton: {
     delay: { value: 0.3, min: 0.1, max: 0.5, step: 0.05 },
     fillHeight: { value: 3, min: 0, max: 10, step: 1 },
-    hoverScale: { value: 1.02, min: 0, max: 2, step: 0.01 },
-    tapScale: { value: 0.96, min: 0, max: 2, step: 0.01 },
+    hoverScale: { value: 1.05, min: 0, max: 2, step: 0.05 },
+    tapScale: { value: 0.95, min: 0, max: 2, step: 0.05 },
   },
 }
 
 export default function LiquidButtonDemo({
   delay = 0.3,
   fillHeight = 3,
-  hoverScale = 1.02,
-  tapScale = 0.96,
+  hoverScale = 1.05,
+  tapScale = 0.95,
 }: {
   /** In seconds. */
   delay?: number

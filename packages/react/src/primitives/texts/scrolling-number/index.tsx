@@ -18,9 +18,8 @@ import {
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
-  type MotionTokens,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN } from '../_text';
 
@@ -174,26 +173,21 @@ type ScrollingNumberProps = HTMLMotionProps<'div'> & {
   onCompleted?: () => void;
 };
 
-/**
- * Spins fast through the range and settles on the target with a strong
- * ease-out tail.
- */
-const defaultTransition = (tokens: MotionTokens): Transition => ({
-  duration: 2 * tokens.tempo,
-  ease: tokens.ease.out,
-});
+const DEFAULT_TRANSITION: Transition = { stiffness: 90, damping: 30 };
 
 /**
  * A `transition` without a `type` or an `ease` is a set of spring options
- * (the original API, fed to a spring): animate it as a spring.
+ * (the original API, fed to `useSpring`): animate it as a spring, with
+ * `useSpring`'s rest thresholds so it settles exactly like one.
  */
-function resolveTransition(
-  transition: Transition | undefined,
-  tokens: MotionTokens,
-): Transition {
-  if (!transition) return defaultTransition(tokens);
+function resolveTransition(transition: Transition): Transition {
   if ('type' in transition || 'ease' in transition) return transition;
-  return { type: 'spring', ...transition } as Transition;
+  return {
+    type: 'spring',
+    restDelta: 0.001,
+    restSpeed: 0.01,
+    ...transition,
+  } as Transition;
 }
 
 const DIRECTION_FLEX: Record<
@@ -247,10 +241,10 @@ function ScrollingNumberContent({
 
   // Read when the spin starts: a new inline transition object on every
   // render must not restart it.
-  const tokens = useMotionTokens();
-  const transitionRef = React.useRef({ transition, tokens });
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const transitionRef = React.useRef(transition ?? defaultTransition);
   React.useEffect(() => {
-    transitionRef.current = { transition, tokens };
+    transitionRef.current = transition ?? defaultTransition;
   });
 
   React.useEffect(() => {
@@ -262,11 +256,14 @@ function ScrollingNumberContent({
       return;
     }
 
-    // animate() starts from the current position and replaces the running
-    // animation, so a new `number` retargets mid-spin.
+    // animate() starts from the current position and velocity, replacing the
+    // running animation: a new `number` retargets the spring mid-spin.
     const timer = setTimeout(() => {
-      const { transition, tokens } = transitionRef.current;
-      animate(position, finalPosition, resolveTransition(transition, tokens));
+      animate(
+        position,
+        finalPosition,
+        resolveTransition(transitionRef.current),
+      );
     }, delay);
     return () => clearTimeout(timer);
   }, [isInView, finalPosition, position, delay, reduce]);

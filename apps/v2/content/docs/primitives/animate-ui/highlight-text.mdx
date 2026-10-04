@@ -29,7 +29,7 @@ export function Title() {
 
 ## Animation
 
-- The background grows from the left edge over 2s on a strong ease-out.
+- The background grows from the left edge over 2s on an ease-in-out: slow at first, fastest midway, easing into place.
 - With `inViewOnce={false}`, it resets off screen and sweeps again on the next entrance.
 - `<AnimateUIProvider tempo>` paces the default duration.
 - Under reduced motion, the text is highlighted at once.
@@ -53,7 +53,7 @@ export function Title() {
     transition: {
       description: 'Transition of the sweep.',
       type: 'Transition',
-      default: '{ duration: 2, ease: ease.out }',
+      default: "{ duration: 2, ease: 'easeInOut' }",
     },
     inView: {
       description: 'Wait for the text to be in view before highlighting.',

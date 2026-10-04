@@ -47,19 +47,21 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), but writes them itself from its state and Animate UI's tokens, so `AnimateUIProvider tempo` applies.
+Animate UI v1 had no toast. Its motion comes from v1's Sheet (it enters and leaves through its edge with a fade, on v1's sheet spring: stiffness 150, damping 22), v1's Popover for anchored toasts, and v1's 200ms easeInOut fade.
 
-- **A toast enters from its edge**, a full toast height away, and fades in over 600ms with a strong ease-out.
-- **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`). Hovering or focusing the viewport expands the stack with a 0.75rem gap. Toasts added quickly retarget instead of restarting.
+Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), springs written as the `linear()` curve Motion itself would use (550ms for v1's sheet spring), and sets them itself from its state, so `AnimateUIProvider tempo` applies.
+
+- **A toast enters from its edge**, a full toast height away, sliding and fading in on the spring.
+- **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, easeInOut. Hovering or focusing the viewport expands the stack with a 0.75rem gap and fades the contents back in. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
 - **A swipe follows the finger** (Base UI sets the transform while swiping), then springs back, or the toast leaves in the swipe direction.
-- **It exits faster** (400ms) through the edge it came from.
-- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they enter and leave through it. Anchored toasts (`Toast.Positioner`) grow from their anchor instead.
+- **It leaves through the edge it came from**, sliding and fading out on the same spring.
+- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they enter and leave through it. Anchored toasts (`Toast.Positioner`) grow from their anchor like v1's popover: from `scale(0.5)` with a fade, on a spring (stiffness 300, damping 25).
 - shadcn/ui's own CSS stack (its `[transform:…]` and `[transition:…]` classes and the variables only they read) would fight these: the CLI removes them.
 - Under reduced motion, toasts fade in place and the stack changes at once.
 
 ## API Reference
 
-Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/react/components/toast#api-reference). Animate UI adds the animation props below. They are CSS transitions: their `duration` and cubic-bezier `ease` are used.
+Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/react/components/toast#api-reference). Animate UI adds the animation props below. They are CSS transitions: a spring becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier or named `ease`.
 
 ### Provider, Viewport, Portal, Positioner, Title, Description, Action, Close, Arrow
 
@@ -74,17 +76,18 @@ Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/reac
     transition: {
       description: 'Transition of the entrance and the stack.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default:
+        "{ type: 'spring', stiffness: 150, damping: 22 }; anchored: { type: 'spring', stiffness: 300, damping: 25 }",
     },
     exitTransition: {
       description: 'Transition of the exit.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />
 
-The Root sets its `transform`, `transition` and `opacity` through Base UI's `style` prop; a `style` of your own (object or function) still applies on top.
+The Root sets its `transform`, transition and `opacity` through Base UI's `style` prop; a `style` of your own (object or function) still applies on top.
 
 ### Content
 
@@ -95,7 +98,7 @@ The Root sets its `transform`, `transition` and `opacity` through Base UI's `sty
     transition: {
       description: 'Transition of the content fading behind the front toast.',
       type: 'Transition',
-      default: 'transition.fade (600ms, ease-out)',
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
     },
   }}
 />

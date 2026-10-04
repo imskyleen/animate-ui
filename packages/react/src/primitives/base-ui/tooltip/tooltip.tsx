@@ -13,10 +13,9 @@ import {
   type AnchoredAnimationProps,
 } from '../popover/base-anchored';
 
-// Same API as Base UI's Tooltip. The Popup scales up from the trigger and
-// fades in. A tooltip opened right after another one closed is warm: it
-// appears at once, like moving along a toolbar (Base UI's own grouping can't
-// tell when each tooltip has its own Provider, as shadcn/ui's do).
+// Same API as Base UI's Tooltip. The Popup grows from half its size and fades
+// in from the trigger on a spring, and shrinks back the same way, every time
+// it opens (Animate UI v1's Tooltip).
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Tooltip.Root',
@@ -104,7 +103,6 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
       popupProps={props}
       open={open}
       keepMounted={React.use(KeepMountedContext)}
-      kind="tooltip"
       transition={transition}
       exitTransition={exitTransition}
     />

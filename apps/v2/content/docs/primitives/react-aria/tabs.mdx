@@ -14,7 +14,12 @@ description: Tabs organize content into multiple sections and allow users to nav
 Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with animated `TabList`, `Tab` and `TabPanel`. Everything else stays the same.
 
 ```tsx
-import { Tab, TabList, TabPanel, Tabs } from '@animate-ui/react/primitives/react-aria';
+import {
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+} from '@animate-ui/react/primitives/react-aria';
 
 export function Settings() {
   return (
@@ -32,14 +37,16 @@ export function Settings() {
 
 ## Animation
 
-- **The selected tab's surface glides** to the new tab with `spring.snappy` (600ms, a hint of overshoot). The TabList draws it as an indicator that copies the selected tab's own classes and data attributes, so it looks exactly like your selected tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the selected tab's own surface is hidden. Its focus ring stays on the tab.
-- Clicking quickly through tabs retargets the glide smoothly.
-- **Keyboard changes are instant**: arrow keys move the indicator and swap the panel at once (with `keyboardActivation="manual"`, Enter selects).
-- **The incoming panel fades in** over 600ms (`transition.fade`); the outgoing one leaves at once (React Aria would otherwise wait for its fade to end), so the two never overlap.
-- Nothing animates on page load.
-- With `shouldForceMount`, inactive panels stay in the DOM and `inert`, as in React Aria; they don't fade.
-- The `className`, `style` and `children` render props keep working. The indicator and the panel go through React Aria's `render` prop; a `render` of your own on `TabList` still receives the indicator, on `TabPanel` it replaces the fade.
-- Under reduced motion, the indicator jumps; panels still fade.
+- **The selected tab's surface slides** to the new tab on a spring (stiffness 200, damping 25), like Animate UI v1's highlight: the new surface fades in as it slides from the previous one, which follows it and fades out 200ms later. The TabList draws it as an indicator that copies the selected tab's own classes and data attributes, so it looks exactly like your selected tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the selected tab's own surface is hidden. Its focus ring stays on the tab.
+- **The tabs' colors change over 500ms** (Tailwind's `ease-in-out`), as in v1, whatever transition your tabs set.
+- Clicking quickly through tabs retargets the slide smoothly.
+- **The incoming panel fades in from a 4px blur** over 500ms ease-in-out, while its height springs from the previous panel's to its own (stiffness 200, damping 25), like v1's tab contents. The panels share an element (the tabs root, usually), which remembers the selected panel's height. The outgoing panel leaves at once, so the two never overlap.
+- The selected panel fades in on mount (page load) too, as in v1.
+- Keyboard changes animate like clicks, as in v1: arrow keys slide the surface and fade the panel in (with `keyboardActivation="manual"`, Enter selects). The outgoing panel still leaves at once (React Aria would otherwise wait for its fade to end).
+- With `shouldForceMount`, inactive panels stay in the DOM and `inert`, as in React Aria, and fade in when they become selected.
+- The `className`, `style` and `children` render props keep working. The indicator and the panel go through React Aria's `render` prop; a `render` of your own on `TabList` still receives the indicator, on `TabPanel` it replaces the animation.
+- `<AnimateUIProvider tempo>` paces every transition.
+- Under reduced motion, the surface jumps and the height changes at once; the fades still play.
 
 ## API Reference
 
@@ -56,9 +63,10 @@ Every component takes exactly the props of [React Aria's Tabs](https://react-spe
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the indicator gliding to the selected tab (pointer changes).',
+      description:
+        'Transition of the surface sliding to the new tab (pointer changes); the previous surface fades out 200ms after it starts.',
       type: 'Transition',
-      default: 'spring.snappy (600ms, bounce 0.15)',
+      default: "{ type: 'spring', stiffness: 200, damping: 25 }",
     },
   }}
 />
@@ -70,9 +78,11 @@ Every component takes exactly the props of [React Aria's Tabs](https://react-spe
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the incoming panel fading in.',
+      description:
+        'Transition of the incoming panel: its fade from a blur, and its height (in `height`, or the whole transition when it has none).',
       type: 'Transition',
-      default: 'transition.fade (600ms, ease-out)',
+      default:
+        "{ duration: 0.5, ease: 'easeInOut', height: { type: 'spring', stiffness: 200, damping: 25 } }",
     },
   }}
 />

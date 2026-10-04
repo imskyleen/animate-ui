@@ -59,7 +59,7 @@ export default function CollapsibleDemo() {
         >
           <HugeiconsIcon
             icon={ArrowDown01Icon} strokeWidth={2}
-            className="transition-transform duration-600 ease-out-strong group-aria-expanded/button:rotate-180"
+            className="transition-transform duration-200 group-aria-expanded/button:rotate-180"
           />
         </CollapsibleTrigger>
       </div>

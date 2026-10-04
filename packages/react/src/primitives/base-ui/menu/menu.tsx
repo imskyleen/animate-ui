@@ -5,11 +5,18 @@ import * as React from 'react';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 
 import { ReducedMotionConfig } from '../../../utils/motion';
+import { mergeRefs } from '../../../internal/anchored';
+import {
+  useItemHighlight,
+  withHighlight,
+} from '../../../internal/item-highlight';
 import {
   IndicatorMotion,
   PopupMotion,
+  RadioGroupLayoutContext,
   UnmountContext,
   useManualUnmount,
+  type IndicatorAnimationProps,
   type PresenceAnimationProps,
 } from './shared';
 
@@ -17,26 +24,19 @@ import {
 // namespace (`Menu.Trigger.Props`).
 import Arrow = MenuPrimitive.Arrow;
 import Backdrop = MenuPrimitive.Backdrop;
-import CheckboxItem = MenuPrimitive.CheckboxItem;
 import Group = MenuPrimitive.Group;
 import GroupLabel = MenuPrimitive.GroupLabel;
-import Item = MenuPrimitive.Item;
-import LinkItem = MenuPrimitive.LinkItem;
 import Portal = MenuPrimitive.Portal;
 import Positioner = MenuPrimitive.Positioner;
-import RadioGroup = MenuPrimitive.RadioGroup;
-import RadioItem = MenuPrimitive.RadioItem;
 import Trigger = MenuPrimitive.Trigger;
 import Viewport = MenuPrimitive.Viewport;
 import Separator = MenuPrimitive.Separator;
-import SubmenuTrigger = MenuPrimitive.SubmenuTrigger;
 import Handle = MenuPrimitive.Handle;
 import createHandle = MenuPrimitive.createHandle;
 
-// Same API as Base UI's Menu. Base UI tells the popup whether it is open and
-// whether the change should be instant (moving between the menus of a
-// menubar); the Root asks Base UI to keep the popup mounted after it closes,
-// and the Popup unmounts it once its exit has played.
+// Same API as Base UI's Menu, animated like Animate UI v1's (see shared.tsx).
+// The Root asks Base UI to keep the popup mounted after it closes, and the
+// Popup unmounts it once its exit has played.
 
 function Root<Payload = unknown>({
   actionsRef,
@@ -88,12 +88,7 @@ namespace SubmenuRoot {
   export type ChangeEventDetails = MenuPrimitive.SubmenuRoot.ChangeEventDetails;
 }
 
-function Popup({
-  transition,
-  exitTransition,
-  render,
-  ...props
-}: Popup.Props) {
+function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
   const unmount = React.use(UnmountContext);
   // Outside Animate UI's Root (nothing would unmount it): Base UI's popup.
   if (!unmount) return <MenuPrimitive.Popup {...props} render={render} />;
@@ -124,9 +119,102 @@ namespace Popup {
   export type State = MenuPrimitive.Popup.State;
 }
 
+type HighlightableProps = {
+  disabled?: boolean;
+  children?: React.ReactNode;
+  ref?: React.Ref<HTMLElement>;
+};
+
+/**
+ * An item that takes part in the menu's highlight. With `render`, Base UI
+ * puts the children (and the highlight) in the user's element.
+ */
+function useHighlighted<P extends HighlightableProps>({
+  disabled,
+  children,
+  ref,
+  ...props
+}: P) {
+  const { ref: highlightRef, highlight } = useItemHighlight(disabled);
+  const mergedRef = React.useMemo(
+    () => mergeRefs(ref, highlightRef),
+    [ref, highlightRef],
+  );
+  return {
+    ...props,
+    disabled,
+    ref: mergedRef,
+    children: withHighlight(children, highlight),
+  };
+}
+
+function Item(props: Item.Props) {
+  return <MenuPrimitive.Item {...useHighlighted(props)} />;
+}
+
+namespace Item {
+  export type Props = MenuPrimitive.Item.Props;
+  export type State = MenuPrimitive.Item.State;
+}
+
+function LinkItem(props: LinkItem.Props) {
+  return <MenuPrimitive.LinkItem {...useHighlighted(props)} />;
+}
+
+namespace LinkItem {
+  export type Props = MenuPrimitive.LinkItem.Props;
+  export type State = MenuPrimitive.LinkItem.State;
+}
+
+function CheckboxItem(props: CheckboxItem.Props) {
+  return <MenuPrimitive.CheckboxItem {...useHighlighted(props)} />;
+}
+
+namespace CheckboxItem {
+  export type Props = MenuPrimitive.CheckboxItem.Props;
+  export type State = MenuPrimitive.CheckboxItem.State;
+  export type ChangeEventReason = MenuPrimitive.CheckboxItem.ChangeEventReason;
+  export type ChangeEventDetails =
+    MenuPrimitive.CheckboxItem.ChangeEventDetails;
+}
+
+function RadioItem(props: RadioItem.Props) {
+  return <MenuPrimitive.RadioItem {...useHighlighted(props)} />;
+}
+
+namespace RadioItem {
+  export type Props = MenuPrimitive.RadioItem.Props;
+  export type State = MenuPrimitive.RadioItem.State;
+}
+
+function SubmenuTrigger(props: SubmenuTrigger.Props) {
+  return <MenuPrimitive.SubmenuTrigger {...useHighlighted(props)} />;
+}
+
+namespace SubmenuTrigger {
+  export type Props = MenuPrimitive.SubmenuTrigger.Props;
+  export type State = MenuPrimitive.SubmenuTrigger.State;
+}
+
+/** Its radio items' indicators glide from one to the other. */
+function RadioGroup(props: RadioGroup.Props) {
+  const layoutId = React.useId();
+  return (
+    <RadioGroupLayoutContext value={layoutId}>
+      <MenuPrimitive.RadioGroup {...props} />
+    </RadioGroupLayoutContext>
+  );
+}
+
+namespace RadioGroup {
+  export type Props = MenuPrimitive.RadioGroup.Props;
+  export type State = MenuPrimitive.RadioGroup.State;
+  export type ChangeEventReason = MenuPrimitive.RadioGroup.ChangeEventReason;
+  export type ChangeEventDetails = MenuPrimitive.RadioGroup.ChangeEventDetails;
+}
+
 function CheckboxItemIndicator({
   transition,
-  exitTransition,
   ...props
 }: CheckboxItemIndicator.Props) {
   return (
@@ -134,10 +222,10 @@ function CheckboxItemIndicator({
       {...props}
       render={(htmlProps, state) => (
         <IndicatorMotion
+          kind="checkbox"
           htmlProps={htmlProps}
           state={state}
           transition={transition}
-          exitTransition={exitTransition}
         />
       )}
     />
@@ -145,15 +233,14 @@ function CheckboxItemIndicator({
 }
 
 namespace CheckboxItemIndicator {
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
+  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = MenuPrimitive.CheckboxItemIndicator.Props &
-    PresenceAnimationProps;
+    IndicatorAnimationProps;
   export type State = MenuPrimitive.CheckboxItemIndicator.State;
 }
 
 function RadioItemIndicator({
   transition,
-  exitTransition,
   ...props
 }: RadioItemIndicator.Props) {
   return (
@@ -161,10 +248,10 @@ function RadioItemIndicator({
       {...props}
       render={(htmlProps, state) => (
         <IndicatorMotion
+          kind="radio"
           htmlProps={htmlProps}
           state={state}
           transition={transition}
-          exitTransition={exitTransition}
         />
       )}
     />
@@ -172,9 +259,9 @@ function RadioItemIndicator({
 }
 
 namespace RadioItemIndicator {
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
+  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = MenuPrimitive.RadioItemIndicator.Props &
-    PresenceAnimationProps;
+    IndicatorAnimationProps;
   export type State = MenuPrimitive.RadioItemIndicator.State;
 }
 

@@ -39,7 +39,7 @@ const animations = {
         pathLength: 1,
       },
       animate: {
-        pathLength: [null, 0, 1],
+        pathLength: [1, 0, 1],
         transition: { duration: 1.2, ease: 'easeInOut' },
       },
     },

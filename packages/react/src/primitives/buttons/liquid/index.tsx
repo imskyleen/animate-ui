@@ -1,14 +1,33 @@
 'use client';
 
 import * as React from 'react';
-import { motion, type HTMLMotionProps } from 'motion/react';
+import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
+import { SCALE_SPRING } from '../_button';
+
+// What Motion picked in production, written out so the tempo applies:
+// - entering hover, `scale` falls back to the CSS variables' transition object
+//   below, which runs as a 0.3s ease-out tween;
+// - pressing, releasing and leaving use the element's transition: Motion's
+//   spring for `scale`, its 0.3s default tween for the CSS variables (so the
+//   fill waits for them before draining).
+const HOVER_TRANSITION: Transition = {
+  scale: { duration: 0.3, ease: 'easeOut' },
+  '--liquid-button-fill-width': { duration: 0 },
+  '--liquid-button-fill-height': { duration: 0 },
+  '--liquid-button-delay': { duration: 0 },
+};
+
+const DEFAULT_TRANSITION: Transition = {
+  scale: SCALE_SPRING,
+  default: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
+};
 
 type LiquidButtonProps = WithAsChild<
   HTMLMotionProps<'button'> & {
@@ -30,35 +49,28 @@ function LiquidButton(props: LiquidButtonProps) {
 function LiquidButtonContent({
   delay = '0.3s',
   fillHeight = '3px',
-  hoverScale = 1.02,
-  tapScale,
+  hoverScale = 1.05,
+  tapScale = 0.95,
   asChild = false,
+  transition,
   ...props
 }: LiquidButtonProps) {
-  const tokens = useMotionTokens();
-  const press = tokens.transition.press;
   const reduce = useShouldReduceMotion();
+  const hoverTransition = useTempoTransition(HOVER_TRANSITION);
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
   const Component = asChild ? Slot : motion.button;
 
   return (
     <Component
-      whileTap={{
-        scale: reduce ? 1 : (tapScale ?? tokens.scale.press),
-        transition: press,
-      }}
+      whileTap={{ scale: reduce ? 1 : tapScale }}
       whileHover={{
         scale: reduce ? 1 : hoverScale,
         '--liquid-button-fill-width': '100%',
         '--liquid-button-fill-height': '100%',
         '--liquid-button-delay': delay,
-        transition: {
-          scale: press,
-          '--liquid-button-fill-width': { duration: 0 },
-          '--liquid-button-fill-height': { duration: 0 },
-          '--liquid-button-delay': { duration: 0 },
-        },
+        transition: hoverTransition,
       }}
-      transition={press}
+      transition={transition ?? defaultTransition}
       style={
         {
           '--liquid-button-fill-width': '-1%',

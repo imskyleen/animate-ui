@@ -20,8 +20,13 @@ import { originFor } from './origin';
 
 // Same API as React Aria's Popover, the overlay under DialogTrigger,
 // PreviewTrigger (hover cards), MenuTrigger and SubmenuTrigger, Select,
-// ComboBox and DatePicker. It scales up from the trigger and fades in, and
-// leaves faster than it came. Submenus, which open often, only fade.
+// ComboBox and DatePicker. React Aria has no Animate UI v1 counterpart, so it
+// moves like the closest v1 overlay:
+// - under menus, submenus, selects and comboboxes, like v1's DropdownMenu
+//   content: a 200ms fade and scale from 0.95, both ways;
+// - anywhere else (dialogs, hover cards, date pickers), like v1's Popover: it
+//   grows from half its size and fades in from the trigger on a spring, and
+//   shrinks back the same way.
 //
 // React Aria keeps a popover mounted while it exits only if it sees running
 // animations when it closes, before Motion has started any. So the Popover
@@ -29,6 +34,14 @@ import { originFor } from './origin';
 // reads) and passes `isExiting` while the exit plays.
 
 type PopoverProps = PopoverPrimitiveProps & AnchoredAnimationProps;
+
+/** The overlays of a list: they move like v1's DropdownMenu content. */
+const MENU_TRIGGERS = new Set([
+  'MenuTrigger',
+  'SubmenuTrigger',
+  'Select',
+  'ComboBox',
+]);
 
 type PopoverContextValue = PopoverPrimitiveProps | null | undefined;
 
@@ -67,7 +80,7 @@ function Popover({
 
   return (
     <ReducedMotionConfig>
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {open && (
           <AnimatedPopover
             key="popover"
@@ -105,11 +118,9 @@ function AnimatedPopover({
     props.shouldSkipAnimation ?? context?.shouldSkipAnimation,
   );
   const motionProps = useAnchoredMotion({
-    kind: 'dropdown',
+    kind: trigger && MENU_TRIGGERS.has(trigger) ? 'menu' : 'popover',
     open: true,
-    fadeOnly: trigger === 'SubmenuTrigger',
-    skipEnter: skip,
-    skipExit: skip,
+    instant: skip,
     transition,
     exitTransition,
   });

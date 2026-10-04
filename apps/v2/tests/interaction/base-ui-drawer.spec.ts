@@ -1,9 +1,22 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import {
+  expectSheetEntrance,
+  expectSheetExit,
+  expectSheetSettled,
+  present,
+  readState,
+  recordTimeline,
+} from './modal-timeline';
+
+// The drawer moves like Animate UI v1's Sheet: it slides and fades on v1's
+// sheet spring (stiffness 150, damping 22), and its backdrop fades and
+// un-blurs in 200ms (easeInOut), both ways.
+
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
 
-/** Vertical/horizontal offset in px and as a share of the size, and opacity. */
+/** Vertical/horizontal offset in px, and opacity. */
 const state = (page: Page, selector: string) =>
   page
     .locator(selector)
@@ -11,21 +24,8 @@ const state = (page: Page, selector: string) =>
     .evaluate((el) => {
       const cs = getComputedStyle(el);
       const m = new DOMMatrix(cs.transform);
-      const box = el as HTMLElement;
-      return {
-        x: m.m41,
-        y: m.m42,
-        shareX: m.m41 / box.offsetWidth,
-        shareY: m.m42 / box.offsetHeight,
-        opacity: Number(cs.opacity),
-      };
+      return { x: m.m41, y: m.m42, opacity: Number(cs.opacity) };
     });
-
-const opacity = (page: Page, selector: string) =>
-  page
-    .locator(selector)
-    .first()
-    .evaluate((el) => Number(getComputedStyle(el).opacity));
 
 test.describe('base-ui drawer demo', () => {
   test.beforeEach(async ({ page }) => {
@@ -36,35 +36,54 @@ test.describe('base-ui drawer demo', () => {
 
   const open = async (page: Page) => {
     await page.getByRole('button', { name: 'Daily goals' }).click();
-    await page.locator(POPUP).waitFor();
+    await expectSheetSettled(page, POPUP, 'bottom');
   };
 
-  test('slides up from the bottom edge, then settles', async ({ page }) => {
+  test('slides and fades up from the bottom edge like v1, its backdrop in 200ms', async ({
+    page,
+  }) => {
+    const timeline = await recordTimeline(page, {
+      content: POPUP,
+      overlay: OVERLAY,
+    });
     await open(page);
-    await page.waitForTimeout(60);
-    const early = await state(page, POPUP);
-    expect(early.shareY).toBeGreaterThan(0.05);
-    expect(await opacity(page, OVERLAY)).toBeLessThan(1);
+    const frames = await timeline.stop();
+    expectSheetEntrance(frames, 'bottom');
 
-    await page.waitForTimeout(650);
-    expect(Math.abs((await state(page, POPUP)).y)).toBeLessThan(1);
-    expect(await opacity(page, OVERLAY)).toBe(1);
+    // v1's overlay: blurred at first, fully in while the drawer still slides.
+    const backdrop = present(frames, 'overlay');
+    expect(backdrop[0]!.samples.overlay!.blur).toBeGreaterThan(2.5);
+    const overlayIn = backdrop.find(
+      (frame) => frame.samples.overlay!.opacity >= 0.99,
+    )!;
+    expect(Math.abs(overlayIn.samples.content!.y)).toBeGreaterThan(0.05);
+    const rest = await readState(page, OVERLAY);
+    expect(rest.opacity).toBe(1);
+    expect(rest.blur).toBe(0);
   });
 
-  test('closes faster than it opens, sliding back down', async ({ page }) => {
+  test('closes the same way, the backdrop gone first, then unmounts', async ({
+    page,
+  }) => {
     await open(page);
-    await page.waitForTimeout(700);
+    const timeline = await recordTimeline(page, {
+      content: POPUP,
+      overlay: OVERLAY,
+    });
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(80);
-    expect((await state(page, POPUP)).shareY).toBeGreaterThan(0.05);
-    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 500 });
+    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
+    const frames = await timeline.stop();
+    expectSheetExit(frames, 'bottom');
+    const overlayOut = present(frames, 'overlay').find(
+      (frame) => frame.samples.overlay!.opacity <= 0.01,
+    )!;
+    expect(overlayOut.samples.content!.opacity).toBeGreaterThan(0.1);
   });
 
   test('a drag follows the finger at once; a slow release springs back', async ({
     page,
   }) => {
     await open(page);
-    await page.waitForTimeout(700);
     const box = (await page.locator(POPUP).boundingBox())!;
     const x = box.x + box.width / 2;
     const y = box.y + 12;
@@ -78,24 +97,23 @@ test.describe('base-ui drawer demo', () => {
     const dragged = await state(page, POPUP);
     expect(dragged.y).toBeGreaterThan(60);
     expect(dragged.y).toBeLessThan(100);
+    expect(dragged.opacity).toBe(1);
     // The backdrop follows the swipe progress without lag too.
-    expect(await opacity(page, OVERLAY)).toBeLessThan(1);
+    expect((await readState(page, OVERLAY)).opacity).toBeLessThan(1);
 
-    // Hold still, then let go: not a flick, so it animates back up.
+    // Hold still, then let go: not a flick, so it springs back up.
     await page.waitForTimeout(150);
     await page.mouse.up();
     await page.waitForTimeout(50);
     const released = await state(page, POPUP);
     expect(released.y).toBeGreaterThan(5);
     expect(released.y).toBeLessThan(dragged.y);
-    await page.waitForTimeout(700);
-    expect(Math.abs((await state(page, POPUP)).y)).toBeLessThan(1);
+    await expectSheetSettled(page, POPUP, 'bottom');
     await expect(page.locator(POPUP)).toHaveCount(1);
   });
 
   test('a flick dismisses it, continuing the swipe', async ({ page }) => {
     await open(page);
-    await page.waitForTimeout(700);
     const box = (await page.locator(POPUP).boundingBox())!;
     const x = box.x + box.width / 2;
     const y = box.y + 12;
@@ -106,18 +124,17 @@ test.describe('base-ui drawer demo', () => {
       await page.waitForTimeout(16);
     }
     await page.mouse.up();
-    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 800 });
+    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('reduced motion: fades in place', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
+    const timeline = await recordTimeline(page, { content: POPUP });
     await open(page);
-    await page.waitForTimeout(60);
-    const early = await state(page, POPUP);
-    expect(Math.abs(early.y)).toBeLessThan(1);
-    expect(early.opacity).toBeLessThan(1);
-    await page.waitForTimeout(650);
-    expect((await state(page, POPUP)).opacity).toBe(1);
+    const first = present(await timeline.stop(), 'content')[0]!.samples
+      .content!;
+    expect(Math.abs(first.y)).toBeLessThan(0.002);
+    expect(first.opacity).toBeLessThan(1);
   });
 });
 
@@ -132,12 +149,10 @@ test.describe('base-ui drawer API', () => {
     page,
   }) => {
     const popup = '[data-testid="bottom-popup"]';
+    const timeline = await recordTimeline(page, { content: popup });
     await page.getByRole('button', { name: 'Open from outside' }).click();
-    await page.locator(popup).waitFor();
-    await page.waitForTimeout(60);
-    expect((await state(page, popup)).shareY).toBeGreaterThan(0.05);
-    await page.waitForTimeout(650);
-    expect(Math.abs((await state(page, popup)).y)).toBeLessThan(1);
+    await expectSheetSettled(page, popup, 'bottom');
+    expectSheetEntrance(await timeline.stop(), 'bottom');
     await expect(page.getByTestId('controlled-state')).toHaveText('open');
 
     await page.getByRole('button', { name: 'Close bottom' }).click();
@@ -145,21 +160,29 @@ test.describe('base-ui drawer API', () => {
     await expect(page.getByTestId('controlled-changes')).toHaveText(
       'false:close-press',
     );
-    await expect(page.locator(popup)).toHaveCount(0, { timeout: 500 });
+    await expect(page.locator(popup)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('swipeDirection right, with custom transitions', async ({ page }) => {
     const popup = '[data-testid="right-popup"]';
+    const timeline = await recordTimeline(page, { content: popup });
     await page.getByRole('button', { name: 'Open right drawer' }).click();
-    await page.locator(popup).waitFor();
-    await page.waitForTimeout(40);
-    expect((await state(page, popup)).shareX).toBeGreaterThan(0.05);
-    // 200ms instead of 600ms.
-    await page.waitForTimeout(260);
-    expect(Math.abs((await state(page, popup)).x)).toBeLessThan(1);
+    await expectSheetSettled(page, popup, 'right');
+    // From its right edge…
+    const first = present(await timeline.stop(), 'content')[0]!.samples
+      .content!;
+    expect(first.x).toBeGreaterThan(0.6);
+    // …on the 200ms tween given instead of v1's spring.
+    const timing = await page
+      .locator(popup)
+      .evaluate((el) => [
+        getComputedStyle(el).transitionDuration.split(',')[0]!.trim(),
+        getComputedStyle(el).transitionTimingFunction.split(', c')[0]!,
+      ]);
+    expect(timing).toEqual(['0.2s', 'cubic-bezier(0.4, 0, 0.2, 1)']);
 
+    // A 100ms exit.
     await page.keyboard.press('Escape');
-    // 100ms instead of 400ms.
-    await expect(page.locator(popup)).toHaveCount(0, { timeout: 300 });
+    await expect(page.locator(popup)).toHaveCount(0, { timeout: 1000 });
   });
 });

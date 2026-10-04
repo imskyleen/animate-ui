@@ -13,13 +13,13 @@ export const controls = {
       value: "top",
       options: { top: "top", right: "right", bottom: "bottom", left: "left" },
     },
-    tapScale: { value: 0.96, min: 0, max: 2, step: 0.01 },
+    tapScale: { value: 0.95, min: 0, max: 2, step: 0.05 },
   },
 }
 
 export default function FlipButtonDemo({
   from = "top",
-  tapScale = 0.96,
+  tapScale = 0.95,
 }: {
   from?: FlipDirection
   tapScale?: number

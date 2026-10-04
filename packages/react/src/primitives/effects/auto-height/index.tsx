@@ -11,11 +11,20 @@ import {
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
 import { useAutoHeight } from './use-auto-height';
+
+/** Animate UI v1's spring. */
+const AUTO_HEIGHT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 30,
+  bounce: 0,
+  restDelta: 0.01,
+};
 
 type AutoHeightProps = WithAsChild<
   {
@@ -43,14 +52,12 @@ function AutoHeightInner({
   asChild = false,
   ...props
 }: AutoHeightProps) {
-  const tokens = useMotionTokens();
+  const spring = useTempoTransition(transition ?? AUTO_HEIGHT_TRANSITION);
   const reduce = useShouldReduceMotion();
   const { ref, height } = useAutoHeight<HTMLDivElement>(deps);
 
   // Reduced motion: the height changes at once.
-  const heightTransition = reduce
-    ? tokens.transition.instant
-    : (transition ?? { ...tokens.spring.snappy, restDelta: 0.01 });
+  const heightTransition: Transition = reduce ? { duration: 0 } : spring;
 
   const Comp = asChild ? Slot : motion.div;
 

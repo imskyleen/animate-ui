@@ -34,12 +34,12 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Dragging follows the pointer instantly**, and keyboard changes are instant.
-- **A press on the track glides** the thumb and the indicator to the new value with `spring.snappy` (600ms). Base UI positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left` or `width`. It composes with the `translate` Base UI centers the thumb with, and waits for `thumbAlignment="edge"`'s second layout pass. With a range slider, only the thumb that moves glides.
-- Dragging right after a press cancels the glide: the thumb sits under the pointer.
-- **The pressed thumb grows** to `scale(1.15)` with `spring.snappy`, and shrinks back on release.
-- An `onValueChange` that calls `eventDetails.cancel()` still cancels the change.
-- Under reduced motion, presses jump and nothing scales.
+Animate UI v1 had no slider: it moves like v1's switch thumb.
+
+- **The pressed or dragged thumb stretches along the track**: its width grows by 3/16 (a 16px thumb becomes 19px, v1's switch `pressedWidth`), on v1's switch spring (stiffness 300, damping 25), and springs back on release. It's the thumb's real width, so its round ends stay round, and Base UI centers it on its value, so it grows on both sides (along its height in a vertical slider).
+- **A press on the track glides** the thumb and the indicator to the new value on the same spring (v1's switch thumb `layout` spring). Base UI positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left`. With a range slider, only the thumb that moves glides.
+- **Dragging follows the pointer instantly**, and keyboard changes are instant. Dragging right after a press cancels the glide: the thumb sits under the pointer.
+- Under reduced motion, presses jump and nothing stretches.
 
 ## API Reference
 
@@ -47,7 +47,7 @@ Every part takes exactly the props of [Base UI's Slider](https://base-ui.com/rea
 
 ### Root, Label, Value, Control, Track
 
-[Base UI props](https://base-ui.com/react/components/slider#root) only. Presses are tracked on the Control.
+[Base UI props](https://base-ui.com/react/components/slider#api-reference) only. Presses are tracked on the Control.
 
 ### Indicator
 
@@ -58,7 +58,7 @@ Every part takes exactly the props of [Base UI's Slider](https://base-ui.com/rea
     transition: {
       description: 'Transition of the indicator after a press on the track.',
       type: 'Transition',
-      default: 'spring.snappy (600ms, bounce 0.15)',
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
     },
   }}
 />
@@ -71,16 +71,11 @@ Every part takes exactly the props of [Base UI's Slider](https://base-ui.com/rea
   type={{
     transition: {
       description:
-        'Transition of the thumb after a press on the track, and of its press scale.',
+        'Transition of the thumb after a press on the track, and of its stretch while pressed.',
       type: 'Transition',
-      default: 'spring.snappy (600ms, bounce 0.15)',
-    },
-    pressedScale: {
-      description: 'Scale of the thumb while it is pressed or dragged.',
-      type: 'number',
-      default: '1.15',
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
     },
   }}
 />
 
-The pressed thumb also gets `data-pressed`. The Indicator and the Thumb render through Base UI's `render` prop: a `render` of your own replaces the animated element.
+The pressed thumb also gets `data-pressed`. The Indicator and the Thumb render through Base UI's `render` prop: a `render` of your own replaces the animated element. `AnimateUIProvider`'s `tempo` scales these transitions with everything else.

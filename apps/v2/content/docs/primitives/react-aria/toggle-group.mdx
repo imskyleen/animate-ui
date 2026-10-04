@@ -38,22 +38,40 @@ export function Formatting() {
 
 ## Animation
 
-- **ToggleButton** (each item) scales to 0.96 while pressed (150ms, strong ease-out), with the pointer or the keyboard (React Aria's `isPressed`); the selection changes on the press itself.
-- **ToggleButtonGroup** has nothing to animate: it is React Aria's.
+The motion of Animate UI v1's Radix UI toggle group (v1 had no React Aria one):
+
+- **ToggleButton** (each item) scales to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30); the selection changes on the press itself.
+- **ToggleButtonGroup** with single selection (`selectionMode="single"`, React Aria's default): the selected item's surface slides to the newly selected item, on a spring (stiffness 200, damping 25), the new surface fading in as the previous one fades out while following it (v1's highlight, a shared layout animation). The first selection fades the surface in on its item; clearing the selection fades it out.
+- To make shadcn/ui's surface slide without touching the component, the group draws it with its own `::before` and `::after`, behind its items, copying the selected item's background and corner radii; a small stylesheet clears the selected item's own background while it isn't hovered (hovered, its own background shows on top, as v1's item hover did over the highlight). The items' borders and `first:` / `last:` styles are untouched.
+- With multiple selection there is no sliding surface: each item keeps its own colours (shadcn/ui's CSS, faded by its `transition-all`; v1 faded a highlight per item in 0.3s).
 - The arrow keys only move the focus between items: nothing animates.
-- The selected colours stay your CSS; there is no sliding highlight.
-- Under reduced motion, there is no press scale.
+- Under reduced motion, there is no press scale and the surface jumps to its item (its fades still play).
 
 ## API Reference
 
-`ToggleButtonGroup` takes exactly the props of [React Aria's ToggleButtonGroup](https://react-spectrum.adobe.com/react-aria/ToggleButtonGroup.html#props). Its items are [ToggleButtons](/docs/primitives/react-aria/toggle), which take React Aria's props, plus:
+`ToggleButtonGroup` takes exactly the props of [React Aria's ToggleButtonGroup](https://react-spectrum.adobe.com/react-aria/ToggleButtonGroup.html#props), plus:
 
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the press feedback.',
+      description:
+        'Transition of the surface sliding between items (single selection).',
       type: 'Transition',
-      default: 'transition.press (150ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 200, damping: 25 }",
     },
   }}
 />
+
+Its items are [ToggleButtons](/docs/primitives/react-aria/toggle), which take React Aria's props, plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30 }",
+    },
+  }}
+/>
+
+`AnimateUIProvider`'s `tempo` scales these transitions with everything else.

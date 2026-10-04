@@ -36,10 +36,10 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
 
 ## Animation
 
-- The element scales from `initialScale` to `scale` over 600ms with a strong ease-out. It starts at 0.96, never from 0.
+- The element scales from `initialScale` (0.5 by default) to `scale` on a spring (stiffness 200, damping 20), overshooting by about 2% before it settles.
 - Under reduced motion, it doesn't scale: it fades in instead.
 - `inView` waits for the element to scroll into view, once by default.
-- `<AnimateUIProvider tempo>` paces the default transition.
+- `<AnimateUIProvider tempo>` paces the default spring.
 
 ## API Reference
 
@@ -56,7 +56,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
     initialScale: {
       description: 'Scale the element starts from.',
       type: 'number',
-      default: '0.96',
+      default: '0.5',
     },
     scale: {
       description: 'Scale the element ends at.',
@@ -71,7 +71,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
     transition: {
       description: 'Transition of the entrance.',
       type: 'Transition',
-      default: 'transition.modal (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
     },
     inView: {
       description: 'Wait for the element to be in view before animating.',

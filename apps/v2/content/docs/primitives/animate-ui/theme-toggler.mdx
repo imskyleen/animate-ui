@@ -31,7 +31,9 @@ export function ThemeButton() {
       setTheme={setTheme}
     >
       {({ effective, toggleTheme }) => (
-        <button onClick={() => toggleTheme(effective === 'dark' ? 'light' : 'dark')}>
+        <button
+          onClick={() => toggleTheme(effective === 'dark' ? 'light' : 'dark')}
+        >
           {effective === 'dark' ? 'Light mode' : 'Dark mode'}
         </button>
       )}
@@ -44,7 +46,7 @@ During the wipe, the `dark` class is toggled on `<html>`: this matches class-bas
 
 ## Animation
 
-- The new theme is revealed with a clip-path wipe over 500ms with a strong ease-out, in `direction` (left to right by default). The old and new pages are snapshots, so nothing re-renders mid-wipe.
+- The new theme is revealed with a clip-path wipe over 700ms with an `ease-in-out`, in `direction` (left to right by default). The old and new pages are snapshots, so nothing re-renders mid-wipe.
 - `setTheme` is called once the wipe finishes; `onImmediateChange` fires right away.
 - Switching to `system` when it resolves to the current theme changes nothing on screen, so there is no wipe.
 - Browsers without the View Transitions API swap the theme at once.
@@ -84,7 +86,8 @@ During the wipe, the `dark` class is toggled on `<html>`: this matches class-bas
       type: "(theme: 'light' | 'dark' | 'system') => void",
     },
     children: {
-      description: 'Content, or a function of the current state that returns it.',
+      description:
+        'Content, or a function of the current state that returns it.',
       type: "React.ReactNode | ((state: { resolved: 'light' | 'dark'; effective: 'light' | 'dark' | 'system'; toggleTheme: (theme: 'light' | 'dark' | 'system') => void }) => React.ReactNode)",
     },
   }}

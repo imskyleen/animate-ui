@@ -11,27 +11,36 @@ import {
 } from 'react-aria-components';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   TAB_ATTRIBUTE,
-  isKeyboardInput,
   useFinishAnimationsWhen,
+  usePanelMotion,
   useTabsIndicator,
 } from '../../../internal/tabs';
 
-// Same API as React Aria's TabList, Tab and TabPanel. The selected tab's
-// surface glides between tabs (see ../../../internal/tabs), and the incoming panel
-// fades in. Both go through React Aria's `render` prop, so the animated
-// elements are React Aria's own.
+// Same API as React Aria's TabList, Tab and TabPanel, moving like Animate UI
+// v1's tabs (v1's Headless UI Tabs, the closest to React Aria's; see
+// ../../../internal/tabs): the selected tab's surface slides to the new tab,
+// and the incoming panel fades in from a blur while its height springs. Both
+// go through React Aria's `render` prop, so the animated elements are React
+// Aria's own.
 
 type ListAnimationProps = {
-  /** Transition of the indicator gliding to the selected tab. Defaults to `spring.snappy`. */
+  /** Transition of the selected tab's surface sliding to the new tab. Defaults to a spring (stiffness 200, damping 25). */
   transition?: Transition;
 };
 
 type PanelAnimationProps = {
-  /** Transition of the incoming panel's fade. Defaults to `transition.fade` (600ms). */
+  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 200, damping 25). */
   transition?: Transition;
+};
+
+/** v1's Headless UI TabPanels spring: the panels' height. */
+const HEIGHT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 25,
 };
 
 type TabListProps<T> = AriaTabListProps<T> & ListAnimationProps;
@@ -91,15 +100,15 @@ function TabPanel({
       <AriaTabPanel
         {...props}
         render={(domProps, renderProps) =>
-          // A custom `render` keeps working, without the fade.
+          // A custom `render` keeps working, without the animation.
           render ? (
             render(domProps, renderProps)
           ) : (
             <PanelMotion
               {...(domProps as HTMLMotionProps<'div'>)}
-              isEntering={renderProps.isEntering}
+              active={!renderProps.isInert && !renderProps.isExiting}
               isExiting={renderProps.isExiting}
-              fadeTransition={transition}
+              panelTransition={transition}
             />
           )
         }
@@ -110,21 +119,25 @@ function TabPanel({
 
 function PanelMotion({
   ref,
-  isEntering,
+  active,
   isExiting,
-  fadeTransition,
+  panelTransition,
   hidden,
   ...props
 }: HTMLMotionProps<'div'> & {
-  isEntering: boolean;
+  /** Selected and not leaving (a force-mounted panel stays mounted). */
+  active: boolean;
   isExiting: boolean;
-  fadeTransition: Transition | undefined;
+  panelTransition: Transition | undefined;
 }) {
-  const tokens = useMotionTokens();
-  // React Aria reports entering only for panels selected after mount (not
-  // the initial one); keyboard changes swap the panel at once.
-  const [enters] = React.useState(() => isEntering && !isKeyboardInput());
-  const localRef = React.useRef<HTMLDivElement>(null);
+  const {
+    ref: localRef,
+    initial,
+    animate,
+  } = usePanelMotion(active, {
+    transition: panelTransition,
+    heightTransition: HEIGHT_TRANSITION,
+  });
   // React Aria waits for running animations before removing an exiting
   // panel: finish the fade so the old panel leaves at once.
   useFinishAnimationsWhen(localRef, isExiting);
@@ -137,11 +150,8 @@ function PanelMotion({
         assignRef(ref as React.Ref<HTMLDivElement>, node);
       }}
       hidden={hidden || isExiting}
-      initial={enters ? { opacity: 0 } : false}
-      animate={{
-        opacity: 1,
-        transition: fadeTransition ?? tokens.transition.fade,
-      }}
+      initial={initial}
+      animate={animate}
     />
   );
 }

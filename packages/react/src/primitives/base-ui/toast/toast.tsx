@@ -7,42 +7,58 @@ import type { Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
-  type MotionTokens,
+  useTempoTransition,
 } from '../../../utils/motion';
+import {
+  OVERLAY_TRANSITION,
+  SHEET_TRANSITION,
+  toCssTiming,
+  type CssTiming,
+} from '../../../internal/modal-motion';
 
-// Same API as Base UI's Toast.
+// Same API as Base UI's Toast. Animate UI v1 had no toast: its motion comes
+// from v1's Sheet (it enters and leaves through its edge, by its own size,
+// with a fade, on v1's sheet spring: stiffness 150, damping 22), v1's Popover
+// for a toast anchored to an element (scale 0.5 → 1 and a fade from its
+// anchor, spring stiffness 300, damping 25), and v1's 200ms easeInOut fade.
 //
 // Base UI drives the stack, swipe-to-dismiss and enter/exit itself, through
 // CSS variables (`--toast-index`, `--toast-offset-y`, `--toast-height`,
 // `--toast-swipe-movement-*`, the viewport's `--toast-frontmost-height`) and
 // its transition status, and waits for CSS transitions before removing a
 // toast. So the Root animates with CSS transitions too (a JS animation would
-// fight the swipe), but writes them itself, from its state and Animate UI's
-// tokens (`tempo` applies):
+// fight the swipe), springs written as the `linear()` curve Motion itself
+// would use, and sets them itself from its state (`tempo` applies):
 //
 // - It enters from its edge (a full toast height away) and fades in.
 // - Collapsed, each toast behind the front one scales down by 0.05 per step
 //   (never below 0.9) and peeks out by 0.75rem; hovering or focusing the
-//   viewport expands the stack with a 0.75rem gap.
+//   viewport expands the stack with a 0.75rem gap. The stack moves on the
+//   same spring.
 // - While swiped it follows the finger (Base UI sets the transform), then
 //   springs back, or leaves the way it was swiped.
-// - It exits faster than it enters, through the edge it came from.
+// - It leaves through the edge it came from, on the same spring.
 // - Under reduced motion it fades in place and the stack changes at once.
+
+/** v1's popover spring, for a toast anchored to an element. */
+const POPOVER_TRANSITION = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 25,
+} as const satisfies Transition;
 
 /** Animate UI's additions to `Toast.Root`. */
 type RootAnimationProps = {
   /**
-   * Transition of the entrance and the stack (a CSS transition: its
-   * `duration` and cubic-bezier `ease` are used). Defaults to
-   * `transition.dropdown` (600ms, ease-out).
+   * Transition of the entrance and the stack (a CSS transition: a spring
+   * becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier
+   * or named `ease`). `{ type: 'spring', stiffness: 150, damping: 22 }` by
+   * default, or `{ type: 'spring', stiffness: 300, damping: 25 }` for a toast
+   * anchored to an element.
    */
   transition?: Transition;
-  /**
-   * Transition of the exit (a CSS transition). Defaults to `transition.exit`
-   * (400ms, ease-out).
-   */
+  /** Transition of the exit (a CSS transition). Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -50,44 +66,28 @@ type RootAnimationProps = {
 type ContentAnimationProps = {
   /**
    * Transition of the content fading behind the front toast (a CSS
-   * transition). Defaults to `transition.fade` (600ms, ease-out).
+   * transition).
+   * @default { duration: 0.2, ease: 'easeInOut' }
    */
   transition?: Transition;
 };
 
 const GAP = '0.75rem';
 const PEEK = '0.75rem';
+/** v1's popover starting scale, for an anchored toast. */
+const ANCHORED_SCALE = 0.5;
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 
-const NAMED_EASES: Record<string, string> = {
-  linear: 'linear',
-  easeIn: 'cubic-bezier(0.42, 0, 1, 1)',
-  easeOut: 'cubic-bezier(0, 0, 0.58, 1)',
-  easeInOut: 'cubic-bezier(0.42, 0, 0.58, 1)',
-};
-
-/** A Motion tween as a CSS duration and timing function. */
-function toCss(transition: Transition, fallback: Transition) {
-  const t = transition as { duration?: number; ease?: unknown };
-  const f = fallback as { duration?: number; ease?: unknown };
-  const duration = `${Math.round((t.duration ?? f.duration ?? 0) * 1000)}ms`;
-  const ease = t.ease ?? f.ease;
-  const timing = Array.isArray(ease)
-    ? `cubic-bezier(${ease.join(', ')})`
-    : typeof ease === 'string'
-      ? (NAMED_EASES[ease] ?? 'ease')
-      : 'ease';
-  return { duration, timing };
-}
-
-function cssTransition(
+function transitionStyle(
   properties: string[],
-  transition: Transition,
-  fallback: Transition,
-) {
-  const { duration, timing } = toCss(transition, fallback);
-  return properties.map((p) => `${p} ${duration} ${timing}`).join(', ');
+  timing: CssTiming,
+): React.CSSProperties {
+  return {
+    transitionProperty: properties.join(', '),
+    transitionDuration: `${timing.duration}ms`,
+    transitionTimingFunction: timing.easing,
+  };
 }
 
 // Toasts swiped down (Base UI's default) live at the bottom edge.
@@ -106,37 +106,32 @@ type StackOptions = {
   side: 'top' | 'bottom';
   reduce: boolean;
   anchored: boolean;
-  tokens: MotionTokens;
-  transition: Transition | undefined;
-  exitTransition: Transition | undefined;
+  enter: CssTiming;
+  exit: CssTiming;
 };
 
 function stackStyle(
   state: ToastPrimitive.Root.State,
-  { side, reduce, anchored, tokens, transition, exitTransition }: StackOptions,
+  { side, reduce, anchored, enter, exit }: StackOptions,
 ): React.CSSProperties {
   const ending = state.transitionStatus === 'ending';
   const hidden =
     state.transitionStatus === 'starting' || ending || state.limited;
   const properties = reduce ? ['opacity'] : ['transform', 'opacity', 'height'];
-  const style: React.CSSProperties = {
-    opacity: hidden ? 0 : 1,
-    transition: ending
-      ? cssTransition(properties, exitTransition ?? {}, tokens.transition.exit)
-      : cssTransition(properties, transition ?? {}, tokens.transition.dropdown),
-  };
 
   // While swiped, Base UI sets the transform (and no transition) itself:
   // the toast follows the finger.
-  if (state.swiping) {
-    delete style.transition;
-    return style;
-  }
+  if (state.swiping) return { opacity: hidden ? 0 : 1 };
+
+  const style: React.CSSProperties = {
+    opacity: hidden ? 0 : 1,
+    ...transitionStyle(properties, ending ? exit : enter),
+  };
 
   // A toast anchored to an element (Toast.Positioner) isn't stacked: it
-  // grows from its anchor.
+  // grows from its anchor, like v1's popover.
   if (anchored) {
-    style.transform = `scale(${hidden && !reduce ? tokens.scale.enter : 1})`;
+    style.transform = `scale(${hidden && !reduce ? ANCHORED_SCALE : 1})`;
     style.transformOrigin = 'var(--transform-origin)';
     return style;
   }
@@ -213,15 +208,19 @@ function RootMotion({
   exitTransition,
   ...props
 }: Root.Props) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
+  const anchored = props.toast.positionerProps != null;
+  const fallback = anchored ? POPOVER_TRANSITION : SHEET_TRANSITION;
+  const enter = toCssTiming(useTempoTransition(transition ?? fallback));
+  const exit = toCssTiming(
+    useTempoTransition(exitTransition ?? transition ?? fallback),
+  );
   const options: StackOptions = {
     side: getSide(props.swipeDirection),
     reduce,
-    anchored: props.toast.positionerProps != null,
-    tokens,
-    transition,
-    exitTransition,
+    anchored,
+    enter,
+    exit,
   };
 
   return (
@@ -249,20 +248,18 @@ namespace Root {
 }
 
 function Content({ style, transition, ...props }: Content.Props) {
-  const tokens = useMotionTokens();
   // Fades behind the front toast while collapsed (shadcn/ui's
-  // data-behind:opacity-0), back in when the stack expands.
-  const fade = cssTransition(
+  // data-behind:opacity-0), back in when the stack expands: v1's fade.
+  const fade = transitionStyle(
     ['opacity'],
-    transition ?? {},
-    tokens.transition.fade,
+    toCssTiming(useTempoTransition(transition ?? OVERLAY_TRANSITION)),
   );
 
   return (
     <ToastPrimitive.Content
       {...props}
       style={(state) => ({
-        transition: fade,
+        ...fade,
         ...resolveStyle(style, state),
       })}
     />

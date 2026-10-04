@@ -26,7 +26,9 @@ import {
 export function Folders() {
   const [items, setItems] = React.useState(ITEMS);
   const toggle = (id: string) =>
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, pinned: !i.pinned } : i)));
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, pinned: !i.pinned } : i)),
+    );
 
   const pinned = items.filter((i) => i.pinned);
   const unpinned = items.filter((i) => !i.pinned);
@@ -39,7 +41,9 @@ export function Folders() {
           {pinned.map((item) => (
             <PinnedListItem key={item.id} id={item.id} customTrigger>
               {item.name}
-              <PinnedListTrigger aria-label={`Unpin ${item.name}`}>…</PinnedListTrigger>
+              <PinnedListTrigger aria-label={`Unpin ${item.name}`}>
+                …
+              </PinnedListTrigger>
             </PinnedListItem>
           ))}
         </PinnedListItems>
@@ -50,7 +54,9 @@ export function Folders() {
           {unpinned.map((item) => (
             <PinnedListItem key={item.id} id={item.id} customTrigger>
               {item.name}
-              <PinnedListTrigger aria-label={`Pin ${item.name}`}>…</PinnedListTrigger>
+              <PinnedListTrigger aria-label={`Pin ${item.name}`}>
+                …
+              </PinnedListTrigger>
             </PinnedListItem>
           ))}
         </PinnedListItems>
@@ -64,10 +70,10 @@ You own the pinned state: `onPinnedChange` tells you which item to move. Without
 
 ## Animation
 
-- The item glides to its new place on a spring (a shared layout animation), above the other items while it moves. The others make room.
-- Labels fade in and out when a group becomes empty or filled (600ms).
-- Items and triggers respond to hover (scale 1.02) and press (scale 0.96) in 150ms.
-- `<AnimateUIProvider tempo>` paces every transition.
+- The item glides to its new place on a spring (stiffness 320, damping 25, mass 0.8: a shared layout animation with a slight overshoot), above the other items while it moves. The others make room.
+- Labels fade in and out when a group becomes empty or filled, and slide along with the layout (220ms, ease-in-out).
+- Triggers, and items without `customTrigger`, grow on hover (scale 1.05) and shrink on press (scale 0.95) on a quick spring (the item's own spring for items).
+- `<AnimateUIProvider tempo>` paces the default transitions.
 - Under reduced motion, items jump to their new place and don't scale.
 
 ## API Reference
@@ -114,7 +120,7 @@ Plain `div`s that structure the groups. They take `div` props.
     transition: {
       description: 'Transition of the fade.',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
+      default: "{ duration: 0.22, ease: 'easeInOut' }",
     },
     '...props': {
       description: 'Props of the label.',
@@ -145,9 +151,9 @@ Plain `div`s that structure the groups. They take `div` props.
       default: 'false',
     },
     transition: {
-      description: 'Transition of the move.',
+      description: 'Transition of the move, and of the hover and press scale.',
       type: 'Transition',
-      default: 'spring.default',
+      default: "{ type: 'spring', stiffness: 320, damping: 25, mass: 0.8 }",
     },
     children: {
       description: 'The item content.',

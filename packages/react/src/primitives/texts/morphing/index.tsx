@@ -16,15 +16,15 @@ import {
 import { usePageVisible } from '../../../utils/use-page-visible';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN, splitGraphemes } from '../_text';
 
 /**
  * Reduced motion turns the morph into a crossfade: object targets keep only
- * their opacity (Motion's reduced motion skips `scale`/`layout`, but not a
- * `transform` string nor the blur), variant labels are left to the user.
+ * their opacity (Motion's reduced motion skips `scale` and layout, but not
+ * the blur), variant labels are left to the user.
  */
 function toCrossfade<T>(target: T): T {
   if (!target || typeof target !== 'object' || Array.isArray(target)) {
@@ -34,17 +34,15 @@ function toCrossfade<T>(target: T): T {
   return (opacity === undefined ? {} : { opacity }) as T;
 }
 
-const DEFAULT_INITIAL = {
-  opacity: 0,
-  transform: 'scale(0.8)',
-  filter: 'blur(10px)',
+const DEFAULT_INITIAL = { opacity: 0, scale: 0.8, filter: 'blur(10px)' };
+const DEFAULT_ANIMATE = { opacity: 1, scale: 1, filter: 'blur(0px)' };
+const DEFAULT_EXIT = { opacity: 0, scale: 0.8, filter: 'blur(10px)' };
+const DEFAULT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 125,
+  damping: 25,
+  mass: 0.4,
 };
-const DEFAULT_ANIMATE = {
-  opacity: 1,
-  transform: 'scale(1)',
-  filter: 'blur(0px)',
-};
-const DEFAULT_EXIT = DEFAULT_INITIAL;
 
 type MorphingTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   /** Delay before the texts start cycling, in milliseconds. Only used if `text` is an array. */
@@ -95,12 +93,8 @@ function MorphingTextContent({
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
 
-  const tokens = useMotionTokens();
-  // A soft spring that doesn't overshoot, paced by the provider's tempo.
-  const transition: Transition = transitionProp ?? {
-    ...tokens.spring.default,
-    bounce: 0,
-  };
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const transition = transitionProp ?? defaultTransition;
 
   const uniqueId = React.useId();
 

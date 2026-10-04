@@ -19,12 +19,12 @@ const inputClassName =
 export default function TabsDemo() {
   return (
     <Tabs className="w-full max-w-sm">
-      <TabsHighlight className="absolute inset-0 z-0 rounded-md bg-background shadow-sm">
+      <TabsHighlight className="absolute inset-0 z-0 rounded-md border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30">
         <TabsList className="inline-flex h-9 w-full rounded-lg bg-muted p-1">
           <TabsHighlightItem value="account" className="flex-1">
             <TabsTrigger
               value="account"
-              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-foreground"
+              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-500 ease-in-out data-[state=active]:text-foreground"
             >
               Account
             </TabsTrigger>
@@ -32,7 +32,7 @@ export default function TabsDemo() {
           <TabsHighlightItem value="password" className="flex-1">
             <TabsTrigger
               value="password"
-              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-foreground"
+              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-500 ease-in-out data-[state=active]:text-foreground"
             >
               Password
             </TabsTrigger>

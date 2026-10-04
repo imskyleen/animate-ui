@@ -5,8 +5,8 @@ import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import {
   useIsInView,
@@ -24,6 +24,12 @@ type BlurProps = WithAsChild<
   } & UseIsInViewOptions &
     HTMLMotionProps<'div'>
 >;
+
+const DEFAULT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 20,
+};
 
 function Blur(props: BlurProps) {
   return (
@@ -45,8 +51,8 @@ function BlurInner({
   asChild = false,
   ...props
 }: BlurProps) {
-  const tokens = useMotionTokens();
-  const baseTransition: Transition = transition ?? tokens.transition.modal;
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const baseTransition: Transition = transition ?? defaultTransition;
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
     {

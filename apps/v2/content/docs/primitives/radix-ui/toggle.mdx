@@ -29,24 +29,26 @@ Coming from the `@radix-ui/react-toggle` package? Use the subpath: `import * as 
 
 ## Animation
 
-- Pressing it scales it to 0.96 (150ms, strong ease-out), and back on release. That's the only motion: the on/off colours stay your CSS.
-- The state changes on the click (or Space / Enter) itself: the animation never delays it.
+The motion of Animate UI v1's toggle:
+
+- **Toggle** scales to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30). No hover scale, as v1's.
+- The press scale runs on the compositor (a `transform`), so shadcn/ui's `transition-all` doesn't tween its frames.
+- The on/off colours are the component's CSS: shadcn/ui colours the toggle itself (`data-[state=on]:bg-muted`) and fades it with `transition-all`. v1's styled toggle faded a separate highlight in and out instead (0.3s).
+- Toggling with Space changes the state at once.
 - Under reduced motion, there is no press scale.
 
 ## API Reference
 
-`Root` takes exactly the props of [Radix UI's Toggle](https://www.radix-ui.com/primitives/docs/components/toggle#api-reference), plus the props below. With `asChild`, a part renders your element with Radix's behaviour, without the animation.
-
-### Root
-
-[Radix UI props](https://www.radix-ui.com/primitives/docs/components/toggle#root), plus:
+`Toggle.Root` takes exactly the props of [Radix UI's Toggle](https://www.radix-ui.com/primitives/docs/components/toggle#api-reference), plus:
 
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the press feedback.',
+      description: 'Transition of the press scale.',
       type: 'Transition',
-      default: 'transition.press (150ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 550, damping: 30 }",
     },
   }}
 />
+
+With `asChild`, it renders your element with Radix's behaviour, without the animation. `AnimateUIProvider`'s `tempo` scales these transitions with everything else.

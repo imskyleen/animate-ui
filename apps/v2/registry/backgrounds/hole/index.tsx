@@ -12,9 +12,6 @@ import {
 import { usePageVisible } from '@animate-ui/react/utils/use-page-visible';
 import { cn } from 'cn';
 
-/** One animation step, in milliseconds (the speeds are tuned for 60 fps). */
-const FRAME = 1000 / 60;
-
 type HoleBackgroundProps = React.ComponentProps<'div'> & {
   strokeColor?: string;
   numberOfLines?: number;
@@ -162,10 +159,19 @@ function HoleBackgroundContent({
       line.forEach((p1: any, j: number) => {
         if (j === 0) return;
         const p0 = line[j - 1];
+        // Hit tests take canvas pixels, unaffected by the dpi scale.
         if (
           !lineIsIn &&
-          (ctx.isPointInPath(stateRef.current.clip.path, p1.x, p1.y) ||
-            ctx.isPointInStroke(stateRef.current.clip.path, p1.x, p1.y))
+          (ctx.isPointInPath(
+            stateRef.current.clip.path,
+            p1.x * dpi,
+            p1.y * dpi,
+          ) ||
+            ctx.isPointInStroke(
+              stateRef.current.clip.path,
+              p1.x * dpi,
+              p1.y * dpi,
+            ))
         ) {
           lineIsIn = true;
         } else if (lineIsIn) {
@@ -342,17 +348,10 @@ function HoleBackgroundContent({
     // Paused or reduced motion: the last (or first) frame stays on screen.
     if (!playing) return;
     let frameId = 0;
-    let lastTime = performance.now();
-    let lag = 0;
-    // Steps at 60 fps whatever the display's refresh rate.
-    const tick = (time: number) => {
-      lag += Math.min(time - lastTime, 100);
-      lastTime = time;
-      while (lag >= FRAME) {
-        moveDiscs();
-        moveParticles();
-        lag -= FRAME;
-      }
+    // One step per displayed frame, as in v1.
+    const tick = () => {
+      moveDiscs();
+      moveParticles();
       draw();
       frameId = requestAnimationFrame(tick);
     };

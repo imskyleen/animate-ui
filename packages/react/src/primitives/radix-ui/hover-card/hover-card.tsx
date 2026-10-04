@@ -12,9 +12,10 @@ import {
   useRadixOpenState,
 } from '../popover/radix-anchored';
 
-// Same API as Radix's HoverCard. The Content scales up from the trigger and
-// fades in like a popover; its open delay already keeps a sweep across links
-// calm. Radix ignores touch pointers, so hover never sticks on touch screens.
+// Same API as Radix's HoverCard. The Content grows from half its size and
+// fades in from the trigger on a spring, and shrinks back the same way
+// (Animate UI v1's HoverCard). Radix ignores touch pointers, so hover never
+// sticks on touch screens.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'HoverCard.Root',
@@ -76,7 +77,7 @@ function Content({
   const keepMounted = Boolean(forceMount) || React.use(PortalForceMountContext);
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {(open || keepMounted) && (
         <RadixAnchoredContent
           key="content"
@@ -84,7 +85,6 @@ function Content({
           contentProps={props}
           open={open}
           keepMounted={keepMounted}
-          kind="dropdown"
           origin="var(--radix-hover-card-content-transform-origin)"
           transition={transition}
           exitTransition={exitTransition}

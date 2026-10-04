@@ -67,66 +67,66 @@ const animations = {
     line1: {
       initial: { y2: 10 },
       animate: {
-        y2: [null, 4, 10],
+        y2: [10, 4, 10],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line2: {
       initial: { y1: 14, y2: 14 },
       animate: {
-        y1: [null, 8, 14],
-        y2: [null, 8, 14],
+        y1: [14, 8, 14],
+        y2: [14, 8, 14],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line3: {
       initial: { y1: 14 },
       animate: {
-        y1: [null, 8, 14],
+        y1: [14, 8, 14],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line4: {
       initial: { y2: 12 },
       animate: {
-        y2: [null, 20, 12],
+        y2: [12, 20, 12],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line5: {
       initial: { y1: 8, y2: 8 },
       animate: {
-        y1: [null, 16, 8],
-        y2: [null, 16, 8],
+        y1: [8, 16, 8],
+        y2: [8, 16, 8],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line6: {
       initial: { y1: 8 },
       animate: {
-        y1: [null, 16, 8],
+        y1: [8, 16, 8],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line7: {
       initial: { y2: 16 },
       animate: {
-        y2: [null, 11, 16],
+        y2: [16, 11, 16],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line8: {
       initial: { y1: 16, y2: 16 },
       animate: {
-        y1: [null, 11, 16],
-        y2: [null, 11, 16],
+        y1: [16, 11, 16],
+        y2: [16, 11, 16],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },
     line9: {
       initial: { y1: 12 },
       animate: {
-        y1: [null, 7, 12],
+        y1: [12, 7, 12],
         transition: { ease: 'easeInOut', duration: 0.8 },
       },
     },

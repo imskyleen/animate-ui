@@ -13,9 +13,10 @@ import {
   type AnchoredAnimationProps,
 } from '../popover/base-anchored';
 
-// Same API as Base UI's PreviewCard. The Popup scales up from the trigger and
-// fades in like a popover; its open delay already keeps a sweep across links
-// calm. Base UI ignores touch pointers, so hover never sticks on touch screens.
+// Same API as Base UI's PreviewCard. The Popup grows from half its size and
+// fades in from the trigger on a spring, and shrinks back the same way
+// (Animate UI v1's PreviewCard). Base UI ignores touch pointers, so hover
+// never sticks on touch screens.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'PreviewCard.Root',
@@ -97,7 +98,6 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
       popupProps={props}
       open={open}
       keepMounted={React.use(KeepMountedContext)}
-      kind="dropdown"
       transition={transition}
       exitTransition={exitTransition}
     />

@@ -14,7 +14,7 @@ import {
   type DisclosureProps,
 } from "@animate-ui/react/primitives/react-aria"
 
-import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons"
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 function Accordion({ className, ...props }: DisclosureGroupProps) {
@@ -56,11 +56,7 @@ function AccordionTrigger({
         {children}
         <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2}
           data-slot="accordion-trigger-icon"
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-        />
-        <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2}
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+          className="pointer-events-none shrink-0 transition-transform duration-200 group-aria-expanded/accordion-trigger:rotate-180"
         />
       </AccordionTriggerPrimitive>
     </AccordionHeaderPrimitive>

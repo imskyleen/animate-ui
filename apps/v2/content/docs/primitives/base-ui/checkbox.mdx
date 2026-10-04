@@ -36,14 +36,17 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Indicator**: the check inside scales in from half size and fades in over 600ms with a strong ease-out. Unchecking scales it out in 400ms, then the indicator unmounts, as in Base UI. The indicator element itself never moves: its content animates, so your layout and classes stay as they are.
-- **Root** scales to 0.96 while pressed (150ms).
+The motion of Animate UI v1's checkbox:
+
+- **Indicator**: the check draws itself. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.2s, after a 0.2s delay, on Motion's default ease-out. Unchecking erases it in 0.2s, without the delay, then the indicator unmounts, as in Base UI. The indicator element itself never moves: its content animates, so your layout and classes stay as they are. Content that isn't an SVG shape fades the same way.
+- **Root** scales to 1.05 while hovered and to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30).
+- A box that is checked when it mounts draws its check too, as v1's did. The indicator stays hidden until then, so a server-rendered page doesn't flash the check first.
 - Checking with Space animates the same way: the state changes at once, the animation never delays it.
-- A box that is already checked on load renders at rest.
-- Toggling again mid-animation retargets from where the check is.
-- Under reduced motion, the check only fades and nothing scales (no press feedback either).
+- Toggling again mid-animation turns back from where the check is.
+- `indeterminate` shows the indicator like `checked`. An icon swapped for the indeterminate state draws without the delay, as v1's indeterminate line did. A parent checkbox in a `CheckboxGroup` animates the same way: the indicator follows the state Base UI computes.
+- Under reduced motion, the check only fades (its stroke stays whole) and nothing scales.
 - With `keepMounted`, the unchecked indicator stays in the DOM with its check hidden.
-- `indeterminate` shows the indicator like `checked`, and a parent checkbox in a `CheckboxGroup` animates the same way: the indicator follows the state Base UI computes.
+- The box's own colours are the component's CSS: shadcn/ui's `transition-colors` fades them.
 
 ## API Reference
 
@@ -56,9 +59,9 @@ Every part takes exactly the props of [Base UI's Checkbox](https://base-ui.com/r
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the press feedback.',
+      description: 'Transition of the hover and press scale.',
       type: 'Transition',
-      default: 'transition.press (150ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 550, damping: 30 }",
     },
   }}
 />
@@ -70,14 +73,16 @@ Every part takes exactly the props of [Base UI's Checkbox](https://base-ui.com/r
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the check appearing.',
+      description: 'Transition of the check drawing itself.',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
+      default: '{ duration: 0.2, delay: 0.2 }',
     },
     exitTransition: {
-      description: 'Transition of the check leaving.',
+      description: 'Transition of the check erasing itself.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
   }}
 />
+
+`AnimateUIProvider`'s `tempo` scales these transitions with everything else.

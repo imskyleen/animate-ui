@@ -5,10 +5,16 @@ import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu
 
 import { UnmountContext, useManualUnmount } from '../menu/shared';
 import {
+  CheckboxItem,
   CheckboxItemIndicator,
+  Item,
+  LinkItem,
   Popup,
+  RadioGroup,
+  RadioItem,
   RadioItemIndicator,
   SubmenuRoot,
+  SubmenuTrigger,
 } from '../menu/menu';
 
 // Untouched parts: the import alias keeps both the component and its type
@@ -20,17 +26,13 @@ import Positioner = ContextMenuPrimitive.Positioner;
 import Arrow = ContextMenuPrimitive.Arrow;
 import Group = ContextMenuPrimitive.Group;
 import GroupLabel = ContextMenuPrimitive.GroupLabel;
-import Item = ContextMenuPrimitive.Item;
-import CheckboxItem = ContextMenuPrimitive.CheckboxItem;
-import LinkItem = ContextMenuPrimitive.LinkItem;
-import RadioGroup = ContextMenuPrimitive.RadioGroup;
-import RadioItem = ContextMenuPrimitive.RadioItem;
-import SubmenuTrigger = ContextMenuPrimitive.SubmenuTrigger;
 import Separator = ContextMenuPrimitive.Separator;
 
 // Same API as Base UI's Context Menu, which is a Menu opened by a right click
-// or a long press: its Popup, item indicators and submenus are the animated
-// Menu parts. The menu grows from the pointer.
+// or a long press: its Popup, items, indicators and submenus are the animated
+// Menu parts. It has no Animate UI v1 counterpart: it moves like v1's Base UI
+// Menu (a 200ms fade and scale from the pointer, a highlight gliding behind
+// the highlighted item, checks popping in).
 
 function Root({ actionsRef, onOpenChange, ...props }: Root.Props) {
   const manual = useManualUnmount(actionsRef, onOpenChange);

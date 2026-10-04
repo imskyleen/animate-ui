@@ -36,10 +36,10 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
 
 ## Animation
 
-- The element sharpens from `initialBlur` to `blur` over 600ms with a strong ease-out.
+- The element sharpens from `initialBlur` to `blur` on a spring (stiffness 200, damping 20): about 250ms from 10px to sharp.
 - Under reduced motion, it fades in instead.
 - `inView` waits for the element to scroll into view, once by default.
-- `<AnimateUIProvider tempo>` paces the default transition.
+- `<AnimateUIProvider tempo>` paces the default spring.
 
 ## API Reference
 
@@ -71,7 +71,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
     transition: {
       description: 'Transition of the entrance.',
       type: 'Transition',
-      default: 'transition.modal (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
     },
     inView: {
       description: 'Wait for the element to be in view before animating.',

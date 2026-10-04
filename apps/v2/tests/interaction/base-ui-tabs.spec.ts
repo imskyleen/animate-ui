@@ -1,15 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { INDICATOR, PANEL, describeTabsDemo } from './tabs-helpers';
+import { INDICATOR, PANEL, describeTabsDemo, gotoTabs } from './tabs-helpers';
 
 // Base UI moves focus with the arrows (activateOnFocus is off), Enter selects.
 describeTabsDemo('base-ui', { selectKeys: ['ArrowRight', 'Enter'] });
 
 test.describe('base-ui tabs API', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/base-ui-tabs', {
-      waitUntil: 'networkidle',
-    });
+    await gotoTabs(page, '/tests/fixtures/base-ui-tabs');
   });
 
   test('controlled value and onValueChange', async ({ page }) => {

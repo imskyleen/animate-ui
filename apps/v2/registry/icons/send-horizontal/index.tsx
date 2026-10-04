@@ -20,8 +20,8 @@ const animations = {
         x: 0,
       },
       animate: {
-        scale: [null, 0.8, 1, 1, 1],
-        x: [null, '-10%', '125%', '-150%', 0],
+        scale: [1, 0.8, 1, 1, 1],
+        x: [0, '-10%', '125%', '-150%', 0],
         transition: {
           default: { ease: 'easeInOut', duration: 1.2 },
           x: {

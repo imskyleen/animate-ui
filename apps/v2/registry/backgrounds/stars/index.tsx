@@ -121,7 +121,7 @@ function StarsBackgroundContent({
   transition = { stiffness: 50, damping: 20 },
   starColor = '#fff',
   pointerEvents = true,
-  onPointerMove,
+  onMouseMove,
   ...props
 }: StarsBackgroundProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -135,11 +135,12 @@ function StarsBackgroundContent({
   const springX = useSpring(offsetX, transition);
   const springY = useSpring(offsetY, transition);
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    onPointerMove?.(e);
-    // Parallax follows a mouse only (a tap would leave the sky shifted), and
-    // not under reduced motion.
-    if (reduce || e.pointerType !== 'mouse') return;
+  // The sky shifts away from the mouse (and from a tap, which browsers report
+  // as a mousemove), relative to the center of the container. No parallax
+  // under reduced motion.
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    onMouseMove?.(e);
+    if (reduce) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -156,7 +157,7 @@ function StarsBackgroundContent({
         className,
       )}
       {...props}
-      onPointerMove={handlePointerMove}
+      onMouseMove={handleMouseMove}
     >
       <StarsInViewContext value={inView}>
         <motion.div

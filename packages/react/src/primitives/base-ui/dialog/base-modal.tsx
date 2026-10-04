@@ -7,16 +7,19 @@ import { AnimatePresence, useIsPresent } from 'motion/react';
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
+  DIALOG_TRANSITION,
+  OVERLAY_TRANSITION,
+  SHEET_TRANSITION,
   getAnimateTarget,
   getContentTargets,
   getModalSide,
   getOverlayTargets,
   motionRender,
   useHiddenWhenClosed,
+  useModalTransitions,
   type ModalAnimationProps,
   type ModalTargets,
 } from '../../../internal/modal-motion';
@@ -132,9 +135,10 @@ function Backdrop({
   render,
   ...props
 }: BackdropProps) {
-  const tokens = useMotionTokens();
   const motionProps = useMotionElementProps(
-    getOverlayTargets({ tokens, transition, exitTransition }),
+    getOverlayTargets(
+      useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+    ),
   );
 
   return (
@@ -148,12 +152,16 @@ function Backdrop({
 type PopupProps = DialogPrimitive.Popup.Props & ModalAnimationProps;
 
 function Popup({ transition, exitTransition, render, ...props }: PopupProps) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
   // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
   const side = getModalSide((props as Record<string, unknown>)['data-side']);
+  const { enter, exit } = useModalTransitions(
+    transition,
+    exitTransition,
+    side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+  );
   const motionProps = useMotionElementProps(
-    getContentTargets({ side, tokens, reduce, transition, exitTransition }),
+    getContentTargets({ side, reduce, enter, exit }),
   );
 
   return (

@@ -51,21 +51,28 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--transform-origin`). It closes in 400ms, then Base UI unmounts it (or hides it, when it keeps the items mounted for typeahead on the closed trigger).
-- With `alignItemWithTrigger` (Base UI's default, and what shadcn/ui's `SelectContent` uses), the list is laid over the trigger with the selected item on the value, like a native select: it only fades.
+Base UI's Select has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.
+
+- **Popup** fades and scales in from 0.95, from the trigger (`--transform-origin`), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way; then Base UI unmounts it (or hides it, when it keeps the items mounted for typeahead on the closed trigger).
+- With `alignItemWithTrigger` (Base UI's default), the list is laid over the trigger with the selected item on the value, like a native select: it only fades.
+- **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, like v1's menu highlight. The new copy fades in as it moves; the previous one goes along and fades out 200ms later. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
+- **ItemIndicator**: with a single value, choosing another item moves the check there while the list closes, like v1's radio indicator. With `multiple`, the list stays open: a selected item's check pops in from half its size with a fade, like v1's checkbox check, and goes at once when it's deselected.
 - Reopening while the list is closing picks up from where it is.
-- **ItemIndicator**, with `multiple`, fades and scales in over 600ms when an item is selected and out in 400ms when it's deselected, while the list stays open. Checks of already selected items show at once when the list opens. With a single value, choosing an item closes the list, so the check is not animated.
-- The highlight moved by the arrow keys and typeahead is not animated: keyboard navigation stays instant.
 - Base UI's Select has no `keepMounted`: Animate UI passes an `actionsRef` to the Root and unmounts the popup when its exit is over. Your own `actionsRef` still works, and `onOpenChangeComplete` fires after the entrance and after the exit.
-- Under reduced motion, the popup and checks fade without scaling.
+- Open from the start (`defaultOpen`), the list plays its entrance on page load.
+- Under reduced motion, nothing scales or glides: the popup, the highlight and the checks only fade.
 
 ## API Reference
 
 Every part takes exactly the props of [Base UI's Select](https://base-ui.com/react/components/select#api-reference). Animate UI adds the animation props below.
 
-### Root, Trigger, Value, Icon, Portal, Backdrop, Positioner, List, Item, ItemText, Group, GroupLabel, Separator, ScrollUpArrow, ScrollDownArrow, Arrow, Label
+### Root, Trigger, Value, Icon, Portal, Backdrop, Positioner, List, ItemText, Group, GroupLabel, Separator, ScrollUpArrow, ScrollDownArrow, Arrow, Label
 
 [Base UI props](https://base-ui.com/react/components/select#root) only. They are not animated.
+
+### Item
+
+[Base UI props](https://base-ui.com/react/components/select#item) only. It takes part in the highlight; it needs nothing more.
 
 ### Popup
 
@@ -74,33 +81,31 @@ Every part takes exactly the props of [Base UI's Select](https://base-ui.com/rea
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />
 
 ### ItemIndicator
 
-[Base UI props](https://base-ui.com/react/components/select#item-indicator), plus (used with `multiple`):
+[Base UI props](https://base-ui.com/react/components/select#item-indicator), plus:
 
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the check appearing.',
+      description:
+        'Transition of the check moving to the chosen item (single value), or popping in (multiple).',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
-    },
-    exitTransition: {
-      description: 'Transition of the check leaving.',
-      type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default:
+        "Motion's defaults, as in v1: a 450ms move; multiple: a spring (stiffness 550, damping 30) and a 300ms fade",
     },
   }}
 />

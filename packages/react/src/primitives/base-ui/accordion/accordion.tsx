@@ -12,8 +12,8 @@ import {
 } from '../../../internal/disclosure-panel';
 
 // Same API as Base UI's Accordion. The Root mirrors the open items and hands
-// them back to Base UI (one source of truth), so each Panel can animate its
-// height in and out.
+// them back to Base UI (one source of truth), so each Panel can animate in
+// and out like Animate UI v1's (see ../../../internal/disclosure-panel).
 
 type RootContext = {
   value: readonly unknown[];

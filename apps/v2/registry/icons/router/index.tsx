@@ -19,7 +19,7 @@ const animations = {
       path3: {
         initial: { opacity: 1 },
         animate: {
-          opacity: [null, 0, 1, 0, 1],
+          opacity: [1, 0, 1, 0, 1],
           transition: {
             duration: 0.8,
             ease: 'easeInOut',

@@ -30,10 +30,10 @@ Pass an array of lines with `type="lines"`:
 
 ## Animation
 
-- Each piece fades and slides in from the right over 0.7s on a strong ease-out, 0.05s apart for characters, 0.2s for words, 0.3s for lines.
-- `initial`, `animate` and `transition` customise every piece. The defaults use a `transform` string: override `initial` and `animate` together.
+- Each piece fades in and slides 150px in from the right over 0.7s on an ease-out, 0.05s apart for characters, 0.2s for words, 0.3s for lines.
+- `initial`, `animate` and `transition` customise every piece.
 - Words never break in the middle; emoji and accented letters stay whole.
-- `<AnimateUIProvider tempo>` paces the default duration.
+- `<AnimateUIProvider tempo>` paces the default transition and stagger.
 - Under reduced motion (or with `disableAnimation`), every piece is in place at once.
 - Screen readers read the text once, not piece by piece.
 
@@ -67,18 +67,18 @@ Pass an array of lines with `type="lines"`:
     initial: {
       description: 'Hidden state of each piece.',
       type: 'TargetAndTransition',
-      default: "{ opacity: 0, transform: 'translateX(150px)' }",
+      default: '{ x: 150, opacity: 0 }',
     },
     animate: {
       description: 'Visible state of each piece.',
       type: 'TargetAndTransition',
-      default: "{ opacity: 1, transform: 'translateX(0px)' }",
+      default: '{ x: 0, opacity: 1 }',
     },
     transition: {
       description:
         'Transition of each piece. Its `delay` is added to the stagger.',
       type: 'Transition',
-      default: '{ duration: 0.7, ease: ease.out }',
+      default: "{ duration: 0.7, ease: 'easeOut' }",
     },
     disableAnimation: {
       description: 'Render the text in its visible state, without animating.',

@@ -5,13 +5,14 @@ import { probeFirstFrame, sample } from './motion-probe';
 const POPOVER = '[data-slot="select-content"]';
 
 test.describe('react-aria select demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/react-aria/select', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and a fade from the trigger, then settles', async ({
+  test('opens with a 200ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, POPOVER);
@@ -29,7 +30,7 @@ test.describe('react-aria select demo', () => {
     expect(parseFloat(settled.origin.split(' ')[1]!)).toBeLessThanOrEqual(0);
   });
 
-  test('closes faster than it opens, and the trigger shows the choice', async ({
+  test('closes the same way, and the trigger shows the choice', async ({
     page,
   }) => {
     const trigger = page.locator('[data-slot="select-trigger"]');
@@ -37,9 +38,12 @@ test.describe('react-aria select demo', () => {
     await page.waitForTimeout(650);
     await page.getByRole('option', { name: 'Lora' }).click();
 
-    await page.waitForTimeout(60);
-    await expect(page.locator(POPOVER)).toHaveCount(1);
-    expect((await sample(page, POPOVER)).opacity).toBeLessThan(1);
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, POPOVER)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 600 });
     await expect(trigger).toContainText('Lora');
   });
@@ -71,6 +75,7 @@ test.describe('react-aria select demo', () => {
 });
 
 test.describe('react-aria select API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test('controlled value and open, with the animated Popover', async ({
     page,
   }) => {

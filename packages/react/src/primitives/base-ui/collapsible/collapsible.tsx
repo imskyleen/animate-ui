@@ -6,11 +6,14 @@ import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible'
 
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
-import { BaseUIPanel, type PanelAnimationProps } from '../../../internal/disclosure-panel';
+import {
+  BaseUIPanel,
+  type PanelAnimationProps,
+} from '../../../internal/disclosure-panel';
 
 // Same API as Base UI's Collapsible. The Root mirrors the open state and
-// hands it back to Base UI (one source of truth), so the Panel can animate
-// its height in and out.
+// hands it back to Base UI (one source of truth), so the Panel can animate in
+// and out like Animate UI v1's (see ../../../internal/disclosure-panel).
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Collapsible.Root',

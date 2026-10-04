@@ -21,9 +21,10 @@ export function Loading() {
 
 ## Animation
 
-- Each letter pulses from `color` to `shimmeringColor` and back, one after the other, in a loop. `wave` also lifts each letter as the glint passes.
+- Each letter pulses from `color` to `shimmeringColor` and back over `duration` (ease-in-out), one after the other (`duration / letters` apart), the loop pausing `0.05s × letters` between runs. `wave` also lifts each letter as the glint passes (5px right and up, 1.1× scale, 15° turn).
 - Emoji and accented letters stay whole.
 - The shimmer pauses off screen and in a hidden tab.
+- `<AnimateUIProvider tempo>` paces the loop.
 - Under reduced motion, the text holds still in its `color`.
 - Screen readers read the text once, not letter by letter.
 

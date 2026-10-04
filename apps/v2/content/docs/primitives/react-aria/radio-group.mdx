@@ -47,21 +47,22 @@ React Aria lets you render the indicator yourself. Animate UI animates the conte
 
 ## Animation
 
-- **Indicator**: a dot that mounts scales in from half size and fades in over 600ms with a strong ease-out. When it unmounts, a copy of it scales out in 400ms in its place, then goes away: React Aria's state and render props are never delayed.
-- **Radio** scales to 0.96 while pressed (150ms), with the pointer or the keyboard (React Aria's `isPressed`).
-- **RadioGroup** has nothing to animate: it tells its radios when a selection comes from the arrow keys.
-- Selecting with the arrow keys is keyboard navigation: the dots swap at once. Space, a click or a tap animate.
-- The dot selected on load renders at rest.
-- Under reduced motion, the dot only fades and nothing scales (no press feedback either).
+The motion of Animate UI v1's Radix UI radio group (v1 had no React Aria one):
+
+- **Radio**: the dot you render inside `data-slot="radio-group-indicator"` pops in when it mounts. Its scale and its opacity spring from 0 to 1 (stiffness 200, damping 16: it overshoots a little before settling). When it unmounts, a copy of it springs back to 0 in its place, then goes away: your render function stays the single source of truth.
+- **Radio** scales to 1.05 while hovered and to 0.95 while pressed (React Aria's `isHovered` and `isPressed`), on Motion's default spring for scale (stiffness 550, damping 30).
+- Selecting with the arrow keys animates like a click.
+- A radio already selected on load renders at rest: the dot is your markup, rendered by the server before any script runs.
+- Under reduced motion, the dot only fades and nothing scales.
 - `className` and `style` render props keep working.
 
 ## API Reference
 
-`RadioGroup` and `Radio` take exactly the props of [React Aria's RadioGroup](https://react-spectrum.adobe.com/react-aria/RadioGroup.html#props). A `render` function of your own gets React Aria's behaviour, without the press feedback.
+`RadioGroup` and `Radio` take exactly the props of [React Aria's RadioGroup](https://react-spectrum.adobe.com/react-aria/RadioGroup.html#props). A `render` function of your own gets React Aria's behaviour, without the hover and press scale.
 
 ### RadioGroup
 
-React Aria props only.
+React Aria props only: nothing animates on the group itself.
 
 ### Radio
 
@@ -72,14 +73,14 @@ React Aria props, plus:
     transition: {
       description: 'Transition of the dot appearing.',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 200, damping: 16 }",
     },
     exitTransition: {
       description: 'Transition of the dot leaving.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'the same spring as transition',
     },
   }}
 />
 
-The press feedback uses `transition.press` (150ms); `AnimateUIProvider`'s `tempo` changes it with everything else.
+The hover and press scale uses Motion's default spring for scale (stiffness 550, damping 30). `AnimateUIProvider`'s `tempo` scales these transitions with everything else.

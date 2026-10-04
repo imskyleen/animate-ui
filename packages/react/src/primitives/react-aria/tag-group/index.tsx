@@ -11,14 +11,16 @@ import { animate, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 
-// Same API as React Aria's TagList and Tag (shadcn/ui's combobox chips). A tag
-// added to the list pops in; tags already there when the list mounts don't.
-// Removing a tag is instant: React Aria drops it from the collection at once
-// (and it's often Backspace), while its neighbours reflow.
+// Same API as React Aria's TagList and Tag (shadcn/ui's combobox chips). Animate
+// UI v1 had no tag group: a tag added to the list pops in like v1's small
+// overlays (Popover, Tooltip, HoverCard): opacity from 0 and scale from 0.5,
+// on a spring (stiffness 300, damping 25). Tags already there when the list
+// mounts don't. Removing a tag is instant: React Aria drops it from the
+// collection at once (and it's often Backspace), while its neighbours reflow.
 //
 // Tags are collection items: the component the user renders only builds the
 // collection, and React Aria renders the real element later. So the entrance
@@ -37,8 +39,16 @@ function TagList<T extends object>(
 ) {
   const mountedRef = React.useRef(false);
   React.useEffect(() => {
-    mountedRef.current = true;
+    // React Aria renders the items once its collection is built, after the
+    // list mounted (and again when a server-rendered page hydrates): tags
+    // rendered before the list has painted twice were already there.
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        mountedRef.current = true;
+      });
+    });
     return () => {
+      cancelAnimationFrame(frame);
       mountedRef.current = false;
     };
   }, []);
@@ -50,9 +60,19 @@ function TagList<T extends object>(
   );
 }
 
+/** v1's Popover / Tooltip / HoverCard entrance. */
+const TAG_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 25,
+};
+
 /** React Aria's props, plus Animate UI's `transition`. */
 type TagProps = TagPrimitiveProps & {
-  /** Transition of a tag being added. Defaults to `transition.change` (600ms). */
+  /**
+   * Transition of a tag being added. Defaults to a spring (stiffness 300,
+   * damping 25).
+   */
   transition?: Transition;
 };
 
@@ -73,7 +93,13 @@ function AnimatedTag({
   const list = React.use(ListMountedContext);
   const [entering] = React.useState(() => list?.current === true);
   const reduce = useShouldReduceMotion();
-  const tokens = useMotionTokens();
+  const spring = useTempoTransition(transition ?? TAG_TRANSITION);
+  // Read when the tag enters: a new transition object each render (a tempo)
+  // mustn't change the ref callback.
+  const springRef = React.useRef(spring);
+  React.useLayoutEffect(() => {
+    springRef.current = spring;
+  });
   const playedRef = React.useRef(false);
 
   // Memoized, so React Aria doesn't update the collection node on each render.
@@ -85,16 +111,17 @@ function AnimatedTag({
       if (!entering || playedRef.current || !(element instanceof HTMLElement))
         return;
       playedRef.current = true;
+      const from = `scale(${reduce ? 1 : 0.5})`;
+      // Hidden on this very frame: the animation only starts on the next one.
+      element.style.opacity = '0';
+      element.style.transform = from;
       animate(
         element,
-        {
-          opacity: [0, 1],
-          transform: [`scale(${reduce ? 1 : tokens.scale.enter})`, 'scale(1)'],
-        },
-        transition ?? tokens.transition.change,
+        { opacity: [0, 1], transform: [from, 'scale(1)'] },
+        springRef.current,
       );
     },
-    [ref, entering, reduce, tokens, transition],
+    [ref, entering, reduce],
   );
 
   return <TagPrimitive {...props} ref={setRef} />;

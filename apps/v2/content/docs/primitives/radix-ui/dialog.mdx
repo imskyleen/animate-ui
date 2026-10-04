@@ -39,21 +39,25 @@ Coming from the `@radix-ui/react-dialog` package? Use the subpath: `import * as 
 
 ## Sheet
 
-shadcn/ui's Sheet is the same primitive: its content carries `data-side`, and the Dialog then slides it in from that edge instead of scaling it. Add it with `shadcn add sheet`, then animate it with `animate-ui animate sheet`.
+shadcn/ui's Sheet is the same primitive: its content carries `data-side`, and the Dialog then slides it in from that edge, fading in, like Animate UI v1's Sheet, instead of tipping it in. Add it with `shadcn add sheet`, then animate it with `animate-ui animate sheet`.
 
 <ComponentPreview name="radix-ui/dialog-sheet" />
 
 ## Animation
 
-- **Overlay** fades in over 600ms with a strong ease-out, and out in 400ms.
-- **Content** fades in and scales up from 0.95 over 600ms, around its center: modals don't grow from their trigger. It closes in 400ms, then unmounts.
-- With `data-side="top" | "right" | "bottom" | "left"`, the content slides in from that edge (a full size of its own, without fading) over 600ms on the drawer curve, and slides back out in 400ms.
+Animate UI v1's dialog motion, unchanged.
+
+- **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way.
+- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, still visible once the overlay is gone, then unmounts.
+- With `data-side="top" | "right" | "bottom" | "left"` (shadcn/ui's Sheet), the content slides in from that edge by its own size and fades in, on v1's sheet spring (stiffness 150, damping 22), and slides back out the same way.
+- `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
 - Radix keeps the Overlay and the Content mounted while they exit. Clicks go through to the page as soon as the dialog closes, and focus returns to the trigger once the exit is over.
 - Reopening while it closes picks up from where it is.
 - Opening from the keyboard animates the same way; focus moves into the dialog at once.
 - With `forceMount` (on the Portal, Overlay or Content), the closed dialog stays in the DOM: it plays its exit, then is hidden and `inert`.
 - A Content rendered without a Portal animates on its own, and `asChild` makes your element the animated one.
-- Under reduced motion, the content fades without scaling or sliding.
+- Under reduced motion, the content fades and un-blurs without tilting, scaling or sliding.
+- `AnimateUIProvider tempo` scales every duration and spring.
 
 ## API Reference
 
@@ -70,14 +74,14 @@ Every part takes exactly the props of [Radix UI's Dialog](https://www.radix-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the fade in.',
+      description: 'Transition of the fade (and blur) in.',
       type: 'Transition',
-      default: 'transition.modal (600ms, ease-out)',
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
     },
     exitTransition: {
-      description: 'Transition of the fade out.',
+      description: 'Transition of the fade (and blur) out.',
       type: 'Transition',
-      default: 'transition.modalExit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />
@@ -92,13 +96,12 @@ Every part takes exactly the props of [Radix UI's Dialog](https://www.radix-ui.c
       description: 'Transition of the opening.',
       type: 'Transition',
       default:
-        'transition.modal (600ms, ease-out); with data-side: transition.drawer (600ms, drawer curve)',
+        "{ type: 'spring', stiffness: 150, damping: 25 }; with data-side: { type: 'spring', stiffness: 150, damping: 22 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default:
-        'transition.modalExit (400ms, ease-out); with data-side: transition.drawerExit (400ms)',
+      default: 'transition',
     },
   }}
 />

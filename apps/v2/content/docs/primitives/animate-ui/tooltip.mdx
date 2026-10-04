@@ -57,9 +57,11 @@ Unlike the library tooltips, this one is Animate UI's own: no Radix UI, Base UI 
 
 ## Animation
 
-- The popup fades in from a 0.95 scale, nudged out of its trigger by a few pixels, on a quick spring (`spring.snappy`), and leaves in 400ms with a strong ease-out.
+The motion of Animate UI v1's Tooltip, value for value:
+
+- The popup grows from nothing and rises 15px out of its trigger (from the side it's placed on) as it fades in, on a critically damped spring (stiffness 300, damping 35), and goes back the same way when it closes.
 - Hovering the next trigger while a tooltip is showing doesn't close it: the popup and its arrow glide to the new trigger and resize to the new content (a shared layout animation), on the same spring. Right after a tooltip closes (within `closeDelay`), the next one opens without the `openDelay`.
-- `<AnimateUIProvider tempo>` paces every spring and duration.
+- `<AnimateUIProvider tempo>` paces the spring.
 - Under reduced motion, the popup only fades, and moving between triggers jumps.
 
 ## API Reference
@@ -83,7 +85,7 @@ Holds the shared popup. Every `Tooltip` must be inside one.
     openDelay: {
       description: 'Delay in milliseconds before a tooltip opens.',
       type: 'number',
-      default: '700',
+      default: '0',
     },
     closeDelay: {
       description:
@@ -93,9 +95,9 @@ Holds the shared popup. Every `Tooltip` must be inside one.
     },
     transition: {
       description:
-        'Transition of the entrance and of the move between triggers.',
+        'Transition of the entrance, of the exit and of the move between triggers.',
       type: 'Transition',
-      default: 'spring.snappy',
+      default: "{ type: 'spring', stiffness: 300, damping: 35 }",
     },
   }}
 />
@@ -118,7 +120,7 @@ Holds the shared popup. Every `Tooltip` must be inside one.
     sideOffset: {
       description: 'Distance in pixels from the trigger.',
       type: 'number',
-      default: '0',
+      default: '10',
     },
     align: {
       description: 'How the popup is aligned on that side.',

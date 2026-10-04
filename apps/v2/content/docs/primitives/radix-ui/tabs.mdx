@@ -34,13 +34,15 @@ Coming from the `@radix-ui/react-tabs` package? Use the subpath: `import * as Ta
 
 ## Animation
 
-- **The active tab's surface glides** to the new tab with `spring.snappy` (600ms, a hint of overshoot). The List draws it as an indicator that copies the active trigger's own classes and data attributes, so it looks exactly like your active trigger (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active trigger's own surface is hidden. Its focus ring stays on the trigger.
-- Clicking quickly through tabs retargets the glide smoothly.
-- **Keyboard changes are instant**: arrow keys move the indicator and swap the panel at once, and never delay focus.
-- **The incoming panel fades in** over 600ms (`transition.fade`); the outgoing one unmounts at once, so the two never overlap.
-- Nothing animates on page load.
+- **The active tab's surface slides** to the new tab on a spring (stiffness 200, damping 25), like Animate UI v1's highlight: the new surface fades in as it slides from the previous one, which follows it and fades out 200ms later. The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
+- **The tabs' colors change over 500ms** (Tailwind's `ease-in-out`), as in v1, whatever transition your tabs set.
+- Clicking quickly through tabs retargets the slide smoothly.
+- **The incoming panel fades in from a 4px blur** over 500ms ease-in-out, while its height springs from the previous panel's to its own (stiffness 200, damping 30), like v1's tab contents. The panels share an element (the tabs root, usually), which remembers the selected panel's height. The outgoing panel leaves at once, so the two never overlap.
+- The selected panel fades in on mount (page load) too, as in v1.
+- Keyboard changes animate like clicks, as in v1: arrow keys, Home and End slide the surface and fade the panel in; focus moves at once.
 - With `forceMount`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
-- Under reduced motion, the indicator jumps; panels still fade.
+- `<AnimateUIProvider tempo>` paces every transition.
+- Under reduced motion, the surface jumps and the height changes at once; the fades still play.
 
 ## API Reference
 
@@ -58,9 +60,9 @@ Every part takes exactly the props of [Radix UI's Tabs](https://www.radix-ui.com
   type={{
     transition: {
       description:
-        'Transition of the indicator gliding to the active tab (pointer changes).',
+        'Transition of the surface sliding to the new tab (pointer changes); the previous surface fades out 200ms after it starts.',
       type: 'Transition',
-      default: 'spring.snappy (600ms, bounce 0.15)',
+      default: "{ type: 'spring', stiffness: 200, damping: 25 }",
     },
   }}
 />
@@ -72,9 +74,11 @@ Every part takes exactly the props of [Radix UI's Tabs](https://www.radix-ui.com
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the incoming panel fading in.',
+      description:
+        'Transition of the incoming panel: its fade from a blur, and its height (in `height`, or the whole transition when it has none).',
       type: 'Transition',
-      default: 'transition.fade (600ms, ease-out)',
+      default:
+        "{ duration: 0.5, ease: 'easeInOut', height: { type: 'spring', stiffness: 200, damping: 30 } }",
     },
   }}
 />

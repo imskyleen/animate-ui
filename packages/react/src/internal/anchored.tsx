@@ -7,37 +7,62 @@ import {
   type Transition,
 } from 'motion/react';
 
-import { useMotionTokens, useShouldReduceMotion } from '../utils/motion';
+import { useShouldReduceMotion, useTempoTransition } from '../utils/motion';
 
 // Shared by every anchored overlay of Animate UI (popovers, hover cards,
-// tooltips, and React Aria's Popover under menus, selects and comboboxes):
-// they scale up from `scale.enter` and fade in from the point of their
-// trigger, and leave faster than they came.
+// tooltips, and React Aria's Popover under menus, selects and comboboxes).
+// The motion is Animate UI v1's, value for value:
+//
+// - popovers, hover cards and tooltips (v1 Popover, HoverCard, Tooltip): they
+//   grow from half their size and fade in from the point of their trigger, on
+//   a spring (stiffness 300, damping 25) that overshoots a little, and shrink
+//   back to half their size on the same spring when they close;
+// - menus (v1 DropdownMenu content and sub content): a short 200ms fade and
+//   scale from 0.95, both ways.
+//
+// A popup open from the start (`defaultOpen`, or `open` on the first render)
+// plays its entrance on page load, like v1.
+
+/** v1's Popover, HoverCard and Tooltip spring, both ways. */
+const POPOVER_TRANSITION = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 25,
+} as const satisfies Transition;
+/** v1's DropdownMenu content and sub content timing, both ways. */
+const MENU_TRANSITION = { duration: 0.2 } as const satisfies Transition;
+
+/** Where each kind of overlay starts from (v1 values). */
+const HIDDEN_SCALE = { popover: 0.5, menu: 0.95 } as const;
+const DEFAULT_TRANSITION = {
+  popover: POPOVER_TRANSITION,
+  menu: MENU_TRANSITION,
+} as const;
 
 /** Animate UI's additions to an anchored popup. */
 type AnchoredAnimationProps = {
   /**
-   * Transition of the opening. Defaults to `transition.dropdown` (600ms),
-   * `transition.tooltip` (600ms) for tooltips.
+   * Transition of the opening, and of the closing unless `exitTransition` is
+   * set. Defaults to v1's spring (stiffness 300, damping 25); `{ duration:
+   * 0.2 }` for menus.
    */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition.exit` (400ms). */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
 type AnchoredMotionOptions = AnchoredAnimationProps & {
-  /** Which entrance token applies. */
-  kind: 'dropdown' | 'tooltip';
+  /** Popovers, hover cards and tooltips, or menus (v1 DropdownMenu). */
+  kind?: 'popover' | 'menu';
   /** Whether the overlay is open (a kept-mounted popup animates in place). */
   open: boolean;
   /** The popup stays mounted while closed (`forceMount`, `keepMounted`…). */
   keepMounted?: boolean;
-  /** Fade without scaling (submenus, which open often). */
-  fadeOnly?: boolean;
-  /** Appear without an entrance (warm tooltips, swapped previews). */
-  skipEnter?: boolean;
-  /** Disappear without an exit (a tooltip replaced by its neighbour). */
-  skipExit?: boolean;
+  /**
+   * Appear and disappear without animation: React Aria asks for it when it
+   * swaps two previews or tooltips during its warmup.
+   */
+  instant?: boolean;
 };
 
 type AnchoredMotionProps = {
@@ -52,30 +77,24 @@ type AnchoredMotionProps = {
  * under reduced motion the popup only fades.
  */
 function useAnchoredMotion({
-  kind,
+  kind = 'popover',
   open,
   keepMounted,
-  fadeOnly,
-  skipEnter,
-  skipExit,
+  instant,
   transition,
   exitTransition,
 }: AnchoredMotionOptions): AnchoredMotionProps {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
-  const from = reduce || fadeOnly ? 1 : tokens.scale.enter;
-  // Full transform strings (hardware accelerated). Never from scale(0).
-  const hidden = { opacity: 0, transform: `scale(${from})` };
-  const shown = { opacity: 1, transform: 'scale(1)' };
-
-  const enter = skipEnter
-    ? tokens.transition.instant
-    : (transition ??
-      // Submenus open often: a short fade both ways.
-      (fadeOnly ? tokens.transition.exit : tokens.transition[kind]));
-  const leave = skipExit
-    ? tokens.transition.instant
-    : (exitTransition ?? tokens.transition.exit);
+  const enter = useTempoTransition(transition ?? DEFAULT_TRANSITION[kind]);
+  const leave = useTempoTransition(
+    exitTransition ?? transition ?? DEFAULT_TRANSITION[kind],
+  );
+  // `scale` (not a transform string), like v1: Motion writes `transform:
+  // none` once it's back to 1, so a settled popup never becomes the
+  // containing block of fixed descendants.
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE[kind] };
+  const shown = { opacity: 1, scale: 1 };
+  const none = { duration: 0 };
 
   // A kept-mounted popup is hidden once its exit has played (not with
   // `transitionEnd`: Motion drops it when the exit interrupts the entrance).
@@ -85,21 +104,23 @@ function useAnchoredMotion({
   if (open && settledClosed) setSettledClosed(false);
 
   return {
-    initial: skipEnter ? false : hidden,
+    // A popup that mounts open plays its entrance, even on page load (v1). A
+    // kept-mounted popup that mounts closed starts hidden, in place.
+    initial: instant || !open ? false : hidden,
     // Transitions live in the targets: an exiting element keeps the props of
     // its last render, when it was still open.
     animate: open
       ? {
           ...shown,
-          transition: enter,
+          transition: instant ? none : enter,
           ...(keepMounted && { visibility: 'visible' }),
         }
       : {
           ...hidden,
-          transition: leave,
+          transition: instant ? none : leave,
           ...(keepMounted && settledClosed && { visibility: 'hidden' }),
         },
-    exit: { ...hidden, transition: leave },
+    exit: { ...hidden, transition: instant ? none : leave },
     onAnimationComplete: keepMounted
       ? (definition) => {
           const target = definition as { opacity?: number };
@@ -107,60 +128,6 @@ function useAnchoredMotion({
         }
       : undefined,
   };
-}
-
-// A tooltip opened while another one is still showing, or shortly after one
-// closed, is "warm": it appears without an entrance, like moving along a
-// toolbar. The window outlasts the previous tooltip's exit. Module-level, so
-// it works across tooltips that each have their own provider (shadcn/ui's
-// do), whatever order the library closes and opens them in.
-const WARM_WINDOW_MS = 1000;
-let lastTooltipCloseAt = Number.NEGATIVE_INFINITY;
-let shownTooltips = 0;
-
-const now = () =>
-  typeof performance === 'undefined' ? Date.now() : performance.now();
-
-const isWarmNow = () =>
-  shownTooltips > 0 || now() - lastTooltipCloseAt < WARM_WINDOW_MS;
-
-type TooltipWarmthOptions = {
-  /** Only tooltips take part. */
-  enabled: boolean;
-  /** Open and present (false while it exits). */
-  open: boolean;
-  /** On screen: open, or playing its exit. */
-  shown: boolean;
-};
-
-/**
- * Whether the tooltip appears warm. Re-evaluated each time it opens; records
- * when it closes and while it's on screen.
- */
-function useTooltipWarmth({ enabled, open, shown }: TooltipWarmthOptions) {
-  const [state, setState] = React.useState(() => ({
-    open,
-    warm: enabled && open && isWarmNow(),
-  }));
-  if (state.open !== open) {
-    setState({ open, warm: enabled && open && isWarmNow() });
-  }
-
-  const wasOpenRef = React.useRef(open);
-  React.useEffect(() => {
-    if (enabled && wasOpenRef.current && !open) lastTooltipCloseAt = now();
-    wasOpenRef.current = open;
-  }, [enabled, open]);
-
-  React.useLayoutEffect(() => {
-    if (!enabled || !shown) return;
-    shownTooltips += 1;
-    return () => {
-      shownTooltips -= 1;
-    };
-  }, [enabled, shown]);
-
-  return state.warm;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,9 +181,10 @@ function asMotion(element: React.ReactElement, props: ElementProps) {
 
 export {
   useAnchoredMotion,
-  useTooltipWarmth,
   asMotion,
   mergeRefs,
+  POPOVER_TRANSITION,
+  MENU_TRANSITION,
   type AnchoredAnimationProps,
   type AnchoredMotionProps,
 };

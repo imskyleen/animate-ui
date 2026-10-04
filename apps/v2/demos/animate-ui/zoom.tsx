@@ -12,14 +12,14 @@ const ITEMS = ["Design", "Build", "Ship"]
 export const controls = {
   Zoom: {
     delay: { value: 0, min: 0, max: 3000, step: 100 },
-    initialScale: { value: 0.96, min: 0, max: 1, step: 0.01 },
-    scale: { value: 1, min: 0, max: 1, step: 0.01 },
+    initialScale: { value: 0.5, min: 0, max: 1, step: 0.1 },
+    scale: { value: 1, min: 0, max: 1, step: 0.1 },
   },
 }
 
 export default function ZoomDemo({
   delay = 0,
-  initialScale = 0.96,
+  initialScale = 0.5,
   scale = 1,
 }: {
   delay?: number

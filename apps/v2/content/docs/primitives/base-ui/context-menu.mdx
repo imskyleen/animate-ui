@@ -39,22 +39,28 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Popup** fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the pointer (`--transform-origin`). It closes in 400ms.
-- Submenu popups grow from the side of their trigger, in 400ms both ways.
+Base UI's Context Menu has no Animate UI v1 counterpart: it moves like v1's Base UI Menu, value for value.
+
+- **Popup** fades and scales in from 0.95, from the pointer (`--transform-origin`, set inline so it works without styles), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way. Submenu popups grow from the side of their trigger the same way.
 - Base UI keeps the popup mounted after it closes, and Animate UI unmounts it once the exit has played (`onOpenChangeComplete` fires then).
-- Moving the highlight with the arrow keys is never animated: items keep their own CSS highlight, which changes on the same frame.
+- **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, and into submenus. The new copy fades in as it moves; the previous one goes along and fades out 200ms later. When the pointer leaves the menu, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted, or while its submenu is open; its text colors stay.
+- **CheckboxItemIndicator** pops in from half its size with a fade whenever it appears (checking the item, or opening the menu) and goes at once when unchecked. **RadioItemIndicator** glides to the newly checked item (when choosing it closes the menu, it glides while the menu fades out, as in v1).
 - When the menu closes with focus inside, focus goes back to where it was before the menu opened at once instead of after the exit, and the leaving popup ignores the pointer.
-- **CheckboxItemIndicator** and **RadioItemIndicator** fade in over 600ms when an item gets checked. Items already checked when the menu opens show at once.
 - With `keepMounted` on the Portal, the closed popup stays in the DOM and Base UI hides it after the exit.
-- Under reduced motion, everything only fades.
+- Open from the start (`defaultOpen`), the menu plays its entrance on page load.
+- Under reduced motion, nothing scales or glides: the menu and the highlight only fade.
 
 ## API Reference
 
 Every part takes exactly the props of [Base UI's Context Menu](https://base-ui.com/react/components/context-menu#api-reference). Animate UI adds the animation props below. The Popup's `render` prop is used by the animation.
 
-### Root, Trigger, Portal, Positioner, Item, LinkItem, Group, GroupLabel, CheckboxItem, RadioGroup, RadioItem, SubmenuRoot, SubmenuTrigger, Separator, Arrow, Backdrop
+### Root, Trigger, Portal, Positioner, Group, GroupLabel, RadioGroup, SubmenuRoot, Separator, Arrow, Backdrop
 
 [Base UI props](https://base-ui.com/react/components/context-menu#api-reference) only. They are not animated.
+
+### Item, LinkItem, CheckboxItem, RadioItem, SubmenuTrigger
+
+[Base UI props](https://base-ui.com/react/components/context-menu#api-reference) only. They take part in the highlight; it needs nothing more.
 
 ### Popup
 
@@ -63,15 +69,15 @@ Every part takes exactly the props of [Base UI's Context Menu](https://base-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default:
-        'transition.dropdown (600ms, ease-out); submenus: transition.exit (400ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />
@@ -83,14 +89,11 @@ Every part takes exactly the props of [Base UI's Context Menu](https://base-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the fade-in when the item gets checked.',
+      description:
+        'Transition of the check popping in (checkbox items), or of the indicator moving to the newly checked item (radio items).',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
-    },
-    exitTransition: {
-      description: 'Transition of the closing.',
-      type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default:
+        "Motion's defaults, as in v1: a spring (stiffness 550, damping 30) and a 300ms fade; radio items: a 450ms move",
     },
   }}
 />

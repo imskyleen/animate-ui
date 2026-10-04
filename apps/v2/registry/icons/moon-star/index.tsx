@@ -20,7 +20,7 @@ const animations = {
         transition: { duration: 0 },
       },
       animate: {
-        rotate: [null, -30, 400, 360],
+        rotate: [0, -30, 400, 360],
         transition: {
           duration: 1.2,
           times: [0, 0.25, 0.75, 1],
@@ -36,10 +36,10 @@ const animations = {
         x: 0,
       },
       animate: {
-        scale: [null, 0, 0, 1],
-        rotate: [null, 90, 90, 0],
-        y: [null, 6, 10, 0],
-        x: [null, -10, -6, 0],
+        scale: [1, 0, 0, 1],
+        rotate: [0, 90, 90, 0],
+        y: [0, 6, 10, 0],
+        x: [0, -10, -6, 0],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',

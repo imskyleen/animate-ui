@@ -10,12 +10,17 @@ import type { Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
-  type MotionTokens,
+  useTempoTransition,
 } from '../../../utils/motion';
+import {
+  OVERLAY_TRANSITION,
+  SHEET_TRANSITION,
+  toCssTiming,
+} from '../../../internal/modal-motion';
 
-// Same API as Base UI's Drawer.
+// Same API as Base UI's Drawer, with the motion of Animate UI v1's Sheet (v1
+// had no drawer).
 //
 // CSS-driven, not Motion: Base UI drives the swipe itself through CSS
 // variables (`--drawer-swipe-movement-*`, `--drawer-snap-point-offset`,
@@ -24,12 +29,16 @@ import {
 // transform while dragging, and waits for CSS transitions before unmounting.
 // A JavaScript animation layered on top would fight the finger. So the Popup
 // and the Backdrop get a small stylesheet (zero specificity, hoisted once by
-// React) and the timing as inline variables, which `tempo` reaches:
+// React) and their timing as inline variables, springs as the `linear()`
+// curve Motion itself would use, which `tempo` reaches:
 //
-// - Popup: rests at the swipe offset, starts and ends one full size off its
-//   edge. 600ms on the drawer curve in, 400ms out scaled by the release
-//   velocity, 0ms while the finger (or a nested drawer) drags it.
-// - Backdrop: fades with the swipe progress, same timing.
+// - Popup: v1's sheet. It rests at the swipe offset, starts and ends one full
+//   size off its edge and transparent, and slides and fades on v1's sheet
+//   spring (stiffness 150, damping 22) both ways; a swipe dismissal's exit is
+//   scaled by the release velocity, and nothing transitions while the finger
+//   (or a nested drawer) drags it.
+// - Backdrop: v1's overlay. It fades and un-blurs (opacity 0 → 1, blur(4px)
+//   → blur(0px)) in 200ms, easeInOut, both ways, and follows the swipe.
 // - Reduced motion: it fades in place; a swipe dismissal still leaves along
 //   the swipe.
 //
@@ -63,6 +72,7 @@ ${POPUP_IS('[data-swipe-direction="right"]')} { --animate-ui-drawer-closed: tran
 ${POPUP_IS('[data-swipe-direction="left"]')} { --animate-ui-drawer-closed: translate3d(-100%, 0, 0); }
 ${POPUP_IS(':is([data-starting-style], [data-ending-style])')} {
   transform: var(--closed-transform, var(--animate-ui-drawer-closed));
+  opacity: 0;
 }
 ${POPUP_IS('[data-ending-style]')} {
   transition-duration: calc(var(--drawer-swipe-strength, 1) * var(--animate-ui-drawer-exit-duration));
@@ -73,15 +83,15 @@ ${POPUP_IS(':is([data-swiping], [data-nested-drawer-swiping]):not([data-ending-s
 }
 ${POPUP_IS('[data-animate-ui-reduce]:not([data-swipe-dismiss]):is([data-starting-style], [data-ending-style])')} {
   transform: var(--animate-ui-drawer-rest);
-  opacity: 0;
 }
 ${BACKDROP_IS('')} {
   opacity: max(var(--drawer-overlay-min-opacity, 0), calc(1 - var(--drawer-swipe-progress, 0)));
-  transition-property: opacity;
+  filter: blur(0px);
+  transition-property: opacity, filter;
   transition-duration: var(--animate-ui-drawer-duration);
   transition-timing-function: var(--animate-ui-drawer-ease);
 }
-${BACKDROP_IS(':is([data-starting-style], [data-ending-style])')} { opacity: 0; }
+${BACKDROP_IS(':is([data-starting-style], [data-ending-style])')} { opacity: 0; filter: blur(4px); }
 ${BACKDROP_IS('[data-ending-style]')} {
   transition-duration: calc(var(--drawer-swipe-strength, 1) * var(--animate-ui-drawer-exit-duration));
   transition-timing-function: var(--animate-ui-drawer-exit-ease);
@@ -89,59 +99,48 @@ ${BACKDROP_IS('[data-ending-style]')} {
 ${BACKDROP_IS('[data-swiping]:not([data-ending-style])')} { transition-duration: 0ms; }
 `;
 
-/** Animate UI's additions to `Drawer.Popup` and `Drawer.Backdrop`. */
-type DrawerAnimationProps = {
+/** Animate UI's additions to `Drawer.Popup`. */
+type PopupAnimationProps = {
   /**
-   * Opening and snapping back. Defaults to `transition.drawer` (600ms, drawer
-   * curve). CSS-driven: only `duration` and a cubic-bezier `ease` apply.
+   * Opening (slide and fade in), snapping and easing back after a swipe that
+   * does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a
+   * tween keeps its `duration` and cubic-bezier or named `ease`.
+   * @default { type: 'spring', stiffness: 150, damping: 22 }
    */
   transition?: Transition;
   /**
-   * Closing, scaled by the swipe's release velocity. Defaults to
-   * `transition.drawerExit` (400ms). Only `duration` and `ease` apply.
+   * Closing (slide and fade out), scaled by a swipe's release velocity.
+   * Defaults to `transition`.
    */
   exitTransition?: Transition;
 };
 
-const NAMED_EASINGS: Record<string, string> = {
-  linear: 'linear',
-  easeIn: 'ease-in',
-  easeOut: 'ease-out',
-  easeInOut: 'ease-in-out',
+/** Animate UI's additions to `Drawer.Backdrop`. */
+type BackdropAnimationProps = {
+  /**
+   * Fade (and blur) in. CSS-driven, like the Popup's.
+   * @default { duration: 0.2, ease: 'easeInOut' }
+   */
+  transition?: Transition;
+  /** Fade (and blur) out. Defaults to `transition`. */
+  exitTransition?: Transition;
 };
 
-function toCssEase(ease: unknown): string | undefined {
-  if (Array.isArray(ease) && ease.length === 4 && ease.every(Number.isFinite))
-    return `cubic-bezier(${ease.join(', ')})`;
-  if (typeof ease === 'string') return NAMED_EASINGS[ease];
-  return undefined;
-}
-
-/** A Motion transition as CSS timing: `duration` (s → ms) and `ease`. */
-function toCssTiming(transition: Transition | undefined, fallback: Transition) {
-  const value = { ...fallback, ...transition } as {
-    duration?: number;
-    ease?: unknown;
-  };
-  const backup = fallback as { duration: number; ease: unknown };
-  return {
-    duration: `${(value.duration ?? backup.duration) * 1000}ms`,
-    ease: toCssEase(value.ease) ?? toCssEase(backup.ease) ?? 'ease-out',
-  };
-}
-
-function timingVariables(
-  tokens: MotionTokens,
+/** The timing variables of a part: `transition` both ways by default. */
+function useTimingVariables(
   transition: Transition | undefined,
   exitTransition: Transition | undefined,
+  fallback: Transition,
 ): React.CSSProperties {
-  const enter = toCssTiming(transition, tokens.transition.drawer);
-  const exit = toCssTiming(exitTransition, tokens.transition.drawerExit);
+  const enter = toCssTiming(useTempoTransition(transition ?? fallback));
+  const exit = toCssTiming(
+    useTempoTransition(exitTransition ?? transition ?? fallback),
+  );
   return {
-    '--animate-ui-drawer-duration': enter.duration,
-    '--animate-ui-drawer-ease': enter.ease,
-    '--animate-ui-drawer-exit-duration': exit.duration,
-    '--animate-ui-drawer-exit-ease': exit.ease,
+    '--animate-ui-drawer-duration': `${enter.duration}ms`,
+    '--animate-ui-drawer-ease': enter.easing,
+    '--animate-ui-drawer-exit-duration': `${exit.duration}ms`,
+    '--animate-ui-drawer-exit-ease': exit.easing,
   } as React.CSSProperties;
 }
 
@@ -176,7 +175,7 @@ function Popup(props: Popup.Props) {
   );
 }
 namespace Popup {
-  export type Props = DrawerPrimitive.Popup.Props & DrawerAnimationProps;
+  export type Props = DrawerPrimitive.Popup.Props & PopupAnimationProps;
   export type State = DrawerPrimitive.Popup.State;
 }
 
@@ -186,8 +185,12 @@ function PopupWithTiming({
   style,
   ...props
 }: Popup.Props) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
+  const variables = useTimingVariables(
+    transition,
+    exitTransition,
+    SHEET_TRANSITION,
+  );
 
   return (
     <>
@@ -196,10 +199,7 @@ function PopupWithTiming({
         {...props}
         data-animate-ui-drawer="popup"
         data-animate-ui-reduce={reduce ? '' : undefined}
-        style={withVariables(
-          timingVariables(tokens, transition, exitTransition),
-          style,
-        )}
+        style={withVariables(variables, style)}
       />
     </>
   );
@@ -211,7 +211,11 @@ function Backdrop({
   style,
   ...props
 }: Backdrop.Props) {
-  const tokens = useMotionTokens();
+  const variables = useTimingVariables(
+    transition,
+    exitTransition,
+    OVERLAY_TRANSITION,
+  );
 
   return (
     <>
@@ -219,16 +223,13 @@ function Backdrop({
       <DrawerPrimitive.Backdrop
         {...props}
         data-animate-ui-drawer="backdrop"
-        style={withVariables(
-          timingVariables(tokens, transition, exitTransition),
-          style,
-        )}
+        style={withVariables(variables, style)}
       />
     </>
   );
 }
 namespace Backdrop {
-  export type Props = DrawerPrimitive.Backdrop.Props & DrawerAnimationProps;
+  export type Props = DrawerPrimitive.Backdrop.Props & BackdropAnimationProps;
   export type State = DrawerPrimitive.Backdrop.State;
 }
 

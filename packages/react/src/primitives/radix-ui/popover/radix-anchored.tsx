@@ -1,12 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useIsPresent } from 'motion/react';
+import { motion } from 'motion/react';
 
 import {
   asMotion,
   useAnchoredMotion,
-  useTooltipWarmth,
   type AnchoredAnimationProps,
 } from '../../../internal/anchored';
 
@@ -46,7 +45,6 @@ type RadixAnchoredContentProps = AnchoredAnimationProps & {
   } & Record<string, unknown>;
   open: boolean;
   keepMounted: boolean;
-  kind: 'dropdown' | 'tooltip';
   /** Radix's transform-origin variable for this content. */
   origin: string;
 };
@@ -61,22 +59,13 @@ function RadixAnchoredContent({
   contentProps: { children, asChild, style, ...contentProps },
   open,
   keepMounted,
-  kind,
   origin,
   transition,
   exitTransition,
 }: RadixAnchoredContentProps) {
-  const isPresent = useIsPresent();
-  const warm = useTooltipWarmth({
-    enabled: kind === 'tooltip',
-    open: open && isPresent,
-    shown: !keepMounted || open,
-  });
   const motionProps = useAnchoredMotion({
-    kind,
     open,
     keepMounted,
-    skipEnter: warm,
     transition,
     exitTransition,
   });

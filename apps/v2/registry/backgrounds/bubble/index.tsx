@@ -31,12 +31,10 @@ function loop(
 }
 
 /**
- * A full turn from `from` degrees. The turns start apart so that the still
- * frame (reduced motion, paused) spreads the bubbles instead of stacking them.
+ * A full turn from `from` degrees. The turns start at 0; under reduced motion
+ * the still frame turns them apart so the bubbles spread instead of stacking.
  */
-const spin = (from: number) => ({
-  transform: [`rotate(${from}deg)`, `rotate(${from + 360}deg)`],
-});
+const spin = (from: number) => ({ rotate: [from, from + 360] });
 
 type BubbleColors = {
   first: string;
@@ -86,7 +84,8 @@ function BubbleBackgroundContent({
 
   const filterId = `bubble-goo-${React.useId().replace(/[^\w-]/g, '')}`;
 
-  // The follower tracks a mouse only: a tap would park it under the finger.
+  // The follower moves to the mouse (and to a tap, which browsers report as
+  // a mousemove), relative to the center of the container.
   React.useEffect(() => {
     if (!interactive || reduce) return;
 
@@ -94,8 +93,7 @@ function BubbleBackgroundContent({
     if (!el) return;
 
     let frameId: number | null = null;
-    const handlePointerMove = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') return;
+    const handleMouseMove = (e: MouseEvent) => {
       if (frameId != null) cancelAnimationFrame(frameId);
       frameId = requestAnimationFrame(() => {
         frameId = null;
@@ -105,9 +103,9 @@ function BubbleBackgroundContent({
       });
     };
 
-    el.addEventListener('pointermove', handlePointerMove, { passive: true });
+    el.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
-      el.removeEventListener('pointermove', handlePointerMove);
+      el.removeEventListener('mousemove', handleMouseMove);
       if (frameId != null) cancelAnimationFrame(frameId);
     };
   }, [interactive, reduce, mouseX, mouseY]);
@@ -163,14 +161,8 @@ function BubbleBackgroundContent({
           className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--first-color),0.8)_0%,rgba(var(--first-color),0)_50%)]"
           {...loop(
             playing,
-            {
-              transform: [
-                'translateY(-50px)',
-                'translateY(50px)',
-                'translateY(-50px)',
-              ],
-            },
-            { transform: 'translateY(-50px)' },
+            { y: [-50, 50, -50] },
+            { y: -50 },
             { duration: 30, ease: 'easeInOut', repeat: Infinity },
           )}
           style={{ willChange: 'transform' }}
@@ -180,8 +172,8 @@ function BubbleBackgroundContent({
           className="absolute inset-0 flex justify-center items-center origin-[calc(50%-400px)]"
           {...loop(
             playing,
-            spin(90),
-            { transform: 'rotate(90deg)' },
+            spin(0),
+            { rotate: reduce ? 90 : 0 },
             {
               duration: 20,
               ease: 'linear',
@@ -198,8 +190,8 @@ function BubbleBackgroundContent({
           className="absolute inset-0 flex justify-center items-center origin-[calc(50%+400px)]"
           {...loop(
             playing,
-            spin(180),
-            { transform: 'rotate(180deg)' },
+            spin(0),
+            { rotate: reduce ? 180 : 0 },
             { duration: 40, ease: 'linear', repeat: Infinity },
           )}
           style={{ willChange: 'transform' }}
@@ -211,14 +203,8 @@ function BubbleBackgroundContent({
           className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--fourth-color),0.8)_0%,rgba(var(--fourth-color),0)_50%)] opacity-70"
           {...loop(
             playing,
-            {
-              transform: [
-                'translateX(-50px)',
-                'translateX(50px)',
-                'translateX(-50px)',
-              ],
-            },
-            { transform: 'translateX(-50px)' },
+            { x: [-50, 50, -50] },
+            { x: -50 },
             { duration: 40, ease: 'easeInOut', repeat: Infinity },
           )}
           style={{ willChange: 'transform' }}
@@ -228,8 +214,8 @@ function BubbleBackgroundContent({
           className="absolute inset-0 flex justify-center items-center origin-[calc(50%_-_800px)_calc(50%_+_200px)]"
           {...loop(
             playing,
-            spin(45),
-            { transform: 'rotate(45deg)' },
+            spin(0),
+            { rotate: reduce ? 45 : 0 },
             { duration: 20, ease: 'linear', repeat: Infinity },
           )}
           style={{ willChange: 'transform' }}

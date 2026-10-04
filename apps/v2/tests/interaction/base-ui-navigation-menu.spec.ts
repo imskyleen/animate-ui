@@ -11,20 +11,23 @@ const size = (page: Page) =>
     .evaluate((el) => ({ width: (el as HTMLElement).offsetWidth }));
 
 test.describe('base-ui navigation-menu demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/base-ui/navigation-menu', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('the popup scales and fades in from its trigger', async ({ page }) => {
+  test('the popup scales and fades in from its trigger in 200ms', async ({
+    page,
+  }) => {
     const probe = await probeFirstFrame(page, POPUP);
     await page.getByRole('button', { name: 'Getting started' }).click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.95);
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
     const settled = await sample(page, POPUP);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
@@ -36,19 +39,32 @@ test.describe('base-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
+    // Sampled in the page: the resize only takes 200ms.
+    const widths = page.evaluate(
+      (selector) =>
+        new Promise<number[]>((resolve) => {
+          const seen: number[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const el = document.querySelector<HTMLElement>(selector);
+            if (el) seen.push(el.offsetWidth);
+            if (performance.now() - t0 < 700) requestAnimationFrame(tick);
+            else resolve(seen);
+          };
+          tick();
+        }),
+      POPUP,
+    );
     await page.getByRole('button', { name: 'Primitives' }).hover();
-    await page.waitForTimeout(100);
-    const during = await size(page);
-    await page.waitForTimeout(800);
+    const seen = await widths;
     const after = await size(page);
     expect(after.width).toBeGreaterThan(before.width);
-    expect(during.width).toBeGreaterThan(before.width);
-    expect(during.width).toBeLessThan(after.width);
+    expect(seen.some((w) => w > before.width + 1 && w < after.width - 1)).toBe(
+      true,
+    );
   });
 
-  test('the new content comes in from the side of its trigger', async ({
-    page,
-  }) => {
+  test('the new content fades in', async ({ page }) => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const probe = await probeFirstFrame(
@@ -60,14 +76,18 @@ test.describe('base-ui navigation-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
   });
 
-  test('closes faster than it opens, then unmounts', async ({ page }) => {
+  test('closes the same way, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'Getting started' }).click();
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(60);
-    expect((await sample(page, POPUP)).opacity).toBeLessThan(1);
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, POPUP)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     await expect(page.locator(POPUP)).toHaveCount(0, {
-      timeout: 450,
+      timeout: 600,
     });
   });
 
@@ -88,6 +108,7 @@ test.describe('base-ui navigation-menu demo', () => {
 });
 
 test.describe('base-ui navigation-menu API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/base-ui-navigation-menu', {
       waitUntil: 'networkidle',

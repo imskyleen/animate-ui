@@ -5,29 +5,35 @@ import * as React from 'react';
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   TAB_ATTRIBUTE,
-  TabsMotionProvider,
-  isKeyboardInput,
   useFinishAnimationsWhen,
-  usePanelEnters,
+  usePanelMotion,
   useTabsIndicator,
 } from '../../../internal/tabs';
 
-// Same API as Base UI's Tabs. The active tab's surface glides between tabs
-// (see ../../../internal/tabs), and the incoming panel fades in.
+// Same API as Base UI's Tabs, moving like Animate UI v1's Base UI Tabs (see
+// ../../../internal/tabs): the active tab's surface slides to the new tab,
+// and the incoming panel fades in from a blur while its height springs.
 
 /** Animate UI's additions to `Tabs.List`. */
 type ListAnimationProps = {
-  /** Transition of the indicator gliding to the active tab. Defaults to `spring.snappy`. */
+  /** Transition of the active tab's surface sliding to the new tab. Defaults to a spring (stiffness 200, damping 25). */
   transition?: Transition;
 };
 
 /** Animate UI's additions to `Tabs.Panel`. */
 type PanelAnimationProps = {
-  /** Transition of the incoming panel's fade. Defaults to `transition.fade` (600ms). */
+  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 200, damping 30). */
   transition?: Transition;
+};
+
+/** v1's TabsPanels spring: the panels' height. */
+const HEIGHT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 30,
 };
 
 // When the user renders Base UI's own `Tabs.Indicator`, the list doesn't
@@ -38,11 +44,9 @@ const CustomIndicatorContext = React.createContext<
 
 function Root(props: Root.Props) {
   return (
-    <TabsMotionProvider>
-      <ReducedMotionConfig>
-        <TabsPrimitive.Root {...props} />
-      </ReducedMotionConfig>
-    </TabsMotionProvider>
+    <ReducedMotionConfig>
+      <TabsPrimitive.Root {...props} />
+    </ReducedMotionConfig>
   );
 }
 
@@ -124,13 +128,13 @@ function Panel({ transition, ...props }: Panel.Props) {
     <TabsPrimitive.Panel
       {...props}
       // Base UI's props (className, style, hidden, data-*…) land on the
-      // motion.div; it only carries the fade.
+      // motion.div; it only carries the animation.
       render={(renderProps, state) => (
         <PanelMotion
           {...(renderProps as HTMLMotionProps<'div'>)}
           // A closing panel leaves at once: no exit, the two never overlap.
           active={!state.hidden && state.transitionStatus !== 'ending'}
-          fadeTransition={transition}
+          panelTransition={transition}
         />
       )}
     />
@@ -149,21 +153,22 @@ namespace Panel {
 function PanelMotion({
   ref,
   active,
-  fadeTransition,
+  panelTransition,
   hidden,
   ...props
 }: HTMLMotionProps<'div'> & {
   active: boolean;
-  fadeTransition: Transition | undefined;
+  panelTransition: Transition | undefined;
 }) {
-  const tokens = useMotionTokens();
-  const enters = usePanelEnters(active);
-  const localRef = React.useRef<HTMLDivElement>(null);
+  const {
+    ref: localRef,
+    initial,
+    animate,
+  } = usePanelMotion(active, {
+    transition: panelTransition,
+    heightTransition: HEIGHT_TRANSITION,
+  });
   useFinishAnimationsWhen(localRef, !active);
-  // Keyboard changes swap the panel at once.
-  const fade = isKeyboardInput()
-    ? tokens.transition.instant
-    : (fadeTransition ?? tokens.transition.fade);
 
   return (
     <motion.div
@@ -176,12 +181,8 @@ function PanelMotion({
       // Base UI keeps a closing panel mounted until its animations end:
       // hide it right away.
       hidden={hidden || !active}
-      initial={enters ? { opacity: 0 } : false}
-      animate={
-        active
-          ? { opacity: 1, transition: fade }
-          : { opacity: 0, transition: tokens.transition.instant }
-      }
+      initial={initial}
+      animate={animate}
     />
   );
 }

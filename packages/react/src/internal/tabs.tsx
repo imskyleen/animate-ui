@@ -1,25 +1,45 @@
 'use client';
 
 import * as React from 'react';
-import { motion, type Transition } from 'motion/react';
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  type AnimationPlaybackControls,
+  type Transition,
+} from 'motion/react';
 
-import { useMotionTokens } from '../utils/motion';
-import { isKeyboardInput, useInputModality } from './input-modality';
+import {
+  useMotionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../utils/motion';
 
-// Shared by the Radix UI, Base UI and React Aria tabs.
+// Shared by the Radix UI, Base UI and React Aria tabs. They move like Animate
+// UI v1's tabs:
+// - the active tab's surface slides to the new tab with a spring, the new
+//   surface fading in while the previous one fades out 200ms later (v1's
+//   Highlight, a shared layout animation);
+// - the tabs' text color changes over 500ms (v1's `transition-colors
+//   duration-500 ease-in-out`);
+// - the incoming panel fades in from a 4px blur over 500ms while its height
+//   springs from the previous panel's (v1's TabsContents); the outgoing one
+//   leaves at once.
+// Keyboard changes animate like clicks.
 //
 // shadcn/ui styles the active tab itself (its background, border, shadow and,
-// for the line variant, an ::after underline). To make that surface glide
+// for the line variant, an ::after underline). To make that surface slide
 // without touching the component, the list renders an indicator that copies
 // the active tab's classes and data attributes (so it looks exactly like the
 // active tab, in every style and theme) and sits behind the tabs, while a
-// small stylesheet hides the active tab's own surface. The indicator moves
-// with a layout animation (transforms), keyboard moves are instant.
+// small stylesheet hides the active tab's own surface.
 
 /** Set on every animated tab, so the stylesheet only touches ours. */
 const TAB_ATTRIBUTE = 'data-animate-ui-tab';
 /** Set on the list once its indicator is on screen. */
 const READY_ATTRIBUTE = 'data-animate-ui-indicator';
+/** The tabs' text color duration, on the list (paced by the tempo). */
+const COLOR_DURATION_VAR = '--animate-ui-tab-color-duration';
 
 // Unlayered, so it wins over Tailwind's layered utilities. The focus ring of
 // a keyboard-focused tab (border and box-shadow) stays on the tab.
@@ -27,6 +47,9 @@ const SURFACE_CSS = [
   `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}][aria-selected="true"]{background-color:transparent;background-image:none}`,
   `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}][aria-selected="true"]:not(:focus-visible){border-color:transparent;box-shadow:none}`,
   `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}][aria-selected="true"]::after{opacity:0}`,
+  // v1's tabs changed their colors over 500ms (`transition-colors
+  // duration-500 ease-in-out`, Tailwind's ease-in-out).
+  `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}]{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke;transition-duration:var(${COLOR_DURATION_VAR},.5s);transition-timing-function:cubic-bezier(.4,0,.2,1)}`,
 ].join('');
 
 // Data attributes the indicator copies from the active tab, minus identity and
@@ -34,8 +57,25 @@ const SURFACE_CSS = [
 const SKIPPED_ATTRIBUTE =
   /^data-(slot|animate-ui-.*|hovered|pressed|focused|focus-visible|highlighted|rac|key|radix-.*|composite-.*)$/;
 
+const INDICATOR_SLOT = 'tabs-indicator';
+
+/** v1's Highlight spring for the tabs (TabsHighlight). */
+const INDICATOR_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 25,
+};
+
+/** v1's Highlight `exitDelay`: the previous surface fades out 200ms later. */
+const EXIT_DELAY = 0.2;
+
+/** v1's tabs text color duration, in seconds. */
+const COLOR_DURATION = 0.5;
+
+const INSTANT: Transition = { duration: 0 };
+
 type IndicatorSnapshot = {
-  /** Bumped when another tab becomes active: only then does it glide. */
+  /** Bumped when another tab becomes active: only then does it slide. */
   version: number;
   tab: Element;
   x: number;
@@ -110,27 +150,34 @@ function readSnapshot(
   };
 }
 
+/** Changes inside the indicators (their own classes) don't move them. */
+function isInIndicator(node: Node) {
+  return (
+    node instanceof Element &&
+    node.closest(`[data-slot="${INDICATOR_SLOT}"]`) !== null
+  );
+}
+
 type TabsIndicatorOptions = {
   /** Off when the user renders the library's own indicator. */
   enabled?: boolean;
-  /** Transition of the glide. Defaults to `spring.snappy`. */
+  /** Transition of the slide. Defaults to v1's spring (stiffness 200, damping 25). */
   transition?: Transition;
 };
 
 /**
- * The gliding indicator of a tab list. Render `indicator` as a child of the
+ * The sliding indicator of a tab list. Render `indicator` as a child of the
  * list element and spread `listProps` on it.
  */
 function useTabsIndicator(
   list: HTMLElement | null,
   { enabled = true, transition }: TabsIndicatorOptions = {},
 ) {
-  useInputModality();
-  const tokens = useMotionTokens();
+  const layoutId = `animate-ui-tabs-indicator-${React.useId()}`;
+  const { tempo } = useMotionTokens();
   const [snapshot, setSnapshot] = React.useState<IndicatorSnapshot | null>(
     null,
   );
-  const indicatorRef = React.useRef<HTMLSpanElement>(null);
 
   React.useLayoutEffect(() => {
     if (!list || !enabled) return;
@@ -148,9 +195,7 @@ function useTabsIndicator(
         resize.observe(tab);
     };
     const mutations = new MutationObserver((records) => {
-      const indicator = indicatorRef.current;
-      if (records.every((r) => indicator && indicator.contains(r.target)))
-        return;
+      if (records.every((r) => isInIndicator(r.target))) return;
       observeTabs();
       update();
     });
@@ -177,10 +222,17 @@ function useTabsIndicator(
     };
   }, [list, enabled]);
 
-  // Keyboard moves are instant; pointer moves glide.
-  const glide = isKeyboardInput()
-    ? tokens.transition.instant
-    : (transition ?? tokens.spring.snappy);
+  React.useLayoutEffect(() => {
+    if (!list || !enabled) return;
+    list.style.setProperty(COLOR_DURATION_VAR, `${COLOR_DURATION * tempo}s`);
+  }, [list, enabled, tempo]);
+
+  const base = transition ?? INDICATOR_TRANSITION;
+  const slide = useTempoTransition(base);
+  const fadeOut = useTempoTransition({
+    ...base,
+    delay: (base.delay ?? 0) + EXIT_DELAY,
+  });
 
   // No indicator while disabled (the user renders the library's own).
   const visible = list && enabled ? snapshot : null;
@@ -190,29 +242,38 @@ function useTabsIndicator(
       <style href="animate-ui-tabs-indicator" precedence="animate-ui">
         {SURFACE_CSS}
       </style>
-      <motion.span
-        ref={indicatorRef}
-        aria-hidden
-        {...visible.attributes}
-        data-slot="tabs-indicator"
-        className={visible.className}
-        layout
-        layoutDependency={visible.version}
-        transition={glide}
-        style={{
-          position: 'absolute',
-          left: visible.x,
-          top: visible.y,
-          width: visible.width,
-          height: visible.height,
-          margin: 0,
-          zIndex: -1,
-          pointerEvents: 'none',
-          // The copied classes may carry a CSS transition (transition-all):
-          // Motion owns the movement.
-          transition: 'none',
-        }}
-      />
+      {/* One surface per active tab, sharing a layoutId (v1's Highlight):
+          the new one slides from the previous one's box while fading in, the
+          previous one follows it and fades out. */}
+      <AnimatePresence initial={false}>
+        <motion.span
+          key={visible.version}
+          aria-hidden
+          {...visible.attributes}
+          data-slot={INDICATOR_SLOT}
+          className={visible.className}
+          layoutId={layoutId}
+          // Only a change of tab slides it: a resize moves it at once.
+          layoutDependency={visible.version}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: fadeOut }}
+          transition={slide}
+          style={{
+            position: 'absolute',
+            left: visible.x,
+            top: visible.y,
+            width: visible.width,
+            height: visible.height,
+            margin: 0,
+            zIndex: -1,
+            pointerEvents: 'none',
+            // The copied classes may carry a CSS transition (transition-all):
+            // Motion owns the movement.
+            transition: 'none',
+          }}
+        />
+      </AnimatePresence>
     </>
   ) : null;
 
@@ -224,39 +285,145 @@ function useTabsIndicator(
   };
 }
 
-// Panels fade in when the selection changes after mount (never on page
-// load), and appear at once after a keyboard change.
+/** v1's panel entrance: a fade from a 4px blur, 500ms ease-in-out. */
+const PANEL_TRANSITION: Transition = { duration: 0.5, ease: 'easeInOut' };
+const PANEL_HIDDEN = { opacity: 0, filter: 'blur(4px)' };
+// Keyframes: a force-mounted panel becoming active again starts from hidden
+// too. The blur is dropped at rest: `filter` would make the panel the
+// containing block of its fixed descendants.
+const PANEL_ENTRANCE = {
+  opacity: [0, 1],
+  filter: ['blur(4px)', 'blur(0px)'],
+  transitionEnd: { filter: 'none' },
+};
+const PANEL_SHOWN = { opacity: 1, filter: 'none' };
 
-const TabsCommittedContext =
-  React.createContext<React.RefObject<boolean> | null>(null);
+/** Last height of the active panel, by the element holding the panels. */
+const panelHeights = new WeakMap<Element, number>();
 
-/** Wrap the tabs root: panels mounted after its first commit fade in. */
-function TabsMotionProvider({ children }: { children: React.ReactNode }) {
-  const committedRef = React.useRef(false);
-  React.useEffect(() => {
-    committedRef.current = true;
-  }, []);
-  return (
-    <TabsCommittedContext value={committedRef}>{children}</TabsCommittedContext>
-  );
-}
+type PanelMotionOptions = {
+  /** The user's `transition`, if any. */
+  transition: Transition | undefined;
+  /** v1's height spring of the library's panels container. */
+  heightTransition: Transition;
+};
 
 /**
- * Whether a panel should fade in: when it becomes active after the tabs
- * mounted (or mounts active after that), unless the keyboard changed it.
+ * A tab panel's motion (v1's TabsContent inside TabsContents): spread
+ * `initial` and `animate` on its motion element and pass `ref`.
+ *
+ * - The incoming panel fades in from a 4px blur, on mount (page load) too,
+ *   as in v1. A panel that leaves goes at once (hidden, or unmounted by the
+ *   library).
+ * - Its height springs from the previous panel's to its own, as v1's
+ *   TabsContents did around the panels: the panels share an element (the
+ *   tabs root, usually), which remembers the active one's height.
+ * - Under reduced motion the height jumps while the fade still plays.
+ *
+ * `transition` covers both: the fade, and `transition.height` (or the whole
+ * transition) for the height.
  */
-function usePanelEnters(active: boolean) {
-  const committed = React.use(TabsCommittedContext);
-  const [state, setState] = React.useState(() => ({
-    active,
-    enters: active && Boolean(committed?.current) && !isKeyboardInput(),
-  }));
-  if (state.active !== active) {
-    const next = { active, enters: active && !isKeyboardInput() };
-    setState(next);
-    return next.enters;
-  }
-  return state.enters;
+function usePanelMotion(
+  active: boolean,
+  { transition, heightTransition }: PanelMotionOptions,
+) {
+  const ref = React.useRef<HTMLElement | null>(null);
+  const reduce = useShouldReduceMotion();
+  const panelTransition = useTempoTransition(
+    transition ?? { ...PANEL_TRANSITION, height: heightTransition },
+  );
+  const heightSpring =
+    (panelTransition as { height?: Transition }).height ?? panelTransition;
+
+  // Read by the effect below, which only runs when the panel (de)activates.
+  const latestRef = React.useRef({ heightSpring, animateHeight: false });
+  React.useLayoutEffect(() => {
+    latestRef.current = { heightSpring, animateHeight: !reduce };
+  });
+
+  React.useLayoutEffect(() => {
+    const element = ref.current;
+    const holder = element?.parentElement;
+    if (!active || !element || !holder) return;
+
+    const { style } = element;
+    const own = {
+      minHeight: style.minHeight,
+      maxHeight: style.maxHeight,
+      overflow: style.overflow,
+    };
+    // Once: a stopped animation settles later, after a newer one started.
+    let restored = false;
+    const restore = () => {
+      if (restored) return;
+      restored = true;
+      style.minHeight = own.minHeight;
+      style.maxHeight = own.maxHeight;
+      style.overflow = own.overflow;
+    };
+
+    let controls: AnimationPlaybackControls | undefined;
+    const from = panelHeights.get(holder);
+    const to = element.offsetHeight;
+    if (
+      latestRef.current.animateHeight &&
+      from !== undefined &&
+      to > 0 &&
+      Math.abs(from - to) > 0.5
+    ) {
+      // The height is held between min-height and max-height: `height`
+      // alone loses to a flex basis (shadcn's panels are `flex-1`).
+      const computed = getComputedStyle(element);
+      const inset =
+        computed.boxSizing === 'border-box'
+          ? 0
+          : parseFloat(computed.paddingTop) +
+            parseFloat(computed.paddingBottom) +
+            parseFloat(computed.borderTopWidth) +
+            parseFloat(computed.borderBottomWidth);
+      const start = from - inset;
+      const end = to - inset;
+      // Held at the previous panel's height from the first frame, and
+      // clipped while it grows, as v1's container was.
+      style.minHeight = style.maxHeight = `${start}px`;
+      style.overflow = 'hidden';
+      // One keyframes array each (Motion resolves them in place), in px:
+      // Motion has no default unit for min-height.
+      const keyframes = () => [`${start}px`, `${end}px`];
+      const animation = animate(
+        element,
+        { minHeight: keyframes(), maxHeight: keyframes() },
+        latestRef.current.heightSpring,
+      );
+      // Back to its own height (auto) once there.
+      animation.then(restore, () => {});
+      controls = animation;
+    }
+
+    // Remembers this panel's height (while it springs too, so a quick
+    // switch starts from where it is).
+    const observer = new ResizeObserver(() => {
+      if (element.offsetHeight > 0)
+        panelHeights.set(holder, element.offsetHeight);
+    });
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+      controls?.stop();
+      restore();
+    };
+  }, [active]);
+
+  return {
+    ref,
+    initial: active ? PANEL_HIDDEN : (false as const),
+    // An inactive panel is hidden (or gone) by its library; React Aria's
+    // force-mounted ones stay as they are.
+    animate: active
+      ? { ...PANEL_ENTRANCE, transition: panelTransition }
+      : { ...PANEL_SHOWN, transition: INSTANT },
+  };
 }
 
 /**
@@ -277,9 +444,7 @@ function useFinishAnimationsWhen(
 export {
   TAB_ATTRIBUTE,
   useTabsIndicator,
-  TabsMotionProvider,
-  usePanelEnters,
+  usePanelMotion,
   useFinishAnimationsWhen,
-  isKeyboardInput,
   type TabsIndicatorOptions,
 };

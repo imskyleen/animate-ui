@@ -40,11 +40,12 @@ export function AccountMenu() {
 
 ## Animation
 
-React Aria's menus open in a `Popover`, so they get the [animated Popover](/docs/primitives/react-aria/popover):
+React Aria's menus open in a `Popover`, so they get the [animated Popover](/docs/primitives/react-aria/popover), which moves like Animate UI v1's Dropdown Menu content under a menu:
 
-- The menu fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--trigger-anchor-point`). It closes in 400ms, then unmounts.
-- Submenus (`SubmenuTrigger`) open in a Popover too: they fade in 400ms, without scaling.
-- `Menu` and `MenuItem` are React Aria's, untouched: moving the highlight with the arrow keys is never animated, and focus moves on the same frame.
+- The menu fades and scales in from 0.95, from the trigger (`--trigger-anchor-point`), in 200ms, and closes the same way before it unmounts.
+- Submenus (`SubmenuTrigger`) open in a Popover too, and move like their menu.
+- `Menu` and `MenuItem` are React Aria's, untouched: their highlight is your CSS.
+- Open from the start (`defaultOpen` on the `MenuTrigger`), the menu plays its entrance on page load, like v1.
 - Under reduced motion, it only fades.
 
 ## API Reference

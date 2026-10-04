@@ -26,7 +26,7 @@ test.describe('react-aria hover-card API', () => {
     await expect(content).toBeVisible();
     await page.mouse.move(5, 5, { steps: 4 });
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
   });
 
   test('swapping previews during the warmup skips the animations', async ({

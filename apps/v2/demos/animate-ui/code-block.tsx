@@ -30,7 +30,7 @@ export { MyComponent, type MyComponentProps };`
 export const controls = {
   CodeBlock: {
     delay: { value: 0, min: 0, max: 3000, step: 100 },
-    duration: { value: 4000, min: 0, max: 30000, step: 1000 },
+    duration: { value: 10000, min: 0, max: 30000, step: 1000 },
     writing: { value: true },
     cursor: { value: true },
   },
@@ -38,7 +38,7 @@ export const controls = {
 
 export default function CodeBlockDemo({
   delay = 0,
-  duration = 4000,
+  duration = 10000,
   writing = true,
   cursor = true,
 }: {

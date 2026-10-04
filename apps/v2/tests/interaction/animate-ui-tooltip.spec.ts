@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { probeFirstFrame, sample } from './motion-probe';
+import { probeFirstFrame } from './motion-probe';
 
 const CONTENT = '[data-slot="tooltip-content"]';
 
@@ -13,9 +13,13 @@ const trigger = (page: Page, name: string) =>
 const contentX = (page: Page) =>
   page
     .locator(CONTENT)
-    .evaluate((el) => el.getBoundingClientRect().left + (el as HTMLElement).offsetWidth / 2);
+    .evaluate(
+      (el) =>
+        el.getBoundingClientRect().left + (el as HTMLElement).offsetWidth / 2,
+    );
 
 test.describe('animate-ui tooltip', () => {
+  test.describe.configure({ timeout: 180_000 });
   test('opens on hover after the delay, described by the trigger', async ({
     page,
   }) => {
@@ -34,19 +38,78 @@ test.describe('animate-ui tooltip', () => {
     await expect(trigger(page, 'Bold')).toHaveAttribute('data-state', 'open');
   });
 
-  test('enters from 0.95 (never 0) and settles', async ({ page }) => {
+  test('grows from nothing, rising out of its trigger, then settles', async ({
+    page,
+  }) => {
     await open(page);
-    const probe = await probeFirstFrame(page, CONTENT);
+    const frames = page.evaluate(
+      (selector) =>
+        new Promise<{ scale: number; y: number; opacity: number }[]>(
+          (resolve) => {
+            const seen: { scale: number; y: number; opacity: number }[] = [];
+            const t0 = performance.now();
+            const tick = () => {
+              const el = document.querySelector(selector);
+              if (el) {
+                const m = new DOMMatrix(getComputedStyle(el).transform);
+                seen.push({
+                  scale: m.a,
+                  y: m.f,
+                  opacity: Number(getComputedStyle(el).opacity),
+                });
+              }
+              if (performance.now() - t0 < 1200) requestAnimationFrame(tick);
+              else resolve(seen);
+            };
+            tick();
+          },
+        ),
+      CONTENT,
+    );
     await trigger(page, 'Bold').hover();
-    const first = await probe.firstFrame();
-    expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
-    expect(first.scale).toBeLessThan(1);
+    const seen = await frames;
+    // v1: from scale 0 and 15px below (side "top"), on a critically damped
+    // spring (stiffness 300, damping 35): no overshoot.
+    expect(seen[0]!.scale).toBeLessThan(0.3);
+    expect(seen[0]!.y).toBeGreaterThan(5);
+    expect(seen[0]!.opacity).toBeLessThan(1);
+    expect(Math.max(...seen.map((f) => f.scale))).toBeLessThanOrEqual(1.001);
+    const last = seen.at(-1)!;
+    expect(last.opacity).toBe(1);
+    expect(last.scale).toBeCloseTo(1, 2);
+    expect(Math.abs(last.y)).toBeLessThan(0.5);
+  });
 
+  test('closes back into its trigger the same way', async ({ page }) => {
+    await open(page);
+    await trigger(page, 'Bold').hover();
+    await expect(page.getByRole('tooltip')).toBeVisible();
     await page.waitForTimeout(900);
-    const settled = await sample(page, CONTENT);
-    expect(settled.opacity).toBe(1);
-    expect(settled.scale).toBeCloseTo(1, 2);
+    const frames = page.evaluate(
+      (selector) =>
+        new Promise<{ scale: number; y: number }[]>((resolve) => {
+          const seen: { scale: number; y: number }[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const el = document.querySelector(selector);
+            if (el) {
+              const m = new DOMMatrix(getComputedStyle(el).transform);
+              seen.push({ scale: m.a, y: m.f });
+            }
+            if (el && performance.now() - t0 < 2000)
+              requestAnimationFrame(tick);
+            else resolve(seen);
+          };
+          tick();
+        }),
+      CONTENT,
+    );
+    await page.mouse.move(5, 5);
+    const seen = await frames;
+    // Shrinks towards nothing and sinks back down before it unmounts.
+    expect(Math.min(...seen.map((f) => f.scale))).toBeLessThan(0.2);
+    expect(Math.max(...seen.map((f) => f.y))).toBeGreaterThan(10);
+    await expect(page.locator(CONTENT)).toHaveCount(0);
   });
 
   test('moving to the next trigger glides the same popup', async ({ page }) => {

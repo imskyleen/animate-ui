@@ -25,10 +25,11 @@ export function Hero() {
 
 ## Animation
 
-- Stars drift across a canvas, wrap around its edges and glow.
-- Near the pointer (`mouseInfluence`), they are pulled in or pushed away (`mouseGravity`) and glow brighter. Leaving or lifting a finger releases them.
+- Stars drift across a canvas at `movementSpeed`, slow down little by little, wrap around its edges and glow.
+- Near the pointer (`mouseInfluence`), they are pulled in or pushed away (`mouseGravity`) and glow brighter. The pointer's last position keeps acting after it leaves (before the first move, it is the top-left corner).
 - The stars take the text color (`currentColor`), so they follow light and dark mode.
-- The canvas is sized to its container at the device pixel ratio, and runs at the same speed on 60Hz and 120Hz screens.
+- The canvas is sized to its container at the device pixel ratio. A resize scatters the stars again.
+- The simulation advances one step per displayed frame, so it runs faster on 120Hz screens.
 - It pauses off screen and while the tab is hidden.
 - Under reduced motion, the stars hold still.
 
@@ -64,7 +65,7 @@ export function Hero() {
       default: "'ease'",
     },
     movementSpeed: {
-      description: 'Drift speed of the stars, in pixels per frame (at 60 fps).',
+      description: 'Starting drift speed of the stars, in pixels per frame.',
       type: 'number',
       default: '0.3',
     },

@@ -5,11 +5,15 @@ const open = (page: Page) =>
     waitUntil: 'networkidle',
   });
 
+const bar = (page: Page) => page.locator('[data-slot="scroll-progress"]');
+
+/** The bar's width as a fraction of its track (its parent). */
 const progress = (page: Page) =>
-  page.locator('[data-slot="scroll-progress"]').evaluate((el) => {
-    const m = getComputedStyle(el).transform.match(/matrix\(([^,]+)/);
-    return m ? Number(m[1]) : 1;
-  });
+  bar(page).evaluate(
+    (el) =>
+      el.getBoundingClientRect().width /
+      el.parentElement!.getBoundingClientRect().width,
+  );
 
 const scrollTo = (page: Page, ratio: number) =>
   page.locator('[data-slot="scroll-progress-container"]').evaluate((el, r) => {
@@ -17,13 +21,16 @@ const scrollTo = (page: Page, ratio: number) =>
   }, ratio);
 
 test.describe('animate-ui scroll progress', () => {
-  test('starts empty, grows from the left', async ({ page }) => {
+  test('starts empty and grows in width, without a transform', async ({
+    page,
+  }) => {
     await open(page);
+    await expect(bar(page)).toHaveAttribute('data-mode', 'width');
     expect(await progress(page)).toBe(0);
-    await expect(page.locator('[data-slot="scroll-progress"]')).toHaveCSS(
-      'transform-origin',
-      /^0px /,
-    );
+    await scrollTo(page, 0.5);
+    await expect.poll(() => progress(page)).toBeGreaterThan(0.2);
+    // The width changes, so rounded ends keep their shape.
+    await expect(bar(page)).toHaveCSS('transform', 'none');
   });
 
   test('follows the scroll position smoothly', async ({ page }) => {

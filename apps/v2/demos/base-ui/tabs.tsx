@@ -85,19 +85,29 @@ const TABS = [
     value: "overview",
     label: "Overview",
     title: "Your week at a glance",
-    body: "12 tasks completed, 3 in review. You shipped 18% more than last week.",
+    lines: [
+      "12 tasks completed, 3 in review. You shipped 18% more than last week.",
+    ],
   },
   {
     value: "activity",
     label: "Activity",
     title: "Recent activity",
-    body: "Maya commented on the onboarding flow. Leo merged the pricing page.",
+    lines: [
+      "Maya commented on the onboarding flow.",
+      "Leo merged the pricing page.",
+      "Ana shipped the new dashboard.",
+      "Sam opened 2 issues on the API.",
+    ],
   },
   {
     value: "settings",
     label: "Settings",
     title: "Workspace settings",
-    body: "Notifications are on for mentions and reviews. Weekly digest every Monday.",
+    lines: [
+      "Notifications are on for mentions and reviews.",
+      "Weekly digest every Monday.",
+    ],
   },
 ]
 
@@ -111,16 +121,18 @@ export default function TabsDemo() {
           </TabsTrigger>
         ))}
       </TabsList>
-      {TABS.map((tab) => (
-        <TabsContent
-          key={tab.value}
-          value={tab.value}
-          className="rounded-lg border p-4"
-        >
-          <p className="font-medium">{tab.title}</p>
-          <p className="text-muted-foreground mt-1">{tab.body}</p>
-        </TabsContent>
-      ))}
+      <div className="rounded-lg border">
+        {TABS.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value} className="p-4">
+            <p className="font-medium">{tab.title}</p>
+            {tab.lines.map((line) => (
+              <p key={line} className="text-muted-foreground mt-1">
+                {line}
+              </p>
+            ))}
+          </TabsContent>
+        ))}
+      </div>
     </Tabs>
   )
 }

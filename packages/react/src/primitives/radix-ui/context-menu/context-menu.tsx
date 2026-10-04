@@ -5,17 +5,21 @@ import { ContextMenu as ContextMenuPrimitive } from 'radix-ui';
 import {
   createCheckboxItem,
   createContent,
+  createItem,
   createItemIndicator,
   createOpenRoot,
   createPortal,
   createRadioGroup,
   createRadioItem,
+  type IndicatorAnimationProps,
   type PresenceAnimationProps,
 } from '../_menu/menu';
 
-// Same API as Radix's Context Menu. The Root and each Sub mirror their open
-// state (Radix keeps it private) so the Content and SubContent can play an
-// exit before they unmount. The menu grows from the pointer.
+// Same API as Radix's Context Menu. It has no Animate UI v1 counterpart: it
+// moves like v1's DropdownMenu (a 200ms fade and scale from the pointer, a
+// highlight gliding behind the highlighted item, checks popping in). The Root
+// and each Sub mirror their open state (Radix keeps it private) so the
+// Content and SubContent can play an exit before they unmount.
 
 type ContextMenuProps = ContextMenuPrimitive.ContextMenuProps;
 type ContextMenuTriggerProps = ContextMenuPrimitive.ContextMenuTriggerProps;
@@ -31,7 +35,7 @@ type ContextMenuRadioGroupProps =
   ContextMenuPrimitive.ContextMenuRadioGroupProps;
 type ContextMenuRadioItemProps = ContextMenuPrimitive.ContextMenuRadioItemProps;
 type ContextMenuItemIndicatorProps =
-  ContextMenuPrimitive.ContextMenuItemIndicatorProps & PresenceAnimationProps;
+  ContextMenuPrimitive.ContextMenuItemIndicatorProps & IndicatorAnimationProps;
 type ContextMenuSeparatorProps = ContextMenuPrimitive.ContextMenuSeparatorProps;
 type ContextMenuArrowProps = ContextMenuPrimitive.ContextMenuArrowProps;
 type ContextMenuSubProps = ContextMenuPrimitive.ContextMenuSubProps;
@@ -50,7 +54,7 @@ const Content = createContent(ContextMenuPrimitive.Content, {
 });
 const Group = ContextMenuPrimitive.Group;
 const Label = ContextMenuPrimitive.Label;
-const Item = ContextMenuPrimitive.Item;
+const Item = createItem(ContextMenuPrimitive.Item);
 const CheckboxItem = createCheckboxItem(ContextMenuPrimitive.CheckboxItem);
 const RadioGroup = createRadioGroup(ContextMenuPrimitive.RadioGroup);
 const RadioItem = createRadioItem(ContextMenuPrimitive.RadioItem);
@@ -58,7 +62,7 @@ const ItemIndicator = createItemIndicator(ContextMenuPrimitive.ItemIndicator);
 const Separator = ContextMenuPrimitive.Separator;
 const Arrow = ContextMenuPrimitive.Arrow;
 const Sub = createOpenRoot(ContextMenuPrimitive.Sub);
-const SubTrigger = ContextMenuPrimitive.SubTrigger;
+const SubTrigger = createItem(ContextMenuPrimitive.SubTrigger);
 const SubContent = createContent(ContextMenuPrimitive.SubContent, {
   origin: '--radix-context-menu-content-transform-origin',
   sub: true,

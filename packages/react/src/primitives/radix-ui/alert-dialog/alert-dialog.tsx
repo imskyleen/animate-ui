@@ -6,8 +6,9 @@ import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 import { createRadixModal } from '../dialog/create-radix-modal';
 import type { ModalAnimationProps } from '../../../internal/modal-motion';
 
-// Same API as Radix's Alert Dialog, animated like the Dialog: the Overlay
-// fades, the Content scales from 0.95 around its center.
+// Same API as Radix's Alert Dialog, animated like the Dialog (Animate UI v1):
+// the Overlay fades and un-blurs, the Content tips forward from
+// `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring.
 
 type AlertDialogProps = AlertDialogPrimitive.AlertDialogProps;
 type AlertDialogTriggerProps = AlertDialogPrimitive.AlertDialogTriggerProps;
@@ -24,17 +25,23 @@ type AlertDialogDescriptionProps =
 
 /** Animate UI's additions to `AlertDialog.Overlay`. */
 type OverlayAnimationProps = {
-  /** Fade in. Defaults to `transition.modal` (600ms). */
+  /**
+   * Fade (and blur) in.
+   * @default { duration: 0.2, ease: 'easeInOut' }
+   */
   transition?: ModalAnimationProps['transition'];
-  /** Fade out. Defaults to `transition.modalExit` (400ms). */
+  /** Fade (and blur) out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
 /** Animate UI's additions to `AlertDialog.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the opening. Defaults to `transition.modal` (600ms). */
+  /**
+   * Transition of the opening.
+   * @default { type: 'spring', stiffness: 150, damping: 25 }
+   */
   transition?: ModalAnimationProps['transition'];
-  /** Transition of the closing. Defaults to `transition.modalExit` (400ms). */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

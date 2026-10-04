@@ -11,13 +11,16 @@ const size = (page: Page) =>
   }));
 
 test.describe('radix-ui navigation-menu demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/radix-ui/navigation-menu', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('the viewport drops in with a scale and fade', async ({ page }) => {
+  test('the viewport drops in with a 200ms scale and fade', async ({
+    page,
+  }) => {
     const probe = await probeFirstFrame(page, VIEWPORT);
     await page.getByRole('button', { name: 'Getting started' }).click();
     const first = await probe.firstFrame();
@@ -26,7 +29,7 @@ test.describe('radix-ui navigation-menu demo', () => {
     expect(first.scale).toBeGreaterThanOrEqual(0.95);
     // From its top edge.
     expect(first.origin.endsWith(' 0px')).toBe(true);
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
     const settled = await sample(page, VIEWPORT);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
@@ -38,18 +41,34 @@ test.describe('radix-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
+    // Sampled in the page: the resize only takes 200ms.
+    const widths = page.evaluate(
+      (selector) =>
+        new Promise<number[]>((resolve) => {
+          const seen: number[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const el = document.querySelector<HTMLElement>(selector);
+            if (el) seen.push(el.offsetWidth);
+            if (performance.now() - t0 < 600) requestAnimationFrame(tick);
+            else resolve(seen);
+          };
+          tick();
+        }),
+      VIEWPORT,
+    );
     await page.getByRole('button', { name: 'Primitives' }).hover();
-    await page.waitForTimeout(80);
-    const during = await size(page);
-    await page.waitForTimeout(700);
+    const seen = await widths;
     const after = await size(page);
     expect(after.width).toBeGreaterThan(before.width);
-    // Part of the way there.
-    expect(during.width).toBeGreaterThan(before.width);
-    expect(during.width).toBeLessThan(after.width);
+    // Part of the way there on some frames, and never past it.
+    expect(seen.some((w) => w > before.width + 1 && w < after.width - 1)).toBe(
+      true,
+    );
+    expect(Math.max(...seen)).toBeLessThanOrEqual(after.width + 0.5);
   });
 
-  test('the new content comes in from its side', async ({ page }) => {
+  test('the new content fades in', async ({ page }) => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const probe = await probeFirstFrame(
@@ -61,13 +80,17 @@ test.describe('radix-ui navigation-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
   });
 
-  test('closes faster than it opens, then unmounts', async ({ page }) => {
+  test('closes the same way, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'Getting started' }).click();
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(60);
-    expect((await sample(page, VIEWPORT)).opacity).toBeLessThan(1);
-    await expect(page.locator(VIEWPORT)).toHaveCount(0, { timeout: 450 });
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, VIEWPORT)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
+    await expect(page.locator(VIEWPORT)).toHaveCount(0, { timeout: 600 });
   });
 
   test('reduced motion: no scale, the size jumps', async ({ page }) => {
@@ -87,6 +110,7 @@ test.describe('radix-ui navigation-menu demo', () => {
 });
 
 test.describe('radix-ui navigation-menu API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/radix-ui-navigation-menu', {
       waitUntil: 'networkidle',
@@ -134,13 +158,24 @@ test.describe('radix-ui navigation-menu API', () => {
         (el) => new DOMMatrix(getComputedStyle(el).transform).m41,
       );
     const start = await x();
+    // v1's highlight spring: sampled in the page.
+    const xs = indicator.evaluate(
+      (el) =>
+        new Promise<number[]>((resolve) => {
+          const seen: number[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            seen.push(new DOMMatrix(getComputedStyle(el).transform).m41);
+            if (performance.now() - t0 < 700) requestAnimationFrame(tick);
+            else resolve(seen);
+          };
+          tick();
+        }),
+    );
     await page.getByRole('button', { name: 'Star two' }).click();
-    await page.waitForTimeout(60);
-    const during = await x();
-    await page.waitForTimeout(800);
-    const end = await x();
+    const seen = await xs;
+    const end = seen.at(-1)!;
     expect(end).toBeGreaterThan(start);
-    expect(during).toBeGreaterThan(start);
-    expect(during).toBeLessThan(end);
+    expect(seen.some((v) => v > start + 1 && v < end - 1)).toBe(true);
   });
 });

@@ -42,8 +42,8 @@ Icons inside an `AnimateIcon` inherit its props and can override them individual
 ### Triggers
 
 - `animate`: animates while `true` (or plays the named animation).
-- `animateOnHover`: plays while a mouse hovers. Touch screens ignore it.
-- `animateOnTap`: a tap plays the whole animation once.
+- `animateOnHover`: animates while the pointer is over the icon, and returns to rest when it leaves.
+- `animateOnTap`: animates while pressed, and returns to rest on release or when the pointer leaves. Add `completeOnStop` to always finish the animation.
 - `animateOnView`: plays when the icon scrolls into view (`animateOnViewMargin`, `animateOnViewOnce`).
 
 ### Animations
@@ -56,7 +56,7 @@ Every icon has a `default` animation, often a few named ones, plus `path` (draws
 
 ### Timing
 
-- `speed`: playback rate (`2` is twice as fast). Defaults to the authored timing, and follows `AnimateUIProvider`'s `tempo`.
+- `speed`: playback rate (`2` is twice as fast). At `1`, the default, icons play exactly as authored. It follows `AnimateUIProvider`'s `tempo`.
 - `delay`: milliseconds before the animation starts.
 - `loop`, `loopDelay`: repeat, with a pause between iterations.
 
@@ -88,12 +88,12 @@ Under reduced motion, icons don't animate.
       default: 'false',
     },
     animateOnHover: {
-      description: 'Animate while hovered (fine pointers only).',
+      description: 'Animate while hovered.',
       type: 'boolean | string',
       default: 'false',
     },
     animateOnTap: {
-      description: 'Play the animation once on tap.',
+      description: 'Animate while pressed.',
       type: 'boolean | string',
       default: 'false',
     },

@@ -28,9 +28,9 @@ test.describe('animate-ui code-block', () => {
       await block(page).locator('.line span[style*="color"]').count(),
     ).toBeGreaterThan(0);
 
-    // 4s duration.
+    // 10s duration.
     await expect(block(page)).toHaveAttribute('data-done', 'true', {
-      timeout: 6000,
+      timeout: 14000,
     });
     await expect(block(page)).toContainText(LAST_LINE);
   });

@@ -1,12 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { AnimatePresence, motion, useIsPresent } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
 import {
   asMotion,
   useAnchoredMotion,
-  useTooltipWarmth,
   type AnchoredAnimationProps,
 } from '../../../internal/anchored';
 
@@ -57,7 +56,7 @@ function BaseAnchoredPortal({
   if (keepMounted) return <Portal {...portalProps} keepMounted />;
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {open && <Portal key="portal" {...portalProps} keepMounted />}
     </AnimatePresence>
   );
@@ -81,7 +80,6 @@ type BaseAnchoredPopupProps = AnchoredAnimationProps & {
   >;
   open: boolean;
   keepMounted: boolean;
-  kind: 'dropdown' | 'tooltip';
 };
 
 const ORIGIN = 'var(--transform-origin)';
@@ -95,21 +93,12 @@ function BaseAnchoredPopup({
   popupProps: { render, style, ...popupProps },
   open,
   keepMounted,
-  kind,
   transition,
   exitTransition,
 }: BaseAnchoredPopupProps) {
-  const isPresent = useIsPresent();
-  const warm = useTooltipWarmth({
-    enabled: kind === 'tooltip',
-    open: open && isPresent,
-    shown: !keepMounted || open,
-  });
   const motionProps = useAnchoredMotion({
-    kind,
     open,
     keepMounted,
-    skipEnter: warm,
     transition,
     exitTransition,
   });

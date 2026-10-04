@@ -101,6 +101,46 @@ const { duration, spring, transition } = motionTokens;
 
 const MotionTokensContext = React.createContext<MotionTokens>(motionTokens);
 
+const TIME_KEYS = ['duration', 'delay', 'repeatDelay', 'delayChildren'];
+
+/**
+ * Time-scales a transition by `tempo` (1 = as written): durations and delays
+ * are multiplied, and a stiffness/damping spring keeps its exact shape
+ * (stiffness / tempo², damping / tempo). Per-value transitions
+ * (`{ opacity: {…}, default: {…} }`) are scaled too.
+ *
+ * Primitives write their transitions literally (the production values) and
+ * pass them through this, so `AnimateUIProvider`'s tempo reaches springs too.
+ */
+function scaleTransition<T extends Transition | undefined>(
+  transition: T,
+  tempo: number,
+): T {
+  if (!transition || tempo === 1 || typeof transition !== 'object')
+    return transition;
+  const scaled: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(transition)) {
+    if (typeof value === 'number' && TIME_KEYS.includes(key))
+      scaled[key] = value * tempo;
+    else if (typeof value === 'number' && key === 'stiffness')
+      scaled[key] = value / (tempo * tempo);
+    else if (typeof value === 'number' && key === 'damping')
+      scaled[key] = value / tempo;
+    else if (value && typeof value === 'object' && !Array.isArray(value))
+      scaled[key] = scaleTransition(value as Transition, tempo);
+    else scaled[key] = value;
+  }
+  return scaled as T;
+}
+
+/** `scaleTransition` with the tempo of the closest `AnimateUIProvider`. */
+function useTempoTransition<T extends Transition | undefined>(
+  transition: T,
+): T {
+  const { tempo } = React.use(MotionTokensContext);
+  return scaleTransition(transition, tempo);
+}
+
 /** The tokens of the closest `AnimateUIProvider`, or the defaults. */
 function useMotionTokens(): MotionTokens {
   return React.use(MotionTokensContext);
@@ -190,6 +230,8 @@ export {
   transition,
   ReducedMotionConfig,
   useShouldReduceMotion,
+  scaleTransition,
+  useTempoTransition,
   type ReducedMotionConfigProps,
   type MotionTokens,
 };

@@ -15,10 +15,15 @@ import {
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
-import { motionRender } from '../../../internal/modal-motion';
+import {
+  OVERLAY_TRANSITION,
+  SHEET_TRANSITION,
+  motionRender,
+  toCssTiming,
+} from '../../../internal/modal-motion';
 
 // A drop-in replacement for Vaul (https://vaul.emilkowal.ski), with exactly
 // its public API: the `Drawer` object and its parts, the same props and the
@@ -35,6 +40,14 @@ import { motionRender } from '../../../internal/modal-motion';
 // Radix unmounts closed content at once: the Portal gates itself with
 // AnimatePresence and passes `forceMount` down, and the Overlay and the
 // Content play their exit through `usePresence`.
+//
+// Its motion is Animate UI v1's Sheet (v1 had no drawer): every move of the
+// position (opening, closing, snapping, settling back after a drag) runs on
+// v1's sheet spring (stiffness 150, damping 22), and the drawer fades in and
+// out with it as v1's sheet did (opacity 0 ↔ 1, never during a drag). The
+// overlay fades and un-blurs like v1's (opacity 0 → 1, blur(4px) → blur(0px),
+// 200ms easeInOut); once a drag has moved the drawer, or with snap points, it
+// also follows the position, like Vaul's.
 
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
@@ -53,6 +66,9 @@ const DOUBLE_TAP_TIMEOUT = 120;
 /** Rubber band past the open position: slope at the start, then a limit. */
 const RUBBER_BAND_FACTOR = 0.5;
 const RUBBER_BAND_LIMIT = 48;
+/** v1's overlay blur, in px, while it fades. */
+const OVERLAY_BLUR = 4;
+const INSTANT: Transition = { duration: 0 };
 
 type Direction = 'top' | 'bottom' | 'left' | 'right';
 type SnapPoint = number | string;
@@ -178,22 +194,26 @@ type DialogProps = {
 /** Animate UI's additions to `Drawer.Content`. */
 type ContentAnimationProps = {
   /**
-   * Opening, moving between snap points and settling back after a drag that
-   * doesn't dismiss. Defaults to `transition.drawer` (600ms, drawer curve).
+   * Opening (slide and fade in), moving between snap points and settling back
+   * after a drag that doesn't dismiss.
+   * @default { type: 'spring', stiffness: 150, damping: 22 }
    */
   transition?: Transition;
   /**
-   * Closing, a drag dismissal included (it continues from where the finger
-   * let go). Defaults to `transition.drawerExit` (400ms, drawer curve).
+   * Closing (slide and fade out), a drag dismissal included: it continues
+   * from where the finger let go. Defaults to `transition`.
    */
   exitTransition?: Transition;
 };
 
 /** Animate UI's additions to `Drawer.Overlay`. */
 type OverlayAnimationProps = {
-  /** Fade in. Defaults to `transition.drawer` (600ms, drawer curve). */
+  /**
+   * Fade (and blur) in.
+   * @default { duration: 0.2, ease: 'easeInOut' }
+   */
   transition?: Transition;
-  /** Fade out. Defaults to `transition.drawerExit` (400ms, drawer curve). */
+  /** Fade (and blur) out. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -245,6 +265,8 @@ type DrawerContextValue = {
   setActiveSnapPoint: (snapPoint: SnapPoint | null) => void;
   shouldFade: boolean;
   position: MotionValue<number>;
+  /** 1 once a drag has moved it since it opened: the overlay follows it. */
+  dragged: MotionValue<number>;
   /** 0 → 1 while a nested drawer is open: this one steps back. */
   nestedShift: MotionValue<number>;
   getGeometry: () => Geometry;
@@ -296,6 +318,16 @@ function useLatest<T>(value: T) {
     ref.current = value;
   });
   return ref;
+}
+
+/**
+ * Starts an animation on the next frame (the effect's cleanup cancels it), so
+ * the commit that mounts or closes the drawer doesn't eat its first frames,
+ * as Motion's own enter and exit animations start.
+ */
+function onNextFrame(start: () => void) {
+  const id = requestAnimationFrame(start);
+  return () => cancelAnimationFrame(id);
 }
 
 function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
@@ -370,8 +402,9 @@ function DrawerRoot({
   container,
   autoFocus = false,
 }: DialogProps) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
+  // v1's sheet spring, for the nested step back and the snap point reset.
+  const sheet = useTempoTransition<Transition>(SHEET_TRANSITION);
   // The drawer this one is nested in, if any.
   const parent = React.use(DrawerContext);
 
@@ -440,6 +473,7 @@ function DrawerRoot({
   }, [shouldAnimate]);
 
   const position = useMotionValue(0);
+  const dragged = useMotionValue(0);
   const nestedShift = useMotionValue(0);
 
   const geometryRef = React.useRef<Geometry>({ size: 0, closed: 0 });
@@ -496,7 +530,7 @@ function DrawerRoot({
     if (snapPoints) {
       resetTimerRef.current = window.setTimeout(
         () => setActiveSnapPoint(snapPoints[0] ?? null),
-        tokens.duration.drawerExit * 1000,
+        toCssTiming(sheet).duration,
       );
     }
   };
@@ -512,18 +546,14 @@ function DrawerRoot({
     if (reduce) nestedShift.jump(to);
     else animate(nestedShift, to, transition);
   };
-  const onNestedOpenChange = (open: boolean) =>
-    moveShift(
-      open ? 1 : 0,
-      open ? tokens.transition.drawer : tokens.transition.drawerExit,
-    );
+  const onNestedOpenChange = (open: boolean) => moveShift(open ? 1 : 0, sheet);
   const onNestedDrag = (percentageDragged: number) => {
     if (percentageDragged < 0) return;
     nestedShift.stop();
     nestedShift.set(1 - clamp01(percentageDragged));
   };
   const onNestedRelease = (open: boolean) => {
-    if (open) moveShift(1, tokens.transition.drawer);
+    if (open) moveShift(1, sheet);
   };
 
   // As a nested drawer: tell the parent.
@@ -560,6 +590,7 @@ function DrawerRoot({
     setActiveSnapPoint,
     shouldFade,
     position,
+    dragged,
     nestedShift,
     getGeometry,
     setGeometry,
@@ -678,26 +709,37 @@ function OverlayMotion({
 }: OverlayProps &
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
-  const tokens = useMotionTokens();
+  const enter = useTempoTransition(transition ?? OVERLAY_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? OVERLAY_TRANSITION,
+  );
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
   const hasSnapPoints = Boolean(context.snapPoints?.length);
 
-  // Its own fade, capped by the drawer's position: it follows the drag.
+  // Its own fade (v1's overlay: opacity and blur). Once a drag has moved the
+  // drawer, or with snap points (Vaul's `fadeFromIndex`), it's capped by the
+  // drawer's position too: it follows the drag.
   const presence = useMotionValue(0);
+  const linkedRef = useLatest(hasSnapPoints);
   const opacity = useTransform(
-    [presence, context.position],
-    ([fade, value]: number[]) =>
-      Math.min(fade!, context.overlayProgress(value!)),
+    [presence, context.position, context.dragged],
+    ([fade, value, dragged]: number[]) =>
+      linkedRef.current || dragged
+        ? Math.min(fade!, context.overlayProgress(value!))
+        : fade!,
+  );
+  const filter = useTransform(
+    presence,
+    (fade) => `blur(${OVERLAY_BLUR * (1 - fade)}px)`,
   );
 
   const [settled, setSettled] = React.useState(!visible);
   if (visible && settled) setSettled(false);
 
   const liveRef = useLatest({
-    tokens,
-    transition,
-    exitTransition,
+    enter,
+    exit,
     isPresent,
     safeToRemove,
     shouldAnimate: context.shouldAnimate,
@@ -706,24 +748,25 @@ function OverlayMotion({
   const generationRef = React.useRef(0);
 
   React.useLayoutEffect(() => {
-    const { tokens, transition, exitTransition, shouldAnimate } =
-      liveRef.current;
+    const { enter, exit, shouldAnimate } = liveRef.current;
     const id = ++generationRef.current;
     const isFirst = firstRef.current;
     firstRef.current = false;
 
     if (visible) {
-      if (isFirst && !shouldAnimate) presence.jump(1);
-      else animate(presence, 1, transition ?? tokens.transition.drawer);
-      return;
+      if (isFirst && !shouldAnimate) {
+        presence.jump(1);
+        return;
+      }
+      return onNextFrame(() => animate(presence, 1, enter));
     }
     if (isFirst) return;
-    animate(presence, 0, exitTransition ?? tokens.transition.drawerExit).then(
-      () => {
+    return onNextFrame(() =>
+      animate(presence, 0, exit).then(() => {
         if (generationRef.current !== id) return;
         if (!liveRef.current.isPresent) liveRef.current.safeToRemove?.();
         else setSettled(true);
-      },
+      }),
     );
   }, [visible, presence, liveRef]);
 
@@ -743,7 +786,7 @@ function OverlayMotion({
         // Once closed (exiting, or kept mounted), clicks go through to the
         // page: Radix sets `pointer-events: auto` on the overlay.
         style: closedStyle(
-          { ...style, opacity },
+          { ...style, opacity, filter },
           visible,
           keepMounted && !visible && settled,
         ),
@@ -805,8 +848,12 @@ function ContentMotion({
 }: ContentProps &
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
+  // v1's sheet spring, both ways unless `exitTransition` is given.
+  const enter = useTempoTransition(transition ?? SHEET_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? SHEET_TRANSITION,
+  );
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
 
@@ -818,9 +865,7 @@ function ContentMotion({
     ? (context.snapDistances[context.activeSnapPointIndex ?? 0] ?? 0)
     : 0;
 
-  const enter = transition ?? tokens.transition.drawer;
-  const exit = exitTransition ?? tokens.transition.drawerExit;
-  const instant = tokens.transition.instant;
+  const instant = INSTANT;
   // Under reduced motion it fades in place, and settles without moving.
   const settle = reduce ? instant : enter;
 
@@ -924,6 +969,8 @@ function ContentMotion({
     const { closed } = context.getGeometry();
 
     if (visible) {
+      // A new opening: the overlay fades on its own until the next drag.
+      context.dragged.jump(0);
       if (isFirst) {
         if (!context.shouldAnimate) {
           // `defaultOpen`: already there.
@@ -933,7 +980,7 @@ function ContentMotion({
           return;
         }
         position.jump(sign * (reduce ? restDistance : closed));
-        opacity.jump(reduce ? 0 : 1);
+        opacity.jump(0);
         // Before the first paint: Motion writes the style on its next frame.
         const node = elementRef.current;
         if (node) {
@@ -945,34 +992,37 @@ function ContentMotion({
           node.style.opacity = String(opacity.get());
         }
       }
-      moveTo(restDistance, reduce ? instant : enter, [
-        1,
-        reduce ? enter : instant,
-      ]).then((done) => {
-        if (done) liveRef.current.context.onAnimationEnd(true);
-      });
-      return;
+      // v1's sheet: it slides and fades in on the same spring.
+      targetRef.current = restDistance;
+      return onNextFrame(() =>
+        moveTo(restDistance, reduce ? instant : enter, [1, enter]).then(
+          (done) => {
+            if (done) liveRef.current.context.onAnimationEnd(true);
+          },
+        ),
+      );
     }
 
     if (isFirst) {
       // Mounted closed (`forceMount`).
       position.jump(sign * closed);
-      opacity.jump(reduce ? 0 : 1);
+      opacity.jump(0);
       targetRef.current = closed;
       return;
     }
-    // From wherever it is: a drag dismissal continues from the release.
-    const from = position.get() * sign;
-    moveTo(reduce ? from : closed, reduce ? instant : exit, [
-      reduce ? 0 : 1,
-      reduce ? exit : instant,
-    ]).then((done) => {
-      if (!done) return;
-      const { context, isPresent, safeToRemove } = liveRef.current;
-      context.onAnimationEnd(false);
-      if (!isPresent) safeToRemove?.();
-      else setSettled(true);
-    });
+    // From wherever it is: a drag dismissal continues from the release. It
+    // slides and fades out on the same spring, like v1's sheet.
+    const to = reduce ? position.get() * sign : closed;
+    targetRef.current = to;
+    return onNextFrame(() =>
+      moveTo(to, reduce ? instant : exit, [0, exit]).then((done) => {
+        if (!done) return;
+        const { context, isPresent, safeToRemove } = liveRef.current;
+        context.onAnimationEnd(false);
+        if (!isPresent) safeToRemove?.();
+        else setSettled(true);
+      }),
+    );
   }, [visible, liveRef, measure, moveTo, position, opacity]);
 
   // A new snap point (dragged, cycled with the Handle, controlled, resized).
@@ -1140,6 +1190,8 @@ function ContentMotion({
   const startDrag = (current: Press) => {
     generationRef.current++;
     position.stop();
+    // From now on, the overlay follows the drawer's position too.
+    context.dragged.jump(1);
     current.dragging = true;
     current.start = position.get() * sign;
     elementRef.current!.classList.add(DRAG_CLASS);

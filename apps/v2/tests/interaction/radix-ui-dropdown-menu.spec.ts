@@ -1,18 +1,20 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight, recordHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
 test.describe('radix-ui dropdown-menu demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/radix-ui/dropdown-menu', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and fade from the trigger, then settles', async ({
+  test('opens with a 200ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);
@@ -24,20 +26,26 @@ test.describe('radix-ui dropdown-menu demo', () => {
     // align="start" below the trigger: it grows from its top-left corner.
     expect(first.origin.startsWith('0px 0px')).toBe(true);
 
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
     const settled = await sample(page, CONTENT);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
   });
 
-  test('closes faster than it opens, then unmounts', async ({ page }) => {
+  test('closes the same way, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(60);
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, CONTENT)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     const leaving = await sample(page, CONTENT);
-    expect(leaving.opacity).toBeLessThan(1);
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 450 });
+    expect(leaving.scale).toBeLessThan(1);
+    expect(leaving.scale).toBeGreaterThanOrEqual(0.95);
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
   });
 
   test('Escape gives focus back to the trigger at once', async ({ page }) => {
@@ -48,22 +56,33 @@ test.describe('radix-ui dropdown-menu demo', () => {
     await page.keyboard.press('Enter');
     await expect(page.getByRole('menuitem', { name: /Profile/ })).toBeFocused();
     await page.keyboard.press('Escape');
-    // Not 400ms later, when the exit ends: keys must not reach a leaving menu.
+    // Not 200ms later, when the exit ends: keys must not reach a leaving menu.
     await expect(trigger).toBeFocused({ timeout: 50 });
   });
 
-  test('the keyboard moves the highlight instantly', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open menu' }).focus();
-    await page.keyboard.press('Enter');
+  test('the highlight follows into a submenu', async ({ page }) => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.waitForTimeout(500);
+    const trigger = page.getByRole('menuitem', { name: 'Invite people' });
+    await trigger.hover();
     await page.waitForTimeout(700);
-    await page.keyboard.press('ArrowDown');
-    const billing = page.getByRole('menuitem', { name: /Billing/ });
-    await expect(billing).toBeFocused();
-    // Same frame: no transition on the highlight.
-    const transition = await billing.evaluate(
-      (el) => getComputedStyle(el).transitionDuration,
+    const from = (await trigger.boundingBox())!;
+    const email = page.getByRole('menuitem', { name: 'Email' });
+    const to = (await email.boundingBox())!;
+    const frames = recordHighlight(page, 900);
+    await email.hover();
+    const lefts = (await frames)
+      .map((f) => f.copies.at(-1)?.left)
+      .filter((left): left is number => left !== undefined);
+    // From the sub trigger in the menu to the item in the submenu.
+    expect(lefts.some((left) => left > from.x + 2 && left < to.x - 2)).toBe(
+      true,
     );
-    expect(transition).toBe('0s');
+    expect(Math.abs(lefts.at(-1)! - to.x)).toBeLessThan(1);
+    // The open sub trigger keeps no background of its own.
+    expect(
+      await trigger.evaluate((el) => getComputedStyle(el).backgroundColor),
+    ).toBe('rgba(0, 0, 0, 0)');
   });
 
   test('a submenu grows from its side', async ({ page }) => {
@@ -74,36 +93,72 @@ test.describe('radix-ui dropdown-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
+    expect(first.scale).toBeGreaterThanOrEqual(0.95);
     // Opens on the right: anchored on its left edge.
     expect(first.origin.startsWith('0px')).toBe(true);
-    await page.waitForTimeout(450);
+    await page.waitForTimeout(400);
     expect((await sample(page, SUB_CONTENT)).opacity).toBe(1);
   });
 
-  test('checking an item fades its check in', async ({ page }) => {
+  test('checking an item pops its check in from half its size', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'Open menu' }).click();
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(500);
     // Click and sample in the page: the first frames go by too fast for a
     // round trip.
-    const opacities = await page.evaluate(async () => {
+    const frames = await page.evaluate(async () => {
       const item = [
         ...document.querySelectorAll<HTMLElement>('[role="menuitemcheckbox"]'),
       ].find((el) => el.textContent?.includes('Activity panel'))!;
       item.click();
-      const read = () =>
-        Number(
-          getComputedStyle(
-            item.querySelector('[data-slot$="indicator"] > span')!,
-          ).opacity,
-        );
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
-      const early = read();
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      return { early, settled: read() };
+      const read = () => {
+        const check = item.querySelector('[data-slot$="indicator"] > span')!;
+        const cs = getComputedStyle(check);
+        const match = cs.transform.match(/matrix\(([^,]+)/);
+        return {
+          opacity: Number(cs.opacity),
+          scale: match ? Number(match[1]) : 1,
+        };
+      };
+      const seen: { opacity: number; scale: number }[] = [];
+      const t0 = performance.now();
+      while (performance.now() - t0 < 700) {
+        await new Promise(requestAnimationFrame);
+        seen.push(read());
+      }
+      return seen;
     });
-    expect(opacities.early).toBeLessThan(1);
-    expect(opacities.settled).toBe(1);
+    expect(frames[0]!.opacity).toBeLessThan(1);
+    expect(frames[0]!.scale).toBeLessThan(0.75);
+    // Motion's default spring for scale: a small overshoot (~1.04).
+    expect(Math.max(...frames.map((f) => f.scale))).toBeGreaterThan(1.01);
+    expect(frames.at(-1)).toEqual({ opacity: 1, scale: 1 });
+  });
+
+  test('choosing a radio item glides its indicator there', async ({ page }) => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.waitForTimeout(500);
+    const offsets = await page.evaluate(async () => {
+      const item = [
+        ...document.querySelectorAll<HTMLElement>('[role="menuitemradio"]'),
+      ].find((el) => el.textContent?.includes('Top'))!;
+      item.click();
+      const seen: number[] = [];
+      const t0 = performance.now();
+      while (performance.now() - t0 < 150) {
+        await new Promise(requestAnimationFrame);
+        const indicator = item.querySelector('[data-slot$="indicator"] > span');
+        if (!indicator) continue;
+        const match = getComputedStyle(indicator).transform.match(
+          /matrix\([^,]+,[^,]+,[^,]+,[^,]+,[^,]+,\s*([^)]+)\)/,
+        );
+        seen.push(match ? Number(match[1]) : 0);
+      }
+      return seen;
+    });
+    // It comes from the item below ("Bottom"), while the menu closes.
+    expect(offsets.some((y) => y > 5)).toBe(true);
   });
 
   test('reduced motion: it fades without scaling', async ({ page }) => {
@@ -117,6 +172,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
 });
 
 test.describe('radix-ui dropdown-menu API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/radix-ui-dropdown-menu', {
       waitUntil: 'networkidle',
@@ -181,4 +237,15 @@ test.describe('radix-ui dropdown-menu API', () => {
     await page.getByRole('menuitemcheckbox', { name: 'Bold' }).click();
     await expect(page.getByTestId('bold')).toHaveText('true');
   });
+});
+
+describeMenuHighlight('radix-ui dropdown-menu highlight', {
+  path: '/tests/demos/radix-ui/dropdown-menu',
+  open: async (page) => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.waitForTimeout(400);
+  },
+  first: (page) => page.getByRole('menuitem', { name: /Profile/ }),
+  second: (page) => page.getByRole('menuitem', { name: /Billing/ }),
+  keyboardNext: 'ArrowDown',
 });

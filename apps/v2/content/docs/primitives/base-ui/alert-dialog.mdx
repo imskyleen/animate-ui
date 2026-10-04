@@ -39,13 +39,17 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Backdrop** fades in over 600ms with a strong ease-out, and out in 400ms.
-- **Popup** fades in and scales up from 0.95 over 600ms, around its center. It closes in 400ms, then unmounts.
+Animate UI v1's alert dialog motion, unchanged.
+
+- **Backdrop** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way.
+- **Popup** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, still visible once the backdrop is gone, then unmounts.
+- `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
 - The Portal keeps Base UI's portal mounted and the popup visible until the exit is over; clicks go through to the page as soon as it closes.
 - Reopening while it closes picks up from where it is.
 - With `keepMounted` on the Portal, the closed popup stays in the DOM: it plays its exit, then Base UI hides it.
 - Your own `render` element (or function) on the Backdrop or the Popup is made animatable rather than replaced.
-- Under reduced motion, the popup fades without scaling.
+- Under reduced motion, the popup fades and un-blurs without tilting or scaling.
+- `AnimateUIProvider tempo` scales every duration and spring.
 
 ## API Reference
 
@@ -62,14 +66,14 @@ Every part takes exactly the props of [Base UI's Alert Dialog](https://base-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the fade in.',
+      description: 'Transition of the fade (and blur) in.',
       type: 'Transition',
-      default: 'transition.modal (600ms, ease-out)',
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
     },
     exitTransition: {
-      description: 'Transition of the fade out.',
+      description: 'Transition of the fade (and blur) out.',
       type: 'Transition',
-      default: 'transition.modalExit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />
@@ -83,12 +87,12 @@ Every part takes exactly the props of [Base UI's Alert Dialog](https://base-ui.c
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: 'transition.modal (600ms, ease-out)',
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.modalExit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

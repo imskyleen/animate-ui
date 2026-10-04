@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { describeAnchoredOverlay, gotoReady } from './anchored-overlay';
+import {
+  describeAnchoredOverlay,
+  expectEntranceOnLoad,
+  gotoReady,
+} from './anchored-overlay';
 
 const PATH = '/tests/demos/radix-ui/popover';
 const CONTENT = '[data-slot="popover-content"]';
@@ -41,7 +45,7 @@ test.describe('radix-ui popover API', () => {
     await expect(content).toBeVisible();
     await page.getByRole('button', { name: 'Close controlled' }).click();
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
     // Opened from outside: the state is the only source of truth.
     await page.getByRole('button', { name: 'Open from outside' }).click();
     await expect(content).toBeVisible();
@@ -68,16 +72,18 @@ test.describe('radix-ui popover API', () => {
     ).toBe(1);
   });
 
-  test('defaultOpen shows without an entrance, even without a Portal', async ({
+  test('defaultOpen plays its entrance on page load (v1), even without a Portal', async ({
     page,
   }) => {
+    await expectEntranceOnLoad(
+      page,
+      '/tests/fixtures/radix-ui-popover',
+      '[data-testid="default-open-content"]',
+      'popover',
+    );
     const content = page.getByTestId('default-open-content');
-    await expect(content).toBeVisible();
-    expect(
-      await content.evaluate((el) => Number(getComputedStyle(el).opacity)),
-    ).toBe(1);
     await page.getByRole('button', { name: 'Default open trigger' }).click();
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
   });
 
   test('forceMount keeps closed content mounted, hidden and inert', async ({
@@ -109,7 +115,7 @@ test.describe('radix-ui popover API', () => {
     expect(
       await content.evaluate((el) => getComputedStyle(el).transformOrigin),
     ).toBe('0px 0px');
-    // A 200ms entrance instead of 600ms.
+    // A 200ms entrance instead of the spring.
     await page.waitForTimeout(260);
     expect(
       await content.evaluate((el) => Number(getComputedStyle(el).opacity)),

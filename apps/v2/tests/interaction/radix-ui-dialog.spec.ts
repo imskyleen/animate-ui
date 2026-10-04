@@ -1,26 +1,21 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-import { probeFirstFrame, sample } from './motion-probe';
+import {
+  SHEET_TRAVEL,
+  expectDialogEntrance,
+  expectDialogExit,
+  expectDialogSettled,
+  expectSheetEntrance,
+  expectSheetExit,
+  expectSheetSettled,
+  present,
+  readState,
+  recordTimeline,
+} from './modal-timeline';
 
 const CONTENT = '[data-slot="dialog-content"]';
 const OVERLAY = '[data-slot="dialog-overlay"]';
 const SHEET = '[data-slot="sheet-content"]';
-
-/** Translation as a share of the element's own size, and opacity. */
-const offset = (page: Page, selector: string) =>
-  page
-    .locator(selector)
-    .first()
-    .evaluate((el) => {
-      const cs = getComputedStyle(el);
-      const m = new DOMMatrix(cs.transform);
-      const box = el as HTMLElement;
-      return {
-        x: m.m41 / box.offsetWidth,
-        y: m.m42 / box.offsetHeight,
-        opacity: Number(cs.opacity),
-      };
-    });
 
 test.describe('radix-ui dialog demo', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,13 +24,16 @@ test.describe('radix-ui dialog demo', () => {
     });
   });
 
-  test('content enters from 0.95, centered, and settles', async ({ page }) => {
-    const probe = await probeFirstFrame(page, CONTENT);
+  test('opens like v1: tipped back, small and blurred, upright on a spring after its overlay', async ({
+    page,
+  }) => {
+    const timeline = await recordTimeline(page, {
+      content: CONTENT,
+      overlay: OVERLAY,
+    });
     await page.getByRole('button', { name: 'Edit profile' }).click();
-    const first = await probe.firstFrame();
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
-    expect(first.scale).toBeLessThan(1);
-    expect(first.opacity).toBeLessThan(1);
+    await expectDialogSettled(page, CONTENT);
+    expectDialogEntrance(await timeline.stop());
 
     // Modals stay centered: the origin is the middle of the content.
     const centered = await page.locator(CONTENT).evaluate((el) => {
@@ -47,36 +45,24 @@ test.describe('radix-ui dialog demo', () => {
       );
     });
     expect(centered).toBe(true);
-
-    await page.waitForTimeout(650);
-    const settled = await sample(page, CONTENT);
-    expect(settled.opacity).toBe(1);
-    expect(settled.scale).toBeCloseTo(1, 3);
+    const overlay = await readState(page, OVERLAY);
+    expect(overlay.opacity).toBe(1);
+    expect(overlay.blur).toBe(0);
   });
 
-  test('the overlay fades in', async ({ page }) => {
-    const probe = await probeFirstFrame(page, OVERLAY);
-    await page.getByRole('button', { name: 'Edit profile' }).click();
-    const first = await probe.firstFrame();
-    expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBe(1);
-    await page.waitForTimeout(650);
-    expect((await sample(page, OVERLAY)).opacity).toBe(1);
-  });
-
-  test('exits faster than it enters, visibly, then unmounts', async ({
+  test('closes like v1: tips back on the same spring, outlasting its overlay, then unmounts', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Edit profile' }).click();
-    await page.waitForTimeout(700);
+    await expectDialogSettled(page, CONTENT);
+    const timeline = await recordTimeline(page, {
+      content: CONTENT,
+      overlay: OVERLAY,
+    });
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(80);
-    const mid = await sample(page, CONTENT);
-    expect(mid.opacity).toBeLessThan(1);
-    expect(mid.opacity).toBeGreaterThan(0);
-    expect(mid.scale).toBeLessThan(1);
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 400 });
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(OVERLAY)).toHaveCount(0);
+    expectDialogExit(await timeline.stop());
   });
 
   test('keyboard: opens with Enter, traps focus, gives it back on close', async ({
@@ -91,31 +77,31 @@ test.describe('radix-ui dialog demo', () => {
       page.getByRole('textbox', { name: 'Name', exact: true }),
     ).toBeFocused();
     await page.keyboard.press('Escape');
-    await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 600 });
+    await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 2500 });
     await expect(trigger).toBeFocused();
   });
 
   test('reopening during the exit comes back fully', async ({ page }) => {
     const trigger = page.getByRole('button', { name: 'Edit profile' });
     await trigger.click();
-    await page.waitForTimeout(700);
+    await expectDialogSettled(page, CONTENT);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(150);
     await trigger.click({ force: true });
-    await page.waitForTimeout(700);
-    const settled = await sample(page, CONTENT);
-    expect(settled.opacity).toBe(1);
-    expect(settled.scale).toBeCloseTo(1, 3);
+    await expectDialogSettled(page, CONTENT);
     await expect(page.locator(CONTENT)).toHaveCount(1);
   });
 
-  test('reduced motion: no scaling, still fades', async ({ page }) => {
+  test('reduced motion: no tilt or scale, still fades', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    const probe = await probeFirstFrame(page, CONTENT);
+    const timeline = await recordTimeline(page, { content: CONTENT });
     await page.getByRole('button', { name: 'Edit profile' }).click();
-    const first = await probe.firstFrame();
-    expect(first.scale).toBeCloseTo(1, 3);
-    expect(first.opacity).toBeLessThan(1);
+    await expectDialogSettled(page, CONTENT);
+    const first = present(await timeline.stop(), 'content')[0]!.samples
+      .content!;
+    expect(Math.abs(first.tilt)).toBeLessThan(0.5);
+    expect(first.scale).toBeCloseTo(1, 2);
+    expect(first.opacity).toBeLessThan(0.5);
   });
 });
 
@@ -126,44 +112,38 @@ test.describe('radix-ui dialog: sheet demo', () => {
     });
   });
 
-  const travel = {
-    top: { axis: 'y', sign: -1 },
-    right: { axis: 'x', sign: 1 },
-    bottom: { axis: 'y', sign: 1 },
-    left: { axis: 'x', sign: -1 },
-  } as const;
-
-  for (const [side, { axis, sign }] of Object.entries(travel)) {
-    test(`slides in from the ${side} edge without fading`, async ({ page }) => {
+  for (const side of Object.keys(
+    SHEET_TRAVEL,
+  ) as (keyof typeof SHEET_TRAVEL)[]) {
+    test(`slides and fades in from the ${side} edge like v1's sheet`, async ({
+      page,
+    }) => {
+      const timeline = await recordTimeline(page, { content: SHEET });
       await page.getByRole('button', { name: side, exact: true }).click();
-      await page.locator(SHEET).waitFor();
       await expect(page.locator(SHEET)).toHaveAttribute('data-side', side);
-      const early = await offset(page, SHEET);
-      expect(early[axis] * sign).toBeGreaterThan(0.1);
-      expect(early.opacity).toBe(1);
-
-      await page.waitForTimeout(650);
-      const settled = await offset(page, SHEET);
-      expect(Math.abs(settled[axis])).toBeLessThan(0.001);
+      await expectSheetSettled(page, SHEET, side);
+      expectSheetEntrance(await timeline.stop(), side);
     });
   }
 
-  test('slides back out faster, then unmounts', async ({ page }) => {
+  test('slides and fades back out, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'right', exact: true }).click();
-    await page.waitForTimeout(700);
+    await expectSheetSettled(page, SHEET, 'right');
+    const timeline = await recordTimeline(page, { content: SHEET });
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(80);
-    expect((await offset(page, SHEET)).x).toBeGreaterThan(0.05);
-    await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 400 });
+    await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
+    expectSheetExit(await timeline.stop(), 'right');
   });
 
   test('reduced motion: fades in place', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
+    const timeline = await recordTimeline(page, { content: SHEET });
     await page.getByRole('button', { name: 'left', exact: true }).click();
-    await page.locator(SHEET).waitFor();
-    const early = await offset(page, SHEET);
-    expect(Math.abs(early.x)).toBeLessThan(0.001);
-    expect(early.opacity).toBeLessThan(1);
+    await expectSheetSettled(page, SHEET, 'left');
+    const first = present(await timeline.stop(), 'content')[0]!.samples
+      .content!;
+    expect(Math.abs(first.x)).toBeLessThan(0.001);
+    expect(first.opacity).toBeLessThan(1);
   });
 });
 
@@ -178,7 +158,7 @@ test.describe('radix-ui dialog API', () => {
     const dialog = page.getByRole('dialog', { name: 'Default open dialog' });
     await expect(dialog).toBeVisible();
     await page.getByRole('button', { name: 'Close star' }).click();
-    await expect(dialog).toHaveCount(0, { timeout: 600 });
+    await expect(dialog).toHaveCount(0, { timeout: 2500 });
   });
 
   test('controlled open and onOpenChange', async ({ page }) => {
@@ -190,7 +170,7 @@ test.describe('radix-ui dialog API', () => {
     await page.getByRole('button', { name: 'Close controlled' }).click();
     await expect(page.getByTestId('controlled-state')).toHaveText('closed');
     await expect(page.getByTestId('controlled-changes')).toHaveText('false');
-    await expect(dialog).toHaveCount(0, { timeout: 500 });
+    await expect(dialog).toHaveCount(0, { timeout: 2500 });
 
     await page.getByRole('button', { name: 'Controlled trigger' }).click();
     await expect(dialog).toBeVisible();
@@ -215,45 +195,37 @@ test.describe('radix-ui dialog API', () => {
           document.querySelector('[data-testid="kept-overlay"]')!,
         ).pointerEvents,
       }));
+    const closed = { visibility: 'hidden', inert: true, overlay: 'none' };
     await expect(content).toHaveCount(1);
     await expect(overlay).toHaveCount(1);
-    expect(await state()).toEqual({
-      visibility: 'hidden',
-      inert: true,
-      overlay: 'none',
-    });
+    expect(await state()).toEqual(closed);
 
     // Radix hides the rest of the page from assistive tech while a modal
     // Content is mounted, even closed: find the trigger by its text.
     await page.getByText('Force mounted trigger').click();
     await expect(content).toBeVisible();
-    await page.waitForTimeout(650);
-    expect((await sample(page, '[data-testid="kept-content"]')).opacity).toBe(
-      1,
-    );
+    await expectDialogSettled(page, '[data-testid="kept-content"]');
     expect((await state()).inert).toBe(false);
 
     await page.getByText('Close kept').click();
-    await page.waitForTimeout(500);
+    await expect.poll(state, { timeout: 2500 }).toEqual(closed);
     await expect(content).toHaveCount(1);
-    expect(await state()).toEqual({
-      visibility: 'hidden',
-      inert: true,
-      overlay: 'none',
-    });
   });
 
   test('a Content without a Portal animates in and out', async ({ page }) => {
     await page.getByRole('button', { name: 'Close star' }).click();
-    const probe = await probeFirstFrame(page, '[data-testid="inline-content"]');
+    const inline = '[data-testid="inline-content"]';
+    const timeline = await recordTimeline(page, { content: inline });
     await page.getByRole('button', { name: 'Inline trigger' }).click();
-    const first = await probe.firstFrame();
-    expect(first.scale).toBeLessThan(1);
-    expect(first.opacity).toBeLessThan(1);
-    await page.waitForTimeout(650);
+    await expectDialogSettled(page, inline);
+    const first = present(await timeline.stop(), 'content')[0]!.samples
+      .content!;
+    expect(first.tilt).toBeLessThan(-12);
+    expect(first.scale).toBeLessThan(0.88);
+    expect(first.opacity).toBeLessThan(0.3);
     await page.getByRole('button', { name: 'Close inline' }).click();
     await expect(page.getByTestId('inline-content')).toHaveCount(0, {
-      timeout: 500,
+      timeout: 2500,
     });
   });
 
@@ -267,11 +239,11 @@ test.describe('radix-ui dialog API', () => {
     await expect(
       page.getByRole('button', { name: 'Keep editing' }),
     ).toBeFocused();
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(800);
     await page.mouse.click(5, 5);
     await expect(page.getByTestId('alert-state')).toHaveText('open');
     await page.getByRole('button', { name: 'Keep editing' }).click();
     await expect(page.getByTestId('alert-state')).toHaveText('closed');
-    await expect(dialog).toHaveCount(0, { timeout: 500 });
+    await expect(dialog).toHaveCount(0, { timeout: 2500 });
   });
 });

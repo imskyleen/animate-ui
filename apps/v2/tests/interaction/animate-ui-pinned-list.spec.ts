@@ -43,6 +43,45 @@ test.describe('animate-ui pinned list', () => {
     ).toBeVisible();
   });
 
+  test('the trigger grows on hover and shrinks on press', async ({ page }) => {
+    await open(page);
+    const trigger = page.getByRole('button', { name: 'Pin Inbox' });
+    const scale = () =>
+      trigger.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
+    await trigger.hover();
+    await expect.poll(scale).toBeCloseTo(1.05, 2);
+    await page.mouse.down();
+    await expect.poll(scale).toBeCloseTo(0.95, 2);
+    await page.mouse.up();
+  });
+
+  test('the move springs past its place, then settles', async ({ page }) => {
+    await open(page);
+    const before = (await item(page, 'Inbox').boundingBox())!;
+    // The item's offset from its new place, on every frame.
+    const offsets = await page.evaluate(async () => {
+      document
+        .querySelector<HTMLButtonElement>('[aria-label="Pin Inbox"]')!
+        .click();
+      const values: number[] = [];
+      const t0 = performance.now();
+      while (performance.now() - t0 < 1200) {
+        await new Promise((r) => requestAnimationFrame(r));
+        const el = [
+          ...document.querySelectorAll('[data-slot="pinned-list-item"]'),
+        ].find((e) => e.textContent?.includes('Inbox'))!;
+        values.push(new DOMMatrix(getComputedStyle(el).transform).m42);
+      }
+      return values;
+    });
+    const after = (await item(page, 'Inbox').boundingBox())!;
+    // It starts from its old place...
+    expect(Math.max(...offsets)).toBeGreaterThan(before.y - after.y - 60);
+    // ...and the v1 spring (stiffness 320, damping 25, mass 0.8) overshoots.
+    expect(Math.min(...offsets)).toBeLessThan(-1);
+    expect(offsets.at(-1)).toBeCloseTo(0, 0);
+  });
+
   test('unpinning every item hides the pinned label', async ({ page }) => {
     await open(page);
     await page.getByRole('button', { name: 'Unpin Drafts' }).click();

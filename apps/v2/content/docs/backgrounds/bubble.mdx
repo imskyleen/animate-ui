@@ -25,8 +25,8 @@ export function Hero() {
 
 ## Animation
 
-- Five blurred, color-blended bubbles drift and orbit on slow loops (20 to 40s), with hardware-accelerated `transform`s.
-- With `interactive`, a sixth bubble follows the mouse on a spring (`transition`). It follows a mouse only: a tap doesn't move it.
+- Five blurred, color-blended bubbles move on slow loops: two drift 100px back and forth (30s and 40s, eased in and out), three orbit around points off to the side (full turns in 20s, 40s and 20s, linear).
+- With `interactive`, a sixth bubble follows the mouse on a spring (`transition`), relative to the center of the container. On touch screens, a tap moves it too.
 - The loops pause off screen and while the tab is hidden.
 - Under reduced motion, the bubbles hold a still frame and the follower stays put.
 

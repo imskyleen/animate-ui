@@ -33,7 +33,7 @@ export default function HighlightDemo({
       key={tab.value}
       type="button"
       data-value={tab.value}
-      className="flex h-8 items-center justify-center rounded-full px-4 text-sm text-muted-foreground transition-colors data-[active=true]:font-medium data-[active=true]:text-foreground"
+      className="flex h-8 items-center justify-center rounded-full px-4 text-sm text-muted-foreground transition-all duration-300 data-[active=true]:font-medium data-[active=true]:text-foreground"
     >
       {tab.title}
     </button>

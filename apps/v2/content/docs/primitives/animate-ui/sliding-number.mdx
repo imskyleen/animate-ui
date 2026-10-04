@@ -21,10 +21,10 @@ export function Price({ value }: { value: number }) {
 
 ## Animation
 
-- Each digit rolls to its new value on a quick spring without overshoot (0.25s), in the direction the number moves: up when it grows. 9 to 0 rolls one step forward, not back through every digit.
-- With `fromNumber`, the number counts to `number` over 3s on a strong ease-out, every digit rolling on the way.
+- Each digit sits on a wheel that springs to its new value (`stiffness: 200, damping: 20, mass: 0.4`), straight through the digits in between: going from 9 to 0, it rolls back through 8, 7…
+- With `fromNumber`, the number counts to `number` on a spring (`stiffness: 90, damping: 50`), every digit rolling on the way; a new `number` then counts on from the current value. Without it, the digits roll straight to their new value.
 - Digits are positioned in percentages of their own height: no measuring, right on the first frame and when the font size changes. Counting doesn't re-render React per frame.
-- `<AnimateUIProvider tempo>` paces the default spring and count.
+- `<AnimateUIProvider tempo>` paces the default springs.
 - Under reduced motion, the digits change without rolling.
 - Screen readers read the number once, not every rolled digit.
 
@@ -41,7 +41,7 @@ export function Price({ value }: { value: number }) {
     },
     fromNumber: {
       description:
-        'When set, the number counts from it to `number`, every digit rolling on the way. Otherwise each digit rolls straight to its new value.',
+        'When set, the number counts from it to `number` (and to every new `number` after that), every digit rolling on the way. Otherwise each digit rolls straight to its new value.',
       type: 'number',
     },
     onNumberChange: {
@@ -60,9 +60,9 @@ export function Price({ value }: { value: number }) {
       default: "'.'",
     },
     decimalPlaces: {
-      description:
-        'Decimal places to show. Defaults to the number of decimals of `number`.',
+      description: 'Decimal places to show.',
       type: 'number',
+      default: '0',
     },
     thousandSeparator: {
       description: 'The separator between groups of thousands.',
@@ -71,7 +71,7 @@ export function Price({ value }: { value: number }) {
     transition: {
       description: 'Spring of each digit roller.',
       type: 'SpringOptions',
-      default: '{ visualDuration: 0.25, bounce: 0 }',
+      default: '{ stiffness: 200, damping: 20, mass: 0.4 }',
     },
     delay: {
       description: 'Delay before the number changes, in milliseconds.',

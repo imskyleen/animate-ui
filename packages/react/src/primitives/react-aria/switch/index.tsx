@@ -9,30 +9,21 @@ import {
 import { ReducedMotionConfig } from '../../../utils/motion';
 import { mergeRefs } from '../../../internal/controls/indicator';
 import { type ThumbAnimationProps } from '../../../internal/controls/thumb';
-import {
-  PressedMotion,
-  RenderedThumb,
-  renderChildren,
-} from '../../../internal/controls/aria';
+import { RenderedThumb, renderChildren } from '../../../internal/controls/aria';
 
-// Same API as React Aria's Switch. The switch gives press feedback; the thumb
-// the user renders (`data-slot="switch-thumb"`, shadcn/ui's thumb) glides to
-// its new side with a spring, through a transform.
+// Same API as React Aria's Switch, animated like Animate UI v1's Radix and
+// Headless UI switches: while the switch is pressed (pointer or keyboard,
+// React Aria's `isPressed`), the thumb the user renders
+// (`data-slot="switch-thumb"`, shadcn/ui's thumb) stretches toward the middle
+// of the track; when it changes, the thumb springs to its new side (stiffness
+// 300, damping 25). The switch itself doesn't move, and its colours are the
+// component's CSS.
 
-/** React Aria's props, plus Animate UI's `transition` (the thumb's glide). */
+/** React Aria's props, plus Animate UI's `transition` (the thumb's). */
 type SwitchProps = SwitchPrimitiveProps & ThumbAnimationProps;
 
-function Switch(props: SwitchProps & React.RefAttributes<HTMLLabelElement>) {
-  return (
-    <ReducedMotionConfig>
-      <AnimatedSwitch {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function AnimatedSwitch({
+function Switch({
   transition,
-  render,
   children,
   ref,
   ...props
@@ -41,31 +32,21 @@ function AnimatedSwitch({
   const mergedRef = React.useMemo(() => mergeRefs(ref, rootRef), [ref]);
 
   return (
-    <SwitchPrimitive
-      {...props}
-      ref={mergedRef}
-      render={
-        render ??
-        ((domProps, values) => (
-          <PressedMotion
-            {...domProps}
-            as="label"
-            isPressed={values.isPressed}
-          />
-        ))
-      }
-    >
-      {(values) => (
-        <>
-          {renderChildren(children, values)}
-          <RenderedThumb
-            rootRef={rootRef}
-            checked={values.isSelected}
-            transition={transition}
-          />
-        </>
-      )}
-    </SwitchPrimitive>
+    <ReducedMotionConfig>
+      <SwitchPrimitive {...props} ref={mergedRef}>
+        {(values) => (
+          <>
+            {renderChildren(children, values)}
+            <RenderedThumb
+              rootRef={rootRef}
+              checked={values.isSelected}
+              pressed={values.isPressed}
+              transition={transition}
+            />
+          </>
+        )}
+      </SwitchPrimitive>
+    </ReducedMotionConfig>
   );
 }
 

@@ -1,6 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Shared by the Radix UI, Base UI and React Aria progress specs.
+// Shared by the Radix UI, Base UI and React Aria progress specs. They move
+// like Animate UI v1's progress: the indicator springs to a new value
+// (stiffness 100, damping 30, no overshoot), its `x` for Radix UI (shadcn's
+// translate) and its `width` for Base UI and React Aria.
 
 export const INDICATOR = '[data-slot="progress-indicator"]';
 
@@ -44,6 +47,10 @@ export async function sampleRevealed(page: Page, ms: number) {
 }
 
 export function describeProgressDemo(library: string) {
+  // How the library sizes the indicator: v1 animated Radix's `x` and Base
+  // UI's `width`; React Aria's bar is width-sized too.
+  const byWidth = library !== 'radix-ui';
+
   test.describe(`${library} progress demo`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(`/tests/demos/${library}/progress`, {
@@ -55,30 +62,41 @@ export function describeProgressDemo(library: string) {
       page,
     }) => {
       expect(await revealed(page)).toBeCloseTo(0.64, 2);
-      // Full width, positioned with a transform.
       const { bar, track } = await page.locator(INDICATOR).evaluate((el) => ({
         bar: el.getBoundingClientRect().width,
         track: el.parentElement!.getBoundingClientRect().width,
-        transform: getComputedStyle(el).transform,
       }));
-      expect(bar).toBeCloseTo(track, 0);
+      // Radix UI: full width, translated. Base UI / React Aria: its width.
+      if (byWidth) expect(bar / track).toBeCloseTo(0.64, 2);
+      else expect(bar).toBeCloseTo(track, 0);
     });
 
-    test('new values glide and retarget, then settle', async ({ page }) => {
-      const samples = await sampleRevealed(page, 500);
+    test('a new value springs there without overshooting', async ({ page }) => {
+      const samples = await sampleRevealed(page, 420);
       await page.getByRole('button', { name: 'Upload again' }).click();
       const frames = await samples();
-      // Heading back to 0 over several frames, not in one jump.
-      expect(frames.some((f) => f > 0.05 && f < 0.6)).toBe(true);
+      // Heading back to 0 over several frames (64% -> 0%, then 12% after
+      // 450ms), never past it, never back up before the next step.
+      const moving = frames.filter((f) => f > 0.01 && f < 0.63);
+      expect(moving.length).toBeGreaterThan(5);
+      expect(Math.min(...frames)).toBeGreaterThan(-0.005);
+      for (let i = 1; i < frames.length; i++)
+        expect(frames[i]!).toBeLessThanOrEqual(frames[i - 1]! + 0.002);
+      // An overdamped spring: still well on its way after 150ms.
+      expect(frames.some((f) => f > 0.15 && f < 0.5)).toBe(true);
+    });
 
+    test('values retarget mid-way, then settle on 100%', async ({ page }) => {
+      await page.getByRole('button', { name: 'Upload again' }).click();
       // 7 steps, 450ms apart, then it settles on 100%.
       await expect(
         page.getByRole('button', { name: 'Upload again' }),
       ).toBeEnabled({
-        timeout: 5000,
+        timeout: 6000,
       });
-      await page.waitForTimeout(650);
-      expect(await revealed(page)).toBeCloseTo(1, 2);
+      await expect
+        .poll(() => revealed(page), { timeout: 3000 })
+        .toBeGreaterThan(0.995);
     });
 
     test('reduced motion: values apply at once', async ({ page }) => {

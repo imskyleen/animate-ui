@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const open = (page: Page) =>
-  page.goto('/tests/demos/animate-ui/tabs', { waitUntil: 'networkidle' });
+import { gotoTabs } from './tabs-helpers';
+
+const open = (page: Page) => gotoTabs(page, '/tests/demos/animate-ui/tabs');
 
 const HIGHLIGHT = '[data-slot="motion-highlight"]';
 
@@ -97,51 +98,62 @@ test.describe('animate-ui tabs', () => {
     );
   });
 
-  test('keyboard: the highlight and the panel jump; clicks still animate', async ({
-    page,
-  }) => {
+  test('keyboard: the selection animates like a click', async ({ page }) => {
     await open(page);
     const account = page.getByRole('tab', { name: 'Account' });
     const password = page.getByRole('tab', { name: 'Password' });
     const accountX = (await account.boundingBox())!.x;
     const passwordX = (await password.boundingBox())!.x;
     await account.focus();
-    await page.keyboard.press('ArrowRight');
-    await expect(password).toBeFocused();
-    await page.waitForTimeout(50);
-    // Keyboard navigation is instant (rules A2).
-    expect(
-      Math.abs((await highlightX(page, 'password')) - passwordX),
-    ).toBeLessThan(1.5);
-    await expect(page.locator(HIGHLIGHT)).toHaveCount(1);
-    expect(Math.round(await stripX(page))).toBe(-100);
-
-    // A click afterwards glides again: sample every frame for 600ms and
-    // expect positions in between (no fixed timing, so no flakiness).
+    // Sampled in the page from the key press: the highlight slides and the
+    // panels strip moves, as on click (no fixed timing, so no flakiness).
     const frames = page.evaluate(
       (selector) =>
-        new Promise<number[]>((resolve) => {
-          const xs: number[] = [];
+        new Promise<{ x: number; strip: number }[]>((resolve) => {
+          const out: { x: number; strip: number }[] = [];
           const start = performance.now();
           const tick = () => {
-            const el = document.querySelector(selector);
-            if (el) xs.push(el.getBoundingClientRect().x);
-            if (performance.now() - start < 600) requestAnimationFrame(tick);
-            else resolve(xs);
+            const el = document.querySelector(
+              `${selector}[data-value="password"]`,
+            );
+            const strip = document.querySelector<HTMLElement>(
+              '[data-slot="tabs-contents"] > div',
+            )!;
+            const m =
+              getComputedStyle(strip).transform.match(/matrix\(([^)]+)\)/);
+            const tx = m ? Number(m[1]!.split(',')[4]) : 0;
+            if (el)
+              out.push({
+                x: el.getBoundingClientRect().x,
+                strip: (tx / strip.getBoundingClientRect().width) * 100,
+              });
+            if (performance.now() - start < 900) requestAnimationFrame(tick);
+            else resolve(out);
           };
           requestAnimationFrame(tick);
         }),
       HIGHLIGHT,
     );
-    await account.click();
+    await page.keyboard.press('ArrowRight');
+    await expect(password).toBeFocused();
+    await expect(password).toHaveAttribute('aria-selected', 'true');
     const xs = await frames;
-    expect(xs.some((x) => x > accountX + 1 && x < passwordX - 1)).toBe(true);
+    expect(xs.some((f) => f.x > accountX + 1 && f.x < passwordX - 1)).toBe(
+      true,
+    );
+    expect(xs.some((f) => f.strip < -1 && f.strip > -99)).toBe(true);
+    await expect
+      .poll(async () =>
+        Math.abs((await highlightX(page, 'password')) - passwordX),
+      )
+      .toBeLessThan(1.5);
+    await expect.poll(async () => Math.round(await stripX(page))).toBe(-100);
   });
 });
 
 test.describe('animate-ui tabs keyboard', () => {
   const openFixture = (page: Page) =>
-    page.goto('/tests/fixtures/animate-ui-tabs', { waitUntil: 'networkidle' });
+    gotoTabs(page, '/tests/fixtures/animate-ui-tabs');
 
   const list = (page: Page, name: string) =>
     page.getByRole('tablist', { name });

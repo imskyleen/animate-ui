@@ -2,62 +2,59 @@
 
 import * as React from "react"
 import { SlidingNumber } from "@animate-ui/react/primitives/texts/sliding-number"
-import { MinusSignIcon, PlusSignIcon } from "@hugeicons/core-free-icons"
+import { RefreshIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Button } from "@/components/ui/button"
 
 export const controls = {
   SlidingNumber: {
-    padStart: { value: false },
-    decimalSeparator: { value: "." },
+    number: { value: 2025 },
+    fromNumber: { value: true },
+    padStart: { value: true },
+    decimalSeparator: { value: "," },
     decimalPlaces: { value: 0 },
-    thousandSeparator: { value: "," },
+    thousandSeparator: { value: "." },
     delay: { value: 0, min: 0, max: 3000, step: 100 },
   },
 }
 
 export default function SlidingNumberDemo({
-  padStart = false,
-  decimalSeparator = ".",
+  number = 2025,
+  fromNumber = true,
+  padStart = true,
+  decimalSeparator = ",",
   decimalPlaces = 0,
-  thousandSeparator = ",",
+  thousandSeparator = ".",
   delay = 0,
 }: {
+  number?: number
+  /** Count up from 0 instead of rolling each digit straight to its value. */
+  fromNumber?: boolean
   padStart?: boolean
   decimalSeparator?: string
   decimalPlaces?: number
   thousandSeparator?: string
   delay?: number
 }) {
-  const [value, setValue] = React.useState(1250)
+  const [run, setRun] = React.useState(0)
 
   return (
-    <div className="flex items-center gap-4">
-      <Button
-        variant="outline"
-        size="icon"
-        aria-label="Decrease"
-        onClick={() => setValue((n) => n - 25)}
-      >
-        <HugeiconsIcon icon={MinusSignIcon} strokeWidth={2} />
-      </Button>
+    <div className="flex flex-col items-center gap-6">
       <SlidingNumber
-        number={value}
+        key={`${run}-${delay}-${fromNumber}`}
+        number={number}
+        fromNumber={fromNumber ? 0 : undefined}
         padStart={padStart}
         decimalSeparator={decimalSeparator}
         decimalPlaces={decimalPlaces}
         thousandSeparator={thousandSeparator}
         delay={delay}
-        className="min-w-36 justify-center text-4xl font-semibold"
+        className="text-4xl font-semibold"
       />
-      <Button
-        variant="outline"
-        size="icon"
-        aria-label="Increase"
-        onClick={() => setValue((n) => n + 25)}
-      >
-        <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+      <Button variant="outline" size="sm" onClick={() => setRun((n) => n + 1)}>
+        <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} data-icon="inline-start" />
+        Replay
       </Button>
     </div>
   )

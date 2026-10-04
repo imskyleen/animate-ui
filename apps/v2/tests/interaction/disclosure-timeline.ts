@@ -17,13 +17,24 @@ export async function gotoHydrated(page: Page, url: string) {
   });
 }
 
-export type HeightSample = { t: number; h: number; o: number };
+export type HeightSample = {
+  t: number;
+  /** Rendered height. */
+  h: number;
+  /** Opacity. */
+  o: number;
+  /** translateY. */
+  y: number;
+  /** `--mask-stop`, in % (NaN without the mask). */
+  m: number;
+};
 
 /**
- * Records the rendered height and opacity of the first element matching
- * `selector` (and containing `text`) on every frame for `durationMs` (0 when
- * absent or hidden). Sampled in the page, so it holds up on a busy machine. Start it, trigger
- * the change, then await `samples()`.
+ * Records the rendered height, opacity, translateY and mask stop of the first
+ * element matching `selector` (and containing `text`) on every frame for
+ * `durationMs` (height and opacity 0 when absent or hidden). Sampled in the
+ * page, so it holds up on a busy machine. Start it, trigger the change, then
+ * await `samples()`.
  */
 export async function recordHeights(
   page: Page,
@@ -35,17 +46,27 @@ export async function recordHeights(
     ({ sel, duration, text }) => {
       const w = window as unknown as { __heights?: Promise<unknown> };
       w.__heights = new Promise((resolve) => {
-        const samples: { t: number; h: number; o: number }[] = [];
+        const samples: {
+          t: number;
+          h: number;
+          o: number;
+          y: number;
+          m: number;
+        }[] = [];
         const start = performance.now();
         const tick = () => {
           const el = [...document.querySelectorAll<HTMLElement>(sel)].find(
             (candidate) => candidate.textContent?.includes(text),
           );
           const shown = el && !el.hasAttribute('hidden');
+          const style = el ? getComputedStyle(el) : null;
+          const matrix = style?.transform.match(/matrix\(([^)]+)\)/);
           samples.push({
             t: performance.now() - start,
             h: shown ? el.getBoundingClientRect().height : 0,
-            o: shown ? Number(getComputedStyle(el).opacity) : 0,
+            o: shown ? Number(style!.opacity) : 0,
+            y: matrix ? Number(matrix[1]!.split(',')[5]) : 0,
+            m: parseFloat(style?.getPropertyValue('--mask-stop') ?? ''),
           });
           if (performance.now() - start < duration) requestAnimationFrame(tick);
           else resolve(samples);
@@ -128,11 +149,17 @@ type DemoOptions = {
   open?: { trigger: string; text: string };
   /** How a closed panel ends up: removed, or kept with `hidden`. */
   closedState: 'unmounted' | 'hidden';
+  /** v1's mask reveal (every panel but the Radix UI Collapsible's). */
+  mask?: boolean;
 };
 
-/** The interaction tests every disclosure demo passes. */
+/**
+ * The interaction tests every disclosure demo passes: Animate UI v1's panel,
+ * whose height grows from 0 while the content fades in and rises 20px (and,
+ * with `mask`, is revealed top to bottom), over 350ms ease-in-out both ways.
+ */
 export function disclosureDemoTests(name: string, options: DemoOptions) {
-  const { url, panel, closed, open, closedState } = options;
+  const { url, panel, closed, open, closedState, mask = true } = options;
 
   test.describe(name, () => {
     test.beforeEach(async ({ page }) => {
@@ -149,7 +176,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       else await expect(panelOf(page, text)).toBeHidden({ timeout: 600 });
     };
 
-    test('opens by growing its height and fading in, then settles', async ({
+    test('opens by growing its height, fading in and rising, then settles', async ({
       page,
     }) => {
       const timeline = await recordHeights(page, panel, 1200, closed.text);
@@ -159,32 +186,93 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
 
       expect(entrance.from).toBe(0);
       expect(entrance.to).toBeGreaterThan(20);
-      // Frames in between: it grows, and fades in with it.
+      // Frames in between: it grows, fades in and rises with it.
       expect(entrance.steps).toBeGreaterThan(2);
-      expect(samples.some((s) => s.h > 0 && s.o > 0 && s.o < 1)).toBe(true);
-      expect(entrance.duration).toBeLessThan(650);
+      const moving = samples.filter((s) => s.h > 0.5 && s.o < 0.99);
+      expect(moving.some((s) => s.o > 0 && s.o < 1)).toBe(true);
+      expect(moving.some((s) => s.y > 1 && s.y < 20)).toBe(true);
+      if (mask) expect(moving.some((s) => s.m > 0 && s.m < 100)).toBe(true);
+      // v1's 350ms (a frame or two of slack on a busy machine).
+      expect(entrance.duration).toBeGreaterThan(250);
+      expect(entrance.duration).toBeLessThan(550);
       await expect(panelOf(page, closed.text)).toHaveCSS('opacity', '1');
+      const settled = samples.at(-1)!;
+      expect(settled.y).toBe(0);
+      if (mask) expect(settled.m).toBe(100);
     });
 
-    test('closes faster than it opens, then goes away', async ({ page }) => {
+    test('closes the same way, in reverse, then goes away', async ({
+      page,
+    }) => {
       let timeline = await recordHeights(page, panel, 1200, closed.text);
       await trigger(page, closed.trigger).click();
       const entrance = transitionTime(await timeline.samples());
 
       timeline = await recordHeights(page, panel, 1200, closed.text);
       await trigger(page, closed.trigger).click();
-      const exit = transitionTime(await timeline.samples());
+      const samples = await timeline.samples();
+      const exit = transitionTime(samples);
 
       expect(exit.to).toBe(0);
-      expect(exit.steps).toBeGreaterThan(1);
-      expect(exit.duration).toBeLessThan(400);
-      expect(exit.duration).toBeLessThan(entrance.duration);
+      expect(exit.steps).toBeGreaterThan(2);
+      // As long as the opening (v1's single 350ms transition).
+      expect(exit.duration).toBeGreaterThan(250);
+      expect(exit.duration).toBeLessThan(550);
+      expect(Math.abs(exit.duration - entrance.duration)).toBeLessThan(150);
+      const moving = samples.filter((s) => s.h > 0.5 && s.o < 0.99);
+      expect(moving.some((s) => s.y > 1 && s.y < 20)).toBe(true);
       await expectClosed(page, closed.text);
     });
 
     if (open) {
+      test('page load: the panel open by default animates open, as in v1', async ({
+        page,
+      }) => {
+        // Sampled from the first frames: it mounts collapsed, then opens.
+        await page.addInitScript(
+          ({ selector, text }) => {
+            const w = window as unknown as { __mount: number[][] };
+            w.__mount = [];
+            const tick = () => {
+              const el = [
+                ...document.querySelectorAll<HTMLElement>(selector),
+              ].find((candidate) => candidate.textContent?.includes(text));
+              if (el) {
+                const style = getComputedStyle(el);
+                const matrix = style.transform.match(/matrix\(([^)]+)\)/);
+                w.__mount.push([
+                  el.getBoundingClientRect().height,
+                  Number(style.opacity),
+                  matrix ? Number(matrix[1]!.split(',')[5]) : 0,
+                ]);
+              }
+              if (w.__mount.length < 900) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          },
+          { selector: panel, text: open.text },
+        );
+        await gotoHydrated(page, url);
+        await expect(panelOf(page, open.text)).toHaveCSS('opacity', '1');
+        const full = await panelOf(page, open.text).evaluate(
+          (el) => el.getBoundingClientRect().height,
+        );
+        const frames = await page.evaluate(
+          () => (window as unknown as { __mount: number[][] }).__mount,
+        );
+        expect(full).toBeGreaterThan(20);
+        expect(frames[0]![0]).toBeLessThan(1);
+        expect(
+          frames.some(
+            ([h, o, y]) => h! > 1 && h! < full - 1 && o! < 1 && y! > 1,
+          ),
+        ).toBe(true);
+      });
+
       test('a panel open by default collapses on click', async ({ page }) => {
         await expect(panelOf(page, open.text)).toBeVisible();
+        // Its own entrance (on mount) is over.
+        await expect(panelOf(page, open.text)).toHaveCSS('opacity', '1');
         const timeline = await recordHeights(page, panel, 1000, open.text);
         await trigger(page, open.trigger).click();
         const exit = transitionTime(await timeline.samples());

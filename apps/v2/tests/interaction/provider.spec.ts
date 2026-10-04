@@ -13,10 +13,9 @@ test('AnimateUIProvider tempo slows animations down; default without it', async 
   });
   await page.getByRole('button', { name: 'Default' }).click();
   await page.getByRole('button', { name: 'Slow' }).click();
-  // The default disclosure takes 600ms, tempo 2 makes it 1200ms.
-  await page.waitForTimeout(800);
-  expect(await height(page, 'Default')).toBe(200);
+  // The default disclosure takes v1's 350ms, tempo 2 makes it 700ms: when
+  // the default one is fully open, the slow one is still opening.
+  await expect.poll(() => height(page, 'Default')).toBe(200);
   expect(await height(page, 'Slow')).toBeLessThan(200);
-  await page.waitForTimeout(600);
-  expect(await height(page, 'Slow')).toBe(200);
+  await expect.poll(() => height(page, 'Slow')).toBe(200);
 });

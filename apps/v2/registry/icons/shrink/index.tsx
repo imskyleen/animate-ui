@@ -70,8 +70,8 @@ const animations = {
         x: 0,
       },
       animate: {
-        y: [null, -1, 0],
-        x: [null, -1, 0],
+        y: [0, -1, 0],
+        x: [0, -1, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -81,8 +81,8 @@ const animations = {
         x: 0,
       },
       animate: {
-        y: [null, 1, 0],
-        x: [null, -1, 0],
+        y: [0, 1, 0],
+        x: [0, -1, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -92,8 +92,8 @@ const animations = {
         x: 0,
       },
       animate: {
-        y: [null, -1, 0],
-        x: [null, 1, 0],
+        y: [0, -1, 0],
+        x: [0, 1, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -103,8 +103,8 @@ const animations = {
         x: 0,
       },
       animate: {
-        y: [null, 1, 0],
-        x: [null, 1, 0],
+        y: [0, 1, 0],
+        x: [0, 1, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },

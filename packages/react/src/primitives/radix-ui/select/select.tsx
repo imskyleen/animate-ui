@@ -2,17 +2,31 @@
 
 import * as React from 'react';
 import { Select as SelectPrimitive } from 'radix-ui';
-import { AnimatePresence, motion, type Transition } from 'motion/react';
+import {
+  AnimatePresence,
+  motion,
+  PresenceContext,
+  type Transition,
+} from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
+import { MENU_TRANSITION, mergeRefs } from '../../../internal/anchored';
+import {
+  HighlightScope,
+  useItemHighlight,
+  withHighlight,
+} from '../../../internal/item-highlight';
 
-// Same API as Radix's Select. The Root mirrors `open` (Radix keeps it private)
-// so the Content can play an exit before Radix unmounts it.
+// Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
+// moves like v1's DropdownMenu content (a 200ms fade and scale from 0.95, both
+// ways), a highlight glides behind the highlighted item, and the check glides
+// to the chosen item like v1's radio indicator. The Root mirrors `open` (Radix
+// keeps it private) so the Content can play an exit before Radix unmounts it.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Select.Root',
@@ -33,7 +47,8 @@ type SelectGroupProps = SelectPrimitive.SelectGroupProps;
 type SelectLabelProps = SelectPrimitive.SelectLabelProps;
 type SelectItemProps = SelectPrimitive.SelectItemProps;
 type SelectItemTextProps = SelectPrimitive.SelectItemTextProps;
-type SelectItemIndicatorProps = SelectPrimitive.SelectItemIndicatorProps;
+type SelectItemIndicatorProps = SelectPrimitive.SelectItemIndicatorProps &
+  IndicatorAnimationProps;
 type SelectScrollUpButtonProps = SelectPrimitive.SelectScrollUpButtonProps;
 type SelectScrollDownButtonProps = SelectPrimitive.SelectScrollDownButtonProps;
 type SelectSeparatorProps = SelectPrimitive.SelectSeparatorProps;
@@ -46,10 +61,22 @@ type unstable_SelectBubbleInputProps =
 
 /** Animate UI's additions to `Select.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the opening. Defaults to `transition.dropdown` (600ms). */
+  /**
+   * Transition of the opening, and of the closing unless `exitTransition` is
+   * set. Defaults to `{ duration: 0.2 }`.
+   */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition.exit` (400ms). */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
+};
+
+/** Animate UI's addition to `Select.ItemIndicator`. */
+type IndicatorAnimationProps = {
+  /**
+   * Transition of the check moving to the chosen item. Defaults to Motion's
+   * layout transition, as v1's radio indicator.
+   */
+  transition?: Transition;
 };
 
 type OpenProps = Pick<
@@ -74,6 +101,13 @@ function useOpenState({
 
   return [open, setOpen] as const;
 }
+
+/**
+ * The checks of an open list share it: the check glides to the chosen item.
+ * Only in the animated list: Radix also renders the items of a closed select,
+ * off-screen.
+ */
+const IndicatorLayoutContext = React.createContext<string | null>(null);
 
 function Root(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
   const [open, setOpen] = useOpenState(props);
@@ -122,8 +156,11 @@ function Content({
   ContentAnimationProps) {
   const { open } = useOpen();
   const portal = React.use(PortalContext);
-  const tokens = useMotionTokens();
   const keepMounted = Boolean(forceMount ?? portal.forceMount);
+  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const exit = useTempoTransition(
+    exitTransition ?? transition ?? MENU_TRANSITION,
+  );
 
   // True while the list is open or playing its exit.
   const [present, setPresent] = React.useState(open);
@@ -134,11 +171,7 @@ function Content({
       <AnimatePresence onExitComplete={() => setPresent(false)}>
         {(open || keepMounted) && (
           <ReducedMotionConfig key="content">
-            <ContentMotion
-              {...props}
-              enter={transition ?? tokens.transition.dropdown}
-              exit={exitTransition ?? tokens.transition.exit}
-            />
+            <ContentMotion {...props} enter={enter} exit={exit} />
           </ReducedMotionConfig>
         )}
       </AnimatePresence>
@@ -170,17 +203,16 @@ function ContentMotion({
   // child, but context still reaches it, so the closing list turns inert.
   const { open } = useOpen();
   const reduce = useShouldReduceMotion();
-  const { scale } = useMotionTokens();
+  const layoutId = React.useId();
   // Item-aligned (Radix's default) lays the list over the trigger, lining the
   // selected item up with the value, and measures it on mount: a scale would
   // skew that measure, and there's no anchor side to grow from. Fade only.
   const popper = props.position === 'popper';
+  // `scale` (like v1's menus): `transform: none` once settled.
   const hidden = popper
-    ? { opacity: 0, transform: `scale(${reduce ? 1 : scale.enter})` }
+    ? { opacity: 0, scale: reduce ? 1 : 0.95 }
     : { opacity: 0 };
-  const visible = popper
-    ? { opacity: 1, transform: 'scale(1)' }
-    : { opacity: 1 };
+  const visible = popper ? { opacity: 1, scale: 1 } : { opacity: 1 };
 
   return (
     // Radix's props (className, data-state, data-side, role, ids…) land on
@@ -202,10 +234,15 @@ function ContentMotion({
           transformOrigin: popper
             ? 'var(--radix-select-content-transform-origin)'
             : undefined,
+          // The highlight goes under the items' content, above the list's
+          // background: the list is its own stacking context.
+          isolation: 'isolate',
           ...style,
         }}
       >
-        {children}
+        <IndicatorLayoutContext value={layoutId}>
+          <HighlightScope open={open}>{children}</HighlightScope>
+        </IndicatorLayoutContext>
       </motion.div>
     </SelectPrimitive.Content>
   );
@@ -214,13 +251,90 @@ function ContentMotion({
 const Viewport = SelectPrimitive.Viewport;
 const Group = SelectPrimitive.Group;
 const Label = SelectPrimitive.Label;
-// No animated highlight: arrow keys move it, and keyboard navigation stays
-// instant. Style `data-highlighted` / `:focus` instead.
-const Item = SelectPrimitive.Item;
+
+/** Takes part in the list's highlight (pointer and arrow keys alike). */
+function Item({
+  asChild,
+  disabled,
+  children,
+  ref,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+  const { ref: highlightRef, highlight } = useItemHighlight(disabled);
+  const mergedRef = React.useMemo(
+    () => mergeRefs(ref, highlightRef),
+    [ref, highlightRef],
+  );
+  return (
+    <SelectPrimitive.Item
+      {...props}
+      ref={mergedRef}
+      asChild={asChild}
+      disabled={disabled}
+    >
+      {withHighlight(children, highlight, asChild)}
+    </SelectPrimitive.Item>
+  );
+}
+
 const ItemText = SelectPrimitive.ItemText;
-// Not animated: it only mounts with the list (choosing an item closes it), so
-// a fade would just repeat the list's.
-const ItemIndicator = SelectPrimitive.ItemIndicator;
+
+/** Motion's default layout transition, which v1's radio indicator used. */
+const CHECK_GLIDE = {
+  duration: 0.45,
+  ease: [0.4, 0, 0.1, 1],
+} as const satisfies Transition;
+
+/**
+ * Shows with the list; choosing another item moves it there (while the list
+ * closes), like v1's radio indicator.
+ */
+function ItemIndicator({
+  transition,
+  children,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ItemIndicator> &
+  IndicatorAnimationProps) {
+  const layoutId = React.use(IndicatorLayoutContext);
+  const glide = useTempoTransition(transition ?? CHECK_GLIDE);
+  if (!layoutId) {
+    return (
+      <SelectPrimitive.ItemIndicator {...props}>
+        {children}
+      </SelectPrimitive.ItemIndicator>
+    );
+  }
+  return (
+    <SelectPrimitive.ItemIndicator {...props} asChild>
+      <CheckMotion layoutId={layoutId} transition={glide}>
+        {children}
+      </CheckMotion>
+    </SelectPrimitive.ItemIndicator>
+  );
+}
+
+function CheckMotion({
+  layoutId,
+  transition,
+  ...props
+}: React.ComponentProps<'span'> & {
+  layoutId: string;
+  transition: Transition;
+}) {
+  return (
+    // Out of the list's exit: the list doesn't wait for the glide to end
+    // before it unmounts.
+    <PresenceContext value={null}>
+      <motion.span
+        {...(props as React.ComponentProps<typeof motion.span>)}
+        layoutId={layoutId}
+        // One check moving, not two crossfading.
+        layoutCrossfade={false}
+        transition={transition}
+      />
+    </PresenceContext>
+  );
+}
 const ScrollUpButton = SelectPrimitive.ScrollUpButton;
 const ScrollDownButton = SelectPrimitive.ScrollDownButton;
 const Separator = SelectPrimitive.Separator;

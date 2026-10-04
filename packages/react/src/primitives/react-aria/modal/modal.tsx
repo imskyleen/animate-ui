@@ -7,55 +7,73 @@ import {
   OverlayTriggerStateContext,
   type ModalOverlayProps as ModalOverlayPrimitiveProps,
 } from 'react-aria-components';
-import { AnimatePresence, useIsPresent } from 'motion/react';
+import {
+  AnimatePresence,
+  useIsPresent,
+  usePresence,
+  type Transition,
+} from 'motion/react';
 
 import { useControlledState } from '../../../utils/use-controlled-state';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
+  DIALOG_TRANSITION,
+  OVERLAY_TRANSITION,
+  SHEET_TRANSITION,
   getContentTargets,
   getModalSide,
-  getOverlayTargets,
   ariaMotionRender,
+  toCssTiming,
+  useModalTransitions,
   type ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
-// Same API as React Aria's Modal and ModalOverlay. The overlay fades, the
-// modal scales from 0.95 around its center, or slides from its edge when it
-// has `data-side` (shadcn/ui's Sheet).
+// Same API as React Aria's Modal and ModalOverlay, animated like Animate UI
+// v1's Dialog (Radix, Base UI and Headless UI shipped the same motion): the
+// overlay fades in 200ms (easeInOut), the modal tips forward from
+// `perspective(500px) rotateX(-20deg) scale(0.8)` with a fade and a blur on a
+// spring, or slides and fades in from its edge when it has `data-side`
+// (shadcn/ui's Sheet, v1's Sheet). See ../../../internal/modal-motion.ts.
+//
+// React Aria renders the Modal inside the ModalOverlay, where v1's overlay and
+// content were siblings: fading the overlay's opacity (and filter) would fade
+// and blur the modal with it, cutting its exit short. So the overlay fades its
+// own background color and backdrop filter instead (from the values its
+// classes give it), and the modal moves exactly like v1's content.
 //
 // React Aria keeps an exiting modal mounted while the animations it finds on
 // it run, but it looks for them before Motion's exit has started. So the
 // ModalOverlay resolves the open state like React Aria does (its own props,
 // else the DialogTrigger's state), gates itself with AnimatePresence and
 // passes `isExiting` while its exit plays: React Aria then keeps it mounted,
-// marks it `data-exiting` and stops trapping focus. Both parts render a
+// marks it `data-exiting` and stops trapping focus. The modal renders a
 // motion.div through React Aria's `render` prop (or the user's own `render`,
-// made animatable), so their attributes, `className` and `style` (render
-// props included) stay on that element.
+// made animatable), so its attributes, `className` and `style` (render props
+// included) stay on that element.
 
 /** Animate UI's additions to `ModalOverlay`. */
 type OverlayAnimationProps = {
-  /** Fade in. Defaults to `transition.modal` (600ms). */
+  /**
+   * Fade in (of its background color and backdrop filter).
+   * @default { duration: 0.2, ease: 'easeInOut' }
+   */
   transition?: ModalAnimationProps['transition'];
-  /** Fade out. Defaults to `transition.modalExit` (400ms). */
+  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
 /** Animate UI's additions to `Modal`. */
 type ModalAnimationPropsDoc = {
   /**
-   * Transition of the opening. Defaults to `transition.modal` (600ms), or
-   * `transition.drawer` when the modal has `data-side`.
+   * Transition of the opening: `{ type: 'spring', stiffness: 150, damping: 25 }`
+   * by default, or `{ type: 'spring', stiffness: 150, damping: 22 }` when the
+   * modal has `data-side`.
    */
   transition?: ModalAnimationProps['transition'];
-  /**
-   * Transition of the closing. Defaults to `transition.modalExit` (400ms), or
-   * `transition.drawerExit` when the modal has `data-side`.
-   */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
@@ -112,19 +130,30 @@ function OverlayPresence({
   isExiting,
   render,
   animated = true,
+  ref,
   ...props
 }: Omit<ModalOverlayProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'> & {
   /** False for the invisible overlay of a standalone Modal. */
   animated?: boolean;
 }) {
   const live = React.use(LiveStateContext)!;
-  const isPresent = useIsPresent();
-  // Once closed, clicks go through to the page while the exit plays.
-  const exitingStyle = isPresent
-    ? {}
-    : { style: { pointerEvents: 'none' as const } };
-  const tokens = useMotionTokens();
-  const targets = getOverlayTargets({ tokens, transition, exitTransition });
+  const [isPresent, safeToRemove] = usePresence();
+  const overlayRef = React.useRef<HTMLDivElement | null>(null);
+  const setRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      overlayRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref)
+        (ref as React.RefObject<HTMLDivElement | null>).current = node;
+    },
+    [ref],
+  );
+  useBackdropFade(overlayRef, {
+    isPresent,
+    safeToRemove,
+    animated,
+    ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+  });
 
   return (
     <InOverlayContext value>
@@ -133,25 +162,89 @@ function OverlayPresence({
         {...(live.local
           ? { isOpen: live.isOpen, onOpenChange: live.setOpen }
           : {})}
+        ref={setRef}
         isExiting={!isPresent || isExiting}
         render={ariaMotionRender(
           render,
-          animated
-            ? {
-                initial: targets.initial,
-                animate: targets.animate,
-                exit: targets.exit,
-                ...exitingStyle,
-              }
-            : // Still a motion element, so the modal's exit is awaited.
-              {
-                exit: { transition: targets.exit.transition },
-                ...exitingStyle,
-              },
+          // Once closed, clicks go through to the page while the exit plays.
+          isPresent ? {} : { style: { pointerEvents: 'none' } },
         )}
       />
     </InOverlayContext>
   );
+}
+
+type BackdropValues = Record<'backgroundColor' | 'backdropFilter', string>;
+
+const CLEAR: BackdropValues = {
+  backgroundColor: 'transparent',
+  backdropFilter: 'none',
+};
+
+function readBackdrop(element: HTMLElement): BackdropValues {
+  const style = getComputedStyle(element);
+  return {
+    backgroundColor: style.backgroundColor,
+    backdropFilter: style.backdropFilter,
+  };
+}
+
+/**
+ * Fades the overlay's background color and backdrop filter in from nothing to
+ * what its classes set, and back out before it unmounts (`safeToRemove`). A
+ * Web Animation, so any color syntax interpolates and the classes take over
+ * again once it has played.
+ */
+function useBackdropFade(
+  ref: React.RefObject<HTMLDivElement | null>,
+  options: {
+    isPresent: boolean;
+    safeToRemove: (() => void) | null | undefined;
+    animated: boolean;
+    enter: Transition;
+    exit: Transition;
+  },
+) {
+  const { isPresent } = options;
+  const latestRef = React.useRef(options);
+  React.useLayoutEffect(() => {
+    latestRef.current = options;
+  });
+  const runningRef = React.useRef<Animation | null>(null);
+
+  React.useLayoutEffect(() => {
+    const { animated, enter, exit, safeToRemove } = latestRef.current;
+    const element = ref.current;
+    if (!element || !animated || typeof element.animate !== 'function') {
+      if (!isPresent) safeToRemove?.();
+      return;
+    }
+    // From where it is: mid-fade when interrupted.
+    const current = runningRef.current;
+    const from = current
+      ? readBackdrop(element)
+      : isPresent
+        ? CLEAR
+        : readBackdrop(element);
+    current?.cancel();
+    // Its classes' values, now that nothing animates them.
+    const to = isPresent ? readBackdrop(element) : CLEAR;
+    const { duration, easing } = toCssTiming(isPresent ? enter : exit);
+    const animation = element.animate([from, to], {
+      duration,
+      easing,
+      fill: isPresent ? 'backwards' : 'forwards',
+    });
+    runningRef.current = animation;
+    animation.finished
+      .then(() => {
+        if (runningRef.current !== animation) return;
+        if (isPresent) runningRef.current = null;
+        else latestRef.current.safeToRemove?.();
+      })
+      // Cancelled: a newer fade took over.
+      .catch(() => {});
+  }, [isPresent, ref]);
 }
 
 // The props React Aria reads on the overlay a standalone Modal creates.
@@ -192,18 +285,16 @@ function ModalContent({
   render,
   ...props
 }: ModalProps) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
   const isPresent = useIsPresent();
   // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
   const side = getModalSide((props as Record<string, unknown>)['data-side']);
-  const targets = getContentTargets({
-    side,
-    tokens,
-    reduce,
+  const { enter, exit } = useModalTransitions(
     transition,
     exitTransition,
-  });
+    side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+  );
+  const targets = getContentTargets({ side, reduce, enter, exit });
 
   return (
     <ModalPrimitive

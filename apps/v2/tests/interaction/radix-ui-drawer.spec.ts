@@ -2,6 +2,11 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { gotoHydrated } from './disclosure-timeline';
 
+// The drawer moves like Animate UI v1's Sheet: every move of its position on
+// v1's sheet spring (stiffness 150, damping 22), fading in and out with it
+// when it opens and closes; its overlay fades and un-blurs in 200ms
+// (easeInOut), and follows the drag like Vaul's.
+
 const CONTENT = '[data-slot="drawer-content"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
 
@@ -97,6 +102,23 @@ async function recordMotion(
 const at = (frames: MotionFrame[], t: number) =>
   frames.filter((frame) => frame.t <= t).at(-1)!;
 
+/** Waits until the drawer rests at its open position (`offset` px), opaque. */
+const settled = (
+  page: Page,
+  selector: string,
+  axis: 'x' | 'y' = 'y',
+  offset = 0,
+) =>
+  expect
+    .poll(
+      async () => {
+        const current = await state(page, selector);
+        return current.opacity === 1 && Math.abs(current[axis] - offset) < 1;
+      },
+      { timeout: 2500 },
+    )
+    .toBe(true);
+
 type DragOptions = {
   /** Where to grab, from the element's top-left corner. */
   at?: { x?: number; y?: number };
@@ -142,24 +164,26 @@ test.describe('radix-ui drawer demo', () => {
   const open = async (page: Page, settle = true) => {
     await page.getByRole('button', { name: 'Move goal' }).click();
     await page.locator(CONTENT).waitFor();
-    if (settle) await page.waitForTimeout(700);
+    if (settle) await settled(page, CONTENT);
   };
 
-  test('slides up from the bottom edge with Vaul attributes, then settles', async ({
+  test("slides and fades up from the bottom edge like v1's sheet, with Vaul attributes", async ({
     page,
   }) => {
-    const motion = await recordMotion(page, CONTENT, OVERLAY);
+    const motion = await recordMotion(page, CONTENT, OVERLAY, 'y', 900);
     await open(page, false);
     const frames = await motion.frames();
-    // Starts off screen, moves fast first (strong ease-out), no fade.
+    // Starts off screen and transparent.
     expect(frames[0]!.share).toBeGreaterThan(0.8);
-    expect(at(frames, 60).share).toBeGreaterThan(0.05);
-    expect(at(frames, 60).share).toBeLessThan(frames[0]!.share);
-    expect(at(frames, 60).opacity).toBe(1);
-    expect(at(frames, 60).overlay).toBeLessThan(1);
-    // Settled within the 600ms budget.
-    expect(Math.abs(at(frames, 650).share)).toBeLessThan(0.01);
-    expect(at(frames, 650).overlay).toBe(1);
+    expect(frames[0]!.opacity).toBeLessThan(0.3);
+    // It fades in while it slides (v1's sheet), on the spring.
+    const midway = frames.find((frame) => frame.share < 0.5)!;
+    expect(midway.opacity).toBeGreaterThan(0.2);
+    expect(midway.opacity).toBeLessThan(0.95);
+    // The overlay's 200ms fade is over while the drawer still slides.
+    const overlayIn = frames.find((frame) => frame.overlay >= 0.99)!;
+    expect(overlayIn.share).toBeGreaterThan(0.05);
+    expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
 
     const content = page.locator(CONTENT);
     await expect(content).toHaveAttribute(
@@ -173,20 +197,27 @@ test.describe('radix-ui drawer demo', () => {
       '',
     );
 
-    await page.waitForTimeout(600);
-    expect(Math.abs((await state(page, CONTENT)).y)).toBeLessThan(1);
+    await settled(page, CONTENT);
     expect(await opacity(page, OVERLAY)).toBe(1);
+    expect(
+      await page.locator(OVERLAY).evaluate((el) => getComputedStyle(el).filter),
+    ).toBe('blur(0px)');
   });
 
-  test('closes faster than it opens, sliding back down, then unmounts', async ({
+  test('closes the same way, sliding and fading back down, then unmounts', async ({
     page,
   }) => {
     await open(page);
+    const motion = await recordMotion(page, CONTENT, OVERLAY, 'y', 450);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(80);
-    expect((await state(page, CONTENT)).shareY).toBeGreaterThan(0.05);
+    const frames = await motion.frames();
     await expect(page.locator(CONTENT)).toHaveAttribute('data-state', 'closed');
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 450 });
+    // The overlay is gone first, while the drawer still slides out.
+    const overlayOut = frames.find((frame) => frame.overlay <= 0.01)!;
+    expect(overlayOut.opacity).toBeGreaterThan(0.1);
+    expect(frames.at(-1)!.share).toBeGreaterThan(0.6);
+    expect(frames.at(-1)!.opacity).toBeLessThan(0.3);
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(OVERLAY)).toHaveCount(0);
   });
 
@@ -197,9 +228,10 @@ test.describe('radix-ui drawer demo', () => {
     const { height } = await state(page, CONTENT);
     const distance = Math.round(height * 0.2);
     await drag(page, CONTENT, { dy: distance, release: false });
-    // No lag: the drawer sits where the finger is.
+    // No lag: the drawer sits where the finger is, and doesn't fade.
     const dragged = await state(page, CONTENT);
     expect(Math.abs(dragged.y - distance)).toBeLessThan(2);
+    expect(dragged.opacity).toBe(1);
     const overlay = await opacity(page, OVERLAY);
     expect(overlay).toBeLessThan(1);
     expect(Math.abs(overlay - (1 - distance / height))).toBeLessThan(0.05);
@@ -212,9 +244,8 @@ test.describe('radix-ui drawer demo', () => {
     const released = await state(page, CONTENT);
     expect(released.y).toBeGreaterThan(5);
     expect(released.y).toBeLessThan(dragged.y);
-    await page.waitForTimeout(700);
-    expect(Math.abs((await state(page, CONTENT)).y)).toBeLessThan(1);
-    expect(await opacity(page, OVERLAY)).toBe(1);
+    await settled(page, CONTENT);
+    await expect.poll(() => opacity(page, OVERLAY)).toBe(1);
     await expect(page.locator(CONTENT)).toHaveCount(1);
   });
 
@@ -229,7 +260,7 @@ test.describe('radix-ui drawer demo', () => {
     await page.waitForTimeout(60);
     // Continues downwards from the release point.
     expect((await state(page, CONTENT)).y).toBeGreaterThan(before);
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 500 });
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('a short flick dismisses it', async ({ page }) => {
@@ -237,7 +268,7 @@ test.describe('radix-ui drawer demo', () => {
     const { height } = await state(page, CONTENT);
     const distance = Math.round(height * 0.2);
     await drag(page, CONTENT, { dy: distance, steps: 3, every: 8 });
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 500 });
+    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('pulled upwards it rubber-bands, then springs back', async ({
@@ -250,8 +281,7 @@ test.describe('radix-ui drawer demo', () => {
     expect(pulled.y).toBeGreaterThan(-60);
     await page.waitForTimeout(150);
     await page.mouse.up();
-    await page.waitForTimeout(700);
-    expect(Math.abs((await state(page, CONTENT)).y)).toBeLessThan(1);
+    await settled(page, CONTENT);
   });
 
   test('a drag does not click the button it started on', async ({ page }) => {
@@ -279,7 +309,7 @@ test.describe('radix-ui drawer demo', () => {
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 600 });
+    await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 2500 });
     await expect(trigger).toBeFocused();
   });
 
@@ -290,9 +320,8 @@ test.describe('radix-ui drawer demo', () => {
     await page
       .getByRole('button', { name: 'Move goal' })
       .click({ force: true });
-    await page.waitForTimeout(700);
-    expect(Math.abs((await state(page, CONTENT)).y)).toBeLessThan(1);
-    expect(await opacity(page, OVERLAY)).toBe(1);
+    await settled(page, CONTENT);
+    await expect.poll(() => opacity(page, OVERLAY)).toBe(1);
     await expect(page.locator(CONTENT)).toHaveCount(1);
   });
 
@@ -305,8 +334,7 @@ test.describe('radix-ui drawer demo', () => {
     const early = await state(page, CONTENT);
     expect(Math.abs(early.y)).toBeLessThan(1);
     expect(early.opacity).toBeLessThan(1);
-    await page.waitForTimeout(650);
-    expect((await state(page, CONTENT)).opacity).toBe(1);
+    await settled(page, CONTENT);
 
     const { height } = await state(page, CONTENT);
     const distance = Math.round(height * 0.2);
@@ -335,7 +363,7 @@ test.describe('radix-ui drawer API', () => {
   const closeDefault = async (page: Page) => {
     await page.getByText('Close default').click();
     await expect(page.getByTestId('default-content')).toHaveCount(0, {
-      timeout: 400,
+      timeout: 1000,
     });
   };
 
@@ -348,17 +376,17 @@ test.describe('radix-ui drawer API', () => {
       'right',
     );
     expect(Math.abs((await state(page, content)).x)).toBeLessThan(1);
-    // 100ms instead of 400ms.
+    // A 100ms exit instead of v1's spring.
     await page.getByText('Close default').click();
-    await expect(page.locator(content)).toHaveCount(0, { timeout: 300 });
+    await expect(page.locator(content)).toHaveCount(0, { timeout: 400 });
 
-    // 200ms instead of 600ms.
+    // A 200ms entrance.
     const motion = await recordMotion(page, content, OVERLAY, 'x', 400);
     await page.getByRole('button', { name: 'Open default' }).click();
     const frames = await motion.frames();
     expect(frames[0]!.share).toBeGreaterThan(0.8);
     expect(at(frames, 40).share).toBeGreaterThan(0.05);
-    expect(Math.abs(at(frames, 260).share)).toBeLessThan(0.005);
+    expect(Math.abs(at(frames, 320).share)).toBeLessThan(0.005);
   });
 
   test('controlled open, onOpenChange, onClose and onAnimationEnd', async ({
@@ -375,7 +403,7 @@ test.describe('radix-ui drawer API', () => {
     await page.getByText('Close bottom').click();
     await expect(page.getByTestId('controlled-state')).toHaveText('closed');
     await expect(page.getByTestId('bottom-content')).toHaveCount(0, {
-      timeout: 500,
+      timeout: 2500,
     });
     await expect(page.getByTestId('log')).toHaveText(
       'end:true,close,change:false,end:false',
@@ -390,8 +418,8 @@ test.describe('radix-ui drawer API', () => {
   }) => {
     await closeDefault(page);
     await page.getByRole('button', { name: 'Controlled trigger' }).click();
-    await page.waitForTimeout(700);
     const content = '[data-testid="bottom-content"]';
+    await settled(page, content);
     const { height } = await state(page, content);
     await drag(page, content, { dy: height * 0.25, hold: 150, release: false });
     const reported = Number(await page.getByTestId('last-drag').textContent());
@@ -399,7 +427,7 @@ test.describe('radix-ui drawer API', () => {
     expect(reported).toBeLessThan(0.3);
     await page.mouse.up();
     await expect(page.getByTestId(`bottom-content`)).toHaveCount(0, {
-      timeout: 500,
+      timeout: 2500,
     });
     await expect(page.getByTestId('log')).toHaveText(
       'change:true,end:true,close,change:false,release:false,end:false',
@@ -414,7 +442,7 @@ test.describe('radix-ui drawer API', () => {
     const scale = () =>
       wrapper.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
     await page.getByRole('button', { name: 'Controlled trigger' }).click();
-    await page.waitForTimeout(700);
+    await settled(page, '[data-testid="bottom-content"]');
     expect(await scale()).toBeLessThan(0.99);
     expect(await page.evaluate(() => document.body.style.background)).toContain(
       'black',
@@ -426,7 +454,7 @@ test.describe('radix-ui drawer API', () => {
     expect(await scale()).toBeGreaterThan(open);
     await page.mouse.up();
     await page.keyboard.press('Escape');
-    await expect(page.locator(content)).toHaveCount(0, { timeout: 500 });
+    await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
     expect(await scale()).toBe(1);
     expect(await page.evaluate(() => document.body.style.background)).toBe('');
   });
@@ -448,12 +476,14 @@ test.describe('radix-ui drawer API', () => {
         content,
         '[data-vaul-overlay]',
         axis,
+        900,
       );
       await page.getByText(`Open ${direction}`).click();
       const frames = await motion.frames();
       expect(frames[0]!.share * sign).toBeGreaterThan(0.8);
+      expect(frames[0]!.opacity).toBeLessThan(0.3);
       expect(at(frames, 60).share * sign).toBeGreaterThan(0.05);
-      expect(Math.abs(at(frames, 650).share)).toBeLessThan(0.01);
+      expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
       await expect(page.locator(content)).toHaveAttribute(
         'data-vaul-drawer-direction',
         direction,
@@ -478,7 +508,7 @@ test.describe('radix-ui drawer API', () => {
         Math.abs((axis === 'x' ? dragged.x : dragged.y) - delta),
       ).toBeLessThan(2);
       await page.mouse.up();
-      await page.waitForTimeout(700);
+      await settled(page, content, axis);
 
       await drag(page, content, {
         at: grab,
@@ -487,7 +517,7 @@ test.describe('radix-ui drawer API', () => {
           : { dy: box.height * 0.5 * sign }),
         hold: 150,
       });
-      await expect(page.locator(content)).toHaveCount(0, { timeout: 500 });
+      await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
     });
   }
 
@@ -529,9 +559,9 @@ test.describe('radix-ui drawer API', () => {
 
     // From the last one, it closes, then resets to the first.
     await page.getByTestId('snap-handle').click();
-    await expect(page.locator(content)).toHaveCount(0, { timeout: 800 });
+    await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
     await expect(page.getByTestId('snap-state')).toHaveText('0.4', {
-      timeout: 1000,
+      timeout: 2000,
     });
   });
 
@@ -560,7 +590,7 @@ test.describe('radix-ui drawer API', () => {
     await expect(page.getByTestId('snap-state')).toHaveText('0.4');
     await page.waitForTimeout(700);
     await drag(page, content, { dy: 80, steps: 3, every: 8 });
-    await expect(page.locator(content)).toHaveCount(0, { timeout: 800 });
+    await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('handleOnly: only the Handle drags it', async ({ page }) => {
@@ -653,7 +683,7 @@ test.describe('radix-ui drawer API', () => {
     expect(Math.abs((await state(page, content)).y)).toBeLessThan(1);
 
     await page.getByText('Unlock').click();
-    await expect(page.locator(content)).toHaveCount(0, { timeout: 500 });
+    await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('nested: the parent steps back while the nested drawer is open', async ({
@@ -671,12 +701,14 @@ test.describe('radix-ui drawer API', () => {
 
     await page.getByText('Close nested').click();
     await expect(page.getByTestId('nested-content')).toHaveCount(0, {
-      timeout: 800,
+      timeout: 2500,
     });
-    await page.waitForTimeout(100);
-    const restored = await state(page, parent);
-    expect(restored.scale).toBeCloseTo(1, 3);
-    expect(Math.abs(restored.y)).toBeLessThan(1);
+    await expect
+      .poll(async () => {
+        const restored = await state(page, parent);
+        return Math.abs(restored.scale - 1) < 0.001 && Math.abs(restored.y) < 1;
+      })
+      .toBe(true);
   });
 
   test('forceMount keeps closed content mounted, hidden and inert', async ({
@@ -698,9 +730,10 @@ test.describe('radix-ui drawer API', () => {
     expect((await kept()).inert).toBe(false);
 
     await page.getByText('Close kept').click();
-    await page.waitForTimeout(500);
+    await expect
+      .poll(kept, { timeout: 2500 })
+      .toEqual({ visibility: 'hidden', inert: true });
     await expect(content).toHaveCount(1);
-    expect(await kept()).toEqual({ visibility: 'hidden', inert: true });
   });
 
   test('modal={false}: no overlay, the page stays usable', async ({ page }) => {

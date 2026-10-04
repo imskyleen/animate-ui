@@ -1,5 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { present, recordTimeline } from './modal-timeline';
+
+// Animate UI v1 had no toast: it moves like v1's Sheet (from its edge by its
+// own size, fading, on a spring of stiffness 150 and damping 22, which the
+// CSS transitions run as a 550ms `linear()` curve), and its content fades
+// behind the front toast with v1's 200ms easeInOut.
+
 const TOAST = '[data-slot="toast"]';
 
 /** Vertical offset (in toast heights), scale and opacity of toast `i`. */
@@ -17,70 +24,137 @@ const read = (page: Page, i: number, selector = TOAST) =>
       };
     });
 
+const timing = (page: Page, selector: string) =>
+  page
+    .locator(selector)
+    .first()
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return {
+        duration: cs.transitionDuration.split(',')[0]!.trim(),
+        easing: cs.transitionTimingFunction,
+      };
+    });
+
+const settled = (page: Page, i = 0, selector = TOAST) =>
+  expect
+    .poll(
+      async () => {
+        const state = await read(page, i, selector);
+        return state.opacity === 1 && Math.abs(state.y) < 0.002;
+      },
+      { timeout: 2500 },
+    )
+    .toBe(true);
+
 test.describe('base-ui toast demo', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/base-ui/toast', { waitUntil: 'networkidle' });
   });
 
-  test('enters from its edge and settles', async ({ page }) => {
+  test("enters from its edge like v1's sheet: sliding and fading on its spring", async ({
+    page,
+  }) => {
+    const timeline = await recordTimeline(page, { toast: TOAST });
     await page.getByRole('button', { name: 'Show toast' }).click();
-    await page.locator(TOAST).first().waitFor();
-    await page.waitForTimeout(40);
-    const early = await read(page, 0);
-    expect(early.y).toBeGreaterThan(0.1);
-    expect(early.opacity).toBeLessThan(1);
-
-    await page.waitForTimeout(700);
-    const settled = await read(page, 0);
-    expect(Math.abs(settled.y)).toBeLessThan(0.02);
-    expect(settled.opacity).toBe(1);
+    await settled(page);
+    const shown = present(await timeline.stop(), 'toast');
+    const first = shown[0]!.samples.toast!;
+    expect(first.y).toBeGreaterThan(0.6);
+    expect(first.opacity).toBeLessThan(0.3);
+    const midway = shown.find((frame) => frame.samples.toast!.y < 0.5)!;
+    expect(midway.samples.toast!.opacity).toBeGreaterThan(0.2);
+    expect(midway.samples.toast!.opacity).toBeLessThan(0.95);
+    // The spring as CSS: v1's sheet spring settles in 550ms.
+    const enter = await timing(page, TOAST);
+    expect(enter.duration).toBe('0.55s');
+    expect(enter.easing).toMatch(/^linear\(/);
   });
 
   test('stacks: toasts behind are scaled down, hover expands them', async ({
     page,
   }) => {
+    // All the toasts' scales in one read (they close themselves after 5s).
+    const scales = () =>
+      page.evaluate(() =>
+        [...document.querySelectorAll('[data-slot="toast"]')].map((el) => {
+          const m = new DOMMatrix(getComputedStyle(el).transform);
+          return Math.hypot(m.a, m.b);
+        }),
+      );
     const button = page.getByRole('button', { name: 'Show toast' });
     for (let i = 0; i < 3; i++) await button.click();
-    await page.waitForTimeout(700);
-    const scales = await Promise.all([0, 1, 2].map((i) => read(page, i)));
-    const smallest = Math.min(...scales.map((s) => s.scale));
-    expect(smallest).toBeLessThan(1);
-    expect(smallest).toBeGreaterThanOrEqual(0.9);
+    // The newest toast comes first in the DOM, at the front of the stack.
+    await settled(page, 0);
+    await expect
+      .poll(async () => {
+        const list = await scales();
+        return list.length === 3 && Math.min(...list) < 0.95;
+      })
+      .toBe(true);
+    const collapsed = await scales();
+    expect(Math.min(...collapsed)).toBeGreaterThanOrEqual(0.9);
 
     // Hovering the stack expands it (the toasts overlap, so no actionability).
     await page.locator(TOAST).first().hover({ force: true });
-    await page.waitForTimeout(700);
-    const expanded = await Promise.all([0, 1, 2].map((i) => read(page, i)));
-    for (const s of expanded) expect(s.scale).toBeCloseTo(1, 2);
+    await expect
+      .poll(
+        async () => {
+          const list = await scales();
+          return (
+            list.length === 3 && list.every((s) => Math.abs(s - 1) < 0.005)
+          );
+        },
+        { timeout: 5000 },
+      )
+      .toBe(true);
+    // The content behind fades back in with v1's 200ms fade.
+    const content = await timing(page, '[data-slot="toast-content"]');
+    expect(content.duration).toBe('0.2s');
+    expect(content.easing).toBe('cubic-bezier(0.42, 0, 0.58, 1)');
   });
 
-  test('exits faster than it enters, through its edge', async ({ page }) => {
+  test('leaves through its edge on the same spring', async ({ page }) => {
     await page.getByRole('button', { name: 'Show toast' }).click();
     const toast = page.locator(TOAST).first();
-    await toast.waitFor();
-    await page.waitForTimeout(700);
-    const enter = await toast.evaluate(
-      (el) => getComputedStyle(el).transitionDuration,
-    );
+    await settled(page);
+    // The exit's timing, read as soon as Base UI marks the toast as ending.
+    await toast.evaluate((el) => {
+      (window as unknown as { __exit: Promise<unknown> }).__exit = new Promise(
+        (resolve) => {
+          const observer = new MutationObserver(() => {
+            if (!el.hasAttribute('data-ending-style')) return;
+            observer.disconnect();
+            const cs = getComputedStyle(el);
+            resolve({
+              duration: cs.transitionDuration.split(',')[0]!.trim(),
+              easing: cs.transitionTimingFunction,
+            });
+          });
+          observer.observe(el, { attributes: true });
+        },
+      );
+    });
+    const timeline = await recordTimeline(page, { toast: TOAST });
     // Base UI hides the close button from the accessibility tree until the
     // stack is expanded or focused.
     await toast.locator('[data-slot="toast-close"]').click();
-    await page.waitForTimeout(60);
-    const exit = await toast.evaluate((el) => ({
-      duration: getComputedStyle(el).transitionDuration,
-      y: new DOMMatrix(getComputedStyle(el).transform).m42,
-    }));
-    expect(enter.split(',')[0]!.trim()).toBe('0.6s');
-    expect(exit.duration.split(',')[0]!.trim()).toBe('0.4s');
-    expect(exit.y).toBeGreaterThan(0);
-    await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 600 });
+    const exit = (await page.evaluate(
+      () => (window as unknown as { __exit: Promise<unknown> }).__exit,
+    )) as { duration: string; easing: string };
+    expect(exit.duration).toBe('0.55s');
+    expect(exit.easing).toMatch(/^linear\(/);
+    await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 2500 });
+    // Down through its edge, fading out.
+    const last = present(await timeline.stop(), 'toast').at(-1)!.samples.toast!;
+    expect(last.y).toBeGreaterThan(0.6);
+    expect(last.opacity).toBeLessThan(0.3);
   });
 
   test('a swipe follows the finger, then dismisses', async ({ page }) => {
     await page.getByRole('button', { name: 'Show toast' }).click();
     const toast = page.locator(TOAST).first();
-    await toast.waitFor();
-    await page.waitForTimeout(700);
+    await settled(page);
     const box = (await toast.boundingBox())!;
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
@@ -98,18 +172,18 @@ test.describe('base-ui toast demo', () => {
       await page.waitForTimeout(16);
     }
     await page.mouse.up();
-    await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 1000 });
+    await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 2500 });
   });
 
   test('reduced motion: fades in place', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.reload({ waitUntil: 'networkidle' });
+    const timeline = await recordTimeline(page, { toast: TOAST });
     await page.getByRole('button', { name: 'Show toast' }).click();
-    await page.locator(TOAST).first().waitFor();
-    await page.waitForTimeout(40);
-    const early = await read(page, 0);
-    expect(Math.abs(early.y)).toBeLessThan(0.02);
-    expect(early.opacity).toBeLessThan(1);
+    await settled(page);
+    const first = present(await timeline.stop(), 'toast')[0]!.samples.toast!;
+    expect(Math.abs(first.y)).toBeLessThan(0.02);
+    expect(first.opacity).toBeLessThan(1);
   });
 });
 
@@ -126,17 +200,16 @@ test.describe('base-ui toast API', () => {
     await expect(toast).toHaveCount(1);
     await expect(toast).toContainText('Bottom toast');
     await toast.getByText('Dismiss').click();
-    await expect(toast).toHaveCount(0, { timeout: 600 });
+    await expect(toast).toHaveCount(0, { timeout: 2500 });
   });
 
   test('a toast swiped up enters from the top edge', async ({ page }) => {
-    await page.getByRole('button', { name: 'Add top' }).click();
     const selector = '[data-testid="top-toast"]';
-    await page.locator(selector).first().waitFor();
-    await page.waitForTimeout(40);
-    expect((await read(page, 0, selector)).y).toBeLessThan(-0.1);
-    await page.waitForTimeout(700);
-    expect(Math.abs((await read(page, 0, selector)).y)).toBeLessThan(0.02);
+    const timeline = await recordTimeline(page, { toast: selector });
+    await page.getByRole('button', { name: 'Add top' }).click();
+    await settled(page, 0, selector);
+    const first = present(await timeline.stop(), 'toast')[0]!.samples.toast!;
+    expect(first.y).toBeLessThan(-0.6);
   });
 
   test('timeouts still close toasts, the user style still applies', async ({
@@ -146,6 +219,6 @@ test.describe('base-ui toast API', () => {
     const toast = page.locator('[data-testid="bottom-toast"]');
     await expect(toast).toHaveCSS('outline-style', 'dashed');
     // 1s timeout, then the exit.
-    await expect(toast).toHaveCount(0, { timeout: 2500 });
+    await expect(toast).toHaveCount(0, { timeout: 3000 });
   });
 });

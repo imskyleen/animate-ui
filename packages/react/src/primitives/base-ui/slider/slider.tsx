@@ -5,33 +5,39 @@ import * as React from 'react';
 import { Slider as SliderPrimitive } from '@base-ui/react/slider';
 import { motion, type Transition } from 'motion/react';
 
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import { ReducedMotionConfig, useTempoTransition } from '../../../utils/motion';
 import {
-  PRESSED_SCALE,
+  SLIDER_TRANSITION,
   SliderMotionProvider,
   assignRef,
   useSliderMotion,
-  usePressScale,
   useSliderPartMotion,
   useSliderRootMotion,
+  useThumbStretch,
 } from '../../../internal/slider';
 
-// Same API as Base UI's Slider. Dragging and the keyboard follow instantly; a
-// press on the track glides the thumb and the indicator to the new value
-// (FLIP on transforms, see ../../../internal/slider), and the pressed thumb grows.
+// Same API as Base UI's Slider, animated like Animate UI v1's switch thumb
+// (v1 had no slider): the pressed (or dragged) thumb stretches along the
+// track, and a press on the track glides the thumb and the indicator to the
+// new value, on v1's spring (stiffness 300, damping 25; see
+// ../../../internal/slider). Dragging and the keyboard follow instantly.
 
 /** Animate UI's additions to `Slider.Indicator`. */
 type IndicatorAnimationProps = {
-  /** Transition of the indicator after a press on the track. Defaults to `spring.snappy`. */
+  /**
+   * Transition of the indicator after a press on the track. Defaults to a
+   * spring (stiffness 300, damping 25).
+   */
   transition?: Transition;
 };
 
 /** Animate UI's additions to `Slider.Thumb`. */
 type ThumbAnimationProps = {
-  /** Transition of the thumb after a press on the track, and of its press scale. Defaults to `spring.snappy`. */
+  /**
+   * Transition of the thumb after a press on the track, and of its stretch
+   * while pressed. Defaults to a spring (stiffness 300, damping 25).
+   */
   transition?: Transition;
-  /** Scale of the thumb while it is pressed or dragged. Defaults to `1.15`. */
-  pressedScale?: number;
 };
 
 type SliderValue = number | readonly number[];
@@ -125,11 +131,8 @@ namespace Track {
 }
 
 function Indicator({ ref, transition, ...props }: Indicator.Props) {
-  const tokens = useMotionTokens();
-  const { ref: motionRef, transform } = useSliderPartMotion(
-    'range',
-    transition ?? tokens.spring.snappy,
-  );
+  const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
+  const { ref: motionRef, transform } = useSliderPartMotion('range', spring);
 
   return (
     <SliderPrimitive.Indicator
@@ -157,24 +160,16 @@ namespace Indicator {
   export type State = SliderPrimitive.Indicator.State;
 }
 
-function Thumb({
-  ref,
-  transition,
-  pressedScale = PRESSED_SCALE,
-  onFocus,
-  onBlur,
-  ...props
-}: Thumb.Props) {
-  const tokens = useMotionTokens();
-  const t = transition ?? tokens.spring.snappy;
+function Thumb({ ref, transition, onFocus, onBlur, ...props }: Thumb.Props) {
+  const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
   const { isPressing } = useSliderMotion();
   const [isFocused, setIsFocused] = React.useState(false);
-  const { ref: motionRef, transform, press } = useSliderPartMotion('thumb', t);
+  const { ref: motionRef, transform } = useSliderPartMotion('thumb', spring);
 
   // Base UI focuses the thumb it moves, so the pressed thumb is the focused
   // one while the pointer is down.
   const isPressed = isPressing && isFocused;
-  usePressScale(press, isPressed, { transition: t, pressedScale });
+  useThumbStretch(motionRef, isPressed, spring);
 
   return (
     <SliderPrimitive.Thumb
@@ -204,7 +199,7 @@ function Thumb({
 }
 
 namespace Thumb {
-  /** Base UI's props, plus Animate UI's `transition` and `pressedScale`. */
+  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = SliderPrimitive.Thumb.Props &
     ThumbAnimationProps &
     React.RefAttributes<HTMLDivElement>;

@@ -36,32 +36,35 @@ React Aria lets you render the indicator yourself. Animate UI animates the conte
 
 ## Animation
 
-- **Indicator**: a check that mounts scales in from half size and fades in over 600ms with a strong ease-out. When it unmounts, a copy of it scales out in 400ms in its place, then goes away: your render function stays the single source of truth, React Aria's state and render props are never delayed.
-- **Checkbox** scales to 0.96 while pressed (150ms), with the pointer or the keyboard (React Aria's `isPressed`).
+The motion of Animate UI v1's Radix UI checkbox (v1 had no React Aria one):
+
+- **Indicator**: the check you render inside `data-slot="checkbox-indicator"` draws itself when it mounts. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.2s, after a 0.2s delay, on Motion's default ease-out. When it unmounts, a copy of it erases in 0.2s in its place, then goes away: your render function stays the single source of truth, React Aria's state and render props are never delayed. Content that isn't an SVG shape fades the same way.
+- **Checkbox** scales to 1.05 while hovered and to 0.95 while pressed (React Aria's `isHovered` and `isPressed`: the pointer, or Space on the keyboard), on Motion's default spring for scale (stiffness 550, damping 30).
 - Checking with Space animates the same way: the state changes at once, the animation never delays it.
-- A box that is already checked on load renders at rest.
-- Toggling again mid-animation retargets from where the check is.
-- Under reduced motion, the check only fades and nothing scales (no press feedback either).
-- `isIndeterminate` shows the indicator like `isSelected`. Inside a `CheckboxGroup`, each checkbox animates the same way.
+- A box that is already checked on load renders at rest: the check is your markup, rendered by the server before any script runs.
+- Toggling again mid-animation turns back from where the check is.
+- `isIndeterminate` shows the indicator like `isSelected`; an icon swapped for the indeterminate state draws without the delay, as v1's indeterminate line did. Inside a `CheckboxGroup`, each checkbox animates the same way.
+- Under reduced motion, the check only fades (its stroke stays whole) and nothing scales.
+- The box's own colours are the component's CSS: shadcn/ui's `transition-colors` fades them.
 - `className` and `style` render props keep working.
 
 ## API Reference
 
-`Checkbox` takes exactly the props of [React Aria's Checkbox](https://react-spectrum.adobe.com/react-aria/Checkbox.html#props), plus the props below. A `render` function of your own gets React Aria's behaviour, without the press feedback.
+`Checkbox` takes exactly the props of [React Aria's Checkbox](https://react-spectrum.adobe.com/react-aria/Checkbox.html#props), plus the props below. A `render` function of your own gets React Aria's behaviour, without the hover and press scale.
 
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the check appearing.',
+      description: 'Transition of the check drawing itself.',
       type: 'Transition',
-      default: 'transition.change (600ms, ease-out)',
+      default: '{ duration: 0.2, delay: 0.2 }',
     },
     exitTransition: {
-      description: 'Transition of the check leaving.',
+      description: 'Transition of the check erasing itself.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
   }}
 />
 
-The press feedback uses `transition.press` (150ms); `AnimateUIProvider`'s `tempo` changes it with everything else.
+The hover and press scale uses Motion's default spring for scale (stiffness 550, damping 30). `AnimateUIProvider`'s `tempo` scales these transitions with everything else.

@@ -5,14 +5,17 @@ import { Accordion as AccordionPrimitive } from 'radix-ui';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
+import { ReducedMotionConfig } from '../../../utils/motion';
 import {
-  ReducedMotionConfig,
-  useMotionTokens,
-  useShouldReduceMotion,
-} from '../../../utils/motion';
+  collapsed,
+  expanded,
+  maskStyle,
+  useDisclosureTransitions,
+} from '../../../internal/disclosure-panel';
 
 // Same API as Radix's Accordion. The Root mirrors the open items (Radix keeps
-// them private) so each Content can animate its height in and out.
+// them private) so each Content can animate in and out like Animate UI v1's:
+// height, fade, a 20px rise and a mask revealing it top to bottom.
 
 type Value = string | string[] | undefined;
 
@@ -35,9 +38,9 @@ type AccordionContentProps = AccordionPrimitive.AccordionContentProps &
 
 /** Animate UI's additions to `Accordion.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the opening. Defaults to `transition.disclosure` (600ms). */
+  /** Transition of the opening. Defaults to 350ms ease-in-out. */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition.exit` (400ms). */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -78,11 +81,6 @@ function Item(props: React.ComponentProps<typeof AccordionPrimitive.Item>) {
 const Header = AccordionPrimitive.Header;
 const Trigger = AccordionPrimitive.Trigger;
 
-// Height is one of the few layout animations worth its cost: the content
-// pushes what follows, so it has to grow.
-const collapsed = { height: 0, opacity: 0 };
-const expanded = { height: 'auto', opacity: 1 };
-
 function Content({
   forceMount,
   children,
@@ -92,19 +90,13 @@ function Content({
 }: React.ComponentProps<typeof AccordionPrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useItemOpen();
-  const tokens = useMotionTokens();
-  // Motion reads reduced motion once per element: a force-mounted panel
-  // follows a later change through its transitions.
-  const reduce = useShouldReduceMotion();
-  const enter = reduce
-    ? tokens.transition.instant
-    : (transition ?? tokens.transition.disclosure);
-  const exit = reduce
-    ? tokens.transition.instant
-    : (exitTransition ?? tokens.transition.exit);
+  // v1's content: 350ms ease-in-out both ways; under reduced motion the
+  // height and the rise jump (see internal/disclosure-panel).
+  const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
 
   return (
-    <AnimatePresence initial={false}>
+    // Open on mount (an item open by default), it animates open, as in v1.
+    <AnimatePresence>
       {(open || forceMount) && (
         // Radix's props (className, style, data-state, ids…) land on the
         // motion.div through asChild; it only carries the animation.
@@ -124,6 +116,7 @@ function Content({
             inert={!open}
             style={{
               overflow: 'hidden',
+              ...maskStyle,
               // Radix measures these once; Motion owns the height now, so
               // classes reading them (h-(--radix-accordion-content-height))
               // follow the content instead of a stale measure.

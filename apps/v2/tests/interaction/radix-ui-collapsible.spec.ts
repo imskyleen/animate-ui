@@ -10,6 +10,8 @@ disclosureDemoTests('radix-ui collapsible demo', {
     text: 'A CLI that animates your shadcn/ui components',
   },
   closedState: 'unmounted',
+  // v1's Radix Collapsible has no mask reveal.
+  mask: false,
 });
 
 test.describe('radix-ui collapsible API', () => {

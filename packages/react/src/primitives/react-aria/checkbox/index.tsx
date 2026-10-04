@@ -17,11 +17,13 @@ import {
   renderChildren,
 } from '../../../internal/controls/aria';
 
-// Same API as React Aria's Checkbox. The checkbox gives press feedback; the
-// check the user renders inside `data-slot="checkbox-indicator"` (shadcn/ui's
-// indicator) scales in when selected and out when cleared.
+// Same API as React Aria's Checkbox, animated like Animate UI v1's Radix UI
+// checkbox (v1 had no React Aria one): the checkbox scales to 1.05 while
+// hovered and 0.95 while pressed, and the check the user renders inside
+// `data-slot="checkbox-indicator"` (shadcn/ui's indicator) draws itself when
+// selected (its stroke and opacity, 0.2s after 0.2s) and erases in 0.2s.
 
-/** React Aria's props, plus Animate UI's `transition` and `exitTransition`. */
+/** React Aria's props, plus Animate UI's `transition` and `exitTransition` (the check's). */
 type CheckboxProps = CheckboxPrimitiveProps & IndicatorAnimationProps;
 
 const INDICATOR = '[data-slot="checkbox-indicator"]';
@@ -53,7 +55,7 @@ function AnimatedCheckbox({
       ref={mergedRef}
       // React Aria's props (resolved className and style, data-selected,
       // handlers, ref) land on the motion element. A custom `render` keeps
-      // React Aria's behaviour, without the press feedback.
+      // React Aria's behaviour, without the hover and press scale.
       render={
         render ??
         ((domProps, values) => (
@@ -61,6 +63,9 @@ function AnimatedCheckbox({
             {...domProps}
             as="label"
             isPressed={values.isPressed}
+            isHovered={values.isHovered}
+            isDisabled={values.isDisabled}
+            hover
           />
         ))
       }
@@ -71,7 +76,9 @@ function AnimatedCheckbox({
           <RenderedIndicator
             rootRef={rootRef}
             selector={INDICATOR}
+            kind="check"
             checked={values.isSelected || values.isIndeterminate}
+            indeterminate={values.isIndeterminate}
             transition={transition}
             exitTransition={exitTransition}
           />

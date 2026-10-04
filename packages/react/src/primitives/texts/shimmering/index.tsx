@@ -6,13 +6,20 @@ import { motion, useInView, type HTMLMotionProps } from 'motion/react';
 import { usePageVisible } from '../../../utils/use-page-visible';
 import {
   ReducedMotionConfig,
+  scaleTransition,
   transition as motionTransition,
+  useMotionTokens,
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN, splitGraphemes } from '../_text';
 
-const REST_TRANSFORM = 'translate(0px, 0px) scale(1) rotateY(0deg)';
-const WAVE_TRANSFORM = 'translate(5px, -5px) scale(1.1) rotateY(15deg)';
+const WAVE_REST = { x: 0, y: 0, scale: 1, rotateY: 0 };
+const WAVE = {
+  x: [0, 5, 0],
+  y: [0, -5, 0],
+  scale: [1, 1.1, 1],
+  rotateY: [0, 15, 0],
+};
 
 type ShimmeringTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   text: string;
@@ -43,11 +50,12 @@ function ShimmeringTextContent({
 }: ShimmeringTextProps) {
   const localRef = React.useRef<HTMLSpanElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLSpanElement);
+  const { tempo } = useMotionTokens();
 
   // The shimmer loops forever: it pauses off screen and in a hidden tab, and
-  // stops under reduced motion (color and transform strings are not covered by
-  // Motion's reduced motion). Pausing resets to the resting state, which is
-  // invisible since nobody is looking.
+  // stops under reduced motion (color is not covered by Motion's reduced
+  // motion). Pausing resets to the resting state, which is invisible since
+  // nobody is looking.
   const inView = useInView(localRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -89,43 +97,38 @@ function ShimmeringTextContent({
               transformStyle: 'preserve-3d',
             }}
             initial={{
+              ...(wave ? { scale: 1, rotateY: 0 } : {}),
               color: 'var(--color)',
-              ...(wave ? { transform: REST_TRANSFORM } : {}),
             }}
             animate={
               playing
                 ? {
+                    ...(wave ? WAVE : {}),
                     color: [
                       'var(--color)',
                       'var(--shimmering-color)',
                       'var(--color)',
                     ],
-                    ...(wave
-                      ? {
-                          transform: [
-                            REST_TRANSFORM,
-                            WAVE_TRANSFORM,
-                            REST_TRANSFORM,
-                          ],
-                        }
-                      : {}),
                   }
                 : {
+                    ...(wave ? WAVE_REST : {}),
                     color: 'var(--color)',
-                    ...(wave ? { transform: REST_TRANSFORM } : {}),
                   }
             }
             transition={
               playing
                 ? {
-                    duration,
-                    repeat: Infinity,
-                    repeatType: 'loop',
-                    repeatDelay: chars.length * 0.05,
-                    delay: (i * duration) / chars.length,
-                    // A symmetric pulse on text already on screen, not an
-                    // entrance.
-                    ease: 'easeInOut',
+                    ...scaleTransition(
+                      {
+                        duration,
+                        repeat: Infinity,
+                        repeatType: 'loop',
+                        repeatDelay: chars.length * 0.05,
+                        delay: (i * duration) / chars.length,
+                        ease: 'easeInOut',
+                      },
+                      tempo,
+                    ),
                     ...transition,
                   }
                 : motionTransition.instant

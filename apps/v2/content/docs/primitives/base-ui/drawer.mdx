@@ -43,11 +43,13 @@ shadcn/ui's React Aria Drawer is built on Base UI's Drawer too: `animate-ui anim
 
 ## Animation
 
-- **Popup** slides in from its edge (`swipeDirection`, a full size of its own) over 600ms on the drawer curve, and slides back out in 400ms.
-- While you drag it, it follows the finger on the same frame: no transition runs during a swipe. Let go slowly and it eases back over 600ms; flick it and it leaves along the swipe, faster the harder the flick (the 400ms exit scaled by Base UI's `--drawer-swipe-strength`).
-- **Backdrop** fades with the swipe, then fades in and out with the same timing.
+Animate UI v1 had no drawer: the motion is v1's Sheet, with Base UI's swipe on top.
+
+- **Popup** slides in from its edge (`swipeDirection`, a full size of its own) and fades in, on v1's sheet spring (stiffness 150, damping 22), and slides and fades back out the same way.
+- While you drag it, it follows the finger on the same frame: no transition runs during a swipe. Let go slowly and it springs back; flick it and it leaves along the swipe, faster the harder the flick (the exit scaled by Base UI's `--drawer-swipe-strength`).
+- **Backdrop** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way; it follows the swipe in between.
 - Snap points, nested drawers and `swipeDirection` work as in Base UI.
-- CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables, which `AnimateUIProvider tempo` reaches. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
+- CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables: a spring becomes the `linear()` curve Motion itself would use (550ms for v1's sheet spring), and `AnimateUIProvider tempo` reaches it. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
 - Under reduced motion, the drawer fades in place; a swipe dismissal still leaves along the swipe.
 
 ## API Reference
@@ -58,7 +60,7 @@ Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/rea
 
 [Base UI props](https://base-ui.com/react/components/drawer#root) only. They are not animated.
 
-### Popup, Backdrop
+### Popup
 
 [Base UI props](https://base-ui.com/react/components/drawer#popup), plus:
 
@@ -66,15 +68,34 @@ Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/rea
   type={{
     transition: {
       description:
-        'Opening, and easing back after a swipe that does not dismiss. CSS-driven: only `duration` and a cubic-bezier or named `ease` apply.',
+        'Opening (slide and fade in), snapping and springing back after a swipe that does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier or named `ease`.',
       type: 'Transition',
-      default: 'transition.drawer (600ms, drawer curve)',
+      default: "{ type: 'spring', stiffness: 150, damping: 22 }",
     },
     exitTransition: {
       description:
-        'Closing, scaled by the release velocity of a swipe. Only `duration` and `ease` apply.',
+        'Closing (slide and fade out), scaled by the release velocity of a swipe.',
       type: 'Transition',
-      default: 'transition.drawerExit (400ms, drawer curve)',
+      default: 'transition',
+    },
+  }}
+/>
+
+### Backdrop
+
+[Base UI props](https://base-ui.com/react/components/drawer#backdrop), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Fade (and blur) in. CSS-driven, like the Popup.',
+      type: 'Transition',
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    exitTransition: {
+      description: 'Fade (and blur) out.',
+      type: 'Transition',
+      default: 'transition',
     },
   }}
 />

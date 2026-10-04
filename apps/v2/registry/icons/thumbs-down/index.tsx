@@ -19,7 +19,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [null, -20, -12],
+        rotate: [0, -20, -12],
         transformOrigin: 'top right',
         transition: {
           duration: 0.4,
@@ -36,7 +36,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [null, -20, 5, 0],
+        rotate: [0, -20, 5, 0],
         transformOrigin: 'top right',
         transition: {
           duration: 0.8,

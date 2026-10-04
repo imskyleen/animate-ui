@@ -1,24 +1,71 @@
 import * as React from 'react';
 import {
+  createGeneratorEasing,
+  generateLinearEasing,
   motion,
+  spring,
   type TargetAndTransition,
   type Transition,
 } from 'motion/react';
 
-import type { MotionTokens } from '../utils/motion';
+import { useTempoTransition } from '../utils/motion';
 
-// Motion targets shared by every modal primitive (Radix UI and Base UI
-// Dialog / Alert Dialog, React Aria Modal): the overlay fades, the content
-// scales from `scale.enter` around its center, or slides in from its edge when
-// it carries `data-side` (shadcn/ui's Sheet).
+// Motion shared by the modal primitives (Radix UI and Base UI Dialog / Alert
+// Dialog, React Aria Modal), as Animate UI v1 shipped it:
+//
+// - The overlay fades in and un-blurs (opacity 0 → 1, blur(4px) → blur(0px))
+//   in 200ms, easeInOut, and leaves the same way.
+// - The content, v1's default entrance (`from="top"`): it fades in, un-blurs
+//   and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on a
+//   spring (stiffness 150, damping 25), and leaves the same way.
+// - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
+//   from that edge by its own size and fades in, on a spring (stiffness 150,
+//   damping 22), and leaves the same way.
+//
+// v1 used one transition both ways: `exitTransition` defaults to `transition`.
+
+/** v1's overlay fade: 200ms, easeInOut. */
+export const OVERLAY_TRANSITION = {
+  duration: 0.2,
+  ease: 'easeInOut',
+} as const satisfies Transition;
+
+/** v1's dialog spring. */
+export const DIALOG_TRANSITION = {
+  type: 'spring',
+  stiffness: 150,
+  damping: 25,
+} as const satisfies Transition;
+
+/** v1's sheet spring. */
+export const SHEET_TRANSITION = {
+  type: 'spring',
+  stiffness: 150,
+  damping: 22,
+} as const satisfies Transition;
 
 /** Animate UI's additions to an overlay or a modal's content. */
 export type ModalAnimationProps = {
   /** Transition of the opening. */
   transition?: Transition;
-  /** Transition of the closing. */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
+
+/**
+ * The opening and closing transitions, with `AnimateUIProvider`'s tempo
+ * applied. The closing one follows `transition` unless `exitTransition` is
+ * given, as v1's single `transition` did.
+ */
+export function useModalTransitions(
+  transition: Transition | undefined,
+  exitTransition: Transition | undefined,
+  fallback: Transition,
+) {
+  const enter = useTempoTransition(transition ?? fallback);
+  const exit = useTempoTransition(exitTransition ?? transition ?? fallback);
+  return { enter, exit };
+}
 
 export type ModalSide = 'top' | 'right' | 'bottom' | 'left';
 
@@ -39,81 +86,77 @@ const OFFSCREEN: Record<ModalSide, string> = {
   left: 'translateX(-100%)',
 };
 
+// v1's `from="top"`. The same functions on both ends, so they interpolate.
+const TIPPED = 'perspective(500px) rotateX(-20deg) scale(0.8)';
+const UPRIGHT = 'perspective(500px) rotateX(0deg) scale(1)';
+
 export type ModalTargets = {
   initial: TargetAndTransition;
   animate: TargetAndTransition;
   exit: TargetAndTransition;
 };
 
-type TargetOptions = ModalAnimationProps & {
-  tokens: MotionTokens;
-  reduce: boolean;
+type TargetOptions = {
+  /** Opening transition, tempo applied. */
+  enter: Transition;
+  /** Closing transition, tempo applied. */
+  exit: Transition;
 };
 
 /**
- * The content: a centered scale from `scale.enter` with a fade (modal
- * tokens), or a slide from `side` without a fade (drawer tokens). Reduced
- * motion keeps the fade and drops the movement.
+ * The content: v1's dialog entrance, or v1's sheet slide from `side`.
+ * Reduced motion keeps the fade (and the blur) and drops the movement.
  */
 export function getContentTargets({
   side,
-  tokens,
   reduce,
-  transition,
-  exitTransition,
-}: TargetOptions & { side: ModalSide | undefined }): ModalTargets {
+  enter,
+  exit,
+}: TargetOptions & {
+  side: ModalSide | undefined;
+  reduce: boolean;
+}): ModalTargets {
   if (side) {
-    // Same transform function on both ends so it interpolates.
     const shown =
       side === 'left' || side === 'right' ? 'translateX(0%)' : 'translateY(0%)';
-    const hidden = reduce
-      ? { opacity: 0, transform: shown }
-      : { opacity: 1, transform: OFFSCREEN[side] };
+    const hidden = {
+      opacity: 0,
+      transform: reduce ? shown : OFFSCREEN[side],
+    };
     return {
       initial: hidden,
-      animate: {
-        opacity: 1,
-        transform: shown,
-        transition: transition ?? tokens.transition.drawer,
-      },
-      exit: {
-        ...hidden,
-        transition: exitTransition ?? tokens.transition.drawerExit,
-      },
+      animate: { opacity: 1, transform: shown, transition: enter },
+      exit: { ...hidden, transition: exit },
     };
   }
 
   const hidden = {
     opacity: 0,
-    transform: `scale(${reduce ? 1 : tokens.scale.enter})`,
+    filter: 'blur(4px)',
+    transform: reduce ? UPRIGHT : TIPPED,
   };
   return {
     initial: hidden,
     animate: {
       opacity: 1,
-      transform: 'scale(1)',
-      transition: transition ?? tokens.transition.modal,
+      filter: 'blur(0px)',
+      transform: UPRIGHT,
+      transition: enter,
     },
-    exit: {
-      ...hidden,
-      transition: exitTransition ?? tokens.transition.modalExit,
-    },
+    exit: { ...hidden, transition: exit },
   };
 }
 
-/** The overlay only fades (no blur: it costs paint for nothing visible). */
+/** The overlay: v1's fade and blur. */
 export function getOverlayTargets({
-  tokens,
-  transition,
-  exitTransition,
-}: Omit<TargetOptions, 'reduce'>): ModalTargets {
+  enter,
+  exit,
+}: TargetOptions): ModalTargets {
+  const hidden = { opacity: 0, filter: 'blur(4px)' };
   return {
-    initial: { opacity: 0 },
-    animate: { opacity: 1, transition: transition ?? tokens.transition.modal },
-    exit: {
-      opacity: 0,
-      transition: exitTransition ?? tokens.transition.modalExit,
-    },
+    initial: hidden,
+    animate: { opacity: 1, filter: 'blur(0px)', transition: enter },
+    exit: { ...hidden, transition: exit },
   };
 }
 
@@ -145,6 +188,78 @@ export function useHiddenWhenClosed(open: boolean, keepMounted: boolean) {
     },
   };
 }
+
+/* CSS timing -------------------------------------------------------------- */
+
+// For the primitives driven by CSS transitions (Base UI's Drawer and Toast,
+// which follow the finger through CSS variables and wait for CSS transitions
+// before unmounting): a Motion transition as a CSS duration and timing
+// function. A spring becomes the `linear()` curve Motion itself hands the
+// browser for a spring (same duration, same 10ms resolution), so it moves
+// exactly like Motion's.
+
+/** A CSS transition timing: duration in ms and timing function. */
+export type CssTiming = { duration: number; easing: string };
+
+const CSS_EASINGS: Record<string, string> = {
+  linear: 'linear',
+  easeIn: 'cubic-bezier(0.42, 0, 1, 1)',
+  easeOut: 'cubic-bezier(0, 0, 0.58, 1)',
+  easeInOut: 'cubic-bezier(0.42, 0, 0.58, 1)',
+  circIn: 'cubic-bezier(0, 0.65, 0.55, 1)',
+  circOut: 'cubic-bezier(0.55, 0, 1, 0.45)',
+  backIn: 'cubic-bezier(0.31, 0.01, 0.66, -0.59)',
+  backOut: 'cubic-bezier(0.33, 1.53, 0.69, 0.99)',
+};
+
+const SPRING_KEYS = [
+  'stiffness',
+  'damping',
+  'mass',
+  'bounce',
+  'visualDuration',
+];
+
+function toCssEase(ease: unknown): string {
+  if (Array.isArray(ease) && ease.length === 4 && ease.every(Number.isFinite))
+    return `cubic-bezier(${ease.join(', ')})`;
+  if (typeof ease === 'string') return CSS_EASINGS[ease] ?? 'ease';
+  return CSS_EASINGS.easeInOut!;
+}
+
+/**
+ * `transition` (tempo already applied) as CSS timing. Springs become
+ * `linear()`; tweens keep their `duration` (Motion's default 0.3s) and
+ * cubic-bezier or named `ease` (Motion's default easeInOut).
+ */
+export function toCssTiming(transition: Transition): CssTiming {
+  const options = transition as Record<string, unknown>;
+  const isSpring =
+    options.type === 'spring' || SPRING_KEYS.some((key) => key in options);
+
+  if (isSpring) {
+    // Motion's spring takes a time-defined `duration` in ms.
+    const springOptions =
+      typeof options.duration === 'number'
+        ? { ...options, duration: options.duration * 1000 }
+        : options;
+    const { duration, ease } = createGeneratorEasing(
+      springOptions,
+      100,
+      spring,
+    );
+    const ms = Math.round(duration * 1000);
+    return { duration: ms, easing: generateLinearEasing(ease, ms) };
+  }
+
+  const seconds = typeof options.duration === 'number' ? options.duration : 0.3;
+  return {
+    duration: Math.round(seconds * 1000),
+    easing: toCssEase(options.ease),
+  };
+}
+
+/* Rendering --------------------------------------------------------------- */
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- elements of any type
    can be made animatable. */

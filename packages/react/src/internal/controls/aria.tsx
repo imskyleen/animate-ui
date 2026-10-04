@@ -7,8 +7,9 @@ import { usePressedMotion } from './press';
 import {
   useRenderedIndicator,
   type IndicatorAnimationProps,
+  type IndicatorKind,
 } from './indicator';
-import { useThumbGlide, type ThumbAnimationProps } from './thumb';
+import { useSwitchThumb, type ThumbAnimationProps } from './thumb';
 
 // React Aria pieces of the toggles and choice controls. React Aria renders
 // these controls with render props (`isSelected`, `isPressed`…): the root
@@ -18,6 +19,10 @@ import { useThumbGlide, type ThumbAnimationProps } from './thumb';
 type PressedMotionProps = Record<string, unknown> & {
   as: 'label' | 'button';
   isPressed: boolean;
+  isHovered?: boolean;
+  /** Also scale up while hovered (v1's Checkbox and Radio). */
+  hover?: boolean;
+  isDisabled?: boolean;
   transition?: Transition;
 };
 
@@ -25,10 +30,16 @@ type PressedMotionProps = Record<string, unknown> & {
 function PressedMotion({
   as,
   isPressed,
+  isHovered,
+  hover,
+  isDisabled,
   transition,
   ...props
 }: PressedMotionProps) {
-  const press = usePressedMotion(isPressed, transition);
+  const press = usePressedMotion(
+    { isPressed, isHovered },
+    { hover, disabled: isDisabled, transition },
+  );
   if (as === 'button')
     return (
       <motion.button {...(props as HTMLMotionProps<'button'>)} {...press} />
@@ -39,36 +50,51 @@ function PressedMotion({
 type RenderedIndicatorProps = IndicatorAnimationProps & {
   rootRef: React.RefObject<Element | null>;
   selector: string;
+  kind: IndicatorKind;
   checked: boolean;
+  indeterminate?: boolean;
 };
 
 /** Animates the indicator the user renders; renders nothing itself. */
 function RenderedIndicator({
   rootRef,
   selector,
+  kind,
   checked,
+  indeterminate,
   transition,
   exitTransition,
 }: RenderedIndicatorProps) {
-  useRenderedIndicator(rootRef, selector, checked, {
-    transition,
-    exitTransition,
-  });
+  useRenderedIndicator(
+    rootRef,
+    selector,
+    kind,
+    { checked, indeterminate },
+    { transition, exitTransition },
+  );
   return null;
 }
 
 type RenderedThumbProps = ThumbAnimationProps & {
   rootRef: React.RefObject<Element | null>;
   checked: boolean;
+  pressed: boolean;
 };
 
-/** Glides the thumb the user renders (`data-slot="switch-thumb"`). */
-function RenderedThumb({ rootRef, checked, transition }: RenderedThumbProps) {
-  useThumbGlide(
+/**
+ * Animates the thumb the user renders (`data-slot="switch-thumb"`): stretched
+ * while pressed, gliding to its new side. Renders nothing itself.
+ */
+function RenderedThumb({
+  rootRef,
+  checked,
+  pressed,
+  transition,
+}: RenderedThumbProps) {
+  useSwitchThumb(
     () =>
       rootRef.current?.querySelector<HTMLElement>('[data-slot="switch-thumb"]'),
-    checked,
-    { transition },
+    { checked, pressed, transition },
   );
   return null;
 }

@@ -13,6 +13,7 @@ import {
   asMotion,
   collapsed,
   expanded,
+  maskStyle,
   useDisclosurePanel,
   useDisclosureTransitions,
   type MotionPanelProps,
@@ -21,8 +22,9 @@ import {
 
 // Same API as React Aria's DisclosurePanel (used alone in a Disclosure, or in
 // a DisclosureGroup for an accordion). React Aria keeps the panel mounted and
-// hides it with `hidden="until-found"`: the panel animates its height in
-// place, and is hidden once the collapse is over.
+// hides it with `hidden="until-found"`: the panel animates in place (v1's
+// Headless UI Disclosure: height, fade, 20px rise and mask reveal), and is
+// hidden once the collapse is over.
 
 type DisclosurePanelProps = DisclosurePanelPrimitiveProps & PanelAnimationProps;
 
@@ -65,8 +67,9 @@ function DisclosurePanelMotion({
     domProps: React.ComponentProps<'div'>,
   ): MotionPanelProps => ({
     ref: domProps.ref as React.Ref<HTMLDivElement>,
-    // Always mounted: no entrance on mount, whatever the initial state.
-    initial: false,
+    // Open on mount (expanded by default), it animates open, as in v1; a
+    // closed one stays collapsed.
+    initial: collapsed,
     // Transitions live in the targets: the exit keeps its own timing.
     animate: open
       ? { ...expanded, transition: enter }
@@ -78,6 +81,7 @@ function DisclosurePanelMotion({
     style: {
       ...domProps.style,
       overflow: 'hidden',
+      ...maskStyle,
       [SIZE_VARS[0]!]: 'auto',
       [SIZE_VARS[1]!]: 'auto',
     },

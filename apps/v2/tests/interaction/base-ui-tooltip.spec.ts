@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import {
   describeAnchoredOverlay,
-  describeWarmTooltips,
+  describeToolbarTooltips,
+  expectEntranceOnLoad,
   gotoReady,
 } from './anchored-overlay';
 
@@ -15,7 +16,7 @@ describeAnchoredOverlay('base-ui tooltip demo', {
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
 });
 
-describeWarmTooltips('base-ui warm tooltips', PATH, CONTENT);
+describeToolbarTooltips('base-ui toolbar tooltips', PATH, CONTENT);
 
 test.describe('base-ui tooltip API', () => {
   test.describe.configure({ timeout: 180_000 });
@@ -30,17 +31,18 @@ test.describe('base-ui tooltip API', () => {
     await expect(content).toBeVisible();
     await page.mouse.move(5, 5, { steps: 4 });
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
     await page.getByRole('button', { name: 'Toggle from outside' }).click();
     await expect(content).toBeVisible();
   });
 
-  test('defaultOpen shows without an entrance', async ({ page }) => {
-    const content = page.getByTestId('default-open-content');
-    await expect(content).toBeVisible();
-    expect(
-      await content.evaluate((el) => Number(getComputedStyle(el).opacity)),
-    ).toBe(1);
+  test('defaultOpen plays its entrance on page load (v1)', async ({ page }) => {
+    await expectEntranceOnLoad(
+      page,
+      '/tests/fixtures/base-ui-tooltip',
+      '[data-testid="default-open-content"]',
+      'popover',
+    );
   });
 
   test('keepMounted keeps the closed popup mounted and hidden', async ({

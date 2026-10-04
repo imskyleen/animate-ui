@@ -19,14 +19,14 @@ export function Stat() {
 }
 ```
 
-A new `number` retargets the running count instead of restarting it.
+A new `number` springs on from where the count is instead of restarting it.
 
 ## Animation
 
-- Counts from `fromNumber` to `number` over 3s on a strong ease-out: it races through the bulk of the range and slows on the last digits, so the final value is readable as it lands.
+- Counts from `fromNumber` to `number` on a spring (`stiffness: 90, damping: 50`): most of the range goes by in the first second, then the last units tick in slowly (2025 lands after about 4.5s).
 - The ticking value is written to the DOM directly, without a React render per frame.
-- Spring options in `transition` (`stiffness`, `damping`, `bounce`, `visualDuration`…) animate the count as a spring.
-- `<AnimateUIProvider tempo>` paces the default duration.
+- `transition` takes other spring options, or any Motion transition with a `type` or an `ease`.
+- `<AnimateUIProvider tempo>` paces the default spring.
 - Under reduced motion, the number shows its target right away.
 - Screen readers read the target value once, never the ticking values.
 
@@ -58,15 +58,15 @@ A new `number` retargets the running count instead of restarting it.
       default: "'.'",
     },
     decimalPlaces: {
-      description:
-        'Decimal places to show. Defaults to the number of decimals of `number` (`12.5` shows one, `2025` none).',
+      description: 'Decimal places to show.',
       type: 'number',
+      default: '0',
     },
     transition: {
       description:
         'Transition of the count. Spring options animate as a spring; a transition with a `type` or an `ease` is used as is.',
       type: 'SpringOptions | Transition',
-      default: '{ duration: 3, ease: ease.out }',
+      default: '{ stiffness: 90, damping: 50 }',
     },
     delay: {
       description: 'Delay before counting, in milliseconds.',

@@ -6,22 +6,67 @@ import { motion, type Transition } from 'motion/react';
 
 import { ReducedMotionConfig } from '../../../utils/motion';
 import { usePressMotion } from '../../../internal/controls/press';
+import { mergeRefs } from '../../../internal/controls/indicator';
+import {
+  toggleGroupItemProps,
+  useToggleGroupHighlight,
+} from '../../../internal/controls/highlight';
 
-// Same API as Radix's Toggle Group. Items give press feedback. Arrow keys only
-// move the focus (roving tabindex), which never animates.
+// Same API as Radix's Toggle Group, animated like Animate UI v1's toggle
+// group: items scale to 0.95 while pressed and, with `type="single"`, the
+// selected item's surface slides to the next selected item (see
+// ../../../internal/controls/highlight). Arrow keys only move the focus
+// (roving tabindex), which never animates.
 
-/** Animate UI's additions to `ToggleGroup.Item`. */
-type ItemAnimationProps = {
-  /** Transition of the press feedback. Defaults to `transition.press` (150ms). */
+/** Animate UI's additions to `ToggleGroup.Root`. */
+type RootAnimationProps = {
+  /**
+   * Transition of the highlight sliding between items (`type="single"`).
+   * Defaults to a spring (stiffness 200, damping 25).
+   */
   transition?: Transition;
 };
 
-type ToggleGroupSingleProps = ToggleGroupPrimitive.ToggleGroupSingleProps;
-type ToggleGroupMultipleProps = ToggleGroupPrimitive.ToggleGroupMultipleProps;
+/** Animate UI's additions to `ToggleGroup.Item`. */
+type ItemAnimationProps = {
+  /**
+   * Transition of the press scale. Defaults to a spring (stiffness 550,
+   * damping 30).
+   */
+  transition?: Transition;
+};
+
+type ToggleGroupSingleProps = ToggleGroupPrimitive.ToggleGroupSingleProps &
+  RootAnimationProps;
+type ToggleGroupMultipleProps = ToggleGroupPrimitive.ToggleGroupMultipleProps &
+  RootAnimationProps;
 type ToggleGroupItemProps = ToggleGroupPrimitive.ToggleGroupItemProps &
   ItemAnimationProps;
 
-const Root = ToggleGroupPrimitive.Root;
+function Root({
+  transition,
+  ref,
+  children,
+  ...props
+}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
+  RootAnimationProps) {
+  const [root, setRoot] = React.useState<HTMLDivElement | null>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, setRoot), [ref]);
+  const { style, rootProps } = useToggleGroupHighlight(root, {
+    library: 'radix',
+    enabled: props.type === 'single',
+    transition,
+  });
+
+  return (
+    <ReducedMotionConfig>
+      {style}
+      <ToggleGroupPrimitive.Root {...props} {...rootProps} ref={mergedRef}>
+        {children}
+      </ToggleGroupPrimitive.Root>
+    </ReducedMotionConfig>
+  );
+}
 
 function Item(
   props: React.ComponentProps<typeof ToggleGroupPrimitive.Item> &
@@ -41,7 +86,7 @@ function AnimatedItem({
   ...props
 }: React.ComponentProps<typeof ToggleGroupPrimitive.Item> &
   ItemAnimationProps) {
-  const press = usePressMotion(transition);
+  const press = usePressMotion({ disabled: props.disabled, transition });
   if (asChild)
     return (
       <ToggleGroupPrimitive.Item {...props} asChild>
@@ -51,7 +96,9 @@ function AnimatedItem({
 
   return (
     <ToggleGroupPrimitive.Item {...props} asChild>
-      <motion.button {...press}>{children}</motion.button>
+      <motion.button {...toggleGroupItemProps} {...press}>
+        {children}
+      </motion.button>
     </ToggleGroupPrimitive.Item>
   );
 }

@@ -26,7 +26,7 @@ export function Hero() {
 ## Animation
 
 - Three layers of stars (1, 2 and 3px) scroll upwards in a loop at different speeds, for depth: the smallest crosses 2000px in `speed` seconds, the others take two and three times longer. They move with hardware-accelerated `transform`s.
-- The sky shifts away from the mouse on a spring (`factor`, `transition`), for parallax. It follows a mouse only: a tap doesn't shift it.
+- The sky shifts away from the mouse on a spring (`factor`, `transition`), relative to the center of the container, for parallax. On touch screens, a tap shifts it too.
 - The loops pause off screen and while the tab is hidden.
 - Under reduced motion, the stars hold still and there is no parallax.
 

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { AutoHeight } from "@animate-ui/react/primitives/effects/auto-height"
+import { AnimatePresence, motion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
 
@@ -13,6 +14,14 @@ const LONG = [
   "Its own primitives, like this one, cover the effects those libraries don't have.",
 ]
 
+// The content swaps with a blur, then AutoHeight springs to its height.
+const swap = {
+  initial: { opacity: 0, filter: "blur(4px)" },
+  animate: { opacity: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, filter: "blur(4px)" },
+  transition: { duration: 0.4, ease: "easeInOut" },
+} as const
+
 export default function AutoHeightDemo() {
   const [expanded, setExpanded] = React.useState(false)
 
@@ -22,15 +31,19 @@ export default function AutoHeightDemo() {
         deps={[expanded]}
         className="w-full rounded-xl border bg-card p-4 text-sm"
       >
-        {expanded ? (
-          <div className="flex flex-col gap-2">
-            {LONG.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-        ) : (
-          <p>{SHORT}</p>
-        )}
+        <AnimatePresence mode="wait" initial={false}>
+          {expanded ? (
+            <motion.div key="long" className="flex flex-col gap-2" {...swap}>
+              {LONG.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.p key="short" {...swap}>
+              {SHORT}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </AutoHeight>
       <Button
         variant="outline"

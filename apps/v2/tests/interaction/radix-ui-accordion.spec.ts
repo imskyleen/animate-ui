@@ -1,39 +1,24 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-const height = (page: Page, text: string) =>
-  page
-    .locator('[role="region"]', { hasText: text })
-    .evaluate((el) => el.getBoundingClientRect().height);
+import { disclosureDemoTests, gotoHydrated } from './disclosure-timeline';
 
-test.describe('radix-ui accordion demo', () => {
+disclosureDemoTests('radix-ui accordion demo', {
+  url: '/tests/demos/radix-ui/accordion',
+  panel: '[data-slot="accordion-content"]',
+  closed: {
+    trigger: 'How is it different from other libraries?',
+    text: 'You keep your own components',
+  },
+  open: {
+    trigger: 'What is Animate UI?',
+    text: 'Animated drop-in primitives',
+  },
+  closedState: 'unmounted',
+});
+
+test.describe('radix-ui accordion demo, Radix behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/radix-ui/accordion', {
-      waitUntil: 'networkidle',
-    });
-  });
-
-  test('opens by growing its height, then settles', async ({ page }) => {
-    await page
-      .getByRole('button', {
-        name: 'How is it different from other libraries?',
-      })
-      .click();
-    await page.waitForTimeout(120);
-    const mid = await height(page, 'You keep your own components');
-    await page.waitForTimeout(700);
-    const full = await height(page, 'You keep your own components');
-    expect(mid).toBeGreaterThan(0);
-    expect(mid).toBeLessThan(full);
-  });
-
-  test('closes with an exit, then unmounts', async ({ page }) => {
-    const region = page.locator('[role="region"]', {
-      hasText: 'Animated drop-in primitives',
-    });
-    await page.getByRole('button', { name: 'What is Animate UI?' }).click();
-    await page.waitForTimeout(80);
-    await expect(region).toHaveCount(1);
-    await expect(region).toHaveCount(0, { timeout: 600 });
+    await gotoHydrated(page, '/tests/demos/radix-ui/accordion');
   });
 
   test('keyboard toggles it like Radix', async ({ page }) => {
@@ -47,19 +32,25 @@ test.describe('radix-ui accordion demo', () => {
     ).toHaveAttribute('aria-expanded', 'true');
   });
 
-  test('reduced motion: the height jumps, nothing slides', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page
-      .getByRole('button', {
-        name: 'How is it different from other libraries?',
-      })
-      .click();
-    await page.waitForTimeout(40);
-    const early = await height(page, 'You keep your own components');
-    await page.waitForTimeout(700);
-    expect(early).toBeCloseTo(
-      await height(page, 'You keep your own components'),
-      0,
+  test('the chevron turns over 200ms', async ({ page }) => {
+    const trigger = page.getByRole('button', {
+      name: 'How is it different from other libraries?',
+    });
+    // Sampled in the page from the click: intermediate angles, then 180°.
+    const angles = await trigger.evaluate(async (button) => {
+      const icon = button.querySelector('svg')!;
+      const frames: string[] = [];
+      (button as HTMLButtonElement).click();
+      const start = performance.now();
+      while (performance.now() - start < 500) {
+        await new Promise((r) => requestAnimationFrame(r));
+        frames.push(getComputedStyle(icon).rotate);
+      }
+      return frames;
+    });
+    expect(angles.at(-1)).toBe('180deg');
+    expect(angles.some((a) => parseFloat(a) > 0 && parseFloat(a) < 180)).toBe(
+      true,
     );
   });
 });

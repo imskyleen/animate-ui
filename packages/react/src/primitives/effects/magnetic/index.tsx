@@ -5,15 +5,14 @@ import {
   motion,
   useMotionValue,
   useSpring,
-  useTransform,
   type SpringOptions,
   type HTMLMotionProps,
 } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
 
@@ -28,6 +27,12 @@ type MagneticProps = WithAsChild<
     ref?: React.Ref<HTMLElement>;
   } & HTMLMotionProps<'div'>
 >;
+
+const DEFAULT_SPRING_OPTIONS: SpringOptions = {
+  stiffness: 100,
+  damping: 10,
+  mass: 0.5,
+};
 
 const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
 
@@ -68,12 +73,8 @@ function MagneticInner({
   asChild = false,
   ...props
 }: MagneticProps) {
-  const { spring } = useMotionTokens();
-  const springOptions: SpringOptions = springOptionsProp ?? {
-    // useSpring takes its duration in milliseconds, unlike transitions.
-    duration: spring.default.duration * 1000,
-    bounce: spring.default.bounce,
-  };
+  const defaultSpringOptions = useTempoTransition(DEFAULT_SPRING_OPTIONS);
+  const springOptions = springOptionsProp ?? defaultSpringOptions;
 
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
@@ -83,18 +84,11 @@ function MagneticInner({
   const enabled = !reduce && (canHover || !disableOnTouch);
 
   const activeRef = React.useRef(!onlyOnHover);
-  // Untransformed center of the element, measured lazily after scroll/resize.
-  const centerRef = React.useRef<{ x: number; y: number } | null>(null);
 
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
   const x = useSpring(rawX, springOptions);
   const y = useSpring(rawY, springOptions);
-  const transform = useTransform(
-    [x, y],
-    ([latestX, latestY]: number[]) =>
-      `translate3d(${latestX}px, ${latestY}px, 0)`,
-  );
 
   const reset = React.useCallback(() => {
     rawX.set(0);
@@ -103,20 +97,14 @@ function MagneticInner({
 
   const compute = React.useCallback(
     (e: MouseEvent | React.MouseEvent) => {
-      const el = localRef.current;
-      if (!el) return;
-
-      if (!centerRef.current) {
-        const { left, top, width, height } = el.getBoundingClientRect();
-        // Remove the current magnetic offset so the pull doesn't feed back.
-        centerRef.current = {
-          x: left - x.get() + width / 2,
-          y: top - y.get() + height / 2,
-        };
-      }
-
-      const dx = e.clientX - centerRef.current.x;
-      const dy = e.clientY - centerRef.current.y;
+      if (!localRef.current) return;
+      // Measured where the element is now, pull included.
+      const { left, top, width, height } =
+        localRef.current.getBoundingClientRect();
+      const cx = left + width / 2;
+      const cy = top + height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
       const dist = Math.hypot(dx, dy);
 
       if (activeRef.current && dist <= range) {
@@ -127,7 +115,7 @@ function MagneticInner({
         reset();
       }
     },
-    [range, strength, rawX, rawY, x, y, reset],
+    [range, strength, rawX, rawY, reset],
   );
 
   React.useEffect(() => {
@@ -135,24 +123,7 @@ function MagneticInner({
   }, [onlyOnHover]);
 
   React.useEffect(() => {
-    if (!enabled) {
-      reset();
-      return;
-    }
-
-    const invalidate = () => {
-      centerRef.current = null;
-    };
-    window.addEventListener('scroll', invalidate, {
-      passive: true,
-      capture: true,
-    });
-    window.addEventListener('resize', invalidate, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', invalidate, { capture: true });
-      window.removeEventListener('resize', invalidate);
-    };
+    if (!enabled) reset();
   }, [enabled, reset]);
 
   React.useEffect(() => {
@@ -162,21 +133,20 @@ function MagneticInner({
 
     let inView = false;
     // Only track the pointer while the element is on screen.
-    const handleMove = (e: PointerEvent) => {
+    const handleMove = (e: MouseEvent) => {
       if (inView) compute(e);
     };
 
     const observer = new IntersectionObserver(([entry]) => {
       inView = entry?.isIntersecting ?? false;
-      centerRef.current = null;
       if (!inView) reset();
     });
     observer.observe(el);
-    window.addEventListener('pointermove', handleMove, { passive: true });
+    window.addEventListener('mousemove', handleMove);
 
     return () => {
       observer.disconnect();
-      window.removeEventListener('pointermove', handleMove);
+      window.removeEventListener('mousemove', handleMove);
       reset();
     };
   }, [compute, enabled, onlyOnHover, reset]);
@@ -186,12 +156,9 @@ function MagneticInner({
   return (
     <Component
       ref={localRef}
-      style={{ display: 'inline-block', ...style, transform }}
+      style={{ display: 'inline-block', ...style, x, y }}
       onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
-        if (onlyOnHover && enabled) {
-          activeRef.current = true;
-          centerRef.current = null;
-        }
+        if (onlyOnHover && enabled) activeRef.current = true;
         onMouseEnter?.(e);
       }}
       onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {

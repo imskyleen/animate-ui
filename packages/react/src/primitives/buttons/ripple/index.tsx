@@ -1,15 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { motion, type HTMLMotionProps } from 'motion/react';
+import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
   useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
+import { SCALE_SPRING } from '../_button';
+
+const RIPPLE_TRANSITION: Transition = { duration: 0.6, ease: 'easeOut' };
 
 type Ripple = {
   id: number;
@@ -43,15 +47,15 @@ function RippleButton(props: RippleButtonProps) {
 function RippleButtonContent({
   ref,
   onClick,
-  hoverScale = 1.02,
-  tapScale,
+  hoverScale = 1.05,
+  tapScale = 0.95,
   asChild = false,
+  transition,
   style,
   ...props
 }: RippleButtonProps) {
-  const tokens = useMotionTokens();
-  const press = tokens.transition.press;
-  const tempo = tokens.tempo;
+  const { tempo } = useMotionTokens();
+  const defaultTransition = useTempoTransition(SCALE_SPRING);
   const [ripples, setRipples] = React.useState<Ripple[]>([]);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   // Two clicks within the same millisecond still get distinct keys.
@@ -105,15 +109,9 @@ function RippleButtonContent({
         ref={buttonRef}
         data-slot="ripple-button"
         onClick={handleClick}
-        whileTap={{
-          scale: reduce ? 1 : (tapScale ?? tokens.scale.press),
-          transition: press,
-        }}
-        whileHover={{
-          scale: reduce ? 1 : hoverScale,
-          transition: press,
-        }}
-        transition={press}
+        whileTap={{ scale: reduce ? 1 : tapScale }}
+        whileHover={{ scale: reduce ? 1 : hoverScale }}
+        transition={transition ?? defaultTransition}
         style={{
           position: 'relative',
           overflow: 'hidden',
@@ -141,7 +139,7 @@ function RippleButtonRipples({
   ...props
 }: RippleButtonRipplesProps) {
   const { ripples } = useRippleButton();
-  const tokens = useMotionTokens();
+  const defaultTransition = useTempoTransition(RIPPLE_TRANSITION);
   // Under reduced motion the ripple fades in place instead of growing.
   const reduce = useShouldReduceMotion();
 
@@ -152,9 +150,7 @@ function RippleButtonRipples({
       key={ripple.id}
       initial={{ scale: reduce ? scale : 0, opacity: 0.5 }}
       animate={{ scale, opacity: 0 }}
-      transition={
-        transition ?? { duration: 0.6 * tokens.tempo, ease: 'easeOut' }
-      }
+      transition={transition ?? defaultTransition}
       style={{
         position: 'absolute',
         borderRadius: '50%',

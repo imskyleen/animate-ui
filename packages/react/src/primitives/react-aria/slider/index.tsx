@@ -11,32 +11,37 @@ import {
 } from 'react-aria-components';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import { ReducedMotionConfig, useTempoTransition } from '../../../utils/motion';
 import {
-  PRESSED_SCALE,
+  SLIDER_TRANSITION,
   SliderMotionProvider,
   assignRef,
-  usePressScale,
   useSliderPartMotion,
   useSliderRootMotion,
+  useThumbStretch,
 } from '../../../internal/slider';
 
-// Same API as React Aria's Slider, SliderFill and SliderThumb. Dragging and
-// the keyboard follow instantly; a press on the track glides the thumb and
-// the fill to the new value (FLIP on transforms, see ../../../internal/slider),
-// and the dragged thumb grows. The animated elements are React Aria's own,
-// through its `render` prop.
+// Same API as React Aria's Slider, SliderFill and SliderThumb, animated like
+// Animate UI v1's switch thumb (v1 had no slider): the dragged thumb stretches
+// along the track, and a press on the track glides the thumb and the fill to
+// the new value, on v1's spring (stiffness 300, damping 25; see
+// ../../../internal/slider). Dragging and the keyboard follow instantly. The
+// animated elements are React Aria's own, through its `render` prop.
 
 type SliderFillProps = AriaSliderFillProps & {
-  /** Transition of the fill after a press on the track. Defaults to `spring.snappy`. */
+  /**
+   * Transition of the fill after a press on the track. Defaults to a spring
+   * (stiffness 300, damping 25).
+   */
   transition?: Transition;
 };
 
 type SliderThumbProps = AriaSliderThumbProps & {
-  /** Transition of the thumb after a press on the track, and of its press scale. Defaults to `spring.snappy`. */
+  /**
+   * Transition of the thumb after a press on the track, and of its stretch
+   * while dragged. Defaults to a spring (stiffness 300, damping 25).
+   */
   transition?: Transition;
-  /** Scale of the thumb while it is dragged. Defaults to `1.15`. */
-  pressedScale?: number;
 };
 
 function Slider<T extends number | number[]>(
@@ -120,11 +125,8 @@ function FillMotion({
   partTransition,
   ...props
 }: HTMLMotionProps<'div'> & { partTransition: Transition | undefined }) {
-  const tokens = useMotionTokens();
-  const { ref: motionRef, transform } = useSliderPartMotion(
-    'range',
-    partTransition ?? tokens.spring.snappy,
-  );
+  const spring = useTempoTransition(partTransition ?? SLIDER_TRANSITION);
+  const { ref: motionRef, transform } = useSliderPartMotion('range', spring);
 
   return (
     <motion.div
@@ -140,7 +142,6 @@ function FillMotion({
 
 function SliderThumb({
   transition,
-  pressedScale = PRESSED_SCALE,
   render,
   ...props
 }: SliderThumbProps & React.RefAttributes<HTMLDivElement>) {
@@ -155,7 +156,6 @@ function SliderThumb({
             {...(domProps as HTMLMotionProps<'div'>)}
             isDragging={renderProps.isDragging}
             partTransition={transition}
-            pressedScale={pressedScale}
           />
         )
       }
@@ -168,24 +168,21 @@ function ThumbMotion({
   style,
   isDragging,
   partTransition,
-  pressedScale,
   ...props
 }: HTMLMotionProps<'div'> & {
   isDragging: boolean;
   partTransition: Transition | undefined;
-  pressedScale: number;
 }) {
-  const tokens = useMotionTokens();
-  const t = partTransition ?? tokens.spring.snappy;
+  const spring = useTempoTransition(partTransition ?? SLIDER_TRANSITION);
   // React Aria centers the thumb with its own transform: ours goes after it.
   const base = typeof style?.transform === 'string' ? style.transform : '';
-  const {
-    ref: motionRef,
-    transform,
-    press,
-  } = useSliderPartMotion('thumb', t, base);
+  const { ref: motionRef, transform } = useSliderPartMotion(
+    'thumb',
+    spring,
+    base,
+  );
   // React Aria drags the thumb a press on the track moved, too.
-  usePressScale(press, isDragging, { transition: t, pressedScale });
+  useThumbStretch(motionRef, isDragging, spring);
 
   return (
     <motion.div

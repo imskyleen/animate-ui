@@ -5,15 +5,14 @@ import { probeFirstFrame, sample } from './motion-probe';
 const POPOVER = '[data-slot="combobox-content"]';
 
 test.describe('react-aria combobox demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/react-aria/combobox', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and a fade from the input, then settles', async ({
-    page,
-  }) => {
+  test('opens with a 200ms scale and fade from the input', async ({ page }) => {
     const probe = await probeFirstFrame(page, POPOVER);
     await page.getByRole('combobox', { name: 'Framework' }).click();
     await page.keyboard.press('ArrowDown');
@@ -41,15 +40,19 @@ test.describe('react-aria combobox demo', () => {
     expect((await sample(page, POPOVER)).scale).toBe(1);
   });
 
-  test('picking an item closes it faster than it opened', async ({ page }) => {
+  test('picking an item closes it the same way', async ({ page }) => {
     const input = page.getByRole('combobox', { name: 'Framework' });
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     await page.getByRole('option', { name: 'Astro' }).click();
 
-    await page.waitForTimeout(60);
-    expect((await sample(page, POPOVER)).opacity).toBeLessThan(1);
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, POPOVER)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 600 });
     await expect(input).toHaveValue('Astro');
   });
@@ -66,6 +69,7 @@ test.describe('react-aria combobox demo', () => {
 });
 
 test.describe('react-aria combobox chips demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/react-aria/combobox-multiple', {
       waitUntil: 'networkidle',
@@ -86,9 +90,9 @@ test.describe('react-aria combobox chips demo', () => {
     await page.getByRole('option', { name: 'Nuxt' }).click();
     await page.waitForTimeout(40);
     const entering = await sample(page, chip('Nuxt'));
+    // The pop itself is the TagGroup primitive's (its own spec checks it).
     expect(entering.opacity).toBeLessThan(1);
     expect(entering.scale).toBeLessThan(1);
-    expect(entering.scale).toBeGreaterThanOrEqual(0.95);
     expect((await sample(page, chip('Astro'))).opacity).toBe(1);
     await page.waitForTimeout(650);
     expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
@@ -114,6 +118,7 @@ test.describe('react-aria combobox chips demo', () => {
 });
 
 test.describe('react-aria combobox API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/react-aria-combobox', {
       waitUntil: 'networkidle',

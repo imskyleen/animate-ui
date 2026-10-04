@@ -24,11 +24,38 @@ test.describe('base-ui progress API', () => {
     );
     await page.getByRole('button', { name: 'Complete' }).click();
     await expect(bar).toHaveAttribute('data-complete', '');
-    await page.waitForTimeout(700);
-    expect(await revealed(page, '[data-testid="main-indicator"]')).toBeCloseTo(
-      1,
-      2,
+    await expect
+      .poll(() => revealed(page, '[data-testid="main-indicator"]'), {
+        timeout: 3000,
+      })
+      .toBeGreaterThan(0.995);
+    // The Value counted there (v1's counting value).
+    await expect(page.getByTestId('value')).toHaveText('100%');
+  });
+
+  test('the Value counts to a new value', async ({ page }) => {
+    const value = page.getByTestId('value');
+    await expect(value).toHaveText('50%');
+    await page.evaluate(() => {
+      const el = document.querySelector('[data-testid="value"]')!;
+      const w = window as unknown as { __texts: string[] };
+      w.__texts = [];
+      new MutationObserver(() => w.__texts.push(el.textContent ?? '')).observe(
+        el,
+        { childList: true, characterData: true, subtree: true },
+      );
+    });
+    await page.getByRole('button', { name: 'Complete' }).click();
+    await expect(value).toHaveText('100%');
+    const texts = await page.evaluate(
+      () => (window as unknown as { __texts: string[] }).__texts,
     );
+    // Through the numbers in between, not straight to 100%.
+    const between = texts.filter((t) => {
+      const n = parseFloat(t);
+      return n > 52 && n < 98;
+    });
+    expect(between.length).toBeGreaterThan(5);
   });
 
   test('indeterminate: the indicator is left to the styles', async ({

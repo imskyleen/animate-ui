@@ -20,8 +20,8 @@ const animations = {
         scale: 1,
       },
       animate: {
-        rotate: [null, 7, -5, 0],
-        scale: [null, 0.9, 1, 1],
+        rotate: [0, 7, -5, 0],
+        scale: [1, 0.9, 1, 1],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',
@@ -33,7 +33,7 @@ const animations = {
         pathLength: 0.8,
       },
       animate: {
-        pathLength: [null, 1, 0.8, 0.8],
+        pathLength: [0.8, 1, 0.8, 0.8],
         transition: {
           duration: 1.2,
           ease: 'easeInOut',
@@ -50,8 +50,8 @@ const animations = {
         scale: 1,
       },
       animate: {
-        rotate: [null, 7, 0],
-        scale: [null, 0.9, 1],
+        rotate: [0, 7, 0],
+        scale: [1, 0.9, 1],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',
@@ -80,8 +80,8 @@ const animations = {
         scale: 1,
       },
       animate: {
-        rotate: [null, -5, 0],
-        scale: [null, 0.9, 1],
+        rotate: [0, -5, 0],
+        scale: [1, 0.9, 1],
         transition: {
           duration: 0.6,
           ease: 'easeInOut',

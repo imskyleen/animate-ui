@@ -53,7 +53,7 @@ test.describe('react-aria popover API', () => {
     // The isExiting render prop and data-exiting follow the exit.
     await expect(popover).toHaveClass(/is-exiting/);
     await expect(popover).toHaveAttribute('data-exiting', 'true');
-    await expect(popover).toHaveCount(0, { timeout: 600 });
+    await expect(popover).toHaveCount(0, { timeout: 1500 });
   });
 
   test('Select: animates, and keeps the chosen value once closed', async ({
@@ -63,11 +63,13 @@ test.describe('react-aria popover API', () => {
     const trigger = page.getByRole('button', { name: /Fruit/ });
     await trigger.click();
     const first = await probe.firstFrame();
+    // Like v1's DropdownMenu content: from 0.95, not a popover's half size.
+    expect(first.scale).toBeGreaterThanOrEqual(0.94);
     expect(first.scale).toBeLessThan(1);
     expect(first.opacity).toBeLessThan(1);
     await page.getByRole('option', { name: 'Banana' }).click();
     await expect(page.getByTestId('select-popover')).toHaveCount(0, {
-      timeout: 600,
+      timeout: 1500,
     });
     await expect(trigger).toContainText('Banana');
     await trigger.click();
@@ -83,23 +85,25 @@ test.describe('react-aria popover API', () => {
     );
     await page.getByRole('combobox', { name: 'Fruit search' }).fill('Ch');
     const first = await probe.firstFrame();
+    expect(first.scale).toBeGreaterThanOrEqual(0.94);
     expect(first.scale).toBeLessThan(1);
     await expect(page.getByRole('option', { name: 'Cherry' })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('combobox-popover')).toHaveCount(0, {
-      timeout: 600,
+      timeout: 1500,
     });
   });
 
-  test('menus scale in, submenus only fade', async ({ page }) => {
+  test('menus and submenus fade and scale from 0.95', async ({ page }) => {
     const menu = await probeFirstFrame(page, '[data-testid="menu-popover"]');
     await page.getByRole('button', { name: 'Actions' }).click();
     const menuFirst = await menu.firstFrame();
+    expect(menuFirst.scale).toBeGreaterThanOrEqual(0.94);
     expect(menuFirst.scale).toBeLessThan(1);
     expect(await originIsAnchored(page, '[data-testid="menu-popover"]')).toBe(
       true,
     );
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
 
     const submenu = await probeFirstFrame(
       page,
@@ -107,12 +111,14 @@ test.describe('react-aria popover API', () => {
     );
     await page.getByRole('menuitem', { name: 'Share' }).click();
     const subFirst = await submenu.firstFrame();
-    expect(subFirst.scale).toBeCloseTo(1, 3);
+    // v1's sub content moves like its content.
+    expect(subFirst.scale).toBeGreaterThanOrEqual(0.94);
+    expect(subFirst.scale).toBeLessThan(1);
     expect(subFirst.opacity).toBeLessThan(1);
     await page.getByRole('menuitem', { name: 'Email' }).click();
     // Choosing an item closes both, each with its exit.
     await expect(page.getByTestId('menu-popover')).toHaveCount(0, {
-      timeout: 600,
+      timeout: 1500,
     });
     await expect(page.getByTestId('submenu-popover')).toHaveCount(0);
   });

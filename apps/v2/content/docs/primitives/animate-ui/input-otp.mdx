@@ -55,15 +55,15 @@ export function VerificationCode() {
 
 ## Animation
 
-- A typed character fades in while its glyph grows from 95% of its size, in 150ms with a strong ease-out (`transition.press`).
-- A pasted or autofilled code staggers its characters by 25ms.
+- A typed character pops in like Animate UI's radio indicator: its glyph grows from 0 while it fades in, on a bouncy spring (stiffness 200, damping 16) that overshoots by about 11% and settles in about 800ms.
+- A pasted or autofilled code staggers its characters by 50ms, like split text.
 - Deleting is instant, and characters that only shift because one before them was removed don't animate. The active slot follows the keyboard at once.
 - `<AnimateUIProvider tempo>` paces the animation.
 - Under reduced motion, characters only fade, without growing or staggering, and the fake caret stops blinking.
 
 ### How it works
 
-The slots are your markup: shadcn/ui's `InputOTPSlot` renders the `char` of `OTPInputContext` as plain text. The context keeps input-otp's values (`char` stays a string), so nothing in the component changes. Instead, `OTPInput` compares each new value with the previous one to find the characters that were just entered, and animates their slots, the `[data-slot="input-otp-slot"]` elements of its container in index order, with the Web Animations API: `color` from transparent and `font-size` from 95%, which scales the glyph alone, not the slot's box. Both end on the slot's own style, so its classes, transitions and focus ring are untouched.
+The slots are your markup: shadcn/ui's `InputOTPSlot` renders the `char` of `OTPInputContext` as plain text. The context keeps input-otp's values (`char` stays a string), so nothing in the component changes. Instead, `OTPInput` compares each new value with the previous one to find the characters that were just entered, and animates their slots, the `[data-slot="input-otp-slot"]` elements of its container in index order, with the Web Animations API: `color` from transparent and `font-size` from 0, which scales the glyph alone, not the slot's box, with the spring as a `linear()` easing. Both end on the slot's own style, so its classes, transitions and focus ring are untouched.
 
 Custom slots animate too, as long as they carry `data-slot="input-otp-slot"`, one per index, in order. Any CSS animation inside a slot (the fake caret's blink) is turned off under reduced motion.
 

@@ -53,9 +53,12 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- Opening the bar scales and fades the menu in over 600ms from its trigger; closing it takes 400ms.
-- Moving from one open menu to another (hovering a trigger or pressing the arrow keys) is instant both ways, like a native menubar: Base UI marks those changes as `instant`, and the Popup follows it.
-- Everything else works like the [Menu](/docs/primitives/base-ui/dropdown-menu): submenus, item indicators, focus and reduced motion.
+Base UI's Menubar has no Animate UI v1 counterpart: each menu moves like v1's Base UI Menu.
+
+- Opening the bar fades and scales the menu in from 0.95 in 200ms, from its trigger; closing it takes 200ms too.
+- Moving from one open menu to another (hovering a trigger or pressing the arrow keys) closes one menu and opens the other, each with its own animation, like any menu.
+- A menu open from the start (`defaultOpen` on its `Menu.Root`) plays its entrance on page load, like v1's menus.
+- Everything else works like the [Menu](/docs/primitives/base-ui/dropdown-menu): the highlight gliding behind the highlighted item, submenus, item indicators, focus and reduced motion.
 
 ## API Reference
 
@@ -67,4 +70,4 @@ Every part takes exactly the props of [Base UI's Menubar](https://base-ui.com/re
 
 ### Menu parts
 
-See the [Menu](/docs/primitives/base-ui/dropdown-menu#api-reference) page: `Popup`, `CheckboxItemIndicator` and `RadioItemIndicator` take `transition` and `exitTransition`.
+See the [Menu](/docs/primitives/base-ui/dropdown-menu#api-reference) page: `Popup` takes `transition` and `exitTransition`, `CheckboxItemIndicator` and `RadioItemIndicator` take `transition`.

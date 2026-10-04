@@ -6,9 +6,11 @@ import { Dialog as DialogPrimitive } from 'radix-ui';
 import { createRadixModal } from './create-radix-modal';
 import type { ModalAnimationProps } from '../../../internal/modal-motion';
 
-// Same API as Radix's Dialog. The Overlay fades, the Content scales from 0.95
-// around its center, or slides from its edge when it has `data-side`
-// (shadcn/ui's Sheet). See create-radix-modal.tsx for the wiring.
+// Same API as Radix's Dialog, animated like Animate UI v1: the Overlay fades
+// and un-blurs, the Content tips forward from `perspective(500px)
+// rotateX(-20deg) scale(0.8)` on a spring, or slides and fades in from its edge
+// when it has `data-side` (shadcn/ui's Sheet). See create-radix-modal.tsx for
+// the wiring and ../../../internal/modal-motion.ts for the motion.
 
 type DialogProps = DialogPrimitive.DialogProps;
 type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
@@ -23,23 +25,24 @@ type DialogCloseProps = DialogPrimitive.DialogCloseProps;
 
 /** Animate UI's additions to `Dialog.Overlay`. */
 type OverlayAnimationProps = {
-  /** Fade in. Defaults to `transition.modal` (600ms). */
+  /**
+   * Fade (and blur) in.
+   * @default { duration: 0.2, ease: 'easeInOut' }
+   */
   transition?: ModalAnimationProps['transition'];
-  /** Fade out. Defaults to `transition.modalExit` (400ms). */
+  /** Fade (and blur) out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
 /** Animate UI's additions to `Dialog.Content`. */
 type ContentAnimationProps = {
   /**
-   * Transition of the opening. Defaults to `transition.modal` (600ms), or
-   * `transition.drawer` when the content has `data-side`.
+   * Transition of the opening: `{ type: 'spring', stiffness: 150, damping: 25 }`
+   * by default, or `{ type: 'spring', stiffness: 150, damping: 22 }` when the
+   * content has `data-side`.
    */
   transition?: ModalAnimationProps['transition'];
-  /**
-   * Transition of the closing. Defaults to `transition.modalExit` (400ms), or
-   * `transition.drawerExit` when the content has `data-side`.
-   */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

@@ -7,15 +7,15 @@ import { Button } from "@/components/ui/button"
 export const controls = {
   Magnetic: {
     onlyOnHover: { value: false },
-    strength: { value: 0.4, min: 0, max: 1, step: 0.05 },
-    range: { value: 160 },
+    strength: { value: 0.5, min: 0, max: 1, step: 0.05 },
+    range: { value: 120 },
   },
 }
 
 export default function MagneticDemo({
   onlyOnHover = false,
-  strength = 0.4,
-  range = 160,
+  strength = 0.5,
+  range = 120,
 }: {
   onlyOnHover?: boolean
   strength?: number

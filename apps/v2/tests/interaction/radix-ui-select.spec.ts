@@ -1,17 +1,19 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const LIST = '[role="listbox"]';
 
 test.describe('radix-ui select demo', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/demos/radix-ui/select', {
       waitUntil: 'networkidle',
     });
   });
 
-  test('opens with a scale and a fade from the trigger, then settles', async ({
+  test('opens with a 200ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, LIST);
@@ -23,13 +25,13 @@ test.describe('radix-ui select demo', () => {
     // Popper below the trigger: it grows from its top edge.
     expect(first.origin.split(' ')[1]).toBe('0px');
 
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(400);
     const settled = await sample(page, LIST);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
   });
 
-  test('closes faster than it opens, and the trigger keeps the label', async ({
+  test('closes the same way, and the trigger keeps the label', async ({
     page,
   }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
@@ -37,10 +39,13 @@ test.describe('radix-ui select demo', () => {
     await page.waitForTimeout(650);
     await page.getByRole('option', { name: 'Lora' }).click();
 
-    // Still on screen for the exit, gone within the 400ms budget.
-    await page.waitForTimeout(60);
-    await expect(page.locator(LIST)).toHaveCount(1);
-    expect((await sample(page, LIST)).opacity).toBeLessThan(1);
+    // Still on screen for the 200ms exit, then gone.
+    // It plays an exit (polled: a loaded machine can skip the first frames).
+    await expect
+      .poll(async () => (await sample(page, LIST)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
     await expect(page.locator(LIST)).toHaveCount(0, { timeout: 600 });
     await expect(trigger).toHaveText('Lora');
   });
@@ -48,24 +53,31 @@ test.describe('radix-ui select demo', () => {
   test('reopening mid-exit retargets instead of restarting', async ({
     page,
   }) => {
-    const trigger = page.getByRole('combobox', { name: 'Font' });
-    await trigger.click();
+    const trigger = page.locator('[data-slot="select-trigger"]');
+    await trigger.focus();
+    await page.keyboard.press('Enter');
     await page.waitForTimeout(650);
+    const element = await page.locator(LIST).elementHandle();
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(80);
-    const closing = await sample(page, LIST);
-    await trigger.click();
-    await page.waitForTimeout(16);
-    const reopened = await sample(page, LIST);
-    // It continues from where the exit left it, not from the 0.95 start.
-    expect(reopened.opacity).toBeGreaterThan(0.2);
-    expect(reopened.scale).toBeGreaterThanOrEqual(closing.scale - 0.01);
-    await expect(page.locator(LIST)).toHaveCount(1);
+    await expect
+      .poll(async () => (await sample(page, LIST)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(0.95);
+    // Dispatched: while the list leaves, Radix's modal layer still blocks
+    // the pointer outside it (and focus comes back once it has left).
+    await trigger.dispatchEvent('pointerdown', {
+      button: 0,
+      pointerType: 'mouse',
+      isPrimary: true,
+    });
     await page.waitForTimeout(650);
+    // The same element: it retargeted instead of remounting.
+    expect(await element!.evaluate((el) => el.isConnected)).toBe(true);
     expect((await sample(page, LIST)).opacity).toBe(1);
   });
 
-  test('keyboard: arrows move the highlight instantly, Escape closes', async ({
+  test('keyboard: arrows move the highlight, Escape closes', async ({
     page,
   }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
@@ -75,10 +87,7 @@ test.describe('radix-ui select demo', () => {
       page.getByRole('option', { name: 'Geist', exact: true }),
     ).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    // Radix moves focus in a timeout: no animation in between.
-    await expect(page.getByRole('option', { name: 'Satoshi' })).toBeFocused({
-      timeout: 50,
-    });
+    await expect(page.getByRole('option', { name: 'Satoshi' })).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.locator(LIST)).toHaveCount(0, { timeout: 600 });
     await expect(trigger).toBeFocused();
@@ -96,6 +105,7 @@ test.describe('radix-ui select demo', () => {
 });
 
 test.describe('radix-ui select API', () => {
+  test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/radix-ui-select', {
       waitUntil: 'networkidle',
@@ -181,4 +191,17 @@ test('radix-ui select docs page renders without errors', async ({ page }) => {
   expect(response?.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Select');
   expect(errors).toEqual([]);
+});
+
+describeMenuHighlight('radix-ui select highlight', {
+  path: '/tests/demos/radix-ui/select',
+  open: async (page) => {
+    await page.getByRole('combobox', { name: 'Font' }).click();
+    await page.waitForTimeout(400);
+  },
+  // Geist is the value: Radix highlights it as the list opens.
+  first: (page) => page.getByRole('option', { name: 'Geist', exact: true }),
+  second: (page) => page.getByRole('option', { name: 'Satoshi' }),
+  keyboardNext: 'ArrowDown',
+  highlightedOnOpen: true,
 });

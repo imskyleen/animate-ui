@@ -5,17 +5,22 @@ import { DropdownMenu as DropdownMenuPrimitive } from 'radix-ui';
 import {
   createCheckboxItem,
   createContent,
+  createItem,
   createItemIndicator,
   createOpenRoot,
   createPortal,
   createRadioGroup,
   createRadioItem,
+  type IndicatorAnimationProps,
   type PresenceAnimationProps,
 } from '../_menu/menu';
 
-// Same API as Radix's Dropdown Menu. The Root and each Sub mirror their open
-// state (Radix keeps it private) so the Content and SubContent can play an
-// exit before they unmount.
+// Same API as Radix's Dropdown Menu, animated like Animate UI v1's: the
+// Content and SubContent fade and scale in 200ms, a highlight glides behind
+// the highlighted item (into submenus too), checks pop in and the radio
+// indicator glides. The Root and each Sub mirror their open state (Radix
+// keeps it private) so the Content and SubContent can play an exit before
+// they unmount.
 
 type DropdownMenuProps = DropdownMenuPrimitive.DropdownMenuProps;
 type DropdownMenuTriggerProps = DropdownMenuPrimitive.DropdownMenuTriggerProps;
@@ -32,7 +37,8 @@ type DropdownMenuRadioGroupProps =
 type DropdownMenuRadioItemProps =
   DropdownMenuPrimitive.DropdownMenuRadioItemProps;
 type DropdownMenuItemIndicatorProps =
-  DropdownMenuPrimitive.DropdownMenuItemIndicatorProps & PresenceAnimationProps;
+  DropdownMenuPrimitive.DropdownMenuItemIndicatorProps &
+    IndicatorAnimationProps;
 type DropdownMenuSeparatorProps =
   DropdownMenuPrimitive.DropdownMenuSeparatorProps;
 type DropdownMenuArrowProps = DropdownMenuPrimitive.DropdownMenuArrowProps;
@@ -51,7 +57,7 @@ const Content = createContent(DropdownMenuPrimitive.Content, {
 });
 const Group = DropdownMenuPrimitive.Group;
 const Label = DropdownMenuPrimitive.Label;
-const Item = DropdownMenuPrimitive.Item;
+const Item = createItem(DropdownMenuPrimitive.Item);
 const CheckboxItem = createCheckboxItem(DropdownMenuPrimitive.CheckboxItem);
 const RadioGroup = createRadioGroup(DropdownMenuPrimitive.RadioGroup);
 const RadioItem = createRadioItem(DropdownMenuPrimitive.RadioItem);
@@ -59,7 +65,7 @@ const ItemIndicator = createItemIndicator(DropdownMenuPrimitive.ItemIndicator);
 const Separator = DropdownMenuPrimitive.Separator;
 const Arrow = DropdownMenuPrimitive.Arrow;
 const Sub = createOpenRoot(DropdownMenuPrimitive.Sub);
-const SubTrigger = DropdownMenuPrimitive.SubTrigger;
+const SubTrigger = createItem(DropdownMenuPrimitive.SubTrigger);
 const SubContent = createContent(DropdownMenuPrimitive.SubContent, {
   // Radix sets the same variable on submenus: they grow from their side.
   origin: '--radix-dropdown-menu-content-transform-origin',

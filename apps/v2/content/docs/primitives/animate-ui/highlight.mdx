@@ -47,7 +47,7 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
 ### Modes
 
 - `children` (default): the highlight is rendered inside the active item and moves with a shared layout animation. Prefer it in most cases.
-- `parent`: the highlight is rendered once in a container and moves with a `transform`. Use it when the items clip or stack in a way that hides the `children` highlight.
+- `parent`: the highlight is rendered once in a container, and its position and size spring to the active item. Use it when the items clip or stack in a way that hides the `children` highlight.
 
 ```tsx
 <Highlight mode="parent" containerClassName="flex" className="bg-accent">
@@ -58,11 +58,12 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
 
 ## Animation
 
-- The highlight glides to the new item on a quick spring with a hint of overshoot, and fades in when nothing was highlighted.
-- Leaving with `hover` fades it out after `exitDelay` (200ms), so moving between items doesn't flicker.
+- In `children` mode, the highlight slides to the new item on a spring (stiffness 350, damping 35) with a shared layout animation: the new one fades in as it slides from the previous one, which follows it and fades out after `exitDelay` (200ms). It fades in when nothing was highlighted.
+- In `parent` mode, a single highlight springs its top, left, width and height to the active item, fades in when it appears, and fades out `exitDelay` after the last item is left.
+- Leaving with `hover` fades it out after `exitDelay`, so moving between items doesn't flicker.
 - `hover` only applies to pointers that can hover (mouse, trackpad): touch taps never leave a highlight stuck.
-- In `parent` mode, the highlight follows scrolling and resizing with `forceUpdateBounds`, measured once per frame at most.
-- `<AnimateUIProvider tempo>` paces the default spring.
+- In `parent` mode, `forceUpdateBounds` measures the active item on every frame, so the highlight follows it whatever moves it (scrolling, resizing, an animated container).
+- `<AnimateUIProvider tempo>` paces the transition and `exitDelay`.
 - Under reduced motion, the highlight jumps to the new item and only fades.
 
 ## API Reference
@@ -104,7 +105,7 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
     transition: {
       description: 'Transition of the highlight.',
       type: 'Transition',
-      default: 'spring.snappy',
+      default: "{ type: 'spring', stiffness: 350, damping: 35 }",
     },
     hover: {
       description: 'Highlight on hover instead of on click.',
@@ -158,7 +159,7 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
     },
     forceUpdateBounds: {
       description:
-        'Follow the active item when it moves or resizes (scroll, resize, layout changes).',
+        'Measure the active item on every frame, to follow it when it moves or resizes (scroll, resize, animations).',
       type: 'boolean',
     },
   }}
@@ -220,7 +221,8 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
       default: 'false',
     },
     forceUpdateBounds: {
-      description: 'In `parent` mode, follow this item when it moves or resizes.',
+      description:
+        'In `parent` mode, follow this item when it moves or resizes.',
       type: 'boolean',
     },
   }}

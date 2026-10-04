@@ -7,13 +7,18 @@ import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
 import { ReducedMotionConfig } from '../../../utils/motion';
 import { usePressMotion } from '../../../internal/controls/press';
+import { toggleGroupItemProps } from '../../../internal/controls/highlight';
 
-// Same API as Base UI's Toggle (also the item of a Toggle Group). Pressing it
-// scales it down a touch; the pressed colours stay the component's CSS.
+// Same API as Base UI's Toggle (also the item of a Toggle Group), animated
+// like Animate UI v1's toggle: it scales to 0.95 while pressed. The pressed
+// colours stay the component's CSS.
 
 /** Animate UI's additions to `Toggle`. */
 type ToggleAnimationProps = {
-  /** Transition of the press feedback. Defaults to `transition.press` (150ms). */
+  /**
+   * Transition of the press scale. Defaults to a spring (stiffness 550,
+   * damping 30).
+   */
   transition?: Transition;
 };
 
@@ -41,7 +46,7 @@ function AnimatedToggle<Value extends string = string>({
   render,
   ...props
 }: Toggle.Props<Value>) {
-  const press = usePressMotion(transition);
+  const press = usePressMotion({ disabled: props.disabled, transition });
   // The user's own element: Base UI's behaviour, no animation.
   if (render) return <TogglePrimitive<Value> {...props} render={render} />;
 
@@ -51,6 +56,7 @@ function AnimatedToggle<Value extends string = string>({
       render={(elementProps) => (
         <motion.button
           {...(elementProps as HTMLMotionProps<'button'>)}
+          {...toggleGroupItemProps}
           {...press}
         />
       )}

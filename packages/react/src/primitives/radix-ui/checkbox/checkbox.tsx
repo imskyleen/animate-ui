@@ -11,12 +11,18 @@ import {
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
-// Same API as Radix's Checkbox. The Root gives press feedback; the Indicator
-// stays mounted while its check scales out, then unmounts like Radix's.
+// Same API as Radix's Checkbox, animated like Animate UI v1's checkbox: the
+// Root scales to 1.05 while hovered and 0.95 while pressed, and the check
+// draws itself (its stroke and opacity, 0.2s after 0.2s) and erases in 0.2s.
+// The Indicator stays mounted while its check erases, then unmounts like
+// Radix's.
 
 /** Animate UI's additions to `Checkbox.Root`. */
 type RootAnimationProps = {
-  /** Transition of the press feedback. Defaults to `transition.press` (150ms). */
+  /**
+   * Transition of the hover and press scale. Defaults to a spring (stiffness
+   * 550, damping 30).
+   */
   transition?: Transition;
 };
 
@@ -42,7 +48,11 @@ function AnimatedRoot({
   children,
   ...props
 }: React.ComponentProps<typeof CheckboxPrimitive.Root> & RootAnimationProps) {
-  const press = usePressMotion(transition);
+  const press = usePressMotion({
+    hover: true,
+    disabled: props.disabled,
+    transition,
+  });
   // The user's own element: Radix's behaviour, no animation.
   if (asChild)
     return (
@@ -94,7 +104,10 @@ function Indicator({
 }
 
 function RadixIndicator(
-  props: Omit<React.ComponentProps<typeof IndicatorPresence>, 'checked'> & {
+  props: Omit<
+    React.ComponentProps<typeof IndicatorPresence>,
+    'checked' | 'kind'
+  > & {
     'data-state'?: string;
   },
 ) {
@@ -102,7 +115,9 @@ function RadixIndicator(
   return (
     <IndicatorPresence
       {...props}
+      kind="check"
       checked={state === 'checked' || state === 'indeterminate'}
+      indeterminate={state === 'indeterminate'}
     />
   );
 }

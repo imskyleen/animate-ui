@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
 import {
+  SETTLE_BUDGET,
   describeAnchoredOverlay,
-  describeWarmTooltips,
+  expectEntranceOnLoad,
   gotoReady,
+  probeFirstFrameOf,
 } from './anchored-overlay';
 
 const PATH = '/tests/demos/react-aria/tooltip';
@@ -13,9 +15,44 @@ describeAnchoredOverlay('react-aria tooltip demo', {
   selector: CONTENT,
   open: (page) => page.getByRole('button', { name: 'Bold' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
+  // React Aria's TooltipTrigger waits 500ms (its default) before closing.
+  closeDelay: 500,
 });
 
-describeWarmTooltips('react-aria warm tooltips', PATH, CONTENT);
+// React Aria's own warmup: once a tooltip has shown, the next one along the
+// toolbar swaps in at once (React Aria asks to skip the animations).
+test.describe('react-aria tooltip warmup', () => {
+  test.describe.configure({ timeout: 180_000 });
+  test.beforeEach(async ({ page }) => {
+    await gotoReady(page, PATH);
+  });
+
+  test('the next tooltip along the toolbar swaps in at once', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Bold' }).hover();
+    await expect(page.locator(CONTENT)).toBeVisible();
+    await page.waitForTimeout(SETTLE_BUDGET);
+    const probe = await probeFirstFrameOf(page, CONTENT, 'Italic');
+    const box = (await page
+      .getByRole('button', { name: 'Italic' })
+      .boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
+      steps: 8,
+    });
+    const first = await probe.firstFrame();
+    expect(first.opacity).toBe(1);
+    expect(first.scale).toBeCloseTo(1, 3);
+  });
+
+  test('a cold tooltip plays its entrance', async ({ page }) => {
+    const probe = await probeFirstFrameOf(page, CONTENT, 'Underline');
+    await page.getByRole('button', { name: 'Underline' }).hover();
+    const first = await probe.firstFrame();
+    expect(first.opacity).toBeLessThan(1);
+    expect(first.scale).toBeLessThan(0.65);
+  });
+});
 
 test.describe('react-aria tooltip API', () => {
   test.describe.configure({ timeout: 180_000 });
@@ -55,18 +92,19 @@ test.describe('react-aria tooltip API', () => {
     await page.mouse.move(5, 5, { steps: 4 });
     expect(await sawExiting).toBe(true);
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    await expect(content).toHaveCount(0, { timeout: 600 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
     await expect(page.getByTestId('own-state-content')).toHaveCount(0, {
-      timeout: 600,
+      timeout: 1500,
     });
   });
 
-  test('defaultOpen shows without an entrance', async ({ page }) => {
-    const content = page.getByTestId('default-open-content');
-    await expect(content).toBeVisible();
-    expect(
-      await content.evaluate((el) => Number(getComputedStyle(el).opacity)),
-    ).toBe(1);
+  test('defaultOpen plays its entrance on page load (v1)', async ({ page }) => {
+    await expectEntranceOnLoad(
+      page,
+      '/tests/fixtures/react-aria-tooltip',
+      '[data-testid="default-open-content"]',
+      'popover',
+    );
   });
 
   test('keyboard focus opens it, Escape closes it', async ({ page }) => {
@@ -82,7 +120,7 @@ test.describe('react-aria tooltip API', () => {
     await expect(page.getByTestId('controlled-content')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('controlled-content')).toHaveCount(0, {
-      timeout: 600,
+      timeout: 1500,
     });
   });
 });

@@ -1,14 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-import { INDICATOR, PANEL, describeTabsDemo } from './tabs-helpers';
+import { INDICATOR, PANEL, describeTabsDemo, gotoTabs } from './tabs-helpers';
 
 describeTabsDemo('react-aria', { selectKeys: ['ArrowRight'] });
 
 test.describe('react-aria tabs API', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/react-aria-tabs', {
-      waitUntil: 'networkidle',
-    });
+    await gotoTabs(page, '/tests/fixtures/react-aria-tabs');
   });
 
   test('controlled selectedKey and onSelectionChange', async ({ page }) => {

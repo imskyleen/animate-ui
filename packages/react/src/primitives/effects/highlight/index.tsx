@@ -7,7 +7,17 @@ import {
   ReducedMotionConfig,
   useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
+
+/** v1's Highlight spring. */
+const HIGHLIGHT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 350,
+  damping: 35,
+};
+
+const INSTANT: Transition = { duration: 0 };
 
 /** Joins class names, skipping empty ones. */
 function cn(...classes: (string | false | null | undefined)[]) {
@@ -81,14 +91,12 @@ type ParentHighlightProps = {
 };
 
 /**
- * Parent mode indicator. It stays pinned at `top: 0; left: 0` and moves with
- * a `transform: translate()` string, so following the pointer never triggers
- * layout. `width`/`height` are plain styles: they jump to the new item's size
- * instead of tweening (items in lists and sidebars mostly share a width, and
- * tweening size would mean layout every frame).
+ * Parent mode indicator (v1's): its top, left, width and height spring to the
+ * active item's box, it fades in when it appears and fades out `exitDelay`
+ * after the last item is left.
  *
  * Rendered inside `ReducedMotionConfig`, so `useShouldReduceMotion` sees the
- * OS setting: under reduced motion the translate jumps and only opacity fades.
+ * OS setting: under reduced motion it jumps to the item and only fades.
  */
 function ParentHighlight({
   bounds,
@@ -98,9 +106,14 @@ function ParentHighlight({
   style,
 }: ParentHighlightProps) {
   const reduceMotion = useShouldReduceMotion();
-  const { transition: tokenTransition } = useMotionTokens();
   const moveTransition: Transition = reduceMotion
-    ? { ...transition, transform: tokenTransition.instant }
+    ? {
+        ...transition,
+        top: INSTANT,
+        left: INSTANT,
+        width: INSTANT,
+        height: INSTANT,
+      }
     : transition;
 
   return (
@@ -108,13 +121,19 @@ function ParentHighlight({
       {bounds && (
         <motion.div
           data-slot="motion-highlight"
-          initial={{
-            transform: `translate(${bounds.left}px, ${bounds.top}px)`,
-            opacity: 0,
-          }}
           animate={{
-            transform: `translate(${bounds.left}px, ${bounds.top}px)`,
+            top: bounds.top,
+            left: bounds.left,
+            width: bounds.width,
+            height: bounds.height,
             opacity: 1,
+          }}
+          initial={{
+            top: bounds.top,
+            left: bounds.left,
+            width: bounds.width,
+            height: bounds.height,
+            opacity: 0,
           }}
           exit={{
             opacity: 0,
@@ -124,15 +143,7 @@ function ParentHighlight({
             },
           }}
           transition={moveTransition}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 0,
-            ...style,
-            width: bounds.width,
-            height: bounds.height,
-          }}
+          style={{ position: 'absolute', zIndex: 0, ...style }}
           className={className}
         />
       )}
@@ -233,12 +244,14 @@ function Highlight<T extends React.ElementType = 'div'>({
     enabled = true,
     controlledItems,
     disabled = false,
-    exitDelay = 200,
+    exitDelay: exitDelayProp = 200,
     mode = 'children',
   } = props;
 
-  const tokens = useMotionTokens();
-  const transition = transitionProp ?? tokens.spring.snappy;
+  // v1's values, paced by the provider's tempo (the exit delay too).
+  const { tempo } = useMotionTokens();
+  const transition = useTempoTransition(transitionProp ?? HIGHLIGHT_TRANSITION);
+  const exitDelay = exitDelayProp * tempo;
 
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
@@ -500,7 +513,11 @@ function HighlightItem<T extends React.ElementType>({
     id ?? value ?? element.props?.['data-value'] ?? element.props?.id ?? itemId;
   const isActive = activeValue === childValue;
   const isDisabled = disabled === undefined ? contextDisabled : disabled;
-  const itemTransition = transition ?? contextTransition;
+  const { tempo } = useMotionTokens();
+  const ownTransition = useTempoTransition(transition);
+  const itemTransition = ownTransition ?? contextTransition;
+  const itemExitDelay =
+    exitDelay === undefined ? contextExitDelay : exitDelay * tempo;
 
   const canHover = useCanHover();
 
@@ -513,57 +530,44 @@ function HighlightItem<T extends React.ElementType>({
 
   React.useEffect(() => {
     if (mode !== 'parent') return;
-
-    if (!isActive) {
-      if (!activeValue) clearBounds();
-      return;
-    }
-
-    const node = localRef.current;
-    if (!node) return;
-
-    setBounds(node.getBoundingClientRect());
-    setActiveClassName(activeClassName ?? '');
-
+    let rafId: number;
+    let previousBounds: Bounds | null = null;
     const shouldUpdateBounds =
       forceUpdateBounds === true ||
       (contextForceUpdateBounds && forceUpdateBounds !== false);
-    if (!shouldUpdateBounds) return;
 
-    // Re-measure only when something can actually move the item: a size
-    // change of the item or any ancestor up to the highlight container
-    // (siblings expanding, sidebar collapsing), a scroll in any scroller, or a
-    // window resize. Bursts are coalesced into one measure per frame.
-    let rafId = 0;
-    const scheduleUpdate = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        if (localRef.current)
-          setBounds(localRef.current.getBoundingClientRect());
-      });
+    // With `forceUpdateBounds`, v1 re-measures the active item on every frame,
+    // so the highlight follows it whatever moves it (an animated sidebar, a
+    // transform…).
+    const updateBounds = () => {
+      if (!localRef.current) return;
+
+      const bounds = localRef.current.getBoundingClientRect();
+
+      if (shouldUpdateBounds) {
+        if (
+          previousBounds &&
+          previousBounds.top === bounds.top &&
+          previousBounds.left === bounds.left &&
+          previousBounds.width === bounds.width &&
+          previousBounds.height === bounds.height
+        ) {
+          rafId = requestAnimationFrame(updateBounds);
+          return;
+        }
+        previousBounds = bounds;
+        rafId = requestAnimationFrame(updateBounds);
+      }
+
+      setBounds(bounds);
     };
 
-    const resizeObserver = new ResizeObserver(scheduleUpdate);
-    let ancestor: HTMLElement | null = node;
-    while (ancestor) {
-      resizeObserver.observe(ancestor);
-      if (ancestor.dataset.slot === 'motion-highlight-container') break;
-      ancestor = ancestor.parentElement;
-    }
+    if (isActive) {
+      updateBounds();
+      setActiveClassName(activeClassName ?? '');
+    } else if (!activeValue) clearBounds();
 
-    window.addEventListener('resize', scheduleUpdate, { passive: true });
-    window.addEventListener('scroll', scheduleUpdate, {
-      passive: true,
-      capture: true,
-    });
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', scheduleUpdate);
-      window.removeEventListener('scroll', scheduleUpdate, { capture: true });
-    };
+    if (shouldUpdateBounds) return () => cancelAnimationFrame(rafId);
   }, [
     mode,
     isActive,
@@ -647,7 +651,7 @@ function HighlightItem<T extends React.ElementType>({
                     ...itemTransition,
                     delay:
                       (itemTransition?.delay ?? 0) +
-                      (exitDelay ?? contextExitDelay ?? 0) / 1000,
+                      (itemExitDelay ?? 0) / 1000,
                   },
                 }}
                 {...dataAttributes}
@@ -708,8 +712,7 @@ function HighlightItem<T extends React.ElementType>({
                 transition: {
                   ...itemTransition,
                   delay:
-                    (itemTransition?.delay ?? 0) +
-                    (exitDelay ?? contextExitDelay ?? 0) / 1000,
+                    (itemTransition?.delay ?? 0) + (itemExitDelay ?? 0) / 1000,
                 },
               }}
               {...dataAttributes}

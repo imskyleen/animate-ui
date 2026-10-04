@@ -53,7 +53,8 @@ type ThemeTogglerProps = {
 };
 
 /** Wipe duration in ms at tempo 1. */
-const WIPE_DURATION = 500;
+const WIPE_DURATION = 700;
+const WIPE_EASING = 'ease-in-out';
 
 function subscribeToNothing() {
   return () => {};
@@ -99,7 +100,6 @@ function ThemeTogglerInner({
   const reduce = useShouldReduceMotion();
   const tokens = useMotionTokens();
   const wipeDuration = WIPE_DURATION * tokens.tempo;
-  const wipeEasing = `cubic-bezier(${tokens.ease.out.join(', ')})`;
   const [preview, setPreview] = React.useState<null | {
     effective: ThemeSelection;
     resolved: Resolved;
@@ -160,7 +160,7 @@ function ThemeTogglerInner({
           { clipPath: [fromClip, toClip] },
           {
             duration: wipeDuration,
-            easing: wipeEasing,
+            easing: WIPE_EASING,
             pseudoElement: '::view-transition-new(root)',
           },
         )
@@ -176,7 +176,6 @@ function ThemeTogglerInner({
       setTheme,
       reduce,
       wipeDuration,
-      wipeEasing,
     ],
   );
 

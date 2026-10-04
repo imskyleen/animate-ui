@@ -5,8 +5,8 @@ import { motion, type Transition, type HTMLMotionProps } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../utils/motion';
 import {
   Highlight,
@@ -18,6 +18,30 @@ import { getStrictContext } from '../../utils/strict-context';
 import { Slot, type WithAsChild } from '../slot';
 
 type TabsOrientation = 'horizontal' | 'vertical';
+
+// Animate UI v1's values.
+/** The highlight sliding to the active trigger. */
+const HIGHLIGHT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 25,
+};
+/** The panels sliding and the height following the active one. */
+const CONTENTS_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 30,
+  bounce: 0,
+  restDelta: 0.01,
+};
+/** The blur of the panels coming in and going out. */
+const CONTENT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 25,
+};
+
+const INSTANT: Transition = { duration: 0 };
 
 type TabsContextType = {
   activeValue: string;
@@ -37,13 +61,6 @@ type TabsContextType = {
     value: string,
     id: string | undefined,
   ) => void;
-  /**
-   * The last selection came from the keyboard: the highlight and panels jump
-   * instead of animating (keyboard navigation is instant).
-   */
-  instant: boolean;
-  /** Selects a tab, recording whether it came from the keyboard. */
-  selectValue: (value: string, input: 'keyboard' | 'pointer') => void;
 };
 
 const [TabsProvider, useTabs] =
@@ -124,16 +141,6 @@ function Tabs({
     [isControlled, onValueChange],
   );
 
-  const [instant, setInstant] = React.useState(false);
-  const selectValue = React.useCallback(
-    (val: string, input: 'keyboard' | 'pointer') => {
-      // Batched with the value change: one render, already instant.
-      setInstant(input === 'keyboard');
-      handleValueChange(val);
-    },
-    [handleValueChange],
-  );
-
   // Own ids passed to triggers and panels, by value.
   const [customIds, setCustomIds] = React.useState<
     Record<string, { trigger?: string; content?: string }>
@@ -174,8 +181,6 @@ function Tabs({
         getContentId,
         getTriggerValue,
         registerId,
-        instant,
-        selectValue,
       }}
     >
       <ReducedMotionConfig>
@@ -206,19 +211,16 @@ function TabsHighlight({
   exitDelay,
   ...props
 }: TabsHighlightProps) {
-  const { activeValue, instant } = useTabs();
-  const { spring, transition: tokenTransition } = useMotionTokens();
+  const { activeValue } = useTabs();
 
   return (
     <Highlight
       data-slot="tabs-highlight"
       controlledItems
       value={activeValue}
-      // Keyboard selection jumps, and the previous highlight leaves at once.
-      transition={
-        instant ? tokenTransition.instant : (transition ?? spring.snappy)
-      }
-      exitDelay={instant ? 0 : exitDelay}
+      // Highlight paces it with the provider's tempo.
+      transition={transition ?? HIGHLIGHT_TRANSITION}
+      exitDelay={exitDelay}
       click={false}
       {...props}
     />
@@ -268,7 +270,7 @@ function TabsTrigger({
 }: TabsTriggerProps) {
   const {
     activeValue,
-    selectValue,
+    handleValueChange,
     registerTrigger,
     registerId,
     orientation,
@@ -340,7 +342,7 @@ function TabsTrigger({
     if (!target) return;
     target.focus();
     const targetValue = getTriggerValue(target);
-    if (targetValue !== undefined) selectValue(targetValue, 'keyboard');
+    if (targetValue !== undefined) handleValueChange(targetValue);
   };
 
   const Component = asChild ? Slot : motion.button;
@@ -361,7 +363,7 @@ function TabsTrigger({
       {...props}
       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
-        if (!event.defaultPrevented) selectValue(value, 'pointer');
+        if (!event.defaultPrevented) handleValueChange(value);
       }}
       onKeyDown={handleKeyDown}
     />
@@ -380,15 +382,11 @@ function TabsContents({
   style,
   ...props
 }: TabsContentsProps) {
-  const { activeValue, instant } = useTabs();
-  const tokens = useMotionTokens();
-  // Reduced motion and keyboard selection: the panel and the height change
-  // at once.
+  const { activeValue } = useTabs();
+  const spring = useTempoTransition(transitionProp ?? CONTENTS_TRANSITION);
+  // Reduced motion: the panel and the height change at once.
   const reduce = useShouldReduceMotion();
-  const transition: Transition =
-    reduce || instant
-      ? tokens.transition.instant
-      : (transitionProp ?? { ...tokens.spring.snappy, restDelta: 0.01 });
+  const transition: Transition = reduce ? INSTANT : spring;
   const childrenArray = React.Children.toArray(children);
   const activeIndex = childrenArray.findIndex(
     (child): child is React.ReactElement<{ value: string }> =>
@@ -517,9 +515,8 @@ function TabsContent({
   asChild = false,
   ...props
 }: TabsContentProps) {
-  const { activeValue, getTriggerId, getContentId, registerId, instant } =
-    useTabs();
-  const { transition: motionTransition } = useMotionTokens();
+  const { activeValue, getTriggerId, getContentId, registerId } = useTabs();
+  const blur = useTempoTransition(CONTENT_TRANSITION);
   const isActive = activeValue === value;
 
   React.useEffect(() => {
@@ -542,7 +539,7 @@ function TabsContent({
       initial={{ filter: 'blur(0px)' }}
       animate={{ filter: isActive ? 'blur(0px)' : 'blur(4px)' }}
       exit={{ filter: 'blur(0px)' }}
-      transition={instant ? motionTransition.instant : motionTransition.change}
+      transition={blur}
       {...props}
     />
   );

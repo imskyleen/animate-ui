@@ -7,11 +7,19 @@ import {
   type OTPInputProps,
   type RenderProps,
 } from 'input-otp';
+import {
+  createGeneratorEasing,
+  generateLinearEasing,
+  spring,
+  supportsLinearEasing,
+  type Transition,
+} from 'motion/react';
 
 import {
   ReducedMotionConfig,
   useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../utils/motion';
 
 // A drop-in replacement for the `input-otp` package: the same exports with the
@@ -24,16 +32,21 @@ import {
 // old and new values, and their slots — the `[data-slot="input-otp-slot"]`
 // elements of the container, in index order — are animated with the Web
 // Animations API: the text fades in (`color` from transparent) while its
-// `font-size` grows from 95%, which scales the glyph alone, not the slot's
-// box. A paste staggers its characters. Only those two properties are
-// animated, from an explicit first keyframe to the slot's own style, so the
-// slot's classes, transitions and rings are untouched. Deleting is instant,
-// and characters that only shift because one before them was removed don't
-// animate. Under reduced motion characters only fade, and the fake caret
-// (any CSS animation inside a slot) stops blinking.
+// `font-size` grows from 0, which scales the glyph alone, not the slot's box.
+// The motion is Animate UI v1's radio indicator (opacity and scale from 0 on
+// a 200/16 spring), the spring turned into a `linear()` easing. A paste
+// staggers its characters like v1's text splitting (50ms). Only those two
+// properties are animated, from an explicit first keyframe to the slot's own
+// style, so the slot's classes, transitions and rings are untouched. Deleting
+// is instant, and characters that only shift because one before them was
+// removed don't animate. Under reduced motion characters only fade, and the
+// fake caret (any CSS animation inside a slot) stops blinking.
+
+/** The spring of Animate UI v1's radio indicator. */
+const SPRING: Transition = { type: 'spring', stiffness: 200, damping: 16 };
 
 /** Delay between characters that arrive together (paste, autofill), in seconds. */
-const STAGGER = 0.025;
+const STAGGER = 0.05;
 
 const SLOT_SELECTOR = '[data-slot="input-otp-slot"]';
 
@@ -79,7 +92,8 @@ type SlotsMotionProps = {
 
 /** Animates the slots of the characters that were just entered. */
 function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
-  const tokens = useMotionTokens();
+  const { tempo } = useMotionTokens();
+  const transition = useTempoTransition(SPRING);
   const reduce = useShouldReduceMotion();
   // The value is contiguous from the first slot.
   const value = slots.map((slot) => slot.char ?? '').join('');
@@ -100,28 +114,30 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     const container = getContainer();
     if (!container || typeof Element.prototype.animate !== 'function') return;
     const elements = container.querySelectorAll<HTMLElement>(SLOT_SELECTOR);
-    const { duration, ease } = tokens.transition.press;
-    const stagger = !reduce && end - start > 1 ? STAGGER * tokens.tempo : 0;
+    // The spring as a progress curve (overshoot included) and its duration.
+    const { ease, duration } = createGeneratorEasing(transition, 100, spring);
+    const easing = supportsLinearEasing()
+      ? generateLinearEasing(ease, duration * 1000)
+      : 'ease-out';
+    const stagger = !reduce && end - start > 1 ? STAGGER * tempo : 0;
 
     for (let index = start; index < end; index++) {
       const el = elements[index];
       if (!el) continue;
       running.get(el)?.cancel();
-      const fontSize = parseFloat(getComputedStyle(el).fontSize);
       const from: Keyframe = { offset: 0, color: 'transparent' };
-      if (!reduce && fontSize > 0)
-        from.fontSize = `${fontSize * tokens.scale.enter}px`;
+      if (!reduce) from.fontSize = '0px';
       // One keyframe at offset 0: it ends on the slot's own style.
       const animation = el.animate([from], {
         duration: duration * 1000,
         delay: (index - start) * stagger * 1000,
-        easing: `cubic-bezier(${ease.join(', ')})`,
+        easing,
         // Waiting characters of a paste stay hidden until their turn.
         fill: 'backwards',
       });
       running.set(el, animation);
     }
-  }, [value, reduce, tokens, getContainer]);
+  }, [value, reduce, transition, tempo, getContainer]);
 
   React.useEffect(() => {
     getContainer()?.toggleAttribute('data-reduced-motion', reduce);

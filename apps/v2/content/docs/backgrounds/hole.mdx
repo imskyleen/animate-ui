@@ -26,7 +26,7 @@ export function Hero() {
 ## Animation
 
 - Rings slide down into a tunnel drawn on a canvas while particles rise out of it, under a glowing aurora that scrolls through its colors every 5s.
-- The canvas is sized to its container at the device pixel ratio, and runs at the same speed on 60Hz and 120Hz screens.
+- The canvas is sized to its container at the device pixel ratio. The rings and particles advance one step per displayed frame, so they move faster on 120Hz screens.
 - It pauses off screen and while the tab is hidden.
 - Under reduced motion, the tunnel, the particles and the aurora hold still.
 

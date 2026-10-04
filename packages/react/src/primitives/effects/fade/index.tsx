@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { useMotionTokens } from '../../../utils/motion';
+import { useTempoTransition } from '../../../utils/motion';
 import {
   useIsInView,
   type UseIsInViewOptions,
@@ -21,6 +21,12 @@ type FadeProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
+const DEFAULT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 20,
+};
+
 function Fade({
   ref,
   transition,
@@ -33,8 +39,8 @@ function Fade({
   asChild = false,
   ...props
 }: FadeProps) {
-  const tokens = useMotionTokens();
-  const baseTransition: Transition = transition ?? tokens.transition.modal;
+  const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
+  const baseTransition: Transition = transition ?? defaultTransition;
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
     {

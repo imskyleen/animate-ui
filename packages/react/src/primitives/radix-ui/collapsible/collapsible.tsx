@@ -5,10 +5,12 @@ import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
-import { ReducedMotionConfig, useMotionTokens } from '../../../utils/motion';
+import { ReducedMotionConfig } from '../../../utils/motion';
+import { useDisclosureTransitions } from '../../../internal/disclosure-panel';
 
 // Same API as Radix's Collapsible. The Root mirrors the open state (Radix
-// keeps it private) so the Content can animate its height in and out.
+// keeps it private) so the Content can animate in and out like Animate UI
+// v1's: height, fade and a 20px rise.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Collapsible.Root',
@@ -21,9 +23,9 @@ type CollapsibleContentProps = CollapsiblePrimitive.CollapsibleContentProps &
 
 /** Animate UI's additions to `Collapsible.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the opening. Defaults to `transition.disclosure` (600ms). */
+  /** Transition of the opening. Defaults to 350ms ease-in-out. */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition.exit` (400ms). */
+  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -50,10 +52,9 @@ function Root(props: React.ComponentProps<typeof CollapsiblePrimitive.Root>) {
 
 const Trigger = CollapsiblePrimitive.Trigger;
 
-// Height is one of the few layout animations worth its cost: the content
-// pushes what follows, so it has to grow.
-const collapsed = { height: 0, opacity: 0 };
-const expanded = { height: 'auto', opacity: 1 };
+// v1's Radix Collapsible: unlike the accordions, no mask.
+const collapsed = { height: 0, opacity: 0, y: 20 };
+const expanded = { height: 'auto', opacity: 1, y: 0 };
 
 function Content({
   forceMount,
@@ -64,12 +65,13 @@ function Content({
 }: React.ComponentProps<typeof CollapsiblePrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useOpen();
-  const tokens = useMotionTokens();
-  const enter = transition ?? tokens.transition.disclosure;
-  const exit = exitTransition ?? tokens.transition.exit;
+  // v1's content: 350ms ease-in-out both ways; under reduced motion the
+  // height and the rise jump (see internal/disclosure-panel).
+  const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
 
   return (
-    <AnimatePresence initial={false}>
+    // Open on mount (an item open by default), it animates open, as in v1.
+    <AnimatePresence>
       {(open || forceMount) && (
         // Radix's props (className, style, data-state, ids…) land on the
         // motion.div through asChild; it only carries the animation.

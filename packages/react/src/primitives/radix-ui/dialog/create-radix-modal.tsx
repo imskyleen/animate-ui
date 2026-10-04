@@ -6,16 +6,19 @@ import { AnimatePresence, motion } from 'motion/react';
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
+  DIALOG_TRANSITION,
+  OVERLAY_TRANSITION,
+  SHEET_TRANSITION,
   getAnimateTarget,
   getContentTargets,
   getModalSide,
   getOverlayTargets,
   motionRender,
   useHiddenWhenClosed,
+  useModalTransitions,
   type ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
@@ -154,8 +157,9 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     style,
     ...props
   }: PartProps & { open: boolean; keepMounted: boolean }) {
-    const tokens = useMotionTokens();
-    const targets = getOverlayTargets({ tokens, transition, exitTransition });
+    const targets = getOverlayTargets(
+      useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+    );
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(
       open,
       keepMounted,
@@ -203,17 +207,15 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     style,
     ...props
   }: PartProps & { open: boolean; keepMounted: boolean }) {
-    const tokens = useMotionTokens();
     const reduce = useShouldReduceMotion();
     // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
     const side = getModalSide(props['data-side']);
-    const targets = getContentTargets({
-      side,
-      tokens,
-      reduce,
+    const { enter, exit } = useModalTransitions(
       transition,
       exitTransition,
-    });
+      side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+    );
+    const targets = getContentTargets({ side, reduce, enter, exit });
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(
       open,
       keepMounted,

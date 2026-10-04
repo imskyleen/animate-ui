@@ -10,9 +10,6 @@ import {
 import { usePageVisible } from '@animate-ui/react/utils/use-page-visible';
 import { cn } from 'cn';
 
-/** One simulation step, in milliseconds (the physics is tuned for 60 fps). */
-const FRAME = 1000 / 60;
-
 type MouseGravity = 'attract' | 'repel';
 type GlowAnimation = 'instant' | 'ease' | 'spring';
 type StarsInteractionType = 'bounce' | 'merge';
@@ -57,17 +54,16 @@ function GravityStarsBackgroundContent({
   starsInteraction = false,
   starsInteractionType = 'bounce',
   className,
-  onPointerMove,
-  onPointerLeave,
-  onPointerUp,
-  onPointerCancel,
+  onMouseMove,
+  onTouchMove,
   ...props
 }: GravityStarsProps) {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const starsRef = React.useRef<Particle[]>([]);
-  // No pointer over the canvas: nothing attracts or repels.
-  const mouseRef = React.useRef<{ x: number; y: number } | null>(null);
+  // The last pointer position over the canvas: the stars keep gathering
+  // there after the pointer leaves.
+  const mouseRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // The loop pauses off screen and in a hidden tab, and renders a single
   // static frame under reduced motion.
@@ -116,8 +112,6 @@ function GravityStarsBackgroundContent({
     let color = '#ffffff';
     let running = false;
     let frameId = 0;
-    let lastTime = 0;
-    let lag = 0;
 
     const createStar = (): Particle => {
       const { movementSpeed, starsSize, starsOpacity } = optionsRef.current;
@@ -165,29 +159,48 @@ function GravityStarsBackgroundContent({
       if (!running) draw();
     };
 
-    const resize = () => {
-      const rect = container.getBoundingClientRect();
-      const nextDpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-      // Keep the stars where they are, relative to the new size.
-      if (width > 0 && height > 0) {
-        const sx = rect.width / width;
-        const sy = rect.height / height;
-        for (const p of starsRef.current) {
-          p.x *= sx;
-          p.y *= sy;
+    // Every star moves at `movementSpeed`, with the resting opacity.
+    const retuneStars = () => {
+      const { starsOpacity, movementSpeed } = optionsRef.current;
+      for (const p of starsRef.current) {
+        p.baseOpacity = starsOpacity;
+        p.opacity = starsOpacity;
+        const spd = Math.hypot(p.vx, p.vy);
+        if (spd > 0) {
+          const ratio = movementSpeed / spd;
+          p.vx *= ratio;
+          p.vy *= ratio;
         }
       }
+    };
+
+    const createStars = () => {
+      starsRef.current = Array.from(
+        { length: optionsRef.current.starsCount },
+        createStar,
+      );
+      retuneStars();
+    };
+
+    // As in v1: a resize scatters the stars again, and a new size resets
+    // their speed and opacity.
+    const resize = () => {
+      const rect = container.getBoundingClientRect();
+      const sizeChanged = rect.width !== width || rect.height !== height;
       width = rect.width;
       height = rect.height;
-      dpr = nextDpr;
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       color = getComputedStyle(container).color || '#ffffff';
       if (starsRef.current.length === 0) {
-        starsRef.current = Array.from(
-          { length: optionsRef.current.starsCount },
-          createStar,
-        );
+        createStars();
+      } else {
+        for (const p of starsRef.current) {
+          p.x = Math.random() * width;
+          p.y = Math.random() * height;
+        }
+        if (sizeChanged) retuneStars();
       }
       // Resizing clears the canvas: redraw the held frame while paused.
       if (!running) draw();
@@ -208,9 +221,9 @@ function GravityStarsBackgroundContent({
       for (let i = 0; i < stars.length; i++) {
         const p = stars[i]!;
 
-        const dx = mouse ? mouse.x - p.x : 0;
-        const dy = mouse ? mouse.y - p.y : 0;
-        const dist = mouse ? Math.hypot(dx, dy) : Infinity;
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const dist = Math.hypot(dx, dy);
 
         if (dist < mouseInfluence && dist > 0) {
           const force = (mouseInfluence - dist) / mouseInfluence;
@@ -319,14 +332,9 @@ function GravityStarsBackgroundContent({
       }
     };
 
-    // The simulation steps at 60 fps whatever the display's refresh rate.
-    const tick = (time: number) => {
-      lag += Math.min(time - lastTime, 100);
-      lastTime = time;
-      while (lag >= FRAME) {
-        update();
-        lag -= FRAME;
-      }
+    // One step per displayed frame, as in v1.
+    const tick = () => {
+      update();
       draw();
       frameId = requestAnimationFrame(tick);
     };
@@ -334,8 +342,6 @@ function GravityStarsBackgroundContent({
     const start = () => {
       if (running) return;
       running = true;
-      lastTime = performance.now();
-      lag = 0;
       frameId = requestAnimationFrame(tick);
     };
 
@@ -345,30 +351,18 @@ function GravityStarsBackgroundContent({
     };
 
     const reset = () => {
-      starsRef.current = Array.from(
-        { length: optionsRef.current.starsCount },
-        createStar,
-      );
+      createStars();
       if (!running) draw();
     };
 
     // New opacity or speed apply to the stars already there.
     const retune = () => {
-      const { starsOpacity, movementSpeed } = optionsRef.current;
-      for (const p of starsRef.current) {
-        p.baseOpacity = starsOpacity;
-        p.opacity = starsOpacity;
-        const spd = Math.hypot(p.vx, p.vy);
-        if (spd > 0) {
-          const ratio = movementSpeed / spd;
-          p.vx *= ratio;
-          p.vy *= ratio;
-        }
-      }
+      retuneStars();
       if (!running) draw();
     };
 
     resize();
+    window.addEventListener('resize', resize);
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
 
@@ -386,6 +380,7 @@ function GravityStarsBackgroundContent({
     return () => {
       stop();
       engineRef.current = null;
+      window.removeEventListener('resize', resize);
       resizeObserver.disconnect();
       mutationObserver.disconnect();
       mql.removeEventListener('change', readColor);
@@ -408,13 +403,16 @@ function GravityStarsBackgroundContent({
     return engine.stop;
   }, [playing]);
 
-  const setPointer = (e: React.PointerEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  };
-  // A lifted finger or a pointer that leaves releases the stars.
-  const clearPointer = () => {
-    mouseRef.current = null;
+  const handlePointerMove = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const point = 'touches' in e ? e.touches[0] : e;
+    if (!point) return;
+    mouseRef.current = {
+      x: point.clientX - rect.left,
+      y: point.clientY - rect.top,
+    };
   };
 
   return (
@@ -422,21 +420,13 @@ function GravityStarsBackgroundContent({
       ref={containerRef}
       data-slot="gravity-stars-background"
       className={cn('relative size-full overflow-hidden', className)}
-      onPointerMove={(e) => {
-        setPointer(e);
-        onPointerMove?.(e);
+      onMouseMove={(e) => {
+        handlePointerMove(e);
+        onMouseMove?.(e);
       }}
-      onPointerLeave={(e) => {
-        clearPointer();
-        onPointerLeave?.(e);
-      }}
-      onPointerUp={(e) => {
-        if (e.pointerType !== 'mouse') clearPointer();
-        onPointerUp?.(e);
-      }}
-      onPointerCancel={(e) => {
-        clearPointer();
-        onPointerCancel?.(e);
+      onTouchMove={(e) => {
+        handlePointerMove(e);
+        onTouchMove?.(e);
       }}
       {...props}
     >
@@ -448,7 +438,7 @@ function GravityStarsBackgroundContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
+// Under reduced motion the stars hold still.
 function GravityStarsBackground(props: GravityStarsProps) {
   return (
     <ReducedMotionConfig>

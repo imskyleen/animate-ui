@@ -36,10 +36,12 @@ Coming from the `@radix-ui/react-accordion` package? Use the subpath: `import * 
 
 ## Animation
 
-- **Content** grows its height and fades in over 600ms with a strong ease-out, and collapses in 400ms before it unmounts.
+- **Content** opens like Animate UI v1's accordion: its height grows from 0 while the content fades in, rises 20px and is revealed top to bottom by a mask, over 350ms ease-in-out. It closes the same way, in reverse, then unmounts.
 - Opening another item while one is closing retargets smoothly.
+- An item open by default animates open on mount (page load), as in v1.
 - With `forceMount`, closed content stays in the DOM, collapsed and `inert`.
-- Under reduced motion, the height changes at once.
+- `<AnimateUIProvider tempo>` paces both transitions.
+- Under reduced motion, the height and the rise change at once; the fade and the mask still play.
 
 ## API Reference
 
@@ -58,12 +60,12 @@ Every part takes exactly the props of [Radix UI's Accordion](https://www.radix-u
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: 'transition.disclosure (600ms, ease-out)',
+      default: "{ duration: 0.35, ease: 'easeInOut' }",
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
     },
   }}
 />

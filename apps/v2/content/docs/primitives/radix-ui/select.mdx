@@ -45,21 +45,29 @@ Coming from the `@radix-ui/react-select` package? Use the subpath: `import * as 
 
 ## Animation
 
-- **Content** with `position="popper"` fades in and scales up from 0.95 over 600ms with a strong ease-out, growing from the trigger (`--radix-select-content-transform-origin`). It closes in 400ms, then unmounts.
+Radix's Select has no Animate UI v1 counterpart: it moves like v1's Dropdown Menu.
+
+- **Content** with `position="popper"` fades and scales in from 0.95, from the trigger (`--radix-select-content-transform-origin`), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way before it unmounts.
 - With `position="item-aligned"` (Radix's default), the list is laid over the trigger with the selected item lined up on the value, so it only fades: there is no side to grow from, and a scale would skew Radix's measurement.
+- **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, like v1's menu highlight. The new copy fades in as it moves; the previous one goes along and fades out 200ms later. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
+- **ItemIndicator**: choosing another item moves the check there while the list closes, like v1's radio indicator.
 - Reopening while the list is closing picks up from where it is. A closing list is `inert`, so it can't be clicked through.
-- The highlight moved by the arrow keys, typeahead and the items themselves are not animated: keyboard navigation stays instant.
 - After the exit, the closed list goes back to Radix, which keeps the items mounted off-screen: the trigger keeps its label, typeahead on the closed trigger and native form submission still work.
 - With `forceMount` (on `Content` or `Portal`), the closed list stays mounted, transparent and `inert`. Like in Radix, a mounted list keeps the select modal.
-- Under reduced motion, the list fades without scaling.
+- Open from the start (`defaultOpen`), the list plays its entrance on page load.
+- Under reduced motion, nothing scales or glides: the list and the highlight only fade.
 
 ## API Reference
 
 Every part takes exactly the props of [Radix UI's Select](https://www.radix-ui.com/primitives/docs/components/select#api-reference). Animate UI adds the animation props below.
 
-### Root, Trigger, Value, Icon, Portal, Viewport, Item, ItemText, ItemIndicator, Group, Label, Separator, ScrollUpButton, ScrollDownButton, Arrow
+### Root, Trigger, Value, Icon, Portal, Viewport, ItemText, Group, Label, Separator, ScrollUpButton, ScrollDownButton, Arrow
 
 [Radix UI props](https://www.radix-ui.com/primitives/docs/components/select#root) only. They are not animated.
+
+### Item
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/select#item) only. It takes part in the highlight; it needs nothing more.
 
 ### Content
 
@@ -68,14 +76,30 @@ Every part takes exactly the props of [Radix UI's Select](https://www.radix-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: 'transition.dropdown (600ms, ease-out)',
+      default: '{ duration: 0.2 }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition.exit (400ms, ease-out)',
+      default: 'transition',
+    },
+  }}
+/>
+
+### ItemIndicator
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/select#itemindicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the check moving to the chosen item.',
+      type: 'Transition',
+      default:
+        "Motion's layout transition, as v1's radio indicator: { duration: 0.45, ease: [0.4, 0, 0.1, 1] }",
     },
   }}
 />

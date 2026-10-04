@@ -19,14 +19,14 @@ export const controls = {
       value: "up",
       options: { up: "up", down: "down", left: "left", right: "right" },
     },
-    offset: { value: 16, min: 0, max: 400, step: 4 },
+    offset: { value: 100, min: 0, max: 1000, step: 10 },
   },
 }
 
 export default function SlideDemo({
   delay = 0,
   direction = "up",
-  offset = 16,
+  offset = 100,
 }: {
   delay?: number
   direction?: SlideDirection

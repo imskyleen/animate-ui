@@ -4,166 +4,193 @@ import * as React from 'react';
 import {
   animate,
   AnimatePresence,
+  motionValue,
   PresenceContext,
   usePresence,
+  type AnimationPlaybackControls,
+  type MotionValue,
   type Transition,
 } from 'motion/react';
 
-import { useMotionTokens, useShouldReduceMotion } from '../../utils/motion';
+import { useShouldReduceMotion, useTempoTransition } from '../../utils/motion';
 
-// Checkmarks and radio dots. The library element (the indicator) never moves:
-// its content (the icon, the dot) scales in. Animating the content instead of
-// the indicator matters for radio dots, which shadcn/ui positions with
-// `absolute top-1/2 left-1/2`: a transform on the indicator would make it
-// their containing block and shift them by a pixel.
+// Checkmarks and radio dots, as Animate UI v1's. The check draws itself: its
+// stroke (`pathLength`) and its opacity go from 0 to 1 in 0.2s, after 0.2s,
+// and back in 0.2s when cleared (v1's `CheckboxIndicator`). The dot pops:
+// its scale and opacity spring from 0 (stiffness 200, damping 16), and back
+// to 0 when it leaves (v1's `RadioGroupIndicator`).
+//
+// The library element (the indicator) never moves: its content (the icon,
+// the dot) animates. Animating the content instead of the indicator matters
+// for radio dots, which shadcn/ui positions with `absolute top-1/2 left-1/2`:
+// a transform on the indicator would make it their containing block and
+// shift them by a pixel.
 
-/**
- * Small glyphs need more travel than panels to read: they start at half size
- * (never 0) and fade in.
- */
-const CONTENT_FROM = 0.5;
+/** What the indicator shows: a check (drawn) or a dot (popped). */
+type IndicatorKind = 'check' | 'dot';
 
 /** Animation props of the animated indicator parts. */
 type IndicatorAnimationProps = {
-  /** Transition of the check (or dot) appearing. Defaults to `transition.change` (600ms). */
+  /**
+   * Transition of the check (or dot) appearing. Check: 0.2s after 0.2s.
+   * Dot: a spring (stiffness 200, damping 16).
+   */
   transition?: Transition;
-  /** Transition of the check (or dot) leaving. Defaults to `transition.exit` (400ms). */
+  /**
+   * Transition of the check (or dot) leaving. Check: 0.2s. Dot: the same
+   * spring as it appears.
+   */
   exitTransition?: Transition;
 };
 
-type Styled = HTMLElement | SVGElement;
+/** v1's `CheckboxIndicator`: the check draws in 0.2s, after 0.2s. */
+const CHECK_TRANSITION: Transition = { duration: 0.2, delay: 0.2 };
+/** v1's `CheckboxIndicator`: the check erases in 0.2s. */
+const CHECK_EXIT_TRANSITION: Transition = { duration: 0.2 };
+/** v1's `RadioGroupIndicator` / `RadioIndicator`, in and out. */
+const DOT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 16,
+};
 
-const shown = { opacity: 1, transform: 'scale(1)' };
-const hidden = (reduce: boolean) => ({
-  opacity: 0,
-  transform: `scale(${reduce ? 1 : CONTENT_FROM})`,
-});
-
-/**
- * Radio groups select with the arrow keys: that's keyboard navigation, so the
- * dots swap at once (Space, Enter and pointers still animate). The group
- * records the last input in a ref its indicators read when they animate.
- */
-const KeyboardSelectionContext =
-  React.createContext<React.RefObject<boolean> | null>(null);
-
-const NAVIGATION_KEYS = new Set([
-  'ArrowUp',
-  'ArrowDown',
-  'ArrowLeft',
-  'ArrowRight',
-  'Home',
-  'End',
-  'PageUp',
-  'PageDown',
-]);
-
-/**
- * For a radio group's root: tracks whether the next selection comes from
- * keyboard navigation. Returns the ref to provide and the root's capture
- * handlers, composed with the user's.
- */
-function useKeyboardSelection<K extends { key: string }, P>(
-  onKeyDownCapture?: (event: K) => void,
-  onPointerDownCapture?: (event: P) => void,
+/** The v1 transitions of an indicator, with the part's overrides. */
+function useIndicatorTransitions(
+  kind: IndicatorKind,
+  { transition, exitTransition }: IndicatorAnimationProps,
 ) {
-  const keyboardRef = React.useRef(false);
-  return {
-    keyboard: keyboardRef,
-    handlers: {
-      onKeyDownCapture: (event: K) => {
-        keyboardRef.current = NAVIGATION_KEYS.has(event.key);
-        onKeyDownCapture?.(event);
-      },
-      onPointerDownCapture: (event: P) => {
-        keyboardRef.current = false;
-        onPointerDownCapture?.(event);
-      },
-    },
-  };
+  const enter = useTempoTransition(
+    transition ?? (kind === 'check' ? CHECK_TRANSITION : DOT_TRANSITION),
+  );
+  const exit = useTempoTransition(
+    exitTransition ?? (kind === 'check' ? CHECK_EXIT_TRANSITION : enter),
+  );
+  return { enter, exit };
 }
 
-/** Elements this module already animated (fresh ones start hidden). */
-const animated = new WeakSet<Element>();
+// ---------------------------------------------------------------------------
+// Content: each animated element has a progress (0 hidden, 1 shown) that the
+// writers below turn into styles.
+
+/** SVG shapes a check is drawn with. */
+const SHAPES = 'path, line, polyline, polygon, circle, ellipse, rect';
+
+type Drawn = {
+  /** stroke: an SVG shape drawn; fade: anything else; pop: a dot. */
+  mode: 'stroke' | 'fade' | 'pop';
+  progress: MotionValue<number>;
+  /** Its opacity at rest (its own, from its styles). */
+  opacity: number;
+  /** Its inline opacity, restored at rest. */
+  inlineOpacity: string;
+  /** Its own dash attributes, restored when fully drawn. */
+  dash: (string | null)[];
+  reduce: boolean;
+  controls: AnimationPlaybackControls | null;
+};
+
+const drawn = new WeakMap<Element, Drawn>();
 /** Exit copies of content React already removed (React Aria). */
 const ghosts = new WeakSet<Element>();
 
-/** What scales: the indicator's element children, or the indicator itself. */
-function contentOf(indicator: Element): Styled[] {
-  const children = Array.from(indicator.children).filter(
-    (child) => !ghosts.has(child),
-  ) as Styled[];
-  return children.length > 0 ? children : [indicator as Styled];
-}
+const DASH_ATTRIBUTES = ['pathLength', 'stroke-dasharray', 'stroke-dashoffset'];
 
-function setStyle(
-  targets: Styled[],
-  style: { opacity: number; transform: string },
-) {
-  for (const target of targets) {
-    target.style.opacity = String(style.opacity);
-    target.style.transform = style.transform;
+type Styled = Element & ElementCSSInlineStyle;
+
+/** Writes progress `p` (0 hidden, 1 shown) on `el`. At 1: as rendered. */
+function write(el: Styled, d: Drawn, p: number) {
+  const atRest = p === 1;
+  if (d.mode === 'stroke') {
+    if (atRest || d.reduce) {
+      DASH_ATTRIBUTES.forEach((name, i) => {
+        const value = d.dash[i];
+        if (value === null || value === undefined) el.removeAttribute(name);
+        else el.setAttribute(name, value);
+      });
+    } else {
+      el.setAttribute('pathLength', '1');
+      el.setAttribute('stroke-dasharray', `${Math.min(1, Math.max(0, p))} 1`);
+      el.setAttribute('stroke-dashoffset', '0');
+    }
   }
+  if (d.mode === 'pop')
+    el.style.transform = atRest || d.reduce ? '' : `scale(${p})`;
+  // A spring past 1 (the dot) overshoots its opacity too: clamped, as v1's.
+  el.style.opacity = atRest ? d.inlineOpacity : String(d.opacity * p);
 }
 
-/**
- * Motion reads a transform-less element as `none`, which it can only
- * interpolate from `scale(0)`: content rendered at rest gets its resting
- * transform written out before it animates.
- */
-function writeRest(targets: Styled[]) {
-  for (const target of targets)
-    if (!target.style.transform) target.style.transform = shown.transform;
-}
-
-/**
- * Shows the content. Fresh elements start hidden on this very frame (no flash
- * before the animation starts); the others retarget from where they are.
- */
-function showContent(
-  targets: Styled[],
-  transition: Transition,
-  reduce: boolean,
-) {
-  if (targets.length === 0) return;
-  const fresh = targets.filter((target) => !animated.has(target));
-  const known = targets.filter((target) => animated.has(target));
-  targets.forEach((target) => animated.add(target));
-
-  const from = hidden(reduce);
-  if (fresh.length > 0) {
-    setStyle(fresh, from);
-    animate(
-      fresh,
-      {
-        opacity: [from.opacity, shown.opacity],
-        transform: [from.transform, shown.transform],
-      },
-      transition,
-    );
-  }
-  if (known.length > 0) {
-    writeRest(known);
-    animate(known, shown, transition);
-  }
-}
-
-function hideContent(
-  targets: Styled[],
-  transition: Transition,
-  reduce: boolean,
-): Promise<void> {
-  if (targets.length === 0) return Promise.resolve();
-  targets.forEach((target) => animated.add(target));
-  writeRest(targets);
-  return new Promise((resolve) => {
-    animate(targets, hidden(reduce), transition).then(() => resolve());
+/** The elements that animate, for the content elements of an indicator. */
+function targetsOf(content: Element[], kind: IndicatorKind): Styled[] {
+  if (kind === 'dot') return content as Styled[];
+  return content.flatMap((el) => {
+    const shapes = el.matches(SHAPES)
+      ? [el]
+      : Array.from(el.querySelectorAll(SHAPES));
+    return (shapes.length > 0 ? shapes : [el]) as Styled[];
   });
 }
 
-function hideContentNow(targets: Styled[], reduce: boolean) {
-  targets.forEach((target) => animated.add(target));
-  setStyle(targets, hidden(reduce));
+function stateOf(el: Styled, kind: IndicatorKind, reduce: boolean): Drawn {
+  let d = drawn.get(el);
+  if (!d) {
+    d = {
+      mode:
+        kind === 'dot'
+          ? 'pop'
+          : el instanceof SVGGeometryElement
+            ? 'stroke'
+            : 'fade',
+      progress: motionValue(1),
+      opacity: Number(getComputedStyle(el).opacity),
+      inlineOpacity: el.style.opacity,
+      dash: DASH_ATTRIBUTES.map((name) => el.getAttribute(name)),
+      reduce,
+      controls: null,
+    };
+    const state = d;
+    d.progress.on('change', (p) => write(el, state, p));
+    drawn.set(el, d);
+  }
+  d.reduce = reduce;
+  return d;
+}
+
+/** Animates `targets` to shown (1) or hidden (0). Fresh ones start hidden. */
+function animateTo(
+  targets: Styled[],
+  kind: IndicatorKind,
+  shown: boolean,
+  transition: Transition,
+  reduce: boolean,
+): Promise<void> {
+  const runs = targets.map((el) => {
+    const fresh = !drawn.has(el);
+    const d = stateOf(el, kind, reduce);
+    d.controls?.stop();
+    // Content seen for the first time is hidden on this very frame (no flash
+    // before the animation starts).
+    if (fresh && shown) d.progress.jump(0);
+    const controls = animate(d.progress, shown ? 1 : 0, transition);
+    d.controls = controls;
+    return controls;
+  });
+  return Promise.all(runs).then(() => undefined);
+}
+
+/** Puts `targets` at rest, shown or hidden, at once. */
+function setNow(
+  targets: Styled[],
+  kind: IndicatorKind,
+  shown: boolean,
+  reduce: boolean,
+) {
+  for (const el of targets) {
+    const d = stateOf(el, kind, reduce);
+    d.controls?.stop();
+    d.controls = null;
+    if (d.progress.get() === (shown ? 1 : 0)) write(el, d, shown ? 1 : 0);
+    else d.progress.jump(shown ? 1 : 0);
+  }
 }
 
 function mergeRefs<T>(
@@ -186,26 +213,21 @@ function mergeRefs<T>(
   };
 }
 
-/** Animation tokens of an indicator, with the part's overrides. */
-function useIndicatorTransitions({
-  transition,
-  exitTransition,
-}: IndicatorAnimationProps) {
-  const tokens = useMotionTokens();
-  const keyboard = React.use(KeyboardSelectionContext);
-  const enter = transition ?? tokens.transition.change;
-  const exit = exitTransition ?? tokens.transition.exit;
-  // Read when animating (in effects), not while rendering.
-  return {
-    enter: () => (keyboard?.current ? tokens.transition.instant : enter),
-    exit: () => (keyboard?.current ? tokens.transition.instant : exit),
-  };
+/** The indicator's element children (its content), copies left out. */
+function contentOf(indicator: Element) {
+  return Array.from(indicator.children).filter((child) => !ghosts.has(child));
 }
+
+// ---------------------------------------------------------------------------
+// Radix UI and Base UI: the part renders the indicator.
 
 type IndicatorContentProps = React.ComponentPropsWithRef<'span'> &
   IndicatorAnimationProps & {
+    kind: IndicatorKind;
     /** The control is checked (or indeterminate). */
     checked: boolean;
+    /** The check of an indeterminate control draws without the delay (v1). */
+    indeterminate?: boolean;
   };
 
 /**
@@ -215,55 +237,83 @@ type IndicatorContentProps = React.ComponentPropsWithRef<'span'> &
  * indicator stays in the DOM with its content hidden.
  */
 function IndicatorContent({
+  kind,
   checked,
+  indeterminate = false,
   transition,
   exitTransition,
   ref,
+  style,
   ...props
 }: IndicatorContentProps) {
   const localRef = React.useRef<HTMLSpanElement>(null);
   const [isPresent, safeToRemove] = usePresence();
-  // Content already there on the first render (a checked box on page load)
-  // doesn't animate: the part's AnimatePresence has `initial={false}`.
+  // v1 animated content already there on mount (its `initial` was the
+  // hidden state): a checked box draws its check, a selected radio pops its
+  // dot. Not inside an `AnimatePresence initial={false}`.
   const animateOnMount = React.use(PresenceContext)?.initial !== false;
   const reduce = useShouldReduceMotion();
-  const { enter, exit } = useIndicatorTransitions({
+  const { enter, exit } = useIndicatorTransitions(kind, {
     transition,
     exitTransition,
   });
   const visible = checked && isPresent;
-  const lastRef = React.useRef<boolean | null>(null);
+  const lastRef = React.useRef<{
+    visible: boolean;
+    indeterminate: boolean;
+    content: Element[];
+  } | null>(null);
   const runRef = React.useRef(0);
+  // Hidden until the first layout effect, so a server-rendered page doesn't
+  // show the content before it animates in (or while it should be hidden).
+  const [hideFirst] = React.useState(() => !checked || animateOnMount);
 
   React.useLayoutEffect(() => {
-    if (lastRef.current === visible) return;
-    const first = lastRef.current === null;
-    lastRef.current = visible;
-    const id = ++runRef.current;
     const element = localRef.current;
+    const last = lastRef.current;
     if (!element) {
       if (!isPresent) safeToRemove?.();
       return;
     }
-    const targets = contentOf(element);
+    const content = contentOf(element);
+    lastRef.current = { visible, indeterminate, content };
+    const targets = targetsOf(content, kind);
+    const enterTransition = indeterminate ? { ...enter, delay: 0 } : enter;
 
-    if (first) {
-      if (!visible) hideContentNow(targets, reduce);
-      else if (animateOnMount) showContent(targets, enter(), reduce);
-      else targets.forEach((target) => animated.add(target));
+    if (!last) {
+      if (!visible) setNow(targets, kind, false, reduce);
+      else if (animateOnMount)
+        void animateTo(targets, kind, true, enterTransition, reduce);
+      else setNow(targets, kind, true, reduce);
+      element.style.opacity = '';
       return;
     }
+    if (last.visible === visible) {
+      // Same state, new content (an icon swapped for the indeterminate one):
+      // the new content draws in.
+      const fresh = targets.filter((el) => !drawn.has(el));
+      if (visible && fresh.length > 0)
+        void animateTo(fresh, kind, true, enterTransition, reduce);
+      return;
+    }
+    const id = ++runRef.current;
     if (visible) {
-      showContent(targets, enter(), reduce);
+      void animateTo(targets, kind, true, enterTransition, reduce);
       return;
     }
-    void hideContent(targets, exit(), reduce).then(() => {
+    void animateTo(targets, kind, false, exit, reduce).then(() => {
       if (runRef.current === id && !isPresent) safeToRemove?.();
     });
   });
 
   const mergedRef = React.useMemo(() => mergeRefs(ref, localRef), [ref]);
-  return <span {...props} ref={mergedRef} />;
+  return (
+    <span
+      {...props}
+      style={hideFirst ? { ...style, opacity: 0 } : style}
+      ref={mergedRef}
+    />
+  );
 }
 
 type IndicatorPresenceProps = IndicatorContentProps & {
@@ -274,7 +324,7 @@ type IndicatorPresenceProps = IndicatorContentProps & {
 /** Mounts the indicator while checked, and keeps it until its content left. */
 function IndicatorPresence({ keepMounted, ...props }: IndicatorPresenceProps) {
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {(props.checked || keepMounted) && (
         <IndicatorContent key="indicator" {...props} />
       )}
@@ -282,44 +332,65 @@ function IndicatorPresence({ keepMounted, ...props }: IndicatorPresenceProps) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// React Aria: the user renders the indicator.
+
 /**
  * React Aria renders the indicator itself (shadcn/ui:
  * `<span data-slot="checkbox-indicator">{isSelected && <CheckIcon />}</span>`),
- * so the content mounts and unmounts with the state. Mounted content scales
+ * so the content mounts and unmounts with the state. Mounted content animates
  * in; removed content leaves through a copy put back for its exit, React's
- * tree is never touched.
+ * tree is never touched. Content there on mount stays at rest: it is the
+ * user's markup, rendered by the server before any script runs.
  */
 function useRenderedIndicator(
   rootRef: React.RefObject<Element | null>,
   selector: string,
-  checked: boolean,
+  kind: IndicatorKind,
+  {
+    checked,
+    indeterminate = false,
+  }: { checked: boolean; indeterminate?: boolean },
   animation: IndicatorAnimationProps,
 ) {
   const reduce = useShouldReduceMotion();
-  const { enter, exit } = useIndicatorTransitions(animation);
-  const lastRef = React.useRef<{ checked: boolean; content: Styled[] } | null>(
-    null,
-  );
+  const { enter, exit } = useIndicatorTransitions(kind, animation);
+  const lastRef = React.useRef<{
+    checked: boolean;
+    content: Element[];
+  } | null>(null);
 
   React.useLayoutEffect(() => {
     const indicator = rootRef.current?.querySelector(selector) ?? null;
-    const content = indicator
-      ? Array.from(indicator.children).filter((child) => !ghosts.has(child))
-      : [];
+    const content = indicator ? contentOf(indicator) : [];
     const previous = lastRef.current;
-    lastRef.current = { checked, content: content as Styled[] };
+    lastRef.current = { checked, content };
+    const enterTransition = indeterminate ? { ...enter, delay: 0 } : enter;
     if (!previous) {
-      content.forEach((child) => animated.add(child));
+      setNow(targetsOf(content, kind), kind, true, reduce);
       return;
     }
-    if (previous.checked === checked || !indicator) return;
+    if (!indicator) return;
+    if (previous.checked === checked) {
+      // Same state, new content: it animates in.
+      const fresh = targetsOf(content, kind).filter((el) => !drawn.has(el));
+      if (checked && fresh.length > 0)
+        void animateTo(fresh, kind, true, enterTransition, reduce);
+      return;
+    }
 
     if (checked) {
       // Re-checked during an exit: the copies go at once.
       Array.from(indicator.children)
         .filter((child) => ghosts.has(child))
         .forEach((ghost) => ghost.remove());
-      showContent(content as Styled[], enter(), reduce);
+      void animateTo(
+        targetsOf(content, kind),
+        kind,
+        true,
+        enterTransition,
+        reduce,
+      );
       return;
     }
 
@@ -331,25 +402,27 @@ function useRenderedIndicator(
         ghosts.add(copy);
         copy.setAttribute('aria-hidden', 'true');
         copy.style.pointerEvents = 'none';
-        setStyle([copy], shown);
         indicator.appendChild(copy);
         return copy;
       });
-    const exiting = [...kept, ...copies];
-    copies.forEach((copy) => animated.add(copy));
-    void hideContent(exiting, exit(), reduce).then(() =>
+    const exiting = targetsOf([...kept, ...copies], kind);
+    // The copies start where the removed content was: shown.
+    setNow(targetsOf(copies, kind), kind, true, reduce);
+    void animateTo(exiting, kind, false, exit, reduce).then(() =>
       copies.forEach((copy) => copy.remove()),
     );
   });
 }
 
 export {
-  KeyboardSelectionContext,
-  useKeyboardSelection,
+  CHECK_TRANSITION,
+  CHECK_EXIT_TRANSITION,
+  DOT_TRANSITION,
   IndicatorContent,
   IndicatorPresence,
   useRenderedIndicator,
   mergeRefs,
+  type IndicatorKind,
   type IndicatorAnimationProps,
   type IndicatorContentProps,
   type IndicatorPresenceProps,

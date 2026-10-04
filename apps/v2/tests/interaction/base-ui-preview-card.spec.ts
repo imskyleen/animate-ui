@@ -22,7 +22,7 @@ test.describe('base-ui preview-card API', () => {
     await expect(content).toBeVisible();
     await page.mouse.move(5, 5, { steps: 4 });
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    await expect(content).toHaveCount(0, { timeout: 800 });
+    await expect(content).toHaveCount(0, { timeout: 1500 });
     await page.getByRole('button', { name: 'Toggle from outside' }).click();
     await expect(content).toBeVisible();
   });

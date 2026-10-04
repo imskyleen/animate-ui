@@ -25,8 +25,8 @@ export function CallToAction() {
 
 ## Animation
 
-- Within `range` pixels of its center, the element moves toward the pointer: the closer, the stronger the pull (`strength`). It springs back when the pointer leaves the range.
-- The pull follows the pointer on a spring, so it's interruptible and never jumps. It moves with a hardware-accelerated `transform`.
+- Within `range` pixels of its center, the element moves toward the pointer: the closer, the stronger the pull (`strength`). The distance is measured from where the element currently is, pull included. It springs back when the pointer leaves the range.
+- The pull follows the pointer on a light, bouncy spring (stiffness 100, damping 10, mass 0.5), so it's interruptible and never jumps. It moves with `x` / `y`, a hardware-accelerated transform.
 - The pointer is only tracked while the element is on screen. With `onlyOnHover`, only while it's hovered.
 - Off on touch screens (`disableOnTouch`), where there is no pointer to follow.
 - `<AnimateUIProvider tempo>` paces the default spring.
@@ -56,10 +56,9 @@ export function CallToAction() {
       default: '120',
     },
     springOptions: {
-      description:
-        'Spring of the pull (useSpring options: duration in milliseconds).',
+      description: 'Spring of the pull (useSpring options).',
       type: 'SpringOptions',
-      default: '{ duration: 600, bounce: 0.2 }',
+      default: '{ stiffness: 100, damping: 10, mass: 0.5 }',
     },
     onlyOnHover: {
       description: 'Only pull while the element is hovered.',

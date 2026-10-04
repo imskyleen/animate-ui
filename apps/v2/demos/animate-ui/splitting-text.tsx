@@ -13,19 +13,13 @@ import { Button } from "@/components/ui/button"
 const ANIMATIONS = {
   default: {},
   vibe: {
-    initial: {
-      opacity: 0,
-      transform: "translate(50px, 50px) scale(0.5) rotate(90deg)",
-    },
-    animate: {
-      opacity: 1,
-      transform: "translate(0px, 0px) scale(1) rotate(0deg)",
-    },
+    initial: { y: 50, scale: 0.5, opacity: 0, x: 50, rotate: 90 },
+    animate: { y: 0, scale: 1, opacity: 1, x: 0, rotate: 0 },
     transition: { duration: 0.5, ease: "easeOut" },
   },
   writing: {
-    initial: { opacity: 0, transform: "translateY(10px)" },
-    animate: { opacity: 1, transform: "translateY(0px)" },
+    initial: { y: 10, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
     transition: { type: "spring", bounce: 0, duration: 2 },
   },
 } satisfies Record<
@@ -67,8 +61,8 @@ export default function SplittingTextDemo({
           className="text-xl font-semibold"
           type="lines"
           text={[
-            "Introducing Splitting Text",
-            "Made with Motion, easy to customize.",
+            "Introducing Splitting Text component",
+            "Made with Motion. Highly customizable and easy to use.",
           ]}
           {...props}
         />

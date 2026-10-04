@@ -23,14 +23,17 @@ import {
 import { getStrictContext } from '../../utils/strict-context';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../utils/motion';
 import { Slot, type WithAsChild } from '../slot';
 
 // Animate UI's own tooltip: every tooltip of a provider shares one popup,
 // positioned with Floating UI. Moving from a trigger to the next one glides
 // the popup (a shared layout animation) instead of closing and reopening it.
+// The motion is Animate UI v1's: the popup grows from nothing and rises 15px
+// out of its trigger on a spring (stiffness 300, damping 35), and goes back
+// the same way when it closes.
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
@@ -88,8 +91,15 @@ function getResolvedSide(placement: Side | `${Side}-${Align}`) {
   return placement as Side;
 }
 
-/** The popup comes out of its trigger: a short nudge from that side. */
-const NUDGE = 8;
+/** The popup comes out of its trigger: 15px from that side (v1). */
+const NUDGE = 15;
+
+/** v1's spring: the entrance, the exit and the glide between triggers. */
+const TOOLTIP_TRANSITION = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 35,
+} as const satisfies Transition;
 
 function initialFromSide(side: Side): Partial<Record<'x' | 'y', number>> {
   if (side === 'top') return { y: NUDGE };
@@ -109,12 +119,11 @@ type TooltipProviderProps = {
 function TooltipProvider({
   children,
   id,
-  openDelay = 700,
+  openDelay = 0,
   closeDelay = 300,
-  transition: transitionProp,
+  transition: transitionProp = TOOLTIP_TRANSITION,
 }: TooltipProviderProps) {
-  const tokens = useMotionTokens();
-  const transition = transitionProp ?? tokens.spring.snappy;
+  const transition = useTempoTransition(transitionProp);
   const globalId = React.useId();
   const [currentTooltip, setCurrentTooltip] =
     React.useState<TooltipData | null>(null);
@@ -262,7 +271,6 @@ function TooltipPortal(props: TooltipPortalProps) {
 function TooltipOverlay() {
   const { currentTooltip, transition, globalId, referenceElRef } =
     useGlobalTooltip();
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
 
   const [rendered, setRendered] = React.useState<{
@@ -308,12 +316,12 @@ function TooltipOverlay() {
   const Component = rendered.data?.contentAsChild ? Slot : motion.div;
   const resolvedSide = getResolvedSide(context.placement);
 
-  // Scales up from `scale.enter` (never 0) and nudges out of the trigger.
-  // Under reduced motion it only fades, and moving between triggers jumps.
+  // Grows from nothing and rises out of the trigger (v1). Under reduced
+  // motion it only fades, and moving between triggers jumps.
   const hidden = rendered.data
     ? {
         opacity: 0,
-        scale: reduce ? 1 : tokens.scale.enter,
+        scale: reduce ? 1 : 0,
         ...(reduce ? { x: 0, y: 0 } : initialFromSide(rendered.data.side)),
       }
     : { opacity: 0 };
@@ -353,14 +361,14 @@ function TooltipOverlay() {
                   data-state={rendered.open ? 'open' : 'closed'}
                   layoutId={`tooltip-content-${globalId}`}
                   initial={hidden}
-                  // Leaving is faster than entering. The shared layout move
-                  // between triggers uses `transition`.
+                  // One spring for everything: the entrance, the exit and
+                  // the shared layout move between triggers.
                   animate={
                     rendered.open
                       ? { opacity: 1, scale: 1, x: 0, y: 0, transition }
-                      : { ...hidden, transition: tokens.transition.exit }
+                      : { ...hidden, transition }
                   }
-                  exit={{ ...hidden, transition: tokens.transition.exit }}
+                  exit={{ ...hidden, transition }}
                   onAnimationComplete={() => {
                     if (!rendered.open)
                       setRendered({ data: null, open: false });
@@ -392,7 +400,7 @@ type TooltipProps = {
 function Tooltip({
   children,
   side = 'top',
-  sideOffset = 0,
+  sideOffset = 10,
   align = 'center',
   alignOffset = 0,
 }: TooltipProps) {

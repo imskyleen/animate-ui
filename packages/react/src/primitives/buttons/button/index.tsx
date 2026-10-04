@@ -5,10 +5,11 @@ import { motion, type HTMLMotionProps } from 'motion/react';
 
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
+import { SCALE_SPRING } from '../_button';
 
 type ButtonProps = WithAsChild<
   HTMLMotionProps<'button'> & {
@@ -26,28 +27,22 @@ function Button(props: ButtonProps) {
 }
 
 function ButtonContent({
-  hoverScale = 1.02,
-  tapScale,
+  hoverScale = 1.05,
+  tapScale = 0.95,
   asChild = false,
+  transition,
   ...props
 }: ButtonProps) {
-  const tokens = useMotionTokens();
   const reduce = useShouldReduceMotion();
-  const press = tokens.transition.press;
+  const defaultTransition = useTempoTransition(SCALE_SPRING);
   const Component = asChild ? Slot : motion.button;
 
   return (
     <Component
       data-slot="button"
-      whileTap={{
-        scale: reduce ? 1 : (tapScale ?? tokens.scale.press),
-        transition: press,
-      }}
-      whileHover={{
-        scale: reduce ? 1 : hoverScale,
-        transition: press,
-      }}
-      transition={press}
+      whileTap={{ scale: reduce ? 1 : tapScale }}
+      whileHover={{ scale: reduce ? 1 : hoverScale }}
+      transition={transition ?? defaultTransition}
       {...props}
     />
   );

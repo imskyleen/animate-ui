@@ -3,10 +3,10 @@
 import { MorphingText } from "@animate-ui/react/primitives/texts/morphing"
 
 const texts = [
-  "Morphing Text",
+  "MorphingText Primitive",
   "Animate your text 🚀",
-  "Handles emojis ✨",
-  "Built with Motion",
+  "Handles emojis 🚀✨",
+  "Built with Motion ✨",
 ]
 
 export const controls = {
@@ -26,7 +26,7 @@ export default function MorphingTextDemo({
   return (
     <MorphingText
       key={`${loop}-${holdDelay}`}
-      className="max-w-2xl text-center text-4xl font-semibold"
+      className="max-w-2xl text-4xl font-semibold"
       text={texts}
       loop={loop}
       holdDelay={holdDelay}

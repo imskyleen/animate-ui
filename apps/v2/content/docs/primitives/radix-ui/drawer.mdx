@@ -40,16 +40,18 @@ The `import * as Vaul from 'vaul'` style works too, as do the named exports (`Ro
 
 ## Animation
 
-- **Content** slides in from its edge (`direction`, its own size plus any gap to the edge) over 600ms on the drawer curve, and slides back out in 400ms. With snap points, it slides to the active one.
-- **Overlay** fades with the drawer's position: in and out with it, and along with a drag. With snap points, it fades between the snap point before `fadeFromIndex` and that one, like Vaul.
-- **Dragging** follows the pointer on the same frame: the pointer sets the position directly, with no transition and no React render. Pulled past the open position, it rubber-bands. On release, it closes past `closeThreshold` (25% of its size) or on a flick, and otherwise eases back over 600ms. With snap points, it goes to the closest one, a flick moves one point (a fast one skips to the first or last), and a flick down from the first closes it.
+Animate UI v1 had no drawer: the motion is v1's Sheet, with Vaul's drag on top.
+
+- **Content** slides in from its edge (`direction`, its own size plus any gap to the edge) and fades in, on v1's sheet spring (stiffness 150, damping 22); it slides and fades back out the same way. With snap points, it slides to the active one.
+- **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way. Once a drag has moved the drawer, it also follows the drawer's position, like Vaul's; with snap points, it always does, fading between the snap point before `fadeFromIndex` and that one.
+- **Dragging** follows the pointer on the same frame: the pointer sets the position directly, with no transition, no fade and no React render. Pulled past the open position, it rubber-bands. On release, it closes past `closeThreshold` (25% of its size) or on a flick, and otherwise springs back on the same spring. With snap points, it goes to the closest one, a flick moves one point (a fast one skips to the first or last), and a flick down from the first closes it.
 - **Scrollable content** keeps scrolling: a drag doesn't start when the content under the pointer can scroll that way, nor shortly after it scrolled (`scrollLockTimeout`).
 - A drag dismissal continues from where the pointer let go; opening again while it closes picks up from where it is. The click that ends a drag doesn't activate the button under it.
-- **Nested drawers**: the parent steps back (16px towards its open edge, slightly smaller) while a nested drawer is open, and follows the nested drawer's drag.
+- **Nested drawers**: the parent steps back (16px towards its open edge, slightly smaller) on the same spring while a nested drawer is open, and follows the nested drawer's drag.
 - **`shouldScaleBackground`** scales the `[data-vaul-drawer-wrapper]` element with the drawer's position, and paints the body black (`setBackgroundColorOnScale`, not with `noBodyStyles`).
 - With `forceMount`, the closed drawer stays in the DOM: it plays its exit, then is hidden and `inert`.
 - Under reduced motion, the drawer fades in place and settles without moving; a drag still follows the pointer.
-- `AnimateUIProvider tempo` reaches every duration.
+- `AnimateUIProvider tempo` scales every duration and spring.
 
 Not reproduced from Vaul: its iOS Safari workarounds (`position: fixed` on the body, so `preventScrollRestoration` and `disablePreventScroll` are accepted but have no effect; Radix's Dialog locks the scroll of a modal drawer). `repositionInputs` and `fixed` keep a bottom drawer above the on-screen keyboard, more simply than Vaul. A Handle tap on a drawer without snap points does nothing.
 
@@ -69,15 +71,15 @@ Every part takes exactly the props of [Vaul's Drawer](https://vaul.emilkowal.ski
   type={{
     transition: {
       description:
-        'Opening, moving between snap points and settling back after a drag that does not dismiss.',
+        'Opening (slide and fade in), moving between snap points and springing back after a drag that does not dismiss.',
       type: 'Transition',
-      default: 'transition.drawer (600ms, drawer curve)',
+      default: "{ type: 'spring', stiffness: 150, damping: 22 }",
     },
     exitTransition: {
       description:
-        'Closing, a drag dismissal included (it continues from the release point).',
+        'Closing (slide and fade out), a drag dismissal included (it continues from the release point).',
       type: 'Transition',
-      default: 'transition.drawerExit (400ms, drawer curve)',
+      default: 'transition',
     },
   }}
 />
@@ -89,14 +91,15 @@ Every part takes exactly the props of [Vaul's Drawer](https://vaul.emilkowal.ski
 <TypeTable
   type={{
     transition: {
-      description: 'Fade in. The opacity also follows the drag.',
+      description:
+        'Fade (and blur) in. After a drag, the opacity also follows the drawer.',
       type: 'Transition',
-      default: 'transition.drawer (600ms, drawer curve)',
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
     },
     exitTransition: {
-      description: 'Fade out.',
+      description: 'Fade (and blur) out.',
       type: 'Transition',
-      default: 'transition.drawerExit (400ms, drawer curve)',
+      default: 'transition',
     },
   }}
 />

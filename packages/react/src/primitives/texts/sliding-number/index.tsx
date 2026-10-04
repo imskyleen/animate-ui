@@ -20,16 +20,29 @@ import {
 } from '../../../utils/use-is-in-view';
 import {
   ReducedMotionConfig,
-  useMotionTokens,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN } from '../_text';
 
-function countDecimals(value: number) {
-  if (!Number.isFinite(value)) return 0;
-  const [, fraction = ''] = String(value).split('.');
-  return Math.min(fraction.length, 20);
-}
+/** Spring of each digit roller. */
+const ROLLER_TRANSITION: SpringOptions = {
+  stiffness: 200,
+  damping: 20,
+  mass: 0.4,
+};
+
+/**
+ * Counting from `fromNumber` (and to every new `number` after that) follows
+ * this spring, with `useSpring`'s rest thresholds.
+ */
+const COUNT_TRANSITION: Transition = {
+  type: 'spring',
+  stiffness: 90,
+  damping: 50,
+  restDelta: 0.001,
+  restSpeed: 0.01,
+};
 
 function intLength(units: number, factor: number) {
   return Math.floor(Math.abs(units) / factor).toString().length;
@@ -67,31 +80,17 @@ function SlidingNumberRoller({
   const [startDigit] = React.useState(() =>
     digitOf(units.getPrevious() ?? units.get()),
   );
-  const digitRef = React.useRef(startDigit);
-  // Unbounded position: 9 -> 0 moves one step forward instead of rolling
-  // back through every digit.
-  const positionRef = React.useRef(startDigit);
+  // The roller springs from digit to digit (9 to 0 rolls back through every
+  // digit), as the wheel below is drawn around its current value.
   const position = useSpring(startDigit, transition);
 
   const roll = React.useCallback(
     (value: number) => {
       const digit = digitOf(value);
-      const current = digitRef.current;
-      if (digit === current) return;
-
-      // Roll in the direction the number moves: up when it grows.
-      const previous = units.getPrevious() ?? value;
-      const delta =
-        Math.abs(value) >= Math.abs(previous)
-          ? (digit - current + 10) % 10
-          : -((current - digit + 10) % 10);
-
-      digitRef.current = digit;
-      positionRef.current += delta;
-      if (reduce) position.jump(positionRef.current);
-      else position.set(positionRef.current);
+      if (reduce) position.jump(digit);
+      else position.set(digit);
     },
-    [digitOf, units, reduce, position],
+    [digitOf, reduce, position],
   );
 
   useMotionValueEvent(units, 'change', roll);
@@ -155,17 +154,15 @@ function SlidingNumberDisplay({ position, number }: SlidingNumberDisplayProps) {
 type SlidingNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   number: number;
   /**
-   * When set, the number counts from it to `number`, every digit rolling on
-   * the way. Otherwise each digit rolls straight to its new value.
+   * When set, the number counts from it to `number` (and to every new
+   * `number` after that), every digit rolling on the way. Otherwise each
+   * digit rolls straight to its new value.
    */
   fromNumber?: number;
   /** Called with the displayed value each time it changes. */
   onNumberChange?: (number: number) => void;
   padStart?: boolean;
   decimalSeparator?: string;
-  /**
-   * Decimal places to show. Defaults to the number of decimals of `number`.
-   */
   decimalPlaces?: number;
   thousandSeparator?: string;
   /** Spring of each digit roller. */
@@ -193,7 +190,7 @@ function SlidingNumberContent({
   inViewOnce = true,
   padStart = false,
   decimalSeparator = '.',
-  decimalPlaces,
+  decimalPlaces = 0,
   thousandSeparator,
   transition: transitionProp,
   delay = 0,
@@ -206,28 +203,22 @@ function SlidingNumberContent({
     { inView, inViewOnce, inViewMargin },
   );
   const reduce = useShouldReduceMotion();
-  const tokens = useMotionTokens();
 
-  // Each digit settles quickly, without overshoot.
-  const defaultRollerTransition = React.useMemo<SpringOptions>(
-    () => ({ visualDuration: 0.25 * tokens.tempo, bounce: 0 }),
-    [tokens.tempo],
-  );
+  const defaultRollerTransition = useTempoTransition(
+    ROLLER_TRANSITION as Transition,
+  ) as SpringOptions;
   const transition = transitionProp ?? defaultRollerTransition;
 
-  // Counting from `fromNumber`: fast through the range, slow on the last
-  // digits. Read when the count starts.
-  const countTransition: Transition = {
-    duration: 3 * tokens.tempo,
-    ease: tokens.ease.out,
-  };
+  // Read when the count starts: a new object on every render must not
+  // restart it.
+  const countTransition = useTempoTransition(COUNT_TRANSITION);
   const countTransitionRef = React.useRef(countTransition);
   React.useEffect(() => {
     countTransitionRef.current = countTransition;
   });
 
   const isCounting = fromNumber !== undefined;
-  const decimals = decimalPlaces ?? countDecimals(number);
+  const decimals = decimalPlaces;
   const factor = Math.pow(10, decimals);
   const toUnits = (value: number) => Math.round(value * factor);
 
@@ -271,8 +262,8 @@ function SlidingNumberContent({
 
     const timeoutId = setTimeout(
       () => {
-        // Counting retargets from the current value; a direct change lets
-        // each roller's spring retarget on its own.
+        // Counting springs from the current value (retargeting mid-count); a
+        // direct change lets each roller's spring retarget on its own.
         if (isCounting && !reduce)
           animate(value, number, countTransitionRef.current);
         else value.jump(number);

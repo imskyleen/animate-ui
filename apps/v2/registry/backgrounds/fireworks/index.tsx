@@ -16,9 +16,6 @@ const rand = (min: number, max: number): number =>
 const randInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min) + min);
 
-/** One simulation step, in milliseconds (the physics is tuned for 60 fps). */
-const FRAME = 1000 / 60;
-
 const randColor = (): string => `hsl(${randInt(0, 360)}, 100%, 50%)`;
 
 type ParticleType = {
@@ -76,11 +73,13 @@ function createParticle(
       this.alpha -= this.decay;
     },
     draw(ctx: CanvasRenderingContext2D) {
-      ctx.globalAlpha = Math.max(0, this.alpha);
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       ctx.fillStyle = this.color;
       ctx.fill();
+      ctx.restore();
     },
     isAlive() {
       return this.alpha > 0;
@@ -240,6 +239,7 @@ function FireworksBackgroundContent({
   const reduce = useShouldReduceMotion();
   const playing = inView && pageVisible && !reduce;
 
+  // New props apply to the next rockets, without restarting the show.
   const optionsRef = React.useRef({
     population,
     color,
@@ -272,41 +272,51 @@ function FireworksBackgroundContent({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Size of the container in CSS pixels: the simulation works in CSS
-    // pixels, the canvas backing store is scaled by the device pixel ratio.
+    // The show takes place in a space as wide as the window, with the
+    // container's aspect ratio, stretched over the container: in a container
+    // narrower than the window, everything is drawn smaller and moves slower.
+    // Speeds and sizes are in pixels of that space. The canvas backing store
+    // is the container's size at the device pixel ratio.
     let maxX = 0;
     let maxY = 0;
+    // Canvas pixels per unit of the show's space.
+    let scale = 1;
 
     const explosions: ParticleType[] = [];
     const fireworks: FireworkType[] = [];
 
     let running = false;
     let frameId = 0;
-    let lastTime = 0;
-    let lag = 0;
     let launchTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
+    const clear = () => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    };
+
+    // Draws the current frame without moving anything (paused, resized).
     const render = () => {
-      const dpr = canvas.width / Math.max(1, maxX);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, maxX, maxY);
-      ctx.globalAlpha = 1;
-      for (const firework of fireworks) firework.draw(ctx);
-      for (const particle of explosions) particle.draw(ctx);
-      ctx.globalAlpha = 1;
+      clear();
+      for (let i = fireworks.length - 1; i >= 0; i--) fireworks[i]?.draw(ctx);
+      for (let i = explosions.length - 1; i >= 0; i--) explosions[i]?.draw(ctx);
     };
 
     const setCanvasSize = () => {
-      const rect = container.getBoundingClientRect();
+      const width = container.offsetWidth;
+      const height = container.offsetHeight;
+      if (!width || !height) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      maxX = rect.width;
-      maxY = rect.height;
-      canvas.width = Math.max(1, Math.round(maxX * dpr));
-      canvas.height = Math.max(1, Math.round(maxY * dpr));
+      maxX = window.innerWidth;
+      maxY = maxX * (height / width);
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      scale = canvas.width / maxX;
       // Resizing clears the canvas: redraw the held frame while paused.
       if (!running) render();
     };
     setCanvasSize();
+    window.addEventListener('resize', setCanvasSize);
     const resizeObserver = new ResizeObserver(setCanvasSize);
     resizeObserver.observe(container);
 
@@ -337,36 +347,37 @@ function FireworksBackgroundContent({
       launchTimeoutId = setTimeout(launchFirework, timeout);
     };
 
-    const update = () => {
+    // One step per displayed frame, as in v1.
+    const animate = () => {
+      clear();
+
       for (let i = fireworks.length - 1; i >= 0; i--) {
-        if (!fireworks[i]?.update()) fireworks.splice(i, 1);
+        const firework = fireworks[i];
+        if (!firework?.update()) {
+          fireworks.splice(i, 1);
+        } else {
+          firework.draw(ctx);
+        }
       }
+
       for (let i = explosions.length - 1; i >= 0; i--) {
         const particle = explosions[i];
         particle?.update();
-        if (!particle?.isAlive()) explosions.splice(i, 1);
+        if (particle?.isAlive()) {
+          particle.draw(ctx);
+        } else {
+          explosions.splice(i, 1);
+        }
       }
-    };
 
-    // The simulation steps at 60 fps whatever the display's refresh rate.
-    const step = (time: number) => {
-      lag += Math.min(time - lastTime, 100);
-      lastTime = time;
-      while (lag >= FRAME) {
-        update();
-        lag -= FRAME;
-      }
-      render();
-      frameId = requestAnimationFrame(step);
+      frameId = requestAnimationFrame(animate);
     };
 
     const start = () => {
       if (running) return;
       running = true;
       launchFirework();
-      lastTime = performance.now();
-      lag = FRAME;
-      frameId = requestAnimationFrame(step);
+      animate();
     };
 
     const stop = () => {
@@ -378,16 +389,17 @@ function FireworksBackgroundContent({
     // Reduced motion: a still frame of a few bursts instead of a blank canvas.
     const still = () => {
       if (running || fireworks.length || explosions.length) return;
+      const options = optionsRef.current;
       for (let i = 0; i < 3; i++) {
         const firework = createFirework(
           maxX * (0.25 + i * 0.25),
           maxY * rand(0.25, 0.45),
           0,
-          getColor(optionsRef.current.color),
+          getColor(options.color),
           0,
           0,
-          optionsRef.current.particleSpeed,
-          optionsRef.current.particleSize,
+          options.particleSpeed,
+          options.particleSize,
           handleExplosion,
         );
         firework.explode();
@@ -398,10 +410,15 @@ function FireworksBackgroundContent({
       render();
     };
 
+    // A click launches a rocket towards the pointer.
     const handleClick = (event: MouseEvent) => {
       if (!running) return;
       const rect = container.getBoundingClientRect();
-      addFirework(event.clientX - rect.left, event.clientY - rect.top);
+      const unit = maxX / rect.width;
+      addFirework(
+        (event.clientX - rect.left) * unit,
+        (event.clientY - rect.top) * unit,
+      );
     };
     container.addEventListener('click', handleClick);
 
@@ -410,6 +427,7 @@ function FireworksBackgroundContent({
     return () => {
       stop();
       engineRef.current = null;
+      window.removeEventListener('resize', setCanvasSize);
       resizeObserver.disconnect();
       container.removeEventListener('click', handleClick);
     };
@@ -443,7 +461,7 @@ function FireworksBackgroundContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
+// Under reduced motion the show stops on a still frame.
 function FireworksBackground(props: FireworksBackgroundProps) {
   return (
     <ReducedMotionConfig>

@@ -10,9 +10,7 @@ import {
 
 import { ReducedMotionConfig } from '../../../utils/motion';
 import {
-  KeyboardSelectionContext,
   mergeRefs,
-  useKeyboardSelection,
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 import {
@@ -21,59 +19,19 @@ import {
   renderChildren,
 } from '../../../internal/controls/aria';
 
-// Same API as React Aria's RadioGroup and Radio. Radios give press feedback;
-// the dot the user renders inside `data-slot="radio-group-indicator"`
-// (shadcn/ui's indicator) scales in. Selecting with the arrow keys (keyboard
-// navigation) swaps the dots at once.
+// Same API as React Aria's RadioGroup and Radio, animated like Animate UI
+// v1's Radix UI radio group (v1 had no React Aria one): radios scale to 1.05
+// while hovered and 0.95 while pressed, and the dot the user renders inside
+// `data-slot="radio-group-indicator"` (shadcn/ui's indicator) pops in (scale
+// and opacity from 0, spring stiffness 200, damping 16) and out the same way.
 
 /** React Aria's props, plus Animate UI's `transition` and `exitTransition`. */
 type RadioProps = RadioPrimitiveProps & IndicatorAnimationProps;
 
 const INDICATOR = '[data-slot="radio-group-indicator"]';
 
-function RadioGroup({
-  render,
-  ...props
-}: RadioGroupProps & React.RefAttributes<HTMLDivElement>) {
-  const { keyboard, handlers } = useKeyboardSelection<
-    React.KeyboardEvent<HTMLDivElement>,
-    React.PointerEvent<HTMLDivElement>
-  >();
-
-  return (
-    <KeyboardSelectionContext value={keyboard}>
-      <ReducedMotionConfig>
-        <RadioGroupPrimitive
-          {...props}
-          // React Aria takes no keyboard handlers on the group: they go on
-          // the element it renders, before its own arrow-key handling.
-          render={(domProps, values) => {
-            const withHandlers = {
-              ...domProps,
-              onKeyDownCapture: (
-                event: React.KeyboardEvent<HTMLDivElement>,
-              ) => {
-                handlers.onKeyDownCapture(event);
-                domProps.onKeyDownCapture?.(event);
-              },
-              onPointerDownCapture: (
-                event: React.PointerEvent<HTMLDivElement>,
-              ) => {
-                handlers.onPointerDownCapture(event);
-                domProps.onPointerDownCapture?.(event);
-              },
-            };
-            return render ? (
-              render(withHandlers, values)
-            ) : (
-              <div {...withHandlers} />
-            );
-          }}
-        />
-      </ReducedMotionConfig>
-    </KeyboardSelectionContext>
-  );
-}
+// Nothing animates on the group itself.
+const RadioGroup = RadioGroupPrimitive;
 
 function Radio(props: RadioProps & React.RefAttributes<HTMLLabelElement>) {
   return (
@@ -105,6 +63,9 @@ function AnimatedRadio({
             {...domProps}
             as="label"
             isPressed={values.isPressed}
+            isHovered={values.isHovered}
+            isDisabled={values.isDisabled}
+            hover
           />
         ))
       }
@@ -115,6 +76,7 @@ function AnimatedRadio({
           <RenderedIndicator
             rootRef={rootRef}
             selector={INDICATOR}
+            kind="dot"
             checked={values.isSelected}
             transition={transition}
             exitTransition={exitTransition}
