@@ -7,23 +7,20 @@ import {
   Menu01Icon,
   Moon02Icon,
   SunMediumIcon,
+  Tick02Icon,
 } from '@hugeicons/core-free-icons';
+import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
 import { useSearchContext } from 'fumadocs-ui/contexts/search';
 import { useSidebar } from 'fumadocs-ui/layouts/docs/slots/sidebar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from 'fumadocs-ui/components/ui/popover';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ComponentProps } from 'react';
 
 import { AnimateUILogo } from '@/lib/libraries';
-import { gitConfig } from '@/lib/shared';
+import { docsVersions, gitConfig } from '@/lib/shared';
 
 export const NAV_ITEMS = [
   { title: 'Home', url: '/' },
@@ -41,25 +38,45 @@ function isActive(pathname: string, url: string) {
   return pathname === url || pathname.startsWith(`${url}/`);
 }
 
+// v2 and v1 docs: in development, the local v2 (3300) and v1 (3200) servers.
 function VersionMenu() {
   return (
-    <Popover>
-      <PopoverTrigger className="inline-flex h-6 items-center gap-1 rounded-md bg-accent px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
+    <DropdownMenu.Root modal={false}>
+      <DropdownMenu.Trigger className="inline-flex h-6 items-center gap-1 rounded-md bg-accent px-2 text-xs font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50">
         v2.0
         <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} size={12} />
-      </PopoverTrigger>
-      <PopoverContent align="end" className="flex w-40 flex-col p-1 text-sm">
-        <span className="rounded-sm bg-accent px-2 py-1.5 font-medium">
-          v2.0 (latest)
-        </span>
-        <a
-          href="https://v1.animate-ui.com"
-          className="rounded-sm px-2 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="end"
+          sideOffset={6}
+          className="z-50 flex w-40 origin-(--radix-dropdown-menu-content-transform-origin) flex-col rounded-xl border bg-popover p-1 text-sm text-popover-foreground shadow-md"
         >
-          v1
-        </a>
-      </PopoverContent>
-    </Popover>
+          {docsVersions.map((version) => (
+            <DropdownMenu.Item key={version.id} asChild>
+              <a
+                href={version.url}
+                aria-current={version.id === 'v2' ? 'page' : undefined}
+                className="flex items-center justify-between rounded-md px-2 py-1.5 text-muted-foreground outline-none transition-colors data-highlighted:bg-accent data-highlighted:text-foreground aria-[current=page]:text-foreground"
+              >
+                <span>
+                  {version.label}
+                  {version.note && (
+                    <span className="text-muted-foreground">
+                      {' '}
+                      ({version.note})
+                    </span>
+                  )}
+                </span>
+                {version.id === 'v2' && (
+                  <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} size={14} />
+                )}
+              </a>
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
 

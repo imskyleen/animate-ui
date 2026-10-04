@@ -38,3 +38,18 @@ test('demo registry items hold the demo and its local files', async ({
   expect(targets).toContain('components/dialog-demo.tsx');
   expect(targets).toContain('components/ui/button.tsx');
 });
+
+test('the version menu links v2 and v1 (local servers in development)', async ({
+  page,
+}) => {
+  await page.goto('/docs');
+  await page.getByRole('button', { name: /v2\.0/ }).click();
+  await expect(page.getByRole('menuitem', { name: /v2\.0/ })).toHaveAttribute(
+    'href',
+    'http://localhost:3300',
+  );
+  await expect(page.getByRole('menuitem', { name: 'v1' })).toHaveAttribute(
+    'href',
+    'http://localhost:3200',
+  );
+});
