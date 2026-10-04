@@ -42,7 +42,7 @@ The `import * as Vaul from 'vaul'` style works too, as do the named exports (`Ro
 
 Animate UI v1 had no drawer: the motion is v1's Sheet, with Vaul's drag on top.
 
-- **Content** slides in from its edge (`direction`, its own size plus any gap to the edge) and fades in, on the sheet spring (stiffness 150, damping 25, the dialog's); it slides and fades back out the same way. With snap points, it slides to the active one.
+- **Content** slides in from its edge (`direction`, its own size plus any gap to the edge) and fades in, on v1's sheet spring (stiffness 150, damping 22, a little livelier than the dialog's); it slides and fades back out the same way. With snap points, it slides to the active one.
 - **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way. Once a drag has moved the drawer, it also follows the drawer's position, like Vaul's; with snap points, it always does, fading between the snap point before `fadeFromIndex` and that one.
 - **Dragging** follows the pointer on the same frame: the pointer sets the position directly, with no transition, no fade and no React render. Pulled past the open position, it rubber-bands. On release, it closes past `closeThreshold` (25% of its size) or on a flick, and otherwise springs back on the same spring. With snap points, it goes to the closest one, a flick moves one point (a fast one skips to the first or last), and a flick down from the first closes it.
 - **Scrollable content** keeps scrolling: a drag doesn't start when the content under the pointer can scroll that way, nor shortly after it scrolled (`scrollLockTimeout`).
@@ -73,7 +73,7 @@ Every part takes exactly the props of [Vaul's Drawer](https://vaul.emilkowal.ski
       description:
         'Opening (slide and fade in), moving between snap points and springing back after a drag that does not dismiss.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 150, damping: 22 }",
     },
     exitTransition: {
       description:

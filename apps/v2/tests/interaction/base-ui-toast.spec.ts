@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { DIALOG_SPRING, present, recordTimeline } from './modal-timeline';
+import { SHEET_SPRING, present, recordTimeline } from './modal-timeline';
 import { expectCssSpring } from './spring-curves';
 
 // Animate UI v1 had no toast: it moves like v1's Sheet (from its edge by its
@@ -68,7 +68,7 @@ test.describe('base-ui toast demo', () => {
     expect(midway.samples.toast!.opacity).toBeLessThan(0.95);
     // The spring as CSS: the duration and `linear()` curve Motion computes
     // for the dialog's spring.
-    expectCssSpring(await timing(page, TOAST), DIALOG_SPRING);
+    expectCssSpring(await timing(page, TOAST), SHEET_SPRING);
   });
 
   test('stacks: toasts behind are scaled down, hover expands them', async ({
@@ -142,7 +142,7 @@ test.describe('base-ui toast demo', () => {
     const exit = (await page.evaluate(
       () => (window as unknown as { __exit: Promise<unknown> }).__exit,
     )) as { duration: string; easing: string };
-    expectCssSpring(exit, DIALOG_SPRING);
+    expectCssSpring(exit, SHEET_SPRING);
     await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 2500 });
     // Down through its edge, fading out.
     const last = present(await timeline.stop(), 'toast').at(-1)!.samples.toast!;

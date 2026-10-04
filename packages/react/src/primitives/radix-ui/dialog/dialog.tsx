@@ -39,7 +39,8 @@ type ContentAnimationProps = {
   /**
    * Transition of the opening, a sheet's slide from its `data-side` edge
    * included.
-   * @default { type: 'spring', stiffness: 150, damping: 25 }
+   * @default { type: 'spring', stiffness: 150, damping: 25 } (damping 22 for a
+   * sheet, with `data-side`)
    */
   transition?: ModalAnimationProps['transition'];
   /** Transition of the closing. Defaults to `transition`. */

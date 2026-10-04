@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import {
-  DIALOG_SPRING,
+  SHEET_SPRING,
   expectSheetEntrance,
   expectSheetExit,
   expectSheetSettled,
@@ -79,7 +79,7 @@ test.describe('base-ui drawer demo', () => {
 
     // The spring as CSS: the duration and `linear()` curve Motion computes
     // for the dialog's spring.
-    expectCssSpring(await timing(page, POPUP), DIALOG_SPRING);
+    expectCssSpring(await timing(page, POPUP), SHEET_SPRING);
   });
 
   test('closes the same way, the backdrop gone first, then unmounts', async ({
@@ -111,7 +111,7 @@ test.describe('base-ui drawer demo', () => {
     const exit = (await page.evaluate(
       () => (window as unknown as { __exit: Promise<unknown> }).__exit,
     )) as { duration: string; easing: string };
-    expectCssSpring(exit, DIALOG_SPRING);
+    expectCssSpring(exit, SHEET_SPRING);
     await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
     const frames = await timeline.stop();
     expectSheetExit(frames, 'bottom');

@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 import { describeProgressDemo, revealed } from './progress-helpers';
 import { expectSpringPace, type Sample } from './spring-curves';
 
-/** The Value's count: Animate UI's Counting Number spring. */
-const COUNT_SPRING = { stiffness: 90, damping: 50 };
+/** The Value's count: the bar's spring, so the number moves with the bar. */
+const COUNT_SPRING = { stiffness: 100, damping: 30 };
 
 describeProgressDemo('base-ui');
 

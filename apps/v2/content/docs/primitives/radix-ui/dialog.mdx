@@ -49,7 +49,7 @@ Animate UI v1's dialog motion, unchanged.
 
 - **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way.
 - **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, still visible once the overlay is gone, then unmounts.
-- With `data-side="top" | "right" | "bottom" | "left"` (shadcn/ui's Sheet), the content slides in from that edge by its own size and fades in, on the same spring (stiffness 150, damping 25), and slides back out the same way.
+- With `data-side="top" | "right" | "bottom" | "left"` (shadcn/ui's Sheet), the content slides in from that edge by its own size and fades in, on v1's sheet spring (stiffness 150, damping 22, a little livelier), and slides back out the same way.
 - `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
 - Radix keeps the Overlay and the Content mounted while they exit. Clicks go through to the page as soon as the dialog closes, and focus returns to the trigger once the exit is over.
 - Reopening while it closes picks up from where it is.
@@ -95,7 +95,8 @@ Every part takes exactly the props of [Radix UI's Dialog](https://www.radix-ui.c
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+      default:
+        "{ type: 'spring', stiffness: 150, damping: 25 }; with data-side: { type: 'spring', stiffness: 150, damping: 22 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',

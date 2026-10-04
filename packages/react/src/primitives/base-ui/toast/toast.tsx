@@ -19,7 +19,7 @@ import {
 
 // Same API as Base UI's Toast. Animate UI v1 had no toast: its motion comes
 // from v1's Sheet (it enters and leaves through its edge, by its own size,
-// with a fade, on the sheet spring: stiffness 150, damping 25), v1's Popover
+// with a fade, on the sheet spring: stiffness 150, damping 22), v1's Popover
 // for a toast anchored to an element (scale 0.5 → 1 and a fade from its
 // anchor, spring stiffness 300, damping 25), and v1's 200ms easeInOut fade.
 //
@@ -53,7 +53,7 @@ type RootAnimationProps = {
   /**
    * Transition of the entrance and the stack (a CSS transition: a spring
    * becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier
-   * or named `ease`). `{ type: 'spring', stiffness: 150, damping: 25 }` by
+   * or named `ease`). `{ type: 'spring', stiffness: 150, damping: 22 }` by
    * default, or `{ type: 'spring', stiffness: 300, damping: 25 }` for a toast
    * anchored to an element.
    */

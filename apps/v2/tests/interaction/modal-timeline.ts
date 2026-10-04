@@ -16,6 +16,8 @@ import { expectSpringPace, type Sample } from './spring-curves';
 
 /** v1's dialog spring: sheets, drawers and edge toasts move on it too. */
 export const DIALOG_SPRING = { stiffness: 150, damping: 25 };
+/** v1's sheet spring (sheets, drawers, toasts from an edge): livelier. */
+export const SHEET_SPRING = { stiffness: 150, damping: 22 };
 
 export type ModalSample = {
   opacity: number;
@@ -254,7 +256,7 @@ export function expectSheetEntrance(
   // time the spring takes.
   expectSpringPace(
     shown.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]),
-    DIALOG_SPRING,
+    SHEET_SPRING,
     { from: 1, to: 0, a: 0.9, b: 0.02 },
   );
 }

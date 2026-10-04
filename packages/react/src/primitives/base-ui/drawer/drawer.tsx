@@ -34,7 +34,7 @@ import {
 //
 // - Popup: v1's sheet. It rests at the swipe offset, starts and ends one full
 //   size off its edge and transparent, and slides and fades on the sheet
-//   spring (stiffness 150, damping 25, the dialog's) both ways; a swipe
+//   spring (stiffness 150, damping 22, v1's sheet) both ways; a swipe
 //   dismissal's exit is scaled by the release velocity, and nothing
 //   transitions while the finger (or a nested drawer) drags it.
 // - Backdrop: v1's overlay. It fades and un-blurs (opacity 0 → 1, blur(4px)
@@ -105,7 +105,7 @@ type PopupAnimationProps = {
    * Opening (slide and fade in), snapping and easing back after a swipe that
    * does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a
    * tween keeps its `duration` and cubic-bezier or named `ease`.
-   * @default { type: 'spring', stiffness: 150, damping: 25 }
+   * @default { type: 'spring', stiffness: 150, damping: 22 }
    */
   transition?: Transition;
   /**

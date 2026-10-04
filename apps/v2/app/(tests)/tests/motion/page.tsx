@@ -181,9 +181,9 @@ const FAMILIES: Family[] = [
   {
     id: 'sheet',
     name: 'Sheets, drawers, toasts',
-    rule: 'Ce qui arrive par un bord glisse de sa propre taille en apparaissant.',
+    rule: 'Ce qui arrive par un bord glisse de sa propre taille en apparaissant, un peu plus vif qu’une modale (il parcourt plus de distance).',
     values: [
-      'glissement + fondu, ressort 150/25 (même ressort que les modales)',
+      'glissement + fondu, ressort 150/22 (≈ 550ms)',
       'toast ancré : pop 0,5 → 1, ressort 300/25',
     ],
     demos: [
@@ -228,9 +228,9 @@ const FAMILIES: Family[] = [
     name: 'Nombres',
     rule: 'Un nombre roule vers sa valeur sans dépasser.',
     values: [
-      'ressort 90/50 (Counting Number, Sliding Number, valeur du Progress)',
+      'ressort 90/50 (Counting Number, Sliding Number)',
       'Scrolling Number : 90/30 ; chiffres du Sliding Number : 200/20 masse 0,4',
-      'barre du Progress : ressort 100/30',
+      'Progress : la barre et sa valeur sur le même ressort 100/30 (le nombre bouge avec la barre)',
     ],
     demos: [
       { demo: 'animate-ui/counting-number', label: 'Counting Number' },

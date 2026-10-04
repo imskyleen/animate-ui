@@ -38,10 +38,14 @@ export const DIALOG_TRANSITION = {
 } as const satisfies Transition;
 
 /**
- * Sheets, drawers and the toasts that enter from an edge: the dialog's spring
- * (v1's sheet had damping 22).
+ * Sheets, drawers and the toasts that enter from an edge: v1's sheet spring,
+ * a little livelier than the dialog's (they travel farther).
  */
-export const SHEET_TRANSITION = DIALOG_TRANSITION;
+export const SHEET_TRANSITION = {
+  type: 'spring',
+  stiffness: 150,
+  damping: 22,
+} as const satisfies Transition;
 
 /** Animate UI's additions to an overlay or a modal's content. */
 export type ModalAnimationProps = {

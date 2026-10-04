@@ -43,7 +43,7 @@ import {
 //
 // Its motion is Animate UI v1's Sheet (v1 had no drawer): every move of the
 // position (opening, closing, snapping, settling back after a drag) runs on
-// the sheet spring (stiffness 150, damping 25, the dialog's), and the drawer
+// the sheet spring (stiffness 150, damping 22, v1's sheet), and the drawer
 // fades in and out with it as v1's sheet did (opacity 0 ↔ 1, never during a
 // drag). The overlay fades and un-blurs like v1's (opacity 0 → 1, blur(4px)
 // → blur(0px), 200ms easeInOut); once a drag has moved the drawer, or with
@@ -196,7 +196,7 @@ type ContentAnimationProps = {
   /**
    * Opening (slide and fade in), moving between snap points and settling back
    * after a drag that doesn't dismiss.
-   * @default { type: 'spring', stiffness: 150, damping: 25 }
+   * @default { type: 'spring', stiffness: 150, damping: 22 }
    */
   transition?: Transition;
   /**

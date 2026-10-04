@@ -12,8 +12,8 @@ import {
 // like Animate UI v1's: the indicator springs to a new value (stiffness 100,
 // damping 30, no bounce), as v1's Radix `ProgressIndicator` (its `x`) and
 // Base UI `ProgressIndicator` (its `width`) did. The Base UI `ProgressValue`
-// counts to the new value like v1's (a `CountingNumber`), on the spring of
-// Animate UI's Counting Number (stiffness 90, damping 50).
+// counts to the new value like v1's (a `CountingNumber`), on the bar's own
+// spring: the number moves with the bar it describes.
 
 /** v1's `ProgressIndicator` transition. */
 const PROGRESS_TRANSITION: Transition = {
@@ -22,12 +22,8 @@ const PROGRESS_TRANSITION: Transition = {
   damping: 30,
 };
 
-/** The Base UI `ProgressValue` count: Counting Number's spring. */
-const VALUE_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 90,
-  damping: 50,
-};
+/** The Base UI `ProgressValue` count: the bar's spring, so they move together. */
+const VALUE_TRANSITION: Transition = PROGRESS_TRANSITION;
 
 /**
  * A number that springs to `target`, re-rendering on each frame (v1's
