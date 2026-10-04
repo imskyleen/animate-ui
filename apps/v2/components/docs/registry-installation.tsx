@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { ServerCodeBlock } from 'fumadocs-ui/components/codeblock.rsc';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 import { Command } from './installation';
+import { ServerCodeBlock } from './server-codeblock';
+import { DocsTabs } from './tabs';
 
 /**
  * A shadcn registry item (backgrounds): the CLI adds the file to your
@@ -24,34 +24,49 @@ export async function RegistryInstallation({ name }: { name: string }) {
   const file = item.files[0]!;
 
   return (
-    <Tabs groupId="registry-installation" persist items={['CLI', 'Manual']}>
-      <Tab value="CLI">
-        <Command
-          command={(m) => `${m.dlx} shadcn@latest add @animate-ui/${name}`}
-        />
-      </Tab>
-      <Tab value="Manual">
-        <Steps>
-          <Step>
-            <h3>Install the dependencies</h3>
+    <DocsTabs
+      groupId="registry-installation"
+      persist
+      lazy
+      label="Installation"
+      tabs={[
+        {
+          value: 'cli',
+          label: 'CLI',
+          content: (
             <Command
-              command={(m) => `${m.add} ${item.dependencies.join(' ')}`}
+              command={(m) => `${m.dlx} shadcn@latest add @animate-ui/${name}`}
             />
-          </Step>
-          <Step>
-            <h3>
-              Copy the code into <code>{file.target}</code>
-            </h3>
-            <div className="max-h-96 overflow-auto rounded-xl">
-              <ServerCodeBlock
-                code={file.content.trimEnd()}
-                lang="tsx"
-                codeblock={{ className: 'my-0' }}
-              />
-            </div>
-          </Step>
-        </Steps>
-      </Tab>
-    </Tabs>
+          ),
+        },
+        {
+          value: 'manual',
+          label: 'Manual',
+          content: (
+            <Steps>
+              <Step>
+                <h3>Install the dependencies</h3>
+                <Command
+                  command={(m) => `${m.add} ${item.dependencies.join(' ')}`}
+                />
+              </Step>
+              <Step>
+                <h3>
+                  Copy the code into <code>{file.target}</code>
+                </h3>
+                <ServerCodeBlock
+                  code={file.content.trimEnd()}
+                  lang="tsx"
+                  codeblock={{
+                    title: file.target.split('/').pop(),
+                    viewportClassName: 'max-h-96',
+                  }}
+                />
+              </Step>
+            </Steps>
+          ),
+        },
+      ]}
+    />
   );
 }

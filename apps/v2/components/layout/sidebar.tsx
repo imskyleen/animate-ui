@@ -4,10 +4,10 @@ import {
   AiElementsIcon,
   BookOpen02Icon,
   Cursor01Icon,
+  GridIcon,
   Image02Icon,
   MagicWand01Icon,
   Menu01Icon,
-  SparklesIcon,
   TextFontIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
@@ -25,31 +25,57 @@ import type * as PageTree from 'fumadocs-core/page-tree';
 import { usePathname } from 'next/navigation';
 import { useMemo, type ReactNode } from 'react';
 
-import { LIBRARIES, type LibraryId } from '@/lib/libraries';
+import { AnimateUILogo, LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { usePreferredLibrary } from '@/lib/preferred-library';
 import {
   primitiveSection,
   type PrimitiveSection,
 } from '@/lib/primitive-sections';
 
+import { AnimatedNav, NavItemContent, useNavHover } from './animated-nav';
 import { GitHubLink, NAV_ITEMS, ThemeToggle } from './header';
 
 type Link = { name: ReactNode; url: string; active: boolean };
 
 const PRIMITIVES_URL = '/docs/primitives';
 const BACKGROUNDS_URL = '/docs/backgrounds';
+const ICONS_URL = '/docs/icons';
+
+/** A Hugeicons icon, or a logo (Animate UI's). */
+type SectionIcon = IconSvgElement | ReactNode;
 
 const PRIMITIVE_SECTIONS: {
   id: PrimitiveSection;
   title: string;
-  icon: IconSvgElement;
+  icon: SectionIcon;
 }[] = [
   { id: 'libraries', title: 'Libraries', icon: AiElementsIcon },
-  { id: 'animate-ui', title: 'Animate UI', icon: SparklesIcon },
+  {
+    id: 'animate-ui',
+    title: 'Animate UI',
+    icon: <AnimateUILogo className="size-3" />,
+  },
   { id: 'buttons', title: 'Buttons', icon: Cursor01Icon },
   { id: 'texts', title: 'Texts', icon: TextFontIcon },
   { id: 'effects', title: 'Effects', icon: MagicWand01Icon },
 ];
+
+/** The pages of a folder (Backgrounds, Icons), with an optional suffix cut. */
+function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {
+  return folder.children.flatMap((page) =>
+    page.type === 'page'
+      ? [
+          {
+            name:
+              suffix && typeof page.name === 'string'
+                ? page.name.replace(suffix, '')
+                : page.name,
+            url: page.url,
+          },
+        ]
+      : [],
+  );
+}
 
 /** One entry per primitive, with the URL of each library that has it. */
 type PrimitiveEntry = {
@@ -78,13 +104,21 @@ function SectionTitle({
   icon,
   children,
 }: {
-  icon: IconSvgElement;
+  icon: SectionIcon;
   children: ReactNode;
 }) {
   return (
     <p className="mb-2 flex items-center gap-2 px-2">
       <span className="relative flex size-5 items-center justify-center rounded-[5px] bg-border text-muted-foreground">
-        <HugeiconsIcon icon={icon} strokeWidth={2} size={12} />
+        {Array.isArray(icon) ? (
+          <HugeiconsIcon
+            icon={icon as IconSvgElement}
+            strokeWidth={2}
+            size={12}
+          />
+        ) : (
+          (icon as ReactNode)
+        )}
         <span className="absolute top-full left-1/2 h-2 w-px translate-x-[calc(-50%-0.5px)] bg-border" />
       </span>
       <span className="text-[13px] text-neutral-500">{children}</span>
@@ -92,32 +126,18 @@ function SectionTitle({
   );
 }
 
-function Item({ name, url, active }: Link) {
+function Item({ id, name, url, active }: Link & { id: string }) {
+  const { hovered, hoverProps } = useNavHover(id);
   return (
     <SidebarItem
       href={url}
       active={active}
-      className="group relative ml-2 flex items-center py-1.5 pl-4 text-start"
+      className="relative ml-2 flex items-center py-1.5 pl-4 text-start"
+      {...hoverProps}
     >
-      <span className="absolute inset-y-0 left-[9px] w-px bg-border" />
-      <span
-        className={cn(
-          'absolute top-1/2 left-[8px] h-[56%] w-[3px] -translate-y-1/2 rounded-full transition-colors',
-          active
-            ? 'bg-primary'
-            : 'bg-transparent pointer-fine:group-hover:bg-neutral-300 dark:pointer-fine:group-hover:bg-neutral-600',
-        )}
-      />
-      <span
-        className={cn(
-          'w-full pl-3 text-sm text-neutral-700 transition-[color,translate] duration-200 ease-out dark:text-neutral-200',
-          active
-            ? 'translate-x-[3px] text-black dark:text-white'
-            : 'pointer-fine:group-hover:translate-x-[3px] pointer-fine:group-hover:text-black dark:pointer-fine:group-hover:text-white',
-        )}
-      >
+      <NavItemContent active={active} hovered={hovered}>
         {name}
-      </span>
+      </NavItemContent>
     </SidebarItem>
   );
 }
@@ -128,7 +148,7 @@ function Section({
   links,
 }: {
   title: string;
-  icon: IconSvgElement;
+  icon: SectionIcon;
   links: Link[];
 }) {
   if (links.length === 0) return null;
@@ -136,7 +156,7 @@ function Section({
     <div className="mb-6 flex flex-col">
       <SectionTitle icon={icon}>{title}</SectionTitle>
       {links.map((link) => (
-        <Item key={link.url} {...link} />
+        <Item key={link.url} id={`${title}:${link.url}`} {...link} />
       ))}
     </div>
   );
@@ -147,32 +167,27 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
   const pathname = usePathname();
   const preferred = usePreferredLibrary();
 
-  const { guide, primitives, backgrounds } = useMemo(() => {
+  const { guide, primitives, backgrounds, icons } = useMemo(() => {
     const guide: Omit<Link, 'active'>[] = [];
     let primitivesFolder: PageTree.Folder | undefined;
-    const backgrounds: Omit<Link, 'active'>[] = [];
+    let backgrounds: Omit<Link, 'active'>[] = [];
+    let icons: Omit<Link, 'active'>[] = [];
     for (const node of root.children) {
       if (node.type === 'page') guide.push({ name: node.name, url: node.url });
       if (node.type === 'folder' && node.index) {
         guide.push({ name: node.name, url: node.index.url });
         if (node.index.url === PRIMITIVES_URL) primitivesFolder = node;
+        // The section says it: "Bubble", not "Bubble Background".
         if (node.index.url === BACKGROUNDS_URL)
-          for (const page of node.children)
-            if (page.type === 'page')
-              // The section says it: "Bubble", not "Bubble Background".
-              backgrounds.push({
-                name:
-                  typeof page.name === 'string'
-                    ? page.name.replace(/ Background$/, '')
-                    : page.name,
-                url: page.url,
-              });
+          backgrounds = folderLinks(node, / Background$/);
+        if (node.index.url === ICONS_URL) icons = folderLinks(node);
       }
     }
     return {
       guide,
       primitives: collectPrimitives(primitivesFolder),
       backgrounds,
+      icons,
     };
   }, [root]);
 
@@ -194,41 +209,52 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
 
   return (
     <SidebarViewport className="px-2 pb-4 max-md:pt-4 md:pb-14">
-      {mobile && (
+      <AnimatedNav>
+        {mobile && (
+          <Section
+            title="Menu"
+            icon={Menu01Icon}
+            // The Guide marks the current page: one active bar at a time.
+            links={NAV_ITEMS.map((item) => ({
+              name: item.title,
+              url: item.url,
+              active: false,
+            }))}
+          />
+        )}
         <Section
-          title="Menu"
-          icon={Menu01Icon}
-          links={NAV_ITEMS.map((item) => ({
-            name: item.title,
-            url: item.url,
-            active: pathname === item.url,
+          title="Guide"
+          icon={BookOpen02Icon}
+          links={guide.map((link) => ({
+            ...link,
+            active: pathname === link.url,
           }))}
         />
-      )}
-      <Section
-        title="Guide"
-        icon={BookOpen02Icon}
-        links={guide.map((link) => ({
-          ...link,
-          active: pathname === link.url,
-        }))}
-      />
-      {PRIMITIVE_SECTIONS.map((section) => (
+        {PRIMITIVE_SECTIONS.map((section) => (
+          <Section
+            key={section.id}
+            title={section.title}
+            icon={section.icon}
+            links={sections.get(section.id) ?? []}
+          />
+        ))}
         <Section
-          key={section.id}
-          title={section.title}
-          icon={section.icon}
-          links={sections.get(section.id) ?? []}
+          title="Backgrounds"
+          icon={Image02Icon}
+          links={backgrounds.map((link) => ({
+            ...link,
+            active: pathname === link.url,
+          }))}
         />
-      ))}
-      <Section
-        title="Backgrounds"
-        icon={Image02Icon}
-        links={backgrounds.map((link) => ({
-          ...link,
-          active: pathname === link.url,
-        }))}
-      />
+        <Section
+          title="Icons"
+          icon={GridIcon}
+          links={icons.map((link) => ({
+            ...link,
+            active: pathname === link.url,
+          }))}
+        />
+      </AnimatedNav>
     </SidebarViewport>
   );
 }
@@ -245,7 +271,7 @@ export function Sidebar({ className }: SidebarProps) {
               id="nd-sidebar"
               ref={ref as React.Ref<HTMLElement>}
               className={cn(
-                'absolute inset-y-0 inset-s-0 flex w-full flex-col items-end pt-6 text-sm *:w-(--fd-sidebar-width)',
+                'absolute inset-y-0 inset-s-0 flex w-full flex-col items-end pt-3 text-sm *:w-(--fd-sidebar-width)',
                 className,
               )}
             >

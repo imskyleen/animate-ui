@@ -8,6 +8,13 @@ import {
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import {
+  TOCPopover,
+  TOCProvider,
+} from 'fumadocs-ui/layouts/docs/page/slots/toc';
+
+import { Footer } from '@/components/layout/footer';
+import { TOC } from '@/components/layout/toc';
 import { LibraryTabs } from '@/components/docs/library-tabs';
 import { CopyPage, PageNavigation } from '@/components/docs/page-actions';
 import { getMDXComponents } from '@/components/mdx';
@@ -31,6 +38,11 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       breadcrumb={{ enabled: false }}
       footer={{ enabled: false }}
       tableOfContentPopover={{ enabled: false }}
+      slots={{
+        toc: { provider: TOCProvider, main: TOC, popover: TOCPopover },
+      }}
+      // The title lines up with the top of the sidebar and the TOC.
+      className="md:pt-6 xl:pt-6"
     >
       <div className="flex items-start justify-between gap-4">
         <DocsTitle className="font-medium">{page.data.title}</DocsTitle>
@@ -55,6 +67,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           })}
         />
       </DocsBody>
+      <Footer lastUpdate={page.data.lastModified} />
     </DocsPage>
   );
 }

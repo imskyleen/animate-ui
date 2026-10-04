@@ -12,7 +12,6 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 import { useInView } from 'motion/react';
 import {
   useDeferredValue,
@@ -24,6 +23,8 @@ import {
 } from 'react';
 
 import { ICONS, iconComponent, type IconEntry } from '@/registry/icons';
+
+import { DynamicCodeBlock } from './dynamic-codeblock';
 
 type Loaded = {
   Icon: ComponentType<IconProps<string>>;
@@ -172,10 +173,12 @@ function IconDetail({
 
         <DynamicCodeBlock
           lang="bash"
+          codeblock={{ className: 'my-0' }}
           code={`pnpm dlx shadcn@latest add @animate-ui/icons-${entry.name}`}
         />
         <DynamicCodeBlock
           lang="tsx"
+          codeblock={{ className: 'my-0' }}
           code={`import { ${component} } from '@/components/animate-ui/icons/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
         />
       </div>

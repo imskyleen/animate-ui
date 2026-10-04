@@ -153,7 +153,11 @@ function subscribeToReducedMotion(onChange: () => void) {
 }
 
 /**
- * True when motion should be reduced. Call it inside `ReducedMotionConfig`.
+ * True when motion should be reduced: an app-level
+ * `<MotionConfig reducedMotion="always">`, or else the OS setting. Works with
+ * or without `ReducedMotionConfig` around it. Motion's own default
+ * (`"never"`) doesn't count, as in `ReducedMotionConfig`: without this,
+ * calling it outside one would always return false.
  *
  * Motion's reduced-motion setting only skips individual transform props
  * (`x`, `scale`…), not a `transform` string. Components animate `transform`
@@ -171,9 +175,7 @@ function useShouldReduceMotion() {
     () => false,
   );
 
-  if (reducedMotion === 'always') return true;
-  if (reducedMotion === 'never') return false;
-  return prefersReduced;
+  return reducedMotion === 'always' || prefersReduced;
 }
 
 export {

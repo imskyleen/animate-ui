@@ -1,9 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { ServerCodeBlock } from 'fumadocs-ui/components/codeblock.rsc';
+import { ReactIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 
 import { PreviewFrame } from './preview-frame';
+import { ServerCodeBlock } from './server-codeblock';
 
 /**
  * A primitive's demo: the shadcn/ui component built on it, plus its usage.
@@ -36,7 +38,12 @@ export async function ComponentPreview({
         <ServerCodeBlock
           code={code.trimEnd()}
           lang="tsx"
-          codeblock={{ className: 'my-0 rounded-none border-0' }}
+          codeblock={{
+            className: 'my-0',
+            title: `${name.split('/').pop()}.tsx`,
+            icon: <HugeiconsIcon icon={ReactIcon} strokeWidth={2} />,
+            viewportClassName: 'max-h-[400px]',
+          }}
         />
       }
     >

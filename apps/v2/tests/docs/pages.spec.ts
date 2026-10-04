@@ -48,11 +48,12 @@ test.describe('primitive page', () => {
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
   });
 
-  test('View code reveals the whole demo source', async ({ page }) => {
-    await page.getByRole('button', { name: 'View code' }).click();
-    await expect(page.getByRole('button', { name: 'View code' })).toHaveCount(
-      0,
-    );
+  test('the Code tab reveals the whole demo source', async ({ page }) => {
+    const code = page
+      .getByRole('tablist', { name: 'Preview' })
+      .getByRole('tab', { name: 'Code', exact: true });
+    await code.click();
+    await expect(code).toHaveAttribute('aria-selected', 'true');
     await expect(
       page.getByText('export default function AccordionDemo'),
     ).toBeVisible();
@@ -112,6 +113,7 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     'Texts',
     'Effects',
     'Backgrounds',
+    'Icons',
   ]);
   // Primitives with a library page, Animate UI's Tabs and Tooltip included.
   await expect(
@@ -132,4 +134,21 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   await expect(
     section('Backgrounds').getByRole('link', { name: 'Bubble', exact: true }),
   ).toHaveAttribute('href', '/docs/backgrounds/bubble');
+  await expect(
+    section('Icons').getByRole('link', { name: 'Lucide' }),
+  ).toHaveAttribute('href', '/docs/icons/lucide');
+  // Animate UI's own section shows the Animate UI logo.
+  await expect(
+    page.locator('#nd-sidebar p', { hasText: /^Animate UI$/ }).locator('svg'),
+  ).toBeVisible();
+});
+
+test('the TOC marks one heading, and the page ends with the footer', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives/radix-ui/accordion');
+  await expect(page.locator('#nd-toc p')).toHaveText('On this page');
+  await expect(page.locator('#nd-toc .bg-primary')).toHaveCount(1);
+  await expect(page.getByText('Built by')).toBeVisible();
+  await expect(page.getByText('Last updated:')).toBeVisible();
 });

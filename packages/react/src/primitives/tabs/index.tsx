@@ -195,6 +195,8 @@ type TabsContentsProps = HTMLMotionProps<'div'> & {
 function TabsContents({
   children,
   transition: transitionProp,
+  ref,
+  style,
   ...props
 }: TabsContentsProps) {
   const { activeValue } = useTabs();
@@ -280,12 +282,17 @@ function TabsContents({
 
   return (
     <motion.div
-      ref={containerRef}
+      // The container is measured: a ref passed in gets it too.
+      ref={(node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        if (typeof ref === 'function') ref(node);
+        else if (ref) ref.current = node;
+      }}
       data-slot="tabs-contents"
-      style={{ overflow: 'hidden' }}
       animate={{ height }}
       transition={transition}
       {...props}
+      style={{ ...style, overflow: 'hidden' }}
     >
       <motion.div
         style={{ display: 'flex', marginInline: -8 }}
