@@ -13,6 +13,7 @@ const CONTENT = '[data-slot="tooltip-content"]';
 describeAnchoredOverlay('react-aria tooltip demo', {
   path: PATH,
   selector: CONTENT,
+  kind: 'tooltip',
   open: (page) => page.getByRole('button', { name: 'Bold' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
   // React Aria's TooltipTrigger waits 500ms (its default) before closing.
@@ -50,7 +51,7 @@ test.describe('react-aria tooltip warmup', () => {
     await page.getByRole('button', { name: 'Underline' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeLessThan(0.65);
+    expect(first.scale).toBeLessThan(0.8);
   });
 });
 
@@ -103,7 +104,7 @@ test.describe('react-aria tooltip API', () => {
       page,
       '/tests/fixtures/react-aria-tooltip',
       '[data-testid="default-open-content"]',
-      'popover',
+      'tooltip',
     );
   });
 

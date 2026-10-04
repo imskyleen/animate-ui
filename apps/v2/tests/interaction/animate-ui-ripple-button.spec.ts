@@ -60,12 +60,11 @@ test.describe('animate-ui ripple button', () => {
     await expect(ripples(page)).toHaveCount(0, { timeout: 2000 });
   });
 
-  test('grows on hover, shrinks while pressed', async ({ page }) => {
+  test('stays put on hover, shrinks while pressed', async ({ page }) => {
     await open(page);
     await button(page).hover();
-    await expect
-      .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(1.05, 3);
+    await page.waitForTimeout(300);
+    expect((await sample(page, SELECTOR)).scale).toBe(1);
     await page.mouse.down();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
@@ -73,7 +72,7 @@ test.describe('animate-ui ripple button', () => {
     await page.mouse.up();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(1.05, 3);
+      .toBeCloseTo(1, 3);
   });
 
   test('reduced motion: the ripple fades in place without growing', async ({

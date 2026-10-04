@@ -18,9 +18,9 @@ import {
 } from '../../../internal/anchored';
 import { originFor } from '../popover/origin';
 
-// Same API as React Aria's Tooltip. React Aria has no Animate UI v1
-// counterpart: it moves like v1's Radix Tooltip, growing from half its size
-// and fading in from the trigger on a spring, and shrinking back the same way.
+// Same API as React Aria's Tooltip, animated like the Radix and Base UI
+// tooltips: it grows from 0.7 and fades in from the trigger on a spring,
+// and shrinks back the same way.
 // When React Aria swaps two tooltips during its warmup (it asks to skip the
 // animations), they swap at once.
 //
@@ -92,6 +92,7 @@ function AnimatedTooltip({
   const instant = React.use(TooltipTriggerStateContext)?.shouldSkipAnimation;
   const [openedInstantly] = React.useState(Boolean(instant));
   const motionProps = useAnchoredMotion({
+    kind: 'tooltip',
     open: true,
     instant: isPresent ? openedInstantly : Boolean(instant),
     transition,

@@ -22,7 +22,7 @@ test.describe('base-ui menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     // Below the trigger, aligned to its start: its top-left corner (Base UI
     // offsets the origin by the side offset).
     expect(first.origin).toMatch(/^0px -?\d/);

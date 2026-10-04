@@ -19,9 +19,6 @@ import { useSwitchThumb, type ThumbAnimationProps } from './thumb';
 type PressedMotionProps = Record<string, unknown> & {
   as: 'label' | 'button';
   isPressed: boolean;
-  isHovered?: boolean;
-  /** Also scale up while hovered (v1's Checkbox and Radio). */
-  hover?: boolean;
   isDisabled?: boolean;
   transition?: Transition;
 };
@@ -30,15 +27,13 @@ type PressedMotionProps = Record<string, unknown> & {
 function PressedMotion({
   as,
   isPressed,
-  isHovered,
-  hover,
   isDisabled,
   transition,
   ...props
 }: PressedMotionProps) {
   const press = usePressedMotion(
-    { isPressed, isHovered },
-    { hover, disabled: isDisabled, transition },
+    { isPressed },
+    { disabled: isDisabled, transition },
   );
   if (as === 'button')
     return (

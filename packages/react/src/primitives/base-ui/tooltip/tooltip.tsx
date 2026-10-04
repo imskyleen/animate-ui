@@ -13,9 +13,9 @@ import {
   type AnchoredAnimationProps,
 } from '../popover/base-anchored';
 
-// Same API as Base UI's Tooltip. The Popup grows from half its size and fades
-// in from the trigger on a spring, and shrinks back the same way, every time
-// it opens (Animate UI v1's Tooltip).
+// Same API as Base UI's Tooltip. The Popup grows from 0.7 and fades in
+// from the trigger on a spring, and shrinks back the same way, every time it
+// opens.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Tooltip.Root',
@@ -103,6 +103,7 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
       popupProps={props}
       open={open}
       keepMounted={React.use(KeepMountedContext)}
+      kind="tooltip"
       transition={transition}
       exitTransition={exitTransition}
     />

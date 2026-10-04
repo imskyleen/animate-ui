@@ -52,7 +52,7 @@ shadcn/ui's Sheet is the same primitive: its `Modal` carries `data-side`, and it
 
 React Aria has no Animate UI v1 counterpart: the motion is v1's Dialog (Radix UI, Base UI and Headless UI shipped the same one) and, for the Sheet, v1's Sheet.
 
-- **ModalOverlay** fades in in 200ms, easeInOut, and out the same way. React Aria renders the Modal inside it, where v1's overlay and content were siblings: fading its opacity (or filter) would fade and blur the modal too and cut its exit short. So it fades its own background color and backdrop filter, from transparent to the values its classes set, and the modal moves exactly like v1's content.
+- **ModalOverlay** fades in in 200ms, ease-out, and out the same way. React Aria renders the Modal inside it, where v1's overlay and content were siblings: fading its opacity (or filter) would fade and blur the modal too and cut its exit short. So it fades its own background color and backdrop filter, from transparent to the values its classes set, and the modal moves exactly like v1's content.
 - **Modal** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, still visible once the overlay is gone, then unmounts.
 - With `data-side="top" | "right" | "bottom" | "left"` (shadcn/ui's Sheet), the modal slides in from that edge by its own size and fades in, on v1's sheet spring (stiffness 150, damping 22, a little livelier), and slides back out the same way.
 - `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
@@ -75,7 +75,7 @@ React Aria has no Animate UI v1 counterpart: the motion is v1's Dialog (Radix UI
       description:
         'Transition of the fade in (of its background color and backdrop filter).',
       type: 'Transition',
-      default: "{ duration: 0.2, ease: 'easeInOut' }",
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Transition of the fade out.',

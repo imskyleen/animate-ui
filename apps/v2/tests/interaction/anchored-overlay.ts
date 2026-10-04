@@ -4,6 +4,12 @@ import { probeFirstFrame } from './motion-probe';
 // The grading grid of an anchored overlay (popover, hover card, tooltip):
 // shared by every library's demo spec.
 
+/**
+ * Where each kind of anchored popup grows from: tooltips from 0.7, popovers
+ * (hover cards, preview cards) from 0.8, menus from 0.9.
+ */
+export const HIDDEN_SCALE = { tooltip: 0.7, popover: 0.8, menu: 0.9 } as const;
+
 export type OverlayCase = {
   /** Demo route, e.g. `/tests/demos/radix-ui/popover`. */
   path: string;
@@ -13,6 +19,8 @@ export type OverlayCase = {
   close: (page: Page) => Promise<void>;
   /** Hover overlays wait for the library's close delay before they exit. */
   closeDelay?: number;
+  /** Tooltips grow from 0.7, the others from 0.8. */
+  kind?: 'popover' | 'tooltip';
 };
 
 /**
@@ -28,9 +36,9 @@ export async function gotoReady(page: Page, path: string) {
 }
 
 /**
- * Animate UI v1's popover spring (stiffness 300, damping 25): it overshoots
- * to ~1.02 around 280ms and settles by ~500ms, both ways. Budgets leave room
- * for a loaded machine.
+ * The popover and tooltip spring (stiffness 300, damping 25): it overshoots by
+ * ~4% of its travel around 260ms and settles by ~500ms, both ways. Budgets
+ * leave room for a loaded machine.
  */
 export const SETTLE_BUDGET = 900;
 export const UNMOUNT_BUDGET = 1000;
@@ -141,11 +149,11 @@ export function recordExit(page: Page, selector: string, timeout = 3000) {
 }
 
 /**
- * How an overlay enters: v1's popover spring (from half its size, with an
- * overshoot), v1's menu timing (from 0.95 in 200ms), or a fade alone (lists
- * laid over their trigger).
+ * How an overlay enters: the tooltip and popover spring (from 0.7 or 0.8,
+ * with an overshoot), the menus' timing (from 0.9 in 200ms, ease-out), or a
+ * fade alone (lists laid over their trigger).
  */
-export type EntranceKind = 'popover' | 'menu' | 'fade';
+export type EntranceKind = 'tooltip' | 'popover' | 'menu' | 'fade';
 
 /**
  * Loads `path` and checks that the popup open from the start (`defaultOpen`)
@@ -196,39 +204,43 @@ export async function expectEntranceOnLoad(
     expect(frames.filter(([o]) => o > 0.02).every(([, s]) => s === 1)).toBe(
       true,
     );
-  } else if (kind === 'popover') {
-    // From half its size, past full size (the spring's overshoot), back to 1.
-    expect(firstScale).toBeLessThan(0.75);
-    expect(Math.max(...scales)).toBeGreaterThan(1.005);
+  } else if (kind === 'tooltip' || kind === 'popover') {
+    // From its hidden scale, past full size (the spring's overshoot), back
+    // to 1.
+    const from = HIDDEN_SCALE[kind];
+    expect(firstScale).toBeGreaterThanOrEqual(from - 0.01);
+    expect(firstScale).toBeLessThan(from + 0.1);
+    expect(Math.max(...scales)).toBeGreaterThan(1 + (1 - from) * 0.02);
     expect(Math.max(...scales)).toBeLessThan(1.05);
   } else {
-    // From 0.95, without overshoot (a tween).
-    expect(firstScale).toBeGreaterThanOrEqual(0.94);
-    expect(firstScale).toBeLessThan(0.98);
+    // From 0.9, without overshoot (an ease-out tween).
+    expect(firstScale).toBeGreaterThanOrEqual(HIDDEN_SCALE.menu - 0.01);
+    expect(firstScale).toBeLessThan(0.97);
     expect(Math.max(...scales)).toBeLessThanOrEqual(1.001);
   }
 }
 
 /**
- * The grading grid of a popover, hover card or tooltip: Animate UI v1's
- * motion. It grows from half its size and fades in from its trigger on a
- * spring that overshoots a little, and shrinks back the same way.
+ * The grading grid of a popover, hover card or tooltip. It grows (a tooltip
+ * from 0.7, the others from 0.8) and fades in from its trigger on a spring
+ * that overshoots a little, and shrinks back the same way.
  */
 export function describeAnchoredOverlay(name: string, c: OverlayCase) {
+  const from = HIDDEN_SCALE[c.kind ?? 'popover'];
   test.describe(name, () => {
     test.describe.configure({ timeout: 180_000 });
     test.beforeEach(async ({ page }) => {
       await gotoReady(page, c.path);
     });
 
-    test('grows from half its size with a fade, from the trigger', async ({
+    test(`grows from ${from} with a fade, from the trigger`, async ({
       page,
     }) => {
       const probe = await probeFirstFrame(page, c.selector);
       await c.open(page);
       const first = await probe.firstFrame();
-      expect(first.scale).toBeGreaterThanOrEqual(0.49);
-      expect(first.scale).toBeLessThan(0.65);
+      expect(first.scale).toBeGreaterThanOrEqual(from - 0.01);
+      expect(first.scale).toBeLessThan(from + 0.15);
       expect(first.opacity).toBeLessThan(1);
       expect(await originIsAnchored(page, c.selector)).toBe(true);
     });
@@ -238,15 +250,15 @@ export function describeAnchoredOverlay(name: string, c: OverlayCase) {
       await page.locator(c.selector).first().waitFor();
       const frames = shown(await recordFrames(page, c.selector, SETTLE_BUDGET));
       const peak = Math.max(...frames.map((f) => f.scale));
-      // The spring's overshoot (~1.02), not an ease that stops at 1.
-      expect(peak).toBeGreaterThan(1.005);
+      // The spring's overshoot (~4% of the way), not an ease that stops at 1.
+      expect(peak).toBeGreaterThan(1 + (1 - from) * 0.02);
       expect(peak).toBeLessThan(1.05);
       const last = frames.at(-1)!;
       expect(last.opacity).toBe(1);
       expect(last.scale).toBeCloseTo(1, 2);
     });
 
-    test('shrinks back to half its size with a fade, then unmounts', async ({
+    test(`shrinks back to ${from} with a fade, then unmounts`, async ({
       page,
     }) => {
       await c.open(page);
@@ -257,8 +269,8 @@ export function describeAnchoredOverlay(name: string, c: OverlayCase) {
       const result = await exit;
       expect(result.timedOut).toBe(false);
       expect(result.sawFade).toBe(true);
-      // The same spring, undershooting half size a little (~0.48).
-      expect(result.minScale).toBeLessThan(0.55);
+      // The same spring, down to its hidden scale.
+      expect(result.minScale).toBeLessThan(from + 0.05);
       expect(result.goneAt).toBeLessThanOrEqual(
         (c.closeDelay ?? 0) + UNMOUNT_BUDGET,
       );
@@ -354,7 +366,7 @@ export function describeToolbarTooltips(
       });
       const first = await probe.firstFrame();
       expect(first.opacity).toBeLessThan(1);
-      expect(first.scale).toBeLessThan(0.65);
+      expect(first.scale).toBeLessThan(0.8);
     });
 
     test('reopening right after closing plays the entrance again', async ({
@@ -373,7 +385,7 @@ export function describeToolbarTooltips(
       });
       const first = await probe.firstFrame();
       expect(first.opacity).toBeLessThan(1);
-      expect(first.scale).toBeLessThan(0.65);
+      expect(first.scale).toBeLessThan(0.8);
     });
   });
 }

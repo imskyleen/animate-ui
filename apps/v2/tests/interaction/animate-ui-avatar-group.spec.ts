@@ -73,13 +73,14 @@ test.describe('animate-ui avatar-group', () => {
     );
     await avatar(page, 'Adam Wathan').hover();
     const scales = await sampling;
-    // From nothing, past full size by the spring's overshoot (frames may miss
-    // the very peak), then at rest.
-    expect(scales[0]!).toBeLessThan(0.3);
+    // From 0.7, past full size by the spring's overshoot over that 0.3 travel
+    // (frames may miss the very peak), then at rest.
+    expect(scales[0]!).toBeGreaterThanOrEqual(0.69);
+    expect(scales[0]!).toBeLessThan(0.85);
     const overshoot = overshootOf(POP_SPRING);
     const peak = Math.max(...scales);
-    expect(peak).toBeGreaterThan(1 + overshoot * 0.7);
-    expect(peak).toBeLessThan(1 + overshoot + 0.003);
+    expect(peak).toBeGreaterThan(1 + 0.3 * overshoot * 0.7);
+    expect(peak).toBeLessThan(1 + 0.3 * overshoot + 0.003);
     expect(scales.at(-1)!).toBeCloseTo(1, 2);
   });
 

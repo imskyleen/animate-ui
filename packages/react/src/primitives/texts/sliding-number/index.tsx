@@ -19,6 +19,7 @@ import {
   type UseIsInViewOptions,
 } from '../../../utils/use-is-in-view';
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
@@ -37,9 +38,7 @@ const ROLLER_TRANSITION: SpringOptions = {
  * this spring, with `useSpring`'s rest thresholds.
  */
 const COUNT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 90,
-  damping: 50,
+  ...motionTokens.spring.number,
   restDelta: 0.001,
   restSpeed: 0.01,
 };

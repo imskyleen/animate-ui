@@ -31,7 +31,7 @@ Coming from the `@radix-ui/react-toggle` package? Use the subpath: `import * as 
 
 The motion of Animate UI v1's toggle:
 
-- **Toggle** scales to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30). No hover scale, as v1's.
+- **Toggle** scales to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30). No hover scale.
 - The press scale runs on the compositor (a `transform`), so shadcn/ui's `transition-all` doesn't tween its frames.
 - The on/off colours are the component's CSS: shadcn/ui colours the toggle itself (`data-[state=on]:bg-muted`) and fades it with `transition-all`. v1's styled toggle faded a separate highlight in and out instead (0.3s).
 - Toggling with Space changes the state at once.

@@ -2,14 +2,14 @@
 
 import { Button } from '@animate-ui/react/primitives/buttons/button';
 import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
-import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 
+import { IconSwap } from './icon-swap';
+
 /**
- * Animate UI's copy button, as in v1: the press scales the button, the icon
- * swaps with a blur. `getText` reads what to copy at click time.
+ * Animate UI's copy button: the press scales the button down, the icon swaps
+ * with a blur. `getText` reads what to copy at click time.
  */
 export function CopyButton({
   getText,
@@ -30,8 +30,6 @@ export function CopyButton({
       type="button"
       data-slot="copy-button"
       aria-label={copied ? 'Copied' : 'Copy code'}
-      hoverScale={1.05}
-      tapScale={0.92}
       onClick={() => {
         const text = getText();
         if (text === undefined) return;
@@ -46,23 +44,12 @@ export function CopyButton({
         className,
       )}
     >
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={copied ? 'check' : 'copy'}
-          data-slot="copy-button-icon"
-          className="flex"
-          initial={{ scale: 0.5, opacity: 0, filter: 'blur(4px)' }}
-          animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
-          exit={{ scale: 0.5, opacity: 0, filter: 'blur(4px)' }}
-          transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-        >
-          <HugeiconsIcon
-            icon={copied ? Tick02Icon : Copy01Icon}
-            strokeWidth={2}
-            size={14}
-          />
-        </motion.span>
-      </AnimatePresence>
+      <IconSwap
+        active={copied}
+        icon={Copy01Icon}
+        activeIcon={Tick02Icon}
+        size={14}
+      />
     </Button>
   );
 }

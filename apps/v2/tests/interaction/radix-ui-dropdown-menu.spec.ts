@@ -22,7 +22,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     // align="start" below the trigger: it grows from its top-left corner.
     expect(first.origin.startsWith('0px 0px')).toBe(true);
 
@@ -44,7 +44,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
       .toBeLessThan(1);
     const leaving = await sample(page, CONTENT);
     expect(leaving.scale).toBeLessThan(1);
-    expect(leaving.scale).toBeGreaterThanOrEqual(0.95);
+    expect(leaving.scale).toBeGreaterThanOrEqual(0.899);
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
   });
 
@@ -93,7 +93,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     // Opens on the right: anchored on its left edge.
     expect(first.origin.startsWith('0px')).toBe(true);
     await page.waitForTimeout(400);

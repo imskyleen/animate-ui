@@ -13,9 +13,8 @@ import {
   type AnchoredAnimationProps,
 } from '../popover/base-anchored';
 
-// Same API as Base UI's PreviewCard. The Popup grows from half its size and
-// fades in from the trigger on a spring, and shrinks back the same way
-// (Animate UI v1's PreviewCard). Base UI ignores touch pointers, so hover
+// Same API as Base UI's PreviewCard. The Popup grows from 0.8 and fades in
+// from the trigger on a spring, and shrinks back the same way. Base UI ignores touch pointers, so hover
 // never sticks on touch screens.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(

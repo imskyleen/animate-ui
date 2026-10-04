@@ -56,14 +56,13 @@ test.describe('animate-ui button', () => {
     await expect(button).toBeFocused();
   });
 
-  test('grows on hover, shrinks while pressed', async ({ page }) => {
+  test('stays put on hover, shrinks while pressed', async ({ page }) => {
     await open(page);
     const button = page.getByRole('button', { name: 'Button', exact: true });
     expect((await sample(page, SELECTOR)).scale).toBe(1);
     await button.hover();
-    await expect
-      .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(1.05, 3);
+    await page.waitForTimeout(300);
+    expect((await sample(page, SELECTOR)).scale).toBe(1);
     await page.mouse.down();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
@@ -71,24 +70,20 @@ test.describe('animate-ui button', () => {
     await page.mouse.up();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(1.05, 3);
-    await page.mouse.move(0, 0);
-    await expect
-      .poll(async () => (await sample(page, SELECTOR)).scale)
       .toBeCloseTo(1, 3);
   });
 
-  test('the press springs past its scale before settling', async ({ page }) => {
+  test('the press springs to its scale quickly', async ({ page }) => {
     await open(page);
     await page.getByRole('button', { name: 'Button', exact: true }).hover();
-    await expect
-      .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(1.05, 3);
     const frames = recordScales(page, SELECTOR, 600);
     await page.mouse.down();
     const scales = await frames;
-    // Motion's spring for scale (stiffness 550, damping 30) overshoots 0.95.
-    expect(Math.min(...scales)).toBeLessThan(0.948);
+    // Motion's spring for scale (stiffness 550, damping 30): on its way, then
+    // at 0.95. Its rest thresholds (restSpeed 10) snap it once within 0.005,
+    // so a 0.05 press doesn't visibly overshoot.
+    expect(scales.some((s) => s < 0.995 && s > 0.951)).toBe(true);
+    expect(Math.min(...scales)).toBeGreaterThan(0.94);
     expect(scales.at(-1)).toBeCloseTo(0.95, 3);
     await page.mouse.up();
   });

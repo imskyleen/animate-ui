@@ -19,7 +19,7 @@ test.describe('react-aria select demo', () => {
     await page.locator('[data-slot="select-trigger"]').click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
 
     await page.waitForTimeout(650);

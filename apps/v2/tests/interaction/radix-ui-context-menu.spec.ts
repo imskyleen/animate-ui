@@ -20,7 +20,7 @@ test.describe('radix-ui context-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     // Opens to the bottom right of the pointer: anchored on its top-left.
     expect(first.origin.startsWith('0px 0px')).toBe(true);
 

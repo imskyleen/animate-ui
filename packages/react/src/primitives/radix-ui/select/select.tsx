@@ -15,7 +15,11 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { MENU_TRANSITION, mergeRefs } from '../../../internal/anchored';
+import {
+  HIDDEN_SCALE,
+  MENU_TRANSITION,
+  mergeRefs,
+} from '../../../internal/anchored';
 import {
   HighlightScope,
   useItemHighlight,
@@ -23,7 +27,7 @@ import {
 } from '../../../internal/item-highlight';
 
 // Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
-// moves like v1's DropdownMenu content (a 200ms fade and scale from 0.95, both
+// moves like the menus (a 200ms fade and scale from 0.9, both
 // ways), a highlight glides behind the highlighted item, and the check glides
 // to the chosen item like v1's radio indicator. The Root mirrors `open` (Radix
 // keeps it private) so the Content can play an exit before Radix unmounts it.
@@ -63,7 +67,7 @@ type unstable_SelectBubbleInputProps =
 type ContentAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2 }`.
+   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -210,7 +214,7 @@ function ContentMotion({
   const popper = props.position === 'popper';
   // `scale` (like v1's menus): `transform: none` once settled.
   const hidden = popper
-    ? { opacity: 0, scale: reduce ? 1 : 0.95 }
+    ? { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu }
     : { opacity: 0 };
   const visible = popper ? { opacity: 1, scale: 1 } : { opacity: 1 };
 

@@ -9,9 +9,8 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import type { AnchoredAnimationProps } from '../../../internal/anchored';
 import { RadixAnchoredContent, useRadixOpenState } from './radix-anchored';
 
-// Same API as Radix's Popover. The Content grows from half its size and fades
-// in from the trigger on a spring, and shrinks back the same way (Animate UI
-// v1's Popover).
+// Same API as Radix's Popover. The Content grows from 0.8 and fades in from
+// the trigger on a spring, and shrinks back the same way.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Popover.Root',

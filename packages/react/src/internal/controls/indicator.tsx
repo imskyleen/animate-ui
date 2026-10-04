@@ -12,7 +12,11 @@ import {
   type Transition,
 } from 'motion/react';
 
-import { useShouldReduceMotion, useTempoTransition } from '../../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../utils/motion';
 
 // Checkmarks and radio dots, as Animate UI v1's. The check draws itself: its
 // stroke (`pathLength`) and its opacity go from 0 to 1 in 0.2s, after 0.2s,
@@ -43,16 +47,12 @@ type IndicatorAnimationProps = {
   exitTransition?: Transition;
 };
 
-/** v1's `CheckboxIndicator`: the check draws in 0.2s, after 0.2s. */
-const CHECK_TRANSITION: Transition = { duration: 0.2, delay: 0.2 };
-/** v1's `CheckboxIndicator`: the check erases in 0.2s. */
-const CHECK_EXIT_TRANSITION: Transition = { duration: 0.2 };
-/** v1's `RadioGroupIndicator` / `RadioIndicator`, in and out. */
-const DOT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 16,
-};
+/** The check draws in 0.2s, after 0.2s (v1's timing), on a strong ease-out. */
+const CHECK_TRANSITION: Transition = motionTokens.transition.check;
+/** The check erases in 0.2s, on a strong ease-out. */
+const CHECK_EXIT_TRANSITION: Transition = motionTokens.transition.uncheck;
+/** v1's `RadioGroupIndicator` / `RadioIndicator`, in and out: bouncy. */
+const DOT_TRANSITION: Transition = motionTokens.spring.bounce;
 
 /** The v1 transitions of an indicator, with the part's overrides. */
 function useIndicatorTransitions(

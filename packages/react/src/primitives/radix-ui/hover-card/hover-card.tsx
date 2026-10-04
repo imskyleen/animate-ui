@@ -12,9 +12,8 @@ import {
   useRadixOpenState,
 } from '../popover/radix-anchored';
 
-// Same API as Radix's HoverCard. The Content grows from half its size and
-// fades in from the trigger on a spring, and shrinks back the same way
-// (Animate UI v1's HoverCard). Radix ignores touch pointers, so hover never
+// Same API as Radix's HoverCard. The Content grows from 0.8 and fades in
+// from the trigger on a spring, and shrinks back the same way. Radix ignores touch pointers, so hover never
 // sticks on touch screens.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(

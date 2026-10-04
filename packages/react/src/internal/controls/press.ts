@@ -2,29 +2,25 @@
 
 import type { Transition } from 'motion/react';
 
-import { useShouldReduceMotion, useTempoTransition } from '../../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../utils/motion';
 
-// Press and hover feedback of the choice controls and toggles, as Animate UI
-// v1's: the control scales to 0.95 while pressed (`whileTap`: Checkbox,
-// Radio, Toggle, Toggle Group item) and to 1.05 while hovered (`whileHover`:
-// Checkbox and Radio), on Motion's default spring for scale, which v1 used.
+// Press feedback of the choice controls and toggles (Checkbox, Radio, Toggle,
+// Toggle Group item), like the buttons': the control scales to 0.95 while
+// pressed (v1's `whileTap`), on Motion's default spring for scale, which v1
+// used. Nothing scales on hover: they answer the press, not the pointer
+// passing over them.
 
-/** Motion's default transition for `scale` (v1's `whileTap`/`whileHover`). */
-const PRESS_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 550,
-  damping: 30,
-  restSpeed: 10,
-};
+/** Motion's default transition for `scale` (v1's `whileTap`). */
+const PRESS_TRANSITION: Transition = motionTokens.spring.press;
 
 /** v1's `whileTap={{ scale: 0.95 }}`. */
-const PRESSED_SCALE = 0.95;
-/** v1's `whileHover={{ scale: 1.05 }}`. */
-const HOVERED_SCALE = 1.05;
+const PRESSED_SCALE = motionTokens.scale.press;
 
 type PressOptions = {
-  /** Also scale up while hovered (v1's Checkbox and Radio). */
-  hover?: boolean;
   disabled?: boolean;
   transition?: Transition;
 };
@@ -33,7 +29,7 @@ type PressOptions = {
  * Motion props for a control's root rendered as a motion element (Radix
  * `asChild`, Base UI `render`). None under reduced motion.
  */
-function usePressMotion({ hover, disabled, transition }: PressOptions = {}) {
+function usePressMotion({ disabled, transition }: PressOptions = {}) {
   const reduce = useShouldReduceMotion();
   const spring = useTempoTransition(transition ?? PRESS_TRANSITION);
   if (reduce || disabled) return {};
@@ -44,27 +40,22 @@ function usePressMotion({ hover, disabled, transition }: PressOptions = {}) {
   return {
     initial: { transform: 'scale(1)' },
     whileTap: { transform: `scale(${PRESSED_SCALE})` },
-    ...(hover ? { whileHover: { transform: `scale(${HOVERED_SCALE})` } } : {}),
     transition: spring,
   };
 }
 
 /**
- * Motion props driven by React Aria's `isPressed` and `isHovered` render
- * props (`isPressed` also covers Space and Enter, and cancelled touches).
+ * Motion props driven by React Aria's `isPressed` render prop (it also covers
+ * Space and Enter, and cancelled touches).
  */
 function usePressedMotion(
-  { isPressed, isHovered }: { isPressed: boolean; isHovered?: boolean },
-  { hover, disabled, transition }: PressOptions = {},
+  { isPressed }: { isPressed: boolean },
+  { disabled, transition }: PressOptions = {},
 ) {
   const reduce = useShouldReduceMotion();
   const spring = useTempoTransition(transition ?? PRESS_TRANSITION);
   if (reduce || disabled) return {};
-  const scale = isPressed
-    ? PRESSED_SCALE
-    : hover && isHovered
-      ? HOVERED_SCALE
-      : 1;
+  const scale = isPressed ? PRESSED_SCALE : 1;
   return {
     initial: false as const,
     animate: { transform: `scale(${scale})` },
@@ -72,10 +63,4 @@ function usePressedMotion(
   };
 }
 
-export {
-  PRESS_TRANSITION,
-  PRESSED_SCALE,
-  HOVERED_SCALE,
-  usePressMotion,
-  usePressedMotion,
-};
+export { PRESS_TRANSITION, PRESSED_SCALE, usePressMotion, usePressedMotion };

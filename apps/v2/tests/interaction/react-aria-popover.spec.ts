@@ -63,8 +63,8 @@ test.describe('react-aria popover API', () => {
     const trigger = page.getByRole('button', { name: /Fruit/ });
     await trigger.click();
     const first = await probe.firstFrame();
-    // Like v1's DropdownMenu content: from 0.95, not a popover's half size.
-    expect(first.scale).toBeGreaterThanOrEqual(0.94);
+    // Like the menus: from 0.9, not a popover's 0.8.
+    expect(first.scale).toBeGreaterThanOrEqual(0.89);
     expect(first.scale).toBeLessThan(1);
     expect(first.opacity).toBeLessThan(1);
     await page.getByRole('option', { name: 'Banana' }).click();
@@ -85,7 +85,7 @@ test.describe('react-aria popover API', () => {
     );
     await page.getByRole('combobox', { name: 'Fruit search' }).fill('Ch');
     const first = await probe.firstFrame();
-    expect(first.scale).toBeGreaterThanOrEqual(0.94);
+    expect(first.scale).toBeGreaterThanOrEqual(0.89);
     expect(first.scale).toBeLessThan(1);
     await expect(page.getByRole('option', { name: 'Cherry' })).toBeVisible();
     await page.keyboard.press('Escape');
@@ -94,11 +94,11 @@ test.describe('react-aria popover API', () => {
     });
   });
 
-  test('menus and submenus fade and scale from 0.95', async ({ page }) => {
+  test('menus and submenus fade and scale from 0.9', async ({ page }) => {
     const menu = await probeFirstFrame(page, '[data-testid="menu-popover"]');
     await page.getByRole('button', { name: 'Actions' }).click();
     const menuFirst = await menu.firstFrame();
-    expect(menuFirst.scale).toBeGreaterThanOrEqual(0.94);
+    expect(menuFirst.scale).toBeGreaterThanOrEqual(0.89);
     expect(menuFirst.scale).toBeLessThan(1);
     expect(await originIsAnchored(page, '[data-testid="menu-popover"]')).toBe(
       true,
@@ -112,7 +112,7 @@ test.describe('react-aria popover API', () => {
     await page.getByRole('menuitem', { name: 'Share' }).click();
     const subFirst = await submenu.firstFrame();
     // v1's sub content moves like its content.
-    expect(subFirst.scale).toBeGreaterThanOrEqual(0.94);
+    expect(subFirst.scale).toBeGreaterThanOrEqual(0.89);
     expect(subFirst.scale).toBeLessThan(1);
     expect(subFirst.opacity).toBeLessThan(1);
     await page.getByRole('menuitem', { name: 'Email' }).click();

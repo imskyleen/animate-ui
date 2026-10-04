@@ -69,23 +69,20 @@ test.describe('animate-ui liquid button', () => {
     await expect.poll(() => fillWidth(page)).toBe('-1%');
   });
 
-  test('grows on hover in a 0.3s tween, back down on a spring', async ({
-    page,
-  }) => {
+  test('fills on hover without growing, then eases back', async ({ page }) => {
     await open(page);
     let frames = record(page, 600);
     await button(page).hover();
     let values = await frames;
-    // The fill variables jump; the scale eases to 1.05 without overshoot.
-    expect(values.at(-1)).toEqual({ fill: '100%', scale: 1.05 });
-    expect(Math.max(...values.map((v) => v.scale))).toBeLessThanOrEqual(1.05);
-    expect(values.some((v) => v.scale > 1.005 && v.scale < 1.045)).toBeTruthy();
+    // The fill variables jump; the button doesn't scale on hover.
+    expect(values.at(-1)).toEqual({ fill: '100%', scale: 1 });
+    expect(values.every((v) => v.scale === 1)).toBeTruthy();
 
     frames = record(page, 700);
     await page.mouse.move(0, 0);
     values = await frames;
     // Leaving, the variables ease back over a few frames before the liquid
-    // drains (CSS), and the scale returns to 1.
+    // drains (CSS).
     expect(
       values.some((v) => v.fill !== '100%' && v.fill !== '-1%'),
     ).toBeTruthy();
@@ -102,7 +99,7 @@ test.describe('animate-ui liquid button', () => {
     await page.mouse.up();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(1.05, 3);
+      .toBeCloseTo(1, 3);
   });
 
   test('reduced motion: fills, without scaling', async ({ page }) => {

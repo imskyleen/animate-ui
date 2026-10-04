@@ -12,6 +12,7 @@ const CONTENT = '[data-slot="tooltip-content"]';
 describeAnchoredOverlay('radix-ui tooltip demo', {
   path: PATH,
   selector: CONTENT,
+  kind: 'tooltip',
   open: (page) => page.getByRole('button', { name: 'Bold' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
 });
@@ -41,7 +42,7 @@ test.describe('radix-ui tooltip API', () => {
       page,
       '/tests/fixtures/radix-ui-tooltip',
       '[data-testid="default-open-content"]',
-      'popover',
+      'tooltip',
     );
   });
 

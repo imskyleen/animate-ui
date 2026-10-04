@@ -13,7 +13,11 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { MENU_TRANSITION, mergeRefs } from '../../../internal/anchored';
+import {
+  HIDDEN_SCALE,
+  MENU_TRANSITION,
+  mergeRefs,
+} from '../../../internal/anchored';
 import {
   HighlightScope,
   useItemHighlight,
@@ -25,7 +29,7 @@ import {
 // v1's DropdownMenu). Each module passes its own Radix parts to these
 // factories.
 //
-// - Content and SubContent fade and scale from 0.95 in 200ms, both ways.
+// - Content and SubContent fade and scale from 0.9 in 200ms, both ways.
 // - One highlight glides behind the highlighted item (internal/item-highlight).
 // - A checkbox item's check pops in from half its size when it appears; a
 //   radio item's indicator glides to the newly checked item.
@@ -34,7 +38,7 @@ import {
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2 }`.
+   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -231,7 +235,7 @@ function ContentMotion({
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
   // a settled content never becomes the containing block of the submenus'
   // fixed positioning (shadcn/ui renders them inside the content).
-  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
 
   // Force-mounted content stays in the DOM while closed: once its exit has
   // played, hide it so it leaves the tab order and the accessibility tree.

@@ -4,7 +4,7 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   // The workspace package is consumed from its sources.
   transpilePackages: ['@animate-ui/react'],
   // v1 registry items (`shadcn add @animate-ui/<v1 item>`) that v2 doesn't

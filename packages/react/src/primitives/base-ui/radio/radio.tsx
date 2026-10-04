@@ -13,15 +13,15 @@ import {
 } from '../../../internal/controls/indicator';
 
 // Same API as Base UI's Radio, animated like Animate UI v1's radio: the Root
-// scales to 1.05 while hovered and 0.95 while pressed, and the Indicator's dot
+// scales to 0.95 while pressed (no hover scale), and the Indicator's dot
 // pops in (scale and opacity from 0, spring stiffness 200, damping 16) and out
 // the same way, staying mounted until it has left.
 
 /** Animate UI's additions to `Radio.Root`. */
 type RootAnimationProps = {
   /**
-   * Transition of the hover and press scale. Defaults to a spring (stiffness
-   * 550, damping 30).
+   * Transition of the press scale. Defaults to a spring (stiffness 550,
+   * damping 30).
    */
   transition?: Transition;
 };
@@ -50,7 +50,6 @@ function AnimatedRoot<Value = any>({
   ...props
 }: Root.Props<Value>) {
   const press = usePressMotion({
-    hover: true,
     disabled: props.disabled,
     transition,
   });

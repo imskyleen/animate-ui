@@ -5,6 +5,9 @@ import { useSpring, type MotionValue, type SpringOptions } from 'motion/react';
 
 import { useMotionTokens, useShouldReduceMotion } from '../../../utils/motion';
 
+/** The edge fades' duration (ms), paced by the provider's tempo. */
+const FADE_DURATION = 600;
+
 type ScrollFadeOrientation = 'vertical' | 'horizontal' | 'both';
 
 type ScrollFadeEdge = 'top' | 'bottom' | 'left' | 'right';
@@ -98,12 +101,12 @@ function useScrollFade(
     enabled = true,
   }: UseScrollFadeOptions = {},
 ): ScrollFadeValues {
-  const tokens = useMotionTokens();
+  const { tempo } = useMotionTokens();
   const reduce = useShouldReduceMotion();
   const transition: SpringOptions = transitionProp ?? {
     // useSpring takes its duration in milliseconds. No bounce: a fade has
     // nothing to overshoot.
-    duration: tokens.duration.change * 1000,
+    duration: FADE_DURATION * tempo,
     bounce: 0,
   };
 

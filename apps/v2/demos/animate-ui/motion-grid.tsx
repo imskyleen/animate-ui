@@ -140,11 +140,10 @@ export default function MotionGridDemo() {
 
   return (
     // The button resizes with its label (a layout animation) and responds to
-    // hover and press.
+    // the press.
     <motion.button
       type="button"
       layout
-      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       className="relative inline-flex h-11 items-center justify-center gap-x-3 rounded-lg bg-primary px-3 text-sm font-medium"
     >

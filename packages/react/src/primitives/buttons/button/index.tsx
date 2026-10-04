@@ -9,11 +9,20 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
-import { SCALE_SPRING } from '../_button';
+import { SCALE_SPRING, TAP_SCALE } from '../_button';
 
 type ButtonProps = WithAsChild<
   HTMLMotionProps<'button'> & {
+    /**
+     * Scale while hovered. Animate UI buttons answer the press, not the
+     * hover: no hover scale unless you set one.
+     * @default 1
+     */
     hoverScale?: number;
+    /**
+     * Scale while pressed.
+     * @default 0.95
+     */
     tapScale?: number;
   }
 >;
@@ -27,8 +36,8 @@ function Button(props: ButtonProps) {
 }
 
 function ButtonContent({
-  hoverScale = 1.05,
-  tapScale = 0.95,
+  hoverScale = 1,
+  tapScale = TAP_SCALE,
   asChild = false,
   transition,
   ...props
@@ -41,7 +50,9 @@ function ButtonContent({
     <Component
       data-slot="button"
       whileTap={{ scale: reduce ? 1 : tapScale }}
-      whileHover={{ scale: reduce ? 1 : hoverScale }}
+      whileHover={
+        reduce || hoverScale === 1 ? undefined : { scale: hoverScale }
+      }
       transition={transition ?? defaultTransition}
       {...props}
     />

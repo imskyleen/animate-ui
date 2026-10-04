@@ -30,7 +30,7 @@ export function Send() {
 ## Animation
 
 - Each click sends a ripple from the pointer: it grows to `scale` while fading out over 0.6s, then is removed. Rapid clicks each get their own ripple.
-- Hovering scales the button to `hoverScale`, pressing to `tapScale`, on Motion's spring for scale (`stiffness: 550, damping: 30`).
+- Pressing scales the button to `tapScale` (0.95), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
 - `<AnimateUIProvider tempo>` paces the default spring and ripple.
 - Under reduced motion, the ripple fades in place without growing, and the button doesn't scale.
 
@@ -41,9 +41,10 @@ export function Send() {
 <TypeTable
   type={{
     hoverScale: {
-      description: 'Scale of the button on hover.',
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
       type: 'number',
-      default: '1.05',
+      default: '1',
     },
     tapScale: {
       description: 'Scale of the button while pressed.',
@@ -51,7 +52,7 @@ export function Send() {
       default: '0.95',
     },
     transition: {
-      description: 'Transition of the hover and tap scales.',
+      description: 'Transition of the tap (and hover) scale.',
       type: 'Transition',
       default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
     },

@@ -12,7 +12,7 @@ import {
 } from '../../../internal/controls/indicator';
 
 // Same API as Radix's Checkbox, animated like Animate UI v1's checkbox: the
-// Root scales to 1.05 while hovered and 0.95 while pressed, and the check
+// Root scales to 0.95 while pressed (no hover scale), and the check
 // draws itself (its stroke and opacity, 0.2s after 0.2s) and erases in 0.2s.
 // The Indicator stays mounted while its check erases, then unmounts like
 // Radix's.
@@ -20,8 +20,8 @@ import {
 /** Animate UI's additions to `Checkbox.Root`. */
 type RootAnimationProps = {
   /**
-   * Transition of the hover and press scale. Defaults to a spring (stiffness
-   * 550, damping 30).
+   * Transition of the press scale. Defaults to a spring (stiffness 550,
+   * damping 30).
    */
   transition?: Transition;
 };
@@ -49,7 +49,6 @@ function AnimatedRoot({
   ...props
 }: React.ComponentProps<typeof CheckboxPrimitive.Root> & RootAnimationProps) {
   const press = usePressMotion({
-    hover: true,
     disabled: props.disabled,
     transition,
   });

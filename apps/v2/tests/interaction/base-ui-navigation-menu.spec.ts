@@ -26,7 +26,7 @@ test.describe('base-ui navigation-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     await page.waitForTimeout(400);
     const settled = await sample(page, POPUP);
     expect(settled.opacity).toBe(1);

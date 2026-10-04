@@ -4,6 +4,7 @@ import * as React from 'react';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useMotionTokens,
   useShouldReduceMotion,
@@ -11,11 +12,7 @@ import {
 } from '../../../utils/motion';
 
 /** v1's Highlight spring. */
-const HIGHLIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 350,
-  damping: 35,
-};
+const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.highlight;
 
 const INSTANT: Transition = { duration: 0 };
 

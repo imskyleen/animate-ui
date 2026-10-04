@@ -10,15 +10,15 @@ import {
 import { animate, type Transition } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
 
 // Same API as React Aria's TagList and Tag (shadcn/ui's combobox chips). Animate
-// UI v1 had no tag group: a tag added to the list pops in like v1's small
-// overlays (Popover, Tooltip, HoverCard): opacity from 0 and scale from 0.5,
-// on a spring (stiffness 300, damping 25). Tags already there when the list
+// UI v1 had no tag group: a tag added to the list pops in, opacity from 0
+// and scale from 0.5, on the popovers' spring (stiffness 300, damping 25). Tags already there when the list
 // mounts don't. Removing a tag is instant: React Aria drops it from the
 // collection at once (and it's often Backspace), while its neighbours reflow.
 //
@@ -60,12 +60,8 @@ function TagList<T extends object>(
   );
 }
 
-/** v1's Popover / Tooltip / HoverCard entrance. */
-const TAG_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-};
+/** The popovers' spring. */
+const TAG_TRANSITION: Transition = motionTokens.spring.pop;
 
 /** React Aria's props, plus Animate UI's `transition`. */
 type TagProps = TagPrimitiveProps & {

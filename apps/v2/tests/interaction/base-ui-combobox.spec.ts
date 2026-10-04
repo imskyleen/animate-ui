@@ -19,7 +19,7 @@ test.describe('base-ui combobox demo', () => {
     await page.keyboard.press('ArrowDown');
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
     // Below the input: it grows from its top edge (minus the side offset).
     expect(parseFloat(first.origin.split(' ')[1]!)).toBeLessThanOrEqual(0);

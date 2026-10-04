@@ -38,7 +38,10 @@ type AccordionContentProps = AccordionPrimitive.AccordionContentProps &
 
 /** Animate UI's additions to `Accordion.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the opening. Defaults to 350ms ease-in-out. */
+  /**
+   * Transition of the opening.
+   * @default { duration: 0.35, ease: [0.23, 1, 0.32, 1] }
+   */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
@@ -90,7 +93,7 @@ function Content({
 }: React.ComponentProps<typeof AccordionPrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useItemOpen();
-  // v1's content: 350ms ease-in-out both ways; under reduced motion the
+  // The content: 350ms ease-out both ways; under reduced motion the
   // height and the rise jump (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
 

@@ -45,7 +45,7 @@ export function FontPicker() {
 
 React Aria's Select has no Animate UI v1 counterpart: its list opens in Animate UI's [Popover](/docs/primitives/react-aria/popover), which moves like v1's Dropdown Menu content under a select.
 
-- **Popover**: the list fades and scales in from 0.95, from the trigger (`--trigger-anchor-point`), in 200ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
+- **Popover**: the list fades and scales in from 0.9, from the trigger (`--trigger-anchor-point`), in 200ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
 - **ListBox** and **ListBoxItem** are React Aria's, untouched: their highlight is your CSS, and shadcn/ui renders the selected check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
 - Opening from the keyboard animates the same way.
 - Open from the start (`defaultOpen`), the list plays its entrance on page load.
@@ -65,7 +65,7 @@ React Aria's Select has no Animate UI v1 counterpart: its list opens in Animate 
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: '{ duration: 0.2 }',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

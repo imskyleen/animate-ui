@@ -12,11 +12,12 @@ import {
 } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { MENU_TRANSITION } from '../../../internal/anchored';
+import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
 import { HIGHLIGHT_TRANSITION } from '../../../internal/item-highlight';
 
 // Same API as Radix's Navigation Menu. The Root (and each Sub) mirrors the
@@ -24,10 +25,10 @@ import { HIGHLIGHT_TRANSITION } from '../../../internal/item-highlight';
 // Indicator can play an exit before they unmount.
 //
 // It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu.
-// - The Viewport fades and scales from 0.95 in 200ms, both ways, like v1's
-//   menu content, and its size follows the active content in 200ms too.
-// - Content swapped inside the Viewport fades in, in 200ms; the previous one
-//   leaves at once. Without a Viewport, each Content fades and scales on its
+// - The Viewport fades and scales from 0.9 in 200ms, both ways, like the
+//   menus, and its size follows the active content in 200ms too.
+// - Content swapped inside the Viewport fades in from a 4px blur, in 200ms;
+//   the previous one leaves at once. Without a Viewport, each Content fades and scales on its
 //   own, like a menu.
 // - The Indicator follows the active trigger like v1's menu highlight: a
 //   spring (stiffness 350, damping 35), fading in on it and out 200ms later.
@@ -36,8 +37,8 @@ import { HIGHLIGHT_TRANSITION } from '../../../internal/item-highlight';
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2 }` (the Indicator: v1's highlight
-   * spring).
+   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }` (the
+   * Indicator: v1's highlight spring).
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -241,8 +242,18 @@ function ViewportContentMotionInner({
   return (
     <motion.div
       {...(props as React.ComponentProps<typeof motion.div>)}
-      initial={swapped ? { opacity: 0 } : false}
-      animate={{ opacity: 1, transition: fade }}
+      // From a light blur, like a tab panel: the swap reads as one surface
+      // changing. The blur is dropped at rest (a `filter` would make it the
+      // containing block of fixed descendants).
+      initial={
+        swapped ? { opacity: 0, filter: motionTokens.blur.surface } : false
+      }
+      animate={{
+        opacity: 1,
+        filter: 'blur(0px)',
+        transition: fade,
+        transitionEnd: { filter: 'none' },
+      }}
     />
   );
 }
@@ -263,7 +274,7 @@ function InlineContentMotion({
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
-  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
 
@@ -347,7 +358,7 @@ function ViewportMotion({
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
-  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
 

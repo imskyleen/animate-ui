@@ -10,7 +10,11 @@ import {
   type Transition,
 } from 'motion/react';
 
-import { useShouldReduceMotion, useTempoTransition } from '../../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../utils/motion';
 
 // Switch thumbs, as Animate UI v1's `SwitchThumb`. While the switch is
 // pressed, the thumb stretches toward the middle of the track (v1:
@@ -36,11 +40,7 @@ type ThumbAnimationProps = {
 };
 
 /** v1's `SwitchThumb` transition. */
-const THUMB_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-};
+const THUMB_TRANSITION: Transition = motionTokens.spring.thumb;
 
 /** v1's styled switch stretched its 16px thumb to 19px (`pressedWidth`). */
 const PRESSED_STRETCH = 19 / 16;

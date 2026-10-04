@@ -6,7 +6,7 @@ import { expectCssSpring } from './spring-curves';
 // Animate UI v1 had no toast: it moves like v1's Sheet (from its edge by its
 // own size, fading, on the dialog's spring, stiffness 150 and damping 25,
 // which the CSS transitions run as Motion's `linear()` curve for it), and its
-// content fades behind the front toast with v1's 200ms easeInOut.
+// content fades behind the front toast in 200ms, ease-out.
 
 const TOAST = '[data-slot="toast"]';
 
@@ -108,10 +108,10 @@ test.describe('base-ui toast demo', () => {
         { timeout: 5000 },
       )
       .toBe(true);
-    // The content behind fades back in with v1's 200ms fade.
+    // The content behind fades back in with the overlay's 200ms ease-out.
     const content = await timing(page, '[data-slot="toast-content"]');
     expect(content.duration).toBe('0.2s');
-    expect(content.easing).toBe('cubic-bezier(0.42, 0, 0.58, 1)');
+    expect(content.easing).toBe('cubic-bezier(0.23, 1, 0.32, 1)');
   });
 
   test('leaves through its edge on the same spring', async ({ page }) => {

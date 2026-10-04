@@ -38,7 +38,7 @@ import {
 //   dismissal's exit is scaled by the release velocity, and nothing
 //   transitions while the finger (or a nested drawer) drags it.
 // - Backdrop: v1's overlay. It fades and un-blurs (opacity 0 → 1, blur(4px)
-//   → blur(0px)) in 200ms, easeInOut, both ways, and follows the swipe.
+//   → blur(0px)) in 200ms, ease-out, both ways, and follows the swipe.
 // - Reduced motion: it fades in place; a swipe dismissal still leaves along
 //   the swipe.
 //
@@ -119,7 +119,7 @@ type PopupAnimationProps = {
 type BackdropAnimationProps = {
   /**
    * Fade (and blur) in. CSS-driven, like the Popup's.
-   * @default { duration: 0.2, ease: 'easeInOut' }
+   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: Transition;
   /** Fade (and blur) out. Defaults to `transition`. */

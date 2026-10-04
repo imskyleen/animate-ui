@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { useTempoTransition } from '../../utils/motion';
+import { motionTokens, useTempoTransition } from '../../utils/motion';
 import {
   TooltipProvider,
   Tooltip,
@@ -27,11 +27,7 @@ const DEFAULT_TRANSITION: Transition = {
   damping: 17,
 };
 /** Animate UI's Tooltip spring (the library tooltips' and popovers'). */
-const DEFAULT_TOOLTIP_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-};
+const DEFAULT_TOOLTIP_TRANSITION: Transition = motionTokens.spring.pop;
 
 type AvatarProps = Omit<HTMLMotionProps<'div'>, 'translate'> & {
   children: React.ReactNode;

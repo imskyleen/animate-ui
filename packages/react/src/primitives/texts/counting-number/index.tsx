@@ -14,13 +14,17 @@ import {
   type UseIsInViewOptions,
 } from '../../../utils/use-is-in-view';
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN } from '../_text';
 
-const DEFAULT_TRANSITION: SpringOptions = { stiffness: 90, damping: 50 };
+const DEFAULT_TRANSITION: SpringOptions = {
+  stiffness: motionTokens.spring.number.stiffness,
+  damping: motionTokens.spring.number.damping,
+};
 
 /**
  * A `transition` without a `type` or an `ease` is a set of spring options

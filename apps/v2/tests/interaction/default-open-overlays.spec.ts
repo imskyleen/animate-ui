@@ -10,7 +10,7 @@ const OVERLAY = '[data-testid="overlay"]';
 
 const CASES: [name: string, kind: EntranceKind][] = [
   ['radix-popover', 'popover'],
-  ['radix-tooltip', 'popover'],
+  ['radix-tooltip', 'tooltip'],
   ['radix-hover-card', 'popover'],
   ['radix-dropdown-menu', 'menu'],
   ['radix-menubar', 'menu'],
@@ -18,7 +18,7 @@ const CASES: [name: string, kind: EntranceKind][] = [
   ['radix-select-aligned', 'fade'],
   ['radix-navigation-menu', 'menu'],
   ['base-popover', 'popover'],
-  ['base-tooltip', 'popover'],
+  ['base-tooltip', 'tooltip'],
   ['base-preview-card', 'popover'],
   ['base-menu', 'menu'],
   ['base-menubar', 'menu'],
@@ -28,7 +28,7 @@ const CASES: [name: string, kind: EntranceKind][] = [
   ['base-combobox', 'menu'],
   ['base-navigation-menu', 'menu'],
   ['aria-popover', 'popover'],
-  ['aria-tooltip', 'popover'],
+  ['aria-tooltip', 'tooltip'],
   ['aria-hover-card', 'popover'],
   ['aria-menu', 'menu'],
   ['aria-select', 'menu'],

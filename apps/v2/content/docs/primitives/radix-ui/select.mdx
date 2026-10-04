@@ -47,7 +47,7 @@ Coming from the `@radix-ui/react-select` package? Use the subpath: `import * as 
 
 Radix's Select has no Animate UI v1 counterpart: it moves like v1's Dropdown Menu.
 
-- **Content** with `position="popper"` fades and scales in from 0.95, from the trigger (`--radix-select-content-transform-origin`), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way before it unmounts.
+- **Content** with `position="popper"` fades and scales in from 0.9, from the trigger (`--radix-select-content-transform-origin`), in 200ms (`{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`, a strong ease-out), and closes the same way before it unmounts.
 - With `position="item-aligned"` (Radix's default), the list is laid over the trigger with the selected item lined up on the value, so it only fades: there is no side to grow from, and a scale would skew Radix's measurement.
 - **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, like v1's menu highlight. The new copy fades in as it moves; the previous one goes along and fades out 200ms later. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
 - **ItemIndicator**: choosing another item moves the check there while the list closes, like v1's radio indicator.
@@ -79,7 +79,7 @@ Every part takes exactly the props of [Radix UI's Select](https://www.radix-ui.c
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: '{ duration: 0.2 }',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

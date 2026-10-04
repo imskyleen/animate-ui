@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react';
 
+import { CopySwap, ThemeSwap } from './swaps';
+
 // Local review page: every motion "family" of Animate UI, its rule and
 // values, with the live demos side by side. Not linked from the docs.
 
@@ -13,15 +15,19 @@ type Family = {
   /** The values, as written in the primitives. */
   values: string[];
   demos: DemoRef[];
+  /** Also shows the docs' own icon swaps (copy button, theme toggle). */
+  live?: boolean;
 };
 
 const GLOBAL_RULES = [
-  "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes.",
+  "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes. Toutes les valeurs par rôle sont des tokens de @animate-ui/react/utils/motion (spring, transition, scale, blur, ease).",
+  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (overlays, menus, disclosures, panneaux d’onglets, coches) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
-  'Pression 0,95 et survol 1,05 sur un ressort 550/30 (le ressort de scale par défaut de Motion) pour tout ce qui se presse.',
-  'Les cartes ancrées (popover, tooltip, hover card) partent de 0,5 depuis leur déclencheur ; les menus, plus fréquents, partent de 0,95 en 0,2s.',
+  'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, checkbox, radio, toggles, Pinned List).',
+  'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,2s ease-out.',
+  'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets, contenu d’un navigation menu), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau.',
   'Un indicateur de sélection glisse sur 200/25 ; un surlignage qui suit le pointeur glisse sur 350/35, plus vif.',
-  'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) s’ouvre en 0,35s ease-in-out, avec montée de 20px et masque.',
+  'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) s’ouvre en 0,35s ease-out, avec montée de 20px et masque.',
   'Ce que la v1 n’animait pas reste instantané (couleur du fond d’un switch).',
   'Le clavier anime exactement comme le pointeur. Un élément ouvert par défaut s’anime au montage.',
   'Mouvement réduit : plus de transform ni de glissement, les fondus restent.',
@@ -31,24 +37,21 @@ const GLOBAL_RULES = [
 const FAMILIES: Family[] = [
   {
     id: 'press',
-    name: 'Pression / survol',
-    rule: 'Tout ce qui se presse réagit sous le doigt. Les contrôles de choix grandissent aussi au survol.',
+    name: 'Pression',
+    rule: 'Tout ce qui se presse réagit sous le doigt, et seulement là : rien ne grossit au survol.',
     values: [
-      'scale 0,95 à la pression, 1,05 au survol (checkbox, radio, boutons)',
+      'scale 0,95 à la pression (boutons, checkbox, radio, toggles, Pinned List)',
       'ressort 550/30',
+      'boutons : hoverScale reste disponible, 1 par défaut',
     ],
     demos: [
       { demo: 'animate-ui/button', label: 'Button' },
       {
         demo: 'radix-ui/checkbox',
         label: 'Checkbox',
-        note: 'coche tracée en 0,2s après 0,2s',
+        note: 'coche tracée en 0,2s après 0,2s, ease-out',
       },
-      {
-        demo: 'radix-ui/toggle',
-        label: 'Toggle',
-        note: 'pression seule, pas de survol',
-      },
+      { demo: 'radix-ui/toggle', label: 'Toggle' },
       {
         demo: 'animate-ui/ripple-button',
         label: 'Ripple Button',
@@ -77,12 +80,13 @@ const FAMILIES: Family[] = [
   },
   {
     id: 'pop',
-    name: 'Pop (cartes ancrées)',
-    rule: 'Une carte ancrée apparaît depuis son déclencheur, avec un léger dépassement.',
+    name: 'Éléments ancrés',
+    rule: 'Un élément ancré grandit depuis son déclencheur, avec un léger dépassement ; plus il est petit, plus il part de loin.',
     values: [
-      'scale 0,5 → 1 + fondu, origine = le déclencheur',
-      'ressort 300/25, à l’aller comme au retour',
-      'Tooltip Animate UI : scale 0 → 1, montée de 15px, même ressort',
+      'tooltips : scale 0,7 → 1 + fondu',
+      'popovers, hover cards : scale 0,8 → 1 + fondu',
+      'ressort 300/25, à l’aller comme au retour, origine = le déclencheur',
+      'Tooltip Animate UI : comme ceux des libs (0,7 depuis le déclencheur), et glisse d’un déclencheur à l’autre',
     ],
     demos: [
       { demo: 'radix-ui/popover', label: 'Popover' },
@@ -101,7 +105,7 @@ const FAMILIES: Family[] = [
     name: 'Menus',
     rule: 'Les menus, fréquents, apparaissent vite et sobrement ; un surlignage glisse derrière l’élément survolé.',
     values: [
-      'contenu : scale 0,95 → 1 + fondu en 0,2s (tween)',
+      'contenu : scale 0,9 → 1 + fondu en 0,2s, ease-out fort',
       'surlignage : ressort 350/35, l’ancienne copie s’efface après 200ms',
       'coches : pop ; indicateur radio : glisse en 0,45s',
     ],
@@ -124,7 +128,7 @@ const FAMILIES: Family[] = [
     rule: 'Ce qui marque la sélection glisse d’un élément à l’autre et l’ancien s’efface.',
     values: [
       'glissement : ressort 200/25',
-      'onglets : couleur du texte 0,5s ease-in-out, panneau depuis un flou de 4px en 0,5s',
+      'onglets : couleur du texte 0,5s ease, panneau depuis un flou de 4px en 0,5s ease-out',
     ],
     demos: [
       { demo: 'radix-ui/tabs', label: 'Tabs (Radix)' },
@@ -132,6 +136,21 @@ const FAMILIES: Family[] = [
       { demo: 'animate-ui/tabs', label: 'Tabs (Animate UI)' },
       { demo: 'radix-ui/toggle-group', label: 'Toggle Group' },
     ],
+  },
+  {
+    id: 'swap',
+    name: 'Changement d’état (flou)',
+    rule: 'Quand deux états se remplacent au même endroit, un léger flou fait lire leur chevauchement comme une seule forme qui change.',
+    values: [
+      'icônes : scale 0,5 + flou 2px + fondu, 0,2s ease-out (copier → coché, soleil → lune)',
+      'panneaux d’onglets, contenu des navigation menus : depuis un flou de 4px',
+      'Morphing Text : flou 10px',
+    ],
+    demos: [
+      { demo: 'animate-ui/tabs', label: 'Tabs (Animate UI)' },
+      { demo: 'animate-ui/morphing-text', label: 'Morphing Text' },
+    ],
+    live: true,
   },
   {
     id: 'hover-highlight',
@@ -155,7 +174,7 @@ const FAMILIES: Family[] = [
     rule: 'Un panneau se déplie de haut en bas ; ouvert par défaut, il se déplie au chargement.',
     values: [
       'hauteur 0 → auto + fondu + montée de 20px + masque (sauf collapsible Radix)',
-      '0,35s ease-in-out, dans les deux sens',
+      '0,35s ease-out fort, dans les deux sens',
       'chevron : rotation de 180° en 0,2s',
     ],
     demos: [
@@ -170,7 +189,7 @@ const FAMILIES: Family[] = [
     rule: 'Une modale se redresse vers l’écran ; le fond s’assombrit et se floute.',
     values: [
       'contenu : perspective rotateX(-20°) scale 0,8 flou 4px → droit, ressort 150/25',
-      'fond : fondu + flou 4px en 0,2s ease-in-out',
+      'fond : fondu + flou 4px en 0,2s ease-out',
     ],
     demos: [
       { demo: 'radix-ui/dialog', label: 'Dialog' },
@@ -184,7 +203,7 @@ const FAMILIES: Family[] = [
     rule: 'Ce qui arrive par un bord glisse de sa propre taille en apparaissant, un peu plus vif qu’une modale (il parcourt plus de distance).',
     values: [
       'glissement + fondu, ressort 150/22 (≈ 550ms)',
-      'toast ancré : pop 0,5 → 1, ressort 300/25',
+      'toast ancré : comme un tooltip, depuis 0,7, ressort 300/25',
     ],
     demos: [
       { demo: 'radix-ui/dialog-sheet', label: 'Sheet' },
@@ -265,7 +284,7 @@ const FAMILIES: Family[] = [
     values: [
       'Magnetic 100/10 masse 0,5 · Tilt 300/25 masse 0,5 · Flip 280/20',
       'Pinned List 320/25 masse 0,8 · Cursor 500/50 · Image Zoom 200/28',
-      'Liquid Button : 0,3s ease-out au survol',
+      'Liquid Button : se remplit au survol, sans grossir',
     ],
     demos: [
       { demo: 'animate-ui/magnetic', label: 'Magnetic' },
@@ -370,6 +389,20 @@ export default async function MotionReviewPage() {
                 </figcaption>
               </figure>
             ))}
+            {family.live && (
+              <figure className="flex flex-col gap-1 rounded-xl bg-accent p-1">
+                <div className="relative flex min-h-64 items-center justify-center gap-4 overflow-hidden rounded-lg bg-background p-6">
+                  <CopySwap />
+                  <ThemeSwap />
+                </div>
+                <figcaption className="flex flex-col px-2 py-1 text-xs">
+                  <span className="font-medium">Copier, thème</span>
+                  <span className="text-muted-foreground">
+                    boutons de la doc (blocs de code, Copy page, header)
+                  </span>
+                </figcaption>
+              </figure>
+            )}
           </div>
         </section>
       ))}

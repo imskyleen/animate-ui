@@ -156,7 +156,8 @@ type DemoOptions = {
 /**
  * The interaction tests every disclosure demo passes: Animate UI v1's panel,
  * whose height grows from 0 while the content fades in and rises 20px (and,
- * with `mask`, is revealed top to bottom), over 350ms ease-in-out both ways.
+ * with `mask`, is revealed top to bottom), over 350ms on a strong ease-out
+ * both ways.
  */
 export function disclosureDemoTests(name: string, options: DemoOptions) {
   const { url, panel, closed, open, closedState, mask = true } = options;
@@ -192,8 +193,9 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       expect(moving.some((s) => s.o > 0 && s.o < 1)).toBe(true);
       expect(moving.some((s) => s.y > 1 && s.y < 20)).toBe(true);
       if (mask) expect(moving.some((s) => s.m > 0 && s.m < 100)).toBe(true);
-      // v1's 350ms (a frame or two of slack on a busy machine).
-      expect(entrance.duration).toBeGreaterThan(250);
+      // 350ms on a strong ease-out: the last half pixel lands well before the
+      // end (a frame or two of slack on a busy machine).
+      expect(entrance.duration).toBeGreaterThan(200);
       expect(entrance.duration).toBeLessThan(550);
       await expect(panelOf(page, closed.text)).toHaveCSS('opacity', '1');
       const settled = samples.at(-1)!;
@@ -215,8 +217,8 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
 
       expect(exit.to).toBe(0);
       expect(exit.steps).toBeGreaterThan(2);
-      // As long as the opening (v1's single 350ms transition).
-      expect(exit.duration).toBeGreaterThan(250);
+      // As long as the opening (one 350ms transition, both ways).
+      expect(exit.duration).toBeGreaterThan(200);
       expect(exit.duration).toBeLessThan(550);
       expect(Math.abs(exit.duration - entrance.duration)).toBeLessThan(150);
       const moving = samples.filter((s) => s.h > 0.5 && s.o < 0.99);

@@ -7,6 +7,7 @@ import {
   type AnimationPlaybackControls,
   type Transition,
 } from 'motion/react';
+import { motionTokens } from '../utils/motion';
 
 // Shared by the Radix UI, Base UI and React Aria progress bars, which move
 // like Animate UI v1's: the indicator springs to a new value (stiffness 100,
@@ -16,11 +17,7 @@ import {
 // spring: the number moves with the bar it describes.
 
 /** v1's `ProgressIndicator` transition. */
-const PROGRESS_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 100,
-  damping: 30,
-};
+const PROGRESS_TRANSITION: Transition = motionTokens.spring.progress;
 
 /** The Base UI `ProgressValue` count: the bar's spring, so they move together. */
 const VALUE_TRANSITION: Transition = PROGRESS_TRANSITION;

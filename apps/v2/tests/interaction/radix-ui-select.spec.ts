@@ -20,7 +20,7 @@ test.describe('radix-ui select demo', () => {
     await page.getByRole('combobox', { name: 'Font' }).click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
     // Popper below the trigger: it grows from its top edge.
     expect(first.origin.split(' ')[1]).toBe('0px');

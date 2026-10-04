@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { AnimatePresence, motion, type Transition } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
-import { useTempoTransition } from '../utils/motion';
+import { motionTokens, useTempoTransition } from '../utils/motion';
 
 // Animate UI v1's menu highlight (DropdownMenuHighlight, MenuHighlight): one
 // surface glides behind the highlighted item, on a spring (stiffness 350,
@@ -28,11 +28,7 @@ import { useTempoTransition } from '../utils/motion';
 // gliding over another item never covers that item's text.
 
 /** v1's highlight spring: the move, and the fade in and out. */
-const HIGHLIGHT_TRANSITION = {
-  type: 'spring',
-  stiffness: 350,
-  damping: 35,
-} as const satisfies Transition;
+const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
 /** v1's highlight exit delay (seconds). */
 const EXIT_DELAY = 0.2;
 

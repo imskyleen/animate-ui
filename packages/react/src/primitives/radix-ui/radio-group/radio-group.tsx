@@ -12,15 +12,15 @@ import {
 } from '../../../internal/controls/indicator';
 
 // Same API as Radix's Radio Group, animated like Animate UI v1's radio group:
-// items scale to 1.05 while hovered and 0.95 while pressed, and the
+// items scale to 0.95 while pressed (no hover scale), and the
 // Indicator's dot pops in (scale and opacity from 0, spring stiffness 200,
 // damping 16) and out the same way, staying mounted until it has left.
 
 /** Animate UI's additions to `RadioGroup.Item`. */
 type ItemAnimationProps = {
   /**
-   * Transition of the hover and press scale. Defaults to a spring (stiffness
-   * 550, damping 30).
+   * Transition of the press scale. Defaults to a spring (stiffness 550,
+   * damping 30).
    */
   transition?: Transition;
 };
@@ -52,7 +52,6 @@ function AnimatedItem({
   ...props
 }: React.ComponentProps<typeof RadioGroupPrimitive.Item> & ItemAnimationProps) {
   const press = usePressMotion({
-    hover: true,
     disabled: props.disabled,
     transition,
   });

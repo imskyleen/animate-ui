@@ -27,7 +27,7 @@ type DialogCloseProps = DialogPrimitive.DialogCloseProps;
 type OverlayAnimationProps = {
   /**
    * Fade (and blur) in.
-   * @default { duration: 0.2, ease: 'easeInOut' }
+   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: ModalAnimationProps['transition'];
   /** Fade (and blur) out. Defaults to `transition`. */

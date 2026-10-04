@@ -1,51 +1,37 @@
 import * as React from 'react';
 import {
-  createGeneratorEasing,
-  generateLinearEasing,
   motion,
-  spring,
   type TargetAndTransition,
   type Transition,
 } from 'motion/react';
 
-import { useTempoTransition } from '../utils/motion';
+import { motionTokens, useTempoTransition } from '../utils/motion';
 
 // Motion shared by the modal primitives (Radix UI and Base UI Dialog / Alert
 // Dialog, React Aria Modal), as Animate UI v1 shipped it:
 //
 // - The overlay fades in and un-blurs (opacity 0 → 1, blur(4px) → blur(0px))
-//   in 200ms, easeInOut, and leaves the same way.
+//   in 200ms on a strong ease-out, and leaves the same way.
 // - The content, v1's default entrance (`from="top"`): it fades in, un-blurs
 //   and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on a
 //   spring (stiffness 150, damping 25), and leaves the same way.
 // - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
-//   from that edge by its own size and fades in, on the dialog's spring
-//   (stiffness 150, damping 25), and leaves the same way.
+//   from that edge by its own size and fades in, on a livelier spring
+//   (stiffness 150, damping 22), and leaves the same way.
 //
 // v1 used one transition both ways: `exitTransition` defaults to `transition`.
 
-/** v1's overlay fade: 200ms, easeInOut. */
-export const OVERLAY_TRANSITION = {
-  duration: 0.2,
-  ease: 'easeInOut',
-} as const satisfies Transition;
+/** The overlay's fade: 200ms, strong ease-out (it enters and leaves). */
+export const OVERLAY_TRANSITION = motionTokens.transition.overlay;
 
 /** v1's dialog spring. */
-export const DIALOG_TRANSITION = {
-  type: 'spring',
-  stiffness: 150,
-  damping: 25,
-} as const satisfies Transition;
+export const DIALOG_TRANSITION = motionTokens.spring.dialog;
 
 /**
  * Sheets, drawers and the toasts that enter from an edge: v1's sheet spring,
  * a little livelier than the dialog's (they travel farther).
  */
-export const SHEET_TRANSITION = {
-  type: 'spring',
-  stiffness: 150,
-  damping: 22,
-} as const satisfies Transition;
+export const SHEET_TRANSITION = motionTokens.spring.sheet;
 
 /** Animate UI's additions to an overlay or a modal's content. */
 export type ModalAnimationProps = {
@@ -90,7 +76,7 @@ const OFFSCREEN: Record<ModalSide, string> = {
 };
 
 // v1's `from="top"`. The same functions on both ends, so they interpolate.
-const TIPPED = 'perspective(500px) rotateX(-20deg) scale(0.8)';
+const TIPPED = `perspective(500px) rotateX(-20deg) scale(${motionTokens.scale.dialog})`;
 const UPRIGHT = 'perspective(500px) rotateX(0deg) scale(1)';
 
 export type ModalTargets = {
@@ -135,7 +121,7 @@ export function getContentTargets({
 
   const hidden = {
     opacity: 0,
-    filter: 'blur(4px)',
+    filter: motionTokens.blur.surface,
     transform: reduce ? UPRIGHT : TIPPED,
   };
   return {
@@ -155,7 +141,7 @@ export function getOverlayTargets({
   enter,
   exit,
 }: TargetOptions): ModalTargets {
-  const hidden = { opacity: 0, filter: 'blur(4px)' };
+  const hidden = { opacity: 0, filter: motionTokens.blur.surface };
   return {
     initial: hidden,
     animate: { opacity: 1, filter: 'blur(0px)', transition: enter },
@@ -194,73 +180,9 @@ export function useHiddenWhenClosed(open: boolean, keepMounted: boolean) {
 
 /* CSS timing -------------------------------------------------------------- */
 
-// For the primitives driven by CSS transitions (Base UI's Drawer and Toast,
-// which follow the finger through CSS variables and wait for CSS transitions
-// before unmounting): a Motion transition as a CSS duration and timing
-// function. A spring becomes the `linear()` curve Motion itself hands the
-// browser for a spring (same duration, same 10ms resolution), so it moves
-// exactly like Motion's.
-
-/** A CSS transition timing: duration in ms and timing function. */
-export type CssTiming = { duration: number; easing: string };
-
-const CSS_EASINGS: Record<string, string> = {
-  linear: 'linear',
-  easeIn: 'cubic-bezier(0.42, 0, 1, 1)',
-  easeOut: 'cubic-bezier(0, 0, 0.58, 1)',
-  easeInOut: 'cubic-bezier(0.42, 0, 0.58, 1)',
-  circIn: 'cubic-bezier(0, 0.65, 0.55, 1)',
-  circOut: 'cubic-bezier(0.55, 0, 1, 0.45)',
-  backIn: 'cubic-bezier(0.31, 0.01, 0.66, -0.59)',
-  backOut: 'cubic-bezier(0.33, 1.53, 0.69, 0.99)',
-};
-
-const SPRING_KEYS = [
-  'stiffness',
-  'damping',
-  'mass',
-  'bounce',
-  'visualDuration',
-];
-
-function toCssEase(ease: unknown): string {
-  if (Array.isArray(ease) && ease.length === 4 && ease.every(Number.isFinite))
-    return `cubic-bezier(${ease.join(', ')})`;
-  if (typeof ease === 'string') return CSS_EASINGS[ease] ?? 'ease';
-  return CSS_EASINGS.easeInOut!;
-}
-
-/**
- * `transition` (tempo already applied) as CSS timing. Springs become
- * `linear()`; tweens keep their `duration` (Motion's default 0.3s) and
- * cubic-bezier or named `ease` (Motion's default easeInOut).
- */
-export function toCssTiming(transition: Transition): CssTiming {
-  const options = transition as Record<string, unknown>;
-  const isSpring =
-    options.type === 'spring' || SPRING_KEYS.some((key) => key in options);
-
-  if (isSpring) {
-    // Motion's spring takes a time-defined `duration` in ms.
-    const springOptions =
-      typeof options.duration === 'number'
-        ? { ...options, duration: options.duration * 1000 }
-        : options;
-    const { duration, ease } = createGeneratorEasing(
-      springOptions,
-      100,
-      spring,
-    );
-    const ms = Math.round(duration * 1000);
-    return { duration: ms, easing: generateLinearEasing(ease, ms) };
-  }
-
-  const seconds = typeof options.duration === 'number' ? options.duration : 0.3;
-  return {
-    duration: Math.round(seconds * 1000),
-    easing: toCssEase(options.ease),
-  };
-}
+// The primitives driven by CSS transitions (Base UI's Drawer and Toast) read
+// their timing from the tokens through `toCssTiming` (utils/motion).
+export { toCssTiming, type CssTiming } from '../utils/motion';
 
 /* Rendering --------------------------------------------------------------- */
 

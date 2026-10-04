@@ -7,44 +7,54 @@ import {
   type Transition,
 } from 'motion/react';
 
-import { useShouldReduceMotion, useTempoTransition } from '../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../utils/motion';
 
 // Shared by every anchored overlay of Animate UI (popovers, hover cards,
 // tooltips, and React Aria's Popover under menus, selects and comboboxes).
-// The motion is Animate UI v1's, value for value:
+// Each grows from the point of its trigger (the transform origin the library
+// gives it) and fades in, from a scale that depends on its size and on how
+// often it opens:
 //
-// - popovers, hover cards and tooltips (v1 Popover, HoverCard, Tooltip): they
-//   grow from half their size and fade in from the point of their trigger, on
-//   a spring (stiffness 300, damping 25) that overshoots a little, and shrink
-//   back to half their size on the same spring when they close;
-// - menus (v1 DropdownMenu content and sub content): a short 200ms fade and
-//   scale from 0.95, both ways.
+// - tooltips, small and textual: from 0.7, on the pop spring (stiffness 300,
+//   damping 25) that overshoots a little, both ways;
+// - popovers, hover cards and preview cards: from 0.8, on the same spring;
+// - menus, opened all day long: from 0.9, in 200ms on a strong ease-out,
+//   both ways.
+//
+// The values are the motion tokens' (utils/motion).
 //
 // A popup open from the start (`defaultOpen`, or `open` on the first render)
 // plays its entrance on page load, like v1.
 
-/** v1's Popover, HoverCard and Tooltip spring, both ways. */
-const POPOVER_TRANSITION = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-} as const satisfies Transition;
-/** v1's DropdownMenu content and sub content timing, both ways. */
-const MENU_TRANSITION = { duration: 0.2 } as const satisfies Transition;
+/** The spring of tooltips, popovers and hover cards, both ways. */
+const POPOVER_TRANSITION = motionTokens.spring.pop;
+/** Menus (dropdown, context menu, menubar, select…): short, ease-out. */
+const MENU_TRANSITION = motionTokens.transition.menu;
 
-/** Where each kind of overlay starts from (v1 values). */
-const HIDDEN_SCALE = { popover: 0.5, menu: 0.95 } as const;
+/** Where each kind of overlay grows from. */
+const HIDDEN_SCALE = {
+  tooltip: motionTokens.scale.tooltip,
+  popover: motionTokens.scale.popover,
+  menu: motionTokens.scale.menu,
+} as const;
 const DEFAULT_TRANSITION = {
+  tooltip: POPOVER_TRANSITION,
   popover: POPOVER_TRANSITION,
   menu: MENU_TRANSITION,
 } as const;
+
+type AnchoredKind = keyof typeof HIDDEN_SCALE;
 
 /** Animate UI's additions to an anchored popup. */
 type AnchoredAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to v1's spring (stiffness 300, damping 25); `{ duration:
-   * 0.2 }` for menus.
+   * set. Defaults to a spring (stiffness 300, damping 25); `{ duration: 0.2,
+   * ease: [0.23, 1, 0.32, 1] }` for menus.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -52,8 +62,8 @@ type AnchoredAnimationProps = {
 };
 
 type AnchoredMotionOptions = AnchoredAnimationProps & {
-  /** Popovers, hover cards and tooltips, or menus (v1 DropdownMenu). */
-  kind?: 'popover' | 'menu';
+  /** Tooltips, popovers (hover cards, preview cards) or menus. */
+  kind?: AnchoredKind;
   /** Whether the overlay is open (a kept-mounted popup animates in place). */
   open: boolean;
   /** The popup stays mounted while closed (`forceMount`, `keepMounted`…). */
@@ -185,6 +195,8 @@ export {
   mergeRefs,
   POPOVER_TRANSITION,
   MENU_TRANSITION,
+  HIDDEN_SCALE,
+  type AnchoredKind,
   type AnchoredAnimationProps,
   type AnchoredMotionProps,
 };

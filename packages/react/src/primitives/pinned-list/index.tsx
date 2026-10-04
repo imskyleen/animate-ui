@@ -12,12 +12,17 @@ import {
 import { Slot, type WithAsChild } from '../slot';
 import { getStrictContext } from '../../utils/strict-context';
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../utils/motion';
 
-const LABEL_TRANSITION: Transition = { duration: 0.22, ease: 'easeInOut' };
+/** The label appearing and disappearing: a short fade, strong ease-out. */
+const LABEL_TRANSITION: Transition = {
+  duration: 0.22,
+  ease: motionTokens.ease.out,
+};
 const ITEM_TRANSITION: Transition = {
   stiffness: 320,
   damping: 25,
@@ -25,15 +30,10 @@ const ITEM_TRANSITION: Transition = {
   type: 'spring',
 };
 /**
- * Motion's default for a `scale` target other than 0 (the trigger has no
- * transition of its own), written out so the tempo applies to it.
+ * The press spring (Motion's default for a `scale` target other than 0: the
+ * trigger has no transition of its own), paced by the tempo.
  */
-const TRIGGER_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 550,
-  damping: 30,
-  restSpeed: 10,
-};
+const TRIGGER_TRANSITION: Transition = motionTokens.spring.press;
 
 type PinnedListContextType = {
   movingId: string | null;
@@ -168,9 +168,12 @@ function PinnedListItem({
           onClick?.(e);
         }}
         transition={transition ?? defaultTransition}
-        // Reduced motion: no hover or press scale.
-        whileHover={!customTrigger && !reduce ? { scale: 1.05 } : undefined}
-        whileTap={!customTrigger && !reduce ? { scale: 0.95 } : undefined}
+        // Pressed, it scales down (no hover scale); not under reduced motion.
+        whileTap={
+          !customTrigger && !reduce
+            ? { scale: motionTokens.scale.press }
+            : undefined
+        }
         {...props}
       />
     </PinnedListItemProvider>
@@ -200,9 +203,8 @@ function PinnedListTrigger({
         onPinnedChange?.(id);
         onClick?.(e);
       }}
-      // Reduced motion: no hover or press scale.
-      whileHover={reduce ? undefined : { scale: 1.05 }}
-      whileTap={reduce ? undefined : { scale: 0.95 }}
+      // Pressed, it scales down (no hover scale); not under reduced motion.
+      whileTap={reduce ? undefined : { scale: motionTokens.scale.press }}
       transition={defaultTransition}
       {...props}
     />

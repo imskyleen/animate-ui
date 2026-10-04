@@ -7,7 +7,7 @@ import { expectSpringPace, type Sample } from './spring-curves';
 // The drawer moves like Animate UI v1's Sheet: every move of its position on
 // the dialog's spring (stiffness 150, damping 25), fading in and out with it
 // when it opens and closes; its overlay fades and un-blurs in 200ms
-// (easeInOut), and follows the drag like Vaul's.
+// (ease-out), and follows the drag like Vaul's.
 
 const CONTENT = '[data-slot="drawer-content"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';

@@ -11,7 +11,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
-import { SCALE_SPRING } from '../_button';
+import { SCALE_SPRING, TAP_SCALE } from '../_button';
 
 const RIPPLE_TRANSITION: Transition = { duration: 0.6, ease: 'easeOut' };
 
@@ -31,7 +31,16 @@ const [RippleButtonProvider, useRippleButton] =
 
 type RippleButtonProps = WithAsChild<
   HTMLMotionProps<'button'> & {
+    /**
+     * Scale while hovered. Animate UI buttons answer the press, not the
+     * hover: no hover scale unless you set one.
+     * @default 1
+     */
     hoverScale?: number;
+    /**
+     * Scale while pressed.
+     * @default 0.95
+     */
     tapScale?: number;
   }
 >;
@@ -47,8 +56,8 @@ function RippleButton(props: RippleButtonProps) {
 function RippleButtonContent({
   ref,
   onClick,
-  hoverScale = 1.05,
-  tapScale = 0.95,
+  hoverScale = 1,
+  tapScale = TAP_SCALE,
   asChild = false,
   transition,
   style,
@@ -69,8 +78,8 @@ function RippleButtonContent({
       if (!button) return;
 
       const rect = button.getBoundingClientRect();
-      // The rect includes the hover/tap scale: convert back to the button's
-      // own pixels so the ripple starts right under the pointer.
+      // The rect includes the tap (or hover) scale: convert back to the
+      // button's own pixels so the ripple starts right under the pointer.
       const x = (event.clientX - rect.left) * (button.offsetWidth / rect.width);
       const y =
         (event.clientY - rect.top) * (button.offsetHeight / rect.height);
@@ -110,7 +119,9 @@ function RippleButtonContent({
         data-slot="ripple-button"
         onClick={handleClick}
         whileTap={{ scale: reduce ? 1 : tapScale }}
-        whileHover={{ scale: reduce ? 1 : hoverScale }}
+        whileHover={
+          reduce || hoverScale === 1 ? undefined : { scale: hoverScale }
+        }
         transition={transition ?? defaultTransition}
         style={{
           position: 'relative',

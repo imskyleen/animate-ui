@@ -56,7 +56,7 @@ export function FrameworkPicker() {
 
 Base UI's Combobox has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.
 
-- **Popup** fades and scales in from 0.95, from the input (`--transform-origin`), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
+- **Popup** fades and scales in from 0.9, from the input (`--transform-origin`), in 200ms (`{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`, a strong ease-out), and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
 - **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, like v1's menu highlight. The new copy fades in as it moves; the previous one goes along and fades out 200ms later. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
 - Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation.
 - Base UI resets the query and syncs the input when the popup unmounts, so the list doesn't change while it fades out.
@@ -88,7 +88,7 @@ Every part takes exactly the props of [Base UI's Combobox](https://base-ui.com/r
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: '{ duration: 0.2 }',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

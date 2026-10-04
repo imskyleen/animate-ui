@@ -173,14 +173,6 @@ async function gotoDemo(page: Page, lib: Lib, name: string) {
   await page.goto(`/tests/demos/${lib}/${name}`, { waitUntil: 'networkidle' });
 }
 
-/** v1's hover and press scale (Checkbox, Radio). */
-function expectHoverAndPress(scales: Awaited<ReturnType<typeof pressScale>>) {
-  expect(scales.hovered).toBeCloseTo(1.05, 2);
-  expect(scales.held).toBeCloseTo(0.95, 2);
-  expect(scales.released).toBeCloseTo(1.05, 2);
-  expect(scales.left).toBeCloseTo(1, 2);
-}
-
 // ---------------------------------------------------------------------------
 
 const CHECKBOX = '[data-slot="checkbox"]';
@@ -257,10 +249,8 @@ export function describeCheckboxDemo(lib: Lib) {
       expectCheckErases(await readSamples(page));
     });
 
-    test('hover and press scale the box', async ({ page }) => {
-      expectHoverAndPress(
-        await pressScale(page, page.locator(CHECKBOX).nth(1)),
-      );
+    test('the box scales on press, not on hover', async ({ page }) => {
+      expectPressOnly(await pressScale(page, page.locator(CHECKBOX).nth(1)));
     });
 
     test('Space toggles at once, and the check still draws', async ({
@@ -365,8 +355,8 @@ export function describeRadioGroupDemo(lib: Lib) {
       expectDotLeaves(await readSamples(page, 'old'));
     });
 
-    test('hover and press scale the radio', async ({ page }) => {
-      expectHoverAndPress(await pressScale(page, page.locator(RADIO).nth(0)));
+    test('the radio scales on press, not on hover', async ({ page }) => {
+      expectPressOnly(await pressScale(page, page.locator(RADIO).nth(0)));
     });
 
     test('reduced motion: the dot fades in place', async ({ page }) => {
@@ -565,7 +555,7 @@ export function describeSwitchDemo(lib: Lib) {
 
 const TOGGLE = '[data-slot="toggle"]';
 
-/** v1's toggles: 0.95 while pressed, no hover scale. */
+/** Every pressable control: 0.95 while pressed, no hover scale. */
 function expectPressOnly(scales: Awaited<ReturnType<typeof pressScale>>) {
   expect(scales.hovered).toBe(1);
   expect(scales.held).toBeCloseTo(0.95, 2);

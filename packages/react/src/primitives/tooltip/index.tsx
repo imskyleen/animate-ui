@@ -22,6 +22,7 @@ import {
 
 import { getStrictContext } from '../../utils/strict-context';
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
@@ -31,10 +32,10 @@ import { Slot, type WithAsChild } from '../slot';
 // Animate UI's own tooltip: every tooltip of a provider shares one popup,
 // positioned with Floating UI. Moving from a trigger to the next one glides
 // the popup (a shared layout animation) instead of closing and reopening it.
-// The popup grows from nothing and rises 15px out of its trigger (Animate UI
-// v1's motion), and goes back the same way when it closes, on the spring of
-// the library tooltips and popovers (stiffness 300, damping 25), which
-// overshoots a little.
+// It moves like the library tooltips (Radix UI, Base UI, React Aria): the
+// popup grows from 0.7 and fades in from the point facing its trigger, and
+// goes back the same way when it closes, on their spring (stiffness 300,
+// damping 25), which overshoots a little.
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
@@ -92,24 +93,23 @@ function getResolvedSide(placement: Side | `${Side}-${Align}`) {
   return placement as Side;
 }
 
-/** The popup comes out of its trigger: 15px from that side (v1). */
-const NUDGE = 15;
-
 /**
  * The library tooltips' and popovers' spring: the entrance, the exit and the
  * glide between triggers.
  */
-const TOOLTIP_TRANSITION = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-} as const satisfies Transition;
+const TOOLTIP_TRANSITION = motionTokens.spring.pop;
 
-function initialFromSide(side: Side): Partial<Record<'x' | 'y', number>> {
-  if (side === 'top') return { y: NUDGE };
-  if (side === 'bottom') return { y: -NUDGE };
-  if (side === 'left') return { x: NUDGE };
-  return { x: -NUDGE };
+/**
+ * The point of the popup facing its trigger (Motion's `originX`/`originY`,
+ * which its layout projection takes into account): it grows out of the
+ * trigger, like the library tooltips from their origin variables.
+ */
+function originFor(side: Side, align: Align) {
+  const along = align === 'start' ? 0 : align === 'end' ? 1 : 0.5;
+  if (side === 'top') return { originX: along, originY: 1 };
+  if (side === 'bottom') return { originX: along, originY: 0 };
+  if (side === 'left') return { originX: 1, originY: along };
+  return { originX: 0, originY: along };
 }
 
 type TooltipProviderProps = {
@@ -287,7 +287,9 @@ function TooltipOverlay() {
   const side = rendered.data?.side ?? 'top';
   const align = rendered.data?.align ?? 'center';
 
-  const { refs, x, y, strategy, context, update } = useFloating({
+  const { refs, x, y, strategy, context, update, isPositioned } = useFloating({
+    // Tracked so `isPositioned` tells when the first position is known.
+    open: rendered.data !== null,
     placement: align === 'center' ? side : `${side}-${align}`,
     whileElementsMounted: autoUpdate,
     middleware: [
@@ -316,23 +318,20 @@ function TooltipOverlay() {
     }
   }, [referenceElRef, refs, update, rendered.data]);
 
-  const ready = x != null && y != null;
   const Component = rendered.data?.contentAsChild ? Slot : motion.div;
   const resolvedSide = getResolvedSide(context.placement);
+  const resolvedAlign =
+    (context.placement.split('-')[1] as Align | undefined) ?? 'center';
 
-  // Grows from nothing and rises out of the trigger (v1). Under reduced
-  // motion it only fades, and moving between triggers jumps.
+  // Grows from 0.7 out of the trigger. Under reduced motion it only fades,
+  // and moving between triggers jumps.
   const hidden = rendered.data
-    ? {
-        opacity: 0,
-        scale: reduce ? 1 : 0,
-        ...(reduce ? { x: 0, y: 0 } : initialFromSide(rendered.data.side)),
-      }
+    ? { opacity: 0, scale: reduce ? 1 : motionTokens.scale.tooltip }
     : { opacity: 0 };
 
   return (
     <AnimatePresence mode="wait">
-      {rendered.data && ready && (
+      {rendered.data && (
         <TooltipPortal>
           <div
             ref={refs.setFloating}
@@ -345,7 +344,9 @@ function TooltipOverlay() {
               top: 0,
               left: 0,
               zIndex: 50,
-              transform: `translate3d(${x!}px, ${y!}px, 0)`,
+              transform: `translate3d(${x}px, ${y}px, 0)`,
+              // Measured unseen until Floating UI has placed it.
+              visibility: isPositioned ? undefined : 'hidden',
             }}
           >
             <FloatingProvider value={{ context, arrowRef }}>
@@ -357,19 +358,28 @@ function TooltipOverlay() {
                 }}
               >
                 <Component
+                  // Floating UI renders the popup at 0, 0 before it has
+                  // measured it. Until it's placed, the popup is measured
+                  // without its layoutId (the shared layout animation would
+                  // fly it in from the corner), then mounts afresh where it
+                  // belongs and plays its entrance there. Moving between
+                  // triggers keeps the same element: it glides.
+                  key={isPositioned ? 'positioned' : 'measuring'}
                   id={contentIdOf(rendered.data.id)}
                   role="tooltip"
                   data-slot="tooltip-content"
                   data-side={resolvedSide}
                   data-align={rendered.data.align}
                   data-state={rendered.open ? 'open' : 'closed'}
-                  layoutId={`tooltip-content-${globalId}`}
+                  layoutId={
+                    isPositioned ? `tooltip-content-${globalId}` : undefined
+                  }
                   initial={hidden}
                   // One spring for everything: the entrance, the exit and
                   // the shared layout move between triggers.
                   animate={
                     rendered.open
-                      ? { opacity: 1, scale: 1, x: 0, y: 0, transition }
+                      ? { opacity: 1, scale: 1, transition }
                       : { ...hidden, transition }
                   }
                   exit={{ ...hidden, transition }}
@@ -381,6 +391,7 @@ function TooltipOverlay() {
                   {...rendered.data.contentProps}
                   style={{
                     position: 'relative',
+                    ...originFor(resolvedSide, resolvedAlign),
                     ...(rendered.data.contentProps?.style || {}),
                   }}
                 />

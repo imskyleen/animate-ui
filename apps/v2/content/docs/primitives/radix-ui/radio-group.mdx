@@ -41,7 +41,7 @@ Coming from the `@radix-ui/react-radio-group` package? Use the subpath: `import 
 The motion of Animate UI v1's radio group:
 
 - **Indicator**: the dot pops in. Its scale and its opacity spring from 0 to 1 (stiffness 200, damping 16: it overshoots a little before settling), and back to 0 the same way when another item is selected, then the indicator unmounts, as in Radix. The indicator element itself never moves: its content (the dot) animates, so shadcn/ui's centered dot stays centered.
-- **Item** scales to 1.05 while hovered and to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30).
+- **Item** scales to 0.95 while pressed (no hover scale), on Motion's default spring for scale (stiffness 550, damping 30).
 - The item selected when the group mounts pops its dot in too, as v1's did. The indicator stays hidden until then, so a server-rendered page doesn't flash the dot first.
 - Selecting with the arrow keys animates like a click, as v1's did.
 - Selecting again mid-animation turns back from where the dot is.
@@ -63,7 +63,7 @@ Every part takes exactly the props of [Radix UI's Radio Group](https://www.radix
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the hover and press scale.',
+      description: 'Transition of the press scale.',
       type: 'Transition',
       default: "{ type: 'spring', stiffness: 550, damping: 30 }",
     },

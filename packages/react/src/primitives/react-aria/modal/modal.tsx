@@ -33,7 +33,7 @@ import {
 
 // Same API as React Aria's Modal and ModalOverlay, animated like Animate UI
 // v1's Dialog (Radix, Base UI and Headless UI shipped the same motion): the
-// overlay fades in 200ms (easeInOut), the modal tips forward from
+// overlay fades in 200ms (ease-out), the modal tips forward from
 // `perspective(500px) rotateX(-20deg) scale(0.8)` with a fade and a blur on a
 // spring, or slides and fades in from its edge when it has `data-side`
 // (shadcn/ui's Sheet, v1's Sheet). See ../../../internal/modal-motion.ts.
@@ -58,7 +58,7 @@ import {
 type OverlayAnimationProps = {
   /**
    * Fade in (of its background color and backdrop filter).
-   * @default { duration: 0.2, ease: 'easeInOut' }
+   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: ModalAnimationProps['transition'];
   /** Fade out. Defaults to `transition`. */

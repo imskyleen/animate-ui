@@ -12,9 +12,9 @@ import {
   useRadixOpenState,
 } from '../popover/radix-anchored';
 
-// Same API as Radix's Tooltip. The Content grows from half its size and fades
-// in from the trigger on a spring, and shrinks back the same way, every time
-// it opens (Animate UI v1's Tooltip). Radix ignores touch pointers.
+// Same API as Radix's Tooltip. The Content grows from 0.7 and fades in
+// from the trigger on a spring, and shrinks back the same way, every time it
+// opens. Radix ignores touch pointers.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Tooltip.Root',
@@ -84,6 +84,7 @@ function Content({
           open={open}
           keepMounted={keepMounted}
           origin="var(--radix-tooltip-content-transform-origin)"
+          kind="tooltip"
           transition={transition}
           exitTransition={exitTransition}
         />

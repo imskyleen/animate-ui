@@ -46,7 +46,7 @@ import {
 // the sheet spring (stiffness 150, damping 22, v1's sheet), and the drawer
 // fades in and out with it as v1's sheet did (opacity 0 ↔ 1, never during a
 // drag). The overlay fades and un-blurs like v1's (opacity 0 → 1, blur(4px)
-// → blur(0px), 200ms easeInOut); once a drag has moved the drawer, or with
+// → blur(0px), 200ms ease-out); once a drag has moved the drawer, or with
 // snap points, it also follows the position, like Vaul's.
 
 const CLOSE_THRESHOLD = 0.25;
@@ -210,7 +210,7 @@ type ContentAnimationProps = {
 type OverlayAnimationProps = {
   /**
    * Fade (and blur) in.
-   * @default { duration: 0.2, ease: 'easeInOut' }
+   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: Transition;
   /** Fade (and blur) out. Defaults to `transition`. */

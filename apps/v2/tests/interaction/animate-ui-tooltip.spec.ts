@@ -41,9 +41,7 @@ test.describe('animate-ui tooltip', () => {
     await expect(trigger(page, 'Bold')).toHaveAttribute('data-state', 'open');
   });
 
-  test('grows from nothing, rising out of its trigger, then settles', async ({
-    page,
-  }) => {
+  test('grows from 0.7 out of its trigger, then settles', async ({ page }) => {
     await open(page);
     const frames = page.evaluate(
       (selector) =>
@@ -71,23 +69,37 @@ test.describe('animate-ui tooltip', () => {
     );
     await trigger(page, 'Bold').hover();
     const seen = await frames;
-    // v1: from scale 0 and 15px below (side "top").
-    expect(seen[0]!.scale).toBeLessThan(0.3);
-    expect(seen[0]!.y).toBeGreaterThan(5);
+    // From 0.7, in place (like the library tooltips: no slide).
+    expect(seen[0]!.scale).toBeGreaterThanOrEqual(0.69);
+    expect(seen[0]!.scale).toBeLessThan(0.85);
+    expect(seen[0]!.y).toBe(0);
     expect(seen[0]!.opacity).toBeLessThan(1);
-    // On the pop spring: past full size and past its place by the spring's
-    // overshoot (frames may miss the very peak), then back.
+    // On the pop spring: past full size by the spring's overshoot over that
+    // 0.3 travel (frames may miss the very peak), then back.
     const overshoot = overshootOf(POP_SPRING);
     const peak = Math.max(...seen.map((f) => f.scale));
-    expect(peak).toBeGreaterThan(1 + overshoot * 0.7);
-    expect(peak).toBeLessThan(1 + overshoot + 0.003);
-    const highest = Math.min(...seen.map((f) => f.y));
-    expect(highest).toBeLessThan(-15 * overshoot * 0.7);
-    expect(highest).toBeGreaterThan(-15 * overshoot - 0.05);
+    expect(peak).toBeGreaterThan(1 + 0.3 * overshoot * 0.7);
+    expect(peak).toBeLessThan(1 + 0.3 * overshoot + 0.003);
+    expect(seen.every((f) => f.y === 0)).toBe(true);
     const last = seen.at(-1)!;
     expect(last.opacity).toBe(1);
     expect(last.scale).toBeCloseTo(1, 2);
-    expect(Math.abs(last.y)).toBeLessThan(0.5);
+  });
+
+  test('grows from the point facing its trigger', async ({ page }) => {
+    await open(page);
+    await trigger(page, 'Bold').hover();
+    await expect(page.locator(CONTENT)).toBeVisible();
+    // Side "top", centered: its bottom center, towards the trigger.
+    const origin = await page.locator(CONTENT).evaluate((el) => {
+      const [x = 0, y = 0] = getComputedStyle(el)
+        .transformOrigin.split(' ')
+        .map((v) => Number.parseFloat(v));
+      const { offsetWidth: w, offsetHeight: h } = el as HTMLElement;
+      return { x: x / w, y: y / h };
+    });
+    expect(origin.x).toBeCloseTo(0.5, 1);
+    expect(origin.y).toBeCloseTo(1, 1);
   });
 
   test('closes back into its trigger the same way', async ({ page }) => {
@@ -116,9 +128,8 @@ test.describe('animate-ui tooltip', () => {
     );
     await page.mouse.move(5, 5);
     const seen = await frames;
-    // Shrinks towards nothing and sinks back down before it unmounts.
-    expect(Math.min(...seen.map((f) => f.scale))).toBeLessThan(0.2);
-    expect(Math.max(...seen.map((f) => f.y))).toBeGreaterThan(10);
+    // Shrinks back to 0.7 towards its trigger before it unmounts.
+    expect(Math.min(...seen.map((f) => f.scale))).toBeLessThan(0.75);
     await expect(page.locator(CONTENT)).toHaveCount(0);
   });
 

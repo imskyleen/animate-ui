@@ -9,6 +9,7 @@ import {
 } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
@@ -59,11 +60,7 @@ const DEFAULT_ZOOM_INITIAL_SCALE: number = 0.5;
 const DEFAULT_ZOOM_SCALE: number = 1;
 const DEFAULT_BLUR_INITIAL_BLUR: number = 10;
 const DEFAULT_BLUR_BLUR: number = 0;
-const DEFAULT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 20,
-};
+const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Effect(props: EffectProps) {
   return (

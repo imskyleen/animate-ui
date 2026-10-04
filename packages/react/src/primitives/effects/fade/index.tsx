@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
-import { useTempoTransition } from '../../../utils/motion';
+import { motionTokens, useTempoTransition } from '../../../utils/motion';
 import {
   useIsInView,
   type UseIsInViewOptions,
@@ -21,11 +21,7 @@ type FadeProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
-const DEFAULT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 20,
-};
+const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Fade({
   ref,

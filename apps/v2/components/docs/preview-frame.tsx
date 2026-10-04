@@ -2,8 +2,9 @@
 
 import { Button } from '@animate-ui/react/primitives/buttons/button';
 import {
+  ease,
   ReducedMotionConfig,
-  useMotionTokens,
+  useTempoTransition,
 } from '@animate-ui/react/utils/motion';
 import { RefreshIcon, SlidersHorizontalIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -29,6 +30,11 @@ import { CopyButton, getPreText } from './copy-button';
 
 const COLLAPSED_HEIGHT = 160;
 const PANEL_SIZE = 250;
+
+// The docs' own disclosures (the controls panel, View code): unfolding takes
+// 600ms on a strong ease-out, folding 400ms; the fade over folded code 600ms.
+const UNFOLD = { duration: 0.6, ease: ease.out };
+const FOLD = { duration: 0.4, ease: ease.out };
 
 // Below md the controls open under the demo, as in v1.
 const MOBILE_QUERY = '(max-width: 767px)';
@@ -78,7 +84,8 @@ export function PreviewFrame({
   const [expanded, setExpanded] = useState(false);
   const codeRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const { transition } = useMotionTokens();
+  const unfold = useTempoTransition(UNFOLD);
+  const fold = useTempoTransition(FOLD);
   const panelId = useId();
   // Short code shows whole, without the button.
   const [fits, setFits] = useState(false);
@@ -116,7 +123,6 @@ export function PreviewFrame({
                 type="button"
                 aria-label="Replay"
                 title="Replay"
-                hoverScale={1.05}
                 onClick={() => setRun((r) => r + 1)}
                 className={toolbarButton}
               >
@@ -129,7 +135,6 @@ export function PreviewFrame({
                   title="Controls"
                   aria-expanded={controlsOpen}
                   aria-controls={panelId}
-                  hoverScale={1.05}
                   onClick={() => setControlsOpen((o) => !o)}
                   className={cn(
                     toolbarButton,
@@ -170,9 +175,7 @@ export function PreviewFrame({
                 height: isMobile ? (controlsOpen ? PANEL_SIZE : 0) : 'auto',
                 opacity: controlsOpen ? 1 : 0,
               }}
-              transition={
-                controlsOpen ? transition.disclosure : transition.exit
-              }
+              transition={controlsOpen ? unfold : fold}
               inert={!controlsOpen}
               className="relative shrink-0 overflow-hidden"
             >
@@ -197,7 +200,7 @@ export function PreviewFrame({
           <motion.div
             initial={false}
             animate={{ height: open ? 'auto' : COLLAPSED_HEIGHT }}
-            transition={open ? transition.disclosure : transition.exit}
+            transition={open ? unfold : fold}
             className="overflow-hidden [&_[data-slot=codeblock-viewport]]:max-h-[600px]"
             inert={!open}
           >
@@ -210,8 +213,8 @@ export function PreviewFrame({
               <motion.div
                 className="absolute inset-0 flex items-center justify-center bg-linear-to-b from-background/20 to-background"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1, transition: transition.fade }}
-                exit={{ opacity: 0, transition: transition.exit }}
+                animate={{ opacity: 1, transition: unfold }}
+                exit={{ opacity: 0, transition: fold }}
               >
                 <Button
                   type="button"

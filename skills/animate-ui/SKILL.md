@@ -1,11 +1,13 @@
 ---
 name: animate-ui
-description: Animate React components with Animate UI (Motion-based animated primitives for Radix UI, Base UI and React Aria). For shadcn/ui components, runs the `@animate-ui/cli` codemod that swaps their primitives for Animate UI's; for components built directly on Radix UI, Base UI or React Aria, swaps the import to `@animate-ui/react`; for anything else (custom components, plain markup, other libraries), applies Animate UI's motion rules, tokens and recipes with Motion (motion/react). Also migrates Animate UI v1 projects. Use when asked to animate a component, make shadcn/ui "animated", add enter/exit or press animations, set up Animate UI, change the animation pace, or review whether motion follows Animate UI's rules.
+description: Animate React components with Animate UI (Motion-based animated primitives for Radix UI, Base UI and React Aria). For shadcn/ui components, runs the `@animate-ui/cli` codemod that swaps their primitives for Animate UI's; for components built directly on Radix UI, Base UI or React Aria, swaps the import to `@animate-ui/react`; for anything else (custom components, plain markup, other libraries), applies Animate UI's motion rules, tokens (springs, curves, scales, blur) and recipes with Motion (motion/react). Also migrates Animate UI v1 projects. Use when asked to animate a component, make shadcn/ui "animated", add enter/exit, press or swap animations, set up Animate UI, change the animation pace, or review whether motion follows Animate UI's rules.
 ---
 
 # Animate UI
 
-Animate UI animates the primitives components are built on. Its package, `@animate-ui/react`, ships each Radix UI, Base UI and React Aria primitive with **exactly its library's API** and Motion inside, so swapping the import is the whole change. The motion philosophy is based on Emil Kowalski's (see NOTICE.md), with one deliberate departure: entrances and state changes take 600ms on a strong ease-out that does most of the movement in the first ~150ms; exits take 400ms, press 150ms, and keyboard-driven or 100+/day actions stay instant.
+Animate UI animates the primitives components are built on. Its package, `@animate-ui/react`, ships each Radix UI, Base UI and React Aria primitive with **exactly its library's API** and Motion inside, so swapping the import is the whole change.
+
+Its motion is springy and alive, but coherent: nearly everything moves on a spring, each motion role has one value (the tokens), and tweens pick their curve by what the element does. It borrows Emil Kowalski's practical rules (trigger-anchored origins, ease-out for what enters and leaves, press feedback, a light blur to bridge swaps; see NOTICE.md) without his strictness: springs may overshoot a little, popups can start from 0.7, and the keyboard animates like the pointer.
 
 ## 1. Pick the path
 
@@ -51,39 +53,43 @@ Then remove the component's own CSS animation classes (same list as the CLI) so 
 
 1. **Gate** (below), then classify the component and start from the matching recipe in `references/recipes.md`.
 2. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. Otherwise wire Motion into the library as `references/base-libraries.md` shows.
-3. Take every value from the tokens (`references/tokens.md`): `import { useMotionTokens, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. `useMotionTokens()` follows `AnimateUIProvider`'s `tempo`. No hand-typed `stiffness`/`damping`, no `easeInOut` on an entrance; an intentionally instant change uses `transition.instant`.
+3. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in, no ease-in-out on an entrance.
 4. Check every rule in `references/rules.md` (quality rules are non-negotiable; style rules are defaults), then verify (§ Verify).
 
 ### Gate: should it animate?
 
-| How often it's used                                                         | Decision                                                      |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| 100+ times a day (command palette, keyboard shortcuts, arrow-key highlight) | No animation (quality rule)                                   |
-| Used constantly (tooltips, press, tabs indicator, toggles)                  | 600ms entrances and state changes, press 150ms; bounce ≤ 0.15 |
-| Occasional (popovers, menus, selects, dialogs, sheets, drawers, toasts)     | 600ms in, 400ms out                                           |
-| Rare (icons, effects, text, onboarding, success, delight)                   | Expressive: around 600ms, bounce up to 0.3                    |
+| How often it's used                                                    | Decision                                                                                                                  |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Constantly (press, tooltips, menus, tabs, toggles, hover highlights)   | Animate, quickly: `spring.press`, `transition.menu`, `spring.pop`, `spring.selection`, `spring.highlight`; no hover scale |
+| Occasionally (popovers, selects, dialogs, sheets, toasts, disclosures) | The role's token: surfaces may take their time (`spring.dialog`, `spring.sheet`)                                          |
+| Rarely (effects, text, numbers, icons, onboarding, success)            | Expressive: their own springs, more bounce, longer rhythms                                                                |
+| Toggled from the keyboard all day (command palette, global shortcuts)  | Consider no animation                                                                                                     |
 
-Never animate keyboard navigation or global shortcuts. Name the purpose in one word (feedback, spatial, state, continuity, delight); if you can't, don't animate.
+Keyboard navigation animates like the pointer. Name the purpose in one word (feedback, spatial, state, continuity, delight); if you can't, don't animate.
 
 ### Kinds of component
 
-| Kind                                                                           | Examples                                             | Recipe     |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------- | ---------- |
-| Anchored overlay                                                               | Popover, Tooltip, Menu, Hover Card, Select, Combobox | Overlay    |
-| Centered overlay                                                               | Dialog, Alert Dialog                                 | Modal      |
-| Edge overlay                                                                   | Sheet, Drawer                                        | Sheet      |
-| Disclosure                                                                     | Accordion, Collapsible                               | Disclosure |
-| Moving indicator                                                               | Tabs, Toggle Group, Navigation Menu                  | Indicator  |
-| Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio              | Press      |
-| Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                      | CSS-driven |
+| Kind                                                                           | Examples                                                                | Recipe     |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ---------- |
+| Anchored overlay                                                               | Popover, Tooltip, Hover Card, Preview Card                              | Overlay    |
+| Anchored list                                                                  | Dropdown Menu, Context Menu, Menubar, Select, Combobox, Navigation Menu | Menu       |
+| Centered overlay                                                               | Dialog, Alert Dialog                                                    | Modal      |
+| Edge overlay                                                                   | Sheet, Drawer                                                           | Sheet      |
+| Disclosure                                                                     | Accordion, Collapsible                                                  | Disclosure |
+| Moving indicator                                                               | Tabs, Toggle Group, Navigation Menu indicator                           | Indicator  |
+| Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio                                 | Press      |
+| Two states swapping in place                                                   | Copy → copied, sun → moon, a changing label                             | Swap       |
+| Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                                         | CSS-driven |
 
-### Non-negotiable rules (summary)
+### The rules in short
 
-- Reduced motion ships with the animation: `ReducedMotionConfig` around the motion tree, `useShouldReduceMotion()` to neutralize `transform` strings, `<ReducedMotionConfig remount>` for animations that play on mount.
-- Transform and opacity only (height only for disclosures). Never `scale(0)`. Anchored overlays scale from the trigger (library origin variables), modals stay centered.
-- Exits are faster than entrances, and their transitions live in the `exit` target (an exiting element keeps its last props).
+- Reduced motion ships with the animation: `ReducedMotionConfig` around the motion tree, `useShouldReduceMotion()` to neutralize `transform` strings, `<ReducedMotionConfig remount>` for animations that play on mount. Fades and blurs stay, movement goes.
+- Transform, opacity and filter (height only where content must push what's below). Anchored popups grow from their trigger (library origin variables), from 0.7 / 0.8 / 0.9 by kind; modals stay centered.
+- Press scales to 0.95 on a spring; nothing scales on hover.
+- Tweens: ease-out for what enters and leaves, ease-in-out for what moves on screen, `ease` for color; never ease-in. A light blur bridges a swap.
+- The exit replays the entrance, its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
 - Keep the library element as the animated element (Radix `asChild`, Base UI `render`, React Aria `render`/`motion.create`) so `data-*` attributes and styles still apply.
-- Hover only on hover-capable fine pointers; drags follow the pointer with no lag; re-triggering retargets, never restarts; loops pause off screen.
+- The keyboard animates like the pointer; hover only on hover-capable fine pointers; re-triggering retargets, never restarts; loops pause off screen.
 
 ## D. Animate UI v1 projects: migrate
 
@@ -101,8 +107,8 @@ At the end it lists the v1 files `@animate-ui/react` replaces that nothing impor
 
 - Every quality item of the checklist in `references/rules.md` passes; style deviations are named.
 - Reduced motion (OS setting or Playwright `emulateMedia({ reducedMotion: 'reduce' })`): things still appear and disappear, nothing moves.
-- Trigger twice quickly: it retargets. Keyboard paths are instant. Positioning and `className` still work.
-- Slow it down (DevTools Animations at 10%) to check origin and overshoot.
+- Trigger twice quickly: it retargets. The keyboard path animates like the pointer one. Positioning and `className` still work.
+- Slow it down (DevTools Animations at 10%) to check the origin, the overshoot and the curve.
 
 ## Output
 

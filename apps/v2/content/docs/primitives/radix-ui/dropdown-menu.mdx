@@ -39,7 +39,7 @@ Coming from the `@radix-ui/react-dropdown-menu` package? Use the subpath: `impor
 
 The motion of Animate UI v1's Dropdown Menu, value for value:
 
-- **Content** fades and scales in from 0.95, from the trigger (`--radix-dropdown-menu-content-transform-origin`, set inline so it works without styles), in 200ms (`{ duration: 0.2 }`, Motion's ease-out), and closes the same way before it unmounts.
+- **Content** fades and scales in from 0.9, from the trigger (`--radix-dropdown-menu-content-transform-origin`, set inline so it works without styles), in 200ms (`{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`, a strong ease-out), and closes the same way before it unmounts.
 - **SubContent** grows from the side of its trigger the same way.
 - **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, and into submenus. The new copy fades in as it moves; the previous one goes along and fades out 200ms later. When the pointer leaves the menu, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted, or while its submenu is open; its text colors stay.
 - **ItemIndicator**: a checkbox item's check pops in from half its size with a fade whenever it appears (checking the item, or opening the menu) and goes at once when unchecked. A radio item's indicator glides to the newly checked item (when choosing it closes the menu, it glides while the menu fades out, as in v1).
@@ -70,7 +70,7 @@ Every part takes exactly the props of [Radix UI's Dropdown Menu](https://www.rad
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: '{ duration: 0.2 }',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

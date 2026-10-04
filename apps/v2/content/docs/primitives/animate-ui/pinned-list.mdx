@@ -71,8 +71,8 @@ You own the pinned state: `onPinnedChange` tells you which item to move. Without
 ## Animation
 
 - The item glides to its new place on a spring (stiffness 320, damping 25, mass 0.8: a shared layout animation with a slight overshoot), above the other items while it moves. The others make room.
-- Labels fade in and out when a group becomes empty or filled, and slide along with the layout (220ms, ease-in-out).
-- Triggers, and items without `customTrigger`, grow on hover (scale 1.05) and shrink on press (scale 0.95) on a quick spring (the item's own spring for items).
+- Labels fade in and out when a group becomes empty or filled, and slide along with the layout (220ms, ease-out).
+- Triggers, and items without `customTrigger`, shrink on press (scale 0.95) on a quick spring (the item's own spring for items). Nothing scales on hover.
 - `<AnimateUIProvider tempo>` paces the default transitions.
 - Under reduced motion, items jump to their new place and don't scale.
 
@@ -120,7 +120,7 @@ Plain `div`s that structure the groups. They take `div` props.
     transition: {
       description: 'Transition of the fade.',
       type: 'Transition',
-      default: "{ duration: 0.22, ease: 'easeInOut' }",
+      default: '{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }',
     },
     '...props': {
       description: 'Props of the label.',
@@ -151,7 +151,7 @@ Plain `div`s that structure the groups. They take `div` props.
       default: 'false',
     },
     transition: {
-      description: 'Transition of the move, and of the hover and press scale.',
+      description: 'Transition of the move, and of the press scale.',
       type: 'Transition',
       default: "{ type: 'spring', stiffness: 320, damping: 25, mass: 0.8 }",
     },

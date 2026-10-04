@@ -9,6 +9,7 @@ import {
 } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
@@ -32,11 +33,7 @@ type SlideProps = WithAsChild<
     HTMLMotionProps<'div'>
 >;
 
-const DEFAULT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 20,
-};
+const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Slide(props: SlideProps) {
   return (

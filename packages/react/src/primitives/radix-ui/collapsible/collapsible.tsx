@@ -23,7 +23,10 @@ type CollapsibleContentProps = CollapsiblePrimitive.CollapsibleContentProps &
 
 /** Animate UI's additions to `Collapsible.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the opening. Defaults to 350ms ease-in-out. */
+  /**
+   * Transition of the opening.
+   * @default { duration: 0.35, ease: [0.23, 1, 0.32, 1] }
+   */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
@@ -65,7 +68,7 @@ function Content({
 }: React.ComponentProps<typeof CollapsiblePrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useOpen();
-  // v1's content: 350ms ease-in-out both ways; under reduced motion the
+  // The content: 350ms ease-out both ways; under reduced motion the
   // height and the rise jump (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
 

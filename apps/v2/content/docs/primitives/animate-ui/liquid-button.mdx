@@ -28,10 +28,10 @@ export function Start() {
 ## Animation
 
 - On hover, a `fillHeight` line of `--liquid-button-color` slides in along the bottom, then rises to fill the button, each step taking `delay` (a CSS transition). Leaving, the fill variables ease back over 0.3s, then the text colour and the liquid drain in reverse.
-- Hovering scales the button to `hoverScale` in a 0.3s ease-out; pressing scales it to `tapScale`, and releasing or leaving springs it back (Motion's spring for scale, `stiffness: 550, damping: 30`).
+- Pressing scales the button to `tapScale` (0.95), and releasing springs it back (Motion's spring for scale, `stiffness: 550, damping: 30`). Hovering fills it without scaling it, unless you set `hoverScale` (then a 0.3s ease-out).
 - `transition` replaces the press, release and leave transitions.
 - `<AnimateUIProvider tempo>` paces the Motion transitions (not the CSS `delay`).
-- Under reduced motion, the button fills without scaling.
+- Under reduced motion, the button fills without scaling when pressed.
 
 ## API Reference
 
@@ -51,9 +51,10 @@ export function Start() {
       default: "'3px'",
     },
     hoverScale: {
-      description: 'Scale of the button on hover.',
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
       type: 'number',
-      default: '1.05',
+      default: '1',
     },
     tapScale: {
       description: 'Scale of the button while pressed.',

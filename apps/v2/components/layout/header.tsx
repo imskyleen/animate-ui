@@ -17,8 +17,9 @@ import { useSidebar } from 'fumadocs-ui/layouts/docs/slots/sidebar';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { ComponentProps } from 'react';
+import { useSyncExternalStore, type ComponentProps } from 'react';
 
+import { IconSwap } from '@/components/docs/icon-swap';
 import { AnimateUILogo } from '@/lib/libraries';
 import { docsVersions, gitConfig } from '@/lib/shared';
 
@@ -102,8 +103,17 @@ function SearchButton() {
   );
 }
 
+const subscribeNever = () => () => {};
+
 export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
+  // The theme is only known in the browser: until then, both icons render
+  // and CSS shows the right one, so the server HTML matches.
+  const hydrated = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
 
   return (
     <button
@@ -112,19 +122,29 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className={cn(iconButton, className)}
     >
-      {/* Both icons render; CSS shows the right one, so SSR matches. */}
-      <HugeiconsIcon
-        icon={SunMediumIcon}
-        strokeWidth={2}
-        size={18}
-        className="dark:hidden"
-      />
-      <HugeiconsIcon
-        icon={Moon02Icon}
-        strokeWidth={2}
-        size={18}
-        className="hidden dark:block"
-      />
+      {hydrated ? (
+        <IconSwap
+          active={resolvedTheme === 'dark'}
+          icon={SunMediumIcon}
+          activeIcon={Moon02Icon}
+          size={18}
+        />
+      ) : (
+        <>
+          <HugeiconsIcon
+            icon={SunMediumIcon}
+            strokeWidth={2}
+            size={18}
+            className="dark:hidden"
+          />
+          <HugeiconsIcon
+            icon={Moon02Icon}
+            strokeWidth={2}
+            size={18}
+            className="hidden dark:block"
+          />
+        </>
+      )}
     </button>
   );
 }

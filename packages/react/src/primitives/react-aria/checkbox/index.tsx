@@ -18,8 +18,8 @@ import {
 } from '../../../internal/controls/aria';
 
 // Same API as React Aria's Checkbox, animated like Animate UI v1's Radix UI
-// checkbox (v1 had no React Aria one): the checkbox scales to 1.05 while
-// hovered and 0.95 while pressed, and the check the user renders inside
+// checkbox (v1 had no React Aria one): the checkbox scales to 0.95 while
+// pressed (no hover scale), and the check the user renders inside
 // `data-slot="checkbox-indicator"` (shadcn/ui's indicator) draws itself when
 // selected (its stroke and opacity, 0.2s after 0.2s) and erases in 0.2s.
 
@@ -63,9 +63,7 @@ function AnimatedCheckbox({
             {...domProps}
             as="label"
             isPressed={values.isPressed}
-            isHovered={values.isHovered}
             isDisabled={values.isDisabled}
-            hover
           />
         ))
       }

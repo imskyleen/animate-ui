@@ -21,12 +21,12 @@ import { originFor } from './origin';
 // Same API as React Aria's Popover, the overlay under DialogTrigger,
 // PreviewTrigger (hover cards), MenuTrigger and SubmenuTrigger, Select,
 // ComboBox and DatePicker. React Aria has no Animate UI v1 counterpart, so it
-// moves like the closest v1 overlay:
-// - under menus, submenus, selects and comboboxes, like v1's DropdownMenu
-//   content: a 200ms fade and scale from 0.95, both ways;
-// - anywhere else (dialogs, hover cards, date pickers), like v1's Popover: it
-//   grows from half its size and fades in from the trigger on a spring, and
-//   shrinks back the same way.
+// moves like the matching Radix and Base UI overlay:
+// - under menus, submenus, selects and comboboxes, like the menus: a 200ms
+//   fade and scale from 0.9, both ways;
+// - anywhere else (dialogs, hover cards, date pickers), like the popovers: it
+//   grows from 0.8 and fades in from the trigger on a spring, and shrinks
+//   back the same way.
 //
 // React Aria keeps a popover mounted while it exits only if it sees running
 // animations when it closes, before Motion has started any. So the Popover

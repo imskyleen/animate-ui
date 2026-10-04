@@ -10,6 +10,7 @@ import {
 } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
@@ -18,13 +19,7 @@ import { Slot, type WithAsChild } from '../../slot';
 import { useAutoHeight } from './use-auto-height';
 
 /** Animate UI v1's spring. */
-const AUTO_HEIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 30,
-  bounce: 0,
-  restDelta: 0.01,
-};
+const AUTO_HEIGHT_TRANSITION: Transition = motionTokens.spring.height;
 
 type AutoHeightProps = WithAsChild<
   {

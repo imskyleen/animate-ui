@@ -9,7 +9,11 @@ import {
   type Transition,
 } from 'motion/react';
 
-import { useShouldReduceMotion, useTempoTransition } from '../../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../utils/motion';
 
 // The highlight of a single-selection toggle group, as Animate UI v1's
 // `ToggleGroupHighlight` (a shared layout animation): when another item is
@@ -33,11 +37,7 @@ const ITEM_ATTRIBUTE = 'data-animate-ui-toggle-item';
 const READY_ATTRIBUTE = 'data-animate-ui-highlight';
 
 /** v1's `ToggleGroupHighlight` transition (slide and fades). */
-const HIGHLIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
-};
+const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.selection;
 
 /** The attributes the group's items carry when selected, per library. */
 const SELECTED = {

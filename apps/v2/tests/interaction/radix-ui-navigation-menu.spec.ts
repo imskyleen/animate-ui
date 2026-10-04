@@ -26,7 +26,7 @@ test.describe('radix-ui navigation-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     // From its top edge.
     expect(first.origin.endsWith(' 0px')).toBe(true);
     await page.waitForTimeout(400);

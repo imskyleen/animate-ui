@@ -12,7 +12,7 @@ import {
 } from 'motion/react';
 
 import { getStrictContext } from '../utils/strict-context';
-import { useShouldReduceMotion } from '../utils/motion';
+import { motionTokens, useShouldReduceMotion } from '../utils/motion';
 
 // Shared by the Radix UI, Base UI and React Aria sliders. Animate UI v1 had no
 // slider: they move like v1's switch thumb. While pressed (or dragged), the
@@ -33,11 +33,7 @@ import { useShouldReduceMotion } from '../utils/motion';
 const DRAG_THRESHOLD = 3;
 
 /** v1's switch thumb transition (`SwitchThumb`), for the thumb and the range. */
-const SLIDER_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-};
+const SLIDER_TRANSITION: Transition = motionTokens.spring.thumb;
 
 /** v1's styled switch stretched its 16px thumb to 19px while pressed. */
 const PRESSED_STRETCH = 19 / 16;

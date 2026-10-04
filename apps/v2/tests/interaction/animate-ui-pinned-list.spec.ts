@@ -43,13 +43,16 @@ test.describe('animate-ui pinned list', () => {
     ).toBeVisible();
   });
 
-  test('the trigger grows on hover and shrinks on press', async ({ page }) => {
+  test('the trigger stays put on hover and shrinks on press', async ({
+    page,
+  }) => {
     await open(page);
     const trigger = page.getByRole('button', { name: 'Pin Inbox' });
     const scale = () =>
       trigger.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
     await trigger.hover();
-    await expect.poll(scale).toBeCloseTo(1.05, 2);
+    await page.waitForTimeout(300);
+    expect(await scale()).toBe(1);
     await page.mouse.down();
     await expect.poll(scale).toBeCloseTo(0.95, 2);
     await page.mouse.up();

@@ -19,6 +19,8 @@ import { useState, type ComponentProps, type ReactNode } from 'react';
 
 import { siteUrl } from '@/lib/shared';
 
+import { IconSwap } from './icon-swap';
+
 const button =
   'inline-flex h-8 items-center justify-center gap-1.5 bg-accent text-sm text-accent-foreground transition-colors hover:bg-accent/70';
 
@@ -93,9 +95,10 @@ export function CopyPage({
         onClick={copy}
         className={cn(button, 'rounded-l-md pr-3 pl-2.5')}
       >
-        <HugeiconsIcon
-          icon={copied ? Tick02Icon : Copy01Icon}
-          strokeWidth={2}
+        <IconSwap
+          active={copied}
+          icon={Copy01Icon}
+          activeIcon={Tick02Icon}
           size={14}
         />
         Copy page

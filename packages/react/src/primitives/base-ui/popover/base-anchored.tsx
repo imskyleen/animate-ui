@@ -7,6 +7,7 @@ import {
   asMotion,
   useAnchoredMotion,
   type AnchoredAnimationProps,
+  type AnchoredKind,
 } from '../../../internal/anchored';
 
 // The Base UI side of Popover, PreviewCard and Tooltip. The Root mirrors the
@@ -80,6 +81,8 @@ type BaseAnchoredPopupProps = AnchoredAnimationProps & {
   >;
   open: boolean;
   keepMounted: boolean;
+  /** Tooltips grow from 0.7, popovers and preview cards from 0.8. */
+  kind?: AnchoredKind;
 };
 
 const ORIGIN = 'var(--transform-origin)';
@@ -93,10 +96,12 @@ function BaseAnchoredPopup({
   popupProps: { render, style, ...popupProps },
   open,
   keepMounted,
+  kind,
   transition,
   exitTransition,
 }: BaseAnchoredPopupProps) {
   const motionProps = useAnchoredMotion({
+    kind,
     open,
     keepMounted,
     transition,

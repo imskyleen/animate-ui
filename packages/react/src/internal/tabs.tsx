@@ -10,6 +10,7 @@ import {
 } from 'motion/react';
 
 import {
+  motionTokens,
   useMotionTokens,
   useShouldReduceMotion,
   useTempoTransition,
@@ -20,9 +21,10 @@ import {
 // - the active tab's surface slides to the new tab with a spring, the new
 //   surface fading in while the previous one fades out 200ms later (v1's
 //   Highlight, a shared layout animation);
-// - the tabs' text color changes over 500ms (v1's `transition-colors
-//   duration-500 ease-in-out`);
-// - the incoming panel fades in from a 4px blur over 500ms while its height
+// - the tabs' text color changes over 500ms on `ease`, the curve of a color
+//   change;
+// - the incoming panel fades in from a 4px blur over 500ms on a strong
+//   ease-out (it enters: most of it shows in the first 150ms) while its height
 //   springs from the previous panel's (v1's TabsContents), on the spring of
 //   Auto Height and Animate UI's own Tabs; the outgoing one leaves at once.
 // Keyboard changes animate like clicks.
@@ -47,9 +49,8 @@ const SURFACE_CSS = [
   `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}][aria-selected="true"]{background-color:transparent;background-image:none}`,
   `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}][aria-selected="true"]:not(:focus-visible){border-color:transparent;box-shadow:none}`,
   `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}][aria-selected="true"]::after{opacity:0}`,
-  // v1's tabs changed their colors over 500ms (`transition-colors
-  // duration-500 ease-in-out`, Tailwind's ease-in-out).
-  `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}]{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke;transition-duration:var(${COLOR_DURATION_VAR},.5s);transition-timing-function:cubic-bezier(.4,0,.2,1)}`,
+  // The tabs change their colors over 500ms (v1's duration), on `ease`.
+  `[${READY_ATTRIBUTE}] [${TAB_ATTRIBUTE}]{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke;transition-duration:var(${COLOR_DURATION_VAR},.5s);transition-timing-function:ease}`,
 ].join('');
 
 // Data attributes the indicator copies from the active tab, minus identity and
@@ -59,12 +60,8 @@ const SKIPPED_ATTRIBUTE =
 
 const INDICATOR_SLOT = 'tabs-indicator';
 
-/** v1's Highlight spring for the tabs (TabsHighlight). */
-const INDICATOR_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
-};
+/** The selection spring (v1's TabsHighlight). */
+const INDICATOR_TRANSITION: Transition = motionTokens.spring.selection;
 
 /** v1's Highlight `exitDelay`: the previous surface fades out 200ms later. */
 const EXIT_DELAY = 0.2;
@@ -285,23 +282,17 @@ function useTabsIndicator(
   };
 }
 
-/** v1's panel entrance: a fade from a 4px blur, 500ms ease-in-out. */
-const PANEL_TRANSITION: Transition = { duration: 0.5, ease: 'easeInOut' };
+/** The panel's entrance: a fade from a 4px blur, 500ms, strong ease-out. */
+const PANEL_TRANSITION: Transition = motionTokens.transition.panel;
 /** The panels' height: the spring of Auto Height and Animate UI's own Tabs. */
-const HEIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 30,
-  bounce: 0,
-  restDelta: 0.01,
-};
-const PANEL_HIDDEN = { opacity: 0, filter: 'blur(4px)' };
+const HEIGHT_TRANSITION: Transition = motionTokens.spring.height;
+const PANEL_HIDDEN = { opacity: 0, filter: motionTokens.blur.surface };
 // Keyframes: a force-mounted panel becoming active again starts from hidden
 // too. The blur is dropped at rest: `filter` would make the panel the
 // containing block of its fixed descendants.
 const PANEL_ENTRANCE = {
   opacity: [0, 1],
-  filter: ['blur(4px)', 'blur(0px)'],
+  filter: [motionTokens.blur.surface, 'blur(0px)'],
   transitionEnd: { filter: 'none' },
 };
 const PANEL_SHOWN = { opacity: 1, filter: 'none' };

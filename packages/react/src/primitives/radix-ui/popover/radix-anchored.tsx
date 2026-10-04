@@ -7,6 +7,7 @@ import {
   asMotion,
   useAnchoredMotion,
   type AnchoredAnimationProps,
+  type AnchoredKind,
 } from '../../../internal/anchored';
 
 // The Radix side of Popover, HoverCard and Tooltip: the Root mirrors the open
@@ -47,6 +48,8 @@ type RadixAnchoredContentProps = AnchoredAnimationProps & {
   keepMounted: boolean;
   /** Radix's transform-origin variable for this content. */
   origin: string;
+  /** Tooltips grow from 0.7, popovers and hover cards from 0.8. */
+  kind?: AnchoredKind;
 };
 
 /**
@@ -60,10 +63,12 @@ function RadixAnchoredContent({
   open,
   keepMounted,
   origin,
+  kind,
   transition,
   exitTransition,
 }: RadixAnchoredContentProps) {
   const motionProps = useAnchoredMotion({
+    kind,
     open,
     keepMounted,
     transition,

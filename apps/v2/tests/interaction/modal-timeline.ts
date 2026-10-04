@@ -6,7 +6,7 @@ import { expectSpringPace, type Sample } from './spring-curves';
 // Sheet), sampled in the page on every animation frame so it holds up on a
 // busy machine, plus the assertions of Animate UI v1's modal motion:
 //
-// - overlay: fades (and un-blurs) in 200ms, easeInOut, both ways;
+// - overlay: fades (and un-blurs) in 200ms, strong ease-out, both ways;
 // - dialog content: from `perspective(500px) rotateX(-20deg) scale(0.8)`,
 //   blur(4px) and transparent, on a spring (stiffness 150, damping 25) that
 //   settles well after the overlay; it leaves the same way, still visible

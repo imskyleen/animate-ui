@@ -1,31 +1,31 @@
 'use client';
 
 import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  ReducedMotionConfig,
-  transition,
-} from '@animate-ui/react/utils/motion';
+import { Button } from '@animate-ui/react/primitives/buttons/button';
+import { ease, ReducedMotionConfig } from '@animate-ui/react/utils/motion';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { IconSwap } from '@/components/docs/icon-swap';
 import { LIBRARIES } from '@/lib/libraries';
 
 const COMMAND = 'pnpm dlx @animate-ui/cli@latest animate all';
 
-// Each block rises into place in turn; reduced motion keeps only the fade.
+// Each block rises into place in turn (600ms, strong ease-out, 80ms apart);
+// reduced motion keeps only the fade.
 const rise = (index: number) => ({
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
-  transition: { ...transition.dropdown, delay: index * 0.08 },
+  transition: { duration: 0.6, ease: ease.out, delay: index * 0.08 },
 });
 
 function CopyCommand() {
   const [copied, setCopied] = useState(false);
   return (
-    <button
+    <Button
       type="button"
+      aria-label={copied ? 'Copied' : 'Copy the command'}
       onClick={async () => {
         await navigator.clipboard.writeText(COMMAND);
         setCopied(true);
@@ -35,13 +35,14 @@ function CopyCommand() {
     >
       <span className="text-muted-foreground select-none">$</span>
       <span className="truncate">{COMMAND}</span>
-      <HugeiconsIcon
-        icon={copied ? Tick02Icon : Copy01Icon}
-        strokeWidth={2}
+      <IconSwap
+        active={copied}
+        icon={Copy01Icon}
+        activeIcon={Tick02Icon}
         size={16}
-        className="shrink-0 text-muted-foreground group-hover:text-foreground"
+        className="text-muted-foreground group-hover:text-foreground"
       />
-    </button>
+    </Button>
   );
 }
 

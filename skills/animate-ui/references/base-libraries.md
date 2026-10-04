@@ -13,12 +13,13 @@ import { useControlledState } from '@animate-ui/react/utils/use-controlled-state
 import {
   ReducedMotionConfig,
   scale,
-  transition as motionTransition,
+  spring,
   useShouldReduceMotion,
+  useTempoTransition,
 } from '@animate-ui/react/utils/motion';
 ```
 
-The snippets use the static `transition` defaults for brevity; in a component, read them from `useMotionTokens()` so `AnimateUIProvider`'s `tempo` applies.
+The snippets pass every token through `useTempoTransition()` so `AnimateUIProvider`'s `tempo` applies (`useMotionTokens()` does the same).
 
 ## 1. The Root tracks `open`
 
@@ -93,14 +94,13 @@ function PopoverContentMotion({
   children,
   align = 'center',
   sideOffset = 4,
-  transition = motionTransition.dropdown,
+  transition,
   ...props
 }: PopoverContentProps) {
   const reduce = useShouldReduceMotion();
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
-  };
+  const pop = useTempoTransition(transition ?? spring.pop);
+  // `scale`: Motion writes `transform: none` once it's back to 1.
+  const hidden = { opacity: 0, scale: reduce ? 1 : scale.popover };
 
   return (
     <PopoverPrimitive.Content
@@ -117,8 +117,8 @@ function PopoverContentMotion({
     >
       <motion.div
         initial={hidden}
-        animate={{ opacity: 1, transform: 'scale(1)', transition }}
-        exit={{ ...hidden, transition: motionTransition.exit }}
+        animate={{ opacity: 1, scale: 1, transition: pop }}
+        exit={{ ...hidden, transition: pop }}
         style={{
           transformOrigin: 'var(--radix-popover-content-transform-origin)',
         }}
@@ -132,7 +132,7 @@ function PopoverContentMotion({
 
 Remove `forceMount` and `asChild` from the public props type since the component owns them. This is the accepted exception to "same props". If the original puts a `data-slot` on the Portal (shadcn does: `data-slot="popover-portal"`), keep it next to `forceMount`.
 
-Tooltip: `TooltipContent` gets `data-state="delayed-open"` or `"instant-open"`, but shadcn's `Tooltip` gives each tooltip its own Provider, so the library never reports "instant". Track warm tooltips yourself (see the Overlay recipe).
+Tooltip: the same, from `scale.tooltip` (0.7). shadcn's `Tooltip` gives each tooltip its own Provider, so Radix's grouping (`data-state="instant-open"`) never applies: every tooltip plays its entrance, which is what Animate UI's primitives do too.
 
 ## 3. Base UI (`@base-ui/react`)
 
@@ -143,15 +143,10 @@ Tooltip: `TooltipContent` gets `data-state="delayed-open"` or `"instant-open"`, 
 - Some parts append a visually hidden `<span>` as the last child (Progress, for example). Lay out children with `flex flex-col gap-*` rather than `space-y-*`, which adds margin to every child except the last.
 
 ```tsx
-function PopoverPopupMotion({
-  transition = motionTransition.dropdown,
-  ...props
-}: PopoverPopupProps) {
+function PopoverPopupMotion({ transition, ...props }: PopoverPopupProps) {
   const reduce = useShouldReduceMotion();
-  const hidden = {
-    opacity: 0,
-    transform: reduce ? 'scale(1)' : `scale(${scale.enter})`,
-  };
+  const pop = useTempoTransition(transition ?? spring.pop);
+  const hidden = { opacity: 0, scale: reduce ? 1 : scale.popover };
 
   return (
     <PopoverPrimitive.Popup
@@ -160,8 +155,8 @@ function PopoverPopupMotion({
       render={
         <motion.div
           initial={hidden}
-          animate={{ opacity: 1, transform: 'scale(1)', transition }}
-          exit={{ ...hidden, transition: motionTransition.exit }}
+          animate={{ opacity: 1, scale: 1, transition: pop }}
+          exit={{ ...hidden, transition: pop }}
           style={{ transformOrigin: 'var(--transform-origin)' }}
         />
       }
@@ -172,7 +167,7 @@ function PopoverPopupMotion({
 
 Render it inside `<AnimatePresence>{isOpen && <PopoverPrimitive.Portal keepMounted><ReducedMotionConfig><PopoverPrimitive.Positioner>…` with the same inner-component pattern as Radix.
 
-Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. A warm tooltip carries `data-instant`, but as with Radix, per-tooltip Providers hide it: track warm tooltips yourself.
+Tooltip and Preview Card: delays live on the Trigger or the Provider, not the Root. Tooltips start from `scale.tooltip` (0.7), preview cards from `scale.popover` (0.8).
 
 ## 4. React Aria (`react-aria-components`)
 

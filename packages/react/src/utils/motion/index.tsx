@@ -2,102 +2,148 @@
 
 import * as React from 'react';
 import {
+  createGeneratorEasing,
+  generateLinearEasing,
   MotionConfig,
   MotionConfigContext,
+  spring as springGenerator,
   type Transition,
 } from 'motion/react';
 
 /**
- * Animate UI motion tokens.
+ * Animate UI motion tokens: one value per motion role, shared by every
+ * primitive, so two components that do the same thing move the same way.
  *
- * Single source of truth for curves, durations and springs used by every
- * primitive. Entrances and state changes take 600ms on a strong ease-out
- * (most of the movement happens in the first ~150ms), exits 400ms, press
- * feedback 150ms. Never scale from 0.
+ * Springs first: nearly everything moves on a spring (stiffness / damping),
+ * which carries its velocity when interrupted and overshoots a little where
+ * that makes motion feel alive. Tweens are for fades, menus, disclosure
+ * heights and swaps, and pick their curve by what the element does: ease-out
+ * to enter or leave, ease-in-out to move on screen. Pressables scale on press
+ * only; anchored popups grow from their trigger, from farther when they are
+ * small; two states swapping in place are bridged with a light blur.
  *
- * Primitives read them with `useMotionTokens()`, so an optional
- * `<AnimateUIProvider tempo={…}>` can change the pace of the whole app.
- * Without a provider, the defaults below apply.
+ * The tokens are the values at tempo 1. Components pass them through
+ * `useTempoTransition` (or read them from `useMotionTokens()`), so an optional
+ * `<AnimateUIProvider tempo={…}>` paces the whole app.
  */
 
+/** Curves of the tweens, picked by what the element does. */
 const ease = {
-  /** Entering / exiting UI. Starts fast so the response is immediate. */
+  /** Entering or leaving: starts fast, so the interface answers at once. */
   out: [0.23, 1, 0.32, 1],
   /** Moving or morphing something already on screen. */
   inOut: [0.77, 0, 0.175, 1],
-  /** Drawers and sheets (iOS-like). */
-  drawer: [0.32, 0.72, 0, 1],
 } as const;
 
+/** Springs, one per role (stiffness / damping, mass 1). */
+const spring = {
+  /** Press feedback: Motion's own spring for `scale`. */
+  press: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
+  /**
+   * Tooltips, popovers and hover cards growing from their trigger: there in
+   * ~200ms, a little overshoot, settled by ~500ms.
+   */
+  pop: { type: 'spring', stiffness: 300, damping: 25 },
+  /** Dialogs tipping forward: calm, no overshoot. */
+  dialog: { type: 'spring', stiffness: 150, damping: 25 },
+  /** Sheets, drawers and toasts from an edge: livelier, they travel farther. */
+  sheet: { type: 'spring', stiffness: 150, damping: 22 },
+  /** A selection sliding between items (tabs, toggle groups). */
+  selection: { type: 'spring', stiffness: 200, damping: 25 },
+  /** A surface following the pointer: quick, so it never trails behind it. */
+  highlight: { type: 'spring', stiffness: 350, damping: 35 },
+  /** A height following its content, without overshoot. */
+  height: {
+    type: 'spring',
+    stiffness: 300,
+    damping: 30,
+    bounce: 0,
+    restDelta: 0.01,
+  },
+  /** A switch or slider thumb gliding and stretching. */
+  thumb: { type: 'spring', stiffness: 300, damping: 25 },
+  /** Small marks popping inside a control (radio dot, OTP characters). */
+  bounce: { type: 'spring', stiffness: 200, damping: 16 },
+  /** Effects bringing content in (Fade, Slide, Zoom, Blur): playful. */
+  entrance: { type: 'spring', stiffness: 200, damping: 20 },
+  /** A progress bar and its value. */
+  progress: { type: 'spring', stiffness: 100, damping: 30 },
+  /** Numbers rolling to their value without overshooting. */
+  number: { type: 'spring', stiffness: 90, damping: 50 },
+} as const satisfies Record<string, Transition>;
+
+/** Tweens, one per role. */
+const transition = {
+  /** Menus, selects, comboboxes and navigation menus: short and exact. */
+  menu: { duration: 0.2, ease: ease.out },
+  /** An overlay or backdrop fading (and un-blurring). */
+  overlay: { duration: 0.2, ease: ease.out },
+  /** Accordion and collapsible panels. */
+  disclosure: { duration: 0.35, ease: ease.out },
+  /** A panel coming in from a blur (tab panels). */
+  panel: { duration: 0.5, ease: ease.out },
+  /** A check drawing itself, once the box has answered the press. */
+  check: { duration: 0.2, delay: 0.2, ease: ease.out },
+  /** A check erasing itself. */
+  uncheck: { duration: 0.2, ease: ease.out },
+  /** Two icons or labels swapping in place. */
+  swap: { duration: 0.2, ease: ease.out },
+  /** Deliberately no animation. */
+  instant: { duration: 0 },
+} as const satisfies Record<string, Transition>;
+
+/** Scales, by role. */
 const scale = {
-  /** Starting scale for anything that appears. Never 0. */
-  enter: 0.95,
-  /** Press feedback. */
-  press: 0.96,
+  /** Anything pressed. Nothing scales on hover. */
+  press: 0.95,
+  /** Where anchored popups grow from: the smaller, the farther. */
+  tooltip: 0.7,
+  popover: 0.8,
+  menu: 0.9,
+  /** Dialog content, with `perspective(500px) rotateX(-20deg)`. */
+  dialog: 0.8,
+  /** An icon swapping for another. */
+  icon: 0.5,
+} as const;
+
+/** Blurs bridging two states. */
+const blur = {
+  /** Icons and short labels swapping in place. */
+  icon: 'blur(2px)',
+  /** Panels and surfaces coming in: tab panels, dialogs and their overlay. */
+  surface: 'blur(4px)',
 } as const;
 
 /**
- * Builds the tokens for a pace. `tempo` multiplies every duration and spring:
- * 1 is the default, 0.8 feels crisper, 1.2 more relaxed.
+ * The tokens at a pace: `tempo` multiplies the tweens' durations and delays,
+ * and time-scales the springs (see `scaleTransition`). 1 is the default, 0.8
+ * feels crisper, 1.2 more relaxed. Curves, scales and blurs don't change.
  */
 function createMotionTokens(tempo = 1) {
-  const t = (seconds: number) => seconds * tempo;
+  const pace = <T extends Record<string, Transition>>(set: T): T =>
+    tempo === 1
+      ? set
+      : (Object.fromEntries(
+          Object.entries(set).map(([role, value]) => [
+            role,
+            scaleTransition(value, tempo),
+          ]),
+        ) as T);
 
-  /** Durations in seconds (Motion's unit). */
-  const duration = {
-    press: t(0.15),
-    /** Any other state change: checkmarks, swapped icons, labels. */
-    change: t(0.6),
-    tooltip: t(0.6),
-    /** Popovers, menus, selects, hover cards. */
-    dropdown: t(0.6),
-    /** Closing tooltips, popovers and menus: faster than their entrance. */
-    exit: t(0.4),
-    /** Swapping content in place (tab panels). */
-    fade: t(0.6),
-    /** Accordion and collapsible height. */
-    disclosure: t(0.6),
-    modal: t(0.6),
-    /** Dismissals are the system's response: faster than the entrance. */
-    modalExit: t(0.4),
-    drawer: t(0.6),
-    drawerExit: t(0.4),
-  };
-
-  const spring = {
-    /** Default for interruptible, dynamic UI (cursors, magnetic, follow). */
-    default: { type: 'spring', duration: t(0.6), bounce: 0.2 },
-    /** Indicators, toggles and highlights: quick with a hint of overshoot. */
-    snappy: { type: 'spring', duration: t(0.6), bounce: 0.15 },
-  } as const satisfies Record<string, Transition>;
-
-  /** Ready-made transitions for the common cases. */
-  const transition = {
-    press: { duration: duration.press, ease: ease.out },
-    change: { duration: duration.change, ease: ease.out },
-    tooltip: { duration: duration.tooltip, ease: ease.out },
-    dropdown: { duration: duration.dropdown, ease: ease.out },
-    exit: { duration: duration.exit, ease: ease.out },
-    /** Swapping content in place (tab panels): a fade, no exit. */
-    fade: { duration: duration.fade, ease: ease.out },
-    /** Accordion and collapsible height (one of the few layout animations). */
-    disclosure: { duration: duration.disclosure, ease: ease.out },
-    modal: { duration: duration.modal, ease: ease.out },
-    modalExit: { duration: duration.modalExit, ease: ease.out },
-    drawer: { duration: duration.drawer, ease: ease.drawer },
-    drawerExit: { duration: duration.drawerExit, ease: ease.drawer },
-    /** Deliberately no animation (e.g. keyboard-driven changes). */
-    instant: { duration: 0 },
-  } as const satisfies Record<string, Transition>;
-
-  return { tempo, ease, scale, duration, spring, transition } as const;
+  return {
+    tempo,
+    ease,
+    scale,
+    blur,
+    spring: pace(spring),
+    transition: pace(transition),
+  } as const;
 }
 
 type MotionTokens = ReturnType<typeof createMotionTokens>;
 
 /** The default tokens (tempo 1). */
 const motionTokens: MotionTokens = createMotionTokens();
-const { duration, spring, transition } = motionTokens;
 
 const MotionTokensContext = React.createContext<MotionTokens>(motionTokens);
 
@@ -144,6 +190,77 @@ function useTempoTransition<T extends Transition | undefined>(
 /** The tokens of the closest `AnimateUIProvider`, or the defaults. */
 function useMotionTokens(): MotionTokens {
   return React.use(MotionTokensContext);
+}
+
+/* CSS timing -------------------------------------------------------------- */
+
+/** A CSS transition timing: duration in milliseconds and timing function. */
+type CssTiming = { duration: number; easing: string };
+
+const CSS_EASINGS: Record<string, string> = {
+  linear: 'linear',
+  easeIn: 'cubic-bezier(0.42, 0, 1, 1)',
+  easeOut: 'cubic-bezier(0, 0, 0.58, 1)',
+  easeInOut: 'cubic-bezier(0.42, 0, 0.58, 1)',
+  circIn: 'cubic-bezier(0, 0.65, 0.55, 1)',
+  circOut: 'cubic-bezier(0.55, 0, 1, 0.45)',
+  backIn: 'cubic-bezier(0.31, 0.01, 0.66, -0.59)',
+  backOut: 'cubic-bezier(0.33, 1.53, 0.69, 0.99)',
+};
+
+const SPRING_KEYS = [
+  'stiffness',
+  'damping',
+  'mass',
+  'bounce',
+  'visualDuration',
+];
+
+function toCssEase(curve: unknown): string {
+  if (
+    Array.isArray(curve) &&
+    curve.length === 4 &&
+    curve.every(Number.isFinite)
+  )
+    return `cubic-bezier(${curve.join(', ')})`;
+  if (typeof curve === 'string') return CSS_EASINGS[curve] ?? 'ease';
+  return CSS_EASINGS.easeInOut!;
+}
+
+/**
+ * A Motion transition (tempo already applied) as a CSS duration and timing
+ * function, for the parts a library drives with CSS transitions (Base UI's
+ * Drawer and Toast follow the finger through CSS variables). A spring becomes
+ * the `linear()` curve Motion itself hands the browser (same duration, same
+ * 10ms resolution), so it moves exactly like Motion's; a tween keeps its
+ * `duration` (Motion's default 0.3s) and cubic-bezier or named `ease`
+ * (Motion's default easeInOut).
+ */
+function toCssTiming(motionTransition: Transition): CssTiming {
+  const options = motionTransition as Record<string, unknown>;
+  const isSpring =
+    options.type === 'spring' || SPRING_KEYS.some((key) => key in options);
+
+  if (isSpring) {
+    // Motion's spring takes a time-defined `duration` in ms.
+    const springOptions =
+      typeof options.duration === 'number'
+        ? { ...options, duration: options.duration * 1000 }
+        : options;
+    const { duration, ease: curve } = createGeneratorEasing(
+      springOptions,
+      100,
+      springGenerator,
+    );
+    const ms = Math.round(duration * 1000);
+    return { duration: ms, easing: generateLinearEasing(curve, ms) };
+  }
+
+  const seconds = typeof options.duration === 'number' ? options.duration : 0.3;
+  return {
+    duration: Math.round(seconds * 1000),
+    easing: toCssEase(options.ease),
+  };
 }
 
 type ReducedMotionConfigProps = {
@@ -200,9 +317,9 @@ function subscribeToReducedMotion(onChange: () => void) {
  * calling it outside one would always return false.
  *
  * Motion's reduced-motion setting only skips individual transform props
- * (`x`, `scale`…), not a `transform` string. Components animate `transform`
- * strings (hardware accelerated), so they neutralize them with this:
- * `const enter = reduce ? 1 : scale.enter`.
+ * (`x`, `scale`…), not a `transform` string. Components that animate a
+ * `transform` string (hardware accelerated) neutralize it with this:
+ * `const pressed = reduce ? 1 : scale.press`.
  *
  * Unlike Motion's `useReducedMotion`, it follows OS setting changes while the
  * component stays mounted.
@@ -224,14 +341,16 @@ export {
   MotionTokensContext,
   useMotionTokens,
   ease,
-  duration,
   spring,
-  scale,
   transition,
+  scale,
+  blur,
   ReducedMotionConfig,
   useShouldReduceMotion,
   scaleTransition,
   useTempoTransition,
+  toCssTiming,
+  type CssTiming,
   type ReducedMotionConfigProps,
   type MotionTokens,
 };

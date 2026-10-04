@@ -19,7 +19,7 @@ test.describe('base-ui context-menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     // Opens to the bottom right of the pointer: anchored near its top-left.
     const [x, y] = first.origin.split(' ').map(parseFloat);
     expect(Math.abs(x!)).toBeLessThan(8);

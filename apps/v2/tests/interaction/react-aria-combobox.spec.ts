@@ -18,7 +18,7 @@ test.describe('react-aria combobox demo', () => {
     await page.keyboard.press('ArrowDown');
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeGreaterThanOrEqual(0.95);
+    expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
 
     await page.waitForTimeout(650);

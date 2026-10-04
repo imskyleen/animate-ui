@@ -14,7 +14,7 @@ import { expectCssSpring } from './spring-curves';
 // The drawer moves like Animate UI v1's Sheet: it slides and fades on the
 // dialog's spring (stiffness 150, damping 25), run by CSS transitions as
 // Motion's `linear()` curve for it, and its backdrop fades and un-blurs in
-// 200ms (easeInOut), both ways.
+// 200ms (ease-out), both ways.
 
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';

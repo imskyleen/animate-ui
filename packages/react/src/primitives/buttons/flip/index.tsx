@@ -15,7 +15,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import { Slot, type WithAsChild } from '../../slot';
-import { SCALE_SPRING } from '../_button';
+import { SCALE_SPRING, TAP_SCALE } from '../_button';
 
 const FACE_TRANSITION: Transition = {
   type: 'spring',
@@ -70,7 +70,7 @@ function FlipButton(props: FlipButtonProps) {
 
 function FlipButtonContent({
   from = 'top',
-  tapScale = 0.95,
+  tapScale = TAP_SCALE,
   asChild = false,
   transition,
   style,

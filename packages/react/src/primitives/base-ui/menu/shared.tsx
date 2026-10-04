@@ -8,13 +8,13 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { MENU_TRANSITION } from '../../../internal/anchored';
+import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
 import { HighlightScope } from '../../../internal/item-highlight';
 
 // Shared by Base UI's Menu and Context Menu (which reuses the Menu's parts),
 // animated like Animate UI v1's Base UI Menu:
 //
-// - the Popup (and each submenu's) fades and scales from 0.95 in 200ms, both
+// - the Popup (and each submenu's) fades and scales from 0.9 in 200ms, both
 //   ways;
 // - one highlight glides behind the highlighted item, into submenus too
 //   (internal/item-highlight);
@@ -25,7 +25,7 @@ import { HighlightScope } from '../../../internal/item-highlight';
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2 }`.
+   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -146,7 +146,7 @@ function PopupMotion({
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1.
-  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const { children, ...props } = htmlProps;
 
   return (

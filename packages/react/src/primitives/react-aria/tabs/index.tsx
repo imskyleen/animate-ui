@@ -32,7 +32,7 @@ type ListAnimationProps = {
 };
 
 type PanelAnimationProps = {
-  /** Transition of the incoming panel: its fade (500ms ease-in-out) and, in `height`, its height (a spring, stiffness 300, damping 30). */
+  /** Transition of the incoming panel: its fade (500ms ease-out) and, in `height`, its height (a spring, stiffness 300, damping 30). */
   transition?: Transition;
 };
 

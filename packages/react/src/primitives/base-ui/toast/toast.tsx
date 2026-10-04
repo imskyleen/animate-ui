@@ -16,12 +16,15 @@ import {
   toCssTiming,
   type CssTiming,
 } from '../../../internal/modal-motion';
+import { HIDDEN_SCALE, POPOVER_TRANSITION } from '../../../internal/anchored';
 
 // Same API as Base UI's Toast. Animate UI v1 had no toast: its motion comes
 // from v1's Sheet (it enters and leaves through its edge, by its own size,
-// with a fade, on the sheet spring: stiffness 150, damping 22), v1's Popover
-// for a toast anchored to an element (scale 0.5 → 1 and a fade from its
-// anchor, spring stiffness 300, damping 25), and v1's 200ms easeInOut fade.
+// with a fade, on the sheet spring: stiffness 150, damping 22). A toast
+// anchored to an element is a small bubble, like a tooltip: it grows from
+// 0.7 and fades in from its anchor, on the tooltips' spring (stiffness 300,
+// damping 25). The content behind the front toast fades in 200ms,
+// ease-out, like a modal's overlay.
 //
 // Base UI drives the stack, swipe-to-dismiss and enter/exit itself, through
 // CSS variables (`--toast-index`, `--toast-offset-y`, `--toast-height`,
@@ -40,13 +43,6 @@ import {
 //   springs back, or leaves the way it was swiped.
 // - It leaves through the edge it came from, on the same spring.
 // - Under reduced motion it fades in place and the stack changes at once.
-
-/** v1's popover spring, for a toast anchored to an element. */
-const POPOVER_TRANSITION = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 25,
-} as const satisfies Transition;
 
 /** Animate UI's additions to `Toast.Root`. */
 type RootAnimationProps = {
@@ -67,15 +63,15 @@ type ContentAnimationProps = {
   /**
    * Transition of the content fading behind the front toast (a CSS
    * transition).
-   * @default { duration: 0.2, ease: 'easeInOut' }
+   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: Transition;
 };
 
 const GAP = '0.75rem';
 const PEEK = '0.75rem';
-/** v1's popover starting scale, for an anchored toast. */
-const ANCHORED_SCALE = 0.5;
+/** An anchored toast grows from 0.7, like a tooltip. */
+const ANCHORED_SCALE = HIDDEN_SCALE.tooltip;
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -129,7 +125,7 @@ function stackStyle(
   };
 
   // A toast anchored to an element (Toast.Positioner) isn't stacked: it
-  // grows from its anchor, like v1's popover.
+  // grows from its anchor, like a tooltip.
   if (anchored) {
     style.transform = `scale(${hidden && !reduce ? ANCHORED_SCALE : 1})`;
     style.transformOrigin = 'var(--transform-origin)';

@@ -1,100 +1,136 @@
 # Motion tokens
 
-The tokens come from the package:
+Every value Animate UI animates with lives in one module, one token per motion role. Two components that do the same thing use the same token; a component with its own character (a magnetic button, a tilt card) keeps its own spring.
 
 ```tsx
 import {
-  useMotionTokens, // the tokens at the current tempo: use this in components
   ease,
+  spring,
+  transition,
   scale,
-  transition, // static defaults (tempo 1)
+  blur,
+  useMotionTokens, // the same tokens, paced by AnimateUIProvider's tempo
+  useTempoTransition,
+  toCssTiming,
   ReducedMotionConfig,
   useShouldReduceMotion,
 } from '@animate-ui/react/utils/motion';
-
-const { transition, spring, duration } = useMotionTokens();
 ```
 
-Inside a component, read durations, springs and transitions from `useMotionTokens()` so `AnimateUIProvider`'s `tempo` applies; the static exports are the tempo-1 defaults (handy outside React). Curves (`ease`) and `scale` don't depend on tempo. The module also exports `createMotionTokens(tempo)` and `motionTokens`.
+The static exports are the values at tempo 1. Inside a component, either read them from `useMotionTokens()` or pass the one you use through `useTempoTransition()`: both follow `<AnimateUIProvider tempo>`.
+
+```tsx
+const { spring } = useMotionTokens();
+const pop = useTempoTransition(transitionProp ?? spring.pop); // same thing, with a prop
+```
+
+Import `transition` as `motionTransition` when the component also takes a `transition` prop.
+
+## Springs
+
+Springs first: nearly everything moves on a spring. They retarget with their velocity when interrupted, and a little overshoot makes motion feel alive. Animate UI's springs are `stiffness` / `damping` pairs (mass 1): tune those, not `bounce`, which Motion ignores when stiffness or damping are set.
+
+| Token              | Value                                                     | Feel                                               | Use for                                                                |
+| ------------------ | --------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                       |
+| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                 |
+| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                              |
+| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)    |
+| `spring.selection` | `stiffness: 200, damping: 25`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                 |
+| `spring.highlight` | `stiffness: 350, damping: 35`                             | Quick, never trails the pointer                    | A surface following the pointer (menu items, Highlight, nav indicator) |
+| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)               |
+| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                        |
+| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters) |
+| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                            | Effects bringing content in (Fade, Slide, Zoom, Blur)                  |
+| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                            | A progress bar and its value                                           |
+| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                         | Numbers rolling to their value                                         |
+
+Every spring above has `type: 'spring'`.
+
+## Tweens
+
+Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
+
+| Token                   | Value                                           | Use for                                                   |
+| ----------------------- | ----------------------------------------------- | --------------------------------------------------------- |
+| `transition.menu`       | `{ duration: 0.2, ease: ease.out }`             | Menus, selects, comboboxes, navigation menus              |
+| `transition.overlay`    | `{ duration: 0.2, ease: ease.out }`             | An overlay or backdrop fading (and un-blurring)           |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.out }`            | Accordion and collapsible panels                          |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`             | A panel coming in from a blur (tab panels)                |
+| `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.out }` | A check drawing itself once the box has answered          |
+| `transition.uncheck`    | `{ duration: 0.2, ease: ease.out }`             | A check erasing itself                                    |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`             | Two icons or labels swapping in place                     |
+| `transition.instant`    | `{ duration: 0 }`                               | Deliberately no animation (reduced motion, a forced jump) |
 
 ## Curves
 
-| Token         | Value                             | Use for                                        |
-| ------------- | --------------------------------- | ---------------------------------------------- |
-| `ease.out`    | `cubic-bezier(0.23, 1, 0.32, 1)`  | Anything entering or exiting. The default.     |
-| `ease.inOut`  | `cubic-bezier(0.77, 0, 0.175, 1)` | Something already on screen moving or morphing |
-| `ease.drawer` | `cubic-bezier(0.32, 0.72, 0, 1)`  | Sheets and drawers                             |
+Pick a tween's curve by what the element does:
 
-Strong ease-out is the default. Never ease-in on an entrance. Motion's built-in `easeOut` and `easeInOut` are too weak for deliberate motion; use the tokens. Color and hover transitions in CSS can use plain `ease`.
+| What it does                       | Curve                                                                              |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| Enters or leaves                   | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                       |
+| Moves or morphs on screen          | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
+| Changes color (CSS)                | `ease`                                                                             |
+| Moves constantly (marquee, loader) | `linear`                                                                           |
+
+`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. Never ease-in on UI: it starts slow, exactly when the user is watching.
+
+## Scales
+
+| Token           | Value | Use for                                                                        |
+| --------------- | ----- | ------------------------------------------------------------------------------ |
+| `scale.press`   | 0.95  | Anything pressed (buttons, checkbox, radio, toggles). Nothing scales on hover. |
+| `scale.tooltip` | 0.7   | Where tooltips (and anchored toasts) grow from                                 |
+| `scale.popover` | 0.8   | Where popovers, hover cards and preview cards grow from                        |
+| `scale.menu`    | 0.9   | Where menus, selects and navigation menus grow from                            |
+| `scale.dialog`  | 0.8   | Dialog content, with `perspective(500px) rotateX(-20deg)`                      |
+| `scale.icon`    | 0.5   | An icon swapping for another                                                   |
+
+The smaller the element, the farther it starts, so its growth stays visible; the more often a large one opens, the subtler it gets. A tooltip's 0.7 is only a few pixels on a small label, a popover's 0.8 shows where it came from, a menu opened all day stays at 0.9.
+
+## Blur
+
+| Token          | Value       | Use for                                                                                       |
+| -------------- | ----------- | --------------------------------------------------------------------------------------------- |
+| `blur.icon`    | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                                      |
+| `blur.surface` | `blur(4px)` | Panels and surfaces coming in: tab panels, navigation menu content, dialogs and their overlay |
+
+A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
 
 ## Tempo
 
-`tempo` multiplies every `duration` and `spring` token (and therefore every ready-made `transition`). The default is 1, Animate UI's pace. Change it for a whole app or a subtree, without touching any component:
+`tempo` paces every token at once: durations and delays are multiplied by it, and a stiffness/damping spring keeps its exact shape on the new time scale (stiffness / tempo², damping / tempo). Change it for an app or a subtree without touching any component:
 
 ```tsx
 import { AnimateUIProvider } from '@animate-ui/react/provider';
 
-<AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>; // crisper; 1.2 feels more relaxed
+<AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>; // crisper; 1.2 is more relaxed
 ```
 
-The provider is optional and nestable (the closest wins). Curves, scales and `bounce` are not affected. CSS-driven primitives (Base UI Drawer and Toast) read the tokens too, through CSS variables they set themselves.
+The provider is optional and nestable (the closest wins). `useTempoTransition(t)` applies it to one transition, `scaleTransition(t, tempo)` outside React. Curves, scales and blurs don't depend on it.
 
-## Durations (seconds, at `tempo` 1)
+## CSS transitions
 
-| Token                 | Value | Use for                                       |
-| --------------------- | ----- | --------------------------------------------- |
-| `duration.press`      | 0.15  | Press feedback                                |
-| `duration.change`     | 0.6   | Other state changes: checkmarks, swapped icons, labels (`transition.change`) |
-| `duration.tooltip`    | 0.6   | Tooltips                                      |
-| `duration.dropdown`   | 0.6   | Popovers, menus, selects, hover cards         |
-| `duration.exit`       | 0.4   | Closing tooltips, popovers, menus             |
-| `duration.fade`       | 0.6   | Swapping content in place (tab panels)        |
-| `duration.disclosure` | 0.6   | Accordion and collapsible height              |
-| `duration.modal`      | 0.6   | Dialog entrance                               |
-| `duration.modalExit`  | 0.4   | Dialog exit                                   |
-| `duration.drawer`     | 0.6   | Sheet and drawer entrance                     |
-| `duration.drawerExit` | 0.4   | Sheet and drawer exit                         |
+When the library drives a part with CSS (Base UI Drawer and Toast follow a swipe and a stack through CSS variables), set its timing from the same tokens. `toCssTiming(transition)` returns `{ duration, easing }` (milliseconds, a CSS timing function): a tween keeps its duration and cubic-bezier, and a spring becomes the `linear()` curve Motion itself would play.
 
-Every entrance and state change is 0.6s, exits 0.4s (about two thirds), press 0.15s. These are longer than Emil Kowalski's budgets on purpose: `ease.out` does most of the movement in the first ~150ms, so the response is immediate and the long tail lets the motion read. Keyboard-driven and 100+/day actions stay instant (quality rule, `transition.instant`). Budgets are in `rules.md` (B2).
-
-## Springs
-
-| Token            | Value                                             | Use for                                                                     |
-| ---------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
-| `spring.default` | `{ type: 'spring', duration: 0.6, bounce: 0.2 }`  | Larger interruptible motion: drag, layout changes, cursor following, magnetic |
-| `spring.snappy`  | `{ type: 'spring', duration: 0.6, bounce: 0.15 }` | Indicators, toggles and highlights (tab indicator, switch thumb)            |
-
-Use the `duration`/`bounce` form only (`duration` is the visual duration). `bounce` is ignored when `stiffness` or `damping` are set, so never mix them.
-
-## Scales
-
-| Token         | Value                                           |
-| ------------- | ----------------------------------------------- |
-| `scale.enter` | 0.95 (starting scale for anything that appears) |
-| `scale.press` | 0.96 (press feedback)                           |
-
-## Ready-made transitions
-
-`transition.press`, `transition.tooltip`, `transition.dropdown`, `transition.exit`, `transition.fade` (content swaps), `transition.disclosure`, `transition.modal`, `transition.modalExit` (all with `ease.out`), `transition.drawer`, `transition.drawerExit` (with `ease.drawer`): each pairs a duration token with its curve. `transition.instant` (`{ duration: 0 }`) is the token for a deliberately instant change.
-
-Import the `transition` export as `motionTransition`, since components also take a `transition` prop. That prop customizes the entrance; overlays keep `transition.exit` for the exit so closing stays fast (modals and sheets let it override both, with `transition ?? motionTransition.modalExit`).
+```tsx
+const enter = toCssTiming(useTempoTransition(spring.sheet));
+style={{ transitionDuration: `${enter.duration}ms`, transitionTimingFunction: enter.easing }}
+```
 
 ## Reduced motion
 
-`ReducedMotionConfig` wraps a component's motion tree. It needs no app setup and keeps an app-level `<MotionConfig reducedMotion="always">`. When the OS asks for reduced motion, Motion skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter.
+`ReducedMotionConfig` wraps a component's motion tree. It needs no app setup and keeps an app-level `<MotionConfig reducedMotion="always">`. When the OS asks for reduced motion, Motion skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter: fades and blurs stay, movement goes.
 
-Animations that play on mount (text entrances, counters, a highlight sweep) use `<ReducedMotionConfig remount>`. The server render can't know the user's preference, so `useShouldReduceMotion()` is `false` during hydration: an entrance started then would keep playing once the preference resolves. `remount` remounts the children when the preference changes, so they restart in the right mode. Overlays and other components that only animate after user input don't need it.
-
-It does not skip a `transform` string. Inside the wrapper, `useShouldReduceMotion()` returns `true` under reduced motion: use it to start from the resting transform.
+It does not skip a `transform` string. Inside the wrapper, `useShouldReduceMotion()` returns `true` under reduced motion: start from the resting transform then.
 
 ```tsx
 const reduce = useShouldReduceMotion();
-const enter = reduce ? 1 : scale.enter;
-initial={{ opacity: 0, transform: `scale(${enter})` }}
+initial={{ opacity: 0, transform: `scale(${reduce ? 1 : scale.popover})` }}
 ```
 
-Stop JavaScript-driven loops (`requestAnimationFrame`, canvas, `setInterval`) with the same hook.
+Animations that play on mount (text entrances, counters, a highlight sweep) use `<ReducedMotionConfig remount>`: the server render can't know the preference, so `remount` restarts them in the right mode once it resolves. Stop JavaScript-driven loops (`requestAnimationFrame`, canvas, `setInterval`) with the same hook.
 
 ## Icons
 
-Animated icons take a `speed` prop that multiplies their playback rate. Icons default to 1 (their authored timing, median about 600ms); set it per icon (`<Bell speed={1.5} />`) or for a group on a wrapping `<AnimateIcon speed={…}>`. Returning to rest takes 0.4s with `ease.out`. Bounce up to 0.3.
+Animated icons take a `speed` prop that multiplies their playback rate (1 by default: their authored timing), per icon (`<Bell speed={1.5} />`) or for a group on a wrapping `<AnimateIcon speed={…}>`. Their loops move on screen, so they use ease-in-out; constant spins use linear.

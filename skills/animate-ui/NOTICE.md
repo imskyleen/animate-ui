@@ -1,8 +1,8 @@
 # Notice
 
-The motion philosophy, rules and values in this skill (decision gate, easing curves, duration budgets, spring settings, never scaling from 0, trigger-anchored origins, reduced-motion and hover-gating guidance) are adapted from Emil Kowalski's agent skills: https://github.com/emilkowalski/skill (`animate`, `review-animations`, `improve-animations`).
+Parts of the rules in this skill (the frequency gate, easing curves chosen by role, trigger-anchored origins, press feedback, blur to bridge swaps, reduced-motion and hover-gating guidance) are adapted from Emil Kowalski's agent skills, https://github.com/emilkowalski/skill (`animate`, `review-animations`, `improve-animations`), and his article "7 practical animation tips" (https://emilkowal.ski/ui/7-practical-animation-tips).
 
-Animate UI adds the base-library wiring (Radix UI, Base UI, Headless UI), the shared token set, the audit-derived rules and the recipes.
+Animate UI adds its own motion language (its springs, scales and timing, from Animate UI v1), the base-library wiring (Radix UI, Base UI, React Aria), the shared token set and the recipes.
 
 Emil Kowalski's skills are distributed under the MIT License:
 

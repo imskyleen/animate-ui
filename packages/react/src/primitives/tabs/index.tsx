@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion, type Transition, type HTMLMotionProps } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
@@ -21,25 +22,11 @@ type TabsOrientation = 'horizontal' | 'vertical';
 
 // Animate UI v1's values.
 /** The highlight sliding to the active trigger. */
-const HIGHLIGHT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
-};
+const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.selection;
 /** The panels sliding and the height following the active one. */
-const CONTENTS_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 30,
-  bounce: 0,
-  restDelta: 0.01,
-};
-/** The blur of the panels coming in and going out. */
-const CONTENT_TRANSITION: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 25,
-};
+const CONTENTS_TRANSITION: Transition = motionTokens.spring.height;
+/** The blur of the panels coming in and going out, with the selection. */
+const CONTENT_TRANSITION: Transition = motionTokens.spring.selection;
 
 const INSTANT: Transition = { duration: 0 };
 

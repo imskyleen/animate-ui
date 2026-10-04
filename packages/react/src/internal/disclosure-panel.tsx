@@ -4,7 +4,11 @@ import * as React from 'react';
 import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 
-import { useShouldReduceMotion, useTempoTransition } from '../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../utils/motion';
 
 // Shared by every disclosure panel (Radix UI Accordion and Collapsible, Base
 // UI Accordion and Collapsible, React Aria's DisclosurePanel). The libraries
@@ -22,15 +26,18 @@ const MASK =
 /** The mask `--mask-stop` animates (v1's reveal). */
 const maskStyle = { maskImage: MASK, WebkitMaskImage: MASK };
 
-/** v1's transition, for the opening and the closing alike. */
-const DISCLOSURE_TRANSITION: Transition = { duration: 0.35, ease: 'easeInOut' };
+/**
+ * The opening and the closing alike: 350ms on a strong ease-out, so the panel
+ * answers the click at once and settles softly.
+ */
+const DISCLOSURE_TRANSITION: Transition = motionTokens.transition.disclosure;
 
 const INSTANT: Transition = { duration: 0 };
 
 type HiddenMode = 'until-found' | false;
 
 /**
- * The opening and closing transitions: v1's 350ms ease-in-out both ways
+ * The opening and closing transitions: 350ms ease-out both ways
  * (`exitTransition` defaults to `transition`), paced by the provider's tempo.
  *
  * Under reduced motion the height and the 20px rise jump, while the fade and
@@ -203,7 +210,10 @@ function motionRender<T extends RenderProp>(
 
 /** Animate UI's additions to a disclosure panel. */
 type PanelAnimationProps = {
-  /** Transition of the opening. Defaults to 350ms ease-in-out. */
+  /**
+   * Transition of the opening.
+   * @default { duration: 0.35, ease: [0.23, 1, 0.32, 1] }
+   */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;

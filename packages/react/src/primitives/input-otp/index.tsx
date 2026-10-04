@@ -16,6 +16,7 @@ import {
 } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useMotionTokens,
   useShouldReduceMotion,
@@ -42,8 +43,8 @@ import {
 // removed don't animate. Under reduced motion characters only fade, and the
 // fake caret (any CSS animation inside a slot) stops blinking.
 
-/** The spring of Animate UI v1's radio indicator. */
-const SPRING: Transition = { type: 'spring', stiffness: 200, damping: 16 };
+/** The bouncy spring of the radio indicator (v1's). */
+const SPRING: Transition = motionTokens.spring.bounce;
 
 /** Delay between characters that arrive together (paste, autofill), in seconds. */
 const STAGGER = 0.05;

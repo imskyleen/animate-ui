@@ -6,11 +6,12 @@ import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui/react/naviga
 import { motion, type Transition } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { MENU_TRANSITION } from '../../../internal/anchored';
+import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
 
 // Untouched parts: the import alias keeps both the component and its type
 // namespace (`NavigationMenu.Trigger.Props`).
@@ -28,12 +29,12 @@ import Icon = NavigationMenuPrimitive.Icon;
 // Same API as Base UI's Navigation Menu. It has no Animate UI v1
 // counterpart: it moves like v1's Base UI Menu.
 //
-// - The Popup fades and scales from 0.95 in 200ms, both ways, from its
+// - The Popup fades and scales from 0.9 in 200ms, both ways, from its
 //   trigger. Base UI resizes it to the active content through
 //   `--popup-width`/`--popup-height`: Animate UI transitions that size in
 //   200ms too (Base UI drives it with CSS transitions, which it waits for).
-// - Moving between items, the new Content fades in while the previous one
-//   fades out, in 200ms.
+// - Moving between items, the new Content fades in from a 4px blur while the
+//   previous one fades out into it, in 200ms.
 // - The Root asks Base UI to keep the popup mounted after it closes, and the
 //   Popup unmounts it once its exit has played.
 
@@ -41,7 +42,8 @@ import Icon = NavigationMenuPrimitive.Icon;
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance (and of the resizing, for the Popup), and of
-   * the exit unless `exitTransition` is set. Defaults to `{ duration: 0.2 }`.
+   * the exit unless `exitTransition` is set. Defaults to `{ duration: 0.2,
+   * ease: [0.23, 1, 0.32, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -206,7 +208,7 @@ function PopupMotion({
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
   // `scale` (like v1's menus): `transform: none` once settled.
-  const hidden = { opacity: 0, scale: reduce ? 1 : 0.95 };
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   // Only the size is left to CSS (Base UI waits for these transitions before
   // it sets the size back to auto); opacity and transform are Motion's.
   const { duration, ease } = enter as { duration?: unknown; ease?: unknown };
@@ -306,11 +308,25 @@ function ContentMotion({
     <motion.div
       {...(htmlProps as React.ComponentProps<typeof motion.div>)}
       ref={ref}
-      initial={swapped ? { opacity: 0 } : false}
+      // A light blur bridges the crossfade: the swap reads as one surface
+      // changing. Dropped at rest (a `filter` would make it the containing
+      // block of fixed descendants).
+      initial={
+        swapped ? { opacity: 0, filter: motionTokens.blur.surface } : false
+      }
       animate={
         leaving
-          ? { opacity: 0, transition: fadeOut }
-          : { opacity: 1, transition: fadeIn }
+          ? {
+              opacity: 0,
+              filter: motionTokens.blur.surface,
+              transition: fadeOut,
+            }
+          : {
+              opacity: 1,
+              filter: 'blur(0px)',
+              transition: fadeIn,
+              transitionEnd: { filter: 'none' },
+            }
       }
       style={htmlProps.style}
     />

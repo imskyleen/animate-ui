@@ -13,7 +13,11 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { MENU_TRANSITION, mergeRefs } from '../../../internal/anchored';
+import {
+  HIDDEN_SCALE,
+  MENU_TRANSITION,
+  mergeRefs,
+} from '../../../internal/anchored';
 import {
   HighlightScope,
   useItemHighlight,
@@ -24,7 +28,7 @@ import {
 // while an `actionsRef` is set, until `actionsRef.current.unmount()`.
 //
 // Neither has an Animate UI v1 counterpart: they move like v1's Base UI Menu.
-// The popup fades and scales from 0.95 in 200ms, both ways; a highlight
+// The popup fades and scales from 0.9 in 200ms, both ways; a highlight
 // glides behind the highlighted item; a single selection's check glides to
 // the chosen item like v1's radio indicator, and a multiple selection's check
 // pops in from half its size like v1's checkbox indicator.
@@ -40,7 +44,7 @@ type RootMotion = {
 type PopupAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2 }`.
+   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -114,7 +118,7 @@ function usePopupRender(
     // `scale` (like v1's menus): `transform: none` once settled.
     const hidden = aligned
       ? { opacity: 0 }
-      : { opacity: 0, scale: reduce ? 1 : 0.95 };
+      : { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
     const visible = aligned ? { opacity: 1 } : { opacity: 1, scale: 1 };
 
     return (

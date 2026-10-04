@@ -42,7 +42,7 @@ Coming from the `@radix-ui/react-alert-dialog` package? Use the subpath: `import
 
 Animate UI v1's alert dialog motion, unchanged.
 
-- **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way.
+- **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, ease-out, and leaves the same way.
 - **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, still visible once the overlay is gone, then unmounts.
 - `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
 - Radix keeps the Overlay and the Content mounted while they exit; Cancel is focused as soon as it opens, and focus returns to the trigger once the exit is over.
@@ -68,7 +68,7 @@ Every part takes exactly the props of [Radix UI's Alert Dialog](https://www.radi
     transition: {
       description: 'Transition of the fade (and blur) in.',
       type: 'Transition',
-      default: "{ duration: 0.2, ease: 'easeInOut' }",
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Transition of the fade (and blur) out.',

@@ -1258,6 +1258,9 @@ const NOT_ANIMATED: Record<string, PropRule> = {
 const CHECKBOX_INDICATOR =
   "v1 drew its own animated check (an <svg>); v2's Indicator animates what you put in it: add your check icon as its child.";
 
+const HOVER_SCALE =
+  "v2's buttons answer the press, not the hover: they no longer grow on hover (v1 scaled them to 1.05). Set `hoverScale={1.05}` to keep v1's hover.";
+
 // v1's Base UI primitives were built on @base-ui-components/react
 // 1.0.0-beta.4. Base UI 1 (@base-ui/react, which v2 uses) renamed, moved or
 // inverted some of their props, and changed some defaults.
@@ -1433,6 +1436,9 @@ const EXTRAS: Record<string, Partial<Migration>> = {
         "v1 placed the sheet at its edge itself (position: fixed); v2's Dialog.Content only slides from its `data-side`: keep the positioning classes (shadcn/ui's Sheet has them).",
     },
   },
+  'buttons/button': { notes: { Button: HOVER_SCALE } },
+  'buttons/ripple': { notes: { RippleButton: HOVER_SCALE } },
+  'buttons/liquid': { notes: { LiquidButton: HOVER_SCALE } },
   'base/progress': {
     props: { ProgressValue: COUNTING_NUMBER },
     notes: {

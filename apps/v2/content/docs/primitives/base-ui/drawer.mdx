@@ -47,7 +47,7 @@ Animate UI v1 had no drawer: the motion is v1's Sheet, with Base UI's swipe on t
 
 - **Popup** slides in from its edge (`swipeDirection`, a full size of its own) and fades in, on v1's sheet spring (stiffness 150, damping 22, a little livelier than the dialog's), and slides and fades back out the same way.
 - While you drag it, it follows the finger on the same frame: no transition runs during a swipe. Let go slowly and it springs back; flick it and it leaves along the swipe, faster the harder the flick (the exit scaled by Base UI's `--drawer-swipe-strength`).
-- **Backdrop** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, easeInOut, and leaves the same way; it follows the swipe in between.
+- **Backdrop** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) in 200ms, ease-out, and leaves the same way; it follows the swipe in between.
 - Snap points, nested drawers and `swipeDirection` work as in Base UI.
 - CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables: a spring becomes the `linear()` curve Motion itself would use (550ms for the sheet spring), and `AnimateUIProvider tempo` reaches it. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
 - Under reduced motion, the drawer fades in place; a swipe dismissal still leaves along the swipe.
@@ -90,7 +90,7 @@ Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/rea
     transition: {
       description: 'Fade (and blur) in. CSS-driven, like the Popup.',
       type: 'Transition',
-      default: "{ duration: 0.2, ease: 'easeInOut' }",
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     exitTransition: {
       description: 'Fade (and blur) out.',
