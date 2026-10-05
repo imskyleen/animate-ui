@@ -6,8 +6,8 @@ import { expectSpringPace, type Sample } from './spring-curves';
 
 // The drawer moves like Animate UI v1's Sheet: every move of its position on
 // the dialog's spring (stiffness 150, damping 25), fading in and out with it
-// when it opens and closes; its overlay fades and un-blurs in 200ms
-// (ease-out), and follows the drag like Vaul's.
+// when it opens and closes; its overlay fades and un-blurs in 400ms on a
+// soft ease-out, a little ahead of it, and follows the drag like Vaul's.
 
 const CONTENT = '[data-slot="drawer-content"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -182,9 +182,11 @@ test.describe('radix-ui drawer demo', () => {
     const midway = frames.find((frame) => frame.share < 0.5)!;
     expect(midway.opacity).toBeGreaterThan(0.2);
     expect(midway.opacity).toBeLessThan(0.95);
-    // The overlay's 200ms fade is over while the drawer still slides.
+    // The overlay dims the page alongside it, a little ahead: further in than
+    // the drawer half way, fully in after ~350ms, not in a couple of frames.
+    expect(midway.overlay).toBeGreaterThan(1 - midway.share);
     const overlayIn = frames.find((frame) => frame.overlay >= 0.99)!;
-    expect(overlayIn.share).toBeGreaterThan(0.05);
+    expect(overlayIn.t).toBeGreaterThan(250);
     expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
     // On v1's sheet spring: from 10% to 98% of the way in the time it
     // takes.
@@ -222,9 +224,13 @@ test.describe('radix-ui drawer demo', () => {
     await page.keyboard.press('Escape');
     const frames = await motion.frames();
     await expect(page.locator(CONTENT)).toHaveAttribute('data-state', 'closed');
-    // The overlay is gone first, while the drawer still slides out.
-    const overlayOut = frames.find((frame) => frame.overlay <= 0.01)!;
-    expect(overlayOut.opacity).toBeGreaterThan(0.1);
+    // The overlay clears with it, a little ahead: further out than the drawer
+    // half way, and still there after 250ms (a 400ms soft fade).
+    const halfway = frames.find((frame) => frame.share > 0.5)!;
+    expect(halfway.overlay).toBeLessThan(1 - halfway.share);
+    expect(
+      frames.filter((frame) => frame.t < 250).every((f) => f.overlay > 0.01),
+    ).toBe(true);
     expect(frames.at(-1)!.share).toBeGreaterThan(0.6);
     expect(frames.at(-1)!.opacity).toBeLessThan(0.3);
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });

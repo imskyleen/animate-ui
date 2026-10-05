@@ -6,12 +6,12 @@ import { Toast as ToastPrimitive } from '@base-ui/react/toast';
 import type { Transition } from 'motion/react';
 
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
 import {
-  OVERLAY_TRANSITION,
   SHEET_TRANSITION,
   toCssTiming,
   type CssTiming,
@@ -24,7 +24,7 @@ import { HIDDEN_SCALE, POPOVER_TRANSITION } from '../../../internal/anchored';
 // anchored to an element is a small bubble, like a tooltip: it grows from
 // 0.7 and fades in from its anchor, on the tooltips' spring (stiffness 300,
 // damping 25). The content behind the front toast fades in 200ms,
-// ease-out, like a modal's overlay.
+// ease-out.
 //
 // Base UI drives the stack, swipe-to-dismiss and enter/exit itself, through
 // CSS variables (`--toast-index`, `--toast-offset-y`, `--toast-height`,
@@ -72,6 +72,8 @@ const GAP = '0.75rem';
 const PEEK = '0.75rem';
 /** An anchored toast grows from 0.7, like a tooltip. */
 const ANCHORED_SCALE = HIDDEN_SCALE.tooltip;
+/** The content behind the front toast: a short fade, 200ms ease-out. */
+const FADE_TRANSITION = motionTokens.transition.fade;
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -248,7 +250,7 @@ function Content({ style, transition, ...props }: Content.Props) {
   // data-behind:opacity-0), back in when the stack expands: v1's fade.
   const fade = transitionStyle(
     ['opacity'],
-    toCssTiming(useTempoTransition(transition ?? OVERLAY_TRANSITION)),
+    toCssTiming(useTempoTransition(transition ?? FADE_TRANSITION)),
   );
 
   return (

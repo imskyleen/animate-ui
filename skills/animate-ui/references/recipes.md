@@ -157,7 +157,7 @@ function DialogContentMotion({
 
 - The content fades in, un-blurs and tips forward to upright on `spring.dialog` (no overshoot), and leaves the same way.
 - `from` (Animate UI's addition, as in v1) picks the edge it tips from: `top` by default and `right` turn it by -20deg, `bottom` and `left` by 20deg, around the X axis for top and bottom, the Y axis for left and right.
-- The overlay fades in and un-blurs (`opacity` 0 → 1, `blur.surface` → `blur(0px)`) on `transition.overlay` (200ms, `ease.out`): it is fully in while the content is still arriving, and on the way out the content is still visible once the overlay has gone.
+- The overlay fades in and un-blurs (`opacity` 0 → 1, `blur.surface` → `blur(0px)`) on `transition.overlay` (400ms, `ease.soft`): the page dims smoothly a little ahead of the content, and clears with it on the way out. On a strong ease-out, a short overlay reads as a cut.
 - Drop the blur at rest if the content holds fixed-position children (`transitionEnd: { filter: 'none' }`): a `filter` makes it their containing block.
 
 ## Disclosure (Accordion, Collapsible)
@@ -190,7 +190,7 @@ const expanded = {
 </AnimatePresence>;
 ```
 
-- The height grows from 0 while the content fades in from `blur.disclosure` (2px), in `transition.disclosure` (350ms, `ease.unfold`), both ways. After Motion's accordion example: the soft ease-out lets the eye follow the content open, where `ease.out` would snap it open.
+- The height grows from 0 while the content fades in from `blur.disclosure` (2px), in `transition.disclosure` (350ms, `ease.soft`), both ways. After Motion's accordion example: the soft ease-out lets the eye follow the content open, where `ease.out` would snap it open.
 - An item open by default unfolds on mount, page load included: no `initial={false}`.
 - Reduced motion: the height jumps; the fade and the blur still play.
 - Derive each item's open state from the root value; never copy it into state with an effect. With a single-value root the value is a string, so compare with `===`, not `includes` (`'item-10'.includes('item-1')` is true).

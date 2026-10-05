@@ -14,7 +14,7 @@ import { expectCssSpring } from './spring-curves';
 // The drawer moves like Animate UI v1's Sheet: it slides and fades on the
 // dialog's spring (stiffness 150, damping 25), run by CSS transitions as
 // Motion's `linear()` curve for it, and its backdrop fades and un-blurs in
-// 200ms (ease-out), both ways.
+// 400ms on a soft ease-out, both ways, a little ahead of it.
 
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -55,7 +55,7 @@ test.describe('base-ui drawer demo', () => {
     await expectSheetSettled(page, POPUP, 'bottom');
   };
 
-  test('slides and fades up from the bottom edge like v1, its backdrop in 200ms', async ({
+  test('slides and fades up from the bottom edge like v1, its backdrop fading in alongside', async ({
     page,
   }) => {
     const timeline = await recordTimeline(page, {
@@ -66,13 +66,20 @@ test.describe('base-ui drawer demo', () => {
     const frames = await timeline.stop();
     expectSheetEntrance(frames, 'bottom');
 
-    // v1's overlay: blurred at first, fully in while the drawer still slides.
+    // v1's overlay, blurred at first, dims the page a little ahead of the
+    // drawer: further in half way, fully in after ~350ms (400ms soft fade).
     const backdrop = present(frames, 'overlay');
     expect(backdrop[0]!.samples.overlay!.blur).toBeGreaterThan(2.5);
+    const halfway = backdrop.find(
+      (frame) => Math.abs(frame.samples.content?.y ?? 1) < 0.5,
+    )!;
+    expect(halfway.samples.overlay!.opacity).toBeGreaterThan(
+      1 - Math.abs(halfway.samples.content!.y),
+    );
     const overlayIn = backdrop.find(
       (frame) => frame.samples.overlay!.opacity >= 0.99,
     )!;
-    expect(Math.abs(overlayIn.samples.content!.y)).toBeGreaterThan(0.05);
+    expect(overlayIn.t - backdrop[0]!.t).toBeGreaterThan(250);
     const rest = await readState(page, OVERLAY);
     expect(rest.opacity).toBe(1);
     expect(rest.blur).toBe(0);
@@ -82,7 +89,7 @@ test.describe('base-ui drawer demo', () => {
     expectCssSpring(await timing(page, POPUP), SHEET_SPRING);
   });
 
-  test('closes the same way, the backdrop gone first, then unmounts', async ({
+  test('closes the same way, the backdrop clearing with it, then unmounts', async ({
     page,
   }) => {
     await open(page);
@@ -115,10 +122,13 @@ test.describe('base-ui drawer demo', () => {
     await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
     const frames = await timeline.stop();
     expectSheetExit(frames, 'bottom');
-    const overlayOut = present(frames, 'overlay').find(
-      (frame) => frame.samples.overlay!.opacity <= 0.01,
+    // The backdrop clears a little ahead of the drawer: further out half way.
+    const halfway = present(frames, 'overlay').find(
+      (frame) => Math.abs(frame.samples.content?.y ?? 0) > 0.5,
     )!;
-    expect(overlayOut.samples.content!.opacity).toBeGreaterThan(0.1);
+    expect(halfway.samples.overlay!.opacity).toBeLessThan(
+      1 - Math.abs(halfway.samples.content!.y),
+    );
   });
 
   test('a drag follows the finger at once; a slow release springs back', async ({

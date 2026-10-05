@@ -6,11 +6,12 @@ import { expectSpringPace, type Sample } from './spring-curves';
 // Sheet), sampled in the page on every animation frame so it holds up on a
 // busy machine, plus the assertions of Animate UI v1's modal motion:
 //
-// - overlay: fades (and un-blurs) in 200ms, strong ease-out, both ways;
+// - overlay: fades (and un-blurs) in 400ms on a soft ease-out, both ways,
+//   a little ahead of the content: the page dims smoothly as the content
+//   arrives, and clears as it leaves;
 // - dialog content: from `perspective(500px) rotateX(-20deg) scale(0.8)`,
 //   blur(4px) and transparent, on a spring (stiffness 150, damping 25) that
-//   settles well after the overlay; it leaves the same way, still visible
-//   once the overlay is gone;
+//   settles after the overlay; it leaves the same way;
 // - sheet: slides from its edge by its own size and fades, on the same
 //   spring.
 
@@ -161,16 +162,28 @@ const overlayLevel = (
   { overlayFade = 'opacity' }: OverlayOptions,
 ) => (overlayFade === 'bg' ? sample.bg : sample.opacity);
 
+/** How far in the overlay is, from 0 to 1 (0 when absent). */
+const overlayProgress = (
+  frame: ModalFrame,
+  overlay: string,
+  options: OverlayOptions,
+) => {
+  const sample = frame.samples[overlay];
+  return sample
+    ? overlayLevel(sample, options) / (options.overlayRest ?? 1)
+    : 0;
+};
+
 /**
  * v1's dialog entrance: tipped back, scaled to 0.8, blurred and transparent
- * at first; the overlay is fully in long before the content's spring settles,
- * and the content comes upright without swinging past it.
+ * at first, and coming upright without swinging past it. The overlay dims the
+ * page smoothly, a little ahead of the content.
  */
 export function expectDialogEntrance(
   frames: ModalFrame[],
   options: OverlayOptions & { content?: string; overlay?: string } = {},
 ) {
-  const { content = 'content', overlay = 'overlay', overlayRest = 1 } = options;
+  const { content = 'content', overlay = 'overlay' } = options;
   const shown = present(frames, content);
   const first = shown[0]!.samples[content]!;
   expect(first.tilt).toBeLessThan(-12);
@@ -186,28 +199,33 @@ export function expectDialogEntrance(
     expect(after.tilt).toBeLessThan(0.5);
   }
 
-  // The overlay's 200ms fade is over while the content is still coming in.
-  const overlayIn = frames.find((frame) => {
-    const sample = frame.samples[overlay];
-    return sample && overlayLevel(sample, options) >= overlayRest * 0.99;
-  })!;
-  expect(overlayIn).toBeTruthy();
-  const contentThen = overlayIn.samples[content]!;
-  expect(contentThen.opacity).toBeLessThan(0.9);
-  expect(contentThen.tilt).toBeLessThan(-0.5);
+  // The overlay fades in over ~350ms (400ms soft ease-out), not in a couple
+  // of frames. A busy machine only delays it.
   const overlayStart = frames.find((frame) => frame.samples[overlay])!;
-  expect(overlayIn.t - overlayStart.t).toBeLessThan(450);
+  const overlayIn = frames.find(
+    (frame) => overlayProgress(frame, overlay, options) >= 0.99,
+  )!;
+  expect(overlayIn).toBeTruthy();
+  expect(overlayIn.t - overlayStart.t).toBeGreaterThan(250);
+  expect(overlayIn.t - overlayStart.t).toBeLessThan(700);
+  // A little ahead of the content: further in when the content is half in.
+  const halfway = frames.find(
+    (frame) => (frame.samples[content]?.opacity ?? 0) >= 0.5,
+  )!;
+  expect(overlayProgress(halfway, overlay, options)).toBeGreaterThan(
+    halfway.samples[content]!.opacity,
+  );
 }
 
 /**
- * v1's dialog exit: the content tips back, shrinks and blurs as it fades,
- * still visible once the overlay's 200ms fade is over.
+ * v1's dialog exit: the content tips back, shrinks and blurs as it fades. The
+ * overlay clears with it, a little ahead, never long before.
  */
 export function expectDialogExit(
   frames: ModalFrame[],
   options: OverlayOptions & { content?: string; overlay?: string } = {},
 ) {
-  const { content = 'content', overlay = 'overlay', overlayRest = 1 } = options;
+  const { content = 'content', overlay = 'overlay' } = options;
   const shown = present(frames, content);
   const last = shown.at(-1)!.samples[content]!;
   expect(last.opacity).toBeLessThan(0.2);
@@ -215,14 +233,29 @@ export function expectDialogExit(
   expect(last.scale).toBeLessThan(0.88);
   expect(last.blur).toBeGreaterThan(2.5);
 
-  const overlayOut = frames.find((frame) => {
-    const sample = frame.samples[overlay];
-    return sample && overlayLevel(sample, options) <= overlayRest * 0.01;
-  })!;
+  // The overlay fades out over ~350ms, not in a couple of frames.
+  const leaving = frames.findIndex(
+    (frame) => overlayProgress(frame, overlay, options) < 0.99,
+  );
+  const exitStart = frames[Math.max(leaving - 1, 0)]!;
+  const overlayOut = frames.find(
+    (frame) =>
+      frame.samples[overlay] &&
+      overlayProgress(frame, overlay, options) <= 0.01,
+  )!;
   expect(overlayOut).toBeTruthy();
+  expect(overlayOut.t - exitStart.t).toBeGreaterThan(250);
+  // A little ahead of the content: further out when the content is half out…
+  const halfway = frames.find(
+    (frame) => frame.t > exitStart.t && frame.samples[content]!.opacity <= 0.5,
+  )!;
+  expect(overlayProgress(halfway, overlay, options)).toBeLessThan(
+    halfway.samples[content]!.opacity,
+  );
+  // …but not gone long before it: the content has nearly faded by then.
   const contentThen = overlayOut.samples[content];
   expect(contentThen).toBeTruthy();
-  expect(contentThen!.opacity).toBeGreaterThan(0.1);
+  expect(contentThen!.opacity).toBeLessThan(0.3);
 }
 
 export const SHEET_TRAVEL = {

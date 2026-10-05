@@ -18,8 +18,8 @@ import {
  * which carries its velocity when interrupted and overshoots a little where
  * that makes motion feel alive. Tweens are for fades, menus, disclosure
  * heights and swaps, and pick their curve by what the element does: ease-out
- * to enter or leave, a softer ease-out to unfold in place, ease-in-out to move
- * on screen. Pressables scale on press only; anchored popups grow from their
+ * to enter or leave, a softer ease-out for large surfaces (a panel unfolding,
+ * an overlay dimming the page), ease-in-out to move on screen. Pressables scale on press only; anchored popups grow from their
  * trigger, from farther when they are small; two states swapping in place are
  * bridged with a light blur, and unfolding content clears from one.
  *
@@ -33,10 +33,11 @@ const ease = {
   /** Entering or leaving: starts fast, so the interface answers at once. */
   out: [0.23, 1, 0.32, 1],
   /**
-   * Unfolding in place and pushing what follows (accordion, collapsible): a
-   * softer start than `out`, so the eye follows the content open.
+   * Large surfaces the eye watches change: a panel unfolding and pushing the
+   * page (accordion, collapsible), an overlay dimming it. A softer start than
+   * `out`, so the change is seen rather than snapped.
    */
-  unfold: [0.215, 0.61, 0.355, 1],
+  soft: [0.215, 0.61, 0.355, 1],
   /** Moving or morphing something already on screen. */
   inOut: [0.77, 0, 0.175, 1],
 } as const;
@@ -82,10 +83,15 @@ const spring = {
 const transition = {
   /** Menus, selects, comboboxes and navigation menus: short and exact. */
   menu: { duration: 0.2, ease: ease.out },
-  /** An overlay or backdrop fading (and un-blurring). */
-  overlay: { duration: 0.2, ease: ease.out },
+  /**
+   * An overlay or backdrop fading in (and un-blurring), and out: the page
+   * dims smoothly while the content arrives.
+   */
+  overlay: { duration: 0.4, ease: ease.soft },
+  /** Content fading in place, out of the way (a toast behind the front one). */
+  fade: { duration: 0.2, ease: ease.out },
   /** Accordion and collapsible panels unfolding, and folding back. */
-  disclosure: { duration: 0.35, ease: ease.unfold },
+  disclosure: { duration: 0.35, ease: ease.soft },
   /** A panel coming in from a blur (tab panels). */
   panel: { duration: 0.5, ease: ease.out },
   /** A check drawing itself, once the box has answered the press. */

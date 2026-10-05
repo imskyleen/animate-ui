@@ -147,7 +147,7 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 ### B2. Pick a tween's curve by what the element does
 
 - Entering or leaving: `ease.out` (`cubic-bezier(0.23, 1, 0.32, 1)`). It starts fast, so the interface answers at once.
-- Unfolding in place and pushing what follows (accordion, collapsible): `ease.unfold` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the eye follows the content open instead of seeing it snap open.
+- Large surfaces the eye watches change, a panel unfolding and pushing the page (accordion, collapsible) or an overlay dimming it: `ease.soft` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the change is seen rather than snapped: on `ease.out`, a 200ms overlay is two-thirds in on its first frame.
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
@@ -175,7 +175,7 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Dialogs, sheets                 | ~450ms, ~550ms                     | `spring.dialog`, `spring.sheet`                |
 | Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
 
-A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure on `ease.out` felt rushed, so it got the softer `ease.unfold`, not a longer duration.
+A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure or an overlay on `ease.out` felt rushed, so they got the softer `ease.soft`.
 
 ### B4. Scale: press only, and from a size that fits
 
@@ -227,7 +227,7 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, `ease.unfold` on disclosures, ease-in-out on on-screen movement, `ease` on color, never ease-in
+- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures and overlays, ease-in-out on on-screen movement, `ease` on color, never ease-in
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance
 - [ ] Swaps bridged with a light blur

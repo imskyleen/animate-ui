@@ -11,7 +11,8 @@ import { motionTokens, useTempoTransition } from '../utils/motion';
 // Dialog, React Aria Modal), as Animate UI v1 shipped it:
 //
 // - The overlay fades in and un-blurs (opacity 0 → 1, blur(4px) → blur(0px))
-//   in 200ms on a strong ease-out, and leaves the same way.
+//   in 400ms on a soft ease-out, and leaves the same way: the page dims
+//   smoothly while the content arrives, and clears as it leaves.
 // - The content, v1's entrance: it fades in, un-blurs and tips forward from
 //   `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring (stiffness
 //   150, damping 25), and leaves the same way. `from` picks the edge it tips
@@ -24,7 +25,7 @@ import { motionTokens, useTempoTransition } from '../utils/motion';
 //
 // v1 used one transition both ways: `exitTransition` defaults to `transition`.
 
-/** The overlay's fade: 200ms, strong ease-out (it enters and leaves). */
+/** The overlay's fade: 400ms on a soft ease-out, both ways. */
 export const OVERLAY_TRANSITION = motionTokens.transition.overlay;
 
 /** v1's dialog spring. */

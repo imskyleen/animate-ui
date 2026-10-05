@@ -51,30 +51,31 @@ Every spring above has `type: 'spring'`.
 
 Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
 
-| Token                   | Value                                           | Use for                                                   |
-| ----------------------- | ----------------------------------------------- | --------------------------------------------------------- |
-| `transition.menu`       | `{ duration: 0.2, ease: ease.out }`             | Menus, selects, comboboxes, navigation menus              |
-| `transition.overlay`    | `{ duration: 0.2, ease: ease.out }`             | An overlay or backdrop fading (and un-blurring)           |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.unfold }`         | Accordion and collapsible panels unfolding                |
-| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`             | A panel coming in from a blur (tab panels)                |
-| `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.out }` | A check drawing itself once the box has answered          |
-| `transition.uncheck`    | `{ duration: 0.2, ease: ease.out }`             | A check erasing itself                                    |
-| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`             | Two icons or labels swapping in place                     |
-| `transition.instant`    | `{ duration: 0 }`                               | Deliberately no animation (reduced motion, a forced jump) |
+| Token                   | Value                                           | Use for                                                    |
+| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| `transition.menu`       | `{ duration: 0.2, ease: ease.out }`             | Menus, selects, comboboxes, navigation menus               |
+| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`            | An overlay or backdrop fading (and un-blurring), both ways |
+| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`             | Content fading in place (a toast behind the front one)     |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`           | Accordion and collapsible panels unfolding                 |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`             | A panel coming in from a blur (tab panels)                 |
+| `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.out }` | A check drawing itself once the box has answered           |
+| `transition.uncheck`    | `{ duration: 0.2, ease: ease.out }`             | A check erasing itself                                     |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`             | Two icons or labels swapping in place                      |
+| `transition.instant`    | `{ duration: 0 }`                               | Deliberately no animation (reduced motion, a forced jump)  |
 
 ## Curves
 
 Pick a tween's curve by what the element does:
 
-| What it does                       | Curve                                                                              |
-| ---------------------------------- | ---------------------------------------------------------------------------------- |
-| Enters or leaves                   | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                       |
-| Unfolds in place, pushing the page | `ease.unfold`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                               |
-| Moves or morphs on screen          | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
-| Changes color (CSS)                | `ease`                                                                             |
-| Moves constantly (marquee, loader) | `linear`                                                                           |
+| What it does                             | Curve                                                                              |
+| ---------------------------------------- | ---------------------------------------------------------------------------------- |
+| Enters or leaves                         | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                       |
+| Large surface: unfolds, or dims the page | `ease.soft`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                                 |
+| Moves or morphs on screen                | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
+| Changes color (CSS)                      | `ease`                                                                             |
+| Moves constantly (marquee, loader)       | `linear`                                                                           |
 
-`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.unfold` starts softer: an accordion or collapsible pushes the page, and should be seen opening rather than snap open (after Motion's accordion example). Never ease-in on UI: it starts slow, exactly when the user is watching.
+`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for large surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), and an overlay should dim the page, not cut to dark. Never ease-in on UI: it starts slow, exactly when the user is watching.
 
 ## Scales
 

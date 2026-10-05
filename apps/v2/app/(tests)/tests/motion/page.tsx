@@ -21,7 +21,7 @@ type Family = {
 
 const GLOBAL_RULES = [
   "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes. Toutes les valeurs par rôle sont des tokens de @animate-ui/react/utils/motion (spring, transition, scale, blur, ease).",
-  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (overlays, menus, panneaux d’onglets, coches) ; dépliage sur place → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons, collapsibles) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
+  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (menus, panneaux d’onglets, coches) ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
   'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, checkbox, radio, toggles, Pinned List).',
   'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,2s ease-out.',
@@ -190,7 +190,7 @@ const FAMILIES: Family[] = [
     rule: 'Une modale se redresse vers l’écran ; le fond s’assombrit et se floute.',
     values: [
       'contenu : perspective rotateX(-20°) scale 0,8 flou 4px → droit, ressort 150/25',
-      'fond : fondu + flou 4px en 0,2s ease-out',
+      'fond : fondu + flou 4px en 0,4s ease-out doux, un peu en avance sur le contenu (à l’ouverture comme à la fermeture)',
     ],
     demos: [
       { demo: 'radix-ui/dialog', label: 'Dialog' },
