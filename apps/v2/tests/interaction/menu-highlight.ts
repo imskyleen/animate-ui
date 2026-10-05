@@ -23,6 +23,8 @@ export type HighlightFrame = {
     width: number;
     opacity: number;
     painted: boolean;
+    /** A surface going along with the highlight into another menu. */
+    leaving: boolean;
   }[];
   /** A copy runs a Web Animation of `transform`. */
   composited: boolean;
@@ -105,6 +107,7 @@ export function recordHighlight(page: Page, duration: number) {
                 painted:
                   fill.backgroundColor !== 'rgba(0, 0, 0, 0)' ||
                   fill.backgroundImage !== 'none',
+                leaving: el.hasAttribute('data-leaving'),
               };
             }),
             lit: [...document.querySelectorAll<HTMLElement>(items)]
@@ -312,7 +315,7 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
     }
 
     if (c.submenuTrigger && c.submenuItem) {
-      test('into its submenu and out, the highlight never drops out', async ({
+      test('into its submenu and out, the highlight crosses as one', async ({
         page,
       }) => {
         const trigger = c.submenuTrigger!(page);
@@ -320,24 +323,52 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
         await pointAt(page, trigger);
         await expect(item).toBeVisible();
         await page.waitForTimeout(500);
-        // The submenu clips the surface gliding in from its trigger: the
-        // trigger's fades out as the new one shows, never a gap. Then out to
-        // another item of the menu (React Aria keeps the focus in an open
-        // submenu over its trigger).
-        for (const target of [item, c.first(page)]) {
-          const frames = recordHighlight(page, 700);
-          await pointAt(page, target, 6);
-          const recorded = await frames;
-          expect(Math.min(...recorded.map((f) => f.presence))).toBeGreaterThan(
-            0.85,
-          );
-          // Then one highlight, on the target.
-          const last = recorded.at(-1)!;
-          expect(last.copies).toHaveLength(1);
-          expect(
-            Math.abs(last.copies[0]!.top - (await boxOf(target)).y),
-          ).toBeLessThan(1);
+
+        // Into the submenu. Each menu clips its own surfaces (as v1's did):
+        // the trigger's glides along with the new one, the same box on
+        // screen, so the part still in the menu and the part already in the
+        // submenu make one highlight. The new one fades in as it enters.
+        let frames = recordHighlight(page, 700);
+        await pointAt(page, item, 6);
+        let recorded = await frames;
+        const crossing = recorded.filter((f) => f.copies.length === 2);
+        expect(crossing.length).toBeGreaterThan(3);
+        for (const f of crossing) {
+          const [a, b] = f.copies;
+          expect(a!.leaving !== b!.leaving).toBe(true);
+          expect(Math.abs(a!.left - b!.left)).toBeLessThan(2);
+          expect(Math.abs(a!.top - b!.top)).toBeLessThan(2);
+          expect(Math.abs(a!.width - b!.width)).toBeLessThan(2);
         }
+        const entering = (f: HighlightFrame) =>
+          f.copies.find((copy) => !copy.leaving)!;
+        expect(entering(crossing[0]!).opacity).toBeLessThan(0.3);
+        // Never a gap, never a copy left behind on the trigger.
+        expect(Math.min(...recorded.map((f) => f.presence))).toBeGreaterThan(
+          0.6,
+        );
+        let last = recorded.at(-1)!;
+        expect(last.copies).toHaveLength(1);
+        expect(last.copies[0]!.opacity).toBe(1);
+        expect(
+          Math.abs(last.copies[0]!.top - (await boxOf(item)).y),
+        ).toBeLessThan(1);
+
+        // Out to another item of the menu (React Aria keeps the focus in an
+        // open submenu over its trigger): the same, the other way, while the
+        // submenu closes (its part fades with it).
+        const target = c.first(page);
+        frames = recordHighlight(page, 700);
+        await pointAt(page, target, 6);
+        recorded = await frames;
+        expect(Math.min(...recorded.map((f) => f.presence))).toBeGreaterThan(
+          0.4,
+        );
+        last = recorded.at(-1)!;
+        expect(last.copies).toHaveLength(1);
+        expect(
+          Math.abs(last.copies[0]!.top - (await boxOf(target)).y),
+        ).toBeLessThan(1);
       });
     }
 

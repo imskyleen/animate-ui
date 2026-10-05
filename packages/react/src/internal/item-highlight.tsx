@@ -39,10 +39,12 @@ import {
 // layoutId; Motion now crossfades shared layouts, so the hand-off is explicit
 // here.) Only a highlight appearing from nothing fades in.
 //
-// Into a submenu (or back out of it), the new surface starts on the previous
-// one too, but its menu clips it there: the previous surface stays on its item
-// and fades out as the new one shows, frame by frame, like v1's highlight
-// leaving the trigger for the submenu.
+// Into a submenu (or back out of it), each menu clips its own surfaces, as
+// v1's did: the previous surface doesn't go at once but glides along with the
+// new one, the same way at the same time, so the two make one highlight
+// crossing from one menu into the other, the part still in the menu it leaves
+// and the part already in the one it enters. The entering one fades in as it
+// glides; the leaving one goes once it has left its menu.
 //
 // The glide runs on the compositor: a Web Animation of `transform`, eased by
 // the spring itself (a `linear()` curve, with the velocity it was handed). A
@@ -92,10 +94,17 @@ type SurfaceHandle = {
   glide: Glide | null;
 };
 
+/**
+ * An item whose surface glides along with the new one into another menu
+ * (see `crossesClip`), toward `to`, the item the highlight went to. When the
+ * highlight moves on, `to` follows it, under a new `key`: the surface starts
+ * again from where the highlight is, on its way.
+ */
+type Leaving = { id: string; to: HTMLElement; key: number };
+
 type HighlightScopeValue = {
   activeId: string | null;
-  /** Items whose surface fades out where it is (see `crossesClip`). */
-  leavingIds: readonly string[];
+  leaving: readonly Leaving[];
   activate: (id: string, item: HTMLElement) => void;
   /** A leaving surface is gone. */
   left: (id: string) => void;
@@ -103,8 +112,6 @@ type HighlightScopeValue = {
   handOff: (item: HTMLElement, reduce: boolean) => Start;
   /** The surface on screen registers itself; returns its unregistration. */
   register: (handle: SurfaceHandle) => () => void;
-  /** The surface on screen (the active one), if any. */
-  onScreen: () => SurfaceHandle | null;
 };
 
 const HighlightScopeContext = React.createContext<HighlightScopeValue | null>(
@@ -134,8 +141,9 @@ function HighlightScope({ shared, ...props }: HighlightScopeProps) {
 
 function OwnHighlightScope({ open, children }: HighlightScopeProps) {
   const [activeId, setActiveId] = React.useState<string | null>(null);
-  const [leavingIds, setLeavingIds] = React.useState<readonly string[]>([]);
+  const [leaving, setLeaving] = React.useState<readonly Leaving[]>([]);
   const surfaceRef = React.useRef<SurfaceHandle | null>(null);
+  const keyRef = React.useRef(0);
   // A kept-mounted menu reopens without a highlight, like a new one. Closing
   // keeps it: the menu fades out as it was.
   const [wasOpen, setWasOpen] = React.useState(open);
@@ -143,28 +151,33 @@ function OwnHighlightScope({ open, children }: HighlightScopeProps) {
     setWasOpen(open);
     if (open) {
       setActiveId(null);
-      setLeavingIds([]);
+      setLeaving([]);
     }
   }
 
   const activate = React.useCallback((id: string, item: HTMLElement) => {
     const previous = surfaceRef.current;
     setActiveId(id);
-    // Coming back to an item while its surface fades out: it's the active one
-    // again.
-    setLeavingIds((ids) => (ids.includes(id) ? without(ids, id) : ids));
-    if (
-      previous &&
-      previous.id !== id &&
-      previous.element.isConnected &&
-      crossesClip(previous.item, item)
-    )
-      setLeavingIds((ids) =>
-        ids.includes(previous.id) ? ids : [...ids, previous.id],
-      );
+    const moves =
+      previous && previous.id !== id && previous.element.isConnected
+        ? previous
+        : null;
+    const cross = moves !== null && crossesClip(moves.item, item);
+    const key = (keyRef.current += 1);
+    setLeaving((list) => {
+      // Coming back to an item while its surface leaves: it's the active one
+      // again.
+      const rest = without(list, id);
+      if (!moves || (!cross && rest.length === 0)) return rest;
+      // The highlight moves on: the surfaces leaving for it follow.
+      const along = rest.map((other) => ({ ...other, to: item, key }));
+      return cross
+        ? [...without(along, moves.id), { id: moves.id, to: item, key }]
+        : along;
+    });
   }, []);
   const left = React.useCallback(
-    (id: string) => setLeavingIds((ids) => without(ids, id)),
+    (id: string) => setLeaving((list) => without(list, id)),
     [],
   );
   const handOffFrom = React.useCallback(
@@ -178,19 +191,17 @@ function OwnHighlightScope({ open, children }: HighlightScopeProps) {
       if (surfaceRef.current === handle) surfaceRef.current = null;
     };
   }, []);
-  const onScreen = React.useCallback(() => surfaceRef.current, []);
 
   const value = React.useMemo(
     () => ({
       activeId,
-      leavingIds,
+      leaving,
       activate,
       left,
       handOff: handOffFrom,
       register,
-      onScreen,
     }),
-    [activeId, leavingIds, activate, left, handOffFrom, register, onScreen],
+    [activeId, leaving, activate, left, handOffFrom, register],
   );
 
   return (
@@ -262,8 +273,10 @@ function readSurface(node: HTMLElement): Surface {
 const isExpanded = (node: HTMLElement) =>
   node.getAttribute('aria-expanded') === 'true';
 
-const without = (ids: readonly string[], id: string) =>
-  ids.filter((other) => other !== id);
+const without = (list: readonly Leaving[], id: string) =>
+  list.some((other) => other.id === id)
+    ? list.filter((other) => other.id !== id)
+    : list;
 
 /** The closest element clipping the item (its menu or list scrolls). */
 function clipperOf(item: HTMLElement) {
@@ -367,7 +380,8 @@ function useItemHighlight(
   }, [activate, node, id, attribute]);
 
   const active = scope?.activeId === id && !disabled;
-  const leaving = Boolean(scope?.leavingIds.includes(id)) && !disabled;
+  const leaving =
+    (!disabled && scope?.leaving.find((other) => other.id === id)) || null;
 
   return {
     ref,
@@ -392,8 +406,8 @@ type HighlightSurfaceProps = {
   surface: Surface | null;
   /** It's the active item: its surface is the highlight. */
   active: boolean;
-  /** The highlight went into another menu: its surface fades out. */
-  leaving: boolean;
+  /** The highlight went into another menu: its surface goes along. */
+  leaving: Leaving | null;
   item: HTMLElement | null;
   scope: HighlightScopeValue;
 };
@@ -420,12 +434,13 @@ function HighlightSurface({
       )}
       {leaving && !active && (
         <SurfaceCopy
-          key="leaving"
+          // A new way: it starts again from the highlight on screen.
+          key={`leaving-${leaving.key}`}
           id={id}
           surface={surface}
           item={item}
           scope={scope}
-          leaving
+          leavingTo={leaving.to}
         />
       )}
     </>
@@ -437,6 +452,8 @@ type Start = {
   opacity: number;
   /** Per millisecond, in the new item's terms. */
   velocity: Offset;
+  /** It comes from another menu (see `crossesClip`). */
+  cross: boolean;
 };
 
 const IN_PLACE: Offset = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
@@ -470,27 +487,19 @@ function handOff(
   reduce: boolean,
 ): Start {
   if (!previous?.element.isConnected)
-    return { offset: IN_PLACE, opacity: 0, velocity: STILL };
+    return { offset: IN_PLACE, opacity: 0, velocity: STILL, cross: false };
   const opacity = Number(getComputedStyle(previous.element).opacity);
-  const own = item.getBoundingClientRect();
-  if (reduce || !own.width || !own.height)
-    return { offset: IN_PLACE, opacity, velocity: STILL };
-
+  const cross = crossesClip(previous.item, item);
   // Its box on screen, mid-glide included.
-  const box = previous.element.getBoundingClientRect();
+  const offset = offsetOn(previous.element.getBoundingClientRect(), item);
+  if (reduce || !offset)
+    return { offset: IN_PLACE, opacity, velocity: STILL, cross };
+
+  const own = item.getBoundingClientRect();
   const from = previous.item.getBoundingClientRect();
-  // Screen pixels per CSS pixel: a menu still scaling in shrinks both boxes.
-  const ratioX = own.width / (item.offsetWidth || own.width);
-  const ratioY = own.height / (item.offsetHeight || own.height);
   const velocity = previous.glide ? velocityOf(previous.glide) : STILL;
   return {
-    // The transform lays the surface over `box` (origin top left).
-    offset: {
-      x: (box.left - own.left) / ratioX,
-      y: (box.top - own.top) / ratioY,
-      scaleX: box.width / own.width,
-      scaleY: box.height / own.height,
-    },
+    offset,
     opacity,
     velocity: {
       x: velocity.x,
@@ -499,24 +508,44 @@ function handOff(
       scaleX: (velocity.scaleX * from.width) / own.width,
       scaleY: (velocity.scaleY * from.height) / own.height,
     },
+    cross,
   };
 }
 
 /**
- * The glide from `offset` to the item, as a share of the way: its initial
+ * The offset that lays a surface of `item` over `box` on screen (origin top
+ * left). Null for an item without a box.
+ */
+function offsetOn(box: DOMRect, item: HTMLElement): Offset | null {
+  const own = item.getBoundingClientRect();
+  if (!own.width || !own.height) return null;
+  // Screen pixels per CSS pixel: a menu still scaling in shrinks both boxes.
+  const ratioX = own.width / (item.offsetWidth || own.width);
+  const ratioY = own.height / (item.offsetHeight || own.height);
+  return {
+    x: (box.left - own.left) / ratioX,
+    y: (box.top - own.top) / ratioY,
+    scaleX: box.width / own.width,
+    scaleY: box.height / own.height,
+  };
+}
+
+/**
+ * The glide from `offset` to `to`, as a share of the way: its initial
  * velocity is the handed velocity along the way (per ms).
  */
 function initialRate(
   { offset, velocity }: Start,
+  to: Offset,
   width: number,
   height: number,
 ) {
   // The way to go, and the velocity, in pixels (scales on the item's size).
   const way = [
-    -offset.x,
-    -offset.y,
-    (1 - offset.scaleX) * width,
-    (1 - offset.scaleY) * height,
+    to.x - offset.x,
+    to.y - offset.y,
+    (to.scaleX - offset.scaleX) * width,
+    (to.scaleY - offset.scaleY) * height,
   ];
   const speed = [
     velocity.x,
@@ -532,29 +561,6 @@ function initialRate(
 const toTransform = ({ x, y, scaleX, scaleY }: Offset) =>
   `translate(${x}px, ${y}px) scale(${scaleX}, ${scaleY})`;
 
-/** A leaving surface is gone by then, whatever happens (ms). */
-const LEAVE_TIMEOUT = 600;
-
-/**
- * How much of a surface shows: its opacity, times the part of it its menu
- * doesn't clip. Nothing on screen: the highlight is gone anyway.
- */
-function shownPart(handle: SurfaceHandle | null) {
-  if (!handle?.element.isConnected) return 1;
-  const box = handle.element.getBoundingClientRect();
-  const area = box.width * box.height;
-  if (!area) return 1;
-  const clip = clipperOf(handle.item)?.getBoundingClientRect();
-  const width = clip
-    ? Math.min(box.right, clip.right) - Math.max(box.left, clip.left)
-    : box.width;
-  const height = clip
-    ? Math.min(box.bottom, clip.bottom) - Math.max(box.top, clip.top)
-    : box.height;
-  const visible = (Math.max(0, width) * Math.max(0, height)) / area;
-  return visible * Number(getComputedStyle(handle.element).opacity);
-}
-
 type SurfaceCopyProps = {
   /** Its item's id in the scope. */
   id: string;
@@ -562,10 +568,10 @@ type SurfaceCopyProps = {
   item: HTMLElement;
   scope: HighlightScopeValue;
   /**
-   * The highlight went into another menu: this surface fades out where it is
-   * while the new one glides in there.
+   * The highlight went into another menu, to this item: this surface glides
+   * along with the new one, then goes.
    */
-  leaving?: boolean;
+  leavingTo?: HTMLElement | null;
 };
 
 function SurfaceCopy({
@@ -573,7 +579,7 @@ function SurfaceCopy({
   surface,
   item,
   scope,
-  leaving = false,
+  leavingTo = null,
 }: SurfaceCopyProps) {
   const reduce = useShouldReduceMotion();
   const glide = useTempoTransition<Transition>(HIGHLIGHT_TRANSITION);
@@ -581,11 +587,17 @@ function SurfaceCopy({
   // Read while rendering: the previous surface is still on screen (it goes
   // in this same commit).
   const [start] = React.useState(() => scope.handOff(item, reduce));
+  // Leaving: where the highlight went, in this item's terms.
+  const [target] = React.useState(() =>
+    leavingTo && !reduce
+      ? offsetOn(leavingTo.getBoundingClientRect(), item)
+      : null,
+  );
   const elementRef = React.useRef<HTMLSpanElement>(null);
   // Read when it mounts: a new transition object each render (a tempo)
   // mustn't restart the glide.
   const transitionsRef = React.useRef({ glide, fade });
-  const { register, left, onScreen } = scope;
+  const { register, left } = scope;
 
   // Before paint: the first frame already shows the surface where it starts.
   React.useLayoutEffect(() => {
@@ -593,8 +605,15 @@ function SurfaceCopy({
     if (!element) return undefined;
     const animations: Animation[] = [];
     let running: Glide | null = null;
+    // Leaving without a way to go (reduced motion): it goes at once.
+    if (leavingTo && !target) {
+      left(id);
+      return undefined;
+    }
 
-    const rate = initialRate(start, item.offsetWidth, item.offsetHeight);
+    const to = target ?? IN_PLACE;
+    const rate = initialRate(start, to, item.offsetWidth, item.offsetHeight);
+    let timing: { duration: number; easing: string } | null = null;
     if (rate !== null) {
       // The spring as a curve, with the velocity it was handed (Motion's
       // velocity is per second, on a 0-100 way).
@@ -604,37 +623,39 @@ function SurfaceCopy({
         springGenerator,
       );
       const ms = duration * 1000;
+      timing = { duration: ms, easing: generateLinearEasing(ease, ms) };
       const animation = element.animate(
-        [{ transform: toTransform(start.offset) }, { transform: 'none' }],
-        { duration: ms, easing: generateLinearEasing(ease, ms) },
+        [
+          { transform: toTransform(start.offset) },
+          { transform: target ? toTransform(target) : 'none' },
+        ],
+        // A leaving surface stays where it went until it goes.
+        { ...timing, fill: target ? 'forwards' : 'auto' },
       );
       animations.push(animation);
       running = { animation, ease, duration: ms, from: start.offset };
     }
 
-    if (leaving) {
-      // The menu the highlight went into clips the surface gliding in from
-      // here: this one gives up as much as that one shows, frame by frame,
-      // however many items it passes on its way.
-      let opacity = start.opacity;
-      const deadline = performance.now() + LEAVE_TIMEOUT;
-      let frame = 0;
-      const tick = (now: number) => {
-        const shown = shownPart(onScreen());
-        opacity = Math.min(opacity, start.opacity * (1 - shown));
-        if (now > deadline) opacity = 0;
-        element.style.opacity = String(opacity);
-        if (opacity <= 0.01) left(id);
-        else frame = requestAnimationFrame(tick);
-      };
-      frame = requestAnimationFrame(tick);
+    if (target) {
+      // Gone once there: out of its menu, under the one it went into.
+      if (running)
+        running.animation.finished.then(
+          () => left(id),
+          // Cancelled: it unmounted first.
+          () => {},
+        );
+      else left(id);
       return () => {
-        cancelAnimationFrame(frame);
         for (const animation of animations) animation.cancel();
       };
     }
 
-    if (start.opacity < 1) {
+    if (start.cross && timing) {
+      // Into another menu: it shows as it glides in, as v1's did.
+      animations.push(
+        element.animate([{ opacity: 0 }, { opacity: 1 }], timing),
+      );
+    } else if (start.opacity < 1) {
       const { duration, easing } = toCssTiming(transitionsRef.current.fade);
       animations.push(
         element.animate([{ opacity: start.opacity }, { opacity: 1 }], {
@@ -649,14 +670,14 @@ function SurfaceCopy({
       for (const animation of animations) animation.cancel();
       unregister();
     };
-  }, [register, left, onScreen, id, item, start, leaving]);
+  }, [register, left, id, item, start, target, leavingTo]);
 
   return (
     <span
       ref={elementRef}
       aria-hidden
       data-slot="item-highlight"
-      data-leaving={leaving || undefined}
+      data-leaving={leavingTo ? '' : undefined}
       style={{
         position: 'absolute',
         inset: 0,
