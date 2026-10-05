@@ -47,9 +47,9 @@ type IndicatorAnimationProps = {
   exitTransition?: Transition;
 };
 
-/** The check draws in 0.2s, after 0.2s (v1's timing), on a strong ease-out. */
+/** The check draws in 0.2s, after 0.2s, on Motion's easeOut (v1's timing). */
 const CHECK_TRANSITION: Transition = motionTokens.transition.check;
-/** The check erases in 0.2s, on a strong ease-out. */
+/** The check erases in 0.2s, on Motion's easeOut (v1's timing). */
 const CHECK_EXIT_TRANSITION: Transition = motionTokens.transition.uncheck;
 /** v1's `RadioGroupIndicator` / `RadioIndicator`, in and out: bouncy. */
 const DOT_TRANSITION: Transition = motionTokens.spring.bounce;

@@ -180,19 +180,23 @@ const CHECK = '[data-slot="checkbox-indicator"] svg path';
 
 /**
  * v1's check drawing itself: hidden for 0.2s after the state flips, then its
- * stroke and its opacity going to 1 together in 0.2s.
+ * stroke and its opacity going to 1 together in 0.2s, on Motion's easeOut.
  */
 function expectCheckDraws(samples: NonNullable<Sample>[], reduce = false) {
   const shown = present(samples).filter((s) => s.state === 'true');
   expect(shown.length).toBeGreaterThan(3);
   const first = shown[0]!;
-  // Still hidden 120ms later: the 0.2s delay.
-  const waiting = shown.filter((s) => s.t - first.t < 120);
+  // The state flipped after the last unchecked frame: on a busy machine, a
+  // long frame can show the flip well after it happened.
+  const flip = samples.findIndex((s) => s.state === 'true');
+  const before = samples[Math.max(flip - 1, 0)]!;
+  // Still hidden 150ms later: the 0.2s delay.
+  const waiting = shown.filter((s) => s.t - before.t < 150);
   for (const s of waiting) expect(s.opacity).toBeLessThan(0.05);
   const drawing = shown.filter((s) => s.opacity > 0.1 && s.opacity < 0.9);
   expect(drawing.length).toBeGreaterThan(0);
   for (const s of drawing) {
-    expect(s.t - first.t).toBeGreaterThan(150);
+    expect(s.t - before.t).toBeGreaterThan(150);
     // The stroke and the opacity move together (one transition); under
     // reduced motion the stroke stays whole and only the opacity fades.
     if (reduce) expect(s.dash).toBe(1);
@@ -204,7 +208,10 @@ function expectCheckDraws(samples: NonNullable<Sample>[], reduce = false) {
   for (const s of shown) expect(s.scale).toBe(1);
 }
 
-/** v1's check erasing itself in 0.2s, no delay; then the indicator goes. */
+/**
+ * v1's check erasing itself in 0.2s, no delay, on Motion's easeOut; then the
+ * indicator goes.
+ */
 function expectCheckErases(samples: NonNullable<Sample>[]) {
   const flipped = samples.filter((s) => s.state === 'false');
   expect(flipped.length).toBeGreaterThan(3);

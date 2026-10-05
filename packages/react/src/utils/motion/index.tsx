@@ -38,6 +38,11 @@ const ease = {
    * `out`, so the change is seen rather than snapped.
    */
   soft: [0.215, 0.61, 0.355, 1],
+  /**
+   * A mark drawing itself in a control (a checkbox's check): Motion's own
+   * easeOut, v1's, gentle enough for the stroke to be seen being drawn.
+   */
+  draw: [0, 0, 0.58, 1],
   /** Moving or morphing something already on screen. */
   inOut: [0.77, 0, 0.175, 1],
 } as const;
@@ -94,10 +99,10 @@ const transition = {
   disclosure: { duration: 0.35, ease: ease.soft },
   /** A panel coming in from a blur (tab panels). */
   panel: { duration: 0.5, ease: ease.out },
-  /** A check drawing itself, once the box has answered the press. */
-  check: { duration: 0.2, delay: 0.2, ease: ease.out },
-  /** A check erasing itself. */
-  uncheck: { duration: 0.2, ease: ease.out },
+  /** A check drawing itself, once the box has answered the press (v1's). */
+  check: { duration: 0.2, delay: 0.2, ease: ease.draw },
+  /** A check erasing itself (v1's). */
+  uncheck: { duration: 0.2, ease: ease.draw },
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
   /** Deliberately no animation. */

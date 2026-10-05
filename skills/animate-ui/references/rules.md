@@ -148,6 +148,7 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 
 - Entering or leaving: `ease.out` (`cubic-bezier(0.23, 1, 0.32, 1)`). It starts fast, so the interface answers at once.
 - Large surfaces the eye watches change, a panel unfolding and pushing the page (accordion, collapsible) or an overlay dimming it: `ease.soft` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the change is seen rather than snapped: on `ease.out`, a 200ms overlay is two-thirds in on its first frame.
+- A mark drawing itself in a control (a checkbox's check): `ease.draw` (`cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut`, v1's). Gentle, so the stroke is seen being drawn: on `ease.out`, a 0.2s check is half drawn on its first frames.
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
@@ -227,7 +228,7 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures and overlays, ease-in-out on on-screen movement, `ease` on color, never ease-in
+- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures and overlays, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance
 - [ ] Swaps bridged with a light blur
