@@ -25,9 +25,10 @@ import {
 // gets highlighted, its own highlighted background (`focus:bg-accent`,
 // `data-highlighted:bg-accent`…) is read and painted on the surface, and the
 // item's background is cleared while it's highlighted (or its submenu is
-// open). Text colors stay on the item. Base UI and React Aria mark an item
-// highlighted a moment before they focus it: a background on `:focus` (a
-// submenu trigger's, often) is read again once the item has the focus.
+// open, or it has the focus). Text colors stay on the item. Base UI and React
+// Aria mark an item highlighted a moment before they focus it: a background
+// on `:focus` (a submenu trigger's, often) is read again once the item has
+// the focus.
 //
 // The active item renders the surface. When another item becomes active, the
 // surface moves into it: the new element starts exactly where the previous
@@ -262,19 +263,30 @@ function useItemHighlight(
     if (getComputedStyle(node).position === 'static')
       node.style.setProperty('position', 'relative');
 
+    // The item's own background is cleared while the surface stands for it
+    // (highlighted, or its submenu open), and while it has the focus: React
+    // Aria moves the highlight a moment before the focus, and the item it
+    // leaves would show its `focus:` background meanwhile, a second highlight.
+    const clear = () =>
+      clearOwnSurface(
+        node,
+        node.hasAttribute(attribute) ||
+          isExpanded(node) ||
+          node.matches(':focus'),
+      );
     const sync = () => {
-      const highlighted = node.hasAttribute(attribute);
-      if (highlighted) {
+      if (node.hasAttribute(attribute)) {
         setSurface(readSurface(node));
         activate(id);
       }
-      clearOwnSurface(node, highlighted || isExpanded(node));
+      clear();
     };
     // Highlighted before it's focused (Base UI, React Aria): read before the
     // focus, a `focus:` background is missing, and the surface would glide in
     // transparent. The focus comes before the surface is rendered.
-    const readFocused = () => {
+    const focus = () => {
       if (node.hasAttribute(attribute)) setSurface(readSurface(node));
+      clear();
     };
     sync();
     const observer = new MutationObserver(sync);
@@ -282,10 +294,12 @@ function useItemHighlight(
       attributes: true,
       attributeFilter: [attribute, 'aria-expanded'],
     });
-    node.addEventListener('focus', readFocused);
+    node.addEventListener('focus', focus);
+    node.addEventListener('blur', clear);
     return () => {
       observer.disconnect();
-      node.removeEventListener('focus', readFocused);
+      node.removeEventListener('focus', focus);
+      node.removeEventListener('blur', clear);
       clearOwnSurface(node, false);
     };
   }, [activate, node, id, attribute]);

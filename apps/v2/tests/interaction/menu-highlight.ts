@@ -7,6 +7,9 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 // to item: there's never more than one on screen.
 
 const HIGHLIGHT = '[data-slot="item-highlight"]';
+/** The items of the open menus and lists. */
+const ITEMS =
+  '[role="menu"] [role^="menuitem"], [role="listbox"] [role="option"]';
 
 export type HighlightFrame = {
   t: number;
@@ -23,6 +26,11 @@ export type HighlightFrame = {
   }[];
   /** A copy runs a Web Animation of `transform`. */
   composited: boolean;
+  /**
+   * Items painting a background of their own: the highlight stands in for
+   * theirs, so any is a second highlight.
+   */
+  lit: string[];
 };
 
 /**
@@ -31,7 +39,7 @@ export type HighlightFrame = {
  */
 export function recordHighlight(page: Page, duration: number) {
   return page.evaluate(
-    ({ selector, duration }) =>
+    ({ selector, items, duration }) =>
       new Promise<HighlightFrame[]>((resolve) => {
         const frames: HighlightFrame[] = [];
         const t0 = performance.now();
@@ -66,13 +74,22 @@ export function recordHighlight(page: Page, duration: number) {
                   fill.backgroundImage !== 'none',
               };
             }),
+            lit: [...document.querySelectorAll<HTMLElement>(items)]
+              .filter((el) => {
+                const own = getComputedStyle(el);
+                return (
+                  own.backgroundColor !== 'rgba(0, 0, 0, 0)' ||
+                  own.backgroundImage !== 'none'
+                );
+              })
+              .map((el) => el.textContent?.trim() ?? ''),
           });
           if (t < duration) requestAnimationFrame(tick);
           else resolve(frames);
         };
         tick();
       }),
-    { selector: HIGHLIGHT, duration },
+    { selector: HIGHLIGHT, items: ITEMS, duration },
   );
 }
 
@@ -198,6 +215,39 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       ).toBe(true);
       expect(allPainted(recorded)).toBe(true);
       expect(Math.abs(recorded.at(-1)!.copies[0]!.top - to)).toBeLessThan(1);
+    });
+
+    test('a fast sweep on a busy main thread: no item lights up on its own', async ({
+      page,
+    }) => {
+      const first = c.first(page);
+      const list = first.locator(
+        'xpath=ancestor::*[@role="menu" or @role="listbox"][1]',
+      );
+      await pointAt(page, first);
+      await page.waitForTimeout(700);
+      const start = await boxOf(first);
+      const bounds = await boxOf(list);
+      const x = start.x + start.width / 2;
+      const top = start.y + start.height / 2;
+      const bottom = Math.min(
+        bounds.y + bounds.height - 6,
+        top + 8 * start.height,
+      );
+      // A slower machine: the library's highlight and its focus can land in
+      // different frames (React Aria moves the focus in an effect).
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+      const frames = recordHighlight(page, 1600);
+      for (const y of [bottom, top, bottom, top])
+        await page.mouse.move(x, y, { steps: 10 });
+      const recorded = await frames;
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      // The item left keeps the focus a moment: its `focus:` background
+      // mustn't show meanwhile.
+      expect(recorded.flatMap((f) => f.lit)).toEqual([]);
+      expect(recorded.every((f) => f.copies.length <= 1)).toBe(true);
+      expect(allPainted(recorded)).toBe(true);
     });
 
     if (c.submenuTrigger) {
