@@ -101,7 +101,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
     expect((await sample(page, SUB_CONTENT)).opacity).toBe(1);
   });
 
-  test('checking an item pops its check in from half its size', async ({
+  test('checking an item draws its check, like a checkbox', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Open menu' }).click();
@@ -113,28 +113,26 @@ test.describe('radix-ui dropdown-menu demo', () => {
         ...document.querySelectorAll<HTMLElement>('[role="menuitemcheckbox"]'),
       ].find((el) => el.textContent?.includes('Activity panel'))!;
       item.click();
-      const read = () => {
-        const check = item.querySelector('[data-slot$="indicator"] > span')!;
-        const cs = getComputedStyle(check);
-        const match = cs.transform.match(/matrix\(([^,]+)/);
-        return {
-          opacity: Number(cs.opacity),
-          scale: match ? Number(match[1]) : 1,
-        };
-      };
-      const seen: { opacity: number; scale: number }[] = [];
+      const seen: { dash: number; opacity: number }[] = [];
       const t0 = performance.now();
       while (performance.now() - t0 < 700) {
         await new Promise(requestAnimationFrame);
-        seen.push(read());
+        const stroke = item.querySelector('[data-slot$="indicator"] path');
+        if (!stroke) continue;
+        const cs = getComputedStyle(stroke);
+        seen.push({
+          dash:
+            cs.strokeDasharray === 'none' ? 1 : parseFloat(cs.strokeDasharray),
+          opacity: Number(cs.opacity),
+        });
       }
       return seen;
     });
-    expect(frames[0]!.opacity).toBeLessThan(1);
-    expect(frames[0]!.scale).toBeLessThan(0.75);
-    // Motion's default spring for scale: a small overshoot (~1.04).
-    expect(Math.max(...frames.map((f) => f.scale))).toBeGreaterThan(1.01);
-    expect(frames.at(-1)).toEqual({ opacity: 1, scale: 1 });
+    // Its stroke draws itself from nothing as it fades in, to the whole check.
+    expect(frames[0]!.dash).toBeLessThan(0.3);
+    expect(frames[0]!.opacity).toBeLessThan(0.3);
+    expect(frames.some((f) => f.dash > 0.3 && f.dash < 0.9)).toBe(true);
+    expect(frames.some((f) => f.dash === 1 && f.opacity === 1)).toBe(true);
   });
 
   test('choosing a radio item glides its indicator there', async ({ page }) => {

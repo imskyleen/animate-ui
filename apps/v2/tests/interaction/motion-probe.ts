@@ -72,7 +72,13 @@ function toSample(raw: {
   };
 }
 
-export type MotionFrame = { t: number; opacity: number; scale: number };
+export type MotionFrame = {
+  t: number;
+  opacity: number;
+  scale: number;
+  /** An SVG shape's drawn stroke (0 to 1; 1 when not dashed), else null. */
+  dash: number | null;
+};
 
 type MotionTarget = {
   selector: string;
@@ -112,6 +118,12 @@ export function recordMotion(
               t,
               opacity: Number(cs.opacity),
               scale: match ? Number(match[1]) : 1,
+              dash:
+                el instanceof SVGGeometryElement
+                  ? cs.strokeDasharray === 'none'
+                    ? 1
+                    : parseFloat(cs.strokeDasharray)
+                  : null,
             });
           }
           if (t < duration) requestAnimationFrame(tick);

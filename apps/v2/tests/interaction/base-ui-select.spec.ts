@@ -162,20 +162,21 @@ test.describe('base-ui select API', () => {
     });
   });
 
-  test('multiple: the list stays open, checks pop in and shrink back out', async ({
+  test('multiple: the list stays open, checks draw in and erase themselves', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Multiple' }).click();
     await page.waitForTimeout(650);
-    // Already selected: its check popped in as the list opened.
+    // Already selected: its check came in as the list opened.
     expect((await sample(page, '[data-testid="check-apple"]')).opacity).toBe(1);
 
     await page.getByRole('option', { name: 'Multiple Cherry' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('apple,cherry');
     await page.waitForTimeout(40);
+    // A text check ("✓") fades in, as a checkbox's would.
     const appearing = await sample(page, '[data-testid="check-cherry"]');
     expect(appearing.opacity).toBeLessThan(1);
-    expect(appearing.scale).toBeLessThan(1);
+    expect(appearing.scale).toBe(1);
     await page.waitForTimeout(650);
     expect((await sample(page, '[data-testid="check-cherry"]')).opacity).toBe(
       1,
@@ -188,13 +189,11 @@ test.describe('base-ui select API', () => {
     );
     await page.getByRole('option', { name: 'Multiple Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('cherry');
-    // Deselected: the check shrinks back out and fades (kept mounted).
+    // Deselected: the check fades out (kept mounted).
     const recorded = await leaving;
-    expect(
-      recorded.some(
-        (f) => f.scale < 0.95 && f.opacity > 0.03 && f.opacity < 0.95,
-      ),
-    ).toBe(true);
+    expect(recorded.some((f) => f.opacity > 0.03 && f.opacity < 0.95)).toBe(
+      true,
+    );
     expect(recorded.at(-1)!.opacity).toBe(0);
     await expect(page.getByTestId('multiple-popup')).toBeVisible();
   });

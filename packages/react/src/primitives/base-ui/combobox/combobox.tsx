@@ -98,7 +98,7 @@ function PopupMotion({ transition, exitTransition, ...props }: Popup.Props) {
 
 // Single selection: the check glides to the chosen item while the list
 // closes. Multiple selection keeps the list open: a selected item's check
-// pops in.
+// draws itself, a deselected one's erases itself.
 function ItemIndicator({ render, transition, ...props }: ItemIndicator.Props) {
   const root = React.use(RootContext);
   if (!root) {

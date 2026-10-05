@@ -14,8 +14,8 @@ import {
   CheckRegistryContext,
   GLIDE_TRANSITION,
   PICK_HOLD,
+  DrawnCheck,
   asTransformable,
-  useCheckMotion,
   useCheckRegistry,
   useRegisterCheck,
 } from '../../../internal/item-indicator';
@@ -27,13 +27,13 @@ import {
 //   ways;
 // - one highlight glides behind the highlighted item, into submenus too
 //   (internal/item-highlight);
-// - a checkbox item's check pops in from half its size out of a light blur
-//   when it's checked (or the menu opens), and shrinks back out when it's
-//   unchecked; a radio item's check glides to the newly checked item, like a
-//   select's (internal/item-indicator);
+// - a checkbox item's check draws itself when it's checked (or the menu
+//   opens), and erases itself when it's unchecked, like a checkbox's; a radio
+//   item's check glides to the newly checked item, like a select's
+//   (internal/item-indicator);
 // - with `closeOnClick`, choosing an item whose check moves (a radio's glides
-//   from the one shown, a checkbox's pops in or out) holds the menu still for
-//   150ms before it closes, so the change is seen.
+//   from the one shown, a checkbox's draws or erases itself) holds the menu
+//   still for 150ms before it closes, so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -49,10 +49,10 @@ type PresenceAnimationProps = {
 /** Animate UI's addition to the item indicators. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the check popping in and out (checkbox items), or of the
-   * indicator gliding to the checked item (radio items). Defaults to a
-   * spring with a little bounce for the pop (stiffness 500, damping 24),
-   * 150ms out, and a spring (stiffness 500, damping 40) for the glide.
+   * Transition of the check drawing and erasing itself (checkbox items), or
+   * of the indicator gliding to the checked item (radio items). Defaults to
+   * 0.3s on Motion's easeOut both ways (a checkbox's), and a spring
+   * (stiffness 500, damping 40) for the glide.
    */
   transition?: Transition;
 };
@@ -268,10 +268,10 @@ type IndicatorState = { checked: boolean; transitionStatus?: string };
 const RadioGroupLayoutContext = React.createContext<string | null>(null);
 
 /**
- * A checkbox item's check pops in from half its size out of a light blur
- * whenever it appears (checking the item, or opening the menu), and shrinks
- * back out when it's unchecked (the indicator is kept mounted for that). A
- * radio item's indicator glides from the previously checked item.
+ * A checkbox item's check draws itself whenever it appears (checking the
+ * item, or opening the menu), and erases itself when it's unchecked (the
+ * indicator is kept mounted for that). A radio item's indicator glides from
+ * the previously checked item.
  */
 function IndicatorMotion({
   kind,
@@ -285,10 +285,9 @@ function IndicatorMotion({
 }) {
   const layoutId = React.use(RadioGroupLayoutContext);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  const { initial, animate } = useCheckMotion(state.checked, transition);
   // A radio item's shown check: choosing another item glides it there.
   useRegisterCheck(kind === 'radio' && state.checked);
-  // A box, so it can scale and glide.
+  // A box, so it can glide.
   const htmlRef = htmlProps.ref;
   const ref = React.useMemo(
     () => mergeRefs(htmlRef, asTransformable),
@@ -318,8 +317,13 @@ function IndicatorMotion({
       </PresenceContext>
     );
   }
-  // Leaving with the menu, it stays as it is.
-  return <motion.span {...props} initial={initial} animate={animate} />;
+  return (
+    <DrawnCheck
+      {...(htmlProps as React.ComponentProps<'span'>)}
+      checked={state.checked}
+      transition={transition}
+    />
+  );
 }
 
 export {

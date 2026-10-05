@@ -16,7 +16,6 @@ import {
   type SelectionIndicatorProps as SelectionIndicatorPrimitiveProps,
 } from 'react-aria-components';
 import {
-  AnimatePresence,
   motion,
   PresenceContext,
   type HTMLMotionProps,
@@ -34,8 +33,8 @@ import {
 } from '../../../internal/aria-item-highlight';
 import { HighlightScope } from '../../../internal/item-highlight';
 import {
+  DrawnCheck,
   GLIDE_TRANSITION,
-  useCheckMotion,
   useRegisterCheck,
 } from '../../../internal/item-indicator';
 
@@ -51,9 +50,9 @@ import {
 // - A SelectionIndicator inside an item (the check), here or in Animate UI's
 //   Menu: with a single selection, it glides to the chosen item on a quick
 //   spring while the list holds still (the Popover waits for it before
-//   closing); with a multiple selection, it pops in from half its size out of
-//   a light blur when the item is selected, and shrinks back out when it's
-//   deselected.
+//   closing); with a multiple selection, it draws itself when the item is
+//   selected and erases itself when it's deselected, like a checkbox's
+//   check.
 //
 // Items are collection items: the highlight goes through their `render` prop
 // (internal/aria-item-highlight).
@@ -110,9 +109,10 @@ function ListBoxItem<T extends object>({
 type SelectionIndicatorProps = SelectionIndicatorPrimitiveProps & {
   /**
    * Transition of the indicator gliding to the chosen item (single
-   * selection), or popping in and out (multiple selection). Defaults to a
-   * spring (stiffness 500, damping 40) for the glide, and a spring with a
-   * little bounce for the pop (stiffness 500, damping 24), 150ms out.
+   * selection), or of the check drawing and erasing itself (multiple
+   * selection). Defaults to a spring (stiffness 500, damping 40) for the
+   * glide, and 0.3s on Motion's easeOut both ways (a checkbox's) for the
+   * check.
    */
   transition?: Transition;
 };
@@ -168,7 +168,6 @@ function AnimatedIndicator({
   const multiple = mode === 'multiple';
   // A single selection's shown check: choosing another item holds the list.
   useRegisterCheck(!multiple && Boolean(isSelected));
-  const check = useCheckMotion(Boolean(isSelected), transition);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
   const renderProps = useRenderProps({
     className,
@@ -187,15 +186,16 @@ function AnimatedIndicator({
 
   if (multiple) {
     return (
-      // Its own presence: it shrinks out when deselected, and leaves with
-      // the list as it is.
-      <AnimatePresence>
-        {isSelected && (
-          <motion.div key="check" {...elementProps} {...check}>
-            {renderProps.children}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      // Kept mounted: it erases itself when deselected, and leaves with the
+      // list as it is.
+      <DrawnCheck
+        {...(elementProps as React.ComponentProps<'span'>)}
+        as="div"
+        checked={Boolean(isSelected)}
+        transition={transition}
+      >
+        {renderProps.children}
+      </DrawnCheck>
     );
   }
 

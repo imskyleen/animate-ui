@@ -27,9 +27,9 @@ import {
   CheckRegistryContext,
   GLIDE_TRANSITION,
   PICK_HOLD,
+  DrawnCheck,
   PickContext,
   asTransformable,
-  useCheckMotion,
   usePicks,
   useRegisterCheck,
 } from '../../../internal/item-indicator';
@@ -41,13 +41,13 @@ import {
 //
 // - Content and SubContent fade and scale from 0.9 in 250ms, both ways.
 // - One highlight glides behind the highlighted item (internal/item-highlight).
-// - A checkbox item's check pops in from half its size out of a light blur
-//   when it's checked (or the menu opens), and shrinks back out when it's
-//   unchecked; a radio item's check glides to the newly checked item, like a
-//   select's (internal/item-indicator).
+// - A checkbox item's check draws itself when it's checked (or the menu
+//   opens), and erases itself when it's unchecked, like a checkbox's; a radio
+//   item's check glides to the newly checked item, like a select's
+//   (internal/item-indicator).
 // - Choosing an item closes the menu (Radix's default): when its check moves
-//   (a radio's glides from the one shown, a checkbox's pops in or out), the
-//   menu holds still for 150ms first, so the change is seen.
+//   (a radio's glides from the one shown, a checkbox's draws or erases
+//   itself), the menu holds still for 150ms first, so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -63,10 +63,10 @@ type PresenceAnimationProps = {
 /** Animate UI's addition to `ItemIndicator`. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the check popping in and out (checkbox items), or of the
-   * indicator gliding to the checked item (radio items). Defaults to a
-   * spring with a little bounce for the pop (stiffness 500, damping 24),
-   * 150ms out, and a spring (stiffness 500, damping 40) for the glide.
+   * Transition of the check drawing and erasing itself (checkbox items), or
+   * of the indicator gliding to the checked item (radio items). Defaults to
+   * 0.3s on Motion's easeOut both ways (a checkbox's), and a spring
+   * (stiffness 500, damping 40) for the glide.
    */
   transition?: Transition;
 };
@@ -467,7 +467,7 @@ function createCheckboxItem<P extends CheckboxItemProps>(
   RadixCheckboxItem: React.ComponentType<P>,
 ) {
   function CheckboxItem(props: P) {
-    // Its check pops in or out.
+    // Its check draws or erases itself.
     const onSelect = useMarkPick(props.onSelect, () => true);
     return (
       <IndicatorItemContext
@@ -539,10 +539,10 @@ type ItemIndicatorProps = {
 };
 
 /**
- * A checkbox item's check pops in from half its size out of a light blur
- * whenever it appears (checking the item, or opening the menu), and shrinks
- * back out when the item is unchecked: it stays mounted for that. A radio
- * item's check glides from the previously checked item.
+ * A checkbox item's check draws itself whenever it appears (checking the
+ * item, or opening the menu), and erases itself when the item is unchecked:
+ * it stays mounted for that. A radio item's check glides from the previously
+ * checked item.
  */
 function createItemIndicator<P extends ItemIndicatorProps>(
   RadixItemIndicator: React.ComponentType<P>,
@@ -584,13 +584,9 @@ function IndicatorMotion({
   ...props
 }: React.ComponentProps<'span'> &
   IndicatorAnimationProps & { item: IndicatorItem }) {
-  // A box, so it can scale and glide.
+  // A box, so it can glide.
   const mergedRef = React.useMemo(() => mergeRefs(ref, asTransformable), [ref]);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  const { initial, animate } = useCheckMotion(
-    item.checked !== false,
-    transition,
-  );
   // Mounted while checked: choosing another radio item holds the menu.
   useRegisterCheck(item.kind === 'radio');
 
@@ -611,12 +607,12 @@ function IndicatorMotion({
     );
   }
   return (
-    <motion.span
-      {...(props as React.ComponentProps<typeof motion.span>)}
-      ref={mergedRef}
-      // Leaving with the menu, it stays as it is.
-      initial={initial}
-      animate={animate}
+    <DrawnCheck
+      {...props}
+      ref={ref}
+      checked={item.checked !== false}
+      indeterminate={item.checked === 'indeterminate'}
+      transition={transition}
     />
   );
 }

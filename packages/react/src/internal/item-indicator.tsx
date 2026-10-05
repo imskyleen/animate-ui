@@ -1,53 +1,68 @@
 'use client';
 
 import * as React from 'react';
-import type { Transition } from 'motion/react';
+import { PresenceContext, type Transition } from 'motion/react';
 
+import { motionTokens } from '../utils/motion';
 import {
-  motionTokens,
-  useShouldReduceMotion,
-  useTempoTransition,
-} from '../utils/motion';
+  IndicatorContent,
+  type IndicatorContentProps,
+} from './controls/indicator';
 
 // The checks of list and menu items (a select's or a combobox's chosen item,
 // a menu's checkbox and radio items), shared by the libraries: a single
-// selection's check glides to the chosen item, a multiple selection's pops in
-// when the item is checked and out when it's unchecked.
+// selection's check glides to the chosen item; a multiple selection's draws
+// itself when the item is checked and erases itself when it's unchecked, like
+// a checkbox's check (internal/controls/indicator).
 //
 // Choosing an item can close the list or the menu: when a check is there to
-// glide (or pops in or out), it holds still for PICK_HOLD first, so the check
-// is seen landing on the item before it fades out. Each shown single
-// selection's check registers with its list (CheckRegistryContext) so the list
-// knows.
-
-/** A multiple selection's check, hidden: half its size, in a light blur. */
-const CHECK_HIDDEN = {
-  opacity: 0,
-  scale: motionTokens.scale.icon,
-  filter: motionTokens.blur.icon,
-} as const;
-/** Under reduced motion it only fades. */
-const CHECK_HIDDEN_REDUCED = { opacity: 0 } as const;
-const CHECK_SHOWN = { opacity: 1, scale: 1, filter: 'blur(0px)' } as const;
+// glide (or draws or erases itself), it holds still for PICK_HOLD first, so
+// the check is seen before it fades out. Each shown single selection's check
+// registers with its list (CheckRegistryContext) so the list knows.
 
 /**
- * A multiple selection's check popping in: a lively spring with a little
- * overshoot (~13%, peak at ~170ms), out of its blur.
+ * A multiple selection's check drawing itself, like a checkbox's: its stroke
+ * and opacity from 0 in 0.3s on `ease.draw`, at once (no box to fill first).
  */
-const CHECK_TRANSITION = {
-  scale: { type: 'spring', stiffness: 500, damping: 24 },
-  opacity: motionTokens.transition.swap,
-  filter: motionTokens.transition.swap,
-} as const satisfies Transition;
+const CHECK_TRANSITION: Transition = {
+  ...motionTokens.transition.check,
+  delay: 0,
+};
 
-/** Unchecked, it shrinks back into its blur and fades, quicker. */
-const UNCHECK_TRANSITION = {
-  duration: 0.15,
-  ease: motionTokens.ease.out,
-} as const satisfies Transition;
+/** Unchecked, it erases itself, as slowly as it draws. */
+const UNCHECK_TRANSITION: Transition = motionTokens.transition.uncheck;
+
+type DrawnCheckProps = Omit<
+  IndicatorContentProps,
+  'kind' | 'checked' | 'transition' | 'exitTransition'
+> & {
+  checked: boolean;
+  /** Replaces both directions' transition. */
+  transition?: Transition;
+};
 
 /**
- * A ref for a check's element: transforms (its pop, its glide) don't apply to
+ * A multiple selection's check, kept mounted: its content (the icon's SVG
+ * shapes) draws itself in when checked (or when the list opens) and erases
+ * itself when unchecked. Under reduced motion, it only fades.
+ */
+function DrawnCheck({ transition, ...props }: DrawnCheckProps) {
+  return (
+    // Out of the list's or the menu's presence: it doesn't erase itself as
+    // they leave.
+    <PresenceContext value={null}>
+      <IndicatorContent
+        {...props}
+        kind="check"
+        transition={transition ?? CHECK_TRANSITION}
+        exitTransition={transition ?? UNCHECK_TRANSITION}
+      />
+    </PresenceContext>
+  );
+}
+
+/**
+ * A ref for a check's element: transforms (its glide) don't apply to
  * an inline box, and an indicator is often a plain `<span>` inside the
  * positioned one. Alone in it, it becomes a block, which lays out the same (an
  * inline-level box would sit 2-4px off, on the line's baseline); beside text,
@@ -57,25 +72,6 @@ function asTransformable(node: HTMLElement | null) {
   if (!node || getComputedStyle(node).display !== 'inline') return;
   const alone = node.parentElement?.childNodes.length === 1;
   node.style.setProperty('display', alone ? 'block' : 'inline-block');
-}
-
-/**
- * The animation of a multiple selection's check: spread it on a motion
- * element kept mounted while unchecked, or use `initial`/`exit` with
- * AnimatePresence. `transition` replaces both directions'.
- */
-function useCheckMotion(checked: boolean, transition?: Transition) {
-  const reduce = useShouldReduceMotion();
-  const check = useTempoTransition(transition ?? CHECK_TRANSITION);
-  const uncheck = useTempoTransition(transition ?? UNCHECK_TRANSITION);
-  const hidden = reduce ? CHECK_HIDDEN_REDUCED : CHECK_HIDDEN;
-  const shown = reduce ? { opacity: 1 } : CHECK_SHOWN;
-  const leave = { ...hidden, transition: uncheck };
-  return {
-    initial: hidden,
-    animate: checked ? { ...shown, transition: check } : leave,
-    exit: leave,
-  };
 }
 
 /**
@@ -160,10 +156,11 @@ export {
   GLIDE_TRANSITION,
   PICK_HOLD,
   CheckRegistryContext,
+  DrawnCheck,
   PickContext,
   asTransformable,
-  useCheckMotion,
   useCheckRegistry,
   usePicks,
   useRegisterCheck,
+  type DrawnCheckProps,
 };

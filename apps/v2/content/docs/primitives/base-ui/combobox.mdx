@@ -61,7 +61,7 @@ Base UI's Combobox has no Animate UI v1 counterpart: it moves like v1's Base UI 
 - Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation.
 - Base UI resets the query and syncs the input when the popup unmounts, so the list doesn't change while it fades out.
 - **Chip**: a chip added to the selection pops in from half its size with a fade, like v1's checkbox check. Chips already selected on mount don't animate, and removing a chip (often with Backspace) is instant.
-- **ItemIndicator**: with a single value, choosing another item holds the list still for 150ms while the check glides there, on the highlight's spring (stiffness 500, damping 40), then the list closes: the check is seen landing. A first choice (no check to glide from yet) and closing any other way (Escape, a click outside) don't wait. With `multiple`, a selected item's check pops in from half its size out of a light blur, with a little overshoot, and shrinks back out when it's deselected (it stays mounted for that).
+- **ItemIndicator**: with a single value, choosing another item holds the list still for 150ms while the check glides there, on the highlight's spring (stiffness 500, damping 40), then the list closes: the check is seen landing. A first choice (no check to glide from yet) and closing any other way (Escape, a click outside) don't wait. With `multiple`, a selected item's check draws itself like a Checkbox's check (its stroke and opacity in 0.3s), and erases itself when it's deselected (it stays mounted for that); a check written as text ("✓") fades.
 - Animate UI passes an `actionsRef` to the Root and unmounts the popup when its exit is over. Your own `actionsRef` still works, `onOpenChangeComplete` fires after the entrance and after the exit, and `keepMounted` on the Portal keeps the closed popup mounted and hidden.
 - Open from the start (`defaultOpen`), the popup plays its entrance on page load.
 - Under reduced motion, nothing scales or glides: the popup, chips and checks only fade; the highlight jumps from item to item and only fades in when it appears.
@@ -121,10 +121,10 @@ Every part takes exactly the props of [Base UI's Combobox](https://base-ui.com/r
   type={{
     transition: {
       description:
-        'Transition of the check moving to the chosen item (single value), or popping in and out (multiple).',
+        'Transition of the check moving to the chosen item (single value), or drawing and erasing itself (multiple).',
       type: 'Transition',
       default:
-        "the highlight's spring (stiffness 500, damping 40); multiple: a spring with a little overshoot (stiffness 500, damping 24) with a 200ms fade and blur, 150ms out",
+        "the highlight's spring (stiffness 500, damping 40); multiple: 0.3s on Motion's easeOut, drawn and erased (a Checkbox's, without its delay)",
     },
   }}
 />

@@ -37,7 +37,7 @@ import { PickContext } from '../../../internal/item-indicator';
 // submenu is open, the highlight having moved into it.
 //
 // A SelectionIndicator inside an item (the list-box primitive's) is its check:
-// a multiple selection's pops in out of a light blur and shrinks back out; a
+// a multiple selection's draws itself and erases itself, like a checkbox's; a
 // single selection's glides to the chosen item, between the items of its
 // Menu or MenuSection. Choosing an item that closes the menu (a single
 // selection's, from the pointer or Enter) holds the menu still for 150ms
@@ -179,8 +179,8 @@ function MenuItem<T extends object>({
                 ...own,
                 // React Aria closes the menu in its click (pointer, Enter):
                 // the pick is marked first when the check moves. A multiple
-                // selection's pops in or out; a single one's glides from the
-                // one shown.
+                // selection's draws or erases itself; a single one's glides
+                // from the one shown.
                 onClick: (event: React.MouseEvent<HTMLElement>) => {
                   const { selectionMode, isSelected } = values;
                   if (

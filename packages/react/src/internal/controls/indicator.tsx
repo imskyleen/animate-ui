@@ -224,6 +224,8 @@ function contentOf(indicator: Element) {
 
 type IndicatorContentProps = React.ComponentPropsWithRef<'span'> &
   IndicatorAnimationProps & {
+    /** The element to render (a `span` by default). */
+    as?: 'span' | 'div';
     kind: IndicatorKind;
     /** The control is checked (or indeterminate). */
     checked: boolean;
@@ -238,6 +240,7 @@ type IndicatorContentProps = React.ComponentPropsWithRef<'span'> &
  * indicator stays in the DOM with its content hidden.
  */
 function IndicatorContent({
+  as: Element = 'span',
   kind,
   checked,
   indeterminate = false,
@@ -278,15 +281,18 @@ function IndicatorContent({
     }
     const content = contentOf(element);
     lastRef.current = { visible, indeterminate, content };
-    const targets = targetsOf(content, kind);
+    // Text alone (a "✓"): the indicator itself fades.
+    const targets =
+      content.length > 0 ? targetsOf(content, kind) : [element as Styled];
     const enterTransition = indeterminate ? { ...enter, delay: 0 } : enter;
 
     if (!last) {
+      // Shown before it animates (its content, or itself, starts hidden).
+      element.style.opacity = '';
       if (!visible) setNow(targets, kind, false, reduce);
       else if (animateOnMount)
         void animateTo(targets, kind, true, enterTransition, reduce);
       else setNow(targets, kind, true, reduce);
-      element.style.opacity = '';
       return;
     }
     if (last.visible === visible) {
@@ -309,8 +315,8 @@ function IndicatorContent({
 
   const mergedRef = React.useMemo(() => mergeRefs(ref, localRef), [ref]);
   return (
-    <span
-      {...props}
+    <Element
+      {...(props as React.ComponentProps<'span'>)}
       style={hideFirst ? { ...style, opacity: 0 } : style}
       ref={mergedRef}
     />

@@ -27,8 +27,8 @@ import {
   CheckRegistryContext,
   GLIDE_TRANSITION,
   PICK_HOLD,
+  DrawnCheck,
   asTransformable,
-  useCheckMotion,
   useCheckRegistry,
   useRegisterCheck,
 } from '../../../internal/item-indicator';
@@ -245,9 +245,9 @@ type IndicatorMotionProps = IndicatorAnimationProps & {
 /**
  * A check, keeping the element the user's `render` asks for. Single
  * selection: it shows with the list and glides to the chosen item, while the
- * list holds still before it closes. Multiple selection: it pops in from half
- * its size out of a light blur when the item is selected, and shrinks back
- * out when it's deselected.
+ * list holds still before it closes. Multiple selection: it draws itself when
+ * the item is selected and erases itself when it's deselected, like a
+ * checkbox's check.
  */
 function IndicatorMotion({
   render,
@@ -259,9 +259,8 @@ function IndicatorMotion({
   const layoutId = React.use(IndicatorLayoutContext);
   // A single selection's shown check: choosing another item holds the list.
   useRegisterCheck(!multiple && state.selected);
-  const check = useCheckMotion(state.selected, transition);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  // A box, so it can scale and glide.
+  // A box, so it can glide.
   const ownRef = props.ref as React.Ref<HTMLElement> | undefined;
   const transformableRef = React.useMemo(
     () => mergeRefs(ownRef, asTransformable),
@@ -316,10 +315,15 @@ function IndicatorMotion({
       </PresenceContext>
     );
   }
-  // Kept mounted (the parts pass `keepMounted`): it shrinks out when its
+  // Kept mounted (the parts pass `keepMounted`): it erases itself when its
   // item is deselected, and leaves with the list as it is.
   return (
-    <Element {...motionProps} initial={check.initial} animate={check.animate} />
+    <DrawnCheck
+      {...(elementProps as React.ComponentProps<'span'>)}
+      as={type === 'div' ? 'div' : 'span'}
+      checked={state.selected}
+      transition={transition}
+    />
   );
 }
 

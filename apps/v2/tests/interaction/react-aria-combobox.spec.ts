@@ -123,41 +123,39 @@ test.describe('react-aria combobox chips demo', () => {
     expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
   });
 
-  test('the check of a selected item pops in, of a deselected one shrinks out', async ({
+  test('the check of a selected item draws itself, of a deselected one erases itself', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     const nuxt = page.getByRole('option', { name: 'Nuxt' });
-    const check = nuxt.locator('> div');
-    await expect(check).toHaveCount(0);
-    const frames = recordMotion(
-      page,
-      { selector: '[role="option"]', text: 'Nuxt', child: ':scope > div' },
-      900,
-    );
+    // The check's stroke, like a checkbox's.
+    const stroke = {
+      selector: '[role="option"]',
+      text: 'Nuxt',
+      child: ':scope > div path',
+    };
+    const frames = recordMotion(page, stroke, 900);
     await nuxt.click();
     // Multiple selection: the list stays open.
     await expect(page.locator(POPOVER)).toBeVisible();
     const recorded = await frames;
-    expect(recorded[0]!.opacity).toBeLessThan(1);
-    // From half its size, like v1's checkbox check.
-    expect(Math.min(...recorded.map((f) => f.scale))).toBeLessThan(0.9);
+    const dashes = recorded.map((f) => f.dash ?? 1);
+    // From nothing, its stroke drawn on the way, to the whole check.
+    expect(Math.min(...dashes)).toBeLessThan(0.3);
+    expect(dashes.some((d) => d > 0.3 && d < 0.9)).toBe(true);
+    expect(recorded.at(-1)!.dash).toBe(1);
     expect(recorded.at(-1)!.opacity).toBe(1);
 
-    const leaving = recordMotion(
-      page,
-      { selector: '[role="option"]', text: 'Nuxt', child: ':scope > div' },
-      500,
-    );
+    const leaving = recordMotion(page, stroke, 600);
     await nuxt.click();
     const out = await leaving;
-    // Smaller and fading on its way out, then gone.
+    // Partly drawn on its way out, then erased (kept mounted).
     expect(
-      out.some((f) => f.scale < 0.95 && f.opacity > 0.03 && f.opacity < 0.95),
+      out.some((f) => f.dash !== null && f.dash > 0.1 && f.dash < 0.9),
     ).toBe(true);
-    await expect(check).toHaveCount(0);
+    expect(out.at(-1)!.opacity).toBe(0);
   });
 
   test('Backspace removes the last tag instantly', async ({ page }) => {

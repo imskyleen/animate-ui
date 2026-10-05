@@ -162,21 +162,29 @@ test.describe('base-ui combobox chips demo', () => {
     expect(recorded.at(-1)!.opacity).toBe(1);
   });
 
-  test('checks pop in with the selection, Backspace removes instantly', async ({
+  test('checks draw themselves with the selection, Backspace removes instantly', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    // The ItemIndicator's icon (the demo renders it in a span), not the
+    // highlight: its stroke draws itself, like a checkbox's check.
+    const frames = recordMotion(
+      page,
+      {
+        selector: '[role="option"]',
+        text: 'Nuxt',
+        child: ':scope > span:not([data-slot="item-highlight"]) path',
+      },
+      700,
+    );
     await nuxt.click();
-    await page.waitForTimeout(40);
-    // The ItemIndicator (the demo renders it as a span), not the highlight.
-    const check = nuxt
-      .locator(':scope > span:not([data-slot="item-highlight"])')
-      .last();
-    const opacity = await check.evaluate((el) => getComputedStyle(el).opacity);
-    expect(Number(opacity)).toBeLessThan(1);
+    const dashes = (await frames).map((f) => f.dash ?? 1);
+    expect(Math.min(...dashes)).toBeLessThan(0.3);
+    expect(dashes.some((d) => d > 0.3 && d < 0.9)).toBe(true);
+    expect(dashes.at(-1)).toBe(1);
 
     await page.keyboard.press('Escape');
     await page.getByRole('combobox', { name: 'Frameworks' }).press('Backspace');
@@ -247,11 +255,9 @@ test.describe('base-ui combobox API', () => {
     );
     await page.getByRole('option', { name: 'Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('Grape');
-    // Deselected: the check shrinks back out and fades (kept mounted).
+    // Deselected: the check fades out (kept mounted).
     const out = await leaving;
-    expect(
-      out.some((f) => f.scale < 0.95 && f.opacity > 0.03 && f.opacity < 0.95),
-    ).toBe(true);
+    expect(out.some((f) => f.opacity > 0.03 && f.opacity < 0.95)).toBe(true);
     expect(out.at(-1)!.opacity).toBe(0);
     await expect(page.getByTestId('chip-Apple')).toHaveCount(0);
   });

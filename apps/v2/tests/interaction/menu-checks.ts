@@ -4,9 +4,9 @@ import { expectEscapeWithoutHold, expectPickHold } from './pick-hold';
 
 // The checks of a menu's checkbox and radio items, shared by the specs of the
 // dropdown and context menus and the menubars of every library: a checkbox
-// item's check pops in from half its size out of a light blur, with a little
-// overshoot, and shrinks back out when it's unchecked; a radio item's check
-// glides to the newly checked item, like a select's. When choosing an item
+// item's check draws itself, like a checkbox's, and erases itself when it's
+// unchecked; a radio item's check glides to the newly checked item, like a
+// select's. When choosing an item
 // closes the menu (Radix, React Aria's single selection), the menu holds still
 // while the check moves, then fades out.
 
@@ -28,8 +28,12 @@ type MenuChecksCase = {
 
 type CheckFrame = {
   t: number;
-  /** The check's scale (as drawn) and opacity, null while it has none. */
-  scale: number | null;
+  /**
+   * How much of the check's stroke is drawn (0 to 1; 1 when not dashed), and
+   * its opacity: of its first SVG shape (or of the check itself without
+   * one). Null while it has none.
+   */
+  dash: number | null;
   opacity: number | null;
   /** The menu's opacity, null once it's gone. */
   menu: number | null;
@@ -61,14 +65,16 @@ async function recordCheck(
               ...document.querySelectorAll<HTMLElement>('[role^="menuitem"]'),
             ].find((el) => el.textContent?.includes(label));
             const mark = owner?.querySelector<HTMLElement>(indicator);
-            const style = mark ? getComputedStyle(mark) : null;
+            const shape =
+              mark?.querySelector('path, line, polyline') ?? mark ?? null;
+            const style = shape ? getComputedStyle(shape) : null;
             frames.push({
               t,
-              // As drawn: a transform on an inline box draws nothing.
-              scale:
-                mark && mark.offsetWidth
-                  ? mark.getBoundingClientRect().width / mark.offsetWidth
-                  : null,
+              dash: style
+                ? style.strokeDasharray === 'none'
+                  ? 1
+                  : parseFloat(style.strokeDasharray)
+                : null,
               opacity: style ? Number(style.opacity) : null,
               menu: menu ? Number(getComputedStyle(menu).opacity) : null,
             });
@@ -101,7 +107,7 @@ export function describeMenuChecks(name: string, c: MenuChecksCase) {
     test('the checks sit where they did, centered on their item', async ({
       page,
     }) => {
-      // Made a box so it can scale and glide, a plain <span> indicator lays
+      // Made a box so it can glide (radio items), a plain <span> indicator lays
       // out as it would inline.
       const offsets = await page.evaluate(() =>
         [
@@ -122,42 +128,34 @@ export function describeMenuChecks(name: string, c: MenuChecksCase) {
       for (const offset of offsets) expect(Math.abs(offset)).toBeLessThan(0.5);
     });
 
-    test("a checkbox item's check pops in from half its size", async ({
+    test("a checkbox item's check draws itself, like a checkbox's", async ({
       page,
     }) => {
       const frames = await recordCheck(page, c, c.checkbox.unchecked);
-      const shown = frames.filter(
-        (f) => f.scale !== null && f.opacity! > 0 && f.menu !== null,
-      );
-      expect(shown.length).toBeGreaterThan(2);
-      // From half its size and transparent…
-      expect(shown[0]!.scale!).toBeLessThan(0.8);
-      expect(shown[0]!.opacity!).toBeLessThan(0.7);
-      // …to its size, with a little overshoot on the way.
-      expect(Math.max(...shown.map((f) => f.scale!))).toBeGreaterThan(1.01);
-      expect(shown.some((f) => f.scale! > 0.97 && f.opacity! > 0.97)).toBe(
-        true,
-      );
+      const shown = frames.filter((f) => f.dash !== null && f.menu !== null);
+      // From nothing…
+      expect(Math.min(...shown.map((f) => f.dash!))).toBeLessThan(0.3);
+      // …its stroke drawn on the way, fading in with it…
+      expect(
+        shown.some((f) => f.dash! > 0.3 && f.dash! < 0.9 && f.opacity! > 0.2),
+      ).toBe(true);
+      // …to the whole check (while the menu is there, holding or leaving).
+      expect(shown.some((f) => f.dash! > 0.98 && f.opacity! > 0.98)).toBe(true);
     });
 
-    test('unchecking shrinks the check back out', async ({ page }) => {
+    test('unchecking erases the check', async ({ page }) => {
       const frames = await recordCheck(page, c, c.checkbox.checked);
-      // On the way out: smaller and fading, the menu still there.
+      // On the way out: partly drawn, the menu still there.
       expect(
         frames.some(
           (f) =>
-            f.menu !== null &&
-            f.scale !== null &&
-            f.scale < 0.95 &&
-            f.scale > 0.5 &&
-            f.opacity! > 0.03 &&
-            f.opacity! < 0.95,
+            f.menu !== null && f.dash !== null && f.dash > 0.1 && f.dash < 0.9,
         ),
       ).toBe(true);
-      // Then gone (or the menu with it).
+      // Then erased (or gone with the menu).
       const last = frames.at(-1)!;
       expect(
-        last.menu === null || last.scale === null || last.opacity === 0,
+        last.menu === null || last.dash === null || last.opacity === 0,
       ).toBe(true);
     });
 
