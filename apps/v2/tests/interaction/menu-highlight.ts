@@ -25,6 +25,9 @@ export type HighlightFrame = {
     painted: boolean;
     /** A surface going along with the highlight into another menu. */
     leaving: boolean;
+    /** The part of it its menu shows, left to right (empty: right <= left). */
+    shownLeft: number;
+    shownRight: number;
   }[];
   /** A copy runs a Web Animation of `transform`. */
   composited: boolean;
@@ -50,10 +53,8 @@ export function recordHighlight(page: Page, duration: number) {
       new Promise<HighlightFrame[]>((resolve) => {
         const frames: HighlightFrame[] = [];
         const t0 = performance.now();
-        // The part of a copy its menu (the closest clipping element) shows.
-        const shown = (copy: HTMLElement) => {
-          const box = copy.getBoundingClientRect();
-          let clip: DOMRect | null = null;
+        // The closest element clipping a copy (its menu), at its padding box.
+        const clipOf = (copy: HTMLElement) => {
           for (
             let el = copy.parentElement?.parentElement;
             el && el !== document.body;
@@ -64,10 +65,21 @@ export function recordHighlight(page: Page, duration: number) {
               style.overflowX !== 'visible' ||
               style.overflowY !== 'visible'
             ) {
-              clip = el.getBoundingClientRect();
-              break;
+              const rect = el.getBoundingClientRect();
+              return {
+                left: rect.left + parseFloat(style.borderLeftWidth),
+                right: rect.right - parseFloat(style.borderRightWidth),
+                top: rect.top + parseFloat(style.borderTopWidth),
+                bottom: rect.bottom - parseFloat(style.borderBottomWidth),
+              };
             }
           }
+          return null;
+        };
+        // The part of a copy its menu shows.
+        const shown = (copy: HTMLElement) => {
+          const box = copy.getBoundingClientRect();
+          const clip = clipOf(copy);
           if (!clip || !box.width || !box.height) return 1;
           const width =
             Math.min(box.right, clip.right) - Math.max(box.left, clip.left);
@@ -108,6 +120,8 @@ export function recordHighlight(page: Page, duration: number) {
                   fill.backgroundColor !== 'rgba(0, 0, 0, 0)' ||
                   fill.backgroundImage !== 'none',
                 leaving: el.hasAttribute('data-leaving'),
+                shownLeft: Math.max(box.left, clipOf(el)?.left ?? -Infinity),
+                shownRight: Math.min(box.right, clipOf(el)?.right ?? Infinity),
               };
             }),
             lit: [...document.querySelectorAll<HTMLElement>(items)]
@@ -339,6 +353,15 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
           expect(Math.abs(a!.left - b!.left)).toBeLessThan(2);
           expect(Math.abs(a!.top - b!.top)).toBeLessThan(2);
           expect(Math.abs(a!.width - b!.width)).toBeLessThan(2);
+        }
+        // No gap between the part in the menu and the part in the submenu:
+        // the two menus' clips meet.
+        for (const f of crossing) {
+          const parts = f.copies
+            .filter((copy) => copy.shownRight - copy.shownLeft > 1)
+            .sort((a, b) => a.shownLeft - b.shownLeft);
+          if (parts.length === 2)
+            expect(parts[1]!.shownLeft - parts[0]!.shownRight).toBeLessThan(1);
         }
         const entering = (f: HighlightFrame) =>
           f.copies.find((copy) => !copy.leaving)!;

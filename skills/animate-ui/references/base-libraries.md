@@ -179,6 +179,7 @@ React Aria signals overlays with `isEntering` / `isExiting` render props and `da
 - Origin: the placement React Aria resolves (`data-placement`), or `--trigger-anchor-point` when set.
 - Collections (Select, ComboBox) keep a hidden copy of their items while closed: when closed, still render the plain React Aria overlay so the chosen label stays.
 - Controls render their indicators yourself (render props): find them by shadcn's `data-slot` attributes and animate them, never fake the render props.
+- A menu's clip must meet its submenu's for the highlight to cross between them: shadcn-style React Aria menus pad the `Popover` and clip in the inner `Menu` (flush with the items), leaving a gap of the padding on each side. Animate UI's `Menu` reaches into its popover's padding (negative margin, as much padding) so it clips at the popover's padding box, like Radix UI's and Base UI's content.
 - Collection items (`ListBoxItem`, `MenuItem`) are rendered by React Aria from the props they gave the collection: hooks in your wrapper don't run around the real element. Pass a `render` function and do the work in a component it renders (the highlight follows the item marked `data-focused`, read through a ref merged with React Aria's). A `SelectValue` renders the chosen item's children again outside the list: anything list-bound inside them (a `SelectionIndicator`) must render nothing there.
 
 `@animate-ui/react/primitives/react-aria` re-exports all of React Aria with the animated overrides, so one import covers a whole component.

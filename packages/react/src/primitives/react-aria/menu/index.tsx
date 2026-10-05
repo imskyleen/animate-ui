@@ -11,6 +11,7 @@ import {
   type MenuSectionProps as MenuSectionPrimitiveProps,
 } from 'react-aria-components';
 
+import { mergeRefs } from '../../../internal/anchored';
 import {
   IndicatorLayoutContext,
   IndicatorModeContext,
@@ -48,12 +49,72 @@ import { PickContext } from '../../../internal/item-indicator';
 /** React Aria's props. */
 type MenuProps<T> = MenuPrimitiveProps<T>;
 
+/** The popovers React Aria opens for menus. */
+const MENU_POPOVER =
+  '[data-trigger="MenuTrigger"], [data-trigger="SubmenuTrigger"]';
+
+/** How far a menu reaches into its popover's padding (px), and its own. */
+type Reach = {
+  left: number;
+  right: number;
+  ownLeft: number;
+  ownRight: number;
+  /** Its items' width, which must not change. */
+  content: number;
+};
+
 function Menu<T extends object>({
   style,
+  ref,
   ...props
 }: MenuProps<T> & React.RefAttributes<HTMLDivElement>) {
   // Its items' checks (a selection on the Menu itself) glide between them.
   const layoutId = React.useId();
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, menuRef), [ref]);
+  const [reach, setReach] = React.useState<Reach | 'none' | null>(null);
+
+  // A popover pads its menu, which clips its items flush with them: the
+  // highlight crossing into a submenu (one surface leaving, one entering) was
+  // cut through both paddings. The menu reaches into its popover's padding
+  // (a negative margin, as much padding on top of its own), so it clips
+  // where the popover's padding ends, like the Radix UI and Base UI menus;
+  // its items stay where they were.
+  React.useLayoutEffect(() => {
+    const menu = menuRef.current;
+    const popover = menu?.parentElement;
+    if (reach || !menu || !popover?.matches(MENU_POPOVER)) return;
+    const outer = getComputedStyle(popover);
+    const own = getComputedStyle(menu);
+    const left = parseFloat(outer.paddingLeft) || 0;
+    const right = parseFloat(outer.paddingRight) || 0;
+    if (
+      (!left && !right) ||
+      (own.overflowX === 'visible' && own.overflowY === 'visible')
+    )
+      return setReach('none');
+    const ownLeft = parseFloat(own.paddingLeft) || 0;
+    const ownRight = parseFloat(own.paddingRight) || 0;
+    setReach({
+      left,
+      right,
+      ownLeft,
+      ownRight,
+      content: menu.clientWidth - ownLeft - ownRight,
+    });
+  }, [reach]);
+  // A menu with a width of its own would get narrower items: it stays put.
+  React.useLayoutEffect(() => {
+    const menu = menuRef.current;
+    if (!menu || !reach || reach === 'none') return;
+    const content =
+      menu.clientWidth -
+      (reach.ownLeft + reach.left) -
+      (reach.ownRight + reach.right);
+    if (Math.abs(content - reach.content) > 0.5) setReach('none');
+  }, [reach]);
+
+  const reaching = reach && reach !== 'none' ? reach : null;
   return (
     // Mounted with its popover: each opening starts without a highlight. A
     // submenu's Menu uses its root menu's.
@@ -61,10 +122,17 @@ function Menu<T extends object>({
       <IndicatorLayoutContext value={layoutId}>
         <MenuPrimitive
           {...props}
+          ref={mergedRef}
           style={(renderProps) => ({
             // The highlight goes under the items' content, above the menu's
             // background: the menu is its own stacking context.
             isolation: 'isolate',
+            ...(reaching && {
+              marginLeft: -reaching.left,
+              marginRight: -reaching.right,
+              paddingLeft: reaching.ownLeft + reaching.left,
+              paddingRight: reaching.ownRight + reaching.right,
+            }),
             ...(typeof style === 'function' ? style(renderProps) : style),
           })}
         />
