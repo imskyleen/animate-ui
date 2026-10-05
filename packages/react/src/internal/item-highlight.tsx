@@ -98,6 +98,11 @@ const HighlightScopeContext = React.createContext<HighlightScopeValue | null>(
 type HighlightScopeProps = {
   /** The menu is open: reopening it starts without a highlight. */
   open: boolean;
+  /**
+   * Inside another scope (a submenu inside its menu), use that one: the
+   * highlight goes into the submenu, like v1's.
+   */
+  shared?: boolean;
   children?: React.ReactNode;
 };
 
@@ -105,7 +110,13 @@ type HighlightScopeProps = {
  * One highlight for the items inside: render it in the root content of a
  * menu (its submenus share it, like v1), a select, a combobox or a listbox.
  */
-function HighlightScope({ open, children }: HighlightScopeProps) {
+function HighlightScope({ shared, ...props }: HighlightScopeProps) {
+  const parent = React.use(HighlightScopeContext);
+  if (shared && parent) return props.children;
+  return <OwnHighlightScope {...props} />;
+}
+
+function OwnHighlightScope({ open, children }: HighlightScopeProps) {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const surfaceRef = React.useRef<SurfaceHandle | null>(null);
   // A kept-mounted menu reopens without a highlight, like a new one. Closing

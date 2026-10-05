@@ -27,12 +27,11 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { mergeRefs } from '../../../internal/anchored';
 import {
-  HighlightScope,
-  useItemHighlight,
-  withHighlight,
-} from '../../../internal/item-highlight';
+  HighlightedItem,
+  type ItemRender,
+} from '../../../internal/aria-item-highlight';
+import { HighlightScope } from '../../../internal/item-highlight';
 import {
   CHECK_TRANSITION,
   GLIDE_TRANSITION,
@@ -54,9 +53,8 @@ import {
 //   selection, it pops in from half its size with a fade, like v1's checkbox
 //   check, and goes at once when the item is deselected.
 //
-// Items are collection items: React Aria renders the real element later, from
-// the props the item gave the collection. So the highlight is rendered through
-// the item's `render` prop, which React Aria calls with the element's props.
+// Items are collection items: the highlight goes through their `render` prop
+// (internal/aria-item-highlight).
 
 /** The ListBox's checks share it: a single selection's check glides. */
 const IndicatorLayoutContext = React.createContext<string | null>(null);
@@ -91,9 +89,6 @@ function ListBox<T extends object>({
 /** React Aria's props. */
 type ListBoxItemProps<T = object> = ListBoxItemPrimitiveProps<T>;
 
-type ItemRender = NonNullable<ListBoxItemProps['render']>;
-type ItemDOMProps = Parameters<ItemRender>[0];
-
 function ListBoxItem<T extends object>({
   render,
   ...props
@@ -102,39 +97,14 @@ function ListBoxItem<T extends object>({
     <ListBoxItemPrimitive
       {...props}
       render={(domProps, values) => (
-        <HighlightedItem domProps={domProps} values={values} render={render} />
+        <HighlightedItem
+          domProps={domProps}
+          values={values}
+          render={render as ItemRender<ListBoxItemRenderProps> | undefined}
+        />
       )}
     />
   );
-}
-
-type HighlightedItemProps = {
-  domProps: ItemDOMProps;
-  values: ListBoxItemRenderProps;
-  render: ItemRender | undefined;
-};
-
-/** The element React Aria asked for, with the highlight inside. */
-function HighlightedItem({ domProps, values, render }: HighlightedItemProps) {
-  const { ref: highlightRef, highlight } = useItemHighlight(values.isDisabled, {
-    attribute: 'data-focused',
-  });
-  const ownRef = (domProps as { ref?: React.Ref<HTMLElement> }).ref;
-  const ref = React.useMemo(
-    () => mergeRefs(ownRef, highlightRef),
-    [ownRef, highlightRef],
-  );
-  const props = {
-    ...domProps,
-    ref,
-    children: withHighlight(domProps.children, highlight),
-  } as ItemDOMProps;
-
-  if (render) return render(props, values);
-  // A link item renders an `<a>`, like React Aria's.
-  if ('href' in props && props.href)
-    return <a {...(props as React.ComponentProps<'a'>)} />;
-  return <div {...(props as React.ComponentProps<'div'>)} />;
 }
 
 /** React Aria's props, plus Animate UI's `transition`. */

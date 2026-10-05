@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
-// React Aria's menus open in Animate UI's animated Popover: this checks they
-// get its animation, and that the menu itself stays instant.
+// React Aria's menus open in Animate UI's animated Popover, and their items
+// take part in the menus' highlight (menu-highlight.ts), into submenus too.
 const CONTENT = '[data-slot="context-menu-content"]';
 const SUB_CONTENT = '[data-slot="context-menu-sub-content"]';
 
@@ -43,7 +44,9 @@ test.describe('react-aria context-menu demo', () => {
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
   });
 
-  test('the keyboard moves the highlight instantly', async ({ page }) => {
+  test('the keyboard moves the focus at once, the items have no transition', async ({
+    page,
+  }) => {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(700);
     await page.keyboard.press('ArrowDown');
@@ -64,6 +67,29 @@ test.describe('react-aria context-menu demo', () => {
     await expect(page.locator(SUB_CONTENT)).toBeVisible();
   });
 
+  test('the highlight goes into the submenu: one highlight, the trigger cleared', async ({
+    page,
+  }) => {
+    await page.getByText('Right click here').click({ button: 'right' });
+    await page.waitForTimeout(700);
+    const trigger = page.getByRole('menuitem', { name: 'Arrange' });
+    await trigger.hover();
+    await expect(page.locator(SUB_CONTENT)).toBeVisible();
+    await page.waitForTimeout(400);
+    await page.getByRole('menuitem', { name: 'Bring to front' }).hover();
+    await page.waitForTimeout(600);
+    // The submenu shares its menu's highlight: it moved into the submenu.
+    const copies = page.locator('[data-slot="item-highlight"]');
+    await expect(copies).toHaveCount(1);
+    expect(
+      await copies.first().evaluate((el) => el.parentElement?.textContent),
+    ).toContain('Bring to front');
+    // The open trigger shows no background of its own.
+    expect(
+      await trigger.evaluate((el) => getComputedStyle(el).backgroundColor),
+    ).toBe('rgba(0, 0, 0, 0)');
+  });
+
   test('reduced motion: it fades without scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, CONTENT);
@@ -72,4 +98,15 @@ test.describe('react-aria context-menu demo', () => {
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
   });
+});
+
+describeMenuHighlight('react-aria context-menu highlight', {
+  path: '/tests/demos/react-aria/context-menu',
+  open: async (page) => {
+    await page.getByText('Right click here').click({ button: 'right' });
+    await page.waitForTimeout(500);
+  },
+  first: (page) => page.getByRole('menuitemcheckbox', { name: 'Show grid' }),
+  second: (page) => page.getByRole('menuitemcheckbox', { name: 'Show rulers' }),
+  keyboardNext: 'ArrowDown',
 });
