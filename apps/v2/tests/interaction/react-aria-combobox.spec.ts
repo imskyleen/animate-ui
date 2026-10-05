@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
+import { expectPickHold } from './pick-hold';
 
 const POPOVER = '[data-slot="combobox-content"]';
 
@@ -58,7 +59,7 @@ test.describe('react-aria combobox demo', () => {
     await expect(input).toHaveValue('Astro');
   });
 
-  test('the check glides to the chosen item while the list closes', async ({
+  test('choosing an item holds the list while the check glides there', async ({
     page,
   }) => {
     const input = page.getByRole('combobox', { name: 'Framework' });
@@ -69,40 +70,15 @@ test.describe('react-aria combobox demo', () => {
     };
     await open();
     await page.getByRole('option', { name: 'Next.js' }).click();
-    await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 600 });
+    await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
     await open();
-    // The SelectionIndicator: the item's only element child but the
-    // highlight.
-    const check = '[role="option"] > div';
-    await expect(page.locator(check)).toHaveCount(1);
-    const from = (await page.locator(check).boundingBox())!.y;
-    const to =
-      from +
-      (await page.getByRole('option', { name: 'Astro' }).boundingBox())!.y -
-      (await page.getByRole('option', { name: 'Next.js' }).boundingBox())!.y;
-
-    const frames = page.evaluate(
-      (selector) =>
-        new Promise<number[]>((resolve) => {
-          const tops: number[] = [];
-          const t0 = performance.now();
-          const tick = () => {
-            const el = document.querySelector(selector);
-            if (el) tops.push(el.getBoundingClientRect().top);
-            if (performance.now() - t0 < 400) requestAnimationFrame(tick);
-            else resolve(tops);
-          };
-          tick();
-        }),
-      check,
-    );
-    await page.getByRole('option', { name: 'Astro' }).click();
-    // On its way from Next.js to Astro (the list shrinks a little as it
-    // closes): one check moving, not one appearing.
-    const between = (await frames).filter(
-      (top) => top > from + 2 && top < to - 2,
-    );
-    expect(between.length).toBeGreaterThan(2);
+    await expectPickHold(page, {
+      popup: POPOVER,
+      item: 'Astro',
+      // The SelectionIndicator.
+      check: ':scope > div',
+      pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+    });
     await expect(input).toHaveValue('Astro');
   });
 

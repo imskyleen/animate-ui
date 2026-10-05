@@ -10,12 +10,21 @@ import {
 } from 'react-aria-components';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 
-import { ReducedMotionConfig } from '../../../utils/motion';
+import {
+  ReducedMotionConfig,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../../utils/motion';
 import {
   asMotion,
   useAnchoredMotion,
   type AnchoredAnimationProps,
 } from '../../../internal/anchored';
+import {
+  CheckRegistryContext,
+  PICK_HOLD,
+  useCheckRegistry,
+} from '../../../internal/item-indicator';
 import { originFor } from './origin';
 
 // Same API as React Aria's Popover, the overlay under DialogTrigger,
@@ -32,6 +41,10 @@ import { originFor } from './origin';
 // animations when it closes, before Motion has started any. So the Popover
 // gates itself with AnimatePresence on the open state (the same one React Aria
 // reads) and passes `isExiting` while the exit plays.
+//
+// Under a Select or a ComboBox with a single selection, choosing another item
+// closes the list: when a check (a SelectionIndicator) is there to glide, it
+// holds still for 200ms first, so the check is seen landing on the item.
 
 type PopoverProps = PopoverPrimitiveProps & AnchoredAnimationProps;
 
@@ -44,6 +57,21 @@ const MENU_TRIGGERS = new Set([
 ]);
 
 type PopoverContextValue = PopoverPrimitiveProps | null | undefined;
+
+/** The selection of a Select's or a ComboBox's state (both are lists). */
+type ListTriggerState = {
+  selectionManager?: {
+    selectionMode: string;
+    selectedKeys: 'all' | Iterable<string | number>;
+  };
+};
+
+/** The trigger's selection, comparable from one render to the next. */
+function selectionOf(state: ListTriggerState | null) {
+  const keys = state?.selectionManager?.selectedKeys;
+  if (keys === undefined || keys === 'all') return keys;
+  return [...keys].join('\u0000');
+}
 
 function Popover({
   transition,
@@ -71,6 +99,26 @@ function Popover({
     if (isOpenProp == null) setUncontrolled(next);
     props.onOpenChange?.(next);
   };
+
+  // Closed with another single selection than it opened with (it had one: a
+  // check to glide from): an item was chosen.
+  const list = triggerState as ListTriggerState | null;
+  const selection = selectionOf(list);
+  const [openedWith, setOpenedWith] = React.useState(selection);
+  const [wasOpen, setWasOpen] = React.useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
+    if (open) setOpenedWith(selection);
+  }
+  const picked =
+    !open &&
+    list?.selectionManager?.selectionMode === 'single' &&
+    Boolean(openedWith) &&
+    selection !== openedWith;
+  // The check doesn't glide under reduced motion: nothing to wait for.
+  const reduce = useShouldReduceMotion();
+  // The SelectionIndicators of its ListBox register: no check, no hold.
+  const { registerCheck, hasCheck } = useCheckRegistry();
   const popoverProps = {
     ...props,
     ref,
@@ -80,16 +128,20 @@ function Popover({
 
   return (
     <ReducedMotionConfig>
-      <AnimatePresence>
-        {open && (
-          <AnimatedPopover
-            key="popover"
-            popoverProps={popoverProps}
-            transition={transition}
-            exitTransition={exitTransition}
-          />
-        )}
-      </AnimatePresence>
+      <CheckRegistryContext value={registerCheck}>
+        {/* `custom` reaches the leaving popover: whether to hold still. */}
+        <AnimatePresence custom={picked && !reduce}>
+          {open && (
+            <AnimatedPopover
+              key="popover"
+              popoverProps={popoverProps}
+              transition={transition}
+              exitTransition={exitTransition}
+              hasCheck={hasCheck}
+            />
+          )}
+        </AnimatePresence>
+      </CheckRegistryContext>
       {/* Closed, React Aria's Popover renders nothing, except in a
           collection's hidden tree: Select and ComboBox build their items
           from it. */}
@@ -100,12 +152,15 @@ function Popover({
 
 type AnimatedPopoverProps = AnchoredAnimationProps & {
   popoverProps: PopoverPrimitiveProps & React.RefAttributes<HTMLElement>;
+  /** Whether its list shows a check, read when it leaves. */
+  hasCheck: () => boolean;
 };
 
 function AnimatedPopover({
   popoverProps: { render, isExiting, ...props },
   transition,
   exitTransition,
+  hasCheck,
 }: AnimatedPopoverProps) {
   const isPresent = useIsPresent();
   const context = useSlottedContext(
@@ -117,13 +172,27 @@ function AnimatedPopover({
   const skip = Boolean(
     props.shouldSkipAnimation ?? context?.shouldSkipAnimation,
   );
-  const motionProps = useAnchoredMotion({
+  const { exit, ...motionProps } = useAnchoredMotion({
     kind: trigger && MENU_TRIGGERS.has(trigger) ? 'menu' : 'popover',
     open: true,
     instant: skip,
     transition,
     exitTransition,
   });
+  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  // A variant, so the leaving popover reads AnimatePresence's `custom`: true
+  // when an item was just chosen. Resolved as it leaves, once the chosen
+  // item's check has mounted.
+  const variants = {
+    exit: (held: boolean | undefined) => {
+      if (!held || !hasCheck()) return exit;
+      const leave = exit.transition as { delay?: number } | undefined;
+      return {
+        ...exit,
+        transition: { ...leave, delay: (leave?.delay ?? 0) + hold },
+      };
+    },
+  };
 
   return (
     <PopoverPrimitive
@@ -135,6 +204,8 @@ function AnimatedPopover({
       render={(domProps, values) => {
         const elementProps = {
           ...motionProps,
+          exit: 'exit',
+          variants,
           style: {
             transformOrigin: originFor(values.placement),
             ...domProps.style,

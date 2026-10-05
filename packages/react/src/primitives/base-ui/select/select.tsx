@@ -24,16 +24,22 @@ const RootContext = React.createContext<RootMotion | null>(null);
 
 function Root<Value, Multiple extends boolean | undefined = false>({
   actionsRef,
+  onOpenChange,
   ...props
 }: SelectPrimitive.Root.Props<Value, Multiple>) {
-  const [internalRef, context] = useRootMotion(
+  const [internalRef, context, handleOpenChange] = useRootMotion(
     actionsRef,
     Boolean(props.multiple),
+    onOpenChange,
   );
 
   return (
     <RootContext value={context}>
-      <SelectPrimitive.Root {...props} actionsRef={internalRef} />
+      <SelectPrimitive.Root
+        {...props}
+        actionsRef={internalRef}
+        onOpenChange={handleOpenChange}
+      />
     </RootContext>
   );
 }

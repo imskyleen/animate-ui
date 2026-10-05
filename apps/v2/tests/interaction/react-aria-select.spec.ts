@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
+import { expectEscapeWithoutHold, expectPickHold } from './pick-hold';
 
 const POPOVER = '[data-slot="select-content"]';
 
@@ -47,6 +48,28 @@ test.describe('react-aria select demo', () => {
       .toBeLessThan(1);
     await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 600 });
     await expect(trigger).toContainText('Lora');
+  });
+
+  test('choosing an item holds the list while the check glides there', async ({
+    page,
+  }) => {
+    const trigger = page.locator('[data-slot="select-trigger"]');
+    await trigger.click();
+    await page.waitForTimeout(650);
+    await expectPickHold(page, {
+      popup: POPOVER,
+      item: 'Satoshi',
+      // The SelectionIndicator.
+      check: ':scope > div',
+      pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
+    });
+    await expect(trigger).toContainText('Satoshi');
+  });
+
+  test('Escape closes it without waiting', async ({ page }) => {
+    await page.locator('[data-slot="select-trigger"]').click();
+    await page.waitForTimeout(650);
+    await expectEscapeWithoutHold(page, POPOVER);
   });
 
   test('keyboard: arrows move the focused item instantly', async ({ page }) => {

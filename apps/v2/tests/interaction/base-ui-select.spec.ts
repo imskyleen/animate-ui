@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
+import { expectPickHold } from './pick-hold';
 
 const POPUP = '[data-slot="select-content"]';
 
@@ -45,6 +46,21 @@ test.describe('base-ui select demo', () => {
       .toBeLessThan(1);
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
     await expect(trigger).toHaveText('Lora');
+  });
+
+  test('choosing an item holds the list while the check glides there', async ({
+    page,
+  }) => {
+    const trigger = page.getByRole('combobox', { name: 'Font' });
+    await trigger.click();
+    await page.waitForTimeout(650);
+    await expectPickHold(page, {
+      popup: POPUP,
+      item: 'Satoshi',
+      check: ':scope > span:not([data-slot="item-highlight"])',
+      pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
+    });
+    await expect(trigger).toHaveText('Satoshi');
   });
 
   test('reopening mid-exit retargets instead of restarting', async ({

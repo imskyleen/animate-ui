@@ -25,7 +25,11 @@ import {
 } from '../../../internal/item-highlight';
 import {
   CHECK_TRANSITION,
+  CheckRegistryContext,
   GLIDE_TRANSITION,
+  PICK_HOLD,
+  useCheckRegistry,
+  useRegisterCheck,
 } from '../../../internal/item-indicator';
 
 // Shared by Base UI's Select and Combobox: both keep their popup mounted
@@ -34,15 +38,24 @@ import {
 // Neither has an Animate UI v1 counterpart: they move like v1's Base UI Menu.
 // The popup fades and scales from 0.9 in 250ms, both ways; a highlight
 // glides behind the highlighted item; a single selection's check glides to
-// the chosen item like v1's radio indicator, and a multiple selection's check
-// pops in from half its size like v1's checkbox indicator.
+// the chosen item on the highlight's spring, and a multiple selection's check
+// pops in from half its size like v1's checkbox indicator. Choosing another
+// item closes the list after a 200ms hold, so the check is seen landing
+// (internal/item-indicator).
 
 /** What a Root shares with its animated parts. */
 type RootMotion = {
   /** Unmounts the popup: called once its exit has played. */
   unmount: () => void;
   multiple: boolean;
+  /** The popup closed because an item was chosen, with a check to glide. */
+  picked: boolean;
+  /** Lets a shown check register with the list. */
+  registerCheck: () => () => void;
 };
+
+/** What the Root needs to know of Base UI's change details. */
+type OpenChangeDetails = { reason: string; isCanceled: boolean };
 
 /** Animate UI's additions to `Popup`. */
 type PopupAnimationProps = {
@@ -59,8 +72,9 @@ type PopupAnimationProps = {
 type IndicatorAnimationProps = {
   /**
    * Transition of the check moving to the chosen item (single selection), or
-   * popping in (multiple selection). Defaults to Motion's defaults, as v1's
-   * radio and checkbox indicators.
+   * popping in (multiple selection). Defaults to the highlight's spring
+   * (stiffness 350, damping 35), and Motion's defaults for the pop, as v1's
+   * checkbox indicator.
    */
   transition?: Transition;
 };
@@ -68,10 +82,18 @@ type IndicatorAnimationProps = {
 /** The checks of an open list share it: the check glides to the chosen item. */
 const IndicatorLayoutContext = React.createContext<string | null>(null);
 
-/** Keeps the actions Base UI needs, and forwards the user's `actionsRef`. */
-function useRootMotion<Actions extends { unmount: () => void }>(
+/**
+ * Keeps the actions Base UI needs, and forwards the user's `actionsRef`.
+ * Returns the Root's `onOpenChange` too: it notes whether the popup closed
+ * because an item was chosen.
+ */
+function useRootMotion<
+  Actions extends { unmount: () => void },
+  Details extends OpenChangeDetails,
+>(
   actionsRef: React.RefObject<Actions | null> | undefined,
   multiple: boolean,
+  onOpenChange: ((open: boolean, eventDetails: Details) => void) | undefined,
 ) {
   const internalRef = React.useRef<Actions | null>(null);
   React.useImperativeHandle(
@@ -80,11 +102,19 @@ function useRootMotion<Actions extends { unmount: () => void }>(
     [],
   );
   const unmount = React.useCallback(() => internalRef.current?.unmount(), []);
+  const { registerCheck, hasCheck } = useCheckRegistry();
+  const [picked, setPicked] = React.useState(false);
+  const handleOpenChange = (open: boolean, eventDetails: Details) => {
+    onOpenChange?.(open, eventDetails);
+    if (eventDetails.isCanceled) return;
+    // A check is shown (the chosen one isn't mounted yet): it will glide.
+    setPicked(!open && eventDetails.reason === 'item-press' && hasCheck());
+  };
   const context = React.useMemo<RootMotion>(
-    () => ({ unmount, multiple }),
-    [unmount, multiple],
+    () => ({ unmount, multiple, picked, registerCheck }),
+    [unmount, multiple, picked, registerCheck],
   );
-  return [internalRef, context] as const;
+  return [internalRef, context, handleOpenChange] as const;
 }
 
 type PopupRenderProps = React.HTMLAttributes<HTMLElement> & {
@@ -105,6 +135,12 @@ function usePopupRender(
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  // Closing because an item was chosen: the list holds still while the check
+  // glides there (it doesn't glide under reduced motion).
+  const exitDelay = (exit as { delay?: number }).delay ?? 0;
+  const held: Transition =
+    root?.picked && !reduce ? { ...exit, delay: exitDelay + hold } : exit;
   const layoutId = React.useId();
   // Base UI can mount a closed popup (typeahead and autofill on the closed
   // trigger register the items): only an exit that followed an entrance
@@ -136,7 +172,7 @@ function usePopupRender(
         animate={
           open
             ? { ...visible, transition: enter }
-            : { ...hidden, transition: exit }
+            : { ...hidden, transition: held }
         }
         onAnimationStart={() => {
           if (open) shownRef.current = true;
@@ -157,7 +193,9 @@ function usePopupRender(
         }}
       >
         <IndicatorLayoutContext value={layoutId}>
-          <HighlightScope open={open}>{children}</HighlightScope>
+          <CheckRegistryContext value={root?.registerCheck ?? null}>
+            <HighlightScope open={open}>{children}</HighlightScope>
+          </CheckRegistryContext>
         </IndicatorLayoutContext>
       </motion.div>
     );
@@ -205,9 +243,10 @@ type IndicatorMotionProps = IndicatorAnimationProps & {
 
 /**
  * A check, keeping the element the user's `render` asks for. Single
- * selection: it shows with the list and glides to the chosen item (while the
- * list closes). Multiple selection: it pops in from half its size and fades
- * in when the item is selected, and goes at once when it's deselected.
+ * selection: it shows with the list and glides to the chosen item, while the
+ * list holds still before it closes. Multiple selection: it pops in from half
+ * its size and fades in when the item is selected, and goes at once when it's
+ * deselected.
  */
 function IndicatorMotion({
   render,
@@ -218,6 +257,8 @@ function IndicatorMotion({
 }: IndicatorMotionProps) {
   const reduce = useShouldReduceMotion();
   const layoutId = React.use(IndicatorLayoutContext);
+  // A single selection's shown check: choosing another item holds the list.
+  useRegisterCheck(!multiple && state.selected);
   const check = useTempoTransition(transition ?? CHECK_TRANSITION);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
 

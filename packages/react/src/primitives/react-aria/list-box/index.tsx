@@ -36,6 +36,7 @@ import {
 import {
   CHECK_TRANSITION,
   GLIDE_TRANSITION,
+  useRegisterCheck,
 } from '../../../internal/item-indicator';
 
 // Same API as React Aria's ListBox, ListBoxItem and SelectionIndicator: the
@@ -191,6 +192,8 @@ function AnimatedIndicator({
   const { isSelected, className, style, children, ...domProps } = props;
   const state = React.use(ListStateContext);
   const multiple = state?.selectionManager.selectionMode === 'multiple';
+  // A single selection's shown check: choosing another item holds the list.
+  useRegisterCheck(!multiple && Boolean(isSelected));
   const reduce = useShouldReduceMotion();
   const check = useTempoTransition(transition ?? CHECK_TRANSITION);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);

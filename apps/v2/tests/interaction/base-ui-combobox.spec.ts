@@ -2,6 +2,11 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
+import {
+  expectCloseWithoutHold,
+  expectEscapeWithoutHold,
+  expectPickHold,
+} from './pick-hold';
 
 const POPUP = '[data-slot="combobox-content"]';
 
@@ -59,6 +64,46 @@ test.describe('base-ui combobox demo', () => {
       .toBeLessThan(1);
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
     await expect(input).toHaveValue('Astro');
+  });
+
+  test('choosing an item holds the list while the check glides there', async ({
+    page,
+  }) => {
+    const input = page.getByRole('combobox', { name: 'Framework' });
+    const open = async () => {
+      await input.click();
+      await page.keyboard.press('ArrowDown');
+      await page.waitForTimeout(650);
+    };
+    await open();
+    await page.getByRole('option', { name: 'Next.js' }).click();
+    await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
+    await open();
+    await expectPickHold(page, {
+      popup: POPUP,
+      item: 'Astro',
+      check: ':scope > span:not([data-slot="item-highlight"])',
+      pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+    });
+    await expect(input).toHaveValue('Astro');
+  });
+
+  test('a first choice, with no check to glide, closes without waiting', async ({
+    page,
+  }) => {
+    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(650);
+    await expectCloseWithoutHold(page, POPUP, () =>
+      page.getByRole('option', { name: 'Astro' }).click(),
+    );
+  });
+
+  test('Escape closes it without waiting', async ({ page }) => {
+    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(650);
+    await expectEscapeWithoutHold(page, POPUP);
   });
 
   test('keyboard: arrows move the highlight, Enter picks', async ({ page }) => {
@@ -181,15 +226,22 @@ test.describe('base-ui combobox API', () => {
     await page.waitForTimeout(650);
     expect((await sample(page, '[data-testid="check-Apple"]')).opacity).toBe(1);
 
+    // Recorded in the page from their first frame: a loaded machine can't
+    // miss the fade.
+    const chip = recordMotion(
+      page,
+      { selector: '[data-testid="chip-Grape"]' },
+      900,
+    );
+    const check = recordMotion(
+      page,
+      { selector: '[data-testid="check-Grape"]' },
+      900,
+    );
     await page.getByRole('option', { name: 'Grape' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('Apple,Grape');
-    await page.waitForTimeout(40);
-    expect(
-      (await sample(page, '[data-testid="chip-Grape"]')).opacity,
-    ).toBeLessThan(1);
-    expect(
-      (await sample(page, '[data-testid="check-Grape"]')).opacity,
-    ).toBeLessThan(1);
+    expect(Math.min(...(await chip).map((f) => f.opacity))).toBeLessThan(1);
+    expect(Math.min(...(await check).map((f) => f.opacity))).toBeLessThan(1);
 
     await page.getByRole('option', { name: 'Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('Grape');

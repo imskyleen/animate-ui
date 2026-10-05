@@ -36,16 +36,22 @@ function Root<
   Item = Value,
 >({
   actionsRef,
+  onOpenChange,
   ...props
 }: ComboboxPrimitive.Root.Props<Value, Multiple, Item>) {
-  const [internalRef, context] = useRootMotion(
+  const [internalRef, context, handleOpenChange] = useRootMotion(
     actionsRef,
     Boolean(props.multiple),
+    onOpenChange,
   );
 
   return (
     <RootContext value={context}>
-      <ComboboxPrimitive.Root {...props} actionsRef={internalRef} />
+      <ComboboxPrimitive.Root
+        {...props}
+        actionsRef={internalRef}
+        onOpenChange={handleOpenChange}
+      />
     </RootContext>
   );
 }
