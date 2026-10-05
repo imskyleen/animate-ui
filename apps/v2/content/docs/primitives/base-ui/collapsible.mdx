@@ -32,7 +32,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Panel** unfolds like the accordions: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
+- **Panel** unfolds like the accordions: its height grows from 0 while the content fades in from a 2px blur, over 400ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
 - Toggling it while it moves retargets from where it is.
 - Open by default (`defaultOpen`), it animates open on mount (page load), as in v1.
 - Motion animates the panel itself: you don't need Base UI's `h-(--collapsible-panel-height)` and `data-starting-style`/`data-ending-style` CSS (the CLI removes it). `--collapsible-panel-height` and `--collapsible-panel-width` read `auto`.
@@ -59,7 +59,7 @@ Every part takes exactly the props of [Base UI's Collapsible](https://base-ui.co
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: '{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

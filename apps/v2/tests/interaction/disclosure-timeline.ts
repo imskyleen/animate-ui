@@ -145,7 +145,7 @@ type DemoOptions = {
 /**
  * The interaction tests every disclosure demo passes: the panel unfolds, its
  * height growing from 0 while the content fades in from a 2px blur, over
- * 350ms on a soft ease-out both ways.
+ * 400ms on a soft ease-out both ways.
  */
 export function disclosureDemoTests(name: string, options: DemoOptions) {
   const { url, panel, closed, open, closedState } = options;
@@ -186,7 +186,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       const begin = samples[Math.max(first - 1, 0)]!.t;
       const fourFifths = samples.find((s) => s.h >= entrance.to * 0.8)!;
       expect(fourFifths.t - begin).toBeGreaterThan(110);
-      // 350ms on a soft ease-out: the last half pixel lands near the end (a
+      // 400ms on a soft ease-out: the last half pixel lands near the end (a
       // frame or two of slack on a busy machine).
       expect(entrance.duration).toBeGreaterThan(200);
       expect(entrance.duration).toBeLessThan(550);
@@ -210,7 +210,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
 
       expect(exit.to).toBe(0);
       expect(exit.steps).toBeGreaterThan(2);
-      // As long as the opening (one 350ms transition, both ways).
+      // As long as the opening (one 400ms transition, both ways).
       expect(exit.duration).toBeGreaterThan(200);
       expect(exit.duration).toBeLessThan(550);
       expect(Math.abs(exit.duration - entrance.duration)).toBeLessThan(150);

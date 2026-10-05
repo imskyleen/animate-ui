@@ -96,7 +96,7 @@ const transition = {
   /** Content fading in place, out of the way (a toast behind the front one). */
   fade: { duration: 0.2, ease: ease.out },
   /** Accordion and collapsible panels unfolding, and folding back. */
-  disclosure: { duration: 0.35, ease: ease.soft },
+  disclosure: { duration: 0.4, ease: ease.soft },
   /** A panel coming in from a blur (tab panels). */
   panel: { duration: 0.5, ease: ease.out },
   /**

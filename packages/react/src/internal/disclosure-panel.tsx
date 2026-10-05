@@ -33,7 +33,7 @@ const expanded = {
 };
 
 /**
- * The opening and the closing alike: 350ms on a soft ease-out, so the panel
+ * The opening and the closing alike: 400ms on a soft ease-out, so the panel
  * answers the click at once without snapping open, and the eye follows it.
  */
 const DISCLOSURE_TRANSITION: Transition = motionTokens.transition.disclosure;
@@ -43,7 +43,7 @@ const INSTANT: Transition = { duration: 0 };
 type HiddenMode = 'until-found' | false;
 
 /**
- * The opening and closing transitions: 350ms on a soft ease-out both ways
+ * The opening and closing transitions: 400ms on a soft ease-out both ways
  * (`exitTransition` defaults to `transition`), paced by the provider's tempo.
  *
  * Under reduced motion the height jumps, while the fade and the blur still
@@ -217,7 +217,7 @@ function motionRender<T extends RenderProp>(
 type PanelAnimationProps = {
   /**
    * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
+   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */

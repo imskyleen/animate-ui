@@ -27,7 +27,7 @@ const GLOBAL_RULES = [
   'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,2s ease-out.',
   'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets, contenu d’un navigation menu), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
   'Un indicateur de sélection glisse sur 200/25 ; un surlignage qui suit le pointeur glisse sur 350/35, plus vif.',
-  'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) se déplie en 0,35s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
+  'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) se déplie en 0,4s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
   'Ce que la v1 n’animait pas reste instantané (couleur du fond d’un switch).',
   'Le clavier anime exactement comme le pointeur. Un élément ouvert par défaut s’anime au montage.',
   'Mouvement réduit : plus de transform ni de glissement, les fondus restent.',
@@ -175,8 +175,8 @@ const FAMILIES: Family[] = [
     rule: 'Un panneau se déplie de haut en bas ; ouvert par défaut, il se déplie au chargement.',
     values: [
       'hauteur 0 → auto + fondu + flou 2px → net (d’après l’exemple d’accordéon de Motion)',
-      '0,35s ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1), dans les deux sens',
-      'chevron : rotation de 180° avec le panneau (0,35s, même courbe)',
+      '0,4s ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1), dans les deux sens',
+      'chevron : rotation de 180° avec le panneau (0,4s, même courbe)',
     ],
     demos: [
       { demo: 'radix-ui/accordion', label: 'Accordion (Radix)' },
