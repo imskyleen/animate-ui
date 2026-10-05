@@ -256,12 +256,14 @@ export function describeCheckboxDemo(lib: Lib) {
       expectCheckErases(await readSamples(page));
     });
 
-    test('the box fills with a layer growing from 70% as it fades in', async ({
+    test('the box fills with a layer growing from 70% over its border', async ({
       page,
     }) => {
       const box = page.locator(CHECKBOX).nth(1);
       // Sampled in the page from the click: the layer (the box's ::before)
-      // grows and fades in together, while the box's own background stays.
+      // grows and fades in together over the whole box, border included,
+      // while the box's own background and border keep their colors (a
+      // border turning to the fill's color would ring the growing layer).
       const frames = await box.evaluate(async (el) => {
         const read = () => {
           const layer = getComputedStyle(el, '::before');
@@ -269,6 +271,8 @@ export function describeCheckboxDemo(lib: Lib) {
             scale: Number(layer.scale === 'none' ? 1 : layer.scale),
             opacity: Number(layer.opacity),
             bg: getComputedStyle(el).backgroundColor,
+            border: getComputedStyle(el).borderTopColor,
+            inset: layer.top,
           };
         };
         const out = [read()];
@@ -289,7 +293,11 @@ export function describeCheckboxDemo(lib: Lib) {
       ).toBe(true);
       expect(frames.at(-1)!.scale).toBe(1);
       expect(frames.at(-1)!.opacity).toBe(1);
-      for (const f of frames) expect(f.bg).toBe(frames[0]!.bg);
+      for (const f of frames) {
+        expect(f.bg).toBe(frames[0]!.bg);
+        expect(f.border).toBe(frames[0]!.border);
+      }
+      expect(frames[0]!.inset).toBe('-1px');
     });
 
     test('the box scales on press, not on hover', async ({ page }) => {
