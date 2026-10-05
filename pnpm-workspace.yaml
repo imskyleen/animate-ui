@@ -1,10 +1,6 @@
 packages:
   - 'apps/*'
   - 'packages/*'
-  # Animate UI v1 is its own project in v1/, with its own lockfile: its old
-  # copies here stay out of this workspace.
-  - '!apps/v1'
-  - '!packages/ui'
 
 # Single source of truth for versions shared across the monorepo.
 # Reference them with "catalog:" in package.json.

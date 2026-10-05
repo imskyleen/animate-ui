@@ -1,5 +1,5 @@
 // The migration table against both ends: every v1 module the production
-// registry installs (v1/apps/www, the files Animate UI v1 users have) is handled,
+// registry installs (apps/v1, the files Animate UI v1 users have) is handled,
 // every export of each is accounted for, and every v2 name it maps to exists
 // (checked by TypeScript on the code `migrate` generates).
 import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -20,15 +20,7 @@ import {
 } from '../src/lib/migrate/table';
 import { typecheck } from './migrate-fixtures/helpers';
 
-const APP = path.resolve(
-  import.meta.dirname,
-  '..',
-  '..',
-  '..',
-  'v1',
-  'apps',
-  'www',
-);
+const APP = path.resolve(import.meta.dirname, '..', '..', '..', 'apps', 'v1');
 const V1 = path.join(APP, 'registry');
 
 /** The value and type exports of a v1 registry file. */
