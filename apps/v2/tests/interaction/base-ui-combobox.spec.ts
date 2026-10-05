@@ -240,12 +240,19 @@ test.describe('base-ui combobox API', () => {
     expect(Math.min(...(await chip).map((f) => f.opacity))).toBeLessThan(1);
     expect(Math.min(...(await check).map((f) => f.opacity))).toBeLessThan(1);
 
+    const leaving = recordMotion(
+      page,
+      { selector: '[data-testid="check-Apple"]' },
+      500,
+    );
     await page.getByRole('option', { name: 'Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('Grape');
-    // Deselected: the check goes at once, like v1's checkbox items.
-    await expect(page.getByTestId('check-Apple')).toHaveCount(0, {
-      timeout: 150,
-    });
+    // Deselected: the check shrinks back out and fades (kept mounted).
+    const out = await leaving;
+    expect(
+      out.some((f) => f.scale < 0.95 && f.opacity > 0.03 && f.opacity < 0.95),
+    ).toBe(true);
+    expect(out.at(-1)!.opacity).toBe(0);
     await expect(page.getByTestId('chip-Apple')).toHaveCount(0);
   });
 

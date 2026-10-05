@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
@@ -98,4 +99,16 @@ describeMenuHighlight('base-ui context-menu highlight', {
   submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
   keyboardNext: 'ArrowDown',
+});
+
+describeMenuChecks('base-ui context-menu checks', {
+  path: '/tests/demos/base-ui/context-menu',
+  open: async (page) => {
+    await page.getByText('Right click here').click({ button: 'right' });
+  },
+  popup: '[data-slot="context-menu-content"]',
+  indicator: 'span[aria-hidden="true"]',
+  checkbox: { checked: 'Show grid', unchecked: 'Show rulers' },
+  radio: { from: 'Zoom to fit', to: 'Zoom to 100%' },
+  radioCloses: false,
 });

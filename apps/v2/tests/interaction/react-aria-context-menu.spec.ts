@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
@@ -111,4 +112,16 @@ describeMenuHighlight('react-aria context-menu highlight', {
   submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
   keyboardNext: 'ArrowDown',
+});
+
+describeMenuChecks('react-aria context-menu checks', {
+  path: '/tests/demos/react-aria/context-menu',
+  open: async (page) => {
+    await page.getByText('Right click here').click({ button: 'right' });
+  },
+  popup: '[data-slot="context-menu-content"]',
+  indicator: '[data-slot$="-item-indicator"]',
+  checkbox: { checked: 'Show grid', unchecked: 'Show rulers' },
+  radio: { from: 'Zoom to fit', to: 'Zoom to 100%' },
+  radioCloses: true,
 });

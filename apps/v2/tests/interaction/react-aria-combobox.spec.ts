@@ -123,7 +123,7 @@ test.describe('react-aria combobox chips demo', () => {
     expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
   });
 
-  test('the check of a selected item pops in, of a deselected one goes at once', async ({
+  test('the check of a selected item pops in, of a deselected one shrinks out', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
@@ -146,8 +146,18 @@ test.describe('react-aria combobox chips demo', () => {
     expect(Math.min(...recorded.map((f) => f.scale))).toBeLessThan(0.9);
     expect(recorded.at(-1)!.opacity).toBe(1);
 
+    const leaving = recordMotion(
+      page,
+      { selector: '[role="option"]', text: 'Nuxt', child: ':scope > div' },
+      500,
+    );
     await nuxt.click();
-    await expect(check).toHaveCount(0, { timeout: 100 });
+    const out = await leaving;
+    // Smaller and fading on its way out, then gone.
+    expect(
+      out.some((f) => f.scale < 0.95 && f.opacity > 0.03 && f.opacity < 0.95),
+    ).toBe(true);
+    await expect(check).toHaveCount(0);
   });
 
   test('Backspace removes the last tag instantly', async ({ page }) => {

@@ -14,6 +14,7 @@ import {
   IndicatorMotion,
   PopupMotion,
   RadioGroupLayoutContext,
+  RootPicks,
   UnmountContext,
   useManualUnmount,
   type IndicatorAnimationProps,
@@ -46,11 +47,13 @@ function Root<Payload = unknown>({
   const manual = useManualUnmount(actionsRef, onOpenChange);
   return (
     <UnmountContext value={manual.unmount}>
-      <MenuPrimitive.Root<Payload>
-        {...props}
-        actionsRef={manual.ownActionsRef}
-        onOpenChange={manual.handleOpenChange}
-      />
+      <RootPicks picked={manual.picked} registerCheck={manual.registerCheck}>
+        <MenuPrimitive.Root<Payload>
+          {...props}
+          actionsRef={manual.ownActionsRef}
+          onOpenChange={manual.handleOpenChange}
+        />
+      </RootPicks>
     </UnmountContext>
   );
 }
@@ -220,6 +223,8 @@ function CheckboxItemIndicator({
   return (
     <MenuPrimitive.CheckboxItemIndicator
       {...props}
+      // Kept mounted, to shrink out when its item is unchecked.
+      keepMounted
       render={(htmlProps, state) => (
         <IndicatorMotion
           kind="checkbox"

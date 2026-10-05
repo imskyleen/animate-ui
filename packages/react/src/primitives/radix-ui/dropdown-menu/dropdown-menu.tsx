@@ -64,7 +64,7 @@ const RadioItem = createRadioItem(DropdownMenuPrimitive.RadioItem);
 const ItemIndicator = createItemIndicator(DropdownMenuPrimitive.ItemIndicator);
 const Separator = DropdownMenuPrimitive.Separator;
 const Arrow = DropdownMenuPrimitive.Arrow;
-const Sub = createOpenRoot(DropdownMenuPrimitive.Sub);
+const Sub = createOpenRoot(DropdownMenuPrimitive.Sub, { sub: true });
 const SubTrigger = createItem(DropdownMenuPrimitive.SubTrigger);
 const SubContent = createContent(DropdownMenuPrimitive.SubContent, {
   // Radix sets the same variable on submenus: they grow from their side.

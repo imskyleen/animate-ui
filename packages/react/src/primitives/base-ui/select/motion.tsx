@@ -24,10 +24,11 @@ import {
   withHighlight,
 } from '../../../internal/item-highlight';
 import {
-  CHECK_TRANSITION,
   CheckRegistryContext,
   GLIDE_TRANSITION,
   PICK_HOLD,
+  asTransformable,
+  useCheckMotion,
   useCheckRegistry,
   useRegisterCheck,
 } from '../../../internal/item-indicator';
@@ -245,8 +246,8 @@ type IndicatorMotionProps = IndicatorAnimationProps & {
  * A check, keeping the element the user's `render` asks for. Single
  * selection: it shows with the list and glides to the chosen item, while the
  * list holds still before it closes. Multiple selection: it pops in from half
- * its size and fades in when the item is selected, and goes at once when it's
- * deselected.
+ * its size out of a light blur when the item is selected, and shrinks back
+ * out when it's deselected.
  */
 function IndicatorMotion({
   render,
@@ -255,12 +256,17 @@ function IndicatorMotion({
   multiple,
   transition,
 }: IndicatorMotionProps) {
-  const reduce = useShouldReduceMotion();
   const layoutId = React.use(IndicatorLayoutContext);
   // A single selection's shown check: choosing another item holds the list.
   useRegisterCheck(!multiple && state.selected);
-  const check = useTempoTransition(transition ?? CHECK_TRANSITION);
+  const check = useCheckMotion(state.selected, transition);
   const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
+  // A box, so it can scale and glide.
+  const ownRef = props.ref as React.Ref<HTMLElement> | undefined;
+  const transformableRef = React.useMemo(
+    () => mergeRefs(ownRef, asTransformable),
+    [ownRef],
+  );
 
   // Resolve the user's render like Base UI does, to keep their element.
   let type = 'span';
@@ -286,7 +292,10 @@ function IndicatorMotion({
   }
 
   const Element = motion[type as 'span'];
-  const motionProps = elementProps as HTMLMotionProps<'span'>;
+  const motionProps = {
+    ...(elementProps as HTMLMotionProps<'span'>),
+    ref: transformableRef,
+  };
 
   if (!multiple) {
     return (
@@ -307,17 +316,10 @@ function IndicatorMotion({
       </PresenceContext>
     );
   }
+  // Kept mounted (the parts pass `keepMounted`): it shrinks out when its
+  // item is deselected, and leaves with the list as it is.
   return (
-    <Element
-      {...motionProps}
-      initial={{ opacity: 0, scale: reduce ? 1 : 0.5 }}
-      animate={
-        state.selected
-          ? { opacity: 1, scale: 1, transition: check }
-          : // Deselected: gone at once (kept mounted, or while Base UI unmounts it).
-            { opacity: 0, transition: { duration: 0 } }
-      }
-    />
+    <Element {...motionProps} initial={check.initial} animate={check.animate} />
   );
 }
 

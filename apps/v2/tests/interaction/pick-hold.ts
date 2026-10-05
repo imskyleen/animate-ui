@@ -1,8 +1,9 @@
 import { expect, type Page } from '@playwright/test';
 
-// Choosing an item closes a single-selection list (selects, comboboxes) after
-// a hold: the list stays as it is while the check glides to the chosen item
-// (150ms), then fades out. Closing any other way doesn't wait.
+// Choosing an item closes a single-selection list (selects, comboboxes, a
+// menu's radio items) after a hold: the list stays as it is while the check
+// glides to the chosen item (150ms), then fades out. Closing any other way
+// doesn't wait.
 
 type PickFrame = {
   t: number;
@@ -46,7 +47,9 @@ async function armPickRecording(
           const t = performance.now() - t0;
           const list = document.querySelector<HTMLElement>(popup);
           const option = [
-            ...document.querySelectorAll<HTMLElement>('[role="option"]'),
+            ...document.querySelectorAll<HTMLElement>(
+              '[role="option"], [role^="menuitem"]',
+            ),
           ].find((el) => el.textContent?.includes(item));
           const mark = option?.querySelector<HTMLElement>(check);
           const shown = mark && getComputedStyle(mark).visibility !== 'hidden';

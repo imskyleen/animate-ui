@@ -3,7 +3,7 @@
 
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu';
 
-import { UnmountContext, useManualUnmount } from '../menu/shared';
+import { RootPicks, UnmountContext, useManualUnmount } from '../menu/shared';
 import {
   CheckboxItem,
   CheckboxItemIndicator,
@@ -38,11 +38,13 @@ function Root({ actionsRef, onOpenChange, ...props }: Root.Props) {
   const manual = useManualUnmount(actionsRef, onOpenChange);
   return (
     <UnmountContext value={manual.unmount}>
-      <ContextMenuPrimitive.Root
-        {...props}
-        actionsRef={manual.ownActionsRef}
-        onOpenChange={manual.handleOpenChange}
-      />
+      <RootPicks picked={manual.picked} registerCheck={manual.registerCheck}>
+        <ContextMenuPrimitive.Root
+          {...props}
+          actionsRef={manual.ownActionsRef}
+          onOpenChange={manual.handleOpenChange}
+        />
+      </RootPicks>
     </UnmountContext>
   );
 }

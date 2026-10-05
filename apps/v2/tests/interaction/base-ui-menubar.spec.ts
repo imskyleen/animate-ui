@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
@@ -142,4 +143,16 @@ describeMenuHighlight('base-ui menubar highlight', {
   submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Open recent' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'animate-ui' }),
   keyboardNext: 'ArrowDown',
+});
+
+describeMenuChecks('base-ui menubar checks', {
+  path: '/tests/demos/base-ui/menubar',
+  open: async (page) => {
+    await page.getByRole('menuitem', { name: 'View' }).click();
+  },
+  popup: '[data-slot="menubar-content"]',
+  indicator: 'span[aria-hidden="true"]',
+  checkbox: { checked: 'Word wrap', unchecked: 'Minimap' },
+  radio: { from: 'System', to: 'Dark' },
+  radioCloses: false,
 });

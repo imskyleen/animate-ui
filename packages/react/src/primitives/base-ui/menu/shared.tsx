@@ -10,6 +10,15 @@ import {
 } from '../../../utils/motion';
 import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
 import { HighlightScope } from '../../../internal/item-highlight';
+import {
+  CheckRegistryContext,
+  GLIDE_TRANSITION,
+  PICK_HOLD,
+  asTransformable,
+  useCheckMotion,
+  useCheckRegistry,
+  useRegisterCheck,
+} from '../../../internal/item-indicator';
 
 // Shared by Base UI's Menu and Context Menu (which reuses the Menu's parts),
 // animated like Animate UI v1's Base UI Menu:
@@ -18,8 +27,13 @@ import { HighlightScope } from '../../../internal/item-highlight';
 //   ways;
 // - one highlight glides behind the highlighted item, into submenus too
 //   (internal/item-highlight);
-// - a checkbox item's check pops in from half its size when it appears; a
-//   radio item's indicator glides to the newly checked item.
+// - a checkbox item's check pops in from half its size out of a light blur
+//   when it's checked (or the menu opens), and shrinks back out when it's
+//   unchecked; a radio item's check glides to the newly checked item, like a
+//   select's (internal/item-indicator);
+// - with `closeOnClick`, choosing an item whose check moves (a radio's glides
+//   from the one shown, a checkbox's pops in or out) holds the menu still for
+//   150ms before it closes, so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -35,9 +49,10 @@ type PresenceAnimationProps = {
 /** Animate UI's addition to the item indicators. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the check popping in (checkbox items), or of the indicator
-   * moving to the checked item (radio items). Defaults to Motion's defaults,
-   * as in v1.
+   * Transition of the check popping in and out (checkbox items), or of the
+   * indicator gliding to the checked item (radio items). Defaults to a
+   * spring with a little bounce for the pop (stiffness 500, damping 24),
+   * 150ms out, and a spring (stiffness 500, damping 40) for the glide.
    */
   transition?: Transition;
 };
@@ -52,11 +67,40 @@ type HTMLProps = React.HTMLAttributes<HTMLElement> & {
 const UnmountContext = React.createContext<(() => void) | null>(null);
 
 /**
+ * The root menu closed because an item whose check moves was chosen: its
+ * popups (submenus' too) hold still before they leave.
+ */
+const PickedContext = React.createContext(false);
+
+type OpenChangeDetails = {
+  isCanceled: boolean;
+  reason?: string;
+  event?: Event;
+};
+
+/**
+ * Whether a press closing the menu chose an item whose check moves: a
+ * checkbox item's pops in or out; another radio item than the checked one
+ * gets the check shown glide there (the DOM still shows the old state).
+ */
+function checkMoves(details: OpenChangeDetails, hasCheck: () => boolean) {
+  if (details.reason !== 'item-press') return false;
+  const target = details.event?.target;
+  const item =
+    target instanceof Element
+      ? target.closest('[role="menuitemcheckbox"], [role="menuitemradio"]')
+      : null;
+  if (!item) return false;
+  if (item.getAttribute('role') === 'menuitemcheckbox') return true;
+  return item.getAttribute('aria-checked') !== 'true' && hasCheck();
+}
+
+/**
  * Wraps a Base UI menu root: every close keeps the popup mounted (Base UI
  * would otherwise unmount it as soon as its CSS animations end, and it can't
  * reliably see Motion's), and the Popup unmounts it after its exit.
  */
-function useManualUnmount<Details extends { isCanceled: boolean }>(
+function useManualUnmount<Details extends OpenChangeDetails>(
   actionsRef: React.RefObject<Actions | null> | undefined,
   onOpenChange: ((open: boolean, details: Details) => void) | undefined,
 ) {
@@ -67,15 +111,39 @@ function useManualUnmount<Details extends { isCanceled: boolean }>(
     close: () => ownActionsRef.current?.close(),
   }));
   const unmount = React.useCallback(() => ownActionsRef.current?.unmount(), []);
+  // The radio items' shown checks register: a check to glide from.
+  const { registerCheck, hasCheck } = useCheckRegistry();
+  const [picked, setPicked] = React.useState(false);
   const handleOpenChange = (open: boolean, details: Details) => {
     onOpenChange?.(open, details);
-    if (open || details.isCanceled) return;
+    if (details.isCanceled) return;
+    setPicked(!open && checkMoves(details, hasCheck));
+    if (open) return;
     // Typed on Menu.Root's details only, but every menu root passes it.
     (
       details as { preventUnmountOnClose?: () => void }
     ).preventUnmountOnClose?.();
   };
-  return { ownActionsRef, unmount, handleOpenChange };
+  return { ownActionsRef, unmount, handleOpenChange, picked, registerCheck };
+}
+
+/** A root menu's picks, for its popups and the checks inside. */
+function RootPicks({
+  picked,
+  registerCheck,
+  children,
+}: {
+  picked: boolean;
+  registerCheck: () => () => void;
+  children?: React.ReactNode;
+}) {
+  return (
+    <PickedContext value={picked}>
+      <CheckRegistryContext value={registerCheck}>
+        {children}
+      </CheckRegistryContext>
+    </PickedContext>
+  );
 }
 
 type PopupState = MenuPrimitive.Popup.State;
@@ -142,9 +210,20 @@ function PopupMotion({
   }, [state.open, state.nested]);
 
   const enter = useTempoTransition(transition ?? MENU_TRANSITION);
-  const exit = useTempoTransition(
+  const leave = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  const picked = React.use(PickedContext);
+  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  // Closing because an item was chosen whose check moves: the menu holds
+  // still while it does (nothing moves under reduced motion).
+  const exit: Transition =
+    picked && !reduce
+      ? {
+          ...leave,
+          delay: ((leave as { delay?: number }).delay ?? 0) + hold,
+        }
+      : leave;
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1.
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const { children, ...props } = htmlProps;
@@ -188,21 +267,11 @@ type IndicatorState = { checked: boolean; transitionStatus?: string };
 /** The indicators of a radio group share it: the indicator glides. */
 const RadioGroupLayoutContext = React.createContext<string | null>(null);
 
-/** Motion's defaults, which v1's check used: written out for the tempo. */
-const CHECK_TRANSITION = {
-  scale: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
-  opacity: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
-} as const satisfies Transition;
-/** Motion's default layout transition, which v1's radio indicator used. */
-const RADIO_TRANSITION = {
-  duration: 0.45,
-  ease: [0.4, 0, 0.1, 1],
-} as const satisfies Transition;
-
 /**
- * A checkbox item's check pops in from half its size and fades in whenever
- * it appears (checking the item, or opening the menu); unchecking removes it
- * at once. A radio item's indicator glides from the previously checked item.
+ * A checkbox item's check pops in from half its size out of a light blur
+ * whenever it appears (checking the item, or opening the menu), and shrinks
+ * back out when it's unchecked (the indicator is kept mounted for that). A
+ * radio item's indicator glides from the previously checked item.
  */
 function IndicatorMotion({
   kind,
@@ -214,16 +283,26 @@ function IndicatorMotion({
   htmlProps: HTMLProps;
   state: IndicatorState;
 }) {
-  const reduce = useShouldReduceMotion();
   const layoutId = React.use(RadioGroupLayoutContext);
-  const check = useTempoTransition(transition ?? CHECK_TRANSITION);
-  const glide = useTempoTransition(transition ?? RADIO_TRANSITION);
-  const props = htmlProps as React.ComponentProps<typeof motion.span>;
+  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
+  const { initial, animate } = useCheckMotion(state.checked, transition);
+  // A radio item's shown check: choosing another item glides it there.
+  useRegisterCheck(kind === 'radio' && state.checked);
+  // A box, so it can scale and glide.
+  const htmlRef = htmlProps.ref;
+  const ref = React.useMemo(
+    () => mergeRefs(htmlRef, asTransformable),
+    [htmlRef],
+  );
+  const props = {
+    ...(htmlProps as React.ComponentProps<typeof motion.span>),
+    ref,
+  };
 
   if (kind === 'radio') {
     return (
       // Out of the menu's exit: the menu doesn't wait for the glide to end
-      // before it unmounts (v1 cut it short the same way).
+      // before it unmounts (it holds for the glide when an item is chosen).
       <PresenceContext value={null}>
         <motion.span
           {...props}
@@ -239,24 +318,15 @@ function IndicatorMotion({
       </PresenceContext>
     );
   }
-  return (
-    <motion.span
-      {...props}
-      initial={{ opacity: 0, scale: reduce ? 1 : 0.5 }}
-      animate={
-        state.checked
-          ? { opacity: 1, scale: 1, transition: check }
-          : // Unchecked: gone at once (kept mounted, or while Base UI unmounts it).
-            { opacity: 0, transition: { duration: 0 } }
-      }
-    />
-  );
+  // Leaving with the menu, it stays as it is.
+  return <motion.span {...props} initial={initial} animate={animate} />;
 }
 
 export {
   IndicatorMotion,
   PopupMotion,
   RadioGroupLayoutContext,
+  RootPicks,
   UnmountContext,
   useManualUnmount,
   type IndicatorAnimationProps,

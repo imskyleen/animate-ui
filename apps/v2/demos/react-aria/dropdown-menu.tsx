@@ -12,6 +12,7 @@ import {
   MenuTrigger as MenuTriggerPrimitive,
   Popover as PopoverPrimitive,
   Separator as SeparatorPrimitive,
+  SelectionIndicator,
   SubmenuTrigger as SubmenuTriggerPrimitive,
   type MenuItemProps as MenuItemPrimitiveProps,
   type MenuSectionProps as MenuSectionPrimitiveProps,
@@ -131,10 +132,10 @@ function DropdownMenuItem({
     >
       {composeRenderProps(
         children,
-        (children, { isSelected, selectionMode }) => (
+        (children, { selectionMode }) => (
           <>
             {selectionMode !== "none" ? (
-              <span
+              <SelectionIndicator
                 className="absolute right-2 flex items-center justify-center pointer-events-none"
                 data-slot={
                   selectionMode === "single"
@@ -142,11 +143,9 @@ function DropdownMenuItem({
                     : "dropdown-menu-checkbox-item-indicator"
                 }
               >
-                {isSelected ? (
-                  <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
-                  />
-                ) : null}
-              </span>
+                <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
+                />
+              </SelectionIndicator>
             ) : null}
             {children}
           </>

@@ -61,7 +61,7 @@ const RadioItem = createRadioItem(ContextMenuPrimitive.RadioItem);
 const ItemIndicator = createItemIndicator(ContextMenuPrimitive.ItemIndicator);
 const Separator = ContextMenuPrimitive.Separator;
 const Arrow = ContextMenuPrimitive.Arrow;
-const Sub = createOpenRoot(ContextMenuPrimitive.Sub);
+const Sub = createOpenRoot(ContextMenuPrimitive.Sub, { sub: true });
 const SubTrigger = createItem(ContextMenuPrimitive.SubTrigger);
 const SubContent = createContent(ContextMenuPrimitive.SubContent, {
   origin: '--radix-context-menu-content-transform-origin',

@@ -5,6 +5,7 @@ import { Menubar as MenubarPrimitive } from 'radix-ui';
 
 import {
   MenuStateContext,
+  useMenuPicks,
   createCheckboxItem,
   createContent,
   createItem,
@@ -47,6 +48,8 @@ type MenubarSubContentProps = MenubarPrimitive.MenubarSubContentProps &
 type MenubarState = {
   /** The value of the open menu ('' when none is). */
   value: string;
+  /** The open menu closed because an item whose check moves was chosen. */
+  picked: boolean;
 };
 
 const MenubarStateContext = React.createContext<MenubarState | null>(null);
@@ -60,18 +63,21 @@ function Root({
   const controlled = valueProp !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? '');
   const value = controlled ? valueProp : uncontrolled;
+  // Its menus' picks: choosing an item closes the open menu.
+  const picks = useMenuPicks();
 
-  return (
-    <MenubarStateContext value={{ value }}>
+  return picks.provide(
+    <MenubarStateContext value={{ value, picked: picks.picked }}>
       <MenubarPrimitive.Root
         {...props}
         value={value}
         onValueChange={(next) => {
+          picks.onOpenChange(next !== '');
           if (!controlled) setUncontrolled(next);
           onValueChange?.(next);
         }}
       />
-    </MenubarStateContext>
+    </MenubarStateContext>,
   );
 }
 
@@ -87,7 +93,9 @@ function Menu({
   if (!menubar) return <MenubarPrimitive.Menu {...props} value={valueProp} />;
 
   return (
-    <MenuStateContext value={{ open: menubar.value === value }}>
+    <MenuStateContext
+      value={{ open: menubar.value === value, picked: menubar.picked }}
+    >
       <MenubarPrimitive.Menu {...props} value={value} />
     </MenuStateContext>
   );
@@ -108,7 +116,7 @@ const RadioItem = createRadioItem(MenubarPrimitive.RadioItem);
 const ItemIndicator = createItemIndicator(MenubarPrimitive.ItemIndicator);
 const Separator = MenubarPrimitive.Separator;
 const Arrow = MenubarPrimitive.Arrow;
-const Sub = createOpenRoot(MenubarPrimitive.Sub);
+const Sub = createOpenRoot(MenubarPrimitive.Sub, { sub: true });
 const SubTrigger = createItem(MenubarPrimitive.SubTrigger);
 const SubContent = createContent(MenubarPrimitive.SubContent, {
   origin: '--radix-menubar-content-transform-origin',

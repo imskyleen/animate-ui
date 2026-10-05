@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
@@ -186,4 +187,16 @@ describeMenuHighlight('base-ui menu highlight', {
     page.getByRole('menuitem', { name: 'Invite people' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'Email' }),
   keyboardNext: 'ArrowDown',
+});
+
+describeMenuChecks('base-ui menu checks', {
+  path: '/tests/demos/base-ui/dropdown-menu',
+  open: async (page) => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+  },
+  popup: '[data-slot="dropdown-menu-content"]',
+  indicator: 'span[aria-hidden="true"]',
+  checkbox: { checked: 'Status bar', unchecked: 'Activity panel' },
+  radio: { from: 'Bottom', to: 'Right' },
+  radioCloses: false,
 });

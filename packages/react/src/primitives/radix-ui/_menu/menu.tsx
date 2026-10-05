@@ -23,6 +23,16 @@ import {
   useItemHighlight,
   withHighlight,
 } from '../../../internal/item-highlight';
+import {
+  CheckRegistryContext,
+  GLIDE_TRANSITION,
+  PICK_HOLD,
+  PickContext,
+  asTransformable,
+  useCheckMotion,
+  usePicks,
+  useRegisterCheck,
+} from '../../../internal/item-indicator';
 
 // Shared by Radix's Dropdown Menu, Context Menu and Menubar: the three are
 // built on the same internal Menu, so they animate the same way (Animate UI
@@ -31,8 +41,13 @@ import {
 //
 // - Content and SubContent fade and scale from 0.9 in 250ms, both ways.
 // - One highlight glides behind the highlighted item (internal/item-highlight).
-// - A checkbox item's check pops in from half its size when it appears; a
-//   radio item's indicator glides to the newly checked item.
+// - A checkbox item's check pops in from half its size out of a light blur
+//   when it's checked (or the menu opens), and shrinks back out when it's
+//   unchecked; a radio item's check glides to the newly checked item, like a
+//   select's (internal/item-indicator).
+// - Choosing an item closes the menu (Radix's default): when its check moves
+//   (a radio's glides from the one shown, a checkbox's pops in or out), the
+//   menu holds still for 150ms first, so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -48,15 +63,18 @@ type PresenceAnimationProps = {
 /** Animate UI's addition to `ItemIndicator`. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the check popping in (checkbox items), or of the indicator
-   * moving to the checked item (radio items). Defaults to Motion's defaults,
-   * as in v1.
+   * Transition of the check popping in and out (checkbox items), or of the
+   * indicator gliding to the checked item (radio items). Defaults to a
+   * spring with a little bounce for the pop (stiffness 500, damping 24),
+   * 150ms out, and a spring (stiffness 500, damping 40) for the glide.
    */
   transition?: Transition;
 };
 
 type MenuState = {
   open: boolean;
+  /** It closed because an item was chosen whose check moves: it holds. */
+  picked?: boolean;
 };
 
 // Nullable contexts: a part used outside Animate UI's Root falls back to the
@@ -97,17 +115,49 @@ function useOpenState({ open, defaultOpen, onOpenChange }: OpenStateProps) {
   return [value, setValue] as const;
 }
 
+/**
+ * A menu's picks, for its root (a Root, or a Menubar): `onClose` reads them
+ * when the menu closes. Its submenus and items use the same.
+ */
+function useMenuPicks() {
+  const { picks, registerCheck, wasPicked } = usePicks();
+  const [picked, setPicked] = React.useState(false);
+  const onOpenChange = (open: boolean) => setPicked(!open && wasPicked());
+  const provide = (children: React.ReactNode) => (
+    <PickContext value={picks}>
+      <CheckRegistryContext value={registerCheck}>
+        {children}
+      </CheckRegistryContext>
+    </PickContext>
+  );
+  return { picked, onOpenChange, provide };
+}
+
 /** `Root` and `Sub`: they track the open state and give it back to Radix. */
 function createOpenRoot<P extends OpenStateProps>(
   RadixRoot: React.ComponentType<P>,
+  { sub = false }: { sub?: boolean } = {},
 ) {
   function OpenRoot(props: P) {
+    // A Sub closes with its root: the root's picks hold it too.
+    const parent = React.use(MenuStateContext);
+    const picks = useMenuPicks();
     const [open, setOpen] = useOpenState(props);
-    return (
-      <MenuStateContext value={{ open }}>
-        <RadixRoot {...props} open={open} onOpenChange={setOpen} />
+    const root = (
+      <MenuStateContext
+        value={{ open, picked: sub ? parent?.picked : picks.picked }}
+      >
+        <RadixRoot
+          {...props}
+          open={open}
+          onOpenChange={(next: boolean) => {
+            if (!sub) picks.onOpenChange(next);
+            setOpen(next);
+          }}
+        />
       </MenuStateContext>
     );
+    return sub ? root : picks.provide(root);
   }
   return OpenRoot;
 }
@@ -223,16 +273,26 @@ function ContentMotion({
   onInteractOutside,
   ...props
 }: ContentMotionProps) {
-  const { open } = React.use(MenuStateContext)!;
+  const { open, picked } = React.use(MenuStateContext)!;
   const reduce = useShouldReduceMotion();
   const ref = React.useRef<HTMLDivElement>(null);
   const previousFocusRef = React.useRef<Element | null>(null);
   const returnedFocusRef = React.useRef(false);
 
   const enter = useTempoTransition(transition ?? MENU_TRANSITION);
-  const exit = useTempoTransition(
+  const leave = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  // Closing because an item was chosen whose check moves: the menu holds
+  // still while it does (nothing moves under reduced motion).
+  const exit: Transition =
+    picked && !reduce
+      ? {
+          ...leave,
+          delay: ((leave as { delay?: number }).delay ?? 0) + hold,
+        }
+      : leave;
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
   // a settled content never becomes the containing block of the submenus'
   // fixed positioning (shadcn/ui renders them inside the content).
@@ -346,6 +406,9 @@ type ItemProps = {
   ref?: React.Ref<HTMLDivElement>;
 };
 
+/** Checkbox and radio items: Radix's `onSelect`, before it closes. */
+type SelectableItemProps = ItemProps & { onSelect?: (event: Event) => void };
+
 /** An item that takes part in the content's highlight. */
 function HighlightedItem<P extends ItemProps>({
   component: RadixItem,
@@ -379,18 +442,41 @@ function createItem<P extends ItemProps>(RadixItem: React.ComponentType<P>) {
   return Item;
 }
 
-type CheckboxItemProps = ItemProps & { checked?: boolean | 'indeterminate' };
+type CheckboxItemProps = SelectableItemProps & {
+  checked?: boolean | 'indeterminate';
+};
+
+/**
+ * Radix calls `onSelect` right before it closes the menu (unless it's
+ * prevented): the pick is marked then, if `moves` says its check moves.
+ */
+function useMarkPick(
+  onSelect: ((event: Event) => void) | undefined,
+  moves: (item: Element | null) => boolean,
+) {
+  const picks = React.use(PickContext);
+  return (event: Event) => {
+    onSelect?.(event);
+    if (!event.defaultPrevented && moves(event.currentTarget as Element | null))
+      picks?.markPick();
+  };
+}
 
 /** Shares its checked state with its ItemIndicator. */
 function createCheckboxItem<P extends CheckboxItemProps>(
   RadixCheckboxItem: React.ComponentType<P>,
 ) {
   function CheckboxItem(props: P) {
+    // Its check pops in or out.
+    const onSelect = useMarkPick(props.onSelect, () => true);
     return (
       <IndicatorItemContext
         value={{ checked: props.checked ?? false, kind: 'checkbox' }}
       >
-        <HighlightedItem component={RadixCheckboxItem} props={props} />
+        <HighlightedItem
+          component={RadixCheckboxItem}
+          props={{ ...props, onSelect }}
+        />
       </IndicatorItemContext>
     );
   }
@@ -411,11 +497,19 @@ function createRadioGroup<P extends { value?: string }>(
   return RadioGroup;
 }
 
-function createRadioItem<P extends ItemProps & { value: string }>(
+function createRadioItem<P extends SelectableItemProps & { value: string }>(
   RadixRadioItem: React.ComponentType<P>,
 ) {
   function RadioItem(props: P) {
     const group = React.use(RadioGroupContext);
+    const picks = React.use(PickContext);
+    // Another item than the checked one: the check shown glides there.
+    const onSelect = useMarkPick(
+      props.onSelect,
+      (item) =>
+        item?.getAttribute('data-state') !== 'checked' &&
+        Boolean(picks?.hasCheck()),
+    );
     return (
       <IndicatorItemContext
         value={
@@ -428,7 +522,10 @@ function createRadioItem<P extends ItemProps & { value: string }>(
             : null
         }
       >
-        <HighlightedItem component={RadixRadioItem} props={props} />
+        <HighlightedItem
+          component={RadixRadioItem}
+          props={{ ...props, onSelect }}
+        />
       </IndicatorItemContext>
     );
   }
@@ -441,39 +538,36 @@ type ItemIndicatorProps = {
   children?: React.ReactNode;
 };
 
-/** Motion's defaults, which v1's check used: written out for the tempo. */
-const CHECK_TRANSITION = {
-  scale: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
-  opacity: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
-} as const satisfies Transition;
-/** Motion's default layout transition, which v1's radio indicator used. */
-const RADIO_TRANSITION = {
-  duration: 0.45,
-  ease: [0.4, 0, 0.1, 1],
-} as const satisfies Transition;
-
 /**
- * A checkbox item's check pops in from half its size and fades in whenever
- * it appears (checking the item, or opening the menu); unchecking removes it
- * at once. A radio item's indicator glides from the previously checked item.
+ * A checkbox item's check pops in from half its size out of a light blur
+ * whenever it appears (checking the item, or opening the menu), and shrinks
+ * back out when the item is unchecked: it stays mounted for that. A radio
+ * item's check glides from the previously checked item.
  */
 function createItemIndicator<P extends ItemIndicatorProps>(
   RadixItemIndicator: React.ComponentType<P>,
 ) {
   function ItemIndicator({
     transition,
+    forceMount,
     children,
     ...props
   }: P & IndicatorAnimationProps) {
     const item = React.use(IndicatorItemContext);
     if (!item) {
       return (
-        <RadixItemIndicator {...(props as P)}>{children}</RadixItemIndicator>
+        <RadixItemIndicator {...(props as P)} forceMount={forceMount}>
+          {children}
+        </RadixItemIndicator>
       );
     }
 
     return (
-      <RadixItemIndicator {...(props as P)} asChild>
+      <RadixItemIndicator
+        {...(props as P)}
+        forceMount={item.kind === 'checkbox' ? true : forceMount}
+        asChild
+      >
         <IndicatorMotion item={item} transition={transition}>
           {children}
         </IndicatorMotion>
@@ -486,20 +580,28 @@ function createItemIndicator<P extends ItemIndicatorProps>(
 function IndicatorMotion({
   item,
   transition,
+  ref,
   ...props
 }: React.ComponentProps<'span'> &
   IndicatorAnimationProps & { item: IndicatorItem }) {
-  const reduce = useShouldReduceMotion();
-  const check = useTempoTransition(transition ?? CHECK_TRANSITION);
-  const glide = useTempoTransition(transition ?? RADIO_TRANSITION);
+  // A box, so it can scale and glide.
+  const mergedRef = React.useMemo(() => mergeRefs(ref, asTransformable), [ref]);
+  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
+  const { initial, animate } = useCheckMotion(
+    item.checked !== false,
+    transition,
+  );
+  // Mounted while checked: choosing another radio item holds the menu.
+  useRegisterCheck(item.kind === 'radio');
 
   if (item.kind === 'radio') {
     return (
       // Out of the menu's exit: the menu doesn't wait for the glide to end
-      // before it unmounts (v1 cut it short the same way).
+      // before it unmounts (it holds for the glide when an item is chosen).
       <PresenceContext value={null}>
         <motion.span
           {...(props as React.ComponentProps<typeof motion.span>)}
+          ref={mergedRef}
           layoutId={item.layoutId}
           // One indicator moving, not two crossfading.
           layoutCrossfade={false}
@@ -511,15 +613,17 @@ function IndicatorMotion({
   return (
     <motion.span
       {...(props as React.ComponentProps<typeof motion.span>)}
-      initial={{ opacity: 0, scale: reduce ? 1 : 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={check}
+      ref={mergedRef}
+      // Leaving with the menu, it stays as it is.
+      initial={initial}
+      animate={animate}
     />
   );
 }
 
 export {
   MenuStateContext,
+  useMenuPicks,
   createOpenRoot,
   createPortal,
   createContent,

@@ -11,8 +11,8 @@ export type {
   ListBoxProps,
   SelectionIndicatorProps,
 } from './list-box';
-export { Menu, MenuItem } from './menu';
-export type { MenuItemProps, MenuProps } from './menu';
+export { Menu, MenuItem, MenuSection } from './menu';
+export type { MenuItemProps, MenuProps, MenuSectionProps } from './menu';
 export { Modal, ModalOverlay } from './modal';
 export type { ModalOverlayProps } from './modal';
 export { Popover } from './popover';

@@ -23,7 +23,8 @@ import {
 import {
   CheckRegistryContext,
   PICK_HOLD,
-  useCheckRegistry,
+  PickContext,
+  usePicks,
 } from '../../../internal/item-indicator';
 import { originFor } from './origin';
 
@@ -45,6 +46,9 @@ import { originFor } from './origin';
 // Under a Select or a ComboBox with a single selection, choosing another item
 // closes the list: when a check (a SelectionIndicator) is there to glide, it
 // holds still for 150ms first, so the check is seen landing on the item.
+// Under a menu, likewise when the item chosen closes the menu while its check
+// moves (Animate UI's MenuItem tells it); the menus around a submenu hold
+// with it.
 
 type PopoverProps = PopoverPrimitiveProps & AnchoredAnimationProps;
 
@@ -57,6 +61,16 @@ const MENU_TRIGGERS = new Set([
 ]);
 
 type PopoverContextValue = PopoverPrimitiveProps | null | undefined;
+
+type LivePopoverProps = PopoverPrimitiveProps &
+  React.RefAttributes<HTMLElement>;
+
+/**
+ * The Popover's latest props, for the leaving popover: AnimatePresence keeps
+ * the element it last rendered, but what's inside goes on updating (a menu's
+ * selection changes as the menu closes, and its check glides there).
+ */
+const LivePropsContext = React.createContext<LivePopoverProps | null>(null);
 
 /** The selection of a Select's or a ComboBox's state (both are lists). */
 type ListTriggerState = {
@@ -106,7 +120,8 @@ function Popover({
   const selection = selectionOf(list);
   const [openedWith, setOpenedWith] = React.useState(selection);
   const [wasOpen, setWasOpen] = React.useState(open);
-  if (wasOpen !== open) {
+  const openChanged = wasOpen !== open;
+  if (openChanged) {
     setWasOpen(open);
     if (open) setOpenedWith(selection);
   }
@@ -117,8 +132,23 @@ function Popover({
     selection !== openedWith;
   // The check doesn't glide under reduced motion: nothing to wait for.
   const reduce = useShouldReduceMotion();
-  // The SelectionIndicators of its ListBox register: no check, no hold.
-  const { registerCheck, hasCheck } = useCheckRegistry();
+  // The SelectionIndicators of its ListBox or Menu register: no check, no
+  // hold. A menu's items mark their picks, for it and the menus around.
+  const parentPicks = React.use(PickContext);
+  const { picks, registerCheck, wasPicked } = usePicks();
+  const menuPicks = React.useMemo(
+    () => ({
+      markPick: () => {
+        picks.markPick();
+        parentPicks?.markPick();
+      },
+      hasCheck: picks.hasCheck,
+    }),
+    [picks, parentPicks],
+  );
+  // Read as it closes: a menu item was just chosen.
+  const [menuPicked, setMenuPicked] = React.useState(false);
+  if (openChanged) setMenuPicked(!open && wasPicked());
   const popoverProps = {
     ...props,
     ref,
@@ -128,20 +158,26 @@ function Popover({
 
   return (
     <ReducedMotionConfig>
-      <CheckRegistryContext value={registerCheck}>
-        {/* `custom` reaches the leaving popover: whether to hold still. */}
-        <AnimatePresence custom={picked && !reduce}>
-          {open && (
-            <AnimatedPopover
-              key="popover"
-              popoverProps={popoverProps}
-              transition={transition}
-              exitTransition={exitTransition}
-              hasCheck={hasCheck}
-            />
-          )}
-        </AnimatePresence>
-      </CheckRegistryContext>
+      <PickContext value={menuPicks}>
+        <CheckRegistryContext value={registerCheck}>
+          {/* `custom` reaches the leaving popover: whether to hold still. */}
+          <LivePropsContext value={popoverProps}>
+            <AnimatePresence
+              custom={reduce ? false : menuPicked ? 'menu' : picked && 'list'}
+            >
+              {open && (
+                <AnimatedPopover
+                  key="popover"
+                  popoverProps={popoverProps}
+                  transition={transition}
+                  exitTransition={exitTransition}
+                  hasCheck={picks.hasCheck}
+                />
+              )}
+            </AnimatePresence>
+          </LivePropsContext>
+        </CheckRegistryContext>
+      </PickContext>
       {/* Closed, React Aria's Popover renders nothing, except in a
           collection's hidden tree: Select and ComboBox build their items
           from it. */}
@@ -151,17 +187,20 @@ function Popover({
 }
 
 type AnimatedPopoverProps = AnchoredAnimationProps & {
-  popoverProps: PopoverPrimitiveProps & React.RefAttributes<HTMLElement>;
+  popoverProps: LivePopoverProps;
   /** Whether its list shows a check, read when it leaves. */
   hasCheck: () => boolean;
 };
 
 function AnimatedPopover({
-  popoverProps: { render, isExiting, ...props },
+  popoverProps,
   transition,
   exitTransition,
   hasCheck,
 }: AnimatedPopoverProps) {
+  // Leaving, it still gets the latest props.
+  const { render, isExiting, ...props } =
+    React.use(LivePropsContext) ?? popoverProps;
   const isPresent = useIsPresent();
   const context = useSlottedContext(
     PopoverContext,
@@ -180,12 +219,12 @@ function AnimatedPopover({
     exitTransition,
   });
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
-  // A variant, so the leaving popover reads AnimatePresence's `custom`: true
-  // when an item was just chosen. Resolved as it leaves, once the chosen
-  // item's check has mounted.
+  // A variant, so the leaving popover reads AnimatePresence's `custom`: what
+  // was just chosen. A list's choice is resolved as it leaves, once the
+  // chosen item's check has mounted; a menu item knew when it was chosen.
   const variants = {
-    exit: (held: boolean | undefined) => {
-      if (!held || !hasCheck()) return exit;
+    exit: (held: 'menu' | 'list' | false | undefined) => {
+      if (!held || (held === 'list' && !hasCheck())) return exit;
       const leave = exit.transition as { delay?: number } | undefined;
       return {
         ...exit,

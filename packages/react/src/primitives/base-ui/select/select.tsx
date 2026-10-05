@@ -92,6 +92,9 @@ function ItemIndicator({ render, transition, ...props }: ItemIndicator.Props) {
   return (
     <SelectPrimitive.ItemIndicator
       {...props}
+      // A multiple selection's check shrinks out when its item is deselected:
+      // kept mounted for that.
+      keepMounted={root.multiple || props.keepMounted}
       render={(elementProps, state) => (
         <IndicatorMotion
           render={render as IndicatorRender}

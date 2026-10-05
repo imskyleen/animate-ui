@@ -56,7 +56,7 @@ Base UI's Select has no Animate UI v1 counterpart: it moves like v1's Base UI Me
 - **Popup** fades and scales in from 0.9, from the trigger (`--transform-origin`), in 250ms (`{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way; then Base UI unmounts it (or hides it, when it keeps the items mounted for typeahead on the closed trigger).
 - With `alignItemWithTrigger` (Base UI's default), the list is laid over the trigger with the selected item on the value, like a native select: it only fades.
 - **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, like v1's menu highlight. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms) when it appears from nothing. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a submenu opening for instance, doesn't stall it. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
-- **ItemIndicator**: with a single value, choosing another item holds the list still for 150ms while the check glides there, on the highlight's spring (stiffness 500, damping 40), then the list closes: the check is seen landing. A first choice (no check to glide from yet) and closing any other way (Escape, a click outside) don't wait. With `multiple`, the list stays open: a selected item's check pops in from half its size with a fade, like v1's checkbox check, and goes at once when it's deselected.
+- **ItemIndicator**: with a single value, choosing another item holds the list still for 150ms while the check glides there, on the highlight's spring (stiffness 500, damping 40), then the list closes: the check is seen landing. A first choice (no check to glide from yet) and closing any other way (Escape, a click outside) don't wait. With `multiple`, the list stays open: a selected item's check pops in from half its size out of a light blur, with a little overshoot, and shrinks back out when it's deselected (it stays mounted for that).
 - Reopening while the list is closing picks up from where it is.
 - Base UI's Select has no `keepMounted`: Animate UI passes an `actionsRef` to the Root and unmounts the popup when its exit is over. Your own `actionsRef` still works, and `onOpenChangeComplete` fires after the entrance and after the exit.
 - Open from the start (`defaultOpen`), the list plays its entrance on page load.
@@ -102,10 +102,10 @@ Every part takes exactly the props of [Base UI's Select](https://base-ui.com/rea
   type={{
     transition: {
       description:
-        'Transition of the check moving to the chosen item (single value), or popping in (multiple).',
+        'Transition of the check moving to the chosen item (single value), or popping in and out (multiple).',
       type: 'Transition',
       default:
-        "the highlight's spring (stiffness 500, damping 40); multiple: Motion's defaults, as v1's checkbox check, a spring (stiffness 550, damping 30) and a 300ms fade",
+        "the highlight's spring (stiffness 500, damping 40); multiple: a spring with a little overshoot (stiffness 500, damping 24) with a 200ms fade and blur, 150ms out",
     },
   }}
 />

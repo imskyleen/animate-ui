@@ -11,7 +11,7 @@ description: Displays a menu at the pointer, triggered by a right click.
 
 ## Usage
 
-Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`, `Menu` and `MenuItem`. Everything else stays the same.
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`, `Menu`, `MenuSection`, `MenuItem` and `SelectionIndicator`. Everything else stays the same.
 
 ```tsx
 import {
@@ -44,19 +44,28 @@ React Aria's menus open in a `Popover`, so they get the [animated Popover](/docs
 
 - The menu fades and scales in from 0.9, from the pointer (`--trigger-anchor-point`), in 250ms, and closes the same way before it unmounts.
 - Submenus (`SubmenuTrigger`) open in a Popover too, and move like their menu.
-- **MenuItem**: one highlight glides behind the focused item (the one React Aria marks `data-focused`) on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, like v1's menu highlight and the Radix UI and Base UI menus. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms) when it appears from nothing. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a submenu opening for instance, doesn't stall it. It goes into submenus, whose `Menu` shares the highlight of its root menu, and stays on the last item when the pointer leaves the menu. It wears the item's own focused background (`focus:bg-accent`, `data-focused:bg-accent`…), read from your styles: the item's background is cleared while it's focused, or while its submenu is open; its text colors stay. The highlight is rendered through the item's `render` prop: your own `render` still works. The `Menu` is its own stacking context (`isolation: isolate`), so the highlight goes under the items' content, above the menu's background.
-- Under reduced motion, the menu only fades; the highlight jumps from item to item instead of gliding (it still fades in when it appears).
+- **MenuItem**: one highlight glides behind the focused item (the one React Aria marks `data-focused`) on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, like v1's menu highlight and the Radix UI and Base UI menus. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms) when it appears from nothing. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a submenu opening for instance, doesn't stall it. Into a submenu or back out of it, the submenu clips the surface gliding in from its trigger: the trigger's surface stays and fades out as the new one shows, so the highlight never drops out. It goes into submenus, whose `Menu` shares the highlight of its root menu, and stays on the last item when the pointer leaves the menu. It wears the item's own focused background (`focus:bg-accent`, `data-focused:bg-accent`…), read from your styles: the item's background is cleared while it's focused, or while its submenu is open; its text colors stay. The highlight is rendered through the item's `render` prop: your own `render` still works. The `Menu` is its own stacking context (`isolation: isolate`), so the highlight goes under the items' content, above the menu's background.
+- **SelectionIndicator** (the check inside an item, the same as a ListBox's): with `selectionMode="multiple"` (on the `Menu` or a `MenuSection`), a selected item's check pops in from half its size out of a light blur, with a little overshoot, and shrinks back out when it's deselected. With `selectionMode="single"`, it glides to the newly selected item on the highlight's spring (stiffness 500, damping 40), between the items of its `Menu` or `MenuSection`. Choosing an item that closes the menu (a single selection's, with the pointer or Enter) holds the menu still for 150ms while its check moves, then it fades out; Escape and outside clicks don't wait. shadcn/ui renders the check as `isSelected ? <Icon /> : null`, which doesn't animate: render it in a `SelectionIndicator` instead, as the demo does.
+- Under reduced motion, the menu only fades and doesn't hold; the highlight jumps from item to item instead of gliding (it still fades in when it appears); a single selection's check jumps, and a multiple selection's check only fades.
 
 ## API Reference
 
 `Popover` takes exactly the props of [React Aria's Popover](https://react-spectrum.adobe.com/react-aria/Popover.html#props), plus `transition` and `exitTransition` (see the [Popover](/docs/primitives/react-aria/popover#api-reference) page).
 
-`MenuTrigger`, `MenuSection`, `SubmenuTrigger` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#props) only. They are not animated.
+`MenuTrigger`, `SubmenuTrigger` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#props) only. They are not animated.
 
 ### Menu
 
 [React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#props) only. It holds its items' highlight; a submenu's `Menu` shares its root menu's.
 
+### MenuSection
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#section) only. With its own `selectionMode="single"`, its items' check glides between them.
+
 ### MenuItem
 
 [React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#menuitem) only. It takes part in the highlight; it needs nothing more.
+
+### SelectionIndicator
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/Menu.html#selection), plus `transition` (see the [Select](/docs/primitives/react-aria/select#selectionindicator) page). Inside an item of Animate UI's `Menu` (or `ListBox`), it's animated; anywhere else, it's React Aria's own.

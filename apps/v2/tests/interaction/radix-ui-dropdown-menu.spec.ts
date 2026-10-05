@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight, recordHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
@@ -251,4 +252,16 @@ describeMenuHighlight('radix-ui dropdown-menu highlight', {
     page.getByRole('menuitem', { name: 'Invite people' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'Email' }),
   keyboardNext: 'ArrowDown',
+});
+
+describeMenuChecks('radix-ui dropdown-menu checks', {
+  path: '/tests/demos/radix-ui/dropdown-menu',
+  open: async (page) => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+  },
+  popup: '[data-slot="dropdown-menu-content"]',
+  indicator: 'span[data-state]',
+  checkbox: { checked: 'Status bar', unchecked: 'Activity panel' },
+  radio: { from: 'Bottom', to: 'Right' },
+  radioCloses: true,
 });

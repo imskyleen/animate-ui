@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
-import { probeFirstFrame, sample } from './motion-probe';
+import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 import { expectPickHold } from './pick-hold';
 
 const POPUP = '[data-slot="select-content"]';
@@ -162,7 +162,7 @@ test.describe('base-ui select API', () => {
     });
   });
 
-  test('multiple: the list stays open, checks pop in and go at once', async ({
+  test('multiple: the list stays open, checks pop in and shrink back out', async ({
     page,
   }) => {
     await page.getByRole('combobox', { name: 'Multiple' }).click();
@@ -181,12 +181,21 @@ test.describe('base-ui select API', () => {
       1,
     );
 
+    const leaving = recordMotion(
+      page,
+      { selector: '[data-testid="check-apple"]' },
+      500,
+    );
     await page.getByRole('option', { name: 'Multiple Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('cherry');
-    // Deselected: the check goes at once, like v1's checkbox items.
-    await expect(page.getByTestId('check-apple')).toHaveCount(0, {
-      timeout: 150,
-    });
+    // Deselected: the check shrinks back out and fades (kept mounted).
+    const recorded = await leaving;
+    expect(
+      recorded.some(
+        (f) => f.scale < 0.95 && f.opacity > 0.03 && f.opacity < 0.95,
+      ),
+    ).toBe(true);
+    expect(recorded.at(-1)!.opacity).toBe(0);
     await expect(page.getByTestId('multiple-popup')).toBeVisible();
   });
 
