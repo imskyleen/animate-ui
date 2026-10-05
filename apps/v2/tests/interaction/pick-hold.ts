@@ -2,7 +2,7 @@ import { expect, type Page } from '@playwright/test';
 
 // Choosing an item closes a single-selection list (selects, comboboxes) after
 // a hold: the list stays as it is while the check glides to the chosen item
-// (200ms), then fades out. Closing any other way doesn't wait.
+// (150ms), then fades out. Closing any other way doesn't wait.
 
 type PickFrame = {
   t: number;
@@ -92,15 +92,16 @@ export async function expectPickHold(page: Page, c: PickCase) {
     (f, i) => i > picked && (f.opacity === null || f.opacity < 0.98),
   );
   expect(fading).toBeGreaterThan(picked);
-  // The list held still (200ms) while the check glided from the previous
+  // The list held still (150ms) while the check glided from the previous
   // item: when it starts fading, the check is most of the way there (~95% at
-  // 60fps; a loaded headless machine starts the glide a frame or two late).
-  expect(recorded[fading]!.t - recorded[picked]!.t).toBeGreaterThan(120);
+  // 60fps; a loaded headless machine starts the glide a frame or two late, so
+  // only 60% is required).
+  expect(recorded[fading]!.t - recorded[picked]!.t).toBeGreaterThan(100);
   const first = recorded[picked]!;
   const held = recorded[fading - 1]!;
   const travel = Math.abs(first.checkTop! - first.restTop!);
   expect(travel).toBeGreaterThan(10);
-  expect(Math.abs(held.checkTop! - held.restTop!)).toBeLessThan(travel * 0.3);
+  expect(Math.abs(held.checkTop! - held.restTop!)).toBeLessThan(travel * 0.4);
   // Then it closed.
   const last = recorded.at(-1)!;
   expect(last.opacity === null || last.opacity === 0).toBe(true);
@@ -153,7 +154,7 @@ export async function expectCloseWithoutHold(
   await close();
   const { acted, frames } = await collect<CloseRecording>(page);
   expect(acted).not.toBeNull();
-  // It starts fading on the next frames, not 200ms later.
+  // It starts fading on the next frames, not 150ms later.
   const fading = frames.find(
     (f) => f.t >= acted! && (f.opacity === null || f.opacity < 0.98),
   );

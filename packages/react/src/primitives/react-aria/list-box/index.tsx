@@ -49,9 +49,10 @@ import {
 //   menu highlight (internal/item-highlight). It wears the item's own focused
 //   background, read from your styles.
 // - A SelectionIndicator inside an item (the check): with a single
-//   selection, it glides to the chosen item, like v1's radio indicator; with
-//   a multiple selection, it pops in from half its size with a fade, like
-//   v1's checkbox check, and goes at once when the item is deselected.
+//   selection, it glides to the chosen item on a quick spring while the list
+//   holds still (the Popover waits for it before closing); with a multiple
+//   selection, it pops in from half its size with a fade, like v1's checkbox
+//   check, and goes at once when the item is deselected.
 //
 // Items are collection items: React Aria renders the real element later, from
 // the props the item gave the collection. So the highlight is rendered through
@@ -140,8 +141,9 @@ function HighlightedItem({ domProps, values, render }: HighlightedItemProps) {
 type SelectionIndicatorProps = SelectionIndicatorPrimitiveProps & {
   /**
    * Transition of the indicator gliding to the chosen item (single
-   * selection), or popping in (multiple selection). Defaults to Motion's
-   * defaults, as v1's radio and checkbox indicators.
+   * selection), or popping in (multiple selection). Defaults to a spring
+   * (stiffness 500, damping 40), and Motion's defaults for the pop, as v1's
+   * checkbox indicator.
    */
   transition?: Transition;
 };

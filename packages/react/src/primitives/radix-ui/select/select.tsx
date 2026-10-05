@@ -36,8 +36,8 @@ import {
 // Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
 // moves like the menus (a 250ms fade and scale from 0.9, both
 // ways), a highlight glides behind the highlighted item, and the check glides
-// to the chosen item on the highlight's spring. Choosing another item closes
-// the list after a 200ms hold, so the check is seen landing (internal/
+// to the chosen item on a quick spring. Choosing another item closes the
+// list after a 150ms hold, so the check is seen landing (internal/
 // item-indicator). The Root mirrors `open` (Radix keeps it private) so the
 // Content can play an exit before Radix unmounts it.
 
@@ -92,8 +92,8 @@ type ContentAnimationProps = {
 /** Animate UI's addition to `Select.ItemIndicator`. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the check moving to the chosen item. Defaults to the
-   * highlight's spring (stiffness 350, damping 35).
+   * Transition of the check moving to the chosen item. Defaults to a spring
+   * (stiffness 500, damping 40).
    */
   transition?: Transition;
 };

@@ -38,9 +38,9 @@ import {
 // Neither has an Animate UI v1 counterpart: they move like v1's Base UI Menu.
 // The popup fades and scales from 0.9 in 250ms, both ways; a highlight
 // glides behind the highlighted item; a single selection's check glides to
-// the chosen item on the highlight's spring, and a multiple selection's check
+// the chosen item on a quick spring, and a multiple selection's check
 // pops in from half its size like v1's checkbox indicator. Choosing another
-// item closes the list after a 200ms hold, so the check is seen landing
+// item closes the list after a 150ms hold, so the check is seen landing
 // (internal/item-indicator).
 
 /** What a Root shares with its animated parts. */
@@ -72,9 +72,9 @@ type PopupAnimationProps = {
 type IndicatorAnimationProps = {
   /**
    * Transition of the check moving to the chosen item (single selection), or
-   * popping in (multiple selection). Defaults to the highlight's spring
-   * (stiffness 350, damping 35), and Motion's defaults for the pop, as v1's
-   * checkbox indicator.
+   * popping in (multiple selection). Defaults to a spring (stiffness 500,
+   * damping 40), and Motion's defaults for the pop, as v1's checkbox
+   * indicator.
    */
   transition?: Transition;
 };

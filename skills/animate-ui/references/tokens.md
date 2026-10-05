@@ -38,6 +38,7 @@ Springs first: nearly everything moves on a spring. They retarget with their vel
 | `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)    |
 | `spring.selection` | `stiffness: 200, damping: 25`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                 |
 | `spring.highlight` | `stiffness: 350, damping: 35`                             | Quick, never trails the pointer                    | A surface following the pointer (menu items, Highlight, nav indicator) |
+| `spring.check`     | `stiffness: 500, damping: 40`                             | There in ~150ms, no overshoot                      | A list's check gliding to the chosen item before the list closes       |
 | `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)               |
 | `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                        |
 | `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters) |

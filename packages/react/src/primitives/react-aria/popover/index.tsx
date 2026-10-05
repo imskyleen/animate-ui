@@ -44,7 +44,7 @@ import { originFor } from './origin';
 //
 // Under a Select or a ComboBox with a single selection, choosing another item
 // closes the list: when a check (a SelectionIndicator) is there to glide, it
-// holds still for 200ms first, so the check is seen landing on the item.
+// holds still for 150ms first, so the check is seen landing on the item.
 
 type PopoverProps = PopoverPrimitiveProps & AnchoredAnimationProps;
 

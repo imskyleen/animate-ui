@@ -64,6 +64,11 @@ const spring = {
   selection: { type: 'spring', stiffness: 200, damping: 25 },
   /** A surface following the pointer: quick, so it never trails behind it. */
   highlight: { type: 'spring', stiffness: 350, damping: 35 },
+  /**
+   * A list's check gliding to the chosen item, while the list holds still
+   * before it closes: there in ~150ms, without overshoot.
+   */
+  check: { type: 'spring', stiffness: 500, damping: 40 },
   /** A height following its content, without overshoot. */
   height: {
     type: 'spring',

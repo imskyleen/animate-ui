@@ -108,7 +108,7 @@ const FAMILIES: Family[] = [
     values: [
       'contenu : scale 0,9 → 1 + fondu en 0,25s, ease-out doux',
       'surlignage : ressort 350/35, un seul surlignage passé d’élément en élément avec sa vitesse',
-      'coches : pop ; coche d’un select ou d’une combobox : glisse sur 350/35, la liste attend 200ms avant de se fermer quand on choisit un autre item ; indicateur radio des menus : glisse en 0,45s',
+      'coches : pop ; coche d’un select ou d’une combobox : glisse sur 500/40, la liste attend 150ms avant de se fermer quand on choisit un autre item ; indicateur radio des menus : glisse en 0,45s',
     ],
     demos: [
       { demo: 'radix-ui/dropdown-menu', label: 'Dropdown Menu' },
