@@ -9,6 +9,7 @@ import {
   type AnchoredAnimationProps,
   type AnchoredKind,
 } from '../../../internal/anchored';
+import { useFollowCursorStyle } from '../../../internal/follow-cursor';
 
 // The Radix side of Popover, HoverCard and Tooltip: the Root mirrors the open
 // state (Radix keeps it private) and each Content gates itself with
@@ -74,8 +75,12 @@ function RadixAnchoredContent({
     transition,
     exitTransition,
   });
+  // v1's followCursor (Tooltip, HoverCard): the popup leans to the pointer.
+  const follow = useFollowCursorStyle();
   const elementProps = {
     ...motionProps,
+    // Motion values in the style: a motion element takes them.
+    style: { ...motionProps.style, ...follow } as React.CSSProperties,
     // Kept mounted while closed: out of reach (tab order, a11y tree).
     inert: keepMounted && !open ? true : undefined,
   };

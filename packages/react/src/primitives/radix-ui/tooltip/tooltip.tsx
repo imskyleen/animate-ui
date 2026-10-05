@@ -8,6 +8,11 @@ import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
 import type { AnchoredAnimationProps } from '../../../internal/anchored';
 import {
+  FollowCursorProvider,
+  useFollowCursorHandler,
+  type FollowCursorProps,
+} from '../../../internal/follow-cursor';
+import {
   RadixAnchoredContent,
   useRadixOpenState,
 } from '../popover/radix-anchored';
@@ -23,7 +28,7 @@ const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
 const PortalForceMountContext = React.createContext(false);
 
 type TooltipProviderProps = TooltipPrimitive.TooltipProviderProps;
-type TooltipProps = TooltipPrimitive.TooltipProps;
+type TooltipProps = TooltipPrimitive.TooltipProps & FollowCursorProps;
 type TooltipTriggerProps = TooltipPrimitive.TooltipTriggerProps;
 type TooltipPortalProps = TooltipPrimitive.TooltipPortalProps;
 type TooltipContentProps = TooltipPrimitive.TooltipContentProps &
@@ -36,6 +41,8 @@ function Root({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  followCursor,
+  followCursorSpringOptions,
   ...props
 }: TooltipProps) {
   const [open, setOpen] = useRadixOpenState(
@@ -47,13 +54,32 @@ function Root({
   return (
     <OpenProvider value={{ open }}>
       <ReducedMotionConfig>
-        <TooltipPrimitive.Root {...props} open={open} onOpenChange={setOpen} />
+        <FollowCursorProvider
+          followCursor={followCursor}
+          followCursorSpringOptions={followCursorSpringOptions}
+        >
+          <TooltipPrimitive.Root
+            {...props}
+            open={open}
+            onOpenChange={setOpen}
+          />
+        </FollowCursorProvider>
       </ReducedMotionConfig>
     </OpenProvider>
   );
 }
 
-const Trigger = TooltipPrimitive.Trigger;
+function Trigger({
+  onMouseMove,
+  ...props
+}: TooltipTriggerProps & React.RefAttributes<HTMLButtonElement>) {
+  return (
+    <TooltipPrimitive.Trigger
+      {...props}
+      onMouseMove={useFollowCursorHandler(onMouseMove)}
+    />
+  );
+}
 
 function Portal({ forceMount, ...props }: TooltipPortalProps) {
   return (

@@ -158,7 +158,8 @@ describe('migrate all', () => {
     expect(output).toContain(
       `${PAGE}:${lineOf('<Content forceMount')} <Content> \`initial\` is a Motion prop`,
     );
-    expect(output).toContain(
+    // v2 keeps v1's `followCursor`: nothing to report.
+    expect(output).not.toContain(
       `${PAGE}:${lineOf('<Tooltip followCursor')} <Tooltip> \`followCursor\``,
     );
     expect(output).toMatch(

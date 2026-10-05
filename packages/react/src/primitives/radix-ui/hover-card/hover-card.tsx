@@ -8,6 +8,11 @@ import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
 import type { AnchoredAnimationProps } from '../../../internal/anchored';
 import {
+  FollowCursorProvider,
+  useFollowCursorHandler,
+  type FollowCursorProps,
+} from '../../../internal/follow-cursor';
+import {
   RadixAnchoredContent,
   useRadixOpenState,
 } from '../popover/radix-anchored';
@@ -22,7 +27,7 @@ const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
 // The `forceMount` of the closest Portal: it keeps the Content mounted too.
 const PortalForceMountContext = React.createContext(false);
 
-type HoverCardProps = HoverCardPrimitive.HoverCardProps;
+type HoverCardProps = HoverCardPrimitive.HoverCardProps & FollowCursorProps;
 type HoverCardTriggerProps = HoverCardPrimitive.HoverCardTriggerProps;
 type HoverCardPortalProps = HoverCardPrimitive.HoverCardPortalProps;
 type HoverCardContentProps = HoverCardPrimitive.HoverCardContentProps &
@@ -33,6 +38,8 @@ function Root({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  followCursor,
+  followCursorSpringOptions,
   ...props
 }: HoverCardProps) {
   const [open, setOpen] = useRadixOpenState(
@@ -44,17 +51,32 @@ function Root({
   return (
     <OpenProvider value={{ open }}>
       <ReducedMotionConfig>
-        <HoverCardPrimitive.Root
-          {...props}
-          open={open}
-          onOpenChange={setOpen}
-        />
+        <FollowCursorProvider
+          followCursor={followCursor}
+          followCursorSpringOptions={followCursorSpringOptions}
+        >
+          <HoverCardPrimitive.Root
+            {...props}
+            open={open}
+            onOpenChange={setOpen}
+          />
+        </FollowCursorProvider>
       </ReducedMotionConfig>
     </OpenProvider>
   );
 }
 
-const Trigger = HoverCardPrimitive.Trigger;
+function Trigger({
+  onMouseMove,
+  ...props
+}: HoverCardTriggerProps & React.RefAttributes<HTMLAnchorElement>) {
+  return (
+    <HoverCardPrimitive.Trigger
+      {...props}
+      onMouseMove={useFollowCursorHandler(onMouseMove)}
+    />
+  );
+}
 
 function Portal({ forceMount, ...props }: HoverCardPortalProps) {
   return (

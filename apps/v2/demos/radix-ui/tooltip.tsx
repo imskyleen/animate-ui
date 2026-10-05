@@ -69,6 +69,12 @@ const TOOLS = [
 ]
 
 export const controls = {
+  Tooltip: {
+    followCursor: {
+      value: false,
+      options: { false: false, true: true, x: "x", y: "y" },
+    },
+  },
   TooltipContent: {
     side: {
       value: "top",
@@ -84,11 +90,13 @@ export const controls = {
 }
 
 export default function TooltipDemo({
+  followCursor = false,
   side = "top",
   sideOffset = 0,
   align = "center",
   alignOffset = 0,
 }: {
+  followCursor?: boolean | "x" | "y"
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
@@ -98,7 +106,7 @@ export default function TooltipDemo({
     <TooltipProvider>
       <div className="flex items-center gap-1 rounded-xl border p-1">
         {TOOLS.map((tool) => (
-          <Tooltip key={tool.label}>
+          <Tooltip key={tool.label} followCursor={followCursor}>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" aria-label={tool.label}>
                 <HugeiconsIcon icon={tool.icon} strokeWidth={2} />

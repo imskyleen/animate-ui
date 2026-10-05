@@ -48,13 +48,34 @@ The motion of Animate UI v1's Base UI Tooltip, starting from 0.7, with a warm-up
 - With `keepMounted` on the Portal, the closed popup stays in the DOM: it plays its exit, then is hidden.
 - Your own `render` element (or function) on the Popup is made animatable rather than replaced.
 - Open from the start (`defaultOpen`), it plays the same entrance on page load, like v1.
+- With `followCursor` on the Root, the popup leans towards the pointer while it moves over the trigger, by half its offset from the trigger's center, on a spring (stiffness 200, damping 17): on both axes, or only `'x'` or `'y'`, as in v1. Under reduced motion it follows without the spring.
 - Under reduced motion, it only fades (no scale).
 
 ## API Reference
 
 Every part takes exactly the props of [Base UI's Tooltip](https://base-ui.com/react/components/tooltip#api-reference). Animate UI adds the animation props below.
 
-### Provider, Root, Trigger, Portal, Positioner, Arrow, Viewport
+### Root
+
+[Base UI props](https://base-ui.com/react/components/tooltip#root), plus:
+
+<TypeTable
+  type={{
+    followCursor: {
+      description:
+        'Make the popup follow the pointer over the trigger, on both axes or only one, as in Animate UI v1.',
+      type: "boolean | 'x' | 'y'",
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring the popup follows the pointer on.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### Provider, Trigger, Portal, Positioner, Arrow, Viewport
 
 [Base UI props](https://base-ui.com/react/components/tooltip#provider) only. They are not animated.
 

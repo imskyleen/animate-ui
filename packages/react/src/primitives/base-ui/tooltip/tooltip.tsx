@@ -7,6 +7,11 @@ import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
 import {
+  FollowCursorProvider,
+  useFollowCursorHandler,
+  type FollowCursorProps,
+} from '../../../internal/follow-cursor';
+import {
   BaseAnchoredPopup,
   BaseAnchoredPortal,
   useBaseOpenState,
@@ -27,6 +32,8 @@ function Root<Payload = unknown>({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  followCursor,
+  followCursorSpringOptions,
   ...props
 }: Root.Props<Payload>) {
   const [open, setOpen] = useBaseOpenState(openProp, defaultOpen, onOpenChange);
@@ -34,11 +41,16 @@ function Root<Payload = unknown>({
   return (
     <OpenProvider value={{ open }}>
       <ReducedMotionConfig>
-        <TooltipPrimitive.Root<Payload>
-          {...props}
-          open={open}
-          onOpenChange={setOpen}
-        />
+        <FollowCursorProvider
+          followCursor={followCursor}
+          followCursorSpringOptions={followCursorSpringOptions}
+        >
+          <TooltipPrimitive.Root<Payload>
+            {...props}
+            open={open}
+            onOpenChange={setOpen}
+          />
+        </FollowCursorProvider>
       </ReducedMotionConfig>
     </OpenProvider>
   );
@@ -46,7 +58,8 @@ function Root<Payload = unknown>({
 
 namespace Root {
   export type State = TooltipPrimitive.Root.State;
-  export type Props<Payload = unknown> = TooltipPrimitive.Root.Props<Payload>;
+  export type Props<Payload = unknown> = TooltipPrimitive.Root.Props<Payload> &
+    FollowCursorProps;
   export type Actions = TooltipPrimitive.Root.Actions;
   export type ChangeEventReason = TooltipPrimitive.Root.ChangeEventReason;
   export type ChangeEventDetails = TooltipPrimitive.Root.ChangeEventDetails;
@@ -59,7 +72,17 @@ namespace Provider {
   export type Props = TooltipPrimitive.Provider.Props;
 }
 
-const Trigger = TooltipPrimitive.Trigger;
+function Trigger<Payload = unknown>({
+  onMouseMove,
+  ...props
+}: Trigger.Props<Payload>) {
+  return (
+    <TooltipPrimitive.Trigger<Payload>
+      {...props}
+      onMouseMove={useFollowCursorHandler(onMouseMove)}
+    />
+  );
+}
 
 namespace Trigger {
   export type State = TooltipPrimitive.Trigger.State;

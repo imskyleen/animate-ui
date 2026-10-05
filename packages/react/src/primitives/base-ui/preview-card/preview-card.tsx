@@ -7,6 +7,11 @@ import { PreviewCard as PreviewCardPrimitive } from '@base-ui/react/preview-card
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
 import {
+  FollowCursorProvider,
+  useFollowCursorHandler,
+  type FollowCursorProps,
+} from '../../../internal/follow-cursor';
+import {
   BaseAnchoredPopup,
   BaseAnchoredPortal,
   useBaseOpenState,
@@ -27,6 +32,8 @@ function Root<Payload = unknown>({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  followCursor,
+  followCursorSpringOptions,
   ...props
 }: Root.Props<Payload>) {
   const [open, setOpen] = useBaseOpenState(openProp, defaultOpen, onOpenChange);
@@ -34,11 +41,16 @@ function Root<Payload = unknown>({
   return (
     <OpenProvider value={{ open }}>
       <ReducedMotionConfig>
-        <PreviewCardPrimitive.Root<Payload>
-          {...props}
-          open={open}
-          onOpenChange={setOpen}
-        />
+        <FollowCursorProvider
+          followCursor={followCursor}
+          followCursorSpringOptions={followCursorSpringOptions}
+        >
+          <PreviewCardPrimitive.Root<Payload>
+            {...props}
+            open={open}
+            onOpenChange={setOpen}
+          />
+        </FollowCursorProvider>
       </ReducedMotionConfig>
     </OpenProvider>
   );
@@ -47,13 +59,23 @@ function Root<Payload = unknown>({
 namespace Root {
   export type State = PreviewCardPrimitive.Root.State;
   export type Props<Payload = unknown> =
-    PreviewCardPrimitive.Root.Props<Payload>;
+    PreviewCardPrimitive.Root.Props<Payload> & FollowCursorProps;
   export type Actions = PreviewCardPrimitive.Root.Actions;
   export type ChangeEventReason = PreviewCardPrimitive.Root.ChangeEventReason;
   export type ChangeEventDetails = PreviewCardPrimitive.Root.ChangeEventDetails;
 }
 
-const Trigger = PreviewCardPrimitive.Trigger;
+function Trigger<Payload = unknown>({
+  onMouseMove,
+  ...props
+}: Trigger.Props<Payload>) {
+  return (
+    <PreviewCardPrimitive.Trigger<Payload>
+      {...props}
+      onMouseMove={useFollowCursorHandler(onMouseMove)}
+    />
+  );
+}
 
 namespace Trigger {
   export type State = PreviewCardPrimitive.Trigger.State;

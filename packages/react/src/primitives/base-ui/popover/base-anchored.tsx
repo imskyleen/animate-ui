@@ -9,6 +9,7 @@ import {
   type AnchoredAnimationProps,
   type AnchoredKind,
 } from '../../../internal/anchored';
+import { useFollowCursorStyle } from '../../../internal/follow-cursor';
 
 // The Base UI side of Popover, PreviewCard and Tooltip. The Root mirrors the
 // open state and hands it back to Base UI (one source of truth). The Portal
@@ -100,6 +101,8 @@ function BaseAnchoredPopup({
   transition,
   exitTransition,
 }: BaseAnchoredPopupProps) {
+  // v1's followCursor (Tooltip, PreviewCard): the popup leans to the pointer.
+  const follow = useFollowCursorStyle();
   const motionProps = useAnchoredMotion({
     kind,
     open,
@@ -118,7 +121,10 @@ function BaseAnchoredPopup({
           ? (state: unknown) => ({ transformOrigin: ORIGIN, ...style(state) })
           : { transformOrigin: ORIGIN, ...style }
       }
-      render={motionRender(render, motionProps)}
+      render={motionRender(render, {
+        ...motionProps,
+        style: { ...motionProps.style, ...follow },
+      })}
     />
   );
 }

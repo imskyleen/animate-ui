@@ -1204,28 +1204,6 @@ export const HEADLESS_PRIMITIVES = [
   'tabs',
 ];
 
-const FOLLOW_CURSOR: Record<string, PropRule> = {
-  followCursor: {
-    manual:
-      'v2 keeps the library API: following the cursor is gone. Drop the prop.',
-  },
-  followCursorSpringOptions: {
-    manual:
-      'v2 keeps the library API: following the cursor is gone. Drop the prop.',
-  },
-};
-
-/** Base UI's Tooltip can follow the cursor itself, without v1's spring. */
-const BASE_FOLLOW_CURSOR: Record<string, PropRule> = {
-  followCursor: {
-    manual:
-      'v2 keeps the library API: v1\'s spring-follow is gone. Base UI\'s `trackCursorAxis` ("x", "y" or "both") makes the popup track the cursor instead; or drop the prop.',
-  },
-  followCursorSpringOptions: {
-    manual: "v1's spring-follow is gone: drop the prop.",
-  },
-};
-
 const PRESSED_ANIMATION: Record<string, PropRule> = {
   pressedAnimation: {
     manual:
@@ -1329,12 +1307,9 @@ const EXTRAS: Record<string, Partial<Migration>> = {
       Dialog: inverted('dismissible', 'disablePointerDismissal'),
     },
   },
-  'radix/tooltip': { props: { Tooltip: FOLLOW_CURSOR } },
-  'radix/hover-card': { props: { HoverCard: FOLLOW_CURSOR } },
   'base/tooltip': {
     props: {
       Tooltip: {
-        ...BASE_FOLLOW_CURSOR,
         ...movedToTrigger(
           'TooltipTrigger',
           ['delay', 'closeDelay'],
@@ -1351,10 +1326,10 @@ const EXTRAS: Record<string, Partial<Migration>> = {
   },
   'base/preview-card': {
     props: {
-      PreviewCard: {
-        ...FOLLOW_CURSOR,
-        ...movedToTrigger('PreviewCardTrigger', ['delay', 'closeDelay']),
-      },
+      PreviewCard: movedToTrigger('PreviewCardTrigger', [
+        'delay',
+        'closeDelay',
+      ]),
       PreviewCardPositioner: TRACK_ANCHOR,
     },
   },

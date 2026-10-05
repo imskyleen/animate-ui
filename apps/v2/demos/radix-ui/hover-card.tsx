@@ -45,6 +45,12 @@ function HoverCardContent({
 export { HoverCard, HoverCardTrigger, HoverCardContent }
 
 export const controls = {
+  HoverCard: {
+    followCursor: {
+      value: false,
+      options: { false: false, true: true, x: "x", y: "y" },
+    },
+  },
   HoverCardContent: {
     side: {
       value: "bottom",
@@ -60,18 +66,20 @@ export const controls = {
 }
 
 export default function HoverCardDemo({
+  followCursor = false,
   side = "bottom",
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
 }: {
+  followCursor?: boolean | "x" | "y"
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
 }) {
   return (
-    <HoverCard>
+    <HoverCard followCursor={followCursor}>
       <HoverCardTrigger asChild>
         <a href="https://github.com/imskyleen/animate-ui" className="text-sm font-medium underline underline-offset-4">
           @animate-ui

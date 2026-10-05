@@ -45,13 +45,34 @@ The motion of Animate UI v1's Hover Card, value for value:
 - With `forceMount` (on the Content or the Portal), the closed content stays in the DOM: it plays its exit, then is hidden and `inert`.
 - Reopening while it closes picks up from where it is, on the same spring.
 - Open from the start (`defaultOpen`), it plays the same entrance on page load, like v1.
+- With `followCursor` on the Root, the content leans towards the pointer while it moves over the trigger, by half its offset from the trigger's center, on a spring (stiffness 200, damping 17): on both axes, or only `'x'` or `'y'`, as in v1. Under reduced motion it follows without the spring.
 - Under reduced motion, it only fades (no scale).
 
 ## API Reference
 
 Every part takes exactly the props of [Radix UI's Hover Card](https://www.radix-ui.com/primitives/docs/components/hover-card#api-reference). Animate UI adds the animation props below.
 
-### Root, Trigger, Portal, Arrow
+### Root
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/hover-card#root), plus:
+
+<TypeTable
+  type={{
+    followCursor: {
+      description:
+        'Make the content follow the pointer over the trigger, on both axes or only one, as in Animate UI v1.',
+      type: "boolean | 'x' | 'y'",
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring the content follows the pointer on.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### Trigger, Portal, Arrow
 
 [Radix UI props](https://www.radix-ui.com/primitives/docs/components/hover-card#root) only. They are not animated.
 

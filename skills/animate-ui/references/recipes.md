@@ -64,6 +64,7 @@ function PopoverContentMotion({
 - Start by kind: tooltips from `scale.tooltip` (0.7), popovers, hover cards and preview cards from `scale.popover` (0.8). All on `spring.pop`, both ways.
 - Scale only, no directional slide: the trigger-anchored origin already shows where it came from. Drop shadcn's `slide-in-from-*` and `zoom-in-*` classes.
 - Tooltips warm up: once one is open, the next one shows at once (`initial={false}`, no transition) and the one it replaces is hidden at once with a `visibility: 'hidden'` style while its exit plays out unseen (a style, not a target: a leaving element keeps the targets of its last render, but its style still follows). 300ms after the last one closed, the next plays its entrance again. shadcn/ui gives each tooltip its own Provider, so the libraries' grouping (`data-state="instant-open"`, `data-instant`) never fires: track it across all tooltips in a module-level group (the open ones, a warm flag cleared 300ms after the last close, and the leaving ones to hide). React Aria does it itself (`shouldSkipAnimation`).
+- `followCursor` on the Root (Animate UI's addition, as in v1; Radix Tooltip and HoverCard, Base UI Tooltip and PreviewCard): while the pointer moves over the trigger, the popup leans towards it by half its offset from the trigger's center, on a spring (stiffness 200, damping 17), on both axes or only `'x'` or `'y'`.
 - Animate UI's own Tooltip (`@animate-ui/react/primitives/tooltip`) shares one popup per provider instead: moving to the next trigger glides it there with a layout animation, which reads better than closing and reopening.
 - Positioned with Floating UI yourself: pass `open` to `useFloating` and mount the popup's content once `isPositioned` is true. Before that it sits at 0, 0, and a `layoutId` (or `layout`) animation would fly it in from the corner of the page.
 - Open from the start (`defaultOpen`): it plays its entrance on mount, page load included.
@@ -155,6 +156,7 @@ function DialogContentMotion({
 ```
 
 - The content fades in, un-blurs and tips forward to upright on `spring.dialog` (no overshoot), and leaves the same way.
+- `from` (Animate UI's addition, as in v1) picks the edge it tips from: `top` by default and `right` turn it by -20deg, `bottom` and `left` by 20deg, around the X axis for top and bottom, the Y axis for left and right.
 - The overlay fades in and un-blurs (`opacity` 0 → 1, `blur.surface` → `blur(0px)`) on `transition.overlay` (200ms, `ease.out`): it is fully in while the content is still arriving, and on the way out the content is still visible once the overlay has gone.
 - Drop the blur at rest if the content holds fixed-position children (`transitionEnd: { filter: 'none' }`): a `filter` makes it their containing block.
 

@@ -49,13 +49,34 @@ The motion of Animate UI v1's Base UI Preview Card, value for value:
 - Your own `render` element (or function) on the Popup is made animatable rather than replaced.
 - Reopening while it closes picks up from where it is, on the same spring.
 - Open from the start (`defaultOpen`), it plays the same entrance on page load, like v1.
+- With `followCursor` on the Root, the popup leans towards the pointer while it moves over the trigger, by half its offset from the trigger's center, on a spring (stiffness 200, damping 17): on both axes, or only `'x'` or `'y'`, as in v1. Under reduced motion it follows without the spring.
 - Under reduced motion, it only fades (no scale).
 
 ## API Reference
 
 Every part takes exactly the props of [Base UI's Preview Card](https://base-ui.com/react/components/preview-card#api-reference). Animate UI adds the animation props below.
 
-### Root, Trigger, Portal, Positioner, Arrow, Backdrop, Viewport
+### Root
+
+[Base UI props](https://base-ui.com/react/components/preview-card#root), plus:
+
+<TypeTable
+  type={{
+    followCursor: {
+      description:
+        'Make the popup follow the pointer over the trigger, on both axes or only one, as in Animate UI v1.',
+      type: "boolean | 'x' | 'y'",
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring the popup follows the pointer on.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### Trigger, Portal, Positioner, Arrow, Backdrop, Viewport
 
 [Base UI props](https://base-ui.com/react/components/preview-card#root) only. They are not animated.
 
