@@ -54,15 +54,12 @@ test.describe('base-ui combobox demo', () => {
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    await page.getByRole('option', { name: 'Astro' }).click();
-
-    // It plays an exit (polled: a loaded machine can skip the first frames).
-    await expect
-      .poll(async () => (await sample(page, POPUP)).opacity, {
-        intervals: [16],
-      })
-      .toBeLessThan(1);
-    await expect(page.locator(POPUP)).toBeHidden({ timeout: 600 });
+    // It plays an exit, recorded in the page from before the click: a loaded
+    // machine can deliver the click late, and miss it with a poll.
+    await expectCloseWithoutHold(page, POPUP, () =>
+      page.getByRole('option', { name: 'Astro' }).click(),
+    );
+    await expect(page.locator(POPUP)).toBeHidden();
     await expect(input).toHaveValue('Astro');
   });
 

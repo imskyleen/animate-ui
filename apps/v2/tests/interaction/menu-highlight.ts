@@ -12,6 +12,8 @@ export type HighlightFrame = {
   t: number;
   /** Every copy on screen: its visual box and the opacity of its fill. */
   copies: { top: number; left: number; width: number; opacity: number }[];
+  /** A copy runs a Web Animation of `transform`. */
+  composited: boolean;
 };
 
 /**
@@ -26,20 +28,32 @@ export function recordHighlight(page: Page, duration: number) {
         const t0 = performance.now();
         const tick = () => {
           const t = performance.now() - t0;
+          const elements = [
+            ...document.querySelectorAll<HTMLElement>(selector),
+          ];
           frames.push({
             t,
-            copies: [...document.querySelectorAll<HTMLElement>(selector)].map(
-              (el) => {
-                const box = el.getBoundingClientRect();
-                const fill = el.firstElementChild ?? el;
-                return {
-                  top: box.top,
-                  left: box.left,
-                  width: box.width,
-                  opacity: Number(getComputedStyle(fill).opacity),
-                };
-              },
+            composited: elements.some((el) =>
+              el
+                .getAnimations()
+                .some(
+                  (animation) =>
+                    animation.playState === 'running' &&
+                    (animation.effect as KeyframeEffect | null)
+                      ?.getKeyframes()
+                      .some((keyframe) => 'transform' in keyframe),
+                ),
             ),
+            copies: elements.map((el) => {
+              const box = el.getBoundingClientRect();
+              const fill = el.firstElementChild ?? el;
+              return {
+                top: box.top,
+                left: box.left,
+                width: box.width,
+                opacity: Number(getComputedStyle(fill).opacity),
+              };
+            }),
           });
           if (t < duration) requestAnimationFrame(tick);
           else resolve(frames);
@@ -135,6 +149,9 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       // One highlight on screen, as opaque as it was: no copy fades in or
       // lingers behind.
       expect(recorded.every((f) => f.copies.length <= 1)).toBe(true);
+      // It glided as a Web Animation of `transform`: on the compositor, so a
+      // busy main thread (a submenu mounting) doesn't stall it.
+      expect(recorded.some((f) => f.composited)).toBe(true);
       expect(
         recorded.every((f) => f.copies.every((copy) => copy.opacity > 0.99)),
       ).toBe(true);

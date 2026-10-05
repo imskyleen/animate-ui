@@ -2,14 +2,15 @@
 
 import * as React from 'react';
 import {
-  animate,
-  motion,
-  useMotionValue,
-  type MotionValue,
+  createGeneratorEasing,
+  generateLinearEasing,
+  spring as springGenerator,
+  type Transition,
 } from 'motion/react';
 
 import {
   motionTokens,
+  toCssTiming,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
@@ -17,9 +18,8 @@ import {
 // Animate UI v1's menu highlight (DropdownMenuHighlight, MenuHighlight): one
 // surface glides behind the highlighted item, on a spring (stiffness 500,
 // damping 40, a little quicker than v1's 350/35), instead of each item
-// lighting up on its own. It follows the
-// pointer and the arrow keys, goes into submenus, and stays on the last item
-// when the pointer leaves the menu.
+// lighting up on its own. It follows the pointer and the arrow keys, goes into
+// submenus, and stays on the last item when the pointer leaves the menu.
 //
 // Drop-in, it reuses the styles already written for the items: when an item
 // gets highlighted, its own highlighted background (`focus:bg-accent`,
@@ -36,6 +36,11 @@ import {
 // layoutId; Motion now crossfades shared layouts, so the hand-off is explicit
 // here.) Only a highlight appearing from nothing fades in.
 //
+// The glide runs on the compositor: a Web Animation of `transform`, eased by
+// the spring itself (a `linear()` curve, with the velocity it was handed). A
+// busy main thread, a submenu mounting as the pointer reaches its trigger,
+// doesn't stall it.
+//
 // The surface sits under every item's content: the menu becomes its own
 // stacking context and the surface goes below its content (z-index -1), so
 // gliding over another item never covers that item's text.
@@ -51,19 +56,30 @@ type Surface = {
   borderRadius: string;
 };
 
-type SurfaceValues = {
-  x: MotionValue<number>;
-  y: MotionValue<number>;
-  scaleX: MotionValue<number>;
-  scaleY: MotionValue<number>;
-  opacity: MotionValue<number>;
+/** A surface's offset from its item: a translation, and a scale. */
+type Offset = {
+  x: number;
+  y: number;
+  scaleX: number;
+  scaleY: number;
+};
+
+/** A running glide, enough to know how fast it moves at any time. */
+type Glide = {
+  animation: Animation;
+  /** The spring's curve: the share of the time elapsed to the share of the way. */
+  ease: (progress: number) => number;
+  /** Milliseconds. */
+  duration: number;
+  /** Where it started, in its item's terms. */
+  from: Offset;
 };
 
 /** The surface on screen: where the next one starts from. */
 type SurfaceHandle = {
   element: HTMLElement;
   item: HTMLElement;
-  values: SurfaceValues;
+  glide: Glide | null;
 };
 
 type HighlightScopeValue = {
@@ -281,21 +297,32 @@ function HighlightSurface({ surface, item, scope }: HighlightSurfaceProps) {
   return <SurfaceCopy surface={surface} item={item} scope={scope} />;
 }
 
-type Motion = {
-  x: number;
-  y: number;
-  scaleX: number;
-  scaleY: number;
-};
-
-type Start = Motion & {
+type Start = {
+  offset: Offset;
   opacity: number;
-  /** Per second, in the new item's terms. */
-  velocity: Motion;
+  /** Per millisecond, in the new item's terms. */
+  velocity: Offset;
 };
 
-const IN_PLACE: Motion = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
-const STILL: Motion = { x: 0, y: 0, scaleX: 0, scaleY: 0 };
+const IN_PLACE: Offset = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
+const STILL: Offset = { x: 0, y: 0, scaleX: 0, scaleY: 0 };
+
+/** How fast a glide moves right now, in its item's terms (per ms). */
+function velocityOf({ animation, ease, duration, from }: Glide): Offset {
+  const time = Number(animation.currentTime ?? duration);
+  if (!(time < duration)) return STILL;
+  const step = 4;
+  const before = Math.max(0, time - step);
+  const rate =
+    (ease(Math.min(1, (before + step) / duration)) - ease(before / duration)) /
+    step;
+  return {
+    x: -from.x * rate,
+    y: -from.y * rate,
+    scaleX: (1 - from.scaleX) * rate,
+    scaleY: (1 - from.scaleY) * rate,
+  };
+}
 
 /**
  * Where a surface entering `item` starts: on the previous surface, as it is
@@ -308,34 +335,67 @@ function handOff(
   reduce: boolean,
 ): Start {
   if (!previous?.element.isConnected)
-    return { ...IN_PLACE, opacity: 0, velocity: STILL };
-  const { values } = previous;
-  const opacity = values.opacity.get();
+    return { offset: IN_PLACE, opacity: 0, velocity: STILL };
+  const opacity = Number(getComputedStyle(previous.element).opacity);
   const own = item.getBoundingClientRect();
   if (reduce || !own.width || !own.height)
-    return { ...IN_PLACE, opacity, velocity: STILL };
+    return { offset: IN_PLACE, opacity, velocity: STILL };
 
+  // Its box on screen, mid-glide included.
   const box = previous.element.getBoundingClientRect();
   const from = previous.item.getBoundingClientRect();
   // Screen pixels per CSS pixel: a menu still scaling in shrinks both boxes.
   const ratioX = own.width / (item.offsetWidth || own.width);
   const ratioY = own.height / (item.offsetHeight || own.height);
+  const velocity = previous.glide ? velocityOf(previous.glide) : STILL;
   return {
     // The transform lays the surface over `box` (origin top left).
-    x: (box.left - own.left) / ratioX,
-    y: (box.top - own.top) / ratioY,
-    scaleX: box.width / own.width,
-    scaleY: box.height / own.height,
+    offset: {
+      x: (box.left - own.left) / ratioX,
+      y: (box.top - own.top) / ratioY,
+      scaleX: box.width / own.width,
+      scaleY: box.height / own.height,
+    },
     opacity,
     velocity: {
-      x: values.x.getVelocity(),
-      y: values.y.getVelocity(),
+      x: velocity.x,
+      y: velocity.y,
       // Scales are relative to the item: the new one may differ in size.
-      scaleX: (values.scaleX.getVelocity() * from.width) / own.width,
-      scaleY: (values.scaleY.getVelocity() * from.height) / own.height,
+      scaleX: (velocity.scaleX * from.width) / own.width,
+      scaleY: (velocity.scaleY * from.height) / own.height,
     },
   };
 }
+
+/**
+ * The glide from `offset` to the item, as a share of the way: its initial
+ * velocity is the handed velocity along the way (per ms).
+ */
+function initialRate(
+  { offset, velocity }: Start,
+  width: number,
+  height: number,
+) {
+  // The way to go, and the velocity, in pixels (scales on the item's size).
+  const way = [
+    -offset.x,
+    -offset.y,
+    (1 - offset.scaleX) * width,
+    (1 - offset.scaleY) * height,
+  ];
+  const speed = [
+    velocity.x,
+    velocity.y,
+    velocity.scaleX * width,
+    velocity.scaleY * height,
+  ];
+  const length = way.reduce((sum, d) => sum + d * d, 0);
+  if (length < 0.25) return null;
+  return way.reduce((sum, d, i) => sum + d * speed[i]!, 0) / length;
+}
+
+const toTransform = ({ x, y, scaleX, scaleY }: Offset) =>
+  `translate(${x}px, ${y}px) scale(${scaleX}, ${scaleY})`;
 
 type SurfaceCopyProps = {
   surface: Surface;
@@ -345,48 +405,60 @@ type SurfaceCopyProps = {
 
 function SurfaceCopy({ surface, item, scope }: SurfaceCopyProps) {
   const reduce = useShouldReduceMotion();
-  const glide = useTempoTransition(HIGHLIGHT_TRANSITION);
-  const fade = useTempoTransition(FADE_TRANSITION);
+  const glide = useTempoTransition<Transition>(HIGHLIGHT_TRANSITION);
+  const fade = useTempoTransition<Transition>(FADE_TRANSITION);
   // Read while rendering: the previous surface is still on screen (it goes
   // in this same commit).
   const [start] = React.useState(() => scope.handOff(item, reduce));
-  const x = useMotionValue(start.x);
-  const y = useMotionValue(start.y);
-  const scaleX = useMotionValue(start.scaleX);
-  const scaleY = useMotionValue(start.scaleY);
-  const opacity = useMotionValue(start.opacity);
   const elementRef = React.useRef<HTMLSpanElement>(null);
   // Read when it mounts: a new transition object each render (a tempo)
   // mustn't restart the glide.
   const transitionsRef = React.useRef({ glide, fade });
-
   const { register } = scope;
 
+  // Before paint: the first frame already shows the surface where it starts.
   React.useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element) return undefined;
-    const unregister = register({
-      element,
-      item,
-      values: { x, y, scaleX, scaleY, opacity },
-    });
-    const { glide, fade } = transitionsRef.current;
-    const { velocity } = start;
-    const controls = [
-      animate(x, 0, { ...glide, velocity: velocity.x }),
-      animate(y, 0, { ...glide, velocity: velocity.y }),
-      animate(scaleX, 1, { ...glide, velocity: velocity.scaleX }),
-      animate(scaleY, 1, { ...glide, velocity: velocity.scaleY }),
-      animate(opacity, 1, fade),
-    ];
+    const animations: Animation[] = [];
+    let running: Glide | null = null;
+
+    const rate = initialRate(start, item.offsetWidth, item.offsetHeight);
+    if (rate !== null) {
+      // The spring as a curve, with the velocity it was handed (Motion's
+      // velocity is per second, on a 0-100 way).
+      const { ease, duration } = createGeneratorEasing(
+        { ...transitionsRef.current.glide, velocity: rate * 1000 * 100 },
+        100,
+        springGenerator,
+      );
+      const ms = duration * 1000;
+      const animation = element.animate(
+        [{ transform: toTransform(start.offset) }, { transform: 'none' }],
+        { duration: ms, easing: generateLinearEasing(ease, ms) },
+      );
+      animations.push(animation);
+      running = { animation, ease, duration: ms, from: start.offset };
+    }
+    if (start.opacity < 1) {
+      const { duration, easing } = toCssTiming(transitionsRef.current.fade);
+      animations.push(
+        element.animate([{ opacity: start.opacity }, { opacity: 1 }], {
+          duration,
+          easing,
+        }),
+      );
+    }
+
+    const unregister = register({ element, item, glide: running });
     return () => {
-      for (const control of controls) control.stop();
+      for (const animation of animations) animation.cancel();
       unregister();
     };
-  }, [register, item, start, x, y, scaleX, scaleY, opacity]);
+  }, [register, item, start]);
 
   return (
-    <motion.span
+    <span
       ref={elementRef}
       aria-hidden
       data-slot="item-highlight"
@@ -399,11 +471,6 @@ function SurfaceCopy({ surface, item, scope }: SurfaceCopyProps) {
         borderRadius: surface.borderRadius,
         backgroundColor: surface.backgroundColor,
         backgroundImage: surface.backgroundImage,
-        x,
-        y,
-        scaleX,
-        scaleY,
-        opacity,
       }}
     />
   );
