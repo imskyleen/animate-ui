@@ -300,8 +300,10 @@ export function describeCheckboxDemo(lib: Lib) {
       expect(frames[0]!.inset).toBe('-1px');
     });
 
-    test('the box scales on press, not on hover', async ({ page }) => {
-      expectPressOnly(await pressScale(page, page.locator(CHECKBOX).nth(1)));
+    test('the box never scales, on press or hover', async ({ page }) => {
+      const scales = await pressScale(page, page.locator(CHECKBOX).nth(1));
+      // The check and the box's fill answer the click: the box stays put.
+      expect(scales).toEqual({ hovered: 1, held: 1, released: 1, left: 1 });
     });
 
     test('Space toggles at once, and the check still draws', async ({

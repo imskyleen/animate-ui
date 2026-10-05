@@ -39,13 +39,13 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 The motion of Animate UI v1's checkbox:
 
 - **Indicator**: the check draws itself. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.3s, after a 0.2s delay, on Motion's default ease-out (v1's delay and curve, drawn a little slower than v1's 0.2s). Unchecking erases it in 0.3s, without the delay, then the indicator unmounts, as in Base UI. The indicator element itself never moves: its content animates, so your layout and classes stay as they are. Content that isn't an SVG shape fades the same way.
-- **Root** scales to 0.95 while pressed (no hover scale), on Motion's default spring for scale (stiffness 550, damping 30).
+- **Root** doesn't move: unlike v1's, it doesn't scale when pressed or hovered. The check (and, in the demo, the box's fill) answers the click.
 - In the demo, the box's fill is a layer of its own (`before:` in its classes) that grows from 70% while it fades in, in 300ms, and shrinks back as it fades out: the check draws over a box that is nearly full. The layer covers the box's border (`before:-inset-px`) and the border keeps its color, so no outline rings the growing fill. It's CSS, so copy the classes for the same effect; under reduced motion the layer only fades.
 - A box that is checked when it mounts draws its check too, as v1's did. The indicator stays hidden until then, so a server-rendered page doesn't flash the check first.
 - Checking with Space animates the same way: the state changes at once, the animation never delays it.
 - Toggling again mid-animation turns back from where the check is.
 - `indeterminate` shows the indicator like `checked`. An icon swapped for the indeterminate state draws without the delay, as v1's indeterminate line did. A parent checkbox in a `CheckboxGroup` animates the same way: the indicator follows the state Base UI computes.
-- Under reduced motion, the check only fades (its stroke stays whole) and nothing scales.
+- Under reduced motion, the check only fades (its stroke stays whole).
 - With `keepMounted`, the unchecked indicator stays in the DOM with its check hidden.
 - The box's own colours are the component's CSS: shadcn/ui's `transition-colors` fades them.
 
@@ -55,17 +55,7 @@ Every part takes exactly the props of [Base UI's Checkbox](https://base-ui.com/r
 
 ### Root
 
-[Base UI props](https://base-ui.com/react/components/checkbox#root), plus:
-
-<TypeTable
-  type={{
-    transition: {
-      description: 'Transition of the press scale.',
-      type: 'Transition',
-      default: "{ type: 'spring', stiffness: 550, damping: 30 }",
-    },
-  }}
-/>
+[Base UI props](https://base-ui.com/react/components/checkbox#root) only. It isn't animated.
 
 ### Indicator
 

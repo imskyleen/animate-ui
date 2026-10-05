@@ -180,7 +180,7 @@ A tween on `ease.out` reads faster than its duration: most of the movement happe
 
 ### B4. Scale: press only, and from a size that fits
 
-- Pressables (buttons, checkbox, radio, toggles) scale to `scale.press` (0.95) on `spring.press` while pressed. **Nothing scales on hover**: hover changes color, a button answers the press. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.)
+- Pressables (buttons, radio, toggles) scale to `scale.press` (0.95) on `spring.press` while pressed. **Nothing scales on hover**: hover changes color, a button answers the press. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
 - Anchored popups grow from their trigger, from farther when they are small: tooltips `scale.tooltip` (0.7), popovers and hover cards `scale.popover` (0.8), menus `scale.menu` (0.9).
 - A dialog tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)`.
 

@@ -1229,6 +1229,9 @@ const NOT_ANIMATED: Record<string, PropRule> = {
 const CHECKBOX_INDICATOR =
   "v1 drew its own animated check (an <svg>); v2's Indicator animates what you put in it: add your check icon as its child.";
 
+const CHECKBOX_PRESS =
+  "v2's checkbox doesn't scale (v1 scaled it to 0.95 when pressed and 1.05 on hover): its check, and your box's fill, answer the click.";
+
 const HOVER_SCALE =
   "v2's buttons answer the press, not the hover: they no longer grow on hover (v1 scaled them to 1.05). Set `hoverScale={1.05}` to keep v1's hover.";
 
@@ -1380,8 +1383,12 @@ const EXTRAS: Record<string, Partial<Migration>> = {
   'base/toggle-group': { props: { ToggleGroup: LOOP_FOCUS } },
   'radix/switch': { props: { SwitchThumb: PRESSED_ANIMATION } },
   'base/switch': { props: { SwitchThumb: PRESSED_ANIMATION } },
-  'radix/checkbox': { notes: { CheckboxIndicator: CHECKBOX_INDICATOR } },
-  'base/checkbox': { notes: { CheckboxIndicator: CHECKBOX_INDICATOR } },
+  'radix/checkbox': {
+    notes: { Checkbox: CHECKBOX_PRESS, CheckboxIndicator: CHECKBOX_INDICATOR },
+  },
+  'base/checkbox': {
+    notes: { Checkbox: CHECKBOX_PRESS, CheckboxIndicator: CHECKBOX_INDICATOR },
+  },
   'radix/dropdown-menu': {
     wrap: { DropdownMenuContent: { in: 'Portal', move: ['container'] } },
     props: {

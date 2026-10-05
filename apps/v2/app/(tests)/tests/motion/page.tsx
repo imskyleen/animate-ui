@@ -23,7 +23,7 @@ const GLOBAL_RULES = [
   "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes. Toutes les valeurs par rôle sont des tokens de @animate-ui/react/utils/motion (spring, transition, scale, blur, ease).",
   'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (menus, panneaux d’onglets) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
-  'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, checkbox, radio, toggles, Pinned List).',
+  'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
   'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,2s ease-out.',
   'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets, contenu d’un navigation menu), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
   'Un indicateur de sélection glisse sur 200/25 ; un surlignage qui suit le pointeur glisse sur 350/35, plus vif.',
@@ -40,7 +40,7 @@ const FAMILIES: Family[] = [
     name: 'Pression',
     rule: 'Tout ce qui se presse réagit sous le doigt, et seulement là : rien ne grossit au survol.',
     values: [
-      'scale 0,95 à la pression (boutons, checkbox, radio, toggles, Pinned List)',
+      'scale 0,95 à la pression (boutons, radio, toggles, Pinned List) ; pas la checkbox',
       'ressort 550/30',
       'boutons : hoverScale reste disponible, 1 par défaut',
     ],
@@ -49,7 +49,7 @@ const FAMILIES: Family[] = [
       {
         demo: 'radix-ui/checkbox',
         label: 'Checkbox',
-        note: 'coche tracée en 0,3s après 0,2s sur l’easeOut de Motion (délai et courbe de la v1) ; fond : un calque qui grandit de 70 % à 100 % en apparaissant, en 0,3s (comme HeroUI)',
+        note: 'pas de scale à la pression ; coche tracée en 0,3s après 0,2s sur l’easeOut de Motion (délai et courbe de la v1) ; fond : un calque qui grandit de 70 % à 100 % en apparaissant, en 0,3s (comme HeroUI)',
       },
       { demo: 'radix-ui/toggle', label: 'Toggle' },
       {

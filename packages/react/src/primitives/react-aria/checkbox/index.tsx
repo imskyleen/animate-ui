@@ -12,16 +12,16 @@ import {
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 import {
-  PressedMotion,
   RenderedIndicator,
   renderChildren,
 } from '../../../internal/controls/aria';
 
 // Same API as React Aria's Checkbox, animated like Animate UI v1's Radix UI
-// checkbox (v1 had no React Aria one): the checkbox scales to 0.95 while
-// pressed (no hover scale), and the check the user renders inside
+// checkbox (v1 had no React Aria one): the check the user renders inside
 // `data-slot="checkbox-indicator"` (shadcn/ui's indicator) draws itself when
-// selected (its stroke and opacity, 0.3s after 0.2s) and erases in 0.3s.
+// selected (its stroke and opacity, 0.3s after 0.2s) and erases in 0.3s. The
+// checkbox itself doesn't scale when pressed or hovered (v1's did): the check
+// (and the box's own fill) answer the click.
 
 /** React Aria's props, plus Animate UI's `transition` and `exitTransition` (the check's). */
 type CheckboxProps = CheckboxPrimitiveProps & IndicatorAnimationProps;
@@ -41,7 +41,6 @@ function Checkbox(
 function AnimatedCheckbox({
   transition,
   exitTransition,
-  render,
   children,
   ref,
   ...props
@@ -50,24 +49,7 @@ function AnimatedCheckbox({
   const mergedRef = React.useMemo(() => mergeRefs(ref, rootRef), [ref]);
 
   return (
-    <CheckboxPrimitive
-      {...props}
-      ref={mergedRef}
-      // React Aria's props (resolved className and style, data-selected,
-      // handlers, ref) land on the motion element. A custom `render` keeps
-      // React Aria's behaviour, without the hover and press scale.
-      render={
-        render ??
-        ((domProps, values) => (
-          <PressedMotion
-            {...domProps}
-            as="label"
-            isPressed={values.isPressed}
-            isDisabled={values.isDisabled}
-          />
-        ))
-      }
-    >
+    <CheckboxPrimitive {...props} ref={mergedRef}>
       {(values) => (
         <>
           {renderChildren(children, values)}

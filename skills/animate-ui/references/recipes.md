@@ -243,7 +243,7 @@ Purpose: feedback.
 
 - Press: ``whileTap={{ transform: `scale(${scale.press})` }}`` (0.95) on `spring.press`. Write the resting `transform: 'scale(1)'` in `initial`: Motion can only interpolate a missing transform from `scale(0)`. No hover scale.
 - Switch: the thumb stretches toward the middle of the track while pressed (×19/16 of its width) and glides to its side on `spring.thumb`; the track color changes at once.
-- Checkbox: the box answers at once (press, and its fill starts: in the demos, a `before:` layer that grows from 70% as it fades in over 300ms, CSS in the classes, so it's nearly full when the check starts; the layer covers the border, `before:-inset-px`, and the border keeps its color, or an outline rings the growing fill); the check draws itself (stroke and opacity together) on `transition.check` (0.3s after 0.2s, `ease.draw`) and erases on `transition.uncheck` (0.3s, `ease.draw`).
+- Checkbox: the box doesn't scale; it answers at once with its fill (in the demos, a `before:` layer that grows from 70% as it fades in over 300ms, CSS in the classes, so it's nearly full when the check starts; the layer covers the border, `before:-inset-px`, and the border keeps its color, or an outline rings the growing fill); the check draws itself (stroke and opacity together) on `transition.check` (0.3s after 0.2s, `ease.draw`) and erases on `transition.uncheck` (0.3s, `ease.draw`).
 - Radio: the dot pops in from 0 on `spring.bounce` and out the same way.
 - When Base UI renders the control as a `<button>`, pass `nativeButton`. React Aria controls expose their state through render props: put `ReducedMotionConfig` outside the primitive so the root's motion element is covered too.
 

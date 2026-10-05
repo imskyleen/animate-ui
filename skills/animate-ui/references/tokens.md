@@ -80,14 +80,14 @@ Pick a tween's curve by what the element does:
 
 ## Scales
 
-| Token           | Value | Use for                                                                        |
-| --------------- | ----- | ------------------------------------------------------------------------------ |
-| `scale.press`   | 0.95  | Anything pressed (buttons, checkbox, radio, toggles). Nothing scales on hover. |
-| `scale.tooltip` | 0.7   | Where tooltips (and anchored toasts) grow from                                 |
-| `scale.popover` | 0.8   | Where popovers, hover cards and preview cards grow from                        |
-| `scale.menu`    | 0.9   | Where menus, selects and navigation menus grow from                            |
-| `scale.dialog`  | 0.8   | Dialog content, with `perspective(500px) rotateX(-20deg)`                      |
-| `scale.icon`    | 0.5   | An icon swapping for another                                                   |
+| Token           | Value | Use for                                                                                |
+| --------------- | ----- | -------------------------------------------------------------------------------------- |
+| `scale.press`   | 0.95  | Anything pressed (buttons, radio, toggles; not the checkbox). Nothing scales on hover. |
+| `scale.tooltip` | 0.7   | Where tooltips (and anchored toasts) grow from                                         |
+| `scale.popover` | 0.8   | Where popovers, hover cards and preview cards grow from                                |
+| `scale.menu`    | 0.9   | Where menus, selects and navigation menus grow from                                    |
+| `scale.dialog`  | 0.8   | Dialog content, with `perspective(500px) rotateX(-20deg)`                              |
+| `scale.icon`    | 0.5   | An icon swapping for another                                                           |
 
 The smaller the element, the farther it starts, so its growth stays visible; the more often a large one opens, the subtler it gets. A tooltip's 0.7 is only a few pixels on a small label, a popover's 0.8 shows where it came from, a menu opened all day stays at 0.9.
 

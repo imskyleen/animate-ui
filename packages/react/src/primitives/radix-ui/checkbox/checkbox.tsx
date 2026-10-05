@@ -2,72 +2,25 @@
 
 import * as React from 'react';
 import { Checkbox as CheckboxPrimitive } from 'radix-ui';
-import { motion, type Transition } from 'motion/react';
 
 import { ReducedMotionConfig } from '../../../utils/motion';
-import { usePressMotion } from '../../../internal/controls/press';
 import {
   IndicatorPresence,
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
 // Same API as Radix's Checkbox, animated like Animate UI v1's checkbox: the
-// Root scales to 0.95 while pressed (no hover scale), and the check
-// draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in 0.3s.
-// The Indicator stays mounted while its check erases, then unmounts like
-// Radix's.
+// check draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in
+// 0.3s. The Indicator stays mounted while its check erases, then unmounts like
+// Radix's. The Root is Radix's: unlike v1's, it doesn't scale when pressed or
+// hovered, the check (and the box's own fill) answer the click.
 
-/** Animate UI's additions to `Checkbox.Root`. */
-type RootAnimationProps = {
-  /**
-   * Transition of the press scale. Defaults to a spring (stiffness 550,
-   * damping 30).
-   */
-  transition?: Transition;
-};
-
-type CheckboxProps = CheckboxPrimitive.CheckboxProps & RootAnimationProps;
+type CheckboxProps = CheckboxPrimitive.CheckboxProps;
 type CheckboxIndicatorProps = CheckboxPrimitive.CheckboxIndicatorProps &
   IndicatorAnimationProps;
 type CheckedState = CheckboxPrimitive.CheckedState;
 
-function Root(
-  props: React.ComponentProps<typeof CheckboxPrimitive.Root> &
-    RootAnimationProps,
-) {
-  return (
-    <ReducedMotionConfig>
-      <AnimatedRoot {...props} />
-    </ReducedMotionConfig>
-  );
-}
-
-function AnimatedRoot({
-  transition,
-  asChild,
-  children,
-  ...props
-}: React.ComponentProps<typeof CheckboxPrimitive.Root> & RootAnimationProps) {
-  const press = usePressMotion({
-    disabled: props.disabled,
-    transition,
-  });
-  // The user's own element: Radix's behaviour, no animation.
-  if (asChild)
-    return (
-      <CheckboxPrimitive.Root {...props} asChild>
-        {children}
-      </CheckboxPrimitive.Root>
-    );
-
-  return (
-    // Radix's props (className, style, data-state, aria-checked, handlers…)
-    // land on the motion.button through asChild.
-    <CheckboxPrimitive.Root {...props} asChild>
-      <motion.button {...press}>{children}</motion.button>
-    </CheckboxPrimitive.Root>
-  );
-}
+const Root = CheckboxPrimitive.Root;
 
 function Indicator({
   forceMount,
