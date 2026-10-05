@@ -98,5 +98,6 @@ describeMenuHighlight('radix-ui context-menu highlight', {
   // Adjacent enabled items (Base UI's arrow keys visit disabled ones too).
   first: (page) => page.getByRole('menuitem', { name: /Duplicate/ }),
   second: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
+  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
   keyboardNext: 'ArrowDown',
 });

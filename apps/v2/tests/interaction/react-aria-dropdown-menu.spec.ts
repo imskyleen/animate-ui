@@ -108,5 +108,7 @@ describeMenuHighlight('react-aria dropdown-menu highlight', {
   },
   first: (page) => page.getByRole('menuitem', { name: 'Profile' }),
   second: (page) => page.getByRole('menuitem', { name: 'Billing' }),
+  submenuTrigger: (page) =>
+    page.getByRole('menuitem', { name: 'Invite people' }),
   keyboardNext: 'ArrowDown',
 });

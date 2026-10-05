@@ -25,7 +25,9 @@ import {
 // gets highlighted, its own highlighted background (`focus:bg-accent`,
 // `data-highlighted:bg-accent`…) is read and painted on the surface, and the
 // item's background is cleared while it's highlighted (or its submenu is
-// open). Text colors stay on the item.
+// open). Text colors stay on the item. Base UI and React Aria mark an item
+// highlighted a moment before they focus it: a background on `:focus` (a
+// submenu trigger's, often) is read again once the item has the focus.
 //
 // The active item renders the surface. When another item becomes active, the
 // surface moves into it: the new element starts exactly where the previous
@@ -268,14 +270,22 @@ function useItemHighlight(
       }
       clearOwnSurface(node, highlighted || isExpanded(node));
     };
+    // Highlighted before it's focused (Base UI, React Aria): read before the
+    // focus, a `focus:` background is missing, and the surface would glide in
+    // transparent. The focus comes before the surface is rendered.
+    const readFocused = () => {
+      if (node.hasAttribute(attribute)) setSurface(readSurface(node));
+    };
     sync();
     const observer = new MutationObserver(sync);
     observer.observe(node, {
       attributes: true,
       attributeFilter: [attribute, 'aria-expanded'],
     });
+    node.addEventListener('focus', readFocused);
     return () => {
       observer.disconnect();
+      node.removeEventListener('focus', readFocused);
       clearOwnSurface(node, false);
     };
   }, [activate, node, id, attribute]);

@@ -10,8 +10,17 @@ const HIGHLIGHT = '[data-slot="item-highlight"]';
 
 export type HighlightFrame = {
   t: number;
-  /** Every copy on screen: its visual box and the opacity of its fill. */
-  copies: { top: number; left: number; width: number; opacity: number }[];
+  /**
+   * Every copy on screen: its visual box, the opacity of its fill, and whether
+   * the fill has a background at all.
+   */
+  copies: {
+    top: number;
+    left: number;
+    width: number;
+    opacity: number;
+    painted: boolean;
+  }[];
   /** A copy runs a Web Animation of `transform`. */
   composited: boolean;
 };
@@ -46,12 +55,15 @@ export function recordHighlight(page: Page, duration: number) {
             ),
             copies: elements.map((el) => {
               const box = el.getBoundingClientRect();
-              const fill = el.firstElementChild ?? el;
+              const fill = getComputedStyle(el.firstElementChild ?? el);
               return {
                 top: box.top,
                 left: box.left,
                 width: box.width,
-                opacity: Number(getComputedStyle(fill).opacity),
+                opacity: Number(fill.opacity),
+                painted:
+                  fill.backgroundColor !== 'rgba(0, 0, 0, 0)' ||
+                  fill.backgroundImage !== 'none',
               };
             }),
           });
@@ -97,7 +109,17 @@ type MenuHighlightCase = {
    * there is no first fade in to check.
    */
   highlightedOnOpen?: boolean;
+  /**
+   * A submenu trigger in the same menu as `first`. Its highlighted background
+   * is often on `:focus` only, which Base UI and React Aria set a moment after
+   * they mark it highlighted.
+   */
+  submenuTrigger?: (page: Page) => Locator;
 };
+
+/** Every copy of every frame has its fill: no transparent highlight. */
+const allPainted = (frames: HighlightFrame[]) =>
+  frames.every((f) => f.copies.every((copy) => copy.painted));
 
 export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
   test.describe(name, () => {
@@ -155,6 +177,7 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       expect(
         recorded.every((f) => f.copies.every((copy) => copy.opacity > 0.99)),
       ).toBe(true);
+      expect(allPainted(recorded)).toBe(true);
     });
 
     test('a quick sweep back and forth leaves no trail', async ({ page }) => {
@@ -173,8 +196,30 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       expect(
         recorded.every((f) => f.copies.every((copy) => copy.opacity > 0.99)),
       ).toBe(true);
+      expect(allPainted(recorded)).toBe(true);
       expect(Math.abs(recorded.at(-1)!.copies[0]!.top - to)).toBeLessThan(1);
     });
+
+    if (c.submenuTrigger) {
+      test('reached quickly, a submenu trigger wears it all the way', async ({
+        page,
+      }) => {
+        const first = c.first(page);
+        const trigger = c.submenuTrigger!(page);
+        await pointAt(page, first);
+        await page.waitForTimeout(700);
+        // Through the items in between, and on past its submenu opening.
+        const frames = recordHighlight(page, 700);
+        await pointAt(page, trigger, 4);
+        const recorded = await frames;
+        expect(recorded.every((f) => f.copies.length <= 1)).toBe(true);
+        expect(allPainted(recorded)).toBe(true);
+        const box = await boxOf(trigger);
+        expect(Math.abs(recorded.at(-1)!.copies[0]!.top - box.y)).toBeLessThan(
+          1,
+        );
+      });
+    }
 
     if (c.keyboardNext) {
       test('the keyboard moves it the same way', async ({ page }) => {

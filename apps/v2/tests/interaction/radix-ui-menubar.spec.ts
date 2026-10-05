@@ -160,5 +160,6 @@ describeMenuHighlight('radix-ui menubar highlight', {
   },
   first: (page) => page.getByRole('menuitem', { name: /New file/ }),
   second: (page) => page.getByRole('menuitem', { name: /New window/ }),
+  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Open recent' }),
   keyboardNext: 'ArrowDown',
 });
