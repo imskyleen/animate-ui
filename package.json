@@ -9,7 +9,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "registry:build": "pnpm --filter ./apps/v1 registry:build",
+    "registry:build": "pnpm --dir apps/v1 registry:build",
     "prepare": "husky",
     "check-types": "turbo check-types"
   },

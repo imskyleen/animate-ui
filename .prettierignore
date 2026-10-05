@@ -5,3 +5,6 @@ apps/v2/components/ui
 packages/cli/test/fixtures
 packages/cli/test/__snapshots__
 apps/v2/registry/icons/index.ts
+
+# Animate UI v1, frozen as in production (its own project in apps/v1)
+apps/v1

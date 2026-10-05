@@ -35,11 +35,11 @@ npm-debug.log*
 .DS_Store
 *.pem
 
-apps/v1/app/(playground)
+apps/v1/apps/www/app/(playground)
 
 # Playwright
-apps/v1/tests/.results
-apps/v1/tests/.baseline
+apps/v1/apps/www/tests/.results
+apps/v1/apps/www/tests/.baseline
 
 # e2e work dir
 e2e/.work

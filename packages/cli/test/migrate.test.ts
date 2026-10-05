@@ -1,5 +1,5 @@
 // `animate-ui migrate` on a v1 project: the production v1 registry files
-// (apps/v1/public/r) where shadcn installs them, with the registry
+// (apps/v1/apps/www/public/r) where shadcn installs them, with the registry
 // dependencies they bring (test/migrate-fixtures/v1-project, `.txt` so tsc
 // and eslint skip them), and an app using them.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -17,7 +17,10 @@ const V1 = 'src/components/animate-ui';
 
 /** The production registry's files, by where shadcn installs them. */
 const production = new Map<string, string>();
-const REGISTRY = path.resolve(import.meta.dirname, '../../../apps/v1/public/r');
+const REGISTRY = path.resolve(
+  import.meta.dirname,
+  '../../../apps/v1/apps/www/public/r',
+);
 for (const name of readdirSync(REGISTRY)) {
   if (!name.endsWith('.json') || name.startsWith('demo-')) continue;
   const item = JSON.parse(readFileSync(path.join(REGISTRY, name), 'utf8'));
