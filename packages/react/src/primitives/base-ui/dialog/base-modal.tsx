@@ -20,6 +20,7 @@ import {
   motionRender,
   useHiddenWhenClosed,
   useModalTransitions,
+  type ContentFlipProps,
   type ModalAnimationProps,
   type ModalTargets,
 } from '../../../internal/modal-motion';
@@ -149,9 +150,17 @@ function Backdrop({
   );
 }
 
-type PopupProps = DialogPrimitive.Popup.Props & ModalAnimationProps;
+type PopupProps = DialogPrimitive.Popup.Props &
+  ModalAnimationProps &
+  ContentFlipProps;
 
-function Popup({ transition, exitTransition, render, ...props }: PopupProps) {
+function Popup({
+  from,
+  transition,
+  exitTransition,
+  render,
+  ...props
+}: PopupProps) {
   const reduce = useShouldReduceMotion();
   // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
   const side = getModalSide((props as Record<string, unknown>)['data-side']);
@@ -161,7 +170,7 @@ function Popup({ transition, exitTransition, render, ...props }: PopupProps) {
     side ? SHEET_TRANSITION : DIALOG_TRANSITION,
   );
   const motionProps = useMotionElementProps(
-    getContentTargets({ side, reduce, enter, exit }),
+    getContentTargets({ side, from, reduce, enter, exit }),
   );
 
   return (

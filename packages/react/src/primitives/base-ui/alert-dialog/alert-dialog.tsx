@@ -12,7 +12,10 @@ import {
   Portal as AnimatedPortal,
   createRoot,
 } from '../dialog/base-modal';
-import type { ModalAnimationProps } from '../../../internal/modal-motion';
+import type {
+  FlipDirection,
+  ModalAnimationProps,
+} from '../../../internal/modal-motion';
 
 // Same API as Base UI's Alert Dialog, animated like the Dialog (Animate UI
 // v1): the Backdrop fades and un-blurs, the Popup tips forward from
@@ -31,8 +34,17 @@ type BackdropAnimationProps = {
   exitTransition?: ModalAnimationProps['transition'];
 };
 
+/** The edge `AlertDialog.Popup` tips from (Animate UI v1's `from`). */
+type AlertDialogFlipDirection = FlipDirection;
+
 /** Animate UI's additions to `AlertDialog.Popup`. */
 type PopupAnimationProps = {
+  /**
+   * The edge the popup tips from as it comes in (and goes back to), as in
+   * Animate UI v1.
+   * @default 'top'
+   */
+  from?: AlertDialogFlipDirection;
   /**
    * Transition of the opening.
    * @default { type: 'spring', stiffness: 150, damping: 25 }
@@ -128,4 +140,5 @@ export {
   Close,
   Handle,
   createHandle,
+  type AlertDialogFlipDirection,
 };

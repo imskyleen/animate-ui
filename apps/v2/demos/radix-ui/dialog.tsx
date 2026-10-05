@@ -162,13 +162,19 @@ const FIELDS = [
 
 export const controls = {
   DialogContent: {
+    from: {
+      value: "top",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
     showCloseButton: { value: true },
   },
 }
 
 export default function DialogDemo({
+  from = "top",
   showCloseButton = true,
 }: {
+  from?: "top" | "bottom" | "left" | "right"
   showCloseButton?: boolean
 }) {
   return (
@@ -176,7 +182,7 @@ export default function DialogDemo({
       <DialogTrigger asChild>
         <Button variant="outline">Edit profile</Button>
       </DialogTrigger>
-      <DialogContent showCloseButton={showCloseButton}>
+      <DialogContent from={from} showCloseButton={showCloseButton}>
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>

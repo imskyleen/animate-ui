@@ -4,7 +4,10 @@ import type * as React from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 
 import { createRadixModal } from './create-radix-modal';
-import type { ModalAnimationProps } from '../../../internal/modal-motion';
+import type {
+  FlipDirection,
+  ModalAnimationProps,
+} from '../../../internal/modal-motion';
 
 // Same API as Radix's Dialog, animated like Animate UI v1: the Overlay fades
 // and un-blurs, the Content tips forward from `perspective(500px)
@@ -34,8 +37,18 @@ type OverlayAnimationProps = {
   exitTransition?: ModalAnimationProps['transition'];
 };
 
+/** The edge `Dialog.Content` tips from (Animate UI v1's `from`). */
+type DialogFlipDirection = FlipDirection;
+
 /** Animate UI's additions to `Dialog.Content`. */
 type ContentAnimationProps = {
+  /**
+   * The edge the content tips from as it comes in (and goes back to), as in
+   * Animate UI v1. Ignored by a sheet (`data-side`), which slides from its
+   * side.
+   * @default 'top'
+   */
+  from?: DialogFlipDirection;
   /**
    * Transition of the opening, a sheet's slide from its `data-side` edge
    * included.
@@ -102,4 +115,5 @@ export {
   type DialogTitleProps,
   type DialogDescriptionProps,
   type DialogCloseProps,
+  type DialogFlipDirection,
 };

@@ -28,6 +28,8 @@ import {
   ariaMotionRender,
   toCssTiming,
   useModalTransitions,
+  type ContentFlipProps,
+  type FlipDirection,
   type ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
@@ -83,6 +85,7 @@ type ModalOverlayProps = ModalOverlayPrimitiveProps &
   React.RefAttributes<HTMLDivElement>;
 type ModalProps = ModalOverlayPrimitiveProps &
   ModalAnimationPropsDoc &
+  ContentFlipProps &
   React.RefAttributes<HTMLDivElement>;
 
 type LiveState = {
@@ -281,6 +284,7 @@ function Modal(props: ModalProps) {
 }
 
 function ModalContent({
+  from,
   transition,
   exitTransition,
   render,
@@ -295,7 +299,7 @@ function ModalContent({
     exitTransition,
     side ? SHEET_TRANSITION : DIALOG_TRANSITION,
   );
-  const targets = getContentTargets({ side, reduce, enter, exit });
+  const targets = getContentTargets({ side, from, reduce, enter, exit });
 
   return (
     <ModalPrimitive
@@ -310,4 +314,9 @@ function ModalContent({
   );
 }
 
-export { Modal, ModalOverlay, type ModalOverlayProps };
+export {
+  Modal,
+  ModalOverlay,
+  type ModalOverlayProps,
+  type FlipDirection as ModalFlipDirection,
+};

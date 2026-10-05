@@ -174,13 +174,26 @@ export {
   AlertDialogTrigger,
 }
 
-export default function AlertDialogDemo() {
+export const controls = {
+  AlertDialogContent: {
+    from: {
+      value: "top",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+  },
+}
+
+export default function AlertDialogDemo({
+  from = "top",
+}: {
+  from?: "top" | "bottom" | "left" | "right"
+}) {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="destructive" />}>
         Delete project
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent from={from}>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this project?</AlertDialogTitle>
           <AlertDialogDescription>

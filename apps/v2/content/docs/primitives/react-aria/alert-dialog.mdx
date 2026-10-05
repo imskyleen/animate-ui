@@ -48,6 +48,7 @@ React Aria has no Animate UI v1 counterpart: the motion is v1's Alert Dialog (Ra
 
 - **ModalOverlay** fades in in 200ms, ease-out, and out the same way. React Aria renders the Modal inside it, so it fades its own background color and backdrop filter (from transparent to the values its classes set) rather than its opacity, which would fade the modal with it.
 - **Modal** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, still visible once the overlay is gone, then unmounts.
+- `from` picks the edge the modal tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`).
 - `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
 - Animate UI passes `isExiting` while the exit plays, so React Aria keeps the modal mounted, `data-exiting` stays accurate, and focus returns to the trigger.
 - Without `isDismissable`, an outside click doesn't close it; Escape does, unless `isKeyboardDismissDisabled`.
@@ -61,6 +62,11 @@ React Aria has no Animate UI v1 counterpart: the motion is v1's Alert Dialog (Ra
 
 <TypeTable
   type={{
+    from: {
+      description: 'Modal: the edge it tips from as it comes in, as in v1.',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
     transition: {
       description: 'Transition of the opening (the fade in, for ModalOverlay).',
       type: 'Transition',

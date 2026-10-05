@@ -4,7 +4,10 @@ import type * as React from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
 import { createRadixModal } from '../dialog/create-radix-modal';
-import type { ModalAnimationProps } from '../../../internal/modal-motion';
+import type {
+  FlipDirection,
+  ModalAnimationProps,
+} from '../../../internal/modal-motion';
 
 // Same API as Radix's Alert Dialog, animated like the Dialog (Animate UI v1):
 // the Overlay fades and un-blurs, the Content tips forward from
@@ -34,8 +37,16 @@ type OverlayAnimationProps = {
   exitTransition?: ModalAnimationProps['transition'];
 };
 
+/** The edge `AlertDialog.Content` tips from (Animate UI v1's `from`). */
+type AlertDialogFlipDirection = FlipDirection;
+
 /** Animate UI's additions to `AlertDialog.Content`. */
 type ContentAnimationProps = {
+  /**
+   * The edge the content tips from as it comes in (and goes back to), as in
+   * Animate UI v1.    * @default 'top'
+   */
+  from?: AlertDialogFlipDirection;
   /**
    * Transition of the opening.
    * @default { type: 'spring', stiffness: 150, damping: 25 }
@@ -101,4 +112,5 @@ export {
   type AlertDialogCancelProps,
   type AlertDialogTitleProps,
   type AlertDialogDescriptionProps,
+  type AlertDialogFlipDirection,
 };

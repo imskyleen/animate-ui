@@ -12,9 +12,12 @@ import { motionTokens, useTempoTransition } from '../utils/motion';
 //
 // - The overlay fades in and un-blurs (opacity 0 → 1, blur(4px) → blur(0px))
 //   in 200ms on a strong ease-out, and leaves the same way.
-// - The content, v1's default entrance (`from="top"`): it fades in, un-blurs
-//   and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on a
-//   spring (stiffness 150, damping 25), and leaves the same way.
+// - The content, v1's entrance: it fades in, un-blurs and tips forward from
+//   `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring (stiffness
+//   150, damping 25), and leaves the same way. `from` picks the edge it tips
+//   from, as in v1: `top` (the default) and `right` turn it by -20deg,
+//   `bottom` and `left` by 20deg, around the X axis for top and bottom, the Y
+//   axis for left and right.
 // - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
 //   from that edge by its own size and fades in, on a livelier spring
 //   (stiffness 150, damping 22), and leaves the same way.
@@ -32,6 +35,17 @@ export const DIALOG_TRANSITION = motionTokens.spring.dialog;
  * a little livelier than the dialog's (they travel farther).
  */
 export const SHEET_TRANSITION = motionTokens.spring.sheet;
+
+/** Animate UI's addition to a dialog's content: v1's `from`. */
+export type ContentFlipProps = {
+  /**
+   * The edge the content tips from as it comes in (and goes back to): its
+   * top edge first by default. Ignored by a sheet (`data-side`), which
+   * slides from its side.
+   * @default 'top'
+   */
+  from?: FlipDirection;
+};
 
 /** Animate UI's additions to an overlay or a modal's content. */
 export type ModalAnimationProps = {
@@ -75,9 +89,21 @@ const OFFSCREEN: Record<ModalSide, string> = {
   left: 'translateX(-100%)',
 };
 
-// v1's `from="top"`. The same functions on both ends, so they interpolate.
-const TIPPED = `perspective(500px) rotateX(-20deg) scale(${motionTokens.scale.dialog})`;
-const UPRIGHT = 'perspective(500px) rotateX(0deg) scale(1)';
+/** The edge a dialog tips from (v1's `from`). */
+export type FlipDirection = 'top' | 'bottom' | 'left' | 'right';
+
+/**
+ * v1's tipped and upright transforms for `from`, with the same functions on
+ * both ends so they interpolate.
+ */
+function getFlip(from: FlipDirection) {
+  const axis = from === 'top' || from === 'bottom' ? 'rotateX' : 'rotateY';
+  const angle = from === 'bottom' || from === 'left' ? '20deg' : '-20deg';
+  return {
+    tipped: `perspective(500px) ${axis}(${angle}) scale(${motionTokens.scale.dialog})`,
+    upright: `perspective(500px) ${axis}(0deg) scale(1)`,
+  };
+}
 
 export type ModalTargets = {
   initial: TargetAndTransition;
@@ -93,16 +119,19 @@ type TargetOptions = {
 };
 
 /**
- * The content: v1's dialog entrance, or v1's sheet slide from `side`.
- * Reduced motion keeps the fade (and the blur) and drops the movement.
+ * The content: v1's dialog entrance (tipped from `from`), or v1's sheet slide
+ * from `side`. Reduced motion keeps the fade (and the blur) and drops the
+ * movement.
  */
 export function getContentTargets({
   side,
+  from = 'top',
   reduce,
   enter,
   exit,
 }: TargetOptions & {
   side: ModalSide | undefined;
+  from?: FlipDirection;
   reduce: boolean;
 }): ModalTargets {
   if (side) {
@@ -119,17 +148,18 @@ export function getContentTargets({
     };
   }
 
+  const { tipped, upright } = getFlip(from);
   const hidden = {
     opacity: 0,
     filter: motionTokens.blur.surface,
-    transform: reduce ? UPRIGHT : TIPPED,
+    transform: reduce ? upright : tipped,
   };
   return {
     initial: hidden,
     animate: {
       opacity: 1,
       filter: 'blur(0px)',
-      transform: UPRIGHT,
+      transform: upright,
       transition: enter,
     },
     exit: { ...hidden, transition: exit },

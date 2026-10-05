@@ -12,7 +12,10 @@ import {
   Portal as AnimatedPortal,
   createRoot,
 } from './base-modal';
-import type { ModalAnimationProps } from '../../../internal/modal-motion';
+import type {
+  FlipDirection,
+  ModalAnimationProps,
+} from '../../../internal/modal-motion';
 
 // Same API as Base UI's Dialog, animated like Animate UI v1: the Backdrop
 // fades and un-blurs, the Popup tips forward from `perspective(500px)
@@ -31,12 +34,23 @@ type BackdropAnimationProps = {
   exitTransition?: ModalAnimationProps['transition'];
 };
 
+/** The edge `Dialog.Popup` tips from (Animate UI v1's `from`). */
+type DialogFlipDirection = FlipDirection;
+
 /** Animate UI's additions to `Dialog.Popup`. */
 type PopupAnimationProps = {
   /**
+   * The edge the popup tips from as it comes in (and goes back to), as in
+   * Animate UI v1. Ignored by a sheet (`data-side`), which slides from its
+   * side.
+   * @default 'top'
+   */
+  from?: DialogFlipDirection;
+  /**
    * Transition of the opening, a sheet's slide from its `data-side` edge
    * included.
-   * @default { type: 'spring', stiffness: 150, damping: 25 }
+   * @default { type: 'spring', stiffness: 150, damping: 25 } (damping 22 for a
+   * sheet, with `data-side`)
    */
   transition?: ModalAnimationProps['transition'];
   /** Transition of the closing. Defaults to `transition`. */
@@ -126,4 +140,5 @@ export {
   Close,
   Handle,
   createHandle,
+  type DialogFlipDirection,
 };

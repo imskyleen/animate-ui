@@ -19,6 +19,7 @@ import {
   motionRender,
   useHiddenWhenClosed,
   useModalTransitions,
+  type ContentFlipProps,
   type ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
@@ -58,13 +59,14 @@ type PortalProps = {
   [key: string]: any;
 };
 
-type PartProps = ModalAnimationProps & {
-  forceMount?: true;
-  asChild?: boolean;
-  style?: React.CSSProperties;
-  children?: React.ReactNode;
-  [key: string]: any;
-};
+type PartProps = ModalAnimationProps &
+  ContentFlipProps & {
+    forceMount?: true;
+    asChild?: boolean;
+    style?: React.CSSProperties;
+    children?: React.ReactNode;
+    [key: string]: any;
+  };
 
 export function createRadixModal(parts: RadixModalParts, name: string) {
   const [OpenProvider, useOpen] = getStrictContext<OpenState>(`${name}.Root`);
@@ -201,6 +203,7 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     open,
     keepMounted,
     asChild,
+    from,
     transition,
     exitTransition,
     children,
@@ -215,7 +218,7 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       exitTransition,
       side ? SHEET_TRANSITION : DIALOG_TRANSITION,
     );
-    const targets = getContentTargets({ side, reduce, enter, exit });
+    const targets = getContentTargets({ side, from, reduce, enter, exit });
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(
       open,
       keepMounted,

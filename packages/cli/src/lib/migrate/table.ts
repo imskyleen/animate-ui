@@ -519,6 +519,7 @@ export const PRIMITIVES: Record<string, Migration> = {
       AlertDialogContentProps: 'AlertDialogContentProps',
       AlertDialogTitleProps: 'AlertDialogTitleProps',
       AlertDialogDescriptionProps: 'AlertDialogDescriptionProps',
+      AlertDialogFlipDirection: 'AlertDialogFlipDirection',
     },
     unmapped: [
       'AlertDialogHeader',
@@ -527,7 +528,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'AlertDialogHeaderProps',
       'AlertDialogFooterProps',
       'AlertDialogContextType',
-      'AlertDialogFlipDirection',
     ],
   },
   'radix/checkbox': {
@@ -577,6 +577,7 @@ export const PRIMITIVES: Record<string, Migration> = {
       DialogContentProps: 'DialogContentProps',
       DialogTitleProps: 'DialogTitleProps',
       DialogDescriptionProps: 'DialogDescriptionProps',
+      DialogFlipDirection: 'DialogFlipDirection',
     },
     unmapped: [
       'DialogHeader',
@@ -585,7 +586,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'DialogHeaderProps',
       'DialogFooterProps',
       'DialogContextType',
-      'DialogFlipDirection',
     ],
   },
   'radix/dropdown-menu': {
@@ -876,6 +876,7 @@ export const PRIMITIVES: Record<string, Migration> = {
       AlertDialogPopupProps: 'AlertDialog.Popup.Props',
       AlertDialogTitleProps: 'AlertDialog.Title.Props',
       AlertDialogDescriptionProps: 'AlertDialog.Description.Props',
+      AlertDialogFlipDirection: 'AlertDialogFlipDirection',
     },
     unmapped: [
       'AlertDialogHeader',
@@ -884,7 +885,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'AlertDialogHeaderProps',
       'AlertDialogFooterProps',
       'AlertDialogContextType',
-      'AlertDialogFlipDirection',
     ],
   },
   'base/checkbox': {
@@ -934,6 +934,7 @@ export const PRIMITIVES: Record<string, Migration> = {
       DialogPopupProps: 'Dialog.Popup.Props',
       DialogTitleProps: 'Dialog.Title.Props',
       DialogDescriptionProps: 'Dialog.Description.Props',
+      DialogFlipDirection: 'DialogFlipDirection',
     },
     unmapped: [
       'DialogHeader',
@@ -942,7 +943,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       'DialogHeaderProps',
       'DialogFooterProps',
       'DialogContextType',
-      'DialogFlipDirection',
     ],
   },
   'base/menu': {
@@ -1226,13 +1226,6 @@ const BASE_FOLLOW_CURSOR: Record<string, PropRule> = {
   },
 };
 
-const FLIP: Record<string, PropRule> = {
-  from: {
-    manual:
-      "v1 flipped the content in 3D from this side (`top` by default); v2 doesn't flip it. Drop the prop.",
-  },
-};
-
 const PRESSED_ANIMATION: Record<string, PropRule> = {
   pressedAnimation: {
     manual:
@@ -1331,15 +1324,11 @@ const EXTRAS: Record<string, Partial<Migration>> = {
   'base/collapsible': {
     props: { CollapsiblePanel: { keepRendered: { rename: 'keepMounted' } } },
   },
-  'radix/dialog': { props: { DialogContent: FLIP } },
-  'radix/alert-dialog': { props: { AlertDialogContent: FLIP } },
   'base/dialog': {
     props: {
       Dialog: inverted('dismissible', 'disablePointerDismissal'),
-      DialogPopup: FLIP,
     },
   },
-  'base/alert-dialog': { props: { AlertDialogPopup: FLIP } },
   'radix/tooltip': { props: { Tooltip: FOLLOW_CURSOR } },
   'radix/hover-card': { props: { HoverCard: FOLLOW_CURSOR } },
   'base/tooltip': {
