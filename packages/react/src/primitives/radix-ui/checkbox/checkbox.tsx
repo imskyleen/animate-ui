@@ -13,7 +13,7 @@ import {
 
 // Same API as Radix's Checkbox, animated like Animate UI v1's checkbox: the
 // Root scales to 0.95 while pressed (no hover scale), and the check
-// draws itself (its stroke and opacity, 0.2s after 0.2s) and erases in 0.2s.
+// draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in 0.3s.
 // The Indicator stays mounted while its check erases, then unmounts like
 // Radix's.
 

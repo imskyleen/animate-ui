@@ -21,7 +21,7 @@ import {
 // checkbox (v1 had no React Aria one): the checkbox scales to 0.95 while
 // pressed (no hover scale), and the check the user renders inside
 // `data-slot="checkbox-indicator"` (shadcn/ui's indicator) draws itself when
-// selected (its stroke and opacity, 0.2s after 0.2s) and erases in 0.2s.
+// selected (its stroke and opacity, 0.3s after 0.2s) and erases in 0.3s.
 
 /** React Aria's props, plus Animate UI's `transition` and `exitTransition` (the check's). */
 type CheckboxProps = CheckboxPrimitiveProps & IndicatorAnimationProps;

@@ -58,8 +58,8 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)         |
 | `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                     |
 | `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                     |
-| `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered               |
-| `transition.uncheck`    | `{ duration: 0.2, ease: ease.draw }`             | A check erasing itself                                         |
+| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered               |
+| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                         |
 | `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                          |
 | `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)      |
 

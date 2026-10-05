@@ -36,7 +36,7 @@ Coming from the `@radix-ui/react-checkbox` package? Use the subpath: `import * a
 
 The motion of Animate UI v1's checkbox:
 
-- **Indicator**: the check draws itself. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.2s, after a 0.2s delay, on Motion's default ease-out. Unchecking erases it in 0.2s, without the delay, then the indicator unmounts, as in Radix. The indicator element itself never moves: its content animates, so your layout and classes stay as they are. Content that isn't an SVG shape fades the same way.
+- **Indicator**: the check draws itself. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.3s, after a 0.2s delay, on Motion's default ease-out (v1's delay and curve, drawn a little slower than v1's 0.2s). Unchecking erases it in 0.3s, without the delay, then the indicator unmounts, as in Radix. The indicator element itself never moves: its content animates, so your layout and classes stay as they are. Content that isn't an SVG shape fades the same way.
 - **Root** scales to 0.95 while pressed (no hover scale), on Motion's default spring for scale (stiffness 550, damping 30).
 - A box that is checked when it mounts draws its check too, as v1's did. The indicator stays hidden until then, so a server-rendered page doesn't flash the check first.
 - Checking with Space animates the same way: the state changes at once, the animation never delays it.
@@ -73,12 +73,12 @@ Every part takes exactly the props of [Radix UI's Checkbox](https://www.radix-ui
     transition: {
       description: 'Transition of the check drawing itself.',
       type: 'Transition',
-      default: '{ duration: 0.2, delay: 0.2, ease: [0, 0, 0.58, 1] }',
+      default: '{ duration: 0.3, delay: 0.2, ease: [0, 0, 0.58, 1] }',
     },
     exitTransition: {
       description: 'Transition of the check erasing itself.',
       type: 'Transition',
-      default: '{ duration: 0.2, ease: [0, 0, 0.58, 1] }',
+      default: '{ duration: 0.3, ease: [0, 0, 0.58, 1] }',
     },
   }}
 />

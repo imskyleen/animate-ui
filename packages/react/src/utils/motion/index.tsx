@@ -99,10 +99,13 @@ const transition = {
   disclosure: { duration: 0.35, ease: ease.soft },
   /** A panel coming in from a blur (tab panels). */
   panel: { duration: 0.5, ease: ease.out },
-  /** A check drawing itself, once the box has answered the press (v1's). */
-  check: { duration: 0.2, delay: 0.2, ease: ease.draw },
-  /** A check erasing itself (v1's). */
-  uncheck: { duration: 0.2, ease: ease.draw },
+  /**
+   * A check drawing itself, once the box has answered the press: v1's delay
+   * and curve, drawn a little slower than v1's 0.2s so it's seen.
+   */
+  check: { duration: 0.3, delay: 0.2, ease: ease.draw },
+  /** A check erasing itself, as slowly as it draws. */
+  uncheck: { duration: 0.3, ease: ease.draw },
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
   /** Deliberately no animation. */

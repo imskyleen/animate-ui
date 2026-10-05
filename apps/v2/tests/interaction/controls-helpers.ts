@@ -180,7 +180,7 @@ const CHECK = '[data-slot="checkbox-indicator"] svg path';
 
 /**
  * v1's check drawing itself: hidden for 0.2s after the state flips, then its
- * stroke and its opacity going to 1 together in 0.2s, on Motion's easeOut.
+ * stroke and its opacity going to 1 together in 0.3s, on Motion's easeOut.
  */
 function expectCheckDraws(samples: NonNullable<Sample>[], reduce = false) {
   const shown = present(samples).filter((s) => s.state === 'true');
@@ -204,12 +204,12 @@ function expectCheckDraws(samples: NonNullable<Sample>[], reduce = false) {
   }
   const settled = shown.find((s) => s.opacity === 1 && s.dash === 1);
   expect(settled).toBeDefined();
-  expect(settled!.t - first.t).toBeLessThan(550);
+  expect(settled!.t - first.t).toBeLessThan(650);
   for (const s of shown) expect(s.scale).toBe(1);
 }
 
 /**
- * v1's check erasing itself in 0.2s, no delay, on Motion's easeOut; then the
+ * v1's check erasing itself in 0.3s, no delay, on Motion's easeOut; then the
  * indicator goes.
  */
 function expectCheckErases(samples: NonNullable<Sample>[]) {
@@ -219,12 +219,12 @@ function expectCheckErases(samples: NonNullable<Sample>[]) {
   const erasing = leaving.filter((s) => s.opacity > 0.05 && s.opacity < 0.95);
   expect(erasing.length).toBeGreaterThan(0);
   for (const s of erasing) {
-    expect(s.t - flipped[0]!.t).toBeLessThan(250);
+    expect(s.t - flipped[0]!.t).toBeLessThan(350);
     expect(Math.abs(s.dash! - s.opacity)).toBeLessThan(0.12);
   }
   const gone = flipped.find((s) => s.width === -1);
   expect(gone).toBeDefined();
-  expect(gone!.t - flipped[0]!.t).toBeLessThan(450);
+  expect(gone!.t - flipped[0]!.t).toBeLessThan(550);
 }
 
 export function describeCheckboxDemo(lib: Lib) {
@@ -240,14 +240,14 @@ export function describeCheckboxDemo(lib: Lib) {
       expect(await check.getAttribute('stroke-dasharray')).toBeNull();
     });
 
-    test('the check draws itself after 0.2s, in 0.2s', async ({ page }) => {
+    test('the check draws itself after 0.2s, in 0.3s', async ({ page }) => {
       await startSampling(page, CHECKBOX, 1, CHECK);
       await page.locator(CHECKBOX).nth(1).click();
       await page.waitForTimeout(900);
       expectCheckDraws(await readSamples(page));
     });
 
-    test('unchecking erases the check in 0.2s, then removes it', async ({
+    test('unchecking erases the check in 0.3s, then removes it', async ({
       page,
     }) => {
       await startSampling(page, CHECKBOX, 0, CHECK);

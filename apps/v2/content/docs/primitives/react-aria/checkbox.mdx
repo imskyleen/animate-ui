@@ -38,7 +38,7 @@ React Aria lets you render the indicator yourself. Animate UI animates the conte
 
 The motion of Animate UI v1's Radix UI checkbox (v1 had no React Aria one):
 
-- **Indicator**: the check you render inside `data-slot="checkbox-indicator"` draws itself when it mounts. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.2s, after a 0.2s delay, on Motion's default ease-out. When it unmounts, a copy of it erases in 0.2s in its place, then goes away: your render function stays the single source of truth, React Aria's state and render props are never delayed. Content that isn't an SVG shape fades the same way.
+- **Indicator**: the check you render inside `data-slot="checkbox-indicator"` draws itself when it mounts. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.3s, after a 0.2s delay, on Motion's default ease-out (v1's delay and curve, drawn a little slower than v1's 0.2s). When it unmounts, a copy of it erases in 0.3s in its place, then goes away: your render function stays the single source of truth, React Aria's state and render props are never delayed. Content that isn't an SVG shape fades the same way.
 - **Checkbox** scales to 0.95 while pressed (React Aria's `isPressed`: the pointer, or Space on the keyboard), with no hover scale, on Motion's default spring for scale (stiffness 550, damping 30).
 - Checking with Space animates the same way: the state changes at once, the animation never delays it.
 - A box that is already checked on load renders at rest: the check is your markup, rendered by the server before any script runs.
@@ -57,12 +57,12 @@ The motion of Animate UI v1's Radix UI checkbox (v1 had no React Aria one):
     transition: {
       description: 'Transition of the check drawing itself.',
       type: 'Transition',
-      default: '{ duration: 0.2, delay: 0.2, ease: [0, 0, 0.58, 1] }',
+      default: '{ duration: 0.3, delay: 0.2, ease: [0, 0, 0.58, 1] }',
     },
     exitTransition: {
       description: 'Transition of the check erasing itself.',
       type: 'Transition',
-      default: '{ duration: 0.2, ease: [0, 0, 0.58, 1] }',
+      default: '{ duration: 0.3, ease: [0, 0, 0.58, 1] }',
     },
   }}
 />

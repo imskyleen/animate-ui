@@ -19,8 +19,9 @@ import {
 } from '../../utils/motion';
 
 // Checkmarks and radio dots, as Animate UI v1's. The check draws itself: its
-// stroke (`pathLength`) and its opacity go from 0 to 1 in 0.2s, after 0.2s,
-// and back in 0.2s when cleared (v1's `CheckboxIndicator`). The dot pops:
+// stroke (`pathLength`) and its opacity go from 0 to 1 in 0.3s, after 0.2s,
+// and back in 0.3s when cleared (v1's `CheckboxIndicator`, drawn a little
+// slower than its 0.2s). The dot pops:
 // its scale and opacity spring from 0 (stiffness 200, damping 16), and back
 // to 0 when it leaves (v1's `RadioGroupIndicator`).
 //
@@ -36,20 +37,20 @@ type IndicatorKind = 'check' | 'dot';
 /** Animation props of the animated indicator parts. */
 type IndicatorAnimationProps = {
   /**
-   * Transition of the check (or dot) appearing. Check: 0.2s after 0.2s.
+   * Transition of the check (or dot) appearing. Check: 0.3s after 0.2s.
    * Dot: a spring (stiffness 200, damping 16).
    */
   transition?: Transition;
   /**
-   * Transition of the check (or dot) leaving. Check: 0.2s. Dot: the same
+   * Transition of the check (or dot) leaving. Check: 0.3s. Dot: the same
    * spring as it appears.
    */
   exitTransition?: Transition;
 };
 
-/** The check draws in 0.2s, after 0.2s, on Motion's easeOut (v1's timing). */
+/** The check draws in 0.3s, after 0.2s, on Motion's easeOut (v1's curve). */
 const CHECK_TRANSITION: Transition = motionTokens.transition.check;
-/** The check erases in 0.2s, on Motion's easeOut (v1's timing). */
+/** The check erases in 0.3s, on Motion's easeOut (v1's curve). */
 const CHECK_EXIT_TRANSITION: Transition = motionTokens.transition.uncheck;
 /** v1's `RadioGroupIndicator` / `RadioIndicator`, in and out: bouncy. */
 const DOT_TRANSITION: Transition = motionTokens.spring.bounce;
