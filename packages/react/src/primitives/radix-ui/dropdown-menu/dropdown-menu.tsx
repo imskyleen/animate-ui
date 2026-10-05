@@ -16,7 +16,7 @@ import {
 } from '../_menu/menu';
 
 // Same API as Radix's Dropdown Menu, animated like Animate UI v1's: the
-// Content and SubContent fade and scale in 200ms, a highlight glides behind
+// Content and SubContent fade and scale in 250ms, a highlight glides behind
 // the highlighted item (into submenus too), checks pop in and the radio
 // indicator glides. The Root and each Sub mirror their open state (Radix
 // keeps it private) so the Content and SubContent can play an exit before

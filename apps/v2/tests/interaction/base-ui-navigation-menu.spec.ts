@@ -18,7 +18,7 @@ test.describe('base-ui navigation-menu demo', () => {
     });
   });
 
-  test('the popup scales and fades in from its trigger in 200ms', async ({
+  test('the popup scales and fades in from its trigger in 250ms', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, POPUP);
@@ -39,7 +39,7 @@ test.describe('base-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
-    // Sampled in the page: the resize only takes 200ms.
+    // Sampled in the page: the resize only takes 250ms.
     const widths = page.evaluate(
       (selector) =>
         new Promise<number[]>((resolve) => {

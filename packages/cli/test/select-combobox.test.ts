@@ -49,10 +49,12 @@ test('combobox: the `@base-ui/react` import of every base moves to the Base UI b
   }
 });
 
-test('react-aria combobox: Tag and TagList come from the mirror too', () => {
+test('react-aria combobox: the list, its items and the tags come from the mirror too', () => {
   for (const file of fixtures('react-aria', 'combobox')) {
     const { imports } = transform(read('react-aria', file));
     expect(imports.map((change) => change.name).sort(), file).toEqual([
+      'ListBox',
+      'ListBoxItem',
       'Popover',
       'Tag',
       'TagList',

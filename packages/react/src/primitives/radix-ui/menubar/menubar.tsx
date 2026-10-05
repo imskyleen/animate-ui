@@ -20,7 +20,7 @@ import {
 // Same API as Radix's Menubar. The Root mirrors which menu is open (Radix
 // keeps it private) so each Content can play an exit before it unmounts.
 // Radix's Menubar has no Animate UI v1 counterpart: each menu moves like v1's
-// DropdownMenu (a 200ms fade and scale, a highlight gliding behind the
+// DropdownMenu (a 250ms fade and scale, a highlight gliding behind the
 // highlighted item), including when moving from one open menu to another.
 
 type MenubarProps = MenubarPrimitive.MenubarProps;

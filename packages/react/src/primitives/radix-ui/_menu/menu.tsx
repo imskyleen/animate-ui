@@ -29,7 +29,7 @@ import {
 // v1's DropdownMenu). Each module passes its own Radix parts to these
 // factories.
 //
-// - Content and SubContent fade and scale from 0.9 in 200ms, both ways.
+// - Content and SubContent fade and scale from 0.9 in 250ms, both ways.
 // - One highlight glides behind the highlighted item (internal/item-highlight).
 // - A checkbox item's check pops in from half its size when it appears; a
 //   radio item's indicator glides to the newly checked item.
@@ -38,7 +38,7 @@ import {
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
+   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -152,7 +152,8 @@ type ContentOptions = {
   sub?: boolean;
   /**
    * Where focus goes when the menu closes, done at once instead of after the
-   * exit (Radix does it on unmount, 200ms later): `trigger` (the element
+   * exit (Radix does it on unmount, once the exit is over): `trigger` (the
+   * element
    * labelling the content), `previous` (the element focused before opening),
    * or `none` (Radix handles it, as it does for submenus).
    */

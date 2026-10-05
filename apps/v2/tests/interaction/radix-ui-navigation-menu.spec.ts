@@ -18,7 +18,7 @@ test.describe('radix-ui navigation-menu demo', () => {
     });
   });
 
-  test('the viewport drops in with a 200ms scale and fade', async ({
+  test('the viewport drops in with a 250ms scale and fade', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, VIEWPORT);
@@ -41,7 +41,7 @@ test.describe('radix-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
-    // Sampled in the page: the resize only takes 200ms.
+    // Sampled in the page: the resize only takes 250ms.
     const widths = page.evaluate(
       (selector) =>
         new Promise<number[]>((resolve) => {

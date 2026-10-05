@@ -14,7 +14,7 @@ test.describe('base-ui menu demo', () => {
     });
   });
 
-  test('opens with a 200ms scale and fade from the trigger', async ({
+  test('opens with a 250ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);

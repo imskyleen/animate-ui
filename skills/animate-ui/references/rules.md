@@ -147,7 +147,7 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 ### B2. Pick a tween's curve by what the element does
 
 - Entering or leaving: `ease.out` (`cubic-bezier(0.23, 1, 0.32, 1)`). It starts fast, so the interface answers at once.
-- Large surfaces the eye watches change, a panel unfolding and pushing the page (accordion, collapsible) or an overlay dimming it: `ease.soft` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the change is seen rather than snapped: on `ease.out`, a 200ms overlay is two-thirds in on its first frame.
+- Surfaces the eye watches change, a panel unfolding and pushing the page (accordion, collapsible), an overlay dimming it or a menu opening: `ease.soft` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the change is seen rather than snapped: on `ease.out`, a 200ms overlay is two-thirds in on its first frame.
 - A mark drawing itself in a control (a checkbox's check): `ease.draw` (`cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut`, v1's). Gentle, so the stroke is seen being drawn: on `ease.out`, a 0.2s check is half drawn on its first frames.
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
@@ -159,7 +159,7 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 transition={{ duration: 0.2, ease: 'easeInOut' }} // a menu entering
 
 // Do
-transition={motionTransition.menu} // 0.2s, ease.out
+transition={motionTransition.menu} // 0.25s, ease.soft
 ```
 
 ### B3. Fast where it's frequent, alive everywhere
@@ -169,14 +169,14 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Motion                          | Feel                               | Token                                          |
 | ------------------------------- | ---------------------------------- | ---------------------------------------------- |
 | Press                           | ~120ms                             | `spring.press`                                 |
-| Menus, selects                  | 200ms                              | `transition.menu`                              |
+| Menus, selects                  | 250ms, soft ease-out               | `transition.menu`                              |
 | Tooltips, popovers, hover cards | there in ~200ms, settled by ~500ms | `spring.pop`                                   |
 | Selection, pointer highlight    | a smooth slide / a quick follow    | `spring.selection`, `spring.highlight`         |
 | Disclosures                     | 350ms, soft ease-out               | `transition.disclosure`                        |
 | Dialogs, sheets                 | ~450ms, ~550ms                     | `spring.dialog`, `spring.sheet`                |
 | Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
 
-A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure or an overlay on `ease.out` felt rushed, so they got the softer `ease.soft`.
+A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure, an overlay or a menu on `ease.out` felt rushed, so they got the softer `ease.soft`.
 
 ### B4. Scale: press only, and from a size that fits
 
@@ -228,7 +228,7 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures and overlays, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in
+- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays and menus, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance
 - [ ] Swaps bridged with a light blur

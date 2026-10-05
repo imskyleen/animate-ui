@@ -15,7 +15,9 @@ test.describe('react-aria context-menu demo', () => {
     });
   });
 
-  test('opens with a 200ms scale and fade, like v1 menus', async ({ page }) => {
+  test('opens with a 250ms scale and fade, like the other menus', async ({
+    page,
+  }) => {
     const probe = await probeFirstFrame(page, CONTENT);
     await page.getByText('Right click here').click({ button: 'right' });
     const first = await probe.firstFrame();

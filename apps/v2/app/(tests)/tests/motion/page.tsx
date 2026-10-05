@@ -21,10 +21,10 @@ type Family = {
 
 const GLOBAL_RULES = [
   "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes. Toutes les valeurs par rôle sont des tokens de @animate-ui/react/utils/motion (spring, transition, scale, blur, ease).",
-  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (menus, panneaux d’onglets) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
+  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (panneaux d’onglets) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers, menus) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
   'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
-  'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,2s ease-out.',
+  'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,25s ease-out doux.',
   'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets, contenu d’un navigation menu), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
   'Un indicateur de sélection glisse sur 200/25 ; un surlignage qui suit le pointeur glisse sur 350/35, plus vif.',
   'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) se déplie en 0,35s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
@@ -106,8 +106,8 @@ const FAMILIES: Family[] = [
     name: 'Menus',
     rule: 'Les menus, fréquents, apparaissent vite et sobrement ; un surlignage glisse derrière l’élément survolé.',
     values: [
-      'contenu : scale 0,9 → 1 + fondu en 0,2s, ease-out fort',
-      'surlignage : ressort 350/35, l’ancienne copie s’efface après 200ms',
+      'contenu : scale 0,9 → 1 + fondu en 0,25s, ease-out doux',
+      'surlignage : ressort 350/35, un seul surlignage passé d’élément en élément avec sa vitesse',
       'coches : pop ; indicateur radio : glisse en 0,45s',
     ],
     demos: [
@@ -116,6 +116,7 @@ const FAMILIES: Family[] = [
       { demo: 'radix-ui/menubar', label: 'Menubar' },
       { demo: 'radix-ui/select', label: 'Select' },
       { demo: 'base-ui/combobox', label: 'Combobox' },
+      { demo: 'react-aria/combobox', label: 'Combobox (React Aria)' },
       {
         demo: 'radix-ui/navigation-menu',
         label: 'Navigation Menu',

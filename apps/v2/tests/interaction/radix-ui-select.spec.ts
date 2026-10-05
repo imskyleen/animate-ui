@@ -13,7 +13,7 @@ test.describe('radix-ui select demo', () => {
     });
   });
 
-  test('opens with a 200ms scale and fade from the trigger', async ({
+  test('opens with a 250ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, LIST);
@@ -39,7 +39,7 @@ test.describe('radix-ui select demo', () => {
     await page.waitForTimeout(650);
     await page.getByRole('option', { name: 'Lora' }).click();
 
-    // Still on screen for the 200ms exit, then gone.
+    // Still on screen for the 250ms exit, then gone.
     // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, LIST)).opacity, {

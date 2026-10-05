@@ -1,9 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import {
+  animate,
+  motion,
+  useMotionValue,
+  type MotionValue,
+} from 'motion/react';
 
-import { motionTokens, useTempoTransition } from '../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../utils/motion';
 
 // Animate UI v1's menu highlight (DropdownMenuHighlight, MenuHighlight): one
 // surface glides behind the highlighted item, on a spring (stiffness 350,
@@ -17,20 +26,23 @@ import { motionTokens, useTempoTransition } from '../utils/motion';
 // item's background is cleared while it's highlighted (or its submenu is
 // open). Text colors stay on the item.
 //
-// As in v1, each item renders its own copy of the surface while it's the
-// active one. The new copy starts from the previous copy's box and glides to
-// its item while it fades in; the previous copy glides along, stays opaque
-// for 200ms, then fades out. (v1 got this from a shared layoutId; Motion now
-// crossfades shared layouts differently, so the glide is explicit here.)
+// The active item renders the surface. When another item becomes active, the
+// surface moves into it: the new element starts exactly where the previous
+// one is on screen, at its opacity and with its velocity, and the previous one
+// goes in the same frame. However fast the pointer or the arrow keys go,
+// there's one highlight on screen, and a glide retargeted on the way keeps its
+// momentum instead of starting over from rest. (v1 got the glide from a shared
+// layoutId; Motion now crossfades shared layouts, so the hand-off is explicit
+// here.) Only a highlight appearing from nothing fades in.
 //
-// The copies sit under every item's content: the menu becomes its own
-// stacking context and the copies go below its content (z-index -1), so one
+// The surface sits under every item's content: the menu becomes its own
+// stacking context and the surface goes below its content (z-index -1), so
 // gliding over another item never covers that item's text.
 
-/** v1's highlight spring: the move, and the fade in and out. */
+/** v1's highlight spring: the glide. */
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
-/** v1's highlight exit delay (seconds). */
-const EXIT_DELAY = 0.2;
+/** A highlight appearing from nothing: a short fade, in place. */
+const FADE_TRANSITION = motionTokens.transition.fade;
 
 type Surface = {
   backgroundColor: string;
@@ -38,17 +50,28 @@ type Surface = {
   borderRadius: string;
 };
 
-type Rect = { left: number; top: number; width: number; height: number };
+type SurfaceValues = {
+  x: MotionValue<number>;
+  y: MotionValue<number>;
+  scaleX: MotionValue<number>;
+  scaleY: MotionValue<number>;
+  opacity: MotionValue<number>;
+};
+
+/** The surface on screen: where the next one starts from. */
+type SurfaceHandle = {
+  element: HTMLElement;
+  item: HTMLElement;
+  values: SurfaceValues;
+};
 
 type HighlightScopeValue = {
   activeId: string | null;
-  /** The visual box of the previous highlight, when the active one changed. */
-  from: Rect | null;
-  /** The box of the active item: where a leaving highlight goes. */
-  to: Rect | null;
-  activate: (id: string, item: HTMLElement) => void;
-  /** The element of the highlight on screen, to start the next one from. */
-  registerSurface: (element: HTMLElement | null) => void;
+  activate: (id: string) => void;
+  /** Where a surface entering `item` starts (see `handOff`). */
+  handOff: (item: HTMLElement, reduce: boolean) => Start;
+  /** The surface on screen registers itself; returns its unregistration. */
+  register: (handle: SurfaceHandle) => () => void;
 };
 
 const HighlightScopeContext = React.createContext<HighlightScopeValue | null>(
@@ -56,53 +79,46 @@ const HighlightScopeContext = React.createContext<HighlightScopeValue | null>(
 );
 
 type HighlightScopeProps = {
-  /** The menu is open: closing it lets the highlight go. */
+  /** The menu is open: reopening it starts without a highlight. */
   open: boolean;
   children?: React.ReactNode;
 };
 
-type ScopeState = Pick<HighlightScopeValue, 'activeId' | 'from' | 'to'>;
-
-const NO_HIGHLIGHT: ScopeState = { activeId: null, from: null, to: null };
-
-const rectOf = (element: Element): Rect => {
-  const { left, top, width, height } = element.getBoundingClientRect();
-  return { left, top, width, height };
-};
-
 /**
  * One highlight for the items inside: render it in the root content of a
- * menu (its submenus share it, like v1), a select or a combobox.
+ * menu (its submenus share it, like v1), a select, a combobox or a listbox.
  */
 function HighlightScope({ open, children }: HighlightScopeProps) {
-  const [state, setState] = React.useState<ScopeState>(NO_HIGHLIGHT);
-  const surfaceRef = React.useRef<HTMLElement | null>(null);
-  // A kept-mounted menu reopens without a highlight, like a new one.
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+  const surfaceRef = React.useRef<SurfaceHandle | null>(null);
+  // A kept-mounted menu reopens without a highlight, like a new one. Closing
+  // keeps it: the menu fades out as it was.
   const [wasOpen, setWasOpen] = React.useState(open);
   if (wasOpen !== open) {
     setWasOpen(open);
-    if (!open) setState(NO_HIGHLIGHT);
+    if (open) setActiveId(null);
   }
 
-  const activate = React.useCallback((id: string, item: HTMLElement) => {
-    setState((current) => {
-      if (current.activeId === id) return current;
-      const previous = surfaceRef.current;
-      return {
-        activeId: id,
-        from:
-          current.activeId && previous?.isConnected ? rectOf(previous) : null,
-        to: rectOf(item),
-      };
-    });
-  }, []);
-  const registerSurface = React.useCallback((element: HTMLElement | null) => {
-    if (element) surfaceRef.current = element;
+  const handOffFrom = React.useCallback(
+    (item: HTMLElement, reduce: boolean) =>
+      handOff(surfaceRef.current, item, reduce),
+    [],
+  );
+  const register = React.useCallback((handle: SurfaceHandle) => {
+    surfaceRef.current = handle;
+    return () => {
+      if (surfaceRef.current === handle) surfaceRef.current = null;
+    };
   }, []);
 
   const value = React.useMemo(
-    () => ({ ...state, activate, registerSurface }),
-    [state, activate, registerSurface],
+    () => ({
+      activeId,
+      activate: setActiveId,
+      handOff: handOffFrom,
+      register,
+    }),
+    [activeId, handOffFrom, register],
   );
 
   return (
@@ -169,8 +185,6 @@ function readSurface(node: HTMLElement): Surface {
   return surface;
 }
 
-const isHighlighted = (node: HTMLElement) =>
-  node.hasAttribute('data-highlighted');
 // A submenu trigger whose submenu is open keeps its highlighted style in most
 // themes: in v1, the highlight leaves it for the submenu.
 const isExpanded = (node: HTMLElement) =>
@@ -183,12 +197,23 @@ type ItemHighlight = {
   highlight: React.ReactNode;
 };
 
+type ItemHighlightOptions = {
+  /**
+   * The attribute the library sets on the highlighted item: Radix UI and
+   * Base UI's `data-highlighted`, React Aria's `data-focused`.
+   */
+  attribute?: string;
+};
+
 /**
  * Makes an item take part in its scope's highlight: it becomes the active
- * item when the library marks it `data-highlighted`, and stays active until
- * another one is.
+ * item when the library marks it highlighted, and stays active until another
+ * one is.
  */
-function useItemHighlight(disabled?: boolean): ItemHighlight {
+function useItemHighlight(
+  disabled?: boolean,
+  { attribute = 'data-highlighted' }: ItemHighlightOptions = {},
+): ItemHighlight {
   const scope = React.use(HighlightScopeContext);
   const id = React.useId();
   const [node, setNode] = React.useState<HTMLElement | null>(null);
@@ -208,10 +233,10 @@ function useItemHighlight(disabled?: boolean): ItemHighlight {
       node.style.setProperty('position', 'relative');
 
     const sync = () => {
-      const highlighted = isHighlighted(node);
+      const highlighted = node.hasAttribute(attribute);
       if (highlighted) {
         setSurface(readSurface(node));
-        activate(id, node);
+        activate(id);
       }
       clearOwnSurface(node, highlighted || isExpanded(node));
     };
@@ -219,116 +244,151 @@ function useItemHighlight(disabled?: boolean): ItemHighlight {
     const observer = new MutationObserver(sync);
     observer.observe(node, {
       attributes: true,
-      attributeFilter: ['data-highlighted', 'aria-expanded'],
+      attributeFilter: [attribute, 'aria-expanded'],
     });
     return () => {
       observer.disconnect();
       clearOwnSurface(node, false);
     };
-  }, [activate, node, id]);
+  }, [activate, node, id, attribute]);
 
-  const active = scope?.activeId === id && !disabled && surface !== null;
+  const active = scope?.activeId === id && !disabled;
 
   return {
     ref,
+    // Always an element inside a scope, so the item's children keep their
+    // place in the tree whether it's active or not.
     highlight: scope ? (
       <HighlightSurface
-        active={active}
-        surface={surface}
-        scope={scope}
+        surface={active ? surface : null}
         item={node}
+        scope={scope}
       />
     ) : null,
   };
 }
 
 type HighlightSurfaceProps = {
-  active: boolean;
+  /** The item's highlighted background, while it's the active item. */
   surface: Surface | null;
-  scope: HighlightScopeValue;
   item: HTMLElement | null;
+  scope: HighlightScopeValue;
 };
 
-function HighlightSurface({
-  active,
-  surface,
-  scope,
-  item,
-}: HighlightSurfaceProps) {
-  return (
-    // `custom`: where a leaving copy glides to, read when it leaves.
-    <AnimatePresence initial={false} custom={scope.to}>
-      {active && surface && item && (
-        <SurfaceCopy
-          key="highlight"
-          surface={surface}
-          from={scope.from}
-          item={item}
-          registerSurface={scope.registerSurface}
-        />
-      )}
-    </AnimatePresence>
-  );
+function HighlightSurface({ surface, item, scope }: HighlightSurfaceProps) {
+  if (!surface || !item) return null;
+  return <SurfaceCopy surface={surface} item={item} scope={scope} />;
 }
 
-const IN_PLACE = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
+type Motion = {
+  x: number;
+  y: number;
+  scaleX: number;
+  scaleY: number;
+};
 
-/** The transform that lays a copy of `item` over `box` (origin top left). */
-function transformTo(box: Rect | null, item: HTMLElement) {
-  const own = rectOf(item);
-  if (!box || !own.width || !own.height) return IN_PLACE;
+type Start = Motion & {
+  opacity: number;
+  /** Per second, in the new item's terms. */
+  velocity: Motion;
+};
+
+const IN_PLACE: Motion = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
+const STILL: Motion = { x: 0, y: 0, scaleX: 0, scaleY: 0 };
+
+/**
+ * Where a surface entering `item` starts: on the previous surface, as it is
+ * on screen, with its opacity and velocity. With nothing on screen, it fades
+ * in, in place. Under reduced motion, it doesn't glide.
+ */
+function handOff(
+  previous: SurfaceHandle | null,
+  item: HTMLElement,
+  reduce: boolean,
+): Start {
+  if (!previous?.element.isConnected)
+    return { ...IN_PLACE, opacity: 0, velocity: STILL };
+  const { values } = previous;
+  const opacity = values.opacity.get();
+  const own = item.getBoundingClientRect();
+  if (reduce || !own.width || !own.height)
+    return { ...IN_PLACE, opacity, velocity: STILL };
+
+  const box = previous.element.getBoundingClientRect();
+  const from = previous.item.getBoundingClientRect();
+  // Screen pixels per CSS pixel: a menu still scaling in shrinks both boxes.
+  const ratioX = own.width / (item.offsetWidth || own.width);
+  const ratioY = own.height / (item.offsetHeight || own.height);
   return {
-    x: box.left - own.left,
-    y: box.top - own.top,
+    // The transform lays the surface over `box` (origin top left).
+    x: (box.left - own.left) / ratioX,
+    y: (box.top - own.top) / ratioY,
     scaleX: box.width / own.width,
     scaleY: box.height / own.height,
+    opacity,
+    velocity: {
+      x: values.x.getVelocity(),
+      y: values.y.getVelocity(),
+      // Scales are relative to the item: the new one may differ in size.
+      scaleX: (values.scaleX.getVelocity() * from.width) / own.width,
+      scaleY: (values.scaleY.getVelocity() * from.height) / own.height,
+    },
   };
 }
 
 type SurfaceCopyProps = {
   surface: Surface;
-  from: Rect | null;
   item: HTMLElement;
-  registerSurface: (element: HTMLElement | null) => void;
+  scope: HighlightScopeValue;
 };
 
-function SurfaceCopy({
-  surface,
-  from,
-  item,
-  registerSurface,
-}: SurfaceCopyProps) {
-  const transition = useTempoTransition(HIGHLIGHT_TRANSITION);
-  const fadeOut = useTempoTransition({
-    ...HIGHLIGHT_TRANSITION,
-    delay: EXIT_DELAY,
-  });
-  // Starts where the previous highlight is (measured once, as it mounts).
-  const [initial] = React.useState(() => transformTo(from, item));
-  const variants = React.useMemo(
-    () => ({
-      // Glides along with the next highlight (same spring, from rest).
-      leave: (to: Rect | null) =>
-        to
-          ? {
-              ...transformTo(to, item),
-              transition: { ...transition, velocity: 0 },
-            }
-          : {},
-    }),
-    [item, transition],
-  );
+function SurfaceCopy({ surface, item, scope }: SurfaceCopyProps) {
+  const reduce = useShouldReduceMotion();
+  const glide = useTempoTransition(HIGHLIGHT_TRANSITION);
+  const fade = useTempoTransition(FADE_TRANSITION);
+  // Read while rendering: the previous surface is still on screen (it goes
+  // in this same commit).
+  const [start] = React.useState(() => scope.handOff(item, reduce));
+  const x = useMotionValue(start.x);
+  const y = useMotionValue(start.y);
+  const scaleX = useMotionValue(start.scaleX);
+  const scaleY = useMotionValue(start.scaleY);
+  const opacity = useMotionValue(start.opacity);
+  const elementRef = React.useRef<HTMLSpanElement>(null);
+  // Read when it mounts: a new transition object each render (a tempo)
+  // mustn't restart the glide.
+  const transitionsRef = React.useRef({ glide, fade });
+
+  const { register } = scope;
+
+  React.useLayoutEffect(() => {
+    const element = elementRef.current;
+    if (!element) return undefined;
+    const unregister = register({
+      element,
+      item,
+      values: { x, y, scaleX, scaleY, opacity },
+    });
+    const { glide, fade } = transitionsRef.current;
+    const { velocity } = start;
+    const controls = [
+      animate(x, 0, { ...glide, velocity: velocity.x }),
+      animate(y, 0, { ...glide, velocity: velocity.y }),
+      animate(scaleX, 1, { ...glide, velocity: velocity.scaleX }),
+      animate(scaleY, 1, { ...glide, velocity: velocity.scaleY }),
+      animate(opacity, 1, fade),
+    ];
+    return () => {
+      for (const control of controls) control.stop();
+      unregister();
+    };
+  }, [register, item, start, x, y, scaleX, scaleY, opacity]);
 
   return (
     <motion.span
-      ref={registerSurface}
+      ref={elementRef}
       aria-hidden
       data-slot="item-highlight"
-      initial={initial}
-      animate={IN_PLACE}
-      exit="leave"
-      variants={variants}
-      transition={transition}
       style={{
         position: 'absolute',
         inset: 0,
@@ -336,22 +396,15 @@ function SurfaceCopy({
         pointerEvents: 'none',
         transformOrigin: '0 0',
         borderRadius: surface.borderRadius,
+        backgroundColor: surface.backgroundColor,
+        backgroundImage: surface.backgroundImage,
+        x,
+        y,
+        scaleX,
+        scaleY,
+        opacity,
       }}
-    >
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0, transition: fadeOut }}
-        transition={transition}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: 'inherit',
-          backgroundColor: surface.backgroundColor,
-          backgroundImage: surface.backgroundImage,
-        }}
-      />
-    </motion.span>
+    />
   );
 }
 

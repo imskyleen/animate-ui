@@ -33,9 +33,9 @@ const ease = {
   /** Entering or leaving: starts fast, so the interface answers at once. */
   out: [0.23, 1, 0.32, 1],
   /**
-   * Large surfaces the eye watches change: a panel unfolding and pushing the
-   * page (accordion, collapsible), an overlay dimming it. A softer start than
-   * `out`, so the change is seen rather than snapped.
+   * Surfaces the eye watches change: a panel unfolding and pushing the page
+   * (accordion, collapsible), an overlay dimming it, a menu opening. A softer
+   * start than `out`, so the change is seen rather than snapped.
    */
   soft: [0.215, 0.61, 0.355, 1],
   /**
@@ -86,8 +86,12 @@ const spring = {
 
 /** Tweens, one per role. */
 const transition = {
-  /** Menus, selects, comboboxes and navigation menus: short and exact. */
-  menu: { duration: 0.2, ease: ease.out },
+  /**
+   * Menus, selects, comboboxes and navigation menus: short, opened all day
+   * long, on the soft ease-out so they're seen opening rather than snapped
+   * open.
+   */
+  menu: { duration: 0.25, ease: ease.soft },
   /**
    * An overlay or backdrop fading in, the page behind blurring from 0, and
    * out: the page dims smoothly while the content arrives.

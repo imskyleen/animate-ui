@@ -22,7 +22,7 @@ import {
 // - tooltips, small and textual: from 0.7, on the pop spring (stiffness 300,
 //   damping 25) that overshoots a little, both ways;
 // - popovers, hover cards and preview cards: from 0.8, on the same spring;
-// - menus, opened all day long: from 0.9, in 200ms on a strong ease-out,
+// - menus, opened all day long: from 0.9, in 250ms on a soft ease-out,
 //   both ways.
 //
 // The values are the motion tokens' (utils/motion).
@@ -39,7 +39,7 @@ import {
 
 /** The spring of tooltips, popovers and hover cards, both ways. */
 const POPOVER_TRANSITION = motionTokens.spring.pop;
-/** Menus (dropdown, context menu, menubar, select…): short, ease-out. */
+/** Menus (dropdown, context menu, menubar, select…): short, soft ease-out. */
 const MENU_TRANSITION = motionTokens.transition.menu;
 
 /** Where each kind of overlay grows from. */
@@ -60,8 +60,8 @@ type AnchoredKind = keyof typeof HIDDEN_SCALE;
 type AnchoredAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to a spring (stiffness 300, damping 25); `{ duration: 0.2,
-   * ease: [0.23, 1, 0.32, 1] }` for menus.
+   * set. Defaults to a spring (stiffness 300, damping 25); `{ duration: 0.25,
+   * ease: [0.215, 0.61, 0.355, 1] }` for menus.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */

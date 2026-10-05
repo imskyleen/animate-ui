@@ -27,7 +27,7 @@ import {
 } from '../../../internal/item-highlight';
 
 // Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
-// moves like the menus (a 200ms fade and scale from 0.9, both
+// moves like the menus (a 250ms fade and scale from 0.9, both
 // ways), a highlight glides behind the highlighted item, and the check glides
 // to the chosen item like v1's radio indicator. The Root mirrors `open` (Radix
 // keeps it private) so the Content can play an exit before Radix unmounts it.
@@ -67,7 +67,7 @@ type unstable_SelectBubbleInputProps =
 type ContentAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
+   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */

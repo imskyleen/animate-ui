@@ -29,12 +29,12 @@ import Icon = NavigationMenuPrimitive.Icon;
 // Same API as Base UI's Navigation Menu. It has no Animate UI v1
 // counterpart: it moves like v1's Base UI Menu.
 //
-// - The Popup fades and scales from 0.9 in 200ms, both ways, from its
+// - The Popup fades and scales from 0.9 in 250ms, both ways, from its
 //   trigger. Base UI resizes it to the active content through
 //   `--popup-width`/`--popup-height`: Animate UI transitions that size in
-//   200ms too (Base UI drives it with CSS transitions, which it waits for).
+//   250ms too (Base UI drives it with CSS transitions, which it waits for).
 // - Moving between items, the new Content fades in from a 4px blur while the
-//   previous one fades out into it, in 200ms.
+//   previous one fades out into it, in 250ms.
 // - The Root asks Base UI to keep the popup mounted after it closes, and the
 //   Popup unmounts it once its exit has played.
 
@@ -42,8 +42,8 @@ import Icon = NavigationMenuPrimitive.Icon;
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance (and of the resizing, for the Popup), and of
-   * the exit unless `exitTransition` is set. Defaults to `{ duration: 0.2,
-   * ease: [0.23, 1, 0.32, 1] }`.
+   * the exit unless `exitTransition` is set. Defaults to `{ duration: 0.25,
+   * ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */

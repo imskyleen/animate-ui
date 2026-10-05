@@ -86,7 +86,7 @@ Keyboard navigation animates like the pointer. Name the purpose in one word (fee
 - Reduced motion ships with the animation: `ReducedMotionConfig` around the motion tree, `useShouldReduceMotion()` to neutralize `transform` strings, `<ReducedMotionConfig remount>` for animations that play on mount. Fades and blurs stay, movement goes.
 - Transform, opacity and filter (height only where content must push what's below). Anchored popups grow from their trigger (library origin variables), from 0.7 / 0.8 / 0.9 by kind; modals stay centered.
 - Press scales to 0.95 on a spring; nothing scales on hover.
-- Tweens: ease-out for what enters and leaves, a softer ease-out for large surfaces (disclosures unfolding, overlays), ease-in-out for what moves on screen, `ease` for color; never ease-in. A light blur bridges a swap.
+- Tweens: ease-out for what enters and leaves, a softer ease-out for what the eye watches change (disclosures unfolding, overlays, menus opening), ease-in-out for what moves on screen, `ease` for color; never ease-in. A light blur bridges a swap.
 - The exit replays the entrance, its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
 - Keep the library element as the animated element (Radix `asChild`, Base UI `render`, React Aria `render`/`motion.create`) so `data-*` attributes and styles still apply.
 - Warm tooltips show at once (and the one they replace goes at once).

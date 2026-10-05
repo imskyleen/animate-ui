@@ -16,6 +16,7 @@ import {
   ListBox as ListBoxPrimitive,
   ListBoxSection as ListBoxSectionPrimitive,
   Popover as PopoverPrimitive,
+  SelectionIndicator,
   Separator as SeparatorPrimitive,
   TagGroup as TagGroupPrimitive,
   TagList as TagListPrimitive,
@@ -194,16 +195,14 @@ function ComboboxItem<T extends object>({
       )}
       {...props}
     >
-      {composeRenderProps(children, (children, { isSelected }) => (
+      {composeRenderProps(children, (children) => (
         <>
           {children}
-          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
-            {isSelected ? (
-              <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
-                className="pointer-events-none"
-              />
-            ) : null}
-          </span>
+          <SelectionIndicator className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
+            <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
+              className="pointer-events-none"
+            />
+          </SelectionIndicator>
         </>
       ))}
     </ListBoxItemPrimitive>

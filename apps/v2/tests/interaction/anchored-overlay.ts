@@ -150,7 +150,7 @@ export function recordExit(page: Page, selector: string, timeout = 3000) {
 
 /**
  * How an overlay enters: the tooltip and popover spring (from 0.7 or 0.8,
- * with an overshoot), the menus' timing (from 0.9 in 200ms, ease-out), or a
+ * with an overshoot), the menus' timing (from 0.9 in 250ms, ease-out), or a
  * fade alone (lists laid over their trigger).
  */
 export type EntranceKind = 'tooltip' | 'popover' | 'menu' | 'fade';

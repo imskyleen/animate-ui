@@ -1,9 +1,10 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
 // Animate UI v1's menu highlight, shared by the specs of every menu-like
-// primitive (dropdown and context menus, menubars, selects, comboboxes): one
-// surface glides behind the highlighted item on a spring, instead of each
-// item lighting up on its own.
+// primitive (dropdown and context menus, menubars, selects, comboboxes, React
+// Aria's ListBox): one surface glides behind the highlighted item on a
+// spring, instead of each item lighting up on its own. It's handed from item
+// to item: there's never more than one on screen.
 
 const HIGHLIGHT = '[data-slot="item-highlight"]';
 
@@ -101,7 +102,7 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       const recorded = await frames;
       const shown = recorded.filter((f) => f.copies.length > 0);
       expect(shown.length).toBeGreaterThan(0);
-      // A fade (v1's spring), not a highlight that just appears.
+      // A short fade, not a highlight that just appears.
       expect(shown[0]!.copies[0]!.opacity).toBeLessThan(0.5);
       expect(shown.at(-1)!.copies[0]!.opacity).toBe(1);
       const box = await boxOf(first);
@@ -110,7 +111,7 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       expect(await ownBackground(first)).toBe('rgba(0, 0, 0, 0)');
     });
 
-    test('glides to the next item on a spring, the previous copy along', async ({
+    test('glides to the next item on a spring, handed over: one opaque copy', async ({
       page,
     }) => {
       const first = c.first(page);
@@ -122,7 +123,7 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       const frames = recordHighlight(page, 900);
       await pointAt(page, second);
       const recorded = await frames;
-      // The copy of the second item starts on the first one and glides.
+      // The second item's copy starts on the first one and glides.
       const tops = recorded
         .map((f) => f.copies.at(-1)?.top)
         .filter((top): top is number => top !== undefined);
@@ -131,18 +132,31 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       );
       expect(between.length).toBeGreaterThan(3);
       expect(Math.abs(tops.at(-1)! - to)).toBeLessThan(1);
-      // While gliding, the previous copy goes along and stays opaque for a
-      // while (v1's 200ms exit delay) before it fades out.
-      const both = recorded.filter((f) => f.copies.length === 2);
-      expect(both.length).toBeGreaterThan(3);
-      const early = both.find((f) => f.t > 60 && f.t < 150);
-      if (early) {
-        expect(early.copies[0]!.opacity).toBe(1);
-        expect(
-          Math.abs(early.copies[0]!.top - early.copies[1]!.top),
-        ).toBeLessThan(3);
+      // One highlight on screen, as opaque as it was: no copy fades in or
+      // lingers behind.
+      expect(recorded.every((f) => f.copies.length <= 1)).toBe(true);
+      expect(
+        recorded.every((f) => f.copies.every((copy) => copy.opacity > 0.99)),
+      ).toBe(true);
+    });
+
+    test('a quick sweep back and forth leaves no trail', async ({ page }) => {
+      const first = c.first(page);
+      const second = c.second(page);
+      await pointAt(page, first);
+      await page.waitForTimeout(700);
+      const to = (await boxOf(second)).y;
+      const frames = recordHighlight(page, 1400);
+      for (const item of [second, first, second, first, second]) {
+        await pointAt(page, item);
+        await page.waitForTimeout(30);
       }
-      expect(recorded.at(-1)!.copies).toHaveLength(1);
+      const recorded = await frames;
+      expect(recorded.every((f) => f.copies.length <= 1)).toBe(true);
+      expect(
+        recorded.every((f) => f.copies.every((copy) => copy.opacity > 0.99)),
+      ).toBe(true);
+      expect(Math.abs(recorded.at(-1)!.copies[0]!.top - to)).toBeLessThan(1);
     });
 
     if (c.keyboardNext) {

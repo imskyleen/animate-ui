@@ -23,12 +23,16 @@ import {
   useItemHighlight,
   withHighlight,
 } from '../../../internal/item-highlight';
+import {
+  CHECK_TRANSITION,
+  GLIDE_TRANSITION,
+} from '../../../internal/item-indicator';
 
 // Shared by Base UI's Select and Combobox: both keep their popup mounted
 // while an `actionsRef` is set, until `actionsRef.current.unmount()`.
 //
 // Neither has an Animate UI v1 counterpart: they move like v1's Base UI Menu.
-// The popup fades and scales from 0.9 in 200ms, both ways; a highlight
+// The popup fades and scales from 0.9 in 250ms, both ways; a highlight
 // glides behind the highlighted item; a single selection's check glides to
 // the chosen item like v1's radio indicator, and a multiple selection's check
 // pops in from half its size like v1's checkbox indicator.
@@ -44,7 +48,7 @@ type RootMotion = {
 type PopupAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
+   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -198,17 +202,6 @@ type IndicatorMotionProps = IndicatorAnimationProps & {
   /** Multiple selection pops each check in; a single one glides. */
   multiple: boolean;
 };
-
-/** Motion's defaults, which v1's checkbox check used: written out for the tempo. */
-const CHECK_TRANSITION = {
-  scale: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
-  opacity: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
-} as const satisfies Transition;
-/** Motion's default layout transition, which v1's radio indicator used. */
-const GLIDE_TRANSITION = {
-  duration: 0.45,
-  ease: [0.4, 0, 0.1, 1],
-} as const satisfies Transition;
 
 /**
  * A check, keeping the element the user's `render` asks for. Single

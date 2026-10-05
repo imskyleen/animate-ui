@@ -75,7 +75,7 @@ function PopoverContentMotion({
 
 ## Menu (Dropdown Menu, Context Menu, Menubar, Select, Combobox, Navigation Menu)
 
-Purpose: spatial, but opened all day long: short and exact. The content fades and grows from `scale.menu` (0.9) in `transition.menu` (200ms, `ease.out`), from its trigger (or the pointer, for a context menu), and closes the same way. Submenus move like their menu.
+Purpose: spatial, but opened all day long: short and exact. The content fades and grows from `scale.menu` (0.9) in `transition.menu` (250ms, `ease.soft`), from its trigger (or the pointer, for a context menu), and closes the same way. Submenus move like their menu.
 
 ```tsx
 const hidden = { opacity: 0, scale: reduce ? 1 : scale.menu };
@@ -90,9 +90,9 @@ const hidden = { opacity: 0, scale: reduce ? 1 : scale.menu };
 />;
 ```
 
-- One highlight glides behind the highlighted item on `spring.highlight` (quick, so it never trails the pointer), whether the pointer or the arrow keys move it; the previous copy fades 200ms later. Give each submenu its own highlight.
+- One highlight glides behind the highlighted item on `spring.highlight` (quick, so it never trails the pointer), whether the pointer or the arrow keys move it. Hand it from item to item: the new item's surface starts from the previous one's position on screen, with its opacity and velocity, and the previous one goes in the same frame, so however fast the pointer or the arrow keys go there's one highlight and no trail (a shared `layoutId` would crossfade two copies). Only a highlight appearing from nothing fades in (`transition.fade`). Submenus share their root menu's highlight, like v1.
 - A checkbox item's check pops in when it appears; a radio item's indicator glides to the newly checked item.
-- Navigation menu: content swapped inside the viewport fades in from `blur.surface` (`transition.menu`); the viewport's size follows the active content in 200ms too.
+- Navigation menu: content swapped inside the viewport fades in from `blur.surface` (`transition.menu`); the viewport's size follows the active content in 250ms too.
 - Select, Radix: needs `@radix-ui/react-select` 2.x (bundled in `radix-ui` 1.4+) for `forceMount`. **Don't gate the whole Portal with `AnimatePresence`**: while closed, Radix renders the items off-screen to show the selected label in the trigger, power typeahead and fill the hidden native `<select>`. Animate the open content inside its own `AnimatePresence`, and once the exit completes (`onExitComplete`) render a plain, non-`forceMount` `SelectPrimitive.Content` with the same children so that fallback comes back. Reset the flag during render when it reopens, so a controlled `open` works too:
 
   ```tsx

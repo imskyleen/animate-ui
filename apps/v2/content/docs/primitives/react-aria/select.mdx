@@ -11,7 +11,7 @@ description: A select displays a collapsible list of options and allows a user t
 
 ## Usage
 
-Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`. Everything else stays the same.
+Import from Animate UI instead of `react-aria-components`: it re-exports all of React Aria, with an animated `Popover`, `ListBox`, `ListBoxItem` and `SelectionIndicator`. Everything else stays the same.
 
 ```tsx
 import {
@@ -20,6 +20,7 @@ import {
   ListBoxItem,
   Popover,
   Select,
+  SelectionIndicator,
   SelectValue,
 } from '@animate-ui/react/primitives/react-aria';
 
@@ -31,9 +32,18 @@ export function FontPicker() {
       </Button>
       <Popover placement="bottom start" offset={4}>
         <ListBox>
-          <ListBoxItem id="inter">Inter</ListBoxItem>
-          <ListBoxItem id="geist">Geist</ListBoxItem>
-          <ListBoxItem id="lora">Lora</ListBoxItem>
+          <ListBoxItem id="inter" textValue="Inter">
+            Inter
+            <SelectionIndicator>✓</SelectionIndicator>
+          </ListBoxItem>
+          <ListBoxItem id="geist" textValue="Geist">
+            Geist
+            <SelectionIndicator>✓</SelectionIndicator>
+          </ListBoxItem>
+          <ListBoxItem id="lora" textValue="Lora">
+            Lora
+            <SelectionIndicator>✓</SelectionIndicator>
+          </ListBoxItem>
         </ListBox>
       </Popover>
     </Select>
@@ -45,15 +55,16 @@ export function FontPicker() {
 
 React Aria's Select has no Animate UI v1 counterpart: its list opens in Animate UI's [Popover](/docs/primitives/react-aria/popover), which moves like v1's Dropdown Menu content under a select.
 
-- **Popover**: the list fades and scales in from 0.9, from the trigger (`--trigger-anchor-point`), in 200ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
-- **ListBox** and **ListBoxItem** are React Aria's, untouched: their highlight is your CSS, and shadcn/ui renders the selected check itself (`isSelected ? <Icon /> : null`), so it stays your markup.
+- **Popover**: the list fades and scales in from 0.9, from the trigger (`--trigger-anchor-point`), in 250ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
+- **ListBoxItem**: one highlight glides behind the focused item (the one React Aria marks `data-focused`) on a spring (stiffness 350, damping 35), following the pointer and the arrow keys alike, like v1's menu highlight and the Radix UI and Base UI selects. React Aria focuses the selected item when the list opens, so the highlight starts on it. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms) when it appears from nothing. When the pointer leaves the list, it stays on the last item. It wears the item's own focused background (`data-focused:bg-accent`…), read from your styles: the item's background is cleared while it's focused; its text colors stay. The highlight is rendered through the item's `render` prop: your own `render` still works. The ListBox is its own stacking context (`isolation: isolate`), so the highlight goes under the items' content, above the list's background.
+- **SelectionIndicator** (the check inside an item): choosing another item moves the check there while the list closes, like v1's radio indicator. With `selectionMode="multiple"`, the list stays open: a selected item's check pops in from half its size with a fade, like v1's checkbox check, and goes at once when it's deselected. shadcn/ui renders the check as `isSelected ? <Icon /> : null`, which doesn't animate: render it in a `SelectionIndicator` instead, as the demo does. `SelectValue` renders the chosen item's content again in the trigger: the indicator renders nothing there (React Aria's own would throw outside the list). Outside Animate UI's ListBox (in a Tab, a ToggleButton…) or with your own `render`, it's React Aria's own.
 - Opening from the keyboard animates the same way.
 - Open from the start (`defaultOpen`), the list plays its entrance on page load.
-- Under reduced motion, the list only fades.
+- Under reduced motion, the list only fades; the highlight jumps from item to item instead of gliding (it still fades in when it appears); a single selection's check jumps, and a multiple selection's check only fades.
 
 ## API Reference
 
-`Select`, `SelectValue`, `ListBox`, `ListBoxItem`, `ListBoxSection`, `Header` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Select.html#props) only. They are not animated.
+`Select`, `SelectValue`, `ListBoxSection`, `Header` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Select.html#props) only. They are not animated.
 
 ### Popover
 
@@ -65,12 +76,36 @@ React Aria's Select has no Animate UI v1 counterpart: its list opens in Animate 
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
+      default: '{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
       default: 'transition',
+    },
+  }}
+/>
+
+### ListBox
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/ListBox.html#props) only. It holds its items' highlight and lets a single selection's check glide.
+
+### ListBoxItem
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/ListBox.html#listboxitem) only. It takes part in the highlight; it needs nothing more.
+
+### SelectionIndicator
+
+[React Aria props](https://react-spectrum.adobe.com/react-aria/ListBox.html), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the check moving to the chosen item (single selection), or popping in (multiple).',
+      type: 'Transition',
+      default:
+        "Motion's defaults, as in v1: a 450ms move; multiple: a spring (stiffness 550, damping 30) and a 300ms fade",
     },
   }}
 />

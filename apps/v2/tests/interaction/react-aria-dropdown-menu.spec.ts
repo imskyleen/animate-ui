@@ -15,7 +15,9 @@ test.describe('react-aria dropdown-menu demo', () => {
     });
   });
 
-  test('opens with a 200ms scale and fade, like v1 menus', async ({ page }) => {
+  test('opens with a 250ms scale and fade, like the other menus', async ({
+    page,
+  }) => {
     const probe = await probeFirstFrame(page, CONTENT);
     await page.getByRole('button', { name: 'Open menu' }).click();
     const first = await probe.firstFrame();

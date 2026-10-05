@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
-import { probeFirstFrame, sample } from './motion-probe';
+import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 
 const POPUP = '[data-slot="combobox-content"]';
 
@@ -13,7 +13,7 @@ test.describe('base-ui combobox demo', () => {
     });
   });
 
-  test('opens with a 200ms scale and fade from the input', async ({ page }) => {
+  test('opens with a 250ms scale and fade from the input', async ({ page }) => {
     const probe = await probeFirstFrame(page, POPUP);
     await page.getByRole('combobox', { name: 'Framework' }).click();
     await page.keyboard.press('ArrowDown');
@@ -104,16 +104,20 @@ test.describe('base-ui combobox chips demo', () => {
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
+    const frames = recordMotion(
+      page,
+      { selector: '[data-slot="combobox-chip"]', text: 'Nuxt' },
+      900,
+    );
     await page.getByRole('option', { name: 'Nuxt' }).click();
     // Multiple selection: the list stays open.
     await expect(page.locator(POPUP)).toBeVisible();
-    await page.waitForTimeout(40);
-    const entering = await sample(page, chip('Nuxt'));
-    expect(entering.opacity).toBeLessThan(1);
-    // From half its size, like v1's checkbox check.
-    expect(entering.scale).toBeLessThan(0.9);
-    await page.waitForTimeout(650);
-    expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
+    const recorded = await frames;
+    // Fading in from transparent and from half its size, like v1's checkbox
+    // check (its first frame can be read before Motion's first update).
+    expect(Math.min(...recorded.map((f) => f.opacity))).toBeLessThan(0.5);
+    expect(Math.min(...recorded.map((f) => f.scale))).toBeLessThan(0.9);
+    expect(recorded.at(-1)!.opacity).toBe(1);
   });
 
   test('checks pop in with the selection, Backspace removes instantly', async ({
@@ -125,8 +129,9 @@ test.describe('base-ui combobox chips demo', () => {
     const nuxt = page.getByRole('option', { name: 'Nuxt' });
     await nuxt.click();
     await page.waitForTimeout(40);
+    // The ItemIndicator (the demo renders it as a span), not the highlight.
     const check = nuxt
-      .locator('[data-slot="combobox-item-indicator"], span')
+      .locator(':scope > span:not([data-slot="item-highlight"])')
       .last();
     const opacity = await check.evaluate((el) => getComputedStyle(el).opacity);
     expect(Number(opacity)).toBeLessThan(1);

@@ -14,7 +14,7 @@ import { HighlightScope } from '../../../internal/item-highlight';
 // Shared by Base UI's Menu and Context Menu (which reuses the Menu's parts),
 // animated like Animate UI v1's Base UI Menu:
 //
-// - the Popup (and each submenu's) fades and scales from 0.9 in 200ms, both
+// - the Popup (and each submenu's) fades and scales from 0.9 in 250ms, both
 //   ways;
 // - one highlight glides behind the highlighted item, into submenus too
 //   (internal/item-highlight);
@@ -25,7 +25,7 @@ import { HighlightScope } from '../../../internal/item-highlight';
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }`.
+   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */

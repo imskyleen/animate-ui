@@ -53,7 +53,7 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 
 | Token                   | Value                                            | Use for                                                        |
 | ----------------------- | ------------------------------------------------ | -------------------------------------------------------------- |
-| `transition.menu`       | `{ duration: 0.2, ease: ease.out }`              | Menus, selects, comboboxes, navigation menus                   |
+| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                   |
 | `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out |
 | `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)         |
 | `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                     |
@@ -70,13 +70,13 @@ Pick a tween's curve by what the element does:
 | What it does                             | Curve                                                                              |
 | ---------------------------------------- | ---------------------------------------------------------------------------------- |
 | Enters or leaves                         | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                       |
-| Large surface: unfolds, or dims the page | `ease.soft`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                                 |
+| Unfolds, dims the page, or a menu opens  | `ease.soft`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                                 |
 | A mark draws itself (a checkbox's check) | `ease.draw`: `cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut` (v1's)              |
 | Moves or morphs on screen                | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
 | Changes color (CSS)                      | `ease`                                                                             |
 | Moves constantly (marquee, loader)       | `linear`                                                                           |
 
-`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for large surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), and an overlay should dim the page, not cut to dark. Never ease-in on UI: it starts slow, exactly when the user is watching.
+`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), an overlay should dim the page, not cut to dark, and a menu, opened all day long, should be seen opening rather than snapped open. Never ease-in on UI: it starts slow, exactly when the user is watching.
 
 ## Scales
 

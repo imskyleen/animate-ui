@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const POPOVER = '[data-slot="select-content"]';
@@ -12,7 +13,7 @@ test.describe('react-aria select demo', () => {
     });
   });
 
-  test('opens with a 200ms scale and fade from the trigger', async ({
+  test('opens with a 250ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, POPOVER);
@@ -109,4 +110,17 @@ test('react-aria select docs page renders without errors', async ({ page }) => {
   expect(response?.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Select');
   expect(errors).toEqual([]);
+});
+
+describeMenuHighlight('react-aria select highlight', {
+  path: '/tests/demos/react-aria/select',
+  open: async (page) => {
+    await page.locator('[data-slot="select-trigger"]').click();
+    await page.waitForTimeout(400);
+  },
+  // Geist is the value: React Aria focuses it as the list opens.
+  first: (page) => page.getByRole('option', { name: 'Geist', exact: true }),
+  second: (page) => page.getByRole('option', { name: 'Satoshi' }),
+  keyboardNext: 'ArrowDown',
+  highlightedOnOpen: true,
 });

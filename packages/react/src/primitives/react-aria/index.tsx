@@ -5,6 +5,12 @@ export { Checkbox } from './checkbox';
 export type { CheckboxProps } from './checkbox';
 export { DisclosurePanel } from './disclosure';
 export type { DisclosurePanelProps } from './disclosure';
+export { ListBox, ListBoxItem, SelectionIndicator } from './list-box';
+export type {
+  ListBoxItemProps,
+  ListBoxProps,
+  SelectionIndicatorProps,
+} from './list-box';
 export { Modal, ModalOverlay } from './modal';
 export type { ModalOverlayProps } from './modal';
 export { Popover } from './popover';

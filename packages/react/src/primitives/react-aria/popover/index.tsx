@@ -22,7 +22,7 @@ import { originFor } from './origin';
 // PreviewTrigger (hover cards), MenuTrigger and SubmenuTrigger, Select,
 // ComboBox and DatePicker. React Aria has no Animate UI v1 counterpart, so it
 // moves like the matching Radix and Base UI overlay:
-// - under menus, submenus, selects and comboboxes, like the menus: a 200ms
+// - under menus, submenus, selects and comboboxes, like the menus: a 250ms
 //   fade and scale from 0.9, both ways;
 // - anywhere else (dialogs, hover cards, date pickers), like the popovers: it
 //   grows from 0.8 and fades in from the trigger on a spring, and shrinks

@@ -71,3 +71,54 @@ function toSample(raw: {
     origin: raw.origin,
   };
 }
+
+export type MotionFrame = { t: number; opacity: number; scale: number };
+
+type MotionTarget = {
+  selector: string;
+  /** The first match whose text includes it. */
+  text?: string;
+  /** An element inside the match, e.g. `:scope > div`. */
+  child?: string;
+};
+
+/**
+ * Records the opacity and scale of an element frame by frame for `duration`
+ * ms, from its first frame in the DOM: call it right before the interaction,
+ * then await it. Sampled in the page, so a loaded machine can't miss the
+ * start of an entrance.
+ */
+export function recordMotion(
+  page: Page,
+  { selector, text, child }: MotionTarget,
+  duration: number,
+) {
+  return page.evaluate(
+    ({ selector, text, child, duration }) =>
+      new Promise<MotionFrame[]>((resolve) => {
+        const frames: MotionFrame[] = [];
+        const t0 = performance.now();
+        const tick = () => {
+          const t = performance.now() - t0;
+          const host = [
+            ...document.querySelectorAll<HTMLElement>(selector),
+          ].find((el) => text === undefined || el.textContent?.includes(text));
+          const el =
+            host && child ? host.querySelector<HTMLElement>(child) : host;
+          if (el) {
+            const cs = getComputedStyle(el);
+            const match = cs.transform.match(/matrix\(([^,]+)/);
+            frames.push({
+              t,
+              opacity: Number(cs.opacity),
+              scale: match ? Number(match[1]) : 1,
+            });
+          }
+          if (t < duration) requestAnimationFrame(tick);
+          else resolve(frames);
+        };
+        tick();
+      }),
+    { selector, text, child, duration },
+  );
+}
