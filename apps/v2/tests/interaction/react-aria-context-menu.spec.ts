@@ -109,5 +109,6 @@ describeMenuHighlight('react-aria context-menu highlight', {
   first: (page) => page.getByRole('menuitemcheckbox', { name: 'Show grid' }),
   second: (page) => page.getByRole('menuitemcheckbox', { name: 'Show rulers' }),
   submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
   keyboardNext: 'ArrowDown',
 });

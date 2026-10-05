@@ -96,5 +96,6 @@ describeMenuHighlight('base-ui context-menu highlight', {
   first: (page) => page.getByRole('menuitem', { name: /Duplicate/ }),
   second: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
   submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
   keyboardNext: 'ArrowDown',
 });

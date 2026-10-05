@@ -249,5 +249,6 @@ describeMenuHighlight('radix-ui dropdown-menu highlight', {
   second: (page) => page.getByRole('menuitem', { name: /Billing/ }),
   submenuTrigger: (page) =>
     page.getByRole('menuitem', { name: 'Invite people' }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Email' }),
   keyboardNext: 'ArrowDown',
 });

@@ -31,6 +31,11 @@ export type HighlightFrame = {
    * theirs, so any is a second highlight.
    */
   lit: string[];
+  /**
+   * How much highlight shows: each copy's opacity times the part of it its
+   * menu doesn't clip, summed (1 for one highlight in full view).
+   */
+  presence: number;
 };
 
 /**
@@ -43,6 +48,34 @@ export function recordHighlight(page: Page, duration: number) {
       new Promise<HighlightFrame[]>((resolve) => {
         const frames: HighlightFrame[] = [];
         const t0 = performance.now();
+        // The part of a copy its menu (the closest clipping element) shows.
+        const shown = (copy: HTMLElement) => {
+          const box = copy.getBoundingClientRect();
+          let clip: DOMRect | null = null;
+          for (
+            let el = copy.parentElement?.parentElement;
+            el && el !== document.body;
+            el = el.parentElement
+          ) {
+            const style = getComputedStyle(el);
+            if (
+              style.overflowX !== 'visible' ||
+              style.overflowY !== 'visible'
+            ) {
+              clip = el.getBoundingClientRect();
+              break;
+            }
+          }
+          if (!clip || !box.width || !box.height) return 1;
+          const width =
+            Math.min(box.right, clip.right) - Math.max(box.left, clip.left);
+          const height =
+            Math.min(box.bottom, clip.bottom) - Math.max(box.top, clip.top);
+          return (
+            (Math.max(0, width) * Math.max(0, height)) /
+            (box.width * box.height)
+          );
+        };
         const tick = () => {
           const t = performance.now() - t0;
           const elements = [
@@ -83,6 +116,11 @@ export function recordHighlight(page: Page, duration: number) {
                 );
               })
               .map((el) => el.textContent?.trim() ?? ''),
+            presence: elements.reduce(
+              (sum, el) =>
+                sum + Number(getComputedStyle(el).opacity) * shown(el),
+              0,
+            ),
           });
           if (t < duration) requestAnimationFrame(tick);
           else resolve(frames);
@@ -132,6 +170,8 @@ type MenuHighlightCase = {
    * they mark it highlighted.
    */
   submenuTrigger?: (page: Page) => Locator;
+  /** The first item of that trigger's submenu, beside it. */
+  submenuItem?: (page: Page) => Locator;
 };
 
 /** Every copy of every frame has its fill: no transparent highlight. */
@@ -268,6 +308,36 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
         expect(Math.abs(recorded.at(-1)!.copies[0]!.top - box.y)).toBeLessThan(
           1,
         );
+      });
+    }
+
+    if (c.submenuTrigger && c.submenuItem) {
+      test('into its submenu and out, the highlight never drops out', async ({
+        page,
+      }) => {
+        const trigger = c.submenuTrigger!(page);
+        const item = c.submenuItem!(page);
+        await pointAt(page, trigger);
+        await expect(item).toBeVisible();
+        await page.waitForTimeout(500);
+        // The submenu clips the surface gliding in from its trigger: the
+        // trigger's fades out as the new one shows, never a gap. Then out to
+        // another item of the menu (React Aria keeps the focus in an open
+        // submenu over its trigger).
+        for (const target of [item, c.first(page)]) {
+          const frames = recordHighlight(page, 700);
+          await pointAt(page, target, 6);
+          const recorded = await frames;
+          expect(Math.min(...recorded.map((f) => f.presence))).toBeGreaterThan(
+            0.85,
+          );
+          // Then one highlight, on the target.
+          const last = recorded.at(-1)!;
+          expect(last.copies).toHaveLength(1);
+          expect(
+            Math.abs(last.copies[0]!.top - (await boxOf(target)).y),
+          ).toBeLessThan(1);
+        }
       });
     }
 
