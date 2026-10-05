@@ -15,20 +15,26 @@ import {
 // hide a closed panel the moment it closes: these helpers keep it visible
 // until Motion's exit is over.
 
-// Animate UI v1's panel: its height grows from 0 while the content fades in
-// and rises 20px, revealed top to bottom by a mask (`--mask-stop`).
-const collapsed = { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 };
-const expanded = { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 };
-
-const MASK =
-  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))';
-
-/** The mask `--mask-stop` animates (v1's reveal). */
-const maskStyle = { maskImage: MASK, WebkitMaskImage: MASK };
+// The panel unfolds: its height grows from 0 while the content fades in from
+// a light blur (after Motion's accordion example). Folding back plays the
+// same in reverse.
+const collapsed = {
+  height: 0,
+  opacity: 0,
+  filter: motionTokens.blur.disclosure,
+};
+const expanded = {
+  height: 'auto',
+  opacity: 1,
+  filter: 'blur(0px)',
+  // Dropped at rest: `filter` would make the panel the containing block of
+  // its fixed descendants.
+  transitionEnd: { filter: 'none' },
+};
 
 /**
- * The opening and the closing alike: 350ms on a strong ease-out, so the panel
- * answers the click at once and settles softly.
+ * The opening and the closing alike: 350ms on a soft ease-out, so the panel
+ * answers the click at once without snapping open, and the eye follows it.
  */
 const DISCLOSURE_TRANSITION: Transition = motionTokens.transition.disclosure;
 
@@ -37,14 +43,13 @@ const INSTANT: Transition = { duration: 0 };
 type HiddenMode = 'until-found' | false;
 
 /**
- * The opening and closing transitions: 350ms ease-out both ways
+ * The opening and closing transitions: 350ms on a soft ease-out both ways
  * (`exitTransition` defaults to `transition`), paced by the provider's tempo.
  *
- * Under reduced motion the height and the 20px rise jump, while the fade and
- * the mask still play. Motion applies its reduced-motion setting when an
- * element mounts; a panel that stays mounted (React Aria, keepMounted,
- * forceMount) must also follow a preference changed later, so their
- * durations are zeroed here too.
+ * Under reduced motion the height jumps, while the fade and the blur still
+ * play. Motion applies its reduced-motion setting when an element mounts; a
+ * panel that stays mounted (React Aria, keepMounted, forceMount) must also
+ * follow a preference changed later, so the height's duration is zeroed here.
  */
 function useDisclosureTransitions(
   transition: Transition | undefined,
@@ -57,7 +62,7 @@ function useDisclosureTransitions(
     exitTransition ?? transition ?? DISCLOSURE_TRANSITION,
   );
   const instantMoves = (t: Transition): Transition =>
-    reduce ? { ...t, height: INSTANT, y: INSTANT } : t;
+    reduce ? { ...t, height: INSTANT } : t;
   return {
     // Find-in-page reveals the match at once, as the libraries do.
     enter: revealedByFind ? INSTANT : instantMoves(enter),
@@ -212,7 +217,7 @@ function motionRender<T extends RenderProp>(
 type PanelAnimationProps = {
   /**
    * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.23, 1, 0.32, 1] }
+   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -271,7 +276,6 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
     inert: !open && !(untilFound && panel.settled),
     style: {
       overflow: 'hidden',
-      ...maskStyle,
       // Base UI measures these for CSS transitions; Motion owns the height
       // now, so classes reading them follow the content.
       [sizeVars[0]]: 'auto',
@@ -300,7 +304,6 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
 export {
   collapsed,
   expanded,
-  maskStyle,
   useDisclosurePanel,
   useDisclosureTransitions,
   asMotion,

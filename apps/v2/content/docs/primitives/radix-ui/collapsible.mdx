@@ -32,13 +32,13 @@ Coming from the `@radix-ui/react-collapsible` package? Use the subpath: `import 
 
 ## Animation
 
-- **Content** opens like Animate UI v1's collapsible: its height grows from 0 while the content fades in and rises 20px, over 350ms on a strong ease-out. It closes the same way, in reverse, then unmounts.
+- **Content** unfolds like the accordions: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
 - Toggling it while it moves retargets from where it is.
 - Open by default (`defaultOpen`), it animates open on mount (page load), as in v1.
 - `--radix-collapsible-content-height` and `--radix-collapsible-content-width` read `auto`: classes using them follow Motion's height instead of a stale measure.
 - With `forceMount`, closed content stays in the DOM, collapsed and `inert`.
 - `<AnimateUIProvider tempo>` paces both transitions.
-- Under reduced motion, the height and the rise change at once; the content only fades.
+- Under reduced motion, the height changes at once; the fade and the blur still play.
 
 ## API Reference
 
@@ -57,7 +57,7 @@ Every part takes exactly the props of [Radix UI's Collapsible](https://www.radix
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: '{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }',
+      default: '{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

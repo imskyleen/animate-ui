@@ -9,13 +9,12 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   collapsed,
   expanded,
-  maskStyle,
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
 
 // Same API as Radix's Accordion. The Root mirrors the open items (Radix keeps
-// them private) so each Content can animate in and out like Animate UI v1's:
-// height, fade, a 20px rise and a mask revealing it top to bottom.
+// them private) so each Content can unfold and fold back: its height grows
+// while the content fades in from a light blur.
 
 type Value = string | string[] | undefined;
 
@@ -40,7 +39,7 @@ type AccordionContentProps = AccordionPrimitive.AccordionContentProps &
 type ContentAnimationProps = {
   /**
    * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.23, 1, 0.32, 1] }
+   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -93,8 +92,8 @@ function Content({
 }: React.ComponentProps<typeof AccordionPrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useItemOpen();
-  // The content: 350ms ease-out both ways; under reduced motion the
-  // height and the rise jump (see internal/disclosure-panel).
+  // The content: 350ms on a soft ease-out both ways; under reduced motion
+  // the height jumps (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
 
   return (
@@ -119,7 +118,6 @@ function Content({
             inert={!open}
             style={{
               overflow: 'hidden',
-              ...maskStyle,
               // Radix measures these once; Motion owns the height now, so
               // classes reading them (h-(--radix-accordion-content-height))
               // follow the content instead of a stale measure.

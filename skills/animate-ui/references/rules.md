@@ -97,7 +97,7 @@ animate={{ top: bounds.top, left: bounds.left, width: bounds.width, height: boun
 <motion.div layoutId="highlight" transition={spring.highlight} />
 ```
 
-Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`) and heights following their content (`spring.height`). Keep blur light (`blur.icon`, `blur.surface`); large blurs are expensive to paint.
+Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`) and heights following their content (`spring.height`). Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`); large blurs are expensive to paint.
 
 #### A9. Prefer a `transform` string for press and continuous motion
 
@@ -147,6 +147,7 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 ### B2. Pick a tween's curve by what the element does
 
 - Entering or leaving: `ease.out` (`cubic-bezier(0.23, 1, 0.32, 1)`). It starts fast, so the interface answers at once.
+- Unfolding in place and pushing what follows (accordion, collapsible): `ease.unfold` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the eye follows the content open instead of seeing it snap open.
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
@@ -170,11 +171,11 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Menus, selects                  | 200ms                              | `transition.menu`                              |
 | Tooltips, popovers, hover cards | there in ~200ms, settled by ~500ms | `spring.pop`                                   |
 | Selection, pointer highlight    | a smooth slide / a quick follow    | `spring.selection`, `spring.highlight`         |
-| Disclosures                     | 350ms                              | `transition.disclosure`                        |
+| Disclosures                     | 350ms, soft ease-out               | `transition.disclosure`                        |
 | Dialogs, sheets                 | ~450ms, ~550ms                     | `spring.dialog`, `spring.sheet`                |
 | Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
 
-A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first.
+A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure on `ease.out` felt rushed, so it got the softer `ease.unfold`, not a longer duration.
 
 ### B4. Scale: press only, and from a size that fits
 
@@ -196,7 +197,7 @@ Closing plays the entrance's transition in reverse: one transition both ways (`e
 
 ### B6. Blur to bridge a swap
 
-When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs and their overlay also come in from `blur.surface`.
+When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs and their overlay also come in from `blur.surface`, and a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds.
 
 ### B7. Surfaces: modals tip, sheets slide
 
@@ -226,7 +227,7 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, ease-in-out on on-screen movement, `ease` on color, never ease-in
+- [ ] `ease.out` on enter and exit, `ease.unfold` on disclosures, ease-in-out on on-screen movement, `ease` on color, never ease-in
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance
 - [ ] Swaps bridged with a light blur

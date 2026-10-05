@@ -6,11 +6,15 @@ import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
-import { useDisclosureTransitions } from '../../../internal/disclosure-panel';
+import {
+  collapsed,
+  expanded,
+  useDisclosureTransitions,
+} from '../../../internal/disclosure-panel';
 
 // Same API as Radix's Collapsible. The Root mirrors the open state (Radix
-// keeps it private) so the Content can animate in and out like Animate UI
-// v1's: height, fade and a 20px rise.
+// keeps it private) so the Content can unfold and fold back like the
+// accordions: its height grows while the content fades in from a light blur.
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Collapsible.Root',
@@ -25,7 +29,7 @@ type CollapsibleContentProps = CollapsiblePrimitive.CollapsibleContentProps &
 type ContentAnimationProps = {
   /**
    * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.23, 1, 0.32, 1] }
+   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */
@@ -55,10 +59,6 @@ function Root(props: React.ComponentProps<typeof CollapsiblePrimitive.Root>) {
 
 const Trigger = CollapsiblePrimitive.Trigger;
 
-// v1's Radix Collapsible: unlike the accordions, no mask.
-const collapsed = { height: 0, opacity: 0, y: 20 };
-const expanded = { height: 'auto', opacity: 1, y: 0 };
-
 function Content({
   forceMount,
   children,
@@ -68,8 +68,8 @@ function Content({
 }: React.ComponentProps<typeof CollapsiblePrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useOpen();
-  // The content: 350ms ease-out both ways; under reduced motion the
-  // height and the rise jump (see internal/disclosure-panel).
+  // The content: 350ms on a soft ease-out both ways; under reduced motion
+  // the height jumps (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
 
   return (

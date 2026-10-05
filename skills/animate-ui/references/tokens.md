@@ -55,7 +55,7 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | ----------------------- | ----------------------------------------------- | --------------------------------------------------------- |
 | `transition.menu`       | `{ duration: 0.2, ease: ease.out }`             | Menus, selects, comboboxes, navigation menus              |
 | `transition.overlay`    | `{ duration: 0.2, ease: ease.out }`             | An overlay or backdrop fading (and un-blurring)           |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.out }`            | Accordion and collapsible panels                          |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.unfold }`         | Accordion and collapsible panels unfolding                |
 | `transition.panel`      | `{ duration: 0.5, ease: ease.out }`             | A panel coming in from a blur (tab panels)                |
 | `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.out }` | A check drawing itself once the box has answered          |
 | `transition.uncheck`    | `{ duration: 0.2, ease: ease.out }`             | A check erasing itself                                    |
@@ -69,11 +69,12 @@ Pick a tween's curve by what the element does:
 | What it does                       | Curve                                                                              |
 | ---------------------------------- | ---------------------------------------------------------------------------------- |
 | Enters or leaves                   | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                       |
+| Unfolds in place, pushing the page | `ease.unfold`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                               |
 | Moves or morphs on screen          | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
 | Changes color (CSS)                | `ease`                                                                             |
 | Moves constantly (marquee, loader) | `linear`                                                                           |
 
-`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. Never ease-in on UI: it starts slow, exactly when the user is watching.
+`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.unfold` starts softer: an accordion or collapsible pushes the page, and should be seen opening rather than snap open (after Motion's accordion example). Never ease-in on UI: it starts slow, exactly when the user is watching.
 
 ## Scales
 
@@ -90,10 +91,11 @@ The smaller the element, the farther it starts, so its growth stays visible; the
 
 ## Blur
 
-| Token          | Value       | Use for                                                                                       |
-| -------------- | ----------- | --------------------------------------------------------------------------------------------- |
-| `blur.icon`    | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                                      |
-| `blur.surface` | `blur(4px)` | Panels and surfaces coming in: tab panels, navigation menu content, dialogs and their overlay |
+| Token             | Value       | Use for                                                                                       |
+| ----------------- | ----------- | --------------------------------------------------------------------------------------------- |
+| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                                      |
+| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds                      |
+| `blur.surface`    | `blur(4px)` | Panels and surfaces coming in: tab panels, navigation menu content, dialogs and their overlay |
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
 

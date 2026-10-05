@@ -165,10 +165,13 @@ function DialogContentMotion({
 Purpose: continuity, the content below doesn't jump. This is where `height` animates.
 
 ```tsx
-const collapsed = { height: 0, opacity: 0, '--mask-stop': '0%', y: 20 };
-const expanded = { height: 'auto', opacity: 1, '--mask-stop': '100%', y: 0 };
-const MASK =
-  'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))';
+const collapsed = { height: 0, opacity: 0, filter: blur.disclosure };
+const expanded = {
+  height: 'auto',
+  opacity: 1,
+  filter: 'blur(0px)',
+  transitionEnd: { filter: 'none' }, // no filter left at rest
+};
 
 <AnimatePresence>
   {isOpen && (
@@ -180,18 +183,18 @@ const MASK =
         transition={useTempoTransition(
           transition ?? motionTransition.disclosure,
         )}
-        style={{ overflow: 'hidden', maskImage: MASK, WebkitMaskImage: MASK }}
+        style={{ overflow: 'hidden' }}
       />
     </AccordionPrimitive.Content>
   )}
 </AnimatePresence>;
 ```
 
-- The height grows from 0 while the content fades in, rises 20px and is revealed top to bottom by the mask, in `transition.disclosure` (350ms, `ease.out`), both ways.
+- The height grows from 0 while the content fades in from `blur.disclosure` (2px), in `transition.disclosure` (350ms, `ease.unfold`), both ways. After Motion's accordion example: the soft ease-out lets the eye follow the content open, where `ease.out` would snap it open.
 - An item open by default unfolds on mount, page load included: no `initial={false}`.
-- Reduced motion: the height and the rise jump; the fade and the mask still play.
+- Reduced motion: the height jumps; the fade and the blur still play.
 - Derive each item's open state from the root value; never copy it into state with an effect. With a single-value root the value is a string, so compare with `===`, not `includes` (`'item-10'.includes('item-1')` is true).
-- Chevron: it turns 180° on screen, so ease-in-out (`transition-transform duration-200`).
+- Chevron: it turns 180° with the panel, on its timing (`transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)]`), so the two read as one gesture.
 
 ## Sheet (Sheet, Drawer)
 

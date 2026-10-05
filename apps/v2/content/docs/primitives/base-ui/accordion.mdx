@@ -36,14 +36,14 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Panel** opens like Animate UI v1's accordion: its height grows from 0 while the content fades in, rises 20px and is revealed top to bottom by a mask, over 350ms on a strong ease-out. It closes the same way, in reverse, then unmounts.
+- **Panel** unfolds: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
 - Opening another item while one is closing retargets smoothly.
 - An item open by default animates open on mount (page load), as in v1.
 - Motion animates the panel itself: shadcn/ui's `h-(--accordion-panel-height) data-starting-style:h-0 data-ending-style:h-0` classes are no longer needed (the CLI removes them). `--accordion-panel-height` and `--accordion-panel-width` read `auto`.
 - `keepMounted` and `hiddenUntilFound`, on the Root or a Panel, keep closed panels in the DOM: they collapse, then get Base UI's `hidden` (or `hidden="until-found"`, which find-in-page can reveal; a panel revealed that way opens at once, as in Base UI).
 - An `onValueChange` that calls `eventDetails.cancel()` still cancels the change.
 - `<AnimateUIProvider tempo>` paces both transitions.
-- Under reduced motion, the height and the rise change at once; the fade and the mask still play.
+- Under reduced motion, the height changes at once; the fade and the blur still play.
 
 ## API Reference
 
@@ -62,7 +62,7 @@ Every part takes exactly the props of [Base UI's Accordion](https://base-ui.com/
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: '{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }',
+      default: '{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

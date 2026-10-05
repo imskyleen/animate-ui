@@ -32,10 +32,18 @@ test.describe('radix-ui accordion demo, Radix behavior', () => {
     ).toHaveAttribute('aria-expanded', 'true');
   });
 
-  test('the chevron turns over 200ms', async ({ page }) => {
+  test('the chevron turns with the panel: 350ms, same soft ease-out', async ({
+    page,
+  }) => {
     const trigger = page.getByRole('button', {
       name: 'How is it different from other libraries?',
     });
+    const icon = trigger.locator('svg');
+    await expect(icon).toHaveCSS('transition-duration', '0.35s');
+    await expect(icon).toHaveCSS(
+      'transition-timing-function',
+      'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    );
     // Sampled in the page from the click: intermediate angles, then 180°.
     const angles = await trigger.evaluate(async (button) => {
       const icon = button.querySelector('svg')!;

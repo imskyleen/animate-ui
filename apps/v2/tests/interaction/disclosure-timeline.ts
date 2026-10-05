@@ -23,15 +23,13 @@ export type HeightSample = {
   h: number;
   /** Opacity. */
   o: number;
-  /** translateY. */
-  y: number;
-  /** `--mask-stop`, in % (NaN without the mask). */
-  m: number;
+  /** Blur radius, in px (0 without a blur). */
+  b: number;
 };
 
 /**
- * Records the rendered height, opacity, translateY and mask stop of the first
- * element matching `selector` (and containing `text`) on every frame for
+ * Records the rendered height, opacity and blur of the first element matching
+ * `selector` (and containing `text`) on every frame for
  * `durationMs` (height and opacity 0 when absent or hidden). Sampled in the
  * page, so it holds up on a busy machine. Start it, trigger the change, then
  * await `samples()`.
@@ -46,13 +44,7 @@ export async function recordHeights(
     ({ sel, duration, text }) => {
       const w = window as unknown as { __heights?: Promise<unknown> };
       w.__heights = new Promise((resolve) => {
-        const samples: {
-          t: number;
-          h: number;
-          o: number;
-          y: number;
-          m: number;
-        }[] = [];
+        const samples: { t: number; h: number; o: number; b: number }[] = [];
         const start = performance.now();
         const tick = () => {
           const el = [...document.querySelectorAll<HTMLElement>(sel)].find(
@@ -60,13 +52,12 @@ export async function recordHeights(
           );
           const shown = el && !el.hasAttribute('hidden');
           const style = el ? getComputedStyle(el) : null;
-          const matrix = style?.transform.match(/matrix\(([^)]+)\)/);
+          const blur = style?.filter.match(/blur\(([\d.e-]+)px\)/);
           samples.push({
             t: performance.now() - start,
             h: shown ? el.getBoundingClientRect().height : 0,
             o: shown ? Number(style!.opacity) : 0,
-            y: matrix ? Number(matrix[1]!.split(',')[5]) : 0,
-            m: parseFloat(style?.getPropertyValue('--mask-stop') ?? ''),
+            b: blur ? Number(blur[1]) : 0,
           });
           if (performance.now() - start < duration) requestAnimationFrame(tick);
           else resolve(samples);
@@ -149,18 +140,15 @@ type DemoOptions = {
   open?: { trigger: string; text: string };
   /** How a closed panel ends up: removed, or kept with `hidden`. */
   closedState: 'unmounted' | 'hidden';
-  /** v1's mask reveal (every panel but the Radix UI Collapsible's). */
-  mask?: boolean;
 };
 
 /**
- * The interaction tests every disclosure demo passes: Animate UI v1's panel,
- * whose height grows from 0 while the content fades in and rises 20px (and,
- * with `mask`, is revealed top to bottom), over 350ms on a strong ease-out
- * both ways.
+ * The interaction tests every disclosure demo passes: the panel unfolds, its
+ * height growing from 0 while the content fades in from a 2px blur, over
+ * 350ms on a soft ease-out both ways.
  */
 export function disclosureDemoTests(name: string, options: DemoOptions) {
-  const { url, panel, closed, open, closedState, mask = true } = options;
+  const { url, panel, closed, open, closedState } = options;
 
   test.describe(name, () => {
     test.beforeEach(async ({ page }) => {
@@ -177,7 +165,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       else await expect(panelOf(page, text)).toBeHidden({ timeout: 600 });
     };
 
-    test('opens by growing its height, fading in and rising, then settles', async ({
+    test('unfolds: its height grows while the content fades in from a blur, then settles', async ({
       page,
     }) => {
       const timeline = await recordHeights(page, panel, 1200, closed.text);
@@ -187,20 +175,25 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
 
       expect(entrance.from).toBe(0);
       expect(entrance.to).toBeGreaterThan(20);
-      // Frames in between: it grows, fades in and rises with it.
+      // Frames in between: it grows while the content fades in and clears.
       expect(entrance.steps).toBeGreaterThan(2);
       const moving = samples.filter((s) => s.h > 0.5 && s.o < 0.99);
       expect(moving.some((s) => s.o > 0 && s.o < 1)).toBe(true);
-      expect(moving.some((s) => s.y > 1 && s.y < 20)).toBe(true);
-      if (mask) expect(moving.some((s) => s.m > 0 && s.m < 100)).toBe(true);
-      // 350ms on a strong ease-out: the last half pixel lands well before the
-      // end (a frame or two of slack on a busy machine).
+      expect(moving.some((s) => s.b > 0.1 && s.b < 2)).toBe(true);
+      // A soft ease-out, not a snap: four fifths of the height take ~140ms
+      // (~90ms on the menus' strong ease-out). A busy machine only delays it.
+      const first = samples.findIndex((s) => s.h > 0.5);
+      const begin = samples[Math.max(first - 1, 0)]!.t;
+      const fourFifths = samples.find((s) => s.h >= entrance.to * 0.8)!;
+      expect(fourFifths.t - begin).toBeGreaterThan(110);
+      // 350ms on a soft ease-out: the last half pixel lands near the end (a
+      // frame or two of slack on a busy machine).
       expect(entrance.duration).toBeGreaterThan(200);
       expect(entrance.duration).toBeLessThan(550);
       await expect(panelOf(page, closed.text)).toHaveCSS('opacity', '1');
-      const settled = samples.at(-1)!;
-      expect(settled.y).toBe(0);
-      if (mask) expect(settled.m).toBe(100);
+      // At rest, no filter is left on the panel.
+      await expect(panelOf(page, closed.text)).toHaveCSS('filter', 'none');
+      expect(samples.at(-1)!.b).toBe(0);
     });
 
     test('closes the same way, in reverse, then goes away', async ({
@@ -221,8 +214,9 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       expect(exit.duration).toBeGreaterThan(200);
       expect(exit.duration).toBeLessThan(550);
       expect(Math.abs(exit.duration - entrance.duration)).toBeLessThan(150);
+      // The content fades out into the blur.
       const moving = samples.filter((s) => s.h > 0.5 && s.o < 0.99);
-      expect(moving.some((s) => s.y > 1 && s.y < 20)).toBe(true);
+      expect(moving.some((s) => s.b > 0.1 && s.b < 2)).toBe(true);
       await expectClosed(page, closed.text);
     });
 
@@ -241,11 +235,11 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
               ].find((candidate) => candidate.textContent?.includes(text));
               if (el) {
                 const style = getComputedStyle(el);
-                const matrix = style.transform.match(/matrix\(([^)]+)\)/);
+                const blur = style.filter.match(/blur\(([\d.e-]+)px\)/);
                 w.__mount.push([
                   el.getBoundingClientRect().height,
                   Number(style.opacity),
-                  matrix ? Number(matrix[1]!.split(',')[5]) : 0,
+                  blur ? Number(blur[1]) : 0,
                 ]);
               }
               if (w.__mount.length < 900) requestAnimationFrame(tick);
@@ -266,7 +260,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
         expect(frames[0]![0]).toBeLessThan(1);
         expect(
           frames.some(
-            ([h, o, y]) => h! > 1 && h! < full - 1 && o! < 1 && y! > 1,
+            ([h, o, b]) => h! > 1 && h! < full - 1 && o! < 1 && b! > 0.1,
           ),
         ).toBe(true);
       });
