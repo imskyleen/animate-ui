@@ -49,7 +49,7 @@ const FAMILIES: Family[] = [
       {
         demo: 'radix-ui/checkbox',
         label: 'Checkbox',
-        note: 'coche tracée en 0,3s après 0,2s sur l’easeOut de Motion (délai et courbe de la v1), fond de la case en 0,3s',
+        note: 'coche tracée en 0,3s après 0,2s sur l’easeOut de Motion (délai et courbe de la v1) ; fond : un calque qui grandit de 70 % à 100 % en apparaissant, en 0,3s (comme HeroUI)',
       },
       { demo: 'radix-ui/toggle', label: 'Toggle' },
       {

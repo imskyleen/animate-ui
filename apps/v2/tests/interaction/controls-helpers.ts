@@ -256,6 +256,42 @@ export function describeCheckboxDemo(lib: Lib) {
       expectCheckErases(await readSamples(page));
     });
 
+    test('the box fills with a layer growing from 70% as it fades in', async ({
+      page,
+    }) => {
+      const box = page.locator(CHECKBOX).nth(1);
+      // Sampled in the page from the click: the layer (the box's ::before)
+      // grows and fades in together, while the box's own background stays.
+      const frames = await box.evaluate(async (el) => {
+        const read = () => {
+          const layer = getComputedStyle(el, '::before');
+          return {
+            scale: Number(layer.scale === 'none' ? 1 : layer.scale),
+            opacity: Number(layer.opacity),
+            bg: getComputedStyle(el).backgroundColor,
+          };
+        };
+        const out = [read()];
+        // React Aria's box is a label: its input takes the click.
+        const target = el.tagName === 'LABEL' ? el.querySelector('input')! : el;
+        (target as HTMLElement).click();
+        const start = performance.now();
+        while (performance.now() - start < 500) {
+          await new Promise((r) => requestAnimationFrame(r));
+          out.push(read());
+        }
+        return out;
+      });
+      expect(frames[0]!.scale).toBeCloseTo(0.7, 2);
+      expect(frames[0]!.opacity).toBe(0);
+      expect(
+        frames.some((f) => f.scale > 0.75 && f.scale < 0.95 && f.opacity > 0.1),
+      ).toBe(true);
+      expect(frames.at(-1)!.scale).toBe(1);
+      expect(frames.at(-1)!.opacity).toBe(1);
+      for (const f of frames) expect(f.bg).toBe(frames[0]!.bg);
+    });
+
     test('the box scales on press, not on hover', async ({ page }) => {
       expectPressOnly(await pressScale(page, page.locator(CHECKBOX).nth(1)));
     });
