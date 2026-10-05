@@ -1,0 +1,106 @@
+---
+title: Accordion
+description: A vertically stacked set of interactive headings that each reveal an associated section of content.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-accordion" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-accordion" />
+
+## Usage
+
+```tsx
+<Accordion>
+  <AccordionItem>
+    <AccordionHeader>
+      <AccordionTrigger>Accordion Item 1</AccordionTrigger>
+    </AccordionHeader>
+    <AccordionContent>
+      <div>Accordion Content 1</div>
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem>
+    <AccordionHeader>
+      <AccordionTrigger>Accordion Item 2</AccordionTrigger>
+    </AccordionHeader>
+    <AccordionContent>
+      <div>Accordion Content 2</div>
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## API Reference
+
+### Accordion
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/accordion#root"
+  text="Radix UI API Reference - Accordion.Root"
+/>
+
+### AccordionItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/accordion#item"
+  text="Radix UI API Reference - Accordion.Item"
+/>
+
+### AccordionHeader
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/accordion#header"
+  text="Radix UI API Reference - Accordion.Header"
+/>
+
+### AccordionTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/accordion#trigger"
+  text="Radix UI API Reference - Accordion.Trigger"
+/>
+
+### AccordionContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/accordion#content"
+  text="Radix UI API Reference - Accordion.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the accordion content',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.35, ease: 'easeInOut' }",
+    },
+    keepRendered: {
+      description:
+        'Whether to keep the accordion content rendered (useful for SEO)',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the accordion content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` props are not supported in the
+  `AccordionContent` component as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Radix UI Accordion](https://www.radix-ui.com/primitives/docs/components/accordion)

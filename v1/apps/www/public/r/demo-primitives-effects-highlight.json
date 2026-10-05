@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-highlight",
+  "title": "Highlight Demo",
+  "description": "Demo showing an animated highlight.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-effects-highlight"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/highlight/index.tsx",
+      "content": "import { Highlight } from '@/components/animate-ui/primitives/effects/highlight';\n\nconst TABS = [\n  {\n    value: 'tab-1',\n    title: 'Tab 1',\n    description: 'Tab 1 description',\n  },\n  {\n    value: 'tab-2',\n    title: 'Tab 2',\n    description: 'Tab 2 description',\n  },\n  {\n    value: 'tab-3',\n    title: 'Tab 3',\n    description: 'Tab 3 description',\n  },\n];\n\ntype HighlightDemoProps = {\n  mode?: 'children' | 'parent';\n  exitDelay?: number;\n  hover?: boolean;\n};\n\nexport const HighlightDemo = ({\n  mode = 'children',\n  exitDelay = 200,\n  hover = false,\n}: HighlightDemoProps) => {\n  return (\n    <div className=\"flex border rounded-full p-1\">\n      {/* @ts-ignore */}\n      <Highlight\n        defaultValue={TABS[0]?.value}\n        className=\"rounded-full bg-accent inset-0\"\n        {...(mode === 'parent' && {\n          containerClassName: 'flex',\n        })}\n        mode={mode}\n        exitDelay={exitDelay}\n        hover={hover}\n      >\n        {TABS.map((tab) => (\n          <div\n            key={tab.value}\n            data-value={tab.value}\n            className=\"px-3 h-8 flex items-center cursor-pointer justify-center rounded-full text-sm data-[active=true]:text-current data-[active=true]:font-medium text-muted-foreground transition-all duration-300\"\n          >\n            {tab.title}\n          </div>\n        ))}\n      </Highlight>\n    </div>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/highlight.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Highlight": {
+        "mode": {
+          "value": "children",
+          "options": {
+            "children": "children",
+            "parent": "parent"
+          }
+        },
+        "exitDelay": {
+          "value": 200,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "hover": {
+          "value": false
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

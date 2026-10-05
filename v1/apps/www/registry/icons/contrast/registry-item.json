@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-contrast",
+  "type": "registry:ui",
+  "title": "Contrast Icon",
+  "description": "Contrast icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/contrast/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/contrast.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["display", "accessibility"]
+  }
+}

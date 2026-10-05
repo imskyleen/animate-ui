@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-spring",
+  "title": "Animate Spring Demo",
+  "description": "Demo showing an animated spring.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-spring"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/spring/index.tsx",
+      "content": "import {\n  SpringProvider,\n  Spring,\n  SpringElement,\n} from '@/components/animate-ui/primitives/animate/spring';\n\nexport const SpringDemo = () => {\n  return (\n    <SpringProvider>\n      <Spring className=\"z-10 text-neutral-500\" />\n      <SpringElement className=\"z-50\">\n        <img\n          src=\"https://pbs.twimg.com/profile_images/1950218390741618688/72447Y7e_400x400.jpg\"\n          alt=\"Animate UI\"\n          draggable={false}\n          className=\"size-12 border\"\n        />\n      </SpringElement>\n    </SpringProvider>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/spring.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,61 @@
+---
+title: Code Tabs
+description: A tabs component that displays code for different languages.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-animate-code-tabs" />
+
+## Installation
+
+<ComponentInstallation name="components-animate-code-tabs" />
+
+## Usage
+
+```tsx
+<CodeTabs codes={codes} />
+```
+
+## API Reference
+
+### CodeTabs
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tabs#tabs"
+  text="Animate UI API Reference - Tabs Primitive"
+/>
+
+<TypeTable
+  type={{
+    codes: {
+      description: 'The codes to display in the tabs',
+      type: 'Record<string, string>',
+      required: true,
+    },
+    lang: {
+      description: 'The language of the code',
+      type: 'string',
+      required: false,
+      default: 'bash',
+    },
+    themes: {
+      description: 'The shiki themes to display in the tabs',
+      type: 'Record<string, string>',
+      required: false,
+      default: "{ light: 'github-light', dark: 'github-dark' }",
+    },
+    copyButton: {
+      description: 'Whether to show the copy button.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    onCopiedChange: {
+      description: 'The callback function when the code is copied.',
+      type: '(copied: boolean, content?: string) => void',
+      required: false,
+    },
+  }}
+/>

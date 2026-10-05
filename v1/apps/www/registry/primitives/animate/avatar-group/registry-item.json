@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-animate-avatar-group",
+  "type": "registry:ui",
+  "title": "Avatar Group",
+  "description": "An animated avatar group that displays overlapping user images and smoothly shifts each avatar forward on hover to highlight it.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-tooltip"],
+  "files": [
+    {
+      "path": "registry/primitives/animate/avatar-group/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/animate/avatar-group.tsx"
+    }
+  ]
+}

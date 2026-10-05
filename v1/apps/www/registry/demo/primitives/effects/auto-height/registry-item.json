@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-auto-height",
+  "type": "registry:ui",
+  "title": "Auto Height Demo",
+  "description": "Demo showing an animated auto height.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/primitives-effects-auto-height"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/auto-height/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/auto-height.tsx"
+    }
+  ]
+}

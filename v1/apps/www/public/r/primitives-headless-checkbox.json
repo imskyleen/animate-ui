@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-headless-checkbox",
+  "title": "Headless Checkbox",
+  "description": "Checkboxes provide the same functionality as native HTML checkboxes, without any of the styling, giving you a clean slate to design them however you'd like.",
+  "dependencies": [
+    "motion",
+    "@headlessui/react"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/headless/checkbox/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {\n  Checkbox as CheckboxPrimitive,\n  type CheckboxProps as CheckboxPrimitiveProps,\n} from '@headlessui/react';\nimport {\n  motion,\n  type SVGMotionProps,\n  type HTMLMotionProps,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype CheckboxContextType = {\n  isChecked: boolean;\n  isIndeterminate: boolean;\n};\n\nconst [CheckboxProvider, useCheckbox] =\n  getStrictContext<CheckboxContextType>('CheckboxContext');\n\ntype CheckboxProps<TTag extends React.ElementType = typeof motion.button> =\n  CheckboxPrimitiveProps<TTag> &\n    Omit<\n      HTMLMotionProps<'button'>,\n      'checked' | 'onChange' | 'defaultChecked' | 'children'\n    > & {\n      as?: TTag;\n    };\n\nfunction Checkbox<TTag extends React.ElementType = typeof motion.button>({\n  children,\n  ...props\n}: CheckboxProps<TTag>) {\n  const { as = motion.button, ...rest } = props;\n\n  return (\n    <CheckboxPrimitive\n      data-slot=\"checkbox\"\n      whileTap={{ scale: 0.95 }}\n      whileHover={{ scale: 1.05 }}\n      {...rest}\n      as={as as React.ElementType}\n    >\n      {(bag) => (\n        <CheckboxProvider\n          value={{ isChecked: bag.checked, isIndeterminate: bag.indeterminate }}\n        >\n          {typeof children === 'function' ? children(bag) : children}\n        </CheckboxProvider>\n      )}\n    </CheckboxPrimitive>\n  );\n}\n\ntype CheckboxIndicatorProps = SVGMotionProps<SVGSVGElement>;\n\nfunction CheckboxIndicator(props: CheckboxIndicatorProps) {\n  const { isChecked, isIndeterminate } = useCheckbox();\n\n  return (\n    <motion.svg\n      data-slot=\"checkbox-indicator\"\n      xmlns=\"http://www.w3.org/2000/svg\"\n      fill=\"none\"\n      viewBox=\"0 0 24 24\"\n      strokeWidth=\"3.5\"\n      stroke=\"currentColor\"\n      initial=\"unchecked\"\n      animate={isChecked ? 'checked' : 'unchecked'}\n      {...props}\n    >\n      {isIndeterminate ? (\n        <motion.line\n          x1=\"5\"\n          y1=\"12\"\n          x2=\"19\"\n          y2=\"12\"\n          strokeLinecap=\"round\"\n          initial={{ pathLength: 0, opacity: 0 }}\n          animate={{\n            pathLength: 1,\n            opacity: 1,\n            transition: { duration: 0.2 },\n          }}\n        />\n      ) : (\n        <motion.path\n          strokeLinecap=\"round\"\n          strokeLinejoin=\"round\"\n          d=\"M4.5 12.75l6 6 9-13.5\"\n          variants={{\n            checked: {\n              pathLength: 1,\n              opacity: 1,\n              transition: {\n                duration: 0.2,\n                delay: 0.2,\n              },\n            },\n            unchecked: {\n              pathLength: 0,\n              opacity: 0,\n              transition: {\n                duration: 0.2,\n              },\n            },\n          }}\n        />\n      )}\n    </motion.svg>\n  );\n}\n\nexport {\n  Checkbox,\n  CheckboxIndicator,\n  useCheckbox,\n  type CheckboxProps,\n  type CheckboxIndicatorProps,\n  type CheckboxContextType,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/headless/checkbox.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

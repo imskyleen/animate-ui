@@ -1,0 +1,108 @@
+---
+title: GitHub Stars Wheel
+description: A scrolling wheel that displays GitHub stars count.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-animate-github-stars-wheel" />
+
+## Installation
+
+<ComponentInstallation name="components-animate-github-stars-wheel" />
+
+## Usage
+
+```tsx
+<GitHubStarsWheel />
+```
+
+## API Reference
+
+### GitHubStarsWheel
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/texts/scrolling-number#scrollingnumbercontainer"
+  text="Animate UI API Reference - ScrollingNumberContainer Primitive"
+/>
+
+<TypeTable
+  type={{
+    username: {
+      description: 'The username of the repository.',
+      type: 'string',
+      required: false,
+    },
+    repo: {
+      description: 'The repository name.',
+      type: 'string',
+      required: false,
+    },
+    delay: {
+      description: 'The delay of the number.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    value: {
+      description: 'The value of the number.',
+      type: 'number',
+      required: false,
+    },
+    direction: {
+      description: 'The direction of the scrolling number.',
+      type: '"btt" | "ttb"',
+      required: false,
+      default: 'btt',
+    },
+    step: {
+      description: 'The step of the number.',
+      type: 'number',
+      required: false,
+      default: '100',
+    },
+    itemsSize: {
+      description: 'The size of the items.',
+      type: 'number',
+      required: false,
+      default: '35',
+    },
+    sideItemsCount: {
+      description: 'The number of items to show on the side.',
+      type: 'number',
+      required: false,
+      default: '2',
+    },
+    onNumberChange: {
+      description:
+        'The callback to use when the number changes as the wheel spins.',
+      type: '(value: number) => void',
+      required: false,
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin to use.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    '...props': {
+      description: 'The props of the scrolling number container.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+
+}}
+/>

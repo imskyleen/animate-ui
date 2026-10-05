@@ -1,0 +1,139 @@
+---
+title: Code
+description: A code component that animates the code as it is written.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-animate-code" />
+
+## Installation
+
+<ComponentInstallation name="components-animate-code" />
+
+## Usage
+
+```tsx
+<Code>
+  <CodeHeader />
+  <CodeBlock />
+</Code>
+```
+
+## API Reference
+
+### Code
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'The props of the Code',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### CodeHeader
+
+<TypeTable
+  type={{
+    icon: {
+      description: 'The icon of the code header.',
+      type: 'React.ElementType',
+      required: true,
+    },
+    copyButton: {
+      description: 'Whether to show the copy button.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the CodeHeader',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### CodeBlock
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/code-block#codeblock"
+  text="Animate UI API Reference - CodeBlock Primitive"
+/>
+
+<TypeTable
+  type={{
+    lang: {
+      description: 'The language of the code.',
+      type: 'string',
+      required: true,
+    },
+    theme: {
+      description: 'The theme of the code.',
+      type: '"light" | "dark"',
+      required: false,
+      default: 'light',
+    },
+    themes: {
+      description: 'The themes of the code.',
+      type: '{ light: string; dark: string }',
+      required: false,
+      default: '{ light: "github-light", dark: "github-dark" }',
+    },
+    writing: {
+      description: 'Whether to animate the code.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    duration: {
+      description: 'The duration of the animation.',
+      type: 'number',
+      required: false,
+      default: '5000',
+    },
+    delay: {
+      description: 'The delay of the animation.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    onDone: {
+      description: 'The callback function when the animation is done.',
+      type: '() => void',
+      required: false,
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'The margin to use when the text is in view.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    '...props': {
+      description: 'The props of the CodeBlock',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>

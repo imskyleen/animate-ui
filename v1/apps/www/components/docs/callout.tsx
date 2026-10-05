@@ -1,0 +1,56 @@
+import { CircleCheck, CircleX, Info, TriangleAlert } from 'lucide-react';
+import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+
+import { cn } from '@workspace/ui/lib/utils';
+
+type CalloutProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'title' | 'type' | 'icon'
+> & {
+  title?: ReactNode;
+  type?: 'info' | 'warn' | 'error' | 'success' | 'warning';
+  icon?: ReactNode;
+};
+
+const iconClass = 'size-5 -me-0.5 fill-(--callout-color) text-fd-accent';
+
+export const Callout = forwardRef<HTMLDivElement, CalloutProps>(
+  ({ className, children, title, type = 'info', icon, ...props }, ref) => {
+    if (type === 'warn') type = 'warning';
+    if ((type as unknown) === 'tip') type = 'info';
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'flex gap-2 my-4 rounded-lg bg-fd-accent/50 p-3 ps-2 text-sm text-fd-card-foreground',
+          className,
+        )}
+        {...props}
+        style={
+          {
+            '--callout-color': `var(--color-fd-${type}, var(--color-fd-muted))`,
+            ...props.style,
+          } as object
+        }
+      >
+        <div role="none" className="w-0.5 bg-(--callout-color)/50 rounded-sm" />
+        {icon ??
+          {
+            info: <Info className={iconClass} />,
+            warning: <TriangleAlert className={iconClass} />,
+            error: <CircleX className={iconClass} />,
+            success: <CircleCheck className={iconClass} />,
+          }[type]}
+        <div className="flex flex-col gap-2 min-w-0 flex-1">
+          {title && <p className="font-medium !my-0">{title}</p>}
+          <div className="text-fd-muted-foreground prose-no-margin empty:hidden">
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  },
+);
+
+Callout.displayName = 'Callout';

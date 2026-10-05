@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-chart-line",
+  "type": "registry:ui",
+  "title": "Chart Line Icon",
+  "description": "Chart line icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/chart-line/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/chart-line.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["statistics", "analytics", "diagram", "graph"]
+  }
+}

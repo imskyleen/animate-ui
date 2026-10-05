@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-files",
+  "title": "Files Demo",
+  "description": "Demo showing a files.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-base-files"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/files/index.tsx",
+      "content": "'use client';\n\nimport React from 'react';\nimport {\n  FileItem,\n  FolderItem,\n  FolderTrigger,\n  FolderPanel,\n  Files,\n  SubFiles,\n} from '@/components/animate-ui/components/base/files';\nimport { FileJsonIcon } from 'lucide-react';\n\nexport const BaseFilesDemo = () => {\n  return (\n    <div className=\"relative max-w-[500px] max-h-[350px] size-full rounded-2xl border bg-background overflow-auto\">\n      <Files className=\"w-full\" defaultOpen={['app']}>\n        <FolderItem value=\"app\">\n          <FolderTrigger\n            gitStatus=\"modified\"\n            className=\"w-full flex items-center justify-between\"\n          >\n            app\n          </FolderTrigger>\n\n          <FolderPanel>\n            <SubFiles defaultOpen={['(home)']}>\n              <FolderItem value=\"(home)\">\n                <FolderTrigger gitStatus=\"untracked\">(home)</FolderTrigger>\n\n                <FolderPanel>\n                  <FileItem gitStatus=\"untracked\">page.tsx</FileItem>\n                  <FileItem gitStatus=\"untracked\">layout.tsx</FileItem>\n                </FolderPanel>\n              </FolderItem>\n\n              <FileItem>layout.tsx</FileItem>\n              <FileItem gitStatus=\"modified\">page.tsx</FileItem>\n              <FileItem>global.css</FileItem>\n            </SubFiles>\n          </FolderPanel>\n        </FolderItem>\n\n        <FolderItem value=\"components\">\n          <FolderTrigger>components</FolderTrigger>\n\n          <FolderPanel>\n            <SubFiles>\n              <FileItem>button.tsx</FileItem>\n              <FileItem>tabs.tsx</FileItem>\n              <FileItem>dialog.tsx</FileItem>\n\n              <FolderItem value=\"empty\">\n                <FolderTrigger>empty</FolderTrigger>\n              </FolderItem>\n            </SubFiles>\n          </FolderPanel>\n        </FolderItem>\n\n        <FileItem icon={FileJsonIcon}>package.json</FileItem>\n      </Files>\n    </div>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/files.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

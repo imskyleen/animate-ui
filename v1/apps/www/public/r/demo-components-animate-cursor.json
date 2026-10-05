@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-animate-cursor",
+  "title": "Cursor Demo",
+  "description": "Demo showing a cursor.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-animate-cursor"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/animate/cursor/index.tsx",
+      "content": "import {\n  Cursor,\n  CursorFollow,\n  CursorProvider,\n  type CursorFollowProps,\n} from '@/components/animate-ui/components/animate/cursor';\n\ninterface CursorDemoProps {\n  global?: boolean;\n  enableCursor?: boolean;\n  enableCursorFollow?: boolean;\n  side?: CursorFollowProps['side'];\n  sideOffset?: number;\n  align?: CursorFollowProps['align'];\n  alignOffset?: number;\n}\n\nexport const CursorDemo = ({\n  global = false,\n  enableCursor = true,\n  enableCursorFollow = true,\n  side = 'bottom',\n  sideOffset = 15,\n  align = 'end',\n  alignOffset = 5,\n}: CursorDemoProps) => {\n  return (\n    <div\n      key={String(global)}\n      className=\"max-w-[400px] h-[400px] w-full bg-accent rounded-lg flex items-center justify-center\"\n    >\n      <p className=\"font-medium italic text-muted-foreground\">\n        Move your mouse over the div\n      </p>\n      <CursorProvider global={global}>\n        {enableCursor && <Cursor />}\n        {enableCursorFollow && (\n          <CursorFollow\n            side={side}\n            sideOffset={sideOffset}\n            align={align}\n            alignOffset={alignOffset}\n          >\n            Designer\n          </CursorFollow>\n        )}\n      </CursorProvider>\n    </div>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/animate/cursor.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "CursorProvider": {
+        "global": {
+          "value": false
+        },
+        "enableCursor": {
+          "value": true
+        },
+        "enableCursorFollow": {
+          "value": true
+        }
+      },
+      "CursorFollow": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "right": "right",
+            "bottom": "bottom",
+            "left": "left"
+          }
+        },
+        "sideOffset": {
+          "value": 15
+        },
+        "align": {
+          "value": "end",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 5
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

@@ -1,0 +1,176 @@
+---
+title: Sheet
+description: Extends the Dialog component to display content that complements the main content of the screen.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-sheet" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-sheet" />
+
+## Usage
+
+```tsx
+<Sheet>
+  <SheetTrigger>Open Sheet</SheetTrigger>
+  <SheetPortal>
+    <SheetOverlay />
+    <SheetContent>
+      <SheetHeader>
+        <SheetTitle>Sheet Title</SheetTitle>
+        <SheetDescription>Sheet Description</SheetDescription>
+      </SheetHeader>
+      <p>Sheet Content</p>
+      <SheetFooter>
+        <button>Accept</button>
+      </SheetFooter>
+      <SheetClose>Close</SheetClose>
+    </SheetContent>
+  </SheetPortal>
+</Sheet>
+```
+
+## API Reference
+
+### Sheet
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#root"
+  text="Radix UI API Reference - Dialog.Root"
+/>
+
+### SheetTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#trigger"
+  text="Radix UI API Reference - Dialog.Trigger"
+/>
+
+### SheetPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#portal"
+  text="Radix UI API Reference - Dialog.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `SheetPortal` component, as
+  it is used for animation.
+</Callout>
+
+### SheetOverlay
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#overlay"
+  text="Radix UI API Reference - Dialog.Overlay"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the dialog overlay',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the dialog portal.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `SheetOverlay` component, as it is used for animation.
+</Callout>
+
+### SheetContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#content"
+  text="Radix UI API Reference - Dialog.Content"
+/>
+
+<TypeTable
+  type={{
+    side: {
+      description: 'The side of the sheet',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'right',
+    },
+    transition: {
+      description: 'The transition of the sheet content',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 22 }",
+    },
+    '...props': {
+      description: 'The props of the sheet content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `SheetContent` component, as it is used for animation.
+</Callout>
+
+### SheetClose
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#close"
+  text="Radix UI API Reference - Dialog.Close"
+/>
+
+### SheetHeader
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### SheetTitle
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#title"
+  text="Radix UI API Reference - Dialog.Title"
+/>
+
+### SheetDescription
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#description"
+  text="Radix UI API Reference - Dialog.Description"
+/>
+
+### SheetFooter
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Shadcn UI Sheet](https://ui.shadcn.com/docs/components/sheet)
+- [Radix UI Dialog](https://www.radix-ui.com/primitives/docs/components/dialog)

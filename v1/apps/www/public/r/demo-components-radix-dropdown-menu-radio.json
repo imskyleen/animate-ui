@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-dropdown-menu-radio",
+  "title": "Dropdown Menu Radio Demo",
+  "description": "Demo showing a dropdown menu with a radio.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-radix-dropdown-menu"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/dropdown-menu-radio/index.tsx",
+      "content": "import * as React from 'react';\n\nimport { Button } from '@/components/ui/button';\nimport {\n  DropdownMenu,\n  DropdownMenuRadioItem,\n  DropdownMenuRadioGroup,\n  DropdownMenuContent,\n  DropdownMenuLabel,\n  DropdownMenuSeparator,\n  DropdownMenuTrigger,\n} from '@/components/animate-ui/components/radix/dropdown-menu';\n\ninterface RadixDropdownMenuRadioDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport function RadixDropdownMenuRadioDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: RadixDropdownMenuRadioDemoProps) {\n  const [position, setPosition] = React.useState('bottom');\n\n  return (\n    <DropdownMenu>\n      <DropdownMenuTrigger asChild>\n        <Button variant=\"outline\">Open</Button>\n      </DropdownMenuTrigger>\n      <DropdownMenuContent\n        className=\"w-56\"\n        align={align}\n        alignOffset={alignOffset}\n        side={side}\n        sideOffset={sideOffset}\n      >\n        <DropdownMenuLabel>Panel Position</DropdownMenuLabel>\n        <DropdownMenuSeparator />\n        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>\n          <DropdownMenuRadioItem value=\"top\">Top</DropdownMenuRadioItem>\n          <DropdownMenuRadioItem value=\"bottom\">Bottom</DropdownMenuRadioItem>\n          <DropdownMenuRadioItem value=\"right\">Right</DropdownMenuRadioItem>\n        </DropdownMenuRadioGroup>\n      </DropdownMenuContent>\n    </DropdownMenu>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/dropdown-menu-radio.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "DropdownMenuContent": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "start",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

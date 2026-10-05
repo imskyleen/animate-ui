@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks-use-motion-value-state",
+  "title": "useMotionValueState",
+  "description": "A hook that allows you to use a motion value state.",
+  "files": [
+    {
+      "path": "registry/hooks/use-motion-value-state/index.tsx",
+      "content": "import * as React from 'react';\nimport { type MotionValue } from 'motion/react';\n\nfunction useMotionValueState(motionValue: MotionValue): number {\n  return React.useSyncExternalStore(\n    (callback) => {\n      const unsub = motionValue.on('change', callback);\n      return unsub;\n    },\n    () => motionValue.get(),\n    () => motionValue.get(),\n  );\n}\n\nexport { useMotionValueState };\n",
+      "type": "registry:hook",
+      "target": "hooks/use-motion-value-state.tsx"
+    }
+  ],
+  "type": "registry:hook"
+}

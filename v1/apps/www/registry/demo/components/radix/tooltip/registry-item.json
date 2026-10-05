@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-tooltip",
+  "type": "registry:ui",
+  "title": "Radix Tooltip Demo",
+  "description": "Demo showing a radix tooltip.",
+  "registryDependencies": ["@animate-ui/v1/components-radix-tooltip"],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/tooltip/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/tooltip.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Tooltip": {
+        "followCursor": {
+          "value": false,
+          "options": {
+            "true": true,
+            "false": false,
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "TooltipContent": {
+        "side": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 0
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  }
+}

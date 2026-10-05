@@ -1,0 +1,156 @@
+---
+title: Tabs
+description: A set of layered sections of content—known as tab panels—that are displayed one at a time.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-tabs" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-tabs" />
+
+## Usage
+
+### With Highlight
+
+```tsx
+<Tabs>
+  <TabsHighlight>
+    <TabsList>
+      <TabsHighlightItem value="account">
+        <TabsTrigger value="account">Account</TabsTrigger>
+      </TabsHighlightItem>
+      <TabsHighlightItem value="password">
+        <TabsTrigger value="password">Password</TabsTrigger>
+      </TabsHighlightItem>
+    </TabsList>
+  </TabsHighlight>
+  <TabContents>
+    <TabsContent value="account">
+      Make changes to your account here.
+    </TabsContent>
+    <TabsContent value="password">Change your password here.</TabsContent>
+  </TabContents>
+</Tabs>
+```
+
+### Without Highlight
+
+```tsx
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+  </TabsList>
+  <TabContents>
+    <TabsContent value="account">
+      Make changes to your account here.
+    </TabsContent>
+    <TabsContent value="password">Change your password here.</TabsContent>
+  </TabContents>
+</Tabs>
+```
+
+## API Reference
+
+### Tabs
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tabs#root"
+  text="Radix UI API Reference - Tabs.Root"
+/>
+
+### TabsHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabsHighlight component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### TabsHighlightItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+### TabsList
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tabs#list"
+  text="Radix UI API Reference - Tabs.List"
+/>
+
+### TabsTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tabs#trigger"
+  text="Radix UI API Reference - Tabs.Trigger"
+/>
+
+### TabsContents
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/auto-height#autoheight"
+  text="Animate UI API Reference - AutoHeight"
+/>
+
+<TypeTable
+  type={{
+    mode: {
+      description:
+        'The mode of the TabsContents component. The auto-height mode (default) dynamically measures the content to adjust the height, resulting in smoother and more natural animations that integrate seamlessly with surrounding elements. The layout mode relies on Motion’s layout transitions, offering better performance, but the resizing may appear less fluid depending on the content.',
+      type: '"auto-height" | "layout"',
+      required: false,
+      default: '"auto-height"',
+    },
+    transition: {
+      description: 'The transition of the TabsContents component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### TabsContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tabs#content"
+  text="Radix UI API Reference - Tabs.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabsContent component.',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.5, ease: "easeInOut" }',
+    },
+    '...props': {
+      description: 'The props of the TabsContent component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Tabs](https://www.radix-ui.com/primitives/docs/components/tabs)

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "lib-get-strict-context",
+  "title": "getStrictContext",
+  "description": "A hook that allows you to create a strict context.",
+  "files": [
+    {
+      "path": "registry/lib/get-strict-context/index.tsx",
+      "content": "import * as React from 'react';\n\nfunction getStrictContext<T>(\n  name?: string,\n): readonly [\n  ({\n    value,\n    children,\n  }: {\n    value: T;\n    children?: React.ReactNode;\n  }) => React.JSX.Element,\n  () => T,\n] {\n  const Context = React.createContext<T | undefined>(undefined);\n\n  const Provider = ({\n    value,\n    children,\n  }: {\n    value: T;\n    children?: React.ReactNode;\n  }) => <Context.Provider value={value}>{children}</Context.Provider>;\n\n  const useSafeContext = () => {\n    const ctx = React.useContext(Context);\n    if (ctx === undefined) {\n      throw new Error(`useContext must be used within ${name ?? 'a Provider'}`);\n    }\n    return ctx;\n  };\n\n  return [Provider, useSafeContext] as const;\n}\n\nexport { getStrictContext };\n",
+      "type": "registry:lib",
+      "target": "lib/get-strict-context.tsx"
+    }
+  ],
+  "type": "registry:lib"
+}

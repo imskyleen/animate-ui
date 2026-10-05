@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-radix-accordion",
+  "type": "registry:ui",
+  "title": "Accordion Demo",
+  "description": "Demo showing a accordion.",
+  "registryDependencies": ["@animate-ui/v1/components-radix-accordion"],
+  "files": [
+    {
+      "path": "registry/demo/components/radix/accordion/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/radix/accordion.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Accordion": {
+        "multiple": {
+          "value": false
+        },
+        "collapsible": {
+          "value": true
+        }
+      },
+      "AccordionTrigger": {
+        "showArrow": {
+          "value": true
+        }
+      },
+      "AccordionContent": {
+        "keepRendered": {
+          "value": false
+        }
+      }
+    }
+  }
+}

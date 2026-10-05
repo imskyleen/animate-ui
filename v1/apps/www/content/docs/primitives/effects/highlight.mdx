@@ -1,0 +1,335 @@
+---
+title: Highlight
+description: A highlight effect that allows you to highlight elements on hover, click or with a controlled value.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-effects-highlight" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-highlight" />
+
+## Usage
+
+### Uncontrolled Items
+
+By default, child items will have the highlight effect. This will map the children elements and surround them with the `HighlightItem` element.
+
+```tsx
+<Highlight>
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Highlight>
+```
+
+### Controlled Items
+
+Using the `controlledItems` props, you place your `HighlightItem` wherever you like in the `Highlight` component.
+
+```tsx
+<Highlight controlledItems>
+  <HighlightItem>Item 1</HighlightItem>
+  <div>
+    <HighlightItem>Item 2</HighlightItem>
+  </div>
+  <HighlightItem>Item 3</HighlightItem>
+</Highlight>
+```
+
+### Children Mode
+
+By default, in `mode` with the value `children` the highlight is placed in the `HighlightItem` component using Motion's `layoutId` technique. This technique should be preferred in most cases. However, in some cases, you may run into z-index problems, so it's best to use the `parent` mode to avoid visual bugs.
+
+```tsx
+<Highlight>
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Highlight>
+```
+
+### Parent Mode
+
+By using the `mode` property with the value `parent`, the `Highlight` component will set the highlight to absolute in `Highlight`. This may be useful in some cases to avoid the visual z-index bugs you can get with `mode` `children`.
+
+```tsx
+<Highlight mode="parent">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Highlight>
+```
+
+### HighlightItem asChild
+
+#### Children Mode
+
+```tsx
+// With asChild
+<Highlight>
+  <HighlightItem asChild>
+    <div id="item-1">Item 1</div>
+  </HighlightItem>
+  <HighlightItem asChild>
+    <div id="item-2">Item 2</div>
+  </HighlightItem>
+</Highlight>
+// Result
+<div className="relative" id="item-1">
+  <div /> {/* Highlight */}
+  <div className="relative z-[1]">Item 1</div>
+</div>
+<div className="relative" id="item-2">
+  <div /> {/* Highlight */}
+  <div className="relative z-[1]">Item 2</div>
+</div>
+
+// Without asChild
+<Highlight>
+  <HighlightItem>
+    <div id="item-1">Item 1</div>
+  </HighlightItem>
+  <HighlightItem>
+    <div id="item-2">Item 2</div>
+  </HighlightItem>
+</Highlight>
+// Result
+<div className="relative" >
+  <div /> {/* Highlight */}
+  <div className="relative z-[1]" id="item-1">Item 1</div>
+</div>
+<div className="relative" >
+  <div /> {/* Highlight */}
+  <div className="relative z-[1]" id="item-2">Item 2</div>
+</div>
+```
+
+#### Parent Mode
+
+```tsx
+// With asChild
+<Highlight mode="parent">
+  <HighlightItem asChild>
+    <div id="item-1">Item 1</div>
+  </HighlightItem>
+  <HighlightItem asChild>
+    <div id="item-2">Item 2</div>
+  </HighlightItem>
+</Highlight>
+// Result
+<div className="relative">
+  <div /> {/* Highlight */}
+  <div id="item-1">Item 1</div>
+  <div id="item-2">Item 2</div>
+</div>
+
+// Without asChild
+<Highlight mode="parent">
+  <HighlightItem>
+    <div id="item-1">Item 1</div>
+  </HighlightItem>
+  <HighlightItem>
+    <div id="item-2">Item 2</div>
+  </HighlightItem>
+</Highlight>
+// Result
+<div className="relative">
+  <div /> {/* Highlight */}
+  <div>
+    <div id="item-1">Item 1</div>
+  </div>
+  <div>
+    <div id="item-2">Item 2</div>
+  </div>
+</div>
+```
+
+## API Reference
+
+### Highlight
+
+<TypeTable
+  type={{
+    as: {
+      description: 'The element to render as',
+      type: 'React.ElementType',
+      required: false,
+      default: 'div',
+    },
+    mode: {
+      description: 'The mode of the highlight',
+      type: "'children' | 'parent'",
+      required: false,
+      default: 'children',
+    },
+    value: {
+      description: 'The value of the highlight',
+      type: 'string | null',
+      required: false,
+    },
+    defaultValue: {
+      description: 'The default value of the highlight',
+      type: 'string | null',
+      required: false,
+    },
+    onValueChange: {
+      description: 'The callback function to call when the value changes',
+      type: '(value: string | null) => void',
+      required: false,
+    },
+    className: {
+      description: 'The class name of the highlight',
+      type: 'string',
+      required: false,
+    },
+    style: {
+      description: 'The style of the highlight',
+      type: 'React.CSSProperties',
+      required: false,
+    },
+    transition: {
+      description: 'The transition of the highlight',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 350, damping: 35 }",
+    },
+    hover: {
+      description: 'Whether the highlight is on hover',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    click: {
+      description: 'Whether the highlight is on click',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    disabled: {
+      description: 'Whether the highlight is disabled',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    enabled: {
+      description: 'Whether the highlight is enabled',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    exitDelay: {
+      description: 'The delay of the highlight exit',
+      type: 'number',
+      required: false,
+      default: '0.2',
+    },
+    controlledItems: {
+      description:
+        'When the items to be highlighted are not direct children but HighlightItem',
+      type: 'boolean',
+      required: false,
+    },
+    itemsClassName: {
+      description: 'The class name of the items',
+      type: 'string',
+      required: false,
+    },
+  }}
+/>
+
+#### Mode: "parent"
+
+<TypeTable
+  type={{
+    boundsOffset: {
+      description: 'The offset of the highlight relative to the item',
+      type: 'Partial<Bounds>',
+      required: false,
+    },
+    containerClassName: {
+      description: 'The class name of the container',
+      type: 'string',
+      required: false,
+    },
+    forceUpdateBounds: {
+      description: 'Whether to force update the bounds of the highlight',
+      type: 'boolean',
+      required: false,
+    },
+  }}
+/>
+
+### HighlightItem
+
+<TypeTable
+  type={{
+    as: {
+      description: 'The element to render as',
+      type: 'React.ElementType',
+      required: false,
+      default: 'div',
+    },
+    children: {
+      description: 'The children of the highlight item',
+      type: 'React.ReactElement',
+      required: true,
+    },
+    id: {
+      description: 'The id of the highlight item',
+      type: 'string',
+      required: false,
+    },
+    value: {
+      description: 'The value of the highlight item',
+      type: 'string',
+      required: false,
+    },
+    className: {
+      description: 'The class name of the highlight item',
+      type: 'string',
+      required: false,
+    },
+    style: {
+      description: 'The style of the highlight item',
+      type: 'React.CSSProperties',
+      required: false,
+    },
+    transition: {
+      description: 'The transition of the highlight item',
+      type: 'Transition',
+      required: false,
+    },
+    activeClassName: {
+      description: 'The class name of the active highlight item',
+      type: 'string',
+      required: false,
+    },
+    disabled: {
+      description: 'Whether the highlight item is disabled',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    exitDelay: {
+      description: 'The delay of the highlight item exit',
+      type: 'number',
+      required: false,
+    },
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    forceUpdateBounds: {
+      description: 'Whether to force update the bounds of the highlight item',
+      type: 'boolean',
+      required: false,
+    },
+  }}
+/>

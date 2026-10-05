@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-switch",
+  "title": "Radix Switch Demo",
+  "description": "Demo showing an animated radix switch.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-switch"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/switch/index.tsx",
+      "content": "import { Switch, SwitchThumb } from '@/components/animate-ui/primitives/radix/switch';\nimport { Label } from '@/components/ui/label';\nimport { cn } from '@/lib/utils';\n\nexport const RadixSwitchDemo = () => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch\n        className={cn(\n          'relative flex p-0.5 h-6 w-10 items-center justify-start rounded-full border transition-colors',\n          'data-[state=checked]:bg-primary data-[state=checked]:justify-end',\n        )}\n        defaultChecked\n      >\n        <SwitchThumb\n          className=\"rounded-full bg-accent h-full aspect-square\"\n          pressedAnimation={{ width: 22 }}\n        />\n      </Switch>\n      Airplane mode\n    </Label>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/switch.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

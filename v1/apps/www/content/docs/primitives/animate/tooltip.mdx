@@ -1,0 +1,158 @@
+---
+title: Tooltip
+description: A tooltip is a small box that appears when hovering over an element.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-tooltip" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-tooltip" />
+
+## Usage
+
+```tsx
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>Hover</TooltipTrigger>
+    <TooltipContent>
+      <p>Tooltip</p>
+    </TooltipContent>
+  </Tooltip>
+
+  <Tooltip>
+    <TooltipTrigger>And me</TooltipTrigger>
+    <TooltipContent>
+      <TooltipArrow />
+      <p>Tooltip with arrow</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
+## API Reference
+
+### TooltipProvider
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the TooltipProvider component.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    openDelay: {
+      description: 'The delay in milliseconds before the tooltip is shown.',
+      type: 'number',
+      required: false,
+      default: '700',
+    },
+    closeDelay: {
+      description: 'The delay in milliseconds before the tooltip is hidden.',
+      type: 'number',
+      required: false,
+      default: '300',
+    },
+    transition: {
+      description: 'The transition of the tooltip.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 300, damping: 35 }',
+    },
+  }}
+/>
+
+### Tooltip
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the Tooltip component.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    side: {
+      description:
+        'Which side of the anchor element to align the popup against.',
+      type: 'Side',
+      required: false,
+      default: 'top',
+    },
+    sideOffset: {
+      description: 'The distance in pixels from the trigger.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    align: {
+      description: 'How to align the popup relative to the specified side.',
+      type: 'Align',
+      required: false,
+      default: 'center',
+    },
+    alignOffset: {
+      description: 'An offset in pixels from the specified alignment.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+  }}
+/>
+
+### TooltipTrigger
+
+<TypeTable
+  type={{
+    asChild: {
+      description: 'Whether to render the children as a child of the trigger.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the TooltipTrigger component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### TooltipContent
+
+<TypeTable
+  type={{
+    asChild: {
+      description: 'Whether to render the children as a child of the content.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the TooltipContent component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### TooltipArrow
+
+<TypeTable
+  type={{
+    withTransition: {
+      description: 'Whether to animate the arrow when tooltip is moving.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    '...props': {
+      description: 'The props of the TooltipArrow component.',
+      type: 'React.ComponentProps<"svg">',
+      required: false,
+    },
+  }}
+/>

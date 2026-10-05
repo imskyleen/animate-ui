@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-community-share-button",
+  "title": "Share Button Demo",
+  "description": "Demo showing a share button.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-community-share-button"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/community/share-button/index.tsx",
+      "content": "'use client';\n\nimport {\n  ShareButton,\n  type ShareButtonProps,\n} from '@/components/animate-ui/components/community/share-button';\n\ntype ShareButtonDemoProps = {\n  size?: ShareButtonProps['size'];\n  icon?: ShareButtonProps['icon'];\n};\n\nexport const ShareButtonDemo = ({ size, icon }: ShareButtonDemoProps) => {\n  return (\n    <ShareButton size={size} icon={icon}>\n      Share\n    </ShareButton>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/community/share-button.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ShareButton": {
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "md": "md",
+            "lg": "lg"
+          }
+        },
+        "icon": {
+          "value": "prefix",
+          "options": {
+            "prefix": "prefix",
+            "suffix": "suffix"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-effects-fade",
+  "title": "Fade",
+  "description": "An effect that allows you to animate elements with a fade effect on first view or load.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/hooks-use-is-in-view"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/effects/fade/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  useIsInView,\n  type UseIsInViewOptions,\n} from '@/hooks/use-is-in-view';\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\n\ntype FadeProps = WithAsChild<\n  {\n    children?: React.ReactNode;\n    delay?: number;\n    initialOpacity?: number;\n    opacity?: number;\n    ref?: React.Ref<HTMLElement>;\n  } & UseIsInViewOptions &\n    HTMLMotionProps<'div'>\n>;\n\nfunction Fade({\n  ref,\n  transition = { type: 'spring', stiffness: 200, damping: 20 },\n  delay = 0,\n  inView = false,\n  inViewMargin = '0px',\n  inViewOnce = true,\n  initialOpacity = 0,\n  opacity = 1,\n  asChild = false,\n  ...props\n}: FadeProps) {\n  const { ref: localRef, isInView } = useIsInView(\n    ref as React.Ref<HTMLElement>,\n    {\n      inView,\n      inViewOnce,\n      inViewMargin,\n    },\n  );\n\n  const Component = asChild ? Slot : motion.div;\n\n  return (\n    <Component\n      ref={localRef as React.Ref<HTMLDivElement>}\n      initial=\"hidden\"\n      animate={isInView ? 'visible' : 'hidden'}\n      exit=\"hidden\"\n      variants={{\n        hidden: { opacity: initialOpacity },\n        visible: { opacity },\n      }}\n      transition={{\n        ...transition,\n        delay: (transition?.delay ?? 0) + delay / 1000,\n      }}\n      {...props}\n    />\n  );\n}\n\ntype FadeListProps = Omit<FadeProps, 'children'> & {\n  children: React.ReactElement | React.ReactElement[];\n  holdDelay?: number;\n};\n\nfunction Fades({\n  children,\n  delay = 0,\n  holdDelay = 0,\n  ...props\n}: FadeListProps) {\n  const array = React.Children.toArray(children) as React.ReactElement[];\n\n  return (\n    <>\n      {array.map((child, index) => (\n        <Fade\n          key={child.key ?? index}\n          delay={delay + index * holdDelay}\n          {...props}\n        >\n          {child}\n        </Fade>\n      ))}\n    </>\n  );\n}\n\nexport { Fade, Fades, type FadeProps, type FadeListProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/effects/fade.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

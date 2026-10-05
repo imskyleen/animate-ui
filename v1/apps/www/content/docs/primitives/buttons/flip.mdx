@@ -1,0 +1,85 @@
+---
+title: Flip
+description: A button that flips between two states on hover.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-buttons-flip" />
+
+## Installation
+
+<ComponentInstallation name="primitives-buttons-flip" />
+
+## Usage
+
+```tsx
+<FlipButton>
+  <FlipButtonFront>Front</FlipButtonFront>
+  <FlipButtonBack>Back</FlipButtonBack>
+</FlipButton>
+```
+
+## API Reference
+
+### FlipButton
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the button will flip from.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+      required: false,
+      default: 'top',
+    },
+    tapScale: {
+      description: 'The scale of the button on tap.',
+      type: 'number',
+      required: false,
+      default: 0.95,
+    },
+    '...props': {
+      description: 'The props for the button.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+### FlipButtonFront
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition for the front face.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 280, damping: 20 }",
+    },
+    '...props': {
+      description: 'The props for the front face.',
+      type: 'HTMLMotionProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+### FlipButtonBack
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition for the back face.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 280, damping: 20 }",
+    },
+    '...props': {
+      description: 'The props for the back face.',
+      type: 'HTMLMotionProps<"span">',
+      required: false,
+    },
+  }}
+/>

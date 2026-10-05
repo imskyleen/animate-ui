@@ -1,0 +1,107 @@
+---
+title: Fade
+description: An effect that allows you to animate elements with a fade effect on first view or load.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-effects-fade" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-fade" />
+
+## Usage
+
+### Fade
+
+```tsx
+<Fade>Fade</Fade>
+```
+
+### Fades
+
+```tsx
+<Fades>
+  <div>Fade 1</div>
+  <div>Fade 2</div>
+  <div>Fade 3</div>
+</Fades>
+```
+
+## API Reference
+
+### Fade
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Animate the element when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Animate the element only once when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin of the element to be in view',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    delay: {
+      description: 'The delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    opacity: {
+      description: 'The opacity of the fade',
+      type: 'number',
+      required: false,
+      default: '1',
+    },
+    initialOpacity: {
+      description: 'The initial opacity of the fade',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+  }}
+/>
+
+### Fades
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the fades',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'The delay between each fade',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the fades',
+      type: 'FadeProps',
+      required: false,
+    },
+  }}
+/>

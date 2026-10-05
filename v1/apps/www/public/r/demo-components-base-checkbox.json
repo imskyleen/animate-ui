@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-checkbox",
+  "title": "Checkbox Demo",
+  "description": "Demo showing a checkbox.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-base-checkbox"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/checkbox/index.tsx",
+      "content": "import { Label } from '@/components/ui/label';\nimport {\n  Checkbox,\n  type CheckboxProps,\n} from '@/components/animate-ui/components/base/checkbox';\n\ninterface BaseCheckboxDemoProps {\n  indeterminate: boolean;\n  variant: CheckboxProps['variant'];\n  size: CheckboxProps['size'];\n}\n\nexport const BaseCheckboxDemo = ({\n  indeterminate,\n  variant,\n  size,\n}: BaseCheckboxDemoProps) => {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Checkbox indeterminate={indeterminate} variant={variant} size={size} />\n      Accept terms and conditions\n    </Label>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/checkbox.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Checkbox": {
+        "indeterminate": {
+          "value": false
+        },
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "accent": "accent"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

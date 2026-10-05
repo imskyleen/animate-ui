@@ -1,0 +1,100 @@
+---
+title: Progress
+description: Displays the status of a task that takes a long time.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-base-progress" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-progress" />
+
+## Usage
+
+```tsx
+<Progress>
+  <ProgressLabel>Export data</ProgressLabel>
+  <ProgressValue />
+  <ProgressTrack>
+    <ProgressIndicator />
+  </ProgressTrack>
+</Progress>
+```
+
+## API Reference
+
+### Progress
+
+<ExternalLink
+  href="https://base-ui.com/react/components/progress#root"
+  text="Base UI API Reference - Progress.Root"
+/>
+
+### ProgressLabel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/progress#label"
+  text="Base UI API Reference - Progress.Label"
+/>
+
+### ProgressValue
+
+<div className="flex flex-col gap-2">
+  <ExternalLink
+    href="https://base-ui.com/react/components/progress#value"
+    text="Base UI API Reference - Progress.Value"
+  />
+  <ExternalLink
+    href="https://animate-ui.com/docs/primitives/texts/counting-number"
+    text="Animate UI API Reference - CountingNumber"
+  />
+</div>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the progress value.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 80, damping: 20 }',
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `ProgressValue` component, as it
+  is used for animation.
+</Callout>
+
+### ProgressTrack
+
+<ExternalLink
+  href="https://base-ui.com/react/components/progress#track"
+  text="Base UI API Reference - Progress.Track"
+/>
+
+### ProgressIndicator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/progress#indicator"
+  text="Base UI API Reference - Progress.Indicator"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the progress indicator.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 100, damping: 30 }',
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Progress](https://base-ui.com/react/components/progress)

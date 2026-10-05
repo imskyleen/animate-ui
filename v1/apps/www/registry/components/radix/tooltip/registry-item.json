@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-tooltip",
+  "type": "registry:ui",
+  "title": "Tooltip",
+  "description": "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-tooltip"],
+  "files": [
+    {
+      "path": "registry/components/radix/tooltip/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/tooltip.tsx"
+    }
+  ]
+}

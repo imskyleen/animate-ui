@@ -1,0 +1,52 @@
+---
+title: Accessibility
+description: How is accessibility with Animate UI?
+---
+
+Animations can greatly enhance user experience, but they can also create accessibility issues if not handled with care. Some users are sensitive to motion and may experience discomfort, dizziness, or difficulty focusing when faced with strong visual effects.
+
+To address this, operating systems and browsers expose a setting called **Reduced Motion** (`prefers-reduced-motion`). When enabled, it communicates that the user prefers simpler or fewer animations.
+
+As developers, it’s our responsibility to make sure our components adapt to this preference.
+
+## Prefers Reduced Motion
+
+`prefers-reduced-motion` is a CSS media query and system-level setting. If a user has enabled it, it usually means:
+
+- Avoiding large-scale movement (scale, translate, rotate).
+- Preferring subtle effects such as opacity fades.
+- Disabling parallax or auto-scrolling animations.
+- Turning off looping or auto-playing background motion.
+
+The goal isn't to remove animation entirely, but to make it comfortable and safe.
+
+## Animate UI & Motion
+
+Animate UI **is built on top of [Motion](https://motion.dev/)**.
+This means all Animate UI components can leverage Motion’s accessibility features.
+
+The recommended way to support Reduced Motion is to wrap your app with `MotionConfig`:
+
+```tsx
+import { MotionConfig } from 'motion/react';
+
+export function App({ children }: { children: React.ReactNode }) {
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
+}
+```
+
+With `reducedMotion="user"`, Motion will automatically:
+
+- Disable transform and layout animations if the user has Reduced Motion enabled.
+- Keep helpful transitions like opacity or background-color.
+
+As a result, Animate UI components will automatically respect user preferences without extra configuration.
+
+## Conclusion
+
+Accessible animations help ensure your UI is usable for everyone.
+By combining Animate UI with Motion’s `MotionConfig`, you can provide a smooth, animated experience while adapting gracefully to `prefers-reduced-motion`.
+
+**We recommend adding `MotionConfig reducedMotion="user"` at the root of your app.**
+
+For more details, see the [Motion documentation](https://motion.dev/docs/react-accessibility).

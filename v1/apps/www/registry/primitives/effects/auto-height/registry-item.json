@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-effects-auto-height",
+  "type": "registry:ui",
+  "title": "Auto Height",
+  "description": "An effect that automatically adjusts the height of an element based on its content.",
+  "dependencies": ["motion"],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/hooks-use-auto-height"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/effects/auto-height/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/effects/auto-height.tsx"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+---
+title: Tooltip
+description: A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-tooltip" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-tooltip" />
+
+## Usage
+
+```tsx
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>Open tooltip</TooltipTrigger>
+    <TooltipPortal>
+      <TooltipContent>
+        <p>Tooltip content</p>
+      </TooltipContent>
+    </TooltipPortal>
+  </Tooltip>
+</TooltipProvider>
+```
+
+## API Reference
+
+### TooltipProvider
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tooltip#provider"
+  text="Radix UI API Reference - Tooltip.Provider"
+/>
+
+### Tooltip
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tooltip#root"
+  text="Radix UI API Reference - Tooltip.Root"
+/>
+
+<TypeTable
+  type={{
+    followCursor: {
+      description: 'Whether to follow the cursor.',
+      type: 'boolean | "x" | "y"',
+      required: false,
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring options of the follow cursor.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### TooltipTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tooltip#trigger"
+  text="Radix UI API Reference - Tooltip.Trigger"
+/>
+
+### TooltipPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tooltip#portal"
+  text="Radix UI API Reference - Tooltip.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `TooltipPortal` component,
+  as it is used for animation.
+</Callout>
+
+### TooltipContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tooltip#content"
+  text="Radix UI API Reference - Tooltip.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the tooltip content.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the tooltip content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `forceMount` and `asChild` properties are not supported in the
+  `TooltipContent` component, as it is used for animation.
+</Callout>
+
+### TooltipArrow
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/tooltip#arrow"
+  text="Radix UI API Reference - Tooltip.Arrow"
+/>
+
+## Credits
+
+- [Radix UI Tooltip](https://www.radix-ui.com/primitives/docs/components/tooltip)

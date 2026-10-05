@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-tooltip",
+  "title": "Tooltip",
+  "description": "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-tooltip"
+  ],
+  "files": [
+    {
+      "path": "registry/components/radix/tooltip/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  TooltipProvider as TooltipProviderPrimitive,\n  Tooltip as TooltipPrimitive,\n  TooltipTrigger as TooltipTriggerPrimitive,\n  TooltipContent as TooltipContentPrimitive,\n  TooltipArrow as TooltipArrowPrimitive,\n  TooltipPortal as TooltipPortalPrimitive,\n  type TooltipProviderProps as TooltipProviderPrimitiveProps,\n  type TooltipProps as TooltipPrimitiveProps,\n  type TooltipTriggerProps as TooltipTriggerPrimitiveProps,\n  type TooltipContentProps as TooltipContentPrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/tooltip';\nimport { cn } from '@/lib/utils';\n\ntype TooltipProviderProps = TooltipProviderPrimitiveProps;\n\nfunction TooltipProvider({\n  delayDuration = 0,\n  ...props\n}: TooltipProviderProps) {\n  return <TooltipProviderPrimitive delayDuration={delayDuration} {...props} />;\n}\n\ntype TooltipProps = TooltipPrimitiveProps & {\n  delayDuration?: TooltipPrimitiveProps['delayDuration'];\n};\n\nfunction Tooltip({ delayDuration = 0, ...props }: TooltipProps) {\n  return (\n    <TooltipProvider delayDuration={delayDuration}>\n      <TooltipPrimitive {...props} />\n    </TooltipProvider>\n  );\n}\n\ntype TooltipTriggerProps = TooltipTriggerPrimitiveProps;\n\nfunction TooltipTrigger({ ...props }: TooltipTriggerProps) {\n  return <TooltipTriggerPrimitive {...props} />;\n}\n\ntype TooltipContentProps = TooltipContentPrimitiveProps;\n\nfunction TooltipContent({\n  className,\n  sideOffset,\n  children,\n  ...props\n}: TooltipContentProps) {\n  return (\n    <TooltipPortalPrimitive>\n      <TooltipContentPrimitive\n        sideOffset={sideOffset}\n        className={cn(\n          'bg-primary text-primary-foreground z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        <TooltipArrowPrimitive className=\"bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]\" />\n      </TooltipContentPrimitive>\n    </TooltipPortalPrimitive>\n  );\n}\n\nexport {\n  Tooltip,\n  TooltipTrigger,\n  TooltipContent,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipContentProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/tooltip.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

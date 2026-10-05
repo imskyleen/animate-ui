@@ -1,0 +1,101 @@
+---
+title: Shine
+description: An animated light sweep effect with configurable timing, colors, and triggers (hover, tap, or continuous).
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-22
+---
+
+<ComponentPreview name="demo-primitives-effects-shine" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-shine" />
+
+## Usage
+
+```tsx
+<Shine>Shine</Shine>
+```
+
+## API Reference
+
+### Shine
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    color: {
+      description: 'The color of the shine',
+      type: 'string',
+      required: false,
+      default: 'currentColor',
+    },
+    opacity: {
+      description: 'The opacity of the shine',
+      type: 'number',
+      required: false,
+      default: '0.3',
+    },
+    delay: {
+      description: 'The delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    duration: {
+      description: 'The duration of the animation',
+      type: 'number',
+      required: false,
+      default: '1200',
+    },
+    loop: {
+      description: 'The loop of the animation',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    loopDelay: {
+      description: 'The loop delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    deg: {
+      description: 'The deg of the animation',
+      type: 'number',
+      required: false,
+      default: '-15',
+    },
+    enable: {
+      description: 'The enable of the animation',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    enableOnHover: {
+      description: 'The enable on hover of the animation',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    enableOnTap: {
+      description: 'The enable on tap of the animation',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the shine element',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>

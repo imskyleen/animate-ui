@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-orbit",
+  "type": "registry:ui",
+  "title": "Orbit Icon",
+  "description": "Orbit icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/orbit/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/orbit.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["planet", "space", "physics", "satellites", "moons"]
+  }
+}

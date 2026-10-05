@@ -1,0 +1,59 @@
+---
+title: Auto Height
+description: An effect that automatically adjusts the height of an element based on its content.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-12
+---
+
+<ComponentPreview name="demo-primitives-effects-auto-height" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-auto-height" />
+
+## Usage
+
+```tsx
+<AutoHeight>Auto Height</AutoHeight>
+```
+
+## API Reference
+
+### AutoHeight
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    deps: {
+      description: 'The dependencies of the element',
+      type: 'React.DependencyList',
+      required: false,
+      default: '[]',
+    },
+    transition: {
+      description: 'The transition of the element',
+      type: 'Transition',
+      required: false,
+      default:
+        '{ type: "spring", stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01 }',
+    },
+    animate: {
+      description: 'The animate of the element',
+      type: 'TargetAndTransition | LegacyAnimationControls',
+      required: false,
+    },
+    '...props': {
+      description: 'The props of the element',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

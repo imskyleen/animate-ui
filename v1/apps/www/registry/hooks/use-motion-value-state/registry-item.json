@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks-use-motion-value-state",
+  "type": "registry:hook",
+  "title": "useMotionValueState",
+  "description": "A hook that allows you to use a motion value state.",
+  "files": [
+    {
+      "path": "registry/hooks/use-motion-value-state/index.tsx",
+      "type": "registry:hook",
+      "target": "hooks/use-motion-value-state.tsx"
+    }
+  ]
+}

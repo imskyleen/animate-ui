@@ -1,0 +1,57 @@
+---
+title: Gradient Text
+description: A gradient text animation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-texts-gradient" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-gradient" />
+
+## Usage
+
+```tsx
+<GradientText text="Gradient Text" />
+```
+
+## API Reference
+
+### GradientText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    gradient: {
+      description: 'The gradient to use.',
+      type: 'string',
+      required: false,
+      default:
+        'linear-gradient(90deg, #3b82f6 0%, #a855f7 20%, #ec4899 50%, #a855f7 80%, #3b82f6 100%)',
+    },
+    neon: {
+      description: 'Whether to use neon effect.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    transition: {
+      description: 'The transition to use.',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 50, repeat: Infinity, ease: 'linear' }",
+    },
+    '...props': {
+      description: 'The props of the gradient text.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>

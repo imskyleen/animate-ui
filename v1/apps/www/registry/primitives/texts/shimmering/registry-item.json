@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-shimmering",
+  "type": "registry:ui",
+  "title": "Shimmering Text",
+  "description": "A shimmering text animation.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/hooks-use-is-in-view"],
+  "files": [
+    {
+      "path": "registry/primitives/texts/shimmering/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/shimmering.tsx"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-toggle-group",
+  "type": "registry:ui",
+  "title": "Toggle Group",
+  "description": "A set of two-state buttons that can be toggled on or off.",
+  "dependencies": ["class-variance-authority"],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-toggle-group",
+    "@animate-ui/v1/components-radix-toggle",
+    "@animate-ui/v1/lib-get-strict-context"
+  ],
+  "files": [
+    {
+      "path": "registry/components/radix/toggle-group/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/toggle-group.tsx"
+    }
+  ]
+}

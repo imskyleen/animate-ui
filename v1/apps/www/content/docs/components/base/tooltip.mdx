@@ -1,0 +1,105 @@
+---
+title: Tooltip
+description: A popup that appears when an element is hovered or focused, showing a hint for sighted users.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-base-tooltip" />
+
+## Installation
+
+<ComponentInstallation name="components-base-tooltip" />
+
+## Usage
+
+```tsx
+<Tooltip>
+  <TooltipTrigger>Open tooltip</TooltipTrigger>
+  <TooltipPanel>
+    <p>Tooltip content</p>
+  </TooltipPanel>
+</Tooltip>
+```
+
+## API Reference
+
+### TooltipProvider
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#provider"
+  text="Base UI API Reference - Tooltip.Provider"
+/>
+
+### Tooltip
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#root"
+  text="Base UI API Reference - Tooltip.Root"
+/>
+
+### TooltipTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#trigger"
+  text="Base UI API Reference - Tooltip.Trigger"
+/>
+
+### TooltipPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#portal"
+  text="Base UI API Reference - Tooltip.Portal"
+/>
+
+<Callout type="info">
+  The `keepMounted` property is not supported in the `TooltipPortal` component,
+  as it is used for animation.
+</Callout>
+
+### TooltipPositioner
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#positioner"
+  text="Base UI API Reference - Popover.Positioner"
+/>
+
+### TooltipPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#popup"
+  text="Base UI API Reference - Tooltip.Popup"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the tooltip popup.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the tooltip content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `TooltipPopup` component, as it
+  is used for animation.
+</Callout>
+
+### TooltipArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tooltip#arrow"
+  text="Base UI API Reference - Tooltip.Arrow"
+/>
+
+## Credits
+
+- [Base UI Tooltip](https://base-ui.com/react/components/tooltip)

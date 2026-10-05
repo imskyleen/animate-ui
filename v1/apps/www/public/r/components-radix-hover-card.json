@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-hover-card",
+  "title": "Hover Card",
+  "description": "For sighted users to preview content available behind a link.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-hover-card"
+  ],
+  "files": [
+    {
+      "path": "registry/components/radix/hover-card/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  HoverCard as HoverCardPrimitive,\n  HoverCardTrigger as HoverCardTriggerPrimitive,\n  HoverCardPortal as HoverCardPortalPrimitive,\n  HoverCardContent as HoverCardContentPrimitive,\n  type HoverCardProps as HoverCardPrimitiveProps,\n  type HoverCardTriggerProps as HoverCardTriggerPrimitiveProps,\n  type HoverCardContentProps as HoverCardContentPrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/hover-card';\nimport { cn } from '@/lib/utils';\n\ntype HoverCardProps = HoverCardPrimitiveProps;\n\nfunction HoverCard(props: HoverCardProps) {\n  return <HoverCardPrimitive {...props} />;\n}\n\ntype HoverCardTriggerProps = HoverCardTriggerPrimitiveProps;\n\nfunction HoverCardTrigger(props: HoverCardTriggerProps) {\n  return <HoverCardTriggerPrimitive {...props} />;\n}\n\ntype HoverCardContentProps = HoverCardContentPrimitiveProps;\n\nfunction HoverCardContent({\n  className,\n  align = 'center',\n  sideOffset = 4,\n  ...props\n}: HoverCardContentProps) {\n  return (\n    <HoverCardPortalPrimitive>\n      <HoverCardContentPrimitive\n        align={align}\n        sideOffset={sideOffset}\n        className={cn(\n          'bg-popover text-popover-foreground z-50 w-64 origin-(--radix-hover-card-content-transform-origin) rounded-md border p-4 shadow-md outline-hidden',\n          className,\n        )}\n        {...props}\n      />\n    </HoverCardPortalPrimitive>\n  );\n}\n\nexport {\n  HoverCard,\n  HoverCardTrigger,\n  HoverCardContent,\n  type HoverCardProps,\n  type HoverCardTriggerProps,\n  type HoverCardContentProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/hover-card.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

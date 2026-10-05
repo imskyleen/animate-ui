@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-counting-number",
+  "type": "registry:ui",
+  "title": "Counting Number",
+  "description": "A counting number animation.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/hooks-use-is-in-view"],
+  "files": [
+    {
+      "path": "registry/primitives/texts/counting-number/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/counting-number.tsx"
+    }
+  ]
+}

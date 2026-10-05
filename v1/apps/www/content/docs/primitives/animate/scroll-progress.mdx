@@ -1,0 +1,109 @@
+---
+title: Scroll Progress
+description: A scroll progress component that allows you to track the progress of a scrollable element.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-scroll-progress" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-scroll-progress" />
+
+## Usage
+
+### Global
+
+```tsx
+<ScrollProgressProvider global>
+  <ScrollProgress />
+</ScrollProgressProvider>
+```
+
+### Local
+
+```tsx
+<ScrollProgressProvider>
+  <ScrollProgress />
+  <ScrollProgressContainer>Scrollable content</ScrollProgressContainer>
+</ScrollProgressProvider>
+```
+
+## API Reference
+
+### ScrollProgressProvider
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the ScrollProgressProvider',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    global: {
+      description: 'Whether the progress is on the global scroll',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    direction: {
+      description: 'The direction of the ScrollProgress',
+      type: '"horizontal" | "vertical"',
+      required: false,
+      default: 'vertical',
+    },
+    transition: {
+      description: 'The transition of the ScrollProgress',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 250, damping: 40, bounce: 0 }',
+    },
+  }}
+/>
+
+### ScrollProgress
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    mode: {
+      description: 'The mode of the ScrollProgress',
+      type: '"width" | "height" | "scaleY" | "scaleX"',
+      required: false,
+      default: 'width',
+    },
+    '...props': {
+      description: 'The props of the ScrollProgress',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollProgressContainer
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the ScrollProgressContainer',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

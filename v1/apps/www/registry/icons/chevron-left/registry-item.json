@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-chevron-left",
+  "type": "registry:ui",
+  "title": "Chevron Left Icon",
+  "description": "Chevron left icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/chevron-left/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/chevron-left.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["back", "previous", "less than", "fewer", "menu", "<"]
+  }
+}

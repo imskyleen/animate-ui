@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-x",
+  "type": "registry:ui",
+  "title": "X Icon",
+  "description": "X icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/x/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/x.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "cross",
+      "x",
+      "delete",
+      "close",
+      "cancel",
+      "remove",
+      "clear",
+      "math",
+      "multiply",
+      "multiplication"
+    ]
+  }
+}

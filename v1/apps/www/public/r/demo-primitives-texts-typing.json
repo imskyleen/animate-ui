@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-texts-typing",
+  "title": "Typing Text Demo",
+  "description": "Demo showing an animated typing text.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-texts-typing"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/texts/typing/index.tsx",
+      "content": "import {\n  TypingText,\n  TypingTextCursor,\n} from '@/components/animate-ui/primitives/texts/typing';\n\ninterface TypingTextDemoProps {\n  delay: number;\n  holdDelay: number;\n  loop: boolean;\n  cursor: boolean;\n}\n\nexport const TypingTextDemo = ({\n  delay,\n  holdDelay,\n  loop,\n  cursor,\n}: TypingTextDemoProps) => {\n  return (\n    <TypingText\n      key={`${delay}-${holdDelay}-${loop}-${cursor}`}\n      delay={delay}\n      holdDelay={holdDelay}\n      className=\"text-4xl font-semibold\"\n      text=\"Typing Text component made with Motion. Highly customizable and easy to use.\"\n      loop={loop}\n    >\n      {cursor && <TypingTextCursor className=\"!h-8 !w-1 rounded-full ml-1\" />}\n    </TypingText>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/texts/typing.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "TypingText": {
+        "delay": {
+          "value": 0,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "holdDelay": {
+          "value": 1000,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "loop": {
+          "value": false
+        },
+        "cursor": {
+          "value": true
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

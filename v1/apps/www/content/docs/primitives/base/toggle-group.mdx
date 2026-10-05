@@ -1,0 +1,124 @@
+---
+title: Toggle Group
+description: Provides a shared state to a series of toggle buttons.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-base-toggle-group" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-toggle-group" />
+
+## Usage
+
+### Single
+
+```tsx
+<ToggleGroup defaultValue={['bold']}>
+  <ToggleGroupHighlight>
+    <ToggleHighlight value="bold">
+      <Toggle value="bold" />
+    </ToggleHighlight>
+
+    <ToggleHighlight value="italic">
+      <Toggle value="italic" />
+    </ToggleHighlight>
+
+    <ToggleHighlight value="underline">
+      <Toggle value="underline" />
+    </ToggleHighlight>
+  </ToggleGroupHighlight>
+</ToggleGroup>
+```
+
+### Multiple
+
+```tsx
+<ToggleGroup toggleMultiple defaultValue={['bold']}>
+  <ToggleHighlight value="bold">
+    <Toggle value="bold" />
+  </ToggleHighlight>
+
+  <ToggleHighlight value="italic">
+    <Toggle value="italic" />
+  </ToggleHighlight>
+
+  <ToggleHighlight value="underline">
+    <Toggle value="underline" />
+  </ToggleHighlight>
+</ToggleGroup>
+```
+
+## API Reference
+
+### ToggleGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/toggle-group#api-reference"
+  text="Base UI API Reference - ToggleGroup"
+/>
+
+### Toggle
+
+<ExternalLink
+  href="https://base-ui.com/react/components/toggle#api-reference"
+  text="Base UI API Reference - Toggle"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the Toggle component.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `Toggle` component, as it is
+  used for animation.
+</Callout>
+
+### ToggleGroupHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the ToggleGroupHighlight component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### ToggleHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the ToggleHighlight component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Toggle Group](https://base-ui.com/react/components/toggle-group)

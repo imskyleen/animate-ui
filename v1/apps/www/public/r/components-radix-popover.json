@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-popover",
+  "title": "Popover",
+  "description": "Displays rich content in a portal, triggered by a button.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-popover"
+  ],
+  "files": [
+    {
+      "path": "registry/components/radix/popover/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  Popover as PopoverPrimitive,\n  PopoverTrigger as PopoverTriggerPrimitive,\n  PopoverContent as PopoverContentPrimitive,\n  PopoverPortal as PopoverPortalPrimitive,\n  PopoverClose as PopoverClosePrimitive,\n  type PopoverProps as PopoverPrimitiveProps,\n  type PopoverTriggerProps as PopoverTriggerPrimitiveProps,\n  type PopoverContentProps as PopoverContentPrimitiveProps,\n  type PopoverCloseProps as PopoverClosePrimitiveProps,\n} from '@/components/animate-ui/primitives/radix/popover';\nimport { cn } from '@/lib/utils';\n\ntype PopoverProps = PopoverPrimitiveProps;\n\nfunction Popover(props: PopoverProps) {\n  return <PopoverPrimitive {...props} />;\n}\n\ntype PopoverTriggerProps = PopoverTriggerPrimitiveProps;\n\nfunction PopoverTrigger(props: PopoverTriggerProps) {\n  return <PopoverTriggerPrimitive {...props} />;\n}\n\ntype PopoverContentProps = PopoverContentPrimitiveProps;\n\nfunction PopoverContent({\n  className,\n  align = 'center',\n  sideOffset = 4,\n  ...props\n}: PopoverContentProps) {\n  return (\n    <PopoverPortalPrimitive>\n      <PopoverContentPrimitive\n        align={align}\n        sideOffset={sideOffset}\n        className={cn(\n          'bg-popover text-popover-foreground z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-md border p-4 shadow-md outline-hidden',\n          className,\n        )}\n        {...props}\n      />\n    </PopoverPortalPrimitive>\n  );\n}\n\ntype PopoverCloseProps = PopoverClosePrimitiveProps;\n\nfunction PopoverClose(props: PopoverCloseProps) {\n  return <PopoverClosePrimitive {...props} />;\n}\n\nexport {\n  Popover,\n  PopoverTrigger,\n  PopoverContent,\n  PopoverClose,\n  type PopoverProps,\n  type PopoverTriggerProps,\n  type PopoverContentProps,\n  type PopoverCloseProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/popover.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

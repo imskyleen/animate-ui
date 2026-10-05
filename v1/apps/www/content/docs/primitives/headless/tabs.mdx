@@ -1,0 +1,164 @@
+---
+title: Tabs
+description: Easily create accessible, fully customizable tab interfaces, with robust focus management and keyboard navigation support.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-headless-tabs" />
+
+## Installation
+
+<ComponentInstallation name="primitives-headless-tabs" />
+
+## Usage
+
+### With Highlight
+
+```tsx
+<TabGroup>
+  <TabHighlight>
+    <TabList>
+      <TabHighlightItem index={0}>
+        <Tab index={0}>Account</Tab>
+      </TabHighlightItem>
+      <TabHighlightItem index={1}>
+        <Tab index={1}>Password</Tab>
+      </TabHighlightItem>
+    </TabList>
+  </TabHighlight>
+  <TabPanels>
+    <TabPanel>Make changes to your account here.</TabPanel>
+    <TabPanel>Change your password here.</TabPanel>
+  </TabPanels>
+</TabGroup>
+```
+
+### Without Highlight
+
+```tsx
+<TabGroup>
+  <TabList>
+    <Tab index={0}>Account</Tab>
+    <Tab index={1}>Password</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel>Make changes to your account here.</TabPanel>
+    <TabPanel>Change your password here.</TabPanel>
+  </TabPanels>
+</TabGroup>
+```
+
+## API Reference
+
+### TabGroup
+
+<ExternalLink
+  href="https://headlessui.com/react/tabs#tab-group"
+  text="Headless UI API Reference - TabGroup"
+/>
+
+### TabHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabHighlight component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### TabHighlightItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+<TypeTable
+  type={{
+    index: {
+      description: 'The index of the tab.',
+      type: 'number',
+      required: false,
+    },
+  }}
+/>
+
+### TabList
+
+<ExternalLink
+  href="https://headlessui.com/react/tabs#tab-list"
+  text="Headless UI API Reference - TabList"
+/>
+
+### Tab
+
+<ExternalLink
+  href="https://headlessui.com/react/tabs#tab"
+  text="Headless UI API Reference - Tab"
+/>
+
+### TabPanel
+
+<ExternalLink
+  href="https://headlessui.com/react/tabs#tab-panel"
+  text="Headless UI API Reference - TabPanel"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabPanel component.',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.5, ease: "easeInOut" }',
+    },
+  }}
+/>
+
+### TabPanels
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://headlessui.com/react/tabs#tab-panels"
+  text="Headless UI API Reference - TabPanels"
+/>
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/auto-height#autoheight"
+  text="Animate UI API Reference - AutoHeight"
+/>
+</div>
+
+<TypeTable
+  type={{
+    mode: {
+      description:
+        'The mode of the TabPanels component. The auto-height mode (default) dynamically measures the content to adjust the height, resulting in smoother and more natural animations that integrate seamlessly with surrounding elements. The layout mode relies on Motion’s layout transitions, offering better performance, but the resizing may appear less fluid depending on the content.',
+      type: '"auto-height" | "layout"',
+      required: false,
+      default: '"auto-height"',
+    },
+    transition: {
+      description: 'The transition of the TabPanels component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+## Credits
+
+- [Headless Tabs](https://headlessui.com/react/tabs)

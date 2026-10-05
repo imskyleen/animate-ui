@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-toggle-right",
+  "type": "registry:ui",
+  "title": "Toggle Right Icon",
+  "description": "Toggle right icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/toggle-right/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/toggle-right.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["on", "off", "switch", "boolean"]
+  }
+}

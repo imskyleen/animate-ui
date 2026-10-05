@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-lock-keyhole-open",
+  "title": "Lock Keyhole Open Icon",
+  "description": "Lock keyhole open icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/lock-keyhole-open/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype LockKeyholeOpenProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n      },\n      animate: {\n        rotate: [0, 7, -5, 0],\n        scale: [1, 0.9, 1, 1],\n        transition: {\n          duration: 1.2,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path: {\n      initial: {\n        pathLength: 0.8,\n      },\n      animate: {\n        pathLength: [0.8, 1, 0.8, 0.8],\n        transition: {\n          duration: 1.2,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    rect: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n  lock: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n      },\n      animate: {\n        rotate: [0, 7, 0],\n        scale: [1, 0.9, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path: {\n      initial: {\n        pathLength: 0.8,\n      },\n      animate: {\n        pathLength: 1,\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    rect: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n  unlock: {\n    group: {\n      initial: {\n        rotate: 0,\n        scale: 1,\n      },\n      animate: {\n        rotate: [0, -5, 0],\n        scale: [1, 0.9, 1],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path: {\n      initial: {\n        pathLength: 1,\n      },\n      animate: {\n        pathLength: 0.8,\n        transition: {\n          duration: 0.4,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    rect: {},\n    circle: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: LockKeyholeOpenProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      initial=\"initial\"\n      animate={controls}\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.circle\n          cx=\"12\"\n          cy=\"16\"\n          r=\"1\"\n          variants={variants.circle}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.rect\n          x=\"3\"\n          y=\"10\"\n          width=\"18\"\n          height=\"12\"\n          rx=\"2\"\n          variants={variants.rect}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M7 10V7a5 5 0 0 1 10 0v3\"\n          variants={variants.path}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction LockKeyholeOpen(props: LockKeyholeOpenProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  LockKeyholeOpen,\n  LockKeyholeOpen as LockKeyholeOpenIcon,\n  type LockKeyholeOpenProps,\n  type LockKeyholeOpenProps as LockKeyholeOpenIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/lock-keyhole-open.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "security"
+    ]
+  },
+  "type": "registry:ui"
+}

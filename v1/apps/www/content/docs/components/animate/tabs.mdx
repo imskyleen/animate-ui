@@ -1,0 +1,168 @@
+---
+title: Tabs
+description: A set of layered sections of content—known as tab panels—that are displayed one at a time.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-animate-tabs" />
+
+## Installation
+
+<ComponentInstallation name="components-animate-tabs" />
+
+## Usage
+
+```tsx
+<Tabs>
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+  </TabsList>
+  <TabContents>
+    <TabsContent value="account">
+      Make changes to your account here.
+    </TabsContent>
+    <TabsContent value="password">Change your password here.</TabsContent>
+  </TabContents>
+</Tabs>
+```
+
+## API Reference
+
+### Tabs
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tabs#tabs"
+  text="Animate UI API Reference - Tabs Primitive"
+/>
+
+<TypeTable
+  type={{
+    defaultValue: {
+      description: 'The default value of the Tabs component.',
+      type: 'string',
+      required: false,
+    },
+    value: {
+      description: 'The value of the Tabs component.',
+      type: 'string',
+      required: false,
+    },
+    onValueChange: {
+      description:
+        'The callback function that is called when the value changes.',
+      type: '(value: string) => void',
+      required: false,
+    },
+    '...props': {
+      description: 'The props of the Tabs component.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### TabsList
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tabs#tabslist"
+  text="Animate UI API Reference - TabsList Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the TabsList component.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### TabsTrigger
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tabs#tabstrigger"
+  text="Animate UI API Reference - TabsTrigger Primitive"
+/>
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The value of the TabsTrigger component.',
+      type: 'string',
+      required: true,
+    },
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the TabsTrigger component.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+### TabsContents
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tabs#tabscontents"
+  text="Animate UI API Reference - TabsContents Primitive"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabsContents component.',
+      type: 'Transition',
+      required: false,
+      default:
+        '{ type: "spring", stiffness: 300, damping: 32, bounce: 0, restDelta: 0.01 }',
+    },
+    '...props': {
+      description: 'The props of the TabsContents component.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### TabsContent
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tabs#tabscontent"
+  text="Animate UI API Reference - TabsContent Primitive"
+/>
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The value of the TabsContent component.',
+      type: 'string',
+      required: true,
+    },
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the TabsContent component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/tabs) for style inspiration.

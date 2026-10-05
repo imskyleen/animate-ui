@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-animate-code-tabs",
+  "title": "Code Tabs Demo",
+  "description": "Demo showing a code tabs.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-animate-code-tabs"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/animate/code-tabs/index.tsx",
+      "content": "import { CodeTabs } from '@/components/animate-ui/components/animate/code-tabs';\n\nconst CODES = {\n  Cursor: `// Copy and paste the code into .cursor/mcp.json\n{\n  \"mcpServers\": {\n    \"shadcn\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"shadcn@canary\", \"registry:mcp\"],\n      \"env\": {\n        \"REGISTRY_URL\": \"@animate-ui/registry.json\"\n      }\n    }\n  }\n}`,\n  Windsurf: `// Copy and paste the code into .codeium/windsurf/mcp_config.json\n{\n  \"mcpServers\": {\n    \"shadcn\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"shadcn@canary\", \"registry:mcp\"],\n      \"env\": {\n        \"REGISTRY_URL\": \"@animate-ui/registry.json\"\n      }\n    }\n  }\n}`,\n};\n\nexport const CodeTabsDemo = () => {\n  return <CodeTabs lang=\"json\" codes={CODES} />;\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/animate/code-tabs.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

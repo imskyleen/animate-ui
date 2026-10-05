@@ -1,0 +1,149 @@
+---
+title: Particles
+description: A particles effect that creates a particle system.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-effects-particles" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-particles" />
+
+## Usage
+
+```tsx
+<Particles>
+  <div>Particles</div>
+  <ParticlesEffect />
+</Particles>
+```
+
+## API Reference
+
+### Particles
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the particles',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    animate: {
+      description: 'Whether the particles are animated',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Animate the element when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Animate the element only once when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin of the element to be in view',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    '...props': {
+      description: 'The props of the particles',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ParticlesEffect
+
+<TypeTable
+  type={{
+    side: {
+      description: 'The side of the particles effect',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    sideOffset: {
+      description: 'The offset of the particles effect',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    align: {
+      description: 'The align of the particles effect',
+      type: "'start' | 'center' | 'end'",
+      required: false,
+      default: 'center',
+    },
+    alignOffset: {
+      description: 'The offset of the particles effect',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    count: {
+      description: 'The count of the particles effect',
+      type: 'number',
+      required: false,
+      default: '6',
+    },
+    radius: {
+      description: 'The radius of the particles effect',
+      type: 'number',
+      required: false,
+      default: '30',
+    },
+    spread: {
+      description: 'The spread of the particles effect',
+      type: 'number',
+      required: false,
+      default: '360',
+    },
+    duration: {
+      description: 'The duration of the particles effect',
+      type: 'number',
+      required: false,
+      default: '0.8',
+    },
+    holdDelay: {
+      description: 'The delay between each particle of the particles effect',
+      type: 'number',
+      required: false,
+      default: '0.05',
+    },
+    delay: {
+      description: 'The delay of the particles effect to start',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the particles effect',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [SHSF UI](https://www.shsfui.com/primitives/buttons/heart-button) for the animation inspiration

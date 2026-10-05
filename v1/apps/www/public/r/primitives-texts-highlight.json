@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-highlight",
+  "title": "Highlight Text",
+  "description": "A highlight text animation.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/hooks-use-is-in-view"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/texts/highlight/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  useIsInView,\n  type UseIsInViewOptions,\n} from '@/hooks/use-is-in-view';\n\ntype HighlightTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {\n  text: string;\n  delay?: number;\n} & UseIsInViewOptions;\n\nfunction HighlightText({\n  ref,\n  text,\n  style,\n  inView = false,\n  inViewMargin = '0px',\n  inViewOnce = true,\n  transition = { duration: 2, ease: 'easeInOut' },\n  delay = 0,\n  ...props\n}: HighlightTextProps) {\n  const { ref: localRef, isInView } = useIsInView(\n    ref as React.Ref<HTMLElement>,\n    {\n      inView,\n      inViewOnce,\n      inViewMargin,\n    },\n  );\n\n  return (\n    <motion.span\n      ref={localRef}\n      data-slot=\"highlight-text\"\n      initial={{ backgroundSize: '0% 100%' }}\n      animate={isInView ? { backgroundSize: '100% 100%' } : undefined}\n      transition={{\n        ...transition,\n        delay: (transition?.delay ?? 0) + delay / 1000,\n      }}\n      style={{\n        position: 'relative',\n        backgroundRepeat: 'no-repeat',\n        backgroundPosition: 'left center',\n        display: 'inline-block',\n        ...style,\n      }}\n      {...props}\n    >\n      {text}\n    </motion.span>\n  );\n}\n\nexport { HighlightText, type HighlightTextProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/highlight.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

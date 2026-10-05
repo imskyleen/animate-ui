@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-shimmering",
+  "title": "Shimmering Text",
+  "description": "A shimmering text animation.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/hooks-use-is-in-view"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/texts/shimmering/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'motion/react';\n\ntype ShimmeringTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {\n  text: string;\n  duration?: number;\n  wave?: boolean;\n  color?: string;\n  shimmeringColor?: string;\n};\n\nfunction ShimmeringText({\n  text,\n  duration = 1,\n  transition,\n  wave = false,\n  color = 'var(--color-neutral-500)',\n  shimmeringColor = 'var(--color-neutral-300)',\n  ...props\n}: ShimmeringTextProps) {\n  return (\n    <motion.span\n      style={\n        {\n          '--shimmering-color': shimmeringColor,\n          '--color': color,\n          color: 'var(--color)',\n          position: 'relative',\n          display: 'inline-block',\n          perspective: '500px',\n        } as React.CSSProperties\n      }\n      {...props}\n    >\n      {text?.split('')?.map((char, i) => (\n        <motion.span\n          key={i}\n          style={{\n            display: 'inline-block',\n            whiteSpace: 'pre',\n            transformStyle: 'preserve-3d',\n          }}\n          initial={{\n            ...(wave\n              ? {\n                  scale: 1,\n                  rotateY: 0,\n                }\n              : {}),\n            color: 'var(--color)',\n          }}\n          animate={{\n            ...(wave\n              ? {\n                  x: [0, 5, 0],\n                  y: [0, -5, 0],\n                  scale: [1, 1.1, 1],\n                  rotateY: [0, 15, 0],\n                }\n              : {}),\n            color: ['var(--color)', 'var(--shimmering-color)', 'var(--color)'],\n          }}\n          transition={{\n            duration,\n            repeat: Infinity,\n            repeatType: 'loop',\n            repeatDelay: text.length * 0.05,\n            delay: (i * duration) / text.length,\n            ease: 'easeInOut',\n            ...transition,\n          }}\n        >\n          {char}\n        </motion.span>\n      ))}\n    </motion.span>\n  );\n}\n\nexport { ShimmeringText, type ShimmeringTextProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/shimmering.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-radio",
+  "title": "Base Radio Demo",
+  "description": "Demo showing an animated base radio.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-base-radio"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/radio/index.tsx",
+      "content": "import { Label } from '@/components/ui/label';\nimport {\n  RadioGroup,\n  Radio,\n  RadioIndicator,\n} from '@/components/animate-ui/primitives/base/radio';\n\nconst itemClassName =\n  'size-5 rounded-full flex items-center justify-center border';\nconst indicatorClassName = 'size-3 bg-primary rounded-full';\n\nexport function BaseRadioDemo() {\n  return (\n    <RadioGroup defaultValue=\"default\" className=\"flex flex-col gap-2\">\n      <Label className=\"flex items-center gap-x-3\">\n        <Radio value=\"default\" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Default\n      </Label>\n      <Label className=\"flex items-center gap-x-3\">\n        <Radio value=\"comfortable\" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Comfortable\n      </Label>\n      <Label className=\"flex items-center gap-x-3\">\n        <Radio value=\"compact\" className={itemClassName}>\n          <RadioIndicator className={indicatorClassName} />\n        </Radio>\n        Compact\n      </Label>\n    </RadioGroup>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/radio.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

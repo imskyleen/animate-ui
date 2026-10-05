@@ -1,0 +1,88 @@
+---
+title: Ripple
+description: A button that creates a ripple effect on tap.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-buttons-ripple" />
+
+## Installation
+
+<ComponentInstallation name="primitives-buttons-ripple" />
+
+## Usage
+
+```tsx
+<RippleButton>Ripple Button</RippleButton>
+```
+
+## API Reference
+
+### RippleButton
+
+<TypeTable
+  type={{
+    hoverScale: {
+      description: 'The scale of the button on hover.',
+      type: 'number',
+      required: false,
+      default: 1.05,
+    },
+    tapScale: {
+      description: 'The scale of the button on tap.',
+      type: 'number',
+      required: false,
+      default: 0.95,
+    },
+    '...props': {
+      description: 'The props for the button.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+### RippleButtonRipples
+
+<TypeTable
+  type={{
+    color: {
+      description: 'The color of the ripple.',
+      type: 'string',
+      required: false,
+      default: 'var(--ripple-button-ripple-color)',
+    },
+    scale: {
+      description: 'The scale of the ripple.',
+      type: 'number',
+      required: false,
+      default: 10,
+    },
+    transition: {
+      description: 'The transition of the ripple.',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.6, ease: 'easeOut' }",
+    },
+    '...props': {
+      description: 'The props for the ripple.',
+      type: 'HTMLMotionProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+#### CSS Variables
+
+<TypeTable
+  type={{
+    '--ripple-button-ripple-color': {
+      description: 'The color of the ripple.',
+      type: 'color',
+      required: false,
+    },
+  }}
+/>

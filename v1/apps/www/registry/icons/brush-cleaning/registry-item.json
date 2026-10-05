@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-brush-cleaning",
+  "type": "registry:ui",
+  "title": "Brush Cleaning Icon",
+  "description": "Brush cleaning icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/brush-cleaning/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/brush-cleaning.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "cleaning",
+      "utensil",
+      "housekeeping",
+      "tool",
+      "sweeping",
+      "scrubbing",
+      "hygiene",
+      "maintenance",
+      "household",
+      "cleaner",
+      "chores",
+      "equipment",
+      "sanitation",
+      "bristles",
+      "handle",
+      "home care",
+      "sanitize",
+      "purify",
+      "wash",
+      "disinfect",
+      "sterilize",
+      "scrub",
+      "polish",
+      "decontaminate",
+      "wipe",
+      "spotless",
+      "remove",
+      "empty",
+      "erase",
+      "purge",
+      "eliminate"
+    ]
+  }
+}

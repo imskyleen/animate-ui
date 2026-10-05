@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-backgrounds-fireworks-circle",
+  "title": "Fireworks Circle Background Demo",
+  "description": "Demo showing a fireworks circle background.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-backgrounds-fireworks"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/backgrounds/fireworks-circle/index.tsx",
+      "content": "'use client';\n\nimport { useTheme } from 'next-themes';\nimport { FireworksBackground } from '@/components/animate-ui/components/backgrounds/fireworks';\n\ntype FireworksCircleBackgroundDemoProps = {\n  population: number;\n  fireworkSize: number;\n  fireworkSpeed: number;\n  particleSize: number;\n  particleSpeed: number;\n};\n\nexport default function FireworksCircleBackgroundDemo({\n  population,\n  fireworkSize,\n  fireworkSpeed,\n  particleSize,\n  particleSpeed,\n}: FireworksCircleBackgroundDemoProps) {\n  const { resolvedTheme: theme } = useTheme();\n\n  return (\n    <FireworksBackground\n      className=\"absolute inset-0 flex items-center justify-center rounded-xl\"\n      color={theme === 'dark' ? 'white' : 'black'}\n      population={population}\n      fireworkSize={fireworkSize}\n      fireworkSpeed={fireworkSpeed}\n      particleSize={particleSize}\n      particleSpeed={particleSpeed}\n    />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/backgrounds/fireworks-circle.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "FireworksBackground": {
+        "population": {
+          "value": 1,
+          "min": 0.1,
+          "max": 10,
+          "step": 0.1
+        },
+        "fireworkSize": {
+          "value": 7,
+          "min": 1,
+          "max": 20,
+          "step": 1
+        },
+        "fireworkSpeed": {
+          "value": 7,
+          "min": 1,
+          "max": 20,
+          "step": 1
+        },
+        "particleSize": {
+          "value": 7,
+          "min": 1,
+          "max": 20,
+          "step": 1
+        },
+        "particleSpeed": {
+          "value": 7,
+          "min": 1,
+          "max": 20,
+          "step": 1
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

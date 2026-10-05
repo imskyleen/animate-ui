@@ -1,0 +1,74 @@
+---
+title: Theme Toggler Button
+description: A button that toggles the theme gradually.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-08
+---
+
+<ComponentPreview name="demo-components-buttons-theme-toggler" />
+
+## Installation
+
+<ComponentInstallation name="components-buttons-theme-toggler" />
+
+## Usage
+
+```tsx
+<ThemeTogglerButton />
+```
+
+## API Reference
+
+### ThemeTogglerButton
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/theme-toggler#themetoggler"
+  text="Animate UI API Reference - Theme Toggler Primitive"
+/>
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'The variant of the button.',
+      type: '"default" | "accent" | "destructive" | "outline" | "secondary" | "ghost" | "link"',
+      required: false,
+      default: 'default',
+    },
+    size: {
+      description: 'The size of the button.',
+      type: '"default" | "sm" | "lg"',
+      required: false,
+      default: 'default',
+    },
+    modes: {
+      description: 'The modes to toggle.',
+      type: "('light' | 'dark' | 'system')[]",
+      required: false,
+      default: ['light', 'dark'],
+    },
+    direction: {
+      description: 'The direction to toggle.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      required: false,
+      default: 'ltr',
+    },
+    onImmediateChange: {
+      description:
+        'The function to call when the theme is changed immediately.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: false,
+    },
+    '...props': {
+      description: 'The props for the button.',
+      type: 'React.ComponentProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/button) for style inspiration.
+- Credit to [Magic UI](https://magicui.design/docs/components/animated-theme-toggler) for the component inspiration.

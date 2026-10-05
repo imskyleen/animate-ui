@@ -1,0 +1,124 @@
+---
+title: Toggle Group
+description: A set of two-state buttons that can be toggled on or off.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-toggle-group" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-toggle-group" />
+
+## Usage
+
+### Single
+
+```tsx
+<ToggleGroup type="single" defaultValue="bold">
+  <ToggleGroupHighlight>
+    <ToggleGroupHighlightItem value="bold">
+      <ToggleGroupItem value="bold" />
+    </ToggleGroupHighlightItem>
+
+    <ToggleGroupHighlightItem value="italic">
+      <ToggleGroupItem value="italic" />
+    </ToggleGroupHighlightItem>
+
+    <ToggleGroupHighlightItem value="underline">
+      <ToggleGroupItem value="underline" />
+    </ToggleGroupHighlightItem>
+  </ToggleGroupHighlight>
+</ToggleGroup>
+```
+
+### Multiple
+
+```tsx
+<ToggleGroup type="multiple" defaultValue={['bold']}>
+  <ToggleGroupHighlightItem value="bold">
+    <ToggleGroupItem value="bold" />
+  </ToggleGroupHighlightItem>
+
+  <ToggleGroupHighlightItem value="italic">
+    <ToggleGroupItem value="italic" />
+  </ToggleGroupHighlightItem>
+
+  <ToggleGroupHighlightItem value="underline">
+    <ToggleGroupItem value="underline" />
+  </ToggleGroupHighlightItem>
+</ToggleGroup>
+```
+
+## API Reference
+
+### ToggleGroup
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/toggle-group#root"
+  text="Radix UI API Reference - ToggleGroup.Root"
+/>
+
+### ToggleGroupItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/toggle-group#item"
+  text="Radix UI API Reference - ToggleGroup.Item"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the ToggleGroupItem component.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` property is not supported in the `ToggleGroupItem` component, as
+  it is used for animation.
+</Callout>
+
+### ToggleGroupHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the ToggleGroupHighlight component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### ToggleGroupHighlightItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the ToggleGroupHighlightItem component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Toggle Group](https://www.radix-ui.com/primitives/docs/components/toggle-group)

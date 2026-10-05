@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-square-code",
+  "title": "Message Square Code Icon",
+  "description": "Message square code icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/message-square-code/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype MessageSquareCodeProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        transformOrigin: 'bottom left',\n        rotate: [0, 8, -8, 2, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.8,\n          times: [0, 0.4, 0.6, 0.8, 1],\n        },\n      },\n    },\n    path1: {},\n    path2: {\n      initial: {\n        x: 0,\n      },\n      animate: {\n        x: [0, -1.5, 0.75, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path3: {\n      initial: {\n        x: 0,\n      },\n      animate: {\n        x: [0, 1.5, -0.75, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: MessageSquareCodeProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"\n          variants={variants.path1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M10 7.5 8 10l2 2.5\"\n          variants={variants.path2}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"m14 7.5 2 2.5-2 2.5\"\n          variants={variants.path3}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction MessageSquareCode(props: MessageSquareCodeProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  MessageSquareCode,\n  MessageSquareCode as MessageSquareCodeIcon,\n  type MessageSquareCodeProps,\n  type MessageSquareCodeProps as MessageSquareCodeIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-square-code.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "speech bubble",
+      "code review",
+      "coding"
+    ]
+  },
+  "type": "registry:ui"
+}

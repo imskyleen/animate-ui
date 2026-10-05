@@ -1,0 +1,58 @@
+---
+title: Progress
+description: Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-progress" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-progress" />
+
+## Usage
+
+```tsx
+<Progress>
+  <ProgressIndicator />
+</Progress>
+```
+
+## API Reference
+
+### Progress
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/progress#root"
+  text="Radix UI API Reference - Progress.Root"
+/>
+
+### ProgressIndicator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/progress#indicator"
+  text="Radix UI API Reference - Progress.Indicator"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the progress indicator.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 100, damping: 30 }",
+    },
+    '...props': {
+      description: 'The props of the progress indicator.',
+      type: 'MotionProps',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Progress](https://www.radix-ui.com/primitives/docs/components/progress)

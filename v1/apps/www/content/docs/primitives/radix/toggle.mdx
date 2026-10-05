@@ -1,0 +1,75 @@
+---
+title: Toggle
+description: A two-state button that can be either on or off.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-toggle" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-toggle" />
+
+## Usage
+
+```tsx
+<Toggle>
+  <ToggleHighlight />
+  <ToggleItem />
+</Toggle>
+```
+
+## API Reference
+
+### Toggle
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/toggle#root"
+  text="Radix UI API Reference - Toggle.Root"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the Toggle component.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` property is not supported in the `Toggle` component, as it is
+  used for animation.
+</Callout>
+
+### ToggleHighlight
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the ToggleHighlight component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ToggleItem
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the ToggleItem component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Toggle](https://www.radix-ui.com/primitives/docs/components/toggle)

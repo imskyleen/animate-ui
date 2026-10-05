@@ -1,0 +1,79 @@
+---
+title: Persistence
+description: Define whether the icon resets to its initial state or keeps the animation.
+---
+
+## `persistOnAnimateEnd`
+
+This allows the animation to remain in the `animate` state without returning to the `initial` state. This will have no impact in `loop` or when the animation ends in the same state as the `initial` state.
+
+<Callout type="info">
+  **Note:** If the animation is not complete, it will remain in the paused
+  animation state.
+</Callout>
+
+```tsx
+<ArrowRight persistOnAnimateEnd />
+
+// or with AnimateIcon
+<AnimateIcon persistOnAnimateEnd>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `initialOnAnimateEnd`
+
+This allows you to set the `initial` state without transition at the end of the animation. Very useful for rotation animations, for example, which give the impression of returning to the `initial` state even though they have the rotation applied.
+
+```tsx
+<ArrowRight initialOnAnimateEnd />
+
+// or with AnimateIcon
+<AnimateIcon initialOnAnimateEnd>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `completeOnStop`
+
+This allows the current animation to finish before returning to the `initial` state.
+
+<Callout type="info">
+  **Note:** If you set it to `AnimateIcon` with multiple child icons, it will
+  wait for the last animation.
+</Callout>
+
+```tsx
+<ArrowRight completeOnStop />
+
+// or with AnimateIcon
+<AnimateIcon completeOnStop>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## API Reference
+
+<TypeTable
+  type={{
+    initialOnAnimateEnd: {
+      description:
+        'Whether to set the icon to the initial state after the animation ends.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    persistOnAnimateEnd: {
+      description: 'Whether to persist the animation after the animation ends.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    completeOnStop: {
+      description: 'Whether to complete the current animation on stop.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+  }}
+/>

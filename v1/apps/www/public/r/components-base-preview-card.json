@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-preview-card",
+  "title": "Preview Card",
+  "description": "A popup that appears when a link is hovered, showing a preview for sighted users.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-base-preview-card"
+  ],
+  "files": [
+    {
+      "path": "registry/components/base/preview-card/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  PreviewCard as PreviewCardPrimitive,\n  PreviewCardTrigger as PreviewCardTriggerPrimitive,\n  PreviewCardPortal as PreviewCardPortalPrimitive,\n  PreviewCardPositioner as PreviewCardPositionerPrimitive,\n  PreviewCardPopup as PreviewCardPopupPrimitive,\n  PreviewCardBackdrop as PreviewCardBackdropPrimitive,\n  type PreviewCardProps as PreviewCardPrimitiveProps,\n  type PreviewCardTriggerProps as PreviewCardTriggerPrimitiveProps,\n  type PreviewCardPositionerProps as PreviewCardPositionerPrimitiveProps,\n  type PreviewCardPopupProps as PreviewCardPopupPrimitiveProps,\n  type PreviewCardBackdropProps as PreviewCardBackdropPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/preview-card';\nimport { cn } from '@/lib/utils';\n\ntype PreviewCardProps = PreviewCardPrimitiveProps;\n\nfunction PreviewCard(props: PreviewCardProps) {\n  return <PreviewCardPrimitive {...props} />;\n}\n\ntype PreviewCardTriggerProps = PreviewCardTriggerPrimitiveProps;\n\nfunction PreviewCardTrigger(props: PreviewCardTriggerProps) {\n  return <PreviewCardTriggerPrimitive {...props} />;\n}\n\ntype PreviewCardPanelProps = PreviewCardPositionerPrimitiveProps &\n  PreviewCardPopupPrimitiveProps;\n\nfunction PreviewCardPanel({\n  className,\n  align = 'center',\n  sideOffset = 4,\n  style,\n  children,\n  ...props\n}: PreviewCardPanelProps) {\n  return (\n    <PreviewCardPortalPrimitive>\n      <PreviewCardPositionerPrimitive\n        align={align}\n        sideOffset={sideOffset}\n        className=\"z-50\"\n        {...props}\n      >\n        <PreviewCardPopupPrimitive\n          className={cn(\n            'bg-popover text-popover-foreground w-64 origin-(--transform-origin) rounded-md border p-4 shadow-md outline-hidden',\n            className,\n          )}\n          style={style}\n        >\n          {children}\n        </PreviewCardPopupPrimitive>\n      </PreviewCardPositionerPrimitive>\n    </PreviewCardPortalPrimitive>\n  );\n}\n\ntype PreviewCardBackdropProps = PreviewCardBackdropPrimitiveProps;\n\nfunction PreviewCardBackdrop(props: PreviewCardBackdropProps) {\n  return <PreviewCardBackdropPrimitive {...props} />;\n}\n\nexport {\n  PreviewCard,\n  PreviewCardTrigger,\n  PreviewCardPanel,\n  PreviewCardBackdrop,\n  type PreviewCardProps,\n  type PreviewCardTriggerProps,\n  type PreviewCardPanelProps,\n  type PreviewCardBackdropProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/preview-card.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

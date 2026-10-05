@@ -1,0 +1,99 @@
+---
+title: Spring
+description: A flexible, animated spring component that attaches a draggable element to its origin with a spring line.
+author:
+  name: arhamkhnz
+  url: https://github.com/arhamkhnz
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-spring" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-spring" />
+
+## Usage
+
+```tsx
+<SpringProvider>
+  <Spring />
+  <SpringElement>
+    <p>Hello</p>
+  </SpringElement>
+</SpringProvider>
+```
+
+<Callout type="info">
+  **Note:** Add `draggable={false}` to your element (avatar, image, etc.) when
+  passing it as children. This prevents the browser's native drag image from
+  interfering with the spring drag animation.
+</Callout>
+
+## API Reference
+
+### SpringProvider
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the SpringProvider',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    dragElastic: {
+      description:
+        'How elastic the drag interaction feels. Lower values = less stretch.',
+      type: 'number',
+      required: false,
+      default: '0.2',
+    },
+    transition: {
+      description: 'The transition of the SpringProvider',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 16 }',
+    },
+    pathConfig: {
+      description:
+        'Config for the spring path itself: number of coils, amplitude, curve ratios, etc.',
+      type: 'SpringPathConfig',
+      required: false,
+      default: '{}',
+    },
+  }}
+/>
+
+### Spring
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the Spring component.',
+      type: 'React.SVGProps<SVGSVGElement>',
+      required: false,
+    },
+  }}
+/>
+
+### SpringElement
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the SpringElement',
+      type: 'React.ReactElement',
+      required: true,
+    },
+    '...props': {
+      description: 'The props of the SpringElement component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Updated by [imskyleen](https://github.com/imskyleen)
+- Credits to [Anh](https://x.com/pwign) for [this X post](https://x.com/pwign/status/1927760004183970067) as inspiration

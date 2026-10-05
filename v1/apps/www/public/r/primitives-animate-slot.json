@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-animate-slot",
+  "title": "Animate Slot",
+  "description": "A slot component that allows you to use motion components with any element.",
+  "dependencies": [
+    "motion"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/animate/slot/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, isMotionComponent, type HTMLMotionProps } from 'motion/react';\nimport { cn } from '@/lib/utils';\n\ntype AnyProps = Record<string, unknown>;\n\ntype DOMMotionProps<T extends HTMLElement = HTMLElement> = Omit<\n  HTMLMotionProps<keyof HTMLElementTagNameMap>,\n  'ref'\n> & { ref?: React.Ref<T> };\n\ntype WithAsChild<Base extends object> =\n  | (Base & { asChild: true; children: React.ReactElement })\n  | (Base & { asChild?: false | undefined });\n\ntype SlotProps<T extends HTMLElement = HTMLElement> = {\n  // eslint-disable-next-line @typescript-eslint/no-explicit-any\n  children?: any;\n} & DOMMotionProps<T>;\n\nfunction mergeRefs<T>(\n  ...refs: (React.Ref<T> | undefined)[]\n): React.RefCallback<T> {\n  return (node) => {\n    refs.forEach((ref) => {\n      if (!ref) return;\n      if (typeof ref === 'function') {\n        ref(node);\n      } else {\n        (ref as React.RefObject<T | null>).current = node;\n      }\n    });\n  };\n}\n\nfunction mergeProps<T extends HTMLElement>(\n  childProps: AnyProps,\n  slotProps: DOMMotionProps<T>,\n): AnyProps {\n  const merged: AnyProps = { ...childProps, ...slotProps };\n\n  if (childProps.className || slotProps.className) {\n    merged.className = cn(\n      childProps.className as string,\n      slotProps.className as string,\n    );\n  }\n\n  if (childProps.style || slotProps.style) {\n    merged.style = {\n      ...(childProps.style as React.CSSProperties),\n      ...(slotProps.style as React.CSSProperties),\n    };\n  }\n\n  return merged;\n}\n\nfunction Slot<T extends HTMLElement = HTMLElement>({\n  children,\n  ref,\n  ...props\n}: SlotProps<T>) {\n  const isAlreadyMotion =\n    typeof children.type === 'object' &&\n    children.type !== null &&\n    isMotionComponent(children.type);\n\n  const Base = React.useMemo(\n    () =>\n      isAlreadyMotion\n        ? (children.type as React.ElementType)\n        : motion.create(children.type as React.ElementType),\n    [isAlreadyMotion, children.type],\n  );\n\n  if (!React.isValidElement(children)) return null;\n\n  const { ref: childRef, ...childProps } = children.props as AnyProps;\n\n  const mergedProps = mergeProps(childProps, props);\n\n  return (\n    <Base {...mergedProps} ref={mergeRefs(childRef as React.Ref<T>, ref)} />\n  );\n}\n\nexport {\n  Slot,\n  type SlotProps,\n  type WithAsChild,\n  type DOMMotionProps,\n  type AnyProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/animate/slot.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

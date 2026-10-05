@@ -1,0 +1,120 @@
+---
+title: MCP
+description: How to use the Registry MCP with Animate UI.
+---
+
+import { CodeTabs } from '@/components/docs/code-tabs';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContents,
+  TabsContent,
+} from '@/components/radix/tabs';
+
+For more information about the MCP server, please refer to the [shadcn/ui MCP documentation](https://ui.shadcn.com/docs/mcp).
+
+## Automatic configuration
+
+Select your MCP client and follow the instructions to configure the shadcn MCP server.
+
+<Tabs defaultValue="claude">
+  <TabsList>
+    <TabsTrigger value="claude">Claude Code</TabsTrigger>
+    <TabsTrigger value="cursor">Cursor</TabsTrigger>
+    <TabsTrigger value="vscode">VS Code</TabsTrigger>
+  </TabsList>
+  <TabsContents>
+    <TabsContent value="claude" className="h-[100px]">
+      <CodeTabs
+        lang="bash"
+        codes={{
+          pnpm: `pnpm dlx shadcn@latest mcp init --client claude`,
+          npm: `npx shadcn@latest mcp init --client claude`,
+          yarn: `yarn shadcn@latest mcp init --client claude`,
+          bun: `bunx --bun shadcn@latest mcp init --client claude`,
+        }}
+      />
+    </TabsContent>
+    <TabsContent value="cursor" className="h-[100px]">
+      <CodeTabs
+        lang="bash"
+        codes={{
+          pnpm: `pnpm dlx shadcn@latest mcp init --client cursor`,
+          npm: `npx shadcn@latest mcp init --client cursor`,
+          yarn: `yarn shadcn@latest mcp init --client cursor`,
+          bun: `bunx --bun shadcn@latest mcp init --client cursor`,
+        }}
+      />
+    </TabsContent>
+    <TabsContent value="vscode" className="h-[100px]">
+      <CodeTabs
+        lang="bash"
+        codes={{
+          pnpm: `pnpm dlx shadcn@latest mcp init --client vscode`,
+          npm: `npx shadcn@latest mcp init --client vscode`,
+          yarn: `yarn shadcn@latest mcp init --client vscode`,
+          bun: `bunx --bun shadcn@latest mcp init --client vscode`,
+        }}
+      />
+    </TabsContent>
+  </TabsContents>
+</Tabs>
+
+## Manual configuration
+
+Install the shadcn package as a dev dependency:
+
+<CodeTabs
+  lang="bash"
+  codes={{
+    pnpm: `pnpm add -D shadcn@latest`,
+    npm: `npm install -D shadcn@latest`,
+    yarn: `yarn add -D shadcn@latest`,
+    bun: `bun add -D shadcn@latest`,
+  }}
+/>
+
+Use the code below to configure the shadcn MCP server in your editor.
+
+<CodeTabs
+  lang="json"
+  codes={{
+    'Claude Code': `// Copy and paste the code into .mcp.json
+  {
+    "mcpServers": {
+      "shadcn": {
+        "command": "npx",
+        "args": ["shadcn@latest", "mcp"]
+      }
+    }
+  }`,
+    Cursor: `// Copy and paste the code into .cursor/mcp.json
+  {
+    "mcpServers": {
+      "shadcn": {
+        "command": "npx",
+        "args": ["shadcn@latest", "mcp"]
+      }
+    }
+  }`,
+    'VS Code': `// Copy and paste the code into .vscode/mcp.json
+  {
+    "mcpServers": {
+      "shadcn": {
+        "command": "npx",
+        "args": ["shadcn@latest", "mcp"]
+      }
+    }
+  }`,
+    Windsurf: `// Copy and paste the code into .codeium/windsurf/mcp_config.json
+  {
+    "mcpServers": {
+      "shadcn": {
+        "command": "npx",
+        "args": ["shadcn@latest", "mcp"]
+      }
+    }
+  }`,
+  }}
+/>

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-progress",
+  "title": "Radix Progress Demo",
+  "description": "Demo showing an animated radix progress.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-progress"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/progress/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {\n  Progress,\n  ProgressIndicator,\n} from '@/components/animate-ui/primitives/radix/progress';\n\nexport const RadixProgressDemo = () => {\n  const [progress, setProgress] = React.useState(0);\n\n  React.useEffect(() => {\n    const timer = setInterval(() => {\n      setProgress((prev) => {\n        if (prev >= 100) return 100;\n        return prev + 25;\n      });\n    }, 2000);\n    return () => clearInterval(timer);\n  }, []);\n\n  React.useEffect(() => {\n    if (progress >= 100) setTimeout(() => setProgress(0), 4000);\n  }, [progress]);\n\n  return (\n    <Progress value={progress} className=\"w-[300px] h-2 border overflow-hidden\">\n      <ProgressIndicator className=\"size-full flex-1 bg-primary\" />\n    </Progress>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/progress.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

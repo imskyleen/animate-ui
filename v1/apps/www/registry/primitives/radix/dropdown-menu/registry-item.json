@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-radix-dropdown-menu",
+  "type": "registry:ui",
+  "title": "Radix Dropdown Menu",
+  "description": "Displays a menu to the user — such as a set of actions or functions — triggered by a button.",
+  "dependencies": ["motion", "radix-ui"],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-effects-highlight",
+    "@animate-ui/v1/hooks-use-controlled-state",
+    "@animate-ui/v1/hooks-use-data-state",
+    "@animate-ui/v1/lib-get-strict-context"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/radix/dropdown-menu/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/radix/dropdown-menu.tsx"
+    }
+  ]
+}

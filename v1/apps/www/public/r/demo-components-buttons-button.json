@@ -1,0 +1,50 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-buttons-button",
+  "title": "Button Demo",
+  "description": "Demo showing a button.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/components-buttons-button"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/buttons/button/index.tsx",
+      "content": "import { PlusIcon } from 'lucide-react';\nimport { Button, type ButtonProps } from '@/components/animate-ui/components/buttons/button';\n\ninterface ButtonDemoProps {\n  variant: ButtonProps['variant'];\n  size: ButtonProps['size'];\n}\n\nexport default function ButtonDemo({ variant, size }: ButtonDemoProps) {\n  return (\n    <Button variant={variant} size={size}>\n      {size === 'icon' ? <PlusIcon /> : 'Click me'}\n    </Button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/buttons/button.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Button": {
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "accent": "accent",
+            "destructive": "destructive",
+            "outline": "outline",
+            "secondary": "secondary",
+            "ghost": "ghost",
+            "link": "link"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg",
+            "icon": "icon",
+            "icon-sm": "icon-sm",
+            "icon-lg": "icon-lg"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

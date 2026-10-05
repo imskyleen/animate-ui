@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-circle-dashed",
+  "type": "registry:ui",
+  "title": "Message Circle Dashed Icon",
+  "description": "Message circle dashed icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/message-circle-dashed/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-circle-dashed.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "speech bubble",
+      "draft"
+    ]
+  }
+}

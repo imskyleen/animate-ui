@@ -1,0 +1,91 @@
+---
+title: Primitives
+description: Animated, unstyled components to let you express your creativity.
+---
+
+import { SparklesIcon, RectangleHorizontalIcon, TypeIcon } from 'lucide-react';
+
+<Cards>
+  <Card
+    icon={
+      <svg
+        role="img"
+        fill="currentColor"
+        aria-label="Animate UI"
+        viewBox="0 0 40 40"
+      >
+        <path d="M28.38,37.05H11.61c-1.79,0-3.58-.47-5.09-1.41-1.41-.85-2.64-2.07-3.49-3.58s-1.32-3.11-1.32-4.8c0-1.79.47-3.58,1.32-5.09L11.42,7.85c.94-1.51,2.17-2.83,3.77-3.67,1.41-.85,3.11-1.22,4.8-1.22s3.3.38,4.8,1.22c1.51.85,2.83,2.17,3.77,3.67l8.38,14.32c.94,1.6,1.41,3.3,1.32,5.09,0,1.7-.47,3.3-1.32,4.8-.85,1.51-2.07,2.73-3.49,3.58-1.51.94-3.3,1.41-5.09,1.41M18.96,12.28l-8.38,14.32c-.28.47-.19.94,0,1.22s.47.57,1.04.57h16.77c.57,0,.85-.28,1.04-.57s.28-.66,0-1.22l-8.38-14.32c-.28-.47-.75-.57-1.04-.57s-.75.09-1.04.57"></path>
+      </svg>
+    }
+    href="/docs/primitives/animate/avatar-group"
+    title="Animate UI"
+    accent
+  />
+  <Card
+    icon={
+      <svg
+        role="img"
+        fill="currentColor"
+        aria-label="Radix UI"
+        viewBox="4 0 17 25"
+      >
+        <path d="M12 25a8 8 0 1 1 0-16zm0-25H4v8h8zm5 8a4 4 0 1 0 0-8 4 4 0 0 0 0 8"></path>
+      </svg>
+    }
+    href="/docs/primitives/radix/accordion"
+    title="Radix UI"
+    accent
+  />
+  <Card
+    icon={
+      <svg
+        role="img"
+        fill="currentColor"
+        aria-label="Base UI"
+        viewBox="4 0 17 25"
+        className="ml-1.5"
+      >
+        <path d="M9.5 7.015A.477.477 0 0 0 9 7.5V23a8 8 0 0 0 .5-15.985M8 9.8V23c-4.418 0-8-3.94-8-8.8V1c4.418 0 8 3.94 8 8.8"></path>
+      </svg>
+    }
+    href="/docs/primitives/base/accordion"
+    title="Base UI"
+    accent
+  />
+  <Card
+    icon={
+      <svg
+        role="img"
+        fill="currentColor"
+        aria-label="Headless UI"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke="none"
+          d="M4.477 13.192c-.36-2.274-.584-3.711-.65-4.805-.062-1.035.051-1.354.1-1.468.169-.395.424-.746.746-1.029.093-.081.363-.288 1.366-.548 1.06-.275 2.496-.507 4.769-.867s3.71-.584 4.804-.65c1.034-.062 1.354.051 1.468.1.395.169.746.424 1.029.747.08.093.287.362.547 1.366.242.933.45 2.156.743 3.987l-14.646 4.89c-.085-.515-.176-1.085-.276-1.723m-3.762.596C.018 9.387-.33 7.187.425 5.422a6.7 6.7 0 0 1 1.743-2.401C3.614 1.757 5.813 1.41 10.211.713c4.4-.698 6.6-1.046 8.367-.291.92.393 1.74.99 2.399 1.743 1.264 1.447 1.612 3.647 2.308 8.047.697 4.4 1.045 6.601.29 8.366a6.7 6.7 0 0 1-1.743 2.402c-1.445 1.263-3.645 1.611-8.045 2.308-4.398.697-6.598 1.045-8.363.29a6.7 6.7 0 0 1-2.4-1.743c-1.263-1.448-1.611-3.648-2.308-8.048zm7.759 7.814c1.178-.072 2.695-.31 4.94-.665 2.247-.356 3.762-.599 4.905-.895 1.107-.288 1.617-.568 1.947-.856a4.3 4.3 0 0 0 1.12-1.543c.172-.402.281-.974.212-2.116-.071-1.178-.309-2.696-.665-4.942-.355-2.247-.598-3.763-.894-4.906-.287-1.107-.568-1.618-.855-1.947a4.3 4.3 0 0 0-1.543-1.12c-.402-.174-.974-.282-2.116-.213-1.178.071-2.694.309-4.94.664-2.246.357-3.762.6-4.905.896-1.107.287-1.616.568-1.946.855a4.3 4.3 0 0 0-1.12 1.543c-.173.403-.281.974-.212 2.116.07 1.179.308 2.696.664 4.943s.598 3.762.895 4.905c.287 1.108.567 1.618.855 1.947.423.485.95.868 1.543 1.121.402.173.973.282 2.116.213Z"
+        ></path>
+      </svg>
+    }
+    href="/docs/primitives/headless/checkbox"
+    title="Headless UI"
+    accent
+  />
+  <Card
+    icon={<SparklesIcon fill="currentColor" strokeWidth={1.5} />}
+    href="/docs/primitives/effects/blur"
+    title="Effects"
+    accent
+  />
+  <Card
+    icon={<RectangleHorizontalIcon fill="currentColor" strokeWidth={1.5} />}
+    href="/docs/primitives/buttons/button"
+    title="Buttons"
+    accent
+  />
+  <Card
+    icon={<TypeIcon strokeWidth={3} />}
+    href="/docs/primitives/texts/counting-number"
+    title="Texts"
+    accent
+  />
+</Cards>

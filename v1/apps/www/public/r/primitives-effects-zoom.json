@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-effects-zoom",
+  "title": "Zoom",
+  "description": "An effect that allows you to animate elements with a zoom effect on first view or load.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/hooks-use-is-in-view"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/effects/zoom/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type HTMLMotionProps } from 'motion/react';\n\nimport {\n  useIsInView,\n  type UseIsInViewOptions,\n} from '@/hooks/use-is-in-view';\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\n\ntype ZoomProps = WithAsChild<\n  {\n    children?: React.ReactNode;\n    delay?: number;\n    initialScale?: number;\n    scale?: number;\n    ref?: React.Ref<HTMLElement>;\n  } & UseIsInViewOptions &\n    HTMLMotionProps<'div'>\n>;\n\nfunction Zoom({\n  ref,\n  transition = { type: 'spring', stiffness: 200, damping: 20 },\n  delay = 0,\n  inView = false,\n  inViewMargin = '0px',\n  inViewOnce = true,\n  initialScale = 0.5,\n  scale = 1,\n  asChild = false,\n  ...props\n}: ZoomProps) {\n  const { ref: localRef, isInView } = useIsInView(\n    ref as React.Ref<HTMLElement>,\n    {\n      inView,\n      inViewOnce,\n      inViewMargin,\n    },\n  );\n\n  const Component = asChild ? Slot : motion.div;\n\n  return (\n    <Component\n      ref={localRef as React.Ref<HTMLDivElement>}\n      initial=\"hidden\"\n      animate={isInView ? 'visible' : 'hidden'}\n      exit=\"hidden\"\n      variants={{\n        hidden: { scale: initialScale },\n        visible: { scale },\n      }}\n      transition={{\n        ...transition,\n        delay: (transition?.delay ?? 0) + delay / 1000,\n      }}\n      {...props}\n    />\n  );\n}\n\ntype ZoomListProps = Omit<ZoomProps, 'children'> & {\n  children: React.ReactElement | React.ReactElement[];\n  holdDelay?: number;\n};\n\nfunction Zooms({\n  children,\n  delay = 0,\n  holdDelay = 0,\n  ...props\n}: ZoomListProps) {\n  const array = React.Children.toArray(children) as React.ReactElement[];\n\n  return (\n    <>\n      {array.map((child, index) => (\n        <Zoom\n          key={child.key ?? index}\n          delay={delay + index * holdDelay}\n          {...props}\n        >\n          {child}\n        </Zoom>\n      ))}\n    </>\n  );\n}\n\nexport { Zoom, Zooms, type ZoomProps, type ZoomListProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/effects/zoom.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-texts-scrolling-number",
+  "title": "Scrolling Number Demo",
+  "description": "Demo showing an animated scrolling number.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-texts-scrolling-number"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/texts/scrolling-number/index.tsx",
+      "content": "'use client';\n\nimport React from 'react';\n\nimport {\n  ScrollingNumberContainer,\n  ScrollingNumber,\n  ScrollingNumberHighlight,\n  ScrollingNumberItems,\n  type ScrollingNumberDirection,\n} from '@/components/animate-ui/primitives/texts/scrolling-number';\n\ninterface ScrollingNumberDemoProps {\n  direction: ScrollingNumberDirection;\n  delay: number;\n}\n\nexport const ScrollingNumberDemo = ({\n  direction = 'btt',\n  delay = 1000,\n}: ScrollingNumberDemoProps) => {\n  const isVertical = direction === 'btt' || direction === 'ttb';\n\n  return (\n    <ScrollingNumberContainer\n      key={direction}\n      number={1000}\n      step={100}\n      className={isVertical ? 'w-18' : 'h-10'}\n      itemsSize={isVertical ? 40 : 75}\n      direction={direction}\n    >\n      <ScrollingNumber delay={delay}>\n        <ScrollingNumberItems className=\"flex items-center justify-center\" />\n      </ScrollingNumber>\n      <ScrollingNumberHighlight className=\"bg-accent size-full\" />\n    </ScrollingNumberContainer>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/texts/scrolling-number.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ScrollingNumberContainer": {
+        "direction": {
+          "value": "btt",
+          "options": {
+            "btt": "btt",
+            "ttb": "ttb",
+            "ltr": "ltr",
+            "rtl": "rtl"
+          }
+        }
+      },
+      "ScrollingNumber": {
+        "delay": {
+          "value": 1000,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

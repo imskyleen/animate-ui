@@ -1,0 +1,77 @@
+---
+title: Theme Toggler
+description: An effect that allows you to toggle the theme gradually.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-08
+---
+
+<ComponentPreview name="demo-primitives-effects-theme-toggler" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-theme-toggler" />
+
+## Usage
+
+```tsx
+<ThemeToggler>
+  {({ effective, toggleTheme }) => (
+    <button onClick={() => toggleTheme(nextTheme)}>
+      {effective === 'system' ? (
+        <Monitor />
+      ) : effective === 'dark' ? (
+        <Moon />
+      ) : (
+        <Sun />
+      )}
+    </button>
+  )}
+</ThemeToggler>
+```
+
+## API Reference
+
+### ThemeToggler
+
+<TypeTable
+  type={{
+    theme: {
+      description: 'The theme to toggle.',
+      type: "'light' | 'dark' | 'system'",
+      required: true,
+    },
+    resolvedTheme: {
+      description: 'The resolved theme.',
+      type: "'light' | 'dark'",
+      required: true,
+    },
+    setTheme: {
+      description: 'The function to set the theme.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: true,
+    },
+    direction: {
+      description: 'The direction to toggle.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      required: false,
+      default: 'ltr',
+    },
+    children: {
+      description: 'The children to render.',
+      type: 'React.ReactNode | ((state: { resolved: "light" | "dark"; effective: "light" | "dark" | "system"; toggleTheme: (theme: "light" | "dark" | "system") => void }) => React.ReactNode)',
+      required: false,
+    },
+    onImmediateChange: {
+      description:
+        'The function to call when the theme is changed immediately.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credit to [Magic UI](https://magicui.design/docs/components/animated-theme-toggler) for the component inspiration.

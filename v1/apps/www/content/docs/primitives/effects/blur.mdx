@@ -1,0 +1,107 @@
+---
+title: Blur
+description: An effect that allows you to animate elements with a blur effect on first view or load.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-effects-blur" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-blur" />
+
+## Usage
+
+### Blur
+
+```tsx
+<Blur>Blur</Blur>
+```
+
+### Blurs
+
+```tsx
+<Blurs>
+  <div>Blur 1</div>
+  <div>Blur 2</div>
+  <div>Blur 3</div>
+</Blurs>
+```
+
+## API Reference
+
+### Blur
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Animate the element when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Animate the element only once when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin of the element to be in view',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    delay: {
+      description: 'The delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    blur: {
+      description: 'The blur of the blur',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    initialBlur: {
+      description: 'The initial blur of the blur',
+      type: 'number',
+      required: false,
+      default: '10',
+    },
+  }}
+/>
+
+### Blurs
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the blurs',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'The delay between each blur',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the blurs',
+      type: 'BlurProps',
+      required: false,
+    },
+  }}
+/>

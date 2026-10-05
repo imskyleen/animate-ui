@@ -1,0 +1,94 @@
+---
+title: Rotating Text
+description: A rotating text animation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-texts-rotating" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-rotating" />
+
+## Usage
+
+```tsx
+<RotatingTextContainer text={['Rotating', 'Text']}>
+  <RotatingText />
+</RotatingTextContainer>
+```
+
+## API Reference
+
+### RotatingTextContainer
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text(s) to display.',
+      type: 'string | string[]',
+      required: true,
+    },
+    duration: {
+      description: 'The duration of the animation.',
+      type: 'number',
+      required: false,
+      default: '2000',
+    },
+    y: {
+      description: 'The y position of the text.',
+      type: 'number',
+      required: false,
+      default: '-50',
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'The margin to use when the text is in view.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    delay: {
+      description: 'The delay to use.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the rotating text container.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### RotatingText
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition to use.',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.3, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the rotating text.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

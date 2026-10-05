@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-animate-cursor",
+  "type": "registry:ui",
+  "title": "Cursor Demo",
+  "description": "Demo showing a cursor.",
+  "registryDependencies": ["@animate-ui/v1/components-animate-cursor"],
+  "files": [
+    {
+      "path": "registry/demo/components/animate/cursor/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/animate/cursor.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "CursorProvider": {
+        "global": {
+          "value": false
+        },
+        "enableCursor": {
+          "value": true
+        },
+        "enableCursorFollow": {
+          "value": true
+        }
+      },
+      "CursorFollow": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "right": "right",
+            "bottom": "bottom",
+            "left": "left"
+          }
+        },
+        "sideOffset": {
+          "value": 15
+        },
+        "align": {
+          "value": "end",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 5
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-gradient",
+  "title": "Gradient Text",
+  "description": "A gradient text animation.",
+  "dependencies": [
+    "motion"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/texts/gradient/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Transition } from 'motion/react';\n\ntype GradientTextProps = Omit<React.ComponentProps<'span'>, 'children'> & {\n  text: string;\n  gradient?: string;\n  neon?: boolean;\n  transition?: Transition;\n};\n\nfunction GradientText({\n  text,\n  style,\n  gradient = 'linear-gradient(90deg, #3b82f6 0%, #a855f7 20%, #ec4899 50%, #a855f7 80%, #3b82f6 100%)',\n  neon = false,\n  transition = { duration: 50, repeat: Infinity, ease: 'linear' },\n  ...props\n}: GradientTextProps) {\n  const baseStyle: React.CSSProperties = {\n    backgroundImage: gradient,\n    margin: 0,\n    color: 'transparent',\n    backgroundClip: 'text',\n    backgroundSize: '700% 100%',\n    backgroundPosition: '0% 0%',\n  };\n\n  return (\n    <span\n      data-slot=\"gradient-text\"\n      style={{ position: 'relative', display: 'inline-block', ...style }}\n      {...props}\n    >\n      <motion.span\n        style={baseStyle}\n        initial={{ backgroundPosition: '0% 0%' }}\n        animate={{ backgroundPosition: '500% 100%' }}\n        transition={transition}\n      >\n        {text}\n      </motion.span>\n\n      {neon && (\n        <motion.span\n          style={{\n            position: 'absolute',\n            top: 0,\n            left: 0,\n            mixBlendMode: 'plus-lighter',\n            filter: 'blur(8px)',\n            ...baseStyle,\n          }}\n          initial={{ backgroundPosition: '0% 0%' }}\n          animate={{ backgroundPosition: '500% 100%' }}\n          transition={transition}\n        >\n          {text}\n        </motion.span>\n      )}\n    </span>\n  );\n}\n\nexport { GradientText, type GradientTextProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/gradient.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

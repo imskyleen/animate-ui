@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-popover",
+  "title": "Radix Popover Demo",
+  "description": "Demo showing an animated radix popover.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-popover"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/popover/index.tsx",
+      "content": "import {\n  Popover,\n  PopoverContent,\n  PopoverPortal,\n  PopoverTrigger,\n} from '@/components/animate-ui/primitives/radix/popover';\n\ninterface RadixPopoverDemoProps {\n  side?: 'top' | 'bottom' | 'left' | 'right';\n  sideOffset?: number;\n  align?: 'start' | 'center' | 'end';\n  alignOffset?: number;\n}\n\nexport function RadixPopoverDemo({\n  side,\n  sideOffset,\n  align,\n  alignOffset,\n}: RadixPopoverDemoProps) {\n  return (\n    <Popover>\n      <PopoverTrigger>Open popover</PopoverTrigger>\n      <PopoverPortal>\n        <PopoverContent\n          side={side}\n          sideOffset={sideOffset}\n          align={align}\n          alignOffset={alignOffset}\n          className=\"w-80 bg-background border p-4 z-50\"\n        >\n          <div className=\"grid gap-4\">\n            <div className=\"space-y-2\">\n              <h4 className=\"font-medium leading-none\">Dimensions</h4>\n              <p className=\"text-sm text-muted-foreground\">\n                Set the dimensions for the layer.\n              </p>\n            </div>\n            <div className=\"grid gap-2\">\n              <div className=\"grid grid-cols-3 items-center gap-4\">\n                <label htmlFor=\"width\" className=\"text-sm\">\n                  Width\n                </label>\n                <input\n                  id=\"width\"\n                  defaultValue=\"100%\"\n                  className=\"col-span-2 h-8 p-2 border\"\n                />\n              </div>\n              <div className=\"grid grid-cols-3 items-center gap-4\">\n                <label htmlFor=\"maxWidth\" className=\"text-sm\">\n                  Max. width\n                </label>\n                <input\n                  id=\"maxWidth\"\n                  defaultValue=\"300px\"\n                  className=\"col-span-2 h-8 p-2 border\"\n                />\n              </div>\n              <div className=\"grid grid-cols-3 items-center gap-4\">\n                <label htmlFor=\"height\" className=\"text-sm\">\n                  Height\n                </label>\n                <input\n                  id=\"height\"\n                  defaultValue=\"25px\"\n                  className=\"col-span-2 h-8 p-2 border\"\n                />\n              </div>\n              <div className=\"grid grid-cols-3 items-center gap-4\">\n                <label htmlFor=\"maxHeight\" className=\"text-sm\">\n                  Max. height\n                </label>\n                <input\n                  id=\"maxHeight\"\n                  defaultValue=\"none\"\n                  className=\"col-span-2 h-8 p-2 border\"\n                />\n              </div>\n            </div>\n          </div>\n        </PopoverContent>\n      </PopoverPortal>\n    </Popover>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/popover.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "PopoverContent": {
+        "side": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 4
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

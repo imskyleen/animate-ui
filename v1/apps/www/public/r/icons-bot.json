@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-bot",
+  "title": "Bot Icon",
+  "description": "Bot icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/bot/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BotProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {},\n    rect: {},\n    path2: {},\n    path3: {},\n    path4: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: [0, -1.5, 1.5, 0],\n        y: [0, 1.5, 1.5, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 1.3,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: [0, -1.5, 1.5, 0],\n        y: [0, 1.5, 1.5, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 1.3,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  blink: {\n    path1: {},\n    rect: {},\n    path2: {},\n    path3: {},\n    path4: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  wink: {\n    path1: {},\n    rect: {},\n    path2: {},\n    path3: {},\n    path4: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path5: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BotProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M12 8V4H8\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.rect\n        width={16}\n        height={12}\n        x={4}\n        y={8}\n        rx={2}\n        variants={variants.rect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M2 14h2\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M20 14h2\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M15 13v2\"\n        variants={variants.path4}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M9 13v2\"\n        variants={variants.path5}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Bot(props: BotProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Bot,\n  Bot as BotIcon,\n  type BotProps,\n  type BotProps as BotIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/bot.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "robot",
+      "ai",
+      "chat",
+      "assistant"
+    ]
+  },
+  "type": "registry:ui"
+}

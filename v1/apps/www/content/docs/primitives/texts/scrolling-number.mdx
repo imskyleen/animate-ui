@@ -1,0 +1,144 @@
+---
+title: Scrolling Number
+description: A scrolling number animation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-texts-scrolling-number" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-scrolling-number" />
+
+## Usage
+
+```tsx
+<ScrollingNumberContainer number={1000} step={100}>
+  <ScrollingNumberHighlight />
+  <ScrollingNumber>
+    <ScrollingNumberItems />
+  </ScrollingNumber>
+</ScrollingNumberContainer>
+```
+
+## API Reference
+
+### ScrollingNumberContainer
+
+<TypeTable
+  type={{
+    number: {
+      description: 'The focused number.',
+      type: 'number',
+      required: true,
+    },
+    step: {
+      description: 'The step of the number.',
+      type: 'number',
+      required: true,
+    },
+    itemsSize: {
+      description: 'The size of the items.',
+      type: 'number',
+      required: false,
+      default: '30',
+    },
+    sideItemsCount: {
+      description: 'The number of items to show on the side.',
+      type: 'number',
+      required: false,
+      default: '2',
+    },
+    direction: {
+      description: 'The direction of the scrolling number.',
+      type: '"btt" | "ttb" | "ltr" | "rtl"',
+      required: false,
+      default: 'btt',
+    },
+    onNumberChange: {
+      description:
+        'The callback to use when the number changes as the wheel spins.',
+      type: '(value: number) => void',
+      required: false,
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin to use.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    '...props': {
+      description: 'The props of the scrolling number container.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollingNumberHighlight
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the scrolling number highlight.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollingNumber
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'The delay to use.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    onCompleted: {
+      description: 'The callback to use when the animation is completed.',
+      type: '() => void',
+      required: false,
+    },
+    transition: {
+      description: 'The transition to use.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 90, damping: 30 }',
+    },
+    '...props': {
+      description: 'The props of the scrolling number.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### ScrollingNumberItems
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the scrolling number items.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>

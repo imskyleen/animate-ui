@@ -1,0 +1,75 @@
+---
+title: Liquid
+description: A button that fills on hover.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-buttons-liquid" />
+
+## Installation
+
+<ComponentInstallation name="primitives-buttons-liquid" />
+
+## Usage
+
+```tsx
+<LiquidButton>Liquid Button</LiquidButton>
+```
+
+## API Reference
+
+### LiquidButton
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'The delay of the button.',
+      type: 'time',
+      required: false,
+      default: '0s',
+    },
+    fillHeight: {
+      description: 'The fill height of the button.',
+      type: 'percentage',
+      required: false,
+      default: '3px',
+    },
+    hoverScale: {
+      description: 'The scale of the button on hover.',
+      type: 'number',
+      required: false,
+      default: 1.05,
+    },
+    tapScale: {
+      description: 'The scale of the button on tap.',
+      type: 'number',
+      required: false,
+      default: 0.95,
+    },
+    '...props': {
+      description: 'The props for the button.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+#### CSS Variables
+
+<TypeTable
+  type={{
+    '--liquid-button-color': {
+      description: 'The color of the button in hover state.',
+      type: 'color',
+      required: false,
+    },
+    '--liquid-button-background-color': {
+      description: 'The background color of the button.',
+      type: 'color',
+      required: false,
+    },
+  }}
+/>

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-bell-off",
+  "type": "registry:ui",
+  "title": "Bell Off Icon",
+  "description": "Bell off icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/bell-off/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/bell-off.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["alarm", "notification", "sound", "reminder"]
+  }
+}

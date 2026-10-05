@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-effects-magnetic",
+  "title": "Magnetic",
+  "description": "A magnetic effect that clings to the cursor, creating a magnetic attraction effect.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-slot"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/effects/magnetic/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport {\n  motion,\n  useMotionValue,\n  useSpring,\n  type SpringOptions,\n  type HTMLMotionProps,\n} from 'motion/react';\n\nimport { Slot, type WithAsChild } from '@/components/animate-ui/primitives/animate/slot';\n\ntype MagneticProps = WithAsChild<\n  {\n    children?: React.ReactNode;\n    strength?: number;\n    range?: number;\n    springOptions?: SpringOptions;\n    onlyOnHover?: boolean;\n    disableOnTouch?: boolean;\n    ref?: React.Ref<HTMLElement>;\n  } & HTMLMotionProps<'div'>\n>;\n\nfunction Magnetic({\n  ref,\n  strength = 0.5,\n  range = 120,\n  springOptions = { stiffness: 100, damping: 10, mass: 0.5 },\n  onlyOnHover = false,\n  disableOnTouch = true,\n  style,\n  onMouseEnter,\n  onMouseLeave,\n  onMouseMove,\n  asChild = false,\n  ...props\n}: MagneticProps) {\n  const localRef = React.useRef<HTMLDivElement>(null);\n  React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);\n\n  const isTouchDevice = React.useMemo(() => {\n    if (typeof window === 'undefined') return false;\n    return window.matchMedia('(pointer:coarse)').matches;\n  }, []);\n\n  const [active, setActive] = React.useState(!onlyOnHover);\n\n  const rawX = useMotionValue(0);\n  const rawY = useMotionValue(0);\n  const x = useSpring(rawX, springOptions);\n  const y = useSpring(rawY, springOptions);\n\n  const compute = React.useCallback(\n    (e: MouseEvent | React.MouseEvent) => {\n      if (!localRef.current) return;\n      const { left, top, width, height } =\n        localRef.current.getBoundingClientRect();\n      const cx = left + width / 2;\n      const cy = top + height / 2;\n      const dx = e.clientX - cx;\n      const dy = e.clientY - cy;\n      const dist = Math.hypot(dx, dy);\n\n      if ((active || !onlyOnHover) && dist <= range) {\n        const factor = (1 - dist / range) * strength;\n        rawX.set(dx * factor);\n        rawY.set(dy * factor);\n      } else {\n        rawX.set(0);\n        rawY.set(0);\n      }\n    },\n    [active, onlyOnHover, range, strength, rawX, rawY],\n  );\n\n  React.useEffect(() => {\n    if (disableOnTouch && isTouchDevice) return;\n    const handle = (e: MouseEvent) => compute(e);\n    window.addEventListener('mousemove', handle);\n    return () => window.removeEventListener('mousemove', handle);\n  }, [compute, disableOnTouch, isTouchDevice]);\n\n  const Component = asChild ? Slot : motion.div;\n\n  return (\n    <Component\n      ref={localRef}\n      style={{ display: 'inline-block', ...style, x, y }}\n      onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {\n        if (onlyOnHover) setActive(true);\n        onMouseEnter?.(e);\n      }}\n      onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {\n        if (onlyOnHover) setActive(false);\n        rawX.set(0);\n        rawY.set(0);\n        onMouseLeave?.(e);\n      }}\n      onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {\n        if (onlyOnHover) compute(e);\n        onMouseMove?.(e);\n      }}\n      {...props}\n    />\n  );\n}\n\nexport { Magnetic, type MagneticProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/effects/magnetic.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

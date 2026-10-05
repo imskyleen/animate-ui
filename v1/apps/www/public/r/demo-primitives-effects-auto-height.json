@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-auto-height",
+  "title": "Auto Height Demo",
+  "description": "Demo showing an animated auto height.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-effects-auto-height"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/auto-height/index.tsx",
+      "content": "import { AutoHeight } from '@/components/animate-ui/primitives/effects/auto-height';\nimport { AnimatePresence, motion } from 'motion/react';\nimport { useState } from 'react';\n\nexport function AutoHeightDemo() {\n  const [content, setContent] = useState(false);\n\n  return (\n    <div className=\"size-full flex flex-col gap-4 items-center justify-start h-[400px]\">\n      <button\n        className=\"bg-primary text-primary-foreground px-3 py-1.5 text-sm\"\n        onClick={() => setContent(!content)}\n      >\n        Toggle Content\n      </button>\n\n      <AutoHeight\n        deps={[content]}\n        className=\"bg-accent w-full max-w-[400px] p-4\"\n      >\n        <AnimatePresence mode=\"wait\" initial={false}>\n          {content ? (\n            <motion.div\n              key=\"content-150px\"\n              className=\"bg-border h-[150px] flex items-center justify-center\"\n              initial={{ opacity: 0, filter: 'blur(4px)' }}\n              animate={{ opacity: 1, filter: 'blur(0px)' }}\n              exit={{ opacity: 0, filter: 'blur(4px)' }}\n              transition={{ duration: 0.4, ease: 'easeInOut' }}\n            >\n              Content 150px\n            </motion.div>\n          ) : (\n            <motion.div\n              key=\"content-300px\"\n              initial={{ opacity: 0, filter: 'blur(4px)' }}\n              animate={{ opacity: 1, filter: 'blur(0px)' }}\n              exit={{ opacity: 0, filter: 'blur(4px)' }}\n              transition={{ duration: 0.4, ease: 'easeInOut' }}\n              className=\"bg-border h-[300px] flex items-center justify-center\"\n            >\n              Content 300px\n            </motion.div>\n          )}\n        </AnimatePresence>\n      </AutoHeight>\n    </div>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/auto-height.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

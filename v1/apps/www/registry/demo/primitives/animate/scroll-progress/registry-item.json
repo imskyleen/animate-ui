@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-scroll-progress",
+  "type": "registry:ui",
+  "title": "Animate Scroll Progress Demo",
+  "description": "Demo showing an animated scroll progress.",
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-scroll-progress"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/scroll-progress/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/scroll-progress.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ScrollProgressProvider": {
+        "global": {
+          "value": false
+        },
+        "direction": {
+          "value": "vertical",
+          "options": {
+            "horizontal": "horizontal",
+            "vertical": "vertical"
+          }
+        }
+      }
+    }
+  }
+}

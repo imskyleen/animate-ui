@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-toggle-group",
+  "title": "Radix Toggle Group Demo",
+  "description": "Demo showing an animated radix toggle group.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-toggle-group"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/toggle-group/index.tsx",
+      "content": "import {\n  ToggleGroup,\n  ToggleGroupItem,\n  ToggleGroupHighlight,\n  ToggleGroupHighlightItem,\n} from '@/components/animate-ui/primitives/radix/toggle-group';\nimport { Bold, Italic, Underline } from 'lucide-react';\nimport { useEffect, useState } from 'react';\n\ninterface RadixToggleGroupDemoProps {\n  type: 'single' | 'multiple';\n}\n\nexport const RadixToggleGroupDemo = ({ type }: RadixToggleGroupDemoProps) => {\n  const [value, setValue] = useState<string | string[] | undefined>(undefined);\n\n  useEffect(() => {\n    if (type === 'single') {\n      setValue('bold');\n    } else {\n      setValue(['bold']);\n    }\n  }, [type]);\n\n  return type === 'single' ? (\n    <ToggleGroup\n      type=\"single\"\n      value={value as string}\n      onValueChange={(value) => setValue(value as string)}\n      className=\"flex gap-2\"\n    >\n      <ToggleGroupHighlight className=\"bg-accent\">\n        <ToggleGroupHighlightItem value=\"bold\">\n          <ToggleGroupItem\n            value=\"bold\"\n            aria-label=\"Toggle bold\"\n            className=\"size-8 flex items-center justify-center\"\n          >\n            <Bold className=\"h-4 w-4\" />\n          </ToggleGroupItem>\n        </ToggleGroupHighlightItem>\n        <ToggleGroupHighlightItem value=\"italic\">\n          <ToggleGroupItem\n            value=\"italic\"\n            aria-label=\"Toggle italic\"\n            className=\"size-8 flex items-center justify-center\"\n          >\n            <Italic className=\"h-4 w-4\" />\n          </ToggleGroupItem>\n        </ToggleGroupHighlightItem>\n        <ToggleGroupHighlightItem value=\"underline\">\n          <ToggleGroupItem\n            value=\"underline\"\n            aria-label=\"Toggle underline\"\n            className=\"size-8 flex items-center justify-center\"\n          >\n            <Underline className=\"h-4 w-4\" />\n          </ToggleGroupItem>\n        </ToggleGroupHighlightItem>\n      </ToggleGroupHighlight>\n    </ToggleGroup>\n  ) : (\n    <ToggleGroup\n      type=\"multiple\"\n      value={value as string[]}\n      onValueChange={(value) => setValue(value as string[])}\n      className=\"flex gap-2\"\n    >\n      <ToggleGroupHighlightItem value=\"bold\" className=\"bg-accent\">\n        <ToggleGroupItem\n          value=\"bold\"\n          aria-label=\"Toggle bold\"\n          className=\"size-8 flex items-center justify-center\"\n        >\n          <Bold className=\"h-4 w-4\" />\n        </ToggleGroupItem>\n      </ToggleGroupHighlightItem>\n      <ToggleGroupHighlightItem value=\"italic\" className=\"bg-accent\">\n        <ToggleGroupItem\n          value=\"italic\"\n          aria-label=\"Toggle italic\"\n          className=\"size-8 flex items-center justify-center\"\n        >\n          <Italic className=\"h-4 w-4\" />\n        </ToggleGroupItem>\n      </ToggleGroupHighlightItem>\n      <ToggleGroupHighlightItem value=\"underline\" className=\"bg-accent\">\n        <ToggleGroupItem\n          value=\"underline\"\n          aria-label=\"Toggle underline\"\n          className=\"size-8 flex items-center justify-center\"\n        >\n          <Underline className=\"h-4 w-4\" />\n        </ToggleGroupItem>\n      </ToggleGroupHighlightItem>\n    </ToggleGroup>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/toggle-group.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ToggleGroup": {
+        "type": {
+          "value": "single",
+          "options": {
+            "single": "single",
+            "multiple": "multiple"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

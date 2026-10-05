@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-base-toggle",
+  "type": "registry:ui",
+  "title": "Base Toggle",
+  "description": "A two-state button that can be on or off.",
+  "dependencies": ["motion", "@base-ui-components/react"],
+  "registryDependencies": [
+    "@animate-ui/v1/lib-get-strict-context",
+    "@animate-ui/v1/hooks-use-controlled-state"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/base/toggle/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/base/toggle.tsx"
+    }
+  ]
+}

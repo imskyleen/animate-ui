@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-dropdown-menu",
+  "type": "registry:ui",
+  "title": "Dropdown Menu",
+  "description": "Displays a menu to the user — such as a set of actions or functions — triggered by a button.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-dropdown-menu"],
+  "files": [
+    {
+      "path": "registry/components/radix/dropdown-menu/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/dropdown-menu.tsx"
+    }
+  ]
+}

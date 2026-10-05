@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-splitting",
+  "type": "registry:ui",
+  "title": "Splitting Text",
+  "description": "A splitting text animation.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/hooks-use-is-in-view"],
+  "files": [
+    {
+      "path": "registry/primitives/texts/splitting/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/splitting.tsx"
+    }
+  ]
+}

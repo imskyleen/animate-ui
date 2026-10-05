@@ -1,0 +1,107 @@
+---
+title: Zoom
+description: An effect that allows you to animate elements with a zoom effect on first view or load.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-effects-zoom" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-zoom" />
+
+## Usage
+
+### Zoom
+
+```tsx
+<Zoom>Zoom</Zoom>
+```
+
+### Zooms
+
+```tsx
+<Zooms>
+  <div>Zoom 1</div>
+  <div>Zoom 2</div>
+  <div>Zoom 3</div>
+</Zooms>
+```
+
+## API Reference
+
+### Zoom
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Animate the element when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Animate the element only once when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin of the element to be in view',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    delay: {
+      description: 'The delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    scale: {
+      description: 'The scale of the zoom',
+      type: 'number',
+      required: false,
+      default: '1',
+    },
+    initialScale: {
+      description: 'The initial scale of the zoom',
+      type: 'number',
+      required: false,
+      default: '0.5',
+    },
+  }}
+/>
+
+### Zooms
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the zooms',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'The delay between each zoom',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the zooms',
+      type: 'ZoomProps',
+      required: false,
+    },
+  }}
+/>

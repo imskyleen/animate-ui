@@ -1,0 +1,142 @@
+---
+title: Dialog
+description: A fully-managed, renderless dialog component jam-packed with accessibility and keyboard features, perfect for building completely custom dialogs and alerts.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-headless-dialog" />
+
+## Installation
+
+<ComponentInstallation name="primitives-headless-dialog" />
+
+## Usage
+
+```tsx
+<Dialog>
+  <DialogBackdrop />
+  <DialogPanel>
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+      <DialogDescription>Dialog Description</DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <button>Accept</button>
+    </DialogFooter>
+    <DialogClose>Close</DialogClose>
+  </DialogPanel>
+</Dialog>
+```
+
+## API Reference
+
+### Dialog
+
+<ExternalLink
+  href="https://headlessui.com/react/dialog#dialog"
+  text="Headless UI API Reference - Dialog"
+/>
+
+### DialogBackdrop
+
+<ExternalLink
+  href="https://headlessui.com/react/dialog#dialog-backdrop"
+  text="Headless UI API Reference - DialogBackdrop"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the dialog backdrop',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the dialog backdrop.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### DialogClose
+
+<ExternalLink
+  href="https://headlessui.com/react/dialog#dialog-close"
+  text="Headless UI API Reference - DialogClose"
+/>
+
+### DialogPanel
+
+<ExternalLink
+  href="https://headlessui.com/react/dialog#dialog-panel"
+  text="Headless UI API Reference - DialogPanel"
+/>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the dialog panel',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the dialog panel.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### DialogHeader
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### DialogTitle
+
+<ExternalLink
+  href="https://headlessui.com/react/dialog#dialog-title"
+  text="Headless UI API Reference - DialogTitle"
+/>
+
+### DialogDescription
+
+<ExternalLink
+  href="https://headlessui.com/react/dialog#dialog-description"
+  text="Headless UI API Reference - DialogDescription"
+/>
+
+### DialogFooter
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Headless Dialog](https://headlessui.com/react/dialog)

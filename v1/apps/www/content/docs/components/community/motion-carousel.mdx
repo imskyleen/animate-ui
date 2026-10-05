@@ -1,0 +1,53 @@
+---
+title: Motion Carousel
+description: A carousel built on top of Embla Carousel with smooth Motion-powered animations. Each slide scales dynamically based on its active state, and the pagination uses animated pill-style dot buttons for an interactive, fluid experience.
+author:
+  name: arhamkhnz
+  url: https://github.com/arhamkhnz
+releaseDate: 2025-11-30
+---
+
+<ComponentPreview name="demo-components-community-motion-carousel" />
+
+<Callout>
+  **Note**: This carousel is built on top of Embla Carousel, which handles the
+  sliding behavior internally. You can configure Embla through the options prop.
+  Motion is only used for the slide scaling animation and the pill-style
+  pagination. This is meant as an example rather than a fully flexible
+  component, so feel free to modify the styling and animations as needed.
+</Callout>
+
+## Installation
+
+<ComponentInstallation name="components-community-motion-carousel" />
+
+## Usage
+
+```tsx
+<MotionCarousel slides={SLIDES} options={OPTIONS} />
+```
+
+## API Reference
+
+### MotionCarousel
+
+<TypeTable
+  type={{
+    slides: {
+      description:
+        'Array of slide identifiers. Each number represents a slide index.',
+      type: 'number[]',
+      required: true,
+    },
+    options: {
+      description:
+        'Embla Carousel configuration options passed directly to the underlying Embla instance.',
+      type: 'EmblaOptionsType',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [David](https://x.com/theumoru) for [this X post](https://x.com/theumoru/status/1978059109338399193) as inspiration

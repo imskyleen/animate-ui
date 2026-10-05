@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-buttons-ripple",
+  "title": "Ripple Button Demo",
+  "description": "Demo showing a ripple button.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-buttons-ripple"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/buttons/ripple/index.tsx",
+      "content": "import {\n  RippleButton,\n  RippleButtonRipples,\n} from '@/components/animate-ui/primitives/buttons/ripple';\n\ninterface RippleButtonDemoProps {\n  hoverScale: number;\n  tapScale: number;\n}\n\nexport default function RippleButtonDemo({\n  hoverScale,\n  tapScale,\n}: RippleButtonDemoProps) {\n  return (\n    <RippleButton\n      key={`${hoverScale}-${tapScale}`}\n      hoverScale={hoverScale}\n      tapScale={tapScale}\n      className=\"bg-primary text-primary-foreground text-sm font-medium px-4 py-2 h-10 [--ripple-button-ripple-color:var(--primary-foreground)]\"\n    >\n      Ripple Button\n      <RippleButtonRipples />\n    </RippleButton>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/buttons/ripple.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "RippleButton": {
+        "hoverScale": {
+          "value": 1.05,
+          "min": 0,
+          "max": 2,
+          "step": 0.05
+        },
+        "tapScale": {
+          "value": 0.95,
+          "min": 0,
+          "max": 2,
+          "step": 0.05
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

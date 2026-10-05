@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-layers-2",
+  "title": "Layers 2 Icon",
+  "description": "Layers 2 icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/layers-2/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype Layers2Props = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: 4,\n        transition: {\n          duration: 0.3,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path2: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: -4,\n        transition: {\n          duration: 0.3,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    path1: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 4, 0],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    path2: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, -4, 0],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: Layers2Props) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M13 13.74a2 2 0 0 1-2 0L2.5 8.87a1 1 0 0 1 0-1.74L11 2.26a2 2 0 0 1 2 0l8.5 4.87a1 1 0 0 1 0 1.74z\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m20 14.285 1.5.845a1 1 0 0 1 0 1.74L13 21.74a2 2 0 0 1-2 0l-8.5-4.87a1 1 0 0 1 0-1.74l1.5-.845\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Layers2(props: Layers2Props) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Layers2,\n  Layers2 as Layers2Icon,\n  type Layers2Props,\n  type Layers2Props as Layers2IconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/layers-2.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "stack",
+      "pile",
+      "pages",
+      "sheets",
+      "paperwork",
+      "copies",
+      "copy",
+      "duplicate",
+      "double",
+      "shortcuts"
+    ]
+  },
+  "type": "registry:ui"
+}

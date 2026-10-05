@@ -1,0 +1,109 @@
+---
+title: Popover
+description: Displays rich content in a portal, triggered by a button.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-popover" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-popover" />
+
+## Usage
+
+```tsx
+<Popover>
+  <PopoverTrigger>Open popover</PopoverTrigger>
+  <PopoverPortal>
+    <PopoverContent>
+      <div>Popover content</div>
+      <PopoverClose>Close popover</PopoverClose>
+    </PopoverContent>
+  </PopoverPortal>
+</Popover>
+```
+
+## API Reference
+
+### Popover
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#root"
+  text="Radix UI API Reference - Popover.Root"
+/>
+
+### PopoverTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#trigger"
+  text="Radix UI API Reference - Popover.Trigger"
+/>
+
+### PopoverPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#portal"
+  text="Radix UI API Reference - Popover.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `PopoverPortal` component,
+  as it is used for animation.
+</Callout>
+
+### PopoverContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#content"
+  text="Radix UI API Reference - Popover.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the popover content.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the popover content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `forceMount` and `asChild` properties are not supported in the
+  `PopoverContent` component, as it is used for animation.
+</Callout>
+
+### PopoverAnchor
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#anchor"
+  text="Radix UI API Reference - Popover.Anchor"
+/>
+
+### PopoverClose
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#close"
+  text="Radix UI API Reference - Popover.Close"
+/>
+
+### PopoverArrow
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/popover#arrow"
+  text="Radix UI API Reference - Popover.Arrow"
+/>
+
+## Credits
+
+- [Radix UI Popover](https://www.radix-ui.com/primitives/docs/components/popover)

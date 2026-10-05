@@ -1,0 +1,135 @@
+---
+title: Triggers
+description: Control how and when the icon animates.
+---
+
+## `animate`
+
+This sets the `animate` state.
+
+```tsx
+<ArrowRight animate />
+
+// or with AnimateIcon
+<AnimateIcon animate>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `animateOnHover`
+
+This sets the state to `animate` on hover.
+
+```tsx
+<ArrowRight animateOnHover />
+
+// or with AnimateIcon
+<AnimateIcon animateOnHover>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `animateOnTap`
+
+This sets the state to `animate` on tap.
+
+<Callout type="info">
+  **Note:** The state will return to its initial state when the click is
+  released. To ensure that the animation always ends, add the `completeOnStop`
+  prop.
+</Callout>
+
+```tsx
+<ArrowRight animateOnTap />
+
+// or with AnimateIcon
+<AnimateIcon animateOnTap>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `animateOnView`
+
+This sets the `animate` state when the icon is in view.
+
+```tsx
+<ArrowRight animateOnView />
+
+// or with AnimateIcon
+<AnimateIcon animateOnView>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `animateOnViewMargin`
+
+This sets the margin of the in view area.
+
+```tsx
+<ArrowRight animateOnView animateOnViewMargin="10px" />
+
+// or with AnimateIcon
+<AnimateIcon animateOnView animateOnViewMargin="10px">
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## `animateOnViewOnce`
+
+This sets the icon to animate only once when it is in view (by default it is `true`).
+
+```tsx
+<ArrowRight animateOnView animateOnViewOnce={false} />
+
+// or with AnimateIcon
+<AnimateIcon animateOnView animateOnViewOnce={false}>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## API Reference
+
+<TypeTable
+  type={{
+    animate: {
+      description:
+        'Whether to animate the icon. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnHover: {
+      description:
+        'Whether to animate the icon on hover. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnTap: {
+      description:
+        'Whether to animate the icon on tap. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnView: {
+      description:
+        'Whether to animate the icon on view. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnViewMargin: {
+      description: 'The margin of the in view area.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    animateOnViewOnce: {
+      description: 'Whether the icon should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+  }}
+/>

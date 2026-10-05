@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-toggle",
+  "type": "registry:ui",
+  "title": "Toggle",
+  "description": "A two-state button that can be either on or off.",
+  "dependencies": ["class-variance-authority"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-toggle"],
+  "files": [
+    {
+      "path": "registry/components/radix/toggle/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/toggle.tsx"
+    }
+  ]
+}

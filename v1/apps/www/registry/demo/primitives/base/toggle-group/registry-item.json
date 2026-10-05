@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-toggle-group",
+  "type": "registry:ui",
+  "title": "Base Toggle Group Demo",
+  "description": "Demo showing an animated base toggle group.",
+  "registryDependencies": ["@animate-ui/v1/primitives-base-toggle-group"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/toggle-group/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/toggle-group.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ToggleGroup": {
+        "toggleMultiple": {
+          "value": false
+        }
+      }
+    }
+  }
+}

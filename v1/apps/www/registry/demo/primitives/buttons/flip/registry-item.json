@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-buttons-flip",
+  "type": "registry:ui",
+  "title": "Flip Button Demo",
+  "description": "Demo showing an animated flip button.",
+  "registryDependencies": ["@animate-ui/v1/primitives-buttons-flip"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/buttons/flip/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/buttons/flip.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "FlipButton": {
+        "from": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "right": "right",
+            "bottom": "bottom",
+            "left": "left"
+          }
+        },
+        "tapScale": {
+          "value": 0.95,
+          "min": 0,
+          "max": 2,
+          "step": 0.05
+        }
+      }
+    }
+  }
+}

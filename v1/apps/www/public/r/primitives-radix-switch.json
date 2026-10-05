@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-radix-switch",
+  "title": "Radix Switch",
+  "description": "A control that allows the user to toggle between checked and not checked.",
+  "dependencies": [
+    "motion",
+    "radix-ui"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/lib-get-strict-context",
+    "@animate-ui/v1/hooks-use-controlled-state"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/radix/switch/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { Switch as SwitchPrimitives } from 'radix-ui';\nimport {\n  motion,\n  type TargetAndTransition,\n  type VariantLabels,\n  type HTMLMotionProps,\n  type LegacyAnimationControls,\n} from 'motion/react';\n\nimport { getStrictContext } from '@/lib/get-strict-context';\nimport { useControlledState } from '@/hooks/use-controlled-state';\n\ntype SwitchContextType = {\n  isChecked: boolean;\n  setIsChecked: (isChecked: boolean) => void;\n  isPressed: boolean;\n  setIsPressed: (isPressed: boolean) => void;\n};\n\nconst [SwitchProvider, useSwitch] =\n  getStrictContext<SwitchContextType>('SwitchContext');\n\ntype SwitchProps = Omit<\n  React.ComponentProps<typeof SwitchPrimitives.Root>,\n  'asChild'\n> &\n  HTMLMotionProps<'button'>;\n\nfunction Switch(props: SwitchProps) {\n  const [isPressed, setIsPressed] = React.useState(false);\n  const [isChecked, setIsChecked] = useControlledState({\n    value: props.checked,\n    defaultValue: props.defaultChecked,\n    onChange: props.onCheckedChange,\n  });\n\n  return (\n    <SwitchProvider\n      value={{ isChecked, setIsChecked, isPressed, setIsPressed }}\n    >\n      <SwitchPrimitives.Root {...props} onCheckedChange={setIsChecked} asChild>\n        <motion.button\n          data-slot=\"switch\"\n          whileTap=\"tap\"\n          initial={false}\n          onTapStart={() => setIsPressed(true)}\n          onTapCancel={() => setIsPressed(false)}\n          onTap={() => setIsPressed(false)}\n          {...props}\n        />\n      </SwitchPrimitives.Root>\n    </SwitchProvider>\n  );\n}\n\ntype SwitchThumbProps = Omit<\n  React.ComponentProps<typeof SwitchPrimitives.Thumb>,\n  'asChild'\n> &\n  HTMLMotionProps<'div'> & {\n    pressedAnimation?:\n      | TargetAndTransition\n      | VariantLabels\n      | boolean\n      | LegacyAnimationControls;\n  };\n\nfunction SwitchThumb({\n  pressedAnimation,\n  transition = { type: 'spring', stiffness: 300, damping: 25 },\n  ...props\n}: SwitchThumbProps) {\n  const { isPressed } = useSwitch();\n\n  return (\n    <SwitchPrimitives.Thumb asChild>\n      <motion.div\n        data-slot=\"switch-thumb\"\n        whileTap=\"tab\"\n        layout\n        transition={transition}\n        animate={isPressed ? pressedAnimation : undefined}\n        {...props}\n      />\n    </SwitchPrimitives.Thumb>\n  );\n}\n\ntype SwitchIconPosition = 'left' | 'right' | 'thumb';\n\ntype SwitchIconProps = HTMLMotionProps<'div'> & {\n  position: SwitchIconPosition;\n};\n\nfunction SwitchIcon({\n  position,\n  transition = { type: 'spring', bounce: 0 },\n  ...props\n}: SwitchIconProps) {\n  const { isChecked } = useSwitch();\n\n  const isAnimated = React.useMemo(() => {\n    if (position === 'right') return !isChecked;\n    if (position === 'left') return isChecked;\n    if (position === 'thumb') return true;\n    return false;\n  }, [position, isChecked]);\n\n  return (\n    <motion.div\n      data-slot={`switch-${position}-icon`}\n      animate={isAnimated ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}\n      transition={transition}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Switch,\n  SwitchThumb,\n  SwitchIcon,\n  useSwitch,\n  type SwitchProps,\n  type SwitchThumbProps,\n  type SwitchIconProps,\n  type SwitchIconPosition,\n  type SwitchContextType,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/radix/switch.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

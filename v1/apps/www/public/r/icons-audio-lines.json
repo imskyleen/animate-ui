@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-audio-lines",
+  "title": "Audio Lines Icon",
+  "description": "Audio Lines icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/audio-lines/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype AudioLinesProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    line1: {\n      initial: {\n        y1: 10,\n        y2: 13,\n      },\n      animate: {\n        y1: [10, 5, 8, 6, 10],\n        y2: [13, 18, 15, 17, 13],\n        transition: {\n          duration: 1.5,\n          ease: 'linear',\n          repeat: Infinity,\n        },\n      },\n    },\n    line2: {\n      initial: {\n        y1: 6,\n        y2: 17,\n      },\n      animate: {\n        y1: [6, 2, 10, 6],\n        y2: [17, 22, 13, 17],\n        transition: {\n          duration: 1.5,\n          ease: 'linear',\n          repeat: Infinity,\n        },\n      },\n    },\n    line3: {\n      initial: {\n        y1: 3,\n        y2: 21,\n      },\n      animate: {\n        y1: [3, 6, 3, 8, 3],\n        y2: [21, 17, 21, 15, 21],\n        transition: {\n          duration: 1.5,\n          ease: 'linear',\n          repeat: Infinity,\n        },\n      },\n    },\n    line4: {\n      initial: {\n        y1: 8,\n        y2: 15,\n      },\n      animate: {\n        y1: [8, 4, 7, 2, 8],\n        y2: [15, 19, 16, 22, 15],\n        transition: {\n          duration: 1.5,\n          ease: 'linear',\n          repeat: Infinity,\n        },\n      },\n    },\n    line5: {\n      initial: {\n        y1: 5,\n        y2: 18,\n      },\n      animate: {\n        y1: [5, 10, 4, 8, 5],\n        y2: [18, 13, 19, 15, 18],\n        transition: {\n          duration: 1.5,\n          ease: 'linear',\n          repeat: Infinity,\n        },\n      },\n    },\n    line6: {\n      initial: {\n        y1: 10,\n        y2: 13,\n      },\n      animate: {\n        y1: [10, 8, 5, 10],\n        y2: [13, 15, 18, 13],\n        transition: {\n          duration: 1.5,\n          ease: 'linear',\n          repeat: Infinity,\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: AudioLinesProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.line\n        x1={2}\n        y1={10}\n        x2={2}\n        y2={13}\n        variants={variants.line1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={6}\n        y1={6}\n        x2={6}\n        y2={17}\n        variants={variants.line2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={10}\n        y1={3}\n        x2={10}\n        y2={21}\n        variants={variants.line3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={14}\n        y1={8}\n        x2={14}\n        y2={15}\n        variants={variants.line4}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={18}\n        y1={5}\n        x2={18}\n        y2={18}\n        variants={variants.line5}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={22}\n        y1={10}\n        x2={22}\n        y2={13}\n        variants={variants.line6}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction AudioLines(props: AudioLinesProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  AudioLines,\n  AudioLines as AudioLinesIcon,\n  type AudioLinesProps,\n  type AudioLinesProps as AudioLinesIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/audio-lines.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "graphic equaliser",
+      "sound",
+      "noise",
+      "listen",
+      "hearing",
+      "hertz",
+      "frequency",
+      "wavelength",
+      "vibrate",
+      "sine",
+      "synthesizer",
+      "synthesiser",
+      "levels",
+      "track",
+      "music",
+      "playback",
+      "radio",
+      "broadcast",
+      "airwaves",
+      "voice",
+      "vocals",
+      "singer",
+      "song"
+    ]
+  },
+  "type": "registry:ui"
+}

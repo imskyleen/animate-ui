@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-square-arrow-out-up-left",
+  "title": "Square Arrow Out Up Left Icon",
+  "description": "Square arrow out up left icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/square-arrow-out-up-left/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype SquareArrowOutUpLeftProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        x: 0,\n        y: 0,\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n      animate: {\n        x: -2,\n        y: -2,\n        transition: { duration: 0.4, ease: 'easeInOut' },\n      },\n    },\n    path1: {},\n    path2: {},\n    path3: {},\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    group: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: [0, -2, 0],\n        y: [0, -2, 0],\n        transition: { duration: 0.8, ease: 'easeInOut' },\n      },\n    },\n    path1: {},\n    path2: {},\n    path3: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: SquareArrowOutUpLeftProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"m3 3 9 9\"\n          variants={variants.path1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M3 9V3h6\"\n          variants={variants.path2}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n      <motion.path\n        d=\"M13 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction SquareArrowOutUpLeft(props: SquareArrowOutUpLeftProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  SquareArrowOutUpLeft,\n  SquareArrowOutUpLeft as SquareArrowOutUpLeftIcon,\n  type SquareArrowOutUpLeftProps,\n  type SquareArrowOutUpLeftProps as SquareArrowOutUpLeftIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/square-arrow-out-up-left.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "outwards",
+      "direction",
+      "north-west",
+      "diagonal"
+    ]
+  },
+  "type": "registry:ui"
+}

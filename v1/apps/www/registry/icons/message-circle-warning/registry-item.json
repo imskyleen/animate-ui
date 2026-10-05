@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-circle-warning",
+  "type": "registry:ui",
+  "title": "Message Circle Warning Icon",
+  "description": "Message circle warning icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/message-circle-warning/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-circle-warning.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "speech bubble",
+      "report",
+      "abuse",
+      "offense",
+      "alert",
+      "danger",
+      "caution",
+      "protected",
+      "exclamation mark"
+    ]
+  }
+}

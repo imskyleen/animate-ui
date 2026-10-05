@@ -1,0 +1,39 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-checkbox",
+  "type": "registry:ui",
+  "title": "Checkbox Demo",
+  "description": "Demo showing a checkbox.",
+  "registryDependencies": ["@animate-ui/v1/components-base-checkbox"],
+  "files": [
+    {
+      "path": "registry/demo/components/base/checkbox/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/checkbox.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Checkbox": {
+        "indeterminate": {
+          "value": false
+        },
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "accent": "accent"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg"
+          }
+        }
+      }
+    }
+  }
+}

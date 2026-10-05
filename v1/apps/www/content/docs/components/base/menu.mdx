@@ -1,0 +1,389 @@
+---
+title: Menu
+description: A list of actions in a dropdown, enhanced with keyboard navigation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-10-21
+---
+
+<ComponentPreview name="demo-components-base-menu" />
+
+## Installation
+
+<ComponentInstallation name="components-base-menu" />
+
+## Usage
+
+```tsx
+<Menu>
+  <MenuTrigger>Open</MenuTrigger>
+
+  <MenuPanel>
+    <MenuGroup>
+      <MenuItem>
+        <span>Profile</span>
+        <MenuShortcut>⇧⌘P</MenuShortcut>
+      </MenuItem>
+      <MenuItem>
+        <span>Billing</span>
+        <MenuShortcut>⌘B</MenuShortcut>
+      </MenuItem>
+      <MenuItem>
+        <span>Settings</span>
+        <MenuShortcut>⌘S</MenuShortcut>
+      </MenuItem>
+      <MenuItem>
+        <span>Keyboard shortcuts</span>
+        <MenuShortcut>⌘K</MenuShortcut>
+      </MenuItem>
+    </MenuGroup>
+
+    <MenuSeparator />
+
+    <MenuGroup>
+      <MenuItem>
+        <span>Team</span>
+      </MenuItem>
+
+      <MenuSubmenu>
+        <MenuSubmenuTrigger>
+          <span>Invite users</span>
+          <ChevronRight />
+        </MenuSubmenuTrigger>
+
+        <MenuSubmenuPanel>
+          <MenuItem>
+            <span>Email</span>
+          </MenuItem>
+          <MenuItem>
+            <span>Message</span>
+          </MenuItem>
+
+          <MenuSeparator />
+
+          <MenuItem>
+            <span>More...</span>
+          </MenuItem>
+        </MenuSubmenuPanel>
+      </MenuSubmenu>
+
+      <MenuItem>
+        <span>New Team</span>
+        <MenuShortcut>⌘+T</MenuShortcut>
+      </MenuItem>
+    </MenuGroup>
+
+    <MenuSeparator />
+
+    <MenuItem>
+      <span>Log out</span>
+      <MenuShortcut>⇧⌘Q</MenuShortcut>
+    </MenuItem>
+  </MenuPanel>
+</Menu>
+```
+
+## Examples
+
+### Menu Checkbox
+
+<ComponentPreview name="demo-components-base-menu-checkbox" />
+
+### Menu Radio
+
+<ComponentPreview name="demo-components-base-menu-radio" />
+
+## API Reference
+
+### Menu
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menu"
+  text="Animate UI API Reference - Menu Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#root"
+  text="Base UI API Reference - Menu.Root"
+/>
+</div>
+
+### MenuTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menutrigger"
+  text="Animate UI API Reference - MenuTrigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#trigger"
+  text="Base UI API Reference - Menu.Trigger"
+/>
+</div>
+
+### MenuPanel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menupositioner"
+  text="Animate UI API Reference - MenuPositioner Primitive"
+/>
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menupopup"
+  text="Animate UI API Reference - MenuPopup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#positioner"
+  text="Base UI API Reference - Menu.Positioner"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#popup"
+  text="Base UI API Reference - Menu.Popup"
+/>
+</div>
+
+<TypeTable
+  type={{
+    sideOffset: {
+      description: 'The offset of the dropdown menu content.',
+      type: 'number',
+      required: false,
+      default: '4',
+    },
+    transition: {
+      description: 'The transition of the dropdown menu content',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.2 }',
+    },
+  }}
+/>
+
+### MenuGroup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menugroup"
+  text="Animate UI API Reference - MenuGroup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#group"
+  text="Base UI API Reference - Menu.Group"
+/>
+</div>
+
+### MenuGroupLabel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menugrouplabel"
+  text="Animate UI API Reference - MenuGroupLabel Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#group-label"
+  text="Base UI API Reference - Menu.GroupLabel"
+/>
+</div>
+
+### MenuSeparator
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menuseparator"
+  text="Animate UI API Reference - MenuSeparator Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#separator"
+  text="Base UI API Reference - Menu.Separator"
+/>
+</div>
+
+### MenuItem
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menuitem"
+  text="Animate UI API Reference - MenuItem Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#item"
+  text="Base UI API Reference - Menu.Item"
+/>
+</div>
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'The variant of the dropdown menu item.',
+      type: 'default' | 'destructive',
+      required: false,
+      default: 'default',
+    },
+    inset: {
+      description: 'Whether the dropdown menu item is inset.',
+      type: 'boolean',
+      default: false,
+      required: false,
+    },
+  }}
+/>
+
+### MenuCheckboxItem
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menucheckboxitem"
+  text="Animate UI API Reference - MenuCheckboxItem Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#checkbox-item"
+  text="Base UI API Reference - Menu.CheckboxItem"
+/>
+</div>
+
+### MenuRadioGroup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menuradiogroup"
+  text="Animate UI API Reference - MenuRadioGroup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#radio-group"
+  text="Base UI API Reference - Menu.RadioGroup"
+/>
+</div>
+
+### MenuRadioItem
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menuradioitem"
+  text="Animate UI API Reference - MenuRadioItem Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#radio-item"
+  text="Base UI API Reference - Menu.RadioItem"
+/>
+</div>
+
+### MenuShortcut
+
+<div className="flex flex-col gap-2">
+  <ExternalLink
+    href="https://animate-ui.com/docs/primitives/base/menushortcut"
+    text="Animate UI API Reference - MenuShortcut Primitive"
+  />
+</div>
+
+### MenuArrow
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menuarrow"
+  text="Animate UI API Reference - MenuArrow Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#arrow"
+  text="Base UI API Reference - Menu.Arrow"
+/>
+</div>
+
+### MenuSubmenu
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menusubmenu"
+  text="Animate UI API Reference - MenuSubmenu Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#submenu"
+  text="Base UI API Reference - Menu.Submenu"
+/>
+</div>
+
+### MenuSubmenuTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menusubmenutrigger"
+  text="Animate UI API Reference - MenuSubmenuTrigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#submenu-trigger"
+  text="Base UI API Reference - Menu.SubmenuTrigger"
+/>
+</div>
+
+<TypeTable
+  type={{
+    inset: {
+      description: 'Whether the dropdown menu submenu trigger is inset.',
+      type: 'boolean',
+      default: false,
+      required: false,
+    },
+  }}
+/>
+
+### MenuSubmenuPanel
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menupositioner"
+  text="Animate UI API Reference - MenuPositioner Primitive"
+/>
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/menu#menupopup"
+  text="Animate UI API Reference - MenuPopup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#positioner"
+  text="Base UI API Reference - Menu.Positioner"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/menu#popup"
+  text="Base UI API Reference - Menu.Popup"
+/>
+</div>
+
+<TypeTable
+  type={{
+    sideOffset: {
+      description: 'The offset of the dropdown menu content.',
+      type: 'number',
+      required: false,
+      default: '4',
+    },
+    transition: {
+      description: 'The transition of the dropdown menu content',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.2 }',
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Menu](https://base-ui.com/react/components/menu)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/dropdown-menu) for style inspiration.

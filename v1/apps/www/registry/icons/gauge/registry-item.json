@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-gauge",
+  "type": "registry:ui",
+  "title": "Gauge Icon",
+  "description": "Gauge icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/gauge/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/gauge.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "dashboard",
+      "dial",
+      "meter",
+      "speed",
+      "pressure",
+      "measure",
+      "level"
+    ]
+  }
+}

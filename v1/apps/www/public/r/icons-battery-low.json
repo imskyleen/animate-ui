@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-battery-low",
+  "title": "Battery Low Icon",
+  "description": "Battery Low icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/battery-low/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BatteryLowProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    rect: {},\n    line1: {},\n    line2: {\n      initial: {\n        opacity: 1,\n        scale: 1,\n      },\n      animate: {\n        opacity: 0,\n        scale: 0,\n        transition: {\n          opacity: {\n            duration: 0.3,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0,\n          },\n          scale: {\n            duration: 0.3,\n            ease: 'easeInOut',\n            repeat: 1,\n            repeatType: 'reverse',\n            repeatDelay: 0,\n          },\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BatteryLowProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.rect\n        width={16}\n        height={10}\n        x={2}\n        y={7}\n        rx={2}\n        ry={2}\n        variants={variants.rect}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={22}\n        x2={22}\n        y1={11}\n        y2={13}\n        variants={variants.line1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={6}\n        x2={6}\n        y1={11}\n        y2={13}\n        variants={variants.line2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BatteryLow(props: BatteryLowProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BatteryLow,\n  BatteryLow as BatteryLowIcon,\n  type BatteryLowProps,\n  type BatteryLowProps as BatteryLowIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/battery-low.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "power",
+      "electricity",
+      "energy",
+      "accumulator",
+      "charge"
+    ]
+  },
+  "type": "registry:ui"
+}

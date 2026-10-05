@@ -1,0 +1,75 @@
+---
+title: Disclosure
+description: A simple, accessible foundation for building custom UIs that show and hide content, like togglable accordion panels.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-headless-disclosure" />
+
+## Installation
+
+<ComponentInstallation name="primitives-headless-disclosure" />
+
+## Usage
+
+```tsx
+<Disclosure>
+  <DisclosureButton>Disclosure Button</DisclosureButton>
+  <DisclosurePanel>
+    <div>Disclosure Panel</div>
+  </DisclosurePanel>
+</Disclosure>
+```
+
+## API Reference
+
+### Disclosure
+
+<ExternalLink
+  href="https://headlessui.com/react/disclosure#disclosure"
+  text="Headless UI API Reference - Disclosure"
+/>
+
+### DisclosureButton
+
+<ExternalLink
+  href="https://headlessui.com/react/disclosure#disclosure-button"
+  text="Headless UI API Reference - DisclosureButton"
+/>
+
+### DisclosurePanel
+
+<ExternalLink
+  href="https://headlessui.com/react/disclosure#disclosure-panel"
+  text="Headless UI API Reference - DisclosurePanel"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the disclosure panel',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.35, ease: 'easeInOut' }",
+    },
+    keepRendered: {
+      description:
+        'Whether to keep the accordion content rendered (useful for SEO)',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the disclosure panel.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Headless Disclosure](https://headlessui.com/react/disclosure)

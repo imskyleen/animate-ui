@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-tooltip",
+  "type": "registry:ui",
+  "title": "Animate Tooltip Demo",
+  "description": "Demo showing an animated tooltip.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-tooltip"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/tooltip/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/tooltip.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "TooltipProvider": {
+        "openDelay": {
+          "value": 700
+        },
+        "closeDelay": {
+          "value": 300
+        }
+      },
+      "Tooltip": {
+        "side": {
+          "value": "top",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        },
+        "sideOffset": {
+          "value": 0
+        },
+        "align": {
+          "value": "center",
+          "options": {
+            "start": "start",
+            "center": "center",
+            "end": "end"
+          }
+        },
+        "alignOffset": {
+          "value": 0
+        }
+      },
+      "TooltipArrow": {
+        "withTransition": {
+          "value": true
+        }
+      }
+    }
+  }
+}

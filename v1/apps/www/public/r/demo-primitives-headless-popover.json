@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-headless-popover",
+  "title": "Headless Popover Demo",
+  "description": "Demo showing an animated headless popover.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-headless-popover"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/headless/popover/index.tsx",
+      "content": "import {\n  Popover,\n  PopoverButton,\n  PopoverPanel,\n} from '@/components/animate-ui/primitives/headless/popover';\n\ninterface HeadlessPopoverDemoProps {\n  anchor?:\n    | 'top'\n    | 'bottom'\n    | 'left'\n    | 'right'\n    | 'top start'\n    | 'top end'\n    | 'bottom start'\n    | 'bottom end'\n    | 'left start'\n    | 'left end'\n    | 'right start'\n    | 'right end';\n  gap?: number;\n}\n\nexport function HeadlessPopoverDemo({\n  anchor = 'bottom',\n  gap = 4,\n}: HeadlessPopoverDemoProps) {\n  return (\n    <Popover>\n      <PopoverButton>Open popover</PopoverButton>\n\n      <PopoverPanel\n        anchor={{ to: anchor, gap }}\n        className=\"w-80 bg-background border p-4 z-50\"\n      >\n        <div className=\"grid gap-4\">\n          <div className=\"space-y-2\">\n            <h4 className=\"font-medium leading-none\">Dimensions</h4>\n            <p className=\"text-sm text-muted-foreground\">\n              Set the dimensions for the layer.\n            </p>\n          </div>\n          <div className=\"grid gap-2\">\n            <div className=\"grid grid-cols-3 items-center gap-4\">\n              <label htmlFor=\"width\" className=\"text-sm\">\n                Width\n              </label>\n              <input\n                id=\"width\"\n                defaultValue=\"100%\"\n                className=\"col-span-2 h-8 p-2 border\"\n              />\n            </div>\n            <div className=\"grid grid-cols-3 items-center gap-4\">\n              <label htmlFor=\"maxWidth\" className=\"text-sm\">\n                Max. width\n              </label>\n              <input\n                id=\"maxWidth\"\n                defaultValue=\"300px\"\n                className=\"col-span-2 h-8 p-2 border\"\n              />\n            </div>\n            <div className=\"grid grid-cols-3 items-center gap-4\">\n              <label htmlFor=\"height\" className=\"text-sm\">\n                Height\n              </label>\n              <input\n                id=\"height\"\n                defaultValue=\"25px\"\n                className=\"col-span-2 h-8 p-2 border\"\n              />\n            </div>\n            <div className=\"grid grid-cols-3 items-center gap-4\">\n              <label htmlFor=\"maxHeight\" className=\"text-sm\">\n                Max. height\n              </label>\n              <input\n                id=\"maxHeight\"\n                defaultValue=\"none\"\n                className=\"col-span-2 h-8 p-2 border\"\n              />\n            </div>\n          </div>\n        </div>\n      </PopoverPanel>\n    </Popover>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/headless/popover.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "PopoverPanel": {
+        "anchor": {
+          "value": "bottom",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right",
+            "top start": "top start",
+            "top end": "top end",
+            "bottom start": "bottom start",
+            "bottom end": "bottom end",
+            "left start": "left start",
+            "left end": "left end",
+            "right start": "right start",
+            "right end": "right end"
+          }
+        },
+        "gap": {
+          "value": 4
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-rotate-cw",
+  "title": "Rotate Cw Icon",
+  "description": "Rotate cw icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/rotate-cw/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype RotateCwProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { type: 'spring', stiffness: 150, damping: 25 },\n      },\n      animate: {\n        rotate: 45,\n        transition: { type: 'spring', stiffness: 150, damping: 25 },\n      },\n    },\n    path1: {},\n    path2: {},\n  } satisfies Record<string, Variants>,\n  rotate: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { type: 'spring', stiffness: 100, damping: 25 },\n      },\n      animate: {\n        rotate: 360,\n        transition: { type: 'spring', stiffness: 100, damping: 25 },\n      },\n    },\n    path1: {},\n    path2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: RotateCwProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      variants={variants.group}\n      initial=\"initial\"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d=\"M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M21 3v5h-5\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction RotateCw(props: RotateCwProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  RotateCw,\n  RotateCw as RotateCwIcon,\n  type RotateCwProps,\n  type RotateCwProps as RotateCwIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/rotate-cw.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "rotate",
+      "arrow",
+      "right",
+      "clockwise",
+      "refresh",
+      "reload",
+      "rerun",
+      "redo"
+    ]
+  },
+  "type": "registry:ui"
+}

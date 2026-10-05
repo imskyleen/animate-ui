@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-square-code",
+  "type": "registry:ui",
+  "title": "Message Square Code Icon",
+  "description": "Message square code icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/message-square-code/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-square-code.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "speech bubble",
+      "code review",
+      "coding"
+    ]
+  }
+}

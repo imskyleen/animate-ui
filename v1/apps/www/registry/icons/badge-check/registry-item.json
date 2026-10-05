@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-badge-check",
+  "type": "registry:ui",
+  "title": "Badge Check Icon",
+  "description": "Badge check icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/badge-check/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/badge-check.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["verified", "check"]
+  }
+}

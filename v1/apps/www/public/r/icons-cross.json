@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-cross",
+  "title": "Cross Icon",
+  "description": "Cross icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/cross/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype CrossProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { type: 'spring', stiffness: 100, damping: 12 },\n      },\n      animate: {\n        rotate: 90,\n        transition: { type: 'spring', stiffness: 100, damping: 12 },\n      },\n    },\n    path: {},\n  } satisfies Record<string, Variants>,\n  x: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { type: 'spring', stiffness: 100, damping: 12 },\n      },\n      animate: {\n        rotate: 45,\n        transition: { type: 'spring', stiffness: 100, damping: 12 },\n      },\n    },\n    path: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: CrossProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      variants={variants.group}\n      initial=\"initial\"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d=\"M4 9a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4a1 1 0 0 1 1 1v4a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-4a1 1 0 0 1 1-1h4a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4a1 1 0 0 1-1-1V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4a1 1 0 0 1-1 1z\"\n        variants={variants.path}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Cross(props: CrossProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Cross,\n  Cross as CrossIcon,\n  type CrossProps,\n  type CrossProps as CrossIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/cross.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "healthcare",
+      "first aid"
+    ]
+  },
+  "type": "registry:ui"
+}

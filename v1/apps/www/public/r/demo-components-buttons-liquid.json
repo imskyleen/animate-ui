@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-buttons-liquid",
+  "title": "Liquid Button Demo",
+  "description": "Demo showing a liquid button.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/components-buttons-liquid"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/buttons/liquid/index.tsx",
+      "content": "import { PlusIcon } from 'lucide-react';\nimport {\n  LiquidButton,\n  type LiquidButtonProps,\n} from '@/components/animate-ui/components/buttons/liquid';\n\ninterface LiquidButtonDemoProps {\n  variant: LiquidButtonProps['variant'];\n  size: LiquidButtonProps['size'];\n}\n\nexport default function LiquidButtonDemo({\n  variant,\n  size,\n}: LiquidButtonDemoProps) {\n  return (\n    <LiquidButton variant={variant} size={size}>\n      {size === 'icon' ? <PlusIcon /> : 'Hover me'}\n    </LiquidButton>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/buttons/liquid.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "LiquidButton": {
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "destructive": "destructive",
+            "ghost": "ghost"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg",
+            "icon": "icon",
+            "icon-sm": "icon-sm",
+            "icon-lg": "icon-lg"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

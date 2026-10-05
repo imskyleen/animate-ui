@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-bot-message-square",
+  "title": "Bot Message Square Icon",
+  "description": "Bot message square icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/bot-message-square/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BotMessageSquareProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        transformOrigin: 'bottom left',\n        rotate: [0, 8, -8, 2, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.8,\n          times: [0, 0.4, 0.6, 0.8, 1],\n        },\n      },\n    },\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path5: {},\n    path6: {},\n  } satisfies Record<string, Variants>,\n  'look-at': {\n    group: {},\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: [0, -1.5, 1.5, 0],\n        y: [0, 1.5, 1.5, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 1.3,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: [0, -1.5, 1.5, 0],\n        y: [0, 1.5, 1.5, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 1.3,\n        },\n      },\n    },\n    path6: {},\n  } satisfies Record<string, Variants>,\n  blink: {\n    group: {},\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path5: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path6: {},\n  } satisfies Record<string, Variants>,\n  wink: {\n    group: {},\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {},\n    path5: {\n      initial: {\n        scaleY: 1,\n      },\n      animate: {\n        scaleY: [1, 0.5, 1],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.6,\n        },\n      },\n    },\n    path6: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BotMessageSquareProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"M12 6V2H8\"\n          variants={variants.path1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"m8 18-4 4V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2Z\"\n          variants={variants.path2}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M2 12h2\"\n          variants={variants.path3}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M9 11v2\"\n          variants={variants.path4}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M15 11v2\"\n          variants={variants.path5}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M20 12h2\"\n          variants={variants.path6}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction BotMessageSquare(props: BotMessageSquareProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BotMessageSquare,\n  BotMessageSquare as BotMessageSquareIcon,\n  type BotMessageSquareProps,\n  type BotMessageSquareProps as BotMessageSquareIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/bot-message-square.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "robot",
+      "ai",
+      "chat",
+      "assistant"
+    ]
+  },
+  "type": "registry:ui"
+}

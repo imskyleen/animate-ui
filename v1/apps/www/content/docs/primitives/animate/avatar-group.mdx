@@ -1,0 +1,140 @@
+---
+title: Avatar Group
+description: An animated avatar group that displays overlapping user images and smoothly shifts each avatar forward on hover to highlight it.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-avatar-group" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-avatar-group" />
+
+## Usage
+
+```tsx
+<AvatarGroup>
+  {AVATARS.map((avatar, index) => (
+    <Avatar key={index}>
+      <AvatarImage src={avatar.src} />
+      <AvatarFallback>{avatar.fallback}</AvatarFallback>
+      <AvatarGroupTooltip>
+        <AvatarGroupTooltipArrow />
+        <p>{avatar.tooltip}</p>
+      </AvatarGroupTooltip>
+    </Avatar>
+  ))}
+</AvatarGroup>
+```
+
+## API Reference
+
+### AvatarGroup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tooltip#tooltipprovider"
+  text="Animate UI API Reference - TooltipProvider"
+/>
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tooltip#tooltip"
+  text="Animate UI API Reference - Tooltip"
+/>
+</div>
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the AvatarGroup.',
+      type: 'React.ReactElement[]',
+      required: true,
+    },
+    invertOverlap: {
+      description: 'Whether to invert the overlap of the avatars.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    translate: {
+      description: 'The translation of the AvatarGroup.',
+      type: 'string | number',
+      required: false,
+      default: '-30%',
+    },
+    transition: {
+      description: 'The transition of the AvatarGroup.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 300, damping: 17 }',
+    },
+    tooltipTransition: {
+      description: 'The transition of the AvatarGroupTooltip.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 300, damping: 35 }',
+    },
+    openDelay: {
+      description: 'The delay of the AvatarGroup tooltip.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    closeDelay: {
+      description: 'The delay of the AvatarGroup tooltip.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    side: {
+      description: 'The side of the AvatarGroup tooltip.',
+      type: '"top" | "bottom" | "left" | "right"',
+      required: false,
+      default: 'top',
+    },
+    sideOffset: {
+      description: 'The offset of the AvatarGroup tooltip.',
+      type: 'number',
+      required: false,
+      default: '25',
+    },
+    align: {
+      description: 'The alignment of the AvatarGroup tooltip.',
+      type: '"start" | "center" | "end"',
+      required: false,
+      default: 'center',
+    },
+    alignOffset: {
+      description: 'The offset of the AvatarGroup tooltip.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the AvatarGroup.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### AvatarGroupTooltip
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tooltip#tooltipcontent"
+  text="Animate UI API Reference - TooltipContent"
+/>
+
+### AvatarGroupTooltipArrow
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/animate/tooltip#tooltiparrow"
+  text="Animate UI API Reference - TooltipArrow"
+/>
+
+## Credits
+
+- Credits to [Jhey](https://codepen.io/jh3y/pen/yyLmmMW) for the inspiration.

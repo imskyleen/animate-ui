@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-x",
+  "title": "X Icon",
+  "description": "X icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/x/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype XProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    line1: {\n      initial: {\n        rotate: 0,\n        transition: { ease: 'easeInOut', duration: 0.4 },\n      },\n      animate: {\n        rotate: 90,\n        transition: { ease: 'easeInOut', duration: 0.4 },\n      },\n    },\n    line2: {\n      initial: {\n        rotate: 0,\n        transition: { ease: 'easeInOut', duration: 0.4, delay: 0.1 },\n      },\n      animate: {\n        rotate: 90,\n        transition: { ease: 'easeInOut', duration: 0.4, delay: 0.1 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  plus: {\n    line1: {\n      initial: {\n        rotate: 0,\n        x1: 6,\n        y1: 18,\n        x2: 18,\n        y2: 6,\n        transition: { ease: 'easeInOut', duration: 0.3, delay: 0.1 },\n      },\n      animate: {\n        rotate: 45,\n        x1: 7.1,\n        y1: 16.9,\n        x2: 16.9,\n        y2: 7.1,\n        transition: { ease: 'easeInOut', duration: 0.3, delay: 0.1 },\n      },\n    },\n    line2: {\n      initial: {\n        rotate: 0,\n        x1: 6,\n        y1: 6,\n        x2: 18,\n        y2: 18,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n      animate: {\n        rotate: 45,\n        x1: 7.1,\n        y1: 7.1,\n        x2: 16.9,\n        y2: 16.9,\n        transition: { ease: 'easeInOut', duration: 0.3 },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: XProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.line\n        x1={6}\n        y1={18}\n        x2={18}\n        y2={6}\n        variants={variants.line1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.line\n        x1={6}\n        y1={6}\n        x2={18}\n        y2={18}\n        variants={variants.line2}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction X(props: XProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport { animations, X, X as XIcon, type XProps, type XProps as XIconProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/x.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "cross",
+      "x",
+      "delete",
+      "close",
+      "cancel",
+      "remove",
+      "clear",
+      "math",
+      "multiply",
+      "multiplication"
+    ]
+  },
+  "type": "registry:ui"
+}

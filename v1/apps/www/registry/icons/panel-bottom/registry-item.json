@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-panel-bottom",
+  "type": "registry:ui",
+  "title": "Panel Bottom Icon",
+  "description": "Panel bottom icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/panel-bottom/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/panel-bottom.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["sidebar", "panel", "bottom", "menu", "drawer", "navigation"]
+  }
+}

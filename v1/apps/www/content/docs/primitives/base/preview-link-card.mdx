@@ -1,0 +1,227 @@
+---
+title: Preview Link Card
+description: Displays a preview image of a link when hovered.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-11-17
+---
+
+<ComponentPreview name="demo-primitives-base-preview-link-card" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-preview-link-card" />
+
+## Usage
+
+```tsx
+<PreviewLinkCard href="https://animate-ui.com/docs">
+  <PreviewLinkCardTrigger>Animate UI Docs</PreviewLinkCardTrigger>
+  <PreviewLinkCardPortal>
+    <PreviewLinkCardPositioner>
+      <PreviewLinkCardPopup>
+        <PreviewLinkCardImage alt="Preview link card content" />
+      </PreviewLinkCardPopup>
+    </PreviewLinkCardPositioner>
+  </PreviewLinkCardPortal>
+</PreviewLinkCard>
+```
+
+## API Reference
+
+### PreviewLinkCard
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcard"
+  text="Animate UI API Reference - PreviewCard Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#root"
+  text="Base UI API Reference - PreviewCard.Root"
+/>
+</div>
+
+<TypeTable
+  type={{
+    href: {
+      description: 'The href of the link.',
+      type: 'string',
+      required: true,
+    },
+    src: {
+      description: 'The src of the image.',
+      type: 'string',
+      required: false,
+    },
+    width: {
+      description: 'The width of the image.',
+      type: 'number',
+      required: false,
+    },
+    height: {
+      description: 'The height of the image.',
+      type: 'number',
+      required: false,
+    },
+    deviceScaleFactor: {
+      description: 'The device scale factor of the image.',
+      type: 'number',
+      required: false,
+      default: '1',
+    },
+    colorScheme: {
+      description: 'The color scheme of the image.',
+      type: 'light' | 'dark',
+      required: false,
+      default: 'light',
+    },
+    followCursor: {
+      description: 'Whether to follow the cursor.',
+      type: 'boolean | "x" | "y"',
+      required: false,
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring options of the follow cursor.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### PreviewLinkCardTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcardtrigger"
+  text="Animate UI API Reference - PreviewCardTrigger Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#trigger"
+  text="Base UI API Reference - PreviewCard.Trigger"
+/>
+</div>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the preview link card.',
+      type: "React.ComponentProps<'a'>",
+      required: false,
+    },
+  }}
+/>
+
+### PreviewLinkCardPortal
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcardportal"
+  text="Animate UI API Reference - PreviewCardPortal Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#portal"
+  text="Base UI API Reference - PreviewCard.Portal"
+/>
+</div>
+
+### PreviewLinkCardPositioner
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcardpositioner"
+  text="Animate UI API Reference - PreviewCardPositioner Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#positioner"
+  text="Base UI API Reference - PreviewCard.Positioner"
+/>
+</div>
+
+### PreviewLinkCardPopup
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcardpopup"
+  text="Animate UI API Reference - PreviewCardPopup Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#popup"
+  text="Base UI API Reference - PreviewCard.Popup"
+/>
+</div>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the preview link card popup.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the preview link card popup.',
+      type: "React.ComponentProps<'a'>",
+      required: false,
+    },
+  }}
+/>
+
+### PreviewLinkCardImage
+
+<TypeTable
+  type={{
+    alt: {
+      description: 'The alt of the preview link card image.',
+      type: 'string',
+      required: false,
+      default: 'preview image',
+    },
+    '...props': {
+      description: 'The props of the preview link card image.',
+      type: "React.ComponentProps<'img'>",
+      required: false,
+    },
+  }}
+/>
+
+### PreviewLinkCardBackdrop
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcardbackdrop"
+  text="Animate UI API Reference - PreviewCardBackdrop Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#backdrop"
+  text="Base UI API Reference - PreviewCard.Backdrop"
+/>
+</div>
+
+### PreviewLinkCardArrow
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/base/preview-card#previewcardarrow"
+  text="Animate UI API Reference - PreviewCardArrow Primitive"
+/>
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#arrow"
+  text="Base UI API Reference - PreviewCard.Arrow"
+/>
+</div>
+
+## Credits
+
+- [Base UI Preview Card](https://base-ui.com/react/components/preview-card)
+- Inspired by [Aceternity UI Link Preview](https://ui.aceternity.com/components/link-preview)

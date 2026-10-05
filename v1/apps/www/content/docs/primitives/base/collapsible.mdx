@@ -1,0 +1,80 @@
+---
+title: Collapsible
+description: A collapsible panel controlled by a button.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-base-collapsible" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-collapsible" />
+
+## Usage
+
+```tsx
+<Collapsible>
+  <CollapsibleTrigger>Collapsible Trigger</CollapsibleTrigger>
+  <CollapsiblePanel>
+    <div>Collapsible Content</div>
+  </CollapsiblePanel>
+</Collapsible>
+```
+
+## API Reference
+
+### Collapsible
+
+<ExternalLink
+  href="https://base-ui.com/react/components/collapsible#root"
+  text="Base UI API Reference - Collapsible.Root"
+/>
+
+### CollapsibleTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/collapsible#trigger"
+  text="Base UI API Reference - Collapsible.Trigger"
+/>
+
+### CollapsiblePanel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/collapsible#panel"
+  text="Base UI API Reference - Collapsible.Panel"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the collapsible panel',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.35, ease: 'easeInOut' }",
+    },
+    keepRendered: {
+      description:
+        'Whether to keep the accordion content rendered (useful for SEO)',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the collapsible panel.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` and `keepMounted` props are not supported in the
+  `CollapsiblePanel` component as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Base UI Collapsible](https://base-ui.com/react/components/collapsible)

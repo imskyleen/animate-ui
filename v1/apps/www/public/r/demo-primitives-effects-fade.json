@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-effects-fade",
+  "title": "Fade Demo",
+  "description": "Demo showing an animated fade.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-effects-fade"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/effects/fade/index.tsx",
+      "content": "import { Fade } from '@/components/animate-ui/primitives/effects/fade';\n\ntype FadeDemoProps = {\n  delay?: number;\n  initialOpacity?: number;\n  opacity?: number;\n};\n\nexport default function FadeDemo({\n  delay = 0,\n  initialOpacity = 0,\n  opacity = 1,\n}: FadeDemoProps) {\n  return (\n    <Fade\n      delay={delay}\n      initialOpacity={initialOpacity}\n      opacity={opacity}\n      className=\"px-6 py-4 bg-accent\"\n    >\n      Fade\n    </Fade>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/effects/fade.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Fade": {
+        "delay": {
+          "value": 0,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        },
+        "initialOpacity": {
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        "opacity": {
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

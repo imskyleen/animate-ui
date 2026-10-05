@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-buttons-theme-toggler",
+  "title": "Theme Toggler Button Demo",
+  "description": "Demo showing a theme toggler button.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/components-buttons-theme-toggler"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/buttons/theme-toggler/index.tsx",
+      "content": "import {\n  ThemeTogglerButton,\n  type ThemeTogglerButtonProps,\n} from '@/components/animate-ui/components/buttons/theme-toggler';\n\ninterface ThemeTogglerButtonDemoProps {\n  variant: ThemeTogglerButtonProps['variant'];\n  size: ThemeTogglerButtonProps['size'];\n  direction: ThemeTogglerButtonProps['direction'];\n  system: boolean;\n}\n\nexport default function ThemeTogglerButtonDemo({\n  variant,\n  size,\n  direction,\n  system,\n}: ThemeTogglerButtonDemoProps) {\n  return (\n    <ThemeTogglerButton\n      variant={variant}\n      size={size}\n      direction={direction}\n      modes={system ? ['light', 'dark', 'system'] : ['light', 'dark']}\n    />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/buttons/theme-toggler.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ThemeTogglerButton": {
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "accent": "accent",
+            "outline": "outline",
+            "ghost": "ghost"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg"
+          }
+        },
+        "direction": {
+          "value": "ltr",
+          "options": {
+            "btt": "btt",
+            "ttb": "ttb",
+            "ltr": "ltr",
+            "rtl": "rtl"
+          }
+        },
+        "system": {
+          "value": false
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

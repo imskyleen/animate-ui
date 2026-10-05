@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-square-share",
+  "type": "registry:ui",
+  "title": "Message Square Share Icon",
+  "description": "Message square share icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/message-square-share/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-square-share.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "speech bubble",
+      "network",
+      "forward"
+    ]
+  }
+}

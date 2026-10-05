@@ -1,0 +1,107 @@
+---
+title: Code Block
+description: A code block component that animates the code as it is written.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-code-block" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-code-block" />
+
+## Usage
+
+```tsx
+<CodeBlock code="console.log('Hello, world!');" lang="javascript" />
+```
+
+## API Reference
+
+### CodeBlock
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code.',
+      type: 'string',
+      required: true,
+    },
+    lang: {
+      description: 'The language of the code.',
+      type: 'string',
+      required: true,
+    },
+    theme: {
+      description: 'The theme of the code.',
+      type: '"light" | "dark"',
+      required: false,
+      default: 'light',
+    },
+    themes: {
+      description: 'The themes of the code.',
+      type: '{ light: string; dark: string }',
+      required: false,
+      default: '{ light: "github-light", dark: "github-dark" }',
+    },
+    writing: {
+      description: 'Whether to animate the code.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    duration: {
+      description: 'The duration of the animation.',
+      type: 'number',
+      required: false,
+      default: '5000',
+    },
+    delay: {
+      description: 'The delay of the animation.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    onDone: {
+      description: 'The callback function when the animation is done.',
+      type: '() => void',
+      required: false,
+    },
+    onWrite: {
+      description: 'The callback function when the code is written.',
+      type: '(info: { index: number; length: number; done: boolean }) => void',
+      required: false,
+    },
+    scrollContainerRef: {
+      description: 'The reference to the scroll container.',
+      type: 'React.RefObject<HTMLElement | null>',
+      required: false,
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'The margin to use when the text is in view.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    '...props': {
+      description: 'The props of the CodeBlock',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>

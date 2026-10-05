@@ -1,0 +1,132 @@
+---
+title: Popover
+description: An accessible popup anchored to a button.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-base-popover" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-popover" />
+
+## Usage
+
+```tsx
+<Popover>
+  <PopoverTrigger>Open popover</PopoverTrigger>
+  <PopoverPortal>
+    <PopoverPositioner>
+      <PopoverPopup>
+        <div>Popover content</div>
+        <PopoverClose>Close popover</PopoverClose>
+      </PopoverPopup>
+    </PopoverPositioner>
+  </PopoverPortal>
+</Popover>
+```
+
+## API Reference
+
+### Popover
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#root"
+  text="Base UI API Reference - Popover.Root"
+/>
+
+### PopoverTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#trigger"
+  text="Base UI API Reference - Popover.Trigger"
+/>
+
+### PopoverPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#portal"
+  text="Base UI API Reference - Popover.Portal"
+/>
+
+<Callout type="info">
+  The `keepMounted` property is not supported in the `PopoverPortal` component,
+  as it is used for animation.
+</Callout>
+
+### PopoverPositioner
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#positioner"
+  text="Base UI API Reference - Popover.Positioner"
+/>
+
+### PopoverPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#popup"
+  text="Base UI API Reference - Popover.Popup"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the popover popup.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the popover content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `PopoverPopup` component, as it
+  is used for animation.
+</Callout>
+
+### PopoverBackdrop
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#backdrop"
+  text="Base UI API Reference - Popover.Backdrop"
+/>
+
+### PopoverArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#arrow"
+  text="Base UI API Reference - Popover.Arrow"
+/>
+
+### PopoverTitle
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#title"
+  text="Base UI API Reference - Popover.Title"
+/>
+
+### PopoverDescription
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#description"
+  text="Base UI API Reference - Popover.Description"
+/>
+
+### PopoverClose
+
+<ExternalLink
+  href="https://base-ui.com/react/components/popover#close"
+  text="Base UI API Reference - Popover.Close"
+/>
+
+## Credits
+
+- [Base UI Popover](https://base-ui.com/react/components/popover)

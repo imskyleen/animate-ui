@@ -1,0 +1,93 @@
+---
+title: Radio Group
+description: A set of checkable buttons—known as radio buttons—where no more than one of the buttons can be checked at a time.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-radio-group" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-radio-group" />
+
+## Usage
+
+```tsx
+<RadioGroup>
+  <RadioGroupItem value="1">
+    <RadioGroupItemIndicator />
+  </RadioGroupItem>
+  <RadioGroupItem value="2">
+    <RadioGroupItemIndicator />
+  </RadioGroupItem>
+  <RadioGroupItem value="3">
+    <RadioGroupItemIndicator />
+  </RadioGroupItem>
+</RadioGroup>
+```
+
+## API Reference
+
+### RadioGroup
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/radio-group#root"
+  text="Radix UI API Reference - RadioGroup.Root"
+/>
+
+### RadioGroupItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/radio-group#item"
+  text="Radix UI API Reference - RadioGroup.Item"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the radio group item.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` property is not supported in the `RadioGroupItem` component, as
+  it is used for animation.
+</Callout>
+
+### RadioGroupIndicator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/radio-group#indicator"
+  text="Radix UI API Reference - RadioGroup.Indicator"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the radio group indicator.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 200, damping: 16 }",
+    },
+    '...props': {
+      description: 'The props of the radio group indicator.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `forceMount` and `asChild` properties are not supported in the
+  `RadioGroupIndicator` component, as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Radix UI Radio Group](https://www.radix-ui.com/primitives/docs/components/radio-group)

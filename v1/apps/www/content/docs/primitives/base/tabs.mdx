@@ -1,0 +1,152 @@
+---
+title: Tabs
+description: A set of layered sections of content—known as tab panels—that are displayed one at a time.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-09
+---
+
+<ComponentPreview name="demo-primitives-base-tabs" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-tabs" />
+
+## Usage
+
+### With Highlight
+
+```tsx
+<Tabs>
+  <TabsHighlight>
+    <TabsList>
+      <TabsHighlightItem value="account">
+        <TabsTab value="account">Account</TabsTab>
+      </TabsHighlightItem>
+      <TabsHighlightItem value="password">
+        <TabsTab value="password">Password</TabsTab>
+      </TabsHighlightItem>
+    </TabsList>
+  </TabsHighlight>
+  <TabsPanels>
+    <TabsPanel value="account">Make changes to your account here.</TabsPanel>
+    <TabsPanel value="password">Change your password here.</TabsPanel>
+  </TabsPanels>
+</Tabs>
+```
+
+### Without Highlight
+
+```tsx
+<Tabs>
+  <TabsList>
+    <TabsTab value="account">Account</TabsTab>
+    <TabsTab value="password">Password</TabsTab>
+  </TabsList>
+  <TabsPanels>
+    <TabsPanel value="account">Make changes to your account here.</TabsPanel>
+    <TabsPanel value="password">Change your password here.</TabsPanel>
+  </TabsPanels>
+</Tabs>
+```
+
+## API Reference
+
+### Tabs
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tabs#root"
+  text="Base UI API Reference - Tabs.Root"
+/>
+
+### TabsHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabsHighlight component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### TabsHighlightItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+### TabsList
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tabs#list"
+  text="Base UI API Reference - Tabs.List"
+/>
+
+### TabsTab
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tabs#tab"
+  text="Base UI API Reference - Tabs.Tab"
+/>
+
+### TabsPanels
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/auto-height#autoheight"
+  text="Animate UI API Reference - AutoHeight"
+/>
+
+<TypeTable
+  type={{
+    mode: {
+      description:
+        'The mode of the TabsPanels component. The auto-height mode (default) dynamically measures the content to adjust the height, resulting in smoother and more natural animations that integrate seamlessly with surrounding elements. The layout mode relies on Motion’s layout transitions, offering better performance, but the resizing may appear less fluid depending on the content.',
+      type: '"auto-height" | "layout"',
+      required: false,
+      default: '"auto-height"',
+    },
+    transition: {
+      description: 'The transition of the TabsPanels component.',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 200, damping: 25 }',
+    },
+  }}
+/>
+
+### TabsPanel
+
+<ExternalLink
+  href="https://base-ui.com/react/components/tabs#panel"
+  text="Base UI API Reference - Tabs.Panel"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the TabsPanel component.',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.5, ease: "easeInOut" }',
+    },
+    '...props': {
+      description: 'The props of the TabsPanel component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Base UI Tabs](https://base-ui.com/react/components/tabs)

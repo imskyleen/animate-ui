@@ -1,0 +1,68 @@
+---
+title: Icon Button
+description: An icon button that displays particles when clicked.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-buttons-icon" />
+
+## Installation
+
+<ComponentInstallation name="components-buttons-icon" />
+
+## Usage
+
+```tsx
+<IconButton>
+  <Icon />
+</IconButton>
+```
+
+## API Reference
+
+### IconButton
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/buttons/button#button"
+  text="Animate UI API Reference - Button Primitive"
+/>
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'The variant of the button.',
+      type: '"default" | "accent" | "destructive" | "outline" | "secondary" | "ghost" | "link"',
+      required: false,
+      default: 'default',
+    },
+    size: {
+      description: 'The size of the button.',
+      type: '"default" | "sm" | "lg"',
+      required: false,
+      default: 'default',
+    },
+    hoverScale: {
+      description: 'The scale of the button on hover.',
+      type: 'number',
+      required: false,
+      default: 1.05,
+    },
+    tapScale: {
+      description: 'The scale of the button on tap.',
+      type: 'number',
+      required: false,
+      default: 0.95,
+    },
+    '...props': {
+      description: 'The props for the button.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/button) for style inspiration.

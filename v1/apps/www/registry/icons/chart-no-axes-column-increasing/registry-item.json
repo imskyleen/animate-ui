@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-chart-no-axes-column-increasing",
+  "type": "registry:ui",
+  "title": "Chart No Axes Column Increasing Icon",
+  "description": "Chart no axes column increasing icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/chart-no-axes-column-increasing/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/chart-no-axes-column-increasing.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["statistics", "analytics", "diagram", "graph", "trending up"]
+  }
+}

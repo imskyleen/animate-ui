@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-headless-disclosure",
+  "title": "Headless Disclosure Demo",
+  "description": "Demo showing an animated headless disclosure.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-headless-disclosure"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/headless/disclosure/index.tsx",
+      "content": "import {\n  Disclosure,\n  DisclosureButton,\n  DisclosurePanel,\n} from '@/components/animate-ui/primitives/headless/disclosure';\n\ntype HeadlessDisclosureDemoProps = {\n  keepRendered: boolean;\n};\n\nexport const HeadlessDisclosureDemo = ({\n  keepRendered = false,\n}: HeadlessDisclosureDemoProps) => {\n  return (\n    <Disclosure className=\"w-[350px]\" as=\"div\">\n      <DisclosureButton className=\"px-3 py-1.5 border-b text-start w-[200px]\">\n        Recovery keys\n      </DisclosureButton>\n      <DisclosurePanel keepRendered={keepRendered}>\n        <div className=\"pt-1.5 px-3 text-sm text-muted-foreground\">\n          <div>alien-bean-pasta</div>\n          <div>wild-irish-burrito</div>\n          <div>horse-battery-staple</div>\n        </div>\n      </DisclosurePanel>\n    </Disclosure>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/headless/disclosure.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "DisclosurePanel": {
+        "keepRendered": {
+          "value": false
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

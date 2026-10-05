@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-base-tabs",
+  "title": "Base Tabs Demo",
+  "description": "Demo showing a base tabs.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-base-tabs"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/base/tabs/index.tsx",
+      "content": "import {\n  Tabs,\n  TabsPanel,\n  TabsPanels,\n  TabsList,\n  TabsTab,\n} from '@/components/animate-ui/components/base/tabs';\nimport { Button } from '@/components/ui/button';\nimport {\n  Card,\n  CardContent,\n  CardDescription,\n  CardFooter,\n  CardHeader,\n  CardTitle,\n} from '@/components/ui/card';\nimport { Input } from '@/components/ui/input';\nimport { Label } from '@/components/ui/label';\n\nexport function BaseTabsDemo() {\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-6\">\n      <Tabs defaultValue=\"account\">\n        <TabsList>\n          <TabsTab value=\"account\">Account</TabsTab>\n          <TabsTab value=\"password\">Password</TabsTab>\n        </TabsList>\n        <Card className=\"shadow-none py-0\">\n          <TabsPanels className=\"py-6\">\n            <TabsPanel value=\"account\" className=\"flex flex-col gap-6\">\n              <CardHeader>\n                <CardTitle>Account</CardTitle>\n                <CardDescription>\n                  Make changes to your account here. Click save when you&apos;re\n                  done.\n                </CardDescription>\n              </CardHeader>\n              <CardContent className=\"grid gap-6\">\n                <div className=\"grid gap-3\">\n                  <Label htmlFor=\"tabs-demo-name\">Name</Label>\n                  <Input id=\"tabs-demo-name\" defaultValue=\"Pedro Duarte\" />\n                </div>\n              </CardContent>\n              <CardFooter>\n                <Button>Save changes</Button>\n              </CardFooter>\n            </TabsPanel>\n            <TabsPanel value=\"password\" className=\"flex flex-col gap-6\">\n              <CardHeader>\n                <CardTitle>Password</CardTitle>\n                <CardDescription>\n                  Change your password here. After saving, you&apos;ll be logged\n                  out.\n                </CardDescription>\n              </CardHeader>\n              <CardContent className=\"grid gap-6\">\n                <div className=\"grid gap-3\">\n                  <Label htmlFor=\"tabs-demo-current\">Current password</Label>\n                  <Input id=\"tabs-demo-current\" type=\"password\" />\n                </div>\n                <div className=\"grid gap-3\">\n                  <Label htmlFor=\"tabs-demo-new\">New password</Label>\n                  <Input id=\"tabs-demo-new\" type=\"password\" />\n                </div>\n              </CardContent>\n              <CardFooter>\n                <Button>Save password</Button>\n              </CardFooter>\n            </TabsPanel>\n          </TabsPanels>\n        </Card>\n      </Tabs>\n    </div>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/base/tabs.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

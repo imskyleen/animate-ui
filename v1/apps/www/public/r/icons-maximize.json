@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-maximize",
+  "title": "Maximize Icon",
+  "description": "Maximize icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/maximize/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype MaximizeProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path1: {\n      initial: {\n        x: 0,\n        y: 0,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n      animate: {\n        x: -2,\n        y: -2,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n    },\n    path2: {\n      initial: {\n        y: 0,\n        x: 0,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n      animate: {\n        y: -2,\n        x: 2,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n    },\n    path3: {\n      initial: {\n        y: 0,\n        x: 0,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n      animate: {\n        y: 2,\n        x: -2,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n    },\n    path4: {\n      initial: {\n        y: 0,\n        x: 0,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n      animate: {\n        y: 2,\n        x: 2,\n        transition: { duration: 0.3, ease: 'easeInOut' },\n      },\n    },\n  } satisfies Record<string, Variants>,\n  'default-loop': {\n    path1: {\n      initial: {\n        x: 0,\n        y: 0,\n      },\n      animate: {\n        x: [0, -2, 0],\n        y: [0, -2, 0],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path2: {\n      initial: {\n        y: 0,\n        x: 0,\n      },\n      animate: {\n        y: [0, -2, 0],\n        x: [0, 2, 0],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path3: {\n      initial: {\n        y: 0,\n        x: 0,\n      },\n      animate: {\n        y: [0, 2, 0],\n        x: [0, -2, 0],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path4: {\n      initial: {\n        y: 0,\n        x: 0,\n      },\n      animate: {\n        y: [0, 2, 0],\n        x: [0, 2, 0],\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: MaximizeProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M8 3H5a2 2 0 0 0-2 2v3\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M21 8V5a2 2 0 0 0-2-2h-3\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M3 16v3a2 2 0 0 0 2 2h3\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M16 21h3a2 2 0 0 0 2-2v-3\"\n        variants={variants.path4}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction Maximize(props: MaximizeProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  Maximize,\n  Maximize as MaximizeIcon,\n  type MaximizeProps,\n  type MaximizeProps as MaximizeIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/maximize.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "fullscreen",
+      "expand",
+      "dashed"
+    ]
+  },
+  "type": "registry:ui"
+}

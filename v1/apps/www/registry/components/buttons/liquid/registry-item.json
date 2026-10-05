@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-buttons-liquid",
+  "type": "registry:ui",
+  "title": "Liquid Button",
+  "description": "A button that fills on hover.",
+  "dependencies": ["class-variance-authority"],
+  "registryDependencies": ["@animate-ui/v1/primitives-buttons-liquid"],
+  "files": [
+    {
+      "path": "registry/components/buttons/liquid/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/buttons/liquid.tsx"
+    }
+  ]
+}

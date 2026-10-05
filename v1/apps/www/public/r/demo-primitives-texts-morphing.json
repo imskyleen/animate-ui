@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-texts-morphing",
+  "title": "Morphing Text Demo",
+  "description": "Demo showing an animated morphing text.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-texts-morphing"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/texts/morphing/index.tsx",
+      "content": "import { MorphingText } from '@/components/animate-ui/primitives/texts/morphing';\n\nconst texts = [\n  'MorphingText Primitive',\n  'Animate your text 🚀',\n  'Handles emojis 🚀✨',\n  'Built with Motion ✨',\n];\n\ninterface MorphingTextDemoProps {\n  loop: boolean;\n  holdDelay: number;\n}\n\nexport const MorphingTextDemo = ({\n  loop,\n  holdDelay,\n}: MorphingTextDemoProps) => {\n  return (\n    <MorphingText\n      key={`${loop}-${holdDelay}`}\n      className=\"text-4xl font-semibold max-w-2xl\"\n      text={texts}\n      loop={loop}\n      holdDelay={holdDelay}\n    />\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/texts/morphing.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MorphingText": {
+        "loop": {
+          "value": true
+        },
+        "holdDelay": {
+          "value": 2500,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

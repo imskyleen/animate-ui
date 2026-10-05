@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-community-radial-intro",
+  "type": "registry:ui",
+  "title": "Radial Intro",
+  "description": "A circular intro animation component that arranges elements in a radial layout, smoothly transitioning them into orbit with looping motion.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/components/community/radial-intro/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/community/radial-intro.tsx"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+---
+title: Checkbox
+description: An easily stylable checkbox component.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-base-checkbox" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-checkbox" />
+
+## Usage
+
+```tsx
+<Checkbox>
+  <CheckboxIndicator />
+</Checkbox>
+```
+
+## API Reference
+
+### Checkbox
+
+<ExternalLink
+  href="https://base-ui.com/react/components/checkbox"
+  text="Base UI API Reference - Checkbox"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the checkbox.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` prop is not supported in the `Checkbox` component as it is used
+  for animation.
+</Callout>
+
+### CheckboxIndicator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/checkbox#indicator"
+  text="Base UI API Reference - Checkbox.Indicator"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the checkbox indicator.',
+      type: 'SVGMotionProps<SVGSVGElement>',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` and `keepMounted` props are not supported in the
+  `CheckboxIndicator` component as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Base UI Checkbox](https://base-ui.com/react/components/checkbox)

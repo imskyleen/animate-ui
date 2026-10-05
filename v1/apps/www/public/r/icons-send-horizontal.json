@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-send-horizontal",
+  "title": "Send Horizontal Icon",
+  "description": "Send horizontal icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/send-horizontal/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype SendHorizontalProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        scale: 1,\n        x: 0,\n      },\n      animate: {\n        scale: [1, 0.8, 1, 1, 1],\n        x: [0, '-10%', '125%', '-150%', 0],\n        transition: {\n          default: { ease: 'easeInOut', duration: 1.2 },\n          x: {\n            ease: 'easeInOut',\n            duration: 1.2,\n            times: [0, 0.25, 0.5, 0.5, 1],\n          },\n        },\n      },\n    },\n    path1: {},\n    path2: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: SendHorizontalProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.g variants={variants.group} initial=\"initial\" animate={controls}>\n        <motion.path\n          d=\"M3.7,3c-.2-.1-.5,0-.7.2,0,.1,0,.3,0,.4l2.8,7.6c.2.5.2.9,0,1.4l-2.8,7.6c0,.3,0,.5.3.6.1,0,.3,0,.4,0l18-8.5c.2-.1.4-.4.2-.7,0-.1-.1-.2-.2-.2L3.7,3Z\"\n          variants={variants.path1}\n          initial=\"initial\"\n          animate={controls}\n        />\n        <motion.path\n          d=\"M6,12h16\"\n          variants={variants.path2}\n          initial=\"initial\"\n          animate={controls}\n        />\n      </motion.g>\n    </motion.svg>\n  );\n}\n\nfunction SendHorizontal(props: SendHorizontalProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  SendHorizontal,\n  SendHorizontal as SendHorizontalIcon,\n  type SendHorizontalProps,\n  type SendHorizontalProps as SendHorizontalIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/send-horizontal.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "send",
+      "email",
+      "message",
+      "mail",
+      "paper aeroplane",
+      "submit"
+    ]
+  },
+  "type": "registry:ui"
+}

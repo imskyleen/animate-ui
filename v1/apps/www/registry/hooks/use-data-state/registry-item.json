@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks-use-data-state",
+  "type": "registry:hook",
+  "title": "useDataState",
+  "description": "A hook that allows you to get the data-state of an element.",
+  "files": [
+    {
+      "path": "registry/hooks/use-data-state/index.tsx",
+      "type": "registry:hook",
+      "target": "hooks/use-data-state.tsx"
+    }
+  ]
+}

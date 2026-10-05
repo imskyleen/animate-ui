@@ -1,0 +1,82 @@
+---
+title: Popover
+description: Popovers are perfect for floating panels with arbitrary content like navigation menus, mobile menus and flyout menus.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-headless-popover" />
+
+## Installation
+
+<ComponentInstallation name="primitives-headless-popover" />
+
+## Usage
+
+```tsx
+<Popover>
+  <PopoverTrigger>Open Popover</PopoverTrigger>
+  <PopoverContent>
+    <div>Popover Content</div>
+  </PopoverContent>
+</Popover>
+```
+
+## API Reference
+
+### Popover
+
+<ExternalLink
+  href="https://headlessui.com/react/popover#popover"
+  text="Headless UI API Reference - Popover"
+/>
+
+### PopoverButton
+
+<ExternalLink
+  href="https://headlessui.com/react/popover#popover-button"
+  text="Headless UI API Reference - PopoverButton"
+/>
+
+### PopoverBackdrop
+
+<ExternalLink
+  href="https://headlessui.com/react/popover#popover-backdrop"
+  text="Headless UI API Reference - PopoverBackdrop"
+/>
+
+### PopoverGroup
+
+<ExternalLink
+  href="https://headlessui.com/react/popover#popover-group"
+  text="Headless UI API Reference - PopoverGroup"
+/>
+
+### PopoverPanel
+
+<ExternalLink
+  href="https://headlessui.com/react/popover#popover-panel"
+  text="Headless UI API Reference - PopoverPanel"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the popover panel.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the popover panel.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Headless Popover](https://headlessui.com/react/popover)

@@ -1,0 +1,95 @@
+---
+title: Liquid Button
+description: A button that fills on hover.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-buttons-liquid" />
+
+## Installation
+
+<ComponentInstallation name="components-buttons-liquid" />
+
+## Usage
+
+```tsx
+<LiquidButton>Liquid Button</LiquidButton>
+```
+
+## API Reference
+
+### LiquidButton
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/buttons/liquid#liquidbutton"
+  text="Animate UI API Reference - Liquid Button Primitive"
+/>
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'The variant of the button.',
+      type: '"default" | "destructive" | "secondary" | "ghost"',
+      required: false,
+      default: 'default',
+    },
+    size: {
+      description: 'The size of the button.',
+      type: '"default" | "sm" | "lg" | "icon"',
+      required: false,
+      default: 'default',
+    },
+    delay: {
+      description: 'The delay of the button.',
+      type: 'time',
+      required: false,
+      default: '0s',
+    },
+    fillHeight: {
+      description: 'The fill height of the button.',
+      type: 'percentage',
+      required: false,
+      default: '3px',
+    },
+    hoverScale: {
+      description: 'The scale of the button on hover.',
+      type: 'number',
+      required: false,
+      default: 1.05,
+    },
+    tapScale: {
+      description: 'The scale of the button on tap.',
+      type: 'number',
+      required: false,
+      default: 0.95,
+    },
+    '...props': {
+      description: 'The props for the button.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+#### CSS Variables
+
+<TypeTable
+  type={{
+    '--liquid-button-color': {
+      description: 'The color of the button in hover state.',
+      type: 'color',
+      required: false,
+    },
+    '--liquid-button-background-color': {
+      description: 'The background color of the button.',
+      type: 'color',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/button) for style inspiration.

@@ -1,0 +1,101 @@
+---
+title: Splitting Text
+description: A splitting text animation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-texts-splitting" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-splitting" />
+
+## Usage
+
+```tsx
+<SplittingText text="Splitting Text" />
+```
+
+## Examples
+
+<ComponentPreview name="demo-primitives-texts-splitting-example" />
+
+## API Reference
+
+### SplittingText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    type: {
+      description: 'The type of splitting to use.',
+      type: "'chars' | 'words' | 'lines'",
+      required: false,
+      default: 'chars',
+    },
+    delay: {
+      description: 'The delay to use.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    disableAnimation: {
+      description: 'Whether the animation should be disabled.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    stagger: {
+      description: 'The stagger to use.',
+      type: 'number',
+      required: false,
+    },
+    initial: {
+      description: 'The initial state to use.',
+      type: 'Variant',
+      required: false,
+      default: '{ x: 150, opacity: 0 }',
+    },
+    animate: {
+      description: 'The animate state to use.',
+      type: 'Variant',
+      required: false,
+      default: '{ x: 0, opacity: 1 }',
+    },
+    transition: {
+      description: 'The transition to use.',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.7, ease: "easeOut" }',
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin to use.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    '...props': {
+      description: 'The props of the splitting text.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

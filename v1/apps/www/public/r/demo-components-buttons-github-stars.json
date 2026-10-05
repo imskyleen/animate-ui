@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-buttons-github-stars",
+  "title": "GitHub Stars Button Demo",
+  "description": "Demo showing a GitHub stars button.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-buttons-github-stars"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/buttons/github-stars/index.tsx",
+      "content": "import {\n  GitHubStarsButton,\n  type GitHubStarsButtonProps,\n} from '@/components/animate-ui/components/buttons/github-stars';\n\ninterface GitHubStarsButtonDemoProps {\n  variant: GitHubStarsButtonProps['variant'];\n  size: GitHubStarsButtonProps['size'];\n}\n\nexport default function GitHubStarsButtonDemo({\n  variant,\n  size,\n}: GitHubStarsButtonDemoProps) {\n  return (\n    <GitHubStarsButton\n      variant={variant}\n      size={size}\n      username=\"imskyleen\"\n      repo=\"animate-ui\"\n    />\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/buttons/github-stars.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "GitHubStarsButton": {
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "accent": "accent",
+            "outline": "outline",
+            "ghost": "ghost"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-chevron-right",
+  "type": "registry:ui",
+  "title": "Chevron Right Icon",
+  "description": "Chevron right icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/chevron-right/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/chevron-right.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "forward",
+      "next",
+      "more than",
+      "greater",
+      "menu",
+      "code",
+      "coding",
+      "command line",
+      "terminal",
+      "prompt",
+      "shell",
+      ">"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-accordion",
+  "type": "registry:ui",
+  "title": "Radix Accordion Demo",
+  "description": "Demo showing an animated radix accordion.",
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-accordion"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/accordion/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/accordion.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Accordion": {
+        "multiple": {
+          "value": false
+        },
+        "collapsible": {
+          "value": true
+        }
+      },
+      "AccordionContent": {
+        "keepRendered": {
+          "value": false
+        }
+      }
+    }
+  }
+}

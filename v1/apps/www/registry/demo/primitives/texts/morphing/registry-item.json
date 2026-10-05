@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-texts-morphing",
+  "type": "registry:ui",
+  "title": "Morphing Text Demo",
+  "description": "Demo showing an animated morphing text.",
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-morphing"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/texts/morphing/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/texts/morphing.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "MorphingText": {
+        "loop": {
+          "value": true
+        },
+        "holdDelay": {
+          "value": 2500,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        }
+      }
+    }
+  }
+}

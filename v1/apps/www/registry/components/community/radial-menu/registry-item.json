@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-community-radial-menu",
+  "type": "registry:ui",
+  "title": "Radial Menu",
+  "description": "A circular context menu built with Base UI, displaying actions in a clean radial layout with full keyboard support and smooth interaction.",
+  "dependencies": [
+    "motion",
+    "lucide-react",
+    "@base-ui-components/react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/components/community/radial-menu/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/community/radial-menu.tsx"
+    }
+  ]
+}

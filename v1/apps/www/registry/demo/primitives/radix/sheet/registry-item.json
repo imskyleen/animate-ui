@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-sheet",
+  "type": "registry:ui",
+  "title": "Radix Sheet Demo",
+  "description": "Demo showing an animated radix sheet.",
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-sheet"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/sheet/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/sheet.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "SheetContent": {
+        "side": {
+          "value": "right",
+          "options": {
+            "top": "top",
+            "bottom": "bottom",
+            "left": "left",
+            "right": "right"
+          }
+        }
+      }
+    }
+  }
+}

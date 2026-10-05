@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks-use-is-in-view",
+  "title": "useIsInView",
+  "description": "A hook that allows you to check if an element is in view.",
+  "dependencies": [
+    "motion"
+  ],
+  "files": [
+    {
+      "path": "registry/hooks/use-is-in-view/index.tsx",
+      "content": "import * as React from 'react';\nimport { useInView, type UseInViewOptions } from 'motion/react';\n\ninterface UseIsInViewOptions {\n  inView?: boolean;\n  inViewOnce?: boolean;\n  inViewMargin?: UseInViewOptions['margin'];\n}\n\nfunction useIsInView<T extends HTMLElement = HTMLElement>(\n  ref: React.Ref<T>,\n  options: UseIsInViewOptions = {},\n) {\n  const { inView, inViewOnce = false, inViewMargin = '0px' } = options;\n  const localRef = React.useRef<T>(null);\n  React.useImperativeHandle(ref, () => localRef.current as T);\n  const inViewResult = useInView(localRef, {\n    once: inViewOnce,\n    margin: inViewMargin,\n  });\n  const isInView = !inView || inViewResult;\n  return { ref: localRef, isInView };\n}\n\nexport { useIsInView, type UseIsInViewOptions };\n",
+      "type": "registry:hook",
+      "target": "hooks/use-is-in-view.tsx"
+    }
+  ],
+  "type": "registry:hook"
+}

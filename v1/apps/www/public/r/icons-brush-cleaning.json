@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-brush-cleaning",
+  "title": "Brush Cleaning Icon",
+  "description": "Brush cleaning icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/brush-cleaning/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype BrushCleaningProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    group: {\n      initial: {\n        rotate: 0,\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n      animate: {\n        rotate: [0, -10, 10, 0],\n        transformOrigin: 'top center',\n        transition: { duration: 0.6, ease: 'easeInOut' },\n      },\n    },\n    path1: {},\n    path2: {},\n    path3: {},\n    path4: {},\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: BrushCleaningProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      variants={variants.group}\n      initial=\"initial\"\n      animate={controls}\n      {...props}\n    >\n      <motion.path\n        d=\"m16 22-1-4\"\n        variants={variants.path1}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M19 13.99a1 1 0 0 0 1-1V12a2 2 0 0 0-2-2h-3a1 1 0 0 1-1-1V4a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2v.99a1 1 0 0 0 1 1\"\n        variants={variants.path2}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"M5 14h14l1.973 6.767A1 1 0 0 1 20 22H4a1 1 0 0 1-.973-1.233z\"\n        variants={variants.path3}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.path\n        d=\"m8 22 1-4\"\n        variants={variants.path4}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction BrushCleaning(props: BrushCleaningProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  BrushCleaning,\n  BrushCleaning as BrushCleaningIcon,\n  type BrushCleaningProps,\n  type BrushCleaningProps as BrushCleaningIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/brush-cleaning.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "cleaning",
+      "utensil",
+      "housekeeping",
+      "tool",
+      "sweeping",
+      "scrubbing",
+      "hygiene",
+      "maintenance",
+      "household",
+      "cleaner",
+      "chores",
+      "equipment",
+      "sanitation",
+      "bristles",
+      "handle",
+      "home care",
+      "sanitize",
+      "purify",
+      "wash",
+      "disinfect",
+      "sterilize",
+      "scrub",
+      "polish",
+      "decontaminate",
+      "wipe",
+      "spotless",
+      "remove",
+      "empty",
+      "erase",
+      "purge",
+      "eliminate"
+    ]
+  },
+  "type": "registry:ui"
+}

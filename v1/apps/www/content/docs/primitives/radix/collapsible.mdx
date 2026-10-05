@@ -1,0 +1,80 @@
+---
+title: Collapsible
+description: An interactive component which expands/collapses a panel.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-collapsible" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-collapsible" />
+
+## Usage
+
+```tsx
+<Collapsible>
+  <CollapsibleTrigger>Collapsible Trigger</CollapsibleTrigger>
+  <CollapsibleContent>
+    <div>Collapsible Content</div>
+  </CollapsibleContent>
+</Collapsible>
+```
+
+## API Reference
+
+### Collapsible
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/collapsible#root"
+  text="Radix UI API Reference - Collapsible.Root"
+/>
+
+### CollapsibleTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/collapsible#trigger"
+  text="Radix UI API Reference - Collapsible.Trigger"
+/>
+
+### CollapsibleContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/collapsible#content"
+  text="Radix UI API Reference - Collapsible.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the collapsible content',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.35, ease: 'easeInOut' }",
+    },
+    keepRendered: {
+      description:
+        'Whether to keep the accordion content rendered (useful for SEO)',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the collapsible content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` props are not supported in the
+  `CollapsibleContent` component as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Radix UI Collapsible](https://www.radix-ui.com/primitives/docs/components/collapsible)

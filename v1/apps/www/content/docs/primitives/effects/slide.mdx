@@ -1,0 +1,107 @@
+---
+title: Slide
+description: An effect that allows you to animate elements with a slide effect on first view or load.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-effects-slide" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-slide" />
+
+## Usage
+
+### Slide
+
+```tsx
+<Slide>Slide</Slide>
+```
+
+### Slides
+
+```tsx
+<Slides>
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</Slides>
+```
+
+## API Reference
+
+### Slide
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Animate the element when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Animate the element only once when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin of the element to be in view',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    delay: {
+      description: 'The delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    direction: {
+      description: 'The direction of the slide',
+      type: "'up' | 'down' | 'left' | 'right'",
+      required: false,
+      default: 'up',
+    },
+    offset: {
+      description: 'The offset of the slide',
+      type: 'number',
+      required: false,
+      default: '100',
+    },
+  }}
+/>
+
+### Slides
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the slides',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'The delay between each slide',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the slides',
+      type: 'SlideProps',
+      required: false,
+    },
+  }}
+/>

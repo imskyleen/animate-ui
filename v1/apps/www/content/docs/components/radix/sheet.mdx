@@ -1,0 +1,189 @@
+---
+title: Sheet
+description: Extends the Dialog component to display content that complements the main content of the screen.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-radix-sheet" />
+
+## Installation
+
+<ComponentInstallation name="components-radix-sheet" />
+
+## Usage
+
+```tsx
+<Sheet>
+  <SheetTrigger>Open Sheet</SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Sheet Title</SheetTitle>
+      <SheetDescription>Sheet Description</SheetDescription>
+    </SheetHeader>
+    <p>Sheet Content</p>
+    <SheetFooter>
+      <button>Accept</button>
+    </SheetFooter>
+  </SheetContent>
+</Sheet>
+```
+
+## API Reference
+
+### Sheet
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheet"
+  text="Animate UI API Reference - Sheet Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#root"
+  text="Radix UI API Reference - Dialog.Root"
+/>
+</div>
+
+### SheetTrigger
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheettrigger"
+  text="Animate UI API Reference - SheetTrigger Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#trigger"
+  text="Radix UI API Reference - Dialog.Trigger"
+/>
+</div>
+
+### SheetContent
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheetcontent"
+  text="Animate UI API Reference - SheetContent Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#content"
+  text="Radix UI API Reference - Dialog.Content"
+/>
+</div>
+
+<TypeTable
+  type={{
+    showCloseButton: {
+      description: 'Whether to show the close button.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    side: {
+      description: 'The side of the sheet',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'right',
+    },
+    transition: {
+      description: 'The transition of the sheet content',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 22 }",
+    },
+    '...props': {
+      description: 'The props of the sheet content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `SheetContent` component, as it is used for animation.
+</Callout>
+
+### SheetClose
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheetclose"
+  text="Animate UI API Reference - SheetClose Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#close"
+  text="Radix UI API Reference - Dialog.Close"
+/>
+</div>
+
+### SheetHeader
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheetheader"
+  text="Animate UI API Reference - SheetHeader Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### SheetTitle
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheettitle"
+  text="Animate UI API Reference - SheetTitle Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#title"
+  text="Radix UI API Reference - Dialog.Title"
+/>
+</div>
+
+### SheetDescription
+
+<div className="flex flex-col gap-2">
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheetdescription"
+  text="Animate UI API Reference - SheetDescription Primitive"
+/>
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#description"
+  text="Radix UI API Reference - Dialog.Description"
+/>
+</div>
+
+### SheetFooter
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/sheet#sheetfooter"
+  text="Animate UI API Reference - SheetFooter Primitive"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Dialog](https://www.radix-ui.com/primitives/docs/components/dialog)
+- Credit to [shadcn/ui](https://ui.shadcn.com/docs/components/sheet) for style inspiration.

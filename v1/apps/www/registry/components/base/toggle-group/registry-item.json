@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-toggle-group",
+  "type": "registry:ui",
+  "title": "Toggle Group",
+  "description": "Provides a shared state to a series of toggle buttons.",
+  "registryDependencies": ["@animate-ui/v1/primitives-base-toggle-group"],
+  "files": [
+    {
+      "path": "registry/components/base/toggle-group/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/toggle-group.tsx"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+---
+title: Checkbox
+description: A control that allows the user to toggle between checked and not checked.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-checkbox" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-checkbox" />
+
+## Usage
+
+```tsx
+<Checkbox>
+  <CheckboxIndicator />
+</Checkbox>
+```
+
+## API Reference
+
+### Checkbox
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/checkbox#root"
+  text="Radix UI API Reference - Checkbox.Root"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the checkbox.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` prop is not supported in the `Checkbox` component as it is used
+  for animation.
+</Callout>
+
+### CheckboxIndicator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/checkbox#indicator"
+  text="Radix UI API Reference - Checkbox.Indicator"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the checkbox indicator.',
+      type: 'SVGMotionProps<SVGSVGElement>',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` props are not supported in the
+  `CheckboxIndicator` component as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Radix UI Checkbox](https://www.radix-ui.com/primitives/docs/components/checkbox)

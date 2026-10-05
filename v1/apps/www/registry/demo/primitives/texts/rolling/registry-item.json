@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-texts-rolling",
+  "type": "registry:ui",
+  "title": "Rolling Text Demo",
+  "description": "Demo showing an animated rolling text.",
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-rolling"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/texts/rolling/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/texts/rolling.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "RollingText": {
+        "delay": {
+          "value": 0,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        }
+      }
+    }
+  }
+}

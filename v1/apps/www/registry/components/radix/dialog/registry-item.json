@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-radix-dialog",
+  "type": "registry:ui",
+  "title": "Dialog",
+  "description": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["@animate-ui/v1/primitives-radix-dialog"],
+  "files": [
+    {
+      "path": "registry/components/radix/dialog/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/radix/dialog.tsx"
+    }
+  ]
+}

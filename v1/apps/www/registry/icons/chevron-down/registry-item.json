@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-chevron-down",
+  "type": "registry:ui",
+  "title": "Chevron Down Icon",
+  "description": "Chevron down icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/chevron-down/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/chevron-down.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["backwards", "reverse", "slow", "dropdown"]
+  }
+}

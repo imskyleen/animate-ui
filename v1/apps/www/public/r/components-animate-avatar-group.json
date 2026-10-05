@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-animate-avatar-group",
+  "title": "Avatar Group",
+  "description": "An animated avatar group that displays overlapping user images and smoothly shifts each avatar forward on hover to highlight it.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-avatar-group"
+  ],
+  "files": [
+    {
+      "path": "registry/components/animate/avatar-group/index.tsx",
+      "content": "import * as React from 'react';\nimport * as motion from 'motion/react-client';\n\nimport {\n  AvatarGroup as AvatarGroupPrimitive,\n  AvatarGroupTooltip as AvatarGroupTooltipPrimitive,\n  AvatarGroupTooltipArrow as AvatarGroupTooltipArrowPrimitive,\n  type AvatarGroupProps as AvatarGroupPropsPrimitive,\n  type AvatarGroupTooltipProps as AvatarGroupTooltipPropsPrimitive,\n} from '@/components/animate-ui/primitives/animate/avatar-group';\nimport { cn } from '@/lib/utils';\n\ntype AvatarGroupProps = AvatarGroupPropsPrimitive;\n\nfunction AvatarGroup({\n  className,\n  invertOverlap = true,\n  ...props\n}: AvatarGroupProps) {\n  return (\n    <AvatarGroupPrimitive\n      className={cn('h-12 -space-x-3', className)}\n      invertOverlap={invertOverlap}\n      {...props}\n    />\n  );\n}\n\ntype AvatarGroupTooltipProps = Omit<\n  AvatarGroupTooltipPropsPrimitive,\n  'asChild'\n> & {\n  children: React.ReactNode;\n  layout?: boolean | 'position' | 'size' | 'preserve-aspect';\n};\n\nfunction AvatarGroupTooltip({\n  className,\n  children,\n  layout = 'preserve-aspect',\n  ...props\n}: AvatarGroupTooltipProps) {\n  return (\n    <AvatarGroupTooltipPrimitive\n      className={cn(\n        'bg-primary text-primary-foreground z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance',\n        className,\n      )}\n      {...props}\n    >\n      <motion.div layout={layout} className=\"overflow-hidden\">\n        {children}\n      </motion.div>\n      <AvatarGroupTooltipArrowPrimitive\n        className=\"fill-primary size-3 data-[side='bottom']:translate-y-[1px] data-[side='right']:translate-x-[1px] data-[side='left']:translate-x-[-1px] data-[side='top']:translate-y-[-1px]\"\n        tipRadius={2}\n      />\n    </AvatarGroupTooltipPrimitive>\n  );\n}\n\nexport {\n  AvatarGroup,\n  AvatarGroupTooltip,\n  type AvatarGroupProps,\n  type AvatarGroupTooltipProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/animate/avatar-group.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

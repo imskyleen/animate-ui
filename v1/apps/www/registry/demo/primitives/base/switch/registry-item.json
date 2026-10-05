@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-switch",
+  "type": "registry:ui",
+  "title": "Base Switch Demo",
+  "description": "Demo showing an animated base switch.",
+  "registryDependencies": ["@animate-ui/v1/primitives-base-switch"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/switch/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/switch.tsx"
+    }
+  ]
+}

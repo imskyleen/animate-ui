@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-animate-tooltip",
+  "title": "Tooltip",
+  "description": "A tooltip is a small box that appears when hovering over an element.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-tooltip"
+  ],
+  "files": [
+    {
+      "path": "registry/components/animate/tooltip/index.tsx",
+      "content": "import * as React from 'react';\nimport * as motion from 'motion/react-client';\n\nimport {\n  TooltipProvider as TooltipProviderPrimitive,\n  Tooltip as TooltipPrimitive,\n  TooltipTrigger as TooltipTriggerPrimitive,\n  TooltipContent as TooltipContentPrimitive,\n  TooltipArrow as TooltipArrowPrimitive,\n  type TooltipProviderProps as TooltipProviderPrimitiveProps,\n  type TooltipProps as TooltipPrimitiveProps,\n  type TooltipTriggerProps as TooltipTriggerPrimitiveProps,\n  type TooltipContentProps as TooltipContentPrimitiveProps,\n} from '@/components/animate-ui/primitives/animate/tooltip';\nimport { cn } from '@/lib/utils';\n\ntype TooltipProviderProps = TooltipProviderPrimitiveProps;\n\nfunction TooltipProvider({ openDelay = 0, ...props }: TooltipProviderProps) {\n  return <TooltipProviderPrimitive openDelay={openDelay} {...props} />;\n}\n\ntype TooltipProps = TooltipPrimitiveProps;\n\nfunction Tooltip({ sideOffset = 10, ...props }: TooltipProps) {\n  return <TooltipPrimitive sideOffset={sideOffset} {...props} />;\n}\n\ntype TooltipTriggerProps = TooltipTriggerPrimitiveProps;\n\nfunction TooltipTrigger({ ...props }: TooltipTriggerProps) {\n  return <TooltipTriggerPrimitive {...props} />;\n}\n\ntype TooltipContentProps = Omit<TooltipContentPrimitiveProps, 'asChild'> & {\n  children: React.ReactNode;\n  layout?: boolean | 'position' | 'size' | 'preserve-aspect';\n};\n\nfunction TooltipContent({\n  className,\n  children,\n  layout = 'preserve-aspect',\n  ...props\n}: TooltipContentProps) {\n  return (\n    <TooltipContentPrimitive\n      className={cn(\n        'z-50 w-fit bg-primary text-primary-foreground rounded-md',\n        className,\n      )}\n      {...props}\n    >\n      <motion.div className=\"overflow-hidden px-3 py-1.5 text-xs text-balance\">\n        <motion.div layout={layout}>{children}</motion.div>\n      </motion.div>\n      <TooltipArrowPrimitive\n        className=\"fill-primary size-3 data-[side='bottom']:translate-y-[1px] data-[side='right']:translate-x-[1px] data-[side='left']:translate-x-[-1px] data-[side='top']:translate-y-[-1px]\"\n        tipRadius={2}\n      />\n    </TooltipContentPrimitive>\n  );\n}\n\nexport {\n  TooltipProvider,\n  Tooltip,\n  TooltipTrigger,\n  TooltipContent,\n  type TooltipProviderProps,\n  type TooltipProps,\n  type TooltipTriggerProps,\n  type TooltipContentProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/animate/tooltip.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

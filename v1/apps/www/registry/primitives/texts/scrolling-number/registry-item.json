@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-scrolling-number",
+  "type": "registry:ui",
+  "title": "Scrolling Number",
+  "description": "A scrolling number animation.",
+  "dependencies": ["motion"],
+  "registryDependencies": [
+    "@animate-ui/v1/hooks-use-is-in-view",
+    "@animate-ui/v1/lib-get-strict-context"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/texts/scrolling-number/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/scrolling-number.tsx"
+    }
+  ]
+}

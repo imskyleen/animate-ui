@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-toggle",
+  "title": "Toggle",
+  "description": "A two-state button that can be on or off.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-base-toggle"
+  ],
+  "files": [
+    {
+      "path": "registry/components/base/toggle/index.tsx",
+      "content": "import * as React from 'react';\nimport { cva, type VariantProps } from 'class-variance-authority';\n\nimport {\n  Toggle as TogglePrimitive,\n  ToggleItem as ToggleItemPrimitive,\n  ToggleHighlight as ToggleHighlightPrimitive,\n  type ToggleProps as TogglePrimitiveProps,\n  type ToggleItemProps as ToggleItemPrimitiveProps,\n} from '@/components/animate-ui/primitives/base/toggle';\nimport { cn } from '@/lib/utils';\n\nconst toggleVariants = cva(\n  \"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium hover:bg-muted/40 hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,background-color,box-shadow] duration-200 ease-in-out aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap\",\n  {\n    variants: {\n      variant: {\n        default: 'bg-transparent',\n        outline:\n          'border border-input bg-transparent shadow-xs hover:bg-accent/40 hover:text-accent-foreground',\n      },\n      size: {\n        default: 'h-9 px-2 min-w-9',\n        sm: 'h-8 px-1.5 min-w-8',\n        lg: 'h-10 px-2.5 min-w-10',\n        icon: 'size-9',\n      },\n    },\n    defaultVariants: {\n      variant: 'default',\n      size: 'default',\n    },\n  },\n);\n\ntype ToggleProps = TogglePrimitiveProps &\n  ToggleItemPrimitiveProps &\n  VariantProps<typeof toggleVariants>;\n\nfunction Toggle({\n  className,\n  variant,\n  size,\n  pressed,\n  defaultPressed,\n  onPressedChange,\n  disabled,\n  ...props\n}: ToggleProps) {\n  return (\n    <TogglePrimitive\n      pressed={pressed}\n      defaultPressed={defaultPressed}\n      onPressedChange={onPressedChange}\n      disabled={disabled}\n      className=\"relative\"\n    >\n      <ToggleHighlightPrimitive className=\"bg-accent rounded-md\" />\n      <ToggleItemPrimitive\n        className={cn(toggleVariants({ variant, size, className }))}\n        {...props}\n      />\n    </TogglePrimitive>\n  );\n}\n\nexport { Toggle, toggleVariants, type ToggleProps };\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/toggle.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

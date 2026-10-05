@@ -1,0 +1,102 @@
+---
+title: Switch
+description: A control that allows the user to toggle between checked and not checked.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-switch" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-switch" />
+
+## Usage
+
+```tsx
+<Switch>
+  <SwitchIcon position="left" />
+  <SwitchIcon position="right" />
+  <SwitchThumb>
+    <SwitchIcon position="thumb" />
+  </SwitchThumb>
+</Switch>
+```
+
+## API Reference
+
+### Switch
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/switch#root"
+  text="Radix UI API Reference - Switch.Root"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the Switch component.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` property is not supported in the `Switch` component, as it is
+  used for animation.
+</Callout>
+
+### SwitchThumb
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/switch#thumb"
+  text="Radix UI API Reference - Switch.Thumb"
+/>
+
+<TypeTable
+  type={{
+    pressedAnimation: {
+      description: 'The animation of the thumb when pressed.',
+      type:
+        'TargetAndTransition' |
+        'VariantLabels' |
+        'boolean' |
+        'LegacyAnimationControls',
+      required: false,
+    },
+    '...props': {
+      description: 'The props of the SwitchThumb component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` property is not supported in the `SwitchThumb` component, as it
+  is used for animation.
+</Callout>
+
+### SwitchIcon
+
+<TypeTable
+  type={{
+    position: {
+      description: 'The position of the icon.',
+      type: 'left' | 'right' | 'thumb',
+      required: true,
+    },
+    '...props': {
+      description: 'The props of the SwitchIcon component.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Switch](https://www.radix-ui.com/primitives/docs/components/switch)

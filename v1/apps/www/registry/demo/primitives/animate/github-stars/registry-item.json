@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-github-stars",
+  "type": "registry:ui",
+  "title": "GitHub Stars Demo",
+  "description": "Demo showing an animated github stars counter.",
+  "registryDependencies": ["@animate-ui/v1/primitives-animate-github-stars"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/github-stars/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/github-stars.tsx"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-circle-heart",
+  "type": "registry:ui",
+  "title": "Message Circle Heart Icon",
+  "description": "Message circle heart icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/message-circle-heart/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-circle-heart.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "positive",
+      "like",
+      "love",
+      "interest",
+      "valentine",
+      "dating",
+      "date",
+      "speech bubble"
+    ]
+  }
+}

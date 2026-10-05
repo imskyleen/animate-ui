@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-buttons-button",
+  "title": "Button Demo",
+  "description": "Demo showing a button.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-buttons-button"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/buttons/button/index.tsx",
+      "content": "import { Button } from '@/components/animate-ui/primitives/buttons/button';\n\ninterface ButtonDemoProps {\n  hoverScale: number;\n  tapScale: number;\n}\n\nexport default function ButtonDemo({ hoverScale, tapScale }: ButtonDemoProps) {\n  return (\n    <Button\n      key={`${hoverScale}-${tapScale}`}\n      hoverScale={hoverScale}\n      tapScale={tapScale}\n      className=\"bg-primary text-primary-foreground text-sm font-medium px-4 py-2 h-10\"\n    >\n      Button\n    </Button>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/buttons/button.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "Button": {
+        "hoverScale": {
+          "value": 1.05,
+          "min": 0,
+          "max": 2,
+          "step": 0.05
+        },
+        "tapScale": {
+          "value": 0.95,
+          "min": 0,
+          "max": 2,
+          "step": 0.05
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

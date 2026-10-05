@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-animate-code",
+  "title": "Code",
+  "description": "A code component that animates the code as it is written.",
+  "dependencies": [
+    "next-themes"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-code-block",
+    "@animate-ui/v1/components-buttons-copy",
+    "@animate-ui/v1/lib-get-strict-context"
+  ],
+  "files": [
+    {
+      "path": "registry/components/animate/code/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { useTheme } from 'next-themes';\n\nimport {\n  CodeBlock as CodeBlockPrimitive,\n  type CodeBlockProps as CodeBlockPropsPrimitive,\n} from '@/components/animate-ui/primitives/animate/code-block';\nimport { cn } from '@/lib/utils';\nimport { CopyButton } from '@/components/animate-ui/components/buttons/copy';\nimport { getStrictContext } from '@/lib/get-strict-context';\n\ntype CodeContextType = {\n  code: string;\n};\n\nconst [CodeProvider, useCode] =\n  getStrictContext<CodeContextType>('CodeContext');\n\ntype CodeProps = React.ComponentProps<'div'> & {\n  code: string;\n};\n\nfunction Code({ className, code, ...props }: CodeProps) {\n  return (\n    <CodeProvider value={{ code }}>\n      <div\n        className={cn(\n          'relative flex flex-col overflow-hidden border bg-accent/50 rounded-lg',\n          className,\n        )}\n        {...props}\n      />\n    </CodeProvider>\n  );\n}\n\ntype CodeHeaderProps = React.ComponentProps<'div'> & {\n  icon?: React.ElementType;\n  copyButton?: boolean;\n};\n\nfunction CodeHeader({\n  className,\n  children,\n  icon: Icon,\n  copyButton = false,\n  ...props\n}: CodeHeaderProps) {\n  const { code } = useCode();\n\n  return (\n    <div\n      className={cn(\n        'bg-accent shrink-0 gap-x-2 border-b border-border/75 dark:border-border/50 text-sm flex text-muted-foreground items-center px-4 w-full h-10',\n        className,\n      )}\n      {...props}\n    >\n      {Icon && <Icon className=\"size-4\" />}\n      {children}\n      {copyButton && (\n        <CopyButton\n          content={code}\n          size=\"xs\"\n          variant=\"ghost\"\n          className=\"ml-auto w-auto h-auto p-2 -mr-2\"\n        />\n      )}\n    </div>\n  );\n}\n\ntype CodeBlockProps = Omit<CodeBlockPropsPrimitive, 'code'> & {\n  cursor?: boolean;\n};\n\nfunction CodeBlock({ cursor, className, ...props }: CodeBlockProps) {\n  const { resolvedTheme } = useTheme();\n  const { code } = useCode();\n  const scrollRef = React.useRef<HTMLDivElement>(null);\n\n  return (\n    <CodeBlockPrimitive\n      ref={scrollRef}\n      theme={resolvedTheme === 'dark' ? 'dark' : 'light'}\n      scrollContainerRef={scrollRef}\n      className={cn(\n        'relative text-sm p-4 overflow-auto',\n        '[&>pre,_&_code]:!bg-transparent [&>pre,_&_code]:[background:transparent_!important] [&>pre,_&_code]:border-none [&_code]:!text-[13px] [&_code_.line]:!px-0',\n        cursor &&\n          \"data-[done=false]:[&_.line:last-of-type::after]:content-['|'] data-[done=false]:[&_.line:last-of-type::after]:inline-block data-[done=false]:[&_.line:last-of-type::after]:w-[1ch] data-[done=false]:[&_.line:last-of-type::after]:-translate-px\",\n        className,\n      )}\n      code={code}\n      {...props}\n    />\n  );\n}\n\nexport {\n  Code,\n  CodeHeader,\n  CodeBlock,\n  type CodeProps,\n  type CodeHeaderProps,\n  type CodeBlockProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/animate/code.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

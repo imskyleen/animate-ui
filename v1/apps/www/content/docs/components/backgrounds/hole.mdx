@@ -1,0 +1,61 @@
+---
+title: Hole Background
+description: A background component featuring an animated hole grid.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-components-backgrounds-hole" />
+
+## Installation
+
+<ComponentInstallation name="components-backgrounds-hole" />
+
+## Usage
+
+```tsx
+<HoleBackground />
+```
+
+## API Reference
+
+### HoleBackground
+
+<TypeTable
+  type={{
+    strokeColor: {
+      description: 'The color of the hole lines.',
+      type: 'string',
+      required: false,
+      default: '#737373',
+    },
+    numberOfLines: {
+      description: 'The number of lines in the hole.',
+      type: 'number',
+      required: false,
+      default: 50,
+    },
+    numberOfDiscs: {
+      description: 'The number of discs in the hole.',
+      type: 'number',
+      required: false,
+      default: 50,
+    },
+    particleRGBColor: {
+      description: 'The RGB color of the particles in the hole.',
+      type: '[number, number, number]',
+      required: false,
+      default: '[255, 255, 255]',
+    },
+    '...props': {
+      description: 'The props of the GradientBackground.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Antoine Wodniack](https://codepen.io/wodniack/pen/VYwGEGg) for the inspiration

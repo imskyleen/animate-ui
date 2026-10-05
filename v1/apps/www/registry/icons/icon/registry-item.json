@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-icon",
+  "type": "registry:ui",
+  "title": "Icon",
+  "description": "Base component to use animated icons.",
+  "dependencies": ["motion"],
+  "registryDependencies": [
+    "@animate-ui/v1/hooks-use-is-in-view",
+    "@animate-ui/v1/primitives-animate-slot"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/icon/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/icon.tsx"
+    }
+  ]
+}

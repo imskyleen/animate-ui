@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-lock-keyhole-open",
+  "type": "registry:ui",
+  "title": "Lock Keyhole Open Icon",
+  "description": "Lock keyhole open icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/lock-keyhole-open/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/lock-keyhole-open.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["security"]
+  }
+}

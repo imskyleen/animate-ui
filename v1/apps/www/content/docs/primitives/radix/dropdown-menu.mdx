@@ -1,0 +1,387 @@
+---
+title: Dropdown Menu
+description: Displays a menu to the user — such as a set of actions or functions — triggered by a button.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-dropdown-menu" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-dropdown-menu" />
+
+## Usage
+
+### With Highlight
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+
+  <DropdownMenuContent>
+    <DropdownMenuHighlight>
+      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+
+      <DropdownMenuSeparator />
+
+      <DropdownMenuGroup>
+        <DropdownMenuHighlightItem>
+          <DropdownMenuItem>
+            <span>Profile</span>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuHighlightItem>
+        <DropdownMenuHighlightItem>
+          <DropdownMenuItem>
+            <span>Billing</span>
+            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuHighlightItem>
+        <DropdownMenuHighlightItem>
+          <DropdownMenuItem>
+            <span>Settings</span>
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuHighlightItem>
+        <DropdownMenuHighlightItem>
+          <DropdownMenuItem>
+            <span>Keyboard shortcuts</span>
+            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuHighlightItem>
+      </DropdownMenuGroup>
+
+      <DropdownMenuSeparator />
+
+      <DropdownMenuGroup>
+        <DropdownMenuHighlightItem>
+          <DropdownMenuItem>
+            <span>Team</span>
+          </DropdownMenuItem>
+        </DropdownMenuHighlightItem>
+
+        <DropdownMenuSub>
+          <DropdownMenuHighlightItem>
+            <DropdownMenuSubTrigger>
+              <span>Invite users</span>
+              <ChevronRight />
+            </DropdownMenuSubTrigger>
+          </DropdownMenuHighlightItem>
+
+          <DropdownMenuSubContent>
+            <DropdownMenuHighlightItem>
+              <DropdownMenuItem>
+                <span>Email</span>
+              </DropdownMenuItem>
+            </DropdownMenuHighlightItem>
+            <DropdownMenuHighlightItem>
+              <DropdownMenuItem>
+                <span>Message</span>
+              </DropdownMenuItem>
+            </DropdownMenuHighlightItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuHighlightItem>
+              <DropdownMenuItem>
+                <span>More...</span>
+              </DropdownMenuItem>
+            </DropdownMenuHighlightItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuHighlightItem>
+          <DropdownMenuItem>
+            <span>New Team</span>
+            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuHighlightItem>
+      </DropdownMenuGroup>
+
+      <DropdownMenuSeparator />
+
+      <DropdownMenuHighlightItem>
+        <DropdownMenuItem>
+          <span>Log out</span>
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuHighlightItem>
+    </DropdownMenuHighlight>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+### Without Highlight
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+
+  <DropdownMenuContent>
+    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+
+    <DropdownMenuSeparator />
+
+    <DropdownMenuGroup>
+      <DropdownMenuItem>
+        <span>Profile</span>
+        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <span>Billing</span>
+        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <span>Settings</span>
+        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <span>Keyboard shortcuts</span>
+        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+
+    <DropdownMenuSeparator />
+
+    <DropdownMenuGroup>
+      <DropdownMenuItem>
+        <span>Team</span>
+      </DropdownMenuItem>
+
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <span>Invite users</span>
+          <ChevronRight />
+        </DropdownMenuSubTrigger>
+
+        <DropdownMenuSubContent>
+          <DropdownMenuItem>
+            <span>Email</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <span>Message</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <span>More...</span>
+          </DropdownMenuItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+
+      <DropdownMenuItem>
+        <span>New Team</span>
+        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+
+    <DropdownMenuSeparator />
+
+    <DropdownMenuItem>
+      <span>Log out</span>
+      <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+## API Reference
+
+### DropdownMenu
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#root"
+  text="Radix UI API Reference - DropdownMenu.Root"
+/>
+
+### DropdownMenuTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#trigger"
+  text="Radix UI API Reference - DropdownMenu.Trigger"
+/>
+
+### DropdownMenuPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#portal"
+  text="Radix UI API Reference - DropdownMenu.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `DropdownMenuPortal`
+  component, as it is used for animation.
+</Callout>
+
+### DropdownMenuContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#content"
+  text="Radix UI API Reference - DropdownMenu.Content"
+/>
+
+<TypeTable
+  type={{
+    container: {
+      description: 'Specify a container element to portal the content into.',
+      type: 'HTMLElement',
+      required: false,
+      default: 'document.body',
+    },
+    transition: {
+      description: 'The transition of the dropdown menu content',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.2 }',
+    },
+    '...props': {
+      description: 'The props of the dropdown menu content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `forceMount` and `asChild` properties are not supported in the
+  `DropdownMenuContent` component, as it is used for animation.
+</Callout>
+
+### DropdownMenuHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the dropdown menu highlight',
+      type: 'Transition',
+      required: false,
+      default: '{ type: "spring", stiffness: 350, damping: 35 }',
+    },
+  }}
+/>
+
+### DropdownMenuLabel
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#label"
+  text="Radix UI API Reference - DropdownMenu.Label"
+/>
+
+### DropdownMenuSeparator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#separator"
+  text="Radix UI API Reference - DropdownMenu.Separator"
+/>
+
+### DropdownMenuGroup
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#group"
+  text="Radix UI API Reference - DropdownMenu.Group"
+/>
+
+### DropdownMenuItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#item"
+  text="Radix UI API Reference - DropdownMenu.Item"
+/>
+
+### DropdownMenuItemIndicator
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#itemindicator"
+  text="Radix UI API Reference - DropdownMenu.ItemIndicator"
+/>
+
+### DropdownMenuHighlightItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+### DropdownMenuCheckboxItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#checkboxitem"
+  text="Radix UI API Reference - DropdownMenu.CheckboxItem"
+/>
+
+### DropdownMenuRadioGroup
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#radiogroup"
+  text="Radix UI API Reference - DropdownMenu.RadioGroup"
+/>
+
+### DropdownMenuRadioItem
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#radioitem"
+  text="Radix UI API Reference - DropdownMenu.RadioItem"
+/>
+
+### DropdownMenuShortcut
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dropdown menu shortcut.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+### DropdownMenuSub
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#sub"
+  text="Radix UI API Reference - DropdownMenu.Sub"
+/>
+
+### DropdownMenuSubTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#subtrigger"
+  text="Radix UI API Reference - DropdownMenu.SubTrigger"
+/>
+
+### DropdownMenuSubContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu#subcontent"
+  text="Radix UI API Reference - DropdownMenu.SubContent"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the dropdown menu',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.2 }',
+    },
+    '...props': {
+      description: 'The props of the dropdown menu sub content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `forceMount` and `asChild` properties are not supported in the
+  `DropdownMenuSubContent` component, as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Radix UI Dropdown Menu](https://www.radix-ui.com/primitives/docs/components/dropdown-menu)

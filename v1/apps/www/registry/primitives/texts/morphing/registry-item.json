@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-texts-morphing",
+  "type": "registry:ui",
+  "title": "Morphing Text",
+  "description": "A text component that smoothly morphs characters to transition between strings.",
+  "dependencies": ["motion"],
+  "registryDependencies": ["@animate-ui/v1/hooks-use-is-in-view"],
+  "files": [
+    {
+      "path": "registry/primitives/texts/morphing/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/texts/morphing.tsx"
+    }
+  ]
+}

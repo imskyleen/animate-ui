@@ -1,0 +1,93 @@
+---
+title: Radio
+description: An easily stylable radio button component.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-26
+---
+
+<ComponentPreview name="demo-primitives-base-radio" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-radio" />
+
+## Usage
+
+```tsx
+<RadioGroup>
+  <Radio value="1">
+    <RadioIndicator />
+  </Radio>
+  <Radio value="2">
+    <RadioIndicator />
+  </Radio>
+  <Radio value="3">
+    <RadioIndicator />
+  </Radio>
+</RadioGroup>
+```
+
+## API Reference
+
+### RadioGroup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/radio#radiogroup"
+  text="Base UI API Reference - RadioGroup"
+/>
+
+### Radio
+
+<ExternalLink
+  href="https://base-ui.com/react/components/radio#root"
+  text="Base UI API Reference - Radio.Root"
+/>
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the radio.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `Radio` component, as it is used
+  for animation.
+</Callout>
+
+### RadioIndicator
+
+<ExternalLink
+  href="https://base-ui.com/react/components/radio#indicator"
+  text="Base UI API Reference - Radio.Indicator"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the radio indicator.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 200, damping: 16 }",
+    },
+    '...props': {
+      description: 'The props of the radio indicator.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `keepMounted` and `render` properties are not supported in the
+  `RadioIndicator` component, as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Base UI Radio](https://base-ui.com/react/components/radio)

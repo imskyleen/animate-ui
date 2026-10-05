@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-buttons-github-stars",
+  "type": "registry:ui",
+  "title": "GitHub Stars Button Demo",
+  "description": "Demo showing a GitHub stars button.",
+  "registryDependencies": ["@animate-ui/v1/components-buttons-github-stars"],
+  "files": [
+    {
+      "path": "registry/demo/components/buttons/github-stars/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/buttons/github-stars.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "GitHubStarsButton": {
+        "variant": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "accent": "accent",
+            "outline": "outline",
+            "ghost": "ghost"
+          }
+        },
+        "size": {
+          "value": "default",
+          "options": {
+            "default": "default",
+            "sm": "sm",
+            "lg": "lg"
+          }
+        }
+      }
+    }
+  }
+}

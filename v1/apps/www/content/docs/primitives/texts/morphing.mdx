@@ -1,0 +1,109 @@
+---
+title: Morphing Text
+description: A text component that smoothly morphs characters to transition between strings.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-14
+---
+
+<ComponentPreview name="demo-primitives-texts-morphing" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-morphing" />
+
+## Usage
+
+```tsx
+<MorphingText text="Morphing Text" />
+```
+
+<Callout type="info">
+  This component will cut words because it splits letters. We recommend avoiding
+  sentences that are likely to wrap.
+</Callout>
+
+## API Reference
+
+### MorphingText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string | string[]',
+      required: true,
+    },
+    initial: {
+      description: 'The initial state of the text.',
+      type: 'TargetAndTransition | VariantLabels | boolean',
+      required: false,
+      default: '{ opacity: 0, scale: 0.8, filter: "blur(10px)" }',
+    },
+    animate: {
+      description: 'The animate state of the text.',
+      type: 'TargetAndTransition | VariantLabels | boolean',
+      required: false,
+      default: '{ opacity: 1, scale: 1, filter: "blur(0px)" }',
+    },
+    exit: {
+      description: 'The exit state of the text.',
+      type: 'TargetAndTransition | VariantLabels | boolean',
+      required: false,
+      default: '{ opacity: 0, scale: 0.8, filter: "blur(10px)" }',
+    },
+    transition: {
+      description: 'The transition of the text.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 125, damping: 25, mass: 0.4 }",
+    },
+    loop: {
+      description:
+        'Whether the text should loop. Only used if text is a string.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    holdDelay: {
+      description:
+        'The delay to use between each text. Only used if text is an array.',
+      type: 'number',
+      required: false,
+      default: '2500',
+    },
+    delay: {
+      description: 'The delay to use. Only used if text is a string.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    inView: {
+      description:
+        'Whether the text is in view. Only used if text is a string.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewMargin: {
+      description:
+        'The margin to use when the text is in view. Only used if text is a string.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    inViewOnce: {
+      description:
+        'Whether the text should only animate once. Only used if text is a string.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    '...props': {
+      description: 'The props of the morphing text.',
+      type: 'HTMLMotionProps<"span">',
+      required: false,
+    },
+  }}
+/>

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-clock-9",
+  "type": "registry:ui",
+  "title": "Clock 9 Icon",
+  "description": "Clock 9 icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/clock-9/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/clock-9.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["clock", "time", "watch", "alarm", "timer"]
+  }
+}

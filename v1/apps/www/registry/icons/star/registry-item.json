@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-star",
+  "type": "registry:ui",
+  "title": "Star Icon",
+  "description": "Star icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/star/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/star.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["bookmark", "favorite", "like", "review", "rating"]
+  }
+}

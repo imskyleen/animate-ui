@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-radix-tabs",
+  "title": "Radix Tabs Demo",
+  "description": "Demo showing an animated radix tabs.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-radix-tabs"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/radix/tabs/index.tsx",
+      "content": "import {\n  Tabs,\n  TabsContent,\n  TabsContents,\n  TabsHighlight,\n  TabsHighlightItem,\n  TabsList,\n  TabsTrigger,\n  type TabsContentsProps,\n} from '@/components/animate-ui/primitives/radix/tabs';\n\ninterface RadixTabsDemoProps {\n  mode: TabsContentsProps['mode'];\n}\n\nexport function RadixTabsDemo({ mode }: RadixTabsDemoProps) {\n  return (\n    <Tabs defaultValue=\"account\" className=\"w-[400px]\">\n      <TabsHighlight className=\"bg-background absolute z-0 inset-0\">\n        <TabsList className=\"h-10 inline-flex p-1 bg-accent w-full\">\n          <TabsHighlightItem value=\"account\" className=\"flex-1\">\n            <TabsTrigger\n              value=\"account\"\n              className=\"h-full px-4 py-2 leading-0 w-full text-sm\"\n            >\n              Account\n            </TabsTrigger>\n          </TabsHighlightItem>\n          <TabsHighlightItem value=\"password\" className=\"flex-1\">\n            <TabsTrigger\n              value=\"password\"\n              className=\"h-full px-4 py-2 leading-0 w-full text-sm\"\n            >\n              Password\n            </TabsTrigger>\n          </TabsHighlightItem>\n        </TabsList>\n      </TabsHighlight>\n      {/* @ts-expect-error - typescript does not handle this well */}\n      <TabsContents\n        mode={mode}\n        className=\"bg-background p-3 border-4 border-accent border-t-0\"\n      >\n        <TabsContent value=\"account\" className=\"space-y-4\">\n          <p className=\"text-sm text-muted-foreground\">\n            Make changes to your account here. Click save when you&apos;re done.\n          </p>\n\n          <div className=\"space-y-3\">\n            <div className=\"space-y-1 flex flex-col\">\n              <label htmlFor=\"name\" className=\"text-sm\">\n                Name\n              </label>\n              <input\n                id=\"name\"\n                defaultValue=\"Pedro Duarte\"\n                className=\"border px-3 py-1.5 text-sm\"\n              />\n            </div>\n            <div className=\"space-y-1 flex flex-col\">\n              <label htmlFor=\"username\" className=\"text-sm\">\n                Username\n              </label>\n              <input\n                id=\"username\"\n                defaultValue=\"@peduarte\"\n                className=\"border px-3 py-1.5 text-sm\"\n              />\n            </div>\n          </div>\n\n          <button className=\"bg-primary text-primary-foreground px-3 py-1.5 text-sm\">\n            Save changes\n          </button>\n        </TabsContent>\n        <TabsContent value=\"password\" className=\"space-y-4\">\n          <p className=\"text-sm text-muted-foreground\">\n            Change your password here. After saving, you&apos;ll be logged out.\n          </p>\n          <div className=\"space-y-3\">\n            <div className=\"space-y-1 flex flex-col\">\n              <label htmlFor=\"current\" className=\"text-sm\">\n                Current password\n              </label>\n              <input\n                id=\"current\"\n                type=\"password\"\n                className=\"border px-3 py-1.5 text-sm\"\n              />\n            </div>\n            <div className=\"space-y-1 flex flex-col\">\n              <label htmlFor=\"new\" className=\"text-sm\">\n                New password\n              </label>\n              <input\n                id=\"new\"\n                type=\"password\"\n                className=\"border px-3 py-1.5 text-sm\"\n              />\n            </div>\n            <div className=\"space-y-1 flex flex-col\">\n              <label htmlFor=\"confirm\" className=\"text-sm\">\n                Confirm password\n              </label>\n              <input\n                id=\"confirm\"\n                type=\"password\"\n                className=\"border px-3 py-1.5 text-sm\"\n              />\n            </div>\n          </div>\n\n          <button className=\"bg-primary text-primary-foreground px-3 py-1.5 text-sm\">\n            Save password\n          </button>\n        </TabsContent>\n      </TabsContents>\n    </Tabs>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/radix/tabs.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "TabsPanels": {
+        "mode": {
+          "value": "auto-height",
+          "options": {
+            "auto-height": "auto-height",
+            "layout": "layout"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

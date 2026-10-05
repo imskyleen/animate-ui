@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-avatar-group",
+  "title": "Animate Avatar Group Demo",
+  "description": "Demo showing an animated avatar group.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-avatar-group"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/avatar-group/index.tsx",
+      "content": "import {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/ui/avatar';\nimport {\n  AvatarGroup,\n  AvatarGroupTooltip,\n  AvatarGroupTooltipArrow,\n} from '@/components/animate-ui/primitives/animate/avatar-group';\nimport { motion } from 'motion/react';\n\nconst AVATARS = [\n  {\n    src: 'https://pbs.twimg.com/profile_images/1948770261848756224/oPwqXMD6_400x400.jpg',\n    fallback: 'SK',\n    tooltip: 'Skyleen',\n  },\n  {\n    src: 'https://pbs.twimg.com/profile_images/1593304942210478080/TUYae5z7_400x400.jpg',\n    fallback: 'CN',\n    tooltip: 'Shadcn',\n  },\n  {\n    src: 'https://pbs.twimg.com/profile_images/1677042510839857154/Kq4tpySA_400x400.jpg',\n    fallback: 'AW',\n    tooltip: 'Adam Wathan',\n  },\n  {\n    src: 'https://pbs.twimg.com/profile_images/1783856060249595904/8TfcCN0r_400x400.jpg',\n    fallback: 'GR',\n    tooltip: 'Guillermo Rauch',\n  },\n  {\n    src: 'https://pbs.twimg.com/profile_images/1534700564810018816/anAuSfkp_400x400.jpg',\n    fallback: 'JH',\n    tooltip: 'Jhey',\n  },\n  {\n    src: 'https://pbs.twimg.com/profile_images/1927474594102784000/Al0g-I6o_400x400.jpg',\n    fallback: 'DH',\n    tooltip: 'David Haz',\n  },\n];\n\nexport const AvatarGroupDemo = () => {\n  return (\n    <AvatarGroup className=\"h-12 -space-x-3\" invertOverlap>\n      {AVATARS.map((avatar, index) => (\n        <Avatar key={index} className=\"size-12 border-3 border-background\">\n          <AvatarImage src={avatar.src} />\n          <AvatarFallback>{avatar.fallback}</AvatarFallback>\n          <AvatarGroupTooltip className=\"bg-primary px-3 py-1.5 text-sm text-primary-foreground\">\n            <AvatarGroupTooltipArrow className=\"fill-primary size-2.5\" />\n            <motion.p layout=\"preserve-aspect\">{avatar.tooltip}</motion.p>\n          </AvatarGroupTooltip>\n        </Avatar>\n      ))}\n    </AvatarGroup>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/avatar-group.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

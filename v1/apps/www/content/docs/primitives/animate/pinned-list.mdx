@@ -1,0 +1,199 @@
+---
+title: Pinned List
+description: A pin list component that allows you to pin items to the top of the list.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-pinned-list" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-pinned-list" />
+
+## Usage
+
+```tsx
+<PinnedList>
+  <PinnedListPinned>
+    <PinnedListLabel>Pinned</PinnedListLabel>
+
+    <PinnedListItems>
+      <PinnedListItem />
+      <PinnedListItem customTrigger>
+        <PinnedListItemTrigger />
+      </PinnedListItem>
+    </PinnedListItems>
+  </PinnedListPinned>
+
+  <PinnedListUnpinned>
+    <PinnedListLabel>Unpinned</PinnedListLabel>
+
+    <PinnedListItems>
+      <PinnedListItem />
+      <PinnedListItem customTrigger>
+        <PinnedListItemTrigger />
+      </PinnedListItem>
+    </PinnedListItems>
+  </PinnedListUnpinned>
+</PinnedList>
+```
+
+## API Reference
+
+### PinnedList
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the PinnedList.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    onPinnedChange: {
+      description:
+        'The callback function to be called when a pinned item is changed.',
+      type: '(id: string) => void',
+      required: false,
+    },
+    '...props': {
+      description: 'The props of the PinnedList.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### PinnedListPinned
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the PinnedListPinned.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### PinnedListUnpinned
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the PinnedListUnpinned.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### PinnedListLabel
+
+<TypeTable
+  type={{
+    hide: {
+      description: 'Whether to hide the label.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    transition: {
+      description: 'The transition of the PinnedListLabel.',
+      type: 'Transition',
+      required: false,
+      default: '{ duration: 0.22, ease: "easeInOut" }',
+    },
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the PinnedListLabel.',
+      type: 'HTMLMotionProps<"p">',
+      required: false,
+    },
+  }}
+/>
+
+### PinnedListItems
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the PinnedListItems.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### PinnedListItem
+
+<TypeTable
+  type={{
+    id: {
+      description: 'The id of the PinnedListItem.',
+      type: 'string',
+      required: true,
+    },
+    children: {
+      description: 'The children of the PinnedListItem.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    customTrigger: {
+      description:
+        'Whether to use a custom trigger with the PinnedListItemTrigger component.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    transition: {
+      description: 'The transition of the PinnedListItem.',
+      type: 'Transition',
+      required: false,
+      default: '{ stiffness: 320, damping: 25, mass: 0.8, type: "spring" }',
+    },
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the PinnedListItem.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### PinnedListItemTrigger
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the PinnedListItemTrigger.',
+      type: 'HTMLMotionProps<"button">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- Based on [@arhamkhnz](https://github.com/arhamkhnz)'s [Pin List](https://animate-ui.com/docs/components/community/pin-list) component.

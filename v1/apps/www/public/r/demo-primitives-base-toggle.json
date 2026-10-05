@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-base-toggle",
+  "title": "Base Toggle Demo",
+  "description": "Demo showing an animated base toggle.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-base-toggle"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/base/toggle/index.tsx",
+      "content": "import {\n  Toggle,\n  ToggleHighlight,\n  ToggleItem,\n} from '@/components/animate-ui/primitives/base/toggle';\nimport { Bold } from 'lucide-react';\n\nexport const BaseToggleDemo = () => {\n  return (\n    <Toggle className=\"relative size-8 flex items-center justify-center\">\n      <ToggleHighlight className=\"bg-accent\" />\n      <ToggleItem>\n        <Bold className=\"h-4 w-4\" />\n      </ToggleItem>\n    </Toggle>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/base/toggle.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

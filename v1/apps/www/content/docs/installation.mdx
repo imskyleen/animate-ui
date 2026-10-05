@@ -1,0 +1,66 @@
+---
+title: Installation
+description: How to install dependencies and structure your app.
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { CodeTabs } from '@/components/docs/code-tabs';
+
+<Callout>
+  **Note:** We use installation process as
+  [shadcn/ui](https://ui.shadcn.com/docs/installation).
+</Callout>
+
+<Steps>
+<Step>
+
+### Initialize shadcn/ui
+
+Run the `init` command to create a new project with shadcn/ui or setup an existing one.
+
+<CodeTabs
+  codes={{
+    pnpm: `pnpm dlx shadcn@latest init`,
+    npm: `npx shadcn@latest init`,
+    yarn: `yarn shadcn@latest init`,
+    bun: `bunx --bun shadcn@latest init`,
+  }}
+/>
+
+</Step>
+<Step>
+
+### Add Components
+
+Run the `add` command to add a component to your project.
+
+<CodeTabs
+  codes={{
+    pnpm: `pnpm dlx shadcn@latest add @animate-ui/v1/primitives-texts-sliding-number`,
+    npm: `npx shadcn@latest add @animate-ui/v1/primitives-texts-sliding-number`,
+    yarn: `npx shadcn@latest add @animate-ui/v1/primitives-texts-sliding-number`,
+    bun: `bunx --bun shadcn@latest add @animate-ui/v1/primitives-texts-sliding-number`,
+  }}
+/>
+
+</Step>
+<Step>
+
+### Import Components
+
+Import the component to your project.
+
+```tsx
+import { SlidingNumber } from '@/components/animate-ui/primitives/texts/sliding-number';
+
+export default function Home() {
+  return (
+    <div>
+      <SlidingNumber />
+    </div>
+  );
+}
+```
+
+</Step>
+</Steps>

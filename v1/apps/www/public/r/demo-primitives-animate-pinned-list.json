@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-pinned-list",
+  "title": "Animate Pinned List Demo",
+  "description": "Demo showing an animated pinned list.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-pinned-list"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/pinned-list/index.tsx",
+      "content": "import {\n  PinnedList,\n  PinnedListItem,\n  PinnedListItems,\n  PinnedListLabel,\n  PinnedListPinned,\n  PinnedListTrigger,\n  PinnedListUnpinned,\n} from '@/components/animate-ui/primitives/animate/pinned-list';\nimport { Pin } from 'lucide-react';\nimport { useState } from 'react';\n\nconst ITEMS = [\n  { id: '1', name: 'Item 1' },\n  { id: '2', name: 'Item 2', pinned: true },\n  { id: '3', name: 'Item 3', pinned: true },\n  { id: '4', name: 'Item 4' },\n];\n\nexport const PinnedListDemo = () => {\n  const [items, setItems] = useState(ITEMS);\n\n  const pinned = items.filter((item) => item.pinned);\n  const unpinned = items.filter((item) => !item.pinned);\n\n  const toggleStatus = (id: string) => {\n    setItems((prev) => {\n      const item = prev.find((item) => item.id === id);\n      if (!item) return prev;\n      return prev.map((item) => ({\n        ...item,\n        pinned: item.id === id ? !item.pinned : item.pinned,\n      }));\n    });\n  };\n\n  return (\n    <PinnedList className=\"space-y-6 w-[200px]\" onPinnedChange={toggleStatus}>\n      <PinnedListPinned>\n        <PinnedListLabel className=\"mb-2\" hide={pinned.length === 0}>\n          Pinned\n        </PinnedListLabel>\n        <PinnedListItems className=\"space-y-2\">\n          {pinned.map((item) => (\n            <PinnedListItem\n              key={item.id}\n              id={item.id}\n              className=\"h-12 px-4 bg-accent select-none flex items-center justify-between\"\n              customTrigger\n            >\n              {item.name}\n\n              <PinnedListTrigger className=\"h-9 -mr-2.5 aspect-square bg-background flex items-center justify-center\">\n                <Pin\n                  size={16}\n                  className=\"text-muted-foreground fill-muted-foreground\"\n                />\n              </PinnedListTrigger>\n            </PinnedListItem>\n          ))}\n        </PinnedListItems>\n      </PinnedListPinned>\n\n      <PinnedListUnpinned>\n        <PinnedListLabel className=\"mb-2\" hide={unpinned.length === 0}>\n          Unpinned\n        </PinnedListLabel>\n        <PinnedListItems className=\"space-y-2\">\n          {unpinned.map((item) => (\n            <PinnedListItem\n              key={item.id}\n              id={item.id}\n              className=\"h-12 px-4 bg-accent select-none flex items-center justify-between\"\n              customTrigger\n            >\n              {item.name}\n\n              <PinnedListTrigger className=\"h-9 -mr-2.5 aspect-square bg-background flex items-center justify-center\">\n                <Pin size={16} className=\"text-muted-foreground\" />\n              </PinnedListTrigger>\n            </PinnedListItem>\n          ))}\n        </PinnedListItems>\n      </PinnedListUnpinned>\n    </PinnedList>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/pinned-list.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

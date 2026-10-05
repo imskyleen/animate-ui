@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hooks-use-data-state",
+  "title": "useDataState",
+  "description": "A hook that allows you to get the data-state of an element.",
+  "files": [
+    {
+      "path": "registry/hooks/use-data-state/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\n\ntype DataStateValue = string | boolean | null;\n\nfunction parseDatasetValue(value: string | null): DataStateValue {\n  if (value === null) return null;\n  if (value === '' || value === 'true') return true;\n  if (value === 'false') return false;\n  return value;\n}\n\nfunction useDataState<T extends HTMLElement = HTMLElement>(\n  key: string,\n  forwardedRef?: React.Ref<T | null>,\n  onChange?: (value: DataStateValue) => void,\n): [DataStateValue, React.RefObject<T | null>] {\n  const localRef = React.useRef<T | null>(null);\n  React.useImperativeHandle(forwardedRef, () => localRef.current as T);\n\n  const getSnapshot = (): DataStateValue => {\n    const el = localRef.current;\n    return el ? parseDatasetValue(el.getAttribute(`data-${key}`)) : null;\n  };\n\n  const subscribe = (callback: () => void) => {\n    const el = localRef.current;\n    if (!el) return () => {};\n    const observer = new MutationObserver((records) => {\n      for (const record of records) {\n        if (record.attributeName === `data-${key}`) {\n          callback();\n          break;\n        }\n      }\n    });\n    observer.observe(el, {\n      attributes: true,\n      attributeFilter: [`data-${key}`],\n    });\n    return () => observer.disconnect();\n  };\n\n  const value = React.useSyncExternalStore(subscribe, getSnapshot);\n\n  React.useEffect(() => {\n    if (onChange) onChange(value);\n  }, [value, onChange]);\n\n  return [value, localRef];\n}\n\nexport { useDataState, type DataStateValue };\n",
+      "type": "registry:hook",
+      "target": "hooks/use-data-state.tsx"
+    }
+  ],
+  "type": "registry:hook"
+}

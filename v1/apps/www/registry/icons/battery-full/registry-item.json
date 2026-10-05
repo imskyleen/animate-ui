@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-battery-full",
+  "type": "registry:ui",
+  "title": "Battery Full Icon",
+  "description": "Battery Full icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/battery-full/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/battery-full.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["power", "electricity", "energy", "accumulator", "charge"]
+  }
+}

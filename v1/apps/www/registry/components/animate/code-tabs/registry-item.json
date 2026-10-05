@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-animate-code-tabs",
+  "type": "registry:ui",
+  "title": "Code Tabs",
+  "description": "A tabs component that displays code for different languages.",
+  "dependencies": ["shiki"],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-tabs",
+    "@animate-ui/v1/components-buttons-copy"
+  ],
+  "files": [
+    {
+      "path": "registry/components/animate/code-tabs/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/animate/code-tabs.tsx"
+    }
+  ]
+}

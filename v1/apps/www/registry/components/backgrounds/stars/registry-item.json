@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-backgrounds-stars",
+  "type": "registry:ui",
+  "title": "Stars Background",
+  "description": "An interactive background featuring animated dots of varying sizes and speeds, simulating a dynamic and immersive starry space effect.",
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/components/backgrounds/stars/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/backgrounds/stars.tsx"
+    }
+  ]
+}

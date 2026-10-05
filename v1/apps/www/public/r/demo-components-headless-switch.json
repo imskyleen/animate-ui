@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-headless-switch",
+  "title": "Headless Switch Demo",
+  "description": "Demo showing a headless switch.",
+  "registryDependencies": [
+    "@animate-ui/v1/components-headless-switch"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/components/headless/switch/index.tsx",
+      "content": "import { Label } from '@/components/ui/label';\nimport { Switch } from '@/components/animate-ui/components/headless/switch';\n\nexport function HeadlessSwitchDemo() {\n  return (\n    <Label className=\"flex items-center gap-x-3\">\n      <Switch />\n      Airplane Mode\n    </Label>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/headless/switch.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

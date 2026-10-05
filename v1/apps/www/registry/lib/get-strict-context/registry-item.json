@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "lib-get-strict-context",
+  "type": "registry:lib",
+  "title": "getStrictContext",
+  "description": "A hook that allows you to create a strict context.",
+  "files": [
+    {
+      "path": "registry/lib/get-strict-context/index.tsx",
+      "type": "registry:lib",
+      "target": "lib/get-strict-context.tsx"
+    }
+  ]
+}

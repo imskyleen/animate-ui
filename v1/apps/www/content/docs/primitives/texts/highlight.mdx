@@ -1,0 +1,69 @@
+---
+title: Highlight Text
+description: A highlight text animation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-texts-highlight" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-highlight" />
+
+## Usage
+
+```tsx
+<HighlightText text="Highlight Text" />
+```
+
+## API Reference
+
+### HighlightText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    gradient: {
+      description: 'The gradient to use.',
+      type: 'string',
+      required: false,
+      default:
+        'linear-gradient(90deg, #3b82f6 0%, #a855f7 20%, #ec4899 50%, #a855f7 80%, #3b82f6 100%)',
+    },
+    transition: {
+      description: 'The transition to use.',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 2, ease: 'easeInOut' }",
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'The margin to use when the text is in view.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    '...props': {
+      description: 'The props of the highlight text.',
+      type: 'HTMLMotionProps<"span">',
+      required: false,
+    },
+  }}
+/>

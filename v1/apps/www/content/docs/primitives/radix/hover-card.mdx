@@ -1,0 +1,104 @@
+---
+title: Hover Card
+description: For sighted users to preview content available behind a link.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-hover-card" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-hover-card" />
+
+## Usage
+
+```tsx
+<HoverCard>
+  <HoverCardTrigger>Hover me</HoverCardTrigger>
+  <HoverCardPortal>
+    <HoverCardContent>
+      <p>Hover card content</p>
+    </HoverCardContent>
+  </HoverCardPortal>
+</HoverCard>
+```
+
+## API Reference
+
+### HoverCard
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#root"
+  text="Radix UI API Reference - HoverCard.Root"
+/>
+
+<TypeTable
+  type={{
+    followCursor: {
+      description: 'Whether to follow the cursor.',
+      type: 'boolean | "x" | "y"',
+      required: false,
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring options of the follow cursor.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### HoverCardTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#trigger"
+  text="Radix UI API Reference - HoverCard.Trigger"
+/>
+
+### HoverCardPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#portal"
+  text="Radix UI API Reference - HoverCard.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `HoverCardPortal` component,
+  as it is used for animation.
+</Callout>
+
+### HoverCardContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/hover-card#content"
+  text="Radix UI API Reference - HoverCard.Content"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the hover card content.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the hover card content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` props are not supported in the
+  `HoverCardContent` component as it is used for animation.
+</Callout>
+
+## Credits
+
+- [Radix UI Hover Card](https://www.radix-ui.com/primitives/docs/components/hover-card)

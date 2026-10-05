@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-components-community-management-bar",
+  "type": "registry:ui",
+  "title": "Management Bar Demo",
+  "description": "Demo showing a management bar.",
+  "registryDependencies": ["@animate-ui/v1/components-community-management-bar"],
+  "files": [
+    {
+      "path": "registry/demo/components/community/management-bar/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/components/community/management-bar.tsx"
+    }
+  ]
+}

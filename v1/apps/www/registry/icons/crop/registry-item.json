@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-crop",
+  "type": "registry:ui",
+  "title": "Crop Icon",
+  "description": "Crop icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/crop/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/crop.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["photo", "image"]
+  }
+}

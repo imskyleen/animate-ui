@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "components-base-progress",
+  "title": "Progress",
+  "description": "Displays the status of a task that takes a long time.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-base-progress"
+  ],
+  "files": [
+    {
+      "path": "registry/components/base/progress/index.tsx",
+      "content": "import * as React from 'react';\n\nimport {\n  Progress as ProgressPrimitive,\n  ProgressTrack as ProgressTrackPrimitive,\n  ProgressIndicator as ProgressIndicatorPrimitive,\n  ProgressLabel as ProgressLabelPrimitive,\n  ProgressValue as ProgressValuePrimitive,\n  type ProgressProps as ProgressPrimitiveProps,\n  type ProgressTrackProps as ProgressTrackPrimitiveProps,\n  type ProgressLabelProps as ProgressLabelPrimitiveProps,\n  type ProgressValueProps as ProgressValuePrimitiveProps,\n} from '@/components/animate-ui/primitives/base/progress';\nimport { cn } from '@/lib/utils';\n\ntype ProgressProps = ProgressPrimitiveProps;\n\nfunction Progress(props: ProgressProps) {\n  return <ProgressPrimitive {...props} />;\n}\n\ntype ProgressTrackProps = ProgressTrackPrimitiveProps;\n\nfunction ProgressTrack({ className, ...props }: ProgressTrackProps) {\n  return (\n    <ProgressTrackPrimitive\n      className={cn(\n        'bg-primary/20 relative h-2 w-full overflow-hidden rounded-full',\n        className,\n      )}\n      {...props}\n    >\n      <ProgressIndicatorPrimitive className=\"bg-primary rounded-full h-full w-full flex-1\" />\n    </ProgressTrackPrimitive>\n  );\n}\n\ntype ProgressLabelProps = ProgressLabelPrimitiveProps;\n\nfunction ProgressLabel(props: ProgressLabelProps) {\n  return <ProgressLabelPrimitive className=\"text-sm font-medium\" {...props} />;\n}\n\ntype ProgressValueProps = ProgressValuePrimitiveProps;\n\nfunction ProgressValue(props: ProgressValueProps) {\n  return <ProgressValuePrimitive className=\"text-sm\" {...props} />;\n}\n\nexport {\n  Progress,\n  ProgressTrack,\n  ProgressLabel,\n  ProgressValue,\n  type ProgressProps,\n  type ProgressTrackProps,\n  type ProgressLabelProps,\n  type ProgressValueProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/components/base/progress.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

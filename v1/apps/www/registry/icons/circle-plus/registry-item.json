@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-circle-plus",
+  "type": "registry:ui",
+  "title": "Circle Plus Icon",
+  "description": "Circle plus icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/circle-plus/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/circle-plus.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "circle",
+      "plus",
+      "add",
+      "sum",
+      "addition",
+      "math",
+      "maths",
+      "new",
+      "+",
+      "increase",
+      "positive",
+      "calculate"
+    ]
+  }
+}

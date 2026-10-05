@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-animate-scroll-progress",
+  "title": "Animate Scroll Progress Demo",
+  "description": "Demo showing an animated scroll progress.",
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-scroll-progress"
+  ],
+  "files": [
+    {
+      "path": "registry/demo/primitives/animate/scroll-progress/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { ArrowDown } from 'lucide-react';\nimport { motion } from 'motion/react';\n\nimport {\n  ScrollProgressProvider,\n  ScrollProgress,\n  ScrollProgressContainer,\n  type ScrollProgressDirection,\n} from '@/components/animate-ui/primitives/animate/scroll-progress';\nimport { cn } from '@/lib/utils';\n\ninterface ScrollProgressDemoProps {\n  global?: boolean;\n  direction?: ScrollProgressDirection;\n}\n\nexport const ScrollProgressDemo = ({\n  global = false,\n  direction = 'vertical',\n}: ScrollProgressDemoProps) => {\n  return (\n    <div className=\"absolute inset-0\" key={String(global) + direction}>\n      <div className=\"relative h-full w-full overflow-hidden\">\n        <ScrollProgressProvider global={global} direction={direction}>\n          <div\n            className={cn(\n              'z-50 ',\n              global\n                ? 'fixed top-0 left-0 right-0'\n                : 'absolute bottom-3 left-3 right-3',\n            )}\n          >\n            <ScrollProgress className=\"bg-foreground h-1.5 data-[global=false]:rounded-full\" />\n          </div>\n\n          {global ? (\n            <div className=\"size-full flex items-center justify-center\">\n              <p className=\"flex items-center gap-2 font-medium\">\n                Scroll the page to see the progress bar\n              </p>\n            </div>\n          ) : (\n            <ScrollProgressContainer className=\"w-full h-full data-[direction=vertical]:overflow-y-auto data-[direction=horizontal]:overflow-x-auto\">\n              <div\n                className={cn('flex', direction === 'vertical' && 'flex-col')}\n              >\n                <div className=\"w-full h-[400px] shrink-0 flex items-center justify-center\">\n                  <p className=\"flex items-center gap-2 font-medium\">\n                    Scroll to see the progress bar{' '}\n                    <motion.span\n                      className={direction === 'horizontal' ? '-rotate-90' : ''}\n                      animate={{ y: [3, -3, 3] }}\n                      transition={{\n                        duration: 1.25,\n                        repeat: Infinity,\n                        ease: 'easeInOut',\n                        type: 'keyframes',\n                      }}\n                    >\n                      <ArrowDown className=\"size-5\" />\n                    </motion.span>\n                  </p>\n                </div>\n                <div className=\"w-full h-[400px] shrink-0 p-3\">\n                  <div className=\"size-full bg-accent rounded-xl\" />\n                </div>\n                <div className=\"w-full h-[400px] shrink-0\" />\n                <div className=\"w-full h-[400px] shrink-0 p-3\">\n                  <div className=\"size-full bg-accent rounded-xl\" />\n                </div>\n                <div className=\"w-full h-[400px] shrink-0\" />\n              </div>\n            </ScrollProgressContainer>\n          )}\n        </ScrollProgressProvider>\n      </div>\n    </div>\n  );\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/animate/scroll-progress.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "ScrollProgressProvider": {
+        "global": {
+          "value": false
+        },
+        "direction": {
+          "value": "vertical",
+          "options": {
+            "horizontal": "horizontal",
+            "vertical": "vertical"
+          }
+        }
+      }
+    }
+  },
+  "type": "registry:ui"
+}

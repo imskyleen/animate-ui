@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-message-square",
+  "title": "Message Square Icon",
+  "description": "Message square icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/message-square/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype MessageSquareProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path: {\n      initial: {\n        rotate: 0,\n      },\n      animate: {\n        transformOrigin: 'bottom left',\n        rotate: [0, 8, -8, 2, 0],\n        transition: {\n          ease: 'easeInOut',\n          duration: 0.8,\n          times: [0, 0.4, 0.6, 0.8, 1],\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: MessageSquareProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"\n        variants={variants.path}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction MessageSquare(props: MessageSquareProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  MessageSquare,\n  MessageSquare as MessageSquareIcon,\n  type MessageSquareProps,\n  type MessageSquareProps as MessageSquareIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/message-square.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "comment",
+      "chat",
+      "conversation",
+      "dialog",
+      "feedback",
+      "speech bubble"
+    ]
+  },
+  "type": "registry:ui"
+}

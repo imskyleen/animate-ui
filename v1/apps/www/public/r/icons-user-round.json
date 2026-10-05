@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-user-round",
+  "title": "User Round Icon",
+  "description": "User round icon component.",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "@animate-ui/v1/icons-icon"
+  ],
+  "files": [
+    {
+      "path": "registry/icons/user-round/index.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { motion, type Variants } from 'motion/react';\n\nimport {\n  getVariants,\n  useAnimateIconContext,\n  IconWrapper,\n  type IconProps,\n} from '@/components/animate-ui/icons/icon';\n\ntype UserRoundProps = IconProps<keyof typeof animations>;\n\nconst animations = {\n  default: {\n    path: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 4, -2, 0],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n    circle: {\n      initial: {\n        y: 0,\n      },\n      animate: {\n        y: [0, 1, -2, 0],\n        transition: {\n          duration: 0.6,\n          ease: 'easeInOut',\n        },\n      },\n    },\n  } satisfies Record<string, Variants>,\n} as const;\n\nfunction IconComponent({ size, ...props }: UserRoundProps) {\n  const { controls } = useAnimateIconContext();\n  const variants = getVariants(animations);\n\n  return (\n    <motion.svg\n      xmlns=\"http://www.w3.org/2000/svg\"\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      {...props}\n    >\n      <motion.path\n        d=\"M20 21a8 8 0 0 0-16 0\"\n        variants={variants.path}\n        initial=\"initial\"\n        animate={controls}\n      />\n      <motion.circle\n        cx={12}\n        cy={8}\n        r={5}\n        variants={variants.circle}\n        initial=\"initial\"\n        animate={controls}\n      />\n    </motion.svg>\n  );\n}\n\nfunction UserRound(props: UserRoundProps) {\n  return <IconWrapper icon={IconComponent} {...props} />;\n}\n\nexport {\n  animations,\n  UserRound,\n  UserRound as UserRoundIcon,\n  type UserRoundProps,\n  type UserRoundProps as UserRoundIconProps,\n};\n",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/user-round.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "person",
+      "account",
+      "contact"
+    ]
+  },
+  "type": "registry:ui"
+}

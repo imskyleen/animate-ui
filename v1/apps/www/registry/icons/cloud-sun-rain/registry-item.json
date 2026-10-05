@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-cloud-sun-rain",
+  "type": "registry:ui",
+  "title": "Cloud Sun Rain Icon",
+  "description": "Cloud sun rain icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/cloud-sun-rain/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/cloud-sun-rain.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": ["weather", "partly", "rainfall"]
+  }
+}

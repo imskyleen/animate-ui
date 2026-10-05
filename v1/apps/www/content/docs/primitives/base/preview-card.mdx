@@ -1,0 +1,127 @@
+---
+title: Preview Card
+description: A popup that appears when a link is hovered, showing a preview for sighted users.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-base-preview-card" />
+
+## Installation
+
+<ComponentInstallation name="primitives-base-preview-card" />
+
+## Usage
+
+```tsx
+<PreviewCard>
+  <PreviewCardTrigger>Hover me</PreviewCardTrigger>
+  <PreviewCardPortal>
+    <PreviewCardPositioner>
+      <PreviewCardPopup>
+        <p>Preview card content</p>
+      </PreviewCardPopup>
+    </PreviewCardPositioner>
+  </PreviewCardPortal>
+</PreviewCard>
+```
+
+## API Reference
+
+### PreviewCard
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#root"
+  text="Base UI API Reference - PreviewCard.Root"
+/>
+
+<TypeTable
+  type={{
+    followCursor: {
+      description: 'Whether to follow the cursor.',
+      type: 'boolean | "x" | "y"',
+      required: false,
+      default: 'false',
+    },
+    followCursorSpringOptions: {
+      description: 'The spring options of the follow cursor.',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### PreviewCardTrigger
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#trigger"
+  text="Base UI API Reference - PreviewCard.Trigger"
+/>
+
+### PreviewCardPortal
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#portal"
+  text="Base UI API Reference - PreviewCard.Portal"
+/>
+
+<Callout type="info">
+  The `keepMounted` property is not supported in the `PreviewCardPortal`
+  component, as it is used for animation.
+</Callout>
+
+### PreviewCardPositioner
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#positioner"
+  text="Base UI API Reference - Popover.Positioner"
+/>
+
+### PreviewCardPopup
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#popup"
+  text="Base UI API Reference - PreviewCard.Popup"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the preview card popup.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the preview card content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `render` property is not supported in the `PreviewCardPopup` component, as
+  it is used for animation.
+</Callout>
+
+### PreviewCardBackdrop
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#backdrop"
+  text="Base UI API Reference - PreviewCard.Backdrop"
+/>
+
+### PreviewCardArrow
+
+<ExternalLink
+  href="https://base-ui.com/react/components/preview-card#arrow"
+  text="Base UI API Reference - PreviewCard.Arrow"
+/>
+
+## Credits
+
+- [Base UI Preview Card](https://base-ui.com/react/components/preview-card)

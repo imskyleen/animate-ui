@@ -1,0 +1,151 @@
+---
+title: Cursor
+description: An animated cursor component that allows you to customize both the cursor and cursor follow elements with smooth animations.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-animate-cursor" />
+
+## Installation
+
+<ComponentInstallation name="primitives-animate-cursor" />
+
+## Usage
+
+### Global
+
+```tsx
+<CursorProvider>
+  <Cursor>
+    <div>Cursor</div>
+  </Cursor>
+  <CursorFollow>
+    <div>Cursor Follow</div>
+  </CursorFollow>
+</CursorProvider>
+```
+
+### Local
+
+```tsx
+<CursorProvider>
+  <CursorContainer>
+    <Cursor>
+      <div>Cursor</div>
+    </Cursor>
+    <CursorFollow>
+      <div>Cursor Follow</div>
+    </CursorFollow>
+  </CursorContainer>
+</CursorProvider>
+```
+
+## API Reference
+
+### CursorProvider
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the CursorProvider',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    global: {
+      description: 'Whether the cursor is global',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+  }}
+/>
+
+### CursorContainer
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the CursorContainer',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### Cursor
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props of the CursorContainer',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### CursorFollow
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    side: {
+      description: 'The side of the CursorFollow',
+      type: 'CursorFollowSide',
+      required: false,
+      default: 'bottom',
+    },
+    sideOffset: {
+      description: 'The side offset of the CursorFollow',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    align: {
+      description: 'The align of the CursorFollow',
+      type: 'CursorFollowAlign',
+      required: false,
+      default: 'end',
+    },
+    alignOffset: {
+      description: 'The align offset of the CursorFollow',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    transition: {
+      description: 'The transition of the CursorFollow',
+      type: 'SpringOptions',
+      required: false,
+      default: '{ stiffness: 500, damping: 50, bounce: 0 }',
+    },
+    '...props': {
+      description: 'The props of the CursorFollow',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

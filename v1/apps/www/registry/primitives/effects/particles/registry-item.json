@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "primitives-effects-particles",
+  "type": "registry:ui",
+  "title": "Particles",
+  "description": "A particles effect that creates a particle system.",
+  "dependencies": ["motion"],
+  "registryDependencies": [
+    "@animate-ui/v1/primitives-animate-slot",
+    "@animate-ui/v1/hooks-use-is-in-view",
+    "@animate-ui/v1/lib-get-strict-context"
+  ],
+  "files": [
+    {
+      "path": "registry/primitives/effects/particles/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/primitives/effects/particles.tsx"
+    }
+  ]
+}

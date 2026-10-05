@@ -1,0 +1,62 @@
+---
+title: Typing Text
+description: A typing text animation.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-texts-typing" />
+
+## Installation
+
+<ComponentInstallation name="primitives-texts-typing" />
+
+## Usage
+
+```tsx
+<TypingText text="Typing Text" />
+```
+
+## API Reference
+
+### SplittingText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    delay: {
+      description: 'The delay to use.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    inView: {
+      description: 'Whether the text is in view.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Whether the text should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin to use.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    '...props': {
+      description: 'The props of the splitting text.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>

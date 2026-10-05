@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons-square-dashed-kanban",
+  "type": "registry:ui",
+  "title": "Square Dashed Kanban Icon",
+  "description": "Square Dashed Kanban icon component.",
+  "registryDependencies": ["@animate-ui/v1/icons-icon"],
+  "dependencies": ["motion"],
+  "files": [
+    {
+      "path": "registry/icons/square-dashed-kanban/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/icons/square-dashed-kanban.tsx"
+    }
+  ],
+  "meta": {
+    "keywords": [
+      "projects",
+      "manage",
+      "overview",
+      "board",
+      "tickets",
+      "issues",
+      "roadmap",
+      "plan",
+      "intentions",
+      "productivity",
+      "work",
+      "agile",
+      "code",
+      "coding"
+    ]
+  }
+}

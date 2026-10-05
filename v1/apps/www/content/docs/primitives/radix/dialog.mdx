@@ -1,0 +1,175 @@
+---
+title: Dialog
+description: A window overlaid on either the primary window or another dialog window, rendering the content underneath inert.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-dialog" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-dialog" />
+
+## Usage
+
+```tsx
+<Dialog>
+  <DialogTrigger>Open Dialog</DialogTrigger>
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Dialog Title</DialogTitle>
+        <DialogDescription>Dialog Description</DialogDescription>
+      </DialogHeader>
+      <p>Dialog Content</p>
+      <DialogFooter>
+        <button>Accept</button>
+      </DialogFooter>
+      <DialogClose>Close</DialogClose>
+    </DialogContent>
+  </DialogPortal>
+</Dialog>
+```
+
+## API Reference
+
+### Dialog
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#root"
+  text="Radix UI API Reference - Dialog.Root"
+/>
+
+### DialogTrigger
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#trigger"
+  text="Radix UI API Reference - Dialog.Trigger"
+/>
+
+### DialogPortal
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#portal"
+  text="Radix UI API Reference - Dialog.Portal"
+/>
+
+<Callout type="info">
+  The `forceMount` property is not supported in the `DialogPortal` component, as
+  it is used for animation.
+</Callout>
+
+### DialogOverlay
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#overlay"
+  text="Radix UI API Reference - Dialog.Overlay"
+/>
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'The transition of the dialog overlay',
+      type: 'Transition',
+      required: false,
+      default: "{ duration: 0.2, ease: 'easeInOut' }",
+    },
+    '...props': {
+      description: 'The props of the dialog overlay.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `DialogOverlay` component, as it is used for animation.
+</Callout>
+
+### DialogContent
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#content"
+  text="Radix UI API Reference - Dialog.Content"
+/>
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The direction the dialog should flip from',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      required: false,
+      default: 'top',
+    },
+    transition: {
+      description: 'The transition of the dialog content',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+    },
+    '...props': {
+      description: 'The props of the dialog content.',
+      type: 'HTMLMotionProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+<Callout type="info">
+  The `asChild` and `forceMount` properties are not supported in the
+  `DialogContent` component, as it is used for animation.
+</Callout>
+
+### DialogClose
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#close"
+  text="Radix UI API Reference - Dialog.Close"
+/>
+
+### DialogHeader
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog header.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+### DialogTitle
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#title"
+  text="Radix UI API Reference - Dialog.Title"
+/>
+
+### DialogDescription
+
+<ExternalLink
+  href="https://www.radix-ui.com/primitives/docs/components/dialog#description"
+  text="Radix UI API Reference - Dialog.Description"
+/>
+
+### DialogFooter
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the dialog footer.',
+      type: "React.ComponentProps<'div'>",
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Dialog](https://www.radix-ui.com/primitives/docs/components/dialog)

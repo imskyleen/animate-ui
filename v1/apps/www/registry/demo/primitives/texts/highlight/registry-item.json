@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "demo-primitives-texts-highlight",
+  "type": "registry:ui",
+  "title": "Highlight Text Demo",
+  "description": "Demo showing an animated highlight text.",
+  "registryDependencies": ["@animate-ui/v1/primitives-texts-highlight"],
+  "files": [
+    {
+      "path": "registry/demo/primitives/texts/highlight/index.tsx",
+      "type": "registry:ui",
+      "target": "components/animate-ui/demo/primitives/texts/highlight.tsx"
+    }
+  ],
+  "meta": {
+    "demoProps": {
+      "HighlightText": {
+        "delay": {
+          "value": 0,
+          "min": 0,
+          "max": 3000,
+          "step": 100
+        }
+      }
+    }
+  }
+}

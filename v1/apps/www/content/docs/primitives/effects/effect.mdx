@@ -1,0 +1,118 @@
+---
+title: Effect
+description: An effect that allows you to animate elements on first view or load.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+---
+
+<ComponentPreview name="demo-primitives-effects-effect" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-effect" />
+
+## Usage
+
+### Effect
+
+```tsx
+<Effect>Effect</Effect>
+```
+
+### Effects
+
+```tsx
+<Effects>
+  <div>Effect 1</div>
+  <div>Effect 2</div>
+  <div>Effect 3</div>
+</Effects>
+```
+
+## API Reference
+
+### Effect
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inView: {
+      description: 'Animate the element when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Animate the element only once when it is in view',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'The margin of the element to be in view',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    delay: {
+      description: 'The delay of the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    blur: {
+      description: 'The blur of the element',
+      type: 'string | boolean',
+      required: false,
+      default: 'false',
+    },
+    slide: {
+      description: 'The slide of the element',
+      type: 'Slide | boolean',
+      required: false,
+      default: 'false',
+    },
+    fade: {
+      description: 'The fade of the element',
+      type: 'Fade | boolean',
+      required: false,
+      default: 'false',
+    },
+    zoom: {
+      description: 'The zoom of the element',
+      type: 'Zoom | boolean',
+      required: false,
+      default: 'false',
+    },
+  }}
+/>
+
+### Effects
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the effects',
+      type: 'React.ReactElement | React.ReactElement[]',
+      required: true,
+    },
+    holdDelay: {
+      description: 'The delay between each effect',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    '...props': {
+      description: 'The props of the effects',
+      type: 'EffectProps',
+      required: false,
+    },
+  }}
+/>

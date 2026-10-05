@@ -1,0 +1,320 @@
+---
+title: Files
+description: A component that allows you to display a list of files and folders.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-09-07
+---
+
+<ComponentPreview name="demo-primitives-radix-files" />
+
+## Installation
+
+<ComponentInstallation name="primitives-radix-files" />
+
+## Usage
+
+### With Highlight
+
+```tsx
+<Files>
+  <FilesHighlight>
+    <FolderItem value="folder-1">
+      <FolderHeader>
+        <FolderTrigger>
+          <FolderHighlight>
+            <Folder>
+              <FolderIcon
+                closeIcon={<LucideFolderIcon />}
+                openIcon={<LucideFolderOpenIcon />}
+              />
+              <FileLabel>Folder 1</FileLabel>
+            </Folder>
+          </FolderHighlight>
+        </FolderTrigger>
+      </FolderHeader>
+
+      <FolderContent>
+        <FileHighlight>
+          <File>
+            <FileIcon>
+              <LucideFileIcon />
+            </FileIcon>
+            <FileLabel>File 1</FileLabel>
+          </File>
+        </FileHighlight>
+
+        <Files>
+          <FolderItem value="folder-2">
+            <FolderHeader>
+              <FolderTrigger>
+                <FolderHighlight>
+                  <Folder>
+                    <FolderIcon
+                      closeIcon={<LucideFolderIcon />}
+                      openIcon={<LucideFolderOpenIcon />}
+                    />
+                    <FileLabel>Folder 2</FileLabel>
+                  </Folder>
+                </FolderHighlight>
+              </FolderTrigger>
+            </FolderHeader>
+
+            <FolderContent>
+              <FileHighlight>
+                <File>
+                  <FileIcon>
+                    <LucideFileIcon />
+                  </FileIcon>
+                  <FileLabel>File 2</FileLabel>
+                </File>
+              </FileHighlight>
+            </FolderContent>
+          </FolderItem>
+        </Files>
+      </FolderContent>
+    </FolderItem>
+
+    <FileHighlight>
+      <File>
+        <FileIcon>
+          <LucideFileIcon />
+        </FileIcon>
+        <FileLabel>File 3</FileLabel>
+      </File>
+    </FileHighlight>
+  </FilesHighlight>
+</Files>
+```
+
+### Without Highlight
+
+```tsx
+<Files>
+  <FolderItem value="folder-1">
+    <FolderHeader>
+      <FolderTrigger>
+        <Folder>
+          <FolderIcon
+            closeIcon={<LucideFolderIcon />}
+            openIcon={<LucideFolderOpenIcon />}
+          />
+          <FileLabel>Folder 1</FileLabel>
+        </Folder>
+      </FolderTrigger>
+    </FolderHeader>
+
+    <FolderContent>
+      <File>
+        <FileIcon>
+          <LucideFileIcon />
+        </FileIcon>
+        <FileLabel>File 1</FileLabel>
+      </File>
+
+      <Files>
+        <FolderItem value="folder-2">
+          <FolderHeader>
+            <FolderTrigger>
+              <Folder>
+                <FolderIcon
+                  closeIcon={<LucideFolderIcon />}
+                  openIcon={<LucideFolderOpenIcon />}
+                />
+                <FileLabel>Folder 2</FileLabel>
+              </Folder>
+            </FolderTrigger>
+          </FolderHeader>
+
+          <FolderContent>
+            <File>
+              <FileIcon>
+                <LucideFileIcon />
+              </FileIcon>
+              <FileLabel>File 2</FileLabel>
+            </File>
+          </FolderContent>
+        </FolderItem>
+      </Files>
+    </FolderContent>
+  </FolderItem>
+
+  <File>
+    <FileIcon>
+      <LucideFileIcon />
+    </FileIcon>
+    <FileLabel>File 3</FileLabel>
+  </File>
+</Files>
+```
+
+## API Reference
+
+### Files
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/accordion#accordion"
+  text="Animate UI API Reference - Radix UI Accordion"
+/>
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The child folders and files.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    defaultOpen: {
+      description: 'The child folders open by default.',
+      type: 'string[]',
+      required: false,
+      default: '[]',
+    },
+    open: {
+      description: 'The child folders open.',
+      type: 'string[]',
+      required: false,
+    },
+    onOpenChange: {
+      description: 'The callback function when the child folders open changes.',
+      type: '(open: string[]) => void',
+      required: false,
+    },
+  }}
+/>
+
+### FilesHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlight"
+  text="Animate UI API Reference - Highlight"
+/>
+
+### FolderItem
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/accordion#accordionitem"
+  text="Animate UI API Reference - Radix UI AccordionItem"
+/>
+
+### FolderHeader
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/accordion#accordionheader"
+  text="Animate UI API Reference - Radix UI AccordionHeader"
+/>
+
+### FolderTrigger
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/accordion#accordiontrigger"
+  text="Animate UI API Reference - Radix UI AccordionTrigger"
+/>
+
+### FolderContent
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/radix/accordion#accordioncontent"
+  text="Animate UI API Reference - Radix UI AccordionContent"
+/>
+
+### FolderHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+### Folder
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the folder.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### FolderIcon
+
+<TypeTable
+  type={{
+    closeIcon: {
+      description: 'The icon of the closed folder.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    openIcon: {
+      description: 'The icon of the open folder.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    '...props': {
+      description: 'The props of the folder icon.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+### FolderLabel
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the folder label.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+### FileHighlight
+
+<ExternalLink
+  href="https://animate-ui.com/docs/primitives/effects/highlight#highlightitem"
+  text="Animate UI API Reference - HighlightItem"
+/>
+
+### File
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the file.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### FileIcon
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the file icon.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+### FileLabel
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'The props of the file label.',
+      type: 'React.ComponentProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+## Credits
+
+- [Radix UI Accordion](https://www.radix-ui.com/primitives/docs/components/accordion)

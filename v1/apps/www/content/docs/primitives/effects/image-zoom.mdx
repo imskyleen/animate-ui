@@ -1,0 +1,111 @@
+---
+title: Image Zoom
+description: An effect that allows you to zoom in on an image on hover.
+author:
+  name: imskyleen
+  url: https://github.com/imskyleen
+releaseDate: 2025-10-28
+---
+
+<ComponentPreview name="demo-primitives-effects-image-zoom" />
+
+## Installation
+
+<ComponentInstallation name="primitives-effects-image-zoom" />
+
+## Usage
+
+```tsx
+<ImageZoom>
+  <Image src="..." />
+</ImageZoom>
+```
+
+## API Reference
+
+### ImageZoom
+
+<TypeTable
+  type={{
+    zoomScale: {
+      description: 'The scale of the image zoom effect.',
+      type: 'number',
+      required: false,
+      default: '3',
+    },
+    transition: {
+      description: 'The transition of the image zoom effect.',
+      type: 'Transition',
+      required: false,
+      default: "{ type: 'spring', stiffness: 200, damping: 28 }",
+    },
+    style: {
+      description: 'The style of the image zoom effect.',
+      type: 'React.CSSProperties',
+      required: false,
+    },
+    zoomOnClick: {
+      description: 'Whether the image zoom effect is triggered on click.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    zoomOnHover: {
+      description: 'Whether the image zoom effect is triggered on hover.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    disabled: {
+      description: 'Whether the image zoom effect is disabled.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    width: {
+      description: 'The width of the image zoom effect.',
+      type: "React.CSSProperties['width']",
+      required: false,
+      default: '100%',
+    },
+    height: {
+      description: 'The height of the image zoom effect.',
+      type: "React.CSSProperties['height']",
+      required: false,
+      default: '100%',
+    },
+    children: {
+      description: 'The children of the image zoom effect.',
+      type: 'React.ReactElement',
+      required: false,
+    },
+    '...props': {
+      description: 'The props of the image zoom container.',
+      type: 'React.ComponentProps<"div">',
+      required: false,
+    },
+  }}
+/>
+
+### Image
+
+<TypeTable
+  type={{
+    objectFit: {
+      description: 'The object fit of the image.',
+      type: "React.CSSProperties['objectFit']",
+      required: false,
+      default: 'cover',
+    },
+    as: {
+      description: 'The component to render the image as.',
+      type: 'React.ElementType',
+      required: false,
+      default: 'img',
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Jurre](https://www.framer.com/marketplace/components/hover-image-zoom/) Hover Zoom Framer component.

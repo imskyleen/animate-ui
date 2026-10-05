@@ -1,0 +1,196 @@
+---
+title: Get Started
+description: Get started with Animate UI Icons.
+---
+
+import { CodeTabs } from '@/components/docs/code-tabs';
+import { ArrowRight } from '@/registry/icons/arrow-right';
+import { IconShowcase } from '@/components/docs/icon-showcase';
+
+We animated [Lucide Icons](https://lucide.dev) with [Motion](https://motion.dev), one of the most popular icon libraries on the web.
+
+<Callout type="warning">
+  **Note:** The animated icons are in **beta**. You may encounter bugs.
+  Recurring changes will take place, and some props may be added or removed. We
+  recommend that you update the wrapper regularly.
+</Callout>
+
+## Installation
+
+### Icon Wrapper
+
+You need to install the icon wrapper components to use the animated icons.
+
+<ComponentInstallation name="icons-icon" />
+
+### Icons
+
+<CodeTabs
+  codes={{
+    npm: `npx shadcn@latest add @animate-ui/v1/icons-[lucide-icon-name]`,
+    pnpm: `pnpm dlx shadcn@latest add @animate-ui/v1/icons-[lucide-icon-name]`,
+    yarn: `npx shadcn@latest add @animate-ui/v1/icons-[lucide-icon-name]`,
+    bun: `bun x --bun shadcn@latest add @animate-ui/v1/icons-[lucide-icon-name]`,
+  }}
+/>
+
+## Basic Usage
+
+### Icon
+
+```tsx
+<ArrowRight animateOnHover />
+```
+
+### Icon with AnimateIcon wrapper
+
+```tsx
+<AnimateIcon animateOnHover>
+  <ArrowRight />
+</AnimateIcon>
+```
+
+## API Reference
+
+### Icon
+
+<TypeTable
+  type={{
+    size: {
+      description: 'The size of the icon',
+      type: 'number',
+      required: false,
+      default: '28',
+    },
+    '...props': {
+      description: 'The props for the icon',
+      type: 'SVGMotionProps<SVGSVGElement>',
+      required: false,
+    },
+  }}
+/>
+
+### AnimateIcon
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The children of the AnimateIcon',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    asChild: {
+      description:
+        'Whether to render the children as a child of the AnimateIcon',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    '...props': {
+      description: 'The props for the AnimateIcon',
+      type: 'HTMLMotionProps<"span">',
+      required: false,
+    },
+  }}
+/>
+
+### Common Props
+
+<TypeTable
+  type={{
+    animate: {
+      description:
+        'Whether to animate the icon. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnHover: {
+      description:
+        'Whether to animate the icon on hover. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnTap: {
+      description:
+        'Whether to animate the icon on tap. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnView: {
+      description:
+        'Whether to animate the icon on view. You can also specify the animation to use.',
+      type: 'boolean | string',
+      required: false,
+      default: 'false',
+    },
+    animateOnViewMargin: {
+      description: 'The margin of the in view area.',
+      type: 'string',
+      required: false,
+      default: '0px',
+    },
+    animateOnViewOnce: {
+      description: 'Whether the icon should only animate once.',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+    },
+    initialOnAnimateEnd: {
+      description:
+        'Whether to set the icon to the initial state after the animation ends.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    persistOnAnimateEnd: {
+      description: 'Whether to persist the animation after the animation ends.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    completeOnStop: {
+      description: 'Whether to complete the current animation on stop.',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    delay: {
+      description: 'The delay before animating the icon.',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+    animation: {
+      description: 'The animation to use',
+      type: 'StaticAnimations | string',
+      required: false,
+      default: 'default',
+    },
+    loop: {
+      description: 'Whether to loop the animation',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+    },
+    loopDelay: {
+      description: 'The delay before looping the animation',
+      type: 'number',
+      required: false,
+      default: '0',
+    },
+  }}
+/>
+
+## Credits
+
+We use the [Lucide Icons](https://lucide.dev) library to create the icons and [Motion](https://motion.dev) to animate them.
+
+We took our inspiration from:
+
+- [Iconly](https://iconly.pro/)
+- [Lordicon](https://lordicon.com/)
+- [Flaticon](https://www.flaticon.com/)
+- [pqoqubbw/icons](https://icons.pqoqubbw.dev/)
