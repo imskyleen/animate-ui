@@ -22,7 +22,7 @@ import {
 type RootAnimationProps = {
   /**
    * Transition of the highlight sliding between items (`type="single"`).
-   * Defaults to a spring (stiffness 200, damping 25).
+   * Defaults to a spring (stiffness 300, damping 30).
    */
   transition?: Transition;
 };

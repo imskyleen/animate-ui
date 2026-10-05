@@ -15,8 +15,9 @@ import {
 } from '../utils/motion';
 
 // Animate UI v1's menu highlight (DropdownMenuHighlight, MenuHighlight): one
-// surface glides behind the highlighted item, on a spring (stiffness 350,
-// damping 35), instead of each item lighting up on its own. It follows the
+// surface glides behind the highlighted item, on a spring (stiffness 500,
+// damping 40, a little quicker than v1's 350/35), instead of each item
+// lighting up on its own. It follows the
 // pointer and the arrow keys, goes into submenus, and stays on the last item
 // when the pointer leaves the menu.
 //
@@ -39,7 +40,7 @@ import {
 // stacking context and the surface goes below its content (z-index -1), so
 // gliding over another item never covers that item's text.
 
-/** v1's highlight spring: the glide. */
+/** The highlight's spring: the glide. */
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
 /** A highlight appearing from nothing: a short fade, in place. */
 const FADE_TRANSITION = motionTokens.transition.fade;

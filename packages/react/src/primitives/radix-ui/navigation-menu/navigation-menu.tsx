@@ -30,15 +30,16 @@ import { HIGHLIGHT_TRANSITION } from '../../../internal/item-highlight';
 // - Content swapped inside the Viewport fades in from a 4px blur, in 250ms;
 //   the previous one leaves at once. Without a Viewport, each Content fades and scales on its
 //   own, like a menu.
-// - The Indicator follows the active trigger like v1's menu highlight: a
-//   spring (stiffness 350, damping 35), fading in on it and out 200ms later.
+// - The Indicator follows the active trigger like v1's menu highlight, on
+//   the highlight's spring (stiffness 500, damping 40), fading in on it and
+//   out 200ms later.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
   /**
    * Transition of the entrance, and of the exit unless `exitTransition` is
    * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }` (the
-   * Indicator: v1's highlight spring).
+   * Indicator: the highlight's spring).
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */

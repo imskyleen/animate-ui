@@ -11,7 +11,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 
-/** v1's Highlight spring. */
+/** The highlight's spring (stiffness 500, damping 40), quicker than v1's. */
 const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.highlight;
 
 const INSTANT: Transition = { duration: 0 };
@@ -245,7 +245,8 @@ function Highlight<T extends React.ElementType = 'div'>({
     mode = 'children',
   } = props;
 
-  // v1's values, paced by the provider's tempo (the exit delay too).
+  // v1's exit delay, and the highlight's spring, paced by the provider's
+  // tempo (the exit delay too).
   const { tempo } = useMotionTokens();
   const transition = useTempoTransition(transitionProp ?? HIGHLIGHT_TRANSITION);
   const exitDelay = exitDelayProp * tempo;

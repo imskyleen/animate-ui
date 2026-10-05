@@ -34,7 +34,7 @@ Coming from the `@radix-ui/react-tabs` package? Use the subpath: `import * as Ta
 
 ## Animation
 
-- **The active tab's surface slides** to the new tab on a spring (stiffness 200, damping 25), like Animate UI v1's highlight: the new surface fades in as it slides from the previous one, which follows it and fades out 200ms later. The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
+- **The active tab's surface slides** to the new tab on a spring (stiffness 300, damping 30), like Animate UI v1's highlight: the new surface fades in as it slides from the previous one, which follows it and fades out 200ms later. The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
 - **The tabs' colors change over 500ms** (`ease`, the curve of a color change), whatever transition your tabs set.
 - Clicking quickly through tabs retargets the slide smoothly.
 - **The incoming panel fades in from a 4px blur** over 500ms on a strong ease-out, while its height springs from the previous panel's to its own, like v1's tab contents, on the spring of [Auto Height](/docs/primitives/animate-ui/auto-height) and Animate UI's [Tabs](/docs/primitives/animate-ui/tabs) (stiffness 300, damping 30). The panels share an element (the tabs root, usually), which remembers the selected panel's height. The outgoing panel leaves at once, so the two never overlap.
@@ -62,7 +62,7 @@ Every part takes exactly the props of [Radix UI's Tabs](https://www.radix-ui.com
       description:
         'Transition of the surface sliding to the new tab (pointer changes); the previous surface fades out 200ms after it starts.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 200, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 300, damping: 30 }",
     },
   }}
 />

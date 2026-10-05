@@ -26,7 +26,7 @@ const GLOBAL_RULES = [
   'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
   'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,25s ease-out doux.',
   'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets, contenu d’un navigation menu), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
-  'Un indicateur de sélection glisse sur 200/25 ; un surlignage qui suit le pointeur glisse sur 350/35, plus vif.',
+  'Un indicateur de sélection glisse sur 300/30 ; un surlignage qui suit le pointeur glisse sur 500/40, plus vif (tous deux un peu plus vifs que la v1 : 200/25 et 350/35).',
   'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) se déplie en 0,35s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
   'Ce que la v1 n’animait pas reste instantané (couleur du fond d’un switch).',
   'Le clavier anime exactement comme le pointeur. Un élément ouvert par défaut s’anime au montage.',
@@ -107,8 +107,8 @@ const FAMILIES: Family[] = [
     rule: 'Les menus, fréquents, apparaissent vite et sobrement ; un surlignage glisse derrière l’élément survolé.',
     values: [
       'contenu : scale 0,9 → 1 + fondu en 0,25s, ease-out doux',
-      'surlignage : ressort 350/35, un seul surlignage passé d’élément en élément avec sa vitesse',
-      'coches : pop ; coche d’un select ou d’une combobox : glisse sur 500/40, la liste attend 150ms avant de se fermer quand on choisit un autre item ; indicateur radio des menus : glisse en 0,45s',
+      'surlignage : ressort 500/40, un seul surlignage passé d’élément en élément avec sa vitesse',
+      'coches : pop ; coche d’un select ou d’une combobox : glisse sur 500/40 (le ressort du surlignage), la liste attend 150ms avant de se fermer quand on choisit un autre item ; indicateur radio des menus : glisse en 0,45s',
     ],
     demos: [
       { demo: 'radix-ui/dropdown-menu', label: 'Dropdown Menu' },
@@ -120,7 +120,7 @@ const FAMILIES: Family[] = [
       {
         demo: 'radix-ui/navigation-menu',
         label: 'Navigation Menu',
-        note: 'indicateur 350/35',
+        note: 'indicateur 500/40',
       },
     ],
   },
@@ -129,7 +129,7 @@ const FAMILIES: Family[] = [
     name: 'Indicateur de sélection',
     rule: 'Ce qui marque la sélection glisse d’un élément à l’autre et l’ancien s’efface.',
     values: [
-      'glissement : ressort 200/25',
+      'glissement : ressort 300/30',
       'onglets : couleur du texte 0,5s ease, panneau depuis un flou de 4px en 0,5s ease-out',
     ],
     demos: [
@@ -159,7 +159,7 @@ const FAMILIES: Family[] = [
     name: 'Surlignage au survol',
     rule: 'Une surface qui suit le pointeur doit être vive pour ne pas traîner derrière lui.',
     values: [
-      'ressort 350/35 (Highlight, menus, indicateur du Navigation Menu)',
+      'ressort 500/40 (Highlight, menus, indicateur du Navigation Menu)',
     ],
     demos: [{ demo: 'animate-ui/highlight', label: 'Highlight' }],
   },

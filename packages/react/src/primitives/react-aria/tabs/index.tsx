@@ -27,7 +27,7 @@ import {
 // Aria's own.
 
 type ListAnimationProps = {
-  /** Transition of the selected tab's surface sliding to the new tab. Defaults to a spring (stiffness 200, damping 25). */
+  /** Transition of the selected tab's surface sliding to the new tab. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
 };
 

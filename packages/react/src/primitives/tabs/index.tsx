@@ -20,7 +20,8 @@ import { Slot, type WithAsChild } from '../slot';
 
 type TabsOrientation = 'horizontal' | 'vertical';
 
-// Animate UI v1's values.
+// Animate UI v1's motion; the selection's spring is a little quicker than
+// v1's (stiffness 300, damping 30, was 200/25).
 /** The highlight sliding to the active trigger. */
 const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.selection;
 /** The panels sliding and the height following the active one. */

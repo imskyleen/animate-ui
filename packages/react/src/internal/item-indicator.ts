@@ -21,10 +21,10 @@ const CHECK_TRANSITION = {
 } as const satisfies Transition;
 
 /**
- * A single selection's check gliding to the chosen item: quick, there in
- * ~150ms without overshoot.
+ * A single selection's check gliding to the chosen item: the highlight's
+ * spring, so it lands with the highlight, in ~150ms without overshoot.
  */
-const GLIDE_TRANSITION = motionTokens.spring.check;
+const GLIDE_TRANSITION = motionTokens.spring.highlight;
 
 /**
  * How long (seconds) a list holds still after an item was chosen, before it

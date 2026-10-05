@@ -66,7 +66,7 @@ function ToggleButton({
 type ToggleButtonGroupProps = ToggleButtonGroupPrimitiveProps & {
   /**
    * Transition of the highlight sliding between items (single selection).
-   * Defaults to a spring (stiffness 200, damping 25).
+   * Defaults to a spring (stiffness 300, damping 30).
    */
   transition?: Transition;
 };

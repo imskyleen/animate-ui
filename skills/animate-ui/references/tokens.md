@@ -30,21 +30,20 @@ Import `transition` as `motionTransition` when the component also takes a `trans
 
 Springs first: nearly everything moves on a spring. They retarget with their velocity when interrupted, and a little overshoot makes motion feel alive. Animate UI's springs are `stiffness` / `damping` pairs (mass 1): tune those, not `bounce`, which Motion ignores when stiffness or damping are set.
 
-| Token              | Value                                                     | Feel                                               | Use for                                                                |
-| ------------------ | --------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
-| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                       |
-| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                 |
-| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                              |
-| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)    |
-| `spring.selection` | `stiffness: 200, damping: 25`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                 |
-| `spring.highlight` | `stiffness: 350, damping: 35`                             | Quick, never trails the pointer                    | A surface following the pointer (menu items, Highlight, nav indicator) |
-| `spring.check`     | `stiffness: 500, damping: 40`                             | There in ~150ms, no overshoot                      | A list's check gliding to the chosen item before the list closes       |
-| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)               |
-| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                        |
-| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters) |
-| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                            | Effects bringing content in (Fade, Slide, Zoom, Blur)                  |
-| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                            | A progress bar and its value                                           |
-| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                         | Numbers rolling to their value                                         |
+| Token              | Value                                                     | Feel                                               | Use for                                                                                                           |
+| ------------------ | --------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                                                                  |
+| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                                                            |
+| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                                                                         |
+| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)                                               |
+| `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                                                            |
+| `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer   | A surface following the pointer (menu items, Highlight, nav indicator), a list's check gliding to the chosen item |
+| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)                                                          |
+| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                                                                   |
+| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters)                                            |
+| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                            | Effects bringing content in (Fade, Slide, Zoom, Blur)                                                             |
+| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                            | A progress bar and its value                                                                                      |
+| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                         | Numbers rolling to their value                                                                                    |
 
 Every spring above has `type: 'spring'`.
 

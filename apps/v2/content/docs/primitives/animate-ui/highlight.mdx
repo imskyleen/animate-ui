@@ -58,7 +58,7 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
 
 ## Animation
 
-- In `children` mode, the highlight slides to the new item on a spring (stiffness 350, damping 35) with a shared layout animation: the new one fades in as it slides from the previous one, which follows it and fades out after `exitDelay` (200ms). It fades in when nothing was highlighted.
+- In `children` mode, the highlight slides to the new item on a spring (stiffness 500, damping 40) with a shared layout animation: the new one fades in as it slides from the previous one, which follows it and fades out after `exitDelay` (200ms). It fades in when nothing was highlighted.
 - In `parent` mode, a single highlight springs its top, left, width and height to the active item, fades in when it appears, and fades out `exitDelay` after the last item is left.
 - Leaving with `hover` fades it out after `exitDelay`, so moving between items doesn't flicker.
 - `hover` only applies to pointers that can hover (mouse, trackpad): touch taps never leave a highlight stuck.
@@ -105,7 +105,7 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
     transition: {
       description: 'Transition of the highlight.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 350, damping: 35 }",
+      default: "{ type: 'spring', stiffness: 500, damping: 40 }",
     },
     hover: {
       description: 'Highlight on hover instead of on click.',

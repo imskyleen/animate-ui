@@ -18,7 +18,7 @@ import {
 // The highlight of a single-selection toggle group, as Animate UI v1's
 // `ToggleGroupHighlight` (a shared layout animation): when another item is
 // selected, the highlight slides from the previous item to it on a spring
-// (stiffness 200, damping 25), the new highlight fading in while the previous
+// (stiffness 300, damping 30), the new highlight fading in while the previous
 // one fades out as it follows; the first selection fades it in, clearing the
 // selection fades it out. Multiple-selection groups have no highlight.
 //

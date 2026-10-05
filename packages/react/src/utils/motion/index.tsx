@@ -60,15 +60,17 @@ const spring = {
   dialog: { type: 'spring', stiffness: 150, damping: 25 },
   /** Sheets, drawers and toasts from an edge: livelier, they travel farther. */
   sheet: { type: 'spring', stiffness: 150, damping: 22 },
-  /** A selection sliding between items (tabs, toggle groups). */
-  selection: { type: 'spring', stiffness: 200, damping: 25 },
-  /** A surface following the pointer: quick, so it never trails behind it. */
-  highlight: { type: 'spring', stiffness: 350, damping: 35 },
   /**
-   * A list's check gliding to the chosen item, while the list holds still
-   * before it closes: there in ~150ms, without overshoot.
+   * A selection sliding between items (tabs, toggle groups): a smooth slide,
+   * a little quicker than v1's (stiffness 200, damping 25).
    */
-  check: { type: 'spring', stiffness: 500, damping: 40 },
+  selection: { type: 'spring', stiffness: 300, damping: 30 },
+  /**
+   * A surface following the pointer (menu items' highlight), and a list's
+   * check gliding to the chosen item: there in ~150ms without overshoot, so
+   * it never trails behind. Quicker than v1's (stiffness 350, damping 35).
+   */
+  highlight: { type: 'spring', stiffness: 500, damping: 40 },
   /** A height following its content, without overshoot. */
   height: {
     type: 'spring',

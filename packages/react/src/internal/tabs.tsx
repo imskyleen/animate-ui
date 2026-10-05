@@ -158,7 +158,7 @@ function isInIndicator(node: Node) {
 type TabsIndicatorOptions = {
   /** Off when the user renders the library's own indicator. */
   enabled?: boolean;
-  /** Transition of the slide. Defaults to v1's spring (stiffness 200, damping 25). */
+  /** Transition of the slide. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
 };
 

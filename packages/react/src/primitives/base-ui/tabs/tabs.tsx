@@ -19,7 +19,7 @@ import {
 
 /** Animate UI's additions to `Tabs.List`. */
 type ListAnimationProps = {
-  /** Transition of the active tab's surface sliding to the new tab. Defaults to a spring (stiffness 200, damping 25). */
+  /** Transition of the active tab's surface sliding to the new tab. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
 };
 
