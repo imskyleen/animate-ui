@@ -10,7 +10,7 @@ import type {
 } from '../../../internal/modal-motion';
 
 // Same API as Radix's Alert Dialog, animated like the Dialog (Animate UI v1):
-// the Overlay fades and un-blurs, the Content tips forward from
+// the Overlay fades in (the page behind blurs from 0), the Content tips forward from
 // `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring.
 
 type AlertDialogProps = AlertDialogPrimitive.AlertDialogProps;
@@ -29,11 +29,11 @@ type AlertDialogDescriptionProps =
 /** Animate UI's additions to `AlertDialog.Overlay`. */
 type OverlayAnimationProps = {
   /**
-   * Fade (and blur) in.
+   * Fade in (its background color and backdrop filter, from nothing).
    * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: ModalAnimationProps['transition'];
-  /** Fade (and blur) out. Defaults to `transition`. */
+  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

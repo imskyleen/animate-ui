@@ -84,8 +84,8 @@ const transition = {
   /** Menus, selects, comboboxes and navigation menus: short and exact. */
   menu: { duration: 0.2, ease: ease.out },
   /**
-   * An overlay or backdrop fading in (and un-blurring), and out: the page
-   * dims smoothly while the content arrives.
+   * An overlay or backdrop fading in, the page behind blurring from 0, and
+   * out: the page dims smoothly while the content arrives.
    */
   overlay: { duration: 0.4, ease: ease.soft },
   /** Content fading in place, out of the way (a toast behind the front one). */
@@ -124,7 +124,7 @@ const blur = {
   icon: 'blur(2px)',
   /** The content of an accordion or collapsible panel, as it unfolds. */
   disclosure: 'blur(2px)',
-  /** Panels and surfaces coming in: tab panels, dialogs and their overlay. */
+  /** Panels and surfaces coming in: tab panels, dialogs. */
   surface: 'blur(4px)',
 } as const;
 

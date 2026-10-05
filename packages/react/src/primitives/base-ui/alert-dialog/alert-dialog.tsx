@@ -18,7 +18,7 @@ import type {
 } from '../../../internal/modal-motion';
 
 // Same API as Base UI's Alert Dialog, animated like the Dialog (Animate UI
-// v1): the Backdrop fades and un-blurs, the Popup tips forward from
+// v1): the Backdrop fades in (the page behind blurs from 0), the Popup tips forward from
 // `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring. Base UI's Alert
 // Dialog reuses the Dialog's parts, and so does this one (see
 // ../dialog/base-modal.tsx).
@@ -26,11 +26,11 @@ import type {
 /** Animate UI's additions to `AlertDialog.Backdrop`. */
 type BackdropAnimationProps = {
   /**
-   * Fade (and blur) in.
+   * Fade in (its background color and backdrop filter, from nothing).
    * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
    */
   transition?: ModalAnimationProps['transition'];
-  /** Fade (and blur) out. Defaults to `transition`. */
+  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

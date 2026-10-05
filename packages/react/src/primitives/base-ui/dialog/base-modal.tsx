@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
-import { AnimatePresence, useIsPresent } from 'motion/react';
+import { AnimatePresence, useIsPresent, usePresence } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
@@ -16,8 +16,8 @@ import {
   getAnimateTarget,
   getContentTargets,
   getModalSide,
-  getOverlayTargets,
   motionRender,
+  useBackdropFade,
   useHiddenWhenClosed,
   useModalTransitions,
   type ContentFlipProps,
@@ -136,16 +136,34 @@ function Backdrop({
   render,
   ...props
 }: BackdropProps) {
-  const motionProps = useMotionElementProps(
-    getOverlayTargets(
-      useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
-    ),
+  const { open } = useOpen();
+  const { keepMounted } = React.use(PortalContext);
+  // The Portal waits for its fade out before unmounting.
+  const [isPresent, safeToRemove] = usePresence();
+  const { hidden, onAnimationComplete } = useHiddenWhenClosed(
+    open,
+    keepMounted,
   );
+  const ref = useBackdropFade({
+    visible: open && isPresent,
+    ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+    onFadedOut: () => {
+      onAnimationComplete();
+      safeToRemove?.();
+    },
+  });
+  const exiting = !isPresent || (keepMounted && !open && !hidden);
 
   return (
     <DialogPrimitive.Backdrop
       {...props}
-      render={motionRender(render, motionProps)}
+      render={motionRender(render, {
+        ref,
+        // Base UI may mark it `hidden` before its fade out has played.
+        ...(exiting ? { hidden: false } : {}),
+        // Once closed, clicks go through to the page while it fades out.
+        ...(open ? {} : { style: { pointerEvents: 'none' as const } }),
+      })}
     />
   );
 }

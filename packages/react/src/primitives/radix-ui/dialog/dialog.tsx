@@ -10,7 +10,7 @@ import type {
 } from '../../../internal/modal-motion';
 
 // Same API as Radix's Dialog, animated like Animate UI v1: the Overlay fades
-// and un-blurs, the Content tips forward from `perspective(500px)
+// in (the page behind blurs from 0), the Content tips forward from `perspective(500px)
 // rotateX(-20deg) scale(0.8)` on a spring, or slides and fades in from its edge
 // when it has `data-side` (shadcn/ui's Sheet). See create-radix-modal.tsx for
 // the wiring and ../../../internal/modal-motion.ts for the motion.
@@ -29,11 +29,11 @@ type DialogCloseProps = DialogPrimitive.DialogCloseProps;
 /** Animate UI's additions to `Dialog.Overlay`. */
 type OverlayAnimationProps = {
   /**
-   * Fade (and blur) in.
+   * Fade in (its background color and backdrop filter, from nothing).
    * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: ModalAnimationProps['transition'];
-  /** Fade (and blur) out. Defaults to `transition`. */
+  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

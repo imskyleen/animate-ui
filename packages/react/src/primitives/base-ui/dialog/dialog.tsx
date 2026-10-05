@@ -18,7 +18,7 @@ import type {
 } from '../../../internal/modal-motion';
 
 // Same API as Base UI's Dialog, animated like Animate UI v1: the Backdrop
-// fades and un-blurs, the Popup tips forward from `perspective(500px)
+// fades in (the page behind blurs from 0), the Popup tips forward from `perspective(500px)
 // rotateX(-20deg) scale(0.8)` on a spring, or slides and fades in from its edge
 // when it has `data-side` (shadcn/ui's Sheet). See base-modal.tsx for the
 // wiring and ../../../internal/modal-motion.ts for the motion.
@@ -26,11 +26,11 @@ import type {
 /** Animate UI's additions to `Dialog.Backdrop`. */
 type BackdropAnimationProps = {
   /**
-   * Fade (and blur) in.
+   * Fade in (its background color and backdrop filter, from nothing).
    * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: ModalAnimationProps['transition'];
-  /** Fade (and blur) out. Defaults to `transition`. */
+  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

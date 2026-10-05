@@ -45,9 +45,9 @@ shadcn/ui's Sheet is the same primitive: its content carries `data-side`, and th
 
 ## Animation
 
-Animate UI v1's dialog motion, unchanged.
+Animate UI v1's dialog motion, with a smoother overlay.
 
-- **Overlay** fades in and un-blurs (opacity 0 → 1, `blur(4px)` → `blur(0px)`) over 400ms on a soft ease-out, a little ahead of the content, and leaves the same way.
+- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, a little ahead of the content, and it leaves the same way.
 - **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, the overlay clearing with it, then unmounts.
 - `from` picks the edge the content tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`) (a sheet, with `data-side`, slides from its side instead).
 - With `data-side="top" | "right" | "bottom" | "left"` (shadcn/ui's Sheet), the content slides in from that edge by its own size and fades in, on v1's sheet spring (stiffness 150, damping 22, a little livelier), and slides back out the same way.
@@ -75,12 +75,13 @@ Every part takes exactly the props of [Radix UI's Dialog](https://www.radix-ui.c
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the fade (and blur) in.',
+      description:
+        'Transition of the fade in (background color and backdrop filter).',
       type: 'Transition',
       default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
-      description: 'Transition of the fade (and blur) out.',
+      description: 'Transition of the fade out.',
       type: 'Transition',
       default: 'transition',
     },

@@ -7,12 +7,7 @@ import {
   OverlayTriggerStateContext,
   type ModalOverlayProps as ModalOverlayPrimitiveProps,
 } from 'react-aria-components';
-import {
-  AnimatePresence,
-  useIsPresent,
-  usePresence,
-  type Transition,
-} from 'motion/react';
+import { AnimatePresence, useIsPresent, usePresence } from 'motion/react';
 
 import { useControlledState } from '../../../utils/use-controlled-state';
 import {
@@ -26,7 +21,7 @@ import {
   getContentTargets,
   getModalSide,
   ariaMotionRender,
-  toCssTiming,
+  useBackdropFade,
   useModalTransitions,
   type ContentFlipProps,
   type FlipDirection,
@@ -142,22 +137,21 @@ function OverlayPresence({
 }) {
   const live = React.use(LiveStateContext)!;
   const [isPresent, safeToRemove] = usePresence();
-  const overlayRef = React.useRef<HTMLDivElement | null>(null);
+  const fadeRef = useBackdropFade({
+    visible: isPresent,
+    animated,
+    ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+    onFadedOut: () => safeToRemove?.(),
+  });
   const setRef = React.useCallback(
     (node: HTMLDivElement | null) => {
-      overlayRef.current = node;
+      fadeRef(node);
       if (typeof ref === 'function') ref(node);
       else if (ref)
         (ref as React.RefObject<HTMLDivElement | null>).current = node;
     },
-    [ref],
+    [ref, fadeRef],
   );
-  useBackdropFade(overlayRef, {
-    isPresent,
-    safeToRemove,
-    animated,
-    ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
-  });
 
   return (
     <InOverlayContext value>
@@ -176,79 +170,6 @@ function OverlayPresence({
       />
     </InOverlayContext>
   );
-}
-
-type BackdropValues = Record<'backgroundColor' | 'backdropFilter', string>;
-
-const CLEAR: BackdropValues = {
-  backgroundColor: 'transparent',
-  backdropFilter: 'none',
-};
-
-function readBackdrop(element: HTMLElement): BackdropValues {
-  const style = getComputedStyle(element);
-  return {
-    backgroundColor: style.backgroundColor,
-    backdropFilter: style.backdropFilter,
-  };
-}
-
-/**
- * Fades the overlay's background color and backdrop filter in from nothing to
- * what its classes set, and back out before it unmounts (`safeToRemove`). A
- * Web Animation, so any color syntax interpolates and the classes take over
- * again once it has played.
- */
-function useBackdropFade(
-  ref: React.RefObject<HTMLDivElement | null>,
-  options: {
-    isPresent: boolean;
-    safeToRemove: (() => void) | null | undefined;
-    animated: boolean;
-    enter: Transition;
-    exit: Transition;
-  },
-) {
-  const { isPresent } = options;
-  const latestRef = React.useRef(options);
-  React.useLayoutEffect(() => {
-    latestRef.current = options;
-  });
-  const runningRef = React.useRef<Animation | null>(null);
-
-  React.useLayoutEffect(() => {
-    const { animated, enter, exit, safeToRemove } = latestRef.current;
-    const element = ref.current;
-    if (!element || !animated || typeof element.animate !== 'function') {
-      if (!isPresent) safeToRemove?.();
-      return;
-    }
-    // From where it is: mid-fade when interrupted.
-    const current = runningRef.current;
-    const from = current
-      ? readBackdrop(element)
-      : isPresent
-        ? CLEAR
-        : readBackdrop(element);
-    current?.cancel();
-    // Its classes' values, now that nothing animates them.
-    const to = isPresent ? readBackdrop(element) : CLEAR;
-    const { duration, easing } = toCssTiming(isPresent ? enter : exit);
-    const animation = element.animate([from, to], {
-      duration,
-      easing,
-      fill: isPresent ? 'backwards' : 'forwards',
-    });
-    runningRef.current = animation;
-    animation.finished
-      .then(() => {
-        if (runningRef.current !== animation) return;
-        if (isPresent) runningRef.current = null;
-        else latestRef.current.safeToRemove?.();
-      })
-      // Cancelled: a newer fade took over.
-      .catch(() => {});
-  }, [isPresent, ref]);
 }
 
 // The props React Aria reads on the overlay a standalone Modal creates.

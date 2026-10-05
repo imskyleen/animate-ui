@@ -51,17 +51,17 @@ Every spring above has `type: 'spring'`.
 
 Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
 
-| Token                   | Value                                           | Use for                                                    |
-| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
-| `transition.menu`       | `{ duration: 0.2, ease: ease.out }`             | Menus, selects, comboboxes, navigation menus               |
-| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`            | An overlay or backdrop fading (and un-blurring), both ways |
-| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`             | Content fading in place (a toast behind the front one)     |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`           | Accordion and collapsible panels unfolding                 |
-| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`             | A panel coming in from a blur (tab panels)                 |
-| `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.out }` | A check drawing itself once the box has answered           |
-| `transition.uncheck`    | `{ duration: 0.2, ease: ease.out }`             | A check erasing itself                                     |
-| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`             | Two icons or labels swapping in place                      |
-| `transition.instant`    | `{ duration: 0 }`                               | Deliberately no animation (reduced motion, a forced jump)  |
+| Token                   | Value                                           | Use for                                                        |
+| ----------------------- | ----------------------------------------------- | -------------------------------------------------------------- |
+| `transition.menu`       | `{ duration: 0.2, ease: ease.out }`             | Menus, selects, comboboxes, navigation menus                   |
+| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`            | An overlay fading in (the page behind blurring from 0) and out |
+| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`             | Content fading in place (a toast behind the front one)         |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`           | Accordion and collapsible panels unfolding                     |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`             | A panel coming in from a blur (tab panels)                     |
+| `transition.check`      | `{ duration: 0.2, delay: 0.2, ease: ease.out }` | A check drawing itself once the box has answered               |
+| `transition.uncheck`    | `{ duration: 0.2, ease: ease.out }`             | A check erasing itself                                         |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`             | Two icons or labels swapping in place                          |
+| `transition.instant`    | `{ duration: 0 }`                               | Deliberately no animation (reduced motion, a forced jump)      |
 
 ## Curves
 
@@ -92,11 +92,11 @@ The smaller the element, the farther it starts, so its growth stays visible; the
 
 ## Blur
 
-| Token             | Value       | Use for                                                                                       |
-| ----------------- | ----------- | --------------------------------------------------------------------------------------------- |
-| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                                      |
-| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds                      |
-| `blur.surface`    | `blur(4px)` | Panels and surfaces coming in: tab panels, navigation menu content, dialogs and their overlay |
+| Token             | Value       | Use for                                                                     |
+| ----------------- | ----------- | --------------------------------------------------------------------------- |
+| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                    |
+| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds    |
+| `blur.surface`    | `blur(4px)` | Panels and surfaces coming in: tab panels, navigation menu content, dialogs |
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
 

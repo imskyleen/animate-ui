@@ -1,7 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import {
+  AnimatePresence,
+  motion,
+  usePresence as useMotionPresence,
+} from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
@@ -15,8 +19,8 @@ import {
   getAnimateTarget,
   getContentTargets,
   getModalSide,
-  getOverlayTargets,
   motionRender,
+  useBackdropFade,
   useHiddenWhenClosed,
   useModalTransitions,
   type ContentFlipProps,
@@ -159,23 +163,26 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     style,
     ...props
   }: PartProps & { open: boolean; keepMounted: boolean }) {
-    const targets = getOverlayTargets(
-      useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
-    );
+    // The Portal (or the Overlay's own AnimatePresence) waits for its fade
+    // out before unmounting.
+    const [isPresent, safeToRemove] = useMotionPresence();
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(
       open,
       keepMounted,
     );
+    const ref = useBackdropFade({
+      visible: open && isPresent,
+      ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+      onFadedOut: () => {
+        onAnimationComplete();
+        safeToRemove?.();
+      },
+    });
 
     return (
       <parts.Overlay {...props} forceMount asChild>
         {motionChild(asChild, children, {
-          initial: targets.initial,
-          // Transitions live in the targets: an exiting element keeps the
-          // props of its last render, when it was still open.
-          animate: getAnimateTarget(targets, open, keepMounted),
-          exit: targets.exit,
-          onAnimationComplete,
+          ref,
           // Once closed (exiting, or kept mounted), clicks go through to the
           // page: Radix sets `pointer-events: auto` on the overlay.
           style: closedStyle(style, open, hidden),

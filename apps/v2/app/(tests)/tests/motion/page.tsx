@@ -190,7 +190,7 @@ const FAMILIES: Family[] = [
     rule: 'Une modale se redresse vers l’écran ; le fond s’assombrit et se floute.',
     values: [
       'contenu : perspective rotateX(-20°) scale 0,8 flou 4px → droit, ressort 150/25',
-      'fond : fondu + flou 4px en 0,4s ease-out doux, un peu en avance sur le contenu (à l’ouverture comme à la fermeture)',
+      'fond : sa couleur et son flou d’arrière-plan (backdrop-filter) montent depuis 0 en 0,4s ease-out doux, un peu en avance sur le contenu, à l’ouverture comme à la fermeture (jamais une page déjà floue en fondu)',
     ],
     demos: [
       { demo: 'radix-ui/dialog', label: 'Dialog' },

@@ -33,6 +33,8 @@ export type ModalSample = {
   y: number;
   /** Alpha of the background color. */
   bg: number;
+  /** backdrop-filter: blur(), px. */
+  backdrop: number;
 };
 
 export type ModalFrame = {
@@ -54,6 +56,7 @@ async function install(page: Page) {
       );
       const box = el as HTMLElement;
       const blur = /blur\(([\d.]+)px\)/.exec(cs.filter);
+      const backdrop = /blur\(([\d.e-]+)px\)/.exec(cs.backdropFilter);
       const color = cs.backgroundColor;
       const slash = /\/\s*([\d.]+)\s*\)$/.exec(color);
       const rgba = /^rgba\(.*,\s*([\d.]+)\)$/.exec(color);
@@ -65,6 +68,7 @@ async function install(page: Page) {
         x: box.offsetWidth ? m.m41 / box.offsetWidth : 0,
         y: box.offsetHeight ? m.m42 / box.offsetHeight : 0,
         bg: slash ? Number(slash[1]) : rgba ? Number(rgba[1]) : 1,
+        backdrop: backdrop ? Number(backdrop[1]) : 0,
       };
     };
   });
@@ -151,7 +155,10 @@ export async function expectDialogSettled(page: Page, selector: string) {
 }
 
 type OverlayOptions = {
-  /** What fades on the overlay: its opacity, or its background's alpha. */
+  /**
+   * What fades on the overlay: its background's alpha (the overlays fade
+   * their background color and backdrop filter), or its opacity.
+   */
   overlayFade?: 'opacity' | 'bg';
   /** The overlay's resting value of that property. */
   overlayRest?: number;
@@ -159,7 +166,7 @@ type OverlayOptions = {
 
 const overlayLevel = (
   sample: ModalSample,
-  { overlayFade = 'opacity' }: OverlayOptions,
+  { overlayFade = 'bg' }: OverlayOptions,
 ) => (overlayFade === 'bg' ? sample.bg : sample.opacity);
 
 /** How far in the overlay is, from 0 to 1 (0 when absent). */
@@ -170,9 +177,20 @@ const overlayProgress = (
 ) => {
   const sample = frame.samples[overlay];
   return sample
-    ? overlayLevel(sample, options) / (options.overlayRest ?? 1)
+    ? overlayLevel(sample, options) / (options.overlayRest ?? 0.1)
     : 0;
 };
+
+/**
+ * The page behind blurs progressively with the tint, from 0: the overlay's
+ * opacity never fades, which would cross-fade the sharp page with an already
+ * blurred one. The largest backdrop blur seen, or 0 without one.
+ */
+function expectProgressiveBackdrop(frames: ModalFrame[], overlay: string) {
+  const veil = present(frames, overlay).map((frame) => frame.samples[overlay]!);
+  for (const sample of veil) expect(sample.opacity).toBe(1);
+  return Math.max(0, ...veil.map((sample) => sample.backdrop));
+}
 
 /**
  * v1's dialog entrance: tipped back, scaled to 0.8, blurred and transparent
@@ -197,6 +215,19 @@ export function expectDialogEntrance(
     const after = shown[i]!.samples[content]!;
     expect(after.tilt).toBeGreaterThanOrEqual(before.tilt - 0.5);
     expect(after.tilt).toBeLessThan(0.5);
+  }
+
+  // The page behind blurs from 0, through every value in between.
+  const blurRest = expectProgressiveBackdrop(frames, overlay);
+  if (blurRest > 0) {
+    const veil = present(frames, overlay);
+    expect(veil[0]!.samples[overlay]!.backdrop).toBeLessThan(blurRest * 0.2);
+    expect(
+      veil.some(({ samples }) => {
+        const blur = samples[overlay]!.backdrop;
+        return blur > blurRest * 0.3 && blur < blurRest * 0.7;
+      }),
+    ).toBe(true);
   }
 
   // The overlay fades in over ~350ms (400ms soft ease-out), not in a couple
@@ -256,6 +287,11 @@ export function expectDialogExit(
   const contentThen = overlayOut.samples[content];
   expect(contentThen).toBeTruthy();
   expect(contentThen!.opacity).toBeLessThan(0.3);
+  // The page behind is sharp again, its blur gone with the tint.
+  const blurRest = expectProgressiveBackdrop(frames, overlay);
+  expect(overlayOut.samples[overlay]!.backdrop).toBeLessThanOrEqual(
+    blurRest * 0.05,
+  );
 }
 
 export const SHEET_TRAVEL = {

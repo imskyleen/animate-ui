@@ -5,14 +5,17 @@ import {
   type Transition,
 } from 'motion/react';
 
-import { motionTokens, useTempoTransition } from '../utils/motion';
+import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 
 // Motion shared by the modal primitives (Radix UI and Base UI Dialog / Alert
 // Dialog, React Aria Modal), as Animate UI v1 shipped it:
 //
-// - The overlay fades in and un-blurs (opacity 0 → 1, blur(4px) → blur(0px))
-//   in 400ms on a soft ease-out, and leaves the same way: the page dims
-//   smoothly while the content arrives, and clears as it leaves.
+// - The overlay fades in from nothing to what its classes set: its background
+//   color deepens and its backdrop filter grows (the page behind blurs from
+//   0), in 400ms on a soft ease-out, and leaves the same way: the page dims
+//   smoothly while the content arrives, and clears as it leaves. Fading its
+//   opacity, as v1 did, would cross-fade the sharp page with an already
+//   blurred one under shadcn/ui's `backdrop-blur-xs`.
 // - The content, v1's entrance: it fades in, un-blurs and tips forward from
 //   `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring (stiffness
 //   150, damping 25), and leaves the same way. `from` picks the edge it tips
@@ -167,19 +170,6 @@ export function getContentTargets({
   };
 }
 
-/** The overlay: v1's fade and blur. */
-export function getOverlayTargets({
-  enter,
-  exit,
-}: TargetOptions): ModalTargets {
-  const hidden = { opacity: 0, filter: motionTokens.blur.surface };
-  return {
-    initial: hidden,
-    animate: { opacity: 1, filter: 'blur(0px)', transition: enter },
-    exit: { ...hidden, transition: exit },
-  };
-}
-
 /**
  * Where the element animates to. A closed element the user keeps mounted
  * (`forceMount`, `keepMounted`) plays the exit instead of unmounting.
@@ -207,6 +197,109 @@ export function useHiddenWhenClosed(open: boolean, keepMounted: boolean) {
       if (!open) setSettled(true);
     },
   };
+}
+
+/* Overlay ----------------------------------------------------------------- */
+
+type BackdropValues = Record<
+  'backgroundColor' | 'backdropFilter' | 'opacity',
+  string
+>;
+
+/** An overlay with nothing to show: no tint, nothing blurred behind it. */
+const CLEAR: BackdropValues = {
+  backgroundColor: 'transparent',
+  backdropFilter: 'none',
+  opacity: '0',
+};
+
+/** What an overlay fades, from its computed style. */
+function readBackdrop(element: HTMLElement) {
+  const style = getComputedStyle(element);
+  return {
+    backgroundColor: style.backgroundColor,
+    backdropFilter: style.backdropFilter,
+    opacity: style.opacity,
+    // A background image (a gradient) has no color to fade through: the
+    // overlay's opacity fades too then.
+    hasImage: style.backgroundImage !== 'none',
+  };
+}
+
+/**
+ * Fades an overlay in from nothing to what its classes set, and back out: its
+ * background color deepens while its backdrop filter grows, so the page
+ * behind blurs progressively from 0. A Web Animation, so any color syntax
+ * interpolates, and the classes take over again once it has played.
+ *
+ * `visible` drives it; `onFadedOut` runs once a fade out has played (to
+ * unmount the overlay, or hide one kept mounted). Returns the ref to put on
+ * the overlay's element.
+ */
+export function useBackdropFade(options: {
+  visible: boolean;
+  /** Fade in, tempo applied. */
+  enter: Transition;
+  /** Fade out, tempo applied. */
+  exit: Transition;
+  onFadedOut?: () => void;
+  /** False for an overlay that shows nothing. */
+  animated?: boolean;
+}): React.RefCallback<HTMLElement> {
+  const { visible } = options;
+  const elementRef = React.useRef<HTMLElement | null>(null);
+  const latestRef = React.useRef(options);
+  React.useLayoutEffect(() => {
+    latestRef.current = options;
+  });
+  const runningRef = React.useRef<Animation | null>(null);
+  const mountedRef = React.useRef(false);
+
+  React.useLayoutEffect(() => {
+    const { animated = true, enter, exit, onFadedOut } = latestRef.current;
+    const element = elementRef.current;
+    const mounting = !mountedRef.current;
+    mountedRef.current = true;
+    // Mounted closed (kept mounted): hidden already, nothing to fade out.
+    if (mounting && !visible) return;
+    if (!element || !animated || typeof element.animate !== 'function') {
+      if (!visible) onFadedOut?.();
+      return;
+    }
+    // From where it is: mid-fade when interrupted.
+    const current = runningRef.current;
+    const midway = current ? readBackdrop(element) : null;
+    current?.cancel();
+    // Its classes' values, now that nothing animates them.
+    const rest = readBackdrop(element);
+    const pick = (values: BackdropValues) => ({
+      backgroundColor: values.backgroundColor,
+      backdropFilter: values.backdropFilter,
+      ...(rest.hasImage ? { opacity: values.opacity } : {}),
+    });
+    const from = pick(midway ?? (visible ? CLEAR : rest));
+    const to = pick(visible ? rest : CLEAR);
+    const { duration, easing } = toCssTiming(visible ? enter : exit);
+    const animation = element.animate([from, to], {
+      duration,
+      easing,
+      // Faded out, it stays clear until it unmounts or opens again.
+      fill: visible ? 'backwards' : 'forwards',
+    });
+    runningRef.current = animation;
+    animation.finished
+      .then(() => {
+        if (runningRef.current !== animation) return;
+        if (visible) runningRef.current = null;
+        else latestRef.current.onFadedOut?.();
+      })
+      // Cancelled: a newer fade took over.
+      .catch(() => {});
+  }, [visible]);
+
+  return React.useCallback((node: HTMLElement | null) => {
+    elementRef.current = node;
+  }, []);
 }
 
 /* CSS timing -------------------------------------------------------------- */
