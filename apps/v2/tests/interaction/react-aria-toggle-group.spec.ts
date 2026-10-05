@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { describeToggleGroupDemo } from './controls-helpers';
 
-describeToggleGroupDemo('react-aria', false);
+describeToggleGroupDemo('react-aria', true);
 
 test.describe('react-aria toggle group API', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,8 +23,14 @@ test.describe('react-aria toggle group API', () => {
     );
   });
 
-  test('multiple selection', async ({ page }) => {
+  test('multiple selection, without the sliding surface', async ({ page }) => {
     await page.getByRole('button', { name: 'Multiple y', exact: true }).click();
+    // Several items pressed: no surface slides between them.
+    expect(
+      await page
+        .getByRole('button', { name: 'Multiple y', exact: true })
+        .evaluate((el) => el.closest('[data-animate-ui-highlight]') === null),
+    ).toBe(true);
     await expect(
       page.getByRole('button', { name: 'Multiple x', exact: true }),
     ).toHaveAttribute('aria-pressed', 'true');

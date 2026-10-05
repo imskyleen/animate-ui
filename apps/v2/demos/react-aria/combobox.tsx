@@ -389,7 +389,42 @@ const FRAMEWORKS = [
   { id: "solidstart", name: "SolidStart" },
 ]
 
-export default function ComboboxDemo() {
+export const controls = {
+  ComboboxContent: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 6 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
+function toPlacement(
+  side: "top" | "right" | "bottom" | "left",
+  align: "start" | "center" | "end"
+) {
+  if (align === "center") return side
+  if (side === "top" || side === "bottom") return `${side} ${align}` as const
+  return `${side} ${align === "start" ? "top" : "bottom"}` as const
+}
+
+export default function ComboboxDemo({
+  side = "bottom",
+  sideOffset = 6,
+  align = "center",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <ComboBoxPrimitive
       aria-label="Framework"
@@ -397,7 +432,7 @@ export default function ComboboxDemo() {
       allowsEmptyCollection
     >
       <ComboboxInput placeholder="Search a framework…" className="w-56" />
-      <ComboboxContent>
+      <ComboboxContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
         <ComboboxList
           renderEmptyState={() => (
             <ComboboxEmpty>No framework found.</ComboboxEmpty>

@@ -324,6 +324,7 @@ export const controls = {
       value: "start",
       options: { start: "start", center: "center", end: "end" },
     },
+    alignOffset: { value: 0 },
   },
 }
 
@@ -331,10 +332,12 @@ export default function ComboboxDemo({
   side = "bottom",
   sideOffset = 6,
   align = "start",
+  alignOffset = 0,
 }: {
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
+  alignOffset?: number
 }) {
   return (
     <Combobox items={FRAMEWORKS}>
@@ -347,6 +350,7 @@ export default function ComboboxDemo({
         side={side}
         sideOffset={sideOffset}
         align={align}
+        alignOffset={alignOffset}
       >
         <ComboboxEmpty>No framework found.</ComboboxEmpty>
         <ComboboxList>

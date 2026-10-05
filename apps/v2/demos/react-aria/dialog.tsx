@@ -66,9 +66,10 @@ function Dialog({
   children,
   showCloseButton = true,
   isDismissable = true,
+  from,
   ...props
 }: Omit<ModalOverlayPrimitiveProps, "className" | "children"> &
-  Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable"> & {
+  Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable" | "from"> & {
     className?: string
     children: React.ReactNode
     showCloseButton?: boolean
@@ -77,6 +78,7 @@ function Dialog({
     <DialogOverlay isDismissable={isDismissable} {...props}>
       <ModalPrimitive
         data-slot="dialog-content"
+        from={from}
         className={cn(
           "bg-popover text-popover-foreground ring-foreground/10 grid max-w-[calc(100%-2rem)] gap-4 rounded-xl p-4 text-sm ring-1 sm:max-w-sm fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
           className
@@ -182,11 +184,27 @@ const FIELDS = [
   { id: "username", label: "Username", defaultValue: "@peduarte" },
 ]
 
-export default function DialogDemo() {
+export const controls = {
+  Dialog: {
+    from: {
+      value: "top",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    showCloseButton: { value: true },
+  },
+}
+
+export default function DialogDemo({
+  from = "top",
+  showCloseButton = true,
+}: {
+  from?: "top" | "bottom" | "left" | "right"
+  showCloseButton?: boolean
+}) {
   return (
     <DialogTrigger>
       <Button variant="outline">Edit profile</Button>
-      <Dialog>
+      <Dialog from={from} showCloseButton={showCloseButton}>
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { cn } from "cn"
 import {
   Checkbox as CheckboxPrimitive,
@@ -44,11 +45,36 @@ function Checkbox({ className, children, ...props }: CheckboxProps) {
 
 export { Checkbox }
 
-export default function CheckboxDemo() {
+export const controls = {
+  Checkbox: {
+    checked: {
+      value: true,
+      options: { true: true, false: false, indeterminate: "indeterminate" },
+    },
+  },
+}
+
+export default function CheckboxDemo({
+  checked: checkedProp = true,
+}: {
+  checked?: boolean | "indeterminate"
+}) {
+  const [checked, setChecked] = React.useState(checkedProp)
+  const [prev, setPrev] = React.useState(checkedProp)
+  if (checkedProp !== prev) {
+    setPrev(checkedProp)
+    setChecked(checkedProp)
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-2">
-        <Checkbox id="terms" defaultSelected />
+        <Checkbox
+          id="terms"
+          isSelected={checked === true}
+          isIndeterminate={checked === "indeterminate"}
+          onChange={setChecked}
+        />
         <Label htmlFor="terms">Accept terms and conditions</Label>
       </div>
       <div className="flex items-start gap-2">

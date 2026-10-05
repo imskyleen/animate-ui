@@ -108,9 +108,25 @@ const ITEMS = [
   },
 ]
 
-export default function AccordionDemo() {
+export const controls = {
+  Accordion: {
+    multiple: { value: false },
+  },
+}
+
+export default function AccordionDemo({
+  multiple = false,
+}: {
+  /** Several items open at once. */
+  multiple?: boolean
+}) {
   return (
-    <Accordion defaultExpandedKeys={["what"]} className="max-w-md">
+    <Accordion
+      key={String(multiple)}
+      allowsMultipleExpanded={multiple}
+      defaultExpandedKeys={["what"]}
+      className="max-w-md"
+    >
       {ITEMS.map((item) => (
         <AccordionItem key={item.value} id={item.value}>
           <AccordionTrigger>{item.question}</AccordionTrigger>

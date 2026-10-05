@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { expect, test, type Page } from '@playwright/test';
 
 // The live controls of a demo (v1's tweakpane): a demo exporting `controls`
@@ -100,13 +103,27 @@ test.describe('demo controls', () => {
   test('a select keeps the option type and updates the demo', async ({
     page,
   }) => {
+    await open(page, '/docs/primitives/radix-ui/checkbox');
+    const box = stage(page).getByRole('checkbox').first();
+    await expect(box).toHaveAttribute('aria-checked', 'true');
+    await toggle(page).click();
+    const control = panel(page).getByRole('combobox', { name: 'checked' });
+    await control.click();
+    await page.getByRole('option', { name: 'indeterminate' }).click();
+    await expect(box).toHaveAttribute('aria-checked', 'mixed');
+    // `false` arrives as a boolean (the string "false" would be truthy).
+    await control.click();
+    await page.getByRole('option', { name: 'false' }).click();
+    await expect(box).toHaveAttribute('aria-checked', 'false');
+  });
+
+  test('a switch changes the mode of a group', async ({ page }) => {
     await open(page, '/docs/primitives/radix-ui/toggle-group');
     const radios = stage(page).getByRole('radio', { name: /^Align/ });
     const buttons = stage(page).getByRole('button', { name: /^Align/ });
     await expect(radios).toHaveCount(3);
     await toggle(page).click();
-    await panel(page).getByRole('combobox', { name: 'type' }).click();
-    await page.getByRole('option', { name: 'multiple' }).click();
+    await panel(page).getByRole('switch', { name: 'multiple' }).click();
     // type="multiple": the radios become toggle buttons.
     await expect(radios).toHaveCount(0);
     await expect(buttons).toHaveCount(3);
@@ -128,5 +145,88 @@ test.describe('demo controls', () => {
     ).toBeVisible();
     await expect(toggle(page)).toHaveCount(0);
     await expect(panel(page)).toHaveCount(0);
+  });
+});
+
+// The same component gets the same controls in Radix UI, Base UI and React
+// Aria, but for the features a library doesn't have.
+const LIBS = ['radix-ui', 'base-ui', 'react-aria'] as const;
+type Lib = (typeof LIBS)[number];
+
+/** Controls of features only some libraries have. */
+const ONLY: Record<string, Partial<Record<Lib, string[]>>> = {
+  // Radix's single-mode `collapsible` (Base UI's and React Aria's always are).
+  accordion: { 'radix-ui': ['collapsible'] },
+  // Animate UI's `followCursor`, on the Radix UI and Base UI primitives.
+  tooltip: { 'radix-ui': ['followCursor'], 'base-ui': ['followCursor'] },
+  'hover-card': { 'radix-ui': ['followCursor'], 'base-ui': ['followCursor'] },
+  // An item-aligned select: React Aria has none.
+  select: { 'radix-ui': ['position'], 'base-ui': ['position'] },
+};
+
+const DEMOS = path.join(process.cwd(), 'demos');
+
+/** A demo's control names, or null when the library has no such demo. */
+function controlsOf(lib: Lib, name: string) {
+  const file = path.join(DEMOS, lib, `${name}.tsx`);
+  if (!fs.existsSync(file)) return null;
+  const source = fs.readFileSync(file, 'utf8');
+  const block = /export const controls\s*=\s*\{([\s\S]*?)\n\}/.exec(source);
+  const names = block ? [...block[1]!.matchAll(/^ {4}(\w+):/gm)] : [];
+  return names
+    .map((match) => match[1]!)
+    .filter((control) => !ONLY[name]?.[lib]?.includes(control))
+    .sort();
+}
+
+test.describe('demo controls across libraries', () => {
+  test('a component has the same controls in every library', () => {
+    const names = new Set(
+      LIBS.flatMap((lib) =>
+        fs
+          .readdirSync(path.join(DEMOS, lib))
+          .filter((file) => file.endsWith('.tsx'))
+          .map((file) => file.slice(0, -'.tsx'.length)),
+      ),
+    );
+    for (const name of names) {
+      const found = LIBS.map((lib) => ({
+        lib,
+        controls: controlsOf(lib, name),
+      }));
+      const present = found.filter((entry) => entry.controls !== null);
+      for (const { lib, controls } of present.slice(1))
+        expect(controls, `${name}: ${lib} vs ${present[0]!.lib}`).toEqual(
+          present[0]!.controls,
+        );
+    }
+  });
+
+  test('React Aria: side and align place the popover', async ({ page }) => {
+    await open(page, '/docs/primitives/react-aria/popover');
+    await toggle(page).click();
+    await panel(page).getByRole('combobox', { name: 'side' }).click();
+    await page.getByRole('option', { name: 'top' }).click();
+    await stage(page).getByRole('button', { name: 'Share' }).click();
+    await expect(page.locator('[data-slot="popover-content"]')).toHaveAttribute(
+      'data-placement',
+      'top',
+    );
+  });
+
+  test('React Aria: multiple keeps several items open', async ({ page }) => {
+    await open(page, '/docs/primitives/react-aria/accordion');
+    const trigger = (name: string) =>
+      stage(page).getByRole('button', { name, exact: true });
+    await toggle(page).click();
+    await panel(page).getByRole('switch', { name: 'multiple' }).click();
+    await trigger('How is it different from other libraries?').click();
+    await expect(trigger('What is Animate UI?')).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    await expect(
+      trigger('How is it different from other libraries?'),
+    ).toHaveAttribute('aria-expanded', 'true');
   });
 });

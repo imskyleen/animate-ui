@@ -208,7 +208,10 @@ const FONTS = [
 
 export const controls = {
   SelectContent: {
-    alignItemWithTrigger: { value: false },
+    position: {
+      value: "popper",
+      options: { popper: "popper", "item-aligned": "item-aligned" },
+    },
     side: {
       value: "bottom",
       options: { top: "top", bottom: "bottom", left: "left", right: "right" },
@@ -223,14 +226,14 @@ export const controls = {
 }
 
 export default function SelectDemo({
-  alignItemWithTrigger = false,
+  position = "popper",
   side = "bottom",
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
 }: {
-  /** Overlaps the trigger with the selected item; side and align apply when off. */
-  alignItemWithTrigger?: boolean
+  /** "item-aligned" overlaps the trigger with the selected item (Base UI's alignItemWithTrigger); side and align apply to "popper". */
+  position?: "popper" | "item-aligned"
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
@@ -242,7 +245,7 @@ export default function SelectDemo({
         <SelectValue placeholder="Choose a font" />
       </SelectTrigger>
       <SelectContent
-        alignItemWithTrigger={alignItemWithTrigger}
+        alignItemWithTrigger={position === "item-aligned"}
         side={side}
         sideOffset={sideOffset}
         align={align}

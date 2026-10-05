@@ -45,13 +45,48 @@ function HoverCard({
 
 export { HoverCard, HoverCardTrigger }
 
-export default function HoverCardDemo() {
+export const controls = {
+  HoverCard: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
+function toPlacement(
+  side: "top" | "right" | "bottom" | "left",
+  align: "start" | "center" | "end"
+) {
+  if (align === "center") return side
+  if (side === "top" || side === "bottom") return `${side} ${align}` as const
+  return `${side} ${align === "start" ? "top" : "bottom"}` as const
+}
+
+export default function HoverCardDemo({
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <HoverCardTrigger>
       <Link href="https://github.com/imskyleen/animate-ui" className="text-sm font-medium underline underline-offset-4">
         @animate-ui
       </Link>
-      <HoverCard className="w-80">
+      <HoverCard className="w-80" placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
         <div className="flex gap-3">
           <div className="bg-primary text-primary-foreground flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
             AU

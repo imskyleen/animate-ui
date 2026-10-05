@@ -254,14 +254,49 @@ export {
   DropdownMenuSubContent,
 }
 
-export default function DropdownMenuDemo() {
+export const controls = {
+  DropdownMenu: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "start",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
+function toPlacement(
+  side: "top" | "right" | "bottom" | "left",
+  align: "start" | "center" | "end"
+) {
+  if (align === "center") return side
+  if (side === "top" || side === "bottom") return `${side} ${align}` as const
+  return `${side} ${align === "start" ? "top" : "bottom"}` as const
+}
+
+export default function DropdownMenuDemo({
+  side = "bottom",
+  sideOffset = 4,
+  align = "start",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   const [panels, setPanels] = React.useState<Selection>(() => new Set(["status"]))
   const [position, setPosition] = React.useState<Selection>(() => new Set(["bottom"]))
 
   return (
     <DropdownMenuTrigger>
       <Button variant="outline">Open menu</Button>
-      <DropdownMenu className="w-56">
+      <DropdownMenu className="w-56" placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
         <DropdownMenuGroup>
           <DropdownMenuLabel>My account</DropdownMenuLabel>
           <DropdownMenuItem>

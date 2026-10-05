@@ -92,7 +92,42 @@ const TOOLS = [
   { label: "Underline", shortcut: "⌘U", icon: TextUnderlineIcon },
 ]
 
-export default function TooltipDemo() {
+export const controls = {
+  Tooltip: {
+    side: {
+      value: "top",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
+function toPlacement(
+  side: "top" | "right" | "bottom" | "left",
+  align: "start" | "center" | "end"
+) {
+  if (align === "center") return side
+  if (side === "top" || side === "bottom") return `${side} ${align}` as const
+  return `${side} ${align === "start" ? "top" : "bottom"}` as const
+}
+
+export default function TooltipDemo({
+  side = "top",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <div className="flex items-center gap-1 rounded-xl border p-1">
       {TOOLS.map((tool) => (
@@ -100,7 +135,7 @@ export default function TooltipDemo() {
           <Button variant="ghost" size="icon" aria-label={tool.label}>
             <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
           </Button>
-          <Tooltip>
+          <Tooltip placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
             {tool.label}
             <span className="opacity-60">{tool.shortcut}</span>
           </Tooltip>

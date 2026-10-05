@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "@animate-ui/react/primitives/base-ui/checkbox"
 import { cn } from "cn"
 
@@ -32,19 +33,33 @@ export { Checkbox }
 
 export const controls = {
   Checkbox: {
-    indeterminate: { value: false },
+    checked: {
+      value: true,
+      options: { true: true, false: false, indeterminate: "indeterminate" },
+    },
   },
 }
 
 export default function CheckboxDemo({
-  indeterminate = false,
+  checked: checkedProp = true,
 }: {
-  indeterminate?: boolean
+  checked?: boolean | "indeterminate"
 }) {
+  const [checked, setChecked] = React.useState(checkedProp)
+  const [prev, setPrev] = React.useState(checkedProp)
+  if (checkedProp !== prev) {
+    setPrev(checkedProp)
+    setChecked(checkedProp)
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <Label>
-        <Checkbox defaultChecked indeterminate={indeterminate} />
+        <Checkbox
+          checked={checked === true}
+          indeterminate={checked === "indeterminate"}
+          onCheckedChange={(next) => setChecked(next)}
+        />
         Accept terms and conditions
       </Label>
       <Label className="items-start">

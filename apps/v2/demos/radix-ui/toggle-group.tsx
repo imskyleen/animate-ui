@@ -92,10 +92,7 @@ export { ToggleGroup, ToggleGroupItem }
 
 export const controls = {
   ToggleGroup: {
-    type: {
-      value: "single",
-      options: { single: "single", multiple: "multiple" },
-    },
+    multiple: { value: false },
     variant: {
       value: "outline",
       options: { default: "default", outline: "outline" },
@@ -108,22 +105,22 @@ export const controls = {
 }
 
 export default function ToggleGroupDemo({
-  type = "single",
+  multiple = false,
   variant = "outline",
   size = "default",
 }: {
-  type?: "single" | "multiple"
+  /** Several items pressed at once (Radix's type="multiple"). */
+  multiple?: boolean
   variant?: "default" | "outline"
   size?: "default" | "sm" | "lg"
 }) {
-  const props =
-    type === "multiple"
-      ? { type: "multiple" as const, defaultValue: ["left"] }
-      : { type: "single" as const, defaultValue: "left" }
+  const props = multiple
+    ? { type: "multiple" as const, defaultValue: ["left"] }
+    : { type: "single" as const, defaultValue: "left" }
 
   return (
     <ToggleGroup
-      key={type}
+      key={String(multiple)}
       {...props}
       variant={variant}
       size={size}

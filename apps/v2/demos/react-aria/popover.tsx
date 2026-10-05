@@ -90,11 +90,46 @@ export {
   PopoverTrigger,
 }
 
-export default function PopoverDemo() {
+export const controls = {
+  Popover: {
+    side: {
+      value: "bottom",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+    sideOffset: { value: 4 },
+    align: {
+      value: "center",
+      options: { start: "start", center: "center", end: "end" },
+    },
+    alignOffset: { value: 0 },
+  },
+}
+
+/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
+function toPlacement(
+  side: "top" | "right" | "bottom" | "left",
+  align: "start" | "center" | "end"
+) {
+  if (align === "center") return side
+  if (side === "top" || side === "bottom") return `${side} ${align}` as const
+  return `${side} ${align === "start" ? "top" : "bottom"}` as const
+}
+
+export default function PopoverDemo({
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+}: {
+  side?: "top" | "right" | "bottom" | "left"
+  sideOffset?: number
+  align?: "start" | "center" | "end"
+  alignOffset?: number
+}) {
   return (
     <PopoverTrigger>
       <Button className={buttonVariants({ variant: "outline" })}>Share</Button>
-      <Popover className="w-80">
+      <Popover className="w-80" placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
         <PopoverHeader>
           <PopoverTitle>Share this document</PopoverTitle>
           <PopoverDescription>

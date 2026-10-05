@@ -236,20 +236,28 @@ const GOALS = [
 
 export const controls = {
   Drawer: {
-    swipeDirection: {
-      value: "down",
-      options: { down: "down", up: "up", left: "left", right: "right" },
+    direction: {
+      value: "bottom",
+      options: { bottom: "bottom", top: "top", left: "left", right: "right" },
     },
   },
 }
 
+/** The edge the drawer comes from, as Base UI's swipe direction. */
+const SWIPE_DIRECTION = {
+  bottom: "down",
+  top: "up",
+  left: "left",
+  right: "right",
+} as const
+
 export default function DrawerDemo({
-  swipeDirection = "down",
+  direction = "bottom",
 }: {
-  swipeDirection?: "down" | "up" | "left" | "right"
+  direction?: "bottom" | "top" | "left" | "right"
 }) {
   return (
-    <Drawer showSwipeHandle swipeDirection={swipeDirection}>
+    <Drawer showSwipeHandle swipeDirection={SWIPE_DIRECTION[direction]}>
       <DrawerTrigger render={<Button variant="outline" />}>
         Daily goals
       </DrawerTrigger>

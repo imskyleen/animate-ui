@@ -135,11 +135,24 @@ export {
 
 const STEP = 10
 
-export default function DrawerDemo() {
+export const controls = {
+  Drawer: {
+    direction: {
+      value: "bottom",
+      options: { bottom: "bottom", top: "top", left: "left", right: "right" },
+    },
+  },
+}
+
+export default function DrawerDemo({
+  direction = "bottom",
+}: {
+  direction?: "bottom" | "top" | "left" | "right"
+}) {
   const [goal, setGoal] = React.useState(350)
 
   return (
-    <Drawer>
+    <Drawer direction={direction}>
       <DrawerTrigger asChild>
         <Button variant="outline">Move goal</Button>
       </DrawerTrigger>

@@ -47,16 +47,29 @@ function Toggle({
 
 export { Toggle, toggleVariants }
 
-export default function ToggleDemo() {
+export const controls = {
+  Toggle: {
+    size: {
+      value: "default",
+      options: { default: "default", sm: "sm", lg: "lg" },
+    },
+  },
+}
+
+export default function ToggleDemo({
+  size = "default",
+}: {
+  size?: "default" | "sm" | "lg"
+}) {
   return (
     <div className="flex items-center gap-2">
-      <Toggle aria-label="Toggle bold" defaultSelected>
+      <Toggle aria-label="Toggle bold" size={size} defaultSelected>
         <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
       </Toggle>
-      <Toggle aria-label="Toggle italic" variant="outline">
+      <Toggle aria-label="Toggle italic" size={size} variant="outline">
         <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
       </Toggle>
-      <Toggle aria-label="Toggle bookmark" variant="outline">
+      <Toggle aria-label="Toggle bookmark" size={size} variant="outline">
         <HugeiconsIcon icon={Bookmark01Icon} strokeWidth={2} data-icon="inline-start" />
         Bookmark
       </Toggle>

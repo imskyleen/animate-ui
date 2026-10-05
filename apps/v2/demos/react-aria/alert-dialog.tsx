@@ -8,7 +8,6 @@ import {
   Heading,
   ModalOverlay as ModalOverlayPrimitive,
   Modal as ModalPrimitive,
-  type DialogProps as AlertDialogPrimitiveProps,
   type DialogTriggerProps as AlertDialogTriggerPrimitiveProps,
   type ModalOverlayProps as ModalOverlayPrimitiveProps,
 } from "@animate-ui/react/primitives/react-aria"
@@ -47,9 +46,10 @@ function AlertDialog({
   className,
   size = "default",
   children,
+  from,
   ...props
 }: Omit<ModalOverlayPrimitiveProps, "className" | "children"> &
-  Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable"> & {
+  Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable" | "from"> & {
     className?: string
     size?: "default" | "sm"
     children: React.ReactNode
@@ -59,6 +59,7 @@ function AlertDialog({
       <ModalPrimitive
         data-slot="alert-dialog-content"
         data-size={size}
+        from={from}
         className={cn(
           "bg-popover text-popover-foreground ring-foreground/10 gap-4 rounded-xl p-4 ring-1 data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 outline-none",
           className
@@ -204,11 +205,24 @@ export {
   AlertDialogTrigger,
 }
 
-export default function AlertDialogDemo() {
+export const controls = {
+  AlertDialogContent: {
+    from: {
+      value: "top",
+      options: { top: "top", bottom: "bottom", left: "left", right: "right" },
+    },
+  },
+}
+
+export default function AlertDialogDemo({
+  from = "top",
+}: {
+  from?: "top" | "bottom" | "left" | "right"
+}) {
   return (
     <AlertDialogTrigger>
       <Button variant="destructive">Delete project</Button>
-      <AlertDialogContent>
+      <AlertDialogContent from={from}>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this project?</AlertDialogTitle>
           <AlertDialogDescription>
