@@ -58,7 +58,7 @@ export default function CollapsibleDemo() {
           <Button variant="ghost" size="icon-sm" aria-label="Show all changes">
             <HugeiconsIcon
               icon={ArrowDown01Icon} strokeWidth={2}
-              className="transition-transform duration-400 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-aria-expanded/button:rotate-180"
+              className="transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-aria-expanded/button:rotate-180"
             />
           </Button>
         </CollapsibleTrigger>

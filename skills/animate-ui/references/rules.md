@@ -172,7 +172,7 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Menus, selects                  | 200ms                              | `transition.menu`                              |
 | Tooltips, popovers, hover cards | there in ~200ms, settled by ~500ms | `spring.pop`                                   |
 | Selection, pointer highlight    | a smooth slide / a quick follow    | `spring.selection`, `spring.highlight`         |
-| Disclosures                     | 400ms, soft ease-out               | `transition.disclosure`                        |
+| Disclosures                     | 350ms, soft ease-out               | `transition.disclosure`                        |
 | Dialogs, sheets                 | ~450ms, ~550ms                     | `spring.dialog`, `spring.sheet`                |
 | Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
 

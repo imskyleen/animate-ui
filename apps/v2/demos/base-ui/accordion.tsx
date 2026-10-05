@@ -44,7 +44,7 @@ function AccordionTrigger({
         {children}
         <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2}
           data-slot="accordion-trigger-icon"
-          className="pointer-events-none shrink-0 transition-transform duration-400 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-aria-expanded/accordion-trigger:rotate-180"
+          className="pointer-events-none shrink-0 transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-aria-expanded/accordion-trigger:rotate-180"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

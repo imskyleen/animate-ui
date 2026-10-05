@@ -190,11 +190,11 @@ const expanded = {
 </AnimatePresence>;
 ```
 
-- The height grows from 0 while the content fades in from `blur.disclosure` (2px), in `transition.disclosure` (400ms, `ease.soft`), both ways. After Motion's accordion example: the soft ease-out lets the eye follow the content open, where `ease.out` would snap it open.
+- The height grows from 0 while the content fades in from `blur.disclosure` (2px), in `transition.disclosure` (350ms, `ease.soft`), both ways. After Motion's accordion example: the soft ease-out lets the eye follow the content open, where `ease.out` would snap it open.
 - An item open by default unfolds on mount, page load included: no `initial={false}`.
 - Reduced motion: the height jumps; the fade and the blur still play.
 - Derive each item's open state from the root value; never copy it into state with an effect. With a single-value root the value is a string, so compare with `===`, not `includes` (`'item-10'.includes('item-1')` is true).
-- Chevron: it turns 180° with the panel, on its timing (`transition-transform duration-400 ease-[cubic-bezier(0.215,0.61,0.355,1)]`), so the two read as one gesture.
+- Chevron: it turns 180° with the panel, on its timing (`transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)]`), so the two read as one gesture.
 
 ## Sheet (Sheet, Drawer)
 

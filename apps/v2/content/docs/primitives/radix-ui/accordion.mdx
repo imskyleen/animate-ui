@@ -36,7 +36,7 @@ Coming from the `@radix-ui/react-accordion` package? Use the subpath: `import * 
 
 ## Animation
 
-- **Content** unfolds: its height grows from 0 while the content fades in from a 2px blur, over 400ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
+- **Content** unfolds: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
 - Opening another item while one is closing retargets smoothly.
 - An item open by default animates open on mount (page load), as in v1.
 - With `forceMount`, closed content stays in the DOM, collapsed and `inert`.
@@ -60,7 +60,7 @@ Every part takes exactly the props of [Radix UI's Accordion](https://www.radix-u
     transition: {
       description: 'Transition of the opening.',
       type: 'Transition',
-      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+      default: '{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
