@@ -18,6 +18,16 @@ import {
 // The panel unfolds: its height grows from 0 while the content fades in from
 // a light blur (after Motion's accordion example). Folding back plays the
 // same in reverse.
+//
+// While it moves, the panel cuts its content off at its bottom edge, right
+// where what follows it starts (an item's border). That edge fades instead,
+// over 16px, or over the part still hidden once less than 16px is: the
+// content never meets the edge with a hard cut, and an open panel shows it
+// untouched. The fade needs the content's height (`--animate-ui-panel-
+// content`), measured when the panel starts moving (`measurePanel`) and
+// dropped once it's open (`releasePanel`): at rest nothing fades, whatever
+// the content does next.
+
 const collapsed = {
   height: 0,
   opacity: 0,
@@ -31,6 +41,31 @@ const expanded = {
   // its fixed descendants.
   transitionEnd: { filter: 'none' },
 };
+
+const CONTENT_VAR = '--animate-ui-panel-content';
+
+// The fade starts 16px above the edge (100% - 16px), or as far above it as
+// the content still hidden, the content's height minus the panel's
+// (100% - (content - 100%)): whichever is lower. Without the content's
+// height, nothing fades.
+const EDGE_MASK = `linear-gradient(to bottom, black max(100% - 16px, 200% - var(${CONTENT_VAR}, 100%)), transparent)`;
+
+/** A panel's own style: it clips its content, its bottom edge faded. */
+const panelStyle = {
+  overflow: 'hidden',
+  maskImage: EDGE_MASK,
+  WebkitMaskImage: EDGE_MASK,
+} as const;
+
+/** Records the content's height for the faded edge, as the panel starts moving. */
+function measurePanel(element: HTMLElement | null) {
+  element?.style.setProperty(CONTENT_VAR, `${element.scrollHeight}px`);
+}
+
+/** Drops it once the panel is open: nothing fades at rest. */
+function releasePanel(element: HTMLElement | null) {
+  element?.style.removeProperty(CONTENT_VAR);
+}
 
 /**
  * The opening and the closing alike: 350ms on a soft ease-out, so the panel
@@ -136,12 +171,23 @@ function useDisclosurePanel(
       });
   }, [hiddenMode]);
 
+  // The faded edge needs the content's height, as the panel starts moving.
+  const onAnimationStart = () => measurePanel(ref.current);
+
   const onAnimationComplete = () => {
-    if (!open) setSettled(true);
-    else if (revealedByFind) setRevealedByFind(false);
+    if (!open) return setSettled(true);
+    releasePanel(ref.current);
+    if (revealedByFind) setRevealedByFind(false);
   };
 
-  return { ref, visible, settled, revealedByFind, onAnimationComplete };
+  return {
+    ref,
+    visible,
+    settled,
+    revealedByFind,
+    onAnimationStart,
+    onAnimationComplete,
+  };
 }
 
 function setRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
@@ -270,12 +316,13 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
       ? { ...expanded, transition: enter }
       : { ...collapsed, transition: exit },
     exit: { ...collapsed, transition: exit },
+    onAnimationStart: panel.onAnimationStart,
     onAnimationComplete: panel.onAnimationComplete,
     // Closed but still in the DOM: out of the tab order and the accessibility
     // tree. Not once hidden until found, or find-in-page would skip it.
     inert: !open && !(untilFound && panel.settled),
     style: {
-      overflow: 'hidden',
+      ...panelStyle,
       // Base UI measures these for CSS transitions; Motion owns the height
       // now, so classes reading them follow the content.
       [sizeVars[0]]: 'auto',
@@ -304,6 +351,9 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
 export {
   collapsed,
   expanded,
+  panelStyle,
+  measurePanel,
+  releasePanel,
   useDisclosurePanel,
   useDisclosureTransitions,
   asMotion,

@@ -34,7 +34,7 @@ export function Changelog() {
 
 ## Animation
 
-- **DisclosurePanel** unfolds like the accordions: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. It folds back the same way, in reverse.
+- **DisclosurePanel** unfolds like the accordions: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. While it moves, its bottom edge fades (over 16px, or over the part still hidden): the content never meets what follows it, an item's border, with a hard cut. It folds back the same way, in reverse.
 - Toggling it while it moves retargets from where it is.
 - Expanded by default (`defaultExpanded`), it animates open on mount (page load), as in v1.
 - React Aria keeps a closed panel mounted with `hidden="until-found"`: the panel stays visible (and `inert`) while it collapses, then gets `hidden="until-found"` back, so find-in-page can still reveal it. A panel revealed by find-in-page opens at once, as in React Aria.

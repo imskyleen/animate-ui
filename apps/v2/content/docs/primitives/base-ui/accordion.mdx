@@ -36,7 +36,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **Panel** unfolds: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. It folds back the same way, in reverse, then unmounts.
+- **Panel** unfolds: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. While it moves, its bottom edge fades (over 16px, or over the part still hidden): the content never meets what follows it, an item's border, with a hard cut. It folds back the same way, in reverse, then unmounts.
 - Opening another item while one is closing retargets smoothly.
 - An item open by default animates open on mount (page load), as in v1.
 - Motion animates the panel itself: shadcn/ui's `h-(--accordion-panel-height) data-starting-style:h-0 data-ending-style:h-0` classes are no longer needed (the CLI removes them). `--accordion-panel-height` and `--accordion-panel-width` read `auto`.

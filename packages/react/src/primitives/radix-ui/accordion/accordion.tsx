@@ -9,6 +9,9 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   collapsed,
   expanded,
+  measurePanel,
+  panelStyle,
+  releasePanel,
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
 
@@ -95,6 +98,7 @@ function Content({
   // The content: 350ms on a soft ease-out both ways; under reduced motion
   // the height jumps (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
+  const ref = React.useRef<HTMLDivElement>(null);
 
   return (
     // Open on mount (an item open by default), it animates open, as in v1.
@@ -104,6 +108,7 @@ function Content({
         // motion.div through asChild; it only carries the animation.
         <AccordionPrimitive.Content {...props} forceMount asChild>
           <motion.div
+            ref={ref}
             initial={collapsed}
             // Transitions live in the targets: an exiting element keeps the
             // props of its last render, when it was still open.
@@ -113,11 +118,15 @@ function Content({
                 : { ...collapsed, transition: exit }
             }
             exit={{ ...collapsed, transition: exit }}
+            onAnimationStart={() => measurePanel(ref.current)}
+            onAnimationComplete={() => {
+              if (open) releasePanel(ref.current);
+            }}
             // A force-mounted closed item stays in the DOM: keep it out of
             // the tab order and the accessibility tree.
             inert={!open}
             style={{
-              overflow: 'hidden',
+              ...panelStyle,
               // Radix measures these once; Motion owns the height now, so
               // classes reading them (h-(--radix-accordion-content-height))
               // follow the content instead of a stale measure.

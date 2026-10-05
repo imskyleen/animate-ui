@@ -25,6 +25,8 @@ export type HeightSample = {
   o: number;
   /** Blur radius, in px (0 without a blur). */
   b: number;
+  /** The content's height the faded edge uses, in px (NaN when unset). */
+  e: number;
 };
 
 /**
@@ -44,7 +46,13 @@ export async function recordHeights(
     ({ sel, duration, text }) => {
       const w = window as unknown as { __heights?: Promise<unknown> };
       w.__heights = new Promise((resolve) => {
-        const samples: { t: number; h: number; o: number; b: number }[] = [];
+        const samples: {
+          t: number;
+          h: number;
+          o: number;
+          b: number;
+          e: number;
+        }[] = [];
         const start = performance.now();
         const tick = () => {
           const el = [...document.querySelectorAll<HTMLElement>(sel)].find(
@@ -58,6 +66,9 @@ export async function recordHeights(
             h: shown ? el.getBoundingClientRect().height : 0,
             o: shown ? Number(style!.opacity) : 0,
             b: blur ? Number(blur[1]) : 0,
+            e: parseFloat(
+              style?.getPropertyValue('--animate-ui-panel-content') ?? '',
+            ),
           });
           if (performance.now() - start < duration) requestAnimationFrame(tick);
           else resolve(samples);
@@ -194,6 +205,15 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       // At rest, no filter is left on the panel.
       await expect(panelOf(page, closed.text)).toHaveCSS('filter', 'none');
       expect(samples.at(-1)!.b).toBe(0);
+      // Its bottom edge fades while it moves (over 16px, or the part still
+      // hidden): it knows the content's height then, and forgets it at rest,
+      // where nothing fades.
+      await expect(panelOf(page, closed.text)).toHaveCSS(
+        'mask-image',
+        /linear-gradient/,
+      );
+      expect(moving.some((s) => Math.abs(s.e - entrance.to) < 1)).toBe(true);
+      expect(samples.at(-1)!.e).toBeNaN();
     });
 
     test('closes the same way, in reverse, then goes away', async ({

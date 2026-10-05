@@ -13,6 +13,7 @@ import {
   asMotion,
   collapsed,
   expanded,
+  panelStyle,
   useDisclosurePanel,
   useDisclosureTransitions,
   type MotionPanelProps,
@@ -73,13 +74,14 @@ function DisclosurePanelMotion({
     animate: open
       ? { ...expanded, transition: enter }
       : { ...collapsed, transition: exit },
+    onAnimationStart: panel.onAnimationStart,
     onAnimationComplete: panel.onAnimationComplete,
     // Collapsing: out of the tab order until it's hidden. Not afterwards, or
     // find-in-page would skip the hidden content.
     inert: !open && !panel.settled,
     style: {
       ...domProps.style,
-      overflow: 'hidden',
+      ...panelStyle,
       [SIZE_VARS[0]!]: 'auto',
       [SIZE_VARS[1]!]: 'auto',
     },

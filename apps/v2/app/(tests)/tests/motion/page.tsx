@@ -175,6 +175,7 @@ const FAMILIES: Family[] = [
     rule: 'Un panneau se déplie de haut en bas ; ouvert par défaut, il se déplie au chargement.',
     values: [
       'hauteur 0 → auto + fondu + flou 2px → net (d’après l’exemple d’accordéon de Motion)',
+      'bord bas estompé sur 16px pendant le mouvement (ou sur ce qui reste caché) : le contenu n’est jamais coupé net contre la bordure',
       '0,35s ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1), dans les deux sens',
       'chevron : rotation de 180° avec le panneau (0,35s, même courbe)',
     ],
