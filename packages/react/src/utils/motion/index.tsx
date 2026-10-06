@@ -71,6 +71,11 @@ const spring = {
    * it never trails behind. Quicker than v1's (stiffness 350, damping 35).
    */
   highlight: { type: 'spring', stiffness: 500, damping: 40 },
+  /**
+   * Items making room for one added, or closing the gap of one removed (a
+   * combobox's chips and its input): quick, without overshoot.
+   */
+  reflow: { type: 'spring', stiffness: 500, damping: 40 },
   /** A height following its content, without overshoot. */
   height: {
     type: 'spring',
@@ -123,10 +128,10 @@ const transition = {
   /** A check erasing itself, as slowly as it draws. */
   uncheck: { duration: 0.3, ease: ease.draw },
   /**
-   * A popped check (`checkAnimation="pop"`) shrinking back into its blur
-   * and fading, quicker than it came.
+   * Something that popped in shrinking back out and fading, quicker than it
+   * came: a popped check (`checkAnimation="pop"`), a removed chip or tag.
    */
-  uncheckPop: { duration: 0.15, ease: ease.out },
+  popOut: { duration: 0.15, ease: ease.out },
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
   /** Deliberately no animation. */

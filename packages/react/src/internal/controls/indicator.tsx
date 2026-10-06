@@ -77,7 +77,7 @@ const POP_TRANSITION: Transition = {
   delay: motionTokens.transition.check.delay,
 };
 /** A popped check shrinks back out, quicker. */
-const POP_EXIT_TRANSITION: Transition = motionTokens.transition.uncheckPop;
+const POP_EXIT_TRANSITION: Transition = motionTokens.transition.popOut;
 /** v1's `RadioGroupIndicator` / `RadioIndicator`, in and out: bouncy. */
 const DOT_TRANSITION: Transition = motionTokens.spring.bounce;
 

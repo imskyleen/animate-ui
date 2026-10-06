@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeChipMotion } from './chip-motion';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 import {
@@ -221,12 +222,6 @@ test.describe('react-aria combobox chips demo', () => {
     await expect(page.locator(POPOVER)).toBeVisible();
   });
 
-  test('Backspace removes the last tag instantly', async ({ page }) => {
-    await page.getByRole('combobox', { name: 'Frameworks' }).press('Backspace');
-    await expect(page.locator(chip('Astro'))).toHaveCount(0, { timeout: 50 });
-    await expect(page.locator(chip('Next.js'))).toHaveCount(1);
-  });
-
   test('reduced motion: added tags fade without scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
@@ -318,4 +313,12 @@ describeMenuHighlight('react-aria combobox highlight', {
   first: (page) => page.getByRole('option').nth(0),
   second: (page) => page.getByRole('option').nth(1),
   keyboardNext: 'ArrowDown',
+});
+
+describeChipMotion('react-aria combobox', {
+  path: '/tests/demos/react-aria/combobox-multiple',
+  label: 'Frameworks',
+  first: 'Next.js',
+  last: 'Astro',
+  add: 'Nuxt',
 });

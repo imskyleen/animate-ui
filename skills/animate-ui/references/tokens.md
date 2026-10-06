@@ -38,6 +38,7 @@ Springs first: nearly everything moves on a spring. They retarget with their vel
 | `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)                                                                   |
 | `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                                                                                |
 | `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer   | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item (`pop`) |
+| `spring.reflow`    | `stiffness: 500, damping: 40`                             | Quick, no overshoot                                | Items making room for one added or closing the gap of one removed (a combobox's chips and its input)                                  |
 | `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)                                                                              |
 | `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                                                                                       |
 | `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters)                                                                |
@@ -61,7 +62,7 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                     |
 | `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered               |
 | `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                         |
-| `transition.uncheckPop` | `{ duration: 0.15, ease: ease.out }`             | A popped check shrinking back into its blur (`pop`)            |
+| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out      |
 | `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                          |
 | `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)      |
 
@@ -120,7 +121,7 @@ The provider is optional and nestable: the closest one sets what it's given, the
 Checks (checkboxes', and the checks of menus, selects, comboboxes and lists) show and hide one of two ways, `CheckAnimation`:
 
 - `draw` (the default): the stroke draws itself (`transition.check`, without its delay outside a checkbox) and erases itself (`transition.uncheck`);
-- `pop`: in from `scale.icon` out of `blur.icon` on `spring.checkPop` (after the checkbox's 0.2s in a checkbox), back out on `transition.uncheckPop`; a single selection's check glides from the item it leaves to the chosen one on `spring.highlight`.
+- `pop`: in from `scale.icon` out of `blur.icon` on `spring.checkPop` (after the checkbox's 0.2s in a checkbox), back out on `transition.popOut`; a single selection's check glides from the item it leaves to the chosen one on `spring.highlight`.
 
 ```tsx
 <AnimateUIProvider checkAnimation="pop">{children}</AnimateUIProvider>

@@ -9,6 +9,15 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
+import { mergeRefs } from '../../../internal/anchored';
+import {
+  CHIP_EXIT_TRANSITION,
+  CHIP_SCALE,
+  CHIP_TRANSITION,
+  REFLOW_TRANSITION,
+  useReflow,
+  type Reflow,
+} from '../../../internal/reflow';
 import {
   IndicatorMotion,
   useHighlightedItem,
@@ -21,14 +30,22 @@ import {
 } from '../select/motion';
 
 // Same API as Base UI's Combobox, animated like Animate UI v1's Base UI Menu
-// (see ../select/motion.tsx); a chip added to the selection pops in like v1's
-// checkbox check. With an `actionsRef`, Base UI keeps the popup mounted until
-// we unmount it after the exit animation; it also waits until then to reset
-// the query and sync the input, so the list doesn't change while it fades out.
+// (see ../select/motion.tsx). A chip added to the selection pops in, a
+// removed one shrinks out, and the others (the input too) glide to make
+// room or close the gap (internal/reflow). With an `actionsRef`, Base UI
+// keeps the popup mounted until we unmount it after the exit animation; it
+// also waits until then to reset the query and sync the input, so the list
+// doesn't change while it fades out.
 
 const RootContext = React.createContext<RootMotion | null>(null);
-/** True once the Chips container has mounted: later chips were just added. */
-const ChipsContext = React.createContext<React.RefObject<boolean> | null>(null);
+
+type ChipsMotion = {
+  /** True once the Chips have mounted: later chips were just added. */
+  mounted: React.RefObject<boolean>;
+  reflow: Reflow;
+};
+
+const ChipsContext = React.createContext<ChipsMotion | null>(null);
 
 function Root<
   Value,
@@ -144,7 +161,8 @@ declare namespace ItemIndicator {
   type State = ComboboxPrimitive.ItemIndicator.State;
 }
 
-function Chips(props: ComboboxPrimitive.Chips.Props) {
+// Lays the chips out: they glide in it when one is added or removed.
+function Chips({ ref, ...props }: Chips.Props) {
   const mountedRef = React.useRef(false);
   React.useEffect(() => {
     mountedRef.current = true;
@@ -152,37 +170,51 @@ function Chips(props: ComboboxPrimitive.Chips.Props) {
       mountedRef.current = false;
     };
   }, []);
+  const elementRef = React.useRef<HTMLDivElement | null>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, elementRef), [ref]);
+  const reduce = useShouldReduceMotion();
+  const glide = useTempoTransition(REFLOW_TRANSITION);
+  const reflow = useReflow({
+    container: () => elementRef.current,
+    glide,
+    reduce,
+  });
+  const motion = React.useMemo(
+    () => ({ mounted: mountedRef, reflow }),
+    [reflow],
+  );
 
   return (
-    <ChipsContext value={mountedRef}>
-      <ComboboxPrimitive.Chips {...props} />
+    <ChipsContext value={motion}>
+      <ComboboxPrimitive.Chips {...props} ref={mergedRef} />
     </ChipsContext>
   );
 }
 
 declare namespace Chips {
-  type Props = ComboboxPrimitive.Chips.Props;
+  type Props = ComboboxPrimitive.Chips.Props & {
+    ref?: React.Ref<HTMLDivElement>;
+  };
   type State = ComboboxPrimitive.Chips.State;
 }
 
 /** Animate UI's additions to `Chip`. */
 type ChipAnimationProps = {
   /**
-   * Transition of a chip being added. Defaults to Motion's defaults, as v1's
-   * checkbox check.
+   * Transition of a chip being added: it pops in from half its size. Defaults
+   * to a spring (stiffness 300, damping 25).
    */
   transition?: Transition;
+  /**
+   * Transition of a removed chip shrinking out. Defaults to 0.15s on a
+   * strong ease-out.
+   */
+  exitTransition?: Transition;
 };
 
-/** Motion's defaults, which v1's checkbox check used: written out for the tempo. */
-const CHIP_TRANSITION = {
-  scale: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
-  opacity: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
-} as const satisfies Transition;
-
-// A chip added to the selection pops in from half its size, like v1's
-// checkbox check; chips already there on mount don't. Removing one is
-// instant: it's often Backspace, and its neighbours reflow.
+// A chip added to the selection pops in from half its size; chips already
+// there on mount don't. A removed one (with its remove button or Backspace)
+// shrinks out in place, out of the flow, while the others close the gap.
 function Chip(props: Chip.Props) {
   return (
     <ReducedMotionConfig>
@@ -192,23 +224,46 @@ function Chip(props: Chip.Props) {
 }
 
 // Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
-function AnimatedChip({ ref, transition, ...props }: Chip.Props) {
+function AnimatedChip({
+  ref,
+  transition,
+  exitTransition,
+  ...props
+}: Chip.Props) {
   const chips = React.use(ChipsContext);
-  const [entering] = React.useState(() => chips?.current === true);
+  const [entering] = React.useState(() => {
+    const added = chips?.mounted.current === true;
+    // Where the others are, before this chip pushes them.
+    if (added) chips?.reflow.measure();
+    return added;
+  });
   const elementRef = React.useRef<HTMLDivElement | null>(null);
   const reduce = useShouldReduceMotion();
   const pop = useTempoTransition(transition ?? CHIP_TRANSITION);
+  const out = useTempoTransition(exitTransition ?? CHIP_EXIT_TRANSITION);
+  // Read when it leaves.
+  const exitRef = React.useRef({ out, reduce });
+  React.useLayoutEffect(() => {
+    exitRef.current = { out, reduce };
+  });
 
   // Before paint, so the chip never flashes at full opacity first.
   React.useLayoutEffect(() => {
     const element = elementRef.current;
-    if (!entering || !element) return undefined;
-    const controls = animate(
-      element,
-      { opacity: [0, 1], scale: [reduce ? 1 : 0.5, 1] },
-      pop,
-    );
-    return () => controls.stop();
+    if (!element) return undefined;
+    const controls = entering
+      ? animate(
+          element,
+          { opacity: [0, 1], scale: [reduce ? 1 : CHIP_SCALE, 1] },
+          pop,
+        )
+      : null;
+    if (entering) chips?.reflow.settle();
+    return () => {
+      controls?.stop();
+      // Removed: it leaves through a copy, the others close the gap.
+      chips?.reflow.leave(element, exitRef.current.out, exitRef.current.reduce);
+    };
     // Plays once, when the chip mounts.
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, []);

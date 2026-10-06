@@ -5,7 +5,6 @@ import { PresenceContext, type Transition } from 'motion/react';
 
 import {
   motionTokens,
-  toCssTiming,
   useCheckAnimation,
   useShouldReduceMotion,
   useTempoTransition,
@@ -17,6 +16,7 @@ import {
   type IndicatorContentProps,
   type IndicatorHandle,
 } from './controls/indicator';
+import { glideFrom, stopGlide } from './glide';
 
 // The checks of list and menu items (a select's or a combobox's chosen item,
 // a menu's checkbox and radio items), shared by the libraries. They stay
@@ -47,7 +47,7 @@ const ERASE_TRANSITION: Transition = motionTokens.transition.uncheck;
 /** A popped check: a lively spring, a little overshoot. */
 const POP_TRANSITION: Transition = motionTokens.spring.checkPop;
 /** Unchecked, it shrinks back into its blur, quicker. */
-const UNPOP_TRANSITION: Transition = motionTokens.transition.uncheckPop;
+const UNPOP_TRANSITION: Transition = motionTokens.transition.popOut;
 
 /**
  * A single selection's check gliding to the chosen item (`pop`): the
@@ -102,34 +102,6 @@ type GroupReport = {
  */
 type CheckGroup = { report: (report: GroupReport) => void };
 
-/** Running glides, by indicator element. */
-const glides = new WeakMap<Element, Animation>();
-
-function stopGlide(element: Element) {
-  glides.get(element)?.cancel();
-  glides.delete(element);
-}
-
-/** Moves `element` from `start` (a box on screen) to where it rests. */
-function glideFrom(element: HTMLElement, start: DOMRect, glide: Transition) {
-  const end = element.getBoundingClientRect();
-  const x = start.left - end.left;
-  const y = start.top - end.top;
-  if (Math.abs(x) < 0.5 && Math.abs(y) < 0.5) return;
-  const { duration, easing } = toCssTiming(glide);
-  // `translate`, added to the element's own: a `translate` or `transform`
-  // from its styles stays as it is.
-  const animation = element.animate(
-    [{ translate: `${x}px ${y}px` }, { translate: '0px 0px' }],
-    { duration, easing, composite: 'add' },
-  );
-  glides.set(element, animation);
-  animation.finished.then(
-    () => glides.get(element) === animation && glides.delete(element),
-    () => {},
-  );
-}
-
 function createCheckGroup(): CheckGroup {
   let pending: GroupReport[] = [];
   const settle = () => {
@@ -149,7 +121,6 @@ function createCheckGroup(): CheckGroup {
         stopGlide(r.handle.element);
         r.handle.toggle(false, false);
       }
-      stopGlide(to.handle.element);
       to.handle.toggle(true, false);
       glideFrom(to.handle.element, start, to.glide);
       return;

@@ -1,8 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { expectChipLeaves, recordChips } from './chip-motion';
+
 // React Aria's tags (shadcn/ui's combobox chips). Animate UI v1 had no tag
 // group: an added tag pops in like v1's small overlays (opacity from 0, scale
-// from 0.5, spring stiffness 300, damping 25).
+// from 0.5, spring stiffness 300, damping 25); a removed one shrinks out where
+// it was while the others close the gap.
 
 type Frame = { t: number; scale: number; opacity: number } | null;
 
@@ -68,12 +71,36 @@ test.describe('react-aria tag group', () => {
     expect(last.opacity).toBeCloseTo(1, 2);
   });
 
-  test('removing a tag is instant', async ({ page }) => {
-    await page.getByRole('button', { name: 'Remove first' }).click();
+  test('a removed tag shrinks out where it was, the others close the gap', async ({
+    page,
+  }) => {
+    const recording = await recordChips(page, {
+      container: '[role="grid"]',
+      next: '[data-testid="tag-Next.js"]',
+      chip: { selector: '[data-testid="tag-Astro"]', text: 'Astro' },
+      act: () => page.getByRole('button', { name: 'Remove first' }).click(),
+    });
+    // Out of the list at once: only its copy (no test id) leaves.
     await expect(page.getByTestId('tag-Astro')).toHaveCount(0, {
       timeout: 50,
     });
     await expect(page.getByTestId('tag-Next.js')).toHaveCount(1);
+    expectChipLeaves(recording);
+  });
+
+  test('an added tag pushes nothing back: those before it stay put', async ({
+    page,
+  }) => {
+    const before = await page
+      .getByTestId('tag-Next.js')
+      .evaluate((el) => el.getBoundingClientRect().x);
+    await page.getByRole('button', { name: 'Add Nuxt' }).click();
+    await page.waitForTimeout(40);
+    expect(
+      await page
+        .getByTestId('tag-Next.js')
+        .evaluate((el) => el.getBoundingClientRect().x),
+    ).toBe(before);
   });
 
   test('reduced motion: an added tag fades in place', async ({ page }) => {

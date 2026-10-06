@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { describeChipMotion } from './chip-motion';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 import {
@@ -198,9 +199,7 @@ test.describe('base-ui combobox chips demo', () => {
     expect(recorded.at(-1)!.opacity).toBe(1);
   });
 
-  test('checks draw themselves with the selection, Backspace removes instantly', async ({
-    page,
-  }) => {
+  test('checks draw themselves with the selection', async ({ page }) => {
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
@@ -221,12 +220,6 @@ test.describe('base-ui combobox chips demo', () => {
     expect(Math.min(...dashes)).toBeLessThan(0.3);
     expect(dashes.some((d) => d > 0.3 && d < 0.9)).toBe(true);
     expect(dashes.at(-1)).toBe(1);
-
-    await page.keyboard.press('Escape');
-    await page.getByRole('combobox', { name: 'Frameworks' }).press('Backspace');
-    await expect(
-      page.locator('[data-slot="combobox-chip"]', { hasText: 'Nuxt' }),
-    ).toHaveCount(0, { timeout: 50 });
   });
 
   test('pop: checks pop in with the selection and shrink back out', async ({
@@ -378,4 +371,12 @@ describeMenuHighlight('base-ui combobox highlight', {
   },
   first: (page) => page.getByRole('option').nth(0),
   second: (page) => page.getByRole('option').nth(1),
+});
+
+describeChipMotion('base-ui combobox', {
+  path: '/tests/demos/base-ui/combobox-multiple',
+  label: 'Frameworks',
+  first: 'Next.js',
+  last: 'Astro',
+  add: 'Nuxt',
 });

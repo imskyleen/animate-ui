@@ -57,6 +57,7 @@ test('react-aria combobox: the list, its items and the tags come from the mirror
       'ListBoxItem',
       'Popover',
       'Tag',
+      'TagGroup',
       'TagList',
     ]);
   }
