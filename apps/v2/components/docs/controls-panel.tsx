@@ -335,9 +335,21 @@ function ControlsPanel({
   );
 }
 
+/** `controls` with some of their values replaced (`{ side: 'top' }`). */
+function withValues(
+  controls: Controls,
+  values: Record<string, ControlValue>,
+): Controls {
+  return Object.entries(values).reduce(
+    (next, [key, value]) => setControl(next, key, value),
+    controls,
+  );
+}
+
 export {
   ControlsPanel,
   controlsToProps,
+  withValues,
   type Control,
   type Controls,
   type ControlValue,

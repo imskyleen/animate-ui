@@ -33,10 +33,19 @@ function stripControls(source: string) {
 export async function ComponentPreview({
   name,
   fullBleed = false,
+  values,
+  code: showCode = true,
 }: {
   name: string;
   /** Backgrounds: the demo fills the whole preview. */
   fullBleed?: boolean;
+  /**
+   * Starts the demo's controls with these values (`{ checkAnimation: 'pop' }`):
+   * the same demo, shown again in another mode.
+   */
+  values?: Record<string, string | number | boolean>;
+  /** Show the demo's code under it (not when the page shows it already). */
+  code?: boolean;
 }) {
   // demos/<library>/<name>.tsx: discovered by path, no registry to update.
   const { default: Demo, controls } = await import(`@/demos/${name}`);
@@ -64,18 +73,20 @@ export async function ComponentPreview({
   return (
     <PreviewFrame
       fullBleed={fullBleed}
-      {...(hasControls && { demo: Demo, controls })}
+      {...(hasControls && { demo: Demo, controls, values })}
       code={
-        <ServerCodeBlock
-          code={code.trimEnd()}
-          lang="tsx"
-          codeblock={{
-            className: 'my-0',
-            title: `${name.split('/').pop()}.tsx`,
-            icon: <HugeiconsIcon icon={ReactIcon} strokeWidth={2} />,
-            viewportClassName: 'max-h-[400px]',
-          }}
-        />
+        showCode ? (
+          <ServerCodeBlock
+            code={code.trimEnd()}
+            lang="tsx"
+            codeblock={{
+              className: 'my-0',
+              title: `${name.split('/').pop()}.tsx`,
+              icon: <HugeiconsIcon icon={ReactIcon} strokeWidth={2} />,
+              viewportClassName: 'max-h-[400px]',
+            }}
+          />
+        ) : undefined
       }
     >
       {!hasControls && <Demo />}

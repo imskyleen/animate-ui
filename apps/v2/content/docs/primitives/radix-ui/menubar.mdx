@@ -94,7 +94,15 @@ export function ViewMenubar() {
 }
 ```
 
-To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+The same demo with `checkAnimation="pop"` (its Controls switch it back to `draw`):
+
+<ComponentPreview
+  name="radix-ui/menubar"
+  values={{ checkAnimation: 'pop' }}
+  code={false}
+/>
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead.
 
 ## Animation
 

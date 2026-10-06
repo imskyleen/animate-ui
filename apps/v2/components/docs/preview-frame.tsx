@@ -24,7 +24,9 @@ import { InCodeTabsContext } from './codeblock';
 import {
   ControlsPanel,
   controlsToProps,
+  withValues,
   type Controls,
+  type ControlValue,
 } from './controls-panel';
 import { CopyButton, getPreText } from './copy-button';
 
@@ -60,6 +62,8 @@ const toolbarButton =
  *
  * A demo with `controls` gets a sliders button that opens them on the right
  * (under the demo on mobile): the demo re-renders with the values as props.
+ * `values` starts some of them elsewhere than the demo's defaults (the same
+ * demo, shown again in another mode). Without `code`, there's only the demo.
  */
 export function PreviewFrame({
   children,
@@ -67,18 +71,25 @@ export function PreviewFrame({
   fullBleed = false,
   demo: Demo,
   controls: initialControls,
+  values,
 }: {
   /** The demo, when it has no controls. */
   children?: ReactNode;
-  code: ReactNode;
+  code?: ReactNode;
   fullBleed?: boolean;
   /** A demo with controls: rendered here with their values. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   demo?: ComponentType<any>;
   controls?: Controls;
+  /** The controls' values to start with, instead of the demo's. */
+  values?: Record<string, ControlValue>;
 }) {
   const [run, setRun] = useState(0);
-  const [controls, setControls] = useState(initialControls);
+  const [controls, setControls] = useState(() =>
+    initialControls && values
+      ? withValues(initialControls, values)
+      : initialControls,
+  );
   const [controlsOpen, setControlsOpen] = useState(false);
   const isMobile = useIsMobile();
   const [expanded, setExpanded] = useState(false);
@@ -189,44 +200,46 @@ export function PreviewFrame({
           )}
         </div>
 
-        <div
-          ref={codeRef}
-          data-slot="preview-code"
-          className="relative overflow-hidden rounded-lg bg-background"
-        >
-          <div className="absolute top-3 right-3 z-2">
-            <CopyButton getText={() => getPreText(codeRef.current)} />
-          </div>
-          <motion.div
-            initial={false}
-            animate={{ height: open ? 'auto' : COLLAPSED_HEIGHT }}
-            transition={open ? unfold : fold}
-            className="overflow-hidden [&_[data-slot=codeblock-viewport]]:max-h-[600px]"
-            inert={!open}
+        {code !== undefined && (
+          <div
+            ref={codeRef}
+            data-slot="preview-code"
+            className="relative overflow-hidden rounded-lg bg-background"
           >
-            <div ref={contentRef}>
-              <InCodeTabsContext value>{code}</InCodeTabsContext>
+            <div className="absolute top-3 right-3 z-2">
+              <CopyButton getText={() => getPreText(codeRef.current)} />
             </div>
-          </motion.div>
-          <AnimatePresence initial={false}>
-            {!open && (
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center bg-linear-to-b from-background/20 to-background"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, transition: unfold }}
-                exit={{ opacity: 0, transition: fold }}
-              >
-                <Button
-                  type="button"
-                  onClick={() => setExpanded(true)}
-                  className="h-9 rounded-lg bg-accent px-4 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            <motion.div
+              initial={false}
+              animate={{ height: open ? 'auto' : COLLAPSED_HEIGHT }}
+              transition={open ? unfold : fold}
+              className="overflow-hidden [&_[data-slot=codeblock-viewport]]:max-h-[600px]"
+              inert={!open}
+            >
+              <div ref={contentRef}>
+                <InCodeTabsContext value>{code}</InCodeTabsContext>
+              </div>
+            </motion.div>
+            <AnimatePresence initial={false}>
+              {!open && (
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center bg-linear-to-b from-background/20 to-background"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: unfold }}
+                  exit={{ opacity: 0, transition: fold }}
                 >
-                  View code
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                  <Button
+                    type="button"
+                    onClick={() => setExpanded(true)}
+                    className="h-9 rounded-lg bg-accent px-4 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  >
+                    View code
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </ReducedMotionConfig>
   );

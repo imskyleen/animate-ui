@@ -146,6 +146,80 @@ test.describe('demo controls', () => {
     expect(Math.max(...scales)).toBeGreaterThan(1.02);
   });
 
+  test('a preview can start the demo with other values, without its code', async ({
+    page,
+  }) => {
+    await open(page, '/docs/primitives/radix-ui/checkbox');
+    // The page's demo, then the same demo again under "Check animation".
+    const frames = await page
+      .locator('[data-slot="preview"]')
+      .evaluateAll((previews) =>
+        previews.map((preview) => ({
+          code: Boolean(
+            preview.parentElement?.querySelector('[data-slot="preview-code"]'),
+          ),
+          animation: preview
+            .querySelector('button[role="combobox"][id$="checkAnimation"]')
+            ?.textContent?.trim(),
+        })),
+      );
+    expect(frames).toEqual([
+      { code: true, animation: 'draw' },
+      { code: false, animation: 'pop' },
+    ]);
+    // It pops: from half its size, a little past it.
+    const scales = await page
+      .locator('[data-slot="preview"]')
+      .nth(1)
+      .getByRole('checkbox')
+      .nth(1)
+      .evaluate(async (box) => {
+        (box as HTMLElement).click();
+        const seen: number[] = [];
+        const t0 = performance.now();
+        while (performance.now() - t0 < 700) {
+          await new Promise(requestAnimationFrame);
+          const icon = box.querySelector('svg');
+          if (!icon || Number(getComputedStyle(icon).opacity) < 0.05) continue;
+          const matrix =
+            getComputedStyle(icon).transform.match(/matrix\(([^,]+)/);
+          seen.push(matrix ? Number(matrix[1]) : 1);
+        }
+        return seen;
+      });
+    expect(Math.min(...scales)).toBeLessThan(0.9);
+    expect(Math.max(...scales)).toBeGreaterThan(1.02);
+  });
+
+  test('the same demo twice on a page: each label checks its own box', async ({
+    page,
+  }) => {
+    await open(page, '/docs/primitives/react-aria/checkbox');
+    const states = () =>
+      page
+        .locator('[data-slot="preview"]')
+        .evaluateAll((previews) =>
+          previews.map((preview) =>
+            [...preview.querySelectorAll('input')].map(
+              (input) => input.checked,
+            ),
+          ),
+        );
+    expect(await states()).toEqual([
+      [true, false, false],
+      [true, false, false],
+    ]);
+    await page
+      .locator('[data-slot="preview"]')
+      .nth(1)
+      .getByText('Product updates')
+      .click();
+    expect(await states()).toEqual([
+      [true, false, false],
+      [true, true, false],
+    ]);
+  });
+
   test('a switch changes the mode of a group', async ({ page }) => {
     await open(page, '/docs/primitives/radix-ui/toggle-group');
     const radios = stage(page).getByRole('radio', { name: /^Align/ });

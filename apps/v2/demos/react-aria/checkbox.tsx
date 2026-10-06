@@ -66,6 +66,7 @@ export default function CheckboxDemo({
   /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
+  const id = React.useId()
   const [checked, setChecked] = React.useState(checkedProp)
   const [prev, setPrev] = React.useState(checkedProp)
   if (checkedProp !== prev) {
@@ -78,25 +79,25 @@ export default function CheckboxDemo({
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-2">
           <Checkbox
-            id="terms"
+            id={`${id}-terms`}
             isSelected={checked === true}
             isIndeterminate={checked === "indeterminate"}
             onChange={setChecked}
           />
-          <Label htmlFor="terms">Accept terms and conditions</Label>
+          <Label htmlFor={`${id}-terms`}>Accept terms and conditions</Label>
         </div>
         <div className="flex items-start gap-2">
-          <Checkbox id="updates" />
+          <Checkbox id={`${id}-updates`} />
           <div className="grid gap-1.5">
-            <Label htmlFor="updates">Product updates</Label>
+            <Label htmlFor={`${id}-updates`}>Product updates</Label>
             <p className="text-muted-foreground text-sm">
               A short email when a new primitive ships.
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Checkbox id="digest" isDisabled />
-          <Label htmlFor="digest">Weekly digest (coming soon)</Label>
+          <Checkbox id={`${id}-digest`} isDisabled />
+          <Label htmlFor={`${id}-digest`}>Weekly digest (coming soon)</Label>
         </div>
       </div>
     </AnimateUIProvider>
