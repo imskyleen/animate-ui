@@ -15,12 +15,20 @@ const PAGES = readdirSync(CONTENT, { recursive: true, encoding: 'utf8' })
   )
   .sort();
 
+// React Aria's accessibility warnings: a collection without a label, an item
+// without the text it's read and typed to by.
+const A11Y_WARNING = /aria-label|aria-labelledby|visible label|textValue/;
+
 for (const url of ['/', ...PAGES]) {
-  test(`${url} renders without errors`, async ({ page }) => {
+  test(`${url} renders without errors or accessibility warnings`, async ({
+    page,
+  }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     page.on('console', (message) => {
       if (message.type() === 'error' && !message.text().includes('/_next/hmr'))
+        errors.push(message.text());
+      if (message.type() === 'warning' && A11Y_WARNING.test(message.text()))
         errors.push(message.text());
     });
     const response = await page.goto(url, { waitUntil: 'networkidle' });

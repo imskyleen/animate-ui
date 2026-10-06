@@ -161,6 +161,42 @@ test.describe('react-aria combobox chips demo', () => {
     expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
   });
 
+  test('the chips are named: their list, and each chip by its text, without accessibility warnings', async ({
+    page,
+  }) => {
+    const warnings: string[] = [];
+    page.on('console', (message) => {
+      if (
+        message.type() === 'warning' &&
+        /aria-label|aria-labelledby|visible label|textValue/.test(
+          message.text(),
+        )
+      )
+        warnings.push(message.text());
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    const chips = page.getByRole('grid', { name: 'Selected frameworks' });
+    const named = (name: string) =>
+      chips.getByRole('row', { name, exact: true });
+    await expect(named('Next.js')).toHaveCount(1);
+    await expect(named('Astro')).toHaveCount(1);
+    // Added and removed, still named and quiet.
+    await page.getByRole('combobox', { name: 'Frameworks' }).click();
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(650);
+    await page.getByRole('option', { name: 'Nuxt' }).click();
+    // Closed: while the list is open, React Aria hides the rest of the page
+    // from assistive tech.
+    await page.keyboard.press('Escape');
+    await expect(named('Nuxt')).toHaveCount(1);
+    await page
+      .locator(chip('Astro'))
+      .locator('[data-slot="combobox-chip-remove"]')
+      .click();
+    await expect(named('Astro')).toHaveCount(0);
+    expect(warnings).toEqual([]);
+  });
+
   test('the check of a selected item draws itself, of a deselected one erases itself', async ({
     page,
   }) => {

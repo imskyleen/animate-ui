@@ -30,6 +30,7 @@ import {
   type ListBoxProps,
   type ListBoxSectionProps,
   type SeparatorProps,
+  type TagGroupProps,
   type TagListProps,
   type TagProps,
 } from "@animate-ui/react/primitives/react-aria"
@@ -267,15 +268,20 @@ function ComboboxChips({ children, className, ...props }: GroupProps) {
 
 function ComboboxChipList<T extends object>({
   className,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
   ...props
-}: Omit<TagListProps<T>, "className" | "items"> & {
-  className?: string
-}) {
+}: Omit<TagListProps<T>, "className" | "items"> &
+  Pick<TagGroupProps, "aria-label" | "aria-labelledby"> & {
+    className?: string
+  }) {
   return (
     <ComboBoxValuePrimitive<T> className="contents">
       {({ selectedItems, state }) => (
         <TagGroupPrimitive
           data-slot="combobox-chip-list"
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
           className={cn("contents", className)}
           onRemove={(keys) => {
             if (Array.isArray(state.value)) {
@@ -298,6 +304,7 @@ function ComboboxChip({
   className,
   children,
   showRemove = true,
+  textValue,
   ...props
 }: Omit<TagProps, "children"> & {
   showRemove?: boolean
@@ -306,6 +313,9 @@ function ComboboxChip({
   return (
     <TagPrimitive
       data-slot="combobox-chip"
+      textValue={
+        textValue ?? (typeof children === "string" ? children : undefined)
+      }
       className={cn(
         "bg-muted text-foreground flex h-[calc(--spacing(5.25))] w-fit items-center justify-center gap-1 rounded-sm px-1.5 text-xs font-medium whitespace-nowrap has-data-[slot=combobox-chip-remove]:pr-0 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50",
         className
@@ -415,7 +425,7 @@ export default function ComboboxMultipleDemo({
       >
         <div ref={anchor} className="w-72">
           <ComboboxChips>
-            <ComboboxChipList<Framework>>
+            <ComboboxChipList<Framework> aria-label="Selected frameworks">
               {(item) => <ComboboxChip id={item.id}>{item.name}</ComboboxChip>}
             </ComboboxChipList>
             <ComboboxChipsInput placeholder="Add frameworks…" />
