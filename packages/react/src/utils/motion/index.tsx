@@ -19,7 +19,8 @@ import {
  * that makes motion feel alive. Tweens are for fades, menus, disclosure
  * heights and swaps, and pick their curve by what the element does: ease-out
  * to enter or leave, a softer ease-out for large surfaces (a panel unfolding,
- * an overlay dimming the page), ease-in-out to move on screen. Pressables scale on press only; anchored popups grow from their
+ * an overlay dimming the page), ease-in-out to move on screen, and ease-in
+ * only for a dialog dismissed, speeding away. Pressables scale on press only; anchored popups grow from their
  * trigger, from farther when they are small; two states swapping in place are
  * bridged with a light blur, and unfolding content clears from one.
  *
@@ -45,6 +46,11 @@ const ease = {
   draw: [0, 0, 0.58, 1],
   /** Moving or morphing something already on screen. */
   inOut: [0.77, 0, 0.175, 1],
+  /**
+   * A dialog dismissed, speeding away: CSS's ease-in. It starts slow, so
+   * nothing else uses it: the user waits on what enters, and on most exits.
+   */
+  in: [0.42, 0, 1, 1],
 } as const;
 
 /** Springs, one per role (stiffness / damping, mass 1). */
@@ -139,6 +145,11 @@ const transition = {
   popOut: { duration: 0.15, ease: ease.out },
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
+  /**
+   * A dialog leaving once dismissed: back the way it came, quicker than it
+   * came, speeding away. Its overlay clears behind it.
+   */
+  dismiss: { duration: 0.25, ease: ease.in },
   /** Deliberately no animation. */
   instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;

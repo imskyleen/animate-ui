@@ -40,12 +40,12 @@ Coming from the `@radix-ui/react-alert-dialog` package? Use the subpath: `import
 
 ## Animation
 
-Animate UI v1's alert dialog motion, with a smoother overlay.
+Animate UI v1's alert dialog motion, with a smoother overlay and a quicker exit.
 
 - **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, a little ahead of the content, and it leaves the same way.
-- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). It closes the same way, on the same spring, the overlay clearing with it, then unmounts.
+- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). Dismissed, it goes back the way it came, but quicker and speeding away (0.25s on an ease-in), out of sight just before the overlay has cleared, then unmounts.
 - `from` picks the edge the content tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`).
-- `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1.
+- On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The dialog's own exit is the quicker one above unless you set `exitTransition`.
 - Radix keeps the Overlay and the Content mounted while they exit; Cancel is focused as soon as it opens, and focus returns to the trigger once the exit is over.
 - Reopening while it closes picks up from where it is.
 - With `forceMount`, the closed alert dialog stays in the DOM: it plays its exit, then is hidden and `inert`.
@@ -99,7 +99,7 @@ Every part takes exactly the props of [Radix UI's Alert Dialog](https://www.radi
     exitTransition: {
       description: 'Transition of the closing.',
       type: 'Transition',
-      default: 'transition',
+      default: '{ duration: 0.25, ease: [0.42, 0, 1, 1] }',
     },
   }}
 />

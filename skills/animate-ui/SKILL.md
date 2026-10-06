@@ -53,7 +53,7 @@ Then remove the component's own CSS animation classes (same list as the CLI) so 
 
 1. **Gate** (below), then classify the component and start from the matching recipe in `references/recipes.md`.
 2. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. Otherwise wire Motion into the library as `references/base-libraries.md` shows.
-3. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in, no ease-in-out on an entrance.
+3. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in (but a dismissed dialog's `transition.dismiss`), no ease-in-out on an entrance.
 4. Check every rule in `references/rules.md` (quality rules are non-negotiable; style rules are defaults), then verify (§ Verify).
 
 ### Gate: should it animate?
@@ -86,8 +86,8 @@ Keyboard navigation animates like the pointer. Name the purpose in one word (fee
 - Reduced motion ships with the animation: `ReducedMotionConfig` around the motion tree, `useShouldReduceMotion()` to neutralize `transform` strings, `<ReducedMotionConfig remount>` for animations that play on mount. Fades and blurs stay, movement goes.
 - Transform, opacity and filter (height only where content must push what's below). Anchored popups grow from their trigger (library origin variables), from 0.7 / 0.8 / 0.9 by kind; modals stay centered.
 - Press scales to 0.95 on a spring; nothing scales on hover.
-- Tweens: ease-out for what enters and leaves, a softer ease-out for what the eye watches change (disclosures unfolding, overlays, menus opening), ease-in-out for what moves on screen, `ease` for color; never ease-in. A light blur bridges a swap.
-- The exit replays the entrance, its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
+- Tweens: ease-out for what enters and leaves, a softer ease-out for what the eye watches change (disclosures unfolding, overlays, menus opening), ease-in-out for what moves on screen, `ease` for color; never ease-in, but a dismissed dialog speeds away (`transition.dismiss`). A light blur bridges a swap.
+- The exit replays the entrance (a dismissed dialog leaves quicker, speeding away), its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
 - Keep the library element as the animated element (Radix `asChild`, Base UI `render`, React Aria `render`/`motion.create`) so `data-*` attributes and styles still apply.
 - Warm tooltips show at once (and the one they replace goes at once).
 - The keyboard animates like the pointer; hover only on hover-capable fine pointers; re-triggering retargets, never restarts; loops pause off screen.

@@ -34,7 +34,7 @@ test.describe('react-aria alert dialog demo', () => {
     expectDialogEntrance(await timeline.stop(), BACKGROUND);
   });
 
-  test('It takes focus at once; Escape closes it on the same spring, outlasting its overlay', async ({
+  test('It takes focus at once; Escape closes it quicker than it came, speeding away', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Delete project' }).click();

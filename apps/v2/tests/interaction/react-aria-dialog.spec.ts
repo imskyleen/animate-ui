@@ -58,7 +58,7 @@ test.describe('react-aria dialog demo', () => {
     expect((await readState(page, OVERLAY)).bg).toBeCloseTo(0.1, 3);
   });
 
-  test('closes like v1: tips back on the same spring, outlasting its overlay, then unmounts', async ({
+  test('closes quicker than it came: tips back speeding away, ahead of its overlay, then unmounts', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Edit profile' }).click();

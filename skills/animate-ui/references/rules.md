@@ -152,7 +152,7 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
-- Never ease-in on UI.
+- Never ease-in on UI, except a dialog dismissed (`transition.dismiss`, 0.25s on `ease.in`): the user has moved on, and it speeds away, out of sight at once, its overlay clearing behind it.
 
 ```tsx
 // Avoid
@@ -194,7 +194,7 @@ whileTap={{ transform: `scale(${scale.press})` }} transition={spring.press}
 
 ### B5. The exit replays the entrance
 
-Closing plays the entrance's transition in reverse: one transition both ways (`exitTransition` defaults to `transition`). Put the transition inside each target (`animate`, `exit`) so a leaving element keeps it, and use `exitTransition` when a component needs a different exit.
+Closing plays the entrance's transition in reverse: one transition both ways (`exitTransition` defaults to `transition`). Put the transition inside each target (`animate`, `exit`) so a leaving element keeps it, and use `exitTransition` when a component needs a different exit. A dialog's content has one by default: dismissed, it goes back the way it came on `transition.dismiss`, quicker and speeding away.
 
 ### B6. Blur to bridge a swap
 
@@ -228,7 +228,7 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays and menus, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in
+- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays and menus, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a dismissed dialog's `transition.dismiss`)
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
-- [ ] The exit replays the entrance
+- [ ] The exit replays the entrance (a dismissed dialog: quicker, speeding away)
 - [ ] Swaps bridged with a light blur

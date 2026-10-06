@@ -115,6 +115,8 @@ Purpose: state, the page is now in a modal mode. Modals stay centered: no trigge
 ```tsx
 const TIPPED = `perspective(500px) rotateX(-20deg) scale(${scale.dialog})`;
 const UPRIGHT = 'perspective(500px) rotateX(0deg) scale(1)';
+// Dismissed: back the way it came, quicker, speeding away.
+const DISMISS = transition.dismiss;
 
 function DialogContentMotion({
   transition,
@@ -124,9 +126,7 @@ function DialogContentMotion({
 }: DialogContentProps) {
   const reduce = useShouldReduceMotion();
   const enter = useTempoTransition(transition ?? spring.dialog);
-  const leave = useTempoTransition(
-    exitTransition ?? transition ?? spring.dialog,
-  );
+  const leave = useTempoTransition(exitTransition ?? DISMISS);
   const hidden = {
     opacity: 0,
     filter: blur.surface,
@@ -157,7 +157,7 @@ function DialogContentMotion({
 }
 ```
 
-- The content fades in, un-blurs and tips forward to upright on `spring.dialog` (no overshoot), and leaves the same way.
+- The content fades in, un-blurs and tips forward to upright on `spring.dialog` (no overshoot). Dismissed, it goes back the way it came on `transition.dismiss` (0.25s on `ease.in`): quicker than it came and speeding away, out of sight just before its overlay has cleared (after Motion's modal example; the one exit on an ease-in). A sheet slides back out on its spring.
 - `from` (Animate UI's addition, as in v1) picks the edge it tips from: `top` by default and `right` turn it by -20deg, `bottom` and `left` by 20deg, around the X axis for top and bottom, the Y axis for left and right.
 - The overlay fades its background color and backdrop filter in from nothing (`transparent` / `none`) to its classes' values, as a Web Animation (`useBackdropFade` in internal/modal-motion: any color syntax interpolates), never its opacity: with a `backdrop-blur` class, an opacity fade cross-fades the sharp page with an already blurred one, and the blur seems not to start at 0. On `transition.overlay` (400ms, `ease.soft`), a little ahead of the content, and the same way out. On a strong ease-out, a short overlay reads as a cut.
 - Drop the blur at rest if the content holds fixed-position children (`transitionEnd: { filter: 'none' }`): a `filter` makes it their containing block.

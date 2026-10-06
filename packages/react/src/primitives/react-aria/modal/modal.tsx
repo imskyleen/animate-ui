@@ -16,6 +16,7 @@ import {
 } from '../../../utils/motion';
 import {
   DIALOG_TRANSITION,
+  DISMISS_TRANSITION,
   OVERLAY_TRANSITION,
   SHEET_TRANSITION,
   getContentTargets,
@@ -219,6 +220,8 @@ function ModalContent({
     transition,
     exitTransition,
     side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+    // Dismissed, a dialog speeds away; a sheet slides back on its spring.
+    side ? undefined : DISMISS_TRANSITION,
   );
   const targets = getContentTargets({ side, from, reduce, enter, exit });
 

@@ -14,6 +14,7 @@ import {
 } from '../../../utils/motion';
 import {
   DIALOG_TRANSITION,
+  DISMISS_TRANSITION,
   OVERLAY_TRANSITION,
   SHEET_TRANSITION,
   getAnimateTarget,
@@ -224,6 +225,8 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       transition,
       exitTransition,
       side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+      // Dismissed, a dialog speeds away; a sheet slides back on its spring.
+      side ? undefined : DISMISS_TRANSITION,
     );
     const targets = getContentTargets({ side, from, reduce, enter, exit });
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(

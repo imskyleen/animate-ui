@@ -11,7 +11,9 @@ import { expectSpringPace, type Sample } from './spring-curves';
 //   arrives, and clears as it leaves;
 // - dialog content: from `perspective(500px) rotateX(-20deg) scale(0.8)`,
 //   blur(4px) and transparent, on a spring (stiffness 150, damping 25) that
-//   settles after the overlay; it leaves the same way;
+//   settles after the overlay; dismissed, it goes back the way it came,
+//   quicker and speeding away (0.25s on an ease-in), out of sight before
+//   its overlay has cleared;
 // - sheet: slides from its edge by its own size and fades, on the same
 //   spring.
 
@@ -249,8 +251,10 @@ export function expectDialogEntrance(
 }
 
 /**
- * v1's dialog exit: the content tips back, shrinks and blurs as it fades. The
- * overlay clears with it, a little ahead, never long before.
+ * A dialog's exit: the content tips back, shrinks and blurs as it fades, the
+ * way it came, but quicker and speeding away (0.25s on an ease-in): out of
+ * sight within ~0.3s, less than half faded halfway through. The overlay
+ * clears a little ahead of it, and behind it.
  */
 export function expectDialogExit(
   frames: ModalFrame[],
@@ -263,6 +267,21 @@ export function expectDialogExit(
   expect(last.tilt).toBeLessThan(-12);
   expect(last.scale).toBeLessThan(0.88);
   expect(last.blur).toBeGreaterThan(2.5);
+
+  // From its last frame at rest to out of sight: quick (0.25s; a busy
+  // machine only delays it), and speeding away.
+  const fading = shown.findIndex(
+    (frame) => frame.samples[content]!.opacity < 0.995,
+  );
+  const contentStart = shown[Math.max(fading - 1, 0)]!;
+  const gone = shown.find((frame) => frame.samples[content]!.opacity < 0.02)!;
+  expect(gone).toBeTruthy();
+  expect(gone.t - contentStart.t).toBeLessThan(400);
+  const middle = (contentStart.t + gone.t) / 2;
+  const halfway = shown.reduce((closest, frame) =>
+    Math.abs(frame.t - middle) < Math.abs(closest.t - middle) ? frame : closest,
+  );
+  expect(1 - halfway.samples[content]!.opacity).toBeLessThan(0.45);
 
   // The overlay fades out over ~350ms, not in a couple of frames.
   const leaving = frames.findIndex(
@@ -277,16 +296,14 @@ export function expectDialogExit(
   expect(overlayOut).toBeTruthy();
   expect(overlayOut.t - exitStart.t).toBeGreaterThan(250);
   // A little ahead of the content: further out when the content is half out…
-  const halfway = frames.find(
+  const halfOut = frames.find(
     (frame) => frame.t > exitStart.t && frame.samples[content]!.opacity <= 0.5,
   )!;
-  expect(overlayProgress(halfway, overlay, options)).toBeLessThan(
-    halfway.samples[content]!.opacity,
+  expect(overlayProgress(halfOut, overlay, options)).toBeLessThan(
+    halfOut.samples[content]!.opacity,
   );
-  // …but not gone long before it: the content has nearly faded by then.
-  const contentThen = overlayOut.samples[content];
-  expect(contentThen).toBeTruthy();
-  expect(contentThen!.opacity).toBeLessThan(0.3);
+  // …and cleared behind it: the page is still dimmed when it's out of sight.
+  expect(overlayOut.t).toBeGreaterThanOrEqual(gone.t);
   // The page behind is sharp again, its blur gone with the tint.
   const blurRest = expectProgressiveBackdrop(frames, overlay);
   expect(overlayOut.samples[overlay]!.backdrop).toBeLessThanOrEqual(

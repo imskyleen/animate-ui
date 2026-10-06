@@ -53,19 +53,20 @@ Every spring above has `type: 'spring'`.
 
 Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
 
-| Token                   | Value                                            | Use for                                                        |
-| ----------------------- | ------------------------------------------------ | -------------------------------------------------------------- |
-| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                   |
-| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out |
-| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)         |
-| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)  |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                     |
-| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                     |
-| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered               |
-| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                         |
-| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out      |
-| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                          |
-| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)      |
+| Token                   | Value                                            | Use for                                                          |
+| ----------------------- | ------------------------------------------------ | ---------------------------------------------------------------- |
+| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                     |
+| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out   |
+| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)           |
+| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)    |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                       |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                       |
+| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                 |
+| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                           |
+| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out        |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                            |
+| `transition.dismiss`    | `{ duration: 0.25, ease: ease.in }`              | A dialog dismissed: back the way it came, quicker, speeding away |
+| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)        |
 
 ## Curves
 
@@ -77,10 +78,11 @@ Pick a tween's curve by what the element does:
 | Unfolds, dims the page, or a menu opens  | `ease.soft`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                                 |
 | A mark draws itself (a checkbox's check) | `ease.draw`: `cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut` (v1's)              |
 | Moves or morphs on screen                | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
+| A dialog dismissed, speeding away        | `ease.in`: `cubic-bezier(0.42, 0, 1, 1)`, CSS's `ease-in`                          |
 | Changes color (CSS)                      | `ease`                                                                             |
 | Moves constantly (marquee, loader)       | `linear`                                                                           |
 
-`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), an overlay should dim the page, not cut to dark, and a menu, opened all day long, should be seen opening rather than snapped open. Never ease-in on UI: it starts slow, exactly when the user is watching.
+`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), an overlay should dim the page, not cut to dark, and a menu, opened all day long, should be seen opening rather than snapped open. Never ease-in on UI: it starts slow, exactly when the user is watching. The one exception is a dialog dismissed (`transition.dismiss`): the user has moved on, and it speeds away, out of sight at once (after Motion's modal example).
 
 ## Scales
 

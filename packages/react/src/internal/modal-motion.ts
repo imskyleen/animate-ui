@@ -18,21 +18,27 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 //   blurred one under shadcn/ui's `backdrop-blur-xs`.
 // - The content, v1's entrance: it fades in, un-blurs and tips forward from
 //   `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring (stiffness
-//   150, damping 25), and leaves the same way. `from` picks the edge it tips
-//   from, as in v1: `top` (the default) and `right` turn it by -20deg,
-//   `bottom` and `left` by 20deg, around the X axis for top and bottom, the Y
-//   axis for left and right.
+//   150, damping 25). Dismissed, it goes back the way it came, quicker and
+//   speeding away (0.25s on an ease-in), gone before its overlay has
+//   cleared. `from` picks the edge it tips from, as in v1: `top` (the
+//   default) and `right` turn it by -20deg, `bottom` and `left` by 20deg,
+//   around the X axis for top and bottom, the Y axis for left and right.
 // - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
 //   from that edge by its own size and fades in, on a livelier spring
 //   (stiffness 150, damping 22), and leaves the same way.
 //
-// v1 used one transition both ways: `exitTransition` defaults to `transition`.
+// The overlay and a sheet use one transition both ways, as v1 did: their
+// `exitTransition` defaults to `transition`. A dialog's content leaves on its
+// own unless `exitTransition` is given.
 
 /** The overlay's fade: 400ms on a soft ease-out, both ways. */
 export const OVERLAY_TRANSITION = motionTokens.transition.overlay;
 
 /** v1's dialog spring. */
 export const DIALOG_TRANSITION = motionTokens.spring.dialog;
+
+/** A dialog dismissed: 0.25s on an ease-in, speeding away. */
+export const DISMISS_TRANSITION = motionTokens.transition.dismiss;
 
 /**
  * Sheets, drawers and the toasts that enter from an edge: v1's sheet spring,
@@ -55,22 +61,29 @@ export type ContentFlipProps = {
 export type ModalAnimationProps = {
   /** Transition of the opening. */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition`. */
+  /**
+   * Transition of the closing. Defaults to 0.25s on an ease-in for a
+   * dialog's content (it speeds away), to `transition` otherwise.
+   */
   exitTransition?: Transition;
 };
 
 /**
  * The opening and closing transitions, with `AnimateUIProvider`'s tempo
- * applied. The closing one follows `transition` unless `exitTransition` is
- * given, as v1's single `transition` did.
+ * applied. The closing one is `exitTransition`, or its own default
+ * (`exitFallback`, a dialog's content), or follows `transition` as v1's
+ * single `transition` did.
  */
 export function useModalTransitions(
   transition: Transition | undefined,
   exitTransition: Transition | undefined,
   fallback: Transition,
+  exitFallback?: Transition,
 ) {
   const enter = useTempoTransition(transition ?? fallback);
-  const exit = useTempoTransition(exitTransition ?? transition ?? fallback);
+  const exit = useTempoTransition(
+    exitTransition ?? exitFallback ?? transition ?? fallback,
+  );
   return { enter, exit };
 }
 

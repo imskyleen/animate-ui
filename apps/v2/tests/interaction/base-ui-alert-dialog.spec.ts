@@ -30,7 +30,7 @@ test.describe('base-ui alert dialog demo', () => {
     expectDialogEntrance(await timeline.stop());
   });
 
-  test('Cancel is focused at once; Escape closes it on the same spring, outlasting its overlay', async ({
+  test('Cancel is focused at once; Escape closes it quicker than it came, speeding away', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Delete project' }).click();

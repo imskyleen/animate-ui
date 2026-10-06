@@ -50,7 +50,7 @@ test.describe('radix-ui dialog demo', () => {
     expect(overlay.blur).toBe(0);
   });
 
-  test('closes like v1: tips back on the same spring, outlasting its overlay, then unmounts', async ({
+  test('closes quicker than it came: tips back speeding away, ahead of its overlay, then unmounts', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Edit profile' }).click();
