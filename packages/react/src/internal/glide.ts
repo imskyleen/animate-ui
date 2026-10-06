@@ -20,13 +20,19 @@ function stopGlide(element: Element) {
 
 /**
  * Moves `element` from `start` (a box on screen, read before it moved) to
- * where it rests, measured now (its glide stopped first).
+ * `end`: where it rests, measured now (its glide stopped first), unless the
+ * caller measured it.
  */
-function glideFrom(element: HTMLElement, start: DOMRect, glide: Transition) {
+function glideFrom(
+  element: HTMLElement,
+  start: DOMRect,
+  glide: Transition,
+  end?: DOMRect,
+) {
   // Without Web Animations (a test DOM), it's where it rests.
   if (typeof element.animate !== 'function') return;
   stopGlide(element);
-  const end = element.getBoundingClientRect();
+  end ??= element.getBoundingClientRect();
   const x = start.left - end.left;
   const y = start.top - end.top;
   if (Math.abs(x) < 0.5 && Math.abs(y) < 0.5) return;

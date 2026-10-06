@@ -321,4 +321,5 @@ describeChipMotion('react-aria combobox', {
   first: 'Next.js',
   last: 'Astro',
   add: 'Nuxt',
+  more: ['React Router', 'TanStack Start', 'SvelteKit', 'SolidStart'],
 });

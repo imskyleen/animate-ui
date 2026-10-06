@@ -14,6 +14,10 @@ type ChipFrame = {
   copy: (Box & { opacity: number; scale: number }) | null;
   /** The element that moves (the next chip, the input), on screen. */
   next: Box | null;
+  /** The element the chips are laid out in (the field). */
+  container: Box;
+  /** A chip that stays on its line, if watched. */
+  stay: Box | null;
 };
 
 type ChipCase = {
@@ -23,13 +27,15 @@ type ChipCase = {
   next: string;
   /** A chip about to be removed: its selector and its text. */
   chip?: { selector: string; text: string };
+  /** A chip that stays on its line: its selector and its text. */
+  stay?: { selector: string; text: string };
   /** Adds or removes a chip. */
   act: () => Promise<void>;
 };
 
 type Recording = {
-  /** Where the moving element (and a chip about to go) were, before. */
-  before: { next: Box; chip: Box | null };
+  /** Where things were, before. */
+  before: { next: Box; chip: Box | null; container: Box; stay: Box | null };
   frames: ChipFrame[];
 };
 
@@ -38,7 +44,7 @@ type Recorder = { __chips?: Promise<Recording> };
 /** Records the frames that follow `act`, for 500ms. */
 export async function recordChips(page: Page, c: ChipCase) {
   await page.evaluate(
-    ({ container, next, chip }) => {
+    ({ container, next, chip, stay }) => {
       const box = (el: Element | null) => {
         if (!el) return null;
         const r = el.getBoundingClientRect();
@@ -54,6 +60,8 @@ export async function recordChips(page: Page, c: ChipCase) {
       const before = {
         next: box(live(next))!,
         chip: chip ? box(live(chip.selector, chip.text)) : null,
+        container: box(root)!,
+        stay: stay ? box(live(stay.selector, stay.text)) : null,
       };
       (window as Recorder).__chips = new Promise((resolve) => {
         const frames: ChipFrame[] = [];
@@ -76,6 +84,8 @@ export async function recordChips(page: Page, c: ChipCase) {
                   }
                 : null,
             next: box(live(next)),
+            container: box(root)!,
+            stay: stay ? box(live(stay.selector, stay.text)) : null,
           });
           if (performance.now() - t0 < 500) requestAnimationFrame(tick);
           else resolve({ before, frames });
@@ -83,7 +93,7 @@ export async function recordChips(page: Page, c: ChipCase) {
         requestAnimationFrame(tick);
       });
     },
-    { container: c.container, next: c.next, chip: c.chip },
+    { container: c.container, next: c.next, chip: c.chip, stay: c.stay },
   );
   await c.act();
   return page.evaluate(() => (window as Recorder).__chips!);
@@ -144,6 +154,33 @@ export function expectChipLeaves(
   expectGlided(recording, { reduce });
 }
 
+/**
+ * The field grew or shrank with its rows (more than 10px), through heights on
+ * the way, and a chip that stays on its line moved with the field (no jump
+ * inside it, wherever the field's free space puts its rows). Under reduced
+ * motion, it's at its height at once.
+ */
+export function expectResized(
+  { before, frames }: Recording,
+  { reduce = false }: { reduce?: boolean } = {},
+) {
+  const end = frames.at(-1)!.container.height;
+  const travel = Math.abs(end - before.container.height);
+  expect(travel).toBeGreaterThan(10);
+  const onTheWay = frames.filter(({ container }) => {
+    const left = Math.abs(container.height - end);
+    return left > 0.5 && left < travel - 0.5;
+  });
+  if (reduce) expect(onTheWay).toEqual([]);
+  else expect(onTheWay.length).toBeGreaterThan(2);
+  if (!before.stay) return;
+  const offset = (stay: Box, container: Box) => stay.y - container.y;
+  const was = offset(before.stay, before.container);
+  for (const f of frames)
+    if (f.stay)
+      expect(Math.abs(offset(f.stay, f.container) - was)).toBeLessThan(1);
+}
+
 /** An added chip: what follows glides to make room. */
 export function expectRoomMade(
   recording: Recording,
@@ -165,6 +202,8 @@ type ChipsDemo = {
   last: string;
   /** An item to add. */
   add: string;
+  /** Items to add, in turn, until the row wraps. */
+  more: string[];
 };
 
 /** The chips of a combobox demo (shadcn/ui's, Base UI's or React Aria's). */
@@ -220,6 +259,48 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
       });
       await expect(chip(page, c.last)).toHaveCount(0, { timeout: 50 });
       expectChipLeaves(recording);
+    });
+
+    test('the field grows and shrinks with its rows, instead of jumping', async ({
+      page,
+    }) => {
+      await page.getByRole('combobox', { name: c.label }).click();
+      await page.keyboard.press('ArrowDown');
+      await page.waitForTimeout(650);
+      // Chips added until the row wraps onto a line more: the field grows.
+      let grown: { recording: Recording; added: string } | null = null;
+      for (const added of c.more) {
+        const recording = await recordChips(page, {
+          container: CONTAINER,
+          next: INPUT,
+          stay: { selector: CHIP, text: c.first },
+          act: () => page.getByRole('option', { name: added }).click(),
+        });
+        const { before, frames } = recording;
+        if (
+          Math.abs(frames.at(-1)!.container.height - before.container.height) >
+          10
+        ) {
+          grown = { recording, added };
+          break;
+        }
+      }
+      expect(grown).not.toBeNull();
+      expectResized(grown!.recording);
+      // Removed, the row comes back onto its line: the field shrinks.
+      await page.keyboard.press('Escape');
+      expectResized(
+        await recordChips(page, {
+          container: CONTAINER,
+          next: INPUT,
+          chip: { selector: CHIP, text: grown!.added },
+          stay: { selector: CHIP, text: c.first },
+          act: () =>
+            chip(page, grown!.added)
+              .locator('[data-slot="combobox-chip-remove"]')
+              .click(),
+        }),
+      );
     });
 
     test('reduced motion: a removed chip only fades, the input jumps', async ({

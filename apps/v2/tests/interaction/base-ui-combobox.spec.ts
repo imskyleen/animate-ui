@@ -379,4 +379,5 @@ describeChipMotion('base-ui combobox', {
   first: 'Next.js',
   last: 'Astro',
   add: 'Nuxt',
+  more: ['React Router', 'TanStack Start', 'SvelteKit', 'SolidStart'],
 });
