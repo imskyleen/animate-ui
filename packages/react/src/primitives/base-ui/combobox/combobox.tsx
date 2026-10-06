@@ -14,6 +14,8 @@ import {
   CHIP_EXIT_TRANSITION,
   CHIP_SCALE,
   CHIP_TRANSITION,
+  PLACEHOLDER_TRANSITION,
+  REFLOW_STYLE,
   REFLOW_TRANSITION,
   useReflow,
   type Reflow,
@@ -161,7 +163,8 @@ declare namespace ItemIndicator {
   type State = ComboboxPrimitive.ItemIndicator.State;
 }
 
-// Lays the chips out: they glide in it when one is added or removed.
+// Lays the chips out: they glide in it when one is added or removed, and the
+// input's placeholder showing up fades in once the input is there.
 function Chips({ ref, ...props }: Chips.Props) {
   const mountedRef = React.useRef(false);
   React.useEffect(() => {
@@ -174,9 +177,11 @@ function Chips({ ref, ...props }: Chips.Props) {
   const mergedRef = React.useMemo(() => mergeRefs(ref, elementRef), [ref]);
   const reduce = useShouldReduceMotion();
   const glide = useTempoTransition(REFLOW_TRANSITION);
+  const fade = useTempoTransition(PLACEHOLDER_TRANSITION);
   const reflow = useReflow({
     container: () => elementRef.current,
     glide,
+    fade,
     reduce,
   });
   const motion = React.useMemo(
@@ -186,6 +191,9 @@ function Chips({ ref, ...props }: Chips.Props) {
 
   return (
     <ChipsContext value={motion}>
+      <style href={REFLOW_STYLE.href} precedence="animate-ui">
+        {REFLOW_STYLE.css}
+      </style>
       <ComboboxPrimitive.Chips {...props} ref={mergedRef} />
     </ChipsContext>
   );

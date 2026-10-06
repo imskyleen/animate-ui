@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import {
   expectChipLeaves,
   expectOneGo,
-  expectPlaceholderWaits,
+  expectPlaceholderComesIn,
   recordChips,
 } from './chip-motion';
 
@@ -93,7 +93,7 @@ test.describe('react-aria tag group', () => {
     expectChipLeaves(recording);
   });
 
-  test('the last tag removed: the input glides back in one go, a placeholder showing up waits for it there', async ({
+  test('the last tag removed: the input glides back in one go, a placeholder showing up fades in once it is there', async ({
     page,
   }) => {
     const remove = page.getByRole('button', { name: 'Remove picked' });
@@ -104,10 +104,30 @@ test.describe('react-aria tag group', () => {
       next: '[data-testid="field-input"]',
       chip: { selector: '[data-slot="picked"]', text: 'Gatsby' },
       act: () => remove.click(),
+      ms: 900,
     });
     expectChipLeaves(recording);
     expectOneGo(recording);
-    expectPlaceholderWaits(recording);
+    expectPlaceholderComesIn(recording);
+  });
+
+  test('reduced motion: the last tag removed, a placeholder showing up only fades in', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload({ waitUntil: 'networkidle' });
+    const remove = page.getByRole('button', { name: 'Remove picked' });
+    await remove.click();
+    await page.waitForTimeout(650);
+    const recording = await recordChips(page, {
+      container: '[data-testid="field"]',
+      next: '[data-testid="field-input"]',
+      chip: { selector: '[data-slot="picked"]', text: 'Gatsby' },
+      act: () => remove.click(),
+      ms: 700,
+    });
+    expectChipLeaves(recording, { reduce: true });
+    expectPlaceholderComesIn(recording, { reduce: true });
   });
 
   test('an added tag pushes nothing back: those before it stay put', async ({

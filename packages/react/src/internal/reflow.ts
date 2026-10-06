@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { Transition } from 'motion/react';
+import { animate, type Transition } from 'motion/react';
 
 import { motionTokens, toCssTiming } from '../utils/motion';
 import { glideFrom, stopGlide, whenLanded } from './glide';
@@ -14,7 +14,8 @@ import { glideFrom, stopGlide, whenLanded } from './glide';
 // the box around it (the field) grows or shrinks on the same spring instead
 // of jumping. An added chip pops in on its own (its part plays it), from
 // CHIP_SCALE. A placeholder showing up as its input glides (the last chip
-// removed) waits for the input to land: it doesn't ride along.
+// removed) waits for the input to land, then fades in where it rests: it
+// doesn't ride along.
 
 /** A chip popping in starts at half its size, and a removed one ends there. */
 const CHIP_SCALE = 0.5;
@@ -24,17 +25,31 @@ const CHIP_TRANSITION: Transition = motionTokens.spring.pop;
 const CHIP_EXIT_TRANSITION: Transition = motionTokens.transition.popOut;
 /** The others making room or closing the gap: quick, without overshoot. */
 const REFLOW_TRANSITION: Transition = motionTokens.spring.reflow;
+/** A placeholder showing up, once its input is there: fading in place. */
+const PLACEHOLDER_TRANSITION: Transition = motionTokens.transition.fade;
+/** ...from a light blur, like a short label coming in place. */
+const PLACEHOLDER_BLUR = motionTokens.blur.icon;
 
 /** Copies of removed chips, still leaving. */
 const copies = new WeakSet<Element>();
 /** Running resizes, by container. */
 const resizes = new WeakMap<Element, Animation>();
-/** Inputs whose placeholder waits for them to land: shows it now. */
-const waiting = new WeakMap<HTMLElement, () => void>();
+/** Inputs whose placeholder is coming in: ends it at once. */
+const entering = new WeakMap<HTMLElement, () => void>();
 
-/** On an input while its placeholder waits for it to land. */
-const PLACEHOLDER_HIDDEN = 'data-placeholder-hidden';
-const PLACEHOLDER_STYLE = '__animate_ui_placeholder_style__';
+/**
+ * On an input while its placeholder comes in: hidden until the input lands,
+ * then fading in through these variables.
+ */
+const PLACEHOLDER_ENTERING = 'data-placeholder-entering';
+const PLACEHOLDER_OPACITY = '--animate-ui-placeholder-opacity';
+const PLACEHOLDER_FILTER = '--animate-ui-placeholder-filter';
+
+/** What a chip row needs on the page: the parts laying chips out render it. */
+const REFLOW_STYLE = {
+  href: 'animate-ui-reflow',
+  css: `[${PLACEHOLDER_ENTERING}]::placeholder { opacity: var(${PLACEHOLDER_OPACITY}, 0) !important; filter: var(${PLACEHOLDER_FILTER}, none); }`,
+};
 
 /** A text field showing its placeholder. */
 function hasPlaceholder(item: HTMLElement) {
@@ -46,32 +61,52 @@ function hasPlaceholder(item: HTMLElement) {
   );
 }
 
-/** Shows `input`'s placeholder, if it was waiting. */
+/** Shows `input`'s placeholder as it is, if it was coming in. */
 function showPlaceholder(input: HTMLElement) {
-  waiting.get(input)?.();
+  entering.get(input)?.();
 }
 
-/** Hides `input`'s placeholder until `input` lands from its glide. */
-function holdPlaceholder(input: HTMLElement) {
+/**
+ * Brings `input`'s placeholder in: hidden until `input` lands from its glide,
+ * then fading in where it rests, from a light blur (only fading under
+ * reduced motion).
+ */
+function enterPlaceholder(
+  input: HTMLElement,
+  fade: Transition,
+  reduce: boolean,
+) {
   showPlaceholder(input);
-  // The rule hiding it, once in its document (or shadow root).
-  const root = input.getRootNode() as Document | ShadowRoot;
-  if (!root.getElementById(PLACEHOLDER_STYLE)) {
-    const style = input.ownerDocument.createElement('style');
-    style.id = PLACEHOLDER_STYLE;
-    style.textContent = `[${PLACEHOLDER_HIDDEN}]::placeholder { opacity: 0 !important; }`;
-    ('head' in root ? root.head : root).appendChild(style);
-  }
-  input.setAttribute(PLACEHOLDER_HIDDEN, '');
-  let stop = () => {};
-  const show = () => {
-    stop();
-    if (waiting.get(input) !== show) return;
-    waiting.delete(input);
-    input.removeAttribute(PLACEHOLDER_HIDDEN);
+  // To its own opacity.
+  const opacity = Number(getComputedStyle(input, '::placeholder').opacity);
+  input.setAttribute(PLACEHOLDER_ENTERING, '');
+  let fading: { stop: () => void } | null = null;
+  let stopWaiting = () => {};
+  const end = () => {
+    stopWaiting();
+    fading?.stop();
+    if (entering.get(input) !== end) return;
+    entering.delete(input);
+    input.removeAttribute(PLACEHOLDER_ENTERING);
+    input.style.removeProperty(PLACEHOLDER_OPACITY);
+    input.style.removeProperty(PLACEHOLDER_FILTER);
   };
-  waiting.set(input, show);
-  stop = whenLanded(input, show);
+  entering.set(input, end);
+  stopWaiting = whenLanded(input, () => {
+    const animation = animate(
+      input,
+      {
+        [PLACEHOLDER_OPACITY]: [0, Number.isFinite(opacity) ? opacity : 1],
+        [PLACEHOLDER_FILTER]: [
+          reduce ? 'blur(0px)' : PLACEHOLDER_BLUR,
+          'blur(0px)',
+        ],
+      },
+      fade,
+    );
+    fading = animation;
+    animation.then(end, end);
+  });
 }
 
 /** The CSS `height` that gives `container` a box `height` px tall. */
@@ -221,6 +256,8 @@ type ReflowOptions = {
    */
   container: () => HTMLElement | null;
   glide: Transition;
+  /** A placeholder showing up, once its input is there. */
+  fade: Transition;
   reduce: boolean;
 };
 
@@ -242,9 +279,9 @@ function createReflow(options: () => ReflowOptions): Reflow {
     height = container.getBoundingClientRect().height;
     const items = layoutItems(container);
     before = new Map(items.map((item) => [item, item.getBoundingClientRect()]));
-    // To the eye: not one still waiting to.
+    // To the eye: not one still coming in.
     shown = new Set(
-      items.filter((item) => hasPlaceholder(item) && !waiting.has(item)),
+      items.filter((item) => hasPlaceholder(item) && !entering.has(item)),
     );
     // Measured for a change that didn't come (a render React dropped).
     cancelAnimationFrame(frame);
@@ -262,7 +299,7 @@ function createReflow(options: () => ReflowOptions): Reflow {
     before = target = null;
     leaving = [];
     if (!container?.isConnected) return;
-    const { glide, reduce } = options();
+    const { glide, fade, reduce } = options();
     const items = layoutItems(container);
     // Where everything rests now: the glides and the resize running stop.
     for (const item of items) stopGlide(item);
@@ -279,10 +316,10 @@ function createReflow(options: () => ReflowOptions): Reflow {
     for (const item of items) {
       const start = reduce ? undefined : from?.get(item);
       // From where it was (gliding, maybe) to where it lands.
-      const glided = start && glideFrom(item, start, glide, held?.get(item));
-      // A placeholder showing up shows where its input lands, once there.
-      if (glided && hasPlaceholder(item) && !shown.has(item))
-        holdPlaceholder(item);
+      if (start) glideFrom(item, start, glide, held?.get(item));
+      // A placeholder showing up comes in where its input lands, once there.
+      if (from && hasPlaceholder(item) && !shown.has(item))
+        enterPlaceholder(item, fade, reduce);
       else showPlaceholder(item);
     }
     // Still on the page: it wasn't removed (a ref handed over).
@@ -336,6 +373,8 @@ export {
   CHIP_EXIT_TRANSITION,
   CHIP_SCALE,
   CHIP_TRANSITION,
+  PLACEHOLDER_TRANSITION,
+  REFLOW_STYLE,
   REFLOW_TRANSITION,
   layoutBox,
   useReflow,

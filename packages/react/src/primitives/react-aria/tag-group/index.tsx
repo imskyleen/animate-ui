@@ -21,6 +21,8 @@ import {
   CHIP_EXIT_TRANSITION,
   CHIP_SCALE,
   CHIP_TRANSITION,
+  PLACEHOLDER_TRANSITION,
+  REFLOW_STYLE,
   REFLOW_TRANSITION,
   layoutBox,
   useReflow,
@@ -32,7 +34,8 @@ import {
 // opacity from 0 and scale from 0.5, on the popovers' spring (stiffness 300,
 // damping 25), and a removed one shrinks out in place, out of the flow, in
 // 0.15s. The others (an input after them too) glide to make room or close
-// the gap, on a quick spring (internal/reflow). Tags already there when the
+// the gap, on a quick spring (internal/reflow), and the input's placeholder
+// showing up fades in once the input is there. Tags already there when the
 // list mounts don't animate.
 //
 // Tags are collection items: React Aria renders the TagList and the tags the
@@ -57,17 +60,22 @@ function TagGroup(props: TagGroupProps & React.RefAttributes<HTMLDivElement>) {
   const listRef = React.useRef<HTMLElement | null>(null);
   const reduce = useShouldReduceMotion();
   const glide = useTempoTransition(REFLOW_TRANSITION);
+  const fade = useTempoTransition(PLACEHOLDER_TRANSITION);
   const reflow = useReflow({
     // The list, or the element laying its tags out when it's `display:
     // contents` (shadcn/ui's, beside the input).
     container: () => listRef.current && layoutBox(listRef.current),
     glide,
+    fade,
     reduce,
   });
   const motion = React.useMemo(() => ({ reflow, list: listRef }), [reflow]);
 
   return (
     <GroupMotionContext value={motion}>
+      <style href={REFLOW_STYLE.href} precedence="animate-ui">
+        {REFLOW_STYLE.css}
+      </style>
       <TagGroupPrimitive {...props} />
     </GroupMotionContext>
   );
@@ -106,8 +114,14 @@ function TagList<T extends object>({
   }, []);
   const reduce = useShouldReduceMotion();
   const glide = useTempoTransition(REFLOW_TRANSITION);
+  const fade = useTempoTransition(PLACEHOLDER_TRANSITION);
   // In React Aria's own TagGroup: a removed tag's parent box.
-  const ownReflow = useReflow({ container: () => null, glide, reduce });
+  const ownReflow = useReflow({
+    container: () => null,
+    glide,
+    fade,
+    reduce,
+  });
   const mergedRef = React.useMemo(
     () => mergeRefs<HTMLElement>(ref as React.Ref<HTMLElement>, group?.list),
     [ref, group],

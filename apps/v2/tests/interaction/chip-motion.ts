@@ -14,8 +14,10 @@ type ChipFrame = {
   copy: (Box & { opacity: number; scale: number }) | null;
   /** The element that moves (the next chip, the input), on screen. */
   next: Box | null;
-  /** Its placeholder, to the eye: 1 shown, 0 hidden or none. */
+  /** Its placeholder's opacity, to the eye: 0 hidden or none. */
   placeholder: number;
+  /** Its placeholder's blur, in px. */
+  placeholderBlur: number;
   /** The element the chips are laid out in (the field). */
   container: Box;
   /** A chip that stays on its line, if watched. */
@@ -33,6 +35,8 @@ type ChipCase = {
   stay?: { selector: string; text: string };
   /** Adds or removes a chip. */
   act: () => Promise<void>;
+  /** How long to record, in ms (500 by default). */
+  ms?: number;
 };
 
 type Recording = {
@@ -43,10 +47,10 @@ type Recording = {
 
 type Recorder = { __chips?: Promise<Recording> };
 
-/** Records the frames that follow `act`, for 500ms. */
+/** Records the frames that follow `act`, for 500ms (or `ms`). */
 export async function recordChips(page: Page, c: ChipCase) {
   await page.evaluate(
-    ({ container, next, chip, stay }) => {
+    ({ container, next, chip, stay, ms }) => {
       const box = (el: Element | null) => {
         if (!el) return null;
         const r = el.getBoundingClientRect();
@@ -54,11 +58,19 @@ export async function recordChips(page: Page, c: ChipCase) {
       };
       const root = document.querySelector(container)!;
       // An empty one matches :placeholder-shown too, but shows nothing.
-      const placeholder = (el: Element | null) =>
-        el?.matches(':placeholder-shown') &&
-        el.getAttribute('placeholder') !== ''
-          ? Number(getComputedStyle(el, '::placeholder').opacity)
-          : 0;
+      const placeholder = (el: Element | null) => {
+        if (
+          !el?.matches(':placeholder-shown') ||
+          el.getAttribute('placeholder') === ''
+        )
+          return { opacity: 0, blur: 0 };
+        const style = getComputedStyle(el, '::placeholder');
+        const blur = style.filter.match(/blur\(([\d.e-]+)px\)/);
+        return {
+          opacity: Number(style.opacity),
+          blur: blur ? Number(blur[1]) : 0,
+        };
+      };
       const live = (selector: string, text?: string) =>
         [...root.querySelectorAll(selector)].find(
           (el) =>
@@ -81,6 +93,8 @@ export async function recordChips(page: Page, c: ChipCase) {
           const matrix = style?.transform.match(/matrix\(([^,]+)/);
           const own =
             style && style.scale !== 'none' ? parseFloat(style.scale) : 1;
+          const moving = live(next);
+          const shown = placeholder(moving);
           frames.push({
             t: performance.now() - t0,
             copy:
@@ -91,18 +105,25 @@ export async function recordChips(page: Page, c: ChipCase) {
                     scale: (matrix ? Number(matrix[1]) : 1) * own,
                   }
                 : null,
-            next: box(live(next)),
-            placeholder: placeholder(live(next)),
+            next: box(moving),
+            placeholder: shown.opacity,
+            placeholderBlur: shown.blur,
             container: box(root)!,
             stay: stay ? box(live(stay.selector, stay.text)) : null,
           });
-          if (performance.now() - t0 < 500) requestAnimationFrame(tick);
+          if (performance.now() - t0 < ms) requestAnimationFrame(tick);
           else resolve({ before, frames });
         };
         requestAnimationFrame(tick);
       });
     },
-    { container: c.container, next: c.next, chip: c.chip, stay: c.stay },
+    {
+      container: c.container,
+      next: c.next,
+      chip: c.chip,
+      stay: c.stay,
+      ms: c.ms ?? 500,
+    },
   );
   await c.act();
   return page.evaluate(() => (window as Recorder).__chips!);
@@ -209,21 +230,35 @@ export function expectOneGo({ before, frames }: Recording) {
 
 /**
  * The input's placeholder, showing up as it glides back (the last chip
- * removed), stays hidden on the way and shows once the input is there, from
- * the frame it lands.
+ * removed), stays hidden on the way, then fades in where the input rests,
+ * from the frame it lands: from a 2px blur clearing on the same progress (no
+ * blur under reduced motion, where the input jumps).
  */
-export function expectPlaceholderWaits({ frames }: Recording) {
+export function expectPlaceholderComesIn(
+  { frames }: Recording,
+  { reduce = false }: { reduce?: boolean } = {},
+) {
   const end = frames.at(-1)!.next!;
   const away = (f: ChipFrame) =>
     Math.hypot(f.next!.x - end.x, f.next!.y - end.y);
   const onTheWay = frames.filter((f) => away(f) > 1);
-  expect(onTheWay.length).toBeGreaterThan(2);
+  if (!reduce) expect(onTheWay.length).toBeGreaterThan(2);
   for (const f of onTheWay) expect(f.placeholder).toBe(0);
   const landed = frames.find((f) => away(f) < 0.5)!;
-  const shown = frames.find((f) => f.placeholder === 1);
-  expect(shown).toBeDefined();
-  expect(shown!.t - landed.t).toBeLessThan(40);
-  expect(frames.at(-1)!.placeholder).toBe(1);
+  const appearing = frames.find((f) => f.placeholder > 0);
+  expect(appearing).toBeDefined();
+  expect(appearing!.t - landed.t).toBeLessThan(40);
+  const fading = frames.filter(
+    (f) => f.placeholder > 0.02 && f.placeholder < 0.98,
+  );
+  expect(fading.length).toBeGreaterThan(1);
+  for (const f of fading) {
+    const blur = reduce ? 0 : 2 * (1 - f.placeholder);
+    expect(Math.abs(f.placeholderBlur - blur)).toBeLessThan(0.25);
+  }
+  const last = frames.at(-1)!;
+  expect(last.placeholder).toBe(1);
+  expect(last.placeholderBlur).toBe(0);
 }
 
 /** The input's placeholder, there all along, goes with it: never hidden. */
@@ -357,7 +392,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
 
     test(
       c.placeholder === 'empty'
-        ? 'the last chip removed: the input glides back in one go, its placeholder shows once it is there'
+        ? 'the last chip removed: the input glides back in one go, its placeholder fades in once it is there'
         : 'the last chip removed: the input glides back in one go, its placeholder with it',
       async ({ page }) => {
         await chip(page, c.first)
@@ -373,13 +408,39 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
             chip(page, c.last)
               .locator('[data-slot="combobox-chip-remove"]')
               .click(),
+          ms: 900,
         });
         expectChipLeaves(recording);
         expectOneGo(recording);
-        if (c.placeholder === 'empty') expectPlaceholderWaits(recording);
+        if (c.placeholder === 'empty') expectPlaceholderComesIn(recording);
         else expectPlaceholderRides(recording);
       },
     );
+
+    if (c.placeholder === 'empty')
+      test('reduced motion: the last chip removed, its placeholder only fades in', async ({
+        page,
+      }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.reload({ waitUntil: 'networkidle' });
+        await chip(page, c.first)
+          .locator('[data-slot="combobox-chip-remove"]')
+          .click();
+        await expect(chip(page, c.first)).toHaveCount(0);
+        await page.waitForTimeout(650);
+        const recording = await recordChips(page, {
+          container: CONTAINER,
+          next: INPUT,
+          chip: { selector: CHIP, text: c.last },
+          act: () =>
+            chip(page, c.last)
+              .locator('[data-slot="combobox-chip-remove"]')
+              .click(),
+          ms: 700,
+        });
+        expectChipLeaves(recording, { reduce: true });
+        expectPlaceholderComesIn(recording, { reduce: true });
+      });
 
     test('reduced motion: a removed chip only fades, the input jumps', async ({
       page,
