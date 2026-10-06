@@ -4,7 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 import { Toggle as TogglePrimitive } from "@animate-ui/react/primitives/radix-ui"
-import { Bookmark01Icon, TextBoldIcon, TextItalicIcon } from "@hugeicons/core-free-icons"
+import { BookmarkIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 const toggleVariants = cva(
@@ -49,29 +49,21 @@ export { Toggle, toggleVariants }
 export const controls = {
   Toggle: {
     size: {
-      value: "default",
+      value: "sm",
       options: { default: "default", sm: "sm", lg: "lg" },
     },
   },
 }
 
 export default function ToggleDemo({
-  size = "default",
+  size = "sm",
 }: {
   size?: "default" | "sm" | "lg"
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <Toggle aria-label="Toggle bold" size={size} defaultPressed>
-        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
-      </Toggle>
-      <Toggle aria-label="Toggle italic" size={size} variant="outline">
-        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
-      </Toggle>
-      <Toggle aria-label="Toggle bookmark" size={size} variant="outline">
-        <HugeiconsIcon icon={Bookmark01Icon} strokeWidth={2} data-icon="inline-start" />
-        Bookmark
-      </Toggle>
-    </div>
+    <Toggle aria-label="Toggle bookmark" size={size} variant="outline">
+      <HugeiconsIcon icon={BookmarkIcon} strokeWidth={2} className="group-data-[state=on]/toggle:fill-foreground" />
+      Bookmark
+    </Toggle>
   )
 }

@@ -4,6 +4,7 @@ import {
   expectChipLeaves,
   expectOneGo,
   expectPlaceholderComesIn,
+  expectPlaceholderRides,
   recordChips,
 } from './chip-motion';
 
@@ -128,6 +129,24 @@ test.describe('react-aria tag group', () => {
     });
     expectChipLeaves(recording, { reduce: true });
     expectPlaceholderComesIn(recording, { reduce: true });
+  });
+
+  test('the last tag removed: the input glides back in one go, a placeholder there all along rides with it', async ({
+    page,
+  }) => {
+    const remove = page.getByRole('button', { name: 'Remove searched' });
+    await remove.click();
+    await page.waitForTimeout(650);
+    const recording = await recordChips(page, {
+      container: '[data-testid="search-field"]',
+      next: '[data-testid="search-input"]',
+      chip: { selector: '[data-slot="searched"]', text: 'Qwik' },
+      act: () => remove.click(),
+      ms: 900,
+    });
+    expectChipLeaves(recording);
+    expectOneGo(recording);
+    expectPlaceholderRides(recording);
   });
 
   test('an added tag pushes nothing back: those before it stay put', async ({

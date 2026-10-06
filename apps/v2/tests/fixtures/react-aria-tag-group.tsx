@@ -9,10 +9,12 @@ import {
 
 // Tags added after the list mounted pop in; removed ones go at once. Below,
 // tags in a field beside an input whose placeholder shows once it's empty,
-// and whose padding narrows while it holds tags (shadcn/ui's chips field).
+// and whose padding narrows while it holds tags (shadcn/ui's chips field);
+// then the same with a placeholder shown all along.
 export default function ReactAriaTagGroupFixture() {
   const [tags, setTags] = React.useState(['Astro', 'Next.js']);
   const [picked, setPicked] = React.useState(['Remix', 'Gatsby']);
+  const [searched, setSearched] = React.useState(['Solid', 'Qwik']);
 
   return (
     <div className="flex flex-col gap-4">
@@ -69,6 +71,39 @@ export default function ReactAriaTagGroupFixture() {
           data-testid="field-input"
           aria-label="Add frameworks"
           placeholder={picked.length > 0 ? '' : 'Add frameworks…'}
+          className="min-w-16 flex-1 outline-none"
+        />
+      </div>
+      <button
+        type="button"
+        className="self-start"
+        onClick={() => setSearched((t) => t.slice(1))}
+      >
+        Remove searched
+      </button>
+      <div
+        data-testid="search-field"
+        className="flex w-72 flex-wrap items-center gap-1 rounded-lg border px-2.5 py-1 has-data-[slot=searched]:px-1"
+      >
+        <TagGroup aria-label="Searched" className="contents">
+          <TagList className="contents">
+            {searched.map((tag) => (
+              <Tag
+                key={tag}
+                id={tag}
+                textValue={tag}
+                data-slot="searched"
+                className="rounded-sm border px-1.5 text-xs"
+              >
+                {tag}
+              </Tag>
+            ))}
+          </TagList>
+        </TagGroup>
+        <input
+          data-testid="search-input"
+          aria-label="Search frameworks"
+          placeholder="Search frameworks…"
           className="min-w-16 flex-1 outline-none"
         />
       </div>

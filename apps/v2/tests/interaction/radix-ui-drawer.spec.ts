@@ -1,14 +1,29 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { gotoHydrated } from './disclosure-timeline';
-import { DRAWER_CURVE } from './modal-timeline';
-import { expectCurvePace, type Sample } from './spring-curves';
+import {
+  expectClearBeforeUnmount,
+  expectDialogLikeOverlay,
+  expectDrawerEntrance,
+  expectDrawerExit,
+  expectProgressiveOverlay,
+  expectShadowLifts,
+  expectThrown,
+  halfwayTimes,
+  present,
+  readState,
+  recordTimeline,
+  seenBlur,
+} from './modal-timeline';
 
-// The drawer moves like Vaul's: every move of its position on Vaul's curve
-// (0.5s of cubic-bezier(0.32, 0.72, 0, 1)), opaque, a sheet sliding in and
-// out; its overlay comes in like the dialogs', its tint and backdrop blur
-// growing from 0 on the same curve (never its opacity), and follows the drag
-// like Vaul's.
+// The drawer slides opaque, a sheet sliding in and out: in, between snap
+// points and back after a drag in 0.4s with a hint of bounce
+// (cubic-bezier(0.34, 1.2, 0.64, 1), a hair past its rest), out like a
+// dismissed dialog (0.2s, a steady push, without crawling), thrown by a drag
+// at the finger's speed (linear); its shadow, if it has one, lifts off the
+// page with it. Its overlay comes in and clears like a dialog's, its tint
+// and backdrop blur (as seen) growing from 0 (never its opacity) in 400ms on
+// CSS's `ease` (250ms clearing), and follows the drag like Vaul's.
 
 const CONTENT = '[data-slot="drawer-content"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -96,6 +111,8 @@ async function recordMotion(
         let start = 0;
         const tick = () => {
           const el = document.querySelector<HTMLElement>(selector);
+          // Gone (closed): what was recorded is all there is.
+          if (!el && start) return resolve(frames);
           if (el) {
             const now = performance.now();
             if (!start) start = now;
@@ -192,47 +209,83 @@ async function drag(page: Page, selector: string, options: DragOptions) {
   if (release) await page.mouse.up();
 }
 
+/**
+ * Flicks `selector` by `dy` px in `steps` moves `every` ms apart, then lets
+ * go `every` ms after the last: the moves land on separate frames and carry
+ * those times (the drawer reads a release's speed from event times), so a
+ * busy machine can't stretch the flick into a slow drag.
+ */
+async function flick(
+  page: Page,
+  selector: string,
+  { dy, steps = 3, every = 8 }: { dy: number; steps?: number; every?: number },
+) {
+  const box = (await page.locator(selector).first().boundingBox())!;
+  const x = box.x + box.width / 2;
+  const y = box.y + 12;
+  const cdp = await page.context().newCDPSession(page);
+  const start = Date.now() / 1000;
+  const mouse = (type: string, top: number, ms: number, buttons: number) =>
+    cdp.send('Input.dispatchMouseEvent', {
+      type: type as 'mouseMoved',
+      x,
+      y: top,
+      button: 'left',
+      buttons,
+      clickCount: 1,
+      timestamp: start + ms / 1000,
+    });
+  const frame = () =>
+    page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(resolve)),
+    );
+  await mouse('mouseMoved', y, 0, 0);
+  await mouse('mousePressed', y, 1, 1);
+  for (let i = 1; i <= steps; i++) {
+    await frame();
+    await mouse('mouseMoved', y + (dy * i) / steps, 1 + i * every, 1);
+  }
+  await mouse('mouseReleased', y + dy, 1 + (steps + 1) * every, 0);
+  await cdp.detach();
+}
+
 test.describe('radix-ui drawer demo', () => {
   test.beforeEach(async ({ page }) => {
     await gotoHydrated(page, '/tests/demos/radix-ui/drawer');
   });
 
   const open = async (page: Page, settle = true) => {
-    await page.getByRole('button', { name: 'Move goal' }).click();
+    await page.getByRole('button', { name: 'Open Drawer' }).click();
     await page.locator(CONTENT).waitFor();
-    if (settle) await settled(page, CONTENT);
+    if (!settle) return;
+    await settled(page, CONTENT);
+    // Past its bounce and its overlay's fade, which end at 400ms.
+    await page.waitForTimeout(400);
   };
 
-  test("slides up opaque from the bottom edge on Vaul's curve, its overlay tinting and blurring the page from 0, with Vaul attributes", async ({
+  test("slides up opaque from the bottom edge with a hint of bounce, its overlay tinting and blurring the page from 0 like a dialog's, with Vaul attributes", async ({
     page,
   }) => {
-    const motion = await recordMotion(page, CONTENT, OVERLAY, 'y', 900);
-    await open(page, false);
-    const frames = await motion.frames();
-    // Starts off screen, and slides in opaque: a sheet, not a fade.
-    expect(frames[0]!.share).toBeGreaterThan(0.8);
-    for (const frame of frames) expect(frame.opacity).toBe(1);
-    expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
-    // On Vaul's curve, which answers at once: from 10% to 70% of the way in
-    // the time it takes.
-    const start = frames[0]!.share;
-    expectCurvePace(
-      frames.map((frame): Sample => [frame.t, frame.share]),
-      DRAWER_CURVE,
-      { from: start, to: 0, a: start * 0.9, b: start * 0.3 },
+    const timeline = await recordTimeline(page, {
+      content: CONTENT,
+      overlay: OVERLAY,
+    });
+    await open(page);
+    const frames = await timeline.stop();
+    // Starts off screen and slides in opaque, a sheet rather than a fade, a
+    // hair past its rest, then back.
+    expectDrawerEntrance(frames, 'bottom');
+    // The overlay comes in like a dialog's, never through its opacity: its
+    // tint and backdrop blur grow from 0 together, gently, half way in a
+    // little after the drawer, which answers at once.
+    expect(present(frames, 'overlay')[0]!.samples.overlay!.bg).toBeLessThan(
+      REST.bg * 0.1,
     );
-    // The overlay comes in with it, never through its opacity: its tint and
-    // backdrop blur grow from 0 together, half way in when the drawer is.
-    expect(frames[0]!.bg).toBeLessThan(REST.bg * 0.1);
-    for (const frame of frames) {
-      expect(frame.overlay).toBe(1);
-      expect(
-        Math.abs(frame.blur / REST.blur - frame.bg / REST.bg),
-      ).toBeLessThan(0.1);
-    }
-    const drawerHalf = frames.find((frame) => frame.share < start / 2)!;
-    const overlayHalf = frames.find((frame) => frame.bg > REST.bg / 2)!;
-    expect(Math.abs(overlayHalf.t - drawerHalf.t)).toBeLessThan(60);
+    expectProgressiveOverlay(frames, REST);
+    expectDialogLikeOverlay(frames, { rest: REST.bg });
+    const halfway = halfwayTimes(frames, { axis: 'y', rest: REST.bg });
+    expect(halfway.overlay - halfway.drawer).toBeGreaterThan(-20);
+    expect(halfway.overlay - halfway.drawer).toBeLessThan(140);
 
     const content = page.locator(CONTENT);
     await expect(content).toHaveAttribute(
@@ -246,7 +299,6 @@ test.describe('radix-ui drawer demo', () => {
       '',
     );
 
-    await settled(page, CONTENT);
     const rest = await veil(page, OVERLAY);
     expect(rest.opacity).toBe(1);
     expect(rest.bg).toBeCloseTo(REST.bg, 3);
@@ -256,25 +308,28 @@ test.describe('radix-ui drawer demo', () => {
     ).toBe('none');
   });
 
-  test('closes the same way, sliding back down opaque, the overlay clearing with it, then unmounts', async ({
+  test("closes quicker than it came, speeding off its edge without crawling, opaque, the overlay clearing ahead of it like a dialog's, then unmounts", async ({
     page,
   }) => {
     await open(page);
-    const motion = await recordMotion(page, CONTENT, OVERLAY, 'y', 450);
+    const timeline = await recordTimeline(page, {
+      content: CONTENT,
+      overlay: OVERLAY,
+    });
     await page.keyboard.press('Escape');
-    const frames = await motion.frames();
-    await expect(page.locator(CONTENT)).toHaveAttribute('data-state', 'closed');
-    for (const frame of frames) {
-      expect(frame.opacity).toBe(1);
-      expect(frame.overlay).toBe(1);
-    }
-    // The overlay clears with it: half way out when the drawer is.
-    const drawerHalf = frames.find((frame) => frame.share > 0.5)!;
-    const overlayHalf = frames.find((frame) => frame.bg < REST.bg / 2)!;
-    expect(Math.abs(overlayHalf.t - drawerHalf.t)).toBeLessThan(60);
-    expect(frames.at(-1)!.share).toBeGreaterThan(0.6);
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(OVERLAY)).toHaveCount(0);
+    const frames = await timeline.stop();
+    expectDrawerExit(frames, 'bottom');
+    // The overlay clears like a dialog's, its tint and blur together, ahead
+    // of the drawer speeding away, and clear before it unmounts.
+    expectProgressiveOverlay(frames, REST);
+    expectDialogLikeOverlay(frames, {
+      rest: REST.bg,
+      leaving: true,
+      axis: 'y',
+    });
+    expectClearBeforeUnmount(frames, REST);
   });
 
   test('a drag follows the finger 1:1, the overlay with it; a slow release springs back', async ({
@@ -288,14 +343,16 @@ test.describe('radix-ui drawer demo', () => {
     const dragged = await state(page, CONTENT);
     expect(Math.abs(dragged.y - distance)).toBeLessThan(2);
     expect(dragged.opacity).toBe(1);
-    // The overlay follows: its tint and its blur, never its opacity.
+    // The overlay follows: its tint and its blur as seen, never its opacity.
     const overlay = await veil(page, OVERLAY);
     expect(overlay.opacity).toBe(1);
     expect(
       Math.abs(overlay.bg / REST.bg - (1 - distance / height)),
     ).toBeLessThan(0.05);
     expect(
-      Math.abs(overlay.blur / REST.blur - (1 - distance / height)),
+      Math.abs(
+        seenBlur(overlay.blur) / seenBlur(REST.blur) - (1 - distance / height),
+      ),
     ).toBeLessThan(0.05);
     await expect(page.locator(CONTENT)).toHaveClass(/vaul-dragging/);
 
@@ -327,12 +384,18 @@ test.describe('radix-ui drawer demo', () => {
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
   });
 
-  test('a short flick dismisses it', async ({ page }) => {
+  test("a short flick throws it out at the finger's speed: linear, never stalling or crawling", async ({
+    page,
+  }) => {
     await open(page);
     const { height } = await state(page, CONTENT);
     const distance = Math.round(height * 0.2);
-    await drag(page, CONTENT, { dy: distance, steps: 3, every: 8 });
+    // Recording from before the flick: nothing may slow it down.
+    const timeline = await recordTimeline(page, { content: CONTENT });
+    // ~1.2px/ms, three times the flick threshold: thrown over ~290ms.
+    await flick(page, CONTENT, { dy: distance, every: 24 });
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
+    expectThrown(await timeline.stop(), 'bottom', distance / height);
   });
 
   test('pulled upwards it rubber-bands, then springs back', async ({
@@ -350,11 +413,12 @@ test.describe('radix-ui drawer demo', () => {
 
   test('a drag does not click the button it started on', async ({ page }) => {
     await open(page);
-    const save = page.getByRole('button', { name: 'Save goal' });
+    // A Close: clicked, it would close the drawer.
+    const cancel = page.getByRole('button', { name: 'Cancel' });
     await drag(page, CONTENT, {
       at: {
         y:
-          (await save.boundingBox())!.y -
+          (await cancel.boundingBox())!.y -
           (await page.locator(CONTENT).boundingBox())!.y +
           10,
       },
@@ -368,7 +432,7 @@ test.describe('radix-ui drawer demo', () => {
   test('keyboard: opens with Enter, closes with Escape, focus goes back', async ({
     page,
   }) => {
-    const trigger = page.getByRole('button', { name: 'Move goal' });
+    const trigger = page.getByRole('button', { name: 'Open Drawer' });
     await trigger.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
@@ -382,7 +446,7 @@ test.describe('radix-ui drawer demo', () => {
     await page.keyboard.press('Escape');
     await page.waitForTimeout(100);
     await page
-      .getByRole('button', { name: 'Move goal' })
+      .getByRole('button', { name: 'Open Drawer' })
       .click({ force: true });
     await settled(page, CONTENT);
     await expect
@@ -486,6 +550,9 @@ test.describe('radix-ui drawer API', () => {
     await page.getByRole('button', { name: 'Controlled trigger' }).click();
     const content = '[data-testid="bottom-content"]';
     await settled(page, content);
+    // Its opening has ended (it passes its rest once, on its way to its hint
+    // of bounce: a drag then would cut it short).
+    await expect(page.getByTestId('log')).toHaveText('change:true,end:true');
     const { height } = await state(page, content);
     await drag(page, content, { dy: height * 0.25, hold: 150, release: false });
     const reported = Number(await page.getByTestId('last-drag').textContent());
@@ -586,6 +653,44 @@ test.describe('radix-ui drawer API', () => {
       await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
     });
   }
+
+  test('its shadow lifts off the page with it: none off screen, lowered by a drag, gone as it leaves', async ({
+    page,
+  }) => {
+    await closeDefault(page);
+    // The fixture's right drawer has `shadow-xl`: 10% black at most.
+    const content = '[data-testid="right-content"]';
+    const opening = await recordTimeline(page, { content });
+    await page.getByText('Open right').click();
+    await settled(page, content, 'x');
+    await page.waitForTimeout(400);
+    expectShadowLifts(await opening.stop(), 0.1);
+    expect((await readState(page, content)).shadow).toBeCloseTo(0.1, 3);
+
+    // Half way out under the finger, half its shadow.
+    const box = (await page.locator(content).boundingBox())!;
+    await drag(page, content, {
+      at: { x: 12, y: box.height / 2 },
+      dx: box.width * 0.5,
+      release: false,
+    });
+    const dragged = await readState(page, content);
+    expect(dragged.shadow).toBeGreaterThan(0.03);
+    expect(dragged.shadow).toBeLessThan(0.07);
+    // Short of the threshold again, it springs back, lifted all the way.
+    await page.mouse.move(box.x + 12, box.y + box.height / 2, { steps: 5 });
+    await page.waitForTimeout(150);
+    await page.mouse.up();
+    await settled(page, content, 'x');
+    await expect
+      .poll(async () => (await readState(page, content)).shadow)
+      .toBeCloseTo(0.1, 3);
+
+    const closing = await recordTimeline(page, { content });
+    await page.keyboard.press('Escape');
+    await expect(page.locator(content)).toHaveCount(0, { timeout: 2500 });
+    expectShadowLifts(await closing.stop(), 0.1, { leaving: true });
+  });
 
   test('snap points: opens at the first, drags between them, the Handle cycles', async ({
     page,

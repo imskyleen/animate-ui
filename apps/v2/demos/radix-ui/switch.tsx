@@ -34,19 +34,9 @@ export { Switch }
 
 export default function SwitchDemo() {
   return (
-    <div className="flex flex-col gap-5">
-      <Label>
-        <Switch />
-        Airplane mode
-      </Label>
-      <Label>
-        <Switch defaultChecked />
-        Wi-Fi
-      </Label>
-      <Label>
-        <Switch size="sm" />
-        Low power mode
-      </Label>
+    <div className="flex items-center space-x-2">
+      <Switch id="airplane-mode" />
+      <Label htmlFor="airplane-mode">Airplane Mode</Label>
     </div>
   )
 }

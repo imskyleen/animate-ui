@@ -48,7 +48,7 @@ test.describe('radix-ui context-menu demo', () => {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(700);
     const probe = await probeFirstFrame(page, SUB_CONTENT);
-    await page.getByRole('menuitem', { name: 'Arrange' }).hover();
+    await page.getByRole('menuitem', { name: 'More Tools' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
@@ -97,10 +97,10 @@ describeMenuHighlight('radix-ui context-menu highlight', {
     await page.waitForTimeout(400);
   },
   // Adjacent enabled items (Base UI's arrow keys visit disabled ones too).
-  first: (page) => page.getByRole('menuitem', { name: /Duplicate/ }),
-  second: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
-  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
-  submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
+  first: (page) => page.getByRole('menuitem', { name: /Reload/ }),
+  second: (page) => page.getByRole('menuitem', { name: 'More Tools' }),
+  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'More Tools' }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Save Page...' }),
   keyboardNext: 'ArrowDown',
 });
 
@@ -111,7 +111,7 @@ describeMenuChecks('radix-ui context-menu checks', {
   },
   popup: '[data-slot="context-menu-content"]',
   indicator: 'span[data-state]',
-  checkbox: { checked: 'Show grid', unchecked: 'Show rulers' },
-  radio: { from: 'Zoom to fit', to: 'Zoom to 100%' },
+  checkbox: { checked: 'Show Bookmarks', unchecked: 'Show Full URLs' },
+  radio: { from: 'Pedro Duarte', to: 'Colm Tuite' },
   radioCloses: true,
 });

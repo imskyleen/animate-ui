@@ -7,29 +7,66 @@ import {
 } from './spring-curves';
 
 // Frame-by-frame recording of the modal primitives (Dialog, Alert Dialog,
-// Sheet), sampled in the page on every animation frame so it holds up on a
-// busy machine, plus the assertions of Animate UI v1's modal motion:
+// Sheet, Drawer), sampled in the page on every animation frame so it holds
+// up on a busy machine, plus the assertions of Animate UI's modal motion:
 //
-// - overlay: fades (and un-blurs) in 400ms on a soft ease-out, both ways:
-//   the page dims smoothly as the content arrives, and clears as it leaves;
+// - overlay (a dialog's, a sheet's, a drawer's): tints and blurs the page
+//   from 0 in 400ms on CSS's `ease`, and clears in 250ms on it, gentle on
+//   its first frames and on its last; its blur grows as it's seen, in step
+//   with the tint, and it's clear before it unmounts;
 // - dialog content: from `perspective(500px) rotateX(-20deg) scale(0.8)`,
 //   blur(4px) and transparent, on a spring (stiffness 150, damping 25) that
-//   settles after the overlay, fading in with the overlay, ahead of its
-//   movement; dismissed, it goes back the way it came,
-//   quicker and speeding away (0.25s on an ease-in), out of sight before
-//   its overlay has cleared;
-// - sheet: slides from its edge by its own size and fades, on Vaul's curve
-//   like the drawers (0.5s of cubic-bezier(0.32, 0.72, 0, 1)).
+//   settles after the overlay, fading in at once (400ms on a soft ease-out),
+//   ahead of its movement and of the overlay; dismissed, it goes back the
+//   way it came, at once, quicker and speeding away (0.2s, a steady push),
+//   out of sight just before its overlay has cleared;
+// - sheet: slides from its edge by its own size and fades, in 0.4s on a soft
+//   ease-out, never past its edge's rest; dismissed, it speeds off its edge
+//   like a dialog (0.2s, a steady push);
+// - drawer: slides opaque in 0.4s with a hint of bounce (a hair past its
+//   rest, then back), and leaves like a dismissed dialog, without crawling
+//   out; its shadow lifts off the page with it, from none.
 
-/** v1's dialog spring: sheets, drawers and edge toasts move on it too. */
+/** v1's dialog spring. */
 export const DIALOG_SPRING = { stiffness: 150, damping: 25 };
-/** v1's sheet spring (toasts from an edge): livelier. */
+/** v1's sheet spring, for the toasts from an edge: livelier. */
 export const SHEET_SPRING = { stiffness: 150, damping: 22 };
-/** Vaul's drawer motion: 0.5s of cubic-bezier(0.32, 0.72, 0, 1). */
+/** A drawer sliding in: 0.4s that answers at once, with a hint of bounce. */
 export const DRAWER_CURVE: CurveOptions = {
-  duration: 500,
-  ease: [0.32, 0.72, 0, 1],
+  duration: 400,
+  ease: [0.34, 1.2, 0.64, 1],
 };
+/** A sheet sliding in: 0.4s on a soft ease-out, without a bounce. */
+export const SHEET_CURVE: CurveOptions = {
+  duration: 400,
+  ease: [0.215, 0.61, 0.355, 1],
+};
+/**
+ * A dialog, a drawer or a sheet dismissed: 0.2s, a steady push from half its
+ * average speed to one and a half.
+ */
+export const DISMISS_CURVE: CurveOptions = {
+  duration: 200,
+  ease: [0.33, 0.17, 0.67, 0.5],
+};
+/** An overlay coming in: 400ms on CSS's `ease`, gentle at first and last. */
+export const OVERLAY_CURVE: CurveOptions = {
+  duration: 400,
+  ease: [0.25, 0.1, 0.25, 1],
+};
+/** An overlay clearing once its content is dismissed: 250ms, same curve. */
+export const OVERLAY_EXIT_CURVE: CurveOptions = {
+  duration: 250,
+  ease: [0.25, 0.1, 0.25, 1],
+};
+
+/**
+ * The share (0 to 1) of a backdrop blur of `radius` px the eye sees, as
+ * Animate UI models it from Chrome's rendering of a docs page (half of it by
+ * ~0.9px, 80% by 2px): most of a blur shows in its first pixel.
+ */
+export const seenBlur = (radius: number) =>
+  radius <= 0 ? 0 : 1 / (1 + (0.9 / radius) ** 2.3);
 
 export type ModalSample = {
   opacity: number;
@@ -46,6 +83,8 @@ export type ModalSample = {
   bg: number;
   /** backdrop-filter: blur(), px. */
   backdrop: number;
+  /** The strongest alpha of its box-shadow's colors (0 without one). */
+  shadow: number;
 };
 
 export type ModalFrame = {
@@ -71,6 +110,9 @@ async function install(page: Page) {
       const color = cs.backgroundColor;
       const slash = /\/\s*([\d.]+(?:e[+-]?\d+)?)\s*\)$/.exec(color);
       const rgba = /^rgba\(.*,\s*([\d.]+)\)$/.exec(color);
+      const shadows = [
+        ...cs.boxShadow.matchAll(/rgba\([^)]*,\s*([\d.e-]+)\)|rgb\(/g),
+      ].map((match) => (match[1] === undefined ? 1 : Number(match[1])));
       return {
         opacity: Number(cs.opacity),
         blur: blur ? Number(blur[1]) : 0,
@@ -80,6 +122,7 @@ async function install(page: Page) {
         y: box.offsetHeight ? m.m42 / box.offsetHeight : 0,
         bg: slash ? Number(slash[1]) : rgba ? Number(rgba[1]) : 1,
         backdrop: backdrop ? Number(backdrop[1]) : 0,
+        shadow: Math.max(0, ...shadows),
       };
     };
   });
@@ -280,7 +323,8 @@ export function expectDialogEntrance(
     expect(after.tilt).toBeLessThan(0.5);
   }
 
-  // The page behind blurs from 0, through every value in between.
+  // The page behind blurs from 0, through every value in between, as seen
+  // in step with the tint.
   const blurRest = expectProgressiveBackdrop(frames, overlay);
   if (blurRest > 0) {
     const veil = present(frames, overlay);
@@ -291,10 +335,15 @@ export function expectDialogEntrance(
         return blur > blurRest * 0.3 && blur < blurRest * 0.7;
       }),
     ).toBe(true);
+    expectBlurAsSeen(
+      frames,
+      { bg: options.overlayRest ?? 0.1, blur: blurRest },
+      overlay,
+    );
   }
 
-  // The overlay fades in over ~350ms (400ms soft ease-out), not in a couple
-  // of frames. A busy machine only delays it.
+  // The overlay comes in over ~350ms (400ms on CSS's `ease`), gently at
+  // first. A busy machine only delays it.
   const overlayStart = frames.find((frame) => frame.samples[overlay])!;
   const overlayIn = frames.find(
     (frame) => overlayProgress(frame, overlay, options) >= 0.99,
@@ -302,16 +351,13 @@ export function expectDialogEntrance(
   expect(overlayIn).toBeTruthy();
   expect(overlayIn.t - overlayStart.t).toBeGreaterThan(250);
   expect(overlayIn.t - overlayStart.t).toBeLessThan(700);
-  // With the content: about as far in when the content is half in.
+  expectOverlayPace(frames, overlay, options, false);
+  // The content answers at once, the overlay gently: the content is half in
+  // first.
   const halfway = frames.find(
     (frame) => (frame.samples[content]?.opacity ?? 0) >= 0.5,
   )!;
-  expect(
-    Math.abs(
-      overlayProgress(halfway, overlay, options) -
-        halfway.samples[content]!.opacity,
-    ),
-  ).toBeLessThan(0.2);
+  expect(overlayProgress(halfway, overlay, options)).toBeLessThan(0.5);
   // The content's opacity ahead of its movement: mostly in (0.7) while it
   // has grown less than 60% of the way from 0.8.
   const mostlyIn = frames.find(
@@ -322,10 +368,11 @@ export function expectDialogEntrance(
 
 /**
  * A dialog's exit: the content tips back, shrinks and blurs as it fades, the
- * way it came, but quicker and speeding away (0.25s on an ease-in): out of
- * sight within ~0.3s, half faded only past 58% of that time (an ease-out
- * would be half faded at a quarter of it). The overlay clears a little ahead
- * of it, and behind it.
+ * way it came, but at once, quicker and speeding away (0.2s, a steady push):
+ * out of sight within ~0.2s, half faded only past half of that time (an
+ * ease-out would be half faded at a quarter of it). The overlay clears a
+ * little ahead of it, gently at last, done just behind it, and clear before
+ * it unmounts.
  */
 export function expectDialogExit(
   frames: ModalFrame[],
@@ -346,7 +393,7 @@ export function expectDialogExit(
   );
   const exitStart = frames[Math.max(leaving - 1, 0)]!;
 
-  // Then out of sight quickly (0.25s; a busy machine only delays it), and
+  // Then out of sight quickly (0.2s; a busy machine only delays it), and
   // speeding away.
   const gone = shown.find((frame) => frame.samples[content]!.opacity < 0.02)!;
   expect(gone).toBeTruthy();
@@ -362,16 +409,18 @@ export function expectDialogExit(
   };
   const half = crossing(0.5) - exitStart.t;
   const out = crossing(0.02) - exitStart.t;
-  expect(half / out).toBeGreaterThan(0.58);
+  expect(half / out).toBeGreaterThan(0.5);
 
-  // The overlay fades out over ~350ms, not in a couple of frames.
+  // The overlay clears over ~220ms (250ms on CSS's `ease`), not in a couple
+  // of frames, gently at last.
   const overlayOut = frames.find(
     (frame) =>
       frame.samples[overlay] &&
       overlayProgress(frame, overlay, options) <= 0.01,
   )!;
   expect(overlayOut).toBeTruthy();
-  expect(overlayOut.t - exitStart.t).toBeGreaterThan(250);
+  expect(overlayOut.t - exitStart.t).toBeGreaterThan(150);
+  expectOverlayPace(frames, overlay, options, true);
   // A little ahead of the content: further out when the content is half out…
   const halfOut = frames.find(
     (frame) => frame.t > exitStart.t && frame.samples[content]!.opacity <= 0.5,
@@ -379,12 +428,135 @@ export function expectDialogExit(
   expect(overlayProgress(halfOut, overlay, options)).toBeLessThan(
     halfOut.samples[content]!.opacity,
   );
-  // …and cleared behind it: the page is still dimmed when it's out of sight.
-  expect(overlayOut.t).toBeGreaterThanOrEqual(gone.t);
-  // The page behind is sharp again, its blur gone with the tint.
+  // …and cleared just behind it: a trace of it is left when the content is
+  // out of sight, gone soon after.
+  expect(overlayProgress(gone, overlay, options)).toBeGreaterThan(0.003);
+  expect(overlayOut.t - gone.t).toBeLessThan(150);
+  // The page behind is sharp again, its blur gone with the tint, as seen.
   const blurRest = expectProgressiveBackdrop(frames, overlay);
   expect(overlayOut.samples[overlay]!.backdrop).toBeLessThanOrEqual(
     blurRest * 0.05,
+  );
+  if (blurRest > 0)
+    expectBlurAsSeen(
+      frames,
+      { bg: options.overlayRest ?? 0.1, blur: blurRest },
+      overlay,
+    );
+  expectClearBeforeUnmount(
+    frames,
+    { bg: options.overlayRest ?? 0.1, blur: blurRest },
+    overlay,
+    options,
+  );
+}
+
+/**
+ * The overlay's tint (its `overlayFade`, as a share of `overlayRest`) on its
+ * curve, CSS's `ease`, end to end: coming in, its first stretch (1% to 15%
+ * of the way) takes as long as the curve's, no snap on its first frames (a
+ * soft ease-out got there in two frames), and so does the rest (15% to
+ * 90%); clearing (400ms in, 250ms out), its last stretch (15% to 1%) too,
+ * no snap to clear.
+ */
+function expectOverlayPace(
+  frames: ModalFrame[],
+  overlay: string,
+  options: OverlayOptions,
+  leaving: boolean,
+) {
+  const rest = options.overlayRest ?? 0.1;
+  const tint = present(frames, overlay).map((frame): Sample => [
+    frame.t,
+    overlayLevel(frame.samples[overlay]!, options),
+  ]);
+  if (leaving) {
+    const pace = { from: rest, to: 0 };
+    expectCurvePace(tint, OVERLAY_EXIT_CURVE, {
+      ...pace,
+      a: rest * 0.9,
+      b: rest * 0.15,
+    });
+    expectCurvePace(tint, OVERLAY_EXIT_CURVE, {
+      ...pace,
+      a: rest * 0.15,
+      b: rest * 0.01,
+    });
+  } else {
+    const pace = { from: 0, to: rest };
+    expectCurvePace(tint, OVERLAY_CURVE, {
+      ...pace,
+      a: rest * 0.01,
+      b: rest * 0.15,
+    });
+    expectCurvePace(tint, OVERLAY_CURVE, {
+      ...pace,
+      a: rest * 0.15,
+      b: rest * 0.9,
+    });
+  }
+}
+
+/**
+ * On every frame, as much of the overlay's backdrop blur is seen as of its
+ * tint (`seenBlur`): its radius grows slowly at first, where the eye sees
+ * most of a blur, rather than straight with the tint (half the radius
+ * showed nine tenths of a 4px blur).
+ */
+export function expectBlurAsSeen(
+  frames: ModalFrame[],
+  rest: { bg: number; blur: number },
+  name = 'overlay',
+) {
+  for (const { samples } of present(frames, name)) {
+    const sample = samples[name]!;
+    expect(
+      Math.abs(
+        seenBlur(sample.backdrop) / seenBlur(rest.blur) - sample.bg / rest.bg,
+      ),
+      `${sample.backdrop}px of blur with ${sample.bg} of tint`,
+    ).toBeLessThan(0.08);
+  }
+}
+
+/**
+ * The overlay is clear before it unmounts: on its last frame in the page,
+ * under 2% of its tint (or opacity) and of its blur as seen are left (a
+ * fade cut short, 4% to 8% from the end, snapped the page back sharp).
+ */
+export function expectClearBeforeUnmount(
+  frames: ModalFrame[],
+  rest: { bg: number; blur: number },
+  name = 'overlay',
+  options: OverlayOptions = {},
+) {
+  const last = present(frames, name).at(-1)!.samples[name]!;
+  const fade = options.overlayFade ?? 'bg';
+  expect(
+    overlayLevel(last, options) / (fade === 'bg' ? rest.bg : 1),
+  ).toBeLessThan(0.02);
+  if (rest.blur > 0)
+    expect(seenBlur(last.backdrop) / seenBlur(rest.blur)).toBeLessThan(0.02);
+}
+
+/**
+ * A drawer's shadow lifts off the page with it: none on its first frame,
+ * off screen, then through the values in between up to `rest` (the
+ * strongest alpha of its colors) as it comes in; or back down to none on
+ * its last frame as it leaves, rather than riding out at full strength.
+ */
+export function expectShadowLifts(
+  frames: ModalFrame[],
+  rest: number,
+  { leaving = false } = {},
+  name = 'content',
+) {
+  const shadow = present(frames, name).map(
+    (frame) => frame.samples[name]!.shadow,
+  );
+  expect(leaving ? shadow.at(-1)! : shadow[0]!).toBeLessThan(rest * 0.05);
+  expect(shadow.some((alpha) => alpha > rest * 0.2 && alpha < rest * 0.8)).toBe(
+    true,
   );
 }
 
@@ -395,10 +567,33 @@ export const SHEET_TRAVEL = {
   left: { axis: 'x', sign: -1 },
 } as const;
 
+/** `name`'s way along `axis` towards its edge, frame by frame: 0 at rest. */
+const travel = (
+  frames: ModalFrame[],
+  name: string,
+  axis: 'x' | 'y',
+  sign: number,
+) =>
+  frames.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]);
+
+/** When `way` first gets to `level`: interpolated, and the frames around. */
+function crossing(way: Sample[], level: number) {
+  const i = way.findIndex(([, value]) => value >= level);
+  expect(i, `it starts short of ${level} and gets there`).toBeGreaterThan(0);
+  const [ta, va] = way[i - 1]!;
+  const [tb, vb] = way[i]!;
+  return {
+    t: ta + ((level - va) / (vb - va)) * (tb - ta),
+    before: ta,
+    after: tb,
+  };
+}
+
 /**
- * v1's sheet entrance on Vaul's curve: from its edge, by its own size, fading
- * in, from 10% to 70% of the way in the time the curve takes (the sheet
- * spring takes half as long again).
+ * v1's sheet entrance: from its edge, by its own size, fading in, from 10%
+ * to 90% of the way in the time its curve takes (0.4s on a soft ease-out),
+ * and never past its rest: held against the screen's edge, a sheet going
+ * past it would open a gap there.
  */
 export function expectSheetEntrance(
   frames: ModalFrame[],
@@ -416,18 +611,16 @@ export function expectSheetEntrance(
   )!;
   expect(midway.samples[name]!.opacity).toBeGreaterThan(0.2);
   expect(midway.samples[name]!.opacity).toBeLessThan(0.95);
-  expectCurvePace(
-    shown.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]),
-    DRAWER_CURVE,
-    { from: 1, to: 0, a: 0.9, b: 0.3 },
-  );
+  const way = travel(shown, name, axis, sign);
+  expectCurvePace(way, SHEET_CURVE, { from: 1, to: 0, a: 0.9, b: 0.1 });
+  for (const [, share] of way) expect(share).toBeGreaterThan(-0.002);
 }
 
 /**
- * A drawer's entrance, Vaul's: from its edge, by its own size, opaque all the
- * way (a sheet sliding in, not a fade), on Vaul's curve, which answers at
- * once: from 10% to 70% of the way in the time the curve takes (the sheet
- * spring takes half as long again).
+ * A drawer's entrance: from its edge, by its own size, opaque all the way (a
+ * sheet sliding in, not a fade), from 10% to 90% of the way in the time its
+ * curve takes (0.4s that answers at once), with a hint of bounce: a hair
+ * past its rest (0.3% to 3% of its size), then back to it.
  */
 export function expectDrawerEntrance(
   frames: ModalFrame[],
@@ -436,20 +629,31 @@ export function expectDrawerEntrance(
 ) {
   const { axis, sign } = SHEET_TRAVEL[side];
   const shown = present(frames, name);
-  const start = shown[0]!.samples[name]![axis] * sign;
+  const way = travel(shown, name, axis, sign);
+  const start = way[0]![1];
   expect(start).toBeGreaterThan(0.6);
   // Opaque to the eye (shadcn/ui's Base UI drawer ends at 0.9999 so its exit
   // has a transition to wait for).
   for (const frame of shown)
     expect(frame.samples[name]!.opacity).toBeGreaterThan(0.999);
-  expectCurvePace(
-    shown.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]),
-    DRAWER_CURVE,
-    { from: start, to: 0, a: start * 0.9, b: start * 0.3 },
-  );
+  expectCurvePace(way, DRAWER_CURVE, {
+    from: start,
+    to: 0,
+    a: start * 0.9,
+    b: start * 0.1,
+  });
+  const past = Math.min(...way.map(([, share]) => share));
+  expect(past, 'a hair past its rest').toBeLessThan(-0.003);
+  expect(past, 'only a hair').toBeGreaterThan(-0.03);
 }
 
-/** A drawer's exit: back to its edge, opaque all the way. */
+/**
+ * A drawer's exit, like a dismissed dialog's (0.2s, a steady push): back to
+ * its edge, opaque all the way, at once, quicker than it came and speeding
+ * away. It's half way out only well into its time out (an ease-out would be
+ * at a quarter of it), and its last stretch, from 90% of the way, takes a
+ * few frames: it never crawls out.
+ */
 export function expectDrawerExit(
   frames: ModalFrame[],
   side: keyof typeof SHEET_TRAVEL,
@@ -457,17 +661,95 @@ export function expectDrawerExit(
 ) {
   const { axis, sign } = SHEET_TRAVEL[side];
   const shown = present(frames, name);
-  expect(shown.at(-1)!.samples[name]![axis] * sign).toBeGreaterThan(0.6);
+  const way = travel(shown, name, axis, sign);
+  const last = way.at(-1)![1];
+  expect(last).toBeGreaterThan(0.6);
   // Opaque to the eye (shadcn/ui's Base UI drawer ends at 0.9999 so its exit
   // has a transition to wait for).
   for (const frame of shown)
     expect(frame.samples[name]!.opacity).toBeGreaterThan(0.999);
+  const end = Math.max(1, last);
+  // Its last stretch is quick enough to end between two frames: the frame
+  // it's gone from counts as its edge.
+  const gone = frames.find((frame) => frame.t > shown.at(-1)!.t);
+  if (gone) way.push([gone.t, end]);
+  const [t10, t50, t90, t97] = [0.1, 0.5, 0.9, 0.97].map((share) =>
+    crossing(way, end * share),
+  );
+  expect((t50!.t - t10!.t) / (t97!.t - t10!.t)).toBeGreaterThan(0.4);
+  expect(t97!.before - t90!.after, 'its last stretch').toBeLessThan(60);
+}
+
+/**
+ * A drawer's overlay, timed like a dialog's (CSS's `ease`, 400ms in, 250ms
+ * out): its tint from 10% to 90% of the way in the time that curve takes,
+ * coming in, or clearing (`leaving`). Clearing, it leads the drawer, which
+ * speeds away: mostly clear once the drawer is half way out along `axis`.
+ */
+export function expectDialogLikeOverlay(
+  frames: ModalFrame[],
+  {
+    rest,
+    leaving = false,
+    axis,
+  }: { rest: number; leaving?: boolean; axis?: 'x' | 'y' },
+  overlay = 'overlay',
+  name = 'content',
+) {
+  const tint = present(frames, overlay).map((frame): Sample => [
+    frame.t,
+    frame.samples[overlay]!.bg,
+  ]);
+  expectCurvePace(
+    tint,
+    leaving ? OVERLAY_EXIT_CURVE : OVERLAY_CURVE,
+    leaving
+      ? { from: rest, to: 0, a: rest * 0.9, b: rest * 0.1 }
+      : { from: 0, to: rest, a: rest * 0.1, b: rest * 0.9 },
+  );
+  if (!leaving || !axis) return;
+  const halfOut = frames.find((frame) => {
+    const sample = frame.samples[name];
+    return sample && Math.abs(sample[axis]) >= 0.5;
+  })!;
+  expect(halfOut.samples[overlay]!.bg).toBeLessThan(rest * 0.35);
+}
+
+/**
+ * A drawer thrown off by a drag, let go `released` of the way to its edge
+ * (a share of its size), keeps the finger's speed: a steady pace (linear)
+ * from there to its edge, every frame within a tenth of the way of that
+ * straight line, so it neither stalls after the release nor crawls out (an
+ * ease-out or an ease-in would stray by a third of it).
+ */
+export function expectThrown(
+  frames: ModalFrame[],
+  side: keyof typeof SHEET_TRAVEL,
+  released: number,
+  name = 'content',
+) {
+  const { axis, sign } = SHEET_TRAVEL[side];
+  const way = travel(present(frames, name), name, axis, sign);
+  const end = Math.max(1, way.at(-1)![1]);
+  // The frames on its way: past where the finger let go, short of its edge
+  // (a frame once it's there would bend the line).
+  const moving = way.filter(
+    ([, share]) => share > released + 0.01 && share < end * 0.99,
+  );
+  expect(moving.length, 'frames on its way out').toBeGreaterThan(1);
+  const [t0, v0] = moving[0]!;
+  const [t1, v1] = moving.at(-1)!;
+  for (const [t, share] of moving) {
+    const steady = v0 + ((v1 - v0) * (t - t0)) / (t1 - t0);
+    expect(Math.abs(share - steady) / (end - released)).toBeLessThan(0.1);
+  }
 }
 
 /**
  * An overlay coming in or clearing the way the dialogs' does: never through
  * its opacity, its tint and its backdrop blur growing from 0 together (or
- * back), through the values in between, up to its classes' `rest` values.
+ * back), the blur as seen in step with the tint, through the values in
+ * between, up to its classes' `rest` values.
  */
 export function expectProgressiveOverlay(
   frames: ModalFrame[],
@@ -475,13 +757,8 @@ export function expectProgressiveOverlay(
   name = 'overlay',
 ) {
   const veil = present(frames, name).map((frame) => frame.samples[name]!);
-  for (const sample of veil) {
-    expect(sample.opacity).toBe(1);
-    if (rest.blur > 0)
-      expect(
-        Math.abs(sample.backdrop / rest.blur - sample.bg / rest.bg),
-      ).toBeLessThan(0.1);
-  }
+  for (const sample of veil) expect(sample.opacity).toBe(1);
+  if (rest.blur > 0) expectBlurAsSeen(frames, rest, name);
   expect(
     veil.some(
       (sample) => sample.bg > rest.bg * 0.1 && sample.bg < rest.bg * 0.9,
@@ -491,8 +768,7 @@ export function expectProgressiveOverlay(
 
 /**
  * When (ms) the drawer `name` gets half way along `axis` (towards its edge
- * when `leaving`), and when the overlay's tint gets half way to its `rest`:
- * they move together when these are close.
+ * when `leaving`), and when the overlay's tint gets half way to its `rest`.
  */
 export function halfwayTimes(
   frames: ModalFrame[],

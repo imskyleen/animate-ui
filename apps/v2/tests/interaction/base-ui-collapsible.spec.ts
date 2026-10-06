@@ -29,8 +29,8 @@ disclosureDemoTests('base-ui collapsible demo', {
   url: '/tests/demos/base-ui/collapsible',
   panel: '[data-slot="collapsible-content"]',
   closed: {
-    trigger: 'Show all changes',
-    text: 'A CLI that animates your shadcn/ui components',
+    trigger: 'Toggle details',
+    text: '100 Market St, San Francisco',
   },
   closedState: 'unmounted',
 });

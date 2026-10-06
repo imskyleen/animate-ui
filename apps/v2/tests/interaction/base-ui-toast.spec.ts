@@ -57,7 +57,7 @@ test.describe('base-ui toast demo', () => {
     page,
   }) => {
     const timeline = await recordTimeline(page, { toast: TOAST });
-    await page.getByRole('button', { name: 'Show toast' }).click();
+    await page.getByRole('button', { name: 'Show Toast' }).click();
     await settled(page);
     const shown = present(await timeline.stop(), 'toast');
     const first = shown[0]!.samples.toast!;
@@ -82,7 +82,7 @@ test.describe('base-ui toast demo', () => {
           return Math.hypot(m.a, m.b);
         }),
       );
-    const button = page.getByRole('button', { name: 'Show toast' });
+    const button = page.getByRole('button', { name: 'Show Toast' });
     for (let i = 0; i < 3; i++) await button.click();
     // The newest toast comes first in the DOM, at the front of the stack.
     await settled(page, 0);
@@ -115,7 +115,7 @@ test.describe('base-ui toast demo', () => {
   });
 
   test('leaves through its edge on the same spring', async ({ page }) => {
-    await page.getByRole('button', { name: 'Show toast' }).click();
+    await page.getByRole('button', { name: 'Show Toast' }).click();
     const toast = page.locator(TOAST).first();
     await settled(page);
     // The exit's timing, read as soon as Base UI marks the toast as ending.
@@ -151,7 +151,7 @@ test.describe('base-ui toast demo', () => {
   });
 
   test('a swipe follows the finger, then dismisses', async ({ page }) => {
-    await page.getByRole('button', { name: 'Show toast' }).click();
+    await page.getByRole('button', { name: 'Show Toast' }).click();
     const toast = page.locator(TOAST).first();
     await settled(page);
     const box = (await toast.boundingBox())!;
@@ -178,7 +178,7 @@ test.describe('base-ui toast demo', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.reload({ waitUntil: 'networkidle' });
     const timeline = await recordTimeline(page, { toast: TOAST });
-    await page.getByRole('button', { name: 'Show toast' }).click();
+    await page.getByRole('button', { name: 'Show Toast' }).click();
     await settled(page);
     const first = present(await timeline.stop(), 'toast')[0]!.samples.toast!;
     expect(Math.abs(first.y)).toBeLessThan(0.02);

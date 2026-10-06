@@ -292,70 +292,134 @@ export default function MenubarDemo({
   /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
-  const [wordWrap, setWordWrap] = React.useState(true)
-  const [minimap, setMinimap] = React.useState(false)
-  const [theme, setTheme] = React.useState("system")
+  const [showBookmarksBar, setShowBookmarksBar] = React.useState(false)
+  const [showFullUrls, setShowFullUrls] = React.useState(true)
+  const [user, setUser] = React.useState("benoit")
 
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <Menubar>
+      <Menubar className="w-72">
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem>
-              New file <MenubarShortcut>⌘N</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem>
-              New window <MenubarShortcut>⇧⌘N</MenubarShortcut>
-            </MenubarItem>
-            <MenubarSub>
-              <MenubarSubTrigger>Open recent</MenubarSubTrigger>
-              <MenubarSubContent>
-                <MenubarItem>animate-ui</MenubarItem>
-                <MenubarItem>design-system</MenubarItem>
-                <MenubarItem>marketing-site</MenubarItem>
-              </MenubarSubContent>
-            </MenubarSub>
+            <MenubarGroup>
+              <MenubarItem>
+                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+              </MenubarItem>
+              <MenubarItem>
+                New Window <MenubarShortcut>⌘N</MenubarShortcut>
+              </MenubarItem>
+              <MenubarItem disabled>New Incognito Window</MenubarItem>
+            </MenubarGroup>
             <MenubarSeparator />
-            <MenubarItem>
-              Save <MenubarShortcut>⌘S</MenubarShortcut>
-            </MenubarItem>
+            <MenubarGroup>
+              <MenubarSub>
+                <MenubarSubTrigger>Share</MenubarSubTrigger>
+                <MenubarSubContent>
+                  <MenubarGroup>
+                    <MenubarItem>Email link</MenubarItem>
+                    <MenubarItem>Messages</MenubarItem>
+                    <MenubarItem>Notes</MenubarItem>
+                  </MenubarGroup>
+                </MenubarSubContent>
+              </MenubarSub>
+            </MenubarGroup>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarItem>
+                Print... <MenubarShortcut>⌘P</MenubarShortcut>
+              </MenubarItem>
+            </MenubarGroup>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger>Edit</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem>
-              Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem>
-              Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-            </MenubarItem>
+            <MenubarGroup>
+              <MenubarItem>
+                Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+              </MenubarItem>
+              <MenubarItem>
+                Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+              </MenubarItem>
+            </MenubarGroup>
             <MenubarSeparator />
-            <MenubarItem>Cut</MenubarItem>
-            <MenubarItem>Copy</MenubarItem>
-            <MenubarItem>Paste</MenubarItem>
+            <MenubarGroup>
+              <MenubarSub>
+                <MenubarSubTrigger>Find</MenubarSubTrigger>
+                <MenubarSubContent>
+                  <MenubarGroup>
+                    <MenubarItem>Search the web</MenubarItem>
+                  </MenubarGroup>
+                  <MenubarSeparator />
+                  <MenubarGroup>
+                    <MenubarItem>Find...</MenubarItem>
+                    <MenubarItem>Find Next</MenubarItem>
+                    <MenubarItem>Find Previous</MenubarItem>
+                  </MenubarGroup>
+                </MenubarSubContent>
+              </MenubarSub>
+            </MenubarGroup>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarItem>Cut</MenubarItem>
+              <MenubarItem>Copy</MenubarItem>
+              <MenubarItem>Paste</MenubarItem>
+            </MenubarGroup>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger>View</MenubarTrigger>
-          <MenubarContent>
-            <MenubarCheckboxItem
-              checked={wordWrap}
-              onCheckedChange={setWordWrap}
-            >
-              Word wrap
-            </MenubarCheckboxItem>
-            <MenubarCheckboxItem checked={minimap} onCheckedChange={setMinimap}>
-              Minimap
-            </MenubarCheckboxItem>
+          <MenubarContent className="w-44">
+            <MenubarGroup>
+              <MenubarCheckboxItem
+                checked={showBookmarksBar}
+                onCheckedChange={setShowBookmarksBar}
+              >
+                Bookmarks Bar
+              </MenubarCheckboxItem>
+              <MenubarCheckboxItem
+                checked={showFullUrls}
+                onCheckedChange={setShowFullUrls}
+              >
+                Full URLs
+              </MenubarCheckboxItem>
+            </MenubarGroup>
             <MenubarSeparator />
-            <MenubarLabel>Theme</MenubarLabel>
-            <MenubarRadioGroup value={theme} onValueChange={setTheme}>
-              <MenubarRadioItem value="light">Light</MenubarRadioItem>
-              <MenubarRadioItem value="dark">Dark</MenubarRadioItem>
-              <MenubarRadioItem value="system">System</MenubarRadioItem>
+            <MenubarGroup>
+              <MenubarItem inset>
+                Reload <MenubarShortcut>⌘R</MenubarShortcut>
+              </MenubarItem>
+              <MenubarItem disabled inset>
+                Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
+              </MenubarItem>
+            </MenubarGroup>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarItem inset>Toggle Fullscreen</MenubarItem>
+            </MenubarGroup>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarItem inset>Hide Sidebar</MenubarItem>
+            </MenubarGroup>
+          </MenubarContent>
+        </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger>Profiles</MenubarTrigger>
+          <MenubarContent>
+            <MenubarRadioGroup value={user} onValueChange={setUser}>
+              <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
+              <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
+              <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
             </MenubarRadioGroup>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarItem inset>Edit...</MenubarItem>
+            </MenubarGroup>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarItem inset>Add Profile...</MenubarItem>
+            </MenubarGroup>
           </MenubarContent>
         </MenubarMenu>
       </Menubar>

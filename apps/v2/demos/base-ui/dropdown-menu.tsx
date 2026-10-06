@@ -298,7 +298,7 @@ export const controls = {
   },
 }
 
-export default function MenuDemo({
+export default function DropdownMenuDemo({
   side = "bottom",
   sideOffset = 4,
   align = "start",
@@ -313,24 +313,25 @@ export default function MenuDemo({
   checkAnimation?: "draw" | "pop"
 }) {
   const [showStatusBar, setShowStatusBar] = React.useState(true)
-  const [showActivity, setShowActivity] = React.useState(false)
+  const [showActivityBar, setShowActivityBar] = React.useState(false)
+  const [showPanel, setShowPanel] = React.useState(false)
   const [position, setPosition] = React.useState("bottom")
 
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="outline" />}>
-          Open menu
+          Open
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-56"
+          className="w-40"
           side={side}
           sideOffset={sideOffset}
           align={align}
           alignOffset={alignOffset}
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel>My account</DropdownMenuLabel>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuItem>
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
@@ -339,35 +340,62 @@ export default function MenuDemo({
               Billing
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
+            <DropdownMenuItem>
+              Settings
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>Team</DropdownMenuItem>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Invite people</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Email</DropdownMenuItem>
-                <DropdownMenuItem>Message</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Copy link</DropdownMenuItem>
-              </DropdownMenuSubContent>
+              <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
             </DropdownMenuSub>
+            <DropdownMenuItem>
+              New Team
+              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>GitHub</DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem disabled>API</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuLabel>Appearance</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
-              checked={showStatusBar}
+              checked={showStatusBar ?? false}
               onCheckedChange={setShowStatusBar}
             >
-              Status bar
+              Status Bar
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem
-              checked={showActivity}
-              onCheckedChange={setShowActivity}
+              checked={showActivityBar}
+              onCheckedChange={setShowActivityBar}
+              disabled
             >
-              Activity panel
+              Activity Bar
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem
+              checked={showPanel}
+              onCheckedChange={setShowPanel}
+            >
+              Panel
             </DropdownMenuCheckboxItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Panel position</DropdownMenuLabel>
+            <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
               <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
@@ -375,10 +403,12 @@ export default function MenuDemo({
             </DropdownMenuRadioGroup>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">
-            Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              Log out
+              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </AnimateUIProvider>

@@ -9,6 +9,10 @@ import { probeFirstFrame, sample } from './motion-probe';
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
+// shadcn's demo menu (~575px tall) doesn't fit under its trigger, in the
+// middle of a 720px viewport: it would scroll, and hide its last items.
+test.use({ viewport: { width: 1280, height: 1280 } });
+
 test.describe('react-aria dropdown-menu demo', () => {
   test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
@@ -21,7 +25,7 @@ test.describe('react-aria dropdown-menu demo', () => {
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
@@ -33,7 +37,7 @@ test.describe('react-aria dropdown-menu demo', () => {
   });
 
   test('closes the same way, then unmounts', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(700);
     await page.keyboard.press('Escape');
     // It plays an exit (polled: a loaded machine can skip the first frames).
@@ -48,7 +52,7 @@ test.describe('react-aria dropdown-menu demo', () => {
   test('the keyboard moves the focus at once, the items have no transition', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(700);
     await page.keyboard.press('ArrowDown');
     const focused = page.locator('[role="menuitem"]:focus');
@@ -59,10 +63,10 @@ test.describe('react-aria dropdown-menu demo', () => {
   });
 
   test('a submenu opens in an animated popover too', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(700);
     const probe = await probeFirstFrame(page, SUB_CONTENT);
-    await page.getByRole('menuitem', { name: 'Invite people' }).hover();
+    await page.getByRole('menuitem', { name: 'Invite users' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     await expect(page.locator(SUB_CONTENT)).toBeVisible();
@@ -71,9 +75,9 @@ test.describe('react-aria dropdown-menu demo', () => {
   test('the highlight goes into the submenu: one highlight, the trigger cleared', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(700);
-    const trigger = page.getByRole('menuitem', { name: 'Invite people' });
+    const trigger = page.getByRole('menuitem', { name: 'Invite users' });
     await trigger.hover();
     await expect(page.locator(SUB_CONTENT)).toBeVisible();
     await page.waitForTimeout(400);
@@ -94,7 +98,7 @@ test.describe('react-aria dropdown-menu demo', () => {
   test('reduced motion: it fades without scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, CONTENT);
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     const first = await probe.firstFrame();
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
@@ -104,13 +108,16 @@ test.describe('react-aria dropdown-menu demo', () => {
 describeMenuHighlight('react-aria dropdown-menu highlight', {
   path: '/tests/demos/react-aria/dropdown-menu',
   open: async (page) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
   },
-  first: (page) => page.getByRole('menuitem', { name: 'Profile' }),
-  second: (page) => page.getByRole('menuitem', { name: 'Billing' }),
+  // Two rows above the submenu trigger, as the old demo's were: leaving the
+  // submenu for an item further up, the part in the submenu is cut by it
+  // before the new one has faded in.
+  first: (page) => page.getByRole('menuitem', { name: /Settings/ }),
+  second: (page) => page.getByRole('menuitem', { name: 'Team', exact: true }),
   submenuTrigger: (page) =>
-    page.getByRole('menuitem', { name: 'Invite people' }),
+    page.getByRole('menuitem', { name: 'Invite users' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'Email' }),
   keyboardNext: 'ArrowDown',
 });
@@ -118,11 +125,11 @@ describeMenuHighlight('react-aria dropdown-menu highlight', {
 describeMenuChecks('react-aria dropdown-menu checks', {
   path: '/tests/demos/react-aria/dropdown-menu',
   open: async (page) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
   },
   popup: '[data-slot="dropdown-menu-content"]',
   indicator: '[data-slot$="-item-indicator"]',
-  checkbox: { checked: 'Status bar', unchecked: 'Activity panel' },
+  checkbox: { checked: 'Status Bar', unchecked: 'Panel' },
   radio: { from: 'Bottom', to: 'Right' },
   radioCloses: true,
 });

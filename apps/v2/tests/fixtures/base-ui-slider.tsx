@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { Slider } from '@animate-ui/react/primitives/base-ui/slider';
 
+import { Slider as DemoSlider } from '@/demos/base-ui/slider';
+
 const control = {
   position: 'relative',
   display: 'flex',
@@ -66,6 +68,16 @@ export default function BaseSliderFixture() {
             </Slider.Track>
           </Slider.Control>
         </Slider.Root>
+      </section>
+
+      <section data-testid="range">
+        {/* shadcn's slider-range example, on the docs demo's Slider. */}
+        <DemoSlider
+          defaultValue={[25, 50]}
+          max={100}
+          step={5}
+          className="mx-auto w-full max-w-xs"
+        />
       </section>
     </div>
   );

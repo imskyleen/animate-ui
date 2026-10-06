@@ -78,16 +78,12 @@ test.describe('primitive page', () => {
 
   test('the demo animates in the page', async ({ page }) => {
     await page
-      .getByRole('button', {
-        name: 'How is it different from other libraries?',
-      })
+      .getByRole('button', { name: 'What is your return policy?' })
       .click();
     await expect(
       page
-        .getByRole('region', {
-          name: 'How is it different from other libraries?',
-        })
-        .getByText('You keep your own components'),
+        .getByRole('region', { name: 'What is your return policy?' })
+        .getByText('Returns accepted within 30 days'),
     ).toBeVisible();
   });
 

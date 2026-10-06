@@ -7,6 +7,7 @@ import { Combobox } from '@animate-ui/react/primitives/base-ui/combobox';
 import { Combobox as BarrelCombobox } from '@animate-ui/react/primitives/base-ui';
 
 const FRUITS = ['Apple', 'Banana', 'Cherry', 'Grape'];
+const FRAMEWORKS = ['Next.js', 'SvelteKit', 'Nuxt.js', 'Remix', 'Astro'];
 
 // API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseComboboxFixture() {
@@ -15,6 +16,7 @@ export default function BaseComboboxFixture() {
   const [completed, setCompleted] = React.useState<string[]>([]);
   const [multiple, setMultiple] = React.useState<string[]>(['Apple']);
   const chipsRef = React.useRef<HTMLDivElement | null>(null);
+  const fieldRef = React.useRef<HTMLDivElement | null>(null);
 
   return (
     <div className="flex flex-col items-start gap-10">
@@ -108,6 +110,60 @@ export default function BaseComboboxFixture() {
             </BarrelCombobox.Positioner>
           </BarrelCombobox.Portal>
         </BarrelCombobox.Root>
+      </section>
+
+      {/* shadcn/ui's chips field, its input showing a placeholder once empty. */}
+      <section data-testid="chips">
+        <Combobox.Root
+          multiple
+          items={FRAMEWORKS}
+          defaultValue={['Next.js', 'Astro']}
+        >
+          <Combobox.Chips
+            ref={fieldRef}
+            data-testid="field"
+            className="flex w-72 flex-wrap items-center gap-1 rounded-lg border px-2.5 py-1 has-data-[slot=combobox-chip]:px-1"
+          >
+            <Combobox.Value>
+              {(values: string[]) => (
+                <>
+                  {values.map((item) => (
+                    <Combobox.Chip
+                      key={item}
+                      data-slot="combobox-chip"
+                      data-testid={`field-chip-${item}`}
+                      className="flex h-5 items-center gap-1 rounded-sm border px-1.5 text-xs"
+                    >
+                      {item}
+                      <Combobox.ChipRemove aria-label={`Remove ${item}`}>
+                        ×
+                      </Combobox.ChipRemove>
+                    </Combobox.Chip>
+                  ))}
+                  <Combobox.Input
+                    data-testid="field-input"
+                    aria-label="Frameworks"
+                    placeholder={values.length > 0 ? '' : 'Add frameworks…'}
+                    className="min-w-16 flex-1 outline-none"
+                  />
+                </>
+              )}
+            </Combobox.Value>
+          </Combobox.Chips>
+          <Combobox.Portal>
+            <Combobox.Positioner anchor={fieldRef}>
+              <Combobox.Popup className="bg-white">
+                <Combobox.List>
+                  {(item: string) => (
+                    <Combobox.Item key={item} value={item}>
+                      {item}
+                    </Combobox.Item>
+                  )}
+                </Combobox.List>
+              </Combobox.Popup>
+            </Combobox.Positioner>
+          </Combobox.Portal>
+        </Combobox.Root>
       </section>
 
       <section data-testid="keep-mounted">

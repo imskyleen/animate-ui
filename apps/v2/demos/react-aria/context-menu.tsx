@@ -21,10 +21,7 @@ import {
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
-import {
-  Button,
-  type Selection,
-} from "@animate-ui/react/primitives/react-aria"
+import { Pressable } from "@animate-ui/react/primitives/react-aria"
 import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 function ContextMenu({
@@ -274,61 +271,72 @@ export default function ContextMenuDemo({
   /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
-  const [view, setView] = React.useState<Selection>(() => new Set(["grid"]))
-  const [zoom, setZoom] = React.useState<Selection>(() => new Set(["fit"]))
-
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
       <ContextMenuTrigger>
-        <Button className="text-muted-foreground flex h-40 w-72 cursor-default items-center justify-center rounded-xl border border-dashed text-sm outline-none select-none">
-          Right click here
-        </Button>
-        <ContextMenu className="w-56">
-          <ContextMenuItem>
-            Undo
-            <ContextMenuShortcut>⌘Z</ContextMenuShortcut>
-          </ContextMenuItem>
-          <ContextMenuItem isDisabled>
-            Redo
-            <ContextMenuShortcut>⇧⌘Z</ContextMenuShortcut>
-          </ContextMenuItem>
-          <ContextMenuItem>
-            Duplicate
-            <ContextMenuShortcut>⌘D</ContextMenuShortcut>
-          </ContextMenuItem>
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>Arrange</ContextMenuSubTrigger>
-            <ContextMenuSubContent className="w-44">
-              <ContextMenuItem>Bring to front</ContextMenuItem>
-              <ContextMenuItem>Bring forward</ContextMenuItem>
-              <ContextMenuItem>Send backward</ContextMenuItem>
-              <ContextMenuItem>Send to back</ContextMenuItem>
-            </ContextMenuSubContent>
-          </ContextMenuSub>
+        <Pressable>
+          <div
+            role="button"
+            className="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm"
+          >
+            <span className="hidden pointer-fine:inline-block">
+              Right click here
+            </span>
+            <span className="hidden pointer-coarse:inline-block">
+              Long press here
+            </span>
+          </div>
+        </Pressable>
+        <ContextMenu className="w-48">
+          <ContextMenuGroup>
+            <ContextMenuItem>
+              Back
+              <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuItem isDisabled>
+              Forward
+              <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuItem>
+              Reload
+              <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>More Tools</ContextMenuSubTrigger>
+              <ContextMenuSubContent className="w-44">
+                <ContextMenuGroup>
+                  <ContextMenuItem>Save Page...</ContextMenuItem>
+                  <ContextMenuItem>Create Shortcut...</ContextMenuItem>
+                  <ContextMenuItem>Name Window...</ContextMenuItem>
+                </ContextMenuGroup>
+                <ContextMenuSeparator />
+                <ContextMenuGroup>
+                  <ContextMenuItem>Developer Tools</ContextMenuItem>
+                </ContextMenuGroup>
+                <ContextMenuSeparator />
+                <ContextMenuGroup>
+                  <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
+                </ContextMenuGroup>
+              </ContextMenuSubContent>
+            </ContextMenuSub>
+          </ContextMenuGroup>
           <ContextMenuSeparator />
           <ContextMenuGroup
             selectionMode="multiple"
-            selectedKeys={view}
-            onSelectionChange={setView}
+            defaultSelectedKeys={["bookmarks"]}
           >
-            <ContextMenuItem id="grid">Show grid</ContextMenuItem>
-            <ContextMenuItem id="rulers">Show rulers</ContextMenuItem>
+            <ContextMenuItem id="bookmarks">Show Bookmarks</ContextMenuItem>
+            <ContextMenuItem id="urls">Show Full URLs</ContextMenuItem>
           </ContextMenuGroup>
           <ContextMenuSeparator />
           <ContextMenuGroup
             selectionMode="single"
-            selectedKeys={zoom}
-            onSelectionChange={setZoom}
+            defaultSelectedKeys={["pedro"]}
           >
-            <ContextMenuLabel>Zoom</ContextMenuLabel>
-            <ContextMenuItem id="fit">Zoom to fit</ContextMenuItem>
-            <ContextMenuItem id="100">Zoom to 100%</ContextMenuItem>
+            <ContextMenuLabel>People</ContextMenuLabel>
+            <ContextMenuItem id="pedro">Pedro Duarte</ContextMenuItem>
+            <ContextMenuItem id="colm">Colm Tuite</ContextMenuItem>
           </ContextMenuGroup>
-          <ContextMenuSeparator />
-          <ContextMenuItem variant="destructive">
-            Delete
-            <ContextMenuShortcut>⌫</ContextMenuShortcut>
-          </ContextMenuItem>
         </ContextMenu>
       </ContextMenuTrigger>
     </AnimateUIProvider>

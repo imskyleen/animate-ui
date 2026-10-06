@@ -16,10 +16,14 @@ const demosDir = path.join(root, 'demos');
 const outDir = path.join(root, 'public', 'r');
 mkdirSync(outDir, { recursive: true });
 
-// This repo's paths → a shadcn/ui project's.
+// This repo's paths → a shadcn/ui project's (helpers in a style folder, like
+// components/ui/base-ui/rhea/, are the project's components too).
 const toProject = (source: string) =>
   source
-    .replace(/@\/components\/ui\/(?:base-ui|react-aria)\//g, '@/components/ui/')
+    .replace(
+      /@\/components\/ui\/(?:base-ui|react-aria)\/(?:rhea\/)?/g,
+      '@/components/ui/',
+    )
     .replace(/@\/registry\//g, '@/components/animate-ui/');
 
 const IGNORED = new Set(['react', 'react-dom', 'next']);
@@ -79,7 +83,11 @@ for (const library of readdirSync(demosDir)) {
       const relative = path.relative(root, absolute);
       files.push({
         path: relative,
-        type: isDemo ? 'registry:component' : 'registry:ui',
+        type: isDemo
+          ? 'registry:component'
+          : relative.startsWith('hooks/')
+            ? 'registry:hook'
+            : 'registry:ui',
         target: isDemo
           ? `components/${name}-demo.tsx`
           : toProject(`@/${relative}`).slice(2),

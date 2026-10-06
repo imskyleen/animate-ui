@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { describeChipMotion } from './chip-motion';
 import { describeMenuHighlight } from './menu-highlight';
@@ -12,16 +12,18 @@ import {
 import { expectPickHold } from './pick-hold';
 
 const POPOVER = '[data-slot="combobox-content"]';
+const DEMO = '/tests/demos/react-aria/combobox';
+const CHIPS_DEMO = '/tests/demos/react-aria/combobox-multiple';
+
+/** Loads a page, once per test: a loaded machine is slow to load one. */
+const load = (page: Page, path: string) =>
+  page.goto(path, { waitUntil: 'networkidle' });
 
 test.describe('react-aria combobox demo', () => {
   test.describe.configure({ timeout: 180_000 });
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/react-aria/combobox', {
-      waitUntil: 'networkidle',
-    });
-  });
 
   test('opens with a 250ms scale and fade from the input', async ({ page }) => {
+    await load(page, DEMO);
     const probe = await probeFirstFrame(page, POPOVER);
     await page.getByRole('combobox', { name: 'Framework' }).click();
     await page.keyboard.press('ArrowDown');
@@ -37,19 +39,21 @@ test.describe('react-aria combobox demo', () => {
   });
 
   test('filtering while typing is instant', async ({ page }) => {
+    await load(page, DEMO);
     const input = page.getByRole('combobox', { name: 'Framework' });
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    await expect(page.getByRole('option')).toHaveCount(7);
+    await expect(page.getByRole('option')).toHaveCount(5);
 
-    await input.pressSequentially('st');
+    await input.pressSequentially('x');
     await expect(page.getByRole('option')).toHaveCount(3, { timeout: 100 });
     expect((await sample(page, '[role="option"]')).opacity).toBe(1);
     expect((await sample(page, POPOVER)).scale).toBe(1);
   });
 
   test('picking an item closes it the same way', async ({ page }) => {
+    await load(page, DEMO);
     const input = page.getByRole('combobox', { name: 'Framework' });
     await input.click();
     await page.keyboard.press('ArrowDown');
@@ -70,10 +74,7 @@ test.describe('react-aria combobox demo', () => {
     test(`a first choice holds the list while its check ${animation === 'draw' ? 'draws itself' : 'pops in'}, then closes`, async ({
       page,
     }) => {
-      await page.goto(
-        withAnimation('/tests/demos/react-aria/combobox', animation),
-        { waitUntil: 'networkidle' },
-      );
+      await load(page, withAnimation(DEMO, animation));
       const input = page.getByRole('combobox', { name: 'Framework' });
       await input.click();
       await page.keyboard.press('ArrowDown');
@@ -93,10 +94,7 @@ test.describe('react-aria combobox demo', () => {
     test(`choosing another item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
       page,
     }) => {
-      await page.goto(
-        withAnimation('/tests/demos/react-aria/combobox', animation),
-        { waitUntil: 'networkidle' },
-      );
+      await load(page, withAnimation(DEMO, animation));
       const input = page.getByRole('combobox', { name: 'Framework' });
       const open = async () => {
         await input.click();
@@ -121,6 +119,7 @@ test.describe('react-aria combobox demo', () => {
   }
 
   test('reduced motion: it fades, nothing scales', async ({ page }) => {
+    await load(page, DEMO);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, POPOVER);
     await page.getByRole('combobox', { name: 'Framework' }).click();
@@ -133,11 +132,6 @@ test.describe('react-aria combobox demo', () => {
 
 test.describe('react-aria combobox chips demo', () => {
   test.describe.configure({ timeout: 180_000 });
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/react-aria/combobox-multiple', {
-      waitUntil: 'networkidle',
-    });
-  });
 
   const chip = (name: string) =>
     `[data-slot="combobox-chip"]:has-text("${name}")`;
@@ -145,20 +139,21 @@ test.describe('react-aria combobox chips demo', () => {
   test('tags there on mount do not animate, added tags pop in', async ({
     page,
   }) => {
-    expect((await sample(page, chip('Astro'))).opacity).toBe(1);
+    await load(page, CHIPS_DEMO);
+    expect((await sample(page, chip('Next.js'))).opacity).toBe(1);
 
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    await page.getByRole('option', { name: 'Nuxt' }).click();
+    await page.getByRole('option', { name: 'Nuxt.js' }).click();
     await page.waitForTimeout(40);
-    const entering = await sample(page, chip('Nuxt'));
+    const entering = await sample(page, chip('Nuxt.js'));
     // The pop itself is the TagGroup primitive's (its own spec checks it).
     expect(entering.opacity).toBeLessThan(1);
     expect(entering.scale).toBeLessThan(1);
-    expect((await sample(page, chip('Astro'))).opacity).toBe(1);
+    expect((await sample(page, chip('Next.js'))).opacity).toBe(1);
     await page.waitForTimeout(650);
-    expect((await sample(page, chip('Nuxt'))).opacity).toBe(1);
+    expect((await sample(page, chip('Nuxt.js'))).opacity).toBe(1);
   });
 
   test('the chips are named: their list, and each chip by its text, without accessibility warnings', async ({
@@ -174,40 +169,41 @@ test.describe('react-aria combobox chips demo', () => {
       )
         warnings.push(message.text());
     });
-    await page.reload({ waitUntil: 'networkidle' });
+    await load(page, CHIPS_DEMO);
     const chips = page.getByRole('grid', { name: 'Selected frameworks' });
     const named = (name: string) =>
       chips.getByRole('row', { name, exact: true });
     await expect(named('Next.js')).toHaveCount(1);
-    await expect(named('Astro')).toHaveCount(1);
     // Added and removed, still named and quiet.
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    await page.getByRole('option', { name: 'Nuxt' }).click();
+    await page.getByRole('option', { name: 'Nuxt.js' }).click();
     // Closed: while the list is open, React Aria hides the rest of the page
     // from assistive tech.
     await page.keyboard.press('Escape');
-    await expect(named('Nuxt')).toHaveCount(1);
+    await expect(named('Nuxt.js')).toHaveCount(1);
     await page
-      .locator(chip('Astro'))
+      .locator(chip('Next.js'))
       .locator('[data-slot="combobox-chip-remove"]')
       .click();
-    await expect(named('Astro')).toHaveCount(0);
+    await expect(named('Next.js')).toHaveCount(0);
+    await expect(named('Nuxt.js')).toHaveCount(1);
     expect(warnings).toEqual([]);
   });
 
   test('the check of a selected item draws itself, of a deselected one erases itself', async ({
     page,
   }) => {
+    await load(page, CHIPS_DEMO);
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    const nuxt = page.getByRole('option', { name: 'Nuxt.js' });
     // The check's stroke, like a checkbox's.
     const stroke = {
       selector: '[role="option"]',
-      text: 'Nuxt',
+      text: 'Nuxt.js',
       child: ':scope > div path',
     };
     const frames = recordMotion(page, stroke, 900);
@@ -235,17 +231,14 @@ test.describe('react-aria combobox chips demo', () => {
   test('pop: the check of a selected item pops in, of a deselected one shrinks out', async ({
     page,
   }) => {
-    await page.goto(
-      '/tests/demos/react-aria/combobox-multiple?checkAnimation=pop',
-      { waitUntil: 'networkidle' },
-    );
+    await load(page, withAnimation(CHIPS_DEMO, 'pop'));
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    const nuxt = page.getByRole('option', { name: 'Nuxt.js' });
     const target = {
       items: '[role="option"]',
-      label: 'Nuxt',
+      label: 'Nuxt.js',
       indicator: ':scope > div',
     };
     const arriving = recordCheck(page, target);
@@ -259,13 +252,14 @@ test.describe('react-aria combobox chips demo', () => {
   });
 
   test('reduced motion: added tags fade without scaling', async ({ page }) => {
+    await load(page, CHIPS_DEMO);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.getByRole('combobox', { name: 'Frameworks' }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    await page.getByRole('option', { name: 'Nuxt' }).click();
+    await page.getByRole('option', { name: 'Nuxt.js' }).click();
     await page.waitForTimeout(40);
-    const entering = await sample(page, chip('Nuxt'));
+    const entering = await sample(page, chip('Nuxt.js'));
     expect(entering.scale).toBe(1);
     expect(entering.opacity).toBeLessThan(1);
   });
@@ -340,7 +334,7 @@ test('react-aria combobox docs page renders without errors', async ({
 });
 
 describeMenuHighlight('react-aria combobox highlight', {
-  path: '/tests/demos/react-aria/combobox',
+  path: DEMO,
   open: async (page) => {
     // The button opens the list without focusing an item.
     await page.locator('[data-slot="input-group"] button').first().click();
@@ -352,11 +346,11 @@ describeMenuHighlight('react-aria combobox highlight', {
 });
 
 describeChipMotion('react-aria combobox', {
-  path: '/tests/demos/react-aria/combobox-multiple',
+  path: CHIPS_DEMO,
   label: 'Frameworks',
+  // One chip on load, and no placeholder on the input.
   first: 'Next.js',
-  last: 'Astro',
-  add: 'Nuxt',
-  more: ['React Router', 'TanStack Start', 'SvelteKit', 'SolidStart'],
-  placeholder: 'always',
+  last: 'Next.js',
+  add: 'Nuxt.js',
+  more: ['SvelteKit', 'Nuxt.js', 'Remix', 'Astro'],
 });

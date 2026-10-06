@@ -5,6 +5,7 @@ import { cn } from "cn"
 import {
   Button as ButtonPrimitive,
   Collection,
+  ComboBox as Combobox,
   ComboBox as ComboBoxPrimitive,
   ComboBoxStateContext,
   ComboBoxValue as ComboBoxValuePrimitive,
@@ -389,17 +390,13 @@ export {
   useComboboxAnchor,
 }
 
-const FRAMEWORKS = [
-  { id: "next", name: "Next.js" },
-  { id: "react-router", name: "React Router" },
-  { id: "tanstack-start", name: "TanStack Start" },
-  { id: "astro", name: "Astro" },
-  { id: "sveltekit", name: "SvelteKit" },
-  { id: "nuxt", name: "Nuxt" },
-  { id: "solidstart", name: "SolidStart" },
-]
-
-type Framework = (typeof FRAMEWORKS)[number]
+const frameworks = [
+  "Next.js",
+  "SvelteKit",
+  "Nuxt.js",
+  "Remix",
+  "Astro",
+] as const
 
 export const controls = {
   AnimateUIProvider: {
@@ -407,38 +404,41 @@ export const controls = {
   },
 }
 
-export default function ComboboxMultipleDemo({
+export default function ComboboxMultiple({
   checkAnimation = "draw",
 }: {
   /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
-  const anchor = useComboboxAnchor()
-
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <ComboBoxPrimitive
+      <Combobox
         aria-label="Frameworks"
         selectionMode="multiple"
-        defaultItems={FRAMEWORKS}
-        defaultValue={["next", "astro"]}
+        defaultValue={[frameworks[0]]}
+        allowsEmptyCollection
+        className="w-[250px] max-w-full"
       >
-        <div ref={anchor} className="w-72">
-          <ComboboxChips>
-            <ComboboxChipList<Framework> aria-label="Selected frameworks">
-              {(item) => <ComboboxChip id={item.id}>{item.name}</ComboboxChip>}
-            </ComboboxChipList>
-            <ComboboxChipsInput placeholder="Add frameworks…" />
-          </ComboboxChips>
-        </div>
-        <ComboboxContent anchor={anchor}>
-          <ComboboxList>
-            {(item: Framework) => (
-              <ComboboxItem id={item.id}>{item.name}</ComboboxItem>
+        <ComboboxChips>
+          <ComboboxChipList<{ name: string }> aria-label="Selected frameworks">
+            {(value) => <ComboboxChip id={value.name}>{value.name}</ComboboxChip>}
+          </ComboboxChipList>
+          <ComboboxChipsInput />
+        </ComboboxChips>
+        <ComboboxContent>
+          <ComboboxList
+            renderEmptyState={() => (
+              <ComboboxEmpty>No items found.</ComboboxEmpty>
             )}
+          >
+            {frameworks.map((item) => (
+              <ComboboxItem key={item} id={item} value={{ name: item }}>
+                {item}
+              </ComboboxItem>
+            ))}
           </ComboboxList>
         </ComboboxContent>
-      </ComboBoxPrimitive>
+      </Combobox>
     </AnimateUIProvider>
   )
 }

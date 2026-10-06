@@ -6,8 +6,8 @@ disclosureDemoTests('radix-ui collapsible demo', {
   url: '/tests/demos/radix-ui/collapsible',
   panel: '[data-slot="collapsible-content"]',
   closed: {
-    trigger: 'Show all changes',
-    text: 'A CLI that animates your shadcn/ui components',
+    trigger: 'Toggle details',
+    text: '100 Market St, San Francisco',
   },
   closedState: 'unmounted',
 });
@@ -53,7 +53,8 @@ test.describe('radix-ui collapsible API', () => {
     await expect(
       page.getByRole('button', { name: 'Hidden button' }),
     ).toBeVisible({ timeout: 800 });
-    expect(await inert()).toBe(false);
+    // Out of `inert` as it opens (Radix updates it a tick after the height).
+    await expect.poll(inert).toBe(false);
     await page.getByRole('button', { name: 'Force mounted' }).click();
     await page.waitForTimeout(500);
     // Still mounted, collapsed and inert.

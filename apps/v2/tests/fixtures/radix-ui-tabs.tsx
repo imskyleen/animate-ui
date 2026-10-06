@@ -62,6 +62,23 @@ export default function RadixTabsFixture() {
           <Tabs.Content value="2">Manual panel 2</Tabs.Content>
         </Tabs.Root>
       </section>
+
+      <section data-testid="heights">
+        {/* Panels of different heights: the height springs between them. */}
+        <Tabs.Root defaultValue="short">
+          <Tabs.List aria-label="Heights">
+            <Tabs.Trigger value="short">Short</Tabs.Trigger>
+            <Tabs.Trigger value="tall">Tall</Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content value="short">Short panel</Tabs.Content>
+          <Tabs.Content value="tall">
+            <p>Tall panel</p>
+            <p>Its second line</p>
+            <p>Its third line</p>
+            <p>Its fourth line</p>
+          </Tabs.Content>
+        </Tabs.Root>
+      </section>
     </div>
   );
 }

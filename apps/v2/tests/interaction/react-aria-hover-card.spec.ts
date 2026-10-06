@@ -8,9 +8,10 @@ import {
 describeAnchoredOverlay('react-aria hover-card demo', {
   path: '/tests/demos/react-aria/hover-card',
   selector: '[data-slot="hover-card-content"]',
-  open: (page) => page.getByRole('link', { name: '@animate-ui' }).hover(),
+  open: (page) => page.getByRole('button', { name: 'Hover Here' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
-  closeDelay: 300,
+  // The demo's closeDelay (shadcn/ui's).
+  closeDelay: 100,
 });
 
 test.describe('react-aria hover-card API', () => {

@@ -1,6 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-import { describeChipMotion } from './chip-motion';
+import {
+  describeChipMotion,
+  expectChipLeaves,
+  expectOneGo,
+  expectPlaceholderComesIn,
+  recordChips,
+} from './chip-motion';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 import {
@@ -18,18 +24,25 @@ import {
 const POPUP = '[data-slot="combobox-content"]';
 /** An item's check (its ItemIndicator), beside the highlight. */
 const CHECK = ':scope > span:not([data-slot="item-highlight"])';
+/** The demo's input, named by its placeholder. */
+const NAME = 'Select a framework';
+/** The chips demo's input: shadcn/ui's has no name. */
+const chipsInput = (page: Page) =>
+  page.locator('[data-slot="combobox-chip-input"]');
+const DEMO = '/tests/demos/base-ui/combobox';
+const CHIPS_DEMO = '/tests/demos/base-ui/combobox-multiple';
+
+/** Loads a page, once per test: a loaded machine is slow to load one. */
+const load = (page: Page, path: string) =>
+  page.goto(path, { waitUntil: 'networkidle' });
 
 test.describe('base-ui combobox demo', () => {
   test.describe.configure({ timeout: 180_000 });
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/base-ui/combobox', {
-      waitUntil: 'networkidle',
-    });
-  });
 
   test('opens with a 250ms scale and fade from the input', async ({ page }) => {
+    await load(page, DEMO);
     const probe = await probeFirstFrame(page, POPUP);
-    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await page.getByRole('combobox', { name: NAME }).click();
     await page.keyboard.press('ArrowDown');
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
@@ -45,13 +58,14 @@ test.describe('base-ui combobox demo', () => {
   });
 
   test('filtering while typing is instant', async ({ page }) => {
-    const input = page.getByRole('combobox', { name: 'Framework' });
+    await load(page, DEMO);
+    const input = page.getByRole('combobox', { name: NAME });
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    await expect(page.getByRole('option')).toHaveCount(7);
+    await expect(page.getByRole('option')).toHaveCount(5);
 
-    await input.pressSequentially('st');
+    await input.pressSequentially('x');
     // No per-item exit: the list is filtered on the next frame.
     await expect(page.getByRole('option')).toHaveCount(3, { timeout: 100 });
     expect((await sample(page, '[role="option"]:first-child')).opacity).toBe(1);
@@ -62,11 +76,8 @@ test.describe('base-ui combobox demo', () => {
     test(`a first choice holds the list while its check ${animation === 'draw' ? 'draws itself' : 'pops in'}, then closes`, async ({
       page,
     }) => {
-      await page.goto(
-        withAnimation('/tests/demos/base-ui/combobox', animation),
-        { waitUntil: 'networkidle' },
-      );
-      const input = page.getByRole('combobox', { name: 'Framework' });
+      await load(page, withAnimation(DEMO, animation));
+      const input = page.getByRole('combobox', { name: NAME });
       await input.click();
       await page.keyboard.press('ArrowDown');
       await page.waitForTimeout(650);
@@ -87,11 +98,8 @@ test.describe('base-ui combobox demo', () => {
     test(`choosing another item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
       page,
     }) => {
-      await page.goto(
-        withAnimation('/tests/demos/base-ui/combobox', animation),
-        { waitUntil: 'networkidle' },
-      );
-      const input = page.getByRole('combobox', { name: 'Framework' });
+      await load(page, withAnimation(DEMO, animation));
+      const input = page.getByRole('combobox', { name: NAME });
       const open = async () => {
         await input.click();
         await page.keyboard.press('ArrowDown');
@@ -116,7 +124,8 @@ test.describe('base-ui combobox demo', () => {
   test('choosing the chosen item again closes without waiting', async ({
     page,
   }) => {
-    const input = page.getByRole('combobox', { name: 'Framework' });
+    await load(page, DEMO);
+    const input = page.getByRole('combobox', { name: NAME });
     const open = async () => {
       await input.click();
       await page.keyboard.press('ArrowDown');
@@ -134,14 +143,16 @@ test.describe('base-ui combobox demo', () => {
   });
 
   test('Escape closes it without waiting', async ({ page }) => {
-    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await load(page, DEMO);
+    await page.getByRole('combobox', { name: NAME }).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     await expectEscapeWithoutHold(page, POPUP);
   });
 
   test('keyboard: arrows move the highlight, Enter picks', async ({ page }) => {
-    const input = page.getByRole('combobox', { name: 'Framework' });
+    await load(page, DEMO);
+    const input = page.getByRole('combobox', { name: NAME });
     await input.click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
@@ -155,9 +166,10 @@ test.describe('base-ui combobox demo', () => {
   });
 
   test('reduced motion: it fades, nothing scales', async ({ page }) => {
+    await load(page, DEMO);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, POPUP);
-    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await page.getByRole('combobox', { name: NAME }).click();
     await page.keyboard.press('ArrowDown');
     const first = await probe.firstFrame();
     expect(first.scale).toBe(1);
@@ -167,28 +179,24 @@ test.describe('base-ui combobox demo', () => {
 
 test.describe('base-ui combobox chips demo', () => {
   test.describe.configure({ timeout: 180_000 });
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/base-ui/combobox-multiple', {
-      waitUntil: 'networkidle',
-    });
-  });
 
   test('chips there on mount do not animate, added chips pop in', async ({
     page,
   }) => {
+    await load(page, CHIPS_DEMO);
     const chip = (name: string) =>
       `[data-slot="combobox-chip"]:has-text("${name}")`;
-    expect((await sample(page, chip('Astro'))).opacity).toBe(1);
+    expect((await sample(page, chip('Next.js'))).opacity).toBe(1);
 
-    await page.getByRole('combobox', { name: 'Frameworks' }).click();
+    await chipsInput(page).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     const frames = recordMotion(
       page,
-      { selector: '[data-slot="combobox-chip"]', text: 'Nuxt' },
+      { selector: '[data-slot="combobox-chip"]', text: 'Nuxt.js' },
       900,
     );
-    await page.getByRole('option', { name: 'Nuxt' }).click();
+    await page.getByRole('option', { name: 'Nuxt.js' }).click();
     // Multiple selection: the list stays open.
     await expect(page.locator(POPUP)).toBeVisible();
     const recorded = await frames;
@@ -200,17 +208,18 @@ test.describe('base-ui combobox chips demo', () => {
   });
 
   test('checks draw themselves with the selection', async ({ page }) => {
-    await page.getByRole('combobox', { name: 'Frameworks' }).click();
+    await load(page, CHIPS_DEMO);
+    await chipsInput(page).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    const nuxt = page.getByRole('option', { name: 'Nuxt.js' });
     // The ItemIndicator's icon (the demo renders it in a span), not the
     // highlight: its stroke draws itself, like a checkbox's check.
     const frames = recordMotion(
       page,
       {
         selector: '[role="option"]',
-        text: 'Nuxt',
+        text: 'Nuxt.js',
         child: ':scope > span:not([data-slot="item-highlight"]) path',
       },
       700,
@@ -225,19 +234,14 @@ test.describe('base-ui combobox chips demo', () => {
   test('pop: checks pop in with the selection and shrink back out', async ({
     page,
   }) => {
-    await page.goto(
-      '/tests/demos/base-ui/combobox-multiple?checkAnimation=pop',
-      {
-        waitUntil: 'networkidle',
-      },
-    );
-    await page.getByRole('combobox', { name: 'Frameworks' }).click();
+    await load(page, withAnimation(CHIPS_DEMO, 'pop'));
+    await chipsInput(page).click();
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
-    const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    const nuxt = page.getByRole('option', { name: 'Nuxt.js' });
     const target = {
       items: '[role="option"]',
-      label: 'Nuxt',
+      label: 'Nuxt.js',
       indicator: CHECK,
     };
     const arriving = recordCheck(page, target);
@@ -364,9 +368,9 @@ test('base-ui combobox docs page renders without errors', async ({ page }) => {
 });
 
 describeMenuHighlight('base-ui combobox highlight', {
-  path: '/tests/demos/base-ui/combobox',
+  path: DEMO,
   open: async (page) => {
-    await page.getByRole('combobox', { name: 'Framework' }).click();
+    await page.getByRole('combobox', { name: NAME }).click();
     await page.waitForTimeout(400);
   },
   first: (page) => page.getByRole('option').nth(0),
@@ -374,11 +378,49 @@ describeMenuHighlight('base-ui combobox highlight', {
 });
 
 describeChipMotion('base-ui combobox', {
-  path: '/tests/demos/base-ui/combobox-multiple',
-  label: 'Frameworks',
+  path: CHIPS_DEMO,
+  // One chip on load, and no name nor placeholder on the input.
   first: 'Next.js',
-  last: 'Astro',
-  add: 'Nuxt',
-  more: ['React Router', 'TanStack Start', 'SvelteKit', 'SolidStart'],
-  placeholder: 'empty',
+  last: 'Next.js',
+  add: 'Nuxt.js',
+  more: ['SvelteKit', 'Nuxt.js', 'Remix', 'Astro'],
+});
+
+// shadcn/ui's chips input has no placeholder: a field like it, whose input
+// shows one once it's empty (Next.js and Astro on load).
+test.describe('base-ui combobox chips placeholder', () => {
+  test.describe.configure({ timeout: 180_000 });
+
+  const removeLast = async (page: Page, ms: number) => {
+    await page.getByRole('button', { name: 'Remove Next.js' }).click();
+    await expect(page.getByTestId('field-chip-Next.js')).toHaveCount(0);
+    await page.waitForTimeout(650);
+    return recordChips(page, {
+      container: '[data-testid="field"]',
+      next: '[data-testid="field-input"]',
+      chip: { selector: '[data-testid="field-chip-Astro"]', text: 'Astro' },
+      act: () => page.getByRole('button', { name: 'Remove Astro' }).click(),
+      ms,
+    });
+  };
+
+  test('the last chip removed: the input glides back in one go, its placeholder fades in once it is there', async ({
+    page,
+  }) => {
+    await load(page, '/tests/fixtures/base-ui-combobox');
+    const recording = await removeLast(page, 900);
+    expectChipLeaves(recording);
+    expectOneGo(recording);
+    expectPlaceholderComesIn(recording);
+  });
+
+  test('reduced motion: the last chip removed, its placeholder only fades in', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await load(page, '/tests/fixtures/base-ui-combobox');
+    const recording = await removeLast(page, 700);
+    expectChipLeaves(recording, { reduce: true });
+    expectPlaceholderComesIn(recording, { reduce: true });
+  });
 });

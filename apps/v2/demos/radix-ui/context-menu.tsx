@@ -278,62 +278,79 @@ export default function ContextMenuDemo({
   /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
-  const [showGrid, setShowGrid] = React.useState(true)
-  const [showRulers, setShowRulers] = React.useState(false)
-  const [zoom, setZoom] = React.useState("fit")
+  const [showBookmarks, setShowBookmarks] = React.useState(true)
+  const [showFullUrls, setShowFullUrls] = React.useState(false)
+  const [user, setUser] = React.useState("pedro")
 
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
       <ContextMenu>
-        <ContextMenuTrigger className="text-muted-foreground flex h-40 w-72 items-center justify-center rounded-xl border border-dashed text-sm">
-          Right click here
+        <ContextMenuTrigger className="flex aspect-video w-full max-w-xs items-center justify-center rounded-xl border border-dashed text-sm">
+          <span className="hidden pointer-fine:inline-block">
+            Right click here
+          </span>
+          <span className="hidden pointer-coarse:inline-block">
+            Long press here
+          </span>
         </ContextMenuTrigger>
-        <ContextMenuContent className="w-56">
-          <ContextMenuItem>
-            Undo
-            <ContextMenuShortcut>⌘Z</ContextMenuShortcut>
-          </ContextMenuItem>
-          <ContextMenuItem disabled>
-            Redo
-            <ContextMenuShortcut>⇧⌘Z</ContextMenuShortcut>
-          </ContextMenuItem>
-          <ContextMenuItem>
-            Duplicate
-            <ContextMenuShortcut>⌘D</ContextMenuShortcut>
-          </ContextMenuItem>
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>Arrange</ContextMenuSubTrigger>
-            <ContextMenuSubContent className="w-44">
-              <ContextMenuItem>Bring to front</ContextMenuItem>
-              <ContextMenuItem>Bring forward</ContextMenuItem>
-              <ContextMenuItem>Send backward</ContextMenuItem>
-              <ContextMenuItem>Send to back</ContextMenuItem>
-            </ContextMenuSubContent>
-          </ContextMenuSub>
+        <ContextMenuContent className="w-48">
+          <ContextMenuGroup>
+            <ContextMenuItem>
+              Back
+              <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuItem disabled>
+              Forward
+              <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuItem>
+              Reload
+              <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>More Tools</ContextMenuSubTrigger>
+              <ContextMenuSubContent className="w-44">
+                <ContextMenuGroup>
+                  <ContextMenuItem>Save Page...</ContextMenuItem>
+                  <ContextMenuItem>Create Shortcut...</ContextMenuItem>
+                  <ContextMenuItem>Name Window...</ContextMenuItem>
+                </ContextMenuGroup>
+                <ContextMenuSeparator />
+                <ContextMenuGroup>
+                  <ContextMenuItem>Developer Tools</ContextMenuItem>
+                </ContextMenuGroup>
+                <ContextMenuSeparator />
+                <ContextMenuGroup>
+                  <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
+                </ContextMenuGroup>
+              </ContextMenuSubContent>
+            </ContextMenuSub>
+          </ContextMenuGroup>
           <ContextMenuSeparator />
-          <ContextMenuCheckboxItem
-            checked={showGrid}
-            onCheckedChange={setShowGrid}
-          >
-            Show grid
-          </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem
-            checked={showRulers}
-            onCheckedChange={setShowRulers}
-          >
-            Show rulers
-          </ContextMenuCheckboxItem>
+          <ContextMenuGroup>
+            <ContextMenuCheckboxItem
+              checked={showBookmarks}
+              onCheckedChange={setShowBookmarks}
+            >
+              Show Bookmarks
+            </ContextMenuCheckboxItem>
+            <ContextMenuCheckboxItem
+              checked={showFullUrls}
+              onCheckedChange={setShowFullUrls}
+            >
+              Show Full URLs
+            </ContextMenuCheckboxItem>
+          </ContextMenuGroup>
           <ContextMenuSeparator />
-          <ContextMenuLabel>Zoom</ContextMenuLabel>
-          <ContextMenuRadioGroup value={zoom} onValueChange={setZoom}>
-            <ContextMenuRadioItem value="fit">Zoom to fit</ContextMenuRadioItem>
-            <ContextMenuRadioItem value="100">Zoom to 100%</ContextMenuRadioItem>
-          </ContextMenuRadioGroup>
-          <ContextMenuSeparator />
-          <ContextMenuItem variant="destructive">
-            Delete
-            <ContextMenuShortcut>⌫</ContextMenuShortcut>
-          </ContextMenuItem>
+          <ContextMenuGroup>
+            <ContextMenuRadioGroup value={user} onValueChange={setUser}>
+              <ContextMenuLabel>People</ContextMenuLabel>
+              <ContextMenuRadioItem value="pedro">
+                Pedro Duarte
+              </ContextMenuRadioItem>
+              <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+            </ContextMenuRadioGroup>
+          </ContextMenuGroup>
         </ContextMenuContent>
       </ContextMenu>
     </AnimateUIProvider>

@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 import {
-  SHEET_TRAVEL,
   expectDialogEntrance,
   expectDialogExit,
   expectDialogSettled,
-  DRAWER_CURVE,
+  DISMISS_CURVE,
+  SHEET_CURVE,
   expectAnimationCurve,
   expectSheetEntrance,
   expectSheetExit,
@@ -33,7 +33,7 @@ test.describe('radix-ui dialog demo', () => {
       content: CONTENT,
       overlay: OVERLAY,
     });
-    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     expectDialogEntrance(await timeline.stop());
 
@@ -55,7 +55,7 @@ test.describe('radix-ui dialog demo', () => {
   test('closes quicker than it came: tips back speeding away, ahead of its overlay, then unmounts', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     const timeline = await recordTimeline(page, {
       content: CONTENT,
@@ -65,12 +65,14 @@ test.describe('radix-ui dialog demo', () => {
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(OVERLAY)).toHaveCount(0);
     expectDialogExit(await timeline.stop());
+    // A dismissed dialog's curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
   });
 
   test('keyboard: opens with Enter, traps focus, gives it back on close', async ({
     page,
   }) => {
-    const trigger = page.getByRole('button', { name: 'Edit profile' });
+    const trigger = page.getByRole('button', { name: 'Open Dialog' });
     await trigger.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
@@ -84,7 +86,7 @@ test.describe('radix-ui dialog demo', () => {
   });
 
   test('reopening during the exit comes back fully', async ({ page }) => {
-    const trigger = page.getByRole('button', { name: 'Edit profile' });
+    const trigger = page.getByRole('button', { name: 'Open Dialog' });
     await trigger.click();
     await expectDialogSettled(page, CONTENT);
     await page.keyboard.press('Escape');
@@ -97,7 +99,7 @@ test.describe('radix-ui dialog demo', () => {
   test('reduced motion: no tilt or scale, still fades', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const timeline = await recordTimeline(page, { content: CONTENT });
-    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;
@@ -114,41 +116,68 @@ test.describe('radix-ui dialog: sheet demo', () => {
     });
   });
 
-  for (const side of Object.keys(
-    SHEET_TRAVEL,
-  ) as (keyof typeof SHEET_TRAVEL)[]) {
-    test(`slides and fades in from the ${side} edge on Vaul's curve`, async ({
-      page,
-    }) => {
-      const timeline = await recordTimeline(page, { content: SHEET });
-      await page.getByRole('button', { name: side, exact: true }).click();
-      await expect(page.locator(SHEET)).toHaveAttribute('data-side', side);
-      await expectSheetSettled(page, SHEET, side);
-      expectSheetEntrance(await timeline.stop(), side);
-      // Vaul's curve, as Motion handed it to the browser.
-      expectAnimationCurve(await timeline.timing('content'), DRAWER_CURVE);
-    });
-  }
+  test('slides and fades in from the right edge, never past its rest', async ({
+    page,
+  }) => {
+    const timeline = await recordTimeline(page, { content: SHEET });
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
+    await expect(page.locator(SHEET)).toHaveAttribute('data-side', 'right');
+    await expectSheetSettled(page, SHEET, 'right');
+    expectSheetEntrance(await timeline.stop(), 'right');
+    // Its curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
+  });
 
-  test('slides and fades back out, then unmounts', async ({ page }) => {
-    await page.getByRole('button', { name: 'right', exact: true }).click();
+  test('slides and fades back out quicker, speeding off its edge like a dismissed dialog, then unmounts', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await expectSheetSettled(page, SHEET, 'right');
     const timeline = await recordTimeline(page, { content: SHEET });
     await page.keyboard.press('Escape');
     await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
     expectSheetExit(await timeline.stop(), 'right');
+    // A dismissed dialog's curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
   });
 
   test('reduced motion: fades in place', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const timeline = await recordTimeline(page, { content: SHEET });
-    await page.getByRole('button', { name: 'left', exact: true }).click();
-    await expectSheetSettled(page, SHEET, 'left');
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
+    await expectSheetSettled(page, SHEET, 'right');
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;
     expect(Math.abs(first.x)).toBeLessThan(0.001);
     expect(first.opacity).toBeLessThan(1);
   });
+});
+
+// The demo's sheet opens from the right: the other edges, on the fixture.
+test.describe('radix-ui dialog: sheet sides', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/tests/fixtures/radix-ui-dialog', {
+      waitUntil: 'networkidle',
+    });
+    // The defaultOpen dialog covers the page at first: close it.
+    await page.getByRole('button', { name: 'Close star' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 2500 });
+  });
+
+  for (const side of ['top', 'bottom', 'left'] as const) {
+    test(`slides and fades in from the ${side} edge, never past its rest`, async ({
+      page,
+    }) => {
+      const sheet = `[data-testid="${side}-sheet"]`;
+      const timeline = await recordTimeline(page, { content: sheet });
+      await page.getByRole('button', { name: `Sheet ${side}` }).click();
+      await expect(page.locator(sheet)).toHaveAttribute('data-side', side);
+      await expectSheetSettled(page, sheet, side);
+      expectSheetEntrance(await timeline.stop(), side);
+      // Its curve, as Motion handed it to the browser.
+      expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
+    });
+  }
 });
 
 test.describe('radix-ui dialog API', () => {

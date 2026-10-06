@@ -52,7 +52,7 @@ test.describe('radix-ui menubar demo', () => {
 
   test('opening the bar scales and fades the menu in', async ({ page }) => {
     const probe = await probeFirstFrame(page, CONTENT);
-    await page.getByRole('menuitem', { name: 'File' }).click();
+    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
@@ -65,22 +65,22 @@ test.describe('radix-ui menubar demo', () => {
   test('moving to another menu plays its entrance, like any menu', async ({
     page,
   }) => {
-    await page.getByRole('menuitem', { name: 'File' }).click();
+    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     await page.waitForTimeout(500);
     const firstFrame = await probeMenu(page, 'Cut');
-    await page.getByRole('menuitem', { name: 'Edit' }).hover();
+    await page.getByRole('menuitem', { name: 'Edit', exact: true }).hover();
     const first = await firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     // The previous menu plays its exit, then unmounts.
-    await expect(page.locator(CONTENT, { hasText: 'New window' })).toHaveCount(
+    await expect(page.locator(CONTENT, { hasText: 'New Window' })).toHaveCount(
       0,
       { timeout: 600 },
     );
   });
 
   test('arrow keys move between menus the same way', async ({ page }) => {
-    await page.getByRole('menuitem', { name: 'File' }).focus();
+    await page.getByRole('menuitem', { name: 'File', exact: true }).focus();
     await page.keyboard.press('Enter');
     await page.waitForTimeout(500);
     const firstFrame = await probeMenu(page, 'Cut');
@@ -91,7 +91,7 @@ test.describe('radix-ui menubar demo', () => {
   });
 
   test('closing the bar plays the exit, then unmounts', async ({ page }) => {
-    await page.getByRole('menuitem', { name: 'File' }).click();
+    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
     // It plays an exit (polled: a loaded machine can skip the first frames).
@@ -110,7 +110,7 @@ test.describe('radix-ui menubar demo', () => {
   test('reduced motion: it fades without scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, CONTENT);
-    await page.getByRole('menuitem', { name: 'File' }).click();
+    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     const first = await probe.firstFrame();
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
@@ -155,25 +155,31 @@ test.describe('radix-ui menubar API', () => {
 
 describeMenuHighlight('radix-ui menubar highlight', {
   path: '/tests/demos/radix-ui/menubar',
+  // The Edit menu: its submenu trigger sits two rows below its first item,
+  // like the old demo's (see the dropdown menu's spec).
   open: async (page) => {
-    await page.getByRole('menuitem', { name: 'File' }).click();
+    await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
     await page.waitForTimeout(400);
   },
-  first: (page) => page.getByRole('menuitem', { name: /New file/ }),
-  second: (page) => page.getByRole('menuitem', { name: /New window/ }),
-  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Open recent' }),
-  submenuItem: (page) => page.getByRole('menuitem', { name: 'animate-ui' }),
+  first: (page) => page.getByRole('menuitem', { name: /Undo/ }),
+  second: (page) => page.getByRole('menuitem', { name: /Redo/ }),
+  submenuTrigger: (page) =>
+    page.getByRole('menuitem', { name: 'Find', exact: true }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Search the web' }),
   keyboardNext: 'ArrowDown',
 });
 
 describeMenuChecks('radix-ui menubar checks', {
   path: '/tests/demos/radix-ui/menubar',
   open: async (page) => {
-    await page.getByRole('menuitem', { name: 'View' }).click();
+    await page.getByRole('menuitem', { name: 'View', exact: true }).click();
+  },
+  openRadios: async (page) => {
+    await page.getByRole('menuitem', { name: 'Profiles' }).click();
   },
   popup: '[data-slot="menubar-content"]',
   indicator: 'span[data-state]',
-  checkbox: { checked: 'Word wrap', unchecked: 'Minimap' },
-  radio: { from: 'System', to: 'Dark' },
+  checkbox: { checked: 'Full URLs', unchecked: 'Bookmarks Bar' },
+  radio: { from: 'Benoit', to: 'Luis' },
   radioCloses: true,
 });

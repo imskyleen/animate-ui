@@ -1,11 +1,12 @@
 "use client"
 
+import * as React from "react"
 import { Collapsible as CollapsiblePrimitive } from "@animate-ui/react/primitives/base-ui/collapsible"
 
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { UnfoldMoreIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/base-ui/button"
 
 function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />
@@ -25,41 +26,37 @@ function CollapsibleContent({ ...props }: CollapsiblePrimitive.Panel.Props) {
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent }
 
-const CHANGES = [
-  "Drop-in primitives for Radix UI, Base UI and React Aria",
-  "A CLI that animates your shadcn/ui components",
-  "Shared motion tokens, tunable with one tempo",
-  "Reduced motion support in every primitive",
-]
-
 export default function CollapsibleDemo() {
+  const [isOpen, setIsOpen] = React.useState(false)
+
   return (
-    <Collapsible className="flex w-full max-w-sm flex-col">
-      <div className="flex items-center justify-between gap-4 pb-2 pl-1">
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Animate UI 2.0</span>
-          <span className="text-muted-foreground text-xs">
-            {CHANGES.length} changes
-          </span>
-        </div>
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className="flex w-[350px] flex-col gap-2"
+    >
+      <div className="flex items-center justify-between gap-4 px-4">
+        <h4 className="text-sm font-semibold">Order #4189</h4>
         <CollapsibleTrigger
-          render={
-            <Button variant="ghost" size="icon-sm" aria-label="Show all changes" />
-          }
+          render={<Button variant="ghost" size="icon" className="size-8" />}
         >
-          <HugeiconsIcon
-            icon={ArrowDown01Icon} strokeWidth={2}
-            className="transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-aria-expanded/button:rotate-180"
-          />
+          <HugeiconsIcon icon={UnfoldMoreIcon} strokeWidth={2} />
+          <span className="sr-only">Toggle details</span>
         </CollapsibleTrigger>
       </div>
-      <div className="rounded-lg border px-3 py-2 text-sm">{CHANGES[0]}</div>
-      <CollapsibleContent className="flex flex-col">
-        {CHANGES.slice(1).map((change) => (
-          <div key={change} className="mt-2 rounded-lg border px-3 py-2 text-sm">
-            {change}
-          </div>
-        ))}
+      <div className="flex items-center justify-between rounded-md border px-4 py-2 text-sm">
+        <span className="text-muted-foreground">Status</span>
+        <span className="font-medium">Shipped</span>
+      </div>
+      <CollapsibleContent className="flex flex-col gap-2">
+        <div className="rounded-md border px-4 py-2 text-sm">
+          <p className="font-medium">Shipping address</p>
+          <p className="text-muted-foreground">100 Market St, San Francisco</p>
+        </div>
+        <div className="rounded-md border px-4 py-2 text-sm">
+          <p className="font-medium">Items</p>
+          <p className="text-muted-foreground">2x Studio Headphones</p>
+        </div>
       </CollapsibleContent>
     </Collapsible>
   )

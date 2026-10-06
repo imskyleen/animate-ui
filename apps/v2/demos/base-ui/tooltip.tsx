@@ -2,13 +2,7 @@
 
 import { Tooltip as TooltipPrimitive } from "@animate-ui/react/primitives/base-ui/tooltip"
 import { cn } from "cn"
-import { Button } from "@/components/ui/button"
-import {
-  TextBoldIcon,
-  TextItalicIcon,
-  TextUnderlineIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Button } from "@/components/ui/base-ui/button"
 
 function TooltipProvider({
   delay = 0,
@@ -71,12 +65,6 @@ function TooltipContent({
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
 
-const TOOLS = [
-  { label: "Bold", shortcut: "⌘B", icon: TextBoldIcon },
-  { label: "Italic", shortcut: "⌘I", icon: TextItalicIcon },
-  { label: "Underline", shortcut: "⌘U", icon: TextUnderlineIcon },
-]
-
 export const controls = {
   Tooltip: {
     followCursor: {
@@ -120,28 +108,19 @@ export default function TooltipDemo({
 }) {
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-1 rounded-xl border p-1">
-        {TOOLS.map((tool) => (
-          <Tooltip key={tool.label} followCursor={followCursor}>
-            <TooltipTrigger
-              render={
-                <Button variant="ghost" size="icon" aria-label={tool.label} />
-              }
-            >
-              <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
-            </TooltipTrigger>
-            <TooltipContent
-              side={side}
-              sideOffset={sideOffset}
-              align={align}
-              alignOffset={alignOffset}
-            >
-              {tool.label}
-              <span className="opacity-60">{tool.shortcut}</span>
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </div>
+      <Tooltip followCursor={followCursor}>
+        <TooltipTrigger render={<Button variant="outline" />}>
+          Hover
+        </TooltipTrigger>
+        <TooltipContent
+          side={side}
+          sideOffset={sideOffset}
+          align={align}
+          alignOffset={alignOffset}
+        >
+          <p>Add to library</p>
+        </TooltipContent>
+      </Tooltip>
     </TooltipProvider>
   )
 }

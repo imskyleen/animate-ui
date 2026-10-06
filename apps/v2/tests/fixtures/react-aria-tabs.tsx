@@ -91,6 +91,23 @@ export default function ReactAriaTabsFixture() {
           <TabPanel id="2">Props panel 2</TabPanel>
         </Tabs>
       </section>
+
+      <section data-testid="heights">
+        {/* Panels of different heights: the height springs between them. */}
+        <Tabs>
+          <TabList aria-label="Heights">
+            <Tab id="short">Short</Tab>
+            <Tab id="tall">Tall</Tab>
+          </TabList>
+          <TabPanel id="short">Short panel</TabPanel>
+          <TabPanel id="tall">
+            <p>Tall panel</p>
+            <p>Its second line</p>
+            <p>Its third line</p>
+            <p>Its fourth line</p>
+          </TabPanel>
+        </Tabs>
+      </section>
     </div>
   );
 }

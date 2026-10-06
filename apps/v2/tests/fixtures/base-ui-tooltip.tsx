@@ -3,6 +3,13 @@
 import * as React from 'react';
 import { Tooltip } from '@animate-ui/react/primitives/base-ui/tooltip';
 
+// A toolbar of tooltips, for their warm-up.
+const TOOLS = [
+  { label: 'Bold', shortcut: '⌘B' },
+  { label: 'Italic', shortcut: '⌘I' },
+  { label: 'Underline', shortcut: '⌘U' },
+];
+
 // API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseUITooltipFixture() {
   const [open, setOpen] = React.useState(false);
@@ -51,6 +58,31 @@ export default function BaseUITooltipFixture() {
               </Tooltip.Positioner>
             </Tooltip.Portal>
           </Tooltip.Root>
+        </section>
+
+        <section data-testid="toolbar">
+          {/* In the Provider (delay 0, like shadcn/ui's TooltipProvider): the
+              first one to open closes the tooltip open on load. */}
+          <div className="flex items-center gap-1 rounded-xl border p-1">
+            {TOOLS.map((tool) => (
+              <Tooltip.Root key={tool.label}>
+                <Tooltip.Trigger aria-label={tool.label} className="size-8">
+                  {tool.label[0]}
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Positioner sideOffset={4}>
+                    <Tooltip.Popup
+                      data-testid="toolbar-content"
+                      className="bg-foreground text-background inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs"
+                    >
+                      {tool.label}
+                      <span className="opacity-60">{tool.shortcut}</span>
+                    </Tooltip.Popup>
+                  </Tooltip.Positioner>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            ))}
+          </div>
         </section>
       </div>
     </Tooltip.Provider>

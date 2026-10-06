@@ -23,8 +23,13 @@ import { expectEscapeWithoutHold, expectPickHold } from './pick-hold';
 
 type MenuChecksCase = {
   path: string;
-  /** Opens the menu. */
+  /** Opens the menu (the one of the checkbox items). */
   open: (page: Page) => Promise<void>;
+  /**
+   * Opens the menu of the radio items, when it's another one (a menubar's).
+   * Defaults to `open`.
+   */
+  openRadios?: (page: Page) => Promise<void>;
   /** The menu's popup. */
   popup: string;
   /** The element of a check, inside its item (the one that moves). */
@@ -38,6 +43,44 @@ type MenuChecksCase = {
 };
 
 const ITEMS = '[role^="menuitem"]';
+
+/** Opens the menu of the checkbox or the radio items, and lets it settle. */
+async function openMenu(
+  page: Page,
+  c: MenuChecksCase,
+  items: 'checkbox' | 'radio',
+) {
+  await (items === 'radio' ? (c.openRadios ?? c.open) : c.open)(page);
+  await page.waitForTimeout(500);
+}
+
+/**
+ * In the open menus: how far each check sits from its item's middle, with
+ * its item's role.
+ */
+function checkOffsets(page: Page) {
+  return page.evaluate(() =>
+    [
+      ...document.querySelectorAll<HTMLElement>(
+        '[role="menuitemcheckbox"], [role="menuitemradio"]',
+      ),
+    ]
+      .filter((item) => item.getAttribute('aria-checked') === 'true')
+      .map((item) => {
+        const mark = item.querySelector('svg');
+        if (!mark) return null;
+        const box = item.getBoundingClientRect();
+        const check = mark.getBoundingClientRect();
+        return {
+          role: item.getAttribute('role') ?? '',
+          offset: check.top + check.height / 2 - (box.top + box.height / 2),
+        };
+      })
+      .filter(
+        (check): check is { role: string; offset: number } => check !== null,
+      ),
+  );
+}
 
 /** Moves the pointer onto an item, and lets the highlight settle there. */
 async function hover(page: Page, label: string) {
@@ -83,8 +126,6 @@ function describeAnimation(
         timeout: 150_000,
       });
       await page.mouse.move(1, 1);
-      await c.open(page);
-      await page.waitForTimeout(500);
     });
 
     test('the checks sit where they did, centered on their item', async ({
@@ -92,44 +133,44 @@ function describeAnimation(
     }) => {
       // Made a box so it can glide (radio items, `pop`), a plain <span>
       // indicator lays out as it would inline.
-      const offsets = await page.evaluate(() =>
-        [
-          ...document.querySelectorAll<HTMLElement>(
-            '[role="menuitemcheckbox"], [role="menuitemradio"]',
-          ),
-        ]
-          .filter((item) => item.getAttribute('aria-checked') === 'true')
-          .map((item) => {
-            const mark = item.querySelector('svg');
-            if (!mark) return null;
-            const box = item.getBoundingClientRect();
-            const check = mark.getBoundingClientRect();
-            return check.top + check.height / 2 - (box.top + box.height / 2);
-          })
-          .filter((offset): offset is number => offset !== null),
-      );
-      expect(offsets.length).toBeGreaterThan(1);
-      for (const offset of offsets) expect(Math.abs(offset)).toBeLessThan(0.5);
+      await openMenu(page, c, 'checkbox');
+      const offsets = await checkOffsets(page);
+      if (c.openRadios) {
+        await page.keyboard.press('Escape');
+        await expect(page.locator(c.popup)).toHaveCount(0, { timeout: 1000 });
+        await openMenu(page, c, 'radio');
+        offsets.push(...(await checkOffsets(page)));
+      }
+      // A checkbox item's check and a radio item's.
+      const roles = offsets.map((check) => check.role);
+      expect(roles).toContain('menuitemcheckbox');
+      expect(roles).toContain('menuitemradio');
+      for (const { offset } of offsets)
+        expect(Math.abs(offset)).toBeLessThan(0.5);
     });
 
     if (animation === 'draw') {
       test("a checkbox item's check draws itself, like a checkbox's", async ({
         page,
       }) => {
+        await openMenu(page, c, 'checkbox');
         expectDrawnIn(await clickRecording(page, c, c.checkbox.unchecked));
       });
 
       test('unchecking erases the check', async ({ page }) => {
+        await openMenu(page, c, 'checkbox');
         expectErased(await clickRecording(page, c, c.checkbox.checked));
       });
     } else {
       test("a checkbox item's check pops in from half its size", async ({
         page,
       }) => {
+        await openMenu(page, c, 'checkbox');
         expectPoppedIn(await clickRecording(page, c, c.checkbox.unchecked));
       });
 
       test('unchecking shrinks the check back out', async ({ page }) => {
+        await openMenu(page, c, 'checkbox');
         expectPoppedOut(await clickRecording(page, c, c.checkbox.checked));
       });
     }
@@ -143,6 +184,7 @@ function describeAnimation(
       test(`a radio item's check ${change}, while the menu holds still`, async ({
         page,
       }) => {
+        await openMenu(page, c, 'radio');
         await hover(page, c.radio.to);
         await expectPickHold(page, {
           popup: c.popup,
@@ -155,22 +197,33 @@ function describeAnimation(
       });
 
       test('closing with Escape does not hold', async ({ page }) => {
+        await openMenu(page, c, 'radio');
         await expectEscapeWithoutHold(page, c.popup);
       });
     } else if (animation === 'draw') {
       test(`a radio item's check ${change}`, async ({ page }) => {
+        await openMenu(page, c, 'radio');
+        await hover(page, c.radio.to);
+        // Both from the click on: started before the pointer got there, a
+        // loaded machine could spend the whole recording getting there.
         const leaving = recordCheck(page, {
           items: ITEMS,
           label: c.radio.from,
           indicator: c.indicator,
         });
-        const arriving = await clickRecording(page, c, c.radio.to);
-        expectDrawnIn(arriving);
+        const arriving = recordCheck(page, {
+          items: ITEMS,
+          label: c.radio.to,
+          indicator: c.indicator,
+        });
+        await press(page);
+        expectDrawnIn(await arriving);
         expectErased(await leaving);
         await expect(page.locator(c.popup)).toBeVisible();
       });
     } else {
       test(`a radio item's check ${change}`, async ({ page }) => {
+        await openMenu(page, c, 'radio');
         await hover(page, c.radio.to);
         const offsets = page.evaluate(
           ({ indicator, label }) =>

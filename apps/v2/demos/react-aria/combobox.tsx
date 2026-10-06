@@ -5,6 +5,7 @@ import { cn } from "cn"
 import {
   Button as ButtonPrimitive,
   Collection,
+  ComboBox as Combobox,
   ComboBox as ComboBoxPrimitive,
   ComboBoxStateContext,
   ComboBoxValue as ComboBoxValuePrimitive,
@@ -379,15 +380,13 @@ export {
   useComboboxAnchor,
 }
 
-const FRAMEWORKS = [
-  { id: "next", name: "Next.js" },
-  { id: "react-router", name: "React Router" },
-  { id: "tanstack-start", name: "TanStack Start" },
-  { id: "astro", name: "Astro" },
-  { id: "sveltekit", name: "SvelteKit" },
-  { id: "nuxt", name: "Nuxt" },
-  { id: "solidstart", name: "SolidStart" },
-]
+const frameworks = [
+  "Next.js",
+  "SvelteKit",
+  "Nuxt.js",
+  "Remix",
+  "Astro",
+] as const
 
 export const controls = {
   ComboboxContent: {
@@ -417,7 +416,7 @@ function toPlacement(
   return `${side} ${align === "start" ? "top" : "bottom"}` as const
 }
 
-export default function ComboboxDemo({
+export default function ComboboxBasic({
   side = "bottom",
   sideOffset = 6,
   align = "center",
@@ -433,24 +432,22 @@ export default function ComboboxDemo({
 }) {
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <ComboBoxPrimitive
-        aria-label="Framework"
-        defaultItems={FRAMEWORKS}
-        allowsEmptyCollection
-      >
-        <ComboboxInput placeholder="Search a framework…" className="w-56" />
+      <Combobox allowsEmptyCollection aria-label="Framework">
+        <ComboboxInput placeholder="Select a framework" />
         <ComboboxContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
           <ComboboxList
             renderEmptyState={() => (
-              <ComboboxEmpty>No framework found.</ComboboxEmpty>
+              <ComboboxEmpty>No items found.</ComboboxEmpty>
             )}
           >
-            {(item: (typeof FRAMEWORKS)[number]) => (
-              <ComboboxItem id={item.id}>{item.name}</ComboboxItem>
-            )}
+            {frameworks.map((item) => (
+              <ComboboxItem key={item} id={item}>
+                {item}
+              </ComboboxItem>
+            ))}
           </ComboboxList>
         </ComboboxContent>
-      </ComboBoxPrimitive>
+      </Combobox>
     </AnimateUIProvider>
   )
 }

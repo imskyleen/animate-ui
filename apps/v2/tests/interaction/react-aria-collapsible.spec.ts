@@ -5,8 +5,8 @@ disclosureDemoTests('react-aria collapsible demo', {
   url: '/tests/demos/react-aria/collapsible',
   panel: '[data-slot="collapsible-content"]',
   closed: {
-    trigger: 'Show all changes',
-    text: 'A CLI that animates your shadcn/ui components',
+    trigger: 'Toggle details',
+    text: '100 Market St, San Francisco',
   },
   // React Aria keeps closed panels mounted, hidden until found.
   closedState: 'hidden',

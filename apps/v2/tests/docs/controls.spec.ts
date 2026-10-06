@@ -104,7 +104,8 @@ test.describe('demo controls', () => {
     page,
   }) => {
     await open(page, '/docs/primitives/radix-ui/checkbox');
-    const box = stage(page).getByRole('checkbox').first();
+    // shadcn/ui's second box: the one checked by default.
+    const box = stage(page).getByRole('checkbox').nth(1);
     await expect(box).toHaveAttribute('aria-checked', 'true');
     await toggle(page).click();
     const control = panel(page).getByRole('combobox', { name: 'checked' });
@@ -122,11 +123,11 @@ test.describe('demo controls', () => {
     await toggle(page).click();
     await panel(page).getByRole('combobox', { name: 'checkAnimation' }).click();
     await page.getByRole('option', { name: 'pop' }).click();
-    // Checking the second box, its icon's scale while it shows (sampled in
+    // Checking the first box, its icon's scale while it shows (sampled in
     // the page: the first frames go by too fast for a round trip).
     const scales = await stage(page)
       .getByRole('checkbox')
-      .nth(1)
+      .nth(0)
       .evaluate(async (box) => {
         (box as HTMLElement).click();
         const seen: number[] = [];
@@ -172,7 +173,7 @@ test.describe('demo controls', () => {
       .locator('[data-slot="preview"]')
       .nth(1)
       .getByRole('checkbox')
-      .nth(1)
+      .nth(0)
       .evaluate(async (box) => {
         (box as HTMLElement).click();
         const seen: number[] = [];
@@ -205,31 +206,40 @@ test.describe('demo controls', () => {
             ),
           ),
         );
+    // shadcn/ui's demo: its second box checked, the third one disabled.
     expect(await states()).toEqual([
-      [true, false, false],
-      [true, false, false],
+      [false, true, false, false],
+      [false, true, false, false],
     ]);
-    await page
-      .locator('[data-slot="preview"]')
-      .nth(1)
-      .getByText('Product updates')
+    const second = page.locator('[data-slot="preview"]').nth(1);
+    // A label wrapping its box.
+    await second
+      .getByText('You can enable or disable notifications at any time.')
       .click();
     expect(await states()).toEqual([
-      [true, false, false],
-      [true, true, false],
+      [false, true, false, false],
+      [false, true, false, true],
+    ]);
+    // A label pointing at its box by id (`htmlFor="terms-checkbox"`): the
+    // demo's static ids are twice in the page, each preview keeps its own.
+    await second.getByText('Accept terms and conditions').first().click();
+    expect(await states()).toEqual([
+      [false, true, false, false],
+      [true, true, false, true],
     ]);
   });
 
   test('a switch changes the mode of a group', async ({ page }) => {
     await open(page, '/docs/primitives/radix-ui/toggle-group');
-    const radios = stage(page).getByRole('radio', { name: /^Align/ });
-    const buttons = stage(page).getByRole('button', { name: /^Align/ });
-    await expect(radios).toHaveCount(3);
+    const radios = stage(page).getByRole('radio', { name: /^Toggle/ });
+    const buttons = stage(page).getByRole('button', { name: /^Toggle/ });
+    // shadcn/ui's demo is type="multiple": toggle buttons.
+    await expect(buttons).toHaveCount(3);
     await toggle(page).click();
     await panel(page).getByRole('switch', { name: 'multiple' }).click();
-    // type="multiple": the radios become toggle buttons.
-    await expect(radios).toHaveCount(0);
-    await expect(buttons).toHaveCount(3);
+    // type="single": the toggle buttons become radios.
+    await expect(buttons).toHaveCount(0);
+    await expect(radios).toHaveCount(3);
   });
 
   test('the code shown is the demo, without its controls', async ({ page }) => {
@@ -310,7 +320,7 @@ test.describe('demo controls across libraries', () => {
     await toggle(page).click();
     await panel(page).getByRole('combobox', { name: 'side' }).click();
     await page.getByRole('option', { name: 'top' }).click();
-    await stage(page).getByRole('button', { name: 'Share' }).click();
+    await stage(page).getByRole('button', { name: 'Open popover' }).click();
     await expect(page.locator('[data-slot="popover-content"]')).toHaveAttribute(
       'data-placement',
       'top',
@@ -323,13 +333,14 @@ test.describe('demo controls across libraries', () => {
       stage(page).getByRole('button', { name, exact: true });
     await toggle(page).click();
     await panel(page).getByRole('switch', { name: 'multiple' }).click();
-    await trigger('How is it different from other libraries?').click();
-    await expect(trigger('What is Animate UI?')).toHaveAttribute(
+    await trigger('What is your return policy?').click();
+    await expect(trigger('What are your shipping options?')).toHaveAttribute(
       'aria-expanded',
       'true',
     );
-    await expect(
-      trigger('How is it different from other libraries?'),
-    ).toHaveAttribute('aria-expanded', 'true');
+    await expect(trigger('What is your return policy?')).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
   });
 });

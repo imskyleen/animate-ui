@@ -2,7 +2,7 @@
 
 import { Switch as SwitchPrimitive } from "@animate-ui/react/primitives/base-ui/switch"
 import { cn } from "cn"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/base-ui/label"
 
 function Switch({
   className,
@@ -33,19 +33,9 @@ export { Switch }
 
 export default function SwitchDemo() {
   return (
-    <div className="flex flex-col gap-5">
-      <Label>
-        <Switch />
-        Airplane mode
-      </Label>
-      <Label>
-        <Switch defaultChecked />
-        Wi-Fi
-      </Label>
-      <Label>
-        <Switch size="sm" />
-        Low power mode
-      </Label>
+    <div className="flex items-center space-x-2">
+      <Switch id="airplane-mode" />
+      <Label htmlFor="airplane-mode">Airplane Mode</Label>
     </div>
   )
 }

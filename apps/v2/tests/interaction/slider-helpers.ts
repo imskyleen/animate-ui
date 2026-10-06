@@ -9,7 +9,8 @@ const THUMB = '[data-slot="slider-thumb"]';
 const TRACK = '[data-slot="slider-track"]';
 const RANGE = '[data-slot="slider-range"]';
 
-// The demo renders a single-value slider first, then a range slider.
+// shadcn's demo is one single-value slider. A range slider (shadcn's
+// slider-range example, on the demo's Slider) renders in the fixture.
 const slider = (page: Page, index: number) => page.locator(ROOT).nth(index);
 
 const centerX = (locator: Locator) =>
@@ -90,8 +91,9 @@ export function describeSliderDemo(library: string) {
       });
     });
 
-    test('thumbs are the accessible sliders', async ({ page }) => {
-      await expect(page.getByRole('slider')).toHaveCount(3);
+    test('the thumb is the accessible slider', async ({ page }) => {
+      await expect(page.getByRole('slider')).toHaveCount(1);
+      await expect(slider(page, 0).getByRole('slider')).toHaveCount(1);
     });
 
     test('a press on the track springs the thumb and range to the value', async ({
@@ -176,29 +178,6 @@ export function describeSliderDemo(library: string) {
       expect(await thumbScale(thumb)).toBeCloseTo(1, 2);
     });
 
-    test('range slider: only the closest thumb moves on a jump', async ({
-      page,
-    }) => {
-      const thumbs = slider(page, 1).locator(THUMB);
-      const firstBefore = await centerX(thumbs.nth(0));
-      const secondBefore = await centerX(thumbs.nth(1));
-      const target = await trackPoint(page, 1, 0.95);
-
-      const samples = await startSampling(page, 1, THUMB, 1, 400);
-      await page.mouse.click(target.x, target.y);
-      const frames = await samples();
-      await page.waitForTimeout(650);
-
-      const secondAfter = await centerX(thumbs.nth(1));
-      expect(secondAfter).toBeGreaterThan(secondBefore + 20);
-      expect(
-        frames.some((x) => x > secondBefore + 2 && x < secondAfter - 2),
-      ).toBe(true);
-      expect(
-        Math.abs((await centerX(thumbs.nth(0))) - firstBefore),
-      ).toBeLessThan(0.5);
-    });
-
     test('reduced motion: jumps are instant and nothing stretches', async ({
       page,
     }) => {
@@ -217,6 +196,39 @@ export function describeSliderDemo(library: string) {
       expect(await thumbScale(thumb)).toBeCloseTo(1, 2);
       expect(await sizeOf(thumb)).toEqual(rest);
       await page.mouse.up();
+    });
+  });
+
+  test.describe(`${library} slider demo, range`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto(`/tests/fixtures/${library}-slider`, {
+        waitUntil: 'networkidle',
+      });
+    });
+
+    test('each thumb is an accessible slider', async ({ page }) => {
+      await expect(slider(page, 0).getByRole('slider')).toHaveCount(2);
+    });
+
+    test('only the closest thumb moves on a jump', async ({ page }) => {
+      const thumbs = slider(page, 0).locator(THUMB);
+      const firstBefore = await centerX(thumbs.nth(0));
+      const secondBefore = await centerX(thumbs.nth(1));
+      const target = await trackPoint(page, 0, 0.95);
+
+      const samples = await startSampling(page, 0, THUMB, 1, 400);
+      await page.mouse.click(target.x, target.y);
+      const frames = await samples();
+      await page.waitForTimeout(650);
+
+      const secondAfter = await centerX(thumbs.nth(1));
+      expect(secondAfter).toBeGreaterThan(secondBefore + 20);
+      expect(
+        frames.some((x) => x > secondBefore + 2 && x < secondAfter - 2),
+      ).toBe(true);
+      expect(
+        Math.abs((await centerX(thumbs.nth(0))) - firstBefore),
+      ).toBeLessThan(0.5);
     });
   });
 }

@@ -3,9 +3,9 @@
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "@animate-ui/react/primitives/base-ui/popover"
 import { cn } from "cn"
-import { Button } from "@/components/ui/button"
-import { Link01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Button } from "@/components/ui/base-ui/button"
+import { Input } from "@/components/ui/base-ui/input"
+import { Label } from "@/components/ui/base-ui/label"
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
@@ -126,7 +126,9 @@ export default function PopoverDemo({
 }) {
   return (
     <Popover>
-      <PopoverTrigger render={<Button variant="outline" />}>Share</PopoverTrigger>
+      <PopoverTrigger render={<Button variant="outline" />}>
+        Open popover
+      </PopoverTrigger>
       <PopoverContent
         className="w-80"
         side={side}
@@ -134,18 +136,47 @@ export default function PopoverDemo({
         align={align}
         alignOffset={alignOffset}
       >
-        <PopoverHeader>
-          <PopoverTitle>Share this document</PopoverTitle>
-          <PopoverDescription>
-            Anyone with the link can view the Q3 roadmap.
-          </PopoverDescription>
-        </PopoverHeader>
-        <div className="flex items-center gap-2">
-          <div className="bg-muted text-muted-foreground flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg px-2.5 text-sm">
-            <HugeiconsIcon icon={Link01Icon} strokeWidth={2} className="size-4 shrink-0" />
-            <span className="truncate">animate-ui.com/d/q3-roadmap</span>
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="leading-none font-medium">Dimensions</h4>
+            <p className="text-sm text-muted-foreground">
+              Set the dimensions for the layer.
+            </p>
           </div>
-          <Button size="sm">Copy link</Button>
+          <div className="grid gap-2">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="width">Width</Label>
+              <Input
+                id="width"
+                defaultValue="100%"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="maxWidth">Max. width</Label>
+              <Input
+                id="maxWidth"
+                defaultValue="300px"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="height">Height</Label>
+              <Input
+                id="height"
+                defaultValue="25px"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="maxHeight">Max. height</Label>
+              <Input
+                id="maxHeight"
+                defaultValue="none"
+                className="col-span-2 h-8"
+              />
+            </div>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

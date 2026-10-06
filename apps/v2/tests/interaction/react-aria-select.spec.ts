@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
@@ -10,20 +10,33 @@ import {
 } from './pick-hold';
 
 const POPOVER = '[data-slot="select-content"]';
+const DEMO = '/tests/demos/react-aria/select';
+/** The SelectionIndicator. */
+const CHECK = ':scope > div';
+
+const trigger = (page: Page) => page.locator('[data-slot="select-trigger"]');
+const option = (page: Page, name: string) =>
+  page.getByRole('option', { name, exact: true });
+
+/** Loads a demo page. */
+const load = (page: Page, path: string) =>
+  page.goto(path, { waitUntil: 'networkidle' });
+
+/** Opens the list with a click and lets its entrance finish. */
+async function openList(page: Page) {
+  await trigger(page).click();
+  await page.waitForTimeout(650);
+}
 
 test.describe('react-aria select demo', () => {
   test.describe.configure({ timeout: 180_000 });
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/react-aria/select', {
-      waitUntil: 'networkidle',
-    });
-  });
 
   test('opens with a 250ms scale and fade from the trigger', async ({
     page,
   }) => {
+    await load(page, DEMO);
     const probe = await probeFirstFrame(page, POPOVER);
-    await page.locator('[data-slot="select-trigger"]').click();
+    await trigger(page).click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
@@ -40,10 +53,9 @@ test.describe('react-aria select demo', () => {
   test('closes the same way, and the trigger shows the choice', async ({
     page,
   }) => {
-    const trigger = page.locator('[data-slot="select-trigger"]');
-    await trigger.click();
-    await page.waitForTimeout(650);
-    await page.getByRole('option', { name: 'Lora' }).click();
+    await load(page, DEMO);
+    await openList(page);
+    await option(page, 'Grapes').click();
 
     // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
@@ -52,72 +64,88 @@ test.describe('react-aria select demo', () => {
       })
       .toBeLessThan(1);
     await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 600 });
-    await expect(trigger).toContainText('Lora');
+    await expect(trigger(page)).toContainText('Grapes');
   });
 
   for (const animation of ['draw', 'pop'] as const) {
-    test(`choosing an item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+    test(`a first choice holds the list while its check ${animation === 'draw' ? 'draws itself' : 'pops in'}, then closes`, async ({
       page,
     }) => {
-      await page.goto(
-        withAnimation('/tests/demos/react-aria/select', animation),
-        { waitUntil: 'networkidle' },
-      );
-      const trigger = page.locator('[data-slot="select-trigger"]');
-      await trigger.click();
-      await page.waitForTimeout(650);
+      await load(page, withAnimation(DEMO, animation));
+      await openList(page);
       await expectPickHold(page, {
         popup: POPOVER,
-        item: 'Satoshi',
-        from: 'Geist',
-        // The SelectionIndicator.
-        check: ':scope > div',
+        item: 'Banana',
+        from: null,
+        check: CHECK,
         animation,
-        pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
+        pick: () => option(page, 'Banana').click(),
       });
-      await expect(trigger).toContainText('Satoshi');
+      await expect(trigger(page)).toContainText('Banana');
+    });
+
+    test(`choosing another item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+      page,
+    }) => {
+      await load(page, withAnimation(DEMO, animation));
+      await openList(page);
+      await option(page, 'Banana').click();
+      await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
+      await openList(page);
+      await expectPickHold(page, {
+        popup: POPOVER,
+        item: 'Grapes',
+        from: 'Banana',
+        check: CHECK,
+        animation,
+        pick: () => option(page, 'Grapes').click(),
+      });
+      await expect(trigger(page)).toContainText('Grapes');
     });
   }
 
   test('choosing the chosen item again closes without waiting', async ({
     page,
   }) => {
-    const trigger = page.locator('[data-slot="select-trigger"]');
-    await trigger.click();
-    await page.waitForTimeout(650);
+    await load(page, DEMO);
+    await openList(page);
+    await option(page, 'Banana').click();
+    await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
+    await openList(page);
     // Nothing changes: no check to wait for.
     await expectCloseWithoutHold(page, POPOVER, () =>
-      page.getByRole('option', { name: 'Geist', exact: true }).click(),
+      option(page, 'Banana').click(),
     );
-    await expect(trigger).toContainText('Geist');
+    await expect(trigger(page)).toContainText('Banana');
   });
 
   test('Escape closes it without waiting', async ({ page }) => {
-    await page.locator('[data-slot="select-trigger"]').click();
-    await page.waitForTimeout(650);
+    await load(page, DEMO);
+    await openList(page);
     await expectEscapeWithoutHold(page, POPOVER);
   });
 
   test('keyboard: arrows move the focused item instantly', async ({ page }) => {
-    const trigger = page.locator('[data-slot="select-trigger"]');
-    await trigger.focus();
+    await load(page, DEMO);
+    await trigger(page).focus();
     await page.keyboard.press('ArrowDown');
     await expect(page.locator(POPOVER)).toHaveCount(1);
-    const geist = page.getByRole('option', { name: 'Geist', exact: true });
-    await expect(geist).toBeFocused();
+    // No value yet: React Aria focuses the first item.
+    await expect(option(page, 'Apple')).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('option', { name: 'Satoshi' })).toBeFocused({
+    await expect(option(page, 'Banana')).toBeFocused({
       timeout: 50,
     });
     await page.keyboard.press('Escape');
     await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 600 });
-    await expect(trigger).toContainText('Geist');
+    await expect(trigger(page)).toContainText('Select a fruit');
   });
 
   test('reduced motion: it fades, nothing scales', async ({ page }) => {
+    await load(page, DEMO);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, POPOVER);
-    await page.locator('[data-slot="select-trigger"]').click();
+    await trigger(page).click();
     const first = await probe.firstFrame();
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
@@ -162,14 +190,13 @@ test('react-aria select docs page renders without errors', async ({ page }) => {
 });
 
 describeMenuHighlight('react-aria select highlight', {
-  path: '/tests/demos/react-aria/select',
+  path: DEMO,
   open: async (page) => {
-    await page.locator('[data-slot="select-trigger"]').click();
+    await trigger(page).click();
     await page.waitForTimeout(400);
   },
-  // Geist is the value: React Aria focuses it as the list opens.
-  first: (page) => page.getByRole('option', { name: 'Geist', exact: true }),
-  second: (page) => page.getByRole('option', { name: 'Satoshi' }),
+  // No value yet: React Aria focuses the list, not an item, as it opens.
+  first: (page) => option(page, 'Apple'),
+  second: (page) => option(page, 'Banana'),
   keyboardNext: 'ArrowDown',
-  highlightedOnOpen: true,
 });

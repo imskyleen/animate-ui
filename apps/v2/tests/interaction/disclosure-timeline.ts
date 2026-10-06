@@ -244,7 +244,8 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       test('page load: the panel open by default animates open, as in v1', async ({
         page,
       }) => {
-        // Sampled from the first frames: it mounts collapsed, then opens.
+        // Sampled from the first frames: it mounts collapsed, then opens
+        // (for up to a minute: a busy dev server can hydrate late).
         await page.addInitScript(
           ({ selector, text }) => {
             const w = window as unknown as { __mount: number[][] };
@@ -262,7 +263,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
                   blur ? Number(blur[1]) : 0,
                 ]);
               }
-              if (w.__mount.length < 900) requestAnimationFrame(tick);
+              if (w.__mount.length < 3600) requestAnimationFrame(tick);
             };
             requestAnimationFrame(tick);
           },

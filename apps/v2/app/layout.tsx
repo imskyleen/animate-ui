@@ -2,6 +2,8 @@ import { RootProvider } from 'fumadocs-ui/provider/next';
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 
+import { Toaster } from '@/components/ui/sonner';
+
 import './global.css';
 
 export const metadata: Metadata = {
@@ -35,7 +37,12 @@ export default function Layout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={outfit.className} suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider>
+          {children}
+          {/* Sonner's toasts, mounted like shadcn's docs do: the Base UI
+              drawer demo confirms with one. */}
+          <Toaster position="top-center" />
+        </RootProvider>
       </body>
     </html>
   );

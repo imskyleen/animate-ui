@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { describeToggleGroupDemo } from './controls-helpers';
 
-describeToggleGroupDemo('react-aria', true);
+describeToggleGroupDemo('react-aria');
 
 test.describe('react-aria toggle group API', () => {
   test.beforeEach(async ({ page }) => {

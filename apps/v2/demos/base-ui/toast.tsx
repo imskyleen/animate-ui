@@ -4,7 +4,7 @@ import * as React from "react"
 import { Toast as ToastPrimitive } from "@animate-ui/react/primitives/base-ui/toast"
 import { cn } from "cn"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/base-ui/button"
 import { Alert02Icon, Cancel01Icon, CheckmarkCircle02Icon, InformationCircleIcon, Loading03Icon, MultiplicationSignCircleIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -248,37 +248,24 @@ export {
   useToastManager,
 }
 
-const MESSAGES = [
-  {
-    type: "success",
-    title: "Changes saved",
-    description: "Your profile is up to date.",
-  },
-  {
-    type: "info",
-    title: "New version available",
-    description: "Animate UI 2.1 ships three new primitives.",
-  },
-  {
-    type: "warning",
-    title: "Storage almost full",
-    description: "You have used 92% of your workspace storage.",
-  },
-]
-
 export default function ToastDemo() {
-  const count = React.useRef(0)
-
-  const show = () => {
-    const message = MESSAGES[count.current % MESSAGES.length]
-    count.current += 1
-    toast.add(message)
+  function showToast() {
+    const id = toast.add({
+      title: "Event created",
+      description: "Sunday, December 3 at 9:00 AM",
+      actionProps: {
+        children: "Undo",
+        onClick() {
+          toast.close(id)
+        },
+      },
+    })
   }
 
   return (
     <Toaster>
-      <Button variant="outline" onClick={show}>
-        Show toast
+      <Button variant="outline" onClick={showToast}>
+        Show Toast
       </Button>
     </Toaster>
   )

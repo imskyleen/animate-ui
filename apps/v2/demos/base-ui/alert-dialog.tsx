@@ -190,20 +190,20 @@ export default function AlertDialogDemo({
 }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="destructive" />}>
-        Delete project
+      <AlertDialogTrigger render={<Button variant="outline" />}>
+        Show Dialog
       </AlertDialogTrigger>
       <AlertDialogContent from={from}>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this project?</AlertDialogTitle>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This permanently deletes the project, its deployments and its
-            domains. This action cannot be undone.
+            This action cannot be undone. This will permanently delete your
+            account from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive">Delete</AlertDialogAction>
+          <AlertDialogAction>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

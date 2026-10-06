@@ -58,33 +58,12 @@ function Slider({
 export { Slider }
 
 export default function SliderDemo() {
-  const [volume, setVolume] = React.useState([64])
-  const [price, setPrice] = React.useState([250, 750])
-
   return (
-    <div className="flex w-full max-w-sm flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-medium">Volume</span>
-          <span className="text-muted-foreground tabular-nums">{volume[0]}%</span>
-        </div>
-        <Slider value={volume} onValueChange={setVolume} aria-label="Volume" />
-      </div>
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-medium">Price</span>
-          <span className="text-muted-foreground tabular-nums">
-            {`$${price[0]} – $${price[1]}`}
-          </span>
-        </div>
-        <Slider
-          value={price}
-          onValueChange={setPrice}
-          max={1000}
-          step={10}
-          aria-label="Price"
-        />
-      </div>
-    </div>
+    <Slider
+      defaultValue={[75]}
+      max={100}
+      step={1}
+      className="mx-auto w-full max-w-xs"
+    />
   )
 }

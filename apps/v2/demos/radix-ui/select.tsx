@@ -196,16 +196,10 @@ export {
   SelectValue,
 }
 
-const FONTS = [
-  { label: "Sans-serif", items: ["Inter", "Geist", "Satoshi"] },
-  { label: "Serif", items: ["Lora", "Merriweather", "Playfair Display"] },
-  { label: "Monospace", items: ["Geist Mono", "JetBrains Mono"] },
-]
-
 export const controls = {
   SelectContent: {
     position: {
-      value: "popper",
+      value: "item-aligned",
       options: { popper: "popper", "item-aligned": "item-aligned" },
     },
     side: {
@@ -225,7 +219,7 @@ export const controls = {
 }
 
 export default function SelectDemo({
-  position = "popper",
+  position = "item-aligned",
   side = "bottom",
   sideOffset = 0,
   align = "center",
@@ -243,9 +237,9 @@ export default function SelectDemo({
 }) {
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <Select defaultValue="Geist">
-        <SelectTrigger className="w-48" aria-label="Font">
-          <SelectValue placeholder="Choose a font" />
+      <Select>
+        <SelectTrigger className="w-full max-w-48">
+          <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent
           position={position}
@@ -254,19 +248,14 @@ export default function SelectDemo({
           align={align}
           alignOffset={alignOffset}
         >
-          {FONTS.map((group, index) => (
-            <React.Fragment key={group.label}>
-              {index > 0 && <SelectSeparator />}
-              <SelectGroup>
-                <SelectLabel>{group.label}</SelectLabel>
-                {group.items.map((font) => (
-                  <SelectItem key={font} value={font}>
-                    {font}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </React.Fragment>
-          ))}
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+            <SelectItem value="blueberry">Blueberry</SelectItem>
+            <SelectItem value="grapes">Grapes</SelectItem>
+            <SelectItem value="pineapple">Pineapple</SelectItem>
+          </SelectGroup>
         </SelectContent>
       </Select>
     </AnimateUIProvider>

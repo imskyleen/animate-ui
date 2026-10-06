@@ -3,8 +3,7 @@
 import * as React from "react"
 import { cn } from "cn"
 import { HoverCard as HoverCardPrimitive } from "@animate-ui/react/primitives/radix-ui"
-import { Calendar03Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Button } from "@/components/ui/button"
 
 function HoverCard({
   ...props
@@ -79,33 +78,21 @@ export default function HoverCardDemo({
   alignOffset?: number
 }) {
   return (
-    <HoverCard followCursor={followCursor}>
+    <HoverCard openDelay={10} closeDelay={100} followCursor={followCursor}>
       <HoverCardTrigger asChild>
-        <a href="https://github.com/imskyleen/animate-ui" className="text-sm font-medium underline underline-offset-4">
-          @animate-ui
-        </a>
+        <Button variant="link">Hover Here</Button>
       </HoverCardTrigger>
       <HoverCardContent
-        className="w-80"
+        className="flex w-64 flex-col gap-0.5"
         side={side}
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
       >
-        <div className="flex gap-3">
-          <div className="bg-primary text-primary-foreground flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
-            AU
-          </div>
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold">Animate UI</p>
-            <p className="text-muted-foreground">
-              Animated drop-in primitives for Radix UI, Base UI and React Aria.
-            </p>
-            <p className="text-muted-foreground flex items-center gap-1.5 pt-1 text-xs">
-              <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} className="size-3.5" />
-              Open source since 2024
-            </p>
-          </div>
+        <div className="font-semibold">@nextjs</div>
+        <div>The React Framework – created and maintained by @vercel.</div>
+        <div className="mt-1 text-xs text-muted-foreground">
+          Joined December 2021
         </div>
       </HoverCardContent>
     </HoverCard>

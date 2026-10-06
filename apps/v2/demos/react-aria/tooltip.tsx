@@ -8,13 +8,7 @@ import {
   Tooltip as TooltipPrimitive,
   TooltipTrigger as TooltipTriggerPrimitive,
 } from "@animate-ui/react/primitives/react-aria"
-import { Button } from "@/components/ui/button"
-import {
-  TextBoldIcon,
-  TextItalicIcon,
-  TextUnderlineIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Button } from "@/components/ui/react-aria/button"
 
 function TooltipTrigger({
   delay = 0,
@@ -86,12 +80,6 @@ function Tooltip({
 
 export { Tooltip, TooltipTrigger }
 
-const TOOLS = [
-  { label: "Bold", shortcut: "⌘B", icon: TextBoldIcon },
-  { label: "Italic", shortcut: "⌘I", icon: TextItalicIcon },
-  { label: "Underline", shortcut: "⌘U", icon: TextUnderlineIcon },
-]
-
 export const controls = {
   Tooltip: {
     side: {
@@ -129,18 +117,15 @@ export default function TooltipDemo({
   alignOffset?: number
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-xl border p-1">
-      {TOOLS.map((tool) => (
-        <TooltipTrigger key={tool.label}>
-          <Button variant="ghost" size="icon" aria-label={tool.label}>
-            <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
-          </Button>
-          <Tooltip placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
-            {tool.label}
-            <span className="opacity-60">{tool.shortcut}</span>
-          </Tooltip>
-        </TooltipTrigger>
-      ))}
-    </div>
+    <TooltipTrigger>
+      <Button variant="outline">Hover</Button>
+      <Tooltip
+        placement={toPlacement(side, align)}
+        offset={sideOffset}
+        crossOffset={alignOffset}
+      >
+        <p>Add to library</p>
+      </Tooltip>
+    </TooltipTrigger>
   )
 }

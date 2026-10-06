@@ -6,8 +6,8 @@ import { ToggleGroup as ToggleGroupPrimitive } from "@animate-ui/react/primitive
 import { type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
-import { toggleVariants } from "@/components/ui/toggle"
-import { TextAlignCenterIcon, TextAlignLeftIcon, TextAlignRightIcon } from "@hugeicons/core-free-icons"
+import { toggleVariants } from "@/components/ui/base-ui/toggle"
+import { TextBoldIcon, TextItalicIcon, TextUnderlineIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 const ToggleGroupContext = React.createContext<
@@ -92,7 +92,7 @@ export { ToggleGroup, ToggleGroupItem }
 
 export const controls = {
   ToggleGroup: {
-    multiple: { value: false },
+    multiple: { value: true },
     variant: {
       value: "outline",
       options: { default: "default", outline: "outline" },
@@ -105,7 +105,7 @@ export const controls = {
 }
 
 export default function ToggleGroupDemo({
-  multiple = false,
+  multiple = true,
   variant = "outline",
   size = "default",
 }: {
@@ -115,22 +115,15 @@ export default function ToggleGroupDemo({
   size?: "default" | "sm" | "lg"
 }) {
   return (
-    <ToggleGroup
-      defaultValue={["left"]}
-      multiple={multiple}
-      variant={variant}
-      size={size}
-      spacing={0}
-      aria-label="Text alignment"
-    >
-      <ToggleGroupItem value="left" aria-label="Align left">
-        <HugeiconsIcon icon={TextAlignLeftIcon} strokeWidth={2} />
+    <ToggleGroup variant={variant} multiple={multiple} size={size}>
+      <ToggleGroupItem value="bold" aria-label="Toggle bold">
+        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
       </ToggleGroupItem>
-      <ToggleGroupItem value="center" aria-label="Align center">
-        <HugeiconsIcon icon={TextAlignCenterIcon} strokeWidth={2} />
+      <ToggleGroupItem value="italic" aria-label="Toggle italic">
+        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
       </ToggleGroupItem>
-      <ToggleGroupItem value="right" aria-label="Align right">
-        <HugeiconsIcon icon={TextAlignRightIcon} strokeWidth={2} />
+      <ToggleGroupItem value="strikethrough" aria-label="Toggle strikethrough">
+        <HugeiconsIcon icon={TextUnderlineIcon} strokeWidth={2} />
       </ToggleGroupItem>
     </ToggleGroup>
   )

@@ -1,8 +1,10 @@
 // Prints a shadcn/ui component as an Animate UI user gets it: the shadcn
-// source (nova style, Hugeicons) after `animate-ui animate`.
-//   node scripts/shadcn-component.mts <shadcn-dir> <radix|base|aria> <component> [--out <file>] [--raw]
+// source (nova style by default, Hugeicons) after `animate-ui animate`.
+//   node scripts/shadcn-component.mts <shadcn-dir> <radix|base|aria> <component> [--style <name>] [--out <file>] [--raw]
 // --raw skips the animate step (for shared components like button).
-// <shadcn-dir> holds style-nova.css and <base>/<component>.tsx from
+// --style picks another shadcn style (the Base UI drawer demo is rhea, like
+// shadcn's docs).
+// <shadcn-dir> holds style-<style>.css and <base>/<component>.tsx from
 // github.com/shadcn-ui/ui apps/v4/registry/{styles,bases/<base>/ui}.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
@@ -15,17 +17,18 @@ const { values, positionals } = parseArgs({
   options: {
     out: { type: 'string' },
     raw: { type: 'boolean', default: false },
+    style: { type: 'string', default: 'nova' },
   },
 });
 const [dir, base, component] = positionals;
 if (!dir || !base || !component) {
   console.error(
-    'Usage: shadcn-component.mts <shadcn-dir> <radix|base|aria> <component> [--out <file>] [--raw]',
+    'Usage: shadcn-component.mts <shadcn-dir> <radix|base|aria> <component> [--style <name>] [--out <file>] [--raw]',
   );
   process.exit(1);
 }
 
-const css = readFileSync(path.join(dir, 'style-nova.css'), 'utf8');
+const css = readFileSync(path.join(dir, `style-${values.style}.css`), 'utf8');
 const rules = new Map<string, string>();
 for (const [, name, classes] of css.matchAll(
   /\.(cn-[\w-]+)\s*\{\s*@apply\s+([^;}]+)/g,
@@ -70,8 +73,21 @@ code = code.replace(
     : '',
 );
 
-// 3. shadcn's registry paths become the project paths users have.
-code = code.replace(/@\/registry\/bases\/[\w-]+\/ui\//g, '@/components/ui/');
+// 3. shadcn's registry paths become this repo's helpers: the project paths
+// users have (@/components/ui/<name>), in the library's folder for Base UI
+// and React Aria, and the style's for a style other than nova. The docs show
+// them as @/components/ui/<name> again.
+const LIBRARY_FOLDERS: Record<string, string> = {
+  base: 'base-ui/',
+  aria: 'react-aria/',
+};
+const folder =
+  (LIBRARY_FOLDERS[base] ?? '') +
+  (values.style === 'nova' ? '' : `${values.style}/`);
+code = code.replace(
+  /@\/registry\/bases\/[\w-]+\/ui\//g,
+  `@/components/ui/${folder}`,
+);
 
 // 4. `animate-ui animate`, with the real CLI on a throwaway project.
 if (!values.raw) {

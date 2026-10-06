@@ -32,44 +32,53 @@ export async function gotoTabs(page: Page, url: string) {
   await waitForTabs(page);
 }
 
+// The helpers below look at the whole page, or only inside the element the
+// selector `scope` matches (a fixture's section: the page holds other tabs).
+
+const within = (page: Page, scope?: string) =>
+  scope ? page.locator(scope) : page;
+
 /** Left edge of the indicator relative to the tab `name`. */
-export const offsetFrom = (page: Page, name: string) =>
+export const offsetFrom = (page: Page, name: string, scope?: string) =>
   page.evaluate(
-    ({ indicator, name }) => {
-      const tab = [...document.querySelectorAll('[role="tab"]')].find(
+    ({ indicator, name, scope }) => {
+      const root = scope ? document.querySelector(scope)! : document;
+      const tab = [...root.querySelectorAll('[role="tab"]')].find(
         (el) => el.textContent?.trim() === name,
       )!;
-      const ind = document.querySelector(indicator)!;
+      const ind = root.querySelector(indicator)!;
       return (
         ind.getBoundingClientRect().left - tab.getBoundingClientRect().left
       );
     },
-    { indicator: INDICATOR, name },
+    { indicator: INDICATOR, name, scope },
   );
 
-export const tabLeft = (page: Page, name: string) =>
-  page
+export const tabLeft = (page: Page, name: string, scope?: string) =>
+  within(page, scope)
     .getByRole('tab', { name, exact: true })
     .evaluate((el) => el.getBoundingClientRect().left);
 
-export const panelOpacity = (page: Page) =>
-  page
+export const panelOpacity = (page: Page, scope?: string) =>
+  within(page, scope)
     .locator(PANEL)
     .first()
     .evaluate((el) => Number(getComputedStyle(el).opacity));
 
 /** The active tab's own surface is hidden; the indicator carries it. */
-export async function expectSurfaceOnIndicator(page: Page) {
-  const { tab, indicator } = await page.evaluate((selector) => {
-    const active = document.querySelector(
-      '[role="tab"][aria-selected="true"]',
-    )!;
-    const ind = document.querySelector(selector)!;
-    return {
-      tab: getComputedStyle(active).backgroundColor,
-      indicator: getComputedStyle(ind).backgroundColor,
-    };
-  }, INDICATOR);
+export async function expectSurfaceOnIndicator(page: Page, scope?: string) {
+  const { tab, indicator } = await page.evaluate(
+    ({ selector, scope }) => {
+      const root = scope ? document.querySelector(scope)! : document;
+      const active = root.querySelector('[role="tab"][aria-selected="true"]')!;
+      const ind = root.querySelector(selector)!;
+      return {
+        tab: getComputedStyle(active).backgroundColor,
+        indicator: getComputedStyle(ind).backgroundColor,
+      };
+    },
+    { selector: INDICATOR, scope },
+  );
   expect(tab).toBe('rgba(0, 0, 0, 0)');
   expect(indicator).not.toBe('rgba(0, 0, 0, 0)');
 }
@@ -93,14 +102,15 @@ export async function recordSwitch(
   name: string,
   ms = 900,
   /** How the tab gets selected: a click by default. */
-  select: () => Promise<void> = () =>
-    page.getByRole('tab', { name, exact: true }).click(),
+  select?: () => Promise<void>,
+  scope?: string,
 ) {
   await page.evaluate(
-    ({ indicator, panel, name, ms }) => {
-      const tab = [
-        ...document.querySelectorAll<HTMLElement>('[role="tab"]'),
-      ].find((el) => el.textContent?.trim() === name)!;
+    ({ indicator, panel, name, ms, scope }) => {
+      const root = scope ? document.querySelector(scope)! : document;
+      const tab = [...root.querySelectorAll<HTMLElement>('[role="tab"]')].find(
+        (el) => el.textContent?.trim() === name,
+      )!;
       const w = window as unknown as { __switch?: Promise<unknown> };
       w.__switch = new Promise((resolve) => {
         const frames: { t: number }[] = [];
@@ -113,18 +123,18 @@ export async function recordSwitch(
             tab.getAttribute('aria-selected') === 'true'
           )
             selectedAt = now;
-          const shown = [...document.querySelectorAll<HTMLElement>(panel)].find(
+          const shown = [...root.querySelectorAll<HTMLElement>(panel)].find(
             (el) => !el.hidden,
           );
           const style = shown ? getComputedStyle(shown) : null;
           frames.push({
             t: now,
-            indicators: [
-              ...document.querySelectorAll<HTMLElement>(indicator),
-            ].map((el) => ({
-              x: el.getBoundingClientRect().left,
-              o: Number(getComputedStyle(el).opacity),
-            })),
+            indicators: [...root.querySelectorAll<HTMLElement>(indicator)].map(
+              (el) => ({
+                x: el.getBoundingClientRect().left,
+                o: Number(getComputedStyle(el).opacity),
+              }),
+            ),
             panel: shown
               ? {
                   h: shown.getBoundingClientRect().height,
@@ -147,14 +157,21 @@ export async function recordSwitch(
         requestAnimationFrame(tick);
       });
     },
-    { indicator: INDICATOR, panel: PANEL, name, ms },
+    { indicator: INDICATOR, panel: PANEL, name, ms, scope },
   );
-  await select();
+  await (
+    select ??
+    (() => within(page, scope).getByRole('tab', { name, exact: true }).click())
+  )();
   return (await page.evaluate(
     () => (window as unknown as { __switch: Promise<unknown> }).__switch,
   )) as SwitchFrame[];
 }
 
+/**
+ * shadcn's tabs demo: Overview (selected), Analytics, Reports and Settings,
+ * each panel a card of the same height.
+ */
 export function describeTabsDemo(
   library: string,
   { selectKeys }: { selectKeys: string[] },
@@ -167,7 +184,8 @@ export function describeTabsDemo(
     test('page load: the indicator sits on the active tab, the panel fades in from a blur', async ({
       page,
     }) => {
-      // Sampled from the first frames, as v1 fades the panel in on mount.
+      // Sampled from the first frames, as v1 fades the panel in on mount
+      // (for up to a minute: a busy dev server can hydrate late).
       await page.addInitScript((panel) => {
         const w = window as unknown as { __load: number[][] };
         w.__load = [];
@@ -180,7 +198,7 @@ export function describeTabsDemo(
               parseFloat(style.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0'),
             ]);
           }
-          if (w.__load.length < 600) requestAnimationFrame(tick);
+          if (w.__load.length < 3600) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
       }, PANEL);
@@ -225,7 +243,7 @@ export function describeTabsDemo(
     });
 
     test("the tabs' text color changes over 500ms", async ({ page }) => {
-      const frames = await recordSwitch(page, 'Activity');
+      const frames = await recordSwitch(page, 'Analytics');
       const final = frames.at(-1)!.color;
       const started = frames.find((f) => f.color !== frames[0]!.color)!;
       const reached = frames.find((f) => f.color === final)!;
@@ -236,17 +254,16 @@ export function describeTabsDemo(
 
     test('keyboard: the selection animates like a click', async ({ page }) => {
       const start = await tabLeft(page, 'Overview');
-      const target = await tabLeft(page, 'Activity');
+      const target = await tabLeft(page, 'Analytics');
       await page.getByRole('tab', { name: 'Overview' }).focus();
-      const frames = await recordSwitch(page, 'Activity', 900, async () => {
+      const frames = await recordSwitch(page, 'Analytics', 900, async () => {
         // Radix and React Aria select on arrow keys; Base UI moves focus,
         // then Enter selects.
         for (const key of selectKeys) await page.keyboard.press(key);
       });
-      await expect(page.getByRole('tab', { name: 'Activity' })).toHaveAttribute(
-        'aria-selected',
-        'true',
-      );
+      await expect(
+        page.getByRole('tab', { name: 'Analytics' }),
+      ).toHaveAttribute('aria-selected', 'true');
       // The surface slides (both surfaces between the two tabs) and the panel
       // fades in from a blur, as on click.
       expect(
@@ -260,23 +277,43 @@ export function describeTabsDemo(
         frames.some((f) => f.panel && f.panel.o < 1 && f.panel.blur > 0),
       ).toBe(true);
       await expect(page.locator(INDICATOR)).toHaveCount(1);
-      expect(Math.abs(await offsetFrom(page, 'Activity'))).toBeLessThan(1);
+      expect(Math.abs(await offsetFrom(page, 'Analytics'))).toBeLessThan(1);
       // Focus moved with the selection, nothing delayed it.
-      await expect(page.getByRole('tab', { name: 'Activity' })).toBeFocused();
+      await expect(page.getByRole('tab', { name: 'Analytics' })).toBeFocused();
     });
+  });
+}
+
+/**
+ * The panels' height, on the `heights` section of the library's fixture:
+ * shadcn's demo has panels of one height. Its tabs are Short (selected) and
+ * Tall, whose panel is taller.
+ */
+export function describeTabsHeights(library: string) {
+  const scope = '[data-testid="heights"]';
+
+  test.describe(`${library} tabs, panels of different heights`, () => {
+    test.beforeEach(async ({ page }) => {
+      await gotoTabs(page, `/tests/fixtures/${library}-tabs`);
+    });
+
+    const panelHeight = (page: Page) =>
+      page
+        .locator(scope)
+        .locator(PANEL)
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().height);
 
     test('the new panel fades in from a blur while its height springs, the old one is gone at once', async ({
       page,
     }) => {
-      const before = await page
-        .locator(PANEL)
-        .first()
-        .evaluate((el) => el.getBoundingClientRect().height);
-      const frames = await recordSwitch(page, 'Activity');
-      await expect(page.locator(PANEL)).toHaveCount(1);
-      await expect(page.locator(PANEL)).toContainText('Recent activity');
+      const before = await panelHeight(page);
+      const frames = await recordSwitch(page, 'Tall', 900, undefined, scope);
+      const panel = page.locator(scope).locator(PANEL);
+      await expect(panel).toHaveCount(1);
+      await expect(panel).toContainText('Tall panel');
       const after = frames.at(-1)!.panel!.h;
-      // The Activity panel is taller: it grows from the previous height.
+      // The Tall panel is taller: it grows from the previous height.
       expect(after).toBeGreaterThan(before + 20);
       const panels = frames.map((f) => f.panel).filter((p) => p !== null);
       expect(panels.some((p) => p.o > 0 && p.o < 1 && p.blur > 0)).toBe(true);
@@ -298,7 +335,7 @@ export function describeTabsDemo(
       // Never taller than its own height (no flash of the full panel).
       const entered = panels.filter((p) => p.o < 0.5);
       expect(entered.every((p) => p.h < after - 1)).toBe(true);
-      await expect.poll(() => panelOpacity(page)).toBe(1);
+      await expect.poll(() => panelOpacity(page, scope)).toBe(1);
     });
 
     test('reduced motion: the indicator and the height jump', async ({
@@ -307,15 +344,13 @@ export function describeTabsDemo(
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.reload({ waitUntil: 'networkidle' });
       await waitForTabs(page);
-      const before = await page
-        .locator(PANEL)
-        .first()
-        .evaluate((el) => el.getBoundingClientRect().height);
-      const frames = await recordSwitch(page, 'Activity', 600);
+      const before = await panelHeight(page);
+      const frames = await recordSwitch(page, 'Tall', 600, undefined, scope);
       const after = frames.at(-1)!.panel!.h;
+      expect(after).toBeGreaterThan(before + 20);
       const heights = frames.map((f) => f.panel?.h ?? 0);
       expect(heights.some((h) => h > before + 1 && h < after - 1)).toBe(false);
-      expect(Math.abs(await offsetFrom(page, 'Activity'))).toBeLessThan(1);
+      expect(Math.abs(await offsetFrom(page, 'Tall', scope))).toBeLessThan(1);
     });
   });
 }

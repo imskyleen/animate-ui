@@ -1,8 +1,15 @@
 import { expect, test } from '@playwright/test';
 
-import { INDICATOR, PANEL, describeTabsDemo, gotoTabs } from './tabs-helpers';
+import {
+  INDICATOR,
+  PANEL,
+  describeTabsDemo,
+  describeTabsHeights,
+  gotoTabs,
+} from './tabs-helpers';
 
 describeTabsDemo('react-aria', { selectKeys: ['ArrowRight'] });
+describeTabsHeights('react-aria');
 
 test.describe('react-aria tabs API', () => {
   test.beforeEach(async ({ page }) => {

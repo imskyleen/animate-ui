@@ -18,6 +18,7 @@ import {
   useSyncExternalStore,
   type ComponentType,
   type ReactNode,
+  type RefObject,
 } from 'react';
 
 import { InCodeTabsContext } from './codeblock';
@@ -51,6 +52,57 @@ const useIsMobile = () =>
     () => window.matchMedia(MOBILE_QUERY).matches,
     () => false,
   );
+
+/** Attributes that point at ids, fixed up along with them. */
+const ID_REFERENCES = [
+  'for',
+  'aria-labelledby',
+  'aria-describedby',
+  'aria-controls',
+] as const;
+
+/**
+ * A page can show a demo twice (a second preview starting it with other
+ * `values`): its static ids, like shadcn/ui's `id="terms-checkbox"`, are then
+ * twice in the page, and a label's `htmlFor` reaches the first preview's box.
+ * An id the preview shares with an element outside it gets the preview's own
+ * suffix, and so do the references to it inside the preview. Generated ids,
+ * already unique, stay as they are, and so does the demo's code.
+ */
+function useOwnIds(ref: RefObject<HTMLElement | null>) {
+  const ownId = useId();
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const own = () => {
+      for (const element of root.querySelectorAll<HTMLElement>('[id]')) {
+        const id = element.id;
+        const twins = root.ownerDocument.querySelectorAll(
+          `[id="${CSS.escape(id)}"]`,
+        );
+        if (![...twins].some((twin) => !root.contains(twin))) continue;
+        element.id = id + ownId;
+        for (const attribute of ID_REFERENCES)
+          for (const node of root.querySelectorAll(
+            `[${attribute}~="${CSS.escape(id)}"]`,
+          ))
+            node.setAttribute(
+              attribute,
+              node
+                .getAttribute(attribute)!
+                .split(/\s+/)
+                .map((token) => (token === id ? id + ownId : token))
+                .join(' '),
+            );
+      }
+    };
+    own();
+    // The demo renders more later (a list, a replay).
+    const observer = new MutationObserver(own);
+    observer.observe(root, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [ref, ownId]);
+}
 
 const toolbarButton =
   'flex size-8 items-center justify-center rounded-lg bg-accent text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50';
@@ -95,6 +147,8 @@ export function PreviewFrame({
   const [expanded, setExpanded] = useState(false);
   const codeRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  useOwnIds(stageRef);
   const unfold = useTempoTransition(UNFOLD);
   const fold = useTempoTransition(FOLD);
   const panelId = useId();
@@ -123,6 +177,7 @@ export function PreviewFrame({
           )}
         >
           <div
+            ref={stageRef}
             data-slot="preview-stage"
             className={cn(
               'relative flex min-w-0 items-center justify-center md:flex-1',

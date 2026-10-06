@@ -7,9 +7,7 @@ import {
   type PopoverProps as PopoverPrimitiveProps,
   type PreviewTriggerProps,
 } from "@animate-ui/react/primitives/react-aria"
-import { Link } from "@animate-ui/react/primitives/react-aria"
-import { Calendar03Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Button } from "@/components/ui/react-aria/button"
 
 function HoverCardTrigger({ children, ...props }: PreviewTriggerProps) {
   return (
@@ -82,25 +80,18 @@ export default function HoverCardDemo({
   alignOffset?: number
 }) {
   return (
-    <HoverCardTrigger>
-      <Link href="https://github.com/imskyleen/animate-ui" className="text-sm font-medium underline underline-offset-4">
-        @animate-ui
-      </Link>
-      <HoverCard className="w-80" placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
-        <div className="flex gap-3">
-          <div className="bg-primary text-primary-foreground flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
-            AU
-          </div>
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold">Animate UI</p>
-            <p className="text-muted-foreground">
-              Animated drop-in primitives for Radix UI, Base UI and React Aria.
-            </p>
-            <p className="text-muted-foreground flex items-center gap-1.5 pt-1 text-xs">
-              <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} className="size-3.5" />
-              Open source since 2024
-            </p>
-          </div>
+    <HoverCardTrigger delay={10} closeDelay={100}>
+      <Button variant="link">Hover Here</Button>
+      <HoverCard
+        className="flex w-64 flex-col gap-0.5"
+        placement={toPlacement(side, align)}
+        offset={sideOffset}
+        crossOffset={alignOffset}
+      >
+        <div className="font-semibold">@nextjs</div>
+        <div>The React Framework – created and maintained by @vercel.</div>
+        <div className="mt-1 text-xs text-muted-foreground">
+          Joined December 2021
         </div>
       </HoverCard>
     </HoverCardTrigger>

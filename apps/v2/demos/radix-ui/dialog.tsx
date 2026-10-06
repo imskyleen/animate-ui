@@ -5,6 +5,9 @@ import { cn } from "cn"
 import { Dialog as DialogPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Button } from "@/components/ui/button"
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -155,11 +158,6 @@ export {
   DialogTrigger,
 }
 
-const FIELDS = [
-  { id: "name", label: "Name", defaultValue: "Pedro Duarte" },
-  { id: "username", label: "Username", defaultValue: "@peduarte" },
-]
-
 export const controls = {
   DialogContent: {
     from: {
@@ -179,39 +177,40 @@ export default function DialogDemo({
 }) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit profile</Button>
-      </DialogTrigger>
-      <DialogContent from={from} showCloseButton={showCloseButton}>
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-3">
-          {FIELDS.map((field) => (
-            <div key={field.id} className="grid gap-1.5">
-              <label htmlFor={field.id} className="text-sm font-medium">
-                {field.label}
-              </label>
-              <input
-                id={field.id}
-                defaultValue={field.defaultValue}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 h-8 w-full rounded-lg border bg-transparent px-2.5 text-sm outline-none focus-visible:ring-3"
-              />
-            </div>
-          ))}
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button>Save changes</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
+      <form>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent
+          className="sm:max-w-sm"
+          from={from}
+          showCloseButton={showCloseButton}
+        >
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you&apos;re
+              done.
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <Label htmlFor="name-1">Name</Label>
+              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+            </Field>
+            <Field>
+              <Label htmlFor="username-1">Username</Label>
+              <Input id="username-1" name="username" defaultValue="@peduarte" />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
     </Dialog>
   )
 }

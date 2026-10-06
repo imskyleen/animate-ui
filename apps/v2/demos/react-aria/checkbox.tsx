@@ -11,7 +11,15 @@ import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/react-aria/field"
+import { Label } from "@/components/ui/react-aria/label"
 
 function Checkbox({ className, children, ...props }: CheckboxProps) {
   return (
@@ -66,7 +74,6 @@ export default function CheckboxDemo({
   /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
-  const id = React.useId()
   const [checked, setChecked] = React.useState(checkedProp)
   const [prev, setPrev] = React.useState(checkedProp)
   if (checkedProp !== prev) {
@@ -76,30 +83,44 @@ export default function CheckboxDemo({
 
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-2">
+      <FieldGroup className="max-w-sm">
+        <Field orientation="horizontal">
+          <Checkbox id="terms-checkbox" name="terms-checkbox" />
+          <Label htmlFor="terms-checkbox">Accept terms and conditions</Label>
+        </Field>
+        <Field orientation="horizontal">
           <Checkbox
-            id={`${id}-terms`}
+            id="terms-checkbox-2"
+            name="terms-checkbox-2"
             isSelected={checked === true}
             isIndeterminate={checked === "indeterminate"}
             onChange={setChecked}
           />
-          <Label htmlFor={`${id}-terms`}>Accept terms and conditions</Label>
-        </div>
-        <div className="flex items-start gap-2">
-          <Checkbox id={`${id}-updates`} />
-          <div className="grid gap-1.5">
-            <Label htmlFor={`${id}-updates`}>Product updates</Label>
-            <p className="text-muted-foreground text-sm">
-              A short email when a new primitive ships.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Checkbox id={`${id}-digest`} isDisabled />
-          <Label htmlFor={`${id}-digest`}>Weekly digest (coming soon)</Label>
-        </div>
-      </div>
+          <FieldContent>
+            <FieldLabel htmlFor="terms-checkbox-2">
+              Accept terms and conditions
+            </FieldLabel>
+            <FieldDescription>
+              By clicking this checkbox, you agree to the terms.
+            </FieldDescription>
+          </FieldContent>
+        </Field>
+        <Field orientation="horizontal" data-disabled>
+          <Checkbox id="toggle-checkbox" name="toggle-checkbox" isDisabled />
+          <FieldLabel htmlFor="toggle-checkbox">Enable notifications</FieldLabel>
+        </Field>
+        <FieldLabel>
+          <Field orientation="horizontal">
+            <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
+            <FieldContent>
+              <FieldTitle>Enable notifications</FieldTitle>
+              <FieldDescription>
+                You can enable or disable notifications at any time.
+              </FieldDescription>
+            </FieldContent>
+          </Field>
+        </FieldLabel>
+      </FieldGroup>
     </AnimateUIProvider>
   )
 }

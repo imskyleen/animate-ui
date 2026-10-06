@@ -9,7 +9,8 @@ const bottom =
   'fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-xl border bg-white p-6';
 const sides = {
   top: 'fixed inset-x-0 top-0 z-50 h-64 border bg-white p-6',
-  right: 'fixed inset-y-0 right-0 z-50 w-80 border bg-white p-6',
+  // A shadow, which lifts off the page with the drawer.
+  right: 'fixed inset-y-0 right-0 z-50 w-80 border bg-white p-6 shadow-xl',
   left: 'fixed inset-y-0 left-0 z-50 w-80 border bg-white p-6',
 } as const;
 

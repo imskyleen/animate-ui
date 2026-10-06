@@ -7,6 +7,8 @@ import {
   type Key,
 } from '@animate-ui/react/primitives/react-aria';
 
+import ToggleGroupDemo from '@/demos/react-aria/toggle-group';
+
 // API compatibility: the components must behave exactly like React Aria's.
 export default function ReactAriaToggleGroupFixture() {
   const [selected, setSelected] = React.useState<Set<Key>>(
@@ -41,6 +43,11 @@ export default function ReactAriaToggleGroupFixture() {
           <ToggleButton id="x">Multiple x</ToggleButton>
           <ToggleButton id="y">Multiple y</ToggleButton>
         </ToggleButtonGroup>
+      </section>
+
+      <section data-testid="demo-single">
+        {/* The docs demo with its `multiple` control off (single selection). */}
+        <ToggleGroupDemo multiple={false} />
       </section>
     </div>
   );

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { describeToggleGroupDemo } from './controls-helpers';
 
-describeToggleGroupDemo('base-ui', true);
+describeToggleGroupDemo('base-ui');
 
 test.describe('base-ui toggle group API', () => {
   test.beforeEach(async ({ page }) => {

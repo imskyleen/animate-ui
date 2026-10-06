@@ -35,7 +35,7 @@ type ChipCase = {
   stay?: { selector: string; text: string };
   /** Adds or removes a chip. */
   act: () => Promise<void>;
-  /** How long to record, in ms (500 by default). */
+  /** How long to record from the change it makes, in ms (500 by default). */
   ms?: number;
 };
 
@@ -47,7 +47,11 @@ type Recording = {
 
 type Recorder = { __chips?: Promise<Recording> };
 
-/** Records the frames that follow `act`, for 500ms (or `ms`). */
+/**
+ * Records the frames that follow `act`: for 500ms (or `ms`) from the first
+ * frame the page changes (a loaded machine can deliver the act late), or for
+ * 3s at most without a change.
+ */
 export async function recordChips(page: Page, c: ChipCase) {
   await page.evaluate(
     ({ container, next, chip, stay, ms }) => {
@@ -83,10 +87,16 @@ export async function recordChips(page: Page, c: ChipCase) {
         container: box(root)!,
         stay: stay ? box(live(stay.selector, stay.text)) : null,
       };
+      const moved = (now: Box | null, was: Box) =>
+        !now || Math.hypot(now.x - was.x, now.y - was.y) > 0.5;
       (window as Recorder).__chips = new Promise((resolve) => {
         const frames: ChipFrame[] = [];
         const t0 = performance.now();
+        // When the page changed: a copy showed up, or what follows the chips
+        // or the field moved.
+        let changed: number | null = null;
         const tick = () => {
+          const t = performance.now() - t0;
           const copy = root.querySelector<HTMLElement>('[data-exiting]');
           const style = copy && getComputedStyle(copy);
           // Its transform's scale, times its `scale`.
@@ -95,8 +105,8 @@ export async function recordChips(page: Page, c: ChipCase) {
             style && style.scale !== 'none' ? parseFloat(style.scale) : 1;
           const moving = live(next);
           const shown = placeholder(moving);
-          frames.push({
-            t: performance.now() - t0,
+          const frame = {
+            t,
             copy:
               copy && style
                 ? {
@@ -110,8 +120,17 @@ export async function recordChips(page: Page, c: ChipCase) {
             placeholderBlur: shown.blur,
             container: box(root)!,
             stay: stay ? box(live(stay.selector, stay.text)) : null,
-          });
-          if (performance.now() - t0 < ms) requestAnimationFrame(tick);
+          };
+          frames.push(frame);
+          if (
+            changed === null &&
+            (frame.copy !== null ||
+              moved(frame.next, before.next) ||
+              Math.abs(frame.container.height - before.container.height) > 0.5)
+          )
+            changed = t;
+          if (changed === null ? t < 3000 : t - changed < ms)
+            requestAnimationFrame(tick);
           else resolve({ before, frames });
         };
         requestAnimationFrame(tick);
@@ -277,26 +296,44 @@ export function expectRoomMade(
 const CONTAINER = '[data-slot="combobox-chips"]';
 const INPUT = '[data-slot="combobox-chip-input"]';
 const CHIP = '[data-slot="combobox-chip"]';
+const REMOVE = '[data-slot="combobox-chip-remove"]';
 
 type ChipsDemo = {
   path: string;
-  /** The combobox's accessible name. */
-  label: string;
-  /** The first chip and the last one, on load. */
+  /**
+   * The combobox's accessible name. Without one (shadcn/ui's Base UI chips
+   * input has none), its input is found by its slot.
+   */
+  label?: string;
+  /** The first chip and the last one, on load (the same when there's one). */
   first: string;
   last: string;
   /** An item to add. */
   add: string;
   /** Items to add, in turn, until the row wraps. */
   more: string[];
-  /** When the input shows its placeholder: once it's empty, or always. */
-  placeholder: 'empty' | 'always';
+  /**
+   * When the input shows its placeholder: once it's empty, or always. None
+   * by default, like shadcn/ui's chips inputs (the fixtures show one).
+   */
+  placeholder?: 'empty' | 'always';
 };
 
 /** The chips of a combobox demo (shadcn/ui's, Base UI's or React Aria's). */
 export function describeChipMotion(name: string, c: ChipsDemo) {
   const chip = (page: Page, text: string) =>
     page.locator(`${CHIP}:not([data-exiting])`, { hasText: text });
+  const input = (page: Page) =>
+    c.label === undefined
+      ? page.locator(INPUT)
+      : page.getByRole('combobox', { name: c.label });
+  /** Removes the first chip, unless it's the last one: one is left. */
+  const keepLast = async (page: Page) => {
+    if (c.first === c.last) return;
+    await chip(page, c.first).locator(REMOVE).click();
+    await expect(chip(page, c.first)).toHaveCount(0);
+    await page.waitForTimeout(650);
+  };
 
   test.describe(`${name} chips`, () => {
     test.describe.configure({ timeout: 180_000 });
@@ -307,7 +344,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     test('an added chip pops in while the input glides to make room', async ({
       page,
     }) => {
-      await page.getByRole('combobox', { name: c.label }).click();
+      await input(page).click();
       await page.keyboard.press('ArrowDown');
       await page.waitForTimeout(650);
       expectRoomMade(
@@ -326,10 +363,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
         container: CONTAINER,
         next: INPUT,
         chip: { selector: CHIP, text: c.first },
-        act: () =>
-          chip(page, c.first)
-            .locator('[data-slot="combobox-chip-remove"]')
-            .click(),
+        act: () => chip(page, c.first).locator(REMOVE).click(),
       });
       // Out of the selection at once: only its copy leaves.
       await expect(chip(page, c.first)).toHaveCount(0, { timeout: 50 });
@@ -337,7 +371,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     });
 
     test('Backspace removes the last chip the same way', async ({ page }) => {
-      await page.getByRole('combobox', { name: c.label }).focus();
+      await input(page).focus();
       const recording = await recordChips(page, {
         container: CONTAINER,
         next: INPUT,
@@ -351,7 +385,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     test('the field grows and shrinks with its rows, instead of jumping', async ({
       page,
     }) => {
-      await page.getByRole('combobox', { name: c.label }).click();
+      await input(page).click();
       await page.keyboard.press('ArrowDown');
       await page.waitForTimeout(650);
       // Chips added until the row wraps onto a line more: the field grows.
@@ -382,10 +416,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
           next: INPUT,
           chip: { selector: CHIP, text: grown!.added },
           stay: { selector: CHIP, text: c.first },
-          act: () =>
-            chip(page, grown!.added)
-              .locator('[data-slot="combobox-chip-remove"]')
-              .click(),
+          act: () => chip(page, grown!.added).locator(REMOVE).click(),
         }),
       );
     });
@@ -393,49 +424,43 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     test(
       c.placeholder === 'empty'
         ? 'the last chip removed: the input glides back in one go, its placeholder fades in once it is there'
-        : 'the last chip removed: the input glides back in one go, its placeholder with it',
+        : c.placeholder === 'always'
+          ? 'the last chip removed: the input glides back in one go, its placeholder with it'
+          : 'the last chip removed: the input glides back in one go',
       async ({ page }) => {
-        await chip(page, c.first)
-          .locator('[data-slot="combobox-chip-remove"]')
-          .click();
-        await expect(chip(page, c.first)).toHaveCount(0);
-        await page.waitForTimeout(650);
+        await keepLast(page);
         const recording = await recordChips(page, {
           container: CONTAINER,
           next: INPUT,
           chip: { selector: CHIP, text: c.last },
-          act: () =>
-            chip(page, c.last)
-              .locator('[data-slot="combobox-chip-remove"]')
-              .click(),
+          act: () => chip(page, c.last).locator(REMOVE).click(),
           ms: 900,
         });
         expectChipLeaves(recording);
         expectOneGo(recording);
         if (c.placeholder === 'empty') expectPlaceholderComesIn(recording);
-        else expectPlaceholderRides(recording);
+        else if (c.placeholder === 'always') expectPlaceholderRides(recording);
       },
     );
+  });
+
+  test.describe(`${name} chips, reduced motion`, () => {
+    test.describe.configure({ timeout: 180_000 });
+    test.beforeEach(async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(c.path, { waitUntil: 'networkidle' });
+    });
 
     if (c.placeholder === 'empty')
       test('reduced motion: the last chip removed, its placeholder only fades in', async ({
         page,
       }) => {
-        await page.emulateMedia({ reducedMotion: 'reduce' });
-        await page.reload({ waitUntil: 'networkidle' });
-        await chip(page, c.first)
-          .locator('[data-slot="combobox-chip-remove"]')
-          .click();
-        await expect(chip(page, c.first)).toHaveCount(0);
-        await page.waitForTimeout(650);
+        await keepLast(page);
         const recording = await recordChips(page, {
           container: CONTAINER,
           next: INPUT,
           chip: { selector: CHIP, text: c.last },
-          act: () =>
-            chip(page, c.last)
-              .locator('[data-slot="combobox-chip-remove"]')
-              .click(),
+          act: () => chip(page, c.last).locator(REMOVE).click(),
           ms: 700,
         });
         expectChipLeaves(recording, { reduce: true });
@@ -445,17 +470,12 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     test('reduced motion: a removed chip only fades, the input jumps', async ({
       page,
     }) => {
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.reload({ waitUntil: 'networkidle' });
       expectChipLeaves(
         await recordChips(page, {
           container: CONTAINER,
           next: INPUT,
           chip: { selector: CHIP, text: c.first },
-          act: () =>
-            chip(page, c.first)
-              .locator('[data-slot="combobox-chip-remove"]')
-              .click(),
+          act: () => chip(page, c.first).locator(REMOVE).click(),
         }),
         { reduce: true },
       );

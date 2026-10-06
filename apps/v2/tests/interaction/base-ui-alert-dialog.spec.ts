@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  DISMISS_CURVE,
+  expectAnimationCurve,
   expectDialogEntrance,
   expectDialogExit,
   expectDialogSettled,
@@ -25,7 +27,7 @@ test.describe('base-ui alert dialog demo', () => {
       content: CONTENT,
       overlay: OVERLAY,
     });
-    await page.getByRole('button', { name: 'Delete project' }).click();
+    await page.getByRole('button', { name: 'Show Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     expectDialogEntrance(await timeline.stop());
   });
@@ -33,7 +35,7 @@ test.describe('base-ui alert dialog demo', () => {
   test('Cancel is focused at once; Escape closes it quicker than it came, speeding away', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Delete project' }).click();
+    await page.getByRole('button', { name: 'Show Dialog' }).click();
     await expect(page.getByRole('button', { name: 'Cancel' })).toBeFocused();
     await expectDialogSettled(page, CONTENT);
     const timeline = await recordTimeline(page, {
@@ -43,13 +45,15 @@ test.describe('base-ui alert dialog demo', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     expectDialogExit(await timeline.stop());
+    // A dismissed dialog's curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
     await expect(
-      page.getByRole('button', { name: 'Delete project' }),
+      page.getByRole('button', { name: 'Show Dialog' }),
     ).toBeFocused();
   });
 
   test('an outside click does not dismiss it', async ({ page }) => {
-    await page.getByRole('button', { name: 'Delete project' }).click();
+    await page.getByRole('button', { name: 'Show Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     await page.mouse.click(5, 5);
     await page.waitForTimeout(450);
@@ -64,7 +68,7 @@ test.describe('base-ui alert dialog demo', () => {
   test('reduced motion: no tilt or scale, still fades', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const timeline = await recordTimeline(page, { content: CONTENT });
-    await page.getByRole('button', { name: 'Delete project' }).click();
+    await page.getByRole('button', { name: 'Show Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;

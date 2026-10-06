@@ -2,6 +2,7 @@
 # shadcn/ui code shown as users get it (shadcn formatting)
 apps/v2/demos
 apps/v2/components/ui
+apps/v2/hooks
 packages/cli/test/fixtures
 packages/cli/test/__snapshots__
 apps/v2/registry/icons/index.ts

@@ -6,7 +6,7 @@ import {
   Switch as SwitchPrimitive,
   type SwitchProps as SwitchPrimitiveProps,
 } from "@animate-ui/react/primitives/react-aria"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/react-aria/label"
 
 function Switch({
   className,
@@ -44,19 +44,9 @@ export { Switch }
 
 export default function SwitchDemo() {
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-2">
-        <Switch id="airplane" />
-        <Label htmlFor="airplane">Airplane mode</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <Switch id="wifi" defaultSelected />
-        <Label htmlFor="wifi">Wi-Fi</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <Switch id="low-power" size="sm" />
-        <Label htmlFor="low-power">Low power mode</Label>
-      </div>
+    <div className="flex items-center space-x-2">
+      <Switch id="airplane-mode" />
+      <Label htmlFor="airplane-mode">Airplane Mode</Label>
     </div>
   )
 }

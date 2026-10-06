@@ -57,7 +57,7 @@ test.describe('radix-ui navigation-menu demo', () => {
         }),
       VIEWPORT,
     );
-    await page.getByRole('button', { name: 'Primitives' }).hover();
+    await page.getByRole('button', { name: 'Components' }).hover();
     const seen = await widths;
     const after = await size(page);
     expect(after.width).toBeGreaterThan(before.width);
@@ -75,7 +75,7 @@ test.describe('radix-ui navigation-menu demo', () => {
       page,
       `${VIEWPORT} [data-motion="from-end"]`,
     );
-    await page.getByRole('button', { name: 'Primitives' }).hover();
+    await page.getByRole('button', { name: 'Components' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
   });
@@ -101,7 +101,7 @@ test.describe('radix-ui navigation-menu demo', () => {
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
     await page.waitForTimeout(700);
-    await page.getByRole('button', { name: 'Primitives' }).hover();
+    await page.getByRole('button', { name: 'Components' }).hover();
     await page.waitForTimeout(80);
     const during = await size(page);
     await page.waitForTimeout(400);

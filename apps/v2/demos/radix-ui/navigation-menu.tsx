@@ -1,4 +1,7 @@
+"use client"
+
 import * as React from "react"
+import Link from "next/link"
 import { cva } from "class-variance-authority"
 import { cn } from "cn"
 import { NavigationMenu as NavigationMenuPrimitive } from "@animate-ui/react/primitives/radix-ui"
@@ -164,69 +167,43 @@ export {
   navigationMenuTriggerStyle,
 }
 
-const GETTING_STARTED = [
+const components: { title: string; href: string; description: string }[] = [
   {
-    href: "/docs",
-    title: "Introduction",
-    description: "Animated drop-in primitives for Radix UI, Base UI and React Aria.",
+    title: "Alert Dialog",
+    href: "/docs/primitives/alert-dialog",
+    description:
+      "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
-    href: "/docs/installation",
-    title: "Installation",
-    description: "Add a shadcn/ui component, then animate it with one command.",
+    title: "Hover Card",
+    href: "/docs/primitives/hover-card",
+    description:
+      "For sighted users to preview content available behind a link.",
   },
   {
-    href: "/docs/primitives",
-    title: "Primitives",
-    description: "Every primitive, with the props each one adds.",
-  },
-]
-
-const PRIMITIVES = [
-  {
-    href: "/docs/primitives/radix-ui/accordion",
-    title: "Accordion",
-    description: "Panels that grow and collapse with their content.",
+    title: "Progress",
+    href: "/docs/primitives/progress",
+    description:
+      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
   },
   {
-    href: "/docs/primitives/radix-ui/dropdown-menu",
-    title: "Dropdown Menu",
-    description: "Menus that scale out of their trigger.",
+    title: "Scroll-area",
+    href: "/docs/primitives/scroll-area",
+    description: "Visually or semantically separates content.",
   },
   {
-    href: "/docs/primitives/radix-ui/context-menu",
-    title: "Context Menu",
-    description: "A menu that grows from the pointer.",
+    title: "Tabs",
+    href: "/docs/primitives/tabs",
+    description:
+      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   },
   {
-    href: "/docs/primitives/radix-ui/menubar",
-    title: "Menubar",
-    description: "Switch menus instantly, like a native menubar.",
+    title: "Tooltip",
+    href: "/docs/primitives/tooltip",
+    description:
+      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ]
-
-function ListItem({
-  href,
-  title,
-  children,
-}: {
-  href: string
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a href={href} className="flex-col items-start gap-1">
-          <span className="font-medium">{title}</span>
-          <span className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </span>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  )
-}
 
 export default function NavigationMenuDemo() {
   return (
@@ -235,22 +212,30 @@ export default function NavigationMenuDemo() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-80 gap-1">
-              {GETTING_STARTED.map((item) => (
-                <ListItem key={item.title} href={item.href} title={item.title}>
-                  {item.description}
-                </ListItem>
-              ))}
+            <ul className="w-96">
+              <ListItem href="/docs" title="Introduction">
+                Re-usable components built with Tailwind CSS.
+              </ListItem>
+              <ListItem href="/docs/installation" title="Installation">
+                How to install dependencies and structure your app.
+              </ListItem>
+              <ListItem href="/docs/primitives/typography" title="Typography">
+                Styles for headings, paragraphs, lists...etc
+              </ListItem>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Primitives</NavigationMenuTrigger>
+        <NavigationMenuItem className="hidden md:flex">
+          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[30rem] grid-cols-2 gap-1">
-              {PRIMITIVES.map((item) => (
-                <ListItem key={item.title} href={item.href} title={item.title}>
-                  {item.description}
+            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+              {components.map((component) => (
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
+                  {component.description}
                 </ListItem>
               ))}
             </ul>
@@ -258,10 +243,30 @@ export default function NavigationMenuDemo() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <a href="https://github.com/imskyleen/animate-ui">GitHub</a>
+            <Link href="/docs">Docs</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
+  )
+}
+
+function ListItem({
+  title,
+  children,
+  href,
+  ...props
+}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+  return (
+    <li {...props}>
+      <NavigationMenuLink asChild>
+        <Link href={href}>
+          <div className="flex flex-col gap-1 text-sm">
+            <div className="leading-none font-medium">{title}</div>
+            <div className="line-clamp-2 text-muted-foreground">{children}</div>
+          </div>
+        </Link>
+      </NavigationMenuLink>
+    </li>
   )
 }

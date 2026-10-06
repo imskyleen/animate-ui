@@ -201,16 +201,19 @@ export {
   SelectValue,
 }
 
-const FONTS = [
-  { label: "Sans-serif", items: ["Inter", "Geist", "Satoshi"] },
-  { label: "Serif", items: ["Lora", "Merriweather", "Playfair Display"] },
-  { label: "Monospace", items: ["Geist Mono", "JetBrains Mono"] },
+const items = [
+  { label: "Select a fruit", value: null },
+  { label: "Apple", value: "apple" },
+  { label: "Banana", value: "banana" },
+  { label: "Blueberry", value: "blueberry" },
+  { label: "Grapes", value: "grapes" },
+  { label: "Pineapple", value: "pineapple" },
 ]
 
 export const controls = {
   SelectContent: {
     position: {
-      value: "popper",
+      value: "item-aligned",
       options: { popper: "popper", "item-aligned": "item-aligned" },
     },
     side: {
@@ -230,7 +233,7 @@ export const controls = {
 }
 
 export default function SelectDemo({
-  position = "popper",
+  position = "item-aligned",
   side = "bottom",
   sideOffset = 4,
   align = "center",
@@ -248,9 +251,9 @@ export default function SelectDemo({
 }) {
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <Select defaultValue="Geist">
-        <SelectTrigger className="w-48" aria-label="Font">
-          <SelectValue placeholder="Choose a font" />
+      <Select items={items}>
+        <SelectTrigger className="w-full max-w-48">
+          <SelectValue />
         </SelectTrigger>
         <SelectContent
           alignItemWithTrigger={position === "item-aligned"}
@@ -259,19 +262,14 @@ export default function SelectDemo({
           align={align}
           alignOffset={alignOffset}
         >
-          {FONTS.map((group, index) => (
-            <React.Fragment key={group.label}>
-              {index > 0 && <SelectSeparator />}
-              <SelectGroup>
-                <SelectLabel>{group.label}</SelectLabel>
-                {group.items.map((font) => (
-                  <SelectItem key={font} value={font}>
-                    {font}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </React.Fragment>
-          ))}
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            {items.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </AnimateUIProvider>

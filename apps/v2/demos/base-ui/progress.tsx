@@ -4,8 +4,6 @@ import * as React from "react"
 import { Progress as ProgressPrimitive } from "@animate-ui/react/primitives/base-ui/progress"
 import { cn } from "cn"
 
-import { Button } from "@/components/ui/button"
-
 function Progress({
   className,
   children,
@@ -81,52 +79,13 @@ export {
   ProgressValue,
 }
 
-const STEPS = [12, 27, 41, 58, 64, 83, 100]
-
-function useUpload() {
-  const [value, setValue] = React.useState(64)
-  const [running, setRunning] = React.useState(false)
+export default function ProgressDemo() {
+  const [progress, setProgress] = React.useState(13)
 
   React.useEffect(() => {
-    if (!running) return
-    let step = 0
-    const id = setInterval(() => {
-      setValue(STEPS[step])
-      step += 1
-      if (step === STEPS.length) {
-        clearInterval(id)
-        setRunning(false)
-      }
-    }, 450)
-    return () => clearInterval(id)
-  }, [running])
+    const timer = setTimeout(() => setProgress(66), 500)
+    return () => clearTimeout(timer)
+  }, [])
 
-  const start = () => {
-    setValue(0)
-    setRunning(true)
-  }
-
-  return { value, running, start }
-}
-
-export default function ProgressDemo() {
-  const { value, running, start } = useUpload()
-
-  return (
-    <div className="flex w-full max-w-sm flex-col gap-4">
-      <Progress value={value}>
-        <ProgressLabel>brand-assets.zip</ProgressLabel>
-        <ProgressValue />
-      </Progress>
-      <Button
-        variant="outline"
-        size="sm"
-        className="self-start"
-        disabled={running}
-        onClick={start}
-      >
-        {running ? "Uploading…" : "Upload again"}
-      </Button>
-    </div>
-  )
+  return <Progress value={progress} className="w-[60%]" />
 }

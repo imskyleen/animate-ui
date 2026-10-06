@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { Tick02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui/dropdown-menu';
 import * as DropdownMenuStar from '@animate-ui/react/primitives/radix-ui/dropdown-menu';
 
@@ -11,6 +13,7 @@ export default function RadixDropdownMenuFixture() {
   const [open, setOpen] = React.useState(false);
   const [size, setSize] = React.useState('small');
   const [bold, setBold] = React.useState(false);
+  const [grid, setGrid] = React.useState(false);
   // Mounted on demand: an open modal menu hides the rest of the page from
   // assistive tech, and force-mounted content takes focus when it mounts
   // (both as with Radix), which would get in the way of the other sections.
@@ -55,6 +58,28 @@ export default function RadixDropdownMenuFixture() {
               >
                 <DropdownMenu.ItemIndicator>✓</DropdownMenu.ItemIndicator>
                 Bold
+              </DropdownMenu.CheckboxItem>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+      </section>
+
+      <section className="flex items-center gap-4">
+        <p data-testid="grid">{String(grid)}</p>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>View</DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content className={content}>
+              {/* Choosing it keeps the menu open: Radix's onSelect, prevented. */}
+              <DropdownMenu.CheckboxItem
+                checked={grid}
+                onCheckedChange={setGrid}
+                onSelect={(event) => event.preventDefault()}
+              >
+                <DropdownMenu.ItemIndicator>
+                  <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
+                </DropdownMenu.ItemIndicator>
+                Show grid
               </DropdownMenu.CheckboxItem>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>

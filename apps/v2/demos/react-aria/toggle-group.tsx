@@ -10,8 +10,8 @@ import {
   type ToggleButtonProps,
 } from "@animate-ui/react/primitives/react-aria"
 
-import { toggleVariants } from "@/components/ui/toggle"
-import { TextAlignCenterIcon, TextAlignLeftIcon, TextAlignRightIcon } from "@hugeicons/core-free-icons"
+import { toggleVariants } from "@/components/ui/react-aria/toggle"
+import { TextBoldIcon, TextItalicIcon, TextUnderlineIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 const ToggleGroupContext = React.createContext<
@@ -99,7 +99,7 @@ export { ToggleGroup, ToggleGroupItem }
 
 export const controls = {
   ToggleGroup: {
-    multiple: { value: false },
+    multiple: { value: true },
     variant: {
       value: "outline",
       options: { default: "default", outline: "outline" },
@@ -112,7 +112,7 @@ export const controls = {
 }
 
 export default function ToggleGroupDemo({
-  multiple = false,
+  multiple = true,
   variant = "outline",
   size = "default",
 }: {
@@ -124,21 +124,18 @@ export default function ToggleGroupDemo({
   return (
     <ToggleGroup
       key={String(multiple)}
-      selectionMode={multiple ? "multiple" : "single"}
-      defaultSelectedKeys={["left"]}
       variant={variant}
+      selectionMode={multiple ? "multiple" : "single"}
       size={size}
-      spacing={0}
-      aria-label="Text alignment"
     >
-      <ToggleGroupItem id="left" aria-label="Align left">
-        <HugeiconsIcon icon={TextAlignLeftIcon} strokeWidth={2} />
+      <ToggleGroupItem id="bold" aria-label="Toggle bold">
+        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
       </ToggleGroupItem>
-      <ToggleGroupItem id="center" aria-label="Align center">
-        <HugeiconsIcon icon={TextAlignCenterIcon} strokeWidth={2} />
+      <ToggleGroupItem id="italic" aria-label="Toggle italic">
+        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
       </ToggleGroupItem>
-      <ToggleGroupItem id="right" aria-label="Align right">
-        <HugeiconsIcon icon={TextAlignRightIcon} strokeWidth={2} />
+      <ToggleGroupItem id="strikethrough" aria-label="Toggle strikethrough">
+        <HugeiconsIcon icon={TextUnderlineIcon} strokeWidth={2} />
       </ToggleGroupItem>
     </ToggleGroup>
   )

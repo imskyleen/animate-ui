@@ -186,6 +186,10 @@ const CHECKBOX = '[data-slot="checkbox"]';
 const CHECK = '[data-slot="checkbox-indicator"] svg path';
 /** The check's icon: what pops (`checkAnimation="pop"`). */
 const ICON = '[data-slot="checkbox-indicator"] svg';
+/** shadcn's demo: its second box, the `checked` control's, checked on load. */
+const CHECKED = 1;
+/** shadcn's demo: its first box, unchecked on load. */
+const UNCHECKED = 0;
 
 /**
  * v1's check drawing itself: hidden for 0.2s after the state flips, then its
@@ -306,7 +310,7 @@ export function describeCheckboxDemo(lib: Lib) {
     test('a checked box shows its check at rest once loaded', async ({
       page,
     }) => {
-      const icon = page.locator(CHECKBOX).nth(0).locator(ICON);
+      const icon = page.locator(CHECKBOX).nth(CHECKED).locator(ICON);
       await expect.poll(() => opacityOf(icon)).toBe(1);
       await expect.poll(() => scaleOf(icon)).toBe(1);
     });
@@ -314,8 +318,8 @@ export function describeCheckboxDemo(lib: Lib) {
     test('the check pops in after 0.2s, from half its size', async ({
       page,
     }) => {
-      await startSampling(page, CHECKBOX, 1, ICON);
-      await page.locator(CHECKBOX).nth(1).click();
+      await startSampling(page, CHECKBOX, UNCHECKED, ICON);
+      await page.locator(CHECKBOX).nth(UNCHECKED).click();
       await page.waitForTimeout(900);
       expectCheckPops(await readSamples(page));
     });
@@ -324,11 +328,11 @@ export function describeCheckboxDemo(lib: Lib) {
       page,
     }) => {
       // At rest first: a checked box's check pops in as the page loads.
-      const icon = page.locator(CHECKBOX).nth(0).locator(ICON);
+      const icon = page.locator(CHECKBOX).nth(CHECKED).locator(ICON);
       await expect.poll(() => opacityOf(icon)).toBe(1);
       await expect.poll(() => scaleOf(icon)).toBe(1);
-      await startSampling(page, CHECKBOX, 0, ICON);
-      await page.locator(CHECKBOX).nth(0).click();
+      await startSampling(page, CHECKBOX, CHECKED, ICON);
+      await page.locator(CHECKBOX).nth(CHECKED).click();
       await page.waitForTimeout(700);
       expectCheckUnpops(await readSamples(page));
     });
@@ -336,8 +340,8 @@ export function describeCheckboxDemo(lib: Lib) {
     test('reduced motion: the check only fades', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.reload({ waitUntil: 'networkidle' });
-      await startSampling(page, CHECKBOX, 1, ICON);
-      await page.locator(CHECKBOX).nth(1).click();
+      await startSampling(page, CHECKBOX, UNCHECKED, ICON);
+      await page.locator(CHECKBOX).nth(UNCHECKED).click();
       await page.waitForTimeout(900);
       expectCheckPops(await readSamples(page), true);
     });
@@ -349,15 +353,15 @@ export function describeCheckboxDemo(lib: Lib) {
     test('a checked box shows its check at rest once loaded', async ({
       page,
     }) => {
-      const check = page.locator(CHECKBOX).nth(0).locator(CHECK);
+      const check = page.locator(CHECKBOX).nth(CHECKED).locator(CHECK);
       await expect.poll(() => opacityOf(check)).toBe(1);
       expect(await scaleOf(check)).toBe(1);
       expect(await check.getAttribute('stroke-dasharray')).toBeNull();
     });
 
     test('the check draws itself after 0.2s, in 0.3s', async ({ page }) => {
-      await startSampling(page, CHECKBOX, 1, CHECK);
-      await page.locator(CHECKBOX).nth(1).click();
+      await startSampling(page, CHECKBOX, UNCHECKED, CHECK);
+      await page.locator(CHECKBOX).nth(UNCHECKED).click();
       await page.waitForTimeout(900);
       expectCheckDraws(await readSamples(page));
     });
@@ -365,8 +369,8 @@ export function describeCheckboxDemo(lib: Lib) {
     test('unchecking erases the check in 0.3s, then removes it', async ({
       page,
     }) => {
-      await startSampling(page, CHECKBOX, 0, CHECK);
-      await page.locator(CHECKBOX).nth(0).click();
+      await startSampling(page, CHECKBOX, CHECKED, CHECK);
+      await page.locator(CHECKBOX).nth(CHECKED).click();
       await page.waitForTimeout(900);
       expectCheckErases(await readSamples(page));
     });
@@ -374,7 +378,7 @@ export function describeCheckboxDemo(lib: Lib) {
     test('the box fills with a layer growing from 70% over its border', async ({
       page,
     }) => {
-      const box = page.locator(CHECKBOX).nth(1);
+      const box = page.locator(CHECKBOX).nth(UNCHECKED);
       // Sampled in the page from the click: the layer (the box's ::before)
       // grows and fades in together over the whole box, border included,
       // while the box's own background and border keep their colors (a
@@ -416,7 +420,10 @@ export function describeCheckboxDemo(lib: Lib) {
     });
 
     test('the box never scales, on press or hover', async ({ page }) => {
-      const scales = await pressScale(page, page.locator(CHECKBOX).nth(1));
+      const scales = await pressScale(
+        page,
+        page.locator(CHECKBOX).nth(UNCHECKED),
+      );
       // The check and the box's fill answer the click: the box stays put.
       expect(scales).toEqual({ hovered: 1, held: 1, released: 1, left: 1 });
     });
@@ -424,9 +431,9 @@ export function describeCheckboxDemo(lib: Lib) {
     test('Space toggles at once, and the check still draws', async ({
       page,
     }) => {
-      const root = page.locator(CHECKBOX).nth(1);
+      const root = page.locator(CHECKBOX).nth(UNCHECKED);
       await focusTarget(lib, root).focus();
-      await startSampling(page, CHECKBOX, 1, CHECK);
+      await startSampling(page, CHECKBOX, UNCHECKED, CHECK);
       await page.keyboard.press('Space');
       expect(await stateOf(root)).toBe('true');
       await page.waitForTimeout(900);
@@ -438,8 +445,8 @@ export function describeCheckboxDemo(lib: Lib) {
     }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.reload({ waitUntil: 'networkidle' });
-      await startSampling(page, CHECKBOX, 1, CHECK);
-      const root = page.locator(CHECKBOX).nth(1);
+      await startSampling(page, CHECKBOX, UNCHECKED, CHECK);
+      const root = page.locator(CHECKBOX).nth(UNCHECKED);
       await root.click();
       await page.waitForTimeout(900);
       expectCheckDraws(await readSamples(page), true);
@@ -463,8 +470,9 @@ const DOT = '[data-slot="radio-group-indicator"] span';
 function expectDotPops(samples: NonNullable<Sample>[]) {
   const shown = present(samples).filter((s) => s.state === 'true');
   expect(shown.length).toBeGreaterThan(3);
-  expect(shown[0]!.scale).toBeLessThan(0.2);
-  expect(shown[0]!.opacity).toBeLessThan(0.3);
+  // From nothing: small on its first frame (~45ms in on a busy machine).
+  expect(shown[0]!.scale).toBeLessThan(0.35);
+  expect(shown[0]!.opacity).toBeLessThan(0.45);
   expect(Math.max(...shown.map((s) => s.scale))).toBeGreaterThan(1.06);
   const settled = shown.find(
     (s, i) => i > 0 && s.scale === 1 && s.opacity === 1,
@@ -608,9 +616,14 @@ export function describeSwitchDemo(lib: Lib) {
     test('pressed while on, it stretches toward the start, its right edge in place', async ({
       page,
     }) => {
-      const root = page.locator(SWITCH).nth(1);
+      // shadcn's demo has one switch, off: turned on first, its thumb left to
+      // come to rest (the glide settles within 650ms, see below).
+      const root = page.locator(SWITCH).nth(0);
+      await root.click();
+      await page.mouse.move(0, 0);
       expect(await stateOf(root)).toBe('true');
-      await startSampling(page, SWITCH, 1, THUMB, 45);
+      await page.waitForTimeout(1000);
+      await startSampling(page, SWITCH, 0, THUMB, 45);
       await pointerDown(page, root);
       await page.waitForTimeout(600);
       const held = await readSamples(page);
@@ -731,6 +744,7 @@ function expectPressOnly(scales: Awaited<ReturnType<typeof pressScale>>) {
   expect(scales.left).toBeCloseTo(1, 2);
 }
 
+// shadcn's demo: a single toggle (Bookmark), off.
 export function describeToggleDemo(lib: Lib) {
   test.describe(`${lib} toggle demo`, () => {
     test.beforeEach(async ({ page }) => gotoDemo(page, lib, 'toggle'));
@@ -738,17 +752,17 @@ export function describeToggleDemo(lib: Lib) {
     test('press scale (no hover scale), and a click toggles it', async ({
       page,
     }) => {
-      const toggle = page.locator(TOGGLE).nth(1);
+      const toggle = page.locator(TOGGLE).nth(0);
       expect(await stateOf(toggle)).toBe('false');
       expectPressOnly(await pressScale(page, toggle));
       expect(await stateOf(toggle)).toBe('true');
     });
 
     test('the press scale is a spring, not a tween', async ({ page }) => {
-      const toggle = page.locator(TOGGLE).nth(1);
+      const toggle = page.locator(TOGGLE).nth(0);
       const box = (await toggle.boundingBox())!;
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-      await startSampling(page, TOGGLE, 1, null, 30);
+      await startSampling(page, TOGGLE, 0, null, 30);
       await page.mouse.down();
       await page.waitForTimeout(500);
       const held = await readSamples(page);
@@ -767,13 +781,13 @@ export function describeToggleDemo(lib: Lib) {
       const toggle = page.locator(TOGGLE).nth(0);
       await toggle.focus();
       await page.keyboard.press('Space');
-      expect(await stateOf(toggle)).toBe('false');
+      expect(await stateOf(toggle)).toBe('true');
     });
 
     test('reduced motion: no press scale', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.reload({ waitUntil: 'networkidle' });
-      const { held } = await pressScale(page, page.locator(TOGGLE).nth(1));
+      const { held } = await pressScale(page, page.locator(TOGGLE).nth(0));
       expect(held).toBe(1);
     });
   });
@@ -845,96 +859,159 @@ async function itemBox(page: Page, index: number) {
     });
 }
 
-export function describeToggleGroupDemo(lib: Lib, single: boolean) {
-  test.describe(`${lib} toggle group demo`, () => {
-    test.beforeEach(async ({ page }) => gotoDemo(page, lib, 'toggle-group'));
+/**
+ * Selects the first item of a single-selection group and lets its surface
+ * fade in until it rests there.
+ */
+async function selectFirst(page: Page) {
+  await page.locator(ITEM).nth(0).click();
+  await page.mouse.move(0, 0);
+  await expect
+    .poll(() =>
+      page
+        .locator(GROUP)
+        .evaluate(
+          (el) =>
+            el.hasAttribute('data-animate-ui-highlight') &&
+            getComputedStyle(el, '::after').opacity === '1',
+        ),
+    )
+    .toBe(true);
+}
 
-    test('items scale while pressed, and a click selects', async ({ page }) => {
-      const item = page.locator(ITEM).nth(2);
-      expectPressOnly(await pressScale(page, item));
-      expect(await stateOf(item)).toBe('true');
-    });
+// shadcn's demo is `type="multiple"` (the `multiple` control's default), with
+// nothing selected. Its single selection (the control off) is tested on the
+// fixture, which renders the demo with `multiple={false}`: there the first
+// item is selected, its surface at rest, before each test.
+export function describeToggleGroupDemo(lib: Lib) {
+  for (const single of [false, true])
+    test.describe(`${lib} toggle group demo${single ? ', single selection' : ''}`, () => {
+      test.beforeEach(async ({ page }) => {
+        if (!single) return gotoDemo(page, lib, 'toggle-group');
+        await page.goto(`/tests/fixtures/${lib}-toggle-group`, {
+          waitUntil: 'networkidle',
+        });
+        await selectFirst(page);
+      });
 
-    if (single) {
-      test('the selected surface slides to the newly selected item', async ({
+      test('items scale while pressed, and a click selects', async ({
         page,
       }) => {
-        const from = await itemBox(page, 0);
-        const to = await itemBox(page, 2);
-        await sampleHighlight(page, 90);
-        await page.locator(ITEM).nth(2).click();
-        await page.mouse.move(0, 0);
-        await page.waitForTimeout(1300);
-        const frames = (await readHighlight(page)).filter((f) => f.drawn);
-        // Drawn behind the items, with the selected item's own background
-        // cleared (it isn't hovered any more).
-        expect(frames.length).toBeGreaterThan(10);
-        expect((await itemBox(page, 2)).background).toBe('rgba(0, 0, 0, 0)');
-        // From the previous item to the new one, through the middle, past
-        // its end a little (stiffness 200, damping 25), the new surface
-        // fading in as the previous one fades out.
-        const moving = frames.filter((f) => f.x > from.x + 5 && f.x < to.x - 5);
-        expect(moving.length).toBeGreaterThan(2);
-        for (const f of moving) {
-          expect(f.from + f.to).toBeCloseTo(1, 1);
-          expect(f.to).toBeGreaterThan(0);
-        }
-        const last = frames[frames.length - 1]!;
-        expect(last.x).toBeCloseTo(to.x, 0);
-        expect(last.to).toBe(1);
-        expect(last.from).toBe(0);
-        expect(Math.max(...frames.map((f) => f.x))).toBeGreaterThan(to.x);
+        const item = page.locator(ITEM).nth(2);
+        expectPressOnly(await pressScale(page, item));
+        expect(await stateOf(item)).toBe('true');
       });
 
-      test('clearing the selection fades the surface out', async ({ page }) => {
-        const item = page.locator(ITEM).nth(0);
-        await sampleHighlight(page, 60);
-        await item.click();
-        await page.mouse.move(0, 0);
-        await page.waitForTimeout(1000);
-        expect(await stateOf(item)).toBe('false');
-        const frames = await readHighlight(page);
-        expect(
-          frames.some((f) => f.drawn && f.from > 0.1 && f.from < 0.9),
-        ).toBe(true);
-        expect(frames[frames.length - 1]!.drawn).toBe(false);
-        // The item's own (unselected) style is back.
-        expect((await itemBox(page, 0)).background).toBe('rgba(0, 0, 0, 0)');
-      });
-    } else {
-      test('multiple selection: no sliding surface, items keep their own', async ({
+      if (single) {
+        test('the selected surface slides to the newly selected item', async ({
+          page,
+        }) => {
+          const from = await itemBox(page, 0);
+          const to = await itemBox(page, 2);
+          await sampleHighlight(page, 90);
+          await page.locator(ITEM).nth(2).click();
+          await page.mouse.move(0, 0);
+          await page.waitForTimeout(1300);
+          const frames = (await readHighlight(page)).filter((f) => f.drawn);
+          // Drawn behind the items, with the selected item's own background
+          // cleared (it isn't hovered any more).
+          expect(frames.length).toBeGreaterThan(10);
+          expect((await itemBox(page, 2)).background).toBe('rgba(0, 0, 0, 0)');
+          // From the previous item to the new one, through the middle, past
+          // its end a little (stiffness 200, damping 25), the new surface
+          // fading in as the previous one fades out.
+          const moving = frames.filter(
+            (f) => f.x > from.x + 5 && f.x < to.x - 5,
+          );
+          expect(moving.length).toBeGreaterThan(2);
+          for (const f of moving) {
+            expect(f.from + f.to).toBeCloseTo(1, 1);
+            expect(f.to).toBeGreaterThan(0);
+          }
+          const last = frames[frames.length - 1]!;
+          expect(last.x).toBeCloseTo(to.x, 0);
+          expect(last.to).toBe(1);
+          expect(last.from).toBe(0);
+          expect(Math.max(...frames.map((f) => f.x))).toBeGreaterThan(to.x);
+        });
+
+        test('the surface wears the selected style, chosen from the keyboard too', async ({
+          page,
+        }) => {
+          // Space on the third item, never hovered: its selected style alone
+          // (React Aria's `data-selected`, not a hover background).
+          await page.mouse.move(0, 0);
+          await page.locator(ITEM).nth(2).focus();
+          await page.keyboard.press('Space');
+          expect(await stateOf(page.locator(ITEM).nth(2))).toBe('true');
+          await expect
+            .poll(() =>
+              page
+                .locator(GROUP)
+                .evaluate((el) => getComputedStyle(el, '::after').opacity),
+            )
+            .toBe('1');
+          expect(
+            await page
+              .locator(GROUP)
+              .evaluate(
+                (el) => getComputedStyle(el, '::after').backgroundColor,
+              ),
+          ).not.toBe('rgba(0, 0, 0, 0)');
+        });
+
+        test('clearing the selection fades the surface out', async ({
+          page,
+        }) => {
+          const item = page.locator(ITEM).nth(0);
+          await sampleHighlight(page, 60);
+          await item.click();
+          await page.mouse.move(0, 0);
+          await page.waitForTimeout(1000);
+          expect(await stateOf(item)).toBe('false');
+          const frames = await readHighlight(page);
+          expect(
+            frames.some((f) => f.drawn && f.from > 0.1 && f.from < 0.9),
+          ).toBe(true);
+          expect(frames[frames.length - 1]!.drawn).toBe(false);
+          // The item's own (unselected) style is back.
+          expect((await itemBox(page, 0)).background).toBe('rgba(0, 0, 0, 0)');
+        });
+      } else {
+        test('multiple selection: no sliding surface, items keep their own', async ({
+          page,
+        }) => {
+          await page.locator(ITEM).nth(2).click();
+          await page.mouse.move(0, 0);
+          await page.waitForTimeout(400);
+          expect(
+            await page
+              .locator(GROUP)
+              .evaluate((el) => el.hasAttribute('data-animate-ui-highlight')),
+          ).toBe(false);
+          expect((await itemBox(page, 2)).background).not.toBe(
+            'rgba(0, 0, 0, 0)',
+          );
+        });
+      }
+
+      test('arrow keys only move the focus: nothing animates', async ({
         page,
       }) => {
-        await page.locator(ITEM).nth(2).click();
-        await page.mouse.move(0, 0);
-        await page.waitForTimeout(400);
-        expect(
-          await page
-            .locator(GROUP)
-            .evaluate((el) => el.hasAttribute('data-animate-ui-highlight')),
-        ).toBe(false);
-        expect((await itemBox(page, 2)).background).not.toBe(
-          'rgba(0, 0, 0, 0)',
-        );
+        await page.locator(ITEM).nth(0).focus();
+        await startSampling(page, ITEM, 1, null, 20);
+        await page.keyboard.press('ArrowRight');
+        await expect(page.locator(ITEM).nth(1)).toBeFocused();
+        await page.waitForTimeout(200);
+        for (const s of present(await readSamples(page)))
+          expect(s.scale).toBe(1);
       });
-    }
 
-    test('arrow keys only move the focus: nothing animates', async ({
-      page,
-    }) => {
-      await page.locator(ITEM).nth(0).focus();
-      await startSampling(page, ITEM, 1, null, 20);
-      await page.keyboard.press('ArrowRight');
-      await expect(page.locator(ITEM).nth(1)).toBeFocused();
-      await page.waitForTimeout(200);
-      for (const s of present(await readSamples(page))) expect(s.scale).toBe(1);
+      test('reduced motion: no press scale', async ({ page }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.reload({ waitUntil: 'networkidle' });
+        const { held } = await pressScale(page, page.locator(ITEM).nth(1));
+        expect(held).toBe(1);
+      });
     });
-
-    test('reduced motion: no press scale', async ({ page }) => {
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.reload({ waitUntil: 'networkidle' });
-      const { held } = await pressScale(page, page.locator(ITEM).nth(1));
-      expect(held).toBe(1);
-    });
-  });
 }

@@ -1,11 +1,23 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { expectSpringPace, type Sample } from './spring-curves';
+
 // Shared by the Radix UI, Base UI and React Aria progress specs. They move
 // like Animate UI v1's progress: the indicator springs to a new value
 // (stiffness 100, damping 30, no overshoot), its `x` for Radix UI (shadcn's
 // translate) and its `width` for Base UI and React Aria.
 
 export const INDICATOR = '[data-slot="progress-indicator"]';
+
+/** The indicator's spring. */
+const SPRING = { stiffness: 100, damping: 30 };
+
+/** shadcn's demo: 13% on mount, then 66% 500ms later. */
+const FROM = 0.13;
+const TO = 0.66;
+
+/** The fixtures' indicator whose value steps up every 450ms. */
+const UPLOAD = '[data-testid="upload-indicator"]';
 
 /** How much of its track the indicator shows (0 to 1). */
 export const revealed = (page: Page, indicator = INDICATOR) =>
@@ -46,67 +58,119 @@ export async function sampleRevealed(page: Page, ms: number) {
     );
 }
 
+/**
+ * Opens shadcn's demo, recording how much of its track the indicator shows
+ * (`[t, fraction]`) on every frame from the first one (an init script: a slow
+ * hydration only delays the change), until it has settled on 66%.
+ */
+async function loadDemo(page: Page, library: string) {
+  await page.addInitScript((indicator) => {
+    const w = window as unknown as { __revealed: [number, number][] };
+    w.__revealed = [];
+    const tick = () => {
+      const el = document.querySelector(indicator);
+      if (el) {
+        const track = el.parentElement!.getBoundingClientRect();
+        w.__revealed.push([
+          performance.now(),
+          (el.getBoundingClientRect().right - track.left) / track.width,
+        ]);
+      }
+      if (w.__revealed.length < 20_000) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, INDICATOR);
+  await page.goto(`/tests/demos/${library}/progress`, {
+    waitUntil: 'networkidle',
+  });
+  await expect
+    .poll(() => revealed(page), { timeout: 30_000 })
+    .toBeGreaterThan(TO - 0.001);
+  await page.waitForTimeout(100);
+  return (await page.evaluate(
+    () => (window as unknown as { __revealed: Sample[] }).__revealed,
+  )) as Sample[];
+}
+
+/** The frames from the last one at 13%, when the demo sets 66%. */
+function fromChange(frames: Sample[]) {
+  const moved = frames.findIndex(([, v]) => Math.abs(v - FROM) > 0.005);
+  expect(moved).toBeGreaterThan(0);
+  return frames.slice(moved - 1);
+}
+
 export function describeProgressDemo(library: string) {
   // How the library sizes the indicator: v1 animated Radix's `x` and Base
   // UI's `width`; React Aria's bar is width-sized too.
   const byWidth = library !== 'radix-ui';
 
   test.describe(`${library} progress demo`, () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(`/tests/demos/${library}/progress`, {
-        waitUntil: 'networkidle',
-      });
-    });
-
     test('page load: the indicator starts at its value, no animation', async ({
       page,
     }) => {
-      expect(await revealed(page)).toBeCloseTo(0.64, 2);
+      const frames = await loadDemo(page, library);
+      // At 13% from the first frame (the server's), until the demo sets 66%.
+      expect(frames[0]![1]).toBeCloseTo(FROM, 2);
+      fromChange(frames);
       const { bar, track } = await page.locator(INDICATOR).evaluate((el) => ({
         bar: el.getBoundingClientRect().width,
         track: el.parentElement!.getBoundingClientRect().width,
       }));
       // Radix UI: full width, translated. Base UI / React Aria: its width.
-      if (byWidth) expect(bar / track).toBeCloseTo(0.64, 2);
+      if (byWidth) expect(bar / track).toBeCloseTo(TO, 2);
       else expect(bar).toBeCloseTo(track, 0);
     });
 
     test('a new value springs there without overshooting', async ({ page }) => {
-      const samples = await sampleRevealed(page, 420);
-      await page.getByRole('button', { name: 'Upload again' }).click();
-      const frames = await samples();
-      // Heading back to 0 over several frames (64% -> 0%, then 12% after
-      // 450ms), never past it, never back up before the next step.
-      const moving = frames.filter((f) => f > 0.01 && f < 0.63);
-      expect(moving.length).toBeGreaterThan(5);
-      expect(Math.min(...frames)).toBeGreaterThan(-0.005);
-      for (let i = 1; i < frames.length; i++)
-        expect(frames[i]!).toBeLessThanOrEqual(frames[i - 1]! + 0.002);
-      // An overdamped spring: still well on its way after 150ms.
-      expect(frames.some((f) => f > 0.15 && f < 0.5)).toBe(true);
-    });
-
-    test('values retarget mid-way, then settle on 100%', async ({ page }) => {
-      await page.getByRole('button', { name: 'Upload again' }).click();
-      // 7 steps, 450ms apart, then it settles on 100%.
-      await expect(
-        page.getByRole('button', { name: 'Upload again' }),
-      ).toBeEnabled({
-        timeout: 6000,
+      const after = fromChange(await loadDemo(page, library));
+      // Heading to 66% over several frames, never past it, never back down.
+      const start = after[0]![0];
+      const first = after
+        .filter(([t]) => t - start <= 420)
+        .map(([, value]) => value);
+      expect(
+        first.filter((v) => v > FROM + 0.01 && v < TO - 0.01).length,
+      ).toBeGreaterThan(5);
+      expect(Math.max(...after.map(([, v]) => v))).toBeLessThan(TO + 0.005);
+      for (let i = 1; i < after.length; i++)
+        expect(after[i]![1]).toBeGreaterThanOrEqual(after[i - 1]![1] - 0.002);
+      // An overdamped spring: still well on its way after 150ms, from 10% to
+      // 90% of the way in the time the spring takes.
+      expect(first.some((v) => v > 0.3 && v < 0.55)).toBe(true);
+      expectSpringPace(after, SPRING, {
+        from: FROM,
+        to: TO,
+        a: FROM + (TO - FROM) * 0.1,
+        b: FROM + (TO - FROM) * 0.9,
       });
-      await expect
-        .poll(() => revealed(page), { timeout: 3000 })
-        .toBeGreaterThan(0.995);
     });
 
     test('reduced motion: values apply at once', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.reload({ waitUntil: 'networkidle' });
-      await page.getByRole('button', { name: 'Upload again' }).click();
-      await page.waitForTimeout(80);
-      // Already at 0 or at the first step, never in between.
-      const value = await revealed(page);
-      expect(value < 0.01 || Math.abs(value - 0.12) < 0.01).toBe(true);
+      const frames = await loadDemo(page, library);
+      // At 13%, then at 66%, never in between.
+      const between = frames.filter(
+        ([, v]) => Math.abs(v - FROM) >= 0.01 && Math.abs(v - TO) >= 0.01,
+      );
+      expect(between).toEqual([]);
+      expect(Math.abs(frames.at(-1)![1] - TO)).toBeLessThan(0.01);
+    });
+  });
+
+  // shadcn's demo sets one value: the fixture steps through several, faster
+  // than the spring settles.
+  test.describe(`${library} progress, values in quick succession`, () => {
+    test('values retarget mid-way, then settle on 100%', async ({ page }) => {
+      await page.goto(`/tests/fixtures/${library}-progress`, {
+        waitUntil: 'networkidle',
+      });
+      const button = page.getByRole('button', { name: 'Upload again' });
+      await button.click();
+      // 7 steps, 450ms apart, then it settles on 100%.
+      await expect(button).toBeEnabled({ timeout: 6000 });
+      await expect
+        .poll(() => revealed(page, UPLOAD), { timeout: 3000 })
+        .toBeGreaterThan(0.995);
     });
   });
 }

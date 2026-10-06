@@ -71,6 +71,23 @@ export default function BaseTabsFixture() {
           <Tabs.Panel value="2">Focus panel 2</Tabs.Panel>
         </Tabs.Root>
       </section>
+
+      <section data-testid="heights">
+        {/* Panels of different heights: the height springs between them. */}
+        <Tabs.Root defaultValue="short">
+          <Tabs.List aria-label="Heights">
+            <Tabs.Tab value="short">Short</Tabs.Tab>
+            <Tabs.Tab value="tall">Tall</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="short">Short panel</Tabs.Panel>
+          <Tabs.Panel value="tall">
+            <p>Tall panel</p>
+            <p>Its second line</p>
+            <p>Its third line</p>
+            <p>Its fourth line</p>
+          </Tabs.Panel>
+        </Tabs.Root>
+      </section>
     </div>
   );
 }

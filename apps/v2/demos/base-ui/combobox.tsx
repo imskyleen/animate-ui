@@ -304,15 +304,13 @@ export {
   useComboboxAnchor,
 }
 
-const FRAMEWORKS = [
+const frameworks = [
   "Next.js",
-  "React Router",
-  "TanStack Start",
-  "Astro",
   "SvelteKit",
-  "Nuxt",
-  "SolidStart",
-]
+  "Nuxt.js",
+  "Remix",
+  "Astro",
+] as const
 
 export const controls = {
   ComboboxContent: {
@@ -332,7 +330,7 @@ export const controls = {
   },
 }
 
-export default function ComboboxDemo({
+export default function ComboboxBasic({
   side = "bottom",
   sideOffset = 6,
   align = "start",
@@ -348,21 +346,17 @@ export default function ComboboxDemo({
 }) {
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <Combobox items={FRAMEWORKS}>
-        <ComboboxInput
-          placeholder="Search a framework…"
-          aria-label="Framework"
-          className="w-56"
-        />
+      <Combobox items={frameworks}>
+        <ComboboxInput placeholder="Select a framework" />
         <ComboboxContent
           side={side}
           sideOffset={sideOffset}
           align={align}
           alignOffset={alignOffset}
         >
-          <ComboboxEmpty>No framework found.</ComboboxEmpty>
+          <ComboboxEmpty>No items found.</ComboboxEmpty>
           <ComboboxList>
-            {(item: string) => (
+            {(item) => (
               <ComboboxItem key={item} value={item}>
                 {item}
               </ComboboxItem>

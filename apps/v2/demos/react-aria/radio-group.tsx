@@ -8,7 +8,7 @@ import {
   type RadioGroupProps,
   type RadioProps,
 } from "@animate-ui/react/primitives/react-aria"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/react-aria/label"
 
 function RadioGroup({ className, ...props }: RadioGroupProps) {
   return (
@@ -47,21 +47,25 @@ function RadioGroupItem({ className, children, ...props }: RadioProps) {
 
 export { RadioGroup, RadioGroupItem }
 
-const OPTIONS = [
-  { value: "all", label: "All new messages" },
-  { value: "mentions", label: "Direct messages and mentions" },
-  { value: "none", label: "Nothing" },
-]
-
 export default function RadioGroupDemo() {
   return (
-    <RadioGroup defaultValue="mentions" aria-label="Notify me about" className="w-fit">
-      {OPTIONS.map((option) => (
-        <div key={option.value} className="flex items-center gap-2">
-          <RadioGroupItem value={option.value} id={`notify-${option.value}`} />
-          <Label htmlFor={`notify-${option.value}`}>{option.label}</Label>
-        </div>
-      ))}
+    <RadioGroup
+      aria-label="Density"
+      defaultValue="comfortable"
+      className="w-fit"
+    >
+      <div className="flex items-center gap-3">
+        <RadioGroupItem value="default" id="r1" />
+        <Label htmlFor="r1">Default</Label>
+      </div>
+      <div className="flex items-center gap-3">
+        <RadioGroupItem value="comfortable" id="r2" />
+        <Label htmlFor="r2">Comfortable</Label>
+      </div>
+      <div className="flex items-center gap-3">
+        <RadioGroupItem value="compact" id="r3" />
+        <Label htmlFor="r3">Compact</Label>
+      </div>
     </RadioGroup>
   )
 }

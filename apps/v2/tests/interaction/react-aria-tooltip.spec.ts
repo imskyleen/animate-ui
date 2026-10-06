@@ -9,12 +9,15 @@ import {
 
 const PATH = '/tests/demos/react-aria/tooltip';
 const CONTENT = '[data-slot="tooltip-content"]';
+const FIXTURE = '/tests/fixtures/react-aria-tooltip';
+/** The fixture's toolbar of tooltips (the demo has a single one). */
+const TOOLBAR = '[data-testid="toolbar-content"]';
 
 describeAnchoredOverlay('react-aria tooltip demo', {
   path: PATH,
   selector: CONTENT,
   kind: 'tooltip',
-  open: (page) => page.getByRole('button', { name: 'Bold' }).hover(),
+  open: (page) => page.getByRole('button', { name: 'Hover' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
   // React Aria's TooltipTrigger waits 500ms (its default) before closing.
   closeDelay: 500,
@@ -25,16 +28,16 @@ describeAnchoredOverlay('react-aria tooltip demo', {
 test.describe('react-aria tooltip warmup', () => {
   test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
-    await gotoReady(page, PATH);
+    await gotoReady(page, FIXTURE);
   });
 
   test('the next tooltip along the toolbar swaps in at once', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Bold' }).hover();
-    await expect(page.locator(CONTENT)).toBeVisible();
+    await expect(page.locator(TOOLBAR)).toBeVisible();
     await page.waitForTimeout(SETTLE_BUDGET);
-    const probe = await probeFirstFrameOf(page, CONTENT, 'Italic');
+    const probe = await probeFirstFrameOf(page, TOOLBAR, 'Italic');
     const box = (await page
       .getByRole('button', { name: 'Italic' })
       .boundingBox())!;
@@ -47,7 +50,7 @@ test.describe('react-aria tooltip warmup', () => {
   });
 
   test('a cold tooltip plays its entrance', async ({ page }) => {
-    const probe = await probeFirstFrameOf(page, CONTENT, 'Underline');
+    const probe = await probeFirstFrameOf(page, TOOLBAR, 'Underline');
     await page.getByRole('button', { name: 'Underline' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
@@ -58,7 +61,7 @@ test.describe('react-aria tooltip warmup', () => {
 test.describe('react-aria tooltip API', () => {
   test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
-    await gotoReady(page, '/tests/fixtures/react-aria-tooltip');
+    await gotoReady(page, FIXTURE);
   });
 
   test('controlled TooltipTrigger, with isExiting', async ({ page }) => {
@@ -102,7 +105,7 @@ test.describe('react-aria tooltip API', () => {
   test('defaultOpen plays its entrance on page load (v1)', async ({ page }) => {
     await expectEntranceOnLoad(
       page,
-      '/tests/fixtures/react-aria-tooltip',
+      FIXTURE,
       '[data-testid="default-open-content"]',
       'tooltip',
     );
@@ -110,7 +113,7 @@ test.describe('react-aria tooltip API', () => {
 
   test('keyboard focus opens it, Escape closes it', async ({ page }) => {
     // Fresh page, no pointer moves: keyboard modality from the start.
-    await page.goto('/tests/fixtures/react-aria-tooltip', {
+    await page.goto(FIXTURE, {
       waitUntil: 'networkidle',
       timeout: 150_000,
     });

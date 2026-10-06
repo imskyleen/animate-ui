@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 import {
-  SHEET_TRAVEL,
   expectDialogEntrance,
   expectDialogExit,
   expectDialogSettled,
-  DRAWER_CURVE,
+  DISMISS_CURVE,
+  SHEET_CURVE,
   expectAnimationCurve,
   expectSheetEntrance,
   expectSheetExit,
@@ -39,7 +39,7 @@ test.describe('react-aria dialog demo', () => {
       content: CONTENT,
       overlay: OVERLAY,
     });
-    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     const frames = await timeline.stop();
     expectDialogEntrance(frames, BACKGROUND);
@@ -63,7 +63,7 @@ test.describe('react-aria dialog demo', () => {
   test('closes quicker than it came: tips back speeding away, ahead of its overlay, then unmounts', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     const timeline = await recordTimeline(page, {
       content: CONTENT,
@@ -74,6 +74,8 @@ test.describe('react-aria dialog demo', () => {
     await expect(page.locator(OVERLAY)).toHaveCount(0);
     const frames = await timeline.stop();
     expectDialogExit(frames, BACKGROUND);
+    // A dismissed dialog's curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
     for (const frame of present(frames, 'overlay'))
       expect(frame.samples.overlay!.opacity).toBe(1);
   });
@@ -81,7 +83,7 @@ test.describe('react-aria dialog demo', () => {
   test('keyboard: opens with Enter, traps focus, gives it back on close', async ({
     page,
   }) => {
-    const trigger = page.getByRole('button', { name: 'Edit profile' });
+    const trigger = page.getByRole('button', { name: 'Open Dialog' });
     await trigger.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
@@ -93,7 +95,7 @@ test.describe('react-aria dialog demo', () => {
   });
 
   test('reopening during the exit comes back fully', async ({ page }) => {
-    const trigger = page.getByRole('button', { name: 'Edit profile' });
+    const trigger = page.getByRole('button', { name: 'Open Dialog' });
     await trigger.click();
     await expectDialogSettled(page, CONTENT);
     await page.keyboard.press('Escape');
@@ -109,7 +111,7 @@ test.describe('react-aria dialog demo', () => {
   test('reduced motion: no tilt or scale, still fades', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const timeline = await recordTimeline(page, { content: CONTENT });
-    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expectDialogSettled(page, CONTENT);
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;
@@ -126,47 +128,82 @@ test.describe('react-aria dialog: sheet demo', () => {
     });
   });
 
-  for (const side of Object.keys(
-    SHEET_TRAVEL,
-  ) as (keyof typeof SHEET_TRAVEL)[]) {
-    test(`slides and fades in from the ${side} edge on Vaul's curve`, async ({
-      page,
-    }) => {
-      const timeline = await recordTimeline(page, {
-        content: SHEET,
-        overlay: SHEET_OVERLAY,
-      });
-      await page.getByRole('button', { name: side, exact: true }).click();
-      await expect(page.locator(SHEET)).toHaveAttribute('data-side', side);
-      await expectSheetSettled(page, SHEET, side);
-      const frames = await timeline.stop();
-      expectSheetEntrance(frames, side);
-      // Vaul's curve, as Motion handed it to the browser.
-      expectAnimationCurve(await timeline.timing('content'), DRAWER_CURVE);
-      for (const frame of present(frames, 'overlay'))
-        expect(frame.samples.overlay!.opacity).toBe(1);
+  test('slides and fades in from the right edge, never past its rest', async ({
+    page,
+  }) => {
+    const timeline = await recordTimeline(page, {
+      content: SHEET,
+      overlay: SHEET_OVERLAY,
     });
-  }
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
+    await expect(page.locator(SHEET)).toHaveAttribute('data-side', 'right');
+    await expectSheetSettled(page, SHEET, 'right');
+    const frames = await timeline.stop();
+    expectSheetEntrance(frames, 'right');
+    // Its curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
+    for (const frame of present(frames, 'overlay'))
+      expect(frame.samples.overlay!.opacity).toBe(1);
+  });
 
-  test('slides and fades back out, then unmounts', async ({ page }) => {
-    await page.getByRole('button', { name: 'right', exact: true }).click();
+  test('slides and fades back out quicker, speeding off its edge like a dismissed dialog, then unmounts', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await expectSheetSettled(page, SHEET, 'right');
     const timeline = await recordTimeline(page, { content: SHEET });
     await page.keyboard.press('Escape');
     await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
     expectSheetExit(await timeline.stop(), 'right');
+    // A dismissed dialog's curve, as Motion handed it to the browser.
+    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
   });
 
   test('reduced motion: fades in place', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const timeline = await recordTimeline(page, { content: SHEET });
-    await page.getByRole('button', { name: 'left', exact: true }).click();
-    await expectSheetSettled(page, SHEET, 'left');
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
+    await expectSheetSettled(page, SHEET, 'right');
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;
     expect(Math.abs(first.x)).toBeLessThan(0.001);
     expect(first.opacity).toBeLessThan(1);
   });
+});
+
+// The demo's sheet opens from the right: the other edges, on the fixture.
+test.describe('react-aria dialog: sheet sides', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/tests/fixtures/react-aria-modal', {
+      waitUntil: 'networkidle',
+    });
+    // The defaultOpen modal comes first: close it.
+    await page.getByRole('button', { name: 'Close default' }).click();
+    await expect(
+      page.getByRole('dialog', { name: 'Default open modal' }),
+    ).toHaveCount(0, { timeout: 2500 });
+  });
+
+  for (const side of ['top', 'bottom', 'left'] as const) {
+    test(`slides and fades in from the ${side} edge, never past its rest`, async ({
+      page,
+    }) => {
+      const sheet = `[data-testid="${side}-sheet"]`;
+      const timeline = await recordTimeline(page, {
+        content: sheet,
+        overlay: `[data-testid="${side}-sheet-overlay"]`,
+      });
+      await page.getByRole('button', { name: `Sheet ${side}` }).click();
+      await expect(page.locator(sheet)).toHaveAttribute('data-side', side);
+      await expectSheetSettled(page, sheet, side);
+      const frames = await timeline.stop();
+      expectSheetEntrance(frames, side);
+      // Its curve, as Motion handed it to the browser.
+      expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
+      for (const frame of present(frames, 'overlay'))
+        expect(frame.samples.overlay!.opacity).toBe(1);
+    });
+  }
 });
 
 test.describe('react-aria modal API', () => {

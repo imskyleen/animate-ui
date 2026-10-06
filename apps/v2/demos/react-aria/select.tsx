@@ -283,10 +283,12 @@ export {
   SelectEmpty,
 }
 
-const FONTS = [
-  { label: "Sans-serif", items: ["Inter", "Geist", "Satoshi"] },
-  { label: "Serif", items: ["Lora", "Merriweather", "Playfair Display"] },
-  { label: "Monospace", items: ["Geist Mono", "JetBrains Mono"] },
+const items = [
+  { label: "Apple", value: "apple" },
+  { label: "Banana", value: "banana" },
+  { label: "Blueberry", value: "blueberry" },
+  { label: "Grapes", value: "grapes" },
+  { label: "Pineapple", value: "pineapple" },
 ]
 
 export const controls = {
@@ -333,29 +335,19 @@ export default function SelectDemo({
 }) {
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <Select
-        aria-label="Font"
-        placeholder="Choose a font"
-        defaultValue="Geist"
-        className="w-48"
-      >
+      <Select placeholder="Select a fruit" className="w-full max-w-48" aria-label="Fruit">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
         <SelectContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
-          {FONTS.map((group, index) => (
-            <React.Fragment key={group.label}>
-              {index > 0 && <SelectSeparator />}
-              <SelectGroup>
-                <SelectLabel>{group.label}</SelectLabel>
-                {group.items.map((font) => (
-                  <SelectItem key={font} id={font}>
-                    {font}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </React.Fragment>
-          ))}
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            {items.map((item) => (
+              <SelectItem key={item.value} id={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </AnimateUIProvider>

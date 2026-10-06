@@ -5,6 +5,8 @@ import { cn } from "cn"
 import { Dialog as SheetPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -140,42 +142,36 @@ export {
   SheetDescription,
 }
 
-const SIDES = ["top", "right", "bottom", "left"] as const
-
-export default function DialogSheetDemo() {
+export default function SheetDemo() {
   return (
-    <div className="grid grid-cols-2 gap-2">
-      {SIDES.map((side) => (
-        <Sheet key={side}>
-          <SheetTrigger asChild>
-            <Button variant="outline" className="capitalize">
-              {side}
-            </Button>
-          </SheetTrigger>
-          <SheetContent side={side}>
-            <SheetHeader>
-              <SheetTitle>Notifications</SheetTitle>
-              <SheetDescription>
-                Choose what you want to hear about. You can change this at any
-                time.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid gap-3 px-4 text-sm">
-              {["Mentions", "Direct messages", "Weekly digest"].map((label) => (
-                <label key={label} className="flex items-center gap-2">
-                  <input type="checkbox" defaultChecked className="accent-primary size-4" />
-                  {label}
-                </label>
-              ))}
-            </div>
-            <SheetFooter>
-              <SheetClose asChild>
-                <Button>Save preferences</Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
-      ))}
-    </div>
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you&apos;re done.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="grid flex-1 auto-rows-min gap-6 px-4">
+          <div className="grid gap-3">
+            <Label htmlFor="sheet-demo-name">Name</Label>
+            <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="sheet-demo-username">Username</Label>
+            <Input id="sheet-demo-username" defaultValue="@peduarte" />
+          </div>
+        </div>
+        <SheetFooter>
+          <Button type="submit">Save changes</Button>
+          <SheetClose asChild>
+            <Button variant="outline">Close</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }

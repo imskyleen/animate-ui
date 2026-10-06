@@ -10,6 +10,8 @@ import {
   SliderTrack,
 } from '@animate-ui/react/primitives/react-aria';
 
+import { Slider as DemoSlider } from '@/demos/react-aria/slider';
+
 const track = {
   position: 'relative',
   width: 240,
@@ -61,6 +63,17 @@ export default function ReactAriaSliderFixture() {
             }
           </SliderTrack>
         </Slider>
+      </section>
+
+      <section data-testid="range">
+        {/* shadcn's slider-range example, on the docs demo's Slider. */}
+        <DemoSlider
+          aria-label="Range"
+          defaultValue={[25, 50]}
+          maxValue={100}
+          step={5}
+          className="mx-auto w-full max-w-xs"
+        />
       </section>
     </div>
   );

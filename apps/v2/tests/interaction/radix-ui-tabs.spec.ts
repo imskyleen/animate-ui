@@ -1,8 +1,15 @@
 import { expect, test } from '@playwright/test';
 
-import { INDICATOR, PANEL, describeTabsDemo, gotoTabs } from './tabs-helpers';
+import {
+  INDICATOR,
+  PANEL,
+  describeTabsDemo,
+  describeTabsHeights,
+  gotoTabs,
+} from './tabs-helpers';
 
 describeTabsDemo('radix-ui', { selectKeys: ['ArrowRight'] });
+describeTabsHeights('radix-ui');
 
 test.describe('radix-ui tabs API', () => {
   test.beforeEach(async ({ page }) => {

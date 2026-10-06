@@ -7,6 +7,14 @@ import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field"
 import { Label } from "@/components/ui/label"
 
 function Checkbox({
@@ -64,25 +72,43 @@ export default function CheckboxDemo({
 
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <div className="flex flex-col gap-5">
-        <Label>
-          <Checkbox checked={checked} onCheckedChange={setChecked} />
-          Accept terms and conditions
-        </Label>
-        <Label className="items-start">
-          <Checkbox />
-          <div className="grid gap-1.5 font-normal">
-            <span className="font-medium">Product updates</span>
-            <span className="text-muted-foreground">
-              A short email when a new primitive ships.
-            </span>
-          </div>
-        </Label>
-        <Label>
-          <Checkbox disabled />
-          Weekly digest (coming soon)
-        </Label>
-      </div>
+      <FieldGroup className="max-w-sm">
+        <Field orientation="horizontal">
+          <Checkbox id="terms-checkbox" name="terms-checkbox" />
+          <Label htmlFor="terms-checkbox">Accept terms and conditions</Label>
+        </Field>
+        <Field orientation="horizontal">
+          <Checkbox
+            id="terms-checkbox-2"
+            name="terms-checkbox-2"
+            checked={checked}
+            onCheckedChange={setChecked}
+          />
+          <FieldContent>
+            <FieldLabel htmlFor="terms-checkbox-2">
+              Accept terms and conditions
+            </FieldLabel>
+            <FieldDescription>
+              By clicking this checkbox, you agree to the terms.
+            </FieldDescription>
+          </FieldContent>
+        </Field>
+        <Field orientation="horizontal" data-disabled>
+          <Checkbox id="toggle-checkbox" name="toggle-checkbox" disabled />
+          <FieldLabel htmlFor="toggle-checkbox">Enable notifications</FieldLabel>
+        </Field>
+        <FieldLabel>
+          <Field orientation="horizontal">
+            <Checkbox id="toggle-checkbox-2" name="toggle-checkbox-2" />
+            <FieldContent>
+              <FieldTitle>Enable notifications</FieldTitle>
+              <FieldDescription>
+                You can enable or disable notifications at any time.
+              </FieldDescription>
+            </FieldContent>
+          </Field>
+        </FieldLabel>
+      </FieldGroup>
     </AnimateUIProvider>
   )
 }

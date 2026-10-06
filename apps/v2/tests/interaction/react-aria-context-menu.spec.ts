@@ -62,7 +62,7 @@ test.describe('react-aria context-menu demo', () => {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(700);
     const probe = await probeFirstFrame(page, SUB_CONTENT);
-    await page.getByRole('menuitem', { name: 'Arrange' }).hover();
+    await page.getByRole('menuitem', { name: 'More Tools' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     await expect(page.locator(SUB_CONTENT)).toBeVisible();
@@ -73,18 +73,18 @@ test.describe('react-aria context-menu demo', () => {
   }) => {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(700);
-    const trigger = page.getByRole('menuitem', { name: 'Arrange' });
+    const trigger = page.getByRole('menuitem', { name: 'More Tools' });
     await trigger.hover();
     await expect(page.locator(SUB_CONTENT)).toBeVisible();
     await page.waitForTimeout(400);
-    await page.getByRole('menuitem', { name: 'Bring to front' }).hover();
+    await page.getByRole('menuitem', { name: 'Save Page...' }).hover();
     await page.waitForTimeout(600);
     // The submenu shares its menu's highlight: it moved into the submenu.
     const copies = page.locator('[data-slot="item-highlight"]');
     await expect(copies).toHaveCount(1);
     expect(
       await copies.first().evaluate((el) => el.parentElement?.textContent),
-    ).toContain('Bring to front');
+    ).toContain('Save Page...');
     // The open trigger shows no background of its own.
     expect(
       await trigger.evaluate((el) => getComputedStyle(el).backgroundColor),
@@ -107,10 +107,12 @@ describeMenuHighlight('react-aria context-menu highlight', {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(500);
   },
-  first: (page) => page.getByRole('menuitemcheckbox', { name: 'Show grid' }),
-  second: (page) => page.getByRole('menuitemcheckbox', { name: 'Show rulers' }),
-  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
-  submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
+  first: (page) =>
+    page.getByRole('menuitemcheckbox', { name: 'Show Bookmarks' }),
+  second: (page) =>
+    page.getByRole('menuitemcheckbox', { name: 'Show Full URLs' }),
+  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'More Tools' }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Save Page...' }),
   keyboardNext: 'ArrowDown',
 });
 
@@ -121,7 +123,7 @@ describeMenuChecks('react-aria context-menu checks', {
   },
   popup: '[data-slot="context-menu-content"]',
   indicator: '[data-slot$="-item-indicator"]',
-  checkbox: { checked: 'Show grid', unchecked: 'Show rulers' },
-  radio: { from: 'Zoom to fit', to: 'Zoom to 100%' },
+  checkbox: { checked: 'Show Bookmarks', unchecked: 'Show Full URLs' },
+  radio: { from: 'Pedro Duarte', to: 'Colm Tuite' },
   radioCloses: true,
 });

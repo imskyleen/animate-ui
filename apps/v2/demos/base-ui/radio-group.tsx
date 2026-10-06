@@ -3,7 +3,7 @@
 import { Radio as RadioPrimitive } from "@animate-ui/react/primitives/base-ui/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@animate-ui/react/primitives/base-ui/radio-group"
 import { cn } from "cn"
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/base-ui/label"
 
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
@@ -37,21 +37,21 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
 
 export { RadioGroup, RadioGroupItem }
 
-const OPTIONS = [
-  { value: "all", label: "All new messages" },
-  { value: "mentions", label: "Direct messages and mentions" },
-  { value: "none", label: "Nothing" },
-]
-
 export default function RadioGroupDemo() {
   return (
-    <RadioGroup defaultValue="mentions" aria-label="Notify me about" className="w-fit">
-      {OPTIONS.map((option) => (
-        <Label key={option.value}>
-          <RadioGroupItem value={option.value} />
-          {option.label}
-        </Label>
-      ))}
+    <RadioGroup defaultValue="comfortable" className="w-fit">
+      <div className="flex items-center gap-3">
+        <RadioGroupItem value="default" id="r1" />
+        <Label htmlFor="r1">Default</Label>
+      </div>
+      <div className="flex items-center gap-3">
+        <RadioGroupItem value="comfortable" id="r2" />
+        <Label htmlFor="r2">Comfortable</Label>
+      </div>
+      <div className="flex items-center gap-3">
+        <RadioGroupItem value="compact" id="r3" />
+        <Label htmlFor="r3">Compact</Label>
+      </div>
     </RadioGroup>
   )
 }

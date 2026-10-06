@@ -7,7 +7,7 @@ import {
 
 const PATH = '/tests/demos/radix-ui/popover';
 const CONTENT = '[data-slot="popover-content"]';
-const trigger = 'Share';
+const trigger = 'Open popover';
 
 describeAnchoredOverlay('radix-ui popover demo', {
   path: PATH,

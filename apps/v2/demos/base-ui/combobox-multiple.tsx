@@ -304,15 +304,13 @@ export {
   useComboboxAnchor,
 }
 
-const FRAMEWORKS = [
+const frameworks = [
   "Next.js",
-  "React Router",
-  "TanStack Start",
-  "Astro",
   "SvelteKit",
-  "Nuxt",
-  "SolidStart",
-]
+  "Nuxt.js",
+  "Remix",
+  "Astro",
+] as const
 
 export const controls = {
   AnimateUIProvider: {
@@ -320,7 +318,7 @@ export const controls = {
   },
 }
 
-export default function ComboboxMultipleDemo({
+export default function ComboboxMultiple({
   checkAnimation = "draw",
 }: {
   /** How the checks show and hide. */
@@ -330,26 +328,28 @@ export default function ComboboxMultipleDemo({
 
   return (
     <AnimateUIProvider checkAnimation={checkAnimation}>
-      <Combobox multiple items={FRAMEWORKS} defaultValue={["Next.js", "Astro"]}>
-        <ComboboxChips ref={anchor} className="w-72">
+      <Combobox
+        multiple
+        autoHighlight
+        items={frameworks}
+        defaultValue={[frameworks[0]]}
+      >
+        <ComboboxChips ref={anchor} className="w-full max-w-xs">
           <ComboboxValue>
-            {(values: string[]) => (
+            {(values) => (
               <React.Fragment>
-                {values.map((value) => (
+                {values.map((value: string) => (
                   <ComboboxChip key={value}>{value}</ComboboxChip>
                 ))}
-                <ComboboxChipsInput
-                  placeholder={values.length > 0 ? "" : "Add frameworks…"}
-                  aria-label="Frameworks"
-                />
+                <ComboboxChipsInput />
               </React.Fragment>
             )}
           </ComboboxValue>
         </ComboboxChips>
         <ComboboxContent anchor={anchor}>
-          <ComboboxEmpty>No framework found.</ComboboxEmpty>
+          <ComboboxEmpty>No items found.</ComboboxEmpty>
           <ComboboxList>
-            {(item: string) => (
+            {(item) => (
               <ComboboxItem key={item} value={item}>
                 {item}
               </ComboboxItem>

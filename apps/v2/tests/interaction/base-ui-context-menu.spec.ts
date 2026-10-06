@@ -94,10 +94,10 @@ describeMenuHighlight('base-ui context-menu highlight', {
     await page.waitForTimeout(400);
   },
   // Adjacent enabled items (Base UI's arrow keys visit disabled ones too).
-  first: (page) => page.getByRole('menuitem', { name: /Duplicate/ }),
-  second: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
-  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'Arrange' }),
-  submenuItem: (page) => page.getByRole('menuitem', { name: 'Bring to front' }),
+  first: (page) => page.getByRole('menuitem', { name: /Reload/ }),
+  second: (page) => page.getByRole('menuitem', { name: 'More Tools' }),
+  submenuTrigger: (page) => page.getByRole('menuitem', { name: 'More Tools' }),
+  submenuItem: (page) => page.getByRole('menuitem', { name: 'Save Page...' }),
   keyboardNext: 'ArrowDown',
 });
 
@@ -108,7 +108,7 @@ describeMenuChecks('base-ui context-menu checks', {
   },
   popup: '[data-slot="context-menu-content"]',
   indicator: 'span[aria-hidden="true"]',
-  checkbox: { checked: 'Show grid', unchecked: 'Show rulers' },
-  radio: { from: 'Zoom to fit', to: 'Zoom to 100%' },
+  checkbox: { checked: 'Show Bookmarks', unchecked: 'Show Full URLs' },
+  radio: { from: 'Pedro Duarte', to: 'Colm Tuite' },
   radioCloses: false,
 });

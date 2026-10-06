@@ -29,12 +29,12 @@ disclosureDemoTests('base-ui accordion demo', {
   url: '/tests/demos/base-ui/accordion',
   panel: '[data-slot="accordion-content"]',
   closed: {
-    trigger: 'How is it different from other libraries?',
-    text: 'You keep your own components',
+    trigger: 'What is your return policy?',
+    text: 'Returns accepted within 30 days',
   },
   open: {
-    trigger: 'What is Animate UI?',
-    text: 'Animated drop-in primitives',
+    trigger: 'What are your shipping options?',
+    text: 'We offer standard (5-7 days)',
   },
   closedState: 'unmounted',
 });

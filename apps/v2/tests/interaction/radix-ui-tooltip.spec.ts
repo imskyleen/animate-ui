@@ -8,21 +8,27 @@ import {
 
 const PATH = '/tests/demos/radix-ui/tooltip';
 const CONTENT = '[data-slot="tooltip-content"]';
+const FIXTURE = '/tests/fixtures/radix-ui-tooltip';
 
 describeAnchoredOverlay('radix-ui tooltip demo', {
   path: PATH,
   selector: CONTENT,
   kind: 'tooltip',
-  open: (page) => page.getByRole('button', { name: 'Bold' }).hover(),
+  open: (page) => page.getByRole('button', { name: 'Hover' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
 });
 
-describeToolbarTooltips('radix-ui toolbar tooltips', PATH, CONTENT);
+// The demo has a single tooltip: the toolbar is the fixture's.
+describeToolbarTooltips(
+  'radix-ui toolbar tooltips',
+  FIXTURE,
+  '[data-testid="toolbar-content"]',
+);
 
 test.describe('radix-ui tooltip API', () => {
   test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
-    await gotoReady(page, '/tests/fixtures/radix-ui-tooltip');
+    await gotoReady(page, FIXTURE);
   });
 
   test('controlled open and onOpenChange', async ({ page }) => {
@@ -40,7 +46,7 @@ test.describe('radix-ui tooltip API', () => {
   test('defaultOpen plays its entrance on page load (v1)', async ({ page }) => {
     await expectEntranceOnLoad(
       page,
-      '/tests/fixtures/radix-ui-tooltip',
+      FIXTURE,
       '[data-testid="default-open-content"]',
       'tooltip',
     );

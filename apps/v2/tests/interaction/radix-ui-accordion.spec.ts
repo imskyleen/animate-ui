@@ -6,12 +6,12 @@ disclosureDemoTests('radix-ui accordion demo', {
   url: '/tests/demos/radix-ui/accordion',
   panel: '[data-slot="accordion-content"]',
   closed: {
-    trigger: 'How is it different from other libraries?',
-    text: 'You keep your own components',
+    trigger: 'What is your return policy?',
+    text: 'Returns accepted within 30 days',
   },
   open: {
-    trigger: 'What is Animate UI?',
-    text: 'Animated drop-in primitives',
+    trigger: 'What are your shipping options?',
+    text: 'We offer standard (5-7 days)',
   },
   closedState: 'unmounted',
 });
@@ -22,13 +22,13 @@ test.describe('radix-ui accordion demo, Radix behavior', () => {
   });
 
   test('keyboard toggles it like Radix', async ({ page }) => {
-    await page.getByRole('button', { name: 'What is Animate UI?' }).focus();
+    await page
+      .getByRole('button', { name: 'What are your shipping options?' })
+      .focus();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await expect(
-      page.getByRole('button', {
-        name: 'How is it different from other libraries?',
-      }),
+      page.getByRole('button', { name: 'What is your return policy?' }),
     ).toHaveAttribute('aria-expanded', 'true');
   });
 
@@ -36,7 +36,7 @@ test.describe('radix-ui accordion demo, Radix behavior', () => {
     page,
   }) => {
     const trigger = page.getByRole('button', {
-      name: 'How is it different from other libraries?',
+      name: 'What is your return policy?',
     });
     const icon = trigger.locator('svg');
     await expect(icon).toHaveCSS('transition-duration', '0.35s');

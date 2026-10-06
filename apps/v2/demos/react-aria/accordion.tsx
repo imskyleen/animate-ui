@@ -88,26 +88,6 @@ function AccordionContent({
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
 
-const ITEMS = [
-  {
-    value: "what",
-    question: "What is Animate UI?",
-    answer:
-      "Animated drop-in primitives for Radix UI, Base UI and React Aria. Swap the import and your components animate.",
-  },
-  {
-    value: "different",
-    question: "How is it different from other libraries?",
-    answer:
-      "You keep your own components. Animate UI only replaces the primitives underneath, so your styles and structure stay yours.",
-  },
-  {
-    value: "free",
-    question: "Is Animate UI free to use?",
-    answer: "Yes. Animate UI is open source under the MIT license.",
-  },
-]
-
 export const controls = {
   Accordion: {
     multiple: { value: false },
@@ -124,15 +104,30 @@ export default function AccordionDemo({
     <Accordion
       key={String(multiple)}
       allowsMultipleExpanded={multiple}
-      defaultExpandedKeys={["what"]}
-      className="max-w-md"
+      defaultExpandedKeys={["shipping"]}
+      className="max-w-lg"
     >
-      {ITEMS.map((item) => (
-        <AccordionItem key={item.value} id={item.value}>
-          <AccordionTrigger>{item.question}</AccordionTrigger>
-          <AccordionContent>{item.answer}</AccordionContent>
-        </AccordionItem>
-      ))}
+      <AccordionItem id="shipping">
+        <AccordionTrigger>What are your shipping options?</AccordionTrigger>
+        <AccordionContent>
+          We offer standard (5-7 days), express (2-3 days), and overnight
+          shipping. Free shipping on international orders.
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem id="returns">
+        <AccordionTrigger>What is your return policy?</AccordionTrigger>
+        <AccordionContent>
+          Returns accepted within 30 days. Items must be unused and in original
+          packaging. Refunds processed within 5-7 business days.
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem id="support">
+        <AccordionTrigger>How can I contact customer support?</AccordionTrigger>
+        <AccordionContent>
+          Reach us via email, live chat, or phone. We respond within 24 hours
+          during business days.
+        </AccordionContent>
+      </AccordionItem>
     </Accordion>
   )
 }

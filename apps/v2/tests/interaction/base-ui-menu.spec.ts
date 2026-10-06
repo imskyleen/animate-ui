@@ -7,6 +7,10 @@ import { probeFirstFrame, sample } from './motion-probe';
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
+// shadcn's demo menu (~575px tall) doesn't fit under its trigger, in the
+// middle of a 720px viewport: it would scroll, and hide its last items.
+test.use({ viewport: { width: 1280, height: 1280 } });
+
 test.describe('base-ui menu demo', () => {
   test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
@@ -19,7 +23,7 @@ test.describe('base-ui menu demo', () => {
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
@@ -35,7 +39,7 @@ test.describe('base-ui menu demo', () => {
   });
 
   test('closes the same way, then unmounts', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
     // It plays an exit (polled: a loaded machine can skip the first frames).
@@ -59,10 +63,10 @@ test.describe('base-ui menu demo', () => {
   });
 
   test('a submenu grows from its side', async ({ page }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(700);
     const probe = await probeFirstFrame(page, SUB_CONTENT);
-    await page.getByRole('menuitem', { name: 'Invite people' }).hover();
+    await page.getByRole('menuitem', { name: 'Invite users' }).hover();
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
@@ -73,14 +77,14 @@ test.describe('base-ui menu demo', () => {
   test('checking an item draws its check, like a checkbox', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
     // Click and sample in the page: the first frames go by too fast for a
     // round trip.
     const frames = await page.evaluate(async () => {
       const item = [
         ...document.querySelectorAll<HTMLElement>('[role="menuitemcheckbox"]'),
-      ].find((el) => el.textContent?.includes('Activity panel'))!;
+      ].find((el) => el.textContent?.includes('Panel'))!;
       item.click();
       const seen: { dash: number; opacity: number }[] = [];
       const t0 = performance.now();
@@ -107,7 +111,7 @@ test.describe('base-ui menu demo', () => {
   test('reduced motion: it fades without scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, CONTENT);
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     const first = await probe.firstFrame();
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
@@ -181,13 +185,16 @@ test.describe('base-ui menu API', () => {
 describeMenuHighlight('base-ui menu highlight', {
   path: '/tests/demos/base-ui/dropdown-menu',
   open: async (page) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(400);
   },
-  first: (page) => page.getByRole('menuitem', { name: /Profile/ }),
-  second: (page) => page.getByRole('menuitem', { name: /Billing/ }),
+  // Two rows above the submenu trigger, as the old demo's were: leaving the
+  // submenu for an item further up, the part in the submenu is cut by it
+  // before the new one has faded in.
+  first: (page) => page.getByRole('menuitem', { name: /Settings/ }),
+  second: (page) => page.getByRole('menuitem', { name: 'Team', exact: true }),
   submenuTrigger: (page) =>
-    page.getByRole('menuitem', { name: 'Invite people' }),
+    page.getByRole('menuitem', { name: 'Invite users' }),
   submenuItem: (page) => page.getByRole('menuitem', { name: 'Email' }),
   keyboardNext: 'ArrowDown',
 });
@@ -195,11 +202,11 @@ describeMenuHighlight('base-ui menu highlight', {
 describeMenuChecks('base-ui menu checks', {
   path: '/tests/demos/base-ui/dropdown-menu',
   open: async (page) => {
-    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.getByRole('button', { name: 'Open', exact: true }).click();
   },
   popup: '[data-slot="dropdown-menu-content"]',
   indicator: 'span[aria-hidden="true"]',
-  checkbox: { checked: 'Status bar', unchecked: 'Activity panel' },
+  checkbox: { checked: 'Status Bar', unchecked: 'Panel' },
   radio: { from: 'Bottom', to: 'Right' },
   radioCloses: false,
 });

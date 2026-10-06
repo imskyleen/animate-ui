@@ -8,7 +8,7 @@ import { probeFirstFrame } from './motion-probe';
 
 const PATH = '/tests/demos/react-aria/popover';
 const CONTENT = '[data-slot="popover-content"]';
-const trigger = 'Share';
+const trigger = 'Open popover';
 
 describeAnchoredOverlay('react-aria popover demo', {
   path: PATH,

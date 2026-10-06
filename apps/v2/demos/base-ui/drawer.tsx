@@ -3,8 +3,19 @@
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "@animate-ui/react/primitives/base-ui/drawer"
 import { cn } from "cn"
+import { toast } from "sonner"
 
-import { Button } from "@/components/ui/base-ui/button"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { Badge } from "@/components/ui/base-ui/rhea/badge"
+import { Button } from "@/components/ui/base-ui/rhea/button"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/base-ui/rhea/field"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/base-ui/rhea/radio-group"
 
 type DrawerContextProps = {
   hasSnapPoints: boolean
@@ -73,7 +84,7 @@ function DrawerOverlay({
     <DrawerPrimitive.Backdrop
       data-slot="drawer-overlay"
       className={cn(
-        "bg-black/10 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 z-50 min-h-dvh transition-opacity select-none data-ending-style:pointer-events-none data-snap-points:[--drawer-overlay-min-opacity:0.5] supports-[-webkit-touch-callout:none]:absolute",
+        "bg-black/30 supports-backdrop-filter:backdrop-blur-sm fixed inset-0 z-50 min-h-dvh transition-opacity select-none data-ending-style:pointer-events-none data-snap-points:[--drawer-overlay-min-opacity:0.5] supports-[-webkit-touch-callout:none]:absolute",
         className
       )}
       {...props}
@@ -90,7 +101,7 @@ function DrawerSwipeHandle({
       data-slot="drawer-swipe-handle"
       aria-hidden="true"
       className={cn(
-        "after:block after:shrink-0 after:rounded-full after:bg-muted group-data-[swipe-axis=y]/drawer-popup:h-3 group-data-[swipe-axis=y]/drawer-popup:w-full group-data-[swipe-axis=y]/drawer-popup:justify-center group-data-[swipe-axis=y]/drawer-popup:after:h-1 group-data-[swipe-axis=y]/drawer-popup:after:w-24 group-data-[swipe-direction=down]/drawer-popup:items-end group-data-[swipe-direction=up]/drawer-popup:items-start group-data-[swipe-axis=x]/drawer-popup:h-full group-data-[swipe-axis=x]/drawer-popup:w-3 group-data-[swipe-axis=x]/drawer-popup:items-center group-data-[swipe-axis=x]/drawer-popup:after:h-24 group-data-[swipe-axis=x]/drawer-popup:after:w-1 group-data-[swipe-direction=left]/drawer-popup:justify-start group-data-[swipe-direction=right]/drawer-popup:justify-end relative z-10 flex shrink-0 cursor-grab transition-opacity duration-200 group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-[swipe-direction=left]/drawer-popup:order-last group-data-[swipe-direction=up]/drawer-popup:order-last active:cursor-grabbing",
+        "after:bg-muted after:block after:shrink-0 after:rounded-full group-data-[swipe-axis=y]/drawer-popup:h-3 group-data-[swipe-axis=y]/drawer-popup:w-full group-data-[swipe-axis=y]/drawer-popup:justify-center group-data-[swipe-axis=y]/drawer-popup:after:h-1.5 group-data-[swipe-axis=y]/drawer-popup:after:w-[100px] group-data-[swipe-direction=down]/drawer-popup:items-end group-data-[swipe-direction=up]/drawer-popup:items-start group-data-[swipe-axis=x]/drawer-popup:h-full group-data-[swipe-axis=x]/drawer-popup:w-3 group-data-[swipe-axis=x]/drawer-popup:items-center group-data-[swipe-axis=x]/drawer-popup:after:h-[100px] group-data-[swipe-axis=x]/drawer-popup:after:w-1.5 group-data-[swipe-direction=left]/drawer-popup:justify-start group-data-[swipe-direction=right]/drawer-popup:justify-end relative z-10 flex shrink-0 cursor-grab transition-opacity duration-200 group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-[swipe-direction=left]/drawer-popup:order-last group-data-[swipe-direction=up]/drawer-popup:order-last active:cursor-grabbing",
         className
       )}
       {...props}
@@ -123,7 +134,7 @@ function DrawerContent({
           data-snap-points={hasSnapPoints ? "" : undefined}
           className={cn(
             // Base.
-            "bg-popover text-popover-foreground text-sm data-[swipe-direction=down]:rounded-t-xl data-[swipe-direction=down]:border-t data-[swipe-direction=left]:rounded-r-xl data-[swipe-direction=left]:border-r data-[swipe-direction=right]:rounded-l-xl data-[swipe-direction=right]:border-l data-[swipe-direction=up]:rounded-b-xl data-[swipe-direction=up]:border-b group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) flex-col will-change-transform outline-none select-none [interpolate-size:allow-keywords]",
+            "bg-popover text-popover-foreground rounded-[min(var(--radius-4xl),24px)] border border-popover dark:border-border text-sm shadow-xl [--drawer-bleed-background:transparent] [--drawer-inset:--spacing(2)] [--drawer-stacked-shadow:0_-20px_25px_-5px_rgb(0_0_0/0.1),0_-8px_10px_-6px_rgb(0_0_0/0.1)] data-[swipe-direction=down]:data-nested-drawer-open:shadow-(--drawer-stacked-shadow) group/drawer-popup pointer-events-auto fixed z-50 m-(--drawer-inset,0px) flex h-(--drawer-content-height) max-h-(--drawer-content-max-height,none) min-h-0 w-(--drawer-content-width,auto) flex-col will-change-transform outline-none select-none [interpolate-size:allow-keywords]",
             // Nested.
             "data-nested-drawer-open:overflow-hidden data-nested-drawer-open:brightness-95",
             // Bleed.
@@ -170,7 +181,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="drawer-header"
       className={cn(
-        "gap-0.5 p-4 pb-0 md:gap-0.5 md:text-left flex shrink-0 flex-col group-data-[swipe-axis=y]/drawer-popup:text-center",
+        "gap-0.5 p-4 pb-0 md:gap-1.5 md:text-left flex shrink-0 flex-col group-data-[swipe-axis=y]/drawer-popup:text-center",
         className
       )}
       {...props}
@@ -228,16 +239,44 @@ export {
   DrawerDescription,
 }
 
-const GOALS = [
-  { label: "Move", value: "420 kcal" },
-  { label: "Exercise", value: "35 min" },
-  { label: "Stand", value: "10 h" },
+const deliveryTimes = [
+  {
+    value: "asap",
+    id: "delivery-asap",
+    label: "Standard delivery",
+    description: "25–35 min · Driver assigned now",
+    badge: "Fastest",
+  },
+  {
+    value: "5-00",
+    id: "delivery-5-00",
+    label: "5:00 PM – 5:15 PM",
+    description: "Prep starts at 4:45 PM",
+  },
+  {
+    value: "5-30",
+    id: "delivery-5-30",
+    label: "5:30 PM – 5:45 PM",
+    description: "Good if you're heading home",
+  },
+  {
+    value: "6-00",
+    id: "delivery-6-00",
+    label: "6:00 PM – 6:15 PM",
+    description: "Most popular · High demand",
+  },
+  {
+    value: "6-30",
+    id: "delivery-6-30",
+    label: "6:30 PM – 6:45 PM",
+    description: "Last slot before kitchen closes",
+  },
 ]
 
 export const controls = {
   Drawer: {
     direction: {
-      value: "bottom",
+      value: "right",
       options: { bottom: "bottom", top: "top", left: "left", right: "right" },
     },
   },
@@ -252,40 +291,76 @@ const SWIPE_DIRECTION = {
 } as const
 
 export default function DrawerDemo({
-  direction = "bottom",
+  direction = "right",
 }: {
   direction?: "bottom" | "top" | "left" | "right"
 }) {
+  const [open, setOpen] = React.useState(false)
+  const [deliveryTime, setDeliveryTime] = React.useState("asap")
+  const isMobile = useIsMobile()
+
+  function handleConfirm() {
+    const selected = deliveryTimes.find((time) => time.value === deliveryTime)
+
+    if (!selected) {
+      return
+    }
+
+    setOpen(false)
+    toast("Delivery time confirmed", {
+      description: selected.label,
+    })
+  }
+
   return (
-    <Drawer showSwipeHandle swipeDirection={SWIPE_DIRECTION[direction]}>
-      <DrawerTrigger render={<Button variant="outline" />}>
-        Daily goals
+    <Drawer
+      open={open}
+      onOpenChange={setOpen}
+      showSwipeHandle={isMobile}
+      swipeDirection={isMobile ? "down" : SWIPE_DIRECTION[direction]}
+    >
+      <DrawerTrigger render={<Button variant="secondary" />}>
+        Open Drawer
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Daily goals</DrawerTitle>
-            <DrawerDescription>
-              Drag the drawer down to dismiss it, or flick it away.
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="grid grid-cols-3 gap-2 p-4">
-            {GOALS.map((goal) => (
-              <div key={goal.label} className="bg-muted rounded-lg p-3 text-center">
-                <p className="text-muted-foreground text-xs">{goal.label}</p>
-                <p className="mt-1 text-base font-medium tabular-nums">
-                  {goal.value}
-                </p>
-              </div>
+        <DrawerHeader>
+          <DrawerTitle>Pick a delivery time</DrawerTitle>
+          <DrawerDescription>
+            We&apos;ll prepare your order as soon as possible.
+          </DrawerDescription>
+        </DrawerHeader>
+        <div className="flex-1 scroll-fade overflow-y-auto p-4">
+          <RadioGroup
+            value={deliveryTime}
+            onValueChange={setDeliveryTime}
+            className="gap-2"
+          >
+            {deliveryTimes.map((time) => (
+              <FieldLabel key={time.value} htmlFor={time.id}>
+                <Field orientation="horizontal">
+                  <FieldContent>
+                    <FieldTitle className="flex items-center gap-2">
+                      {time.label}
+                      {time.badge ? (
+                        <Badge variant="secondary">{time.badge}</Badge>
+                      ) : null}
+                    </FieldTitle>
+                    <FieldDescription>{time.description}</FieldDescription>
+                  </FieldContent>
+                  <RadioGroupItem value={time.value} id={time.id} />
+                </Field>
+              </FieldLabel>
             ))}
-          </div>
-          <DrawerFooter>
-            <DrawerClose render={<Button />}>Save goals</DrawerClose>
-            <DrawerClose render={<Button variant="outline" />}>
-              Cancel
-            </DrawerClose>
-          </DrawerFooter>
+          </RadioGroup>
         </div>
+        <DrawerFooter>
+          <Button onClick={handleConfirm} className="h-[34px]">
+            Confirm Delivery Time
+          </Button>
+          <DrawerClose render={<Button variant="outline" />}>
+            Cancel
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   )

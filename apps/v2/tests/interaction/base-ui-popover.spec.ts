@@ -3,7 +3,7 @@ import { describeAnchoredOverlay, gotoReady } from './anchored-overlay';
 
 const PATH = '/tests/demos/base-ui/popover';
 const CONTENT = '[data-slot="popover-content"]';
-const trigger = 'Share';
+const trigger = 'Open popover';
 
 describeAnchoredOverlay('base-ui popover demo', {
   path: PATH,

@@ -51,7 +51,8 @@ export async function ComponentPreview({
   const { default: Demo, controls } = await import(`@/demos/${name}`);
 
   // Helpers built on Base UI or React Aria live in components/ui/<library>/
-  // here; in the reader's project they are plain @/components/ui/<name>.
+  // here (components/ui/<library>/rhea/ for a demo in shadcn's rhea style);
+  // in the reader's project they are plain @/components/ui/<name>.
   // Registry items (backgrounds) land in components/animate-ui/.
   const source = await readFile(
     path.join(process.cwd(), 'demos', `${name}.tsx`),
@@ -67,7 +68,10 @@ export async function ComponentPreview({
     );
 
   const code = stripControls(source)
-    .replace(/@\/components\/ui\/(?:base-ui|react-aria)\//g, '@/components/ui/')
+    .replace(
+      /@\/components\/ui\/(?:base-ui|react-aria)\/(?:rhea\/)?/g,
+      '@/components/ui/',
+    )
     .replace(/@\/registry\//g, '@/components/animate-ui/');
 
   return (
