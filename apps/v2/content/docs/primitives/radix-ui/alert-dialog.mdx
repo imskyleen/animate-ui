@@ -42,8 +42,8 @@ Coming from the `@radix-ui/react-alert-dialog` package? Use the subpath: `import
 
 Animate UI v1's alert dialog motion, with a smoother overlay and a quicker exit.
 
-- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, a little ahead of the content, and it leaves the same way.
-- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright, opaque and sharp on a spring (stiffness 150, damping 25). Dismissed, it goes back the way it came, but quicker and speeding away (0.25s on an ease-in), out of sight just before the overlay has cleared, then unmounts.
+- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, along with the content's fade, and it leaves the same way.
+- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it with the overlay (400ms on a soft ease-out): it's there first, then it settles. Dismissed, it goes back the way it came, but quicker and speeding away (0.25s on an ease-in), out of sight just before the overlay has cleared, then unmounts.
 - `from` picks the edge the content tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`).
 - On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The dialog's own exit is the quicker one above unless you set `exitTransition`.
 - Radix keeps the Overlay and the Content mounted while they exit; Cancel is focused as soon as it opens, and focus returns to the trigger once the exit is over.
@@ -92,9 +92,11 @@ Every part takes exactly the props of [Radix UI's Alert Dialog](https://www.radi
       default: "'top'",
     },
     transition: {
-      description: 'Transition of the opening.',
+      description:
+        'Transition of the opening. One you pass drives its fade too.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 150, damping: 25 }",
+      default:
+        "{ type: 'spring', stiffness: 150, damping: 25, opacity: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] } }",
     },
     exitTransition: {
       description: 'Transition of the closing.',

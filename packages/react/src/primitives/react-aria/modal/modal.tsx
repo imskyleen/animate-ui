@@ -15,14 +15,12 @@ import {
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
-  DIALOG_TRANSITION,
-  DISMISS_TRANSITION,
   OVERLAY_TRANSITION,
-  SHEET_TRANSITION,
   getContentTargets,
   getModalSide,
   ariaMotionRender,
   useBackdropFade,
+  useContentTransitions,
   useModalTransitions,
   type ContentFlipProps,
   type FlipDirection,
@@ -216,12 +214,10 @@ function ModalContent({
   const isPresent = useIsPresent();
   // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
   const side = getModalSide((props as Record<string, unknown>)['data-side']);
-  const { enter, exit } = useModalTransitions(
+  const { enter, exit } = useContentTransitions(
+    side,
     transition,
     exitTransition,
-    side ? SHEET_TRANSITION : DIALOG_TRANSITION,
-    // Dismissed, a dialog speeds away; a sheet slides back on its spring.
-    side ? undefined : DISMISS_TRANSITION,
   );
   const targets = getContentTargets({ side, from, reduce, enter, exit });
 

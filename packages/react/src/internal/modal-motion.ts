@@ -16,9 +16,11 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 //   smoothly while the content arrives, and clears as it leaves. Fading its
 //   opacity, as v1 did, would cross-fade the sharp page with an already
 //   blurred one under shadcn/ui's `backdrop-blur-xs`.
-// - The content, v1's entrance: it fades in, un-blurs and tips forward from
+// - The content, v1's entrance: it un-blurs and tips forward from
 //   `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring (stiffness
-//   150, damping 25). Dismissed, it goes back the way it came, quicker and
+//   150, damping 25), fading in ahead of it with its overlay (400ms on a
+//   soft ease-out): it's there first, then it settles. Dismissed, it goes
+//   back the way it came, quicker and
 //   speeding away (0.25s on an ease-in), gone before its overlay has
 //   cleared. `from` picks the edge it tips from, as in v1: `top` (the
 //   default) and `right` turn it by -20deg, `bottom` and `left` by 20deg,
@@ -39,6 +41,12 @@ export const DIALOG_TRANSITION = motionTokens.spring.dialog;
 
 /** A dialog dismissed: 0.25s on an ease-in, speeding away. */
 export const DISMISS_TRANSITION = motionTokens.transition.dismiss;
+
+/**
+ * A dialog's opacity as it comes in: with its overlay's fade, ahead of its
+ * tilt, so it's there first, then settles.
+ */
+const CONTENT_FADE = motionTokens.transition.overlay;
 
 /**
  * Sheets, drawers and the toasts that enter from an edge: v1's sheet spring,
@@ -88,6 +96,31 @@ export function useModalTransitions(
 }
 
 export type ModalSide = 'top' | 'right' | 'bottom' | 'left';
+
+/**
+ * A modal content's transitions, tempo applied. A dialog tips in on its
+ * spring, fading in ahead of it with its overlay, and speeds away once
+ * dismissed; a sheet (`side`) slides both ways on its own spring. A
+ * `transition` given drives the whole opening.
+ */
+export function useContentTransitions(
+  side: ModalSide | undefined,
+  transition: Transition | undefined,
+  exitTransition: Transition | undefined,
+) {
+  const { enter, exit } = useModalTransitions(
+    transition,
+    exitTransition,
+    side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+    // Dismissed, a dialog speeds away; a sheet slides back on its spring.
+    side ? undefined : DISMISS_TRANSITION,
+  );
+  const fade = useTempoTransition(CONTENT_FADE);
+  return {
+    enter: side || transition ? enter : { ...enter, opacity: fade },
+    exit,
+  };
+}
 
 const SIDES: readonly string[] = ['top', 'right', 'bottom', 'left'];
 

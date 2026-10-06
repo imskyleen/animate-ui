@@ -6,12 +6,12 @@ import { expectSpringPace, type Sample } from './spring-curves';
 // Sheet), sampled in the page on every animation frame so it holds up on a
 // busy machine, plus the assertions of Animate UI v1's modal motion:
 //
-// - overlay: fades (and un-blurs) in 400ms on a soft ease-out, both ways,
-//   a little ahead of the content: the page dims smoothly as the content
-//   arrives, and clears as it leaves;
+// - overlay: fades (and un-blurs) in 400ms on a soft ease-out, both ways:
+//   the page dims smoothly as the content arrives, and clears as it leaves;
 // - dialog content: from `perspective(500px) rotateX(-20deg) scale(0.8)`,
 //   blur(4px) and transparent, on a spring (stiffness 150, damping 25) that
-//   settles after the overlay; dismissed, it goes back the way it came,
+//   settles after the overlay, fading in with the overlay, ahead of its
+//   movement; dismissed, it goes back the way it came,
 //   quicker and speeding away (0.25s on an ease-in), out of sight before
 //   its overlay has cleared;
 // - sheet: slides from its edge by its own size and fades, on the same
@@ -196,8 +196,9 @@ function expectProgressiveBackdrop(frames: ModalFrame[], overlay: string) {
 
 /**
  * v1's dialog entrance: tipped back, scaled to 0.8, blurred and transparent
- * at first, and coming upright without swinging past it. The overlay dims the
- * page smoothly, a little ahead of the content.
+ * at first, and coming upright without swinging past it. It fades in with
+ * its overlay, which dims the page smoothly, ahead of its own movement: it's
+ * there first, then it settles.
  */
 export function expectDialogEntrance(
   frames: ModalFrame[],
@@ -241,20 +242,30 @@ export function expectDialogEntrance(
   expect(overlayIn).toBeTruthy();
   expect(overlayIn.t - overlayStart.t).toBeGreaterThan(250);
   expect(overlayIn.t - overlayStart.t).toBeLessThan(700);
-  // A little ahead of the content: further in when the content is half in.
+  // With the content: about as far in when the content is half in.
   const halfway = frames.find(
     (frame) => (frame.samples[content]?.opacity ?? 0) >= 0.5,
   )!;
-  expect(overlayProgress(halfway, overlay, options)).toBeGreaterThan(
-    halfway.samples[content]!.opacity,
-  );
+  expect(
+    Math.abs(
+      overlayProgress(halfway, overlay, options) -
+        halfway.samples[content]!.opacity,
+    ),
+  ).toBeLessThan(0.2);
+  // The content's opacity ahead of its movement: mostly in (0.7) while it
+  // has grown less than 60% of the way from 0.8.
+  const mostlyIn = frames.find(
+    (frame) => (frame.samples[content]?.opacity ?? 0) >= 0.7,
+  )!;
+  expect((mostlyIn.samples[content]!.scale - 0.8) / 0.2).toBeLessThan(0.6);
 }
 
 /**
  * A dialog's exit: the content tips back, shrinks and blurs as it fades, the
  * way it came, but quicker and speeding away (0.25s on an ease-in): out of
- * sight within ~0.3s, less than half faded halfway through. The overlay
- * clears a little ahead of it, and behind it.
+ * sight within ~0.3s, half faded only past 58% of that time (an ease-out
+ * would be half faded at a quarter of it). The overlay clears a little ahead
+ * of it, and behind it.
  */
 export function expectDialogExit(
   frames: ModalFrame[],
@@ -268,26 +279,32 @@ export function expectDialogExit(
   expect(last.scale).toBeLessThan(0.88);
   expect(last.blur).toBeGreaterThan(2.5);
 
-  // From its last frame at rest to out of sight: quick (0.25s; a busy
-  // machine only delays it), and speeding away.
-  const fading = shown.findIndex(
-    (frame) => frame.samples[content]!.opacity < 0.995,
-  );
-  const contentStart = shown[Math.max(fading - 1, 0)]!;
-  const gone = shown.find((frame) => frame.samples[content]!.opacity < 0.02)!;
-  expect(gone).toBeTruthy();
-  expect(gone.t - contentStart.t).toBeLessThan(400);
-  const middle = (contentStart.t + gone.t) / 2;
-  const halfway = shown.reduce((closest, frame) =>
-    Math.abs(frame.t - middle) < Math.abs(closest.t - middle) ? frame : closest,
-  );
-  expect(1 - halfway.samples[content]!.opacity).toBeLessThan(0.45);
-
-  // The overlay fades out over ~350ms, not in a couple of frames.
+  // Both leave together: the overlay's fade starts fast, so its first frame
+  // tells when (the content's starts slow, it can't).
   const leaving = frames.findIndex(
     (frame) => overlayProgress(frame, overlay, options) < 0.99,
   );
   const exitStart = frames[Math.max(leaving - 1, 0)]!;
+
+  // Then out of sight quickly (0.25s; a busy machine only delays it), and
+  // speeding away.
+  const gone = shown.find((frame) => frame.samples[content]!.opacity < 0.02)!;
+  expect(gone).toBeTruthy();
+  expect(gone.t - exitStart.t).toBeLessThan(400);
+  // When its opacity crosses `level`, between the frames around it.
+  const crossing = (level: number) => {
+    const i = shown.findIndex(
+      (frame) => frame.samples[content]!.opacity <= level,
+    );
+    const [a, b] = [shown[i - 1]!, shown[i]!];
+    const [oa, ob] = [a.samples[content]!.opacity, b.samples[content]!.opacity];
+    return a.t + ((oa - level) / (oa - ob)) * (b.t - a.t);
+  };
+  const half = crossing(0.5) - exitStart.t;
+  const out = crossing(0.02) - exitStart.t;
+  expect(half / out).toBeGreaterThan(0.58);
+
+  // The overlay fades out over ~350ms, not in a couple of frames.
   const overlayOut = frames.find(
     (frame) =>
       frame.samples[overlay] &&
