@@ -116,6 +116,11 @@ const transition = {
   overlay: { duration: 0.4, ease: ease.soft },
   /** Content fading in place, out of the way (a toast behind the front one). */
   fade: { duration: 0.2, ease: ease.out },
+  /**
+   * A label showing up where the eye already is, once what moved has landed
+   * (a combobox input's placeholder): a little longer, so it's seen coming.
+   */
+  reveal: { duration: 0.3, ease: ease.out },
   /** Accordion and collapsible panels unfolding, and folding back. */
   disclosure: { duration: 0.35, ease: ease.soft },
   /** A panel coming in from a blur (tab panels). */

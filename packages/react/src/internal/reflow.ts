@@ -26,7 +26,7 @@ const CHIP_EXIT_TRANSITION: Transition = motionTokens.transition.popOut;
 /** The others making room or closing the gap: quick, without overshoot. */
 const REFLOW_TRANSITION: Transition = motionTokens.spring.reflow;
 /** A placeholder showing up, once its input is there: fading in place. */
-const PLACEHOLDER_TRANSITION: Transition = motionTokens.transition.fade;
+const PLACEHOLDER_TRANSITION: Transition = motionTokens.transition.reveal;
 /** ...from a light blur, like a short label coming in place. */
 const PLACEHOLDER_BLUR = motionTokens.blur.icon;
 

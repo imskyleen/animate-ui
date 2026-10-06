@@ -198,7 +198,7 @@ Closing plays the entrance's transition in reverse: one transition both ways (`e
 
 ### B6. Blur to bridge a swap
 
-When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs also come in from `blur.surface`, and a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds.
+When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs also come in from `blur.surface`, a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed.
 
 ### B7. Surfaces: modals tip, sheets slide
 

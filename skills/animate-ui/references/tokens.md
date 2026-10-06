@@ -58,6 +58,7 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                   |
 | `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out |
 | `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)         |
+| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)  |
 | `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                     |
 | `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                     |
 | `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered               |
