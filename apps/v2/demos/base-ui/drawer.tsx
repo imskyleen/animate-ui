@@ -269,7 +269,7 @@ export default function DrawerDemo({
               Drag the drawer down to dismiss it, or flick it away.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="grid grid-cols-3 gap-2 px-4">
+          <div className="grid grid-cols-3 gap-2 p-4">
             {GOALS.map((goal) => (
               <div key={goal.label} className="bg-muted rounded-lg p-3 text-center">
                 <p className="text-muted-foreground text-xs">{goal.label}</p>
