@@ -96,10 +96,15 @@ function PopupMotion({ transition, exitTransition, ...props }: Popup.Props) {
   return <ComboboxPrimitive.Popup {...props} render={render} />;
 }
 
-// Single selection: the check glides to the chosen item while the list
-// closes. Multiple selection keeps the list open: a selected item's check
-// draws itself, a deselected one's erases itself.
-function ItemIndicator({ render, transition, ...props }: ItemIndicator.Props) {
+// An item's check draws itself when the item is chosen and erases itself
+// when it's not anymore (with `pop`, it pops in and out, and a single
+// selection's check glides to the chosen item), while a closing list holds.
+function ItemIndicator({
+  render,
+  animation,
+  transition,
+  ...props
+}: ItemIndicator.Props) {
   const root = React.use(RootContext);
   if (!root) {
     return <ComboboxPrimitive.ItemIndicator {...props} render={render} />;
@@ -108,15 +113,15 @@ function ItemIndicator({ render, transition, ...props }: ItemIndicator.Props) {
   return (
     <ComboboxPrimitive.ItemIndicator
       {...props}
-      // A multiple selection's check shrinks out when its item is deselected:
-      // kept mounted for that.
-      keepMounted={root.multiple || props.keepMounted}
+      // Kept mounted, to hide itself when its item isn't chosen anymore.
+      keepMounted
       render={(elementProps, state) => (
         <IndicatorMotion
           render={render as IndicatorRender}
           props={elementProps as Record<string, unknown>}
           state={state}
           multiple={root.multiple}
+          animation={animation}
           transition={transition}
         />
       )}

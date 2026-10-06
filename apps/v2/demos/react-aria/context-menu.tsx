@@ -25,6 +25,7 @@ import {
   Button,
   type Selection,
 } from "@animate-ui/react/primitives/react-aria"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 function ContextMenu({
   "data-slot": dataSlot = "context-menu-content",
@@ -261,62 +262,75 @@ export {
   ContextMenuSubTrigger,
 }
 
-export default function ContextMenuDemo() {
+export const controls = {
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
+}
+
+export default function ContextMenuDemo({
+  checkAnimation = "draw",
+}: {
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
+}) {
   const [view, setView] = React.useState<Selection>(() => new Set(["grid"]))
   const [zoom, setZoom] = React.useState<Selection>(() => new Set(["fit"]))
 
   return (
-    <ContextMenuTrigger>
-      <Button className="text-muted-foreground flex h-40 w-72 cursor-default items-center justify-center rounded-xl border border-dashed text-sm outline-none select-none">
-        Right click here
-      </Button>
-      <ContextMenu className="w-56">
-        <ContextMenuItem>
-          Undo
-          <ContextMenuShortcut>⌘Z</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem isDisabled>
-          Redo
-          <ContextMenuShortcut>⇧⌘Z</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem>
-          Duplicate
-          <ContextMenuShortcut>⌘D</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger>Arrange</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-44">
-            <ContextMenuItem>Bring to front</ContextMenuItem>
-            <ContextMenuItem>Bring forward</ContextMenuItem>
-            <ContextMenuItem>Send backward</ContextMenuItem>
-            <ContextMenuItem>Send to back</ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSeparator />
-        <ContextMenuGroup
-          selectionMode="multiple"
-          selectedKeys={view}
-          onSelectionChange={setView}
-        >
-          <ContextMenuItem id="grid">Show grid</ContextMenuItem>
-          <ContextMenuItem id="rulers">Show rulers</ContextMenuItem>
-        </ContextMenuGroup>
-        <ContextMenuSeparator />
-        <ContextMenuGroup
-          selectionMode="single"
-          selectedKeys={zoom}
-          onSelectionChange={setZoom}
-        >
-          <ContextMenuLabel>Zoom</ContextMenuLabel>
-          <ContextMenuItem id="fit">Zoom to fit</ContextMenuItem>
-          <ContextMenuItem id="100">Zoom to 100%</ContextMenuItem>
-        </ContextMenuGroup>
-        <ContextMenuSeparator />
-        <ContextMenuItem variant="destructive">
-          Delete
-          <ContextMenuShortcut>⌫</ContextMenuShortcut>
-        </ContextMenuItem>
-      </ContextMenu>
-    </ContextMenuTrigger>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <ContextMenuTrigger>
+        <Button className="text-muted-foreground flex h-40 w-72 cursor-default items-center justify-center rounded-xl border border-dashed text-sm outline-none select-none">
+          Right click here
+        </Button>
+        <ContextMenu className="w-56">
+          <ContextMenuItem>
+            Undo
+            <ContextMenuShortcut>⌘Z</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem isDisabled>
+            Redo
+            <ContextMenuShortcut>⇧⌘Z</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem>
+            Duplicate
+            <ContextMenuShortcut>⌘D</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Arrange</ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-44">
+              <ContextMenuItem>Bring to front</ContextMenuItem>
+              <ContextMenuItem>Bring forward</ContextMenuItem>
+              <ContextMenuItem>Send backward</ContextMenuItem>
+              <ContextMenuItem>Send to back</ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuSeparator />
+          <ContextMenuGroup
+            selectionMode="multiple"
+            selectedKeys={view}
+            onSelectionChange={setView}
+          >
+            <ContextMenuItem id="grid">Show grid</ContextMenuItem>
+            <ContextMenuItem id="rulers">Show rulers</ContextMenuItem>
+          </ContextMenuGroup>
+          <ContextMenuSeparator />
+          <ContextMenuGroup
+            selectionMode="single"
+            selectedKeys={zoom}
+            onSelectionChange={setZoom}
+          >
+            <ContextMenuLabel>Zoom</ContextMenuLabel>
+            <ContextMenuItem id="fit">Zoom to fit</ContextMenuItem>
+            <ContextMenuItem id="100">Zoom to 100%</ContextMenuItem>
+          </ContextMenuGroup>
+          <ContextMenuSeparator />
+          <ContextMenuItem variant="destructive">
+            Delete
+            <ContextMenuShortcut>⌫</ContextMenuShortcut>
+          </ContextMenuItem>
+        </ContextMenu>
+      </ContextMenuTrigger>
+    </AnimateUIProvider>
   )
 }

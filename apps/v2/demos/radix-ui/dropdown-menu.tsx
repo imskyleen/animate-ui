@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cn } from "cn"
 import { DropdownMenu as DropdownMenuPrimitive } from "@animate-ui/react/primitives/radix-ui"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -287,6 +288,9 @@ export const controls = {
     },
     alignOffset: { value: 0 },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 export default function DropdownMenuDemo({
@@ -294,77 +298,82 @@ export default function DropdownMenuDemo({
   sideOffset = 4,
   align = "start",
   alignOffset = 0,
+  checkAnimation = "draw",
 }: {
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   const [showStatusBar, setShowStatusBar] = React.useState(true)
   const [showActivity, setShowActivity] = React.useState(false)
   const [position, setPosition] = React.useState("bottom")
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">Open menu</Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56"
-        side={side}
-        sideOffset={sideOffset}
-        align={align}
-        alignOffset={alignOffset}
-      >
-        <DropdownMenuLabel>My account</DropdownMenuLabel>
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Profile
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Invite people</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem>Email</DropdownMenuItem>
-              <DropdownMenuItem>Message</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Copy link</DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-        <DropdownMenuCheckboxItem
-          checked={showStatusBar}
-          onCheckedChange={setShowStatusBar}
-          onSelect={(event) => event.preventDefault()}
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Open menu</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-56"
+          side={side}
+          sideOffset={sideOffset}
+          align={align}
+          alignOffset={alignOffset}
         >
-          Status bar
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={showActivity}
-          onCheckedChange={setShowActivity}
-          onSelect={(event) => event.preventDefault()}
-        >
-          Activity panel
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Panel position</DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
-          <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">
-          Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuLabel>My account</DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              Profile
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              Billing
+              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Invite people</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem>Email</DropdownMenuItem>
+                <DropdownMenuItem>Message</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Copy link</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+          <DropdownMenuCheckboxItem
+            checked={showStatusBar}
+            onCheckedChange={setShowStatusBar}
+            onSelect={(event) => event.preventDefault()}
+          >
+            Status bar
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            checked={showActivity}
+            onCheckedChange={setShowActivity}
+            onSelect={(event) => event.preventDefault()}
+          >
+            Activity panel
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>Panel position</DropdownMenuLabel>
+          <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+            <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">
+            Log out
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </AnimateUIProvider>
   )
 }

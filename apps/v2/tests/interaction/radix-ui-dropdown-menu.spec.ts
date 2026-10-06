@@ -135,7 +135,12 @@ test.describe('radix-ui dropdown-menu demo', () => {
     expect(frames.some((f) => f.dash === 1 && f.opacity === 1)).toBe(true);
   });
 
-  test('choosing a radio item glides its indicator there', async ({ page }) => {
+  test('pop: choosing a radio item glides its indicator there', async ({
+    page,
+  }) => {
+    await page.goto('/tests/demos/radix-ui/dropdown-menu?checkAnimation=pop', {
+      waitUntil: 'networkidle',
+    });
     await page.getByRole('button', { name: 'Open menu' }).click();
     await page.waitForTimeout(500);
     const offsets = await page.evaluate(async () => {
@@ -147,12 +152,15 @@ test.describe('radix-ui dropdown-menu demo', () => {
       const t0 = performance.now();
       while (performance.now() - t0 < 150) {
         await new Promise(requestAnimationFrame);
-        const indicator = item.querySelector('[data-slot$="indicator"] > span');
-        if (!indicator) continue;
-        const match = getComputedStyle(indicator).transform.match(
-          /matrix\([^,]+,[^,]+,[^,]+,[^,]+,[^,]+,\s*([^)]+)\)/,
+        const indicator = item.querySelector<HTMLElement>(
+          '[data-slot$="indicator"] > span',
         );
-        seen.push(match ? Number(match[1]) : 0);
+        const parent = indicator?.offsetParent;
+        if (!indicator || !parent) continue;
+        seen.push(
+          indicator.getBoundingClientRect().top -
+            (parent.getBoundingClientRect().top + indicator.offsetTop),
+        );
       }
       return seen;
     });

@@ -117,6 +117,35 @@ test.describe('demo controls', () => {
     await expect(box).toHaveAttribute('aria-checked', 'false');
   });
 
+  test('the checkAnimation control makes the checks pop', async ({ page }) => {
+    await open(page, '/docs/primitives/radix-ui/checkbox');
+    await toggle(page).click();
+    await panel(page).getByRole('combobox', { name: 'checkAnimation' }).click();
+    await page.getByRole('option', { name: 'pop' }).click();
+    // Checking the second box, its icon's scale while it shows (sampled in
+    // the page: the first frames go by too fast for a round trip).
+    const scales = await stage(page)
+      .getByRole('checkbox')
+      .nth(1)
+      .evaluate(async (box) => {
+        (box as HTMLElement).click();
+        const seen: number[] = [];
+        const t0 = performance.now();
+        while (performance.now() - t0 < 700) {
+          await new Promise(requestAnimationFrame);
+          const icon = box.querySelector('svg');
+          if (!icon || Number(getComputedStyle(icon).opacity) < 0.05) continue;
+          const matrix =
+            getComputedStyle(icon).transform.match(/matrix\(([^,]+)/);
+          seen.push(matrix ? Number(matrix[1]) : 1);
+        }
+        return seen;
+      });
+    // From half its size, a little past it (a drawn check doesn't scale).
+    expect(Math.min(...scales)).toBeLessThan(0.9);
+    expect(Math.max(...scales)).toBeGreaterThan(1.02);
+  });
+
   test('a switch changes the mode of a group', async ({ page }) => {
     await open(page, '/docs/primitives/radix-ui/toggle-group');
     const radios = stage(page).getByRole('radio', { name: /^Align/ });

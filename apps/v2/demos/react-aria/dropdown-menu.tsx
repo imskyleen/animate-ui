@@ -22,6 +22,7 @@ import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import type { Selection } from "@animate-ui/react/primitives/react-aria"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 import { Button } from "@/components/ui/react-aria/button"
 
 function DropdownMenuTrigger({
@@ -266,6 +267,9 @@ export const controls = {
     },
     alignOffset: { value: 0 },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 /** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
@@ -283,66 +287,71 @@ export default function DropdownMenuDemo({
   sideOffset = 4,
   align = "start",
   alignOffset = 0,
+  checkAnimation = "draw",
 }: {
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   const [panels, setPanels] = React.useState<Selection>(() => new Set(["status"]))
   const [position, setPosition] = React.useState<Selection>(() => new Set(["bottom"]))
 
   return (
-    <DropdownMenuTrigger>
-      <Button variant="outline">Open menu</Button>
-      <DropdownMenu className="w-56" placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>My account</DropdownMenuLabel>
-          <DropdownMenuItem>
-            Profile
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <DropdownMenuTrigger>
+        <Button variant="outline">Open menu</Button>
+        <DropdownMenu className="w-56" placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>My account</DropdownMenuLabel>
+            <DropdownMenuItem>
+              Profile
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              Billing
+              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Invite people</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem>Email</DropdownMenuItem>
+                <DropdownMenuItem>Message</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Copy link</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup
+            selectionMode="multiple"
+            selectedKeys={panels}
+            onSelectionChange={setPanels}
+          >
+            <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+            <DropdownMenuItem id="status">Status bar</DropdownMenuItem>
+            <DropdownMenuItem id="activity">Activity panel</DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup
+            selectionMode="single"
+            selectedKeys={position}
+            onSelectionChange={setPosition}
+          >
+            <DropdownMenuLabel>Panel position</DropdownMenuLabel>
+            <DropdownMenuItem id="top">Top</DropdownMenuItem>
+            <DropdownMenuItem id="bottom">Bottom</DropdownMenuItem>
+            <DropdownMenuItem id="right">Right</DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">
+            Log out
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Invite people</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem>Email</DropdownMenuItem>
-              <DropdownMenuItem>Message</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Copy link</DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup
-          selectionMode="multiple"
-          selectedKeys={panels}
-          onSelectionChange={setPanels}
-        >
-          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-          <DropdownMenuItem id="status">Status bar</DropdownMenuItem>
-          <DropdownMenuItem id="activity">Activity panel</DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup
-          selectionMode="single"
-          selectedKeys={position}
-          onSelectionChange={setPosition}
-        >
-          <DropdownMenuLabel>Panel position</DropdownMenuLabel>
-          <DropdownMenuItem id="top">Top</DropdownMenuItem>
-          <DropdownMenuItem id="bottom">Bottom</DropdownMenuItem>
-          <DropdownMenuItem id="right">Right</DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">
-          Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenu>
-    </DropdownMenuTrigger>
+        </DropdownMenu>
+      </DropdownMenuTrigger>
+    </AnimateUIProvider>
   )
 }

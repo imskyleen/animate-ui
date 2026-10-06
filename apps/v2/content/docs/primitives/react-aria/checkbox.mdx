@@ -39,13 +39,14 @@ React Aria lets you render the indicator yourself. Animate UI animates the conte
 The motion of Animate UI v1's Radix UI checkbox (v1 had no React Aria one):
 
 - **Indicator**: the check you render inside `data-slot="checkbox-indicator"` draws itself when it mounts. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.3s, after a 0.2s delay, on Motion's default ease-out (v1's delay and curve, drawn a little slower than v1's 0.2s). When it unmounts, a copy of it erases in 0.3s in its place, then goes away: your render function stays the single source of truth, React Aria's state and render props are never delayed. Content that isn't an SVG shape fades the same way.
+- With `animation="pop"` (or `checkAnimation="pop"` on an `AnimateUIProvider`), the check pops instead: after the same 0.2s, it springs in from half its size out of a 2px blur (stiffness 500, damping 24, a little past its size), and shrinks back into its blur in 0.15s when the box is unchecked. Its stroke stays whole. The demo's Controls switch between the two.
 - **Checkbox** doesn't move: unlike v1's checkbox, it doesn't scale when pressed or hovered. The check (and, in the demo, the box's fill) answers the click.
 - In the demo, the box's fill is a layer of its own (`before:` in its classes) that grows from 70% while it fades in, in 300ms, and shrinks back as it fades out: the check draws over a box that is nearly full. The layer covers the box's border (`before:-inset-px`) and the border keeps its color, so no outline rings the growing fill. It's CSS, so copy the classes for the same effect; under reduced motion the layer only fades.
 - Checking with Space animates the same way: the state changes at once, the animation never delays it.
 - A box that is already checked on load renders at rest: the check is your markup, rendered by the server before any script runs.
 - Toggling again mid-animation turns back from where the check is.
 - `isIndeterminate` shows the indicator like `isSelected`; an icon swapped for the indeterminate state draws without the delay, as v1's indeterminate line did. Inside a `CheckboxGroup`, each checkbox animates the same way.
-- Under reduced motion, the check only fades (its stroke stays whole).
+- Under reduced motion, the check only fades, drawn or popped (its stroke stays whole, nothing scales).
 - The box's own colours are the component's CSS: shadcn/ui's `transition-colors` fades them.
 - `className` and `style` render props keep working.
 
@@ -55,15 +56,23 @@ The motion of Animate UI v1's Radix UI checkbox (v1 had no React Aria one):
 
 <TypeTable
   type={{
+    animation: {
+      description:
+        'How the check shows and hides: `draw` (it draws itself and erases itself) or `pop` (it pops in from half its size and shrinks back out).',
+      type: "'draw' | 'pop'",
+      default: "the closest AnimateUIProvider's checkAnimation, else 'draw'",
+    },
     transition: {
-      description: 'Transition of the check drawing itself.',
+      description: 'Transition of the check drawing itself (or popping in).',
       type: 'Transition',
-      default: '{ duration: 0.3, delay: 0.2, ease: [0, 0, 0.58, 1] }',
+      default:
+        "draw: { duration: 0.3, delay: 0.2, ease: [0, 0, 0.58, 1] }; pop: { type: 'spring', stiffness: 500, damping: 24, delay: 0.2 }",
     },
     exitTransition: {
-      description: 'Transition of the check erasing itself.',
+      description: 'Transition of the check erasing itself (or popping out).',
       type: 'Transition',
-      default: '{ duration: 0.3, ease: [0, 0, 0.58, 1] }',
+      default:
+        'draw: { duration: 0.3, ease: [0, 0, 0.58, 1] }; pop: { duration: 0.15, ease: [0.23, 1, 0.32, 1] }',
     },
   }}
 />

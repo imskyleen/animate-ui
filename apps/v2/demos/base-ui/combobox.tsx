@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@animate-ui/react/primitives/base-ui"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/base-ui/button"
@@ -326,6 +327,9 @@ export const controls = {
     },
     alignOffset: { value: 0 },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 export default function ComboboxDemo({
@@ -333,34 +337,39 @@ export default function ComboboxDemo({
   sideOffset = 6,
   align = "start",
   alignOffset = 0,
+  checkAnimation = "draw",
 }: {
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   return (
-    <Combobox items={FRAMEWORKS}>
-      <ComboboxInput
-        placeholder="Search a framework…"
-        aria-label="Framework"
-        className="w-56"
-      />
-      <ComboboxContent
-        side={side}
-        sideOffset={sideOffset}
-        align={align}
-        alignOffset={alignOffset}
-      >
-        <ComboboxEmpty>No framework found.</ComboboxEmpty>
-        <ComboboxList>
-          {(item: string) => (
-            <ComboboxItem key={item} value={item}>
-              {item}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <Combobox items={FRAMEWORKS}>
+        <ComboboxInput
+          placeholder="Search a framework…"
+          aria-label="Framework"
+          className="w-56"
+        />
+        <ComboboxContent
+          side={side}
+          sideOffset={sideOffset}
+          align={align}
+          alignOffset={alignOffset}
+        >
+          <ComboboxEmpty>No framework found.</ComboboxEmpty>
+          <ComboboxList>
+            {(item: string) => (
+              <ComboboxItem key={item} value={item}>
+                {item}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+    </AnimateUIProvider>
   )
 }

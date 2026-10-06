@@ -13,7 +13,7 @@ import {
 
 import { mergeRefs } from '../../../internal/anchored';
 import {
-  IndicatorLayoutContext,
+  IndicatorGroupContext,
   IndicatorModeContext,
 } from '../../../internal/aria-indicator';
 import {
@@ -21,7 +21,7 @@ import {
   type ItemRender,
 } from '../../../internal/aria-item-highlight';
 import { HighlightScope } from '../../../internal/item-highlight';
-import { PickContext } from '../../../internal/item-indicator';
+import { PickContext, useCheckGroup } from '../../../internal/item-indicator';
 
 // Same API as React Aria's Menu, MenuSection and MenuItem: the menus of
 // MenuTrigger (dropdown and context menus) and SubmenuTrigger. React Aria has
@@ -37,11 +37,11 @@ import { PickContext } from '../../../internal/item-indicator';
 // submenu is open, the highlight having moved into it.
 //
 // A SelectionIndicator inside an item (the list-box primitive's) is its check:
-// a multiple selection's draws itself and erases itself, like a checkbox's; a
-// single selection's glides to the chosen item, between the items of its
-// Menu or MenuSection. Choosing an item that closes the menu (a single
-// selection's, from the pointer or Enter) holds the menu still for 150ms
-// while its check moves (the Popover waits).
+// it draws itself and erases itself, like a checkbox's; with `pop`, it pops in
+// and out, and a single selection's check glides to the chosen item, between
+// the items of its Menu or MenuSection. Choosing an item that closes the menu
+// (from the pointer or Enter) holds the menu still for 150ms while its check
+// changes (the Popover waits).
 //
 // Items are collection items: the highlight goes through their `render` prop
 // (internal/aria-item-highlight).
@@ -69,7 +69,7 @@ function Menu<T extends object>({
   ...props
 }: MenuProps<T> & React.RefAttributes<HTMLDivElement>) {
   // Its items' checks (a selection on the Menu itself) glide between them.
-  const layoutId = React.useId();
+  const group = useCheckGroup();
   const menuRef = React.useRef<HTMLDivElement>(null);
   const mergedRef = React.useMemo(() => mergeRefs(ref, menuRef), [ref]);
   const [reach, setReach] = React.useState<Reach | 'none' | null>(null);
@@ -119,7 +119,7 @@ function Menu<T extends object>({
     // Mounted with its popover: each opening starts without a highlight. A
     // submenu's Menu uses its root menu's.
     <HighlightScope open shared>
-      <IndicatorLayoutContext value={layoutId}>
+      <IndicatorGroupContext value={group}>
         <MenuPrimitive
           {...props}
           ref={mergedRef}
@@ -136,7 +136,7 @@ function Menu<T extends object>({
             ...(typeof style === 'function' ? style(renderProps) : style),
           })}
         />
-      </IndicatorLayoutContext>
+      </IndicatorGroupContext>
     </HighlightScope>
   );
 }
@@ -144,15 +144,15 @@ function Menu<T extends object>({
 /** React Aria's props. */
 type MenuSectionProps<T> = MenuSectionPrimitiveProps<T>;
 
-/** Its own selection: its items' checks glide between them. */
+/** Its own selection: its items' checks glide between them (`pop`). */
 function MenuSection<T extends object>(
   props: MenuSectionProps<T> & React.RefAttributes<HTMLElement>,
 ) {
-  const layoutId = React.useId();
+  const group = useCheckGroup();
   return (
-    <IndicatorLayoutContext value={layoutId}>
+    <IndicatorGroupContext value={group}>
       <MenuSectionPrimitive {...props} />
-    </IndicatorLayoutContext>
+    </IndicatorGroupContext>
   );
 }
 
@@ -178,16 +178,15 @@ function MenuItem<T extends object>({
               domProps={{
                 ...own,
                 // React Aria closes the menu in its click (pointer, Enter):
-                // the pick is marked first when the check moves. A multiple
-                // selection's draws or erases itself; a single one's glides
-                // from the one shown.
+                // the pick is marked first when the item's check changes (a
+                // multiple selection's, or another item's than the chosen
+                // one).
                 onClick: (event: React.MouseEvent<HTMLElement>) => {
                   const { selectionMode, isSelected } = values;
                   if (
-                    selectionMode === 'multiple' ||
-                    (selectionMode === 'single' &&
-                      !isSelected &&
-                      picks?.hasCheck())
+                    (selectionMode === 'multiple' ||
+                      (selectionMode === 'single' && !isSelected)) &&
+                    picks?.hasCheck(event.currentTarget)
                   )
                     picks?.markPick();
                   own.onClick?.(event);

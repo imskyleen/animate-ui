@@ -1,18 +1,34 @@
 import { expect, type Page } from '@playwright/test';
 
+import type { CheckAnimation } from './item-checks';
+
 // Choosing an item closes a single-selection list (selects, comboboxes, a
-// menu's radio items) after a hold: the list stays as it is while the check
-// glides to the chosen item (150ms), then fades out. Closing any other way
+// menu's radio items) after a hold: the list stays as it is while the checks
+// change (150ms), then fades out. `draw` (the default): the chosen item's
+// check draws itself while the previous one erases itself. `pop`: the check
+// glides from the previous item to the chosen one. Closing any other way
 // doesn't wait.
+
+type CheckState = {
+  /** How much it shows (its opacities up to the indicator, multiplied). */
+  opacity: number;
+  /** How much of its stroke is drawn (1 when not dashed). */
+  dash: number;
+  /** The scale of its icon. */
+  scale: number;
+};
 
 type PickFrame = {
   t: number;
   /** The list's opacity, null once it's gone. */
   opacity: number | null;
-  /** The top of the chosen item's check, null while it has none. */
+  /** The chosen item's check, null while it isn't there. */
+  chosen: CheckState | null;
+  /** The top of that check, and where it rests (without its glide). */
   checkTop: number | null;
-  /** Where that check rests, without its glide's transform. */
   restTop: number | null;
+  /** The previously chosen item's check. */
+  previous: CheckState | null;
 };
 
 type PickCase = {
@@ -20,10 +36,13 @@ type PickCase = {
   popup: string;
   /** The text of the item about to be chosen. */
   item: string;
+  /** The text of the item chosen until then (null: none, a first choice). */
+  from: string | null;
   /** Its check, inside the item (`:scope > div`…). */
   check: string;
   /** Chooses the item. */
   pick: () => Promise<void>;
+  animation: CheckAnimation;
 };
 
 type Recorder<T> = { __recording?: Promise<T> };
@@ -35,10 +54,36 @@ type Recorder<T> = { __recording?: Promise<T> };
  */
 async function armPickRecording(
   page: Page,
-  { popup, item, check }: Omit<PickCase, 'pick'>,
+  { popup, item, from, check }: Omit<PickCase, 'pick' | 'animation'>,
 ) {
   await page.evaluate(
-    ({ popup, item, check }) => {
+    ({ popup, item, from, check }) => {
+      const markOf = (label: string) =>
+        [
+          ...document.querySelectorAll<HTMLElement>(
+            '[role="option"], [role^="menuitem"]',
+          ),
+        ]
+          .find((el) => el.textContent?.includes(label))
+          ?.querySelector<HTMLElement>(check) ?? null;
+      const stateOf = (mark: HTMLElement | null) => {
+        if (!mark) return null;
+        const icon = mark.querySelector('svg') ?? mark;
+        const shape = icon.querySelector('path, line, polyline') ?? icon;
+        let opacity = 1;
+        for (let el: Element | null = shape; el; el = el.parentElement) {
+          opacity *= Number(getComputedStyle(el).opacity);
+          if (el === mark) break;
+        }
+        const dash = getComputedStyle(shape).strokeDasharray;
+        const matrix =
+          getComputedStyle(icon).transform.match(/matrix\(([^,]+)/);
+        return {
+          opacity,
+          dash: dash === 'none' ? 1 : parseFloat(dash),
+          scale: matrix ? Number(matrix[1]) : 1,
+        };
+      };
       (window as Recorder<PickFrame[]>).__recording = new Promise((resolve) => {
         const frames: PickFrame[] = [];
         const t0 = performance.now();
@@ -46,32 +91,28 @@ async function armPickRecording(
         const tick = () => {
           const t = performance.now() - t0;
           const list = document.querySelector<HTMLElement>(popup);
-          const option = [
-            ...document.querySelectorAll<HTMLElement>(
-              '[role="option"], [role^="menuitem"]',
-            ),
-          ].find((el) => el.textContent?.includes(item));
-          const mark = option?.querySelector<HTMLElement>(check);
-          const shown = mark && getComputedStyle(mark).visibility !== 'hidden';
-          const parent = shown
-            ? (mark.offsetParent as HTMLElement | null)
-            : null;
+          const mark = markOf(item);
+          const chosen = stateOf(mark);
+          const parent = mark?.offsetParent as HTMLElement | null;
           frames.push({
             t,
             opacity: list ? Number(getComputedStyle(list).opacity) : null,
-            checkTop: shown ? mark.getBoundingClientRect().top : null,
-            restTop: parent
-              ? parent.getBoundingClientRect().top + mark!.offsetTop
-              : null,
+            chosen,
+            checkTop: mark ? mark.getBoundingClientRect().top : null,
+            restTop:
+              mark && parent
+                ? parent.getBoundingClientRect().top + mark.offsetTop
+                : null,
+            previous: from === null ? null : stateOf(markOf(from)),
           });
-          if (shown) picked = true;
+          if (chosen && chosen.opacity > 0.02) picked = true;
           if ((picked && !list) || t > 3000) resolve(frames);
           else requestAnimationFrame(tick);
         };
         tick();
       });
     },
-    { popup, item, check },
+    { popup, item, from, check },
   );
 }
 
@@ -80,31 +121,65 @@ function collect<T>(page: Page) {
 }
 
 /**
- * Chooses an item in an open list that already has another one chosen: its
- * check glides there while the list holds still, then the list closes.
+ * Chooses an item in an open list (that has another one chosen, unless
+ * `from` is null): the checks change while the list holds still, then the
+ * list closes.
  */
 export async function expectPickHold(page: Page, c: PickCase) {
   await armPickRecording(page, c);
   await c.pick();
   const recorded = await collect<PickFrame[]>(page);
 
-  // The first frame the check is in the chosen item: the pick.
-  const picked = recorded.findIndex((f) => f.checkTop !== null);
+  // The first frame the chosen item's check shows: the pick.
+  const picked = recorded.findIndex(
+    (f) => f.chosen !== null && f.chosen.opacity > 0.02,
+  );
   expect(picked).toBeGreaterThanOrEqual(0);
   const fading = recorded.findIndex(
     (f, i) => i > picked && (f.opacity === null || f.opacity < 0.98),
   );
   expect(fading).toBeGreaterThan(picked);
-  // The list held still (150ms) while the check glided from the previous
-  // item: when it starts fading, the check is most of the way there (~95% at
-  // 60fps; a loaded headless machine starts the glide a frame or two late, so
-  // only 60% is required).
+  // The list held still (150ms) while the checks changed.
   expect(recorded[fading]!.t - recorded[picked]!.t).toBeGreaterThan(100);
   const first = recorded[picked]!;
   const held = recorded[fading - 1]!;
-  const travel = Math.abs(first.checkTop! - first.restTop!);
-  expect(travel).toBeGreaterThan(10);
-  expect(Math.abs(held.checkTop! - held.restTop!)).toBeLessThan(travel * 0.4);
+
+  // While the list holds (it scales as it leaves, which `restTop`, read from
+  // layout offsets, doesn't follow).
+  const inPlace = () => {
+    for (const f of recorded.slice(picked, fading))
+      if (f.checkTop !== null && f.restTop !== null)
+        expect(Math.abs(f.checkTop - f.restTop)).toBeLessThan(0.5);
+  };
+  if (c.animation === 'pop' && c.from !== null) {
+    // The check glided from the previous item, shown all the way (the
+    // previous one went at once): when the list starts fading, it's most of
+    // the way there (~95% at 60fps; a loaded headless machine starts the
+    // glide a frame or two late, so only 60% is required).
+    expect(first.chosen!.opacity).toBeGreaterThan(0.9);
+    expect(first.previous?.opacity ?? 0).toBeLessThan(0.02);
+    const travel = Math.abs(first.checkTop! - first.restTop!);
+    expect(travel).toBeGreaterThan(10);
+    expect(Math.abs(held.checkTop! - held.restTop!)).toBeLessThan(travel * 0.4);
+  } else if (c.animation === 'pop') {
+    // Nothing to glide from: it pops in, in place.
+    inPlace();
+    expect(first.chosen!.scale).toBeLessThan(0.9);
+    expect(held.chosen!.opacity).toBeGreaterThan(0.5);
+    for (const f of recorded) expect(f.chosen?.dash ?? 1).toBe(1);
+  } else {
+    // In place: the chosen check draws itself while the previous one erases
+    // itself, both partway when the list starts fading.
+    inPlace();
+    expect(first.chosen!.dash).toBeLessThan(0.5);
+    expect(held.chosen!.dash).toBeGreaterThan(0.15);
+    expect(held.chosen!.dash).toBeLessThan(0.97);
+    for (const f of recorded) expect(f.chosen?.scale ?? 1).toBeCloseTo(1, 2);
+    if (c.from !== null) {
+      expect(held.previous!.dash).toBeGreaterThan(0.03);
+      expect(held.previous!.dash).toBeLessThan(0.85);
+    }
+  }
   // Then it closed.
   const last = recorded.at(-1)!;
   expect(last.opacity === null || last.opacity === 0).toBe(true);
@@ -116,8 +191,8 @@ type CloseRecording = {
 };
 
 /**
- * `close` (Escape, or choosing an item while no check is shown) starts the
- * list's exit at once: measured from its first key or pointer press.
+ * `close` (Escape, or choosing the item already chosen) starts the list's
+ * exit at once: measured from its first key or pointer press.
  */
 export async function expectCloseWithoutHold(
   page: Page,

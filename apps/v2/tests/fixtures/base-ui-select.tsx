@@ -9,7 +9,15 @@ const FRUITS = [
   { value: 'cherry', label: 'Cherry' },
 ];
 
-function Items({ prefix, check }: { prefix: string; check?: boolean }) {
+function Items({
+  prefix,
+  check,
+  animation,
+}: {
+  prefix: string;
+  check?: boolean;
+  animation?: 'draw' | 'pop';
+}) {
   return FRUITS.map((fruit) => (
     <Select.Item key={fruit.value} value={fruit.value}>
       <Select.ItemText>
@@ -17,8 +25,9 @@ function Items({ prefix, check }: { prefix: string; check?: boolean }) {
       </Select.ItemText>
       {check && (
         <Select.ItemIndicator
-          data-testid={`check-${fruit.value}`}
+          data-testid={`${animation ?? 'check'}-${fruit.value}`}
           render={<span className="ml-2" />}
+          animation={animation}
         >
           ✓
         </Select.ItemIndicator>
@@ -33,6 +42,7 @@ export default function BaseSelectFixture() {
   const [value, setValue] = React.useState<string | null>('banana');
   const [completed, setCompleted] = React.useState<string[]>([]);
   const [multiple, setMultiple] = React.useState<string[]>(['apple']);
+  const [popped, setPopped] = React.useState<string[]>(['apple']);
   const actionsRef = React.useRef<Select.Root.Actions | null>(null);
   const [hasActions, setHasActions] = React.useState(false);
   React.useEffect(() => {
@@ -109,6 +119,29 @@ export default function BaseSelectFixture() {
               <Select.Popup data-testid="multiple-popup" className="bg-white">
                 <Select.List>
                   <Items prefix="Multiple" check />
+                </Select.List>
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </section>
+
+      <section data-testid="popped" className="flex items-center gap-4">
+        <p data-testid="popped-value">{popped.join(',')}</p>
+        <Select.Root
+          multiple
+          value={popped}
+          onValueChange={setPopped}
+          items={FRUITS}
+        >
+          <Select.Trigger aria-label="Popped">
+            <Select.Value />
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner alignItemWithTrigger={false}>
+              <Select.Popup data-testid="popped-popup" className="bg-white">
+                <Select.List>
+                  <Items prefix="Popped" check animation="pop" />
                 </Select.List>
               </Select.Popup>
             </Select.Positioner>

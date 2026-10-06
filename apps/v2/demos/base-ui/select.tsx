@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Select as SelectPrimitive } from "@animate-ui/react/primitives/base-ui/select"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 import { cn } from "cn"
 
 import { ArrowDown01Icon, ArrowUp01Icon, Tick02Icon, UnfoldMoreIcon } from "@hugeicons/core-free-icons"
@@ -223,6 +224,9 @@ export const controls = {
     },
     alignOffset: { value: 0 },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 export default function SelectDemo({
@@ -231,6 +235,7 @@ export default function SelectDemo({
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
+  checkAnimation = "draw",
 }: {
   /** "item-aligned" overlaps the trigger with the selected item (Base UI's alignItemWithTrigger); side and align apply to "popper". */
   position?: "popper" | "item-aligned"
@@ -238,33 +243,37 @@ export default function SelectDemo({
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   return (
-    <Select defaultValue="Geist">
-      <SelectTrigger className="w-48" aria-label="Font">
-        <SelectValue placeholder="Choose a font" />
-      </SelectTrigger>
-      <SelectContent
-        alignItemWithTrigger={position === "item-aligned"}
-        side={side}
-        sideOffset={sideOffset}
-        align={align}
-        alignOffset={alignOffset}
-      >
-        {FONTS.map((group, index) => (
-          <React.Fragment key={group.label}>
-            {index > 0 && <SelectSeparator />}
-            <SelectGroup>
-              <SelectLabel>{group.label}</SelectLabel>
-              {group.items.map((font) => (
-                <SelectItem key={font} value={font}>
-                  {font}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </React.Fragment>
-        ))}
-      </SelectContent>
-    </Select>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <Select defaultValue="Geist">
+        <SelectTrigger className="w-48" aria-label="Font">
+          <SelectValue placeholder="Choose a font" />
+        </SelectTrigger>
+        <SelectContent
+          alignItemWithTrigger={position === "item-aligned"}
+          side={side}
+          sideOffset={sideOffset}
+          align={align}
+          alignOffset={alignOffset}
+        >
+          {FONTS.map((group, index) => (
+            <React.Fragment key={group.label}>
+              {index > 0 && <SelectSeparator />}
+              <SelectGroup>
+                <SelectLabel>{group.label}</SelectLabel>
+                {group.items.map((font) => (
+                  <SelectItem key={font} value={font}>
+                    {font}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </React.Fragment>
+          ))}
+        </SelectContent>
+      </Select>
+    </AnimateUIProvider>
   )
 }

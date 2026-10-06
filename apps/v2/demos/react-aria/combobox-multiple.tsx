@@ -33,6 +33,7 @@ import {
   type TagListProps,
   type TagProps,
 } from "@animate-ui/react/primitives/react-aria"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { Button } from "@/components/ui/react-aria/button"
 import {
@@ -390,31 +391,44 @@ const FRAMEWORKS = [
 
 type Framework = (typeof FRAMEWORKS)[number]
 
-export default function ComboboxMultipleDemo() {
+export const controls = {
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
+}
+
+export default function ComboboxMultipleDemo({
+  checkAnimation = "draw",
+}: {
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
+}) {
   const anchor = useComboboxAnchor()
 
   return (
-    <ComboBoxPrimitive
-      aria-label="Frameworks"
-      selectionMode="multiple"
-      defaultItems={FRAMEWORKS}
-      defaultValue={["next", "astro"]}
-    >
-      <div ref={anchor} className="w-72">
-        <ComboboxChips>
-          <ComboboxChipList<Framework>>
-            {(item) => <ComboboxChip id={item.id}>{item.name}</ComboboxChip>}
-          </ComboboxChipList>
-          <ComboboxChipsInput placeholder="Add frameworks…" />
-        </ComboboxChips>
-      </div>
-      <ComboboxContent anchor={anchor}>
-        <ComboboxList>
-          {(item: Framework) => (
-            <ComboboxItem id={item.id}>{item.name}</ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </ComboBoxPrimitive>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <ComboBoxPrimitive
+        aria-label="Frameworks"
+        selectionMode="multiple"
+        defaultItems={FRAMEWORKS}
+        defaultValue={["next", "astro"]}
+      >
+        <div ref={anchor} className="w-72">
+          <ComboboxChips>
+            <ComboboxChipList<Framework>>
+              {(item) => <ComboboxChip id={item.id}>{item.name}</ComboboxChip>}
+            </ComboboxChipList>
+            <ComboboxChipsInput placeholder="Add frameworks…" />
+          </ComboboxChips>
+        </div>
+        <ComboboxContent anchor={anchor}>
+          <ComboboxList>
+            {(item: Framework) => (
+              <ComboboxItem id={item.id}>{item.name}</ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </ComboBoxPrimitive>
+    </AnimateUIProvider>
   )
 }

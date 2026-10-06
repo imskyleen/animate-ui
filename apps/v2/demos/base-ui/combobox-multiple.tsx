@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@animate-ui/react/primitives/base-ui"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/base-ui/button"
@@ -313,36 +314,49 @@ const FRAMEWORKS = [
   "SolidStart",
 ]
 
-export default function ComboboxMultipleDemo() {
+export const controls = {
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
+}
+
+export default function ComboboxMultipleDemo({
+  checkAnimation = "draw",
+}: {
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
+}) {
   const anchor = useComboboxAnchor()
 
   return (
-    <Combobox multiple items={FRAMEWORKS} defaultValue={["Next.js", "Astro"]}>
-      <ComboboxChips ref={anchor} className="w-72">
-        <ComboboxValue>
-          {(values: string[]) => (
-            <React.Fragment>
-              {values.map((value) => (
-                <ComboboxChip key={value}>{value}</ComboboxChip>
-              ))}
-              <ComboboxChipsInput
-                placeholder={values.length > 0 ? "" : "Add frameworks…"}
-                aria-label="Frameworks"
-              />
-            </React.Fragment>
-          )}
-        </ComboboxValue>
-      </ComboboxChips>
-      <ComboboxContent anchor={anchor}>
-        <ComboboxEmpty>No framework found.</ComboboxEmpty>
-        <ComboboxList>
-          {(item: string) => (
-            <ComboboxItem key={item} value={item}>
-              {item}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <Combobox multiple items={FRAMEWORKS} defaultValue={["Next.js", "Astro"]}>
+        <ComboboxChips ref={anchor} className="w-72">
+          <ComboboxValue>
+            {(values: string[]) => (
+              <React.Fragment>
+                {values.map((value) => (
+                  <ComboboxChip key={value}>{value}</ComboboxChip>
+                ))}
+                <ComboboxChipsInput
+                  placeholder={values.length > 0 ? "" : "Add frameworks…"}
+                  aria-label="Frameworks"
+                />
+              </React.Fragment>
+            )}
+          </ComboboxValue>
+        </ComboboxChips>
+        <ComboboxContent anchor={anchor}>
+          <ComboboxEmpty>No framework found.</ComboboxEmpty>
+          <ComboboxList>
+            {(item: string) => (
+              <ComboboxItem key={item} value={item}>
+                {item}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+    </AnimateUIProvider>
   )
 }

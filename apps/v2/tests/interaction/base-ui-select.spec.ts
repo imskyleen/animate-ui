@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
-import { expectPickHold } from './pick-hold';
+import { withAnimation } from './item-checks';
+import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
 const POPUP = '[data-slot="select-content"]';
 
@@ -48,19 +49,39 @@ test.describe('base-ui select demo', () => {
     await expect(trigger).toHaveText('Lora');
   });
 
-  test('choosing an item holds the list while the check glides there', async ({
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`choosing an item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+      page,
+    }) => {
+      await page.goto(withAnimation('/tests/demos/base-ui/select', animation), {
+        waitUntil: 'networkidle',
+      });
+      const trigger = page.getByRole('combobox', { name: 'Font' });
+      await trigger.click();
+      await page.waitForTimeout(650);
+      await expectPickHold(page, {
+        popup: POPUP,
+        item: 'Satoshi',
+        from: 'Geist',
+        check: ':scope > span:not([data-slot="item-highlight"])',
+        animation,
+        pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
+      });
+      await expect(trigger).toHaveText('Satoshi');
+    });
+  }
+
+  test('choosing the chosen item again closes without waiting', async ({
     page,
   }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
     await trigger.click();
     await page.waitForTimeout(650);
-    await expectPickHold(page, {
-      popup: POPUP,
-      item: 'Satoshi',
-      check: ':scope > span:not([data-slot="item-highlight"])',
-      pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
-    });
-    await expect(trigger).toHaveText('Satoshi');
+    // Nothing changes: no check to wait for.
+    await expectCloseWithoutHold(page, POPUP, () =>
+      page.getByRole('option', { name: 'Geist', exact: true }).click(),
+    );
+    await expect(trigger).toHaveText('Geist');
   });
 
   test('reopening mid-exit retargets instead of restarting', async ({
@@ -196,6 +217,38 @@ test.describe('base-ui select API', () => {
     );
     expect(recorded.at(-1)!.opacity).toBe(0);
     await expect(page.getByTestId('multiple-popup')).toBeVisible();
+  });
+
+  test('animation="pop": a text check pops in and shrinks back out', async ({
+    page,
+  }) => {
+    await page.getByRole('combobox', { name: 'Popped' }).click();
+    await page.waitForTimeout(650);
+    const arriving = recordMotion(
+      page,
+      { selector: '[data-testid="pop-cherry"]' },
+      600,
+    );
+    await page.getByRole('option', { name: 'Popped Cherry' }).click();
+    await expect(page.getByTestId('popped-value')).toHaveText('apple,cherry');
+    const shown = (await arriving).filter((f) => f.opacity > 0.02);
+    // From half its size (the text "✓" made a box for it), past its size.
+    expect(shown[0]!.scale).toBeLessThan(0.85);
+    expect(Math.max(...shown.map((f) => f.scale))).toBeGreaterThan(1.02);
+    expect(shown.at(-1)!.scale).toBe(1);
+    expect(shown.at(-1)!.opacity).toBe(1);
+
+    const leaving = recordMotion(
+      page,
+      { selector: '[data-testid="pop-apple"]' },
+      400,
+    );
+    await page.getByRole('option', { name: 'Popped Apple' }).click();
+    await expect(page.getByTestId('popped-value')).toHaveText('cherry');
+    const out = await leaving;
+    expect(out.some((f) => f.scale < 0.95 && f.opacity > 0.05)).toBe(true);
+    expect(out.at(-1)!.opacity).toBe(0);
+    await expect(page.getByTestId('popped-popup')).toBeVisible();
   });
 
   test('transition props replace the defaults', async ({ page }) => {

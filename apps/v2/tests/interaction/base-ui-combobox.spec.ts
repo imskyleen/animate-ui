@@ -3,12 +3,20 @@ import { expect, test } from '@playwright/test';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 import {
+  expectPoppedIn,
+  expectPoppedOut,
+  recordCheck,
+  withAnimation,
+} from './item-checks';
+import {
   expectCloseWithoutHold,
   expectEscapeWithoutHold,
   expectPickHold,
 } from './pick-hold';
 
 const POPUP = '[data-slot="combobox-content"]';
+/** An item's check (its ItemIndicator), beside the highlight. */
+const CHECK = ':scope > span:not([data-slot="item-highlight"])';
 
 test.describe('base-ui combobox demo', () => {
   test.describe.configure({ timeout: 180_000 });
@@ -49,21 +57,62 @@ test.describe('base-ui combobox demo', () => {
     await expect(page.locator(POPUP)).toHaveCount(1);
   });
 
-  test('picking an item closes it the same way', async ({ page }) => {
-    const input = page.getByRole('combobox', { name: 'Framework' });
-    await input.click();
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(650);
-    // It plays an exit, recorded in the page from before the click: a loaded
-    // machine can deliver the click late, and miss it with a poll.
-    await expectCloseWithoutHold(page, POPUP, () =>
-      page.getByRole('option', { name: 'Astro' }).click(),
-    );
-    await expect(page.locator(POPUP)).toBeHidden();
-    await expect(input).toHaveValue('Astro');
-  });
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`a first choice holds the list while its check ${animation === 'draw' ? 'draws itself' : 'pops in'}, then closes`, async ({
+      page,
+    }) => {
+      await page.goto(
+        withAnimation('/tests/demos/base-ui/combobox', animation),
+        { waitUntil: 'networkidle' },
+      );
+      const input = page.getByRole('combobox', { name: 'Framework' });
+      await input.click();
+      await page.keyboard.press('ArrowDown');
+      await page.waitForTimeout(650);
+      // Recorded in the page from before the click: a loaded machine can
+      // deliver the click late, and miss it with a poll.
+      await expectPickHold(page, {
+        popup: POPUP,
+        item: 'Astro',
+        from: null,
+        check: CHECK,
+        animation,
+        pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+      });
+      await expect(page.locator(POPUP)).toBeHidden();
+      await expect(input).toHaveValue('Astro');
+    });
 
-  test('choosing an item holds the list while the check glides there', async ({
+    test(`choosing another item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+      page,
+    }) => {
+      await page.goto(
+        withAnimation('/tests/demos/base-ui/combobox', animation),
+        { waitUntil: 'networkidle' },
+      );
+      const input = page.getByRole('combobox', { name: 'Framework' });
+      const open = async () => {
+        await input.click();
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(650);
+      };
+      await open();
+      await page.getByRole('option', { name: 'Next.js' }).click();
+      await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
+      await open();
+      await expectPickHold(page, {
+        popup: POPUP,
+        item: 'Astro',
+        from: 'Next.js',
+        check: CHECK,
+        animation,
+        pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+      });
+      await expect(input).toHaveValue('Astro');
+    });
+  }
+
+  test('choosing the chosen item again closes without waiting', async ({
     page,
   }) => {
     const input = page.getByRole('combobox', { name: 'Framework' });
@@ -73,27 +122,14 @@ test.describe('base-ui combobox demo', () => {
       await page.waitForTimeout(650);
     };
     await open();
-    await page.getByRole('option', { name: 'Next.js' }).click();
+    await page.getByRole('option', { name: 'Astro' }).click();
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
     await open();
-    await expectPickHold(page, {
-      popup: POPUP,
-      item: 'Astro',
-      check: ':scope > span:not([data-slot="item-highlight"])',
-      pick: () => page.getByRole('option', { name: 'Astro' }).click(),
-    });
-    await expect(input).toHaveValue('Astro');
-  });
-
-  test('a first choice, with no check to glide, closes without waiting', async ({
-    page,
-  }) => {
-    await page.getByRole('combobox', { name: 'Framework' }).click();
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(650);
+    // Nothing changes: no check to wait for.
     await expectCloseWithoutHold(page, POPUP, () =>
       page.getByRole('option', { name: 'Astro' }).click(),
     );
+    await expect(input).toHaveValue('Astro');
   });
 
   test('Escape closes it without waiting', async ({ page }) => {
@@ -191,6 +227,34 @@ test.describe('base-ui combobox chips demo', () => {
     await expect(
       page.locator('[data-slot="combobox-chip"]', { hasText: 'Nuxt' }),
     ).toHaveCount(0, { timeout: 50 });
+  });
+
+  test('pop: checks pop in with the selection and shrink back out', async ({
+    page,
+  }) => {
+    await page.goto(
+      '/tests/demos/base-ui/combobox-multiple?checkAnimation=pop',
+      {
+        waitUntil: 'networkidle',
+      },
+    );
+    await page.getByRole('combobox', { name: 'Frameworks' }).click();
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(650);
+    const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    const target = {
+      items: '[role="option"]',
+      label: 'Nuxt',
+      indicator: CHECK,
+    };
+    const arriving = recordCheck(page, target);
+    await nuxt.click();
+    expectPoppedIn(await arriving);
+    const leaving = recordCheck(page, target, 500);
+    await nuxt.click();
+    expectPoppedOut(await leaving);
+    // Multiple selection: the list stays open.
+    await expect(page.locator(POPUP)).toBeVisible();
   });
 });
 

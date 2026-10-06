@@ -7,24 +7,17 @@ import {
   ListStateContext,
   SelectionIndicator as SelectionIndicatorPrimitive,
   SelectionIndicatorContext,
-  SelectStateContext,
   useContextProps,
   useRenderProps,
+  useSlottedContext,
   type ListBoxItemProps as ListBoxItemPrimitiveProps,
   type ListBoxItemRenderProps,
   type ListBoxProps as ListBoxPrimitiveProps,
   type SelectionIndicatorProps as SelectionIndicatorPrimitiveProps,
 } from 'react-aria-components';
+import { ReducedMotionConfig } from '../../../utils/motion';
 import {
-  motion,
-  PresenceContext,
-  type HTMLMotionProps,
-  type Transition,
-} from 'motion/react';
-
-import { ReducedMotionConfig, useTempoTransition } from '../../../utils/motion';
-import {
-  IndicatorLayoutContext,
+  IndicatorGroupContext,
   IndicatorModeContext,
 } from '../../../internal/aria-indicator';
 import {
@@ -33,9 +26,10 @@ import {
 } from '../../../internal/aria-item-highlight';
 import { HighlightScope } from '../../../internal/item-highlight';
 import {
-  DrawnCheck,
-  GLIDE_TRANSITION,
-  useRegisterCheck,
+  ItemCheck,
+  useCheckGroup,
+  type CheckGroup,
+  type ItemCheckAnimationProps,
 } from '../../../internal/item-indicator';
 
 // Same API as React Aria's ListBox, ListBoxItem and SelectionIndicator: the
@@ -48,11 +42,11 @@ import {
 //   menu highlight (internal/item-highlight). It wears the item's own focused
 //   background, read from your styles.
 // - A SelectionIndicator inside an item (the check), here or in Animate UI's
-//   Menu: with a single selection, it glides to the chosen item on a quick
-//   spring while the list holds still (the Popover waits for it before
-//   closing); with a multiple selection, it draws itself when the item is
-//   selected and erases itself when it's deselected, like a checkbox's
-//   check.
+//   Menu: it draws itself when the item is selected and erases itself when
+//   it's deselected, like a checkbox's check; with `pop`, it pops in and out,
+//   and a single selection's check glides to the chosen item on a quick
+//   spring. A closing list holds still while it does (the Popover waits for
+//   it).
 //
 // Items are collection items: the highlight goes through their `render` prop
 // (internal/aria-item-highlight).
@@ -64,10 +58,10 @@ function ListBox<T extends object>({
   style,
   ...props
 }: ListBoxProps<T> & React.RefAttributes<HTMLDivElement>) {
-  const layoutId = React.useId();
+  const group = useCheckGroup();
 
   return (
-    <IndicatorLayoutContext value={layoutId}>
+    <IndicatorGroupContext value={group}>
       {/* Mounted with its popover: each opening starts without a highlight. */}
       <HighlightScope open>
         <ListBoxPrimitive
@@ -80,7 +74,7 @@ function ListBox<T extends object>({
           })}
         />
       </HighlightScope>
-    </IndicatorLayoutContext>
+    </IndicatorGroupContext>
   );
 }
 
@@ -105,39 +99,37 @@ function ListBoxItem<T extends object>({
   );
 }
 
-/** React Aria's props, plus Animate UI's `transition`. */
-type SelectionIndicatorProps = SelectionIndicatorPrimitiveProps & {
-  /**
-   * Transition of the indicator gliding to the chosen item (single
-   * selection), or of the check drawing and erasing itself (multiple
-   * selection). Defaults to a spring (stiffness 500, damping 40) for the
-   * glide, and 0.3s on Motion's easeOut both ways (a checkbox's) for the
-   * check.
-   */
-  transition?: Transition;
-};
+/** React Aria's props, plus Animate UI's `animation` and `transition`. */
+type SelectionIndicatorProps = SelectionIndicatorPrimitiveProps &
+  ItemCheckAnimationProps;
 
 /**
- * Animated inside Animate UI's ListBox and Menu. Anywhere else (a Tab, a
- * ToggleButton, React Aria's own ListBox or Menu), it's React Aria's.
+ * Animated inside Animate UI's ListBox and Menu, where it's rendered on every
+ * item (a check rendered only while its item is selected can't hide itself:
+ * it glides from where it was with `pop`, and goes at once with `draw`).
+ * Anywhere else (a Tab, a ToggleButton, React Aria's own ListBox or Menu),
+ * it's React Aria's.
  */
 function SelectionIndicator({
+  animation,
   transition,
   ...props
 }: SelectionIndicatorProps & React.RefAttributes<HTMLDivElement>) {
-  const layoutId = React.use(IndicatorLayoutContext);
-  const select = React.use(SelectStateContext);
-  const list = React.use(ListStateContext);
-  // A SelectValue renders the chosen item's content again, in the trigger:
-  // no check there (React Aria's own would throw, out of any list).
-  if (select && !list) return null;
-  if (!layoutId || props.render)
-    return <SelectionIndicatorPrimitive {...props} />;
+  const group = React.use(IndicatorGroupContext);
+  const item = useSlottedContext(SelectionIndicatorContext);
+  if (!group || props.render) {
+    // React Aria's, shown on the selected item only. A SelectValue renders
+    // the chosen item's content again in the trigger, out of any list and
+    // unselected: React Aria's own would throw there.
+    const selected = props.isSelected ?? item?.isSelected;
+    return selected ? <SelectionIndicatorPrimitive {...props} /> : null;
+  }
   return (
     <ReducedMotionConfig>
       <AnimatedIndicator
         {...props}
-        layoutId={layoutId}
+        group={group}
+        animation={animation}
         transition={transition}
       />
     </ReducedMotionConfig>
@@ -145,11 +137,12 @@ function SelectionIndicator({
 }
 
 type AnimatedIndicatorProps = SelectionIndicatorProps &
-  React.RefAttributes<HTMLDivElement> & { layoutId: string };
+  React.RefAttributes<HTMLDivElement> & { group: CheckGroup };
 
 // Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
 function AnimatedIndicator({
-  layoutId,
+  group,
+  animation,
   transition,
   ref,
   ...ownProps
@@ -166,9 +159,6 @@ function AnimatedIndicator({
   const mode =
     React.use(IndicatorModeContext) ?? state?.selectionManager.selectionMode;
   const multiple = mode === 'multiple';
-  // A single selection's shown check: choosing another item holds the list.
-  useRegisterCheck(!multiple && Boolean(isSelected));
-  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
   const renderProps = useRenderProps({
     className,
     style,
@@ -177,44 +167,23 @@ function AnimatedIndicator({
     values: { isEntering: false, isExiting: false },
   });
 
-  const elementProps = {
-    ...(domProps as HTMLMotionProps<'div'>),
-    ref: mergedRef,
-    className: renderProps.className,
-    style: renderProps.style,
-  };
-
-  if (multiple) {
-    return (
-      // Kept mounted: it erases itself when deselected, and leaves with the
-      // list as it is.
-      <DrawnCheck
-        {...(elementProps as React.ComponentProps<'span'>)}
-        as="div"
-        checked={Boolean(isSelected)}
-        transition={transition}
-      >
-        {renderProps.children}
-      </DrawnCheck>
-    );
-  }
-
-  // A single selection's check: on the chosen item only.
-  if (!isSelected) return null;
   return (
-    // Out of the popover's exit: it doesn't wait for the glide to end before
-    // it unmounts.
-    <PresenceContext value={null}>
-      <motion.div
-        {...elementProps}
-        layoutId={layoutId}
-        // One check moving, not two crossfading.
-        layoutCrossfade={false}
-        transition={glide}
-      >
-        {renderProps.children}
-      </motion.div>
-    </PresenceContext>
+    // Kept mounted: it hides itself when deselected, and leaves with the list
+    // as it is.
+    <ItemCheck
+      {...(domProps as React.ComponentProps<'span'>)}
+      ref={mergedRef as React.Ref<HTMLSpanElement>}
+      className={renderProps.className}
+      style={renderProps.style}
+      as="div"
+      multiple={multiple}
+      group={multiple ? null : group}
+      checked={Boolean(isSelected)}
+      animation={animation}
+      transition={transition}
+    >
+      {renderProps.children}
+    </ItemCheck>
   );
 }
 

@@ -22,6 +22,8 @@ export type Sample = {
    * the content is (or holds) an SVG shape.
    */
   dash: number | null;
+  /** The content's blur, in px. */
+  blur: number;
 } | null;
 
 /**
@@ -67,6 +69,7 @@ export async function startSampling(
           const shapes = 'path, line, polyline';
           const path = el.matches(shapes) ? el : el.querySelector(shapes);
           const dashArray = path ? getComputedStyle(path).strokeDasharray : '';
+          const blur = style.filter.match(/blur\(([\d.]+)px\)/);
           out.push({
             t: performance.now() - t0,
             state: stateOf(rootEl),
@@ -80,6 +83,7 @@ export async function startSampling(
                 ? 1
                 : parseFloat(dashArray)
               : null,
+            blur: blur ? Number(blur[1]) : 0,
           });
         } else {
           out.push(
@@ -93,6 +97,7 @@ export async function startSampling(
                   width: 0,
                   bg: getComputedStyle(rootEl).backgroundColor,
                   dash: null,
+                  blur: 0,
                 }
               : null,
           );
@@ -169,14 +174,18 @@ async function stateOf(root: Locator) {
   });
 }
 
-async function gotoDemo(page: Page, lib: Lib, name: string) {
-  await page.goto(`/tests/demos/${lib}/${name}`, { waitUntil: 'networkidle' });
+async function gotoDemo(page: Page, lib: Lib, name: string, query = '') {
+  await page.goto(`/tests/demos/${lib}/${name}${query}`, {
+    waitUntil: 'networkidle',
+  });
 }
 
 // ---------------------------------------------------------------------------
 
 const CHECKBOX = '[data-slot="checkbox"]';
 const CHECK = '[data-slot="checkbox-indicator"] svg path';
+/** The check's icon: what pops (`checkAnimation="pop"`). */
+const ICON = '[data-slot="checkbox-indicator"] svg';
 
 /**
  * v1's check drawing itself: hidden for 0.2s after the state flips, then its
@@ -227,7 +236,113 @@ function expectCheckErases(samples: NonNullable<Sample>[]) {
   expect(gone!.t - flipped[0]!.t).toBeLessThan(550);
 }
 
+/**
+ * A popped check, partway: its scale, blur and opacity follow one progress
+ * (from half its size, 2px of blur and transparent, to rest), whatever the
+ * frames a busy machine skips.
+ */
+function expectPopShape(s: NonNullable<Sample>) {
+  expect(Math.abs(s.scale - (0.5 + 0.5 * s.opacity))).toBeLessThan(0.06);
+  expect(Math.abs(s.blur - 2 * (1 - s.opacity))).toBeLessThan(0.3);
+}
+
+/**
+ * A check popping in (`pop`): hidden for 0.2s after the state flips, like a
+ * drawn one, then springing from half its size out of a blur, a little past
+ * its size, to rest. Its stroke stays whole. Under reduced motion it only
+ * fades.
+ */
+function expectCheckPops(samples: NonNullable<Sample>[], reduce = false) {
+  const shown = present(samples).filter((s) => s.state === 'true');
+  expect(shown.length).toBeGreaterThan(3);
+  const flip = samples.findIndex((s) => s.state === 'true');
+  const before = samples[Math.max(flip - 1, 0)]!;
+  for (const s of shown.filter((s) => s.t - before.t < 150))
+    expect(s.opacity).toBeLessThan(0.05);
+  const appearing = shown.filter((s) => s.opacity > 0.05);
+  expect(appearing.length).toBeGreaterThan(2);
+  for (const s of appearing) {
+    expect(s.t - before.t).toBeGreaterThan(150);
+    expect(s.dash).toBe(1);
+  }
+  const partway = appearing.filter((s) => s.opacity < 0.98);
+  expect(partway.length).toBeGreaterThan(0);
+  if (reduce) {
+    for (const s of shown) expect(s.scale).toBe(1);
+  } else {
+    for (const s of partway) expectPopShape(s);
+    expect(Math.max(...appearing.map((s) => s.scale))).toBeGreaterThan(1.02);
+  }
+  const last = shown.at(-1)!;
+  expect(last.scale).toBeCloseTo(1, 2);
+  expect(last.opacity).toBe(1);
+  expect(last.blur).toBe(0);
+}
+
+/** A popped check shrinking back into its blur in 0.15s; then it goes. */
+function expectCheckUnpops(samples: NonNullable<Sample>[]) {
+  const flipped = samples.filter((s) => s.state === 'false');
+  expect(flipped.length).toBeGreaterThan(3);
+  const leaving = present(flipped).filter(
+    (s) => s.opacity > 0.02 && s.opacity < 0.98,
+  );
+  expect(leaving.length).toBeGreaterThan(0);
+  for (const s of leaving) {
+    expectPopShape(s);
+    expect(s.t - flipped[0]!.t).toBeLessThan(250);
+    expect(s.dash).toBe(1);
+  }
+  const gone = flipped.find((s) => s.width === -1);
+  expect(gone).toBeDefined();
+  expect(gone!.t - flipped[0]!.t).toBeLessThan(450);
+}
+
 export function describeCheckboxDemo(lib: Lib) {
+  test.describe(`${lib} checkbox demo, checkAnimation="pop"`, () => {
+    test.beforeEach(async ({ page }) =>
+      gotoDemo(page, lib, 'checkbox', '?checkAnimation=pop'),
+    );
+
+    test('a checked box shows its check at rest once loaded', async ({
+      page,
+    }) => {
+      const icon = page.locator(CHECKBOX).nth(0).locator(ICON);
+      await expect.poll(() => opacityOf(icon)).toBe(1);
+      await expect.poll(() => scaleOf(icon)).toBe(1);
+    });
+
+    test('the check pops in after 0.2s, from half its size', async ({
+      page,
+    }) => {
+      await startSampling(page, CHECKBOX, 1, ICON);
+      await page.locator(CHECKBOX).nth(1).click();
+      await page.waitForTimeout(900);
+      expectCheckPops(await readSamples(page));
+    });
+
+    test('unchecking shrinks it back out in 0.15s, then removes it', async ({
+      page,
+    }) => {
+      // At rest first: a checked box's check pops in as the page loads.
+      const icon = page.locator(CHECKBOX).nth(0).locator(ICON);
+      await expect.poll(() => opacityOf(icon)).toBe(1);
+      await expect.poll(() => scaleOf(icon)).toBe(1);
+      await startSampling(page, CHECKBOX, 0, ICON);
+      await page.locator(CHECKBOX).nth(0).click();
+      await page.waitForTimeout(700);
+      expectCheckUnpops(await readSamples(page));
+    });
+
+    test('reduced motion: the check only fades', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.reload({ waitUntil: 'networkidle' });
+      await startSampling(page, CHECKBOX, 1, ICON);
+      await page.locator(CHECKBOX).nth(1).click();
+      await page.waitForTimeout(900);
+      expectCheckPops(await readSamples(page), true);
+    });
+  });
+
   test.describe(`${lib} checkbox demo`, () => {
     test.beforeEach(async ({ page }) => gotoDemo(page, lib, 'checkbox'));
 

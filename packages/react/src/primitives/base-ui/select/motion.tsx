@@ -2,12 +2,7 @@
 
 import * as React from 'react';
 import { mergeProps } from '@base-ui/react/merge-props';
-import {
-  motion,
-  PresenceContext,
-  type HTMLMotionProps,
-  type Transition,
-} from 'motion/react';
+import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
 import {
   useShouldReduceMotion,
@@ -25,12 +20,12 @@ import {
 } from '../../../internal/item-highlight';
 import {
   CheckRegistryContext,
-  GLIDE_TRANSITION,
+  ItemCheck,
   PICK_HOLD,
-  DrawnCheck,
-  asTransformable,
+  useCheckGroup,
   useCheckRegistry,
-  useRegisterCheck,
+  type CheckGroup,
+  type ItemCheckAnimationProps,
 } from '../../../internal/item-indicator';
 
 // Shared by Base UI's Select and Combobox: both keep their popup mounted
@@ -38,25 +33,29 @@ import {
 //
 // Neither has an Animate UI v1 counterpart: they move like v1's Base UI Menu.
 // The popup fades and scales from 0.9 in 250ms, both ways; a highlight
-// glides behind the highlighted item; a single selection's check glides to
-// the chosen item on a quick spring, and a multiple selection's check
-// pops in from half its size like v1's checkbox indicator. Choosing another
-// item closes the list after a 150ms hold, so the check is seen landing
-// (internal/item-indicator).
+// glides behind the highlighted item; an item's check draws itself when the
+// item is chosen and erases itself when it's not anymore, like a checkbox's
+// (with `pop`, it pops in and out, and a single selection's check glides to
+// the chosen item on a quick spring). Choosing another item closes the list
+// after a 150ms hold, so the change is seen (internal/item-indicator).
 
 /** What a Root shares with its animated parts. */
 type RootMotion = {
   /** Unmounts the popup: called once its exit has played. */
   unmount: () => void;
   multiple: boolean;
-  /** The popup closed because an item was chosen, with a check to glide. */
+  /** The popup closed because an item was chosen, whose check changes. */
   picked: boolean;
-  /** Lets a shown check register with the list. */
-  registerCheck: () => () => void;
+  /** Lets a check register with the list. */
+  registerCheck: (element: Element) => () => void;
 };
 
 /** What the Root needs to know of Base UI's change details. */
-type OpenChangeDetails = { reason: string; isCanceled: boolean };
+type OpenChangeDetails = {
+  reason: string;
+  isCanceled: boolean;
+  event?: Event;
+};
 
 /** Animate UI's additions to `Popup`. */
 type PopupAnimationProps = {
@@ -69,19 +68,34 @@ type PopupAnimationProps = {
   exitTransition?: Transition;
 };
 
-/** Animate UI's addition to `ItemIndicator`. */
-type IndicatorAnimationProps = {
-  /**
-   * Transition of the check moving to the chosen item (single selection), or
-   * popping in (multiple selection). Defaults to a spring (stiffness 500,
-   * damping 40), and Motion's defaults for the pop, as v1's checkbox
-   * indicator.
-   */
-  transition?: Transition;
-};
+/** Animate UI's additions to `ItemIndicator`. */
+type IndicatorAnimationProps = ItemCheckAnimationProps;
 
-/** The checks of an open list share it: the check glides to the chosen item. */
-const IndicatorLayoutContext = React.createContext<string | null>(null);
+/**
+ * The checks of an open list share it: a single selection's check glides to
+ * the chosen item (`pop`).
+ */
+const IndicatorGroupContext = React.createContext<CheckGroup | null>(null);
+
+/**
+ * Whether a press closing the list chose an item whose check changes:
+ * another item than the chosen one (the DOM still shows the old state), with
+ * a check.
+ */
+function checkChanges(
+  details: OpenChangeDetails,
+  hasCheck: (item: Element) => boolean,
+) {
+  if (details.reason !== 'item-press') return false;
+  const target = details.event?.target;
+  const item =
+    target instanceof Element ? target.closest('[role="option"]') : null;
+  return (
+    item !== null &&
+    item.getAttribute('aria-selected') !== 'true' &&
+    hasCheck(item)
+  );
+}
 
 /**
  * Keeps the actions Base UI needs, and forwards the user's `actionsRef`.
@@ -108,8 +122,8 @@ function useRootMotion<
   const handleOpenChange = (open: boolean, eventDetails: Details) => {
     onOpenChange?.(open, eventDetails);
     if (eventDetails.isCanceled) return;
-    // A check is shown (the chosen one isn't mounted yet): it will glide.
-    setPicked(!open && eventDetails.reason === 'item-press' && hasCheck());
+    // The chosen item's check shows itself while the list holds.
+    setPicked(!open && checkChanges(eventDetails, hasCheck));
   };
   const context = React.useMemo<RootMotion>(
     () => ({ unmount, multiple, picked, registerCheck }),
@@ -137,12 +151,12 @@ function usePopupRender(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
-  // Closing because an item was chosen: the list holds still while the check
-  // glides there (it doesn't glide under reduced motion).
+  // Closing because an item was chosen: the list holds still while its check
+  // shows itself (nothing moves under reduced motion).
   const exitDelay = (exit as { delay?: number }).delay ?? 0;
   const held: Transition =
     root?.picked && !reduce ? { ...exit, delay: exitDelay + hold } : exit;
-  const layoutId = React.useId();
+  const group = useCheckGroup();
   // Base UI can mount a closed popup (typeahead and autofill on the closed
   // trigger register the items): only an exit that followed an entrance
   // unmounts it.
@@ -193,11 +207,11 @@ function usePopupRender(
           isolation: 'isolate',
         }}
       >
-        <IndicatorLayoutContext value={layoutId}>
+        <IndicatorGroupContext value={group}>
           <CheckRegistryContext value={root?.registerCheck ?? null}>
             <HighlightScope open={open}>{children}</HighlightScope>
           </CheckRegistryContext>
-        </IndicatorLayoutContext>
+        </IndicatorGroupContext>
       </motion.div>
     );
   };
@@ -238,34 +252,26 @@ type IndicatorMotionProps = IndicatorAnimationProps & {
   render: IndicatorRender;
   props: Record<string, unknown>;
   state: { selected: boolean };
-  /** Multiple selection pops each check in; a single one glides. */
+  /** Each check of a multiple selection shows on its own. */
   multiple: boolean;
 };
 
 /**
- * A check, keeping the element the user's `render` asks for. Single
- * selection: it shows with the list and glides to the chosen item, while the
- * list holds still before it closes. Multiple selection: it draws itself when
- * the item is selected and erases itself when it's deselected, like a
- * checkbox's check.
+ * A check, keeping the element the user's `render` asks for, kept mounted
+ * (the parts pass `keepMounted`): it shows itself when its item is selected
+ * (or the list opens) and hides itself when it's deselected, while a closing
+ * list holds still. With `pop`, a single selection's check glides to the
+ * chosen item.
  */
 function IndicatorMotion({
   render,
   props,
   state,
   multiple,
+  animation,
   transition,
 }: IndicatorMotionProps) {
-  const layoutId = React.use(IndicatorLayoutContext);
-  // A single selection's shown check: choosing another item holds the list.
-  useRegisterCheck(!multiple && state.selected);
-  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  // A box, so it can glide.
-  const ownRef = props.ref as React.Ref<HTMLElement> | undefined;
-  const transformableRef = React.useMemo(
-    () => mergeRefs(ownRef, asTransformable),
-    [ownRef],
-  );
+  const group = React.use(IndicatorGroupContext);
 
   // Resolve the user's render like Base UI does, to keep their element.
   let type = 'span';
@@ -283,45 +289,21 @@ function IndicatorMotion({
       ...mergeProps(props, render.props as Record<string, unknown>),
       ref: props.ref,
     };
-    // A component can't become a motion element: render it unanimated.
+    // A component's element can't be reached: render it unanimated.
     if (typeof render.type !== 'string')
       return React.cloneElement(render, merged);
     type = render.type;
     elementProps = merged;
   }
 
-  const Element = motion[type as 'span'];
-  const motionProps = {
-    ...(elementProps as HTMLMotionProps<'span'>),
-    ref: transformableRef,
-  };
-
-  if (!multiple) {
-    return (
-      // Out of the list's exit: the list doesn't wait for the glide to end
-      // before it unmounts.
-      <PresenceContext value={null}>
-        <Element
-          {...motionProps}
-          layoutId={layoutId ?? undefined}
-          // One check moving, not two crossfading.
-          layoutCrossfade={false}
-          transition={glide}
-          style={{
-            ...motionProps.style,
-            ...(state.selected ? null : { visibility: 'hidden' as const }),
-          }}
-        />
-      </PresenceContext>
-    );
-  }
-  // Kept mounted (the parts pass `keepMounted`): it erases itself when its
-  // item is deselected, and leaves with the list as it is.
   return (
-    <DrawnCheck
+    <ItemCheck
       {...(elementProps as React.ComponentProps<'span'>)}
       as={type === 'div' ? 'div' : 'span'}
+      multiple={multiple}
+      group={multiple ? null : group}
       checked={state.selected}
+      animation={animation}
       transition={transition}
     />
   );

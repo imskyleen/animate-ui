@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
+import type { CheckAnimation } from '../../utils/motion';
 import { usePressedMotion } from './press';
 import {
   useRenderedIndicator,
@@ -46,6 +47,8 @@ type RenderedIndicatorProps = IndicatorAnimationProps & {
   rootRef: React.RefObject<Element | null>;
   selector: string;
   kind: IndicatorKind;
+  /** How a check shows and hides (a dot always pops). */
+  animation?: CheckAnimation;
   checked: boolean;
   indeterminate?: boolean;
 };
@@ -55,6 +58,7 @@ function RenderedIndicator({
   rootRef,
   selector,
   kind,
+  animation,
   checked,
   indeterminate,
   transition,
@@ -64,7 +68,7 @@ function RenderedIndicator({
     rootRef,
     selector,
     kind,
-    { checked, indeterminate },
+    { checked, indeterminate, animation },
     { transition, exitTransition },
   );
   return null;

@@ -114,8 +114,8 @@ function Popover({
     props.onOpenChange?.(next);
   };
 
-  // Closed with another single selection than it opened with (it had one: a
-  // check to glide from): an item was chosen.
+  // Closed with another single selection than it opened with: an item was
+  // chosen, whose check shows itself.
   const list = triggerState as ListTriggerState | null;
   const selection = selectionOf(list);
   const [openedWith, setOpenedWith] = React.useState(selection);
@@ -128,9 +128,8 @@ function Popover({
   const picked =
     !open &&
     list?.selectionManager?.selectionMode === 'single' &&
-    Boolean(openedWith) &&
     selection !== openedWith;
-  // The check doesn't glide under reduced motion: nothing to wait for.
+  // Nothing moves under reduced motion: nothing to wait for.
   const reduce = useShouldReduceMotion();
   // The SelectionIndicators of its ListBox or Menu register: no check, no
   // hold. A menu's items mark their picks, for it and the menus around.

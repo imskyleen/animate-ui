@@ -2,7 +2,12 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
-import { expectEscapeWithoutHold, expectPickHold } from './pick-hold';
+import { withAnimation } from './item-checks';
+import {
+  expectCloseWithoutHold,
+  expectEscapeWithoutHold,
+  expectPickHold,
+} from './pick-hold';
 
 const POPOVER = '[data-slot="select-content"]';
 
@@ -50,20 +55,41 @@ test.describe('react-aria select demo', () => {
     await expect(trigger).toContainText('Lora');
   });
 
-  test('choosing an item holds the list while the check glides there', async ({
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`choosing an item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+      page,
+    }) => {
+      await page.goto(
+        withAnimation('/tests/demos/react-aria/select', animation),
+        { waitUntil: 'networkidle' },
+      );
+      const trigger = page.locator('[data-slot="select-trigger"]');
+      await trigger.click();
+      await page.waitForTimeout(650);
+      await expectPickHold(page, {
+        popup: POPOVER,
+        item: 'Satoshi',
+        from: 'Geist',
+        // The SelectionIndicator.
+        check: ':scope > div',
+        animation,
+        pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
+      });
+      await expect(trigger).toContainText('Satoshi');
+    });
+  }
+
+  test('choosing the chosen item again closes without waiting', async ({
     page,
   }) => {
     const trigger = page.locator('[data-slot="select-trigger"]');
     await trigger.click();
     await page.waitForTimeout(650);
-    await expectPickHold(page, {
-      popup: POPOVER,
-      item: 'Satoshi',
-      // The SelectionIndicator.
-      check: ':scope > div',
-      pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
-    });
-    await expect(trigger).toContainText('Satoshi');
+    // Nothing changes: no check to wait for.
+    await expectCloseWithoutHold(page, POPOVER, () =>
+      page.getByRole('option', { name: 'Geist', exact: true }).click(),
+    );
+    await expect(trigger).toContainText('Geist');
   });
 
   test('Escape closes it without waiting', async ({ page }) => {

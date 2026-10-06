@@ -33,6 +33,7 @@ import {
   type TagListProps,
   type TagProps,
 } from "@animate-ui/react/primitives/react-aria"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { Button } from "@/components/ui/react-aria/button"
 import {
@@ -401,6 +402,9 @@ export const controls = {
     },
     alignOffset: { value: 0 },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 /** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
@@ -418,30 +422,35 @@ export default function ComboboxDemo({
   sideOffset = 6,
   align = "center",
   alignOffset = 0,
+  checkAnimation = "draw",
 }: {
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   return (
-    <ComboBoxPrimitive
-      aria-label="Framework"
-      defaultItems={FRAMEWORKS}
-      allowsEmptyCollection
-    >
-      <ComboboxInput placeholder="Search a framework…" className="w-56" />
-      <ComboboxContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
-        <ComboboxList
-          renderEmptyState={() => (
-            <ComboboxEmpty>No framework found.</ComboboxEmpty>
-          )}
-        >
-          {(item: (typeof FRAMEWORKS)[number]) => (
-            <ComboboxItem id={item.id}>{item.name}</ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </ComboBoxPrimitive>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <ComboBoxPrimitive
+        aria-label="Framework"
+        defaultItems={FRAMEWORKS}
+        allowsEmptyCollection
+      >
+        <ComboboxInput placeholder="Search a framework…" className="w-56" />
+        <ComboboxContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
+          <ComboboxList
+            renderEmptyState={() => (
+              <ComboboxEmpty>No framework found.</ComboboxEmpty>
+            )}
+          >
+            {(item: (typeof FRAMEWORKS)[number]) => (
+              <ComboboxItem id={item.id}>{item.name}</ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </ComboBoxPrimitive>
+    </AnimateUIProvider>
   )
 }

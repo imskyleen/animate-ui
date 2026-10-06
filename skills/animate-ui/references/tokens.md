@@ -30,20 +30,21 @@ Import `transition` as `motionTransition` when the component also takes a `trans
 
 Springs first: nearly everything moves on a spring. They retarget with their velocity when interrupted, and a little overshoot makes motion feel alive. Animate UI's springs are `stiffness` / `damping` pairs (mass 1): tune those, not `bounce`, which Motion ignores when stiffness or damping are set.
 
-| Token              | Value                                                     | Feel                                               | Use for                                                                                                                       |
-| ------------------ | --------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                                                                              |
-| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                                                                        |
-| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                                                                                     |
-| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)                                                           |
-| `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                                                                        |
-| `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer   | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item |
-| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)                                                                      |
-| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                                                                               |
-| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters)                                                        |
-| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                            | Effects bringing content in (Fade, Slide, Zoom, Blur)                                                                         |
-| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                            | A progress bar and its value                                                                                                  |
-| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                         | Numbers rolling to their value                                                                                                |
+| Token              | Value                                                     | Feel                                               | Use for                                                                                                                               |
+| ------------------ | --------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                                                                                      |
+| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                                                                                |
+| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                                                                                             |
+| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)                                                                   |
+| `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                                                                                |
+| `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer   | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item (`pop`) |
+| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)                                                                              |
+| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                                                                                       |
+| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters)                                                                |
+| `spring.checkPop`  | `stiffness: 500, damping: 24`                             | Lively, overshoots ~13% (peak at ~170ms)           | A check popping in (`checkAnimation="pop"`), from `scale.icon` out of `blur.icon`                                                     |
+| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                            | Effects bringing content in (Fade, Slide, Zoom, Blur)                                                                                 |
+| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                            | A progress bar and its value                                                                                                          |
+| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                         | Numbers rolling to their value                                                                                                        |
 
 Every spring above has `type: 'spring'`.
 
@@ -60,6 +61,7 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                     |
 | `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered               |
 | `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                         |
+| `transition.uncheckPop` | `{ duration: 0.15, ease: ease.out }`             | A popped check shrinking back into its blur (`pop`)            |
 | `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                          |
 | `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)      |
 
@@ -111,7 +113,20 @@ import { AnimateUIProvider } from '@animate-ui/react/provider';
 <AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>; // crisper; 1.2 is more relaxed
 ```
 
-The provider is optional and nestable (the closest wins). `useTempoTransition(t)` applies it to one transition, `scaleTransition(t, tempo)` outside React. Curves, scales and blurs don't depend on it.
+The provider is optional and nestable: the closest one sets what it's given, the rest comes from the one around it. `useTempoTransition(t)` applies it to one transition, `scaleTransition(t, tempo)` outside React. Curves, scales and blurs don't depend on it.
+
+## Check animation
+
+Checks (checkboxes', and the checks of menus, selects, comboboxes and lists) show and hide one of two ways, `CheckAnimation`:
+
+- `draw` (the default): the stroke draws itself (`transition.check`, without its delay outside a checkbox) and erases itself (`transition.uncheck`);
+- `pop`: in from `scale.icon` out of `blur.icon` on `spring.checkPop` (after the checkbox's 0.2s in a checkbox), back out on `transition.uncheckPop`; a single selection's check glides from the item it leaves to the chosen one on `spring.highlight`.
+
+```tsx
+<AnimateUIProvider checkAnimation="pop">{children}</AnimateUIProvider>
+```
+
+A check's own `animation` prop wins. Inside a component, `useCheckAnimation(own)` returns the one to use (`@animate-ui/react/utils/motion`).
 
 ## CSS transitions
 

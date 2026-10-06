@@ -2,12 +2,7 @@
 
 import * as React from 'react';
 import { Select as SelectPrimitive } from 'radix-ui';
-import {
-  AnimatePresence,
-  motion,
-  PresenceContext,
-  type Transition,
-} from 'motion/react';
+import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
@@ -27,29 +22,38 @@ import {
 } from '../../../internal/item-highlight';
 import {
   CheckRegistryContext,
-  GLIDE_TRANSITION,
+  ItemCheck,
   PICK_HOLD,
+  useCheckGroup,
   useCheckRegistry,
-  useRegisterCheck,
+  type CheckGroup,
+  type ItemCheckAnimationProps,
 } from '../../../internal/item-indicator';
 
 // Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
 // moves like the menus (a 250ms fade and scale from 0.9, both
-// ways), a highlight glides behind the highlighted item, and the check glides
-// to the chosen item on a quick spring. Choosing another item closes the
-// list after a 150ms hold, so the check is seen landing (internal/
-// item-indicator). The Root mirrors `open` (Radix keeps it private) so the
-// Content can play an exit before Radix unmounts it.
+// ways), a highlight glides behind the highlighted item, and the chosen
+// item's check draws itself while the previous one erases itself (with
+// `pop`, the check glides to the chosen item on a quick spring). Choosing
+// another item closes the list after a 150ms hold, so the change is seen
+// (internal/item-indicator). The Root mirrors `open` and `value` (Radix keeps
+// them private) so the Content can play an exit before Radix unmounts it, and
+// every item's check stays mounted to show and hide itself.
 
 const [OpenProvider, useOpen] = getStrictContext<{
   open: boolean;
-  /** The list closed because an item was chosen, with a check to glide. */
+  /** The chosen value, as Radix has it. */
+  value: string | undefined;
+  /** The list closed because an item was chosen, whose check changes. */
   picked: boolean;
   /** Called by an item about to be chosen, just before Radix closes. */
-  markPick: () => void;
-  /** Lets a shown check register with the list. */
-  registerCheck: () => () => void;
+  markPick: (item: Element) => void;
+  /** Lets a check register with the list. */
+  registerCheck: (element: Element) => () => void;
 }>('Select.Root');
+
+/** Whether the closest Item is the chosen one. */
+const ItemSelectedContext = React.createContext<boolean | null>(null);
 
 // `forceMount` on the Portal applies to the Content, like in Radix.
 const PortalContext = React.createContext<{ forceMount?: true }>({});
@@ -89,70 +93,81 @@ type ContentAnimationProps = {
   exitTransition?: Transition;
 };
 
-/** Animate UI's addition to `Select.ItemIndicator`. */
-type IndicatorAnimationProps = {
-  /**
-   * Transition of the check moving to the chosen item. Defaults to a spring
-   * (stiffness 500, damping 40).
-   */
-  transition?: Transition;
-};
+/** Animate UI's additions to `Select.ItemIndicator`. */
+type IndicatorAnimationProps = ItemCheckAnimationProps;
 
 type OpenProps = Pick<
   SelectSharedProps,
   'open' | 'defaultOpen' | 'onOpenChange'
->;
+> & {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+};
 
 /**
- * `open` controlled or not, exactly like Radix resolves it, and whether the
- * list closed because an item was chosen. Radix chooses an item from its
- * pointer and key handlers, which run right after the item's own: the item
- * marks itself there (`markPick`), and Radix closes the list in the same
- * event.
+ * `open` and `value` controlled or not, exactly like Radix resolves them,
+ * and whether the list closed because an item was chosen. Radix chooses an
+ * item from its pointer and key handlers, which run right after the item's
+ * own: the item marks itself there (`markPick`), and Radix closes the list in
+ * the same event.
  */
 function useOpenState({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  value: valueProp,
+  defaultValue,
+  onValueChange,
 }: OpenProps) {
   const controlled = openProp !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen ?? false);
   const open = controlled ? openProp : uncontrolled;
+  const [ownValue, setOwnValue] = React.useState(defaultValue);
+  const value = valueProp !== undefined ? valueProp : ownValue;
   const [picked, setPicked] = React.useState(false);
   const { registerCheck, hasCheck } = useCheckRegistry();
-  const pickingRef = React.useRef(false);
-  const markPick = React.useCallback(() => {
-    pickingRef.current = true;
+  const pickedRef = React.useRef<Element | null>(null);
+  const markPick = React.useCallback((item: Element) => {
+    pickedRef.current = item;
     // Only for this event: an item that wasn't chosen leaves no mark.
     queueMicrotask(() => {
-      pickingRef.current = false;
+      pickedRef.current = null;
     });
   }, []);
 
   const setOpen = (next: boolean) => {
     if (!controlled) setUncontrolled(next);
-    // A check is shown (the chosen one isn't mounted yet): it will glide.
-    setPicked(!next && pickingRef.current && hasCheck());
+    // The chosen item has a check: it shows itself while the list holds.
+    const item = pickedRef.current;
+    setPicked(!next && item !== null && hasCheck(item));
     onOpenChange?.(next);
   };
+  // Radix keeps its own value: this only follows it.
+  const setValue = (next: string) => {
+    setOwnValue(next);
+    onValueChange?.(next);
+  };
 
-  return { open, setOpen, picked, markPick, registerCheck };
+  return {
+    state: { open, value, picked, markPick, registerCheck },
+    radix: { open, onOpenChange: setOpen, onValueChange: setValue },
+  };
 }
 
 /**
- * The checks of an open list share it: the check glides to the chosen item.
- * Only in the animated list: Radix also renders the items of a closed select,
- * off-screen.
+ * The checks of an open list share it: a check glides to the chosen item
+ * (`pop`). Only in the animated list: Radix also renders the items of a
+ * closed select, off-screen.
  */
-const IndicatorLayoutContext = React.createContext<string | null>(null);
+const IndicatorGroupContext = React.createContext<CheckGroup | null>(null);
 
 function Root(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  const { open, setOpen, picked, markPick, registerCheck } =
-    useOpenState(props);
+  const { state, radix } = useOpenState(props);
 
   return (
-    <OpenProvider value={{ open, picked, markPick, registerCheck }}>
-      <SelectPrimitive.Root {...props} open={open} onOpenChange={setOpen} />
+    <OpenProvider value={state}>
+      <SelectPrimitive.Root {...props} {...radix} />
     </OpenProvider>
   );
 }
@@ -160,16 +175,11 @@ function Root(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
 function Provider(
   props: React.ComponentProps<typeof SelectPrimitive.unstable_Provider>,
 ) {
-  const { open, setOpen, picked, markPick, registerCheck } =
-    useOpenState(props);
+  const { state, radix } = useOpenState(props);
 
   return (
-    <OpenProvider value={{ open, picked, markPick, registerCheck }}>
-      <SelectPrimitive.unstable_Provider
-        {...props}
-        open={open}
-        onOpenChange={setOpen}
-      />
+    <OpenProvider value={state}>
+      <SelectPrimitive.unstable_Provider {...props} {...radix} />
     </OpenProvider>
   );
 }
@@ -243,12 +253,12 @@ function ContentMotion({
   const { open, picked, registerCheck } = useOpen();
   const reduce = useShouldReduceMotion();
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
-  // Closing because an item was chosen: the list holds still while the check
-  // glides there (it doesn't glide under reduced motion).
+  // Closing because an item was chosen: the list holds still while its check
+  // shows itself (nothing moves under reduced motion).
   const exitDelay = (exit as { delay?: number }).delay ?? 0;
   const leave: Transition =
     picked && !reduce ? { ...exit, delay: exitDelay + hold } : exit;
-  const layoutId = React.useId();
+  const group = useCheckGroup();
   // Item-aligned (Radix's default) lays the list over the trigger, lining the
   // selected item up with the value, and measures it on mount: a scale would
   // skew that measure, and there's no anchor side to grow from. Fade only.
@@ -285,11 +295,11 @@ function ContentMotion({
           ...style,
         }}
       >
-        <IndicatorLayoutContext value={layoutId}>
+        <IndicatorGroupContext value={group}>
           <CheckRegistryContext value={registerCheck}>
             <HighlightScope open={open}>{children}</HighlightScope>
           </CheckRegistryContext>
-        </IndicatorLayoutContext>
+        </IndicatorGroupContext>
       </motion.div>
     </SelectPrimitive.Content>
   );
@@ -303,8 +313,9 @@ const Label = SelectPrimitive.Label;
 const SELECTION_KEYS = new Set(['Enter', ' ']);
 
 /**
- * Takes part in the list's highlight (pointer and arrow keys alike), and
- * tells the Root when it's being chosen.
+ * Takes part in the list's highlight (pointer and arrow keys alike), tells
+ * the Root when it's being chosen, and its ItemIndicator whether it's the
+ * chosen one.
  */
 function Item({
   asChild,
@@ -316,93 +327,87 @@ function Item({
   onKeyDown,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Item>) {
-  const { markPick } = useOpen();
+  const { value, markPick } = useOpen();
   const { ref: highlightRef, highlight } = useItemHighlight(disabled);
   const mergedRef = React.useMemo(
     () => mergeRefs(ref, highlightRef),
     [ref, highlightRef],
   );
   // Run before Radix's own handlers, which choose the item and close.
-  const mark = (event: React.SyntheticEvent) => {
-    if (!disabled && !event.defaultPrevented) markPick();
+  // Another item than the chosen one: the checks change.
+  const mark = (event: React.SyntheticEvent<HTMLDivElement>) => {
+    const item = event.currentTarget;
+    if (
+      !disabled &&
+      !event.defaultPrevented &&
+      item.getAttribute('data-state') !== 'checked'
+    )
+      markPick(item);
   };
   return (
-    <SelectPrimitive.Item
-      {...props}
-      ref={mergedRef}
-      asChild={asChild}
-      disabled={disabled}
-      onPointerUp={(event) => {
-        onPointerUp?.(event);
-        mark(event);
-      }}
-      onClick={(event) => {
-        onClick?.(event);
-        mark(event);
-      }}
-      onKeyDown={(event) => {
-        onKeyDown?.(event);
-        if (SELECTION_KEYS.has(event.key)) mark(event);
-      }}
-    >
-      {withHighlight(children, highlight, asChild)}
-    </SelectPrimitive.Item>
+    <ItemSelectedContext value={value === props.value}>
+      <SelectPrimitive.Item
+        {...props}
+        ref={mergedRef}
+        asChild={asChild}
+        disabled={disabled}
+        onPointerUp={(event) => {
+          onPointerUp?.(event);
+          mark(event);
+        }}
+        onClick={(event) => {
+          onClick?.(event);
+          mark(event);
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (SELECTION_KEYS.has(event.key)) mark(event);
+        }}
+      >
+        {withHighlight(children, highlight, asChild)}
+      </SelectPrimitive.Item>
+    </ItemSelectedContext>
   );
 }
 
 const ItemText = SelectPrimitive.ItemText;
 
 /**
- * Shows with the list; choosing another item moves it there, while the list
- * holds still before it closes.
+ * Shows itself with the list, on the chosen item; choosing another item
+ * hides it there and shows it on the new one (with `pop`, it glides there),
+ * while the list holds still before it closes. Radix renders it for the
+ * chosen item only: in the animated list, it's on every item, Radix's
+ * `<span aria-hidden>` all the same.
  */
 function ItemIndicator({
+  animation,
   transition,
+  asChild,
   children,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.ItemIndicator> &
   IndicatorAnimationProps) {
-  const layoutId = React.use(IndicatorLayoutContext);
-  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  if (!layoutId) {
+  const group = React.use(IndicatorGroupContext);
+  const selected = React.use(ItemSelectedContext);
+  if (!group || selected === null || asChild) {
     return (
-      <SelectPrimitive.ItemIndicator {...props}>
+      <SelectPrimitive.ItemIndicator {...props} asChild={asChild}>
         {children}
       </SelectPrimitive.ItemIndicator>
     );
   }
   return (
-    <SelectPrimitive.ItemIndicator {...props} asChild>
-      <CheckMotion layoutId={layoutId} transition={glide}>
-        {children}
-      </CheckMotion>
-    </SelectPrimitive.ItemIndicator>
-  );
-}
-
-function CheckMotion({
-  layoutId,
-  transition,
-  ...props
-}: React.ComponentProps<'span'> & {
-  layoutId: string;
-  transition: Transition;
-}) {
-  // Shown (Radix renders it for the chosen item only): choosing another item
-  // holds the list while it glides.
-  useRegisterCheck(true);
-  return (
-    // Out of the list's exit: the list doesn't wait for the glide to end
-    // before it unmounts.
-    <PresenceContext value={null}>
-      <motion.span
-        {...(props as React.ComponentProps<typeof motion.span>)}
-        layoutId={layoutId}
-        // One check moving, not two crossfading.
-        layoutCrossfade={false}
-        transition={transition}
-      />
-    </PresenceContext>
+    <ItemCheck
+      aria-hidden
+      {...(props as React.ComponentProps<'span'>)}
+      multiple={false}
+      group={group}
+      checked={selected}
+      animation={animation}
+      transition={transition}
+    >
+      {children}
+    </ItemCheck>
   );
 }
 const ScrollUpButton = SelectPrimitive.ScrollUpButton;

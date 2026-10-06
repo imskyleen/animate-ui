@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "@animate-ui/react/primitives/base-ui/checkbox"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 import { cn } from "cn"
 
 import { Tick02Icon } from "@hugeicons/core-free-icons"
@@ -38,12 +39,18 @@ export const controls = {
       options: { true: true, false: false, indeterminate: "indeterminate" },
     },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 export default function CheckboxDemo({
   checked: checkedProp = true,
+  checkAnimation = "draw",
 }: {
   checked?: boolean | "indeterminate"
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   const [checked, setChecked] = React.useState(checkedProp)
   const [prev, setPrev] = React.useState(checkedProp)
@@ -53,28 +60,30 @@ export default function CheckboxDemo({
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <Label>
-        <Checkbox
-          checked={checked === true}
-          indeterminate={checked === "indeterminate"}
-          onCheckedChange={(next) => setChecked(next)}
-        />
-        Accept terms and conditions
-      </Label>
-      <Label className="items-start">
-        <Checkbox />
-        <div className="grid gap-1.5 font-normal">
-          <span className="font-medium">Product updates</span>
-          <span className="text-muted-foreground">
-            A short email when a new primitive ships.
-          </span>
-        </div>
-      </Label>
-      <Label>
-        <Checkbox disabled />
-        Weekly digest (coming soon)
-      </Label>
-    </div>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <div className="flex flex-col gap-5">
+        <Label>
+          <Checkbox
+            checked={checked === true}
+            indeterminate={checked === "indeterminate"}
+            onCheckedChange={(next) => setChecked(next)}
+          />
+          Accept terms and conditions
+        </Label>
+        <Label className="items-start">
+          <Checkbox />
+          <div className="grid gap-1.5 font-normal">
+            <span className="font-medium">Product updates</span>
+            <span className="text-muted-foreground">
+              A short email when a new primitive ships.
+            </span>
+          </div>
+        </Label>
+        <Label>
+          <Checkbox disabled />
+          Weekly digest (coming soon)
+        </Label>
+      </div>
+    </AnimateUIProvider>
   )
 }

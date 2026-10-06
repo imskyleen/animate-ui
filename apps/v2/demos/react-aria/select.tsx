@@ -21,6 +21,7 @@ import {
   type SelectProps,
   type SelectValueProps,
 } from "@animate-ui/react/primitives/react-aria"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import {
   InputGroup,
@@ -227,19 +228,17 @@ function SelectItem({
       )}
       {...props}
     >
-      {composeRenderProps(children, (children, { isSelected }) => (
+      {composeRenderProps(children, (children) => (
         <>
           <span className="flex flex-1 gap-2 shrink-0 whitespace-nowrap">
             {children}
           </span>
-          {/* SelectValue renders this again in the trigger, unselected. */}
-          {isSelected && (
-            <SelectionIndicator className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
-              <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
-                className="pointer-events-none"
-              />
-            </SelectionIndicator>
-          )}
+          {/* On every item: it shows itself on the chosen one. */}
+          <SelectionIndicator className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
+            <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
+              className="pointer-events-none"
+            />
+          </SelectionIndicator>
         </>
       ))}
     </ListBoxItemPrimitive>
@@ -303,6 +302,9 @@ export const controls = {
     },
     alignOffset: { value: 0 },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 /** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
@@ -320,37 +322,42 @@ export default function SelectDemo({
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
+  checkAnimation = "draw",
 }: {
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   return (
-    <Select
-      aria-label="Font"
-      placeholder="Choose a font"
-      defaultValue="Geist"
-      className="w-48"
-    >
-      <SelectTrigger>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
-        {FONTS.map((group, index) => (
-          <React.Fragment key={group.label}>
-            {index > 0 && <SelectSeparator />}
-            <SelectGroup>
-              <SelectLabel>{group.label}</SelectLabel>
-              {group.items.map((font) => (
-                <SelectItem key={font} id={font}>
-                  {font}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </React.Fragment>
-        ))}
-      </SelectContent>
-    </Select>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <Select
+        aria-label="Font"
+        placeholder="Choose a font"
+        defaultValue="Geist"
+        className="w-48"
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent placement={toPlacement(side, align)} offset={sideOffset} crossOffset={alignOffset}>
+          {FONTS.map((group, index) => (
+            <React.Fragment key={group.label}>
+              {index > 0 && <SelectSeparator />}
+              <SelectGroup>
+                <SelectLabel>{group.label}</SelectLabel>
+                {group.items.map((font) => (
+                  <SelectItem key={font} id={font}>
+                    {font}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </React.Fragment>
+          ))}
+        </SelectContent>
+      </Select>
+    </AnimateUIProvider>
   )
 }

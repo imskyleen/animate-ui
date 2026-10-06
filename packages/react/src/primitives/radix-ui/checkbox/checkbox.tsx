@@ -3,21 +3,26 @@
 import * as React from 'react';
 import { Checkbox as CheckboxPrimitive } from 'radix-ui';
 
-import { ReducedMotionConfig } from '../../../utils/motion';
+import { ReducedMotionConfig, useCheckAnimation } from '../../../utils/motion';
 import {
   IndicatorPresence,
+  type CheckAnimationProps,
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
 // Same API as Radix's Checkbox, animated like Animate UI v1's checkbox: the
 // check draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in
-// 0.3s. The Indicator stays mounted while its check erases, then unmounts like
-// Radix's. The Root is Radix's: unlike v1's, it doesn't scale when pressed or
-// hovered, the check (and the box's own fill) answer the click.
+// 0.3s; with `animation="pop"` (or an `AnimateUIProvider`'s
+// `checkAnimation`), it pops in from half its size out of a light blur after
+// the same 0.2s, and shrinks back out in 0.15s. The Indicator stays mounted
+// while its check leaves, then unmounts like Radix's. The Root is Radix's:
+// unlike v1's, it doesn't scale when pressed or hovered, the check (and the
+// box's own fill) answer the click.
 
 type CheckboxProps = CheckboxPrimitive.CheckboxProps;
 type CheckboxIndicatorProps = CheckboxPrimitive.CheckboxIndicatorProps &
-  IndicatorAnimationProps;
+  IndicatorAnimationProps &
+  CheckAnimationProps;
 type CheckedState = CheckboxPrimitive.CheckedState;
 
 const Root = CheckboxPrimitive.Root;
@@ -26,11 +31,14 @@ function Indicator({
   forceMount,
   asChild,
   children,
+  animation,
   transition,
   exitTransition,
   ...props
 }: React.ComponentProps<typeof CheckboxPrimitive.Indicator> &
-  IndicatorAnimationProps) {
+  IndicatorAnimationProps &
+  CheckAnimationProps) {
+  const look = useCheckAnimation(animation);
   if (asChild)
     return (
       <CheckboxPrimitive.Indicator {...props} forceMount={forceMount} asChild>
@@ -45,6 +53,7 @@ function Indicator({
       <CheckboxPrimitive.Indicator {...props} forceMount asChild>
         <RadixIndicator
           keepMounted={forceMount}
+          animation={look}
           transition={transition}
           exitTransition={exitTransition}
         >

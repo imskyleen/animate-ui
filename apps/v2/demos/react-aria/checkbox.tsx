@@ -7,6 +7,7 @@ import {
   composeRenderProps,
   type CheckboxProps,
 } from "@animate-ui/react/primitives/react-aria"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -52,12 +53,18 @@ export const controls = {
       options: { true: true, false: false, indeterminate: "indeterminate" },
     },
   },
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
 }
 
 export default function CheckboxDemo({
   checked: checkedProp = true,
+  checkAnimation = "draw",
 }: {
   checked?: boolean | "indeterminate"
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
 }) {
   const [checked, setChecked] = React.useState(checkedProp)
   const [prev, setPrev] = React.useState(checkedProp)
@@ -67,29 +74,31 @@ export default function CheckboxDemo({
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id="terms"
-          isSelected={checked === true}
-          isIndeterminate={checked === "indeterminate"}
-          onChange={setChecked}
-        />
-        <Label htmlFor="terms">Accept terms and conditions</Label>
-      </div>
-      <div className="flex items-start gap-2">
-        <Checkbox id="updates" />
-        <div className="grid gap-1.5">
-          <Label htmlFor="updates">Product updates</Label>
-          <p className="text-muted-foreground text-sm">
-            A short email when a new primitive ships.
-          </p>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="terms"
+            isSelected={checked === true}
+            isIndeterminate={checked === "indeterminate"}
+            onChange={setChecked}
+          />
+          <Label htmlFor="terms">Accept terms and conditions</Label>
+        </div>
+        <div className="flex items-start gap-2">
+          <Checkbox id="updates" />
+          <div className="grid gap-1.5">
+            <Label htmlFor="updates">Product updates</Label>
+            <p className="text-muted-foreground text-sm">
+              A short email when a new primitive ships.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Checkbox id="digest" isDisabled />
+          <Label htmlFor="digest">Weekly digest (coming soon)</Label>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Checkbox id="digest" isDisabled />
-        <Label htmlFor="digest">Weekly digest (coming soon)</Label>
-      </div>
-    </div>
+    </AnimateUIProvider>
   )
 }

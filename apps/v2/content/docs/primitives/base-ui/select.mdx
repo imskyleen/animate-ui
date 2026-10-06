@@ -56,11 +56,11 @@ Base UI's Select has no Animate UI v1 counterpart: it moves like v1's Base UI Me
 - **Popup** fades and scales in from 0.9, from the trigger (`--transform-origin`), in 250ms (`{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way; then Base UI unmounts it (or hides it, when it keeps the items mounted for typeahead on the closed trigger).
 - With `alignItemWithTrigger` (Base UI's default), the list is laid over the trigger with the selected item on the value, like a native select: it only fades.
 - **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, like v1's menu highlight. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms) when it appears from nothing. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a submenu opening for instance, doesn't stall it. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
-- **ItemIndicator**: with a single value, choosing another item holds the list still for 150ms while the check glides there, on the highlight's spring (stiffness 500, damping 40), then the list closes: the check is seen landing. A first choice (no check to glide from yet) and closing any other way (Escape, a click outside) don't wait. With `multiple`, the list stays open: a selected item's check draws itself like a Checkbox's check (its stroke and opacity in 0.3s), and erases itself when it's deselected (it stays mounted for that); a check written as text ("✓") fades.
+- **ItemIndicator** (kept mounted on every item, so a check can hide itself): with a single value, the chosen item's check draws itself like a Checkbox's check (its stroke and opacity in 0.3s on Motion's easeOut, at once) while the previous one erases itself, and the list holds still for 150ms before it closes, so the change is seen. With `animation="pop"` (or `checkAnimation="pop"` on an `AnimateUIProvider`), the check glides there instead, on the highlight's spring (stiffness 500, damping 40), and a first choice pops it in from half its size out of a 2px blur (a spring, stiffness 500, damping 24). The demo's Controls switch between the two. Choosing the item already chosen, and closing any other way (Escape, a click outside), don't wait. With `multiple`, the list stays open: a selected item's check draws itself, and erases itself when it's deselected; with `pop`, it pops in from half its size and shrinks back out in 0.15s; a check written as text ("✓") fades (or pops).
 - Reopening while the list is closing picks up from where it is.
 - Base UI's Select has no `keepMounted`: Animate UI passes an `actionsRef` to the Root and unmounts the popup when its exit is over. Your own `actionsRef` still works, and `onOpenChangeComplete` fires after the entrance and after the exit.
 - Open from the start (`defaultOpen`), the list plays its entrance on page load.
-- Under reduced motion, nothing scales or glides: the popup and the checks only fade; the highlight jumps from item to item and only fades in when it appears.
+- Under reduced motion, nothing scales or glides: the popup and the checks only fade, and the list doesn't hold; the highlight jumps from item to item and only fades in when it appears.
 
 ## API Reference
 
@@ -100,12 +100,18 @@ Every part takes exactly the props of [Base UI's Select](https://base-ui.com/rea
 
 <TypeTable
   type={{
+    animation: {
+      description:
+        "How the check shows and hides: `draw` (it draws itself and erases itself) or `pop` (it pops in from half its size and shrinks back out; a single selection's check glides to the chosen item).",
+      type: "'draw' | 'pop'",
+      default: "the closest AnimateUIProvider's checkAnimation, else 'draw'",
+    },
     transition: {
       description:
-        'Transition of the check moving to the chosen item (single value), or drawing and erasing itself (multiple).',
+        "Transition of the check showing and hiding itself, and of a single selection's check gliding (`pop`).",
       type: 'Transition',
       default:
-        "the highlight's spring (stiffness 500, damping 40); multiple: 0.3s on Motion's easeOut, drawn and erased (a Checkbox's, without its delay)",
+        "draw: 0.3s on Motion's easeOut both ways (a Checkbox's, without its delay); pop: a spring (stiffness 500, damping 24) in, 0.15s out, and the highlight's spring (stiffness 500, damping 40) for the glide",
     },
   }}
 />

@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AnimatePresence,
-  motion,
-  PresenceContext,
-  type Transition,
-} from 'motion/react';
+import { AnimatePresence, motion, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
@@ -25,13 +20,13 @@ import {
 } from '../../../internal/item-highlight';
 import {
   CheckRegistryContext,
-  GLIDE_TRANSITION,
+  ItemCheck,
   PICK_HOLD,
-  DrawnCheck,
   PickContext,
-  asTransformable,
+  useCheckGroup,
   usePicks,
-  useRegisterCheck,
+  type CheckGroup,
+  type ItemCheckAnimationProps,
 } from '../../../internal/item-indicator';
 
 // Shared by Radix's Dropdown Menu, Context Menu and Menubar: the three are
@@ -41,13 +36,12 @@ import {
 //
 // - Content and SubContent fade and scale from 0.9 in 250ms, both ways.
 // - One highlight glides behind the highlighted item (internal/item-highlight).
-// - A checkbox item's check draws itself when it's checked (or the menu
-//   opens), and erases itself when it's unchecked, like a checkbox's; a radio
-//   item's check glides to the newly checked item, like a select's
-//   (internal/item-indicator).
-// - Choosing an item closes the menu (Radix's default): when its check moves
-//   (a radio's glides from the one shown, a checkbox's draws or erases
-//   itself), the menu holds still for 150ms first, so the change is seen.
+// - An item's check draws itself when it's checked (or the menu opens), and
+//   erases itself when it's unchecked, like a checkbox's; with `pop`, it pops
+//   in and out, and a radio item's check glides to the newly checked item,
+//   like a select's (internal/item-indicator).
+// - Choosing an item closes the menu (Radix's default): when its check
+//   changes, the menu holds still for 150ms first, so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -60,16 +54,8 @@ type PresenceAnimationProps = {
   exitTransition?: Transition;
 };
 
-/** Animate UI's addition to `ItemIndicator`. */
-type IndicatorAnimationProps = {
-  /**
-   * Transition of the check drawing and erasing itself (checkbox items), or
-   * of the indicator gliding to the checked item (radio items). Defaults to
-   * 0.3s on Motion's easeOut both ways (a checkbox's), and a spring
-   * (stiffness 500, damping 40) for the glide.
-   */
-  transition?: Transition;
-};
+/** Animate UI's additions to `ItemIndicator`. */
+type IndicatorAnimationProps = ItemCheckAnimationProps;
 
 type MenuState = {
   open: boolean;
@@ -86,15 +72,15 @@ const PortalForceMountContext = React.createContext(false);
 type IndicatorItem = {
   checked: boolean | 'indeterminate';
   kind: 'checkbox' | 'radio';
-  /** Shared by the indicators of a radio group: the indicator glides. */
-  layoutId?: string;
+  /** The group of a radio item's check: it glides between them (`pop`). */
+  group?: CheckGroup;
 };
 
 /** The checked state of the closest checkbox or radio item. */
 const IndicatorItemContext = React.createContext<IndicatorItem | null>(null);
 const RadioGroupContext = React.createContext<{
   value: string | undefined;
-  layoutId: string;
+  group: CheckGroup;
 } | null>(null);
 
 type OpenStateProps = {
@@ -467,8 +453,11 @@ function createCheckboxItem<P extends CheckboxItemProps>(
   RadixCheckboxItem: React.ComponentType<P>,
 ) {
   function CheckboxItem(props: P) {
-    // Its check draws or erases itself.
-    const onSelect = useMarkPick(props.onSelect, () => true);
+    const picks = React.use(PickContext);
+    // Its check shows or hides itself.
+    const onSelect = useMarkPick(props.onSelect, (item) =>
+      Boolean(picks?.hasCheck(item)),
+    );
     return (
       <IndicatorItemContext
         value={{ checked: props.checked ?? false, kind: 'checkbox' }}
@@ -487,9 +476,9 @@ function createRadioGroup<P extends { value?: string }>(
   RadixRadioGroup: React.ComponentType<P>,
 ) {
   function RadioGroup(props: P) {
-    const layoutId = React.useId();
+    const group = useCheckGroup();
     return (
-      <RadioGroupContext value={{ value: props.value, layoutId }}>
+      <RadioGroupContext value={{ value: props.value, group }}>
         <RadixRadioGroup {...props} />
       </RadioGroupContext>
     );
@@ -503,12 +492,12 @@ function createRadioItem<P extends SelectableItemProps & { value: string }>(
   function RadioItem(props: P) {
     const group = React.use(RadioGroupContext);
     const picks = React.use(PickContext);
-    // Another item than the checked one: the check shown glides there.
+    // Another item than the checked one: the check moves there.
     const onSelect = useMarkPick(
       props.onSelect,
       (item) =>
         item?.getAttribute('data-state') !== 'checked' &&
-        Boolean(picks?.hasCheck()),
+        Boolean(picks?.hasCheck(item)),
     );
     return (
       <IndicatorItemContext
@@ -517,7 +506,7 @@ function createRadioItem<P extends SelectableItemProps & { value: string }>(
             ? {
                 checked: group.value === props.value,
                 kind: 'radio',
-                layoutId: group.layoutId,
+                group: group.group,
               }
             : null
         }
@@ -539,15 +528,16 @@ type ItemIndicatorProps = {
 };
 
 /**
- * A checkbox item's check draws itself whenever it appears (checking the
- * item, or opening the menu), and erases itself when the item is unchecked:
- * it stays mounted for that. A radio item's check glides from the previously
- * checked item.
+ * An item's check shows itself whenever it appears (checking the item, or
+ * opening the menu), and hides itself when the item is unchecked: it stays
+ * mounted for that. With `pop`, a radio item's check glides from the
+ * previously checked item.
  */
 function createItemIndicator<P extends ItemIndicatorProps>(
   RadixItemIndicator: React.ComponentType<P>,
 ) {
   function ItemIndicator({
+    animation,
     transition,
     forceMount,
     children,
@@ -563,58 +553,21 @@ function createItemIndicator<P extends ItemIndicatorProps>(
     }
 
     return (
-      <RadixItemIndicator
-        {...(props as P)}
-        forceMount={item.kind === 'checkbox' ? true : forceMount}
-        asChild
-      >
-        <IndicatorMotion item={item} transition={transition}>
+      <RadixItemIndicator {...(props as P)} forceMount asChild>
+        <ItemCheck
+          multiple={item.kind === 'checkbox'}
+          group={item.group ?? null}
+          checked={item.checked !== false}
+          indeterminate={item.checked === 'indeterminate'}
+          animation={animation}
+          transition={transition}
+        >
           {children}
-        </IndicatorMotion>
+        </ItemCheck>
       </RadixItemIndicator>
     );
   }
   return ItemIndicator;
-}
-
-function IndicatorMotion({
-  item,
-  transition,
-  ref,
-  ...props
-}: React.ComponentProps<'span'> &
-  IndicatorAnimationProps & { item: IndicatorItem }) {
-  // A box, so it can glide.
-  const mergedRef = React.useMemo(() => mergeRefs(ref, asTransformable), [ref]);
-  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  // Mounted while checked: choosing another radio item holds the menu.
-  useRegisterCheck(item.kind === 'radio');
-
-  if (item.kind === 'radio') {
-    return (
-      // Out of the menu's exit: the menu doesn't wait for the glide to end
-      // before it unmounts (it holds for the glide when an item is chosen).
-      <PresenceContext value={null}>
-        <motion.span
-          {...(props as React.ComponentProps<typeof motion.span>)}
-          ref={mergedRef}
-          layoutId={item.layoutId}
-          // One indicator moving, not two crossfading.
-          layoutCrossfade={false}
-          transition={glide}
-        />
-      </PresenceContext>
-    );
-  }
-  return (
-    <DrawnCheck
-      {...props}
-      ref={ref}
-      checked={item.checked !== false}
-      indeterminate={item.checked === 'indeterminate'}
-      transition={transition}
-    />
-  );
 }
 
 export {

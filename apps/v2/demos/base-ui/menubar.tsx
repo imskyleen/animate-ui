@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Menu as MenuPrimitive } from "@animate-ui/react/primitives/base-ui/menu"
 import { Menubar as MenubarPrimitive } from "@animate-ui/react/primitives/base-ui/menubar"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 import { cn } from "cn"
 
 import {
@@ -271,74 +272,87 @@ export {
   MenubarSubContent,
 }
 
-export default function MenubarDemo() {
+export const controls = {
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
+}
+
+export default function MenubarDemo({
+  checkAnimation = "draw",
+}: {
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
+}) {
   const [wordWrap, setWordWrap] = React.useState(true)
   const [minimap, setMinimap] = React.useState(false)
   const [theme, setTheme] = React.useState("system")
 
   return (
-    <Menubar>
-      <MenubarMenu>
-        <MenubarTrigger>File</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            New file <MenubarShortcut>⌘N</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            New window <MenubarShortcut>⇧⌘N</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSub>
-            <MenubarSubTrigger>Open recent</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>animate-ui</MenubarItem>
-              <MenubarItem>design-system</MenubarItem>
-              <MenubarItem>marketing-site</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>
-            Save <MenubarShortcut>⌘S</MenubarShortcut>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>Edit</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>Cut</MenubarItem>
-          <MenubarItem>Copy</MenubarItem>
-          <MenubarItem>Paste</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>View</MenubarTrigger>
-        <MenubarContent>
-          <MenubarCheckboxItem
-            checked={wordWrap}
-            onCheckedChange={setWordWrap}
-          >
-            Word wrap
-          </MenubarCheckboxItem>
-          <MenubarCheckboxItem checked={minimap} onCheckedChange={setMinimap}>
-            Minimap
-          </MenubarCheckboxItem>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarLabel>Theme</MenubarLabel>
-            <MenubarRadioGroup value={theme} onValueChange={setTheme}>
-              <MenubarRadioItem value="light">Light</MenubarRadioItem>
-              <MenubarRadioItem value="dark">Dark</MenubarRadioItem>
-              <MenubarRadioItem value="system">System</MenubarRadioItem>
-            </MenubarRadioGroup>
-          </MenubarGroup>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <Menubar>
+        <MenubarMenu>
+          <MenubarTrigger>File</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>
+              New file <MenubarShortcut>⌘N</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem>
+              New window <MenubarShortcut>⇧⌘N</MenubarShortcut>
+            </MenubarItem>
+            <MenubarSub>
+              <MenubarSubTrigger>Open recent</MenubarSubTrigger>
+              <MenubarSubContent>
+                <MenubarItem>animate-ui</MenubarItem>
+                <MenubarItem>design-system</MenubarItem>
+                <MenubarItem>marketing-site</MenubarItem>
+              </MenubarSubContent>
+            </MenubarSub>
+            <MenubarSeparator />
+            <MenubarItem>
+              Save <MenubarShortcut>⌘S</MenubarShortcut>
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger>Edit</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem>
+              Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem>
+              Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+            </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem>Cut</MenubarItem>
+            <MenubarItem>Copy</MenubarItem>
+            <MenubarItem>Paste</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger>View</MenubarTrigger>
+          <MenubarContent>
+            <MenubarCheckboxItem
+              checked={wordWrap}
+              onCheckedChange={setWordWrap}
+            >
+              Word wrap
+            </MenubarCheckboxItem>
+            <MenubarCheckboxItem checked={minimap} onCheckedChange={setMinimap}>
+              Minimap
+            </MenubarCheckboxItem>
+            <MenubarSeparator />
+            <MenubarGroup>
+              <MenubarLabel>Theme</MenubarLabel>
+              <MenubarRadioGroup value={theme} onValueChange={setTheme}>
+                <MenubarRadioItem value="light">Light</MenubarRadioItem>
+                <MenubarRadioItem value="dark">Dark</MenubarRadioItem>
+                <MenubarRadioItem value="system">System</MenubarRadioItem>
+              </MenubarRadioGroup>
+            </MenubarGroup>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>
+    </AnimateUIProvider>
   )
 }

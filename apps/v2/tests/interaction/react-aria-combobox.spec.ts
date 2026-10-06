@@ -2,6 +2,12 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
+import {
+  expectPoppedIn,
+  expectPoppedOut,
+  recordCheck,
+  withAnimation,
+} from './item-checks';
 import { expectPickHold } from './pick-hold';
 
 const POPOVER = '[data-slot="combobox-content"]';
@@ -59,28 +65,59 @@ test.describe('react-aria combobox demo', () => {
     await expect(input).toHaveValue('Astro');
   });
 
-  test('choosing an item holds the list while the check glides there', async ({
-    page,
-  }) => {
-    const input = page.getByRole('combobox', { name: 'Framework' });
-    const open = async () => {
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`a first choice holds the list while its check ${animation === 'draw' ? 'draws itself' : 'pops in'}, then closes`, async ({
+      page,
+    }) => {
+      await page.goto(
+        withAnimation('/tests/demos/react-aria/combobox', animation),
+        { waitUntil: 'networkidle' },
+      );
+      const input = page.getByRole('combobox', { name: 'Framework' });
       await input.click();
       await page.keyboard.press('ArrowDown');
       await page.waitForTimeout(650);
-    };
-    await open();
-    await page.getByRole('option', { name: 'Next.js' }).click();
-    await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
-    await open();
-    await expectPickHold(page, {
-      popup: POPOVER,
-      item: 'Astro',
-      // The SelectionIndicator.
-      check: ':scope > div',
-      pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+      await expectPickHold(page, {
+        popup: POPOVER,
+        item: 'Astro',
+        from: null,
+        // The SelectionIndicator.
+        check: ':scope > div',
+        animation,
+        pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+      });
+      await expect(input).toHaveValue('Astro');
     });
-    await expect(input).toHaveValue('Astro');
-  });
+
+    test(`choosing another item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+      page,
+    }) => {
+      await page.goto(
+        withAnimation('/tests/demos/react-aria/combobox', animation),
+        { waitUntil: 'networkidle' },
+      );
+      const input = page.getByRole('combobox', { name: 'Framework' });
+      const open = async () => {
+        await input.click();
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(650);
+      };
+      await open();
+      await page.getByRole('option', { name: 'Next.js' }).click();
+      await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
+      await open();
+      await expectPickHold(page, {
+        popup: POPOVER,
+        item: 'Astro',
+        from: 'Next.js',
+        // The SelectionIndicator.
+        check: ':scope > div',
+        animation,
+        pick: () => page.getByRole('option', { name: 'Astro' }).click(),
+      });
+      await expect(input).toHaveValue('Astro');
+    });
+  }
 
   test('reduced motion: it fades, nothing scales', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -156,6 +193,32 @@ test.describe('react-aria combobox chips demo', () => {
       out.some((f) => f.dash !== null && f.dash > 0.1 && f.dash < 0.9),
     ).toBe(true);
     expect(out.at(-1)!.opacity).toBe(0);
+  });
+
+  test('pop: the check of a selected item pops in, of a deselected one shrinks out', async ({
+    page,
+  }) => {
+    await page.goto(
+      '/tests/demos/react-aria/combobox-multiple?checkAnimation=pop',
+      { waitUntil: 'networkidle' },
+    );
+    await page.getByRole('combobox', { name: 'Frameworks' }).click();
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(650);
+    const nuxt = page.getByRole('option', { name: 'Nuxt' });
+    const target = {
+      items: '[role="option"]',
+      label: 'Nuxt',
+      indicator: ':scope > div',
+    };
+    const arriving = recordCheck(page, target);
+    await nuxt.click();
+    expectPoppedIn(await arriving);
+    const leaving = recordCheck(page, target, 500);
+    await nuxt.click();
+    expectPoppedOut(await leaving);
+    // Multiple selection: the list stays open.
+    await expect(page.locator(POPOVER)).toBeVisible();
   });
 
   test('Backspace removes the last tag instantly', async ({ page }) => {

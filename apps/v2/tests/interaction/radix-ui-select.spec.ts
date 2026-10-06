@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
-import { expectPickHold } from './pick-hold';
+import { withAnimation } from './item-checks';
+import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
 const LIST = '[role="listbox"]';
 
@@ -51,20 +52,43 @@ test.describe('radix-ui select demo', () => {
     await expect(trigger).toHaveText('Lora');
   });
 
-  test('choosing an item holds the list while the check glides there', async ({
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`choosing an item holds the list while its check ${animation === 'draw' ? 'draws itself and the old one erases itself' : 'glides there'}`, async ({
+      page,
+    }) => {
+      await page.goto(
+        withAnimation('/tests/demos/radix-ui/select', animation),
+        {
+          waitUntil: 'networkidle',
+        },
+      );
+      const trigger = page.getByRole('combobox', { name: 'Font' });
+      await trigger.click();
+      await page.waitForTimeout(650);
+      await expectPickHold(page, {
+        popup: LIST,
+        item: 'Satoshi',
+        from: 'Geist',
+        // Radix's ItemIndicator, inside the demo's span.
+        check: ':scope > span > span',
+        animation,
+        pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
+      });
+      await expect(trigger).toHaveText('Satoshi');
+    });
+  }
+
+  test('choosing the chosen item again closes without waiting', async ({
     page,
   }) => {
     const trigger = page.getByRole('combobox', { name: 'Font' });
     await trigger.click();
     await page.waitForTimeout(650);
-    await expectPickHold(page, {
-      popup: LIST,
-      item: 'Satoshi',
-      // The demo's span around Radix's ItemIndicator, which moves.
-      check: ':scope > span > span',
-      pick: () => page.getByRole('option', { name: 'Satoshi' }).click(),
-    });
-    await expect(trigger).toHaveText('Satoshi');
+    // Nothing changes: no check to wait for.
+    await expectCloseWithoutHold(page, LIST, () =>
+      page.getByRole('option', { name: 'Geist', exact: true }).click(),
+    );
+    await expect(trigger).toHaveText('Geist');
   });
 
   test('reopening mid-exit retargets instead of restarting', async ({

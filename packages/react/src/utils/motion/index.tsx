@@ -83,6 +83,11 @@ const spring = {
   thumb: { type: 'spring', stiffness: 300, damping: 25 },
   /** Small marks popping inside a control (radio dot, OTP characters). */
   bounce: { type: 'spring', stiffness: 200, damping: 16 },
+  /**
+   * A check popping in (`checkAnimation="pop"`), from half its size out of a
+   * light blur: lively, a little overshoot (~13%, peak at ~170ms).
+   */
+  checkPop: { type: 'spring', stiffness: 500, damping: 24 },
   /** Effects bringing content in (Fade, Slide, Zoom, Blur): playful. */
   entrance: { type: 'spring', stiffness: 200, damping: 20 },
   /** A progress bar and its value. */
@@ -117,6 +122,11 @@ const transition = {
   check: { duration: 0.3, delay: 0.2, ease: ease.draw },
   /** A check erasing itself, as slowly as it draws. */
   uncheck: { duration: 0.3, ease: ease.draw },
+  /**
+   * A popped check (`checkAnimation="pop"`) shrinking back into its blur
+   * and fading, quicker than it came.
+   */
+  uncheckPop: { duration: 0.15, ease: ease.out },
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
   /** Deliberately no animation. */
@@ -223,6 +233,31 @@ function useTempoTransition<T extends Transition | undefined>(
 /** The tokens of the closest `AnimateUIProvider`, or the defaults. */
 function useMotionTokens(): MotionTokens {
   return React.use(MotionTokensContext);
+}
+
+/* Checks ------------------------------------------------------------------ */
+
+/**
+ * How checks show and hide: a checkbox's, and the checks of menus, selects,
+ * comboboxes and lists.
+ *
+ * - `draw`: the check draws itself (its stroke) and erases itself.
+ * - `pop`: it pops in from half its size out of a light blur, and shrinks
+ *   back out; a single selection's check glides from the item it leaves to
+ *   the chosen one.
+ */
+type CheckAnimation = 'draw' | 'pop';
+
+/** The closest `AnimateUIProvider`'s `checkAnimation`. */
+const CheckAnimationContext = React.createContext<CheckAnimation>('draw');
+
+/**
+ * A check's animation: its own (`animation`), or else the closest
+ * `AnimateUIProvider`'s `checkAnimation`, or else `draw`.
+ */
+function useCheckAnimation(own?: CheckAnimation): CheckAnimation {
+  const inherited = React.use(CheckAnimationContext);
+  return own ?? inherited;
 }
 
 /* CSS timing -------------------------------------------------------------- */
@@ -373,6 +408,8 @@ export {
   motionTokens,
   MotionTokensContext,
   useMotionTokens,
+  CheckAnimationContext,
+  useCheckAnimation,
   ease,
   spring,
   transition,
@@ -386,4 +423,5 @@ export {
   type CssTiming,
   type ReducedMotionConfigProps,
   type MotionTokens,
+  type CheckAnimation,
 };

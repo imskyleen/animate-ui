@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { Menu as MenuPrimitive } from '@base-ui/react/menu';
-import { motion, PresenceContext, type Transition } from 'motion/react';
+import { motion, type Transition } from 'motion/react';
 
 import {
   useShouldReduceMotion,
@@ -12,12 +12,11 @@ import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
 import { HighlightScope } from '../../../internal/item-highlight';
 import {
   CheckRegistryContext,
-  GLIDE_TRANSITION,
+  ItemCheck,
   PICK_HOLD,
-  DrawnCheck,
-  asTransformable,
   useCheckRegistry,
-  useRegisterCheck,
+  type CheckGroup,
+  type ItemCheckAnimationProps,
 } from '../../../internal/item-indicator';
 
 // Shared by Base UI's Menu and Context Menu (which reuses the Menu's parts),
@@ -27,12 +26,11 @@ import {
 //   ways;
 // - one highlight glides behind the highlighted item, into submenus too
 //   (internal/item-highlight);
-// - a checkbox item's check draws itself when it's checked (or the menu
-//   opens), and erases itself when it's unchecked, like a checkbox's; a radio
-//   item's check glides to the newly checked item, like a select's
-//   (internal/item-indicator);
-// - with `closeOnClick`, choosing an item whose check moves (a radio's glides
-//   from the one shown, a checkbox's draws or erases itself) holds the menu
+// - an item's check draws itself when it's checked (or the menu opens), and
+//   erases itself when it's unchecked, like a checkbox's; with `pop`, it pops
+//   in and out, and a radio item's check glides to the newly checked item,
+//   like a select's (internal/item-indicator);
+// - with `closeOnClick`, choosing an item whose check changes holds the menu
 //   still for 150ms before it closes, so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
@@ -46,16 +44,8 @@ type PresenceAnimationProps = {
   exitTransition?: Transition;
 };
 
-/** Animate UI's addition to the item indicators. */
-type IndicatorAnimationProps = {
-  /**
-   * Transition of the check drawing and erasing itself (checkbox items), or
-   * of the indicator gliding to the checked item (radio items). Defaults to
-   * 0.3s on Motion's easeOut both ways (a checkbox's), and a spring
-   * (stiffness 500, damping 40) for the glide.
-   */
-  transition?: Transition;
-};
+/** Animate UI's additions to the item indicators. */
+type IndicatorAnimationProps = ItemCheckAnimationProps;
 
 type Actions = { unmount: () => void; close: () => void };
 
@@ -67,7 +57,7 @@ type HTMLProps = React.HTMLAttributes<HTMLElement> & {
 const UnmountContext = React.createContext<(() => void) | null>(null);
 
 /**
- * The root menu closed because an item whose check moves was chosen: its
+ * The root menu closed because an item whose check changes was chosen: its
  * popups (submenus' too) hold still before they leave.
  */
 const PickedContext = React.createContext(false);
@@ -79,20 +69,25 @@ type OpenChangeDetails = {
 };
 
 /**
- * Whether a press closing the menu chose an item whose check moves: a
- * checkbox item's pops in or out; another radio item than the checked one
- * gets the check shown glide there (the DOM still shows the old state).
+ * Whether a press closing the menu chose an item whose check changes: a
+ * checkbox item's, or another radio item's than the checked one (the DOM
+ * still shows the old state).
  */
-function checkMoves(details: OpenChangeDetails, hasCheck: () => boolean) {
+function checkMoves(
+  details: OpenChangeDetails,
+  hasCheck: (item: Element) => boolean,
+) {
   if (details.reason !== 'item-press') return false;
   const target = details.event?.target;
   const item =
     target instanceof Element
       ? target.closest('[role="menuitemcheckbox"], [role="menuitemradio"]')
       : null;
-  if (!item) return false;
-  if (item.getAttribute('role') === 'menuitemcheckbox') return true;
-  return item.getAttribute('aria-checked') !== 'true' && hasCheck();
+  if (!item || !hasCheck(item)) return false;
+  return (
+    item.getAttribute('role') === 'menuitemcheckbox' ||
+    item.getAttribute('aria-checked') !== 'true'
+  );
 }
 
 /**
@@ -111,7 +106,7 @@ function useManualUnmount<Details extends OpenChangeDetails>(
     close: () => ownActionsRef.current?.close(),
   }));
   const unmount = React.useCallback(() => ownActionsRef.current?.unmount(), []);
-  // The radio items' shown checks register: a check to glide from.
+  // The items' checks register: which items have one.
   const { registerCheck, hasCheck } = useCheckRegistry();
   const [picked, setPicked] = React.useState(false);
   const handleOpenChange = (open: boolean, details: Details) => {
@@ -134,7 +129,7 @@ function RootPicks({
   children,
 }: {
   picked: boolean;
-  registerCheck: () => () => void;
+  registerCheck: (element: Element) => () => void;
   children?: React.ReactNode;
 }) {
   return (
@@ -215,7 +210,7 @@ function PopupMotion({
   );
   const picked = React.use(PickedContext);
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
-  // Closing because an item was chosen whose check moves: the menu holds
+  // Closing because an item was chosen whose check changes: the menu holds
   // still while it does (nothing moves under reduced motion).
   const exit: Transition =
     picked && !reduce
@@ -264,63 +259,34 @@ function PopupMotion({
 
 type IndicatorState = { checked: boolean; transitionStatus?: string };
 
-/** The indicators of a radio group share it: the indicator glides. */
-const RadioGroupLayoutContext = React.createContext<string | null>(null);
+/** The checks of a radio group share it: a check glides between them (`pop`). */
+const RadioGroupCheckContext = React.createContext<CheckGroup | null>(null);
 
 /**
- * A checkbox item's check draws itself whenever it appears (checking the
- * item, or opening the menu), and erases itself when it's unchecked (the
- * indicator is kept mounted for that). A radio item's indicator glides from
- * the previously checked item.
+ * An item's check shows itself whenever it appears (checking the item, or
+ * opening the menu), and hides itself when it's unchecked (the indicator is
+ * kept mounted for that). With `pop`, a radio item's check glides from the
+ * previously checked item.
  */
 function IndicatorMotion({
   kind,
   htmlProps,
   state,
+  animation,
   transition,
 }: IndicatorAnimationProps & {
   kind: 'checkbox' | 'radio';
   htmlProps: HTMLProps;
   state: IndicatorState;
 }) {
-  const layoutId = React.use(RadioGroupLayoutContext);
-  const glide = useTempoTransition(transition ?? GLIDE_TRANSITION);
-  // A radio item's shown check: choosing another item glides it there.
-  useRegisterCheck(kind === 'radio' && state.checked);
-  // A box, so it can glide.
-  const htmlRef = htmlProps.ref;
-  const ref = React.useMemo(
-    () => mergeRefs(htmlRef, asTransformable),
-    [htmlRef],
-  );
-  const props = {
-    ...(htmlProps as React.ComponentProps<typeof motion.span>),
-    ref,
-  };
-
-  if (kind === 'radio') {
-    return (
-      // Out of the menu's exit: the menu doesn't wait for the glide to end
-      // before it unmounts (it holds for the glide when an item is chosen).
-      <PresenceContext value={null}>
-        <motion.span
-          {...props}
-          layoutId={layoutId ?? undefined}
-          // One indicator moving, not two crossfading.
-          layoutCrossfade={false}
-          transition={glide}
-          style={{
-            ...props.style,
-            ...(state.checked ? null : { visibility: 'hidden' as const }),
-          }}
-        />
-      </PresenceContext>
-    );
-  }
+  const group = React.use(RadioGroupCheckContext);
   return (
-    <DrawnCheck
+    <ItemCheck
       {...(htmlProps as React.ComponentProps<'span'>)}
+      multiple={kind === 'checkbox'}
+      group={kind === 'radio' ? group : null}
       checked={state.checked}
+      animation={animation}
       transition={transition}
     />
   );
@@ -329,7 +295,7 @@ function IndicatorMotion({
 export {
   IndicatorMotion,
   PopupMotion,
-  RadioGroupLayoutContext,
+  RadioGroupCheckContext,
   RootPicks,
   UnmountContext,
   useManualUnmount,

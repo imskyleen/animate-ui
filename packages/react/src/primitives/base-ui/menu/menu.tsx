@@ -10,10 +10,11 @@ import {
   useItemHighlight,
   withHighlight,
 } from '../../../internal/item-highlight';
+import { useCheckGroup } from '../../../internal/item-indicator';
 import {
   IndicatorMotion,
   PopupMotion,
-  RadioGroupLayoutContext,
+  RadioGroupCheckContext,
   RootPicks,
   UnmountContext,
   useManualUnmount,
@@ -199,13 +200,13 @@ namespace SubmenuTrigger {
   export type State = MenuPrimitive.SubmenuTrigger.State;
 }
 
-/** Its radio items' indicators glide from one to the other. */
+/** Its radio items' checks glide from one to the other (`pop`). */
 function RadioGroup(props: RadioGroup.Props) {
-  const layoutId = React.useId();
+  const group = useCheckGroup();
   return (
-    <RadioGroupLayoutContext value={layoutId}>
+    <RadioGroupCheckContext value={group}>
       <MenuPrimitive.RadioGroup {...props} />
-    </RadioGroupLayoutContext>
+    </RadioGroupCheckContext>
   );
 }
 
@@ -217,19 +218,21 @@ namespace RadioGroup {
 }
 
 function CheckboxItemIndicator({
+  animation,
   transition,
   ...props
 }: CheckboxItemIndicator.Props) {
   return (
     <MenuPrimitive.CheckboxItemIndicator
       {...props}
-      // Kept mounted, to shrink out when its item is unchecked.
+      // Kept mounted, to hide itself when its item is unchecked.
       keepMounted
       render={(htmlProps, state) => (
         <IndicatorMotion
           kind="checkbox"
           htmlProps={htmlProps}
           state={state}
+          animation={animation}
           transition={transition}
         />
       )}
@@ -238,24 +241,28 @@ function CheckboxItemIndicator({
 }
 
 namespace CheckboxItemIndicator {
-  /** Base UI's props, plus Animate UI's `transition`. */
+  /** Base UI's props, plus Animate UI's `animation` and `transition`. */
   export type Props = MenuPrimitive.CheckboxItemIndicator.Props &
     IndicatorAnimationProps;
   export type State = MenuPrimitive.CheckboxItemIndicator.State;
 }
 
 function RadioItemIndicator({
+  animation,
   transition,
   ...props
 }: RadioItemIndicator.Props) {
   return (
     <MenuPrimitive.RadioItemIndicator
       {...props}
+      // Kept mounted, to hide itself when another item is checked.
+      keepMounted
       render={(htmlProps, state) => (
         <IndicatorMotion
           kind="radio"
           htmlProps={htmlProps}
           state={state}
+          animation={animation}
           transition={transition}
         />
       )}
@@ -264,7 +271,7 @@ function RadioItemIndicator({
 }
 
 namespace RadioItemIndicator {
-  /** Base UI's props, plus Animate UI's `transition`. */
+  /** Base UI's props, plus Animate UI's `animation` and `transition`. */
   export type Props = MenuPrimitive.RadioItemIndicator.Props &
     IndicatorAnimationProps;
   export type State = MenuPrimitive.RadioItemIndicator.State;

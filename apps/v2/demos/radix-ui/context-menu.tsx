@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cn } from "cn"
 import { ContextMenu as ContextMenuPrimitive } from "@animate-ui/react/primitives/radix-ui"
+import { AnimateUIProvider } from "@animate-ui/react/provider"
 
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -265,63 +266,76 @@ export {
   ContextMenuRadioGroup,
 }
 
-export default function ContextMenuDemo() {
+export const controls = {
+  AnimateUIProvider: {
+    checkAnimation: { value: "draw", options: { draw: "draw", pop: "pop" } },
+  },
+}
+
+export default function ContextMenuDemo({
+  checkAnimation = "draw",
+}: {
+  /** How the checks show and hide. */
+  checkAnimation?: "draw" | "pop"
+}) {
   const [showGrid, setShowGrid] = React.useState(true)
   const [showRulers, setShowRulers] = React.useState(false)
   const [zoom, setZoom] = React.useState("fit")
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger className="text-muted-foreground flex h-40 w-72 items-center justify-center rounded-xl border border-dashed text-sm">
-        Right click here
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-56">
-        <ContextMenuItem>
-          Undo
-          <ContextMenuShortcut>⌘Z</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem disabled>
-          Redo
-          <ContextMenuShortcut>⇧⌘Z</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem>
-          Duplicate
-          <ContextMenuShortcut>⌘D</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger>Arrange</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-44">
-            <ContextMenuItem>Bring to front</ContextMenuItem>
-            <ContextMenuItem>Bring forward</ContextMenuItem>
-            <ContextMenuItem>Send backward</ContextMenuItem>
-            <ContextMenuItem>Send to back</ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSeparator />
-        <ContextMenuCheckboxItem
-          checked={showGrid}
-          onCheckedChange={setShowGrid}
-        >
-          Show grid
-        </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem
-          checked={showRulers}
-          onCheckedChange={setShowRulers}
-        >
-          Show rulers
-        </ContextMenuCheckboxItem>
-        <ContextMenuSeparator />
-        <ContextMenuLabel>Zoom</ContextMenuLabel>
-        <ContextMenuRadioGroup value={zoom} onValueChange={setZoom}>
-          <ContextMenuRadioItem value="fit">Zoom to fit</ContextMenuRadioItem>
-          <ContextMenuRadioItem value="100">Zoom to 100%</ContextMenuRadioItem>
-        </ContextMenuRadioGroup>
-        <ContextMenuSeparator />
-        <ContextMenuItem variant="destructive">
-          Delete
-          <ContextMenuShortcut>⌫</ContextMenuShortcut>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <AnimateUIProvider checkAnimation={checkAnimation}>
+      <ContextMenu>
+        <ContextMenuTrigger className="text-muted-foreground flex h-40 w-72 items-center justify-center rounded-xl border border-dashed text-sm">
+          Right click here
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-56">
+          <ContextMenuItem>
+            Undo
+            <ContextMenuShortcut>⌘Z</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem disabled>
+            Redo
+            <ContextMenuShortcut>⇧⌘Z</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem>
+            Duplicate
+            <ContextMenuShortcut>⌘D</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Arrange</ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-44">
+              <ContextMenuItem>Bring to front</ContextMenuItem>
+              <ContextMenuItem>Bring forward</ContextMenuItem>
+              <ContextMenuItem>Send backward</ContextMenuItem>
+              <ContextMenuItem>Send to back</ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem
+            checked={showGrid}
+            onCheckedChange={setShowGrid}
+          >
+            Show grid
+          </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            checked={showRulers}
+            onCheckedChange={setShowRulers}
+          >
+            Show rulers
+          </ContextMenuCheckboxItem>
+          <ContextMenuSeparator />
+          <ContextMenuLabel>Zoom</ContextMenuLabel>
+          <ContextMenuRadioGroup value={zoom} onValueChange={setZoom}>
+            <ContextMenuRadioItem value="fit">Zoom to fit</ContextMenuRadioItem>
+            <ContextMenuRadioItem value="100">Zoom to 100%</ContextMenuRadioItem>
+          </ContextMenuRadioGroup>
+          <ContextMenuSeparator />
+          <ContextMenuItem variant="destructive">
+            Delete
+            <ContextMenuShortcut>⌫</ContextMenuShortcut>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    </AnimateUIProvider>
   )
 }

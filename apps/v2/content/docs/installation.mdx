@@ -38,3 +38,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 ```
 
 `tempo` multiplies every duration: `0.8` feels crisper, `1.2` more relaxed. Without the provider, the defaults apply.
+
+## Choose how checks animate (optional)
+
+Checks draw themselves: their stroke is drawn when they appear and erased when they go, like a pen. `checkAnimation="pop"` makes them pop instead: in from half their size out of a light blur, and back out. In a single selection (a select, a combobox, a menu's radio items), the check then glides from the item it leaves to the chosen one.
+
+```tsx
+<AnimateUIProvider checkAnimation="pop">{children}</AnimateUIProvider>
+```
+
+It applies to every check inside: checkboxes, and the checks of menus, selects, comboboxes and lists. A check's own `animation` prop wins over it. Nested providers keep what they don't set: an inner `<AnimateUIProvider tempo={0.8}>` keeps the outer `checkAnimation`.

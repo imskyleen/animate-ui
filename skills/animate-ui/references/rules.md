@@ -207,7 +207,7 @@ When two states replace each other in place (an icon swapping for another, a lab
 
 ### B8. One token set, one tempo
 
-Values come from `@animate-ui/react/utils/motion`. To change the pace of everything, set `tempo` on `AnimateUIProvider` (`tokens.md`), not individual components.
+Values come from `@animate-ui/react/utils/motion`. To change the pace of everything, set `tempo` on `AnimateUIProvider` (`tokens.md`), not individual components; to pop checks instead of drawing them, its `checkAnimation`.
 
 ## Checklist
 
