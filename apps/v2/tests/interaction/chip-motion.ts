@@ -14,6 +14,8 @@ type ChipFrame = {
   copy: (Box & { opacity: number; scale: number }) | null;
   /** The element that moves (the next chip, the input), on screen. */
   next: Box | null;
+  /** Its placeholder, to the eye: 1 shown, 0 hidden or none. */
+  placeholder: number;
   /** The element the chips are laid out in (the field). */
   container: Box;
   /** A chip that stays on its line, if watched. */
@@ -51,6 +53,12 @@ export async function recordChips(page: Page, c: ChipCase) {
         return { x: r.x, y: r.y, width: r.width, height: r.height };
       };
       const root = document.querySelector(container)!;
+      // An empty one matches :placeholder-shown too, but shows nothing.
+      const placeholder = (el: Element | null) =>
+        el?.matches(':placeholder-shown') &&
+        el.getAttribute('placeholder') !== ''
+          ? Number(getComputedStyle(el, '::placeholder').opacity)
+          : 0;
       const live = (selector: string, text?: string) =>
         [...root.querySelectorAll(selector)].find(
           (el) =>
@@ -84,6 +92,7 @@ export async function recordChips(page: Page, c: ChipCase) {
                   }
                 : null,
             next: box(live(next)),
+            placeholder: placeholder(live(next)),
             container: box(root)!,
             stay: stay ? box(live(stay.selector, stay.text)) : null,
           });
@@ -181,6 +190,47 @@ export function expectResized(
       expect(Math.abs(offset(f.stay, f.container) - was)).toBeLessThan(1);
 }
 
+/**
+ * What follows glided in one go: from where it was when its glide starts,
+ * then always closer to where it lands, never jumping back (the copy
+ * leaving mustn't move it).
+ */
+export function expectOneGo({ before, frames }: Recording) {
+  const end = frames.at(-1)!.next!;
+  const away = (box: Box) => Math.hypot(box.x - end.x, box.y - end.y);
+  const start = frames.find((f) => f.copy !== null)!;
+  expect(
+    Math.hypot(start.next!.x - before.next.x, start.next!.y - before.next.y),
+  ).toBeLessThan(1.5);
+  for (const [i, f] of frames.entries())
+    if (i > 0)
+      expect(away(f.next!)).toBeLessThan(away(frames[i - 1]!.next!) + 0.5);
+}
+
+/**
+ * The input's placeholder, showing up as it glides back (the last chip
+ * removed), stays hidden on the way and shows once the input is there, from
+ * the frame it lands.
+ */
+export function expectPlaceholderWaits({ frames }: Recording) {
+  const end = frames.at(-1)!.next!;
+  const away = (f: ChipFrame) =>
+    Math.hypot(f.next!.x - end.x, f.next!.y - end.y);
+  const onTheWay = frames.filter((f) => away(f) > 1);
+  expect(onTheWay.length).toBeGreaterThan(2);
+  for (const f of onTheWay) expect(f.placeholder).toBe(0);
+  const landed = frames.find((f) => away(f) < 0.5)!;
+  const shown = frames.find((f) => f.placeholder === 1);
+  expect(shown).toBeDefined();
+  expect(shown!.t - landed.t).toBeLessThan(40);
+  expect(frames.at(-1)!.placeholder).toBe(1);
+}
+
+/** The input's placeholder, there all along, goes with it: never hidden. */
+export function expectPlaceholderRides({ frames }: Recording) {
+  for (const f of frames) expect(f.placeholder).toBe(1);
+}
+
 /** An added chip: what follows glides to make room. */
 export function expectRoomMade(
   recording: Recording,
@@ -204,6 +254,8 @@ type ChipsDemo = {
   add: string;
   /** Items to add, in turn, until the row wraps. */
   more: string[];
+  /** When the input shows its placeholder: once it's empty, or always. */
+  placeholder: 'empty' | 'always';
 };
 
 /** The chips of a combobox demo (shadcn/ui's, Base UI's or React Aria's). */
@@ -302,6 +354,32 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
         }),
       );
     });
+
+    test(
+      c.placeholder === 'empty'
+        ? 'the last chip removed: the input glides back in one go, its placeholder shows once it is there'
+        : 'the last chip removed: the input glides back in one go, its placeholder with it',
+      async ({ page }) => {
+        await chip(page, c.first)
+          .locator('[data-slot="combobox-chip-remove"]')
+          .click();
+        await expect(chip(page, c.first)).toHaveCount(0);
+        await page.waitForTimeout(650);
+        const recording = await recordChips(page, {
+          container: CONTAINER,
+          next: INPUT,
+          chip: { selector: CHIP, text: c.last },
+          act: () =>
+            chip(page, c.last)
+              .locator('[data-slot="combobox-chip-remove"]')
+              .click(),
+        });
+        expectChipLeaves(recording);
+        expectOneGo(recording);
+        if (c.placeholder === 'empty') expectPlaceholderWaits(recording);
+        else expectPlaceholderRides(recording);
+      },
+    );
 
     test('reduced motion: a removed chip only fades, the input jumps', async ({
       page,

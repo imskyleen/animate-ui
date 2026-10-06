@@ -7,9 +7,12 @@ import {
   TagList,
 } from '@animate-ui/react/primitives/react-aria';
 
-// Tags added after the list mounted pop in; removed ones go at once.
+// Tags added after the list mounted pop in; removed ones go at once. Below,
+// tags in a field beside an input whose placeholder shows once it's empty,
+// and whose padding narrows while it holds tags (shadcn/ui's chips field).
 export default function ReactAriaTagGroupFixture() {
   const [tags, setTags] = React.useState(['Astro', 'Next.js']);
+  const [picked, setPicked] = React.useState(['Remix', 'Gatsby']);
 
   return (
     <div className="flex flex-col gap-4">
@@ -36,6 +39,39 @@ export default function ReactAriaTagGroupFixture() {
           ))}
         </TagList>
       </TagGroup>
+      <button
+        type="button"
+        className="self-start"
+        onClick={() => setPicked((t) => t.slice(1))}
+      >
+        Remove picked
+      </button>
+      <div
+        data-testid="field"
+        className="flex w-72 flex-wrap items-center gap-1 rounded-lg border px-2.5 py-1 has-data-[slot=picked]:px-1"
+      >
+        <TagGroup aria-label="Picked" className="contents">
+          <TagList className="contents">
+            {picked.map((tag) => (
+              <Tag
+                key={tag}
+                id={tag}
+                textValue={tag}
+                data-slot="picked"
+                className="rounded-sm border px-1.5 text-xs"
+              >
+                {tag}
+              </Tag>
+            ))}
+          </TagList>
+        </TagGroup>
+        <input
+          data-testid="field-input"
+          aria-label="Add frameworks"
+          placeholder={picked.length > 0 ? '' : 'Add frameworks…'}
+          className="min-w-16 flex-1 outline-none"
+        />
+      </div>
     </div>
   );
 }

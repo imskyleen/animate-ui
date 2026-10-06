@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { expectChipLeaves, recordChips } from './chip-motion';
+import {
+  expectChipLeaves,
+  expectOneGo,
+  expectPlaceholderWaits,
+  recordChips,
+} from './chip-motion';
 
 // React Aria's tags (shadcn/ui's combobox chips). Animate UI v1 had no tag
 // group: an added tag pops in like v1's small overlays (opacity from 0, scale
@@ -75,7 +80,7 @@ test.describe('react-aria tag group', () => {
     page,
   }) => {
     const recording = await recordChips(page, {
-      container: '[role="grid"]',
+      container: '[role="grid"][aria-label="Frameworks"]',
       next: '[data-testid="tag-Next.js"]',
       chip: { selector: '[data-testid="tag-Astro"]', text: 'Astro' },
       act: () => page.getByRole('button', { name: 'Remove first' }).click(),
@@ -86,6 +91,23 @@ test.describe('react-aria tag group', () => {
     });
     await expect(page.getByTestId('tag-Next.js')).toHaveCount(1);
     expectChipLeaves(recording);
+  });
+
+  test('the last tag removed: the input glides back in one go, a placeholder showing up waits for it there', async ({
+    page,
+  }) => {
+    const remove = page.getByRole('button', { name: 'Remove picked' });
+    await remove.click();
+    await page.waitForTimeout(650);
+    const recording = await recordChips(page, {
+      container: '[data-testid="field"]',
+      next: '[data-testid="field-input"]',
+      chip: { selector: '[data-slot="picked"]', text: 'Gatsby' },
+      act: () => remove.click(),
+    });
+    expectChipLeaves(recording);
+    expectOneGo(recording);
+    expectPlaceholderWaits(recording);
   });
 
   test('an added tag pushes nothing back: those before it stay put', async ({

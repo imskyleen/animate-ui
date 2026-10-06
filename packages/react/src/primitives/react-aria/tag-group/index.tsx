@@ -171,6 +171,10 @@ function AnimatedTag({
   });
   const playedRef = React.useRef(false);
   const elementRef = React.useRef<HTMLElement | null>(null);
+  // Removed from the collection: React Aria removes the real tag right after,
+  // once the page around it changed (an input's placeholder showing up).
+  // Where everything is, before.
+  React.useLayoutEffect(() => () => list?.reflow.measure(), [list]);
 
   // Memoized, so React Aria doesn't update the collection node on each render.
   const setRef = React.useCallback(

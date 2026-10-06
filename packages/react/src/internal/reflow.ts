@@ -4,7 +4,7 @@ import * as React from 'react';
 import type { Transition } from 'motion/react';
 
 import { motionTokens, toCssTiming } from '../utils/motion';
-import { glideFrom, stopGlide } from './glide';
+import { glideFrom, stopGlide, whenLanded } from './glide';
 
 // A row of chips (a Base UI combobox's chips, React Aria's tags) and what
 // follows them (the input): adding a chip or removing one moves the others.
@@ -13,7 +13,8 @@ import { glideFrom, stopGlide } from './glide';
 // the others close its gap. When the row wraps onto a line more, or one less,
 // the box around it (the field) grows or shrinks on the same spring instead
 // of jumping. An added chip pops in on its own (its part plays it), from
-// CHIP_SCALE.
+// CHIP_SCALE. A placeholder showing up as its input glides (the last chip
+// removed) waits for the input to land: it doesn't ride along.
 
 /** A chip popping in starts at half its size, and a removed one ends there. */
 const CHIP_SCALE = 0.5;
@@ -28,6 +29,50 @@ const REFLOW_TRANSITION: Transition = motionTokens.spring.reflow;
 const copies = new WeakSet<Element>();
 /** Running resizes, by container. */
 const resizes = new WeakMap<Element, Animation>();
+/** Inputs whose placeholder waits for them to land: shows it now. */
+const waiting = new WeakMap<HTMLElement, () => void>();
+
+/** On an input while its placeholder waits for it to land. */
+const PLACEHOLDER_HIDDEN = 'data-placeholder-hidden';
+const PLACEHOLDER_STYLE = '__animate_ui_placeholder_style__';
+
+/** A text field showing its placeholder. */
+function hasPlaceholder(item: HTMLElement) {
+  const field = item as Partial<HTMLInputElement>;
+  return (
+    typeof field.placeholder === 'string' &&
+    field.placeholder !== '' &&
+    field.value === ''
+  );
+}
+
+/** Shows `input`'s placeholder, if it was waiting. */
+function showPlaceholder(input: HTMLElement) {
+  waiting.get(input)?.();
+}
+
+/** Hides `input`'s placeholder until `input` lands from its glide. */
+function holdPlaceholder(input: HTMLElement) {
+  showPlaceholder(input);
+  // The rule hiding it, once in its document (or shadow root).
+  const root = input.getRootNode() as Document | ShadowRoot;
+  if (!root.getElementById(PLACEHOLDER_STYLE)) {
+    const style = input.ownerDocument.createElement('style');
+    style.id = PLACEHOLDER_STYLE;
+    style.textContent = `[${PLACEHOLDER_HIDDEN}]::placeholder { opacity: 0 !important; }`;
+    ('head' in root ? root.head : root).appendChild(style);
+  }
+  input.setAttribute(PLACEHOLDER_HIDDEN, '');
+  let stop = () => {};
+  const show = () => {
+    stop();
+    if (waiting.get(input) !== show) return;
+    waiting.delete(input);
+    input.removeAttribute(PLACEHOLDER_HIDDEN);
+  };
+  waiting.set(input, show);
+  stop = whenLanded(input, show);
+}
 
 /** The CSS `height` that gives `container` a box `height` px tall. */
 function cssHeight(container: HTMLElement, height: number) {
@@ -115,6 +160,9 @@ function leaveThrough(
     element.removeAttribute('id');
     element.removeAttribute('data-testid');
   }
+  // Not a chip anymore: what counts the field's chips doesn't count it
+  // (shadcn/ui's field narrows its padding while it holds one).
+  copy.removeAttribute('data-slot');
   copy.setAttribute('aria-hidden', 'true');
   copy.setAttribute('inert', '');
   copy.setAttribute('data-exiting', '');
@@ -178,6 +226,8 @@ type ReflowOptions = {
 
 function createReflow(options: () => ReflowOptions): Reflow {
   let before: Map<HTMLElement, DOMRect> | null = null;
+  /** The inputs showing their placeholder, before. */
+  let shown = new Set<HTMLElement>();
   /** The container's height, before (on screen: resizing, maybe). */
   let height = 0;
   let frame = 0;
@@ -190,11 +240,11 @@ function createReflow(options: () => ReflowOptions): Reflow {
     if (before || !container?.isConnected) return;
     target = container;
     height = container.getBoundingClientRect().height;
-    before = new Map(
-      layoutItems(container).map((item) => [
-        item,
-        item.getBoundingClientRect(),
-      ]),
+    const items = layoutItems(container);
+    before = new Map(items.map((item) => [item, item.getBoundingClientRect()]));
+    // To the eye: not one still waiting to.
+    shown = new Set(
+      items.filter((item) => hasPlaceholder(item) && !waiting.has(item)),
     );
     // Measured for a change that didn't come (a render React dropped).
     cancelAnimationFrame(frame);
@@ -226,12 +276,15 @@ function createReflow(options: () => ReflowOptions): Reflow {
       Math.abs(now - height) > 0.5 &&
       typeof container.animate === 'function';
     const held = resized ? resize(container, items, height, now, glide) : null;
-    if (!reduce)
-      for (const item of items) {
-        const start = from?.get(item);
-        // From where it was (gliding, maybe) to where it lands.
-        if (start) glideFrom(item, start, glide, held?.get(item));
-      }
+    for (const item of items) {
+      const start = reduce ? undefined : from?.get(item);
+      // From where it was (gliding, maybe) to where it lands.
+      const glided = start && glideFrom(item, start, glide, held?.get(item));
+      // A placeholder showing up shows where its input lands, once there.
+      if (glided && hasPlaceholder(item) && !shown.has(item))
+        holdPlaceholder(item);
+      else showPlaceholder(item);
+    }
     // Still on the page: it wasn't removed (a ref handed over).
     for (const item of gone)
       if (!item.element.isConnected) leaveThrough(container, item);

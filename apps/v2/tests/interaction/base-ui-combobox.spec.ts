@@ -380,4 +380,5 @@ describeChipMotion('base-ui combobox', {
   last: 'Astro',
   add: 'Nuxt',
   more: ['React Router', 'TanStack Start', 'SvelteKit', 'SolidStart'],
+  placeholder: 'empty',
 });
