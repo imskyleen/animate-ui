@@ -147,12 +147,14 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 ### B2. Pick a tween's curve by what the element does
 
 - Entering or leaving: `ease.out` (`cubic-bezier(0.23, 1, 0.32, 1)`). It starts fast, so the interface answers at once.
-- Surfaces the eye watches change, a panel unfolding and pushing the page (accordion, collapsible), an overlay dimming it or a menu opening: `ease.soft` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the change is seen rather than snapped: on `ease.out`, a 200ms overlay is two-thirds in on its first frame.
+- Surfaces the eye watches change, a panel unfolding and pushing the page (accordion, collapsible), a menu opening or a sheet sliding in: `ease.soft` (`cubic-bezier(0.215, 0.61, 0.355, 1)`). A softer start, so the change is seen rather than snapped: on `ease.out`, a 200ms menu is two-thirds in on its first frame.
+- An overlay dimming and blurring the whole page, or clearing it: `ease.overlay` (CSS's `ease`, `cubic-bezier(0.25, 0.1, 0.25, 1)`), gentle at first and at last, so the whole screen never changes at once. Grow its backdrop blur as it's seen (`blurAtLevel`): the eye sees most of a blur in its first pixel, so a radius grown straight with the tint shows 60% of a 4px blur on the first two frames of a soft ease-out, and snaps the page sharp on the last ones.
+- A drawer sliding in: `ease.drawer` (`cubic-bezier(0.34, 1.2, 0.64, 1)`), which answers at once and goes a hair past its rest (~1%), a hint of bounce its bleed covers.
 - A mark drawing itself in a control (a checkbox's check): `ease.draw` (`cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut`, v1's). Gentle, so the stroke is seen being drawn: on `ease.out`, a 0.2s check is half drawn on its first frames.
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
-- Never ease-in on UI, except a dialog dismissed (`transition.dismiss`, 0.25s on `ease.in`): the user has moved on, and it speeds away, out of sight at once, its overlay clearing behind it.
+- Never ease-in on UI: it starts slow, exactly when the user is watching. Something dismissed (a dialog, a drawer, a sheet) speeds away on `ease.away` (`transition.dismiss`, 0.2s): a steady push from half its average speed to one and a half, so it leaves at once and its last pixels don't crawl out, its overlay clearing with it.
 
 ```tsx
 // Avoid
@@ -173,10 +175,12 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Tooltips, popovers, hover cards | there in ~200ms, settled by ~500ms | `spring.pop`                                   |
 | Selection, pointer highlight    | a smooth slide / a quick follow    | `spring.selection`, `spring.highlight`         |
 | Disclosures                     | 350ms, soft ease-out               | `transition.disclosure`                        |
-| Dialogs, sheets and drawers     | ~450ms, 500ms (Vaul's curve)       | `spring.dialog`, `transition.drawer`           |
+| Dialogs                         | ~450ms in, 200ms out               | `spring.dialog`, `transition.dismiss`          |
+| Sheets and drawers              | 400ms in, 200ms out                | `transition.sheet`, `transition.drawer`        |
+| Their overlays                  | 400ms in, 250ms out                | `transition.overlay`, `transition.overlayOut`  |
 | Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
 
-A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure, an overlay or a menu on `ease.out` felt rushed, so they got the softer `ease.soft`.
+A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure or a menu on `ease.out` felt rushed, so they got the softer `ease.soft`, and an overlay, which changes the whole screen, starts and lands gently on `ease.overlay`.
 
 ### B4. Scale: press only, and from a size that fits
 
@@ -194,7 +198,7 @@ whileTap={{ transform: `scale(${scale.press})` }} transition={spring.press}
 
 ### B5. The exit replays the entrance
 
-Closing plays the entrance's transition in reverse: one transition both ways (`exitTransition` defaults to `transition`). Put the transition inside each target (`animate`, `exit`) so a leaving element keeps it, and use `exitTransition` when a component needs a different exit. A dialog's content has one by default: dismissed, it goes back the way it came on `transition.dismiss`, quicker and speeding away.
+Closing plays the entrance's transition in reverse: one transition both ways (`exitTransition` defaults to `transition`). Put the transition inside each target (`animate`, `exit`) so a leaving element keeps it, and use `exitTransition` when a component needs a different exit. Modals have theirs by default: dismissed, a dialog's content goes back the way it came, and a drawer or a sheet off its edge, on `transition.dismiss`, at once and speeding away; their overlay clears on `transition.overlayOut`. Whatever unmounts the modal waits for its overlay to clear: one cut short snaps the page back sharp.
 
 ### B6. Blur to bridge a swap
 
@@ -202,9 +206,9 @@ When two states replace each other in place (an icon swapping for another, a lab
 
 ### B7. Surfaces: modals tip, sheets slide
 
-- **Dialog**: the content fades in, un-blurs and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on `spring.dialog`; the overlay fades its background color and backdrop filter in from nothing on `transition.overlay` (the page behind blurs from 0; never fade an overlay's opacity over a `backdrop-blur`). It stays centered.
-- **Sheet**: slides from its edge by its own size (percentages, never pixels) while it fades, on `transition.drawer` like a drawer (Vaul's curve). The overlay fades like a dialog's.
-- **Drawer** (Vaul): slides from its edge opaque, a sheet sliding in rather than a fade, on `transition.drawer` (Vaul's 0.5s `ease.drawer`, which answers at once and glides to rest), opening, closing, snapping and settling after a drag. Its overlay's tint and backdrop blur grow from 0 on the same curve, like a dialog's, and follow the drag.
+- **Dialog**: the content fades in at once (`transition.dialogFade`), un-blurs and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on `spring.dialog`; the overlay brings its background color and backdrop filter in from nothing on `transition.overlay` (the page behind blurs from 0, as it's seen; never fade an overlay's opacity over a `backdrop-blur`), and clears on `transition.overlayOut`. Dismissed, the content leaves on `transition.dismiss`. It stays centered.
+- **Sheet**: slides from its edge by its own size (percentages, never pixels) while it fades, in on `transition.sheet` (no bounce: held against the screen's edge, going past its rest would open a gap there), out on `transition.dismiss`. The overlay comes and goes like a dialog's.
+- **Drawer**: slides from its edge opaque, a sheet sliding in rather than a fade. It comes in, snaps and eases back after a drag on `transition.drawer` (0.4s on `ease.drawer`, a hint of bounce its bleed covers), and closes on `transition.dismiss`, speeding off its edge. Thrown by a swipe, it keeps the finger's speed (linear). Its shadow lifts off the page with it, from none off screen. Its overlay comes in and clears exactly like a dialog's, and follows the drag.
 
 ### B8. One token set, one tempo
 
@@ -229,7 +233,7 @@ Quality (any miss is a bug):
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays and menus, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a dismissed dialog's `transition.dismiss`)
+- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, menus and sheets, `ease.overlay` on overlays (blur as seen), `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (a dismissed modal speeds away on `ease.away`)
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
-- [ ] The exit replays the entrance (a dismissed dialog: quicker, speeding away)
+- [ ] The exit replays the entrance (a dismissed modal: at once, quicker, speeding away; its overlay clear before it unmounts)
 - [ ] Swaps bridged with a light blur

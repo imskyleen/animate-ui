@@ -10,15 +10,14 @@ import {
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
-  OVERLAY_TRANSITION,
   getAnimateTarget,
   getContentTargets,
   getModalSide,
   motionRender,
   useBackdropFade,
+  useOverlayTransitions,
   useHiddenWhenClosed,
   useContentTransitions,
-  useModalTransitions,
   type ContentFlipProps,
   type ModalAnimationProps,
   type ModalTargets,
@@ -145,7 +144,7 @@ function Backdrop({
   );
   const ref = useBackdropFade({
     visible: open && isPresent,
-    ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+    ...useOverlayTransitions(transition, exitTransition),
     onFadedOut: () => {
       onAnimationComplete();
       safeToRemove?.();

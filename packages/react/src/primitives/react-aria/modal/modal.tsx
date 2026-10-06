@@ -15,13 +15,12 @@ import {
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
-  OVERLAY_TRANSITION,
   getContentTargets,
   getModalSide,
   ariaMotionRender,
   useBackdropFade,
+  useOverlayTransitions,
   useContentTransitions,
-  useModalTransitions,
   type ContentFlipProps,
   type FlipDirection,
   type ModalAnimationProps,
@@ -139,7 +138,7 @@ function OverlayPresence({
   const fadeRef = useBackdropFade({
     visible: isPresent,
     animated,
-    ...useModalTransitions(transition, exitTransition, OVERLAY_TRANSITION),
+    ...useOverlayTransitions(transition, exitTransition),
     onFadedOut: () => safeToRemove?.(),
   });
   const setRef = React.useCallback(

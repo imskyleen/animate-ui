@@ -19,11 +19,14 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import {
+  DISMISS_TRANSITION,
   DRAWER_TRANSITION,
   motionRender,
   scrubBackdrop,
+  scrubShadow,
   toCssTiming,
-  type BackdropScrub,
+  useOverlayTransitions,
+  type Scrub,
 } from '../../../internal/modal-motion';
 
 // A drop-in replacement for Vaul (https://vaul.emilkowal.ski), with exactly
@@ -42,15 +45,26 @@ import {
 // AnimatePresence and passes `forceMount` down, and the Overlay and the
 // Content play their exit through `usePresence`.
 //
-// Its motion is Vaul's (v1 had no drawer): every move of the position
-// (opening, closing, snapping, settling back after a drag) runs on Vaul's
-// curve, 0.5s of cubic-bezier(0.32, 0.72, 0, 1), which answers at once and
-// glides to rest, and the drawer stays opaque, a sheet sliding in (it only
-// fades in place under reduced motion). The overlay comes in on the same
-// curve the way the dialogs' does: its tint deepens while its backdrop blur
-// grows from 0, so the page behind blurs progressively instead of
-// cross-fading with an already blurred copy. Once a drag has moved the
-// drawer, or with snap points, it also follows the position, like Vaul's.
+// Its motion (v1 had no drawer): the drawer stays opaque, a sheet sliding in
+// (it only fades in place under reduced motion).
+// - Opening, snapping and settling back after a drag: 0.4s of
+//   cubic-bezier(0.34, 1.2, 0.64, 1). It answers at once, goes a hair past
+//   its rest (~1%, which Vaul's bleed below it covers), then settles back: a
+//   hint of bounce, where Vaul's curve zips in, then stops.
+// - Closing: like a dismissed dialog, at once, quicker than it came, speeding
+//   off its edge (0.2s, a steady push), so its last pixels don't crawl out.
+// - Thrown by a drag: it keeps the finger's speed off its edge, linear, over
+//   the time the rest of the way takes at that speed (Base UI's drawer
+//   bounds).
+// - Its shadow, if it has one, lifts off the page with it: none off screen,
+//   all of it once it's in, following the position, so it fades as it leaves
+//   instead of riding out at full strength.
+// The overlay comes in and clears like a dialog's: its tint deepens while its
+// backdrop blur grows from 0 as it's seen, in 400ms on CSS's `ease` (250ms
+// clearing), so the page behind blurs progressively instead of cross-fading
+// with an already blurred copy, and never all at once. Once a drag has moved
+// the drawer, or with snap points, it also follows the position, like
+// Vaul's.
 
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
@@ -60,6 +74,12 @@ const VELOCITY_THRESHOLD = 0.4;
 const SNAP_SKIP_VELOCITY = 2;
 /** ms of pointer history used for the release velocity. */
 const VELOCITY_WINDOW = 100;
+/** px/ms: Base UI's bounds on a thrown drawer's speed. */
+const MIN_THROW_VELOCITY = 0.2;
+const MAX_THROW_VELOCITY = 4;
+/** ms: Base UI's bounds on a thrown drawer's way out. */
+const MIN_THROW_DURATION = 80;
+const MAX_THROW_DURATION = 360;
 const NESTED_DISPLACEMENT = 16;
 const WINDOW_TOP_OFFSET = 26;
 const BORDER_RADIUS = 8;
@@ -195,14 +215,16 @@ type DialogProps = {
 /** Animate UI's additions to `Drawer.Content`. */
 type ContentAnimationProps = {
   /**
-   * Opening (slide and fade in), moving between snap points and settling back
-   * after a drag that doesn't dismiss.
-   * @default { type: 'spring', stiffness: 150, damping: 22 }
+   * Opening (slide in), moving between snap points and settling back after
+   * a drag that doesn't dismiss.
+   * @default { duration: 0.4, ease: [0.34, 1.2, 0.64, 1] }
    */
   transition?: Transition;
   /**
-   * Closing (slide and fade out), a drag dismissal included: it continues
-   * from where the finger let go. Defaults to `transition`.
+   * Closing (slide out) by a button, Escape or a click outside: at once,
+   * quicker than it came, speeding off its edge. A drag dismissal is thrown
+   * instead: it keeps the finger's speed.
+   * @default { duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }
    */
   exitTransition?: Transition;
 };
@@ -210,11 +232,15 @@ type ContentAnimationProps = {
 /** Animate UI's additions to `Drawer.Overlay`. */
 type OverlayAnimationProps = {
   /**
-   * Fade (and blur) in.
-   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
+   * Its tint and backdrop blur coming in, like a dialog's overlay. After a
+   * drag, they also follow the drawer.
+   * @default { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }
    */
   transition?: Transition;
-  /** Fade (and blur) out. Defaults to `transition`. */
+  /**
+   * Its tint and backdrop blur clearing, like a dialog's overlay.
+   * @default { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }
+   */
   exitTransition?: Transition;
 };
 
@@ -404,7 +430,7 @@ function DrawerRoot({
   autoFocus = false,
 }: DialogProps) {
   const reduce = useShouldReduceMotion();
-  // Vaul's curve, for the nested step back and the snap point reset.
+  // The drawer's curve, for the nested step back and the snap point reset.
   const sheet = useTempoTransition<Transition>(DRAWER_TRANSITION);
   // The drawer this one is nested in, if any.
   const parent = React.use(DrawerContext);
@@ -711,10 +737,8 @@ function OverlayMotion({
 }: OverlayProps &
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
-  const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
-  const exit = useTempoTransition(
-    exitTransition ?? transition ?? DRAWER_TRANSITION,
-  );
+  // A dialog's overlay: in over 400ms, cleared over 250ms, on CSS's `ease`.
+  const { enter, exit } = useOverlayTransitions(transition, exitTransition);
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
   const hasSnapPoints = Boolean(context.snapPoints?.length);
@@ -743,7 +767,7 @@ function OverlayMotion({
   // Held at its level on every frame, between nothing and its classes'
   // values, read again at each opening (they may have changed since), and
   // kept through the exit: it clears on the same scrub.
-  const scrubRef = React.useRef<BackdropScrub | null>(null);
+  const scrubRef = React.useRef<Scrub | null>(null);
   React.useLayoutEffect(() => {
     const node = elementRef.current;
     if (!node || !visible) return;
@@ -879,11 +903,9 @@ function ContentMotion({
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
   const reduce = useShouldReduceMotion();
-  // Vaul's curve, both ways unless `exitTransition` is given.
+  // In with a hint of bounce; closed, out at once, speeding away.
   const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
-  const exit = useTempoTransition(
-    exitTransition ?? transition ?? DRAWER_TRANSITION,
-  );
+  const exit = useTempoTransition(exitTransition ?? DISMISS_TRANSITION);
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
 
@@ -949,6 +971,32 @@ function ContentMotion({
     vertical,
   });
 
+  // Its shadow (shadcn/ui's has none; yours may) lifts off the page with it:
+  // none off screen, all of it once it's in (from its first snap point up),
+  // on every frame of a slide or a drag, so it fades as it leaves. Read again
+  // at each opening (its classes may have changed since), before the opening
+  // below moves it off screen.
+  const shadowRef = React.useRef<Scrub | null>(null);
+  React.useLayoutEffect(() => {
+    const node = elementRef.current;
+    if (!node || !visible) return;
+    shadowRef.current?.stop();
+    shadowRef.current = scrubShadow(node);
+    shadowRef.current.set(
+      liveRef.current.context.backgroundProgress(position.get()),
+    );
+  }, [visible, position, liveRef]);
+  React.useLayoutEffect(() => {
+    const unsubscribe = position.on('change', (value) =>
+      shadowRef.current?.set(liveRef.current.context.backgroundProgress(value)),
+    );
+    return () => {
+      unsubscribe();
+      shadowRef.current?.stop();
+      shadowRef.current = null;
+    };
+  }, [position, liveRef]);
+
   const measure = React.useCallback(() => {
     const node = elementRef.current;
     if (!node) return;
@@ -975,6 +1023,8 @@ function ContentMotion({
   // Every animation of the position goes through here: the latest one wins.
   const generationRef = React.useRef(0);
   const targetRef = React.useRef<number | null>(null);
+  /** px/ms towards its edge when a drag dismissed it: it's thrown out. */
+  const throwRef = React.useRef<number | null>(null);
   const moveTo = React.useCallback(
     (distance: number, how: Transition, fade?: [number, Transition]) => {
       const id = ++generationRef.current;
@@ -1046,12 +1096,19 @@ function ContentMotion({
       targetRef.current = closed;
       return;
     }
-    // From wherever it is: a drag dismissal continues from the release. It
+    // From wherever it is: a drag dismissal continues from the release,
+    // thrown at the finger's speed; otherwise it speeds off its edge. It
     // slides out opaque, or fades in place under reduced motion.
+    const thrown = throwRef.current;
+    throwRef.current = null;
+    const out =
+      thrown === null
+        ? exit
+        : throwTransition(closed - position.get() * sign, thrown);
     const to = reduce ? position.get() * sign : closed;
     targetRef.current = to;
     return onNextFrame(() =>
-      moveTo(to, reduce ? instant : exit, reduce ? [0, exit] : undefined).then(
+      moveTo(to, reduce ? instant : out, reduce ? [0, exit] : undefined).then(
         (done) => {
           if (!done) return;
           const { context, isPresent, safeToRemove } = liveRef.current;
@@ -1264,13 +1321,19 @@ function ContentMotion({
     );
   };
 
-  /** Close; a controlled drawer whose owner keeps it open settles back. */
-  const requestClose = () => {
+  /**
+   * Close, thrown at `velocity` (px/ms towards its edge); a controlled drawer
+   * whose owner keeps it open settles back.
+   */
+  const requestClose = (velocity: number) => {
+    throwRef.current = velocity;
     context.closeDrawer();
     window.setTimeout(() => {
       const { context, restDistance, reduce, instant, enter } = liveRef.current;
-      if (context.isOpen && !pressRef.current?.dragging)
+      if (context.isOpen && !pressRef.current?.dragging) {
+        throwRef.current = null;
         moveTo(restDistance, reduce ? instant : enter);
+      }
     }, 0);
     return false;
   };
@@ -1287,7 +1350,7 @@ function ContentMotion({
       velocity > -VELOCITY_THRESHOLD &&
       (velocity > VELOCITY_THRESHOLD ||
         distance >= visibleSize * context.closeThreshold);
-    if (dismiss) return requestClose();
+    if (dismiss) return requestClose(velocity);
     moveTo(0, settle);
     return true;
   };
@@ -1314,7 +1377,7 @@ function ContentMotion({
 
     if (!context.snapToSequentialPoint && speed > SNAP_SKIP_VELOCITY) {
       if (towardsOpen) return snapTo(last);
-      return context.dismissible ? requestClose() : snapTo(0);
+      return context.dismissible ? requestClose(velocity) : snapTo(0);
     }
     // Pulled well below the first snap point.
     const firstDistance = distances[0]!;
@@ -1323,11 +1386,12 @@ function ContentMotion({
       distance >
         firstDistance + (closed - firstDistance) * context.closeThreshold
     )
-      return requestClose();
+      return requestClose(velocity);
     const dimension = vertical ? window.innerHeight : window.innerWidth;
     if (speed > VELOCITY_THRESHOLD && Math.abs(dragged) < dimension * 0.4) {
       if (towardsOpen) return snapTo(index + 1);
-      if (index === 0) return context.dismissible ? requestClose() : snapTo(0);
+      if (index === 0)
+        return context.dismissible ? requestClose(velocity) : snapTo(0);
       return snapTo(index - 1);
     }
     let closest = 0;
@@ -1646,6 +1710,26 @@ function releaseVelocity(
   return to.time > from.time
     ? (to.distance - from.distance) / (to.time - from.time)
     : 0;
+}
+
+/**
+ * A drawer a drag dismissed, `remaining` px from its edge, released at
+ * `velocity` px/ms: it keeps the finger's speed (linear, so it neither stalls
+ * nor crawls), over the time the rest of the way takes at that speed, within
+ * Base UI's drawer bounds; a slow release takes the longest of them.
+ */
+function throwTransition(remaining: number, velocity: number): Transition {
+  const ms =
+    velocity > MIN_THROW_VELOCITY
+      ? Math.min(
+          Math.max(
+            remaining / Math.min(velocity, MAX_THROW_VELOCITY),
+            MIN_THROW_DURATION,
+          ),
+          MAX_THROW_DURATION,
+        )
+      : MAX_THROW_DURATION;
+  return { duration: ms / 1000, ease: 'linear' };
 }
 
 /** After a drag, the click that ends it doesn't activate what's under it. */

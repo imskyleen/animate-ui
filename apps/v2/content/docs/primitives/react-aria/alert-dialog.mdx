@@ -46,10 +46,10 @@ export function DeleteProject() {
 
 React Aria has no Animate UI v1 counterpart: the motion is v1's Alert Dialog (Radix UI and Base UI shipped the same one), with a quicker exit.
 
-- **ModalOverlay** fades in over 400ms on a soft ease-out, along with the modal's fade, and out the same way. React Aria renders the Modal inside it, so it fades its own background color and backdrop filter (from transparent to the values its classes set) rather than its opacity, which would fade the modal with it.
-- **Modal** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it with the overlay (400ms on a soft ease-out): it's there first, then it settles. Dismissed, it goes back the way it came, but quicker and speeding away (0.25s on an ease-in), out of sight just before the overlay has cleared, then unmounts.
+- **ModalOverlay** comes in over 400ms on CSS's `ease` (`cubic-bezier(0.25, 0.1, 0.25, 1)`), which starts and lands gently, so the page never changes all at once, on the first frame or on the last, and clears the same way in 250ms once the modal is dismissed. React Aria renders the Modal inside it, so it fades its own background color and backdrop filter (from transparent to the values its classes set) rather than its opacity, which would fade the modal with it.
+- **Modal** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it (400ms on a soft ease-out), and ahead of the overlay: it's there first, then it settles. Dismissed, it goes back the way it came, at once, quicker and speeding away (0.2s, a steady push from half its average speed to one and a half), out of sight just before the overlay has cleared, then unmounts.
 - `from` picks the edge the modal tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`).
-- On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The dialog's own exit is the quicker one above unless you set `exitTransition`.
+- Each part leaves its own way unless you set its `exitTransition`: the overlay clears in 250ms, the dialog speeds away in 0.2s.
 - Animate UI passes `isExiting` while the exit plays, so React Aria keeps the modal mounted, `data-exiting` stays accurate, and focus returns to the trigger.
 - Without `isDismissable`, an outside click doesn't close it; Escape does, unless `isKeyboardDismissDisabled`.
 - Reopening while it closes picks up from where it is.
@@ -72,14 +72,14 @@ React Aria has no Animate UI v1 counterpart: the motion is v1's Alert Dialog (Ra
         'Transition of the opening (the fade in, for ModalOverlay). On Modal, one you pass drives its fade too.',
       type: 'Transition',
       default:
-        "Modal: { type: 'spring', stiffness: 150, damping: 25, opacity: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] } }; ModalOverlay: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }",
+        "Modal: { type: 'spring', stiffness: 150, damping: 25, opacity: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] } }; ModalOverlay: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }",
     },
     exitTransition: {
       description:
         'Transition of the closing (the fade out, for ModalOverlay).',
       type: 'Transition',
       default:
-        'Modal: { duration: 0.25, ease: [0.42, 0, 1, 1] }; ModalOverlay: transition',
+        'Modal: { duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }; ModalOverlay: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }',
     },
   }}
 />

@@ -12,7 +12,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import {
-  SHEET_TRANSITION,
+  TOAST_TRANSITION,
   toCssTiming,
   type CssTiming,
 } from '../../../internal/modal-motion';
@@ -208,7 +208,7 @@ function RootMotion({
 }: Root.Props) {
   const reduce = useShouldReduceMotion();
   const anchored = props.toast.positionerProps != null;
-  const fallback = anchored ? POPOVER_TRANSITION : SHEET_TRANSITION;
+  const fallback = anchored ? POPOVER_TRANSITION : TOAST_TRANSITION;
   const enter = toCssTiming(useTempoTransition(transition ?? fallback));
   const exit = toCssTiming(
     useTempoTransition(exitTransition ?? transition ?? fallback),

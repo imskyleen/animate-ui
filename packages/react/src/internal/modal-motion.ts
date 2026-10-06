@@ -10,56 +10,75 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 // Motion shared by the modal primitives (Radix UI and Base UI Dialog / Alert
 // Dialog, React Aria Modal), as Animate UI v1 shipped it:
 //
-// - The overlay fades in from nothing to what its classes set: its background
+// - The overlay comes in from nothing to what its classes set: its background
 //   color deepens and its backdrop filter grows (the page behind blurs from
-//   0), in 400ms on a soft ease-out, and leaves the same way: the page dims
-//   smoothly while the content arrives, and clears as it leaves. Fading its
-//   opacity, as v1 did, would cross-fade the sharp page with an already
-//   blurred one under shadcn/ui's `backdrop-blur-xs`.
+//   0), in 400ms on CSS's `ease`, which starts and lands gently: the whole
+//   page never changes at once, on the first frame or on the last. It clears
+//   the same way once its content is dismissed, in 250ms. Its blur grows as
+//   it's seen: the eye sees most of a blur in its first pixel, so the radius
+//   rises slowly at first, and what's seen of the blur keeps pace with the
+//   tint. Fading its opacity, as v1 did, would cross-fade the sharp page with
+//   an already blurred one under shadcn/ui's `backdrop-blur-xs`.
 // - The content, v1's entrance: it un-blurs and tips forward from
 //   `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring (stiffness
-//   150, damping 25), fading in ahead of it with its overlay (400ms on a
-//   soft ease-out): it's there first, then it settles. Dismissed, it goes
-//   back the way it came, quicker and
-//   speeding away (0.25s on an ease-in), gone before its overlay has
-//   cleared. `from` picks the edge it tips from, as in v1: `top` (the
-//   default) and `right` turn it by -20deg, `bottom` and `left` by 20deg,
-//   around the X axis for top and bottom, the Y axis for left and right.
+//   150, damping 25), fading in ahead of it (400ms on a soft ease-out): it's
+//   there first, then it settles. Dismissed, it goes back the way it came,
+//   at once, quicker and speeding away (0.2s, a steady push), gone just
+//   before its overlay has cleared. `from` picks the edge it tips from, as
+//   in v1: `top` (the default) and `right` turn it by -20deg, `bottom` and
+//   `left` by 20deg, around the X axis for top and bottom, the Y axis for
+//   left and right.
 // - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
-//   from that edge by its own size and fades in, on Vaul's curve like the
-//   drawers (0.5s of cubic-bezier(0.32, 0.72, 0, 1), which answers at once
-//   and glides to rest), and leaves the same way.
+//   from that edge by its own size and fades in (0.4s on a soft ease-out: it
+//   answers at once and slows down all the way in, without a drawer's
+//   bounce, since it's held against the screen's edge), and leaves like a
+//   dismissed dialog, speeding off its edge (0.2s, a steady push).
 //
-// The overlay and a sheet use one transition both ways, as v1 did: their
-// `exitTransition` defaults to `transition`. A dialog's content leaves on its
-// own unless `exitTransition` is given.
+// Each part leaves on its own unless `exitTransition` is given: the overlay
+// clears in 250ms, a dialog's or a sheet's content speeds away in 0.2s.
 
-/** The overlay's fade: 400ms on a soft ease-out, both ways. */
+/**
+ * An overlay coming in (a dialog's, a sheet's, a drawer's): 400ms on CSS's
+ * `ease`, gentle at first and at last.
+ */
 export const OVERLAY_TRANSITION = motionTokens.transition.overlay;
+
+/** The overlay clearing once its content is dismissed: 250ms, same curve. */
+export const OVERLAY_EXIT_TRANSITION = motionTokens.transition.overlayOut;
 
 /** v1's dialog spring. */
 export const DIALOG_TRANSITION = motionTokens.spring.dialog;
 
-/** A dialog dismissed: 0.25s on an ease-in, speeding away. */
+/**
+ * A dialog, a drawer or a sheet dismissed: 0.2s, a steady push from half its
+ * average speed to one and a half.
+ */
 export const DISMISS_TRANSITION = motionTokens.transition.dismiss;
 
 /**
- * A dialog's opacity as it comes in: with its overlay's fade, ahead of its
+ * A dialog's opacity as it comes in: 400ms on a soft ease-out, ahead of its
  * tilt, so it's there first, then settles.
  */
-const CONTENT_FADE = motionTokens.transition.overlay;
+const CONTENT_FADE = motionTokens.transition.dialogFade;
 
 /**
  * The toasts that enter from an edge: v1's sheet spring, a little livelier
  * than the dialog's (they travel farther).
  */
-export const SHEET_TRANSITION = motionTokens.spring.sheet;
+export const TOAST_TRANSITION = motionTokens.spring.toast;
 
 /**
- * Drawers and sheets, and the drawers' overlay: Vaul's 0.5s curve, which
- * answers at once and glides to rest.
+ * A drawer sliding in, snapping or easing back: 0.4s that answers at once
+ * with a hint of bounce. Closed, it leaves like a dialog
+ * (`DISMISS_TRANSITION`).
  */
 export const DRAWER_TRANSITION = motionTokens.transition.drawer;
+
+/**
+ * A sheet sliding in: 0.4s on a soft ease-out, no bounce (it's held against
+ * the screen's edge). Closed, it leaves like a dialog.
+ */
+export const SHEET_TRANSITION = motionTokens.transition.sheet;
 
 /** Animate UI's addition to a dialog's content: v1's `from`. */
 export type ContentFlipProps = {
@@ -77,8 +96,8 @@ export type ModalAnimationProps = {
   /** Transition of the opening. */
   transition?: Transition;
   /**
-   * Transition of the closing. Defaults to 0.25s on an ease-in for a
-   * dialog's content (it speeds away), to `transition` otherwise.
+   * Transition of the closing. Defaults to 0.2s speeding away for a dialog's
+   * or a sheet's content, to 250ms on CSS's `ease` for the overlay.
    */
   exitTransition?: Transition;
 };
@@ -102,13 +121,29 @@ export function useModalTransitions(
   return { enter, exit };
 }
 
+/**
+ * An overlay's transitions, tempo applied: in over 400ms, cleared over
+ * 250ms, both on CSS's `ease`, unless given.
+ */
+export function useOverlayTransitions(
+  transition: Transition | undefined,
+  exitTransition: Transition | undefined,
+) {
+  return useModalTransitions(
+    transition,
+    exitTransition,
+    OVERLAY_TRANSITION,
+    OVERLAY_EXIT_TRANSITION,
+  );
+}
+
 export type ModalSide = 'top' | 'right' | 'bottom' | 'left';
 
 /**
  * A modal content's transitions, tempo applied. A dialog tips in on its
- * spring, fading in ahead of it with its overlay, and speeds away once
- * dismissed; a sheet (`side`) slides both ways on Vaul's curve. A
- * `transition` given drives the whole opening.
+ * spring, fading in ahead of it with its overlay; a sheet (`side`) slides in
+ * from its edge. Both speed away once dismissed. A `transition` given drives
+ * the whole opening.
  */
 export function useContentTransitions(
   side: ModalSide | undefined,
@@ -118,9 +153,10 @@ export function useContentTransitions(
   const { enter, exit } = useModalTransitions(
     transition,
     exitTransition,
-    side ? DRAWER_TRANSITION : DIALOG_TRANSITION,
-    // Dismissed, a dialog speeds away; a sheet slides back on its curve.
-    side ? undefined : DISMISS_TRANSITION,
+    side ? SHEET_TRANSITION : DIALOG_TRANSITION,
+    // Dismissed, a dialog tips back speeding away; a sheet speeds off its
+    // edge.
+    DISMISS_TRANSITION,
   );
   const fade = useTempoTransition(CONTENT_FADE);
   return {
@@ -177,8 +213,8 @@ type TargetOptions = {
 
 /**
  * The content: v1's dialog entrance (tipped from `from`), or v1's sheet slide
- * from `side` (on Vaul's curve). Reduced motion keeps the fade (and the blur) and drops the
- * movement.
+ * from `side` (in like a drawer, out speeding off its edge). Reduced motion
+ * keeps the fade (and the blur) and drops the movement.
  */
 export function getContentTargets({
   side,
@@ -266,53 +302,120 @@ const CLEAR: BackdropValues = {
   opacity: '0',
 };
 
+type Backdrop = BackdropValues & {
+  /**
+   * Its backdrop filter's radius (px) when it's a lone blur, 0 without a
+   * filter, null for another filter.
+   */
+  blur: number | null;
+  /**
+   * A background image (a gradient) has no color to fade through: the
+   * overlay's opacity fades too then.
+   */
+  hasImage: boolean;
+};
+
 /** What an overlay fades, from its computed style. */
-function readBackdrop(element: HTMLElement) {
+function readBackdrop(element: HTMLElement): Backdrop {
   const style = getComputedStyle(element);
+  const filter = style.backdropFilter;
+  const radius =
+    filter === 'none' ? '0' : /^blur\(([\d.]+)px\)$/.exec(filter)?.[1];
   return {
     backgroundColor: style.backgroundColor,
-    backdropFilter: style.backdropFilter,
+    backdropFilter: filter,
     opacity: style.opacity,
-    // A background image (a gradient) has no color to fade through: the
-    // overlay's opacity fades too then.
+    blur: radius === undefined ? null : Number(radius),
     hasImage: style.backgroundImage !== 'none',
   };
 }
 
-/** A keyframe of an overlay's fade (its opacity too over an image). */
-function backdropKeyframe(
-  values: BackdropValues,
-  rest: ReturnType<typeof readBackdrop>,
-) {
-  return {
-    backgroundColor: values.backgroundColor,
-    backdropFilter: values.backdropFilter,
-    ...(rest.hasImage ? { opacity: values.opacity } : {}),
-  };
+// How much of a backdrop blur the eye sees: the page behind (Chrome's
+// rendering of a docs page, at 1x and 2x) loses half its sharpness by
+// ~0.9px of blur and 80% by 2px, so most of a blur shows in its first pixel:
+// grown straight to 4px on an ease-out, 60% of it showed in an overlay's
+// first two frames. A Hill curve fits it, and the overlays grow their blur
+// through it, so what's seen of the blur keeps pace with the tint.
+/** px: the radius at which half of a blur is seen. */
+export const BLUR_HALF = 0.9;
+/** How steeply a blur shows around `BLUR_HALF`. */
+export const BLUR_STEEPNESS = 2.3;
+
+/** The share (0 to 1) of a blur of `radius` px that's seen. */
+export function seenBlur(radius: number) {
+  return radius <= 0 ? 0 : 1 / (1 + (BLUR_HALF / radius) ** BLUR_STEEPNESS);
 }
 
-export type BackdropScrub = {
+/**
+ * The radius (px) of a blur of `radius` px at `level` (0 to 1), as seen: a
+ * share `level` of what's seen of it. Slow at first, all of it at 1.
+ */
+export function blurAtLevel(radius: number, level: number) {
+  const seen = Math.min(1, Math.max(0, level)) * seenBlur(radius);
+  if (seen <= 0) return 0;
+  return BLUR_HALF * (seen / (1 - seen)) ** (1 / BLUR_STEEPNESS);
+}
+
+/** Keyframes of a fade: enough for the blur's curve to read smooth. */
+const LEVEL_STEPS = 16;
+
+/**
+ * An overlay's keyframes from level `from` to `to` (0: nothing, 1: its
+ * classes' values): its tint (or its opacity, over an image) straight between
+ * the two, its blur as seen. `start` holds its values at `from` when it's
+ * interrupted mid-fade.
+ */
+function backdropKeyframes(
+  rest: Backdrop,
+  from: number,
+  to: number,
+  start?: BackdropValues,
+): Keyframe[] {
+  const at = (level: number) => (level === 0 ? CLEAR : rest);
+  const tint = (values: BackdropValues) => ({
+    backgroundColor: values.backgroundColor,
+    ...(rest.hasImage ? { opacity: values.opacity } : {}),
+  });
+  const first = start ?? at(from);
+  const last = at(to);
+  // A filter that isn't a lone blur goes straight from one to the other.
+  if (rest.blur === null)
+    return [
+      { ...tint(first), backdropFilter: first.backdropFilter },
+      { ...tint(last), backdropFilter: last.backdropFilter },
+    ];
+  if (rest.blur === 0) return [tint(first), tint(last)];
+  const frames: Keyframe[] = [];
+  for (let step = 0; step <= LEVEL_STEPS; step++) {
+    const blur = blurAtLevel(
+      rest.blur,
+      from + ((to - from) * step) / LEVEL_STEPS,
+    );
+    frames.push({
+      offset: step / LEVEL_STEPS,
+      backdropFilter: blur > 0 ? `blur(${blur.toFixed(3)}px)` : 'none',
+    });
+  }
+  Object.assign(frames[0]!, tint(first));
+  Object.assign(frames[LEVEL_STEPS]!, tint(last));
+  return frames;
+}
+
+export type Scrub = {
   /** Holds it at `level`, from 0 (nothing) to 1 (its classes' values). */
   set: (level: number) => void;
   /** Lets its classes take over again. */
   stop: () => void;
 };
 
-/**
- * Holds an overlay at `level` of what its classes set, from nothing (0: no
- * tint, nothing blurred behind it) to its classes' values (1), for an overlay
- * that follows a drag: a paused Web Animation between the two, scrubbed, so
- * any color syntax interpolates. Its values are read now: nothing may animate
- * them yet.
- */
-export function scrubBackdrop(element: HTMLElement): BackdropScrub {
-  if (typeof element.animate !== 'function')
-    return { set: () => {}, stop: () => {} };
-  const rest = readBackdrop(element);
-  const animation = element.animate(
-    [backdropKeyframe(CLEAR, rest), backdropKeyframe(rest, rest)],
-    { duration: 1000, fill: 'both' },
-  );
+const NO_SCRUB: Scrub = { set: () => {}, stop: () => {} };
+
+/** A paused Web Animation of `keyframes`, held at a level. */
+function scrub(element: HTMLElement, keyframes: Keyframe[]): Scrub {
+  const animation = element.animate(keyframes, {
+    duration: 1000,
+    fill: 'both',
+  });
   animation.pause();
   return {
     set: (level: number) => {
@@ -323,10 +426,43 @@ export function scrubBackdrop(element: HTMLElement): BackdropScrub {
 }
 
 /**
+ * Holds an overlay at `level` of what its classes set, from nothing (0: no
+ * tint, nothing blurred behind it) to its classes' values (1), its blur as
+ * seen, for an overlay that follows a drag: a paused Web Animation between
+ * the two, scrubbed, so any color syntax interpolates. Its values are read
+ * now: nothing may animate them yet.
+ */
+export function scrubBackdrop(element: HTMLElement): Scrub {
+  if (typeof element.animate !== 'function') return NO_SCRUB;
+  return scrub(element, backdropKeyframes(readBackdrop(element), 0, 1));
+}
+
+/**
+ * Holds a surface's shadow at `level` of what its classes set, from none (0)
+ * to all of it (1): its color, offsets and blur grow together, the surface
+ * lifting off the page. A paused Web Animation, scrubbed, so any shadow
+ * interpolates; nothing to hold without one. Its shadow is read now:
+ * nothing may animate it yet.
+ */
+export function scrubShadow(element: HTMLElement): Scrub {
+  if (typeof element.animate !== 'function') return NO_SCRUB;
+  const shadow = getComputedStyle(element).boxShadow;
+  if (!shadow || shadow === 'none') return NO_SCRUB;
+  return scrub(element, [{ boxShadow: 'none' }, { boxShadow: shadow }]);
+}
+
+type Fade = { animation: Animation; from: number; to: number };
+
+/** Where a fade is (0: nothing, 1: its classes' values), from its progress. */
+const levelOf = ({ animation, from, to }: Fade) =>
+  from + (to - from) * (animation.effect?.getComputedTiming().progress ?? 1);
+
+/**
  * Fades an overlay in from nothing to what its classes set, and back out: its
  * background color deepens while its backdrop filter grows, so the page
- * behind blurs progressively from 0. A Web Animation, so any color syntax
- * interpolates, and the classes take over again once it has played.
+ * behind blurs progressively from 0, its blur as seen. A Web Animation, so
+ * any color syntax interpolates, and the classes take over again once it has
+ * played.
  *
  * `visible` drives it; `onFadedOut` runs once a fade out has played (to
  * unmount the overlay, or hide one kept mounted). Returns the ref to put on
@@ -348,7 +484,7 @@ export function useBackdropFade(options: {
   React.useLayoutEffect(() => {
     latestRef.current = options;
   });
-  const runningRef = React.useRef<Animation | null>(null);
+  const runningRef = React.useRef<Fade | null>(null);
   const mountedRef = React.useRef(false);
 
   React.useLayoutEffect(() => {
@@ -363,25 +499,30 @@ export function useBackdropFade(options: {
       return;
     }
     // From where it is: mid-fade when interrupted.
-    const current = runningRef.current;
-    const midway = current ? readBackdrop(element) : null;
-    current?.cancel();
+    const running = runningRef.current;
+    const midway = running
+      ? { level: levelOf(running), values: readBackdrop(element) }
+      : null;
+    running?.animation.cancel();
     // Its classes' values, now that nothing animates them.
     const rest = readBackdrop(element);
-    const pick = (values: BackdropValues) => backdropKeyframe(values, rest);
-    const from = pick(midway ?? (visible ? CLEAR : rest));
-    const to = pick(visible ? rest : CLEAR);
+    const from = midway?.level ?? (visible ? 0 : 1);
+    const to = visible ? 1 : 0;
     const { duration, easing } = toCssTiming(visible ? enter : exit);
-    const animation = element.animate([from, to], {
-      duration,
-      easing,
-      // Faded out, it stays clear until it unmounts or opens again.
-      fill: visible ? 'backwards' : 'forwards',
-    });
-    runningRef.current = animation;
+    const animation = element.animate(
+      backdropKeyframes(rest, from, to, midway?.values),
+      {
+        duration,
+        easing,
+        // Faded out, it stays clear until it unmounts or opens again.
+        fill: visible ? 'backwards' : 'forwards',
+      },
+    );
+    const fade = { animation, from, to };
+    runningRef.current = fade;
     animation.finished
       .then(() => {
-        if (runningRef.current !== animation) return;
+        if (runningRef.current !== fade) return;
         if (visible) runningRef.current = null;
         else latestRef.current.onFadedOut?.();
       })
