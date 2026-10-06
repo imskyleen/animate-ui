@@ -35,7 +35,7 @@ Springs first: nearly everything moves on a spring. They retarget with their vel
 | `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                                                                                      |
 | `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                                                                                |
 | `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                                                                                             |
-| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, drawers, toasts entering from an edge (they travel farther)                                                                   |
+| `spring.sheet`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Sheets, toasts entering from an edge (they travel farther)                                                                            |
 | `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                                                                                |
 | `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer   | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item (`pop`) |
 | `spring.reflow`    | `stiffness: 500, damping: 40`                             | Quick, no overshoot                                | Items making room for one added or closing the gap of one removed (a combobox's chips and its input)                                  |
@@ -53,20 +53,21 @@ Every spring above has `type: 'spring'`.
 
 Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
 
-| Token                   | Value                                            | Use for                                                          |
-| ----------------------- | ------------------------------------------------ | ---------------------------------------------------------------- |
-| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                     |
-| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out   |
-| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)           |
-| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)    |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                       |
-| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                       |
-| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                 |
-| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                           |
-| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out        |
-| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                            |
-| `transition.dismiss`    | `{ duration: 0.25, ease: ease.in }`              | A dialog dismissed: back the way it came, quicker, speeding away |
-| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)        |
+| Token                   | Value                                            | Use for                                                                       |
+| ----------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                                  |
+| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out                |
+| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)                        |
+| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                 |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                    |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                                    |
+| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                              |
+| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                        |
+| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out                     |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                                         |
+| `transition.dismiss`    | `{ duration: 0.25, ease: ease.in }`              | A dialog dismissed: back the way it came, quicker, speeding away              |
+| `transition.drawer`     | `{ duration: 0.5, ease: ease.drawer }`           | A drawer opening, closing, snapping or settling after a drag, and its overlay |
+| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)                     |
 
 ## Curves
 
@@ -79,6 +80,7 @@ Pick a tween's curve by what the element does:
 | A mark draws itself (a checkbox's check) | `ease.draw`: `cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut` (v1's)              |
 | Moves or morphs on screen                | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
 | A dialog dismissed, speeding away        | `ease.in`: `cubic-bezier(0.42, 0, 1, 1)`, CSS's `ease-in`                          |
+| A drawer slides from its edge or settles | `ease.drawer`: `cubic-bezier(0.32, 0.72, 0, 1)`, Vaul's (iOS's sheets)             |
 | Changes color (CSS)                      | `ease`                                                                             |
 | Moves constantly (marquee, loader)       | `linear`                                                                           |
 

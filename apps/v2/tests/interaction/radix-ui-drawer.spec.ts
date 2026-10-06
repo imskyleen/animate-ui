@@ -1,13 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { gotoHydrated } from './disclosure-timeline';
-import { SHEET_SPRING } from './modal-timeline';
-import { expectSpringPace, type Sample } from './spring-curves';
+import { DRAWER_CURVE } from './modal-timeline';
+import { expectCurvePace, type Sample } from './spring-curves';
 
-// The drawer moves like Animate UI v1's Sheet: every move of its position on
-// the dialog's spring (stiffness 150, damping 25), fading in and out with it
-// when it opens and closes; its overlay fades and un-blurs in 400ms on a
-// soft ease-out, a little ahead of it, and follows the drag like Vaul's.
+// The drawer moves like Vaul's: every move of its position on Vaul's curve
+// (0.5s of cubic-bezier(0.32, 0.72, 0, 1)), opaque, a sheet sliding in and
+// out; its overlay comes in like the dialogs', its tint and backdrop blur
+// growing from 0 on the same curve (never its opacity), and follows the drag
+// like Vaul's.
 
 const CONTENT = '[data-slot="drawer-content"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -32,17 +33,39 @@ const state = (page: Page, selector: string) =>
       };
     });
 
-const opacity = (page: Page, selector: string) =>
+/** The demo overlay's classes: `bg-black/10`, `backdrop-blur-xs`. */
+const REST = { bg: 0.1, blur: 4 };
+
+/** An overlay's opacity, the alpha of its tint and its backdrop blur (px). */
+const veil = (page: Page, selector: string) =>
   page
     .locator(selector)
     .first()
-    .evaluate((el) => Number(getComputedStyle(el).opacity));
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      const alpha =
+        /\/\s*([\d.]+(?:e[+-]?\d+)?)\s*\)$/.exec(cs.backgroundColor) ??
+        /^rgba\(.*,\s*([\d.]+)\)$/.exec(cs.backgroundColor);
+      const blur = /blur\(([\d.e-]+)px\)/.exec(cs.backdropFilter);
+      return {
+        opacity: Number(cs.opacity),
+        bg: alpha
+          ? Number(alpha[1])
+          : cs.backgroundColor === 'transparent'
+            ? 0
+            : 1,
+        blur: blur ? Number(blur[1]) : 0,
+      };
+    });
 
 type MotionFrame = {
   t: number;
   share: number;
   opacity: number;
+  /** The overlay's opacity, the alpha of its tint and its backdrop blur. */
   overlay: number;
+  bg: number;
+  blur: number;
 };
 
 /**
@@ -67,6 +90,8 @@ async function recordMotion(
           share: number;
           opacity: number;
           overlay: number;
+          bg: number;
+          blur: number;
         }[] = [];
         let start = 0;
         const tick = () => {
@@ -76,12 +101,21 @@ async function recordMotion(
             if (!start) start = now;
             const m = new DOMMatrix(getComputedStyle(el).transform);
             const ov = document.querySelector(overlay);
+            const veil = ov && getComputedStyle(ov);
+            const alpha =
+              veil &&
+              (/\/\s*([\d.]+(?:e[+-]?\d+)?)\s*\)$/.exec(veil.backgroundColor) ??
+                /^rgba\(.*,\s*([\d.]+)\)$/.exec(veil.backgroundColor));
+            const blur =
+              veil && /blur\(([\d.e-]+)px\)/.exec(veil.backdropFilter);
             frames.push({
               t: now - start,
               share:
                 axis === 'y' ? m.m42 / el.offsetHeight : m.m41 / el.offsetWidth,
               opacity: Number(getComputedStyle(el).opacity),
-              overlay: ov ? Number(getComputedStyle(ov).opacity) : 1,
+              overlay: veil ? Number(veil.opacity) : 1,
+              bg: alpha ? Number(alpha[1]) : 0,
+              blur: blur ? Number(blur[1]) : 0,
             });
             if (now - start > durationMs) return resolve(frames);
           }
@@ -169,33 +203,36 @@ test.describe('radix-ui drawer demo', () => {
     if (settle) await settled(page, CONTENT);
   };
 
-  test("slides and fades up from the bottom edge like v1's sheet, with Vaul attributes", async ({
+  test("slides up opaque from the bottom edge on Vaul's curve, its overlay tinting and blurring the page from 0, with Vaul attributes", async ({
     page,
   }) => {
     const motion = await recordMotion(page, CONTENT, OVERLAY, 'y', 900);
     await open(page, false);
     const frames = await motion.frames();
-    // Starts off screen and transparent.
+    // Starts off screen, and slides in opaque: a sheet, not a fade.
     expect(frames[0]!.share).toBeGreaterThan(0.8);
-    expect(frames[0]!.opacity).toBeLessThan(0.3);
-    // It fades in while it slides (v1's sheet), on the spring.
-    const midway = frames.find((frame) => frame.share < 0.5)!;
-    expect(midway.opacity).toBeGreaterThan(0.2);
-    expect(midway.opacity).toBeLessThan(0.95);
-    // The overlay dims the page alongside it, a little ahead: further in than
-    // the drawer half way, fully in after ~350ms, not in a couple of frames.
-    expect(midway.overlay).toBeGreaterThan(1 - midway.share);
-    const overlayIn = frames.find((frame) => frame.overlay >= 0.99)!;
-    expect(overlayIn.t).toBeGreaterThan(250);
+    for (const frame of frames) expect(frame.opacity).toBe(1);
     expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
-    // On v1's sheet spring: from 10% to 98% of the way in the time it
-    // takes.
+    // On Vaul's curve, which answers at once: from 10% to 70% of the way in
+    // the time it takes.
     const start = frames[0]!.share;
-    expectSpringPace(
+    expectCurvePace(
       frames.map((frame): Sample => [frame.t, frame.share]),
-      SHEET_SPRING,
-      { from: start, to: 0, a: start * 0.9, b: start * 0.02 },
+      DRAWER_CURVE,
+      { from: start, to: 0, a: start * 0.9, b: start * 0.3 },
     );
+    // The overlay comes in with it, never through its opacity: its tint and
+    // backdrop blur grow from 0 together, half way in when the drawer is.
+    expect(frames[0]!.bg).toBeLessThan(REST.bg * 0.1);
+    for (const frame of frames) {
+      expect(frame.overlay).toBe(1);
+      expect(
+        Math.abs(frame.blur / REST.blur - frame.bg / REST.bg),
+      ).toBeLessThan(0.1);
+    }
+    const drawerHalf = frames.find((frame) => frame.share < start / 2)!;
+    const overlayHalf = frames.find((frame) => frame.bg > REST.bg / 2)!;
+    expect(Math.abs(overlayHalf.t - drawerHalf.t)).toBeLessThan(60);
 
     const content = page.locator(CONTENT);
     await expect(content).toHaveAttribute(
@@ -210,13 +247,16 @@ test.describe('radix-ui drawer demo', () => {
     );
 
     await settled(page, CONTENT);
-    expect(await opacity(page, OVERLAY)).toBe(1);
+    const rest = await veil(page, OVERLAY);
+    expect(rest.opacity).toBe(1);
+    expect(rest.bg).toBeCloseTo(REST.bg, 3);
+    expect(rest.blur).toBe(REST.blur);
     expect(
       await page.locator(OVERLAY).evaluate((el) => getComputedStyle(el).filter),
-    ).toBe('blur(0px)');
+    ).toBe('none');
   });
 
-  test('closes the same way, sliding and fading back down, then unmounts', async ({
+  test('closes the same way, sliding back down opaque, the overlay clearing with it, then unmounts', async ({
     page,
   }) => {
     await open(page);
@@ -224,15 +264,15 @@ test.describe('radix-ui drawer demo', () => {
     await page.keyboard.press('Escape');
     const frames = await motion.frames();
     await expect(page.locator(CONTENT)).toHaveAttribute('data-state', 'closed');
-    // The overlay clears with it, a little ahead: further out than the drawer
-    // half way, and still there after 250ms (a 400ms soft fade).
-    const halfway = frames.find((frame) => frame.share > 0.5)!;
-    expect(halfway.overlay).toBeLessThan(1 - halfway.share);
-    expect(
-      frames.filter((frame) => frame.t < 250).every((f) => f.overlay > 0.01),
-    ).toBe(true);
+    for (const frame of frames) {
+      expect(frame.opacity).toBe(1);
+      expect(frame.overlay).toBe(1);
+    }
+    // The overlay clears with it: half way out when the drawer is.
+    const drawerHalf = frames.find((frame) => frame.share > 0.5)!;
+    const overlayHalf = frames.find((frame) => frame.bg < REST.bg / 2)!;
+    expect(Math.abs(overlayHalf.t - drawerHalf.t)).toBeLessThan(60);
     expect(frames.at(-1)!.share).toBeGreaterThan(0.6);
-    expect(frames.at(-1)!.opacity).toBeLessThan(0.3);
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(OVERLAY)).toHaveCount(0);
   });
@@ -248,9 +288,15 @@ test.describe('radix-ui drawer demo', () => {
     const dragged = await state(page, CONTENT);
     expect(Math.abs(dragged.y - distance)).toBeLessThan(2);
     expect(dragged.opacity).toBe(1);
-    const overlay = await opacity(page, OVERLAY);
-    expect(overlay).toBeLessThan(1);
-    expect(Math.abs(overlay - (1 - distance / height))).toBeLessThan(0.05);
+    // The overlay follows: its tint and its blur, never its opacity.
+    const overlay = await veil(page, OVERLAY);
+    expect(overlay.opacity).toBe(1);
+    expect(
+      Math.abs(overlay.bg / REST.bg - (1 - distance / height)),
+    ).toBeLessThan(0.05);
+    expect(
+      Math.abs(overlay.blur / REST.blur - (1 - distance / height)),
+    ).toBeLessThan(0.05);
     await expect(page.locator(CONTENT)).toHaveClass(/vaul-dragging/);
 
     // Hold still, then let go: not a flick, under the threshold.
@@ -261,7 +307,9 @@ test.describe('radix-ui drawer demo', () => {
     expect(released.y).toBeGreaterThan(5);
     expect(released.y).toBeLessThan(dragged.y);
     await settled(page, CONTENT);
-    await expect.poll(() => opacity(page, OVERLAY)).toBe(1);
+    await expect
+      .poll(async () => (await veil(page, OVERLAY)).bg)
+      .toBeCloseTo(REST.bg, 3);
     await expect(page.locator(CONTENT)).toHaveCount(1);
   });
 
@@ -337,7 +385,9 @@ test.describe('radix-ui drawer demo', () => {
       .getByRole('button', { name: 'Move goal' })
       .click({ force: true });
     await settled(page, CONTENT);
-    await expect.poll(() => opacity(page, OVERLAY)).toBe(1);
+    await expect
+      .poll(async () => (await veil(page, OVERLAY)).bg)
+      .toBeCloseTo(REST.bg, 3);
     await expect(page.locator(CONTENT)).toHaveCount(1);
   });
 
@@ -497,7 +547,7 @@ test.describe('radix-ui drawer API', () => {
       await page.getByText(`Open ${direction}`).click();
       const frames = await motion.frames();
       expect(frames[0]!.share * sign).toBeGreaterThan(0.8);
-      expect(frames[0]!.opacity).toBeLessThan(0.3);
+      for (const frame of frames) expect(frame.opacity).toBe(1);
       expect(at(frames, 60).share * sign).toBeGreaterThan(0.05);
       expect(Math.abs(at(frames, 880).share)).toBeLessThan(0.01);
       await expect(page.locator(content)).toHaveAttribute(
@@ -553,8 +603,8 @@ test.describe('radix-ui drawer API', () => {
     expect(
       Math.abs((await state(page, content)).y - viewport.height * 0.6),
     ).toBeLessThan(2);
-    // The overlay fades in from the last snap point only.
-    expect(await opacity(page, '[data-testid="snap-overlay"]')).toBe(0);
+    // The overlay comes in from the last snap point only (`bg-black/40`).
+    expect((await veil(page, '[data-testid="snap-overlay"]')).bg).toBe(0);
 
     // Dragged up near the 600px point, released slowly: it snaps there.
     const target = viewport.height - 600;
@@ -571,7 +621,10 @@ test.describe('radix-ui drawer API', () => {
     await expect(page.getByTestId('snap-state')).toHaveText('1');
     await page.waitForTimeout(800);
     expect(Math.abs((await state(page, content)).y)).toBeLessThan(2);
-    expect(await opacity(page, '[data-testid="snap-overlay"]')).toBe(1);
+    expect((await veil(page, '[data-testid="snap-overlay"]')).bg).toBeCloseTo(
+      0.4,
+      3,
+    );
 
     // From the last one, it closes, then resets to the first.
     await page.getByTestId('snap-handle').click();
@@ -591,9 +644,9 @@ test.describe('radix-ui drawer API', () => {
     await page.getByTestId('snap-handle').click();
     await expect(page.getByTestId('snap-state')).toHaveText('600px');
     await page.waitForTimeout(800);
-    // From 600px towards full height, the overlay follows.
+    // From 600px towards full height, the overlay follows: its tint.
     await drag(page, content, { dy: -60, release: false });
-    const overlay = await opacity(page, '[data-testid="snap-overlay"]');
+    const overlay = (await veil(page, '[data-testid="snap-overlay"]')).bg / 0.4;
     expect(overlay).toBeGreaterThan(0.2);
     expect(overlay).toBeLessThan(0.8);
     await page.waitForTimeout(150);
@@ -750,6 +803,34 @@ test.describe('radix-ui drawer API', () => {
       .poll(kept, { timeout: 2500 })
       .toEqual({ visibility: 'hidden', inert: true });
     await expect(content).toHaveCount(1);
+  });
+
+  test('an overlay over an image fades its opacity instead', async ({
+    page,
+  }) => {
+    await closeDefault(page);
+    const overlay = '[data-testid="gradient-overlay"]';
+    const motion = await recordMotion(
+      page,
+      '[data-testid="gradient-content"]',
+      overlay,
+      'y',
+      700,
+    );
+    await page.getByRole('button', { name: 'Open gradient' }).click();
+    const frames = await motion.frames();
+    // No color to deepen: from transparent, through the values in between.
+    expect(frames[0]!.overlay).toBeLessThan(0.3);
+    expect(
+      frames.some((frame) => frame.overlay > 0.2 && frame.overlay < 0.8),
+    ).toBe(true);
+    await expect
+      .poll(() =>
+        page
+          .locator(overlay)
+          .evaluate((el) => Number(getComputedStyle(el).opacity)),
+      )
+      .toBe(1);
   });
 
   test('modal={false}: no overlay, the page stays usable', async ({ page }) => {

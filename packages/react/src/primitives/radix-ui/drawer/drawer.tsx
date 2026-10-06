@@ -19,10 +19,11 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import {
-  OVERLAY_TRANSITION,
-  SHEET_TRANSITION,
+  DRAWER_TRANSITION,
   motionRender,
+  scrubBackdrop,
   toCssTiming,
+  type BackdropScrub,
 } from '../../../internal/modal-motion';
 
 // A drop-in replacement for Vaul (https://vaul.emilkowal.ski), with exactly
@@ -41,13 +42,15 @@ import {
 // AnimatePresence and passes `forceMount` down, and the Overlay and the
 // Content play their exit through `usePresence`.
 //
-// Its motion is Animate UI v1's Sheet (v1 had no drawer): every move of the
-// position (opening, closing, snapping, settling back after a drag) runs on
-// the sheet spring (stiffness 150, damping 22, v1's sheet), and the drawer
-// fades in and out with it as v1's sheet did (opacity 0 ↔ 1, never during a
-// drag). The overlay fades and un-blurs like v1's (opacity 0 → 1, blur(4px)
-// → blur(0px), 400ms soft ease-out); once a drag has moved the drawer, or with
-// snap points, it also follows the position, like Vaul's.
+// Its motion is Vaul's (v1 had no drawer): every move of the position
+// (opening, closing, snapping, settling back after a drag) runs on Vaul's
+// curve, 0.5s of cubic-bezier(0.32, 0.72, 0, 1), which answers at once and
+// glides to rest, and the drawer stays opaque, a sheet sliding in (it only
+// fades in place under reduced motion). The overlay comes in on the same
+// curve the way the dialogs' does: its tint deepens while its backdrop blur
+// grows from 0, so the page behind blurs progressively instead of
+// cross-fading with an already blurred copy. Once a drag has moved the
+// drawer, or with snap points, it also follows the position, like Vaul's.
 
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
@@ -66,8 +69,6 @@ const DOUBLE_TAP_TIMEOUT = 120;
 /** Rubber band past the open position: slope at the start, then a limit. */
 const RUBBER_BAND_FACTOR = 0.5;
 const RUBBER_BAND_LIMIT = 48;
-/** v1's overlay blur, in px, while it fades. */
-const OVERLAY_BLUR = 4;
 const INSTANT: Transition = { duration: 0 };
 
 type Direction = 'top' | 'bottom' | 'left' | 'right';
@@ -403,8 +404,8 @@ function DrawerRoot({
   autoFocus = false,
 }: DialogProps) {
   const reduce = useShouldReduceMotion();
-  // The sheet spring, for the nested step back and the snap point reset.
-  const sheet = useTempoTransition<Transition>(SHEET_TRANSITION);
+  // Vaul's curve, for the nested step back and the snap point reset.
+  const sheet = useTempoTransition<Transition>(DRAWER_TRANSITION);
   // The drawer this one is nested in, if any.
   const parent = React.use(DrawerContext);
 
@@ -705,34 +706,62 @@ function OverlayMotion({
   exitTransition,
   style,
   children,
+  ref,
   ...props
 }: OverlayProps &
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
-  const enter = useTempoTransition(transition ?? OVERLAY_TRANSITION);
+  const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
   const exit = useTempoTransition(
-    exitTransition ?? transition ?? OVERLAY_TRANSITION,
+    exitTransition ?? transition ?? DRAWER_TRANSITION,
   );
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
   const hasSnapPoints = Boolean(context.snapPoints?.length);
 
-  // Its own fade (v1's overlay: opacity and blur). Once a drag has moved the
-  // drawer, or with snap points (Vaul's `fadeFromIndex`), it's capped by the
-  // drawer's position too: it follows the drag.
+  // How far in it is, from nothing (0) to its classes' tint and backdrop
+  // blur (1): its own fade, capped by the drawer's position once a drag has
+  // moved it, or with snap points (Vaul's `fadeFromIndex`): it follows the
+  // drag.
   const presence = useMotionValue(0);
   const linkedRef = useLatest(hasSnapPoints);
-  const opacity = useTransform(
+  const level = useTransform(
     [presence, context.position, context.dragged],
     ([fade, value, dragged]: number[]) =>
       linkedRef.current || dragged
         ? Math.min(fade!, context.overlayProgress(value!))
         : fade!,
   );
-  const filter = useTransform(
-    presence,
-    (fade) => `blur(${OVERLAY_BLUR * (1 - fade)}px)`,
+  const elementRef = React.useRef<HTMLDivElement | null>(null);
+  const setRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      elementRef.current = node;
+      assignRef(ref, node);
+    },
+    [ref],
   );
+  // Held at its level on every frame, between nothing and its classes'
+  // values, read again at each opening (they may have changed since), and
+  // kept through the exit: it clears on the same scrub.
+  const scrubRef = React.useRef<BackdropScrub | null>(null);
+  React.useLayoutEffect(() => {
+    const node = elementRef.current;
+    if (!node || !visible) return;
+    // Its classes' values, with nothing holding them.
+    scrubRef.current?.stop();
+    scrubRef.current = scrubBackdrop(node);
+    scrubRef.current.set(level.get());
+  }, [visible, level]);
+  React.useLayoutEffect(() => {
+    const unsubscribe = level.on('change', (value) =>
+      scrubRef.current?.set(value),
+    );
+    return () => {
+      unsubscribe();
+      scrubRef.current?.stop();
+      scrubRef.current = null;
+    };
+  }, [level]);
 
   const [settled, setSettled] = React.useState(!visible);
   if (visible && settled) setSettled(false);
@@ -779,6 +808,7 @@ function OverlayMotion({
       }
       data-vaul-animate={context.shouldAnimate ? 'true' : 'false'}
       {...props}
+      ref={setRef}
       forceMount
       asChild
     >
@@ -786,7 +816,7 @@ function OverlayMotion({
         // Once closed (exiting, or kept mounted), clicks go through to the
         // page: Radix sets `pointer-events: auto` on the overlay.
         style: closedStyle(
-          { ...style, opacity, filter },
+          { ...style },
           visible,
           keepMounted && !visible && settled,
         ),
@@ -849,10 +879,10 @@ function ContentMotion({
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
   const reduce = useShouldReduceMotion();
-  // The sheet spring, both ways unless `exitTransition` is given.
-  const enter = useTempoTransition(transition ?? SHEET_TRANSITION);
+  // Vaul's curve, both ways unless `exitTransition` is given.
+  const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
   const exit = useTempoTransition(
-    exitTransition ?? transition ?? SHEET_TRANSITION,
+    exitTransition ?? transition ?? DRAWER_TRANSITION,
   );
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
@@ -980,7 +1010,9 @@ function ContentMotion({
           return;
         }
         position.jump(sign * (reduce ? restDistance : closed));
-        opacity.jump(0);
+        // Opaque, a sheet sliding in; it only fades in place under reduced
+        // motion.
+        opacity.jump(reduce ? 0 : 1);
         // Before the first paint: Motion writes the style on its next frame.
         const node = elementRef.current;
         if (node) {
@@ -992,14 +1024,18 @@ function ContentMotion({
           node.style.opacity = String(opacity.get());
         }
       }
-      // v1's sheet: it slides and fades in on the same spring.
+      // It slides in opaque (shown again if it was kept mounted closed), or
+      // fades in place under reduced motion.
       targetRef.current = restDistance;
+      if (!reduce) opacity.jump(1);
       return onNextFrame(() =>
-        moveTo(restDistance, reduce ? instant : enter, [1, enter]).then(
-          (done) => {
-            if (done) liveRef.current.context.onAnimationEnd(true);
-          },
-        ),
+        moveTo(
+          restDistance,
+          reduce ? instant : enter,
+          reduce ? [1, enter] : undefined,
+        ).then((done) => {
+          if (done) liveRef.current.context.onAnimationEnd(true);
+        }),
       );
     }
 
@@ -1011,17 +1047,19 @@ function ContentMotion({
       return;
     }
     // From wherever it is: a drag dismissal continues from the release. It
-    // slides and fades out on the same spring, like v1's sheet.
+    // slides out opaque, or fades in place under reduced motion.
     const to = reduce ? position.get() * sign : closed;
     targetRef.current = to;
     return onNextFrame(() =>
-      moveTo(to, reduce ? instant : exit, [0, exit]).then((done) => {
-        if (!done) return;
-        const { context, isPresent, safeToRemove } = liveRef.current;
-        context.onAnimationEnd(false);
-        if (!isPresent) safeToRemove?.();
-        else setSettled(true);
-      }),
+      moveTo(to, reduce ? instant : exit, reduce ? [0, exit] : undefined).then(
+        (done) => {
+          if (!done) return;
+          const { context, isPresent, safeToRemove } = liveRef.current;
+          context.onAnimationEnd(false);
+          if (!isPresent) safeToRemove?.();
+          else setSettled(true);
+        },
+      ),
     );
   }, [visible, liveRef, measure, moveTo, position, opacity]);
 

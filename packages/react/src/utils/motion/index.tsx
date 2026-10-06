@@ -51,6 +51,11 @@ const ease = {
    * nothing else uses it: the user waits on what enters, and on most exits.
    */
   in: [0.42, 0, 1, 1],
+  /**
+   * A drawer sliding from its edge or settling after a drag: Vaul's, the
+   * curve of iOS's sheets. It answers at once, then glides to rest.
+   */
+  drawer: [0.32, 0.72, 0, 1],
 } as const;
 
 /** Springs, one per role (stiffness / damping, mass 1). */
@@ -64,7 +69,7 @@ const spring = {
   pop: { type: 'spring', stiffness: 300, damping: 25 },
   /** Dialogs tipping forward: calm, no overshoot. */
   dialog: { type: 'spring', stiffness: 150, damping: 25 },
-  /** Sheets, drawers and toasts from an edge: livelier, they travel farther. */
+  /** Sheets and toasts from an edge: livelier, they travel farther. */
   sheet: { type: 'spring', stiffness: 150, damping: 22 },
   /**
    * A selection sliding between items (tabs, toggle groups): a smooth slide,
@@ -150,6 +155,11 @@ const transition = {
    * came, speeding away. Its overlay clears behind it.
    */
   dismiss: { duration: 0.25, ease: ease.in },
+  /**
+   * A drawer opening, closing, snapping or settling after a drag, and its
+   * overlay with it: Vaul's 0.5s.
+   */
+  drawer: { duration: 0.5, ease: ease.drawer },
   /** Deliberately no animation. */
   instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;

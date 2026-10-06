@@ -49,10 +49,16 @@ export const DISMISS_TRANSITION = motionTokens.transition.dismiss;
 const CONTENT_FADE = motionTokens.transition.overlay;
 
 /**
- * Sheets, drawers and the toasts that enter from an edge: v1's sheet spring,
- * a little livelier than the dialog's (they travel farther).
+ * Sheets and the toasts that enter from an edge: v1's sheet spring, a little
+ * livelier than the dialog's (they travel farther).
  */
 export const SHEET_TRANSITION = motionTokens.spring.sheet;
+
+/**
+ * Drawers, and their overlay: Vaul's 0.5s curve, which answers at once and
+ * glides to rest.
+ */
+export const DRAWER_TRANSITION = motionTokens.transition.drawer;
 
 /** Animate UI's addition to a dialog's content: v1's `from`. */
 export type ContentFlipProps = {
@@ -272,6 +278,49 @@ function readBackdrop(element: HTMLElement) {
   };
 }
 
+/** A keyframe of an overlay's fade (its opacity too over an image). */
+function backdropKeyframe(
+  values: BackdropValues,
+  rest: ReturnType<typeof readBackdrop>,
+) {
+  return {
+    backgroundColor: values.backgroundColor,
+    backdropFilter: values.backdropFilter,
+    ...(rest.hasImage ? { opacity: values.opacity } : {}),
+  };
+}
+
+export type BackdropScrub = {
+  /** Holds it at `level`, from 0 (nothing) to 1 (its classes' values). */
+  set: (level: number) => void;
+  /** Lets its classes take over again. */
+  stop: () => void;
+};
+
+/**
+ * Holds an overlay at `level` of what its classes set, from nothing (0: no
+ * tint, nothing blurred behind it) to its classes' values (1), for an overlay
+ * that follows a drag: a paused Web Animation between the two, scrubbed, so
+ * any color syntax interpolates. Its values are read now: nothing may animate
+ * them yet.
+ */
+export function scrubBackdrop(element: HTMLElement): BackdropScrub {
+  if (typeof element.animate !== 'function')
+    return { set: () => {}, stop: () => {} };
+  const rest = readBackdrop(element);
+  const animation = element.animate(
+    [backdropKeyframe(CLEAR, rest), backdropKeyframe(rest, rest)],
+    { duration: 1000, fill: 'both' },
+  );
+  animation.pause();
+  return {
+    set: (level: number) => {
+      animation.currentTime = Math.min(1, Math.max(0, level)) * 1000;
+    },
+    stop: () => animation.cancel(),
+  };
+}
+
 /**
  * Fades an overlay in from nothing to what its classes set, and back out: its
  * background color deepens while its backdrop filter grows, so the page
@@ -318,11 +367,7 @@ export function useBackdropFade(options: {
     current?.cancel();
     // Its classes' values, now that nothing animates them.
     const rest = readBackdrop(element);
-    const pick = (values: BackdropValues) => ({
-      backgroundColor: values.backgroundColor,
-      backdropFilter: values.backdropFilter,
-      ...(rest.hasImage ? { opacity: values.opacity } : {}),
-    });
+    const pick = (values: BackdropValues) => backdropKeyframe(values, rest);
     const from = pick(midway ?? (visible ? CLEAR : rest));
     const to = pick(visible ? rest : CLEAR);
     const { duration, easing } = toCssTiming(visible ? enter : exit);

@@ -67,6 +67,29 @@ export default function BaseDrawerFixture() {
           </Drawer.Portal>
         </Drawer.Root>
       </section>
+
+      <section data-testid="gradient">
+        <Drawer.Root>
+          <Drawer.Trigger>Open gradient drawer</Drawer.Trigger>
+          <Drawer.Portal>
+            {/* No color to deepen over an image: it fades instead. */}
+            <Drawer.Backdrop
+              className="fixed inset-0 z-50 bg-linear-to-t from-black/40 to-transparent"
+              data-testid="gradient-backdrop"
+            />
+            <Drawer.Viewport className={viewport}>
+              <Drawer.Popup
+                className="fixed inset-x-0 bottom-0 h-64 rounded-t-xl border bg-background p-6"
+                data-testid="gradient-popup"
+              >
+                <Drawer.Title>Gradient backdrop</Drawer.Title>
+                <Drawer.Description>It fades.</Drawer.Description>
+                <Drawer.Close>Close gradient</Drawer.Close>
+              </Drawer.Popup>
+            </Drawer.Viewport>
+          </Drawer.Portal>
+        </Drawer.Root>
+      </section>
     </div>
   );
 }

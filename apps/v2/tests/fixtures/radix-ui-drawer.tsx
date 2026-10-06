@@ -213,6 +213,24 @@ export default function RadixDrawerFixture() {
           </Drawer.Root>
         </section>
 
+        <section data-testid="gradient">
+          <Drawer.Root>
+            <Drawer.Trigger>Open gradient</Drawer.Trigger>
+            <Drawer.Portal>
+              {/* No color to deepen over an image: it fades instead. */}
+              <Drawer.Overlay
+                className="fixed inset-0 z-50 bg-linear-to-t from-black/40 to-transparent"
+                data-testid="gradient-overlay"
+              />
+              <Drawer.Content className={bottom} data-testid="gradient-content">
+                <Drawer.Title>Gradient overlay</Drawer.Title>
+                <Drawer.Description>It fades.</Drawer.Description>
+                <Drawer.Close>Close gradient</Drawer.Close>
+              </Drawer.Content>
+            </Drawer.Portal>
+          </Drawer.Root>
+        </section>
+
         <section data-testid="default-open">
           <Drawer.Root defaultOpen direction="right">
             <Drawer.Trigger>Open default</Drawer.Trigger>

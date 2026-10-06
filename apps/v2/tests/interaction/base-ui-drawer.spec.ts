@@ -1,20 +1,22 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import {
-  SHEET_SPRING,
-  expectSheetEntrance,
-  expectSheetExit,
+  DRAWER_CURVE,
+  halfwayTimes,
+  expectDrawerEntrance,
+  expectDrawerExit,
+  expectProgressiveOverlay,
   expectSheetSettled,
   present,
   readState,
   recordTimeline,
 } from './modal-timeline';
-import { expectCssSpring } from './spring-curves';
+import { expectCssCurve } from './spring-curves';
 
-// The drawer moves like Animate UI v1's Sheet: it slides and fades on the
-// dialog's spring (stiffness 150, damping 25), run by CSS transitions as
-// Motion's `linear()` curve for it, and its backdrop fades and un-blurs in
-// 400ms on a soft ease-out, both ways, a little ahead of it.
+// The drawer moves like Vaul's: it slides opaque on Vaul's curve (0.5s of
+// cubic-bezier(0.32, 0.72, 0, 1)), run by CSS transitions, and its backdrop
+// comes in like the dialogs': its tint and backdrop blur grow from 0 on the
+// same curve (never its opacity), and follow the swipe.
 
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -31,6 +33,9 @@ const timing = (page: Page, selector: string) =>
         easing: cs.transitionTimingFunction,
       };
     });
+
+/** The demo backdrop's classes: `bg-black/10`, `backdrop-blur-xs`. */
+const REST = { bg: 0.1, blur: 4 };
 
 /** Vertical/horizontal offset in px, and opacity. */
 const state = (page: Page, selector: string) =>
@@ -55,7 +60,7 @@ test.describe('base-ui drawer demo', () => {
     await expectSheetSettled(page, POPUP, 'bottom');
   };
 
-  test('slides and fades up from the bottom edge like v1, its backdrop fading in alongside', async ({
+  test("slides up opaque from the bottom edge on Vaul's curve, its backdrop tinting and blurring the page from 0", async ({
     page,
   }) => {
     const timeline = await recordTimeline(page, {
@@ -64,32 +69,29 @@ test.describe('base-ui drawer demo', () => {
     });
     await open(page);
     const frames = await timeline.stop();
-    expectSheetEntrance(frames, 'bottom');
+    expectDrawerEntrance(frames, 'bottom');
 
-    // v1's overlay, blurred at first, dims the page a little ahead of the
-    // drawer: further in half way, fully in after ~350ms (400ms soft fade).
+    // Its backdrop, from nothing, along with the drawer: half way in at about
+    // the same time.
     const backdrop = present(frames, 'overlay');
-    expect(backdrop[0]!.samples.overlay!.blur).toBeGreaterThan(2.5);
-    const halfway = backdrop.find(
-      (frame) => Math.abs(frame.samples.content?.y ?? 1) < 0.5,
-    )!;
-    expect(halfway.samples.overlay!.opacity).toBeGreaterThan(
-      1 - Math.abs(halfway.samples.content!.y),
+    expect(backdrop[0]!.samples.overlay!.bg).toBeLessThan(REST.bg * 0.1);
+    expect(backdrop[0]!.samples.overlay!.backdrop).toBeLessThan(
+      REST.blur * 0.1,
     );
-    const overlayIn = backdrop.find(
-      (frame) => frame.samples.overlay!.opacity >= 0.99,
-    )!;
-    expect(overlayIn.t - backdrop[0]!.t).toBeGreaterThan(250);
+    expectProgressiveOverlay(frames, REST);
+    const halfway = halfwayTimes(frames, { axis: 'y', rest: REST.bg });
+    expect(Math.abs(halfway.overlay - halfway.drawer)).toBeLessThan(60);
     const rest = await readState(page, OVERLAY);
     expect(rest.opacity).toBe(1);
-    expect(rest.blur).toBe(0);
+    expect(rest.bg).toBeCloseTo(REST.bg, 3);
+    expect(rest.backdrop).toBe(REST.blur);
 
-    // The spring as CSS: the duration and `linear()` curve Motion computes
-    // for the dialog's spring.
-    expectCssSpring(await timing(page, POPUP), SHEET_SPRING);
+    // Vaul's curve as CSS, on both.
+    expectCssCurve(await timing(page, POPUP), DRAWER_CURVE);
+    expectCssCurve(await timing(page, OVERLAY), DRAWER_CURVE);
   });
 
-  test('closes the same way, the backdrop clearing with it, then unmounts', async ({
+  test('closes the same way, opaque, the backdrop clearing with it, then unmounts', async ({
     page,
   }) => {
     await open(page);
@@ -118,17 +120,19 @@ test.describe('base-ui drawer demo', () => {
     const exit = (await page.evaluate(
       () => (window as unknown as { __exit: Promise<unknown> }).__exit,
     )) as { duration: string; easing: string };
-    expectCssSpring(exit, SHEET_SPRING);
+    expectCssCurve(exit, DRAWER_CURVE);
     await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
     const frames = await timeline.stop();
-    expectSheetExit(frames, 'bottom');
-    // The backdrop clears a little ahead of the drawer: further out half way.
-    const halfway = present(frames, 'overlay').find(
-      (frame) => Math.abs(frame.samples.content?.y ?? 0) > 0.5,
-    )!;
-    expect(halfway.samples.overlay!.opacity).toBeLessThan(
-      1 - Math.abs(halfway.samples.content!.y),
-    );
+    expectDrawerExit(frames, 'bottom');
+    // The backdrop clears along with the drawer, its tint and blur together:
+    // half way out at about the same time.
+    expectProgressiveOverlay(frames, REST);
+    const halfway = halfwayTimes(frames, {
+      axis: 'y',
+      rest: REST.bg,
+      leaving: true,
+    });
+    expect(Math.abs(halfway.overlay - halfway.drawer)).toBeLessThan(60);
   });
 
   test('a drag follows the finger at once; a slow release springs back', async ({
@@ -149,8 +153,15 @@ test.describe('base-ui drawer demo', () => {
     expect(dragged.y).toBeGreaterThan(60);
     expect(dragged.y).toBeLessThan(100);
     expect(dragged.opacity).toBe(1);
-    // The backdrop follows the swipe progress without lag too.
-    expect((await readState(page, OVERLAY)).opacity).toBeLessThan(1);
+    // The backdrop follows the swipe progress without lag too: its tint and
+    // its blur, never its opacity.
+    const swiped = await readState(page, OVERLAY);
+    expect(swiped.opacity).toBe(1);
+    expect(swiped.bg).toBeLessThan(REST.bg * 0.95);
+    expect(swiped.bg).toBeGreaterThan(REST.bg * 0.3);
+    expect(
+      Math.abs(swiped.backdrop / REST.blur - swiped.bg / REST.bg),
+    ).toBeLessThan(0.1);
 
     // Hold still, then let go: not a flick, so it springs back up.
     await page.waitForTimeout(150);
@@ -203,7 +214,7 @@ test.describe('base-ui drawer API', () => {
     const timeline = await recordTimeline(page, { content: popup });
     await page.getByRole('button', { name: 'Open from outside' }).click();
     await expectSheetSettled(page, popup, 'bottom');
-    expectSheetEntrance(await timeline.stop(), 'bottom');
+    expectDrawerEntrance(await timeline.stop(), 'bottom');
     await expect(page.getByTestId('controlled-state')).toHaveText('open');
 
     await page.getByRole('button', { name: 'Close bottom' }).click();
@@ -223,7 +234,7 @@ test.describe('base-ui drawer API', () => {
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;
     expect(first.x).toBeGreaterThan(0.6);
-    // …on the 200ms tween given instead of v1's spring.
+    // …on the 200ms tween given instead of Vaul's curve.
     const timing = await page
       .locator(popup)
       .evaluate((el) => [
@@ -235,5 +246,30 @@ test.describe('base-ui drawer API', () => {
     // A 100ms exit.
     await page.keyboard.press('Escape');
     await expect(page.locator(popup)).toHaveCount(0, { timeout: 1000 });
+  });
+
+  test('a backdrop over an image fades its opacity instead', async ({
+    page,
+  }) => {
+    const backdrop = '[data-testid="gradient-backdrop"]';
+    const timeline = await recordTimeline(page, { overlay: backdrop });
+    await page.getByRole('button', { name: 'Open gradient drawer' }).click();
+    await expectSheetSettled(page, '[data-testid="gradient-popup"]', 'bottom');
+    const frames = present(await timeline.stop(), 'overlay');
+    // No color to deepen: from transparent, through the values in between.
+    expect(frames[0]!.samples.overlay!.opacity).toBeLessThan(0.3);
+    expect(
+      frames.some(
+        (frame) =>
+          frame.samples.overlay!.opacity > 0.2 &&
+          frame.samples.overlay!.opacity < 0.8,
+      ),
+    ).toBe(true);
+    await expect
+      .poll(async () => (await readState(page, backdrop)).opacity)
+      .toBe(1);
+    await expect(page.locator(backdrop)).not.toHaveAttribute(
+      'data-animate-ui-backdrop',
+    );
   });
 });

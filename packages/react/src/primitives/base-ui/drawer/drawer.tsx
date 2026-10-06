@@ -13,14 +13,10 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import {
-  OVERLAY_TRANSITION,
-  SHEET_TRANSITION,
-  toCssTiming,
-} from '../../../internal/modal-motion';
+import { DRAWER_TRANSITION, toCssTiming } from '../../../internal/modal-motion';
 
-// Same API as Base UI's Drawer, with the motion of Animate UI v1's Sheet (v1
-// had no drawer).
+// Same API as Base UI's Drawer, with Vaul's motion (Animate UI v1 had no
+// drawer).
 //
 // CSS-driven, not Motion: Base UI drives the swipe itself through CSS
 // variables (`--drawer-swipe-movement-*`, `--drawer-snap-point-offset`,
@@ -32,14 +28,18 @@ import {
 // React) and their timing as inline variables, springs as the `linear()`
 // curve Motion itself would use, which `tempo` reaches:
 //
-// - Popup: v1's sheet. It rests at the swipe offset, starts and ends one full
-//   size off its edge and transparent, and slides and fades on the sheet
-//   spring (stiffness 150, damping 22, v1's sheet) both ways; a swipe
-//   dismissal's exit is scaled by the release velocity, and nothing
-//   transitions while the finger (or a nested drawer) drags it.
-// - Backdrop: v1's overlay. It fades and un-blurs (opacity 0 → 1, blur(4px)
-//   → blur(0px)) in 400ms on a soft ease-out, both ways, and follows the
-//   swipe.
+// - Popup: Vaul's. It rests at the swipe offset, starts and ends one full
+//   size off its edge, and slides opaque on Vaul's curve (0.5s of
+//   cubic-bezier(0.32, 0.72, 0, 1), which answers at once and glides to
+//   rest) both ways; a swipe dismissal's exit is scaled by the release
+//   velocity, and nothing transitions while the finger (or a nested drawer)
+//   drags it.
+// - Backdrop: like the dialogs'. Its tint deepens while its backdrop blur
+//   grows from 0, on the same curve, so the page behind blurs progressively
+//   instead of cross-fading with an already blurred copy, and both follow
+//   the swipe. Its classes' values are read once it mounts and held as
+//   variables the stylesheet scales; over a background image, it fades its
+//   opacity instead.
 // - Reduced motion: it fades in place; a swipe dismissal still leaves along
 //   the swipe.
 //
@@ -73,7 +73,6 @@ ${POPUP_IS('[data-swipe-direction="right"]')} { --animate-ui-drawer-closed: tran
 ${POPUP_IS('[data-swipe-direction="left"]')} { --animate-ui-drawer-closed: translate3d(-100%, 0, 0); }
 ${POPUP_IS(':is([data-starting-style], [data-ending-style])')} {
   transform: var(--closed-transform, var(--animate-ui-drawer-closed));
-  opacity: 0;
 }
 ${POPUP_IS('[data-ending-style]')} {
   transition-duration: calc(var(--drawer-swipe-strength, 1) * var(--animate-ui-drawer-exit-duration));
@@ -84,15 +83,25 @@ ${POPUP_IS(':is([data-swiping], [data-nested-drawer-swiping]):not([data-ending-s
 }
 ${POPUP_IS('[data-animate-ui-reduce]:not([data-swipe-dismiss]):is([data-starting-style], [data-ending-style])')} {
   transform: var(--animate-ui-drawer-rest);
+  opacity: 0;
 }
 ${BACKDROP_IS('')} {
-  opacity: max(var(--drawer-overlay-min-opacity, 0), calc(1 - var(--drawer-swipe-progress, 0)));
-  filter: blur(0px);
-  transition-property: opacity, filter;
+  --animate-ui-backdrop-level: max(var(--drawer-overlay-min-opacity, 0), calc(1 - var(--drawer-swipe-progress, 0)));
+  opacity: var(--animate-ui-backdrop-level);
+  transition-property: opacity;
   transition-duration: var(--animate-ui-drawer-duration);
   transition-timing-function: var(--animate-ui-drawer-ease);
 }
-${BACKDROP_IS(':is([data-starting-style], [data-ending-style])')} { opacity: 0; filter: blur(4px); }
+${BACKDROP_IS(':is([data-starting-style], [data-ending-style])')} { --animate-ui-backdrop-level: 0; }
+${BACKDROP_IS('[data-animate-ui-backdrop]')} {
+  opacity: 1;
+  background-color: color-mix(in srgb, var(--animate-ui-backdrop-color) calc(var(--animate-ui-backdrop-level) * 100%), transparent) !important;
+  transition-property: background-color, backdrop-filter, -webkit-backdrop-filter;
+}
+${BACKDROP_IS('[data-animate-ui-backdrop-blur]')} {
+  -webkit-backdrop-filter: blur(calc(var(--animate-ui-backdrop-blur) * var(--animate-ui-backdrop-level))) !important;
+  backdrop-filter: blur(calc(var(--animate-ui-backdrop-blur) * var(--animate-ui-backdrop-level))) !important;
+}
 ${BACKDROP_IS('[data-ending-style]')} {
   transition-duration: calc(var(--drawer-swipe-strength, 1) * var(--animate-ui-drawer-exit-duration));
   transition-timing-function: var(--animate-ui-drawer-exit-ease);
@@ -103,15 +112,15 @@ ${BACKDROP_IS('[data-swiping]:not([data-ending-style])')} { transition-duration:
 /** Animate UI's additions to `Drawer.Popup`. */
 type PopupAnimationProps = {
   /**
-   * Opening (slide and fade in), snapping and easing back after a swipe that
-   * does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a
-   * tween keeps its `duration` and cubic-bezier or named `ease`.
-   * @default { type: 'spring', stiffness: 150, damping: 22 }
+   * Opening (slide in), snapping and easing back after a swipe that does not
+   * dismiss. CSS-driven: a spring becomes a `linear()` curve, a tween keeps
+   * its `duration` and cubic-bezier or named `ease`.
+   * @default { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
    */
   transition?: Transition;
   /**
-   * Closing (slide and fade out), scaled by a swipe's release velocity.
-   * Defaults to `transition`.
+   * Closing (slide out), scaled by a swipe's release velocity. Defaults to
+   * `transition`.
    */
   exitTransition?: Transition;
 };
@@ -119,11 +128,11 @@ type PopupAnimationProps = {
 /** Animate UI's additions to `Drawer.Backdrop`. */
 type BackdropAnimationProps = {
   /**
-   * Fade (and blur) in. CSS-driven, like the Popup's.
-   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
+   * Its tint and backdrop blur coming in. CSS-driven, like the Popup's.
+   * @default { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
    */
   transition?: Transition;
-  /** Fade (and blur) out. Defaults to `transition`. */
+  /** Its tint and backdrop blur clearing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -190,7 +199,7 @@ function PopupWithTiming({
   const variables = useTimingVariables(
     transition,
     exitTransition,
-    SHEET_TRANSITION,
+    DRAWER_TRANSITION,
   );
 
   return (
@@ -206,23 +215,65 @@ function PopupWithTiming({
   );
 }
 
+/**
+ * Holds `node`'s tint and backdrop blur, from its classes, as the variables
+ * the stylesheet scales by its level: read, then set, with nothing
+ * transitioning (it mounts transparent, and only then comes in).
+ */
+function holdBackdrop(node: HTMLElement) {
+  const { style } = node;
+  const transition = style.getPropertyValue('transition');
+  style.setProperty('transition', 'none');
+  const computed = getComputedStyle(node);
+  // Over a background image, there's no color to deepen: it fades.
+  if (computed.backgroundImage === 'none') {
+    style.setProperty('--animate-ui-backdrop-color', computed.backgroundColor);
+    node.setAttribute('data-animate-ui-backdrop', '');
+    const filter = computed.backdropFilter;
+    const blur = /^blur\(([\d.]+px)\)$/.exec(filter)?.[1];
+    // Other filters than a blur are left as they are.
+    if (blur || filter === 'none') {
+      style.setProperty('--animate-ui-backdrop-blur', blur ?? '0px');
+      node.setAttribute('data-animate-ui-backdrop-blur', '');
+    }
+  }
+  void getComputedStyle(node).backgroundColor;
+  if (transition) style.setProperty('transition', transition);
+  else style.removeProperty('transition');
+}
+
 function Backdrop({
   transition,
   exitTransition,
   style,
+  ref,
   ...props
 }: Backdrop.Props) {
   const variables = useTimingVariables(
     transition,
     exitTransition,
-    OVERLAY_TRANSITION,
+    DRAWER_TRANSITION,
   );
+  const nodeRef = React.useRef<HTMLDivElement | null>(null);
+  const setRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      nodeRef.current = node;
+      if (typeof ref === 'function') return ref(node);
+      if (ref) ref.current = node;
+      return undefined;
+    },
+    [ref],
+  );
+  React.useLayoutEffect(() => {
+    if (nodeRef.current) holdBackdrop(nodeRef.current);
+  }, []);
 
   return (
     <>
       <DrawerStyle />
       <DrawerPrimitive.Backdrop
         {...props}
+        ref={setRef}
         data-animate-ui-drawer="backdrop"
         style={withVariables(variables, style)}
       />
@@ -230,7 +281,8 @@ function Backdrop({
   );
 }
 namespace Backdrop {
-  export type Props = DrawerPrimitive.Backdrop.Props & BackdropAnimationProps;
+  export type Props = DrawerPrimitive.Backdrop.Props &
+    BackdropAnimationProps & { ref?: React.Ref<HTMLDivElement> };
   export type State = DrawerPrimitive.Backdrop.State;
 }
 

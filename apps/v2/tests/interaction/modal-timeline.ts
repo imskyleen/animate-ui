@@ -1,6 +1,11 @@
 import { expect, type Page } from '@playwright/test';
 
-import { expectSpringPace, type Sample } from './spring-curves';
+import {
+  expectCurvePace,
+  expectSpringPace,
+  type CurveOptions,
+  type Sample,
+} from './spring-curves';
 
 // Frame-by-frame recording of the modal primitives (Dialog, Alert Dialog,
 // Sheet), sampled in the page on every animation frame so it holds up on a
@@ -19,8 +24,13 @@ import { expectSpringPace, type Sample } from './spring-curves';
 
 /** v1's dialog spring: sheets, drawers and edge toasts move on it too. */
 export const DIALOG_SPRING = { stiffness: 150, damping: 25 };
-/** v1's sheet spring (sheets, drawers, toasts from an edge): livelier. */
+/** v1's sheet spring (sheets, toasts from an edge): livelier. */
 export const SHEET_SPRING = { stiffness: 150, damping: 22 };
+/** Vaul's drawer motion: 0.5s of cubic-bezier(0.32, 0.72, 0, 1). */
+export const DRAWER_CURVE: CurveOptions = {
+  duration: 500,
+  ease: [0.32, 0.72, 0, 1],
+};
 
 export type ModalSample = {
   opacity: number;
@@ -60,7 +70,7 @@ async function install(page: Page) {
       const blur = /blur\(([\d.]+)px\)/.exec(cs.filter);
       const backdrop = /blur\(([\d.e-]+)px\)/.exec(cs.backdropFilter);
       const color = cs.backgroundColor;
-      const slash = /\/\s*([\d.]+)\s*\)$/.exec(color);
+      const slash = /\/\s*([\d.]+(?:e[+-]?\d+)?)\s*\)$/.exec(color);
       const rgba = /^rgba\(.*,\s*([\d.]+)\)$/.exec(color);
       return {
         opacity: Number(cs.opacity),
@@ -362,6 +372,101 @@ export function expectSheetEntrance(
     SHEET_SPRING,
     { from: 1, to: 0, a: 0.9, b: 0.02 },
   );
+}
+
+/**
+ * A drawer's entrance, Vaul's: from its edge, by its own size, opaque all the
+ * way (a sheet sliding in, not a fade), on Vaul's curve, which answers at
+ * once: from 10% to 70% of the way in the time the curve takes (the sheet
+ * spring takes half as long again).
+ */
+export function expectDrawerEntrance(
+  frames: ModalFrame[],
+  side: keyof typeof SHEET_TRAVEL,
+  name = 'content',
+) {
+  const { axis, sign } = SHEET_TRAVEL[side];
+  const shown = present(frames, name);
+  const start = shown[0]!.samples[name]![axis] * sign;
+  expect(start).toBeGreaterThan(0.6);
+  // Opaque to the eye (shadcn/ui's Base UI drawer ends at 0.9999 so its exit
+  // has a transition to wait for).
+  for (const frame of shown)
+    expect(frame.samples[name]!.opacity).toBeGreaterThan(0.999);
+  expectCurvePace(
+    shown.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]),
+    DRAWER_CURVE,
+    { from: start, to: 0, a: start * 0.9, b: start * 0.3 },
+  );
+}
+
+/** A drawer's exit: back to its edge, opaque all the way. */
+export function expectDrawerExit(
+  frames: ModalFrame[],
+  side: keyof typeof SHEET_TRAVEL,
+  name = 'content',
+) {
+  const { axis, sign } = SHEET_TRAVEL[side];
+  const shown = present(frames, name);
+  expect(shown.at(-1)!.samples[name]![axis] * sign).toBeGreaterThan(0.6);
+  // Opaque to the eye (shadcn/ui's Base UI drawer ends at 0.9999 so its exit
+  // has a transition to wait for).
+  for (const frame of shown)
+    expect(frame.samples[name]!.opacity).toBeGreaterThan(0.999);
+}
+
+/**
+ * An overlay coming in or clearing the way the dialogs' does: never through
+ * its opacity, its tint and its backdrop blur growing from 0 together (or
+ * back), through the values in between, up to its classes' `rest` values.
+ */
+export function expectProgressiveOverlay(
+  frames: ModalFrame[],
+  rest: { bg: number; blur: number },
+  name = 'overlay',
+) {
+  const veil = present(frames, name).map((frame) => frame.samples[name]!);
+  for (const sample of veil) {
+    expect(sample.opacity).toBe(1);
+    if (rest.blur > 0)
+      expect(
+        Math.abs(sample.backdrop / rest.blur - sample.bg / rest.bg),
+      ).toBeLessThan(0.1);
+  }
+  expect(
+    veil.some(
+      (sample) => sample.bg > rest.bg * 0.1 && sample.bg < rest.bg * 0.9,
+    ),
+  ).toBe(true);
+}
+
+/**
+ * When (ms) the drawer `name` gets half way along `axis` (towards its edge
+ * when `leaving`), and when the overlay's tint gets half way to its `rest`:
+ * they move together when these are close.
+ */
+export function halfwayTimes(
+  frames: ModalFrame[],
+  {
+    axis,
+    rest,
+    leaving = false,
+  }: { axis: 'x' | 'y'; rest: number; leaving?: boolean },
+  name = 'content',
+  overlay = 'overlay',
+) {
+  const drawer = frames.find((frame) => {
+    const sample = frame.samples[name];
+    if (!sample) return false;
+    const share = Math.abs(sample[axis]);
+    return leaving ? share > 0.5 : share < 0.5;
+  })!;
+  const veil = frames.find((frame) => {
+    const sample = frame.samples[overlay];
+    if (!sample) return false;
+    return leaving ? sample.bg < rest / 2 : sample.bg > rest / 2;
+  })!;
+  return { drawer: drawer.t, overlay: veil.t };
 }
 
 /** v1's sheet exit: back to its edge, fading out. */
