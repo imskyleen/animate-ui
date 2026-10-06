@@ -44,6 +44,58 @@ export function EditorMenubar() {
 
 Coming from the `@radix-ui/react-menubar` package? Use the subpath: `import * as MenubarPrimitive from '@animate-ui/react/primitives/radix-ui/menubar'`.
 
+### Check animation
+
+Checkbox and radio items show their check in an `ItemIndicator`: it draws itself when the item is checked, and erases itself when it's unchecked (a radio item's while the new one draws). With `animation="pop"`, it pops in from half its size and shrinks back out instead, and a radio item's check glides to the newly checked item:
+
+```tsx
+import * as React from 'react';
+import { Menubar } from '@animate-ui/react/primitives/radix-ui';
+
+export function ViewMenubar() {
+  const [statusBar, setStatusBar] = React.useState(true);
+  const [panel, setPanel] = React.useState('bottom');
+
+  return (
+    <Menubar.Root>
+      <Menubar.Menu>
+        <Menubar.Trigger>View</Menubar.Trigger>
+        <Menubar.Portal>
+          <Menubar.Content align="start" sideOffset={8}>
+            <Menubar.CheckboxItem
+              checked={statusBar}
+              onCheckedChange={setStatusBar}
+            >
+              <Menubar.ItemIndicator animation="pop">
+                <CheckIcon />
+              </Menubar.ItemIndicator>
+              Status bar
+            </Menubar.CheckboxItem>
+            <Menubar.Separator />
+            <Menubar.RadioGroup value={panel} onValueChange={setPanel}>
+              <Menubar.RadioItem value="top">
+                <Menubar.ItemIndicator animation="pop">
+                  <CheckIcon />
+                </Menubar.ItemIndicator>
+                Top
+              </Menubar.RadioItem>
+              <Menubar.RadioItem value="bottom">
+                <Menubar.ItemIndicator animation="pop">
+                  <CheckIcon />
+                </Menubar.ItemIndicator>
+                Bottom
+              </Menubar.RadioItem>
+            </Menubar.RadioGroup>
+          </Menubar.Content>
+        </Menubar.Portal>
+      </Menubar.Menu>
+    </Menubar.Root>
+  );
+}
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 Radix's Menubar has no Animate UI v1 counterpart: each menu moves like v1's Dropdown Menu.

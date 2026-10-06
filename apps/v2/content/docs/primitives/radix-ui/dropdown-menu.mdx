@@ -35,6 +35,56 @@ export function AccountMenu() {
 
 Coming from the `@radix-ui/react-dropdown-menu` package? Use the subpath: `import * as DropdownMenuPrimitive from '@animate-ui/react/primitives/radix-ui/dropdown-menu'`.
 
+### Check animation
+
+Checkbox and radio items show their check in an `ItemIndicator`: it draws itself when the item is checked, and erases itself when it's unchecked (a radio item's while the new one draws). With `animation="pop"`, it pops in from half its size and shrinks back out instead, and a radio item's check glides to the newly checked item:
+
+```tsx
+import * as React from 'react';
+import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui';
+
+export function ViewMenu() {
+  const [statusBar, setStatusBar] = React.useState(true);
+  const [panel, setPanel] = React.useState('bottom');
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>View</DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content sideOffset={4}>
+          <DropdownMenu.CheckboxItem
+            checked={statusBar}
+            onCheckedChange={setStatusBar}
+          >
+            <DropdownMenu.ItemIndicator animation="pop">
+              <CheckIcon />
+            </DropdownMenu.ItemIndicator>
+            Status bar
+          </DropdownMenu.CheckboxItem>
+          <DropdownMenu.Separator />
+          <DropdownMenu.RadioGroup value={panel} onValueChange={setPanel}>
+            <DropdownMenu.RadioItem value="top">
+              <DropdownMenu.ItemIndicator animation="pop">
+                <CheckIcon />
+              </DropdownMenu.ItemIndicator>
+              Top
+            </DropdownMenu.RadioItem>
+            <DropdownMenu.RadioItem value="bottom">
+              <DropdownMenu.ItemIndicator animation="pop">
+                <CheckIcon />
+              </DropdownMenu.ItemIndicator>
+              Bottom
+            </DropdownMenu.RadioItem>
+          </DropdownMenu.RadioGroup>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 The motion of Animate UI v1's Dropdown Menu:

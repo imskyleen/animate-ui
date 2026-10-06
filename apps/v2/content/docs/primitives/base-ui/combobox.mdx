@@ -52,6 +52,21 @@ export function FrameworkPicker() {
 
 <ComponentPreview name="base-ui/combobox-multiple" />
 
+### Check animation
+
+The chosen item's check draws itself while the previous one erases itself. With `animation="pop"` on every item's ItemIndicator, the check glides from the previous item to the chosen one instead (a first choice pops it in from half its size):
+
+```tsx
+<Combobox.Item key={item} value={item}>
+  {item}
+  <Combobox.ItemIndicator animation="pop">✓</Combobox.ItemIndicator>
+</Combobox.Item>
+```
+
+With a multiple selection, each check pops in and shrinks back out on its own.
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 Base UI's Combobox has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.

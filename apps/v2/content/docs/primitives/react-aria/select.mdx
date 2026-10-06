@@ -51,6 +51,19 @@ export function FontPicker() {
 }
 ```
 
+### Check animation
+
+The chosen item's check draws itself while the previous one erases itself. With `animation="pop"` on every item's SelectionIndicator, the check glides from the previous item to the chosen one instead (a first choice pops it in from half its size):
+
+```tsx
+<ListBoxItem id="geist" textValue="Geist">
+  Geist
+  <SelectionIndicator animation="pop">✓</SelectionIndicator>
+</ListBoxItem>
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 React Aria's Select has no Animate UI v1 counterpart: its list opens in Animate UI's [Popover](/docs/primitives/react-aria/popover), which moves like v1's Dropdown Menu content under a select.

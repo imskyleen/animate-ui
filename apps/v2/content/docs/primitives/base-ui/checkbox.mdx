@@ -34,6 +34,20 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 `Checkbox.Root.Props`, `Checkbox.Indicator.State` and the other type namespaces are kept.
 
+### Check animation
+
+The check draws itself by default. With `animation="pop"` on the Indicator, it pops in from half its size instead, and shrinks back out:
+
+```tsx
+<Checkbox.Root defaultChecked>
+  <Checkbox.Indicator animation="pop">
+    <CheckIcon />
+  </Checkbox.Indicator>
+</Checkbox.Root>
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 The motion of Animate UI v1's checkbox:

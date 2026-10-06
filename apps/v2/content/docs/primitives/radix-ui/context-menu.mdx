@@ -35,6 +35,56 @@ export function CanvasMenu() {
 
 Coming from the `@radix-ui/react-context-menu` package? Use the subpath: `import * as ContextMenuPrimitive from '@animate-ui/react/primitives/radix-ui/context-menu'`.
 
+### Check animation
+
+Checkbox and radio items show their check in an `ItemIndicator`: it draws itself when the item is checked, and erases itself when it's unchecked (a radio item's while the new one draws). With `animation="pop"`, it pops in from half its size and shrinks back out instead, and a radio item's check glides to the newly checked item:
+
+```tsx
+import * as React from 'react';
+import { ContextMenu } from '@animate-ui/react/primitives/radix-ui';
+
+export function CanvasMenu() {
+  const [showGrid, setShowGrid] = React.useState(true);
+  const [zoom, setZoom] = React.useState('fit');
+
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger>Right click here</ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <ContextMenu.Content>
+          <ContextMenu.CheckboxItem
+            checked={showGrid}
+            onCheckedChange={setShowGrid}
+          >
+            <ContextMenu.ItemIndicator animation="pop">
+              <CheckIcon />
+            </ContextMenu.ItemIndicator>
+            Show grid
+          </ContextMenu.CheckboxItem>
+          <ContextMenu.Separator />
+          <ContextMenu.RadioGroup value={zoom} onValueChange={setZoom}>
+            <ContextMenu.RadioItem value="fit">
+              <ContextMenu.ItemIndicator animation="pop">
+                <CheckIcon />
+              </ContextMenu.ItemIndicator>
+              Zoom to fit
+            </ContextMenu.RadioItem>
+            <ContextMenu.RadioItem value="100">
+              <ContextMenu.ItemIndicator animation="pop">
+                <CheckIcon />
+              </ContextMenu.ItemIndicator>
+              Zoom to 100%
+            </ContextMenu.RadioItem>
+          </ContextMenu.RadioGroup>
+        </ContextMenu.Content>
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
+}
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 Radix's Context Menu has no Animate UI v1 counterpart: it moves like v1's Dropdown Menu.

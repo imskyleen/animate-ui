@@ -52,6 +52,21 @@ export function FrameworkPicker() {
 
 <ComponentPreview name="react-aria/combobox-multiple" />
 
+### Check animation
+
+The chosen item's check draws itself while the previous one erases itself. With `animation="pop"` on every item's SelectionIndicator, the check glides from the previous item to the chosen one instead (a first choice pops it in from half its size):
+
+```tsx
+<ListBoxItem id={item.id} textValue={item.name}>
+  {item.name}
+  <SelectionIndicator animation="pop">✓</SelectionIndicator>
+</ListBoxItem>
+```
+
+With a multiple selection, each check pops in and shrinks back out on its own.
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 - **Popover**: React Aria's ComboBox has no Animate UI v1 counterpart. Its list opens in Animate UI's [Popover](/docs/primitives/react-aria/popover), which moves like v1's Dropdown Menu content under a combobox: it fades and scales in from 0.9, from the input (`--trigger-anchor-point`), in 250ms, and closes the same way before it unmounts. Reopening while it closes picks up from where it is.

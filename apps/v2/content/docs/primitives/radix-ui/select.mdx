@@ -28,6 +28,7 @@ export function FontPicker() {
           <Select.Viewport>
             <Select.Item value="inter">
               <Select.ItemText>Inter</Select.ItemText>
+              <Select.ItemIndicator>✓</Select.ItemIndicator>
             </Select.Item>
             <Select.Item value="geist">
               <Select.ItemText>Geist</Select.ItemText>
@@ -42,6 +43,19 @@ export function FontPicker() {
 ```
 
 Coming from the `@radix-ui/react-select` package? Use the subpath: `import * as SelectPrimitive from '@animate-ui/react/primitives/radix-ui/select'`.
+
+### Check animation
+
+The chosen item's check draws itself while the previous one erases itself. With `animation="pop"` on every item's ItemIndicator, the check glides from the previous item to the chosen one instead (a first choice pops it in from half its size):
+
+```tsx
+<Select.Item value="geist">
+  <Select.ItemText>Geist</Select.ItemText>
+  <Select.ItemIndicator animation="pop">✓</Select.ItemIndicator>
+</Select.Item>
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
 
 ## Animation
 

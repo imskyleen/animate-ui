@@ -37,6 +37,51 @@ export function CanvasMenu() {
 
 Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { ContextMenu } from '@animate-ui/react/primitives/base-ui'`.
 
+### Check animation
+
+Checkbox and radio items show their check in a `CheckboxItemIndicator` or a `RadioItemIndicator`: it draws itself when the item is checked, and erases itself when it's unchecked (a radio item's while the new one draws). With `animation="pop"`, it pops in from half its size and shrinks back out instead, and a radio item's check glides to the newly checked item:
+
+```tsx
+import { ContextMenu } from '@animate-ui/react/primitives/base-ui/context-menu';
+
+export function CanvasMenu() {
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger>Right click here</ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <ContextMenu.Positioner>
+          <ContextMenu.Popup>
+            <ContextMenu.CheckboxItem defaultChecked>
+              <ContextMenu.CheckboxItemIndicator animation="pop">
+                <CheckIcon />
+              </ContextMenu.CheckboxItemIndicator>
+              Show grid
+            </ContextMenu.CheckboxItem>
+            <ContextMenu.Separator />
+            <ContextMenu.RadioGroup defaultValue="fit">
+              <ContextMenu.RadioItem value="fit">
+                <ContextMenu.RadioItemIndicator animation="pop">
+                  <CheckIcon />
+                </ContextMenu.RadioItemIndicator>
+                Zoom to fit
+              </ContextMenu.RadioItem>
+              <ContextMenu.RadioItem value="100">
+                <ContextMenu.RadioItemIndicator animation="pop">
+                  <CheckIcon />
+                </ContextMenu.RadioItemIndicator>
+                Zoom to 100%
+              </ContextMenu.RadioItem>
+            </ContextMenu.RadioGroup>
+          </ContextMenu.Popup>
+        </ContextMenu.Positioner>
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
+}
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 Base UI's Context Menu has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.

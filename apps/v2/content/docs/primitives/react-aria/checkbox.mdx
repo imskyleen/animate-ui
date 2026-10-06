@@ -34,6 +34,23 @@ export function Terms() {
 
 React Aria lets you render the indicator yourself. Animate UI animates the content of the element marked `data-slot="checkbox-indicator"`, which is what shadcn/ui renders: add the attribute to your own indicator.
 
+### Check animation
+
+The check draws itself by default. With `animation="pop"` on the Checkbox, it pops in from half its size instead, and shrinks back out:
+
+```tsx
+<Checkbox defaultSelected animation="pop">
+  {({ isSelected }) => (
+    <>
+      <span data-slot="checkbox-indicator">{isSelected && <CheckIcon />}</span>
+      Accept terms and conditions
+    </>
+  )}
+</Checkbox>
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 The motion of Animate UI v1's Radix UI checkbox (v1 had no React Aria one):

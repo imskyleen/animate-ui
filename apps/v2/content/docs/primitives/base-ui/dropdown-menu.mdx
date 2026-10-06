@@ -39,6 +39,51 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 shadcn/ui's Dropdown Menu is built on it.
 
+### Check animation
+
+Checkbox and radio items show their check in a `CheckboxItemIndicator` or a `RadioItemIndicator`: it draws itself when the item is checked, and erases itself when it's unchecked (a radio item's while the new one draws). With `animation="pop"`, it pops in from half its size and shrinks back out instead, and a radio item's check glides to the newly checked item:
+
+```tsx
+import { Menu } from '@animate-ui/react/primitives/base-ui/menu';
+
+export function ViewMenu() {
+  return (
+    <Menu.Root>
+      <Menu.Trigger>View</Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner sideOffset={4}>
+          <Menu.Popup>
+            <Menu.CheckboxItem defaultChecked>
+              <Menu.CheckboxItemIndicator animation="pop">
+                <CheckIcon />
+              </Menu.CheckboxItemIndicator>
+              Status bar
+            </Menu.CheckboxItem>
+            <Menu.Separator />
+            <Menu.RadioGroup defaultValue="bottom">
+              <Menu.RadioItem value="top">
+                <Menu.RadioItemIndicator animation="pop">
+                  <CheckIcon />
+                </Menu.RadioItemIndicator>
+                Top
+              </Menu.RadioItem>
+              <Menu.RadioItem value="bottom">
+                <Menu.RadioItemIndicator animation="pop">
+                  <CheckIcon />
+                </Menu.RadioItemIndicator>
+                Bottom
+              </Menu.RadioItem>
+            </Menu.RadioGroup>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
+  );
+}
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 The motion of Animate UI v1's Base UI Menu:

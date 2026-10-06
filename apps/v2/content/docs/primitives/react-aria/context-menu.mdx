@@ -38,6 +38,58 @@ export function CanvasMenu() {
 }
 ```
 
+### Check animation
+
+An item of a selection (`selectionMode` on the `Menu` or a `MenuSection`) shows its check in a `SelectionIndicator`: it draws itself when the item is selected, and erases itself when it's deselected (a single selection's while the new one draws). With `animation="pop"`, it pops in from half its size and shrinks back out instead, and a single selection's check glides to the newly selected item:
+
+```tsx
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuSection,
+  MenuTrigger,
+  Popover,
+  SelectionIndicator,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function CanvasMenu() {
+  return (
+    <MenuTrigger trigger="contextMenu">
+      <Button>Right click here</Button>
+      <Popover placement="bottom start">
+        <Menu>
+          <MenuSection selectionMode="multiple" defaultSelectedKeys={['grid']}>
+            <MenuItem id="grid">
+              <SelectionIndicator animation="pop">
+                <CheckIcon />
+              </SelectionIndicator>
+              Show grid
+            </MenuItem>
+          </MenuSection>
+          <MenuSection selectionMode="single" defaultSelectedKeys={['fit']}>
+            <MenuItem id="fit">
+              <SelectionIndicator animation="pop">
+                <CheckIcon />
+              </SelectionIndicator>
+              Zoom to fit
+            </MenuItem>
+            <MenuItem id="100">
+              <SelectionIndicator animation="pop">
+                <CheckIcon />
+              </SelectionIndicator>
+              Zoom to 100%
+            </MenuItem>
+          </MenuSection>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/installation#choose-how-checks-animate-optional) instead. The demo's Controls switch between the two.
+
 ## Animation
 
 React Aria's menus open in a `Popover`, so they get the [animated Popover](/docs/primitives/react-aria/popover), which moves like Animate UI v1's Dropdown Menu content under a menu:
