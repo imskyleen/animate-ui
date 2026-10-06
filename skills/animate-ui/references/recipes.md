@@ -224,12 +224,12 @@ const hidden = { opacity: 0, transform: reduce ? shown : offscreen[side] };
 
 <motion.div
   initial={hidden}
-  animate={{ opacity: 1, transform: shown, transition: enter }} // spring.sheet
+  animate={{ opacity: 1, transform: shown, transition: enter }} // transition.drawer
   exit={{ ...hidden, transition: leave }}
 />;
 ```
 
-- It slides from its edge by its own size (percentages, never pixel offsets) while it fades, on `spring.sheet`, both ways. Under reduced motion it fades in place.
+- It slides from its edge by its own size (percentages, never pixel offsets) while it fades, on `transition.drawer` (Vaul's curve, like a drawer), both ways. Under reduced motion it fades in place.
 - The overlay fades like a modal's.
 - A drawer (Vaul's motion) doesn't fade: it slides opaque on `transition.drawer`, both ways and back after a drag (a spring starts from rest and seems to hesitate; Vaul's curve answers at once, then glides). Its overlay comes in like a dialog's, its tint and backdrop blur on the same curve, and follows the drag through them: a paused Web Animation from nothing to its classes' values, scrubbed by the drawer's position (`scrubBackdrop` in internal/modal-motion), never its opacity (over a background image, its opacity).
 - Drag to dismiss: use a library that decides dismissal on velocity (Animate UI's Radix Drawer, Base UI 1.8's Drawer with the CSS-driven recipe below). Don't reimplement it.

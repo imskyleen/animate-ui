@@ -173,7 +173,7 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Tooltips, popovers, hover cards | there in ~200ms, settled by ~500ms | `spring.pop`                                   |
 | Selection, pointer highlight    | a smooth slide / a quick follow    | `spring.selection`, `spring.highlight`         |
 | Disclosures                     | 350ms, soft ease-out               | `transition.disclosure`                        |
-| Dialogs, sheets                 | ~450ms, ~550ms                     | `spring.dialog`, `spring.sheet`                |
+| Dialogs, sheets and drawers     | ~450ms, 500ms (Vaul's curve)       | `spring.dialog`, `transition.drawer`           |
 | Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
 
 A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure, an overlay or a menu on `ease.out` felt rushed, so they got the softer `ease.soft`.
@@ -203,7 +203,7 @@ When two states replace each other in place (an icon swapping for another, a lab
 ### B7. Surfaces: modals tip, sheets slide
 
 - **Dialog**: the content fades in, un-blurs and tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)` on `spring.dialog`; the overlay fades its background color and backdrop filter in from nothing on `transition.overlay` (the page behind blurs from 0; never fade an overlay's opacity over a `backdrop-blur`). It stays centered.
-- **Sheet**: slides from its edge by its own size (percentages, never pixels) while it fades, on `spring.sheet`. The overlay fades like a dialog's.
+- **Sheet**: slides from its edge by its own size (percentages, never pixels) while it fades, on `transition.drawer` like a drawer (Vaul's curve). The overlay fades like a dialog's.
 - **Drawer** (Vaul): slides from its edge opaque, a sheet sliding in rather than a fade, on `transition.drawer` (Vaul's 0.5s `ease.drawer`, which answers at once and glides to rest), opening, closing, snapping and settling after a drag. Its overlay's tint and backdrop blur grow from 0 on the same curve, like a dialog's, and follow the drag.
 
 ### B8. One token set, one tempo

@@ -5,6 +5,8 @@ import {
   expectDialogEntrance,
   expectDialogExit,
   expectDialogSettled,
+  DRAWER_CURVE,
+  expectAnimationCurve,
   expectSheetEntrance,
   expectSheetExit,
   expectSheetSettled,
@@ -127,7 +129,7 @@ test.describe('react-aria dialog: sheet demo', () => {
   for (const side of Object.keys(
     SHEET_TRAVEL,
   ) as (keyof typeof SHEET_TRAVEL)[]) {
-    test(`slides and fades in from the ${side} edge like v1's sheet`, async ({
+    test(`slides and fades in from the ${side} edge on Vaul's curve`, async ({
       page,
     }) => {
       const timeline = await recordTimeline(page, {
@@ -139,6 +141,8 @@ test.describe('react-aria dialog: sheet demo', () => {
       await expectSheetSettled(page, SHEET, side);
       const frames = await timeline.stop();
       expectSheetEntrance(frames, side);
+      // Vaul's curve, as Motion handed it to the browser.
+      expectAnimationCurve(await timeline.timing('content'), DRAWER_CURVE);
       for (const frame of present(frames, 'overlay'))
         expect(frame.samples.overlay!.opacity).toBe(1);
     });

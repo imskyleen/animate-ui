@@ -26,8 +26,9 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 //   default) and `right` turn it by -20deg, `bottom` and `left` by 20deg,
 //   around the X axis for top and bottom, the Y axis for left and right.
 // - Content with `data-side` (shadcn/ui's Sheet), v1's Sheet: it slides in
-//   from that edge by its own size and fades in, on a livelier spring
-//   (stiffness 150, damping 22), and leaves the same way.
+//   from that edge by its own size and fades in, on Vaul's curve like the
+//   drawers (0.5s of cubic-bezier(0.32, 0.72, 0, 1), which answers at once
+//   and glides to rest), and leaves the same way.
 //
 // The overlay and a sheet use one transition both ways, as v1 did: their
 // `exitTransition` defaults to `transition`. A dialog's content leaves on its
@@ -49,14 +50,14 @@ export const DISMISS_TRANSITION = motionTokens.transition.dismiss;
 const CONTENT_FADE = motionTokens.transition.overlay;
 
 /**
- * Sheets and the toasts that enter from an edge: v1's sheet spring, a little
- * livelier than the dialog's (they travel farther).
+ * The toasts that enter from an edge: v1's sheet spring, a little livelier
+ * than the dialog's (they travel farther).
  */
 export const SHEET_TRANSITION = motionTokens.spring.sheet;
 
 /**
- * Drawers, and their overlay: Vaul's 0.5s curve, which answers at once and
- * glides to rest.
+ * Drawers and sheets, and the drawers' overlay: Vaul's 0.5s curve, which
+ * answers at once and glides to rest.
  */
 export const DRAWER_TRANSITION = motionTokens.transition.drawer;
 
@@ -106,7 +107,7 @@ export type ModalSide = 'top' | 'right' | 'bottom' | 'left';
 /**
  * A modal content's transitions, tempo applied. A dialog tips in on its
  * spring, fading in ahead of it with its overlay, and speeds away once
- * dismissed; a sheet (`side`) slides both ways on its own spring. A
+ * dismissed; a sheet (`side`) slides both ways on Vaul's curve. A
  * `transition` given drives the whole opening.
  */
 export function useContentTransitions(
@@ -117,8 +118,8 @@ export function useContentTransitions(
   const { enter, exit } = useModalTransitions(
     transition,
     exitTransition,
-    side ? SHEET_TRANSITION : DIALOG_TRANSITION,
-    // Dismissed, a dialog speeds away; a sheet slides back on its spring.
+    side ? DRAWER_TRANSITION : DIALOG_TRANSITION,
+    // Dismissed, a dialog speeds away; a sheet slides back on its curve.
     side ? undefined : DISMISS_TRANSITION,
   );
   const fade = useTempoTransition(CONTENT_FADE);
@@ -176,7 +177,7 @@ type TargetOptions = {
 
 /**
  * The content: v1's dialog entrance (tipped from `from`), or v1's sheet slide
- * from `side`. Reduced motion keeps the fade (and the blur) and drops the
+ * from `side` (on Vaul's curve). Reduced motion keeps the fade (and the blur) and drops the
  * movement.
  */
 export function getContentTargets({

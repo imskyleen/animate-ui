@@ -61,7 +61,7 @@ Then remove the component's own CSS animation classes (same list as the CLI) so 
 | How often it's used                                                    | Decision                                                                                                                  |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Constantly (press, tooltips, menus, tabs, toggles, hover highlights)   | Animate, quickly: `spring.press`, `transition.menu`, `spring.pop`, `spring.selection`, `spring.highlight`; no hover scale |
-| Occasionally (popovers, selects, dialogs, sheets, toasts, disclosures) | The role's token: surfaces may take their time (`spring.dialog`, `spring.sheet`)                                          |
+| Occasionally (popovers, selects, dialogs, sheets, toasts, disclosures) | The role's token: surfaces may take their time (`spring.dialog`, `transition.drawer`, `spring.sheet` for edge toasts)     |
 | Rarely (effects, text, numbers, icons, onboarding, success)            | Expressive: their own springs, more bounce, longer rhythms                                                                |
 | Toggled from the keyboard all day (command palette, global shortcuts)  | Consider no animation                                                                                                     |
 

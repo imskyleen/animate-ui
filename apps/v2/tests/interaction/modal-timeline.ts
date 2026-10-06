@@ -2,7 +2,6 @@ import { expect, type Page } from '@playwright/test';
 
 import {
   expectCurvePace,
-  expectSpringPace,
   type CurveOptions,
   type Sample,
 } from './spring-curves';
@@ -19,12 +18,12 @@ import {
 //   movement; dismissed, it goes back the way it came,
 //   quicker and speeding away (0.25s on an ease-in), out of sight before
 //   its overlay has cleared;
-// - sheet: slides from its edge by its own size and fades, on the same
-//   spring.
+// - sheet: slides from its edge by its own size and fades, on Vaul's curve
+//   like the drawers (0.5s of cubic-bezier(0.32, 0.72, 0, 1)).
 
 /** v1's dialog spring: sheets, drawers and edge toasts move on it too. */
 export const DIALOG_SPRING = { stiffness: 150, damping: 25 };
-/** v1's sheet spring (sheets, toasts from an edge): livelier. */
+/** v1's sheet spring (toasts from an edge): livelier. */
 export const SHEET_SPRING = { stiffness: 150, damping: 22 };
 /** Vaul's drawer motion: 0.5s of cubic-bezier(0.32, 0.72, 0, 1). */
 export const DRAWER_CURVE: CurveOptions = {
@@ -113,9 +112,17 @@ export async function recordTimeline(
   await page.evaluate((targets) => {
     const w = window as unknown as {
       __readModal: (el: Element) => unknown;
-      __modalTimeline?: { frames: unknown[]; stopped: boolean };
+      __modalTimeline?: {
+        frames: unknown[];
+        timings: Record<string, unknown>;
+        stopped: boolean;
+      };
     };
-    const timeline = { frames: [] as unknown[], stopped: false };
+    const timeline = {
+      frames: [] as unknown[],
+      timings: {} as Record<string, unknown>,
+      stopped: false,
+    };
     w.__modalTimeline = timeline;
     const t0 = performance.now();
     const tick = () => {
@@ -124,6 +131,22 @@ export async function recordTimeline(
       for (const [name, selector] of Object.entries(targets)) {
         const el = document.querySelector(selector);
         samples[name] = el ? w.__readModal(el) : null;
+        // The first Web Animation of its transform (Motion hands the
+        // browser its tweens and springs): its timing.
+        const moving =
+          el &&
+          !timeline.timings[name] &&
+          el
+            .getAnimations()
+            .find((animation) =>
+              (animation.effect as KeyframeEffect | null)
+                ?.getKeyframes()
+                .some((keyframe) => 'transform' in keyframe),
+            );
+        if (moving) {
+          const { duration, easing } = moving.effect!.getTiming();
+          timeline.timings[name] = { duration, easing };
+        }
       }
       timeline.frames.push({ t: performance.now() - t0, samples });
       requestAnimationFrame(tick);
@@ -141,7 +164,34 @@ export async function recordTimeline(
         timeline.stopped = true;
         return timeline.frames;
       }),
+    /** The timing of the first Web Animation of `name`'s transform. */
+    timing: (name: string) =>
+      page.evaluate(
+        (name) =>
+          (
+            window as unknown as {
+              __modalTimeline: { timings: Record<string, AnimationTiming> };
+            }
+          ).__modalTimeline.timings[name] ?? null,
+        name,
+      ),
   };
+}
+
+export type AnimationTiming = { duration: number; easing: string };
+
+/**
+ * Expects a Web Animation to run the tween: its duration and curve, as the
+ * browser was handed them (a frame-free check, unlike a pace).
+ */
+export function expectAnimationCurve(
+  timing: AnimationTiming | null,
+  options: CurveOptions,
+) {
+  expect(timing).toEqual({
+    duration: options.duration,
+    easing: `cubic-bezier(${options.ease.join(', ')})`,
+  });
 }
 
 /** Frames where `name` is in the page. */
@@ -346,8 +396,9 @@ export const SHEET_TRAVEL = {
 } as const;
 
 /**
- * v1's sheet entrance: from its edge, by its own size, fading in, on the
- * dialog's spring.
+ * v1's sheet entrance on Vaul's curve: from its edge, by its own size, fading
+ * in, from 10% to 70% of the way in the time the curve takes (the sheet
+ * spring takes half as long again).
  */
 export function expectSheetEntrance(
   frames: ModalFrame[],
@@ -365,12 +416,10 @@ export function expectSheetEntrance(
   )!;
   expect(midway.samples[name]!.opacity).toBeGreaterThan(0.2);
   expect(midway.samples[name]!.opacity).toBeLessThan(0.95);
-  // From a full size away to its edge: from 10% to 98% of the way in the
-  // time the spring takes.
-  expectSpringPace(
+  expectCurvePace(
     shown.map((frame): Sample => [frame.t, frame.samples[name]![axis] * sign]),
-    SHEET_SPRING,
-    { from: 1, to: 0, a: 0.9, b: 0.02 },
+    DRAWER_CURVE,
+    { from: 1, to: 0, a: 0.9, b: 0.3 },
   );
 }
 

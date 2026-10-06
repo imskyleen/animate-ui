@@ -5,6 +5,8 @@ import {
   expectDialogEntrance,
   expectDialogExit,
   expectDialogSettled,
+  DRAWER_CURVE,
+  expectAnimationCurve,
   expectSheetEntrance,
   expectSheetExit,
   expectSheetSettled,
@@ -115,7 +117,7 @@ test.describe('base-ui dialog: sheet demo', () => {
   for (const side of Object.keys(
     SHEET_TRAVEL,
   ) as (keyof typeof SHEET_TRAVEL)[]) {
-    test(`slides and fades in from the ${side} edge like v1's sheet`, async ({
+    test(`slides and fades in from the ${side} edge on Vaul's curve`, async ({
       page,
     }) => {
       const timeline = await recordTimeline(page, { content: SHEET });
@@ -123,6 +125,8 @@ test.describe('base-ui dialog: sheet demo', () => {
       await expect(page.locator(SHEET)).toHaveAttribute('data-side', side);
       await expectSheetSettled(page, SHEET, side);
       expectSheetEntrance(await timeline.stop(), side);
+      // Vaul's curve, as Motion handed it to the browser.
+      expectAnimationCurve(await timeline.timing('content'), DRAWER_CURVE);
     });
   }
 
