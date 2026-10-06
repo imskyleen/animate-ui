@@ -112,6 +112,11 @@ type HighlightScopeValue = {
   handOff: (item: HTMLElement, reduce: boolean) => Start;
   /** The surface on screen registers itself; returns its unregistration. */
   register: (handle: SurfaceHandle) => () => void;
+  /**
+   * The paint for an item's surface: what its styles give it, or, when
+   * they give it nothing yet, the last highlight's (see `paint`).
+   */
+  paint: (surface: Surface) => Surface;
 };
 
 const HighlightScopeContext = React.createContext<HighlightScopeValue | null>(
@@ -144,6 +149,7 @@ function OwnHighlightScope({ open, children }: HighlightScopeProps) {
   const [leaving, setLeaving] = React.useState<readonly Leaving[]>([]);
   const surfaceRef = React.useRef<SurfaceHandle | null>(null);
   const keyRef = React.useRef(0);
+  const paintRef = React.useRef<Surface | null>(null);
   // A kept-mounted menu reopens without a highlight, like a new one. Closing
   // keeps it: the menu fades out as it was.
   const [wasOpen, setWasOpen] = React.useState(open);
@@ -191,6 +197,16 @@ function OwnHighlightScope({ open, children }: HighlightScopeProps) {
       if (surfaceRef.current === handle) surfaceRef.current = null;
     };
   }, []);
+  // An item highlighted before it's focused, whose highlighted background is
+  // on `:focus` (shadcn/ui's React Aria submenu trigger), reads nothing; the
+  // focus reads it again, unless the pointer has already moved on, on a busy
+  // main thread. Meanwhile it wears the last highlight's paint: the menu's
+  // items share one, and a transparent surface would be no highlight at all.
+  const paint = React.useCallback((surface: Surface) => {
+    if (isBare(surface)) return paintRef.current ?? surface;
+    paintRef.current = surface;
+    return surface;
+  }, []);
 
   const value = React.useMemo(
     () => ({
@@ -200,8 +216,9 @@ function OwnHighlightScope({ open, children }: HighlightScopeProps) {
       left,
       handOff: handOffFrom,
       register,
+      paint,
     }),
-    [activeId, leaving, activate, left, handOffFrom, register],
+    [activeId, leaving, activate, left, handOffFrom, register, paint],
   );
 
   return (
@@ -244,6 +261,12 @@ function clearOwnSurface(node: HTMLElement, clear: boolean) {
     restore(node, saved);
   }
 }
+
+/** No background at all: nothing to paint. */
+const isBare = ({ backgroundColor, backgroundImage }: Surface) =>
+  backgroundImage === 'none' &&
+  (backgroundColor === 'transparent' ||
+    /^rgba\(.*,\s*0\)$/.test(backgroundColor));
 
 /** The background the item's own styles give it right now. */
 function readSurface(node: HTMLElement): Surface {
@@ -325,6 +348,7 @@ function useItemHighlight(
   const [node, setNode] = React.useState<HTMLElement | null>(null);
   const [surface, setSurface] = React.useState<Surface | null>(null);
   const activate = scope?.activate;
+  const paint = scope?.paint;
   // Stable, and only a new element counts: React calls a ref with null and
   // the element again whenever it's recreated.
   const ref = React.useCallback((element: HTMLElement | null) => {
@@ -333,7 +357,7 @@ function useItemHighlight(
   }, []);
 
   React.useLayoutEffect(() => {
-    if (!activate || !node) return;
+    if (!activate || !paint || !node) return;
     // The surface is positioned inside the item.
     if (getComputedStyle(node).position === 'static')
       node.style.setProperty('position', 'relative');
@@ -351,7 +375,7 @@ function useItemHighlight(
       );
     const sync = () => {
       if (node.hasAttribute(attribute)) {
-        setSurface(readSurface(node));
+        setSurface(paint(readSurface(node)));
         activate(id, node);
       }
       clear();
@@ -360,7 +384,7 @@ function useItemHighlight(
     // focus, a `focus:` background is missing, and the surface would glide in
     // transparent. The focus comes before the surface is rendered.
     const focus = () => {
-      if (node.hasAttribute(attribute)) setSurface(readSurface(node));
+      if (node.hasAttribute(attribute)) setSurface(paint(readSurface(node)));
       clear();
     };
     sync();
@@ -377,7 +401,7 @@ function useItemHighlight(
       node.removeEventListener('blur', clear);
       clearOwnSurface(node, false);
     };
-  }, [activate, node, id, attribute]);
+  }, [activate, paint, node, id, attribute]);
 
   const active = scope?.activeId === id && !disabled;
   const leaving =
