@@ -58,12 +58,12 @@ Then remove the component's own CSS animation classes (same list as the CLI) so 
 
 ### Gate: should it animate?
 
-| How often it's used                                                    | Decision                                                                                                                                                                  |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Constantly (press, tooltips, menus, tabs, toggles, hover highlights)   | Animate, quickly: `spring.press`, `transition.menu`, `spring.pop`, `spring.selection`, `spring.highlight`; no hover scale                                                 |
-| Occasionally (popovers, selects, dialogs, sheets, toasts, disclosures) | The role's token: surfaces may take their time (`spring.dialog`, `transition.drawer` and `transition.sheet` in, `transition.dismiss` out, `spring.toast` for edge toasts) |
-| Rarely (effects, text, numbers, icons, onboarding, success)            | Expressive: their own springs, more bounce, longer rhythms                                                                                                                |
-| Toggled from the keyboard all day (command palette, global shortcuts)  | Consider no animation                                                                                                                                                     |
+| How often it's used                                                    | Decision                                                                                                                                                                                             |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Constantly (press, tooltips, menus, tabs, toggles, hover highlights)   | Animate, quickly: `spring.press`, `transition.menu`, `spring.pop`, `spring.selection`, `spring.highlight`; no hover scale                                                                            |
+| Occasionally (popovers, selects, dialogs, sheets, toasts, disclosures) | The role's token: surfaces may take their time (`spring.dialog`, `transition.drawer` and `transition.sheet` in, `transition.dismiss` and `transition.drawerOut` out, `spring.toast` for edge toasts) |
+| Rarely (effects, text, numbers, icons, onboarding, success)            | Expressive: their own springs, more bounce, longer rhythms                                                                                                                                           |
+| Toggled from the keyboard all day (command palette, global shortcuts)  | Consider no animation                                                                                                                                                                                |
 
 Keyboard navigation animates like the pointer. Name the purpose in one word (feedback, spatial, state, continuity, delight); if you can't, don't animate.
 
@@ -86,7 +86,7 @@ Keyboard navigation animates like the pointer. Name the purpose in one word (fee
 - Reduced motion ships with the animation: `ReducedMotionConfig` around the motion tree, `useShouldReduceMotion()` to neutralize `transform` strings, `<ReducedMotionConfig remount>` for animations that play on mount. Fades and blurs stay, movement goes.
 - Transform, opacity and filter (height only where content must push what's below). Anchored popups grow from their trigger (library origin variables), from 0.7 / 0.8 / 0.9 by kind; modals stay centered.
 - Press scales to 0.95 on a spring; nothing scales on hover.
-- Tweens: ease-out for what enters and leaves, a softer ease-out for what the eye watches change (disclosures unfolding, menus opening, sheets sliding in), ease-in-out for what moves on screen, `ease` for color and for an overlay dimming the whole page (gentle at first and at last, its blur grown as it's seen); never ease-in: a dismissed dialog, drawer or sheet speeds away on a steady push (`transition.dismiss`). A light blur bridges a swap.
+- Tweens: ease-out for what enters and leaves, a softer ease-out for what the eye watches change (disclosures unfolding, overlays, menus opening, sheets sliding in), ease-in-out for what moves on screen, `ease` for color; never ease-in, but a closed drawer speeds off its edge on a short one (`transition.drawerOut`), and a dismissed dialog or sheet speeds away on a steady push (`transition.dismiss`). A light blur bridges a swap.
 - The exit replays the entrance (a dismissed dialog, drawer or sheet leaves at once, quicker, speeding away), its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
 - Keep the library element as the animated element (Radix `asChild`, Base UI `render`, React Aria `render`/`motion.create`) so `data-*` attributes and styles still apply.
 - Warm tooltips show at once (and the one they replace goes at once).

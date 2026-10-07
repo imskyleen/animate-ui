@@ -13,17 +13,15 @@ import {
   present,
   readState,
   recordTimeline,
-  seenBlur,
 } from './modal-timeline';
 
 // The drawer slides opaque, a sheet sliding in and out: in, between snap
 // points and back after a drag in 0.4s with a hint of bounce
-// (cubic-bezier(0.34, 1.2, 0.64, 1), a hair past its rest), out like a
-// dismissed dialog (0.2s, a steady push, without crawling), thrown by a drag
-// at the finger's speed (linear); its shadow, if it has one, lifts off the
-// page with it. Its overlay comes in and clears like a dialog's, its tint
-// and backdrop blur (as seen) growing from 0 (never its opacity) in 400ms on
-// CSS's `ease` (250ms clearing), and follows the drag like Vaul's.
+// (cubic-bezier(0.34, 1.2, 0.64, 1), a hair past its rest), out quickly,
+// speeding off its edge (0.16s on an ease-in, without crawling), thrown by a drag at the finger's speed (linear); its shadow, if it has
+// one, lifts off the page with it. Its overlay comes in and clears like a
+// dialog's, its tint and backdrop blur growing from 0 (never its opacity) in
+// 400ms on a soft ease-out, and follows the drag like Vaul's.
 
 const CONTENT = '[data-slot="drawer-content"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -276,16 +274,15 @@ test.describe('radix-ui drawer demo', () => {
     // hair past its rest, then back.
     expectDrawerEntrance(frames, 'bottom');
     // The overlay comes in like a dialog's, never through its opacity: its
-    // tint and backdrop blur grow from 0 together, gently, half way in a
-    // little after the drawer, which answers at once.
+    // tint and backdrop blur grow from 0 together, about half way in when
+    // the drawer is.
     expect(present(frames, 'overlay')[0]!.samples.overlay!.bg).toBeLessThan(
       REST.bg * 0.1,
     );
     expectProgressiveOverlay(frames, REST);
     expectDialogLikeOverlay(frames, { rest: REST.bg });
     const halfway = halfwayTimes(frames, { axis: 'y', rest: REST.bg });
-    expect(halfway.overlay - halfway.drawer).toBeGreaterThan(-20);
-    expect(halfway.overlay - halfway.drawer).toBeLessThan(140);
+    expect(Math.abs(halfway.overlay - halfway.drawer)).toBeLessThan(60);
 
     const content = page.locator(CONTENT);
     await expect(content).toHaveAttribute(
@@ -343,16 +340,14 @@ test.describe('radix-ui drawer demo', () => {
     const dragged = await state(page, CONTENT);
     expect(Math.abs(dragged.y - distance)).toBeLessThan(2);
     expect(dragged.opacity).toBe(1);
-    // The overlay follows: its tint and its blur as seen, never its opacity.
+    // The overlay follows: its tint and its blur, never its opacity.
     const overlay = await veil(page, OVERLAY);
     expect(overlay.opacity).toBe(1);
     expect(
       Math.abs(overlay.bg / REST.bg - (1 - distance / height)),
     ).toBeLessThan(0.05);
     expect(
-      Math.abs(
-        seenBlur(overlay.blur) / seenBlur(REST.blur) - (1 - distance / height),
-      ),
+      Math.abs(overlay.blur / REST.blur - (1 - distance / height)),
     ).toBeLessThan(0.05);
     await expect(page.locator(CONTENT)).toHaveClass(/vaul-dragging/);
 

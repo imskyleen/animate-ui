@@ -13,13 +13,9 @@ import {
   useShouldReduceMotion,
 } from '../../../utils/motion';
 import {
-  BLUR_HALF,
-  BLUR_STEEPNESS,
-  DISMISS_TRANSITION,
+  DRAWER_EXIT_TRANSITION,
   DRAWER_TRANSITION,
-  OVERLAY_EXIT_TRANSITION,
   OVERLAY_TRANSITION,
-  seenBlur,
   toCssTiming,
   useModalTransitions,
 } from '../../../internal/modal-motion';
@@ -42,9 +38,9 @@ import {
 //   after a swipe) in 0.4s of cubic-bezier(0.34, 1.2, 0.64, 1): it answers
 //   at once, goes a hair past its rest (~1%, which shadcn/ui's bleed below
 //   it covers), then settles back, a hint of bounce where Vaul's curve zips
-//   in, then stops. Closed, it leaves like a dismissed dialog, at once,
-//   speeding off its edge (0.2s, a steady push), so its last pixels don't
-//   crawl out. Thrown by a swipe (`data-swipe-dismiss`), it keeps the
+//   in, then stops. Closed, it leaves quickly, seen speeding off its edge
+//   (0.16s on an ease-in), so it never reads as a constant slide and its
+//   last pixels don't crawl out. Thrown by a swipe (`data-swipe-dismiss`), it keeps the
 //   finger's speed: linear, over Base UI's `--drawer-swipe-strength` share
 //   of 360ms, the time the rest of the way takes at that speed. Nothing
 //   transitions while the finger (or a nested drawer) drags it. Its shadow
@@ -53,13 +49,12 @@ import {
 //   Popup's transitions have played, which cut a slower Backdrop short and
 //   snapped the page back sharp.
 // - Backdrop: like a dialog's overlay. One level (a registered `<number>`)
-//   transitions, in 400ms on CSS's `ease` (250ms clearing) or following the
-//   swipe; its tint deepens with it, and its backdrop blur grows from 0 as
-//   it's seen, so the page behind blurs progressively instead of
-//   cross-fading with an already blurred copy, and never all at once. Its
-//   classes' values are read once it mounts and held as variables the
-//   stylesheet scales; over a background image, it fades its opacity
-//   instead.
+//   transitions, in 400ms on a soft ease-out both ways or following the
+//   swipe; its tint deepens and its backdrop blur grows from 0 with it, so
+//   the page behind blurs progressively instead of cross-fading with an
+//   already blurred copy. Its classes' values are read once it mounts and
+//   held as variables the stylesheet scales; over a background image, it
+//   fades its opacity instead.
 // - Reduced motion: it fades in place; a swipe dismissal still leaves along
 //   the swipe.
 //
@@ -74,11 +69,6 @@ const STYLE_HREF = 'animate-ui-base-ui-drawer';
  * scales down to the time the rest of the way takes at the finger's speed.
  */
 const THROW_DURATION = 360;
-
-/** The backdrop blur's radius at its level, as seen (`blurAtLevel`). */
-const SEEN =
-  'calc(var(--animate-ui-backdrop-level) * var(--animate-ui-backdrop-blur-seen))';
-const BLUR_AS_SEEN = `calc(${BLUR_HALF}px * pow(calc(${SEEN} / (1 - ${SEEN})), ${1 / BLUR_STEEPNESS}))`;
 
 const POPUP = ':where([data-animate-ui-drawer="popup"])';
 const POPUP_IS = (selector: string) =>
@@ -142,12 +132,6 @@ ${BACKDROP_IS('[data-animate-ui-backdrop-blur]')} {
   -webkit-backdrop-filter: blur(calc(var(--animate-ui-backdrop-blur) * var(--animate-ui-backdrop-level))) !important;
   backdrop-filter: blur(calc(var(--animate-ui-backdrop-blur) * var(--animate-ui-backdrop-level))) !important;
 }
-@supports (width: calc(1px * pow(2, 0.5))) {
-  ${BACKDROP_IS('[data-animate-ui-backdrop-blur]')} {
-    -webkit-backdrop-filter: blur(${BLUR_AS_SEEN}) !important;
-    backdrop-filter: blur(${BLUR_AS_SEEN}) !important;
-  }
-}
 ${BACKDROP_IS('[data-ending-style]')} {
   transition-duration: var(--animate-ui-drawer-exit-duration);
   transition-timing-function: var(--animate-ui-drawer-exit-ease);
@@ -168,7 +152,7 @@ type PopupAnimationProps = {
    * Closing (slide out) by a button, Escape or a click outside: at once,
    * quicker than it came, speeding off its edge. A swipe dismissal is thrown
    * instead: it keeps the finger's speed.
-   * @default { duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }
+   * @default { duration: 0.16, ease: [0.4, 0, 1, 1] }
    */
   exitTransition?: Transition;
 };
@@ -178,13 +162,10 @@ type BackdropAnimationProps = {
   /**
    * Its tint and backdrop blur coming in, like a dialog's overlay.
    * CSS-driven, like the Popup's.
-   * @default { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }
+   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: Transition;
-  /**
-   * Its tint and backdrop blur clearing, like a dialog's overlay.
-   * @default { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }
-   */
+  /** Its tint and backdrop blur clearing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -258,12 +239,12 @@ function PopupWithTiming({
   ...props
 }: Popup.Props) {
   const reduce = useShouldReduceMotion();
-  // In with a hint of bounce; closed, out at once, speeding away.
+  // In with a hint of bounce; closed, out quickly, speeding off its edge.
   const variables = useTimingVariables(
     transition,
     exitTransition,
     DRAWER_TRANSITION,
-    DISMISS_TRANSITION,
+    DRAWER_EXIT_TRANSITION,
   );
   const setRef = useHoldForBackdrop(ref);
 
@@ -367,12 +348,7 @@ function holdBackdrop(node: HTMLElement) {
     const blur = /^blur\(([\d.]+)px\)$/.exec(filter)?.[1];
     // Other filters than a blur are left as they are.
     if (blur || filter === 'none') {
-      const radius = Number(blur ?? 0);
-      style.setProperty('--animate-ui-backdrop-blur', `${radius}px`);
-      style.setProperty(
-        '--animate-ui-backdrop-blur-seen',
-        String(seenBlur(radius)),
-      );
+      style.setProperty('--animate-ui-backdrop-blur', `${blur ?? 0}px`);
       node.setAttribute('data-animate-ui-backdrop-blur', '');
     }
   }
@@ -388,12 +364,11 @@ function Backdrop({
   ref,
   ...props
 }: Backdrop.Props) {
-  // A dialog's overlay: in over 400ms, cleared over 250ms, on CSS's `ease`.
+  // A dialog's overlay: 400ms on a soft ease-out, both ways.
   const variables = useTimingVariables(
     transition,
     exitTransition,
     OVERLAY_TRANSITION,
-    OVERLAY_EXIT_TRANSITION,
   );
   const nodeRef = React.useRef<HTMLDivElement | null>(null);
   const setRef = React.useCallback(

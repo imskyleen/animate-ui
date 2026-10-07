@@ -19,11 +19,11 @@ import {
  * that makes motion feel alive. Tweens are for fades, menus, disclosure
  * heights and swaps, and pick their curve by what the element does: ease-out
  * to enter or leave, a softer ease-out for large surfaces (a panel unfolding,
- * a sheet sliding in), ease-in-out to move on screen, a hint of bounce for a
- * drawer sliding in, a gentle start and landing for an overlay dimming the
- * whole page, and a steady push for a dialog, a drawer or a sheet dismissed,
- * speeding away. Pressables scale on press only; anchored popups grow from
- * their trigger, from farther when they are small; two states swapping in
+ * an overlay dimming the page, a sheet sliding in), ease-in-out to move on
+ * screen, a hint of bounce for a drawer sliding in, a steady push for a
+ * dialog or a sheet dismissed, and ease-in only for a drawer closed,
+ * speeding off its edge. Pressables scale on press only; anchored popups
+ * grow from their trigger, from farther when they are small; two states swapping in
  * place are bridged with a light blur, and unfolding content clears from one.
  *
  * The tokens are the values at tempo 1. Components pass them through
@@ -37,8 +37,8 @@ const ease = {
   out: [0.23, 1, 0.32, 1],
   /**
    * Surfaces the eye watches change: a panel unfolding and pushing the page
-   * (accordion, collapsible), a menu opening, a sheet sliding in, a dialog
-   * fading in. A softer start than `out`, so the change is seen rather than
+   * (accordion, collapsible), an overlay dimming it, a menu opening, a sheet
+   * sliding in, a dialog fading in. A softer start than `out`, so the change is seen rather than
    * snapped.
    */
   soft: [0.215, 0.61, 0.355, 1],
@@ -50,18 +50,16 @@ const ease = {
   /** Moving or morphing something already on screen. */
   inOut: [0.77, 0, 0.175, 1],
   /**
-   * An overlay dimming and blurring the whole page, or clearing it: CSS's
-   * `ease`. It starts gently and lands gently, so the screen never changes
-   * at once, on its first frame or on its last.
-   */
-  overlay: [0.25, 0.1, 0.25, 1],
-  /**
-   * A dialog, a drawer or a sheet dismissed, speeding away: a steady push,
-   * from half its average speed to one and a half. It leaves at once (an
-   * ease-in would wait), and its last pixels don't crawl out (an ease-out
-   * would).
+   * A dialog or a sheet dismissed, speeding away: a steady push, from half
+   * its average speed to one and a half. It leaves at once (an ease-in
+   * would wait), and its last pixels don't crawl out (an ease-out would).
    */
   away: [0.33, 0.17, 0.67, 0.5],
+  /**
+   * A drawer closed: CSS's ease-in, a little sharper, so it's seen
+   * speeding off its edge. Short (0.16s), so its slow start doesn't wait.
+   */
+  in: [0.4, 0, 1, 1],
   /**
    * A drawer sliding in: it answers at once, goes a hair past its rest (~1%,
    * which its bleed covers), then settles back: a hint of bounce, the same
@@ -133,16 +131,11 @@ const transition = {
    */
   menu: { duration: 0.25, ease: ease.soft },
   /**
-   * An overlay or backdrop (a dialog's, a sheet's, a drawer's) coming in:
-   * the page dims and blurs from 0, gently at first, while the content
-   * arrives.
+   * An overlay or backdrop (a dialog's, a sheet's, a drawer's) fading in, the
+   * page behind blurring from 0, and out: the page dims smoothly while the
+   * content arrives.
    */
-  overlay: { duration: 0.4, ease: ease.overlay },
-  /**
-   * The same overlay clearing once its content is dismissed: quicker, done
-   * just after the content, landing gently.
-   */
-  overlayOut: { duration: 0.25, ease: ease.overlay },
+  overlay: { duration: 0.4, ease: ease.soft },
   /**
    * A dialog's content fading in, ahead of its tilt: it answers at once, so
    * it's there first, then it settles.
@@ -174,11 +167,16 @@ const transition = {
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
   /**
-   * A dialog, a drawer or a sheet leaving once dismissed: at once, quicker
-   * than it came, speeding away (a drawer or a sheet off its edge, so its
-   * last pixels don't crawl out). Its overlay clears with it.
+   * A dialog or a sheet leaving once dismissed: at once, quicker than it
+   * came, speeding away (a sheet off its edge, so its last pixels don't
+   * crawl out). Its overlay clears behind it.
    */
   dismiss: { duration: 0.2, ease: ease.away },
+  /**
+   * A drawer closed (a button, Escape, a click outside): quick, and seen
+   * speeding off its edge, so it never reads as a constant slide.
+   */
+  drawerOut: { duration: 0.16, ease: ease.in },
   /**
    * A drawer sliding in from its edge, snapping, or easing back after a
    * drag: it answers at once, with a hint of bounce.

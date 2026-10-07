@@ -19,7 +19,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import {
-  DISMISS_TRANSITION,
+  DRAWER_EXIT_TRANSITION,
   DRAWER_TRANSITION,
   motionRender,
   scrubBackdrop,
@@ -51,8 +51,8 @@ import {
 //   cubic-bezier(0.34, 1.2, 0.64, 1). It answers at once, goes a hair past
 //   its rest (~1%, which Vaul's bleed below it covers), then settles back: a
 //   hint of bounce, where Vaul's curve zips in, then stops.
-// - Closing: like a dismissed dialog, at once, quicker than it came, speeding
-//   off its edge (0.2s, a steady push), so its last pixels don't crawl out.
+// - Closing: quick, and seen speeding off its edge (0.16s on an ease-in), so
+//   it never reads as a constant slide and its last pixels don't crawl out.
 // - Thrown by a drag: it keeps the finger's speed off its edge, linear, over
 //   the time the rest of the way takes at that speed (Base UI's drawer
 //   bounds).
@@ -60,11 +60,10 @@ import {
 //   all of it once it's in, following the position, so it fades as it leaves
 //   instead of riding out at full strength.
 // The overlay comes in and clears like a dialog's: its tint deepens while its
-// backdrop blur grows from 0 as it's seen, in 400ms on CSS's `ease` (250ms
-// clearing), so the page behind blurs progressively instead of cross-fading
-// with an already blurred copy, and never all at once. Once a drag has moved
-// the drawer, or with snap points, it also follows the position, like
-// Vaul's.
+// backdrop blur grows from 0, in 400ms on a soft ease-out both ways, so the
+// page behind blurs progressively instead of cross-fading with an already
+// blurred copy. Once a drag has moved the drawer, or with snap points, it
+// also follows the position, like Vaul's.
 
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
@@ -224,7 +223,7 @@ type ContentAnimationProps = {
    * Closing (slide out) by a button, Escape or a click outside: at once,
    * quicker than it came, speeding off its edge. A drag dismissal is thrown
    * instead: it keeps the finger's speed.
-   * @default { duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }
+   * @default { duration: 0.16, ease: [0.4, 0, 1, 1] }
    */
   exitTransition?: Transition;
 };
@@ -234,13 +233,10 @@ type OverlayAnimationProps = {
   /**
    * Its tint and backdrop blur coming in, like a dialog's overlay. After a
    * drag, they also follow the drawer.
-   * @default { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }
+   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
    */
   transition?: Transition;
-  /**
-   * Its tint and backdrop blur clearing, like a dialog's overlay.
-   * @default { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }
-   */
+  /** Its tint and backdrop blur clearing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -737,7 +733,7 @@ function OverlayMotion({
 }: OverlayProps &
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
-  // A dialog's overlay: in over 400ms, cleared over 250ms, on CSS's `ease`.
+  // A dialog's overlay: 400ms on a soft ease-out, both ways.
   const { enter, exit } = useOverlayTransitions(transition, exitTransition);
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
@@ -903,9 +899,9 @@ function ContentMotion({
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
   const reduce = useShouldReduceMotion();
-  // In with a hint of bounce; closed, out at once, speeding away.
+  // In with a hint of bounce; closed, out quickly, speeding off its edge.
   const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
-  const exit = useTempoTransition(exitTransition ?? DISMISS_TRANSITION);
+  const exit = useTempoTransition(exitTransition ?? DRAWER_EXIT_TRANSITION);
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
 

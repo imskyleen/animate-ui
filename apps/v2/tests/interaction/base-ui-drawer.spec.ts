@@ -1,10 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import {
-  DISMISS_CURVE,
   DRAWER_CURVE,
+  DRAWER_EXIT_CURVE,
   OVERLAY_CURVE,
-  OVERLAY_EXIT_CURVE,
   halfwayTimes,
   expectClearBeforeUnmount,
   expectDialogLikeOverlay,
@@ -17,18 +16,17 @@ import {
   present,
   readState,
   recordTimeline,
-  seenBlur,
 } from './modal-timeline';
 import { expectCssCurve } from './spring-curves';
 
 // The drawer slides opaque, run by CSS transitions: in 0.4s with a hint of
 // bounce (cubic-bezier(0.34, 1.2, 0.64, 1), a hair past its rest), out like
-// a dismissed dialog (0.2s, a steady push, without crawling), thrown by a
-// swipe at the finger's speed (linear); its shadow lifts off the page with
-// it. Its backdrop comes in and clears like a dialog's overlay: its tint and
-// backdrop blur (as seen) grow from 0 (never its opacity) in 400ms on CSS's
-// `ease` (250ms clearing), follow the swipe, and are clear before the
-// drawer unmounts.
+// quickly, speeding off its edge (0.16s on an ease-in, without crawling),
+// thrown by a swipe at the finger's speed (linear); its shadow lifts off the
+// page with it. Its backdrop comes in and clears like a dialog's overlay:
+// its tint and backdrop blur grow from 0 (never its opacity) in 400ms on a
+// soft ease-out, follow the swipe, and are clear before the drawer
+// unmounts.
 
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
@@ -136,8 +134,8 @@ for (const { side, query, axis, swipe } of SIDES) {
       // Its shadow lifts off the page with it, from none.
       expectShadowLifts(frames, SHADOW);
 
-      // Its backdrop, from nothing, gently, just behind the drawer, which
-      // answers at once: half way in a little after it.
+      // Its backdrop, from nothing, along with the drawer: half way in at
+      // about the same time.
       const backdrop = present(frames, 'overlay');
       expect(backdrop[0]!.samples.overlay!.bg).toBeLessThan(REST.bg * 0.1);
       expect(backdrop[0]!.samples.overlay!.backdrop).toBeLessThan(
@@ -146,8 +144,7 @@ for (const { side, query, axis, swipe } of SIDES) {
       expectProgressiveOverlay(frames, REST);
       expectDialogLikeOverlay(frames, { rest: REST.bg });
       const halfway = halfwayTimes(frames, { axis, rest: REST.bg });
-      expect(halfway.overlay - halfway.drawer).toBeGreaterThan(-20);
-      expect(halfway.overlay - halfway.drawer).toBeLessThan(140);
+      expect(Math.abs(halfway.overlay - halfway.drawer)).toBeLessThan(60);
       const rest = await readState(page, OVERLAY);
       expect(rest.opacity).toBe(1);
       expect(rest.bg).toBeCloseTo(REST.bg, 3);
@@ -169,9 +166,9 @@ for (const { side, query, axis, swipe } of SIDES) {
         overlay: OVERLAY,
       });
       await page.keyboard.press('Escape');
-      // As CSS: a dismissed dialog's curve, and a dialog overlay's.
-      expectCssCurve(await popupExit(), DISMISS_CURVE);
-      expectCssCurve(await backdropExit(), OVERLAY_EXIT_CURVE);
+      // As CSS: an ease-in, speeding off its edge, and a dialog overlay's.
+      expectCssCurve(await popupExit(), DRAWER_EXIT_CURVE);
+      expectCssCurve(await backdropExit(), OVERLAY_CURVE);
       await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
       const frames = await timeline.stop();
       expectDrawerExit(frames, side);
@@ -234,16 +231,14 @@ test.describe('base-ui drawer demo, on a phone', () => {
     expect(dragged.y).toBeLessThan(100);
     expect(dragged.opacity).toBe(1);
     // The backdrop follows the swipe progress without lag too: its tint and
-    // its blur as seen, never its opacity.
+    // its blur, never its opacity.
     const swiped = await readState(page, OVERLAY);
     expect(swiped.opacity).toBe(1);
     expect(swiped.bg).toBeLessThan(REST.bg * 0.95);
     expect(swiped.bg).toBeGreaterThan(REST.bg * 0.3);
     expect(
-      Math.abs(
-        seenBlur(swiped.backdrop) / seenBlur(REST.blur) - swiped.bg / REST.bg,
-      ),
-    ).toBeLessThan(0.08);
+      Math.abs(swiped.backdrop / REST.blur - swiped.bg / REST.bg),
+    ).toBeLessThan(0.1);
 
     // Hold still, then let go: not a flick, so it springs back up, through
     // the positions in between (recorded in the page: a busy machine can't

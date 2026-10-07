@@ -41,10 +41,10 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 Animate UI v1's alert dialog motion, with a smoother overlay and a quicker exit.
 
-- **Backdrop** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). In 400ms on CSS's `ease` (`cubic-bezier(0.25, 0.1, 0.25, 1)`), which starts and lands gently, so the page never changes all at once, on the first frame or on the last; it clears the same way in 250ms once the popup is dismissed. Its blur grows as it's seen: the eye sees most of a blur in its first pixel, so its radius rises slowly at first, and what's seen of the blur keeps pace with the tint.
-- **Popup** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it (400ms on a soft ease-out), and ahead of the backdrop: it's there first, then it settles. Dismissed, it goes back the way it came, at once, quicker and speeding away (0.2s, a steady push from half its average speed to one and a half), out of sight just before the backdrop has cleared, then unmounts.
+- **Backdrop** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, along with the popup's fade, and it leaves the same way.
+- **Popup** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it with the backdrop (400ms on a soft ease-out): it's there first, then it settles. Dismissed, it goes back the way it came, at once, quicker and speeding away (0.2s, a steady push from half its average speed to one and a half), out of sight just before the backdrop has cleared, then unmounts.
 - `from` picks the edge the popup tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`).
-- Each part leaves its own way unless you set its `exitTransition`: the backdrop clears in 250ms, the dialog speeds away in 0.2s.
+- On the backdrop, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The dialog's own exit is the quicker one above unless you set `exitTransition`.
 - The Portal keeps Base UI's portal mounted and the popup visible until the exit is over; clicks go through to the page as soon as it closes.
 - Reopening while it closes picks up from where it is.
 - With `keepMounted` on the Portal, the closed popup stays in the DOM: it plays its exit, then Base UI hides it.
@@ -70,12 +70,12 @@ Every part takes exactly the props of [Base UI's Alert Dialog](https://base-ui.c
       description:
         'Transition of the fade in (background color and backdrop filter).',
       type: 'Transition',
-      default: '{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the fade out.',
       type: 'Transition',
-      default: '{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }',
+      default: 'transition',
     },
   }}
 />

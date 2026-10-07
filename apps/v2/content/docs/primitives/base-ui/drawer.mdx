@@ -46,10 +46,10 @@ shadcn/ui's React Aria Drawer is built on Base UI's Drawer too: `animate-ui anim
 Animate UI v1 had no drawer: Animate UI's motion, with Base UI's swipe.
 
 - **Popup** slides in from its edge (`swipeDirection`, a full size of its own), opaque, a sheet sliding in rather than a fade, in 0.4s of `cubic-bezier(0.34, 1.2, 0.64, 1)`: it answers at once, goes a hair past its rest (about 1% of its size, which shadcn/ui's bleed below it covers), then settles back. A hint of bounce, where Vaul's curve zips in, then stops.
-- Closed (Escape, a click outside, a Close), it leaves like a dismissed dialog: at once, quicker than it came, speeding off its edge (0.2s, a steady push from half its average speed to one and a half), so its last pixels don't crawl out.
+- Closed (Escape, a click outside, a Close), it leaves quickly, seen speeding off its edge (0.16s on an ease-in, `cubic-bezier(0.4, 0, 1, 1)`), so it never reads as a constant slide and its last pixels don't crawl out.
 - Its shadow lifts off the page with it: its starting and ending styles drop it, so it grows from none as the popup slides in, on the same transition, and fades as it leaves rather than riding out at full strength.
 - While you drag it, it follows the finger on the same frame: no transition runs during a swipe. Let go slowly and it eases back; flick it and it's thrown: it keeps the finger's speed to its edge, linear, over Base UI's `--drawer-swipe-strength` share of 360ms (the time the rest of the way takes at that speed).
-- **Backdrop** comes in and clears exactly like a dialog's overlay: its tint deepens while its backdrop blur grows from 0, in 400ms on CSS's `ease` (`cubic-bezier(0.25, 0.1, 0.25, 1)`), and it clears the same way in 250ms: gently at first and at last, so the page never changes all at once. The page behind blurs progressively (fading its opacity would cross-fade the sharp page with an already blurred one), its blur growing as it's seen: its radius rises slowly at first, where the eye sees most of a blur, so what's seen of it keeps pace with the tint. One level transitions (a registered CSS property), the tint and the blur following it, and it follows the swipe in between. The drawer waits for it: Base UI unmounts a closed drawer once its Popup's own transitions have played, which cut a slower backdrop short and snapped the page back sharp, so the Popup holds until its Backdrop has cleared. Its classes' color and blur are read once it mounts; over a background image (a gradient), it fades its opacity instead.
+- **Backdrop** comes in and clears exactly like a dialog's overlay: its tint deepens while its backdrop blur grows from 0, in 400ms on a soft ease-out both ways, so the page behind blurs progressively (fading its opacity would cross-fade the sharp page with an already blurred one). It follows the swipe in between. The drawer waits for it: Base UI unmounts a closed drawer once its Popup's own transitions have played, which cut a slower backdrop short and snapped the page back sharp, so the Popup holds until its Backdrop has cleared. Its classes' color and blur are read once it mounts; over a background image (a gradient), it fades its opacity instead.
 - Snap points, nested drawers and `swipeDirection` work as in Base UI.
 - CSS-driven, not Motion: Base UI drives the swipe through CSS variables and waits for CSS transitions before unmounting, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables: a spring becomes the `linear()` curve Motion itself would use, a tween keeps its cubic-bezier, and `AnimateUIProvider tempo` reaches it. It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and `--closed-transform` when they're set.
 - Under reduced motion, the drawer fades in place; a swipe dismissal still leaves along the swipe.
@@ -78,7 +78,7 @@ Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/rea
       description:
         "Closing (slide out) by Escape, a click outside or a Close. A swipe dismissal is thrown instead, at the finger's speed.",
       type: 'Transition',
-      default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',
+      default: '{ duration: 0.16, ease: [0.4, 0, 1, 1] }',
     },
   }}
 />
@@ -93,13 +93,13 @@ Every part takes exactly the props of [Base UI's Drawer](https://base-ui.com/rea
       description:
         "Its tint and backdrop blur coming in, like a dialog's overlay. CSS-driven, like the Popup.",
       type: 'Transition',
-      default: '{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description:
         "Its tint and backdrop blur clearing, like a dialog's overlay.",
       type: 'Transition',
-      default: '{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }',
+      default: 'transition',
     },
   }}
 />
