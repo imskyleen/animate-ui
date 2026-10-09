@@ -617,11 +617,14 @@ function handOver(
     element.style.left = `${left - originLeft}px`;
     element.style.top = `${top - originTop}px`;
     popover.appendChild(element);
-    // It stays where it is on screen while the popover moves.
+    // It stays where it is on screen while the popover moves. Added, like
+    // the popover's own move: the browser runs both on the main thread, in
+    // step (on its own, this one would run on the compositor, a frame ahead
+    // of the popover: the content would jump aside as the move starts).
     if (moves)
       element.animate(
         [{ translate: '0px 0px' }, { translate: `${x}px ${y}px` }],
-        { ...move, fill: 'forwards' },
+        { ...move, composite: 'add', fill: 'forwards' },
       );
     if (slide[0] !== slideTo[0] || slide[1] !== slideTo[1])
       element.animate(
@@ -629,7 +632,7 @@ function handOver(
           { transform: `translate(${slide[0]}px, ${slide[1]}px)` },
           { transform: `translate(${slideTo[0]}px, ${slideTo[1]}px)` },
         ],
-        { ...out, fill: 'forwards' },
+        { ...out, composite: 'add', fill: 'forwards' },
       );
     const fade = element.animate([{ opacity }, { opacity: 0 }], {
       ...out,

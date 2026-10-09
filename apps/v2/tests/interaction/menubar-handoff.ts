@@ -203,6 +203,69 @@ function firstShowing(frames: PopoverFrame[], label: string) {
   );
 }
 
+/**
+ * Where the text of a row starts in each frame as the browser paints it (its
+ * compositor's frames, a screencast), while `act` runs and `duration` ms
+ * after: the leftmost dark pixel inside `band`, null once it's faded or
+ * clipped away. Values computed on the main thread can't show a compositor
+ * animation running out of step with one on the main thread.
+ */
+async function paintedLeft(
+  page: Page,
+  band: { left: number; right: number; top: number; bottom: number },
+  act: () => Promise<void>,
+  duration: number,
+) {
+  const cdp = await page.context().newCDPSession(page);
+  const frames: string[] = [];
+  cdp.on('Page.screencastFrame', (frame) => {
+    frames.push(frame.data);
+    cdp
+      .send('Page.screencastFrameAck', { sessionId: frame.sessionId })
+      .catch(() => {});
+  });
+  await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 });
+  await page.waitForTimeout(300);
+  const start = Math.max(0, frames.length - 1);
+  await act();
+  await page.waitForTimeout(duration);
+  await cdp.send('Page.stopScreencast');
+  return page.evaluate(
+    async ({ frames, band }) => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d', { willReadFrequently: true })!;
+      const lefts: (number | null)[] = [];
+      for (const data of frames) {
+        const image = new Image();
+        image.src = `data:image/png;base64,${data}`;
+        await image.decode();
+        // Screencast frames are in CSS pixels, the viewport's size.
+        const scale = image.naturalWidth / window.innerWidth;
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        context.drawImage(image, 0, 0);
+        const x0 = Math.round(band.left * scale);
+        const y0 = Math.round(band.top * scale);
+        const width = Math.round((band.right - band.left) * scale);
+        const height = Math.round((band.bottom - band.top) * scale);
+        const { data: pixels } = context.getImageData(x0, y0, width, height);
+        let left: number | null = null;
+        for (let x = 0; x < width && left === null; x++)
+          for (let y = 0; y < height; y++) {
+            const i = (y * width + x) * 4;
+            if ((pixels[i]! + pixels[i + 1]! + pixels[i + 2]!) / 3 < 150) {
+              left = band.left + x / scale;
+              break;
+            }
+          }
+        lefts.push(left);
+      }
+      return lefts;
+    },
+    { frames: frames.slice(start), band },
+  );
+}
+
 /** One popover on screen, every frame, never dimmed. */
 function expectOnePopover(frames: PopoverFrame[], top?: number) {
   expect(frames.length).toBeGreaterThan(5);
@@ -373,6 +436,37 @@ export function describeMenubarHandoff(title: string, path: string) {
       );
       end = swap.at(-1)!.shown[0]!;
       expect(end.copy!.left - edit.firstLeft).toBeGreaterThan(4);
+    });
+
+    test('as painted, the content holds still as the popover starts moving', async ({
+      page,
+    }) => {
+      await open(page);
+      const row = await page
+        .getByRole('menuitem', { name: /New Tab/ })
+        .boundingBox();
+      const popover = await boxOf(page, 'New Tab');
+      const lefts = await paintedLeft(
+        page,
+        {
+          left: popover.left - 12,
+          right: row!.x + 60,
+          top: row!.y + 3,
+          bottom: row!.y + row!.height - 3,
+        },
+        () => hover(page, 'Edit'),
+        300,
+      );
+      // File's items slide 6px left over 250ms (a pixel a frame at most),
+      // until the popover's edge clips them: never a jump. A move of the
+      // copy out of step with the popover's would jump them aside at once.
+      const seen = lefts.filter((left): left is number => left !== null);
+      expect(seen.length).toBeGreaterThan(2);
+      for (let i = 1; i < seen.length; i++)
+        expect(
+          seen[i]! - seen[i - 1]!,
+          `frame ${i}: ${seen.join(', ')}`,
+        ).toBeGreaterThan(-3);
     });
 
     test('the arrow keys hand the popover over too', async ({ page }) => {
