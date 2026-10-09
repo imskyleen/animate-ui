@@ -8,10 +8,38 @@ const item = 'grid size-5 place-content-center rounded-full border';
 
 // API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixRadioGroupFixture() {
+  // Mounted checked after the page has loaded, as a dialog's would be.
+  const [shown, setShown] = React.useState(false);
   const [value, setValue] = React.useState('a');
 
   return (
     <div className="flex flex-col gap-10">
+      <section data-testid="mounted">
+        <button type="button" onClick={() => setShown(true)}>
+          Show checked
+        </button>
+        {shown && (
+          <RadioGroup.Root aria-label="Mounted" defaultValue="a">
+            {['a', 'b'].map((v) => (
+              <RadioGroup.Item
+                key={v}
+                value={v}
+                aria-label={`Mounted ${v}`}
+                className={item}
+              >
+                <RadioGroup.Indicator
+                  data-testid={v === 'a' ? 'mounted-indicator' : undefined}
+                >
+                  <svg viewBox="0 0 8 8" className="size-2">
+                    <circle cx="4" cy="4" r="4" fill="currentColor" />
+                  </svg>
+                </RadioGroup.Indicator>
+              </RadioGroup.Item>
+            ))}
+          </RadioGroup.Root>
+        )}
+      </section>
+
       <section data-testid="controlled">
         <p data-testid="controlled-value">{value}</p>
         <button type="button" onClick={() => setValue('a')}>

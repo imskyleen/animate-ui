@@ -23,7 +23,7 @@ export type CheckFrame = {
   dash: number;
 };
 
-type CheckTarget = {
+export type CheckTarget = {
   /** The items (`[role="option"]`, `[role^="menuitem"]`). */
   items: string;
   /** The item's text. */
@@ -178,4 +178,41 @@ export function expectPoppedOut(frames: CheckFrame[], within = 300) {
 export function withAnimation(path: string, animation: CheckAnimation) {
   if (animation === 'draw') return path;
   return `${path}${path.includes('?') ? '&' : '?'}checkAnimation=${animation}`;
+}
+
+/**
+ * At rest in every frame it's there: whole, opaque, unscaled, unblurred. A
+ * check only animates when it's checked or unchecked, not when its list,
+ * menu or page shows it or takes it away.
+ */
+export function expectAtRest(frames: CheckFrame[]) {
+  const shown = frames.filter((f) => f.present);
+  expect(shown.length).toBeGreaterThan(0);
+  for (const f of shown) {
+    expect(f.dash, `${Math.round(f.t)}ms`).toBeGreaterThan(0.98);
+    expect(f.opacity, `${Math.round(f.t)}ms`).toBeGreaterThan(0.98);
+    expect(f.scale, `${Math.round(f.t)}ms`).toBeCloseTo(1, 2);
+    expect(f.blur, `${Math.round(f.t)}ms`).toBeLessThan(0.05);
+  }
+}
+
+/**
+ * The check of a checked item stays at rest while its list or menu opens,
+ * and while it closes: neither draws it nor erases it.
+ */
+export async function expectAtRestThrough(
+  page: Page,
+  target: CheckTarget,
+  {
+    open,
+    close,
+  }: { open: () => Promise<unknown>; close: () => Promise<unknown> },
+) {
+  let frames = recordCheck(page, target, 600);
+  await open();
+  expectAtRest(await frames);
+  await page.waitForTimeout(200);
+  frames = recordCheck(page, target, 600);
+  await close();
+  expectAtRest(await frames);
 }

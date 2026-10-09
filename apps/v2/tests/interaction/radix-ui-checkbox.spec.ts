@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { describeCheckboxDemo, opacityOf } from './controls-helpers';
+import { describeCheckedOnMount } from './indicator-mount';
 
 describeCheckboxDemo('radix-ui');
 
@@ -64,3 +65,9 @@ test.describe('radix-ui checkbox API', () => {
     await expect(form.locator('input[name="newsletter"]')).toBeChecked();
   });
 });
+
+describeCheckedOnMount(
+  'radix-ui checkbox checked on mount',
+  '/tests/fixtures/radix-ui-checkbox',
+  'checkbox',
+);

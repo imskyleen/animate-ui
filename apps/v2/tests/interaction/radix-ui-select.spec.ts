@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
-import { withAnimation } from './item-checks';
+import { expectAtRestThrough, withAnimation } from './item-checks';
 import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
 const LIST = '[role="listbox"]';
@@ -297,4 +297,32 @@ describeMenuHighlight('radix-ui select highlight', {
   second: (page) => option(page, 'Banana'),
   keyboardNext: 'ArrowDown',
   highlightedOnOpen: true,
+});
+
+// Only choosing animates a check: the list opening shows the chosen item's
+// at rest, and closing leaves it as it is.
+test.describe('radix-ui select checks', () => {
+  test.describe.configure({ timeout: 180_000 });
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`opening and closing the list leaves its check at rest (${animation})`, async ({
+      page,
+    }) => {
+      await load(page, withAnimation(DEMO, animation));
+      await openList(page);
+      await option(page, 'Banana').click();
+      await expect(page.locator(LIST)).toHaveCount(0, { timeout: 1000 });
+      await page.waitForTimeout(300);
+      await expectAtRestThrough(
+        page,
+        { items: '[role="option"]', label: 'Banana', indicator: CHECK },
+        {
+          open: () => trigger(page).click(),
+          close: async () => {
+            await page.keyboard.press('Escape');
+            await expect(page.locator(LIST)).toHaveCount(0, { timeout: 1000 });
+          },
+        },
+      );
+    });
+  }
 });

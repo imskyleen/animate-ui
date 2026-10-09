@@ -596,10 +596,10 @@ type ItemIndicatorProps = {
 };
 
 /**
- * An item's check shows itself whenever it appears (checking the item, or
- * opening the menu), and hides itself when the item is unchecked: it stays
- * mounted for that. With `pop`, a radio item's check glides from the
- * previously checked item.
+ * An item's check shows itself when the item is checked, and hides itself
+ * when it's unchecked: it stays mounted for that. The menu opening shows it
+ * at rest. With `pop`, a radio item's check glides from the previously
+ * checked item.
  */
 function createItemIndicator<P extends ItemIndicatorProps>(
   RadixItemIndicator: React.ComponentType<P>,

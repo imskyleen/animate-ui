@@ -373,7 +373,7 @@ function Item({
 const ItemText = SelectPrimitive.ItemText;
 
 /**
- * Shows itself with the list, on the chosen item; choosing another item
+ * On the chosen item, at rest when the list opens; choosing another item
  * hides it there and shows it on the new one (with `pop`, it glides there),
  * while the list holds still before it closes. Radix renders it for the
  * chosen item only: in the animated list, it's on every item, Radix's

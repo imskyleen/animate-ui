@@ -10,6 +10,7 @@ import {
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
 import {
+  expectAtRestThrough,
   expectPoppedIn,
   expectPoppedOut,
   recordCheck,
@@ -423,4 +424,38 @@ test.describe('base-ui combobox chips placeholder', () => {
     expectChipLeaves(recording, { reduce: true });
     expectPlaceholderComesIn(recording, { reduce: true });
   });
+});
+
+// Only choosing animates a check: the list opening shows the chosen item's
+// at rest, and closing leaves it as it is.
+test.describe('base-ui combobox checks', () => {
+  test.describe.configure({ timeout: 180_000 });
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`opening and closing the list leaves its check at rest (${animation})`, async ({
+      page,
+    }) => {
+      await load(page, withAnimation(DEMO, animation));
+      const input = page.getByRole('combobox', { name: NAME });
+      const open = async () => {
+        await input.click();
+        await page.keyboard.press('ArrowDown');
+      };
+      await open();
+      await page.waitForTimeout(650);
+      await page.getByRole('option', { name: 'Next.js' }).click();
+      await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
+      await page.waitForTimeout(300);
+      await expectAtRestThrough(
+        page,
+        { items: '[role="option"]', label: 'Next.js', indicator: CHECK },
+        {
+          open,
+          close: async () => {
+            await page.keyboard.press('Escape');
+            await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
+          },
+        },
+      );
+    });
+  }
 });

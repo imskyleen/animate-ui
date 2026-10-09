@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, recordMotion, sample } from './motion-probe';
-import { withAnimation } from './item-checks';
+import { expectAtRestThrough, withAnimation } from './item-checks';
 import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
 const POPUP = '[data-slot="select-content"]';
@@ -330,4 +330,28 @@ describeMenuHighlight('base-ui select highlight', {
   second: (page) => option(page, 'Apple'),
   keyboardNext: 'ArrowDown',
   highlightedOnOpen: true,
+});
+
+// Only choosing animates a check: the list opening shows the chosen item's
+// (the placeholder's, on load) at rest, and closing leaves it as it is.
+test.describe('base-ui select checks', () => {
+  test.describe.configure({ timeout: 180_000 });
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`opening and closing the list leaves its check at rest (${animation})`, async ({
+      page,
+    }) => {
+      await load(page, withAnimation(DEMO, animation));
+      await expectAtRestThrough(
+        page,
+        { items: '[role="option"]', label: PLACEHOLDER, indicator: CHECK },
+        {
+          open: () => trigger(page).click(),
+          close: async () => {
+            await page.keyboard.press('Escape');
+            await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
+          },
+        },
+      );
+    });
+  }
 });

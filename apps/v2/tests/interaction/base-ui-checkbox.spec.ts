@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { describeCheckboxDemo, opacityOf } from './controls-helpers';
+import { describeCheckedOnMount } from './indicator-mount';
 
 describeCheckboxDemo('base-ui');
 
@@ -62,3 +63,9 @@ test.describe('base-ui checkbox API', () => {
     await expect(page.getByTestId('kept-indicator')).toHaveCount(1);
   });
 });
+
+describeCheckedOnMount(
+  'base-ui checkbox checked on mount',
+  '/tests/fixtures/base-ui-checkbox',
+  'checkbox',
+);

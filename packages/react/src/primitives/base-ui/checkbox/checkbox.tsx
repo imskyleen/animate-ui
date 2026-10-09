@@ -15,8 +15,10 @@ import {
 // check draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in
 // 0.3s; with `animation="pop"` (or an `AnimateUIProvider`'s
 // `checkAnimation`), it pops in from half its size out of a light blur after
-// the same 0.2s, and shrinks back out in 0.15s. The Indicator stays mounted
-// while its check leaves, then unmounts like Base UI's. The Root is Base
+// the same 0.2s, and shrinks back out in 0.15s. Only checking and
+// unchecking animate: checked as it appears (the page loading, a dialog
+// opening), the check is at rest. The Indicator stays mounted while its
+// check leaves, then unmounts like Base UI's. The Root is Base
 // UI's: unlike v1's, it doesn't scale when pressed or hovered, the check (and
 // the box's own fill) answer the click.
 

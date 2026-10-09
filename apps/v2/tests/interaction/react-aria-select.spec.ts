@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
-import { withAnimation } from './item-checks';
+import { expectAtRestThrough, withAnimation } from './item-checks';
 import {
   expectCloseWithoutHold,
   expectEscapeWithoutHold,
@@ -199,4 +199,34 @@ describeMenuHighlight('react-aria select highlight', {
   first: (page) => option(page, 'Apple'),
   second: (page) => option(page, 'Banana'),
   keyboardNext: 'ArrowDown',
+});
+
+// Only choosing animates a check: the list opening shows the chosen item's
+// at rest, and closing leaves it as it is.
+test.describe('react-aria select checks', () => {
+  test.describe.configure({ timeout: 180_000 });
+  for (const animation of ['draw', 'pop'] as const) {
+    test(`opening and closing the list leaves its check at rest (${animation})`, async ({
+      page,
+    }) => {
+      await load(page, withAnimation(DEMO, animation));
+      await openList(page);
+      await option(page, 'Banana').click();
+      await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
+      await page.waitForTimeout(300);
+      await expectAtRestThrough(
+        page,
+        { items: '[role="option"]', label: 'Banana', indicator: CHECK },
+        {
+          open: () => trigger(page).click(),
+          close: async () => {
+            await page.keyboard.press('Escape');
+            await expect(page.locator(POPOVER)).toHaveCount(0, {
+              timeout: 1000,
+            });
+          },
+        },
+      );
+    });
+  }
 });

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { describeRadioGroupDemo, opacityOf } from './controls-helpers';
+import { describeCheckedOnMount } from './indicator-mount';
 
 describeRadioGroupDemo('radix-ui');
 
@@ -62,3 +63,9 @@ test.describe('radix-ui radio group API', () => {
     await expect(page.getByTestId('forced-indicator-1')).toHaveCount(1);
   });
 });
+
+describeCheckedOnMount(
+  'radix-ui radio-group checked on mount',
+  '/tests/fixtures/radix-ui-radio-group',
+  'radio',
+);

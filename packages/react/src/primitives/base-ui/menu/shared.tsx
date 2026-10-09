@@ -353,9 +353,9 @@ type IndicatorState = { checked: boolean; transitionStatus?: string };
 const RadioGroupCheckContext = React.createContext<CheckGroup | null>(null);
 
 /**
- * An item's check shows itself whenever it appears (checking the item, or
- * opening the menu), and hides itself when it's unchecked (the indicator is
- * kept mounted for that). With `pop`, a radio item's check glides from the
+ * An item's check shows itself when the item is checked, and hides itself
+ * when it's unchecked (the indicator is kept mounted for that). The menu
+ * opening shows it at rest. With `pop`, a radio item's check glides from the
  * previously checked item.
  */
 function IndicatorMotion({

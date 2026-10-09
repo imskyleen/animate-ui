@@ -49,10 +49,10 @@ React Aria lets you render the indicator yourself. Animate UI animates the conte
 
 The motion of Animate UI v1's Radix UI radio group (v1 had no React Aria one):
 
-- **Radio**: the dot you render inside `data-slot="radio-group-indicator"` pops in when it mounts. Its scale and its opacity spring from 0 to 1 (stiffness 200, damping 16: it overshoots a little before settling). When it unmounts, a copy of it springs back to 0 in its place, then goes away: your render function stays the single source of truth.
+- **Radio**: the dot you render inside `data-slot="radio-group-indicator"` pops in when selecting its radio mounts it. Its scale and its opacity spring from 0 to 1 (stiffness 200, damping 16: it overshoots a little before settling). When it unmounts, a copy of it springs back to 0 in its place, then goes away: your render function stays the single source of truth.
 - **Radio** scales to 0.95 while pressed (React Aria's `isPressed`), with no hover scale, on Motion's default spring for scale (stiffness 550, damping 30).
 - Selecting with the arrow keys animates like a click.
-- A radio already selected on load renders at rest: the dot is your markup, rendered by the server before any script runs.
+- A radio already selected when it appears (on load, in a dialog that opens) renders at rest: only a change of selection animates a dot. On load, the dot is your markup, rendered by the server before any script runs.
 - Under reduced motion, the dot only fades and nothing scales.
 - `className` and `style` render props keep working.
 

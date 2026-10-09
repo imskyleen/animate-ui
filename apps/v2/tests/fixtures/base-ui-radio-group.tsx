@@ -8,10 +8,38 @@ const item = 'grid size-5 place-content-center rounded-full border';
 
 // API compatibility: the primitives must behave exactly like Base UI's.
 export default function BaseRadioGroupFixture() {
+  // Mounted checked after the page has loaded, as a dialog's would be.
+  const [shown, setShown] = React.useState(false);
   const [value, setValue] = React.useState('a');
 
   return (
     <div className="flex flex-col gap-10">
+      <section data-testid="mounted">
+        <button type="button" onClick={() => setShown(true)}>
+          Show checked
+        </button>
+        {shown && (
+          <RadioGroup aria-label="Mounted" defaultValue="a">
+            {['a', 'b'].map((v) => (
+              <Radio.Root
+                key={v}
+                value={v}
+                aria-label={`Mounted ${v}`}
+                className={item}
+              >
+                <Radio.Indicator
+                  data-testid={v === 'a' ? 'mounted-indicator' : undefined}
+                >
+                  <svg viewBox="0 0 8 8" className="size-2">
+                    <circle cx="4" cy="4" r="4" fill="currentColor" />
+                  </svg>
+                </Radio.Indicator>
+              </Radio.Root>
+            ))}
+          </RadioGroup>
+        )}
+      </section>
+
       <section data-testid="controlled">
         <p data-testid="controlled-value">{value}</p>
         <button type="button" onClick={() => setValue('a')}>

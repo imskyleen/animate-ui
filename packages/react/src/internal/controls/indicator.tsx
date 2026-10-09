@@ -357,6 +357,12 @@ type IndicatorContentProps = React.ComponentPropsWithRef<'span'> &
     indeterminate?: boolean;
     /** Something else decides how its content shows and hides. */
     coordinate?: Coordinate;
+    /**
+     * Whether content checked on mount animates in (read in the mount's
+     * layout effect when it's a function). Defaults to its presence's: not
+     * inside an `AnimatePresence initial={false}`.
+     */
+    animateOnMount?: boolean | (() => boolean);
   };
 
 /**
@@ -374,16 +380,19 @@ function IndicatorContent({
   transition,
   exitTransition,
   coordinate,
+  animateOnMount: animateOnMountProp,
   ref,
   style,
   ...props
 }: IndicatorContentProps) {
   const localRef = React.useRef<HTMLSpanElement>(null);
   const [isPresent, safeToRemove] = usePresence();
-  // v1 animated content already there on mount (its `initial` was the
-  // hidden state): a checked box draws its check, a selected radio pops its
-  // dot. Not inside an `AnimatePresence initial={false}`.
-  const animateOnMount = React.use(PresenceContext)?.initial !== false;
+  // A check or a dot only animates when it's checked or unchecked: content
+  // checked on mount (the page loading, a dialog or a menu opening) is at
+  // rest, unless it mounts because it was just checked (it's added to an
+  // `AnimatePresence` already there, whose `initial` doesn't apply to it).
+  const presenceInitial = React.use(PresenceContext)?.initial !== false;
+  const animateOnMount = animateOnMountProp ?? presenceInitial;
   const reduce = useShouldReduceMotion();
   const { enter, exit } = useIndicatorTransitions(kind, animation, {
     transition,
@@ -398,7 +407,9 @@ function IndicatorContent({
   const runRef = React.useRef(0);
   // Hidden until the first layout effect, so a server-rendered page doesn't
   // show the content before it animates in (or while it should be hidden).
-  const [hideFirst] = React.useState(() => !checked || animateOnMount);
+  const [hideFirst] = React.useState(
+    () => !checked || animateOnMount !== false,
+  );
 
   React.useLayoutEffect(() => {
     const element = localRef.current;
@@ -433,7 +444,11 @@ function IndicatorContent({
     if (!last) {
       // Shown before it animates (its content, or itself, starts hidden).
       element.style.opacity = '';
-      if (!visible || !animateOnMount) setNow(targets, look, visible, reduce);
+      const animated =
+        typeof animateOnMount === 'function'
+          ? animateOnMount()
+          : animateOnMount;
+      if (!visible || !animated) setNow(targets, look, visible, reduce);
       else if (coordinate) {
         setNow(targets, look, false, reduce);
         coordinate(handle, true);
@@ -483,10 +498,13 @@ type IndicatorPresenceProps = IndicatorContentProps & {
   keepMounted?: boolean;
 };
 
-/** Mounts the indicator while checked, and keeps it until its content left. */
+/**
+ * Mounts the indicator while checked, and keeps it until its content left.
+ * Checked on mount, it's at rest: it animates when it's checked.
+ */
 function IndicatorPresence({ keepMounted, ...props }: IndicatorPresenceProps) {
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {(props.checked || keepMounted) && (
         <IndicatorContent key="indicator" {...props} />
       )}

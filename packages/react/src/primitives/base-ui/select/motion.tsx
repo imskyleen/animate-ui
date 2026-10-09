@@ -259,9 +259,9 @@ type IndicatorMotionProps = IndicatorAnimationProps & {
 /**
  * A check, keeping the element the user's `render` asks for, kept mounted
  * (the parts pass `keepMounted`): it shows itself when its item is selected
- * (or the list opens) and hides itself when it's deselected, while a closing
- * list holds still. With `pop`, a single selection's check glides to the
- * chosen item.
+ * and hides itself when it's deselected, while a closing list holds still;
+ * the list opening shows it at rest. With `pop`, a single selection's check
+ * glides to the chosen item.
  */
 function IndicatorMotion({
   render,

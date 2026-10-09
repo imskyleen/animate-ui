@@ -12,9 +12,11 @@ const docs = defineDocs({
   dir: 'content/docs',
   docs: {
     // Sidebar badges, as in v1: `releaseDate: "YYYY-MM-DD"` (new for 30
-    // days), `alpha`, `beta`, `updated`, `deprecated`.
+    // days), `new` (new until it's removed: components v1 didn't have),
+    // `alpha`, `beta`, `updated`, `deprecated`.
     schema: pageSchema.extend({
       releaseDate: pageSchema.shape.description,
+      new: flag,
       alpha: flag,
       beta: flag,
       updated: flag,

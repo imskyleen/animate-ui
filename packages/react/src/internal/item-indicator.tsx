@@ -23,10 +23,13 @@ import { glideFrom, stopGlide } from './glide';
 // mounted on every item, and show the way their `CheckAnimation` says:
 //
 // - `draw` (the default): the check draws itself when its item is checked
-//   (or the list opens) and erases itself when it's unchecked, like a
-//   checkbox's (internal/controls/indicator), without its 0.2s delay (there's
-//   no box to fill first). Choosing another item of a single selection
-//   erases the old check while the new one draws.
+//   and erases itself when it's unchecked, like a checkbox's
+//   (internal/controls/indicator), without its 0.2s delay (there's no box to
+//   fill first). Choosing another item of a single selection erases the old
+//   check while the new one draws.
+//
+// Only checking and unchecking animate: the list or the menu opening shows
+// its checks at rest, and closing leaves them as they are.
 // - `pop`: it pops in from half its size out of a light blur, and shrinks
 //   back out. Choosing another item of a single selection doesn't pop: the
 //   check glides from the item it leaves to the chosen one, on the
@@ -184,10 +187,26 @@ type ItemCheckProps = Omit<
     group: CheckGroup | null;
   };
 
+/** Lists and menus on the page since an earlier frame. */
+const settledLists = new WeakSet<Element>();
+
+/**
+ * Whether `check` mounts in a list that was already there: it was just
+ * checked (an indicator rendered for the chosen item only). Mounting with its
+ * list (it opens), it's at rest.
+ */
+function inSettledList(check: Element | null) {
+  const list = check?.closest('[role="menu"], [role="listbox"]');
+  if (!list) return true;
+  if (settledLists.has(list)) return true;
+  requestAnimationFrame(() => settledLists.add(list));
+  return false;
+}
+
 /**
  * A list or menu item's check, kept mounted: its content (the icon) shows
- * when the item is checked (and when the list opens), and hides when it's
- * unchecked. Under reduced motion, it only fades.
+ * when the item is checked, and hides when it's unchecked; the list opening
+ * shows it at rest. Under reduced motion, it only fades.
  */
 function ItemCheck({
   multiple,
@@ -258,6 +277,7 @@ function ItemCheck({
         transition={transition ?? enter}
         exitTransition={transition ?? exit}
         coordinate={gliding ? coordinate : undefined}
+        animateOnMount={() => inSettledList(elementRef.current)}
       />
     </PresenceContext>
   );

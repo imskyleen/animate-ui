@@ -35,7 +35,8 @@ function Badge({
 const NEW_FOR_DAYS = 30;
 
 // The status badge (new, alpha, beta, deprecated, updated) of a sidebar item,
-// from its page's frontmatter.
+// from its page's frontmatter: `new` for 30 days after its `releaseDate`, or
+// as long as it has `new: true`.
 export const attachBadge: PageTreeTransformer['file'] = function (
   node,
   filePath,
@@ -44,11 +45,14 @@ export const attachBadge: PageTreeTransformer['file'] = function (
   if (!file || file.format !== 'page') return node;
   const data = file.data as Record<string, unknown>;
 
-  if (typeof data.releaseDate === 'string') {
-    const days =
-      (Date.now() - new Date(data.releaseDate).getTime()) / 86_400_000;
-    if (days <= NEW_FOR_DAYS) node.name = <Badge name={node.name}>new</Badge>;
-  }
+  // Released in the last 30 days, or a component v1 didn't have (new until
+  // the flag is removed).
+  const recent =
+    typeof data.releaseDate === 'string' &&
+    (Date.now() - new Date(data.releaseDate).getTime()) / 86_400_000 <=
+      NEW_FOR_DAYS;
+  if (recent || data.new === true)
+    node.name = <Badge name={node.name}>new</Badge>;
   if (data.alpha === true)
     node.name = (
       <Badge name={node.name} className="text-pink-600 dark:text-pink-400">

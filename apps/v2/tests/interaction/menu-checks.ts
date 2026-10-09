@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import {
+  expectAtRestThrough,
   expectDrawnIn,
   expectErased,
   expectPoppedIn,
@@ -19,7 +20,8 @@ import { expectEscapeWithoutHold, expectPickHold } from './pick-hold';
 // check pops in and shrinks back out; a radio item's check glides to the
 // newly checked item, like a select's. When choosing an item closes the menu
 // (Radix, React Aria's single selection), the menu holds still while the
-// check changes, then fades out.
+// check changes, then fades out. Only checking and unchecking animate: the
+// menu opening or closing leaves its checks at rest.
 
 type MenuChecksCase = {
   path: string;
@@ -126,6 +128,30 @@ function describeAnimation(
         timeout: 150_000,
       });
       await page.mouse.move(1, 1);
+    });
+
+    test('opening and closing the menu leaves its checks at rest', async ({
+      page,
+    }) => {
+      const cases = [
+        { label: c.checkbox.checked, open: c.open },
+        { label: c.radio.from, open: c.openRadios ?? c.open },
+      ];
+      for (const { label, open } of cases) {
+        await expectAtRestThrough(
+          page,
+          { items: ITEMS, label, indicator: c.indicator },
+          {
+            open: () => open(page),
+            close: async () => {
+              await page.keyboard.press('Escape');
+              await expect(page.locator(c.popup)).toHaveCount(0, {
+                timeout: 1000,
+              });
+            },
+          },
+        );
+      }
     });
 
     test('the checks sit where they did, centered on their item', async ({
