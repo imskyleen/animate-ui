@@ -7,7 +7,9 @@ import { expect, test, type Page } from '@playwright/test';
 // it is on screen while the popover slides over it: going from File to Edit,
 // File's items leave to the left and fade out, Edit's come in from the right
 // and fade in behind them (the other way around going back). One popover on
-// screen, every frame.
+// screen, every frame. Going back and forth faster than they settle, each
+// menu's content shows once, leaving from where it is, and a menu coming back
+// takes its content back from there.
 
 const CONTENT = '[data-slot="menubar-content"]';
 const SUB_CONTENT = '[data-slot$="sub-content"]';
@@ -20,7 +22,7 @@ type ShownPopover = Box & {
   label: string;
   opacity: number;
   scale: number;
-  /** The previous menu's content leaving inside it. */
+  /** The latest menu's content leaving inside it. */
   copy: {
     opacity: number;
     /** Its first item, on screen. */
@@ -32,6 +34,14 @@ type ShownPopover = Box & {
   } | null;
   /** Its own first item, on screen. */
   first: { opacity: number; left: number } | null;
+  /**
+   * Each menu's content inside it, its own first, then each one leaving: its
+   * text, how much it shows (its first item's opacity, on its layer's) and
+   * where its first item is.
+   */
+  contents: { text: string; shown: number; left: number }[];
+  /** Copies inside copies. */
+  nested: number;
 };
 
 export type PopoverFrame = {
@@ -74,9 +84,10 @@ export function recordPopovers(page: Page, duration: number) {
               const own = [...el.children].filter(
                 (child) => !child.matches(copySelector),
               ) as HTMLElement[];
-              const copy = el.querySelector<HTMLElement>(
-                `:scope > ${copySelector}`,
-              );
+              const layers = [
+                ...el.querySelectorAll<HTMLElement>(`:scope > ${copySelector}`),
+              ];
+              const copy = layers.at(-1);
               const copyFirst = copy?.firstElementChild;
               const matrix = style.transform.match(/matrix\(([^,]+)/);
               return {
@@ -104,6 +115,24 @@ export function recordPopovers(page: Page, duration: number) {
                       left: own[0].getBoundingClientRect().left,
                     }
                   : null,
+                contents: [
+                  ...(own[0] ? [[own[0], 1] as const] : []),
+                  ...layers.map(
+                    (layer) =>
+                      [
+                        layer.firstElementChild,
+                        Number(getComputedStyle(layer).opacity),
+                      ] as const,
+                  ),
+                ]
+                  .filter(([item]) => item)
+                  .map(([item, opacity]) => ({
+                    text: (item!.textContent ?? '').trim(),
+                    shown: opacity * Number(getComputedStyle(item!).opacity),
+                    left: item!.getBoundingClientRect().left,
+                  })),
+                nested: el.querySelectorAll(`${copySelector} ${copySelector}`)
+                  .length,
               };
             });
           const subs = [
@@ -390,6 +419,88 @@ export function describeMenubarHandoff(title: string, path: string) {
       await sweep();
       expectOnePopover(await recording, top);
       await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    });
+
+    test("going back and forth, each menu's content shows once, never inside another's", async ({
+      page,
+    }) => {
+      await open(page);
+      const recording = recordPopovers(page, 1600);
+      // Faster than the content settles: back to menus still leaving.
+      for (let pass = 0; pass < 2; pass++)
+        for (const name of [
+          'Edit',
+          'View',
+          'Profiles',
+          'View',
+          'Edit',
+          'File',
+        ]) {
+          await hover(page, name);
+          await page.waitForTimeout(40);
+        }
+      const frames = await recording;
+      expectOnePopover(frames);
+      for (const frame of frames) {
+        const popover = frame.shown[0]!;
+        expect(popover.nested, `${frame.t}ms`).toBe(0);
+        const shown = popover.contents
+          .filter((content) => content.shown > 0.02)
+          .map((content) => content.text.slice(0, 6));
+        expect(new Set(shown).size, `${frame.t}ms: ${shown.join(' + ')}`).toBe(
+          shown.length,
+        );
+      }
+    });
+
+    test('back to a menu still leaving, its content comes back from where it is', async ({
+      page,
+    }) => {
+      await open(page);
+      const file = await boxOf(page, 'New Tab');
+      const recording = recordPopovers(page, 900);
+      await hover(page, 'Edit');
+      await page.waitForTimeout(50);
+      await hover(page, 'File');
+      const frames = await recording;
+      expectOnePopover(frames);
+      // File's content, frame by frame: leaving inside Edit's popover, then
+      // File's own again.
+      const seen = frames.flatMap((frame) => {
+        const popover = frame.shown[0]!;
+        const content = popover.contents.find((c) =>
+          c.text.startsWith('New Tab'),
+        );
+        return content
+          ? [{ t: frame.t, own: popover.label.startsWith('New Tab'), content }]
+          : [];
+      });
+      const back = seen.findIndex(
+        (frame, i) => i > 0 && frame.own && !seen[i - 1]!.own,
+      );
+      expect(back).toBeGreaterThan(0);
+      const leaving = seen[back - 1]!.content;
+      const returning = seen[back]!.content;
+      // Still in sight when it comes back, it goes on from there (give or
+      // take the frame or two it went on fading out, quickly at first): not
+      // from nothing, not from 6px aside.
+      expect(leaving.shown).toBeGreaterThan(0.1);
+      expect(returning.shown).toBeGreaterThan(leaving.shown * 0.6);
+      expect(Math.abs(returning.left - leaving.left)).toBeLessThan(1.5);
+      // Then it only clears up, and slides back to its place, one way.
+      const rest = seen.slice(back);
+      for (let i = 1; i < rest.length; i++)
+        expect(
+          rest[i]!.content.shown,
+          `${rest[i]!.t}ms`,
+        ).toBeGreaterThanOrEqual(rest[i - 1]!.content.shown - 0.01);
+      expectOneWay(
+        rest.map((frame) => frame.content.left),
+        1,
+      );
+      const last = rest.at(-1)!.content;
+      expect(last.shown).toBe(1);
+      expect(Math.abs(last.left - file.firstLeft)).toBeLessThan(0.2);
     });
 
     test('two moves within one frame still hand over the popover on screen', async ({

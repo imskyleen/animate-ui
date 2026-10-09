@@ -7,6 +7,7 @@ import {
   describeMenubarHandoff,
   recordPopovers,
 } from './menubar-handoff';
+import { describeMenubarTriggers } from './menubar-triggers';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const CONTENT = '[data-slot="menubar-content"]';
@@ -180,4 +181,9 @@ describeMenubarHandoff(
 describeKeptMountedHandoff(
   'radix-ui menubar handoff, kept-mounted menus',
   '/tests/fixtures/radix-ui-menubar',
+);
+
+describeMenubarTriggers(
+  'radix-ui menubar triggers',
+  '/tests/demos/radix-ui/menubar',
 );

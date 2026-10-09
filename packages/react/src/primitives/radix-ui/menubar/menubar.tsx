@@ -17,6 +17,12 @@ import {
   type IndicatorAnimationProps,
   type PresenceAnimationProps,
 } from '../_menu/menu';
+import { mergeRefs } from '../../../internal/anchored';
+import {
+  TriggerHighlightScope,
+  useTriggerHighlight,
+  withHighlight,
+} from '../../../internal/item-highlight';
 import {
   MenuHandoffContext,
   useHandoffGroup,
@@ -29,7 +35,10 @@ import {
 // the highlighted item). Moving from an open menu to another, the popover
 // doesn't close and reopen: it moves to the next menu and resizes, in 250ms,
 // while the content changes like Motion's mega menu, the previous items
-// sliding 6px away as the next ones slide in (internal/menu-handoff).
+// sliding 6px away as the next ones slide in (internal/menu-handoff). The
+// triggers share one highlight, like a menu's items: hovered, focused or
+// with its menu open, a trigger's background glides from the previous one
+// (internal/item-highlight).
 
 type MenubarProps = MenubarPrimitive.MenubarProps;
 type MenubarMenuProps = MenubarPrimitive.MenubarMenuProps;
@@ -65,6 +74,7 @@ function Root({
   value: valueProp,
   defaultValue,
   onValueChange,
+  style,
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Root>) {
   const controlled = valueProp !== undefined;
@@ -78,15 +88,20 @@ function Root({
   return picks.provide(
     <MenubarStateContext value={{ value, picked: picks.picked }}>
       <MenuHandoffContext value={handoff}>
-        <MenubarPrimitive.Root
-          {...props}
-          value={value}
-          onValueChange={(next) => {
-            picks.onOpenChange(next !== '');
-            if (!controlled) setUncontrolled(next);
-            onValueChange?.(next);
-          }}
-        />
+        <TriggerHighlightScope>
+          <MenubarPrimitive.Root
+            {...props}
+            // The triggers' highlight goes under their content, above the
+            // bar's background: the bar is its own stacking context.
+            style={{ isolation: 'isolate', ...style }}
+            value={value}
+            onValueChange={(next) => {
+              picks.onOpenChange(next !== '');
+              if (!controlled) setUncontrolled(next);
+              onValueChange?.(next);
+            }}
+          />
+        </TriggerHighlightScope>
       </MenuHandoffContext>
     </MenubarStateContext>,
   );
@@ -112,7 +127,29 @@ function Menu({
   );
 }
 
-const Trigger = MenubarPrimitive.Trigger;
+function Trigger({
+  asChild,
+  disabled,
+  children,
+  ref,
+  ...props
+}: React.ComponentProps<typeof MenubarPrimitive.Trigger>) {
+  const { ref: highlightRef, highlight } = useTriggerHighlight(disabled);
+  const mergedRef = React.useMemo(
+    () => mergeRefs(ref, highlightRef),
+    [ref, highlightRef],
+  );
+  return (
+    <MenubarPrimitive.Trigger
+      {...props}
+      ref={mergedRef}
+      asChild={asChild}
+      disabled={disabled}
+    >
+      {withHighlight(children, highlight, asChild)}
+    </MenubarPrimitive.Trigger>
+  );
+}
 const Portal = createPortal(MenubarPrimitive.Portal);
 const Content = createContent(MenubarPrimitive.Content, {
   origin: '--radix-menubar-content-transform-origin',

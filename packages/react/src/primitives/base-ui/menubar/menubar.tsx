@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Menubar as MenubarPrimitive } from '@base-ui/react/menubar';
 
+import { TriggerHighlightScope } from '../../../internal/item-highlight';
 import {
   MenuHandoffContext,
   useHandoffGroup,
@@ -16,15 +17,29 @@ import {
 // popover doesn't close and reopen: it moves to the next menu and resizes,
 // in 250ms, while the content changes like Motion's mega menu, the previous
 // items sliding 6px away as the next ones slide in (internal/menu-handoff).
-// Same API as Base UI's, so `@base-ui/react/menubar` imports can switch to
-// Animate UI along with the menus.
+// Its menus' triggers share one highlight, like a menu's items: hovered,
+// focused or with its menu open, a trigger's background glides from the
+// previous one (internal/item-highlight). Same API as Base UI's, so
+// `@base-ui/react/menubar` imports can switch to Animate UI along with the
+// menus.
 
-function Menubar(props: Menubar.Props) {
+function Menubar({ style, ...props }: Menubar.Props) {
   // Its menus hand their popover over to one another.
   const handoff = useHandoffGroup();
   return (
     <MenuHandoffContext value={handoff}>
-      <MenubarPrimitive {...props} />
+      <TriggerHighlightScope>
+        <MenubarPrimitive
+          {...props}
+          // The triggers' highlight goes under their content, above the
+          // bar's background: the bar is its own stacking context.
+          style={
+            typeof style === 'function'
+              ? (state) => ({ isolation: 'isolate', ...style(state) })
+              : { isolation: 'isolate', ...style }
+          }
+        />
+      </TriggerHighlightScope>
     </MenuHandoffContext>
   );
 }

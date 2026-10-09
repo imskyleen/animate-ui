@@ -108,6 +108,22 @@ test.describe('base-ui menu demo', () => {
     expect(frames.some((f) => f.dash === 1 && f.opacity === 1)).toBe(true);
   });
 
+  test("its trigger keeps its own hover: only a menubar's triggers share a highlight", async ({
+    page,
+  }) => {
+    const open = page.getByRole('button', { name: 'Open', exact: true });
+    await open.hover();
+    await page.waitForTimeout(300);
+    await expect(page.locator('[data-slot="trigger-highlight"]')).toHaveCount(
+      0,
+    );
+    expect(
+      await open.evaluate((el) =>
+        el.style.getPropertyValue('background-color'),
+      ),
+    ).toBe('');
+  });
+
   test('reduced motion: it fades without scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const probe = await probeFirstFrame(page, CONTENT);

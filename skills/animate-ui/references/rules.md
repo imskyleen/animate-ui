@@ -140,7 +140,7 @@ A popup or panel open on the first render (`defaultOpen`, a controlled `open`) p
 
 #### A16. A menubar's popover moves from menu to menu
 
-Moving from an open menu of a menubar to another (hovering, clicking or tapping the next trigger, or the arrow keys), the popover doesn't close and reopen: the next menu takes the previous one's popover over, which moves to its place and resizes on the menu's own transition (`transition.menu`), and the content changes like Motion's mega menu. The content stays where it is on screen while the popover slides over it and clips it: the previous items leave `shift.handoff` (6px) away from where the popover goes while they fade out (`transition.handoffOut`); the next ones come in from 6px that way on `spring.handoff` and fade in behind them (`transition.handoffIn`). From File to Edit, File's items leave to the left and Edit's come from the right; a content riding along with the popover would read the other way round. One popover on screen at every frame, however fast the pointer sweeps the bar, interactive from its first frame. Under reduced motion each menu fades in place. Animate UI's Radix and Base UI menubars do it (internal/menu-handoff.ts; Menu recipe).
+Moving from an open menu of a menubar to another (hovering, clicking or tapping the next trigger, or the arrow keys), the popover doesn't close and reopen: the next menu takes the previous one's popover over, which moves to its place and resizes on the menu's own transition (`transition.menu`), and the content changes like Motion's mega menu. The content stays where it is on screen while the popover slides over it and clips it: the previous items leave `shift.handoff` (6px) away from where the popover goes while they fade out (`transition.handoffOut`); the next ones come in from 6px that way on `spring.handoff` and fade in behind them (`transition.handoffIn`). From File to Edit, File's items leave to the left and Edit's come from the right; a content riding along with the popover would read the other way round. One popover on screen at every frame, however fast the pointer sweeps the bar, interactive from its first frame. Going back and forth faster than the content settles, each menu's content shows once, never inside another's: what's still leaving goes on from where it is, and a menu coming back takes its items back from where they are and as they show, instead of them coming in again (blinking). The triggers share one highlight, like a menu's items: hovered, focused or with its menu open, a trigger's own background glides from the previous trigger (`spring.highlight`), fades in from nothing and fades out where it is once no trigger is lit. Under reduced motion each menu fades in place. Animate UI's Radix and Base UI menubars do it (internal/menu-handoff.ts; Menu recipe).
 
 ## B. Style rules
 
@@ -234,7 +234,7 @@ Quality (any miss is a bug):
 - [ ] Re-triggering retargets instead of restarting
 - [ ] Warm tooltips show (and the previous one goes) at once
 - [ ] Open from the start, it plays its entrance
-- [ ] A menubar's popover moves to the next menu (one on screen at every frame) instead of closing and reopening
+- [ ] A menubar's popover moves to the next menu (one on screen at every frame) instead of closing and reopening, and its triggers share one gliding highlight
 - [ ] Same exports, props and `data-slot` as the original component
 
 Style (defaults; deviations named in the output):

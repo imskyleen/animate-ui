@@ -6,6 +6,7 @@ import {
   describeKeptMountedHandoff,
   describeMenubarHandoff,
 } from './menubar-handoff';
+import { describeMenubarTriggers } from './menubar-triggers';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const CONTENT = '[data-slot="menubar-content"]';
@@ -120,4 +121,9 @@ describeMenubarHandoff(
 describeKeptMountedHandoff(
   'base-ui menubar handoff, kept-mounted menus',
   '/tests/fixtures/base-ui-menubar',
+);
+
+describeMenubarTriggers(
+  'base-ui menubar triggers',
+  '/tests/demos/base-ui/menubar',
 );

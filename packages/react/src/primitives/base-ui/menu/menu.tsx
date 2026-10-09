@@ -8,6 +8,7 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import { mergeRefs } from '../../../internal/anchored';
 import {
   useItemHighlight,
+  useTriggerHighlight,
   withHighlight,
 } from '../../../internal/item-highlight';
 import { useCheckGroup } from '../../../internal/item-indicator';
@@ -33,7 +34,6 @@ import Group = MenuPrimitive.Group;
 import GroupLabel = MenuPrimitive.GroupLabel;
 import Portal = MenuPrimitive.Portal;
 import Positioner = MenuPrimitive.Positioner;
-import Trigger = MenuPrimitive.Trigger;
 import Viewport = MenuPrimitive.Viewport;
 import Separator = MenuPrimitive.Separator;
 import Handle = MenuPrimitive.Handle;
@@ -78,6 +78,47 @@ namespace Root {
   export type ChangeEventReason = MenuPrimitive.Root.ChangeEventReason;
   export type ChangeEventDetails = MenuPrimitive.Root.ChangeEventDetails;
   export type Orientation = MenuPrimitive.Root.Orientation;
+}
+
+/**
+ * Base UI's Trigger. A menubar's menu's trigger takes part in its triggers'
+ * highlight (see Menubar).
+ */
+function Trigger<Payload = unknown>(props: Trigger.Props<Payload>) {
+  // One of a menubar's menus (not a menu nested in one).
+  const menubar = React.use(PopupHandoffContext);
+  if (!menubar) return <MenuPrimitive.Trigger<Payload> {...props} />;
+  return <BarTrigger<Payload> {...props} />;
+}
+
+function BarTrigger<Payload>({
+  disabled,
+  children,
+  ref,
+  ...props
+}: Trigger.Props<Payload> & { ref?: React.Ref<HTMLElement> }) {
+  const { ref: highlightRef, highlight } = useTriggerHighlight(disabled);
+  const mergedRef = React.useMemo(
+    () => mergeRefs(ref, highlightRef),
+    [ref, highlightRef],
+  );
+  return (
+    <MenuPrimitive.Trigger<Payload>
+      {...props}
+      ref={mergedRef}
+      disabled={disabled}
+    >
+      {withHighlight(children, highlight)}
+    </MenuPrimitive.Trigger>
+  );
+}
+
+namespace Trigger {
+  export type Props<Payload = unknown> =
+    MenuPrimitive.Trigger.Props<Payload> & {
+      ref?: React.Ref<HTMLElement>;
+    };
+  export type State = MenuPrimitive.Trigger.State;
 }
 
 function SubmenuRoot({

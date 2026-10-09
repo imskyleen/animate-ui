@@ -30,6 +30,11 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 // - Moving on again before it landed, the popover leaves from where it is,
 //   with what it shows. A menu that opened and closed before it was shown
 //   passes on the popover it was to take over.
+// - Each menu's content is one layer, like Motion's: going back and forth
+//   faster than it settles, what's still leaving goes on leaving from where
+//   it is, inside the next popover (never inside another copy), and a menu
+//   coming back takes its items back from where its copy is, as it shows,
+//   instead of them coming in again.
 
 /** A menu's popover, as its menubar knows it. */
 class HandoffEntry {
@@ -231,6 +236,33 @@ const ANIMATED_PROPERTIES = [
 /** Marks a submenu inside the popover: its copy leaves it out. */
 const SKIP = 'data-animate-ui-handoff-skip';
 
+/** Marks a copy of a menu's content leaving inside a popover: a layer. */
+const LAYER = 'data-animate-ui-handoff';
+
+/**
+ * A layer, as the handoff knows it: whose content it is (`menu`), where it
+ * slides to (`to`, from where it was copied) and the fade running on it.
+ */
+type Layer = {
+  menu: string | null;
+  to: [number, number];
+  fade: Animation | null;
+};
+
+const layers = new WeakMap<HTMLElement, Layer>();
+
+/** A menu, the same each time it opens: its popover's id. */
+const menuOf = (popover: HTMLElement) =>
+  popover.id || popover.getAttribute('aria-labelledby') || null;
+
+/** An element's translation by its `transform` (none: 0, 0). */
+function translationOf(style: CSSStyleDeclaration): [number, number] {
+  const match = style.transform.match(/^matrix\(([^)]+)\)$/);
+  if (!match) return [0, 0];
+  const values = match[1]!.split(',').map(Number);
+  return [values[4] ?? 0, values[5] ?? 0];
+}
+
 /**
  * A copy of the popover's content as it shows right now, laid out the way it
  * was: running animations (a check drawing itself, items still fading in)
@@ -238,6 +270,8 @@ const SKIP = 'data-animate-ui-handoff-skip';
  */
 type ContentCopy = {
   element: HTMLElement;
+  /** Whose content it is. */
+  menu: string | null;
   /** Its offset in the popover: the popover's border. */
   left: number;
   top: number;
@@ -269,7 +303,7 @@ function copyContent(popover: HTMLElement, nested: Set<HTMLElement>) {
   const element = popover.ownerDocument.createElement('div');
   element.setAttribute('aria-hidden', 'true');
   element.setAttribute('inert', '');
-  element.setAttribute('data-animate-ui-handoff', '');
+  element.setAttribute(LAYER, '');
   Object.assign(element.style, {
     position: 'absolute',
     margin: '0px',
@@ -302,14 +336,13 @@ function copyContent(popover: HTMLElement, nested: Set<HTMLElement>) {
   if (popover.scrollTop || popover.scrollLeft)
     scrolls.push([element, popover.scrollTop, popover.scrollLeft]);
   for (const node of Array.from(popover.childNodes)) {
-    // A copy still leaving from an earlier handoff, once it's out of sight.
+    // Its own content only: what's still leaving inside it from earlier
+    // handoffs goes on leaving on its own.
     if (
-      node instanceof HTMLElement &&
-      node.hasAttribute('data-animate-ui-handoff') &&
-      Number(getComputedStyle(node).opacity) < 0.05
+      node instanceof Element &&
+      (node.hasAttribute(LAYER) || node.hasAttribute(SKIP))
     )
       continue;
-    if (node instanceof Element && node.hasAttribute(SKIP)) continue;
     const copy = node.cloneNode(true);
     if (node instanceof Element && copy instanceof Element) {
       freeze(node, copy, scrolls);
@@ -323,10 +356,43 @@ function copyContent(popover: HTMLElement, nested: Set<HTMLElement>) {
   for (const node of skipped) node.removeAttribute(SKIP);
   return {
     element,
+    menu: menuOf(popover),
     left: popover.clientLeft,
     top: popover.clientTop,
     scrolls,
   } satisfies ContentCopy;
+}
+
+/** A layer leaving inside a popover, as it shows right now. */
+type Leaving = {
+  element: HTMLElement;
+  menu: string | null;
+  /** On screen. */
+  box: DOMRect;
+  opacity: number;
+  /** Where it has slid to, and where it slides to. */
+  slide: [number, number];
+  to: [number, number];
+};
+
+/** The layers leaving inside a popover, still in sight. */
+function leavingIn(popover: HTMLElement): Leaving[] {
+  const found: Leaving[] = [];
+  for (const element of Array.from(popover.children)) {
+    if (!(element instanceof HTMLElement) || !element.hasAttribute(LAYER))
+      continue;
+    const style = getComputedStyle(element);
+    const layer = layers.get(element);
+    found.push({
+      element,
+      menu: layer?.menu ?? null,
+      box: element.getBoundingClientRect(),
+      opacity: Number(style.opacity),
+      slide: translationOf(style),
+      to: layer?.to ?? [0, 0],
+    });
+  }
+  return found;
 }
 
 type HandoffTimings = {
@@ -342,26 +408,36 @@ type HandoffTimings = {
 
 /** The handoff's animations running on a popover, by popover. */
 const running = new WeakMap<HTMLElement, Animation[]>();
-/** Copies leaving inside a popover that made it `position: relative`. */
-const positioned = new WeakMap<HTMLElement, number>();
+/** Popovers made `position: relative` for the layers leaving inside. */
+const positioned = new WeakSet<HTMLElement>();
+
+/** Its layers are gone: it gets its own position back. */
+function release(popover: HTMLElement) {
+  if (!positioned.has(popover) || popover.querySelector(`:scope > [${LAYER}]`))
+    return;
+  positioned.delete(popover);
+  popover.style.position = '';
+}
 
 /**
  * Moves the popover from `from` (the previous one, on screen) to where it
  * rests, resizing it on the way, and swaps the content in place on screen:
- * the previous one's copy leaves, the popover's own items come in.
+ * the previous one's copy leaves, the popover's own items come in. What was
+ * still leaving inside the previous one (`leaving`) goes on leaving inside
+ * it, each from where it is; its own content, if it's among them, comes
+ * back from there instead of coming in again.
  */
 function handOver(
   popover: HTMLElement,
   from: DOMRect,
   previous: ContentCopy,
+  leaving: Leaving[],
   timings: HandoffTimings,
 ) {
   // An earlier handoff to this popover (taken over again before it landed):
   // it starts over from where it is.
   for (const animation of running.get(popover) ?? []) animation.cancel();
-  for (const copy of popover.querySelectorAll(
-    ':scope > [data-animate-ui-handoff]',
-  ))
+  for (const copy of popover.querySelectorAll(`:scope > [${LAYER}]`))
     copy.remove();
   const animations: Animation[] = [];
   running.set(popover, animations);
@@ -382,6 +458,9 @@ function handOver(
   const to = popover.getBoundingClientRect();
   popover.style.transform = transform;
   const computed = getComputedStyle(popover);
+  const items = Array.from(popover.children).filter(
+    (item) => !item.hasAttribute(LAYER),
+  );
 
   const move = toCssTiming(timings.move);
   const shift = motionTokens.shift.handoff;
@@ -391,8 +470,33 @@ function handOver(
   const y = from.top - to.top;
   const horizontal = Math.abs(x) >= Math.abs(y);
   const way = -Math.sign(horizontal ? x : y);
-  const offset = (distance: number) =>
-    horizontal ? `${distance}px 0px` : `0px ${distance}px`;
+  const along = (distance: number): [number, number] =>
+    horizontal ? [distance, 0] : [0, distance];
+
+  // Its own content still leaving (back to a menu just left): it comes back
+  // from where it is, as it shows, instead of coming in again.
+  const menu = menuOf(popover);
+  const back = menu
+    ? leaving.find((layer) => layer.menu === menu && layer.opacity > 0.02)
+    : undefined;
+  let enter: { slide: [number, number]; shown: number } = {
+    slide: along(way * shift),
+    shown: 0,
+  };
+  const first = items[0];
+  const theirs = back?.element.firstElementChild;
+  if (back && first && theirs) {
+    const own = first.getBoundingClientRect();
+    const box = theirs.getBoundingClientRect();
+    const rest = Number(getComputedStyle(first).opacity) || 1;
+    enter = {
+      slide: [box.left - own.left, box.top - own.top],
+      shown: Math.min(
+        1,
+        (back.opacity * Number(getComputedStyle(theirs).opacity)) / rest,
+      ),
+    };
+  }
 
   // Its size for the way. Its margins make up the difference, so the box the
   // library places stays at its rest size (it would place it again on every
@@ -450,11 +554,13 @@ function handOver(
 
   // Its own items stay where they rest on screen while it moves over them
   // (moved back by as much as it moves), and come in from the way it goes.
-  for (const item of Array.from(popover.children)) {
-    if (item.hasAttribute('data-animate-ui-handoff')) continue;
+  const [slideX, slideY] = enter.slide;
+  const slides = Math.abs(slideX) >= 0.5 || Math.abs(slideY) >= 0.5;
+  for (const item of items) {
+    const rest = getComputedStyle(item).opacity;
     animate(
       item,
-      [{ opacity: 0 }, { opacity: getComputedStyle(item).opacity }],
+      [{ opacity: Number(rest) * enter.shown }, { opacity: rest }],
       fadeIn,
     );
     if (moves)
@@ -466,10 +572,10 @@ function handOver(
           composite: 'add',
         },
       );
-    if (way)
+    if (slides)
       animate(
         item,
-        [{ translate: offset(way * shift) }, { translate: '0px 0px' }],
+        [{ translate: `${slideX}px ${slideY}px` }, { translate: '0px 0px' }],
         {
           ...slideIn,
           composite: 'add',
@@ -478,46 +584,98 @@ function handOver(
   }
 
   // The previous content leaves where it was on screen, the other way,
-  // inside the popover (its containing block: it's clipped by it).
+  // inside the popover (its containing block: it's clipped by it), and so
+  // does what was still leaving inside the previous popover, each from where
+  // it is: one layer per menu, none inside another.
   if (computed.position === 'static' || positioned.has(popover)) {
-    positioned.set(popover, (positioned.get(popover) ?? 0) + 1);
+    positioned.add(popover);
     popover.style.position = 'relative';
   }
+  // The popover's padding box on screen, as it starts.
+  const originLeft = from.left + popover.clientLeft;
+  const originTop = from.top + popover.clientTop;
+  const leave = (
+    element: HTMLElement,
+    {
+      menu: layerMenu,
+      left,
+      top,
+      opacity,
+      slide,
+      to: slideTo,
+    }: {
+      menu: string | null;
+      /** Where it is on screen, not counting its slide. */
+      left: number;
+      top: number;
+      opacity: number;
+      slide: [number, number];
+      to: [number, number];
+    },
+  ) => {
+    for (const animation of element.getAnimations()) animation.cancel();
+    element.style.left = `${left - originLeft}px`;
+    element.style.top = `${top - originTop}px`;
+    popover.appendChild(element);
+    // It stays where it is on screen while the popover moves.
+    if (moves)
+      element.animate(
+        [{ translate: '0px 0px' }, { translate: `${x}px ${y}px` }],
+        { ...move, fill: 'forwards' },
+      );
+    if (slide[0] !== slideTo[0] || slide[1] !== slideTo[1])
+      element.animate(
+        [
+          { transform: `translate(${slide[0]}px, ${slide[1]}px)` },
+          { transform: `translate(${slideTo[0]}px, ${slideTo[1]}px)` },
+        ],
+        { ...out, fill: 'forwards' },
+      );
+    const fade = element.animate([{ opacity }, { opacity: 0 }], {
+      ...out,
+      fill: 'forwards',
+    });
+    const layer: Layer = { menu: layerMenu, to: slideTo, fade };
+    layers.set(element, layer);
+    const remove = () => {
+      // Moved on into another popover since: it leaves from there.
+      if (layers.get(element)?.fade !== fade) return;
+      element.remove();
+      release(popover);
+    };
+    fade.finished.then(remove, remove);
+  };
+
+  for (const layer of leaving) {
+    if (layer === back) {
+      layers.delete(layer.element);
+      layer.element.remove();
+      continue;
+    }
+    if (layer.opacity <= 0.02) continue;
+    leave(layer.element, {
+      menu: layer.menu,
+      left: layer.box.left - layer.slide[0],
+      top: layer.box.top - layer.slide[1],
+      opacity: layer.opacity,
+      slide: layer.slide,
+      to: layer.to,
+    });
+  }
+
   const copy = previous.element;
-  copy.style.left = `${previous.left - popover.clientLeft}px`;
-  copy.style.top = `${previous.top - popover.clientTop}px`;
-  popover.appendChild(copy);
+  leave(copy, {
+    menu: previous.menu,
+    left: from.left + previous.left,
+    top: from.top + previous.top,
+    opacity: 1,
+    slide: [0, 0],
+    to: along(-way * shift),
+  });
   for (const [element, top, left] of previous.scrolls) {
     element.scrollTop = top;
     element.scrollLeft = left;
   }
-  if (moves)
-    animate(copy, [{ translate: '0px 0px' }, { translate: `${x}px ${y}px` }], {
-      ...move,
-      composite: 'add',
-      fill: 'forwards',
-    });
-  if (way)
-    animate(
-      copy,
-      [{ translate: '0px 0px' }, { translate: offset(-way * shift) }],
-      { ...out, composite: 'add', fill: 'forwards' },
-    );
-  const leave = animate(copy, [{ opacity: 1 }, { opacity: 0 }], {
-    ...out,
-    fill: 'forwards',
-  });
-  const remove = () => {
-    copy.remove();
-    const count = positioned.get(popover);
-    if (count === undefined) return;
-    if (count > 1) positioned.set(popover, count - 1);
-    else {
-      positioned.delete(popover);
-      popover.style.position = '';
-    }
-  };
-  leave.finished.then(remove, remove);
 }
 
 type HandoffOptions = {
@@ -642,10 +800,13 @@ function useMenuHandoff(
       swapped = true;
       stop();
       entry.await(null);
+      // What still leaves inside it goes on leaving inside the next one.
+      const leaving = previous && source.node ? leavingIn(source.node) : [];
       for (const other of skipped) other.drop();
       source.drop();
       if (node.isConnected && previous)
-        handOver(node, from, previous, timingsRef.current);
+        handOver(node, from, previous, leaving, timingsRef.current);
+      if (source.node) release(source.node);
     };
     const observer =
       typeof ResizeObserver === 'function' ? new ResizeObserver(swap) : null;
