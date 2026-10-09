@@ -1,46 +1,15 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
+import {
+  describeKeptMountedHandoff,
+  describeMenubarHandoff,
+  recordPopovers,
+} from './menubar-handoff';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const CONTENT = '[data-slot="menubar-content"]';
-
-/** First frame of the menu content that contains `text`, once it mounts. */
-async function probeMenu(page: Page, text: string) {
-  await page.evaluate(
-    ({ selector, text }) => {
-      const w = window as unknown as { __menu?: Promise<unknown> };
-      w.__menu = new Promise((resolve) => {
-        const observer = new MutationObserver(() => {
-          const el = [...document.querySelectorAll(selector)].find((node) =>
-            node.textContent?.includes(text),
-          );
-          if (!el) return;
-          observer.disconnect();
-          requestAnimationFrame(() => {
-            const cs = getComputedStyle(el);
-            const match = cs.transform.match(/matrix\(([^,]+)/);
-            resolve({
-              opacity: Number(cs.opacity),
-              scale: match ? Number(match[1]) : 1,
-            });
-          });
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-      });
-    },
-    { selector: CONTENT, text },
-  );
-  return () =>
-    page.evaluate(
-      () =>
-        (window as unknown as { __menu: Promise<unknown> }).__menu as Promise<{
-          opacity: number;
-          scale: number;
-        }>,
-    );
-}
 
 test.describe('radix-ui menubar demo', () => {
   test.describe.configure({ timeout: 180_000 });
@@ -60,34 +29,6 @@ test.describe('radix-ui menubar demo', () => {
     expect(first.origin.startsWith('0px 0px')).toBe(true);
     await page.waitForTimeout(400);
     expect((await sample(page, CONTENT)).opacity).toBe(1);
-  });
-
-  test('moving to another menu plays its entrance, like any menu', async ({
-    page,
-  }) => {
-    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
-    await page.waitForTimeout(500);
-    const firstFrame = await probeMenu(page, 'Cut');
-    await page.getByRole('menuitem', { name: 'Edit', exact: true }).hover();
-    const first = await firstFrame();
-    expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeLessThan(1);
-    // The previous menu plays its exit, then unmounts.
-    await expect(page.locator(CONTENT, { hasText: 'New Window' })).toHaveCount(
-      0,
-      { timeout: 600 },
-    );
-  });
-
-  test('arrow keys move between menus the same way', async ({ page }) => {
-    await page.getByRole('menuitem', { name: 'File', exact: true }).focus();
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(500);
-    const firstFrame = await probeMenu(page, 'Cut');
-    await page.keyboard.press('ArrowRight');
-    const first = await firstFrame();
-    expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeLessThan(1);
   });
 
   test('closing the bar plays the exit, then unmounts', async ({ page }) => {
@@ -138,6 +79,53 @@ test.describe('radix-ui menubar API', () => {
     await expect(page.getByTestId('value')).toHaveText('none');
   });
 
+  test('a submenu in its own portal goes with its menu to the next one', async ({
+    page,
+  }) => {
+    await page.getByRole('menuitem', { name: 'Alpha', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Alpha more' }).hover();
+    await expect(
+      page.getByRole('menuitem', { name: 'Alpha sub item' }),
+    ).toBeVisible();
+    await page.waitForTimeout(400);
+    const recording = recordPopovers(page, 500);
+    const beta = (await page
+      .getByRole('menuitem', { name: 'Beta', exact: true })
+      .boundingBox())!;
+    await page.mouse.move(beta.x + beta.width / 2, beta.y + beta.height / 2);
+    const frames = await recording;
+    expect(frames[0]!.subs).toBe(1);
+    // Gone in the frame Beta's menu shows.
+    expect(
+      frames.filter(
+        (frame) =>
+          frame.subs > 0 &&
+          frame.shown.some((popover) => popover.label.startsWith('Beta')),
+      ),
+    ).toEqual([]);
+  });
+
+  test('a kept-mounted menu opens on a click, and closes on one', async ({
+    page,
+  }) => {
+    const gamma = page.getByRole('menuitem', { name: 'Gamma', exact: true });
+    const item = page.getByRole('menuitem', { name: 'Gamma item' });
+    // A closed kept-mounted menu is still a dismissable layer: the pointer
+    // down that opens it must not count as one outside it.
+    await gamma.click();
+    await expect(item).toBeVisible();
+    await page.waitForTimeout(400);
+    await expect(item).toBeVisible();
+    // A click outside still closes it, and so does its trigger.
+    await page.mouse.click(5, 5);
+    await expect(item).toBeHidden({ timeout: 600 });
+    await gamma.click();
+    await expect(item).toBeVisible();
+    await page.waitForTimeout(400);
+    await gamma.click();
+    await expect(item).toBeHidden({ timeout: 600 });
+  });
+
   test('menus without a value, with the import * style', async ({ page }) => {
     await page.getByRole('menuitem', { name: 'Star menu' }).click();
     await expect(
@@ -183,3 +171,13 @@ describeMenuChecks('radix-ui menubar checks', {
   radio: { from: 'Benoit', to: 'Luis' },
   radioCloses: true,
 });
+
+describeMenubarHandoff(
+  'radix-ui menubar handoff',
+  '/tests/demos/radix-ui/menubar',
+);
+
+describeKeptMountedHandoff(
+  'radix-ui menubar handoff, kept-mounted menus',
+  '/tests/fixtures/radix-ui-menubar',
+);

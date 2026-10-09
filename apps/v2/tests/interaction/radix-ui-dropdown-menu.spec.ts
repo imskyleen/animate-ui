@@ -231,12 +231,33 @@ test.describe('radix-ui dropdown-menu API', () => {
     const item = page.getByText('Kept item');
     await expect(item).toHaveCount(1);
     await expect(item).toBeHidden();
-    // From the keyboard: a closed force-mounted menu is still a dismissable
-    // layer, so Radix takes a pointer down on the trigger for an outside one.
     await page.getByRole('button', { name: 'Force mounted' }).focus();
     await page.keyboard.press('Enter');
     await expect(item).toBeVisible();
     await page.keyboard.press('Escape');
+    await expect(item).toBeHidden({ timeout: 600 });
+    await expect(item).toHaveCount(1);
+  });
+
+  test('a force-mounted menu opens on a click, and closes on one', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Show force-mounted menu' }).click();
+    const trigger = page.getByRole('button', { name: 'Force mounted' });
+    const item = page.getByText('Kept item');
+    // A closed force-mounted menu is still a dismissable layer: the pointer
+    // down that opens it must not count as one outside it.
+    await trigger.click();
+    await expect(item).toBeVisible();
+    await page.waitForTimeout(400);
+    await expect(item).toBeVisible();
+    // A click outside still closes it, and so does its trigger.
+    await page.mouse.click(5, 5);
+    await expect(item).toBeHidden({ timeout: 600 });
+    await trigger.click();
+    await expect(item).toBeVisible();
+    await page.waitForTimeout(400);
+    await trigger.click();
     await expect(item).toBeHidden({ timeout: 600 });
     await expect(item).toHaveCount(1);
   });

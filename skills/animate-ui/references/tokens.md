@@ -9,6 +9,7 @@ import {
   transition,
   scale,
   blur,
+  shift,
   useMotionTokens, // the same tokens, paced by AnimateUIProvider's tempo
   useTempoTransition,
   toCssTiming,
@@ -30,22 +31,23 @@ Import `transition` as `motionTransition` when the component also takes a `trans
 
 Springs first: nearly everything moves on a spring. They retarget with their velocity when interrupted, and a little overshoot makes motion feel alive. Animate UI's springs are `stiffness` / `damping` pairs (mass 1): tune those, not `bounce`, which Motion ignores when stiffness or damping are set.
 
-| Token              | Value                                                     | Feel                                               | Use for                                                                                                                               |
-| ------------------ | --------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                             | Press feedback (Motion's own spring for `scale`)                                                                                      |
-| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms | Tooltips, popovers, hover cards, anchored toasts, tags                                                                                |
-| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                         | Dialogs and alert dialogs                                                                                                             |
-| `spring.toast`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                           | Toasts entering from an edge (they travel farther)                                                                                    |
-| `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                       | A selection moving between items (tabs, toggle groups)                                                                                |
-| `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer   | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item (`pop`) |
-| `spring.reflow`    | `stiffness: 500, damping: 40`                             | Quick, no overshoot                                | Items making room for one added or closing the gap of one removed (a combobox's chips and its input)                                  |
-| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                       | A height following its content (Auto Height, tab panels)                                                                              |
-| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                         | A switch or slider thumb gliding and stretching                                                                                       |
-| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                             | Small marks popping inside a control (radio dot, typed OTP characters)                                                                |
-| `spring.checkPop`  | `stiffness: 500, damping: 24`                             | Lively, overshoots ~13% (peak at ~170ms)           | A check popping in (`checkAnimation="pop"`), from `scale.icon` out of `blur.icon`                                                     |
-| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                            | Effects bringing content in (Fade, Slide, Zoom, Blur)                                                                                 |
-| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                            | A progress bar and its value                                                                                                          |
-| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                         | Numbers rolling to their value                                                                                                        |
+| Token              | Value                                                     | Feel                                                         | Use for                                                                                                                               |
+| ------------------ | --------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`              | Quick: there in ~120ms                                       | Press feedback (Motion's own spring for `scale`)                                                                                      |
+| `spring.pop`       | `stiffness: 300, damping: 25`                             | There in ~200ms, overshoots ~4%, settled by ~500ms           | Tooltips, popovers, hover cards, anchored toasts, tags                                                                                |
+| `spring.dialog`    | `stiffness: 150, damping: 25`                             | Calm, no overshoot, ~450ms                                   | Dialogs and alert dialogs                                                                                                             |
+| `spring.toast`     | `stiffness: 150, damping: 22`                             | A touch livelier, ~550ms                                     | Toasts entering from an edge (they travel farther)                                                                                    |
+| `spring.selection` | `stiffness: 300, damping: 30`                             | Smooth slide                                                 | A selection moving between items (tabs, toggle groups)                                                                                |
+| `spring.highlight` | `stiffness: 500, damping: 40`                             | Quick, there in ~150ms, never trails the pointer             | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item (`pop`) |
+| `spring.reflow`    | `stiffness: 500, damping: 40`                             | Quick, no overshoot                                          | Items making room for one added or closing the gap of one removed (a combobox's chips and its input)                                  |
+| `spring.handoff`   | `stiffness: 340, damping: 37`                             | From rest, there in ~250ms, no overshoot (critically damped) | A menu's content sliding in as a menubar's popover is handed from one menu to the next (`shift.handoff`), like Motion's mega menu     |
+| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01` | No overshoot                                                 | A height following its content (Auto Height, tab panels)                                                                              |
+| `spring.thumb`     | `stiffness: 300, damping: 25`                             | Like `pop`                                                   | A switch or slider thumb gliding and stretching                                                                                       |
+| `spring.bounce`    | `stiffness: 200, damping: 16`                             | Bouncy                                                       | Small marks popping inside a control (radio dot, typed OTP characters)                                                                |
+| `spring.checkPop`  | `stiffness: 500, damping: 24`                             | Lively, overshoots ~13% (peak at ~170ms)                     | A check popping in (`checkAnimation="pop"`), from `scale.icon` out of `blur.icon`                                                     |
+| `spring.entrance`  | `stiffness: 200, damping: 20`                             | Playful                                                      | Effects bringing content in (Fade, Slide, Zoom, Blur)                                                                                 |
+| `spring.progress`  | `stiffness: 100, damping: 30`                             | Unhurried, no overshoot                                      | A progress bar and its value                                                                                                          |
+| `spring.number`    | `stiffness: 90, damping: 50`                              | Rolls without overshooting                                   | Numbers rolling to their value                                                                                                        |
 
 Every spring above has `type: 'spring'`.
 
@@ -53,24 +55,26 @@ Every spring above has `type: 'spring'`.
 
 Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
 
-| Token                   | Value                                            | Use for                                                                                           |
-| ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                                                      |
-| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out: a dialog's, a sheet's, a drawer's |
-| `transition.dialogFade` | `{ duration: 0.4, ease: ease.soft }`             | A dialog's content fading in at once, ahead of its tilt                                           |
-| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)                                            |
-| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                                     |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                                        |
-| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                                                        |
-| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                                                  |
-| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                                            |
-| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out                                         |
-| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                                                             |
-| `transition.dismiss`    | `{ duration: 0.2, ease: ease.away }`             | A dialog or a sheet dismissed: at once, quicker than it came, speeding away                       |
-| `transition.drawerOut`  | `{ duration: 0.16, ease: ease.in }`              | A drawer closed: quick, seen speeding off its edge                                                |
-| `transition.drawer`     | `{ duration: 0.4, ease: ease.drawer }`           | A drawer sliding in, snapping or easing back after a drag: a hint of bounce                       |
-| `transition.sheet`      | `{ duration: 0.4, ease: ease.soft }`             | A sheet sliding in, no bounce (held against the screen's edge)                                    |
-| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)                                         |
+| Token                   | Value                                            | Use for                                                                                                                              |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                                                                                         |
+| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out: a dialog's, a sheet's, a drawer's                                    |
+| `transition.dialogFade` | `{ duration: 0.4, ease: ease.soft }`             | A dialog's content fading in at once, ahead of its tilt                                                                              |
+| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)                                                                               |
+| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                                                                        |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                                                                           |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                                                                                           |
+| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                                                                                     |
+| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                                                                               |
+| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out                                                                            |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                                                                                                |
+| `transition.handoffOut` | `{ duration: 0.25, ease: ease.soft }`            | A menu's content leaving the popover it hands to the next menu (a menubar's), sliding away from where it goes: mostly gone in ~100ms |
+| `transition.handoffIn`  | `{ duration: 0.3, ease: ease.arrive }`           | The next menu's content fading in behind it, once it has mostly cleared                                                              |
+| `transition.dismiss`    | `{ duration: 0.2, ease: ease.away }`             | A dialog or a sheet dismissed: at once, quicker than it came, speeding away                                                          |
+| `transition.drawerOut`  | `{ duration: 0.16, ease: ease.in }`              | A drawer closed: quick, seen speeding off its edge                                                                                   |
+| `transition.drawer`     | `{ duration: 0.4, ease: ease.drawer }`           | A drawer sliding in, snapping or easing back after a drag: a hint of bounce                                                          |
+| `transition.sheet`      | `{ duration: 0.4, ease: ease.soft }`             | A sheet sliding in, no bounce (held against the screen's edge)                                                                       |
+| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)                                                                            |
 
 ## Curves
 
@@ -85,11 +89,12 @@ Pick a tween's curve by what the element does:
 | Moves or morphs on screen                               | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
 | A dialog or a sheet dismissed, speeding away            | `ease.away`: `cubic-bezier(0.33, 0.17, 0.67, 0.5)`, a steady push                  |
 | A drawer closed, speeding off its edge                  | `ease.in`: `cubic-bezier(0.4, 0, 1, 1)`                                            |
+| Fades in behind content leaving (a menubar's next menu) | `ease.arrive`: `cubic-bezier(0.11, 0, 0.5, 0)`, a slow start                       |
 | Changes color (CSS)                                     | `ease`                                                                             |
 | Moves constantly (marquee, loader)                      | `linear`                                                                           |
 | Thrown off screen by a swipe                            | `linear`, at the finger's speed (see the Sheet recipe)                             |
 
-`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), an overlay should dim the page, not cut to dark, a menu, opened all day long, should be seen opening rather than snapped open, and a sheet should slow down all the way in. A drawer answers at once and goes a hair past its rest on `ease.drawer`: Vaul's `cubic-bezier(0.32, 0.72, 0, 1)` felt linear, zipping in and stopping, then crawled out. Never ease-in on UI: it starts slow, exactly when the user is watching. A dialog or a sheet dismissed speeds away on `ease.away` (`transition.dismiss`): a steady push from half its average speed to one and a half, so it leaves at once (CSS's ease-in waited on its first frames) and its last pixels don't crawl out. The one ease-in is a drawer closed (`transition.drawerOut`, 0.16s on `ease.in`): the steady push read as a linear slide there, and short, its slow start doesn't wait.
+`ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), an overlay should dim the page, not cut to dark, a menu, opened all day long, should be seen opening rather than snapped open, and a sheet should slow down all the way in. A drawer answers at once and goes a hair past its rest on `ease.drawer`: Vaul's `cubic-bezier(0.32, 0.72, 0, 1)` felt linear, zipping in and stopping, then crawled out. Never ease-in on UI: it starts slow, exactly when the user is watching. A dialog or a sheet dismissed speeds away on `ease.away` (`transition.dismiss`): a steady push from half its average speed to one and a half, so it leaves at once (CSS's ease-in waited on its first frames) and its last pixels don't crawl out. The one ease-in that moves something is a drawer closed (`transition.drawerOut`, 0.16s on `ease.in`): the steady push read as a linear slide there, and short, its slow start doesn't wait. `ease.arrive` only fades: as a menubar's popover is handed to the next menu, the next menu's content fades in on it (`transition.handoffIn`) behind the previous one fading out, so what leaves has mostly cleared before it shows, like Motion's mega menu; its slide (`spring.handoff`) and the popover's move (`transition.menu`) start at once.
 
 ## Scales
 
@@ -114,6 +119,14 @@ The smaller the element, the farther it starts, so its growth stays visible; the
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
 
+## Shifts
+
+| Token           | Value    | Use for                                                                                                                                                             |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shift.handoff` | `6` (px) | How far a menu's content slides as a menubar's popover is handed to the next menu: the leaving content away from where the popover goes, the next one in from there |
+
+Distances in px, for content that slides a little while it fades, whatever its size: a hint of direction, not a journey. A menubar's content slides 6px on screen, like Motion's mega menu, without a blur: it stays where it is while its popover slides over it, it doesn't swap in place.
+
 ## Tempo
 
 `tempo` paces every token at once: durations and delays are multiplied by it, and a stiffness/damping spring keeps its exact shape on the new time scale (stiffness / tempo², damping / tempo). Change it for an app or a subtree without touching any component:
@@ -124,7 +137,7 @@ import { AnimateUIProvider } from '@animate-ui/react/provider';
 <AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>; // crisper; 1.2 is more relaxed
 ```
 
-The provider is optional and nestable: the closest one sets what it's given, the rest comes from the one around it. `useTempoTransition(t)` applies it to one transition, `scaleTransition(t, tempo)` outside React. Curves, scales and blurs don't depend on it.
+The provider is optional and nestable: the closest one sets what it's given, the rest comes from the one around it. `useTempoTransition(t)` applies it to one transition, `scaleTransition(t, tempo)` outside React. Curves, scales, blurs and shifts don't depend on it.
 
 ## Check animation
 

@@ -11,6 +11,13 @@ import {
 import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
 import { HighlightScope } from '../../../internal/item-highlight';
 import {
+  HandoffNestedContext,
+  takeOver,
+  useHandoffNested,
+  useMenuHandoff,
+  type HandoffGroup,
+} from '../../../internal/menu-handoff';
+import {
   CheckRegistryContext,
   ItemCheck,
   PICK_HOLD,
@@ -36,8 +43,9 @@ import {
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
   /**
-   * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
+   * Transition of the entrance (and, in a menubar, of the popover moving to
+   * the next menu), and of the exit unless `exitTransition` is set. Defaults
+   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -55,6 +63,44 @@ type HTMLProps = React.HTMLAttributes<HTMLElement> & {
 
 /** How the closest Root or SubmenuRoot unmounts its popup. */
 const UnmountContext = React.createContext<(() => void) | null>(null);
+
+/**
+ * The menubar of the closest Root, if it's one of its menus: its popup takes
+ * over the popover of the menu open before it (internal/menu-handoff).
+ */
+const PopupHandoffContext = React.createContext<HandoffGroup | null>(null);
+
+/**
+ * The root menu closed because the user moved on to another menu of its
+ * menubar: the next one takes its popover over, even once it has closed.
+ */
+const MovedOnContext = React.createContext(false);
+
+/** Base UI's reasons for closing a menubar's menu as another one opens. */
+const MOVE_REASONS = new Set([
+  'trigger-hover',
+  'trigger-focus',
+  'focus-out',
+  'list-navigation',
+  'sibling-open',
+]);
+
+/**
+ * Whether the menu closes because the user moved on to another menu of its
+ * menubar: hovering, focusing or arrowing to it, or pressing it (a tap, or a
+ * click without hover-open: Base UI closes this one as pressed outside, then
+ * opens that one a frame later).
+ */
+function movesOn(details: OpenChangeDetails) {
+  const reason = details.reason ?? '';
+  if (MOVE_REASONS.has(reason)) return true;
+  if (reason !== 'outside-press') return false;
+  const target = details.event?.target;
+  const menubar = (details as { trigger?: Element | null }).trigger?.closest(
+    '[role="menubar"]',
+  );
+  return Boolean(menubar && target instanceof Node && menubar.contains(target));
+}
 
 /**
  * The root menu closed because an item whose check changes was chosen: its
@@ -109,17 +155,26 @@ function useManualUnmount<Details extends OpenChangeDetails>(
   // The items' checks register: which items have one.
   const { registerCheck, hasCheck } = useCheckRegistry();
   const [picked, setPicked] = React.useState(false);
+  const [movedOn, setMovedOn] = React.useState(false);
   const handleOpenChange = (open: boolean, details: Details) => {
     onOpenChange?.(open, details);
     if (details.isCanceled) return;
     setPicked(!open && checkMoves(details, hasCheck));
+    setMovedOn(!open && movesOn(details));
     if (open) return;
     // Typed on Menu.Root's details only, but every menu root passes it.
     (
       details as { preventUnmountOnClose?: () => void }
     ).preventUnmountOnClose?.();
   };
-  return { ownActionsRef, unmount, handleOpenChange, picked, registerCheck };
+  return {
+    ownActionsRef,
+    unmount,
+    handleOpenChange,
+    picked,
+    movedOn,
+    registerCheck,
+  };
 }
 
 /** A root menu's picks, for its popups and the checks inside. */
@@ -182,6 +237,8 @@ function PopupMotion({
     [htmlRef],
   );
   const previousFocusRef = React.useRef<Element | null>(null);
+  // The user moved on to another menu of its menubar.
+  const movedOn = React.use(MovedOnContext);
 
   // A layout effect runs before Base UI moves focus into the popup.
   React.useLayoutEffect(() => {
@@ -193,16 +250,18 @@ function PopupMotion({
 
   // Base UI gives focus back when the popup unmounts, after the exit. Keyboard
   // users must not keep acting on a menu that is leaving: give it back now.
+  // Not when moving on to another menu of a menubar: that one takes focus (its
+  // trigger, focused, would open this one again).
   React.useEffect(() => {
     const node = nodeRef.current;
-    if (state.open || !node || state.nested) return;
+    if (state.open || !node || state.nested || movedOn) return;
     const doc = node.ownerDocument;
     if (!node.contains(doc.activeElement)) return;
     const target =
       doc.getElementById(node.getAttribute('aria-labelledby') ?? '') ??
       previousFocusRef.current;
     if (target instanceof HTMLElement) target.focus({ preventScroll: true });
-  }, [state.open, state.nested]);
+  }, [state.open, state.nested, movedOn]);
 
   const enter = useTempoTransition(transition ?? MENU_TRANSITION);
   const leave = useTempoTransition(
@@ -210,10 +269,30 @@ function PopupMotion({
   );
   const picked = React.use(PickedContext);
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  // A menubar's next menu takes its popover over: it starts from where this
+  // one is, which leaves at once, unseen (unmounted as soon as it's closed:
+  // Base UI doesn't open a menu again on hover while it's still mounted).
+  const handoffGroup = React.use(PopupHandoffContext);
+  const handoff = useMenuHandoff(state.nested ? null : handoffGroup, {
+    nodeRef,
+    open: state.open,
+    movedOn,
+    transition: enter,
+    reduce,
+    onDrop: () => {
+      if (!openRef.current) unmount();
+    },
+  });
+  React.useEffect(() => {
+    if (handoff.dropped && !state.open) unmount();
+  }, [handoff.dropped, state.open, unmount]);
+  // A submenu goes with its menu when the next one takes its popover over.
+  useHandoffNested(nodeRef, Boolean(state.nested));
   // Closing because an item was chosen whose check changes: the menu holds
   // still while it does (nothing moves under reduced motion).
-  const exit: Transition =
-    picked && !reduce
+  const exit: Transition = handoff.dropped
+    ? { duration: 0 }
+    : picked && !reduce
       ? {
           ...leave,
           delay: ((leave as { delay?: number }).delay ?? 0) + hold,
@@ -227,11 +306,19 @@ function PopupMotion({
     <motion.div
       {...(props as React.ComponentProps<typeof motion.div>)}
       ref={ref}
-      initial={entering ? hidden : false}
+      initial={
+        handoff.from
+          ? { opacity: handoff.from.opacity, scale: 1 }
+          : entering
+            ? hidden
+            : false
+      }
       // Transitions live in the targets: each direction keeps its own.
       animate={
         state.open
-          ? { opacity: 1, scale: 1, transition: enter }
+          ? handoff.from
+            ? takeOver(handoff.from, enter)
+            : { opacity: 1, scale: 1, transition: enter }
           : { ...hidden, transition: exit }
       }
       onAnimationComplete={() => {
@@ -247,11 +334,14 @@ function PopupMotion({
         ...htmlProps.style,
       }}
     >
-      {/* Submenus share their root menu's highlight, like v1. */}
+      {/* Submenus share their root menu's highlight, like v1, and go with it
+          in a menubar's handoff. */}
       {state.nested ? (
         children
       ) : (
-        <HighlightScope open={state.open}>{children}</HighlightScope>
+        <HandoffNestedContext value={handoffGroup ? handoff.entry : null}>
+          <HighlightScope open={state.open}>{children}</HighlightScope>
+        </HandoffNestedContext>
       )}
     </motion.div>
   );
@@ -294,6 +384,8 @@ function IndicatorMotion({
 
 export {
   IndicatorMotion,
+  MovedOnContext,
+  PopupHandoffContext,
   PopupMotion,
   RadioGroupCheckContext,
   RootPicks,

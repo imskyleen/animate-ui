@@ -1,49 +1,14 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
+import {
+  describeKeptMountedHandoff,
+  describeMenubarHandoff,
+} from './menubar-handoff';
 import { probeFirstFrame, sample } from './motion-probe';
 
 const CONTENT = '[data-slot="menubar-content"]';
-
-/** First frame of the menu content that contains `text`, once it mounts. */
-async function probeMenu(page: Page, text: string) {
-  await page.evaluate(
-    ({ selector, text }) => {
-      const w = window as unknown as { __menu?: Promise<unknown> };
-      w.__menu = new Promise((resolve) => {
-        const check = () => {
-          const el = [...document.querySelectorAll(selector)].find((node) =>
-            node.textContent?.includes(text),
-          );
-          if (!el) return false;
-          requestAnimationFrame(() => {
-            const cs = getComputedStyle(el);
-            const match = cs.transform.match(/matrix\(([^,]+)/);
-            resolve({
-              opacity: Number(cs.opacity),
-              scale: match ? Number(match[1]) : 1,
-            });
-          });
-          return true;
-        };
-        const observer = new MutationObserver(() => {
-          if (check()) observer.disconnect();
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-      });
-    },
-    { selector: CONTENT, text },
-  );
-  return () =>
-    page.evaluate(
-      () =>
-        (window as unknown as { __menu: Promise<unknown> }).__menu as Promise<{
-          opacity: number;
-          scale: number;
-        }>,
-    );
-}
 
 test.describe('base-ui menubar demo', () => {
   test.describe.configure({ timeout: 180_000 });
@@ -62,22 +27,6 @@ test.describe('base-ui menubar demo', () => {
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
     await page.waitForTimeout(400);
     expect((await sample(page, CONTENT)).opacity).toBe(1);
-  });
-
-  test('moving to another menu plays its entrance, like any menu', async ({
-    page,
-  }) => {
-    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
-    await page.waitForTimeout(500);
-    const firstFrame = await probeMenu(page, 'Cut');
-    await page.getByRole('menuitem', { name: 'Edit', exact: true }).hover();
-    const first = await firstFrame();
-    expect(first.opacity).toBeLessThan(1);
-    expect(first.scale).toBeLessThan(1);
-    await expect(page.locator(CONTENT, { hasText: 'New Window' })).toHaveCount(
-      0,
-      { timeout: 600 },
-    );
   });
 
   test('closing the bar plays the exit, then unmounts', async ({ page }) => {
@@ -162,3 +111,13 @@ describeMenuChecks('base-ui menubar checks', {
   radio: { from: 'Benoit', to: 'Luis' },
   radioCloses: false,
 });
+
+describeMenubarHandoff(
+  'base-ui menubar handoff',
+  '/tests/demos/base-ui/menubar',
+);
+
+describeKeptMountedHandoff(
+  'base-ui menubar handoff, kept-mounted menus',
+  '/tests/fixtures/base-ui-menubar',
+);

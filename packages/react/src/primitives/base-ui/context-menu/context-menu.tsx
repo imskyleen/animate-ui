@@ -3,7 +3,12 @@
 
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu';
 
-import { RootPicks, UnmountContext, useManualUnmount } from '../menu/shared';
+import {
+  PopupHandoffContext,
+  RootPicks,
+  UnmountContext,
+  useManualUnmount,
+} from '../menu/shared';
 import {
   CheckboxItem,
   CheckboxItemIndicator,
@@ -39,11 +44,14 @@ function Root({ actionsRef, onOpenChange, ...props }: Root.Props) {
   return (
     <UnmountContext value={manual.unmount}>
       <RootPicks picked={manual.picked} registerCheck={manual.registerCheck}>
-        <ContextMenuPrimitive.Root
-          {...props}
-          actionsRef={manual.ownActionsRef}
-          onOpenChange={manual.handleOpenChange}
-        />
+        {/* Its popup opens on its own, even inside a menubar's menu. */}
+        <PopupHandoffContext value={null}>
+          <ContextMenuPrimitive.Root
+            {...props}
+            actionsRef={manual.ownActionsRef}
+            onOpenChange={manual.handleOpenChange}
+          />
+        </PopupHandoffContext>
       </RootPicks>
     </UnmountContext>
   );

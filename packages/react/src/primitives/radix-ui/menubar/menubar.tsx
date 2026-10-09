@@ -17,12 +17,19 @@ import {
   type IndicatorAnimationProps,
   type PresenceAnimationProps,
 } from '../_menu/menu';
+import {
+  MenuHandoffContext,
+  useHandoffGroup,
+} from '../../../internal/menu-handoff';
 
 // Same API as Radix's Menubar. The Root mirrors which menu is open (Radix
 // keeps it private) so each Content can play an exit before it unmounts.
-// Radix's Menubar has no Animate UI v1 counterpart: each menu moves like v1's
-// DropdownMenu (a 250ms fade and scale, a highlight gliding behind the
-// highlighted item), including when moving from one open menu to another.
+// Radix's Menubar has no Animate UI v1 counterpart: a menu opens and closes
+// like v1's DropdownMenu (a 250ms fade and scale, a highlight gliding behind
+// the highlighted item). Moving from an open menu to another, the popover
+// doesn't close and reopen: it moves to the next menu and resizes, in 250ms,
+// while the content changes like Motion's mega menu, the previous items
+// sliding 6px away as the next ones slide in (internal/menu-handoff).
 
 type MenubarProps = MenubarPrimitive.MenubarProps;
 type MenubarMenuProps = MenubarPrimitive.MenubarMenuProps;
@@ -65,18 +72,22 @@ function Root({
   const value = controlled ? valueProp : uncontrolled;
   // Its menus' picks: choosing an item closes the open menu.
   const picks = useMenuPicks();
+  // Its menus hand their popover over to one another.
+  const handoff = useHandoffGroup();
 
   return picks.provide(
     <MenubarStateContext value={{ value, picked: picks.picked }}>
-      <MenubarPrimitive.Root
-        {...props}
-        value={value}
-        onValueChange={(next) => {
-          picks.onOpenChange(next !== '');
-          if (!controlled) setUncontrolled(next);
-          onValueChange?.(next);
-        }}
-      />
+      <MenuHandoffContext value={handoff}>
+        <MenubarPrimitive.Root
+          {...props}
+          value={value}
+          onValueChange={(next) => {
+            picks.onOpenChange(next !== '');
+            if (!controlled) setUncontrolled(next);
+            onValueChange?.(next);
+          }}
+        />
+      </MenuHandoffContext>
     </MenubarStateContext>,
   );
 }
@@ -106,6 +117,7 @@ const Portal = createPortal(MenubarPrimitive.Portal);
 const Content = createContent(MenubarPrimitive.Content, {
   origin: '--radix-menubar-content-transform-origin',
   returnFocus: 'trigger',
+  handoff: true,
 });
 const Group = MenubarPrimitive.Group;
 const Label = MenubarPrimitive.Label;

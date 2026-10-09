@@ -297,7 +297,7 @@ export default function MenubarDemo({
               <MenubarItem>
                 New Window <MenubarShortcut>⌘N</MenubarShortcut>
               </MenubarItem>
-              <MenubarItem disabled>New Incognito Window</MenubarItem>
+              <MenubarItem disabled>Incognito Window</MenubarItem>
             </MenubarGroup>
             <MenubarSeparator />
             <MenubarGroup>

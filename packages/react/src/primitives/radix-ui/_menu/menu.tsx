@@ -1,7 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { AnimatePresence, motion, type Transition } from 'motion/react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  type Transition,
+} from 'motion/react';
 
 import {
   ReducedMotionConfig,
@@ -18,6 +23,13 @@ import {
   useItemHighlight,
   withHighlight,
 } from '../../../internal/item-highlight';
+import {
+  HandoffNestedContext,
+  MenuHandoffContext,
+  takeOver,
+  useHandoffNested,
+  useMenuHandoff,
+} from '../../../internal/menu-handoff';
 import {
   CheckRegistryContext,
   ItemCheck,
@@ -46,8 +58,9 @@ import {
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
   /**
-   * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
+   * Transition of the entrance (and, in a menubar, of the popover moving to
+   * the next menu), and of the exit unless `exitTransition` is set. Defaults
+   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -167,7 +180,14 @@ function createPortal<P extends PortalProps>(
   return Portal;
 }
 
-type OutsideEvent = { preventDefault: () => void };
+type OutsideEvent = {
+  preventDefault: () => void;
+  /**
+   * Radix's outside events carry the pointer or focus event behind them
+   * (`originalEvent`); Escape's is a key event (a number).
+   */
+  detail?: unknown;
+};
 
 type ContentProps = {
   forceMount?: true;
@@ -194,6 +214,11 @@ type ContentOptions = {
    * or `none` (Radix handles it, as it does for submenus).
    */
   returnFocus: 'trigger' | 'previous' | 'none';
+  /**
+   * A menubar's menu: it takes over the popover of the menu open before it,
+   * which moves to it (internal/menu-handoff).
+   */
+  handoff?: boolean;
 };
 
 /** `Content` and `SubContent`: scale and fade from the trigger. */
@@ -270,19 +295,44 @@ function ContentMotion({
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
+  // a settled content never becomes the containing block of the submenus'
+  // fixed positioning (shadcn/ui renders them inside the content).
+  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
+  // Its values, to end its exit at once when a menubar's next menu takes its
+  // popover over.
+  const opacity = useMotionValue(hidden.opacity);
+  const scale = useMotionValue(hidden.scale);
+  // A menubar's next menu takes its popover over: it starts from where this
+  // one is, which leaves at once, unseen (its exit ends there, so Radix
+  // unmounts it: focus and Escape go to the next menu).
+  const handoff = useMenuHandoff(
+    options.handoff ? React.use(MenuHandoffContext) : null,
+    {
+      nodeRef: ref,
+      open,
+      transition: enter,
+      reduce,
+      onDrop: () => {
+        for (const value of [opacity, scale])
+          (
+            value.animation as { complete?: () => void } | undefined
+          )?.complete?.();
+      },
+    },
+  );
+  // A submenu goes with its menu when the next one takes its popover over.
+  useHandoffNested(ref, Boolean(options.sub));
   // Closing because an item was chosen whose check moves: the menu holds
   // still while it does (nothing moves under reduced motion).
-  const exit: Transition =
-    picked && !reduce
+  const exit: Transition = handoff.dropped
+    ? { duration: 0 }
+    : picked && !reduce
       ? {
           ...leave,
           delay: ((leave as { delay?: number }).delay ?? 0) + hold,
         }
       : leave;
-  // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
-  // a settled content never becomes the containing block of the submenus'
-  // fixed positioning (shadcn/ui renders them inside the content).
-  const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
 
   // Force-mounted content stays in the DOM while closed: once its exit has
   // played, hide it so it leaves the tab order and the accessibility tree.
@@ -292,17 +342,26 @@ function ContentMotion({
   React.useLayoutEffect(() => {
     openRef.current = open;
   });
+  // When it last opened (performance.now()).
+  const openedAtRef = React.useRef(-Infinity);
   const guard =
     <E extends OutsideEvent>(handler?: (event: E) => void) =>
     (event: E) => {
       handler?.(event);
-      if (!openRef.current) event.preventDefault();
+      // Neither a leaving menu, nor the event that opened it: a kept-mounted
+      // menu is a dismissable layer already, so Radix takes the pointer down
+      // on its trigger, once it has opened it, for one outside it.
+      const cause = (event.detail as { originalEvent?: Event } | undefined)
+        ?.originalEvent;
+      if (!openRef.current || (cause && cause.timeStamp < openedAtRef.current))
+        event.preventDefault();
     };
 
   // A layout effect runs before Radix's focus scope moves focus in (a
   // passive effect), so this still sees the element focused before opening.
   React.useLayoutEffect(() => {
     if (!open) return;
+    openedAtRef.current = performance.now();
     previousFocusRef.current = ref.current?.ownerDocument.activeElement ?? null;
     returnedFocusRef.current = false;
   }, [open]);
@@ -349,11 +408,15 @@ function ContentMotion({
     >
       <motion.div
         ref={ref}
-        initial={hidden}
+        initial={
+          handoff.from ? { opacity: handoff.from.opacity, scale: 1 } : hidden
+        }
         // Transitions live in the targets: each direction keeps its own.
         animate={
           open
-            ? { opacity: 1, scale: 1, transition: enter }
+            ? handoff.from
+              ? takeOver(handoff.from, enter)
+              : { opacity: 1, scale: 1, transition: enter }
             : { ...hidden, transition: exit }
         }
         exit={{ ...hidden, transition: exit }}
@@ -361,6 +424,8 @@ function ContentMotion({
           if (!openRef.current && keepMounted) setSettledClosed(true);
         }}
         style={{
+          opacity,
+          scale,
           transformOrigin: `var(${options.origin})`,
           // The highlight goes under the items' content, above the menu's
           // background: the menu is its own stacking context.
@@ -378,7 +443,10 @@ function ContentMotion({
         {options.sub ? (
           children
         ) : (
-          <HighlightScope open={open}>{children}</HighlightScope>
+          // Its submenus go with it in a menubar's handoff (none otherwise).
+          <HandoffNestedContext value={options.handoff ? handoff.entry : null}>
+            <HighlightScope open={open}>{children}</HighlightScope>
+          </HandoffNestedContext>
         )}
       </motion.div>
     </RadixContent>

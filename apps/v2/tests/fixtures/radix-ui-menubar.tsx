@@ -25,10 +25,28 @@ export default function RadixMenubarFixture() {
                 {menu === 'alpha' ? 'Alpha' : 'Beta'}
               </Menubar.Trigger>
               <Menubar.Portal>
-                <Menubar.Content className={content}>
+                <Menubar.Content
+                  data-slot="menubar-content"
+                  className={content}
+                >
                   <Menubar.Item>
                     {menu === 'alpha' ? 'Alpha item' : 'Beta item'}
                   </Menubar.Item>
+                  {menu === 'alpha' && (
+                    // A submenu in a portal of its own: it goes with its
+                    // menu all the same.
+                    <Menubar.Sub>
+                      <Menubar.SubTrigger>Alpha more</Menubar.SubTrigger>
+                      <Menubar.Portal>
+                        <Menubar.SubContent
+                          data-slot="menubar-sub-content"
+                          className={content}
+                        >
+                          <Menubar.Item>Alpha sub item</Menubar.Item>
+                        </Menubar.SubContent>
+                      </Menubar.Portal>
+                    </Menubar.Sub>
+                  )}
                 </Menubar.Content>
               </Menubar.Portal>
             </Menubar.Menu>
@@ -57,6 +75,33 @@ export default function RadixMenubarFixture() {
             </MenubarStar.Portal>
           </MenubarStar.Menu>
         </MenubarStar.Root>
+      </section>
+
+      <section>
+        {/* Kept mounted (forceMount): the next menu takes the popover over
+            all the same. */}
+        <Menubar.Root className="flex gap-2">
+          {['Gamma', 'Delta'].map((menu) => (
+            <Menubar.Menu key={menu} value={menu}>
+              <Menubar.Trigger>{menu}</Menubar.Trigger>
+              <Menubar.Portal forceMount>
+                <Menubar.Content
+                  data-slot="menubar-content"
+                  align="start"
+                  className={content}
+                >
+                  <Menubar.Item>{menu} item</Menubar.Item>
+                  {menu === 'Delta' && (
+                    <>
+                      <Menubar.Item>Delta second item</Menubar.Item>
+                      <Menubar.Item>Delta third, longer item</Menubar.Item>
+                    </>
+                  )}
+                </Menubar.Content>
+              </Menubar.Portal>
+            </Menubar.Menu>
+          ))}
+        </Menubar.Root>
       </section>
     </div>
   );

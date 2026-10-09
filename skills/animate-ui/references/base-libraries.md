@@ -64,6 +64,7 @@ function Popover({
 - Put `ReducedMotionConfig` inside the Portal, and render the animated part in an inner component so `useShouldReduceMotion()` runs inside the wrapper.
 - `Content` gets `asChild` and `forceMount`, plus every library prop, `className` and `style`. Radix's Slot merges them onto the `motion.div`, which only carries the animation and `children`.
 - Origin: `var(--radix-<component>-content-transform-origin)`.
+- Menubar: Radix keeps which menu is open private. Mirror the Root's `value` (controlled or not) in context so each Content knows when it closes and can play its exit. Radix switches from one menu to the next in one commit; the Root also provides the menubar's handoff group, so the next menu takes the popover over (Menu recipe, internal/menu-handoff.ts).
 
 ```tsx
 type PopoverContentProps = Omit<
@@ -141,6 +142,7 @@ Tooltip: the same, from `scale.tooltip` (0.7). shadcn's `Tooltip` gives each too
 - Origin: `var(--transform-origin)`, set by the Positioner.
 - When `render` is a `<button>` (Checkbox, Radio, Switch), pass `nativeButton` (default it to `true`): these roots render a `<span>` by default since 1.0.
 - Some parts append a visually hidden `<span>` as the last child (Progress, for example). Lay out children with `flex flex-col gap-*` rather than `space-y-*`, which adds margin to every child except the last.
+- Menubar: Base UI's `Menubar` only lays out its menus. Wrap it (same props, keeping its `Menubar.Props`/`Menubar.State` type namespace) to provide the handoff group (Menu recipe, internal/menu-handoff.ts), read it in each `Menu.Root` and reset it for everything nested (submenus' and context menus' popups open on their own). On hover, Base UI opens the next menu before it closes the previous one (`sibling-open`); on ArrowLeft it closes the open one first (`list-navigation`), then opens the previous trigger's: keep the reason from `onOpenChange` so a menu closed that way can still hand its popover over while it's shown.
 
 ```tsx
 function PopoverPopupMotion({ transition, ...props }: PopoverPopupProps) {

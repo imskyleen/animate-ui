@@ -11,8 +11,11 @@ import {
   withHighlight,
 } from '../../../internal/item-highlight';
 import { useCheckGroup } from '../../../internal/item-indicator';
+import { MenuHandoffContext } from '../../../internal/menu-handoff';
 import {
   IndicatorMotion,
+  MovedOnContext,
+  PopupHandoffContext,
   PopupMotion,
   RadioGroupCheckContext,
   RootPicks,
@@ -38,7 +41,8 @@ import createHandle = MenuPrimitive.createHandle;
 
 // Same API as Base UI's Menu, animated like Animate UI v1's (see shared.tsx).
 // The Root asks Base UI to keep the popup mounted after it closes, and the
-// Popup unmounts it once its exit has played.
+// Popup unmounts it once its exit has played. In Animate UI's Menubar, the
+// menus hand their popover over to one another (internal/menu-handoff).
 
 function Root<Payload = unknown>({
   actionsRef,
@@ -46,14 +50,22 @@ function Root<Payload = unknown>({
   ...props
 }: Root.Props<Payload>) {
   const manual = useManualUnmount(actionsRef, onOpenChange);
+  // One of a menubar's menus: its popup only (menus nested in it aren't).
+  const menubar = React.use(MenuHandoffContext);
   return (
     <UnmountContext value={manual.unmount}>
       <RootPicks picked={manual.picked} registerCheck={manual.registerCheck}>
-        <MenuPrimitive.Root<Payload>
-          {...props}
-          actionsRef={manual.ownActionsRef}
-          onOpenChange={manual.handleOpenChange}
-        />
+        <MenuHandoffContext value={null}>
+          <PopupHandoffContext value={menubar}>
+            <MovedOnContext value={manual.movedOn}>
+              <MenuPrimitive.Root<Payload>
+                {...props}
+                actionsRef={manual.ownActionsRef}
+                onOpenChange={manual.handleOpenChange}
+              />
+            </MovedOnContext>
+          </PopupHandoffContext>
+        </MenuHandoffContext>
       </RootPicks>
     </UnmountContext>
   );
@@ -76,11 +88,14 @@ function SubmenuRoot({
   const manual = useManualUnmount(actionsRef, onOpenChange);
   return (
     <UnmountContext value={manual.unmount}>
-      <MenuPrimitive.SubmenuRoot
-        {...props}
-        actionsRef={manual.ownActionsRef}
-        onOpenChange={manual.handleOpenChange}
-      />
+      {/* A submenu's popup opens on its own. */}
+      <PopupHandoffContext value={null}>
+        <MenuPrimitive.SubmenuRoot
+          {...props}
+          actionsRef={manual.ownActionsRef}
+          onOpenChange={manual.handleOpenChange}
+        />
+      </PopupHandoffContext>
     </UnmountContext>
   );
 }

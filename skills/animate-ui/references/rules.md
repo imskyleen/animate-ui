@@ -97,7 +97,7 @@ animate={{ top: bounds.top, left: bounds.left, width: bounds.width, height: boun
 <motion.div layoutId="highlight" transition={spring.highlight} />
 ```
 
-Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`) and heights following their content (`spring.height`). Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`); large blurs are expensive to paint.
+Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`) and heights following their content (`spring.height`). And a menubar's popover handed to the next menu resizes to it (`width`/`height`, a Web Animation for its 250ms move, A16): a scale would change its items' size. Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`); large blurs are expensive to paint.
 
 #### A9. Prefer a `transform` string for press and continuous motion
 
@@ -138,6 +138,10 @@ Once a tooltip is open, moving to the next one shows it at once, without its ent
 
 A popup or panel open on the first render (`defaultOpen`, a controlled `open`) plays its entrance on mount, page load included.
 
+#### A16. A menubar's popover moves from menu to menu
+
+Moving from an open menu of a menubar to another (hovering, clicking or tapping the next trigger, or the arrow keys), the popover doesn't close and reopen: the next menu takes the previous one's popover over, which moves to its place and resizes on the menu's own transition (`transition.menu`), and the content changes like Motion's mega menu. The content stays where it is on screen while the popover slides over it and clips it: the previous items leave `shift.handoff` (6px) away from where the popover goes while they fade out (`transition.handoffOut`); the next ones come in from 6px that way on `spring.handoff` and fade in behind them (`transition.handoffIn`). From File to Edit, File's items leave to the left and Edit's come from the right; a content riding along with the popover would read the other way round. One popover on screen at every frame, however fast the pointer sweeps the bar, interactive from its first frame. Under reduced motion each menu fades in place. Animate UI's Radix and Base UI menubars do it (internal/menu-handoff.ts; Menu recipe).
+
 ## B. Style rules
 
 ### B1. Springs first
@@ -153,7 +157,8 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 - Moving or morphing on screen: ease-in-out (`ease.inOut`, or Motion's `easeInOut` for loops).
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
-- Never ease-in on UI: it starts slow, exactly when the user is watching. A dialog or a sheet dismissed speeds away on `ease.away` (`transition.dismiss`, 0.2s): a steady push from half its average speed to one and a half, so it leaves at once and its last pixels don't crawl out. The one ease-in is a drawer closed (`transition.drawerOut`, 0.16s on `ease.in`): short enough that its slow start doesn't wait, and it's seen speeding off its edge (a steady push read as a linear slide there).
+- Never ease-in on UI: it starts slow, exactly when the user is watching. A dialog or a sheet dismissed speeds away on `ease.away` (`transition.dismiss`, 0.2s): a steady push from half its average speed to one and a half, so it leaves at once and its last pixels don't crawl out. The one ease-in that moves something is a drawer closed (`transition.drawerOut`, 0.16s on `ease.in`): short enough that its slow start doesn't wait, and it's seen speeding off its edge (a steady push read as a linear slide there).
+- Content fading in behind content leaving (a menubar's next menu, A16): `ease.arrive` (`cubic-bezier(0.11, 0, 0.5, 0)`, `transition.handoffIn`, 0.3s), a slow start on its opacity only, so what leaves has mostly cleared before it shows. Its slide and the popover's move start at once.
 
 ```tsx
 // Avoid
@@ -167,18 +172,19 @@ transition={motionTransition.menu} // 0.25s, ease.soft
 
 Keep what's used constantly quick and let rarer surfaces take their time:
 
-| Motion                          | Feel                               | Token                                          |
-| ------------------------------- | ---------------------------------- | ---------------------------------------------- |
-| Press                           | ~120ms                             | `spring.press`                                 |
-| Menus, selects                  | 250ms, soft ease-out               | `transition.menu`                              |
-| Tooltips, popovers, hover cards | there in ~200ms, settled by ~500ms | `spring.pop`                                   |
-| Selection, pointer highlight    | a smooth slide / a quick follow    | `spring.selection`, `spring.highlight`         |
-| Disclosures                     | 350ms, soft ease-out               | `transition.disclosure`                        |
-| Dialogs                         | ~450ms in, 200ms out               | `spring.dialog`, `transition.dismiss`          |
-| Sheets                          | 400ms in, 200ms out                | `transition.sheet`, `transition.dismiss`       |
-| Drawers                         | 400ms in, 160ms out                | `transition.drawer`, `transition.drawerOut`    |
-| Their overlays                  | 400ms, both ways                   | `transition.overlay`                           |
-| Effects, texts, numbers, icons  | expressive, their own rhythm       | `spring.entrance`, `spring.number`, own values |
+| Motion                            | Feel                                                                                          | Token                                                                                |
+| --------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Press                             | ~120ms                                                                                        | `spring.press`                                                                       |
+| Menus, selects                    | 250ms, soft ease-out                                                                          | `transition.menu`                                                                    |
+| A menubar moving to the next menu | the popover moves in 250ms; content out in 250ms, in on a ~250ms spring, fading in over 300ms | `transition.menu`, `transition.handoffOut`, `spring.handoff`, `transition.handoffIn` |
+| Tooltips, popovers, hover cards   | there in ~200ms, settled by ~500ms                                                            | `spring.pop`                                                                         |
+| Selection, pointer highlight      | a smooth slide / a quick follow                                                               | `spring.selection`, `spring.highlight`                                               |
+| Disclosures                       | 350ms, soft ease-out                                                                          | `transition.disclosure`                                                              |
+| Dialogs                           | ~450ms in, 200ms out                                                                          | `spring.dialog`, `transition.dismiss`                                                |
+| Sheets                            | 400ms in, 200ms out                                                                           | `transition.sheet`, `transition.dismiss`                                             |
+| Drawers                           | 400ms in, 160ms out                                                                           | `transition.drawer`, `transition.drawerOut`                                          |
+| Their overlays                    | 400ms, both ways                                                                              | `transition.overlay`                                                                 |
+| Effects, texts, numbers, icons    | expressive, their own rhythm                                                                  | `spring.entrance`, `spring.number`, own values                                       |
 
 A tween on `ease.out` reads faster than its duration: most of the movement happens in its first third. Don't shorten durations to make something feel snappier; fix the curve first. The same goes the other way: a disclosure, an overlay or a menu on `ease.out` felt rushed, so they got the softer `ease.soft`.
 
@@ -202,7 +208,7 @@ Closing plays the entrance's transition in reverse: one transition both ways (`e
 
 ### B6. Blur to bridge a swap
 
-When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs also come in from `blur.surface`, a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed.
+When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs also come in from `blur.surface`, a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed. A menubar's content changing as its popover moves to the next menu doesn't swap in place: it slides `shift.handoff` (6px) and fades, without a blur, like Motion's mega menu (A16).
 
 ### B7. Surfaces: modals tip, sheets slide
 
@@ -222,18 +228,19 @@ Quality (any miss is a bug):
 - [ ] The keyboard animates like the pointer
 - [ ] Anchored popups set `transform-origin` in the primitive; modals stay centered
 - [ ] Overlays start from a visible size (≥ 0.7)
-- [ ] Only `transform`, `opacity` and `filter` animate (disclosure and content heights excepted); blur stays light
+- [ ] Only `transform`, `opacity` and `filter` animate (disclosure and content heights, and a menubar popover's size as it's handed over, excepted); blur stays light
 - [ ] Hover gated to hover-capable pointers; the control answers on the frame of the interaction
 - [ ] No `transition-all`; pointer values in motion values, not state
 - [ ] Re-triggering retargets instead of restarting
 - [ ] Warm tooltips show (and the previous one goes) at once
 - [ ] Open from the start, it plays its entrance
+- [ ] A menubar's popover moves to the next menu (one on screen at every frame) instead of closing and reopening
 - [ ] Same exports, props and `data-slot` as the original component
 
 Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
-- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays, menus and sheets, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a closed drawer's `transition.drawerOut`; a dismissed dialog or sheet speeds away on `ease.away`)
+- [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays, menus and sheets, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a closed drawer's `transition.drawerOut`, and a menubar's next content fading in on `transition.handoffIn`; a dismissed dialog or sheet speeds away on `ease.away`)
 - [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance (a dismissed modal: at once, quicker, speeding away; its overlay clear before it unmounts)
 - [ ] Swaps bridged with a light blur

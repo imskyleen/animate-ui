@@ -22,9 +22,12 @@ import {
  * an overlay dimming the page, a sheet sliding in), ease-in-out to move on
  * screen, a hint of bounce for a drawer sliding in, a steady push for a
  * dialog or a sheet dismissed, and ease-in only for a drawer closed,
- * speeding off its edge. Pressables scale on press only; anchored popups
- * grow from their trigger, from farther when they are small; two states swapping in
- * place are bridged with a light blur, and unfolding content clears from one.
+ * speeding off its edge, and for content fading in behind content leaving (a
+ * menubar's menus). Pressables scale on press only; anchored popups grow from
+ * their trigger, from farther when they are small; two states swapping in
+ * place are bridged with a light blur, and unfolding content clears from one;
+ * a menubar's content stays on screen while its popover moves to the next
+ * menu, sliding a little out and in.
  *
  * The tokens are the values at tempo 1. Components pass them through
  * `useTempoTransition` (or read them from `useMotionTokens()`), so an optional
@@ -66,6 +69,12 @@ const ease = {
    * in Motion and in CSS.
    */
   drawer: [0.34, 1.2, 0.64, 1],
+  /**
+   * Content arriving behind content leaving (a menubar's menus handing their
+   * popover over): a slow start, so what leaves has mostly cleared before it
+   * shows, like Motion's mega menu.
+   */
+  arrive: [0.11, 0, 0.5, 0],
 } as const;
 
 /** Springs, one per role (stiffness / damping, mass 1). */
@@ -97,6 +106,12 @@ const spring = {
    * combobox's chips and its input): quick, without overshoot.
    */
   reflow: { type: 'spring', stiffness: 500, damping: 40 },
+  /**
+   * Content sliding in as a popover is handed from one menu to the next (a
+   * menubar's): from rest, there in ~250ms without overshoot, like Motion's
+   * mega menu.
+   */
+  handoff: { type: 'spring', stiffness: 340, damping: 37 },
   /** A height following its content, without overshoot. */
   height: {
     type: 'spring',
@@ -167,6 +182,17 @@ const transition = {
   /** Two icons or labels swapping in place. */
   swap: { duration: 0.2, ease: ease.out },
   /**
+   * A menu's content leaving the popover it hands over to the next menu (a
+   * menubar's), sliding away from where the popover goes: soft, mostly gone
+   * in ~100ms.
+   */
+  handoffOut: { duration: 0.25, ease: ease.soft },
+  /**
+   * The next menu's content fading in, once the previous one has mostly
+   * cleared.
+   */
+  handoffIn: { duration: 0.3, ease: ease.arrive },
+  /**
    * A dialog or a sheet leaving once dismissed: at once, quicker than it
    * came, speeding away (a sheet off its edge, so its last pixels don't
    * crawl out). Its overlay clears behind it.
@@ -216,10 +242,21 @@ const blur = {
   surface: 'blur(4px)',
 } as const;
 
+/** Distances, in px, by role. */
+const shift = {
+  /**
+   * How far a menu's content slides on screen as the popover is handed to the
+   * next menu (a menubar's): the leaving one away from where it goes, the
+   * next one in from there.
+   */
+  handoff: 6,
+} as const;
+
 /**
  * The tokens at a pace: `tempo` multiplies the tweens' durations and delays,
  * and time-scales the springs (see `scaleTransition`). 1 is the default, 0.8
- * feels crisper, 1.2 more relaxed. Curves, scales and blurs don't change.
+ * feels crisper, 1.2 more relaxed. Curves, scales, blurs and shifts don't
+ * change.
  */
 function createMotionTokens(tempo = 1) {
   const pace = <T extends Record<string, Transition>>(set: T): T =>
@@ -237,6 +274,7 @@ function createMotionTokens(tempo = 1) {
     ease,
     scale,
     blur,
+    shift,
     spring: pace(spring),
     transition: pace(transition),
   } as const;
@@ -474,6 +512,7 @@ export {
   transition,
   scale,
   blur,
+  shift,
   ReducedMotionConfig,
   useShouldReduceMotion,
   scaleTransition,
