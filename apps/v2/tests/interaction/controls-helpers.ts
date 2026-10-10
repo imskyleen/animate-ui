@@ -768,6 +768,32 @@ export function describeSwitchDemo(lib: Lib) {
       await page.mouse.up();
     });
 
+    test('a quick click while on: the thumb leaves without its right edge going right', async ({
+      page,
+    }) => {
+      // The stretch stops where it is on release: kept going, it grew the
+      // thumb to the right as it left to the left (a tremble).
+      const root = page.locator(SWITCH).nth(0);
+      await root.click();
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(1000);
+      await startSampling(page, SWITCH, 0, THUMB, 45);
+      await pointerDown(page, root);
+      await page.waitForTimeout(60);
+      await page.mouse.up();
+      await page.waitForTimeout(700);
+      const samples = await readSamples(page);
+      const flip = samples.findIndex((s) => s.state === 'false');
+      expect(flip).toBeGreaterThan(0);
+      const pressedRight = Math.max(
+        ...samples.slice(0, flip).map((s) => s.x + s.width),
+      );
+      const leftRight = samples.slice(flip).map((s) => s.x + s.width);
+      expect(Math.max(...leftRight) - pressedRight).toBeLessThan(0.05);
+      // It did leave.
+      expect(Math.min(...leftRight)).toBeLessThan(pressedRight - 10);
+    });
+
     test('released, the thumb springs to its side as its width springs back; the track colour changes at once', async ({
       page,
     }) => {

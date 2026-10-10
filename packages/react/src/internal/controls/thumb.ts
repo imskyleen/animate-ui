@@ -245,6 +245,12 @@ function useSwitchThumb(
     const width = m.stretched ? m.width.get() : natural;
     const x = m.x.get();
 
+    // Released (a click: then the state flips), the stretch stops where it
+    // is and springs back from there: kept going, it pushed the thumb's back
+    // edge against the way it goes (a quick click on a switch on: its right
+    // edge went on growing to the right as the thumb left to the left).
+    if (m.stretched && (flipped || !pressed)) m.width.jump(width);
+
     if (flipped) {
       const before = m.rest;
       // The width changes after a press: its effect on the new resting
