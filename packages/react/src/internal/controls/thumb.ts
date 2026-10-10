@@ -64,6 +64,15 @@ type ThumbMotion = {
   /** Our width (px), while `stretched`. */
   width: MotionValue<number>;
   stretched: boolean;
+  /** Device pixels per CSS pixel. */
+  unit: number;
+  /**
+   * How our offset makes up for the width's rounding to device pixels:
+   * keeping the edge the thumb rests against in place (see `write`).
+   */
+  lean: number;
+  /** The make-up last written on top of `x` (px). */
+  shift: number;
   /** The thumb's own width, measured at rest. */
   natural: number;
   rest: Rest | null;
@@ -122,12 +131,20 @@ function growthAnchor(thumb: Thumb, width: number) {
   });
 }
 
+/**
+ * The thumb's width as its `width` style sets it (unrounded: `offsetWidth`
+ * rounds a fractional one, which then jumped when pressed and at rest).
+ */
+function widthOf(thumb: Thumb) {
+  return parseFloat(getComputedStyle(thumb).width) || thumb.offsetWidth;
+}
+
 /** The thumb's own width (its CSS width, without ours). */
 function naturalWidth(thumb: Thumb) {
   return withoutTransitions(thumb, () => {
     const inline = thumb.style.width;
     thumb.style.width = '';
-    const natural = thumb.offsetWidth;
+    const natural = widthOf(thumb);
     thumb.style.width = inline;
     return natural;
   });
@@ -152,6 +169,9 @@ function createThumbMotion(): ThumbMotion {
     x: motionValue(0),
     width: motionValue(0),
     stretched: false,
+    unit: 1,
+    lean: 0,
+    shift: 0,
     natural: 0,
     rest: null,
     committed: null,
@@ -159,6 +179,55 @@ function createThumbMotion(): ThumbMotion {
     pending: null,
     run: 0,
   };
+}
+
+/**
+ * The width as painted: its own, give or take whole device pixels (at rest,
+ * exactly the library's, painted as the library paints it).
+ */
+function snapped(m: ThumbMotion, width: number) {
+  return m.natural + Math.round((width - m.natural) * m.unit) / m.unit;
+}
+
+/** Device pixels per CSS pixel of the thumb (with a CSS `zoom` around it). */
+function unitOf(thumb: Thumb) {
+  const zoom = (thumb as Thumb & { currentCSSZoom?: number }).currentCSSZoom;
+  return (thumb.ownerDocument.defaultView?.devicePixelRatio || 1) * (zoom || 1);
+}
+
+/**
+ * Writes our offset and width on the thumb. The browser paints a box whole
+ * device pixels wide, while a transform moves it by any fraction: stretched
+ * as is, a thumb whose offset follows its width (shadcn/ui's checked thumb)
+ * had its far edge, which stays put, step out by a device pixel as the width
+ * rounded up, then slide back as the offset went on (a tremble). So the
+ * width goes on device pixels, and the offset makes up for the rounding:
+ * the edge the thumb rests against moves exactly as it should.
+ */
+function write(thumb: Thumb, m: ThumbMotion) {
+  let shift = 0;
+  if (m.stretched) {
+    const width = m.width.get();
+    const painted = snapped(m, width);
+    shift = m.lean * (painted - width);
+    thumb.style.width = `${painted}px`;
+  }
+  m.shift = shift;
+  thumb.style.transform = `translateX(${m.x.get() + shift}px)`;
+}
+
+/**
+ * Makes what's painted the model: the make-up goes into `x`, the width onto
+ * its device pixels, so the next animations leave from exactly where the
+ * thumb is seen. (Jumped there, the values lose their speed: the caller
+ * hands it on.)
+ */
+function settleWhereSeen(m: ThumbMotion) {
+  if (!m.stretched) return;
+  const width = m.width.get();
+  const painted = snapped(m, width);
+  m.x.jump(m.x.get() + m.lean * (painted - width));
+  m.width.jump(painted);
 }
 
 /** Stops what moves the thumb, and what was about to. */
@@ -202,13 +271,13 @@ function useSwitchThumb(
   // Our offset and width, written on the thumb as they move.
   React.useLayoutEffect(() => {
     const m = (motionRef.current ??= createThumbMotion());
-    const stopX = m.x.on('change', (x) => {
+    const update = () => {
       const thumb = getThumbRef.current();
-      if (thumb) thumb.style.transform = `translateX(${x}px)`;
-    });
-    const stopWidth = m.width.on('change', (width) => {
-      const thumb = getThumbRef.current();
-      if (thumb && m.stretched) thumb.style.width = `${width}px`;
+      if (thumb) write(thumb, m);
+    };
+    const stopX = m.x.on('change', update);
+    const stopWidth = m.width.on('change', () => {
+      if (m.stretched) update();
     });
     return () => {
       stopX();
@@ -230,26 +299,30 @@ function useSwitchThumb(
     if (!flipped && !pressChanged) {
       // Mounted, or re-rendered for another reason: note where it rests.
       if (m.controls.length === 0 && !m.stretched)
-        m.rest = measureRest(thumb, m.x.get(), thumb.offsetWidth, false);
+        m.rest = measureRest(thumb, m.x.get(), widthOf(thumb), false);
       return;
     }
 
     if (reduce) {
       settle(thumb, m);
-      m.rest = measureRest(thumb, 0, thumb.offsetWidth, false);
+      m.rest = measureRest(thumb, 0, widthOf(thumb), false);
       return;
     }
 
+    m.unit = unitOf(thumb);
+    // A glide goes on at its speed when pressed again; turned back, the
+    // thumb leaves from rest (below). When the state flips, the stretch
+    // springs back from rest: kept going, it pushed the thumb's back edge
+    // against the way it goes (a quick click on a switch on grew it to the
+    // right as it left to the left).
+    let xVelocity = m.x.getVelocity();
+    const widthVelocity = flipped ? 0 : m.width.getVelocity();
+    stop(m);
+    settleWhereSeen(m);
     if (!m.stretched) m.natural = naturalWidth(thumb);
     const natural = m.natural;
     const width = m.stretched ? m.width.get() : natural;
     const x = m.x.get();
-
-    // Released (a click: then the state flips), the stretch stops where it
-    // is and springs back from there: kept going, it pushed the thumb's back
-    // edge against the way it goes (a quick click on a switch on: its right
-    // edge went on growing to the right as the thumb left to the left).
-    if (m.stretched && (flipped || !pressed)) m.width.jump(width);
 
     if (flipped) {
       const before = m.rest;
@@ -261,6 +334,7 @@ function useSwitchThumb(
         const was = before.left - before.anchor * (width - before.width) + x;
         // Kept there: it springs to its new place from where it was.
         m.x.jump(was - now.left);
+        xVelocity = 0;
       }
       m.rest = now;
     } else if (pressed) {
@@ -269,19 +343,24 @@ function useSwitchThumb(
 
     // Pressed: stretched toward the middle of the track, the opposite edge
     // staying where it rests.
-    const stretchedWidth = natural * PRESSED_STRETCH;
+    // On whole device pixels: a spring settling around a width half a device
+    // pixel off would paint it one pixel wider, narrower, wider…
+    const stretchedWidth =
+      natural + Math.round(natural * (PRESSED_STRETCH - 1) * m.unit) / m.unit;
     const targetWidth = pressed ? stretchedWidth : natural;
     let targetX = 0;
     const rest = m.rest;
-    if (pressed && rest) {
+    if (rest) {
       const track = thumb.parentElement;
       const restLeft = rest.left - rest.anchor * (natural - rest.width);
       const atEnd =
         track !== null && restLeft + natural / 2 > track.offsetWidth / 2;
-      targetX = -((atEnd ? 1 : 0) - rest.anchor) * (stretchedWidth - natural);
+      if (pressed)
+        targetX = -((atEnd ? 1 : 0) - rest.anchor) * (stretchedWidth - natural);
+      // The edge it rests against: its right one at the end of the track.
+      m.lean = atEnd ? rest.anchor - 1 : rest.anchor;
     }
 
-    stop(m);
     if (!m.stretched) {
       m.stretched = true;
       m.width.jump(width);
@@ -296,15 +375,20 @@ function useSwitchThumb(
       m.controls = [
         // v1's layout animation sprang a 0–1000 progress: it settles to a
         // hundredth of a pixel, not to Motion's default half pixel.
-        animate(m.x, targetX, { restDelta: 0.005, restSpeed: 0.01, ...spring }),
-        animate(m.width, targetWidth, spring),
+        animate(m.x, targetX, {
+          restDelta: 0.005,
+          restSpeed: 0.01,
+          ...spring,
+          velocity: xVelocity,
+        }),
+        animate(m.width, targetWidth, { ...spring, velocity: widthVelocity }),
       ];
       void Promise.all(m.controls).then(() => {
         if (m.run !== id) return;
         m.controls = [];
         if (m.committed?.pressed) return;
         settle(thumb, m);
-        m.rest = measureRest(thumb, 0, thumb.offsetWidth, false);
+        m.rest = measureRest(thumb, 0, widthOf(thumb), false);
       });
     };
     start();

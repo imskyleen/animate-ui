@@ -711,6 +711,80 @@ async function pointerDown(page: Page, locator: Locator) {
 /** v1's styled switch stretched its 16px thumb to 19px while pressed. */
 const STRETCH = 19 / 16;
 
+/**
+ * The thumb's left and right edges as the browser paints them, frame by
+ * frame (its compositor's frames, a screencast), while `act` runs and
+ * `duration` ms after: along the switch's middle row, from each edge pixel's
+ * coverage, a white thumb on a black page and track (colours only). Layout reads
+ * can't show it: the browser paints a box whole device pixels wide.
+ */
+async function paintedThumbEdges(
+  page: Page,
+  root: Locator,
+  act: () => Promise<void>,
+  duration: number,
+) {
+  await page.addStyleTag({
+    content: `html,body,${SWITCH}{background:#000!important;border-color:#000!important}${THUMB}{background:#fff!important}`,
+  });
+  const box = (await root.boundingBox())!;
+  const cdp = await page.context().newCDPSession(page);
+  const frames: { data: string; t: number }[] = [];
+  cdp.on('Page.screencastFrame', (frame) => {
+    frames.push({ data: frame.data, t: frame.metadata.timestamp ?? 0 });
+    cdp
+      .send('Page.screencastFrameAck', { sessionId: frame.sessionId })
+      .catch(() => {});
+  });
+  await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 });
+  await page.waitForTimeout(300);
+  const before = Math.max(0, ...frames.map((frame) => frame.t));
+  await act();
+  await page.waitForTimeout(duration);
+  await cdp.send('Page.stopScreencast');
+  // In the order they were painted (they can arrive out of it), from the
+  // last one before the interaction.
+  const painted = frames
+    .filter((frame) => frame.t >= before)
+    .sort((a, b) => a.t - b.t)
+    .map((frame) => frame.data);
+  return page.evaluate(
+    async ({ frames, box }) => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d', { willReadFrequently: true })!;
+      const edges: { left: number; right: number }[] = [];
+      for (const data of frames) {
+        const image = new Image();
+        image.src = `data:image/png;base64,${data}`;
+        await image.decode();
+        // Screencast frames are in CSS pixels, the viewport's size.
+        const scale = image.naturalWidth / window.innerWidth;
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        context.drawImage(image, 0, 0);
+        const x0 = Math.round(box.x * scale);
+        const width = Math.round(box.width * scale);
+        const y = Math.round((box.y + box.height / 2) * scale);
+        const { data: pixels } = context.getImageData(x0, y, width, 1);
+        const cover = Array.from({ length: width }, (_, x) => {
+          const i = x * 4;
+          return (pixels[i]! + pixels[i + 1]! + pixels[i + 2]!) / 765;
+        });
+        const first = cover.findIndex((c) => c > 0.02);
+        if (first < 0) continue;
+        let last = width - 1;
+        while (cover[last]! <= 0.02) last--;
+        edges.push({
+          left: (first + 1 - cover[first]!) / scale,
+          right: (last + cover[last]!) / scale,
+        });
+      }
+      return edges;
+    },
+    { frames: painted, box },
+  );
+}
+
 export function describeSwitchDemo(lib: Lib) {
   test.describe(`${lib} switch demo`, () => {
     test.beforeEach(async ({ page }) => gotoDemo(page, lib, 'switch'));
@@ -729,15 +803,18 @@ export function describeSwitchDemo(lib: Lib) {
       expect(last.width).toBeCloseTo(first.width * STRETCH, 0);
       expect(last.scale).toBe(1);
       for (const s of held) expect(Math.abs(s.x - first.x)).toBeLessThan(0.5);
-      // A spring: seen on its way, and overshooting 19px a little.
+      // A spring, seen on its way, its width on whole device pixels (as
+      // painted: its overshoot, a tenth of a pixel, never showed).
       expect(
         held.some(
           (s) => s.width > first.width + 0.5 && s.width < last.width - 0.5,
         ),
       ).toBe(true);
-      expect(Math.max(...held.map((s) => s.width))).toBeGreaterThan(
-        first.width * STRETCH + 0.03,
-      );
+      const ratio = await page.evaluate(() => window.devicePixelRatio);
+      for (const s of held) {
+        const pixels = s.width * ratio;
+        expect(Math.abs(pixels - Math.round(pixels))).toBeLessThan(0.01);
+      }
       // No press feedback on the switch itself.
       expect(await scaleOf(root)).toBe(1);
       await page.mouse.up();
@@ -793,6 +870,58 @@ export function describeSwitchDemo(lib: Lib) {
       // It did leave.
       expect(Math.min(...leftRight)).toBeLessThan(pressedRight - 10);
     });
+
+    for (const [on, hold] of [
+      [true, 120],
+      [true, 250],
+      [false, 120],
+      [false, 250],
+    ] as const) {
+      test(`a ${hold}ms click while ${on ? 'on' : 'off'}: as painted, the thumb never steps back`, async ({
+        page,
+      }) => {
+        // Stretched while on, the thumb's right edge stays put as its offset
+        // follows its width: painted whole device pixels wide, the width
+        // stepped that edge out, then the offset slid it back (a tremble).
+        // Each edge moves one way only, the way the thumb goes, until the
+        // thumb has gone (its spring then comes back a little).
+        const root = page.locator(SWITCH).nth(0);
+        if (on) {
+          await root.click();
+          await page.mouse.move(0, 0);
+          await page.waitForTimeout(1000);
+        }
+        const edges = await paintedThumbEdges(
+          page,
+          root,
+          async () => {
+            await pointerDown(page, root);
+            // Released mid-stretch, or once stretched across a few device
+            // pixels.
+            await page.waitForTimeout(hold);
+            await page.mouse.up();
+          },
+          900,
+        );
+        expect(edges.length).toBeGreaterThan(10);
+        const way = on ? -1 : 1;
+        const back = (e: { left: number; right: number }) =>
+          on ? e.right : e.left;
+        // It went: the back edge travelled the track.
+        const gone = edges.reduce(
+          (far, e, i) => (way * back(e) > way * back(edges[far]!) ? i : far),
+          0,
+        );
+        expect(way * (back(edges[gone]!) - back(edges[0]!))).toBeGreaterThan(
+          10,
+        );
+        for (let i = 1; i <= gone; i++)
+          for (const edge of ['left', 'right'] as const) {
+            const step = way * (edges[i]![edge] - edges[i - 1]![edge]);
+            expect(step, `${edge} edge, frame ${i}`).toBeGreaterThan(-0.1);
+          }
+      });
+    }
 
     test('released, the thumb springs to its side as its width springs back; the track colour changes at once', async ({
       page,
