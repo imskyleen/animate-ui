@@ -21,11 +21,13 @@ import {
 import {
   CheckRegistryContext,
   ItemCheck,
-  PICK_HOLD,
+  usePickHold,
   useCheckGroup,
   useCheckRegistry,
   type CheckGroup,
   type ItemCheckAnimationProps,
+  type Picked,
+  type RegisterCheck,
 } from '../../../internal/item-indicator';
 
 // Shared by Base UI's Select and Combobox: both keep their popup mounted
@@ -37,17 +39,21 @@ import {
 // item is chosen and erases itself when it's not anymore, like a checkbox's
 // (with `pop`, it pops in and out, and a single selection's check glides to
 // the chosen item on a quick spring). Choosing another item closes the list
-// after a 150ms hold, so the change is seen (internal/item-indicator).
+// after a hold (250ms for a drawn check, 150ms for a glide or a pop), so
+// the change is seen (internal/item-indicator).
 
 /** What a Root shares with its animated parts. */
 type RootMotion = {
   /** Unmounts the popup: called once its exit has played. */
   unmount: () => void;
   multiple: boolean;
-  /** The popup closed because an item was chosen, whose check changes. */
-  picked: boolean;
+  /**
+   * The popup closed because an item was chosen whose check changes: how it
+   * shows (the list holds for it).
+   */
+  picked: Picked;
   /** Lets a check register with the list. */
-  registerCheck: (element: Element) => () => void;
+  registerCheck: RegisterCheck;
 };
 
 /** What the Root needs to know of Base UI's change details. */
@@ -84,8 +90,8 @@ const IndicatorGroupContext = React.createContext<CheckGroup | null>(null);
  */
 function checkChanges(
   details: OpenChangeDetails,
-  hasCheck: (item: Element) => boolean,
-) {
+  checkOf: (item: Element) => Picked,
+): Picked {
   if (details.reason !== 'item-press') return false;
   const target = details.event?.target;
   const item =
@@ -93,7 +99,7 @@ function checkChanges(
   return (
     item !== null &&
     item.getAttribute('aria-selected') !== 'true' &&
-    hasCheck(item)
+    checkOf(item)
   );
 }
 
@@ -117,13 +123,13 @@ function useRootMotion<
     [],
   );
   const unmount = React.useCallback(() => internalRef.current?.unmount(), []);
-  const { registerCheck, hasCheck } = useCheckRegistry();
-  const [picked, setPicked] = React.useState(false);
+  const { registerCheck, checkOf } = useCheckRegistry();
+  const [picked, setPicked] = React.useState<Picked>(false);
   const handleOpenChange = (open: boolean, eventDetails: Details) => {
     onOpenChange?.(open, eventDetails);
     if (eventDetails.isCanceled) return;
     // The chosen item's check shows itself while the list holds.
-    setPicked(!open && checkChanges(eventDetails, hasCheck));
+    setPicked(!open && checkChanges(eventDetails, checkOf));
   };
   const context = React.useMemo<RootMotion>(
     () => ({ unmount, multiple, picked, registerCheck }),
@@ -150,12 +156,14 @@ function usePopupRender(
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
-  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  const hold = usePickHold();
   // Closing because an item was chosen: the list holds still while its check
   // shows itself (nothing moves under reduced motion).
   const exitDelay = (exit as { delay?: number }).delay ?? 0;
   const held: Transition =
-    root?.picked && !reduce ? { ...exit, delay: exitDelay + hold } : exit;
+    root?.picked && !reduce
+      ? { ...exit, delay: exitDelay + hold(root.picked) }
+      : exit;
   const group = useCheckGroup();
   // Base UI can mount a closed popup (typeahead and autofill on the closed
   // trigger register the items): only an exit that followed an entrance

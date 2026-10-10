@@ -27,18 +27,19 @@ import { glideFrom, stopGlide } from './glide';
 //   (internal/controls/indicator), without its 0.2s delay (there's no box to
 //   fill first). Choosing another item of a single selection erases the old
 //   check while the new one draws.
-//
-// Only checking and unchecking animate: the list or the menu opening shows
-// its checks at rest, and closing leaves them as they are.
 // - `pop`: it pops in from half its size out of a light blur, and shrinks
 //   back out. Choosing another item of a single selection doesn't pop: the
 //   check glides from the item it leaves to the chosen one, on the
 //   highlight's spring (its group decides, CheckGroup).
 //
+// Only checking and unchecking animate: the list or the menu opening shows
+// its checks at rest, and closing leaves them as they are.
+//
 // Choosing an item can close the list or the menu: when its check changes,
-// the list holds still for PICK_HOLD first, so the change is seen before the
-// list fades out. Each check registers with its list (CheckRegistryContext)
-// so the list knows which items have one.
+// the list holds still first (PICK_HOLD: 250ms for a drawn check, 150ms for
+// a glide or a pop), so the change is seen before the list fades out. Each
+// check registers with its list (CheckRegistryContext), with how it shows,
+// so the list knows which items have one and how long to hold.
 
 /** A drawn check: no box to fill first, it draws at once. */
 const DRAW_TRANSITION: Transition = {
@@ -61,9 +62,28 @@ const GLIDE_TRANSITION = motionTokens.spring.highlight;
 
 /**
  * How long (seconds) a list holds still after an item was chosen, before it
- * closes: the check's change, in sight.
+ * closes: the check's change, in sight. A drawn check (0.3s) is ~95% drawn
+ * and the old one ~95% erased when the list starts to fade (at 150ms, only
+ * two thirds: the list was half gone before they were done); a glide or a
+ * pop is nearly done in 150ms.
  */
-const PICK_HOLD = 0.15;
+const PICK_HOLD: Record<CheckAnimation, number> = { draw: 0.25, pop: 0.15 };
+
+/**
+ * How the chosen item's check changes as its list closes: the check's
+ * animation (the list holds for it), or `false` (it doesn't hold).
+ */
+type Picked = CheckAnimation | false;
+
+/**
+ * A list's hold (seconds, at the app's tempo) for a check that shows the way
+ * `look` says.
+ */
+function usePickHold() {
+  const { delay: draw = 0 } = useTempoTransition({ delay: PICK_HOLD.draw });
+  const { delay: pop = 0 } = useTempoTransition({ delay: PICK_HOLD.pop });
+  return (look: CheckAnimation) => (look === 'draw' ? draw : pop);
+}
 
 /** Animate UI's additions to the parts that show an item's check. */
 type ItemCheckAnimationProps = {
@@ -148,29 +168,39 @@ function useCheckGroup(): CheckGroup {
 // ---------------------------------------------------------------------------
 // Registry: which items have a check.
 
-type RegisterCheck = (element: Element) => () => void;
+type RegisterCheck = (element: Element, look: CheckAnimation) => () => void;
 
-/** The list's registry of checks. */
+/** The list's registry of checks, with how each one shows. */
 const CheckRegistryContext = React.createContext<RegisterCheck | null>(null);
 
 /**
- * A list's registry: `hasCheck(item)` tells, when `item` is chosen, whether
- * it has a check to change (without `item`: whether any item has one).
+ * A list's registry: `checkOf(item)` tells, when `item` is chosen, how the
+ * check it changes shows (`draw` if one of its checks draws itself), or
+ * `false` without one (without `item`: any item's); `hasCheck` whether it
+ * has one.
  */
 function useCheckRegistry() {
-  const checksRef = React.useRef(new Set<Element>());
-  const registerCheck = React.useCallback<RegisterCheck>((element) => {
-    checksRef.current.add(element);
+  const checksRef = React.useRef(new Map<Element, CheckAnimation>());
+  const registerCheck = React.useCallback<RegisterCheck>((element, look) => {
+    checksRef.current.set(element, look);
     return () => {
       checksRef.current.delete(element);
     };
   }, []);
-  const hasCheck = React.useCallback((item?: Element | null) => {
-    for (const check of checksRef.current)
-      if (!item || item.contains(check)) return true;
-    return false;
+  const checkOf = React.useCallback((item?: Element | null): Picked => {
+    let found: Picked = false;
+    for (const [check, look] of checksRef.current) {
+      if (item && !item.contains(check)) continue;
+      if (look === 'draw') return 'draw';
+      found = look;
+    }
+    return found;
   }, []);
-  return { registerCheck, hasCheck };
+  const hasCheck = React.useCallback(
+    (item?: Element | null) => checkOf(item) !== false,
+    [checkOf],
+  );
+  return { registerCheck, hasCheck, checkOf };
 }
 
 // ---------------------------------------------------------------------------
@@ -222,10 +252,11 @@ function ItemCheck({
   const gliding = look === 'pop' && !multiple && group !== null;
   const register = React.use(CheckRegistryContext);
   const elementRef = React.useRef<HTMLElement>(null);
+  // Registered with how it shows: its list holds longer for a drawn check.
   React.useLayoutEffect(() => {
     const element = elementRef.current;
-    return element && register ? register(element) : undefined;
-  }, [register]);
+    return element && register ? register(element, look) : undefined;
+  }, [register, look]);
   // Gliding, it must be a box: a translate doesn't apply to an inline one.
   const mergedRef = React.useMemo(
     () =>
@@ -301,27 +332,30 @@ function asTransformable(node: HTMLElement | null) {
 
 type Picks = {
   /**
-   * An item is being chosen and its check changes: call it right before the
-   * library closes the menu.
+   * An item is being chosen and its check changes, the way `look` says:
+   * call it right before the library closes the menu.
    */
-  markPick: () => void;
+  markPick: (look: CheckAnimation) => void;
   /** Whether `item` has a check (without `item`: whether any item has one). */
   hasCheck: (item?: Element | null) => boolean;
+  /** How `item`'s check shows (see `useCheckRegistry`). */
+  checkOf: (item?: Element | null) => Picked;
 };
 
 /** The picks of the menu or list an item is in. */
 const PickContext = React.createContext<Picks | null>(null);
 
 /**
- * A menu's picks. `wasPicked()`, read when it closes, tells whether an item
- * was just chosen (the close follows the pick, in the same event or in the
- * render it schedules).
+ * A menu's picks. `wasPicked()`, read when it closes, tells how the check of
+ * an item just chosen changes, or `false` (the close follows the pick, in the
+ * same event or in the render it schedules).
  */
 function usePicks() {
-  const { registerCheck, hasCheck } = useCheckRegistry();
-  const pickingRef = React.useRef(false);
-  const markPick = React.useCallback(() => {
-    pickingRef.current = true;
+  const { registerCheck, hasCheck, checkOf } = useCheckRegistry();
+  const pickingRef = React.useRef<Picked>(false);
+  const markPick = React.useCallback((look: CheckAnimation) => {
+    // A drawn check, anywhere in the menus picked, is held for.
+    if (pickingRef.current !== 'draw') pickingRef.current = look;
     // A pick that doesn't close it (a key that keeps it open) is forgotten
     // with its event, after React has rendered what it scheduled.
     setTimeout(() => {
@@ -330,8 +364,8 @@ function usePicks() {
   }, []);
   const wasPicked = React.useCallback(() => pickingRef.current, []);
   const picks = React.useMemo(
-    () => ({ markPick, hasCheck }),
-    [markPick, hasCheck],
+    () => ({ markPick, hasCheck, checkOf }),
+    [markPick, hasCheck, checkOf],
   );
   return { picks, registerCheck, wasPicked };
 }
@@ -340,6 +374,7 @@ export {
   GLIDE_TRANSITION,
   PICK_HOLD,
   CheckRegistryContext,
+  usePickHold,
   ItemCheck,
   PickContext,
   useCheckGroup,
@@ -348,4 +383,6 @@ export {
   type CheckGroup,
   type ItemCheckAnimationProps,
   type ItemCheckProps,
+  type Picked,
+  type RegisterCheck,
 };

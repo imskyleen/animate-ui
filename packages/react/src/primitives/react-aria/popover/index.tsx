@@ -13,7 +13,7 @@ import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import {
   ReducedMotionConfig,
   useShouldReduceMotion,
-  useTempoTransition,
+  type CheckAnimation,
 } from '../../../utils/motion';
 import {
   asMotion,
@@ -22,9 +22,10 @@ import {
 } from '../../../internal/anchored';
 import {
   CheckRegistryContext,
-  PICK_HOLD,
+  usePickHold,
   PickContext,
   usePicks,
+  type Picked,
 } from '../../../internal/item-indicator';
 import { originFor } from './origin';
 
@@ -44,8 +45,9 @@ import { originFor } from './origin';
 // reads) and passes `isExiting` while the exit plays.
 //
 // Under a Select or a ComboBox with a single selection, choosing another item
-// closes the list: when a check (a SelectionIndicator) is there to glide, it
-// holds still for 150ms first, so the check is seen landing on the item.
+// closes the list: when a check (a SelectionIndicator) is there, it holds
+// still first (250ms for a drawn check, 150ms for a glide or a pop), so the
+// check is seen landing on the item.
 // Under a menu, likewise when the item chosen closes the menu while its check
 // moves (Animate UI's MenuItem tells it); the menus around a submenu hold
 // with it.
@@ -137,16 +139,17 @@ function Popover({
   const { picks, registerCheck, wasPicked } = usePicks();
   const menuPicks = React.useMemo(
     () => ({
-      markPick: () => {
-        picks.markPick();
-        parentPicks?.markPick();
+      markPick: (look: CheckAnimation) => {
+        picks.markPick(look);
+        parentPicks?.markPick(look);
       },
       hasCheck: picks.hasCheck,
+      checkOf: picks.checkOf,
     }),
     [picks, parentPicks],
   );
-  // Read as it closes: a menu item was just chosen.
-  const [menuPicked, setMenuPicked] = React.useState(false);
+  // Read as it closes: a menu item was just chosen (how its check shows).
+  const [menuPicked, setMenuPicked] = React.useState<Picked>(false);
   if (openChanged) setMenuPicked(!open && wasPicked());
   const popoverProps = {
     ...props,
@@ -162,7 +165,7 @@ function Popover({
           {/* `custom` reaches the leaving popover: whether to hold still. */}
           <LivePropsContext value={popoverProps}>
             <AnimatePresence
-              custom={reduce ? false : menuPicked ? 'menu' : picked && 'list'}
+              custom={reduce ? false : menuPicked || (picked && 'list')}
             >
               {open && (
                 <AnimatedPopover
@@ -170,7 +173,7 @@ function Popover({
                   popoverProps={popoverProps}
                   transition={transition}
                   exitTransition={exitTransition}
-                  hasCheck={picks.hasCheck}
+                  checkOf={picks.checkOf}
                 />
               )}
             </AnimatePresence>
@@ -187,15 +190,15 @@ function Popover({
 
 type AnimatedPopoverProps = AnchoredAnimationProps & {
   popoverProps: LivePopoverProps;
-  /** Whether its list shows a check, read when it leaves. */
-  hasCheck: () => boolean;
+  /** How its list's checks show (or `false`: none), read when it leaves. */
+  checkOf: () => Picked;
 };
 
 function AnimatedPopover({
   popoverProps,
   transition,
   exitTransition,
-  hasCheck,
+  checkOf,
 }: AnimatedPopoverProps) {
   // Leaving, it still gets the latest props.
   const { render, isExiting, ...props } =
@@ -217,17 +220,19 @@ function AnimatedPopover({
     transition,
     exitTransition,
   });
-  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  const hold = usePickHold();
   // A variant, so the leaving popover reads AnimatePresence's `custom`: what
   // was just chosen. A list's choice is resolved as it leaves, once the
   // chosen item's check has mounted; a menu item knew when it was chosen.
   const variants = {
-    exit: (held: 'menu' | 'list' | false | undefined) => {
-      if (!held || (held === 'list' && !hasCheck())) return exit;
+    exit: (held: Picked | 'list' | undefined) => {
+      // A menu item's check, as marked; a list's, read now.
+      const look = held === 'list' ? checkOf() : held;
+      if (!look) return exit;
       const leave = exit.transition as { delay?: number } | undefined;
       return {
         ...exit,
-        transition: { ...leave, delay: (leave?.delay ?? 0) + hold },
+        transition: { ...leave, delay: (leave?.delay ?? 0) + hold(look) },
       };
     },
   };

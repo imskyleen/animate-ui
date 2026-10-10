@@ -40,8 +40,8 @@ import { PickContext, useCheckGroup } from '../../../internal/item-indicator';
 // it draws itself and erases itself, like a checkbox's; with `pop`, it pops in
 // and out, and a single selection's check glides to the chosen item, between
 // the items of its Menu or MenuSection. Choosing an item that closes the menu
-// (from the pointer or Enter) holds the menu still for 150ms while its check
-// changes (the Popover waits).
+// (from the pointer or Enter) holds the menu still while its check changes
+// (the Popover waits: 250ms for a drawn check, 150ms for a pop or a glide).
 //
 // Items are collection items: the highlight goes through their `render` prop
 // (internal/aria-item-highlight).
@@ -183,12 +183,13 @@ function MenuItem<T extends object>({
                 // one).
                 onClick: (event: React.MouseEvent<HTMLElement>) => {
                   const { selectionMode, isSelected } = values;
+                  const look = picks?.checkOf(event.currentTarget);
                   if (
                     (selectionMode === 'multiple' ||
                       (selectionMode === 'single' && !isSelected)) &&
-                    picks?.hasCheck(event.currentTarget)
+                    look
                   )
-                    picks?.markPick();
+                    picks?.markPick(look);
                   own.onClick?.(event);
                 },
               }}

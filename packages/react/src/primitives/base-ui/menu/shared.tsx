@@ -24,10 +24,12 @@ import {
 import {
   CheckRegistryContext,
   ItemCheck,
-  PICK_HOLD,
+  usePickHold,
   useCheckRegistry,
   type CheckGroup,
   type ItemCheckAnimationProps,
+  type Picked,
+  type RegisterCheck,
 } from '../../../internal/item-indicator';
 
 // Shared by Base UI's Menu and Context Menu (which reuses the Menu's parts),
@@ -42,7 +44,8 @@ import {
 //   in and out, and a radio item's check glides to the newly checked item,
 //   like a select's (internal/item-indicator);
 // - with `closeOnClick`, choosing an item whose check changes holds the menu
-//   still for 150ms before it closes, so the change is seen.
+//   still before it closes (250ms for a drawn check, 150ms for a glide or a
+//   pop), so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -111,7 +114,7 @@ function movesOn(details: OpenChangeDetails) {
  * The root menu closed because an item whose check changes was chosen: its
  * popups (submenus' too) hold still before they leave.
  */
-const PickedContext = React.createContext(false);
+const PickedContext = React.createContext<Picked>(false);
 
 type OpenChangeDetails = {
   isCanceled: boolean;
@@ -126,19 +129,19 @@ type OpenChangeDetails = {
  */
 function checkMoves(
   details: OpenChangeDetails,
-  hasCheck: (item: Element) => boolean,
-) {
+  checkOf: (item: Element) => Picked,
+): Picked {
   if (details.reason !== 'item-press') return false;
   const target = details.event?.target;
   const item =
     target instanceof Element
       ? target.closest('[role="menuitemcheckbox"], [role="menuitemradio"]')
       : null;
-  if (!item || !hasCheck(item)) return false;
-  return (
+  if (!item) return false;
+  const moves =
     item.getAttribute('role') === 'menuitemcheckbox' ||
-    item.getAttribute('aria-checked') !== 'true'
-  );
+    item.getAttribute('aria-checked') !== 'true';
+  return moves && checkOf(item);
 }
 
 /**
@@ -158,13 +161,13 @@ function useManualUnmount<Details extends OpenChangeDetails>(
   }));
   const unmount = React.useCallback(() => ownActionsRef.current?.unmount(), []);
   // The items' checks register: which items have one.
-  const { registerCheck, hasCheck } = useCheckRegistry();
-  const [picked, setPicked] = React.useState(false);
+  const { registerCheck, checkOf } = useCheckRegistry();
+  const [picked, setPicked] = React.useState<Picked>(false);
   const [movedOn, setMovedOn] = React.useState(false);
   const handleOpenChange = (open: boolean, details: Details) => {
     onOpenChange?.(open, details);
     if (details.isCanceled) return;
-    setPicked(!open && checkMoves(details, hasCheck));
+    setPicked(!open && checkMoves(details, checkOf));
     setMovedOn(!open && movesOn(details));
     if (open) return;
     // Typed on Menu.Root's details only, but every menu root passes it.
@@ -188,8 +191,8 @@ function RootPicks({
   registerCheck,
   children,
 }: {
-  picked: boolean;
-  registerCheck: (element: Element) => () => void;
+  picked: Picked;
+  registerCheck: RegisterCheck;
   children?: React.ReactNode;
 }) {
   return (
@@ -275,7 +278,7 @@ function PopupMotion({
   // A menubar's popover moving and resizing to the next menu.
   const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   const picked = React.use(PickedContext);
-  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  const hold = usePickHold();
   // A menubar's next menu takes its popover over: it starts from where this
   // one is, which leaves at once, unseen (unmounted as soon as it's closed:
   // Base UI doesn't open a menu again on hover while it's still mounted).
@@ -302,7 +305,7 @@ function PopupMotion({
     : picked && !reduce
       ? {
           ...leave,
-          delay: ((leave as { delay?: number }).delay ?? 0) + hold,
+          delay: ((leave as { delay?: number }).delay ?? 0) + hold(picked),
         }
       : leave;
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1.

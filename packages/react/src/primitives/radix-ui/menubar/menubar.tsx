@@ -27,6 +27,7 @@ import {
   MenuHandoffContext,
   useHandoffGroup,
 } from '../../../internal/menu-handoff';
+import type { Picked } from '../../../internal/item-indicator';
 
 // Same API as Radix's Menubar. The Root mirrors which menu is open (Radix
 // keeps it private) so each Content can play an exit before it unmounts.
@@ -65,8 +66,11 @@ type MenubarSubContentProps = MenubarPrimitive.MenubarSubContentProps &
 type MenubarState = {
   /** The value of the open menu ('' when none is). */
   value: string;
-  /** The open menu closed because an item whose check moves was chosen. */
-  picked: boolean;
+  /**
+   * The open menu closed because an item whose check moves was chosen: how
+   * it shows.
+   */
+  picked: Picked;
 };
 
 const MenubarStateContext = React.createContext<MenubarState | null>(null);

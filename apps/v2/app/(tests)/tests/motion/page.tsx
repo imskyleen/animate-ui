@@ -109,7 +109,7 @@ const FAMILIES: Family[] = [
       'contenu : scale 0,9 → 1 + fondu en 0,22s, ease-out doux',
       'menubar et navigation menu, d’un menu à l’autre : le popover se déplace et se redimensionne sur un ressort 660/52 sans dépassement ; le contenu qui part glisse de 6px (24px pour un navigation menu) en 0,22s, le suivant arrive sur 450/43 et apparaît en 0,26s',
       'surlignage : ressort 500/40, un seul surlignage passé d’élément en élément avec sa vitesse',
-      'coches : pop ; coche d’un select ou d’une combobox : glisse sur 500/40 (le ressort du surlignage), la liste attend 150ms avant de se fermer quand on choisit un autre item ; indicateur radio des menus : glisse en 0,45s',
+      'coches : pop ; coche d’un select ou d’une combobox : glisse sur 500/40 (le ressort du surlignage), la liste attend avant de se fermer quand on choisit un autre item (250ms quand la coche se trace, 150ms quand elle glisse ou apparaît) ; indicateur radio des menus : glisse en 0,45s',
     ],
     demos: [
       { demo: 'radix-ui/dropdown-menu', label: 'Dropdown Menu' },

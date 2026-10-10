@@ -23,11 +23,13 @@ import {
 import {
   CheckRegistryContext,
   ItemCheck,
-  PICK_HOLD,
+  usePickHold,
   useCheckGroup,
   useCheckRegistry,
   type CheckGroup,
   type ItemCheckAnimationProps,
+  type Picked,
+  type RegisterCheck,
 } from '../../../internal/item-indicator';
 
 // Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
@@ -35,7 +37,8 @@ import {
 // ways), a highlight glides behind the highlighted item, and the chosen
 // item's check draws itself while the previous one erases itself (with
 // `pop`, the check glides to the chosen item on a quick spring). Choosing
-// another item closes the list after a 150ms hold, so the change is seen
+// another item closes the list after a hold (250ms for a drawn check,
+// 150ms for a glide or a pop), so the change is seen
 // (internal/item-indicator). The Root mirrors `open` and `value` (Radix keeps
 // them private) so the Content can play an exit before Radix unmounts it, and
 // every item's check stays mounted to show and hide itself.
@@ -44,12 +47,15 @@ const [OpenProvider, useOpen] = getStrictContext<{
   open: boolean;
   /** The chosen value, as Radix has it. */
   value: string | undefined;
-  /** The list closed because an item was chosen, whose check changes. */
-  picked: boolean;
+  /**
+   * The list closed because an item was chosen whose check changes: how it
+   * shows (the list holds for it).
+   */
+  picked: Picked;
   /** Called by an item about to be chosen, just before Radix closes. */
   markPick: (item: Element) => void;
   /** Lets a check register with the list. */
-  registerCheck: (element: Element) => () => void;
+  registerCheck: RegisterCheck;
 }>('Select.Root');
 
 /** Whether the closest Item is the chosen one. */
@@ -125,8 +131,8 @@ function useOpenState({
   const open = controlled ? openProp : uncontrolled;
   const [ownValue, setOwnValue] = React.useState(defaultValue);
   const value = valueProp !== undefined ? valueProp : ownValue;
-  const [picked, setPicked] = React.useState(false);
-  const { registerCheck, hasCheck } = useCheckRegistry();
+  const [picked, setPicked] = React.useState<Picked>(false);
+  const { registerCheck, checkOf } = useCheckRegistry();
   const pickedRef = React.useRef<Element | null>(null);
   const markPick = React.useCallback((item: Element) => {
     pickedRef.current = item;
@@ -140,7 +146,7 @@ function useOpenState({
     if (!controlled) setUncontrolled(next);
     // The chosen item has a check: it shows itself while the list holds.
     const item = pickedRef.current;
-    setPicked(!next && item !== null && hasCheck(item));
+    setPicked(!next && item !== null && checkOf(item));
     onOpenChange?.(next);
   };
   // Radix keeps its own value: this only follows it.
@@ -252,12 +258,12 @@ function ContentMotion({
   // child, but context still reaches it, so the closing list turns inert.
   const { open, picked, registerCheck } = useOpen();
   const reduce = useShouldReduceMotion();
-  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  const hold = usePickHold();
   // Closing because an item was chosen: the list holds still while its check
   // shows itself (nothing moves under reduced motion).
   const exitDelay = (exit as { delay?: number }).delay ?? 0;
   const leave: Transition =
-    picked && !reduce ? { ...exit, delay: exitDelay + hold } : exit;
+    picked && !reduce ? { ...exit, delay: exitDelay + hold(picked) } : exit;
   const group = useCheckGroup();
   // Item-aligned (Radix's default) lays the list over the trigger, lining the
   // selected item up with the value, and measures it on mount: a scale would

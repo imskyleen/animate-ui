@@ -205,6 +205,23 @@ test.describe('radix-ui select API', () => {
     });
   });
 
+  test("an indicator's own animation sets the hold: it draws, under checks that pop", async ({
+    page,
+  }) => {
+    const trigger = page.getByRole('combobox', { name: 'Own animation' });
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.click();
+    await page.waitForTimeout(650);
+    await expectPickHold(page, {
+      popup: LIST,
+      item: 'Own Banana',
+      from: 'Own Apple',
+      check: CHECK,
+      animation: 'draw',
+      pick: () => option(page, 'Own Banana').click(),
+    });
+  });
+
   test('controlled open, value and their callbacks', async ({ page }) => {
     const trigger = page.getByRole('combobox', { name: 'Controlled' });
     await expect(trigger).toHaveText('Controlled Banana');

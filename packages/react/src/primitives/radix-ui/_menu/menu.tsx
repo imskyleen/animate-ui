@@ -34,12 +34,13 @@ import {
 import {
   CheckRegistryContext,
   ItemCheck,
-  PICK_HOLD,
+  usePickHold,
   PickContext,
   useCheckGroup,
   usePicks,
   type CheckGroup,
   type ItemCheckAnimationProps,
+  type Picked,
 } from '../../../internal/item-indicator';
 
 // Shared by Radix's Dropdown Menu, Context Menu and Menubar: the three are
@@ -54,7 +55,8 @@ import {
 //   in and out, and a radio item's check glides to the newly checked item,
 //   like a select's (internal/item-indicator).
 // - Choosing an item closes the menu (Radix's default): when its check
-//   changes, the menu holds still for 150ms first, so the change is seen.
+//   changes, the menu holds still first (250ms for a drawn check, 150ms
+//   for a glide or a pop), so the change is seen.
 
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
@@ -74,8 +76,11 @@ type IndicatorAnimationProps = ItemCheckAnimationProps;
 
 type MenuState = {
   open: boolean;
-  /** It closed because an item was chosen whose check moves: it holds. */
-  picked?: boolean;
+  /**
+   * It closed because an item was chosen whose check moves: how it shows
+   * (it holds for it).
+   */
+  picked?: Picked;
 };
 
 // Nullable contexts: a part used outside Animate UI's Root falls back to the
@@ -122,7 +127,7 @@ function useOpenState({ open, defaultOpen, onOpenChange }: OpenStateProps) {
  */
 function useMenuPicks() {
   const { picks, registerCheck, wasPicked } = usePicks();
-  const [picked, setPicked] = React.useState(false);
+  const [picked, setPicked] = React.useState<Picked>(false);
   const onOpenChange = (open: boolean) => setPicked(!open && wasPicked());
   const provide = (children: React.ReactNode) => (
     <PickContext value={picks}>
@@ -298,7 +303,7 @@ function ContentMotion({
   );
   // A menubar's popover moving and resizing to the next menu.
   const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
-  const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
+  const hold = usePickHold();
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
   // a settled content never becomes the containing block of the submenus'
   // fixed positioning (shadcn/ui renders them inside the content).
@@ -334,7 +339,7 @@ function ContentMotion({
     : picked && !reduce
       ? {
           ...leave,
-          delay: ((leave as { delay?: number }).delay ?? 0) + hold,
+          delay: ((leave as { delay?: number }).delay ?? 0) + hold(picked),
         }
       : leave;
 
@@ -506,17 +511,19 @@ type CheckboxItemProps = SelectableItemProps & {
 
 /**
  * Radix calls `onSelect` right before it closes the menu (unless it's
- * prevented): the pick is marked then, if `moves` says its check moves.
+ * prevented): the pick is marked then, if `moves` says its check moves (how
+ * it shows).
  */
 function useMarkPick(
   onSelect: ((event: Event) => void) | undefined,
-  moves: (item: Element | null) => boolean,
+  moves: (item: Element | null) => Picked,
 ) {
   const picks = React.use(PickContext);
   return (event: Event) => {
     onSelect?.(event);
-    if (!event.defaultPrevented && moves(event.currentTarget as Element | null))
-      picks?.markPick();
+    if (event.defaultPrevented) return;
+    const look = moves(event.currentTarget as Element | null);
+    if (look) picks?.markPick(look);
   };
 }
 
@@ -527,8 +534,9 @@ function createCheckboxItem<P extends CheckboxItemProps>(
   function CheckboxItem(props: P) {
     const picks = React.use(PickContext);
     // Its check shows or hides itself.
-    const onSelect = useMarkPick(props.onSelect, (item) =>
-      Boolean(picks?.hasCheck(item)),
+    const onSelect = useMarkPick(
+      props.onSelect,
+      (item) => picks?.checkOf(item) ?? false,
     );
     return (
       <IndicatorItemContext
@@ -569,7 +577,7 @@ function createRadioItem<P extends SelectableItemProps & { value: string }>(
       props.onSelect,
       (item) =>
         item?.getAttribute('data-state') !== 'checked' &&
-        Boolean(picks?.hasCheck(item)),
+        (picks?.checkOf(item) ?? false),
     );
     return (
       <IndicatorItemContext

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Select } from '@animate-ui/react/primitives/radix-ui/select';
 import * as SelectStar from '@animate-ui/react/primitives/radix-ui/select';
+import { AnimateUIProvider } from '@animate-ui/react/provider';
 
 const FRUITS = ['Apple', 'Banana', 'Cherry'];
 
@@ -115,6 +116,40 @@ export default function RadixSelectFixture() {
             </Select.Portal>
           </Select.Root>
         )}
+      </section>
+
+      <section data-testid="own-animation">
+        {/* Checks that pop, but this list's draw: it holds for a drawing. */}
+        <AnimateUIProvider checkAnimation="pop">
+          <Select.Root defaultValue="apple">
+            <Select.Trigger aria-label="Own animation">
+              <Select.Value />
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content position="popper" className="bg-white">
+                <Select.Viewport>
+                  {FRUITS.map((fruit) => (
+                    <Select.Item key={fruit} value={fruit.toLowerCase()}>
+                      <span>
+                        <Select.ItemIndicator animation="draw">
+                          <svg viewBox="0 0 24 24" width={16} height={16}>
+                            <path
+                              d="M5 12l5 5L20 7"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            />
+                          </svg>
+                        </Select.ItemIndicator>
+                      </span>
+                      <Select.ItemText>Own {fruit}</Select.ItemText>
+                    </Select.Item>
+                  ))}
+                </Select.Viewport>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+        </AnimateUIProvider>
       </section>
     </div>
   );

@@ -4,10 +4,10 @@ import type { CheckAnimation } from './item-checks';
 
 // Choosing an item closes a single-selection list (selects, comboboxes, a
 // menu's radio items) after a hold: the list stays as it is while the checks
-// change (150ms), then fades out. `draw` (the default): the chosen item's
-// check draws itself while the previous one erases itself. `pop`: the check
-// glides from the previous item to the chosen one. Closing any other way
-// doesn't wait.
+// change, then fades out. `draw` (the default, 250ms): the chosen item's
+// check draws itself while the previous one erases itself, both nearly done
+// when the list starts fading. `pop` (150ms): the check glides from the
+// previous item to the chosen one. Closing any other way doesn't wait.
 
 type CheckState = {
   /** How much it shows (its opacities up to the indicator, multiplied). */
@@ -139,8 +139,11 @@ export async function expectPickHold(page: Page, c: PickCase) {
     (f, i) => i > picked && (f.opacity === null || f.opacity < 0.98),
   );
   expect(fading).toBeGreaterThan(picked);
-  // The list held still (150ms) while the checks changed.
-  expect(recorded[fading]!.t - recorded[picked]!.t).toBeGreaterThan(100);
+  // The list held still (250ms for a drawn check, 150ms for a glide or a
+  // pop) while the checks changed.
+  expect(recorded[fading]!.t - recorded[picked]!.t).toBeGreaterThan(
+    c.animation === 'draw' ? 200 : 100,
+  );
   const first = recorded[picked]!;
   const held = recorded[fading - 1]!;
 
@@ -169,16 +172,13 @@ export async function expectPickHold(page: Page, c: PickCase) {
     for (const f of recorded) expect(f.chosen?.dash ?? 1).toBe(1);
   } else {
     // In place: the chosen check draws itself while the previous one erases
-    // itself, both partway when the list starts fading.
+    // itself, both nearly done when the list starts fading (~95%; at 150ms,
+    // two thirds, and the list was half gone before they were done).
     inPlace();
     expect(first.chosen!.dash).toBeLessThan(0.5);
-    expect(held.chosen!.dash).toBeGreaterThan(0.15);
-    expect(held.chosen!.dash).toBeLessThan(0.97);
+    expect(held.chosen!.dash).toBeGreaterThan(0.85);
     for (const f of recorded) expect(f.chosen?.scale ?? 1).toBeCloseTo(1, 2);
-    if (c.from !== null) {
-      expect(held.previous!.dash).toBeGreaterThan(0.03);
-      expect(held.previous!.dash).toBeLessThan(0.85);
-    }
+    if (c.from !== null) expect(held.previous!.dash).toBeLessThan(0.15);
   }
   // Then it closed.
   const last = recorded.at(-1)!;
@@ -232,7 +232,7 @@ export async function expectCloseWithoutHold(
   await close();
   const { acted, frames } = await collect<CloseRecording>(page);
   expect(acted).not.toBeNull();
-  // It starts fading on the next frames, not 150ms later.
+  // It starts fading on the next frames, not after a hold.
   const fading = frames.find(
     (f) => f.t >= acted! && (f.opacity === null || f.opacity < 0.98),
   );
