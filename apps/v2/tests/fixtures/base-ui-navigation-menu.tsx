@@ -40,6 +40,12 @@ export default function BaseNavigationMenuFixture() {
               <NavigationMenu.Link href="#one">Link one</NavigationMenu.Link>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
+          <NavigationMenu.Item value="two">
+            <NavigationMenu.Trigger>Controlled two</NavigationMenu.Trigger>
+            <NavigationMenu.Content className="p-2">
+              <NavigationMenu.Link href="#two">Link two</NavigationMenu.Link>
+            </NavigationMenu.Content>
+          </NavigationMenu.Item>
         </NavigationMenu.List>
         <NavigationMenu.Portal>
           <NavigationMenu.Positioner sideOffset={8}>

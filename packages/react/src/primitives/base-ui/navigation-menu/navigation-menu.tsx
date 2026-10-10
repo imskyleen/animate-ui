@@ -126,12 +126,26 @@ type RootContextValue = {
    * but declared in their items: they reach it from here).
    */
   swapper: ContentSwapper;
+  /** The pointer has just switched the menu to the open item (see Trigger). */
+  justSwitched: () => boolean;
+  /** A click kept the open item open (see Trigger): it's pinned. */
+  keptOpen: () => void;
 };
 
 const RootContext = React.createContext<RootContextValue | null>(null);
 
+/**
+ * How soon after a hover opened an item a click on its trigger keeps it
+ * open: Base UI's "patient click" (its `PATIENT_CLICK_THRESHOLD`).
+ */
+const PATIENT_CLICK = 500;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function Root<Value = any>({ actionsRef, ...props }: Root.Props<Value>) {
+function Root<Value = any>({
+  actionsRef,
+  onValueChange,
+  ...props
+}: Root.Props<Value>) {
   const ownActionsRef = React.useRef<Root.Actions | null>(null);
   // The user's actionsRef still works: it forwards to Base UI's actions.
   React.useImperativeHandle(actionsRef, () => ({
@@ -144,11 +158,63 @@ function Root<Value = any>({ actionsRef, ...props }: Root.Props<Value>) {
   // Its contents change in place even without a Popup (a submenu shown in
   // its parent's content), unless its Popup's settings come first.
   useContentSwapper(MORPH_TRANSITION, useShouldReduceMotion(), swapper, true);
+  // Which item the pointer last switched the menu to (from another one), and
+  // when: a click on its trigger right after keeps it open (see Trigger),
+  // pinned, as Base UI pins an item after its own patient click (leaving it,
+  // the pointer doesn't close it). The value is the one the menu shows (a
+  // controlled one once its parent has applied it).
+  const valueRef = React.useRef<unknown>(
+    props.value ?? props.defaultValue ?? null,
+  );
+  const switchedRef = React.useRef<{ to: unknown; at: number }>({
+    to: null,
+    at: -Infinity,
+  });
+  const pinnedRef = React.useRef<unknown>(null);
+  React.useLayoutEffect(() => {
+    if (props.value === undefined || props.value === valueRef.current) return;
+    valueRef.current = props.value;
+    pinnedRef.current = null;
+  });
+  const handleValueChange: Root.Props<Value>['onValueChange'] = (
+    value,
+    details,
+  ) => {
+    if (
+      value == null &&
+      details.reason === 'trigger-hover' &&
+      pinnedRef.current != null &&
+      pinnedRef.current === valueRef.current
+    ) {
+      details.cancel();
+      return;
+    }
+    onValueChange?.(value, details);
+    if (details.isCanceled) return;
+    const previous = valueRef.current;
+    if (props.value === undefined) valueRef.current = value;
+    pinnedRef.current = null;
+    switchedRef.current =
+      value != null &&
+      previous != null &&
+      value !== previous &&
+      details.reason === 'trigger-hover'
+        ? { to: value, at: performance.now() }
+        : { to: null, at: -Infinity };
+  };
   const context = React.useMemo<RootContextValue>(
     () => ({
       unmount: () => ownActionsRef.current?.unmount(),
       enableManualUnmount: () => setManual(true),
       swapper,
+      justSwitched: () =>
+        switchedRef.current.to === valueRef.current &&
+        performance.now() - switchedRef.current.at < PATIENT_CLICK,
+      keptOpen: () => {
+        pinnedRef.current = valueRef.current;
+        // Once: the next click toggles it.
+        switchedRef.current = { to: null, at: -Infinity };
+      },
     }),
     [swapper],
   );
@@ -159,6 +225,7 @@ function Root<Value = any>({ actionsRef, ...props }: Root.Props<Value>) {
       <TriggerHighlightScope>
         <NavigationMenuPrimitive.Root<Value>
           {...props}
+          onValueChange={handleValueChange}
           // Providing actionsRef opts into manual unmounting in Base UI.
           actionsRef={manual || actionsRef ? ownActionsRef : undefined}
         />
@@ -251,10 +318,29 @@ function useHighlighted<P extends HighlightedProps>({
   };
 }
 
-function Trigger(props: Trigger.Props) {
+function Trigger({ onClick, ...props }: Trigger.Props) {
+  const root = React.use(RootContext);
   return (
     <NavigationMenuPrimitive.Trigger
       {...(useHighlighted(props) as Trigger.Props)}
+      onClick={(event) => {
+        onClick?.(event);
+        // A click on the trigger the pointer has just switched the menu to
+        // (from another item) keeps it open, pinned, as Base UI keeps it for
+        // a click right after a hover opened it: Base UI forgets its
+        // "patient click" on a switch, and the click closed the menu. Later,
+        // a second time, or from the keyboard (no pointer), it toggles.
+        if (
+          root &&
+          !event.baseUIHandlerPrevented &&
+          event.detail > 0 &&
+          event.currentTarget.getAttribute('aria-expanded') === 'true' &&
+          root.justSwitched()
+        ) {
+          event.preventBaseUIHandler();
+          root.keptOpen();
+        }
+      }}
     />
   );
 }

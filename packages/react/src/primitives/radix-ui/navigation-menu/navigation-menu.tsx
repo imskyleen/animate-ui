@@ -96,7 +96,26 @@ type MenuState = {
   /** A Viewport is rendered: Contents are displayed inside it. */
   hasViewport: boolean;
   registerViewport: () => () => void;
+  /**
+   * A click Radix acts on, on `item`'s trigger (opening or closing it): until
+   * the pointer arrives on a trigger again, `item` opening isn't the
+   * pointer's doing (Radix's hover timer, armed as it arrived, may still
+   * open it).
+   */
+  clicked: (item: string) => void;
+  /** The pointer arrives on a trigger. */
+  pointerEntered: () => void;
+  /** The pointer (not a click) has just opened `item` (see Trigger). */
+  justOpened: (item: string) => boolean;
+  /** A click kept `item` open (see Trigger): the next one toggles it. */
+  keptOpen: (item: string) => void;
 };
+
+/**
+ * How soon after the pointer opened an item a click on its trigger keeps it
+ * open: Base UI's "patient click" (its `PATIENT_CLICK_THRESHOLD`).
+ */
+const PATIENT_CLICK = 500;
 
 // Nullable contexts: a part used outside Animate UI's Root falls back to the
 // plain Radix part instead of throwing.
@@ -123,6 +142,9 @@ function useMenuState(
     setViewports((count) => count + 1);
     return () => setViewports((count) => count - 1);
   }, []);
+  // Which item opened last, when, and whether a click opened it.
+  const openedRef = React.useRef({ item: '', at: -Infinity, byClick: false });
+  const clickedRef = React.useRef<string | null>(null);
 
   const state: MenuState = {
     value,
@@ -130,10 +152,38 @@ function useMenuState(
     dir,
     hasViewport: viewports > 0,
     registerViewport,
+    clicked: (item) => {
+      clickedRef.current = item;
+    },
+    pointerEntered: () => {
+      clickedRef.current = null;
+    },
+    justOpened: (item) => {
+      const opened = openedRef.current;
+      return (
+        opened.item === item &&
+        !opened.byClick &&
+        performance.now() - opened.at < PATIENT_CLICK
+      );
+    },
+    keptOpen: (item) => {
+      if (openedRef.current.item === item)
+        openedRef.current = { ...openedRef.current, byClick: true };
+    },
   };
   const onChange = (next: string) => {
     if (!controlled) setUncontrolled(next);
     onValueChange?.(next);
+    // (Radix opens it again on its hover timer, armed as the pointer
+    // arrived, even when a click has already: it's still what opened it.)
+    if (next === value) return;
+    openedRef.current = next
+      ? {
+          item: next,
+          at: performance.now(),
+          byClick: clickedRef.current === next,
+        }
+      : { item: '', at: -Infinity, byClick: false };
   };
   return [state, onChange] as const;
 }
@@ -235,12 +285,40 @@ function useHighlighted<P extends HighlightedProps>({
   };
 }
 
-function Trigger(
-  props: React.ComponentProps<typeof NavigationMenuPrimitive.Trigger>,
-) {
+function Trigger({
+  onClick,
+  onPointerEnter,
+  ...props
+}: React.ComponentProps<typeof NavigationMenuPrimitive.Trigger>) {
+  const menu = React.use(MenuStateContext);
+  const item = React.use(ItemValueContext);
   return (
     <NavigationMenuPrimitive.Trigger
       {...(useHighlighted(props) as typeof props)}
+      onPointerEnter={(event) => {
+        onPointerEnter?.(event);
+        menu?.pointerEntered();
+      }}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented || !menu || item === null) return;
+        // A click on the trigger of an item the pointer has just opened
+        // keeps it open (Base UI's "patient click"): Radix would toggle it
+        // closed. Later, a second time, from the keyboard (no pointer), on
+        // an item a click opened, or on a link (preventing Radix's toggle
+        // would cancel its navigation too), it toggles as usual.
+        if (
+          menu.value === item &&
+          event.detail > 0 &&
+          !event.currentTarget.matches('a[href]') &&
+          menu.justOpened(item)
+        ) {
+          event.preventDefault();
+          menu.keptOpen(item);
+          return;
+        }
+        menu.clicked(item);
+      }}
     />
   );
 }

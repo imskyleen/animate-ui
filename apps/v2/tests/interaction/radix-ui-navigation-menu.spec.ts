@@ -1,5 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import {
+  describeNavigationMenuClicks,
+  moveTo,
+  opened,
+  press,
+} from './navigation-menu-clicks';
 import { probeFirstFrame, sample } from './motion-probe';
 import {
   describeNavigationMenuSwap,
@@ -123,6 +129,20 @@ test.describe('radix-ui navigation-menu API', () => {
     });
   });
 
+  test('a link trigger the pointer has just opened still navigates when clicked', async ({
+    page,
+  }) => {
+    const link = page.getByRole('link', { name: 'Anchor trigger' });
+    const box = (await link.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
+      steps: 5,
+    });
+    await opened(page, link);
+    await page.waitForTimeout(100);
+    await press(page);
+    await expect(page).toHaveURL(/#anchored$/);
+  });
+
   test('controlled value and onValueChange', async ({ page }) => {
     await expect(page.getByTestId('value')).toHaveText('none');
     await page.getByRole('button', { name: 'Controlled one' }).click();
@@ -202,4 +222,10 @@ describeRadixNavigationMenuCases();
 describeNavigationMenuTriggerColors(
   'radix-ui navigation-menu',
   '/tests/demos/radix-ui/navigation-menu',
+);
+
+describeNavigationMenuClicks(
+  'radix-ui navigation-menu clicks',
+  '/tests/demos/radix-ui/navigation-menu',
+  'radix-ui',
 );

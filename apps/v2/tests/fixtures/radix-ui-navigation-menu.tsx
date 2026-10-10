@@ -80,6 +80,26 @@ export default function RadixNavigationMenuFixture() {
           </div>
         </NavigationMenuStar.Root>
       </section>
+      <section>
+        {/* A trigger that is a link (asChild). */}
+        <NavigationMenu.Root className="relative">
+          <NavigationMenu.List className="flex gap-2">
+            <NavigationMenu.Item value="anchor">
+              <NavigationMenu.Trigger asChild>
+                <a href="#anchored">Anchor trigger</a>
+              </NavigationMenu.Trigger>
+              <NavigationMenu.Content className="absolute top-0 left-0 p-2">
+                <NavigationMenu.Link href="#anchor-link">
+                  Anchor link
+                </NavigationMenu.Link>
+              </NavigationMenu.Content>
+            </NavigationMenu.Item>
+          </NavigationMenu.List>
+          <div className="absolute top-full left-0">
+            <NavigationMenu.Viewport className="relative h-(--radix-navigation-menu-viewport-height) w-(--radix-navigation-menu-viewport-width) overflow-hidden rounded-md border bg-white" />
+          </div>
+        </NavigationMenu.Root>
+      </section>
     </div>
   );
 }

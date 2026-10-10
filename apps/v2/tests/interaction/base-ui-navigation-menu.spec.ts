@@ -1,5 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import {
+  describeNavigationMenuClicks,
+  moveTo,
+  opened,
+  press,
+} from './navigation-menu-clicks';
 import { probeFirstFrame, sample } from './motion-probe';
 import {
   describeNavigationMenuSwap,
@@ -121,6 +127,22 @@ test.describe('base-ui navigation-menu API', () => {
     });
   });
 
+  test('controlled, a click right after the pointer switched to another item keeps it open', async ({
+    page,
+  }) => {
+    await moveTo(page, 'Controlled one');
+    await opened(page, page.getByRole('button', { name: 'Controlled one' }));
+    await page.waitForTimeout(700);
+    await moveTo(page, 'Controlled two');
+    const two = page.getByRole('button', { name: 'Controlled two' });
+    await opened(page, two);
+    await page.waitForTimeout(100);
+    await press(page);
+    await page.waitForTimeout(400);
+    await expect(two).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByTestId('value')).toHaveText('two');
+  });
+
   test('controlled value, onValueChange and onOpenChangeComplete', async ({
     page,
   }) => {
@@ -167,4 +189,10 @@ describeBaseNavigationMenuCases();
 describeNavigationMenuTriggerColors(
   'base-ui navigation-menu',
   '/tests/demos/base-ui/navigation-menu',
+);
+
+describeNavigationMenuClicks(
+  'base-ui navigation-menu clicks',
+  '/tests/demos/base-ui/navigation-menu',
+  'base-ui',
 );
