@@ -210,7 +210,7 @@ function firstShowing(frames: PopoverFrame[], label: string) {
  * clipped away. Values computed on the main thread can't show a compositor
  * animation running out of step with one on the main thread.
  */
-async function paintedLeft(
+export async function paintedLeft(
   page: Page,
   band: { left: number; right: number; top: number; bottom: number },
   act: () => Promise<void>,

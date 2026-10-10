@@ -1,6 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { probeFirstFrame, sample } from './motion-probe';
+import {
+  describeNavigationMenuSwap,
+  describeNavigationMenuTriggerColors,
+  describeNavigationMenuTriggers,
+} from './navigation-menu-swap';
+import { describeRadixNavigationMenuCases } from './navigation-menu-cases';
 
 const VIEWPORT = '[data-slot="navigation-menu-viewport"]';
 
@@ -179,3 +185,21 @@ test.describe('radix-ui navigation-menu API', () => {
     expect(seen.some((v) => v > start + 1 && v < end - 1)).toBe(true);
   });
 });
+
+describeNavigationMenuSwap(
+  'radix-ui navigation-menu content',
+  '/tests/demos/radix-ui/navigation-menu',
+  { container: '[data-slot="navigation-menu-viewport"]', moves: false },
+);
+
+describeNavigationMenuTriggers(
+  'radix-ui navigation-menu',
+  '/tests/demos/radix-ui/navigation-menu',
+);
+
+describeRadixNavigationMenuCases();
+
+describeNavigationMenuTriggerColors(
+  'radix-ui navigation-menu',
+  '/tests/demos/radix-ui/navigation-menu',
+);

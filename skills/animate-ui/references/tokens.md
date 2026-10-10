@@ -55,44 +55,46 @@ Every spring above has `type: 'spring'`.
 
 Tweens are for fades, menus (opened all day long, so short and exact), disclosure heights and swaps.
 
-| Token                   | Value                                            | Use for                                                                                                                              |
-| ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                                                                                         |
-| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out: a dialog's, a sheet's, a drawer's                                    |
-| `transition.dialogFade` | `{ duration: 0.4, ease: ease.soft }`             | A dialog's content fading in at once, ahead of its tilt                                                                              |
-| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)                                                                               |
-| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                                                                        |
-| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                                                                           |
-| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                                                                                           |
-| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                                                                                     |
-| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                                                                               |
-| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out                                                                            |
-| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                                                                                                |
-| `transition.handoffOut` | `{ duration: 0.25, ease: ease.soft }`            | A menu's content leaving the popover it hands to the next menu (a menubar's), sliding away from where it goes: mostly gone in ~100ms |
-| `transition.handoffIn`  | `{ duration: 0.3, ease: ease.arrive }`           | The next menu's content fading in behind it, once it has mostly cleared                                                              |
-| `transition.dismiss`    | `{ duration: 0.2, ease: ease.away }`             | A dialog or a sheet dismissed: at once, quicker than it came, speeding away                                                          |
-| `transition.drawerOut`  | `{ duration: 0.16, ease: ease.in }`              | A drawer closed: quick, seen speeding off its edge                                                                                   |
-| `transition.drawer`     | `{ duration: 0.4, ease: ease.drawer }`           | A drawer sliding in, snapping or easing back after a drag: a hint of bounce                                                          |
-| `transition.sheet`      | `{ duration: 0.4, ease: ease.soft }`             | A sheet sliding in, no bounce (held against the screen's edge)                                                                       |
-| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)                                                                            |
+| Token                   | Value                                            | Use for                                                                                                                                                  |
+| ----------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `transition.menu`       | `{ duration: 0.25, ease: ease.soft }`            | Menus, selects, comboboxes, navigation menus                                                                                                             |
+| `transition.overlay`    | `{ duration: 0.4, ease: ease.soft }`             | An overlay fading in (the page behind blurring from 0) and out: a dialog's, a sheet's, a drawer's                                                        |
+| `transition.dialogFade` | `{ duration: 0.4, ease: ease.soft }`             | A dialog's content fading in at once, ahead of its tilt                                                                                                  |
+| `transition.fade`       | `{ duration: 0.2, ease: ease.out }`              | Content fading in place (a toast behind the front one)                                                                                                   |
+| `transition.color`      | `{ duration: 0.2, ease: ease.color }`            | A highlight showing up from nothing or going (a hover lighting an item or a trigger), and its color changing (a trigger open, then hovered): never a cut |
+| `transition.reveal`     | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                                                                                            |
+| `transition.disclosure` | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                                                                                               |
+| `transition.panel`      | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                                                                                                               |
+| `transition.check`      | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                                                                                                         |
+| `transition.uncheck`    | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                                                                                                   |
+| `transition.popOut`     | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out                                                                                                |
+| `transition.swap`       | `{ duration: 0.2, ease: ease.out }`              | Two icons or labels swapping in place                                                                                                                    |
+| `transition.handoffOut` | `{ duration: 0.25, ease: ease.soft }`            | A menu's content leaving the popover it hands to the next menu (a menubar's), sliding away from where it goes: mostly gone in ~100ms                     |
+| `transition.handoffIn`  | `{ duration: 0.3, ease: ease.arrive }`           | The next menu's content fading in behind it, once it has mostly cleared                                                                                  |
+| `transition.dismiss`    | `{ duration: 0.2, ease: ease.away }`             | A dialog or a sheet dismissed: at once, quicker than it came, speeding away                                                                              |
+| `transition.drawerOut`  | `{ duration: 0.16, ease: ease.in }`              | A drawer closed: quick, seen speeding off its edge                                                                                                       |
+| `transition.drawer`     | `{ duration: 0.4, ease: ease.drawer }`           | A drawer sliding in, snapping or easing back after a drag: a hint of bounce                                                                              |
+| `transition.sheet`      | `{ duration: 0.4, ease: ease.soft }`             | A sheet sliding in, no bounce (held against the screen's edge)                                                                                           |
+| `transition.instant`    | `{ duration: 0 }`                                | Deliberately no animation (reduced motion, a forced jump)                                                                                                |
 
 ## Curves
 
 Pick a tween's curve by what the element does:
 
-| What it does                                            | Curve                                                                              |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Enters or leaves                                        | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                       |
-| Unfolds, dims the page, a menu opens, a sheet slides in | `ease.soft`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                                 |
-| A drawer slides in, with a hint of bounce               | `ease.drawer`: `cubic-bezier(0.34, 1.2, 0.64, 1)`                                  |
-| A mark draws itself (a checkbox's check)                | `ease.draw`: `cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut` (v1's)              |
-| Moves or morphs on screen                               | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops |
-| A dialog or a sheet dismissed, speeding away            | `ease.away`: `cubic-bezier(0.33, 0.17, 0.67, 0.5)`, a steady push                  |
-| A drawer closed, speeding off its edge                  | `ease.in`: `cubic-bezier(0.4, 0, 1, 1)`                                            |
-| Fades in behind content leaving (a menubar's next menu) | `ease.arrive`: `cubic-bezier(0.11, 0, 0.5, 0)`, a slow start                       |
-| Changes color (CSS)                                     | `ease`                                                                             |
-| Moves constantly (marquee, loader)                      | `linear`                                                                           |
-| Thrown off screen by a swipe                            | `linear`, at the finger's speed (see the Sheet recipe)                             |
+| What it does                                            | Curve                                                                                |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Enters or leaves                                        | `ease.out`: `cubic-bezier(0.23, 1, 0.32, 1)`                                         |
+| Unfolds, dims the page, a menu opens, a sheet slides in | `ease.soft`: `cubic-bezier(0.215, 0.61, 0.355, 1)`                                   |
+| A drawer slides in, with a hint of bounce               | `ease.drawer`: `cubic-bezier(0.34, 1.2, 0.64, 1)`                                    |
+| A mark draws itself (a checkbox's check)                | `ease.draw`: `cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut` (v1's)                |
+| Moves or morphs on screen                               | `ease.inOut`: `cubic-bezier(0.77, 0, 0.175, 1)`, or Motion's `easeInOut` for loops   |
+| A dialog or a sheet dismissed, speeding away            | `ease.away`: `cubic-bezier(0.33, 0.17, 0.67, 0.5)`, a steady push                    |
+| A drawer closed, speeding off its edge                  | `ease.in`: `cubic-bezier(0.4, 0, 1, 1)`                                              |
+| Fades in behind content leaving (a menubar's next menu) | `ease.arrive`: `cubic-bezier(0.11, 0, 0.5, 0)`, a slow start                         |
+| A highlight showing up, going, or changing color        | `ease.color`: `cubic-bezier(0.25, 0.1, 0.25, 1)` (CSS's `ease`), gentle at both ends |
+| Changes color (CSS)                                     | `ease`                                                                               |
+| Moves constantly (marquee, loader)                      | `linear`                                                                             |
+| Thrown off screen by a swipe                            | `linear`, at the finger's speed (see the Sheet recipe)                               |
 
 `ease.out` starts fast, so the interface answers on the first frame, and does most of the movement in the first third. `ease.soft` starts softer, for surfaces the eye watches change: an accordion or collapsible pushing the page should be seen opening rather than snap open (after Motion's accordion example), an overlay should dim the page, not cut to dark, a menu, opened all day long, should be seen opening rather than snapped open, and a sheet should slow down all the way in. A drawer answers at once and goes a hair past its rest on `ease.drawer`: Vaul's `cubic-bezier(0.32, 0.72, 0, 1)` felt linear, zipping in and stopping, then crawled out. Never ease-in on UI: it starts slow, exactly when the user is watching. A dialog or a sheet dismissed speeds away on `ease.away` (`transition.dismiss`): a steady push from half its average speed to one and a half, so it leaves at once (CSS's ease-in waited on its first frames) and its last pixels don't crawl out. The one ease-in that moves something is a drawer closed (`transition.drawerOut`, 0.16s on `ease.in`): the steady push read as a linear slide there, and short, its slow start doesn't wait. `ease.arrive` only fades: as a menubar's popover is handed to the next menu, the next menu's content fades in on it (`transition.handoffIn`) behind the previous one fading out, so what leaves has mostly cleared before it shows, like Motion's mega menu; its slide (`spring.handoff`) and the popover's move (`transition.menu`) start at once.
 
@@ -121,9 +123,10 @@ A light blur during a swap makes two overlapping states read as one shape changi
 
 ## Shifts
 
-| Token           | Value    | Use for                                                                                                                                                             |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shift.handoff` | `6` (px) | How far a menu's content slides as a menubar's popover is handed to the next menu: the leaving content away from where the popover goes, the next one in from there |
+| Token              | Value     | Use for                                                                                                                                                                                             |
+| ------------------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shift.handoff`    | `6` (px)  | How far a menu's content slides as a menubar's popover is handed to the next menu: the leaving content away from where the popover goes, the next one in from there                                 |
+| `shift.navigation` | `24` (px) | The same for a navigation menu's content, four times as far: across 400-600px, 6px barely shows (the leaving content fades out within ~100ms, the next one fades in once its spring is mostly done) |
 
 Distances in px, for content that slides a little while it fades, whatever its size: a hint of direction, not a journey. A menubar's content slides 6px on screen, like Motion's mega menu, without a blur: it stays where it is while its popover slides over it, it doesn't swap in place.
 

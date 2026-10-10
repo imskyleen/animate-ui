@@ -75,6 +75,12 @@ const ease = {
    * shows, like Motion's mega menu.
    */
   arrive: [0.11, 0, 0.5, 0],
+  /**
+   * A color changing, a background showing up or going (a highlight lit by a
+   * hover): CSS's own `ease`, gentle at both ends, so the change is seen
+   * rather than cut.
+   */
+  color: [0.25, 0.1, 0.25, 1],
 } as const;
 
 /** Springs, one per role (stiffness / damping, mass 1). */
@@ -158,6 +164,11 @@ const transition = {
   dialogFade: { duration: 0.4, ease: ease.soft },
   /** Content fading in place, out of the way (a toast behind the front one). */
   fade: { duration: 0.2, ease: ease.out },
+  /**
+   * A highlight showing up from nothing or going (a hover lighting an item, a
+   * trigger), and its color changing (a trigger open, then hovered).
+   */
+  color: { duration: 0.2, ease: ease.color },
   /**
    * A label showing up where the eye already is, once what moved has landed
    * (a combobox input's placeholder): a little longer, so it's seen coming.
@@ -250,6 +261,13 @@ const shift = {
    * next one in from there.
    */
   handoff: 6,
+  /**
+   * How far a navigation menu's content slides as it changes for another
+   * item's: four times a menubar's, its content being wider (6px barely shows
+   * across 400-600px, the leaving content fading out within ~100ms and the
+   * next one fading in once its spring is mostly done).
+   */
+  navigation: 24,
 } as const;
 
 /**

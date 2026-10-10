@@ -63,8 +63,16 @@ import {
 
 /** The highlight's spring: the glide. */
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
-/** A highlight appearing from nothing: a short fade, in place. */
-const FADE_TRANSITION = motionTokens.transition.fade;
+/**
+ * A highlight appearing from nothing, or going: a short fade, in place, on
+ * the color's curve (a background showing up). Its color changing too.
+ */
+const FADE_TRANSITION = motionTokens.transition.color;
+/**
+ * A highlight taken over halfway through a fade (it was showing up, or
+ * going): back to full at once, as it was on its way.
+ */
+const RESUME_TRANSITION = motionTokens.transition.fade;
 
 type Surface = {
   backgroundColor: string;
@@ -128,6 +136,8 @@ type HighlightScopeValue = {
   handOff: (item: HTMLElement, reduce: boolean) => Start;
   /** The surface on screen registers itself; returns its unregistration. */
   register: (handle: SurfaceHandle) => () => void;
+  /** The surface on screen is going, at this opacity. */
+  gone: (opacity: number) => void;
   /**
    * The paint for an item's surface: what its styles give it, or, when
    * they give it nothing yet, the last highlight's (see `paint`).
@@ -269,11 +279,27 @@ function OwnHighlightScope({
     },
     [activate],
   );
+  // The last surface on screen, gone a moment ago (a submenu closing before
+  // the menu's next item is highlighted): the next one doesn't start from
+  // nothing, it picks up where that one was.
+  const goneRef = React.useRef<{ opacity: number; at: number } | null>(null);
   const handOffFrom = React.useCallback(
-    (item: HTMLElement, reduce: boolean) =>
-      handOff(surfaceRef.current, item, reduce),
+    (item: HTMLElement, reduce: boolean) => {
+      const start = handOff(surfaceRef.current, item, reduce);
+      const gone = goneRef.current;
+      if (
+        !surfaceRef.current?.element.isConnected &&
+        gone &&
+        performance.now() - gone.at < 120
+      )
+        return { ...start, opacity: gone.opacity, fresh: false };
+      return start;
+    },
     [],
   );
+  const gone = React.useCallback((opacity: number) => {
+    goneRef.current = { opacity, at: performance.now() };
+  }, []);
   const register = React.useCallback((handle: SurfaceHandle) => {
     surfaceRef.current = handle;
     return () => {
@@ -302,6 +328,7 @@ function OwnHighlightScope({
       left,
       handOff: handOffFrom,
       register,
+      gone,
       paint,
     }),
     [
@@ -314,6 +341,7 @@ function OwnHighlightScope({
       left,
       handOffFrom,
       register,
+      gone,
       paint,
     ],
   );
@@ -500,10 +528,13 @@ function useHighlightIn(
     let lit = false;
     let frame = 0;
     const sync = () => {
-      const surface =
-        !disabled && (hovered || isExpanded(node) || node.matches(':focus'))
-          ? readSurface(node)
-          : null;
+      const interactive =
+        !disabled && (hovered || isExpanded(node) || node.matches(':focus'));
+      // Cleared before it's read: read first, its highlighted background
+      // would be where a CSS transition (`transition-all`) starts from, and
+      // fade out on the trigger, a second highlight.
+      if (interactive) clearOwnSurface(node, true);
+      const surface = interactive ? readSurface(node) : null;
       const now = surface !== null && !isBare(surface);
       if (surface && now)
         setSurface((current) =>
@@ -668,6 +699,10 @@ function HighlightSurface({
 type Start = {
   offset: Offset;
   opacity: number;
+  /** The color it shows at first: the previous surface's (null: its own). */
+  color: string | null;
+  /** Nothing was on screen: it shows up (not a fade taken over). */
+  fresh: boolean;
   /** Per millisecond, in the new item's terms. */
   velocity: Offset;
   /** It comes from another menu (see `crossesClip`). */
@@ -705,13 +740,29 @@ function handOff(
   reduce: boolean,
 ): Start {
   if (!previous?.element.isConnected)
-    return { offset: IN_PLACE, opacity: 0, velocity: STILL, cross: false };
-  const opacity = Number(getComputedStyle(previous.element).opacity);
+    return {
+      offset: IN_PLACE,
+      opacity: 0,
+      color: null,
+      fresh: true,
+      velocity: STILL,
+      cross: false,
+    };
+  const style = getComputedStyle(previous.element);
+  const opacity = Number(style.opacity);
+  const color = style.backgroundColor;
   const cross = crossesClip(previous.item, item);
   // Its box on screen, mid-glide included.
   const offset = offsetOn(previous.element.getBoundingClientRect(), item);
   if (reduce || !offset)
-    return { offset: IN_PLACE, opacity, velocity: STILL, cross };
+    return {
+      offset: IN_PLACE,
+      opacity,
+      color,
+      fresh: false,
+      velocity: STILL,
+      cross,
+    };
 
   const own = item.getBoundingClientRect();
   const from = previous.item.getBoundingClientRect();
@@ -719,6 +770,8 @@ function handOff(
   return {
     offset,
     opacity,
+    color,
+    fresh: false,
     velocity: {
       x: velocity.x,
       y: velocity.y,
@@ -805,6 +858,7 @@ function SurfaceCopy({
   const reduce = useShouldReduceMotion();
   const glide = useTempoTransition<Transition>(HIGHLIGHT_TRANSITION);
   const fade = useTempoTransition<Transition>(FADE_TRANSITION);
+  const resume = useTempoTransition<Transition>(RESUME_TRANSITION);
   // Read while rendering: the previous surface is still on screen (it goes
   // in this same commit).
   const [start] = React.useState(() => scope.handOff(item, reduce));
@@ -817,8 +871,8 @@ function SurfaceCopy({
   const elementRef = React.useRef<HTMLSpanElement>(null);
   // Read when it mounts: a new transition object each render (a tempo)
   // mustn't restart the glide.
-  const transitionsRef = React.useRef({ glide, fade });
-  const { register, left } = scope;
+  const transitionsRef = React.useRef({ glide, fade, resume });
+  const { register, gone, left } = scope;
 
   // Before paint: the first frame already shows the surface where it starts.
   React.useLayoutEffect(() => {
@@ -892,7 +946,13 @@ function SurfaceCopy({
         element.animate([{ opacity: 0 }, { opacity: 1 }], timing),
       );
     } else if (start.opacity < 1) {
-      const { duration, easing } = toCssTiming(transitionsRef.current.fade);
+      // From nothing, gently; halfway through a fade (another surface's,
+      // showing up or going), back at once.
+      const { duration, easing } = toCssTiming(
+        start.fresh
+          ? transitionsRef.current.fade
+          : transitionsRef.current.resume,
+      );
       animations.push(
         element.animate([{ opacity: start.opacity }, { opacity: 1 }], {
           duration,
@@ -901,12 +961,34 @@ function SurfaceCopy({
       );
     }
 
+    // From the previous surface's color, when it wore another one (an open
+    // trigger's lighter background, then a hovered one's).
+    const color = getComputedStyle(element).backgroundColor;
+    if (start.color && start.color !== color && !target) {
+      const { duration, easing } = toCssTiming(transitionsRef.current.fade);
+      animations.push(
+        element.animate(
+          [{ backgroundColor: start.color }, { backgroundColor: color }],
+          { duration, easing },
+        ),
+      );
+    }
+
     const unregister = register({ id, element, item, glide: running });
     return () => {
+      // As it shows, before its fade stops.
+      const opacity = element.isConnected
+        ? Number(getComputedStyle(element).opacity)
+        : 0;
       for (const animation of animations) animation.cancel();
       unregister();
+      gone(opacity);
     };
-  }, [register, left, id, item, start, target, leavingTo, fadeOut]);
+  }, [register, gone, left, id, item, start, target, leavingTo, fadeOut]);
+
+  // Its color changing while it's on (the item's styles: a trigger open,
+  // then hovered) changes on the color's curve too.
+  const { duration: colorDuration, easing: colorEasing } = toCssTiming(fade);
 
   return (
     <span
@@ -923,6 +1005,7 @@ function SurfaceCopy({
         borderRadius: surface.borderRadius,
         backgroundColor: surface.backgroundColor,
         backgroundImage: surface.backgroundImage,
+        transition: `background-color ${colorDuration}ms ${colorEasing}`,
       }}
     />
   );

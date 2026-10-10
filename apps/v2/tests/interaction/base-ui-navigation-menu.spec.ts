@@ -1,6 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { probeFirstFrame, sample } from './motion-probe';
+import {
+  describeNavigationMenuSwap,
+  describeNavigationMenuTriggerColors,
+  describeNavigationMenuTriggers,
+} from './navigation-menu-swap';
+import { describeBaseNavigationMenuCases } from './navigation-menu-cases';
 
 // The shadcn/ui Popup has no data-slot: it is the element Base UI sizes.
 const POPUP = '[class*="h-(--popup-height)"]';
@@ -144,3 +150,21 @@ test.describe('base-ui navigation-menu API', () => {
     });
   });
 });
+
+describeNavigationMenuSwap(
+  'base-ui navigation-menu content',
+  '/tests/demos/base-ui/navigation-menu',
+  { container: '[class*="h-(--popup-height)"]', moves: true },
+);
+
+describeNavigationMenuTriggers(
+  'base-ui navigation-menu',
+  '/tests/demos/base-ui/navigation-menu',
+);
+
+describeBaseNavigationMenuCases();
+
+describeNavigationMenuTriggerColors(
+  'base-ui navigation-menu',
+  '/tests/demos/base-ui/navigation-menu',
+);

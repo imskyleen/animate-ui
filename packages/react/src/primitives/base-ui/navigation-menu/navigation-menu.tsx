@@ -6,24 +6,31 @@ import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui/react/naviga
 import { motion, type Transition } from 'motion/react';
 
 import {
-  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
 import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
+import {
+  ContentSwapper,
+  useContentSwapper,
+  useMoveFollower,
+  type Way,
+} from '../../../internal/content-swap';
+import {
+  TriggerHighlightScope,
+  useTriggerHighlight,
+  withHighlight,
+} from '../../../internal/item-highlight';
 
 // Untouched parts: the import alias keeps both the component and its type
-// namespace (`NavigationMenu.Trigger.Props`).
-import List = NavigationMenuPrimitive.List;
+// namespace (`NavigationMenu.Item.Props`).
 import Item = NavigationMenuPrimitive.Item;
-import Trigger = NavigationMenuPrimitive.Trigger;
 import Portal = NavigationMenuPrimitive.Portal;
 import Positioner = NavigationMenuPrimitive.Positioner;
 import Viewport = NavigationMenuPrimitive.Viewport;
 import Backdrop = NavigationMenuPrimitive.Backdrop;
 import Arrow = NavigationMenuPrimitive.Arrow;
-import Link = NavigationMenuPrimitive.Link;
 import Icon = NavigationMenuPrimitive.Icon;
 
 // Same API as Base UI's Navigation Menu. It has no Animate UI v1
@@ -33,8 +40,15 @@ import Icon = NavigationMenuPrimitive.Icon;
 //   trigger. Base UI resizes it to the active content through
 //   `--popup-width`/`--popup-height`: Animate UI transitions that size in
 //   250ms too (Base UI drives it with CSS transitions, which it waits for).
-// - Moving between items, the new Content fades in from a 4px blur while the
-//   previous one fades out into it, in 250ms.
+// - Moving between items, the Popup moves to the next trigger in 250ms too
+//   (its own transition: Web Animations, the Positioner's CSS transition is
+//   set aside), and the content changes like a menubar's, like Motion's mega
+//   menu: it stays where it is on screen while the Popup slides over it, the
+//   previous one leaving 6px away from where the next one comes from while
+//   it fades out, the next one coming in from 6px that way and fading in
+//   behind it (internal/content-swap).
+// - The triggers (and the links beside them) share one highlight, like a
+//   menubar's, and so do the links of each Content (internal/item-highlight).
 // - The Root asks Base UI to keep the popup mounted after it closes, and the
 //   Popup unmounts it once its exit has played.
 
@@ -101,6 +115,11 @@ type RootContextValue = {
   unmount: () => void;
   /** The Popup is there to unmount the menu: hand it over. */
   enableManualUnmount: () => void;
+  /**
+   * The contents changing inside the Popup (they're rendered in its Viewport,
+   * but declared in their items: they reach it from here).
+   */
+  swapper: ContentSwapper;
 };
 
 const RootContext = React.createContext<RootContextValue | null>(null);
@@ -115,21 +134,29 @@ function Root<Value = any>({ actionsRef, ...props }: Root.Props<Value>) {
   // Only once a Popup has mounted: a nested menu without its own Popup keeps
   // Base UI's automatic unmounting.
   const [manual, setManual] = React.useState(false);
+  const [swapper] = React.useState(() => new ContentSwapper());
+  // Its contents change in place even without a Popup (a submenu shown in
+  // its parent's content): on the menus' transition, unless its Popup's.
+  useContentSwapper(MENU_TRANSITION, useShouldReduceMotion(), swapper, true);
   const context = React.useMemo<RootContextValue>(
     () => ({
       unmount: () => ownActionsRef.current?.unmount(),
       enableManualUnmount: () => setManual(true),
+      swapper,
     }),
-    [],
+    [swapper],
   );
 
   return (
     <RootContext value={context}>
-      <NavigationMenuPrimitive.Root<Value>
-        {...props}
-        // Providing actionsRef opts into manual unmounting in Base UI.
-        actionsRef={manual || actionsRef ? ownActionsRef : undefined}
-      />
+      {/* Its triggers share one highlight. */}
+      <TriggerHighlightScope>
+        <NavigationMenuPrimitive.Root<Value>
+          {...props}
+          // Providing actionsRef opts into manual unmounting in Base UI.
+          actionsRef={manual || actionsRef ? ownActionsRef : undefined}
+        />
+      </TriggerHighlightScope>
     </RootContext>
   );
 }
@@ -145,6 +172,101 @@ namespace Root {
     NavigationMenuPrimitive.Root.ChangeEventReason;
   export type ChangeEventDetails =
     NavigationMenuPrimitive.Root.ChangeEventDetails;
+}
+
+function List({ style, ...props }: List.Props) {
+  return (
+    <NavigationMenuPrimitive.List
+      {...props}
+      // The triggers' highlight goes under their content, above what's
+      // behind the list: the list is its own stacking context.
+      style={
+        typeof style === 'function'
+          ? (state) => ({ isolation: 'isolate', ...style(state) })
+          : { isolation: 'isolate', ...style }
+      }
+    />
+  );
+}
+
+namespace List {
+  export type Props = NavigationMenuPrimitive.List.Props;
+  export type State = NavigationMenuPrimitive.List.State;
+}
+
+type HighlightedProps = {
+  disabled?: boolean;
+  children?: React.ReactNode;
+  ref?: React.Ref<HTMLElement>;
+  render?: unknown;
+};
+
+/**
+ * A trigger, or a link: it takes part in the highlight of its list (the
+ * triggers'), or of its Content (the links'). With `render`, Base UI puts the
+ * children (and the highlight) in the user's element, unless that element has
+ * children of its own, which win: the highlight goes among them. A `render`
+ * function can't take one: the item keeps its own hover styles.
+ */
+function useHighlighted<P extends HighlightedProps>({
+  disabled,
+  children,
+  ref,
+  render,
+  ...props
+}: P) {
+  const own = React.isValidElement<{ children?: React.ReactNode }>(render)
+    ? render.props.children
+    : undefined;
+  const { ref: highlightRef, highlight } = useTriggerHighlight(
+    disabled || typeof render === 'function',
+  );
+  const mergedRef = React.useMemo(
+    () => mergeRefs(ref, highlightRef),
+    [ref, highlightRef],
+  );
+  return {
+    ...props,
+    disabled,
+    ref: mergedRef,
+    render:
+      own !== undefined && highlight && React.isValidElement(render)
+        ? // eslint-disable-next-line @eslint-react/no-clone-element -- the highlight goes among the element's own children
+          React.cloneElement(
+            render,
+            undefined,
+            <>
+              {own}
+              {highlight}
+            </>,
+          )
+        : render,
+    children: own === undefined ? withHighlight(children, highlight) : children,
+  };
+}
+
+function Trigger(props: Trigger.Props) {
+  return (
+    <NavigationMenuPrimitive.Trigger
+      {...(useHighlighted(props) as Trigger.Props)}
+    />
+  );
+}
+
+namespace Trigger {
+  export type Props = NavigationMenuPrimitive.Trigger.Props;
+  export type State = NavigationMenuPrimitive.Trigger.State;
+}
+
+function Link(props: Link.Props) {
+  return (
+    <NavigationMenuPrimitive.Link {...(useHighlighted(props) as Link.Props)} />
+  );
+}
+
+namespace Link {
+  export type Props = NavigationMenuPrimitive.Link.Props;
+  export type State = NavigationMenuPrimitive.Link.State;
 }
 
 function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
@@ -165,6 +287,7 @@ function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
             htmlProps={htmlProps}
             state={state}
             unmount={root.unmount}
+            swapper={root.swapper}
             transition={transition}
             exitTransition={exitTransition}
           />
@@ -186,12 +309,14 @@ function PopupMotion({
   htmlProps,
   state,
   unmount,
+  swapper,
   transition,
   exitTransition,
 }: PresenceAnimationProps & {
   htmlProps: HTMLProps;
   state: Popup.State;
   unmount: () => void;
+  swapper: ContentSwapper;
 }) {
   const reduce = useShouldReduceMotion();
   // A popup that mounts open plays its entrance: when it opens, and when an
@@ -222,12 +347,18 @@ function PopupMotion({
     duration: `${sizeDuration}s`,
     easing: sizeEase,
   });
+  // Moving between items, it moves to the next trigger on its transition,
+  // and the contents change in place on screen.
+  const nodeRef = React.useRef<HTMLElement | null>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, nodeRef), [ref]);
+  useContentSwapper(enter, reduce, swapper);
+  useMoveFollower(swapper, nodeRef, true);
 
   return (
     // Base UI renders the Popup as a <nav>.
     <motion.nav
       {...(htmlProps as React.ComponentProps<typeof motion.nav>)}
-      ref={ref}
+      ref={mergedRef}
       initial={entering ? hidden : false}
       // Transitions live in the targets: each direction keeps its own.
       animate={
@@ -247,12 +378,16 @@ function PopupMotion({
 }
 
 function Content({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept in the API
   transition,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept in the API
   exitTransition,
   render,
   ...props
 }: Content.Props) {
   const root = React.use(RootContext);
+  // The same each time it opens: a content coming back finds its copy.
+  const id = React.useId();
   if (!root)
     return <NavigationMenuPrimitive.Content {...props} render={render} />;
 
@@ -260,14 +395,12 @@ function Content({
     <NavigationMenuPrimitive.Content
       {...props}
       render={(htmlProps, state) => (
-        <ReducedMotionConfig>
-          <ContentMotion
-            htmlProps={htmlProps}
-            state={state}
-            transition={transition}
-            exitTransition={exitTransition}
-          />
-        </ReducedMotionConfig>
+        <ContentMotion
+          htmlProps={htmlProps}
+          state={state}
+          swapper={root.swapper}
+          id={id}
+        />
       )}
     />
   );
@@ -280,56 +413,83 @@ namespace Content {
   export type State = NavigationMenuPrimitive.Content.State;
 }
 
-// Rendered inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
+/** Where the next content comes from, by Base UI's activation direction. */
+function wayOf(direction: Content.State['activationDirection']): Way | null {
+  switch (direction) {
+    case 'right':
+      return { axis: 'x', sign: 1 };
+    case 'left':
+      return { axis: 'x', sign: -1 };
+    case 'down':
+      return { axis: 'y', sign: 1 };
+    case 'up':
+      return { axis: 'y', sign: -1 };
+    default:
+      return null;
+  }
+}
+
+/**
+ * Moving between items, the one leaving is copied as it leaves (and hidden:
+ * the copy leaves in its place), and the one coming in comes in from Base
+ * UI's activation direction. The first opening has none: the Popup's
+ * entrance is enough.
+ */
 function ContentMotion({
   htmlProps,
   state,
-  transition,
-  exitTransition,
-}: PresenceAnimationProps & { htmlProps: HTMLProps; state: Content.State }) {
-  const fadeIn = useTempoTransition(transition ?? MENU_TRANSITION);
-  const fadeOut = useTempoTransition(
-    exitTransition ?? transition ?? MENU_TRANSITION,
-  );
-  // Switching items gives a direction. The first opening has none: the
-  // Popup's entrance is enough.
-  const [swapped] = React.useState(
-    () =>
-      state.transitionStatus === 'starting' &&
-      Boolean(state.activationDirection),
-  );
-  // Leaving for another item. Closing the whole menu has no direction: the
-  // content stays put while the Popup leaves.
-  const leaving = !state.open && Boolean(state.activationDirection);
-  // Motion owns opacity: no CSS transition on top.
+  swapper,
+  id,
+}: {
+  htmlProps: HTMLProps;
+  state: Content.State;
+  swapper: ContentSwapper;
+  id: string;
+}) {
+  // No CSS transition: Base UI doesn't wait for one to remove it.
   const ref = useInlineTransition(htmlProps, { property: 'none' });
+  const nodeRef = React.useRef<HTMLElement | null>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, nodeRef), [ref]);
+  // Shown as of the last commit. The same element may show again: kept
+  // mounted (`keepMounted`), or shown again before Base UI removed it.
+  const shownRef = React.useRef(false);
+
+  React.useLayoutEffect(() => {
+    const node = nodeRef.current;
+    if (!node) return;
+    if (state.open) {
+      if (shownRef.current) return;
+      shownRef.current = true;
+      node.style.removeProperty('opacity');
+      // Switching items gives a direction; the first opening has none: the
+      // Popup's entrance is enough.
+      swapper.enter(node, id, wayOf(state.activationDirection));
+    } else if (shownRef.current) {
+      shownRef.current = false;
+      // Copied as it showed: its copy leaves in its place, for the next
+      // item's content, or holds still while the Popup fades out (Base UI
+      // removes the content before it). Its own animations stop (still
+      // coming in, it would show again over the copy, and Base UI would wait
+      // for them to remove it).
+      swapper.leave(node, id);
+      for (const animation of node.getAnimations()) animation.cancel();
+      node.style.opacity = '0';
+    }
+  }, [state.open, state.activationDirection, swapper, id]);
 
   return (
-    <motion.div
-      {...(htmlProps as React.ComponentProps<typeof motion.div>)}
-      ref={ref}
-      // A light blur bridges the crossfade: the swap reads as one surface
-      // changing. Dropped at rest (a `filter` would make it the containing
-      // block of fixed descendants).
-      initial={
-        swapped ? { opacity: 0, filter: motionTokens.blur.surface } : false
-      }
-      animate={
-        leaving
-          ? {
-              opacity: 0,
-              filter: motionTokens.blur.surface,
-              transition: fadeOut,
-            }
-          : {
-              opacity: 1,
-              filter: 'blur(0px)',
-              transition: fadeIn,
-              transitionEnd: { filter: 'none' },
-            }
-      }
-      style={htmlProps.style}
-    />
+    <div
+      {...htmlProps}
+      ref={mergedRef}
+      style={{
+        ...htmlProps.style,
+        // Its links' highlight goes under their content, above the Popup's
+        // background.
+        isolation: 'isolate',
+      }}
+    >
+      <TriggerHighlightScope>{htmlProps.children}</TriggerHighlightScope>
+    </div>
   );
 }
 

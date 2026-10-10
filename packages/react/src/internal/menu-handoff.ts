@@ -851,5 +851,15 @@ export {
   useHandoffGroup,
   useHandoffNested,
   useMenuHandoff,
+  // Shared with a navigation menu's content changes (internal/content-swap).
+  freeze,
+  release,
+  translationOf,
+  layers,
+  positioned,
+  LAYER,
+  UNIQUE_ATTRIBUTES,
+  type Layer,
+  type HandoffTimings,
   type HandoffGroup,
 };

@@ -12,24 +12,42 @@ import {
 } from 'motion/react';
 
 import {
-  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
-import { HIGHLIGHT_TRANSITION } from '../../../internal/item-highlight';
+import {
+  HIDDEN_SCALE,
+  MENU_TRANSITION,
+  mergeRefs,
+} from '../../../internal/anchored';
+import {
+  SwapContext,
+  useContentSwapper,
+  type Way,
+} from '../../../internal/content-swap';
+import {
+  HIGHLIGHT_TRANSITION,
+  TriggerHighlightScope,
+  useTriggerHighlight,
+  withHighlight,
+} from '../../../internal/item-highlight';
 
 // Same API as Radix's Navigation Menu. The Root (and each Sub) mirrors the
 // open value (Radix keeps it private) so the Viewport, the Content and the
 // Indicator can play an exit before they unmount.
 //
-// It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu.
+// It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu, and
+// like Animate UI's Menubar between items.
 // - The Viewport fades and scales from 0.9 in 250ms, both ways, like the
 //   menus, and its size follows the active content in 250ms too.
-// - Content swapped inside the Viewport fades in from a 4px blur, in 250ms;
-//   the previous one leaves at once. Without a Viewport, each Content fades and scales on its
-//   own, like a menu.
+// - Moving to another item, the content changes inside the Viewport like a
+//   menubar's, like Motion's mega menu: the previous one leaves 6px away from
+//   where the next one comes from while it fades out, the next one comes in
+//   from 6px that way and fades in behind it (internal/content-swap). Without
+//   a Viewport, each Content fades and scales on its own, like a menu.
+// - The triggers (and the links beside them) share one highlight, like a
+//   menubar's, and so do the links of each Content (internal/item-highlight).
 // - The Indicator follows the active trigger like v1's menu highlight, on
 //   the highlight's spring (stiffness 500, damping 40), fading in on it and
 //   out 200ms later.
@@ -116,11 +134,14 @@ function Root(
   const [state, onValueChange] = useMenuState(props, dir);
   return (
     <MenuStateContext value={state}>
-      <NavigationMenuPrimitive.Root
-        {...props}
-        value={state.value}
-        onValueChange={onValueChange}
-      />
+      {/* Its triggers share one highlight. */}
+      <TriggerHighlightScope>
+        <NavigationMenuPrimitive.Root
+          {...props}
+          value={state.value}
+          onValueChange={onValueChange}
+        />
+      </TriggerHighlightScope>
     </MenuStateContext>
   );
 }
@@ -130,16 +151,31 @@ function Sub(props: React.ComponentProps<typeof NavigationMenuPrimitive.Sub>) {
   const [state, onValueChange] = useMenuState(props, parent?.dir ?? 'ltr');
   return (
     <MenuStateContext value={state}>
-      <NavigationMenuPrimitive.Sub
-        {...props}
-        value={state.value}
-        onValueChange={onValueChange}
-      />
+      <TriggerHighlightScope>
+        <NavigationMenuPrimitive.Sub
+          {...props}
+          value={state.value}
+          onValueChange={onValueChange}
+        />
+      </TriggerHighlightScope>
     </MenuStateContext>
   );
 }
 
-const List = NavigationMenuPrimitive.List;
+function List({
+  style,
+  ...props
+}: React.ComponentProps<typeof NavigationMenuPrimitive.List>) {
+  return (
+    <NavigationMenuPrimitive.List
+      {...props}
+      // The triggers' highlight goes under their content, above what's
+      // behind the list: the list is its own stacking context (not the Root,
+      // whose Viewport must stay above the page).
+      style={{ isolation: 'isolate', ...style }}
+    />
+  );
+}
 
 function Item({
   value: valueProp,
@@ -156,8 +192,57 @@ function Item({
   );
 }
 
-const Trigger = NavigationMenuPrimitive.Trigger;
-const Link = NavigationMenuPrimitive.Link;
+type HighlightedProps = {
+  asChild?: boolean;
+  disabled?: boolean;
+  children?: React.ReactNode;
+  ref?: React.Ref<HTMLElement>;
+};
+
+/**
+ * A trigger, or a link: it takes part in the highlight of its list (the
+ * triggers'), or of its Content (the links').
+ */
+function useHighlighted<P extends HighlightedProps>({
+  asChild,
+  disabled,
+  children,
+  ref,
+  ...props
+}: P) {
+  const { ref: highlightRef, highlight } = useTriggerHighlight(disabled);
+  const mergedRef = React.useMemo(
+    () => mergeRefs(ref, highlightRef),
+    [ref, highlightRef],
+  );
+  return {
+    ...props,
+    ref: mergedRef,
+    asChild,
+    disabled,
+    children: withHighlight(children, highlight, asChild),
+  };
+}
+
+function Trigger(
+  props: React.ComponentProps<typeof NavigationMenuPrimitive.Trigger>,
+) {
+  return (
+    <NavigationMenuPrimitive.Trigger
+      {...(useHighlighted(props) as typeof props)}
+    />
+  );
+}
+
+function Link(
+  props: React.ComponentProps<typeof NavigationMenuPrimitive.Link>,
+) {
+  return (
+    <NavigationMenuPrimitive.Link
+      {...(useHighlighted(props) as typeof props)}
+    />
+  );
+}
 
 function Content({
   forceMount,
@@ -178,7 +263,7 @@ function Content({
   }
 
   // Inside a Viewport, Radix mounts only the active Content (and renders it
-  // in the Viewport): it just needs an entrance.
+  // in the Viewport): moving between items, it changes in place.
   if (menu.hasViewport) {
     return (
       <NavigationMenuPrimitive.Content
@@ -186,8 +271,8 @@ function Content({
         forceMount={forceMount}
         asChild
       >
-        <ViewportContentMotion transition={transition}>
-          {children}
+        <ViewportContentMotion>
+          <TriggerHighlightScope>{children}</TriggerHighlightScope>
         </ViewportContentMotion>
       </NavigationMenuPrimitive.Content>
     );
@@ -205,7 +290,7 @@ function Content({
               transition={transition}
               exitTransition={exitTransition}
             >
-              {children}
+              <TriggerHighlightScope>{children}</TriggerHighlightScope>
             </InlineContentMotion>
           </NavigationMenuPrimitive.Content>
         </ReducedMotionConfig>
@@ -219,42 +304,47 @@ type SlotChildProps = React.ComponentProps<'div'> & {
   'data-orientation'?: string;
 };
 
-/** Radix renders it in the Viewport, through asChild. */
-function ViewportContentMotion(
-  props: SlotChildProps & { transition?: Transition },
-) {
-  return (
-    <ReducedMotionConfig>
-      <ViewportContentMotionInner {...props} />
-    </ReducedMotionConfig>
-  );
+/** Where the next content comes from, by Radix's `data-motion`. */
+function wayOf(motionAttribute: string | undefined, menu: MenuState | null) {
+  if (!motionAttribute?.startsWith('from-')) return null;
+  const axis = menu?.orientation === 'vertical' ? 'y' : 'x';
+  const motion = motionAttribute === 'from-end' ? 1 : -1;
+  // Radix orders the items the other way in a right-to-left menu, whatever
+  // its orientation: its `start` is then the physical left, which is right
+  // across, but the bottom, down a vertical menu.
+  const sign = axis === 'y' && menu?.dir === 'rtl' ? -motion : motion;
+  return { axis, sign } satisfies Way;
 }
 
-function ViewportContentMotionInner({
-  transition,
-  ...props
-}: SlotChildProps & { transition?: Transition }) {
-  const fade = useTempoTransition(transition ?? MENU_TRANSITION);
-  // Radix's `data-motion` is set when moving between items (from-start or
-  // from-end): read once, on mount. The first opening has none: the
-  // Viewport's entrance is enough.
-  const [swapped] = React.useState(Boolean(props['data-motion']));
+/**
+ * Radix renders it in the Viewport, through asChild. Moving between items,
+ * the one leaving is copied as it unmounts, and the one coming in comes in
+ * from Radix's `data-motion` (from-start or from-end, read once, on mount).
+ * The first opening has none: the Viewport's entrance is enough.
+ */
+function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
+  const swapper = React.use(SwapContext);
+  const menu = React.use(MenuStateContext);
+  const nodeRef = React.useRef<HTMLDivElement>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, nodeRef), [ref]);
+  const [way] = React.useState(() => wayOf(props['data-motion'], menu));
+  const [id] = React.useState(() => props.id ?? null);
+
+  React.useLayoutEffect(() => {
+    const node = nodeRef.current;
+    if (!swapper || !node) return;
+    swapper.enter(node, id, way);
+    // Still in the page: Radix removes it after this.
+    return () => swapper.leave(node, id);
+  }, [swapper, id, way]);
 
   return (
-    <motion.div
-      {...(props as React.ComponentProps<typeof motion.div>)}
-      // From a light blur, like a tab panel: the swap reads as one surface
-      // changing. The blur is dropped at rest (a `filter` would make it the
-      // containing block of fixed descendants).
-      initial={
-        swapped ? { opacity: 0, filter: motionTokens.blur.surface } : false
-      }
-      animate={{
-        opacity: 1,
-        filter: 'blur(0px)',
-        transition: fade,
-        transitionEnd: { filter: 'none' },
-      }}
+    <div
+      {...props}
+      ref={mergedRef}
+      // Its links' highlight goes under their content, above the Viewport's
+      // background.
+      style={{ isolation: 'isolate', ...style }}
     />
   );
 }
@@ -295,6 +385,9 @@ function InlineContentMotion({
       style={{
         // It hangs from the start edge of its item.
         transformOrigin: menu?.dir === 'rtl' ? 'top right' : 'top left',
+        // Its links' highlight goes under their content, above its
+        // background.
+        isolation: 'isolate',
         ...(keepMounted && settledClosed && !open
           ? { visibility: 'hidden' as const }
           : null),
@@ -367,6 +460,8 @@ function ViewportMotion({
     transition: enter,
     reduce,
   });
+  // Its contents change in place, moving between items.
+  const swapper = useContentSwapper(enter, reduce);
 
   // Radix measures the active content and sets these variables at once:
   // Animate UI animates them instead, so classes reading them
@@ -398,35 +493,37 @@ function ViewportMotion({
   }, [measured, width, height]);
 
   return (
-    <MotionViewport
-      // Motion reads onAnimationStart & co. as its own events, not CSS ones.
-      {...(props as React.ComponentProps<typeof MotionViewport>)}
-      ref={ref}
-      forceMount
-      initial={hidden}
-      animate={
-        open
-          ? { opacity: 1, scale: 1, transition: enter }
-          : { ...hidden, transition: exit }
-      }
-      exit={{ ...hidden, transition: exit }}
-      onAnimationComplete={() => {
-        if (keepMounted && !open) setSettledClosed(true);
-      }}
-      style={{
-        // It drops from the menu, centered under it.
-        transformOrigin:
-          menu?.orientation === 'vertical'
-            ? menu.dir === 'rtl'
-              ? 'center right'
-              : 'center left'
-            : 'top center',
-        ...(keepMounted && settledClosed && !open
-          ? { visibility: 'hidden' as const }
-          : null),
-        ...style,
-      }}
-    />
+    <SwapContext value={swapper}>
+      <MotionViewport
+        // Motion reads onAnimationStart & co. as its own events, not CSS ones.
+        {...(props as React.ComponentProps<typeof MotionViewport>)}
+        ref={ref}
+        forceMount
+        initial={hidden}
+        animate={
+          open
+            ? { opacity: 1, scale: 1, transition: enter }
+            : { ...hidden, transition: exit }
+        }
+        exit={{ ...hidden, transition: exit }}
+        onAnimationComplete={() => {
+          if (keepMounted && !open) setSettledClosed(true);
+        }}
+        style={{
+          // It drops from the menu, centered under it.
+          transformOrigin:
+            menu?.orientation === 'vertical'
+              ? menu.dir === 'rtl'
+                ? 'center right'
+                : 'center left'
+              : 'top center',
+          ...(keepMounted && settledClosed && !open
+            ? { visibility: 'hidden' as const }
+            : null),
+          ...style,
+        }}
+      />
+    </SwapContext>
   );
 }
 
@@ -472,11 +569,13 @@ function useActiveContentSize(
 
     const resizeObserver = new ResizeObserver(measure);
     const track = () => {
+      // Not a previous content's copy, leaving (internal/content-swap).
       const active =
         Array.from(viewport.children).find(
           (child): child is HTMLElement =>
             child instanceof HTMLElement &&
-            !child.dataset.motion?.startsWith('to-'),
+            !child.dataset.motion?.startsWith('to-') &&
+            !child.hasAttribute('data-animate-ui-handoff'),
         ) ?? null;
       if (active === content) return;
       if (content) resizeObserver.unobserve(content);

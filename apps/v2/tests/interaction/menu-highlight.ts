@@ -221,6 +221,49 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       expect(await ownBackground(first)).toBe('rgba(0, 0, 0, 0)');
     });
 
+    test("its fade in is gentle, on the color's curve", async ({ page }) => {
+      test.skip(Boolean(c.highlightedOnOpen), 'Highlighted as it opens');
+      const sampled = page.evaluate(
+        () =>
+          new Promise<{ fade: number; opacity: number }[]>((resolve) => {
+            const seen: { fade: number; opacity: number }[] = [];
+            const t0 = performance.now();
+            const tick = () => {
+              for (const el of document.querySelectorAll<HTMLElement>(
+                '[data-slot="item-highlight"]',
+              )) {
+                const fade = el
+                  .getAnimations()
+                  .find((a) =>
+                    (a.effect as KeyframeEffect | null)
+                      ?.getKeyframes()
+                      .some((k) => 'opacity' in k),
+                  );
+                if (fade?.playState === 'running')
+                  seen.push({
+                    fade: Number(fade.currentTime),
+                    opacity: Number(getComputedStyle(el).opacity),
+                  });
+              }
+              if (performance.now() - t0 < 500) requestAnimationFrame(tick);
+              else resolve(seen);
+            };
+            requestAnimationFrame(tick);
+          }),
+      );
+      await pointAt(page, c.first(page));
+      const seen = await sampled;
+      expect(seen.length).toBeGreaterThan(2);
+      // CSS's `ease` over 200ms: under half in at 40ms, under three quarters
+      // at 80ms (a strong ease-out is 85% in at 40ms, which reads as a cut).
+      for (const { fade, opacity } of seen) {
+        if (fade > 10 && fade <= 40)
+          expect(opacity, `${fade}ms`).toBeLessThan(0.5);
+        if (fade > 10 && fade <= 80)
+          expect(opacity, `${fade}ms`).toBeLessThan(0.75);
+      }
+    });
+
     test('glides to the next item on a spring, handed over: one opaque copy', async ({
       page,
     }) => {

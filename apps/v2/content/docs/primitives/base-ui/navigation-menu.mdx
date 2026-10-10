@@ -46,22 +46,24 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-Base UI's Navigation Menu has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.
+Base UI's Navigation Menu has no Animate UI v1 counterpart: it opens like v1's Base UI Menu, and moves between items like Animate UI's [Menubar](/docs/primitives/base-ui/menubar).
 
 - **Popup** fades and scales in from 0.9, from its trigger (`--transform-origin`), in 250ms (`{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way; Base UI keeps it mounted until then, and Animate UI unmounts it once the exit has played.
-- Moving from one item to another, the Popup's size follows the new content in 250ms with the same curve: Base UI resizes it through `--popup-width`/`--popup-height`, and Animate UI sets the CSS transition of `width` and `height` inline (Base UI waits for it before it sets the size back to auto). The Positioner keeps its own transition.
-- **Content** fades in from a 4px blur, in 250ms, when moving between items, while the previous one fades out into a blur: the swap reads as one surface changing. On the first opening, the Popup's entrance is enough.
-- Keyboard navigation between links and triggers moves focus only: nothing animates.
+- Moving from one item to another, the Popup moves to the next trigger and its size follows the new content, in 250ms with the same curve (the Popup's `transition`): Base UI resizes it through `--popup-width`/`--popup-height`, and Animate UI sets the CSS transition of `width` and `height` inline (Base UI waits for it before it sets the size back to auto); the Positioner's own CSS transition is set aside, and the Popup moves from where it was on Web Animations (its `translate`). Moving on again before it has landed, it leaves from where it is.
+- **Content**: moving from one item to another, the content changes in place, like the [Menubar](/docs/primitives/base-ui/menubar)'s, like [Motion's mega menu](https://motion.dev/ui/sections/react-nav-mega-menu): the previous content leaves 24px away from where the next one comes from (moving to an item on its right, to the left) while it fades out (250ms, a soft ease-out), and the next one comes in from 24px that way on a spring (stiffness 340, damping 37) and fades in behind it (300ms, on a slow start); the content stays where it is on screen while the Popup slides over it, and the Popup clips it. A copy of the previous content (`aria-hidden`, `inert`) leaves in its place. Going back and forth faster than they settle, each content shows once: what's still leaving goes on from where it is, and back to an item whose content is still leaving, it comes back from there (where it is, as it shows) instead of coming in again. On the first opening, the Popup's entrance is enough.
+- **The highlights**: the triggers, and the links beside them (`navigationMenuTriggerStyle`), share one highlight, like a Menubar's: a trigger hovered, focused or open wears its own background (`hover:bg-muted`, `focus:bg-muted`, `data-open:bg-muted/50`…, read from your styles and cleared on the trigger), and that background glides from trigger to trigger on the highlight's spring (stiffness 500, damping 40). It fades in (200ms, on CSS's `ease`) when it appears from nothing and fades out where it is the same way when no trigger is lit anymore; lit again meanwhile, it comes back from there. The links of each Content share their own the same way. The List and each Content become their own stacking context (`isolation: isolate`), so a highlight goes under the text and above the background.
+- Closing the menu, the content stays as it showed while the Popup fades out (Base UI removes it first: a copy, `aria-hidden` and `inert`, holds its place). Its highlight's color follows the trigger's state on the same curve: open (`data-popup-open:bg-muted/50`), then hovered (`hover:bg-muted`).
+- Keyboard navigation between links and triggers moves the focus, and the highlight with it wherever your styles light a focused trigger or link (`focus:bg-muted`).
 - An item open from the start (`defaultValue`) shows with the Popup's entrance on page load.
-- Under reduced motion, everything only fades and sizes change at once.
+- Under reduced motion, everything only fades, and sizes and places change at once: moving between items, the Popup jumps to the next trigger while each content fades in place; the highlights jump from trigger to trigger and from link to link.
 
 ## API Reference
 
 Every part takes exactly the props of [Base UI's Navigation Menu](https://base-ui.com/react/components/navigation-menu#api-reference). Animate UI adds the animation props below. The `render` prop of the Popup and the Content is used by the animation.
 
-### Root, List, Item, Trigger, Link, Icon, Portal, Positioner, Viewport, Backdrop, Arrow
+### Root, List, Item, Trigger, Link, Icon, Portal, Positioner, Viewport, Backdrop, Arrow, Content
 
-[Base UI props](https://base-ui.com/react/components/navigation-menu#api-reference) only. They are not animated.
+[Base UI props](https://base-ui.com/react/components/navigation-menu#api-reference) only. Triggers and links take part in the highlights; they need nothing more. A Content changing to another moves like the Menubar's, on the Popup's `transition`.
 
 ### Popup
 
@@ -71,31 +73,12 @@ Every part takes exactly the props of [Base UI's Navigation Menu](https://base-u
   type={{
     transition: {
       description:
-        'Transition of the opening and of the resizing between items, and of the closing unless `exitTransition` is set.',
+        'Transition of the opening, of the move and resizing between items, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
       default: '{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',
-      type: 'Transition',
-      default: 'transition',
-    },
-  }}
-/>
-
-### Content
-
-[Base UI props](https://base-ui.com/react/components/navigation-menu#content), plus:
-
-<TypeTable
-  type={{
-    transition: {
-      description: 'Transition of the entrance when moving between items.',
-      type: 'Transition',
-      default: '{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }',
-    },
-    exitTransition: {
-      description: 'Transition of the fade-out when moving to another item.',
       type: 'Transition',
       default: 'transition',
     },
