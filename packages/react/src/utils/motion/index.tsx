@@ -27,7 +27,8 @@ import {
  * their trigger, from farther when they are small; two states swapping in
  * place are bridged with a light blur, and unfolding content clears from one;
  * a menubar's content stays on screen while its popover moves to the next
- * menu, sliding a little out and in.
+ * menu, sliding a little out and in, and the popover moves and resizes on a
+ * spring that eases in, keeping its speed from menu to menu.
  *
  * The tokens are the values at tempo 1. Components pass them through
  * `useTempoTransition` (or read them from `useMotionTokens()`), so an optional
@@ -114,10 +115,18 @@ const spring = {
   reflow: { type: 'spring', stiffness: 500, damping: 40 },
   /**
    * Content sliding in as a popover is handed from one menu to the next (a
-   * menubar's): from rest, there in ~250ms without overshoot, like Motion's
-   * mega menu.
+   * menubar's), or as a navigation menu changes items: from rest, there in
+   * ~250ms without overshoot, like Motion's mega menu.
    */
   handoff: { type: 'spring', stiffness: 340, damping: 37 },
+  /**
+   * A popover moving and resizing from one content to the next (a menubar's
+   * handed from menu to menu, a navigation menu's changing items): it starts
+   * gently, half the way in ~75ms, most of it in ~175ms, and eases in
+   * without going past its place or size, settled by ~340ms. Started over on
+   * the way, it keeps the speed it had (internal/momentum).
+   */
+  morph: { type: 'spring', stiffness: 500, damping: 45 },
   /** A height following its content, without overshoot. */
   height: {
     type: 'spring',

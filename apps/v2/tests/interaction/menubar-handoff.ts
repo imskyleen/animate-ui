@@ -46,6 +46,8 @@ type ShownPopover = Box & {
 
 export type PopoverFrame = {
   t: number;
+  /** The document timeline's time: what animations are sampled at. */
+  clock: number;
   /** Popovers on screen: visible, not transparent, placed. */
   shown: ShownPopover[];
   /** Submenus on screen. */
@@ -138,7 +140,12 @@ export function recordPopovers(page: Page, duration: number) {
           const subs = [
             ...document.querySelectorAll<HTMLElement>(subContent),
           ].filter(shownNow).length;
-          frames.push({ t: Math.round(performance.now() - t0), shown, subs });
+          frames.push({
+            t: Math.round(performance.now() - t0),
+            clock: Number(document.timeline.currentTime),
+            shown,
+            subs,
+          });
         };
         const probe = document.createElement('div');
         probe.style.cssText =
@@ -295,6 +302,41 @@ function series(
     .filter((value): value is number => value !== undefined);
 }
 
+/**
+ * The popover on screen frame by frame (the last sample of each), on the
+ * timeline: its left edge and its own first item's text.
+ */
+function onTimeline(frames: PopoverFrame[]) {
+  const byClock = new Map<
+    number,
+    { clock: number; left: number; label: string }
+  >();
+  for (const frame of frames) {
+    const popover = frame.shown[0];
+    if (popover)
+      byClock.set(frame.clock, {
+        clock: frame.clock,
+        left: popover.left,
+        label: popover.label,
+      });
+  }
+  return [...byClock.values()];
+}
+
+/** The popover shows at least once with its left edge past `left`. */
+function underWay(page: Page, left: number) {
+  return page.waitForFunction(
+    ({ content, left }) =>
+      [...document.querySelectorAll(content)].some(
+        (el) =>
+          getComputedStyle(el).visibility === 'visible' &&
+          el.getBoundingClientRect().left > left,
+      ),
+    { content: CONTENT, left },
+    { polling: 'raf' },
+  );
+}
+
 /** Only ever goes one way (`way` 1: up, -1: down), within half a pixel. */
 function expectOneWay(values: number[], way: 1 | -1) {
   expect(values.length).toBeGreaterThan(3);
@@ -360,6 +402,98 @@ export function describeMenubarHandoff(title: string, path: string) {
       const last = frames.at(-1)!.shown[0]!;
       expect(Math.abs(last.left - edit.left)).toBeLessThan(0.5);
       expect(Math.abs(last.height - edit.height)).toBeLessThan(0.5);
+    });
+
+    test('it starts gently and eases into its place, never past it', async ({
+      page,
+    }) => {
+      await open(page);
+      const file = await boxOf(page, 'New Tab');
+      const recording = recordPopovers(page, 900);
+      await hover(page, 'Profiles');
+      const frames = await recording;
+      const profiles = await boxOf(page, 'Andy');
+      expect(profiles.left - file.left).toBeGreaterThan(60);
+      const shown = onTimeline(frames);
+      // On a spring from rest: its first frames speed up (a tween, only
+      // slowing down, would start at its fastest).
+      const moving = shown.findIndex(
+        (frame, i) => i > 0 && frame.left > shown[i - 1]!.left + 1,
+      );
+      expect(moving).toBeGreaterThan(0);
+      const speed = (i: number) =>
+        (shown[i]!.left - shown[i - 1]!.left) /
+        (shown[i]!.clock - shown[i - 1]!.clock);
+      expect(
+        speed(moving),
+        shown
+          .map((f) => `${Math.round(f.clock)}:${f.left.toFixed(1)}`)
+          .join(' '),
+      ).toBeLessThan(speed(moving + 1) * 0.95);
+      // Never faster than a critically damped spring's peak from rest, ~0.82%
+      // of the way per ms (a tween starting at its fastest goes 1.1% or more).
+      const fastest = Math.max(...shown.slice(1).map((_, i) => speed(i + 1)));
+      expect(fastest).toBeLessThan((profiles.left - file.left) * 0.0095);
+      // No bounce: it never goes past its place.
+      const lefts = shown.map((frame) => frame.left);
+      expect(Math.max(...lefts)).toBeLessThanOrEqual(profiles.left + 0.5);
+      expect(Math.abs(lefts.at(-1)! - profiles.left)).toBeLessThan(0.5);
+    });
+
+    test('swept on before it lands, it keeps its speed from menu to menu', async ({
+      page,
+    }) => {
+      await open(page);
+      const file = await boxOf(page, 'New Tab');
+      const recording = recordPopovers(page, 900);
+      await hover(page, 'Edit');
+      await underWay(page, file.left + 8);
+      await hover(page, 'View');
+      const frames = await recording;
+      const view = await boxOf(page, 'Bookmarks');
+      const shown = onTimeline(frames);
+      const next = shown.findIndex(
+        (frame) =>
+          !frame.label.startsWith('New Tab') && !frame.label.startsWith('Undo'),
+      );
+      expect(next).toBeGreaterThan(2);
+      const speed = (i: number) =>
+        (shown[i]!.left - shown[i - 1]!.left) /
+        (shown[i]!.clock - shown[i - 1]!.clock);
+      const before = speed(next - 1);
+      expect(before).toBeGreaterThan(0.1);
+      // Neither stopping (a move started from rest, or waiting while the
+      // next menu mounts) nor lurching (a tween starting at its fastest).
+      expect(speed(next) / before).toBeGreaterThan(0.6);
+      expect(speed(next) / before).toBeLessThan(2.5);
+      expect(speed(next + 1) / before).toBeGreaterThan(0.6);
+      // Nor going past View's place.
+      const lefts = shown.map((frame) => frame.left);
+      expect(Math.max(...lefts)).toBeLessThanOrEqual(view.left + 0.5);
+    });
+
+    test('sent back before it lands, it turns back at once, without carrying on', async ({
+      page,
+    }) => {
+      await open(page);
+      const file = await boxOf(page, 'New Tab');
+      const recording = recordPopovers(page, 1000);
+      // Well past Edit (36px from File), on its way to Profiles.
+      await hover(page, 'Profiles');
+      await underWay(page, file.left + 70);
+      await hover(page, 'Edit');
+      const frames = await recording;
+      const edit = await boxOf(page, 'Undo');
+      const shown = onTimeline(frames);
+      const back = shown.findIndex((frame) => frame.label.startsWith('Undo'));
+      expect(back).toBeGreaterThan(2);
+      // No bounce: it doesn't go on right (where it was going) first, and
+      // it eases into Edit's place without going past it.
+      const at = shown[back - 1]!.left;
+      const lefts = shown.slice(back).map((frame) => frame.left);
+      expect(Math.max(...lefts)).toBeLessThanOrEqual(at + 0.5);
+      expect(Math.min(...lefts)).toBeGreaterThanOrEqual(edit.left - 0.5);
+      expect(Math.abs(lefts.at(-1)! - edit.left)).toBeLessThan(0.5);
     });
 
     test("the content stays on screen: File's leaves to the left, Edit's comes from the right", async ({
@@ -808,7 +942,8 @@ export function describeMenubarHandoff(title: string, path: string) {
       await hover(page, 'Profiles');
       const frames = await recording;
       expectOnePopover(frames);
-      // It starts where View's was, and only moves toward its place.
+      // It starts where View's was, and only moves toward its place: against
+      // the edge, it doesn't overshoot (it would go past the page).
       expectFrom(frames, 'Andy', view);
       expectOneWay(
         series(frames, 'Andy', (p) => p.left),
@@ -818,6 +953,11 @@ export function describeMenubarHandoff(title: string, path: string) {
         series(frames, 'Andy', (p) => p.left + p.width),
         1,
       );
+      const pageWidth = await page.evaluate(
+        () => document.documentElement.clientWidth,
+      );
+      for (const right of series(frames, 'Andy', (p) => p.left + p.width))
+        expect(right).toBeLessThanOrEqual(pageWidth + 0.5);
     });
   });
 

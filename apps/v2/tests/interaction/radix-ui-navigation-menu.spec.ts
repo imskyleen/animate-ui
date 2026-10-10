@@ -47,7 +47,7 @@ test.describe('radix-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
-    // Sampled in the page: the resize only takes 250ms.
+    // Sampled in the page: the resize is mostly done in ~175ms.
     const widths = page.evaluate(
       (selector) =>
         new Promise<number[]>((resolve) => {

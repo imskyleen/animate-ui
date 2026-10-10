@@ -15,8 +15,9 @@ import {
 // closes like v1's Base UI Menu (a 250ms fade and scale, a highlight gliding
 // behind the highlighted item). Moving from an open menu to another, the
 // popover doesn't close and reopen: it moves to the next menu and resizes,
-// in 250ms, while the content changes like Motion's mega menu, the previous
-// items sliding 6px away as the next ones slide in (internal/menu-handoff).
+// on a spring that eases in, without going past, while the content changes
+// like Motion's mega menu, the previous items sliding 6px away as the next
+// ones slide in (internal/menu-handoff).
 // Its menus' triggers share one highlight, like a menu's items: hovered,
 // focused or with its menu open, a trigger's background glides from the
 // previous one (internal/item-highlight). Same API as Base UI's, so

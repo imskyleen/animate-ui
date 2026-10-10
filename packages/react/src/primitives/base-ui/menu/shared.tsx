@@ -8,7 +8,11 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
+import {
+  HIDDEN_SCALE,
+  MENU_TRANSITION,
+  MORPH_TRANSITION,
+} from '../../../internal/anchored';
 import { HighlightScope } from '../../../internal/item-highlight';
 import {
   HandoffNestedContext,
@@ -45,7 +49,8 @@ type PresenceAnimationProps = {
   /**
    * Transition of the entrance (and, in a menubar, of the popover moving to
    * the next menu), and of the exit unless `exitTransition` is set. Defaults
-   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
+   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, and in a menubar
+   * the popover moves on `{ type: 'spring', stiffness: 500, damping: 45 }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -267,6 +272,8 @@ function PopupMotion({
   const leave = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  // A menubar's popover moving and resizing to the next menu.
+  const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   const picked = React.use(PickedContext);
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
   // A menubar's next menu takes its popover over: it starts from where this
@@ -277,7 +284,7 @@ function PopupMotion({
     nodeRef,
     open: state.open,
     movedOn,
-    transition: enter,
+    transition: morph,
     reduce,
     onDrop: () => {
       if (!openRef.current) unmount();

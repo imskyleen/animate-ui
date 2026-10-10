@@ -10,11 +10,16 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
-import { HIDDEN_SCALE, MENU_TRANSITION } from '../../../internal/anchored';
+import {
+  HIDDEN_SCALE,
+  MENU_TRANSITION,
+  MORPH_TRANSITION,
+} from '../../../internal/anchored';
 import {
   ContentSwapper,
   useContentSwapper,
   useMoveFollower,
+  useSizeFollower,
   type Way,
 } from '../../../internal/content-swap';
 import {
@@ -38,15 +43,17 @@ import Icon = NavigationMenuPrimitive.Icon;
 //
 // - The Popup fades and scales from 0.9 in 250ms, both ways, from its
 //   trigger. Base UI resizes it to the active content through
-//   `--popup-width`/`--popup-height`: Animate UI transitions that size in
-//   250ms too (Base UI drives it with CSS transitions, which it waits for).
-// - Moving between items, the Popup moves to the next trigger in 250ms too
-//   (its own transition: Web Animations, the Positioner's CSS transition is
-//   set aside), and the content changes like a menubar's, like Motion's mega
-//   menu: it stays where it is on screen while the Popup slides over it, the
-//   previous one leaving 6px away from where the next one comes from while
-//   it fades out, the next one coming in from 6px that way and fading in
-//   behind it (internal/content-swap).
+//   `--popup-width`/`--popup-height`: Animate UI transitions that size on a
+//   spring that eases in without going past (`spring.morph`; Base UI drives
+//   it with CSS transitions, which it waits for), each resize from the speed
+//   the previous one had (internal/momentum).
+// - Moving between items, the Popup moves to the next trigger on that spring
+//   too (Web Animations, the Positioner's CSS transition is set aside), and
+//   the content changes like a menubar's, like Motion's mega menu: it stays
+//   where it is on screen while the Popup slides over it, the previous one
+//   leaving 24px away from where the next one comes from while it fades out,
+//   the next one coming in from 24px that way and fading in behind it
+//   (internal/content-swap).
 // - The triggers (and the links beside them) share one highlight, like a
 //   menubar's, and so do the links of each Content (internal/item-highlight).
 // - The Root asks Base UI to keep the popup mounted after it closes, and the
@@ -55,17 +62,16 @@ import Icon = NavigationMenuPrimitive.Icon;
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
   /**
-   * Transition of the entrance (and of the resizing, for the Popup), and of
-   * the exit unless `exitTransition` is set. Defaults to `{ duration: 0.25,
-   * ease: [0.215, 0.61, 0.355, 1] }`.
+   * Transition of the entrance (and, for the Popup, of its moving and
+   * resizing from item to item), and of the exit unless `exitTransition` is
+   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, and
+   * the Popup moves and resizes on `{ type: 'spring', stiffness: 500,
+   * damping: 45 }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
   exitTransition?: Transition;
 };
-
-/** Motion's `easeOut` (the ease of a tween without one), for CSS. */
-const EASE_OUT_CSS = 'cubic-bezier(0, 0, 0.58, 1)';
 
 type HTMLProps = React.HTMLAttributes<HTMLElement> & {
   ref?: React.Ref<HTMLElement>;
@@ -136,8 +142,8 @@ function Root<Value = any>({ actionsRef, ...props }: Root.Props<Value>) {
   const [manual, setManual] = React.useState(false);
   const [swapper] = React.useState(() => new ContentSwapper());
   // Its contents change in place even without a Popup (a submenu shown in
-  // its parent's content): on the menus' transition, unless its Popup's.
-  useContentSwapper(MENU_TRANSITION, useShouldReduceMotion(), swapper, true);
+  // its parent's content), unless its Popup's settings come first.
+  useContentSwapper(MORPH_TRANSITION, useShouldReduceMotion(), swapper, true);
   const context = React.useMemo<RootContextValue>(
     () => ({
       unmount: () => ownActionsRef.current?.unmount(),
@@ -332,26 +338,23 @@ function PopupMotion({
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  // Moving and resizing from one item's content to the next.
+  const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   // `scale` (like v1's menus): `transform: none` once settled.
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
+  const nodeRef = React.useRef<HTMLElement | null>(null);
   // Only the size is left to CSS (Base UI waits for these transitions before
-  // it sets the size back to auto); opacity and transform are Motion's.
-  const { duration, ease } = enter as { duration?: unknown; ease?: unknown };
-  const sizeDuration =
-    typeof duration === 'number' ? duration : MENU_TRANSITION.duration;
-  const sizeEase = Array.isArray(ease)
-    ? `cubic-bezier(${ease.join(', ')})`
-    : EASE_OUT_CSS;
+  // it sets the size back to auto), each resize timed from the speed the
+  // previous one had; opacity and transform are Motion's.
+  const sizing = useSizeFollower(nodeRef, morph, !reduce);
   const ref = useInlineTransition(htmlProps, {
     property: reduce ? 'none' : 'width, height',
-    duration: `${sizeDuration}s`,
-    easing: sizeEase,
+    ...sizing,
   });
-  // Moving between items, it moves to the next trigger on its transition,
-  // and the contents change in place on screen.
-  const nodeRef = React.useRef<HTMLElement | null>(null);
+  // Moving between items, it moves to the next trigger, and the contents
+  // change in place on screen.
   const mergedRef = React.useMemo(() => mergeRefs(ref, nodeRef), [ref]);
-  useContentSwapper(enter, reduce, swapper);
+  useContentSwapper(morph, reduce, swapper);
   useMoveFollower(swapper, nodeRef, true);
 
   return (

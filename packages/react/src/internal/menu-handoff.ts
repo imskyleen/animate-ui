@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { Transition } from 'motion/react';
 
 import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
+import { carries, curveFrom, velocityOf, type Run } from './momentum';
 
 // A menubar's popover, handed from one menu to the next. Moving from an open
 // menu to another (hovering the next trigger, clicking or tapping it, or the
@@ -23,13 +24,15 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 // - The popover that moves is the next menu itself, interactive from its
 //   first frame: Web Animations move it (`translate`, added to its own) and
 //   resize it (`width`/`height`, its margins making up the difference so the
-//   library never sees its size change and places it once); it's never
-//   scaled, so its items keep their size, and nothing is left on it once it
-//   has landed. Its items and the copy are moved back by as much as it moves
-//   (the same timing), so they stay where they are on screen.
+//   library never sees its size change and places it once), on one spring
+//   (`spring.morph`) that starts gently and eases in without going past
+//   (internal/momentum); it's never scaled, so its items keep
+//   their size, and nothing is left on it once it has landed. Its items and
+//   the copy are moved back by as much as it moves (the same timing), so
+//   they stay where they are on screen.
 // - Moving on again before it landed, the popover leaves from where it is,
-//   with what it shows. A menu that opened and closed before it was shown
-//   passes on the popover it was to take over.
+//   with what it shows, at the speed it has. A menu that opened and closed
+//   before it was shown passes on the popover it was to take over.
 // - Each menu's content is one layer, like Motion's: going back and forth
 //   faster than it settles, what's still leaving goes on leaving from where
 //   it is, inside the next popover (never inside another copy), and a menu
@@ -396,8 +399,21 @@ function leavingIn(popover: HTMLElement): Leaving[] {
 }
 
 type HandoffTimings = {
-  /** The popover moving and resizing: the menu's own transition. */
+  /**
+   * The popover moving and resizing: the menu's own transition, or else
+   * `spring.morph`.
+   */
   move: Transition;
+  /**
+   * The velocity of the popover it takes over, as it does (px per ms of its
+   * left, top, width and height): it carries on from there.
+   */
+  velocity?: number[];
+  /**
+   * When where it is and its velocity were read (the document timeline's
+   * time): the move goes on from then.
+   */
+  since?: number | null;
   /** The previous content leaving. */
   out: Transition;
   /** The next content fading in. */
@@ -408,6 +424,16 @@ type HandoffTimings = {
 
 /** The handoff's animations running on a popover, by popover. */
 const running = new WeakMap<HTMLElement, Animation[]>();
+/** A popover's move (left, top, width, height), and the animation it's on. */
+const moving = new WeakMap<HTMLElement, { run: Run; animation: Animation }>();
+
+/** A popover's velocity right now (px per ms of its left, top, size). */
+function velocityOfPopover(popover: HTMLElement) {
+  const move = moving.get(popover);
+  const time = move?.animation.currentTime;
+  if (!move || typeof time !== 'number') return [0, 0, 0, 0];
+  return velocityOf(move.run, time);
+}
 /** Popovers made `position: relative` for the layers leaving inside. */
 const positioned = new WeakSet<HTMLElement>();
 
@@ -462,12 +488,20 @@ function handOver(
     (item) => !item.hasAttribute(LAYER),
   );
 
-  const move = toCssTiming(timings.move);
   const shift = motionTokens.shift.handoff;
   // Where the popover goes (`way`): the next content arrives from that side,
   // the previous one leaves to the other.
   const x = from.left - to.left;
   const y = from.top - to.top;
+  // Its move and resize, on one curve (an edge resting against the trigger
+  // stays there), carrying on the speed of the popover it takes over.
+  const offset = [x, y, from.width - to.width, from.height - to.height];
+  const curve = curveFrom(
+    timings.move,
+    offset,
+    timings.velocity ?? [0, 0, 0, 0],
+  );
+  const move = { duration: curve.duration, easing: curve.easing };
   const horizontal = Math.abs(x) >= Math.abs(y);
   const way = -Math.sign(horizontal ? x : y);
   const along = (distance: number): [number, number] =>
@@ -512,7 +546,9 @@ function handOver(
     minHeight: '0px',
     maxHeight: 'none',
   };
-  animate(
+  // The animations on the move's timing.
+  const moved: Animation[] = [];
+  const resize = animate(
     popover,
     [
       {
@@ -532,9 +568,11 @@ function handOver(
     ],
     move,
   );
+  moving.set(popover, { run: { offset, curve }, animation: resize });
+  moved.push(resize);
   const moves = Math.abs(x) >= 0.5 || Math.abs(y) >= 0.5;
   if (moves) {
-    animate(
+    const translate = animate(
       popover,
       [{ translate: `${x}px ${y}px` }, { translate: '0px 0px' }],
       {
@@ -542,6 +580,7 @@ function handOver(
         composite: 'add',
       },
     );
+    moved.push(translate);
   }
   // What it doesn't show yet is clipped, while either content moves.
   const fadeIn = toCssTiming(timings.fadeIn);
@@ -564,13 +603,15 @@ function handOver(
       fadeIn,
     );
     if (moves)
-      animate(
-        item,
-        [{ translate: `${-x}px ${-y}px` }, { translate: '0px 0px' }],
-        {
-          ...move,
-          composite: 'add',
-        },
+      moved.push(
+        animate(
+          item,
+          [{ translate: `${-x}px ${-y}px` }, { translate: '0px 0px' }],
+          {
+            ...move,
+            composite: 'add',
+          },
+        ),
       );
     if (slides)
       animate(
@@ -622,9 +663,11 @@ function handOver(
     // step (on its own, this one would run on the compositor, a frame ahead
     // of the popover: the content would jump aside as the move starts).
     if (moves)
-      element.animate(
-        [{ translate: '0px 0px' }, { translate: `${x}px ${y}px` }],
-        { ...move, composite: 'add', fill: 'forwards' },
+      moved.push(
+        element.animate(
+          [{ translate: '0px 0px' }, { translate: `${x}px ${y}px` }],
+          { ...move, composite: 'add', fill: 'forwards' },
+        ),
       );
     if (slide[0] !== slideTo[0] || slide[1] !== slideTo[1])
       element.animate(
@@ -679,6 +722,30 @@ function handOver(
     element.scrollTop = top;
     element.scrollLeft = left;
   }
+
+  // They start all at once, by their start time (left to the browser, some
+  // would start a frame before the others). Taking over a popover still
+  // moving, from when that one was read, a frame or more ago (mounting this
+  // menu took that): it catches up instead of pausing. From rest, on the
+  // first frame it shows (it would jump ahead after a long task).
+  // (The popover's own document's timeline: the one they run on.)
+  const timeline = popover.ownerDocument.timeline;
+  const now = timeline.currentTime;
+  if (
+    carries(curve, offset) &&
+    typeof now === 'number' &&
+    typeof timings.since === 'number'
+  ) {
+    const since = Math.max(timings.since, now - move.duration);
+    for (const animation of moved) animation.startTime = since;
+    return;
+  }
+  for (const animation of moved) animation.pause();
+  requestAnimationFrame(() => {
+    const start = timeline.currentTime;
+    for (const animation of moved)
+      if (animation.playState === 'paused') animation.startTime = start;
+  });
 }
 
 type HandoffOptions = {
@@ -690,7 +757,10 @@ type HandoffOptions = {
    * UI's reasons): the next one may open after it closed.
    */
   movedOn?: boolean;
-  /** The menu's own transition: the popover moves and resizes on it. */
+  /**
+   * The popover moving and resizing: the menu's own transition, or else
+   * `spring.morph`.
+   */
   transition: Transition;
   reduce: boolean;
   /**
@@ -788,8 +858,11 @@ function useMenuHandoff(
     if (!source?.node) return;
     entry.await(source);
     const skipped = opening.skipped;
-    // Read now, before the source changes: where it is, what it shows.
+    // Read now, before the source changes: where it is, how fast it moves,
+    // what it shows.
     const from = source.node.getBoundingClientRect();
+    const velocity = velocityOfPopover(source.node);
+    const since = source.node.ownerDocument.timeline.currentTime;
     const instant = isInstant(timingsRef.current.move);
     const previous = instant ? null : copyContent(source.node, source.nested);
     // Floating UI places the popover asynchronously, before the frame is
@@ -808,7 +881,11 @@ function useMenuHandoff(
       for (const other of skipped) other.drop();
       source.drop();
       if (node.isConnected && previous)
-        handOver(node, from, previous, leaving, timingsRef.current);
+        handOver(node, from, previous, leaving, {
+          ...timingsRef.current,
+          velocity,
+          since: typeof since === 'number' ? since : null,
+        });
       if (source.node) release(source.node);
     };
     const observer =

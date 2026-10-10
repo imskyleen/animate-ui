@@ -16,6 +16,7 @@ import {
 import {
   HIDDEN_SCALE,
   MENU_TRANSITION,
+  MORPH_TRANSITION,
   mergeRefs,
 } from '../../../internal/anchored';
 import {
@@ -60,7 +61,8 @@ type PresenceAnimationProps = {
   /**
    * Transition of the entrance (and, in a menubar, of the popover moving to
    * the next menu), and of the exit unless `exitTransition` is set. Defaults
-   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
+   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, and in a menubar
+   * the popover moves on `{ type: 'spring', stiffness: 500, damping: 45 }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -294,6 +296,8 @@ function ContentMotion({
   const leave = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  // A menubar's popover moving and resizing to the next menu.
+  const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   const { delay: hold = 0 } = useTempoTransition({ delay: PICK_HOLD });
   // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
   // a settled content never becomes the containing block of the submenus'
@@ -311,7 +315,7 @@ function ContentMotion({
     {
       nodeRef: ref,
       open,
-      transition: enter,
+      transition: morph,
       reduce,
       onDrop: () => {
         for (const value of [opacity, scale])

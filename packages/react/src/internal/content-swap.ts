@@ -13,6 +13,15 @@ import {
   UNIQUE_ATTRIBUTES,
   type Layer,
 } from './menu-handoff';
+import {
+  carries,
+  curveFrom,
+  curveOf,
+  velocityOf,
+  INSTANT,
+  type Curve,
+  type Run,
+} from './momentum';
 
 // A navigation menu's content changing, like a menubar's (internal/
 // menu-handoff), like Motion's mega menu: its viewport (or popup) stays, and
@@ -29,8 +38,9 @@ import {
 //   takes it back from where its copy is, as it shows.
 // - A popup that moves from item to item (Base UI's, placed under each
 //   trigger) moves on Web Animations (`translate`, added to its own) on its
-//   own transition, from where it was: the content stays where it is on
-//   screen while the popup slides over it (`MoveFollower`).
+//   own transition (`spring.morph`), from where it was, at the speed it had
+//   (internal/momentum): the content stays where it is on screen while the
+//   popup slides over it (`MoveFollower`).
 
 type Way = {
   /** The axis the items lie along. */
@@ -121,14 +131,18 @@ const toTranslate = ([x, y]: [number, number]) => `${x}px ${y}px`;
  * pinned inside it where it should be on screen: a content leaving where it
  * was, the content coming in where it rests. Each jump, and each element
  * pinned on the way, starts every move over from where things are, all in
- * one go. They're added (`composite: 'add'`), so the browser runs them all on
- * the main thread, and they're given one start time: created in one task, the
- * browser may still start some of them (an element just added's) a frame
- * before the others, and a copy would jump aside by a frame of the move.
+ * one go, at the speed the popup had (internal/momentum). They're added
+ * (`composite: 'add'`), so the browser runs them all on the main thread, and
+ * they're given one start time, when where things are was read: created in
+ * one task, the browser may still start some of them (an element just
+ * added's) a frame before the others, and a copy would jump aside by a frame
+ * of the move.
  */
 class MoveFollower {
   /** The popup's move (its offset from its layout, to none). */
   private move: Animation | null = null;
+  /** Its offset and curve, for its velocity when it starts over. */
+  private run: Run | null = null;
   /**
    * Pinned elements, and their own move: `rest` follows the layout (it makes
    * up for the popup's offset), `screen` stays where it is on screen.
@@ -253,12 +267,23 @@ class MoveFollower {
    */
   private restart(jump: [number, number]) {
     const { move, reduce } = this.timing();
-    // Reduced motion: at once.
-    const timing = reduce
-      ? { duration: 0, easing: 'linear' }
-      : toCssTiming(move);
     const [ox, oy] = this.offset();
     const total: [number, number] = [ox + jump[0], oy + jump[1]];
+    // Still moving: it carries on at the speed it has, toward its new place.
+    const velocity =
+      this.move && this.run
+        ? velocityOf(this.run, Number(this.move.currentTime) || 0)
+        : [0, 0];
+    // Reduced motion: at once.
+    const curve = reduce ? INSTANT : curveFrom(move, total, velocity);
+    const timing = { duration: curve.duration, easing: curve.easing };
+    // Where things are now is where they were when the page last showed (a
+    // long task since, rendering the next content, showed nothing): still
+    // moving, they go on from then, catching up instead of pausing; from
+    // rest, they start as they show.
+    // (The popup's own document's timeline: the one they run on.)
+    const timeline = this.mover.ownerDocument.timeline;
+    const sampled = carries(curve, total) ? timeline.currentTime : null;
     // Read before anything is cancelled: where each one is now.
     const offsets = new Map<HTMLElement, [number, number]>();
     for (const [element, { kind }] of this.pinned) {
@@ -275,6 +300,7 @@ class MoveFollower {
       );
       created.push(animation);
       this.move = animation;
+      this.run = { offset: total, curve };
       const done = () => {
         if (this.move === animation) this.move = null;
       };
@@ -306,14 +332,211 @@ class MoveFollower {
       );
       created.push(pin.animation);
     }
-    // Held at their first keyframe until the next frame starts them all at
-    // once.
+    // Moving, they all go on at once, from when they were read (held for a
+    // frame, they'd stop there, then jump to catch up).
+    if (sampled !== null) {
+      for (const animation of created) animation.startTime = sampled;
+      return;
+    }
+    // From rest, held at their first keyframe until the next frame starts
+    // them all at once.
     for (const animation of created) animation.pause();
     requestAnimationFrame(() => {
-      const now = document.timeline.currentTime;
+      const start = timeline.currentTime;
       for (const animation of created)
-        if (animation.playState === 'paused') animation.startTime = now;
+        if (animation.playState === 'paused') animation.startTime = start;
     });
+  }
+}
+
+/** A size written in two CSS variables, in px (none while it's `auto`). */
+function sizeIn(style: CSSStyleDeclaration, width: string, height: string) {
+  const w = style.getPropertyValue(width).trim();
+  const h = style.getPropertyValue(height).trim();
+  if (!w.endsWith('px') || !h.endsWith('px')) return null;
+  const size: [number, number] = [parseFloat(w), parseFloat(h)];
+  return size.every(Number.isFinite) ? size : null;
+}
+
+const sameSize = (a: [number, number], b: [number, number]) =>
+  Math.abs(a[0] - b[0]) < 0.01 && Math.abs(a[1] - b[1]) < 0.01;
+
+/**
+ * A popup its library resizes with CSS transitions (Base UI's navigation
+ * menu): switching items, it holds the popup at the size it shows (read as
+ * the page last showed: `--popup-width`, `--popup-height`), the next
+ * content's size written on the positioner (`--positioner-width`,
+ * `--positioner-height`), then, a frame later, writes that size on the
+ * popup, which transitions to it, timed on a curve from the speed the
+ * previous resize had (internal/momentum). Carrying a speed on, Animate UI
+ * writes that size at once (the popup would stand still a frame), started
+ * from when its size was read, like the popup's move (`MoveFollower`), so
+ * the two stay in step. Started, the timing goes back to the plain one, for a resize
+ * nothing held first.
+ */
+class SizeFollower {
+  private observer: MutationObserver | null = null;
+  /** The size last written on the popup. */
+  private written: [number, number] | null = null;
+  /**
+   * The resize timed while the popup is held: from, to, at what speed, on
+   * what curves, and from when, if it carries a speed on.
+   */
+  private next: {
+    from: [number, number];
+    to: [number, number];
+    velocity: number[];
+    curves: [Curve, Curve];
+    at: number | null;
+  } | null = null;
+  /** The resize under way, per axis: from its offset, to where, since when. */
+  private runs: [Run, Run] | null = null;
+  private target: [number, number] = [0, 0];
+  private since = 0;
+
+  constructor(
+    private popup: HTMLElement,
+    private transition: () => Transition,
+  ) {}
+
+  start() {
+    this.observer = new MutationObserver(() => this.check());
+    this.observer.observe(this.popup, {
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+  }
+
+  stop() {
+    this.observer?.disconnect();
+    this.observer = null;
+  }
+
+  /** Its transitions' durations and timing functions (width, height). */
+  timing() {
+    const plain = curveOf(this.transition());
+    const [width, height] = this.next?.curves ?? [plain, plain];
+    return {
+      duration: `${width.duration}ms, ${height.duration}ms`,
+      easing: `${width.easing}, ${height.easing}`,
+    };
+  }
+
+  private apply() {
+    const { duration, easing } = this.timing();
+    this.popup.style.setProperty('transition-duration', duration);
+    this.popup.style.setProperty('transition-timing-function', easing);
+  }
+
+  /**
+   * The time on the popup's document's timeline (its CSS transitions', and
+   * the computed styles' its library reads the size from).
+   */
+  private clock() {
+    const time = this.popup.ownerDocument.timeline.currentTime;
+    return typeof time === 'number' ? time : performance.now();
+  }
+
+  /** Where the resize under way is now, and how fast it goes (per ms). */
+  private now(): { shown: [number, number] | null; velocity: number[] } {
+    const runs = this.runs;
+    if (!runs) return { shown: null, velocity: [0, 0] };
+    const elapsed = this.clock() - this.since;
+    return {
+      shown: [0, 1].map(
+        (axis) =>
+          this.target[axis]! +
+          runs[axis]!.offset[0]! * (1 - runs[axis]!.curve.at(elapsed)),
+      ) as [number, number],
+      velocity: runs.map((run) => velocityOf(run, elapsed)[0]!),
+    };
+  }
+
+  private check() {
+    const size = sizeIn(this.popup.style, '--popup-width', '--popup-height');
+    if (!size) {
+      // Back to `auto` (its library's reset once it has landed, or a window
+      // resize cutting it short): it shows its own size, at rest.
+      if (this.runs || this.next) {
+        this.runs = null;
+        this.next = null;
+        this.apply();
+      }
+      return;
+    }
+    const positioner = this.popup.parentElement;
+    const target =
+      positioner &&
+      sizeIn(positioner.style, '--positioner-width', '--positioner-height');
+    if (!target) return;
+    const before = this.written;
+    const held = !sameSize(size, target);
+    // Its own size written again, or the same hold: nothing new (held again
+    // at the same size toward another content is).
+    if (
+      before &&
+      sameSize(size, before) &&
+      (!held || (this.next !== null && sameSize(this.next.to, target)))
+    )
+      return;
+    this.written = size;
+    if (held) {
+      // Held at the size it shows: its resize to `target` is timed now, at
+      // the speed it has (held again where it was, the speed it had then).
+      const again = this.next && sameSize(this.next.from, size);
+      const velocity = again ? this.next!.velocity : this.now().velocity;
+      const transition = this.transition();
+      const curves = [0, 1].map((axis) =>
+        curveFrom(transition, [size[axis]! - target[axis]!], [velocity[axis]!]),
+      ) as [Curve, Curve];
+      const carried = [0, 1].some((axis) =>
+        carries(curves[axis]!, [size[axis]! - target[axis]!]),
+      );
+      this.next = {
+        from: size,
+        to: target,
+        velocity,
+        curves,
+        at: carried ? (again ? this.next!.at : this.clock()) : null,
+      };
+      this.apply();
+      // Its library writes that size a frame later. Moving, held still that
+      // frame, the popup would stop: written now, once the size it holds is
+      // its style (so it transitions from there), it resizes on. From rest,
+      // it starts on that frame (started now, it would jump ahead after the
+      // next content's render).
+      if (this.next.at !== null) {
+        this.popup.getAnimations();
+        this.popup.style.setProperty('--popup-width', `${target[0]}px`);
+        this.popup.style.setProperty('--popup-height', `${target[1]}px`);
+      }
+      return;
+    }
+    // It resizes to `size` now (the browser has started it, or does now),
+    // on the timing set while it was held, if it was.
+    const transitions = this.popup.getAnimations();
+    const next = this.next && sameSize(this.next.to, size) ? this.next : null;
+    const plain = curveOf(this.transition());
+    const from = next?.from ?? this.now().shown ?? before ?? size;
+    const curves = next?.curves ?? [plain, plain];
+    // Carrying a speed on, from when its size was read.
+    const at = next?.at ?? null;
+    if (at !== null)
+      for (const animation of transitions)
+        if (
+          'transitionProperty' in animation &&
+          (animation.transitionProperty === 'width' ||
+            animation.transitionProperty === 'height')
+        )
+          animation.startTime = at;
+    this.runs = [
+      { offset: [from[0] - size[0]], curve: curves[0] },
+      { offset: [from[1] - size[1]], curve: curves[1] },
+    ];
+    this.target = size;
+    this.since = at ?? this.clock();
+    this.next = null;
+    this.apply();
   }
 }
 
@@ -666,10 +889,42 @@ function useMoveFollower(
   }, [swapper, mover, enabled]);
 }
 
+/**
+ * A popup its library resizes with CSS transitions (Base UI's navigation
+ * menu): each resize on `transition`, from the speed the previous one had.
+ * Returns its transitions' timings, to write with its `width, height`.
+ */
+function useSizeFollower(
+  popup: React.RefObject<HTMLElement | null>,
+  transition: Transition,
+  enabled: boolean,
+) {
+  const transitionRef = React.useRef(transition);
+  React.useLayoutEffect(() => {
+    transitionRef.current = transition;
+  });
+  const [follower, setFollower] = React.useState<SizeFollower | null>(null);
+  React.useLayoutEffect(() => {
+    const node = popup.current;
+    if (!enabled || !node) return;
+    const own = new SizeFollower(node, () => transitionRef.current);
+    own.start();
+    setFollower(own);
+    return () => {
+      own.stop();
+      setFollower(null);
+    };
+  }, [popup, enabled]);
+  if (follower) return follower.timing();
+  const { duration, easing } = curveOf(transition);
+  return { duration: `${duration}ms`, easing };
+}
+
 export {
   ContentSwapper,
   SwapContext,
   useContentSwapper,
   useMoveFollower,
+  useSizeFollower,
   type Way,
 };

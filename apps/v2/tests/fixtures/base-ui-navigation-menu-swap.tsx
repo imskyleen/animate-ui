@@ -9,6 +9,11 @@ const popup =
   'relative h-(--popup-height) w-(--popup-width) rounded-md border bg-white';
 const content = 'w-64 p-2';
 const link = 'block rounded px-2 py-1 hover:bg-[rgb(255,0,0)]';
+const sizes = [
+  { name: 'Small', className: 'h-24 w-48' },
+  { name: 'Medium', className: 'h-40 w-80' },
+  { name: 'Large', className: 'h-56 w-[28rem]' },
+];
 
 function Popup({ className }: { className?: string }) {
   return (
@@ -126,6 +131,29 @@ export default function BaseNavigationMenuSwapFixture() {
             <Items names={['Delta', 'Epsilon']} />
           </NavigationMenu.List>
           <Popup className="translate-y-1.5" />
+        </NavigationMenu.Root>
+      </section>
+      <section data-testid="sizes" className="pb-96">
+        {/* Contents of growing sizes. */}
+        <NavigationMenu.Root>
+          <NavigationMenu.List className="flex gap-2">
+            {sizes.map(({ name, className }) => (
+              <NavigationMenu.Item key={name} value={name}>
+                <NavigationMenu.Trigger className="w-28 px-2 py-1">
+                  {name}
+                </NavigationMenu.Trigger>
+                <NavigationMenu.Content
+                  data-slot="navigation-menu-content"
+                  className={`p-2 ${className}`}
+                >
+                  <NavigationMenu.Link href={`#${name}`} className={link}>
+                    {name} link
+                  </NavigationMenu.Link>
+                </NavigationMenu.Content>
+              </NavigationMenu.Item>
+            ))}
+          </NavigationMenu.List>
+          <Popup className="sizes-popup" />
         </NavigationMenu.Root>
       </section>
     </div>

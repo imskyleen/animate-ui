@@ -41,6 +41,11 @@ import {
 const POPOVER_TRANSITION = motionTokens.spring.pop;
 /** Menus (dropdown, context menu, menubar, select…): short, soft ease-out. */
 const MENU_TRANSITION = motionTokens.transition.menu;
+/**
+ * A menubar's popover, or a navigation menu's, moving and resizing from one
+ * content to the next: a spring that eases in, without going past.
+ */
+const MORPH_TRANSITION = motionTokens.spring.morph;
 
 /** Where each kind of overlay grows from. */
 const HIDDEN_SCALE = {
@@ -292,6 +297,7 @@ export {
   mergeRefs,
   POPOVER_TRANSITION,
   MENU_TRANSITION,
+  MORPH_TRANSITION,
   HIDDEN_SCALE,
   type AnchoredKind,
   type AnchoredAnimationProps,

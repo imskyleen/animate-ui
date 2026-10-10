@@ -7,6 +7,11 @@ import { NavigationMenu } from '@animate-ui/react/primitives/radix-ui/navigation
 
 const content = 'absolute top-0 left-0 w-64 p-2';
 const link = 'block rounded px-2 py-1 hover:bg-[rgb(255,0,0)]';
+const sizes = [
+  { name: 'Small', className: 'h-24 w-48' },
+  { name: 'Medium', className: 'h-40 w-80' },
+  { name: 'Large', className: 'h-56 w-[28rem]' },
+];
 
 function Menu({ names, dir }: { names: string[]; dir?: 'ltr' | 'rtl' }) {
   return (
@@ -70,6 +75,34 @@ export default function RadixNavigationMenuSwapFixture() {
               </NavigationMenu.Content>
             </NavigationMenu.Item>
           </NavigationMenu.List>
+        </NavigationMenu.Root>
+      </section>
+      <section data-testid="sizes" className="pb-96">
+        {/* Contents of growing sizes. */}
+        <NavigationMenu.Root className="relative">
+          <NavigationMenu.List className="flex gap-2">
+            {sizes.map(({ name, className }) => (
+              <NavigationMenu.Item key={name} value={name}>
+                <NavigationMenu.Trigger className="w-28 px-2 py-1">
+                  {name}
+                </NavigationMenu.Trigger>
+                <NavigationMenu.Content
+                  data-slot="navigation-menu-content"
+                  className={`absolute top-0 left-0 p-2 ${className}`}
+                >
+                  <NavigationMenu.Link href={`#${name}`} className={link}>
+                    {name} link
+                  </NavigationMenu.Link>
+                </NavigationMenu.Content>
+              </NavigationMenu.Item>
+            ))}
+          </NavigationMenu.List>
+          <div className="absolute top-full left-0 mt-2">
+            <NavigationMenu.Viewport
+              data-testid="sizes-viewport"
+              className="relative h-(--radix-navigation-menu-viewport-height) w-(--radix-navigation-menu-viewport-width) overflow-hidden rounded-md border bg-white"
+            />
+          </div>
         </NavigationMenu.Root>
       </section>
     </div>

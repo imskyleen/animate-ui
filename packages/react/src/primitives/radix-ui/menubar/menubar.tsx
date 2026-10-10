@@ -33,9 +33,10 @@ import {
 // Radix's Menubar has no Animate UI v1 counterpart: a menu opens and closes
 // like v1's DropdownMenu (a 250ms fade and scale, a highlight gliding behind
 // the highlighted item). Moving from an open menu to another, the popover
-// doesn't close and reopen: it moves to the next menu and resizes, in 250ms,
-// while the content changes like Motion's mega menu, the previous items
-// sliding 6px away as the next ones slide in (internal/menu-handoff). The
+// doesn't close and reopen: it moves to the next menu and resizes, on a
+// spring that eases in, without going past, while the content changes like
+// Motion's mega menu, the previous items sliding 6px away as the next ones
+// slide in (internal/menu-handoff). The
 // triggers share one highlight, like a menu's items: hovered, focused or
 // with its menu open, a trigger's background glides from the previous one
 // (internal/item-highlight).

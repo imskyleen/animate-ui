@@ -19,6 +19,7 @@ import {
 import {
   HIDDEN_SCALE,
   MENU_TRANSITION,
+  MORPH_TRANSITION,
   mergeRefs,
 } from '../../../internal/anchored';
 import {
@@ -26,6 +27,12 @@ import {
   useContentSwapper,
   type Way,
 } from '../../../internal/content-swap';
+import {
+  curveOf,
+  startOf,
+  velocityOf,
+  type Run,
+} from '../../../internal/momentum';
 import {
   HIGHLIGHT_TRANSITION,
   TriggerHighlightScope,
@@ -40,12 +47,14 @@ import {
 // It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu, and
 // like Animate UI's Menubar between items.
 // - The Viewport fades and scales from 0.9 in 250ms, both ways, like the
-//   menus, and its size follows the active content in 250ms too.
+//   menus, and its size follows the active content on a spring that eases
+//   in without going past (`spring.morph`), carrying on the speed it has.
 // - Moving to another item, the content changes inside the Viewport like a
-//   menubar's, like Motion's mega menu: the previous one leaves 6px away from
-//   where the next one comes from while it fades out, the next one comes in
-//   from 6px that way and fades in behind it (internal/content-swap). Without
-//   a Viewport, each Content fades and scales on its own, like a menu.
+//   menubar's, like Motion's mega menu: the previous one leaves 24px away
+//   from where the next one comes from while it fades out, the next one
+//   comes in from 24px that way and fades in behind it (internal/
+//   content-swap). Without a Viewport, each Content fades and scales on its
+//   own, like a menu.
 // - The triggers (and the links beside them) share one highlight, like a
 //   menubar's, and so do the links of each Content (internal/item-highlight).
 // - The Indicator follows the active trigger like v1's menu highlight, on
@@ -55,9 +64,11 @@ import {
 /** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
   /**
-   * Transition of the entrance, and of the exit unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }` (the
-   * Indicator: the highlight's spring).
+   * Transition of the entrance (and, for the Viewport, of its resizing from
+   * item to item), and of the exit unless `exitTransition` is set. Defaults
+   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }` (the Indicator:
+   * the highlight's spring), and the Viewport resizes on `{ type: 'spring',
+   * stiffness: 500, damping: 45 }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
@@ -452,16 +463,18 @@ function ViewportMotion({
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
+  // Resizing from one content to the next.
+  const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
 
   const { measured, width, height } = useActiveContentSize(ref, {
-    transition: enter,
+    transition: morph,
     reduce,
   });
   // Its contents change in place, moving between items.
-  const swapper = useContentSwapper(enter, reduce);
+  const swapper = useContentSwapper(morph, reduce);
 
   // Radix measures the active content and sets these variables at once:
   // Animate UI animates them instead, so classes reading them
@@ -529,8 +542,10 @@ function ViewportMotion({
 
 /**
  * The size of the Content displayed in the Viewport, animated when it
- * changes. Radix mounts only the active Content in the Viewport; one leaving
- * with a CSS animation is marked `data-motion="to-…"`.
+ * changes (on a spring that eases in, carrying on the speed it has when it
+ * changes again).
+ * Radix mounts only the active Content in the Viewport; one leaving with a
+ * CSS animation is marked `data-motion="to-…"`.
  */
 function useActiveContentSize(
   viewportRef: React.RefObject<HTMLDivElement | null>,
@@ -551,6 +566,11 @@ function useActiveContentSize(
     if (!viewport) return;
     let content: HTMLElement | null = null;
     let first = true;
+    // The size it's heading to, and its resizes under way (for the speed
+    // they carry on: Motion's own estimate is 0 after 30ms without a frame,
+    // as when the next content takes that long to render).
+    let heading: { width: number; height: number } | null = null;
+    const runs = new Map<typeof width, { run: Run; since: number }>();
 
     const measure = () => {
       if (!content) return;
@@ -559,10 +579,38 @@ function useActiveContentSize(
       if (first || reduce) {
         width.jump(next.width);
         height.jump(next.height);
-      } else {
-        animate(width, next.width, transition);
-        animate(height, next.height, transition);
+        runs.clear();
+      } else if (
+        // Already heading there (the resize observer's first report of a
+        // content it just started observing): nothing to start over.
+        !heading ||
+        next.width !== heading.width ||
+        next.height !== heading.height
+      ) {
+        // From where it is now, at the speed it has, as far as it takes it
+        // toward the next size without going past it (internal/momentum).
+        const resize = (value: typeof width, to: number) => {
+          value.stop();
+          const now = performance.now();
+          const moving = runs.get(value);
+          const velocity = moving
+            ? velocityOf(moving.run, now - moving.since)[0]!
+            : 0;
+          const offset = value.get() - to;
+          const speed = startOf(transition, [offset], [velocity]);
+          animate(value, to, {
+            ...transition,
+            velocity: -offset * speed * 1000,
+          });
+          runs.set(value, {
+            run: { offset: [offset], curve: curveOf(transition, speed) },
+            since: now,
+          });
+        };
+        resize(width, next.width);
+        resize(height, next.height);
       }
+      heading = next;
       if (first) setMeasured(true);
       first = false;
     };

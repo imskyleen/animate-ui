@@ -29,6 +29,8 @@ type Shown = {
 
 export type SwapFrame = {
   t: number;
+  /** The document timeline's time: what animations are sampled at. */
+  clock: number;
   /** The viewport (or popup), on screen. */
   box: { left: number; width: number };
   contents: Shown[];
@@ -65,6 +67,7 @@ export function recordSwap(page: Page, container: string, duration: number) {
           });
           frames.push({
             t: Math.round(performance.now() - t0),
+            clock: Number(document.timeline.currentTime),
             box: { left: box?.left ?? 0, width: box?.width ?? 0 },
             contents,
             nested: document.querySelectorAll(`${copy} ${copy}`).length,
@@ -222,9 +225,10 @@ export function describeNavigationMenuSwap(
     }) => {
       const intro = await restOf(page, 'Introduction');
       const recording = recordSwap(page, nav.container, 900);
-      // Long enough for Base UI to switch (it waits a moment on hover).
+      // Back while Getting started's content is leaving (once the menu has
+      // switched: Base UI waits a moment on hover, Radix doesn't).
       await hover(page, 'Components');
-      await page.waitForTimeout(130);
+      await page.locator(COPY).first().waitFor({ state: 'attached' });
       await hover(page, 'Getting started');
       const frames = await recording;
       const seen = frames.flatMap((frame) => {
@@ -332,6 +336,7 @@ export function describeNavigationMenuSwap(
         expectOneWay(lefts, 1);
         expect(
           lefts.filter((left) => left > start + 1 && left < end - 1).length,
+          lefts.join(', '),
         ).toBeGreaterThanOrEqual(3);
         // However far it moves, the links stay put but for their slide.
         for (const c of seriesOf(frames, 'Introduction', true)) {
@@ -343,6 +348,168 @@ export function describeNavigationMenuSwap(
           expect(c.left - alert).toBeLessThanOrEqual(SHIFT + 0.5);
         }
       });
+  });
+
+  test.describe(`${title}, on a spring`, () => {
+    test.describe.configure({ timeout: 180_000 });
+    test.use({ viewport: { width: 1280, height: 800 } });
+    test.beforeEach(async ({ page }) => {
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await hover(page, 'Getting started');
+      await page.waitForTimeout(700);
+    });
+
+    const boxOf = async (page: Page) =>
+      (await page.locator(nav.container).boundingBox())!;
+
+    /** Its speed from the frame before (on the timeline), per ms. */
+    const speedOf = (values: number[], frames: SwapFrame[], i: number) =>
+      (values[i]! - values[i - 1]!) / (frames[i]!.clock - frames[i - 1]!.clock);
+
+    const shows = (label: string) => (frame: SwapFrame) =>
+      frame.contents.some((c) => !c.copy && c.label.startsWith(label));
+
+    test('resizing to the next content, it starts gently and eases in, never past it', async ({
+      page,
+    }) => {
+      const before = (await boxOf(page)).width;
+      const recording = recordSwap(page, nav.container, 900);
+      await hover(page, 'Components');
+      const frames = await recording;
+      const after = (await boxOf(page)).width;
+      expect(after - before).toBeGreaterThan(100);
+      const widths = frames.map((frame) => frame.box.width);
+      const trace = frames
+        .map((f) => `${Math.round(f.clock)}:${f.box.width.toFixed(1)}`)
+        .join(' ');
+      // On a critically damped spring from rest: never faster than its
+      // peak, ~0.82% of the way per ms (a tween starting at its fastest goes
+      // 1.1% or more).
+      const fastest = Math.max(
+        ...widths.slice(1).map((_, i) => speedOf(widths, frames, i + 1)),
+      );
+      expect(fastest, trace).toBeLessThan((after - before) * 0.0095);
+      // Its first frames speed up (a tween, only slowing down, would start
+      // at its fastest). (Base UI's CSS transition starts with a frame;
+      // Motion's, for Radix, mid-frame, and a frame later if the content is
+      // measured again: its own steps aren't whole frames.)
+      if (nav.moves) {
+        const first = widths.findIndex(
+          (width, i) => i > 0 && width > widths[i - 1]! + 0.01,
+        );
+        expect(first).toBeGreaterThan(0);
+        expect(speedOf(widths, frames, first), trace).toBeLessThan(
+          speedOf(widths, frames, first + 1) * 0.95,
+        );
+      }
+      // No bounce: never wider than the next content.
+      expect(Math.max(...widths)).toBeLessThanOrEqual(after + 0.5);
+      expect(Math.abs(widths.at(-1)! - after)).toBeLessThan(0.5);
+    });
+
+    test('sent back before it has grown, it shrinks back at once, without growing on', async ({
+      page,
+    }) => {
+      const before = (await boxOf(page)).width;
+      const recording = recordSwap(page, nav.container, 1000);
+      await hover(page, 'Components');
+      await page.waitForFunction(
+        ({ container, than }) =>
+          document.querySelector(container)!.getBoundingClientRect().width >
+          than,
+        { container: nav.container, than: before + 20 },
+        { polling: 'raf' },
+      );
+      await hover(page, 'Getting started');
+      const frames = await recording;
+      // Getting started's content gone (Components' shows), then back.
+      const gone = frames.findIndex(
+        (frame) =>
+          shows('Alert Dialog')(frame) && !shows('Introduction')(frame),
+      );
+      expect(gone).toBeGreaterThan(0);
+      const back = gone + frames.slice(gone).findIndex(shows('Introduction'));
+      expect(back).toBeGreaterThan(gone);
+      const widths = frames.map((frame) => frame.box.width);
+      // Where it had grown to as it turns (Radix's viewport turns once it
+      // has measured the content back, a frame later), and never wider
+      // after: no bounce.
+      const at = nav.moves ? widths[back - 1]! : widths[back + 1]!;
+      expect(at - before).toBeGreaterThan(10);
+      expect(Math.max(...widths.slice(back + 1))).toBeLessThanOrEqual(at + 0.5);
+      expect(Math.min(...widths)).toBeGreaterThanOrEqual(before - 0.5);
+      expect(Math.abs(widths.at(-1)! - before)).toBeLessThan(0.5);
+    });
+
+    if (nav.moves) {
+      test('swept on before it lands, the popup keeps its speed', async ({
+        page,
+      }) => {
+        const start = (await boxOf(page)).x;
+        const recording = recordSwap(page, nav.container, 1100);
+        await hover(page, 'Components');
+        await page.waitForFunction(
+          ({ container, left }) =>
+            document.querySelector(container)!.getBoundingClientRect().left >
+            left,
+          { container: nav.container, left: start + 20 },
+          { polling: 'raf' },
+        );
+        await hover(page, 'With Icon');
+        const frames = await recording;
+        const end = (await boxOf(page)).x;
+        const next = frames.findIndex(shows('Backlog'));
+        expect(next).toBeGreaterThan(1);
+        const lefts = frames.map((frame) => frame.box.left);
+        const before = speedOf(lefts, frames, next - 1);
+        expect(before).toBeGreaterThan(0.05);
+        // On from where it was, at about the speed it had, as the next
+        // trigger takes it: no lurch (a tween starting at its fastest), no
+        // stop; then speeding up toward With Icon, farther.
+        const trace = frames
+          .map((f) => `${Math.round(f.clock)}:${f.box.left.toFixed(1)}`)
+          .join(' ');
+        const ratio = speedOf(lefts, frames, next) / before;
+        expect(ratio, trace).toBeGreaterThan(0.5);
+        expect(ratio, trace).toBeLessThan(2.5);
+        for (const i of [next + 1, next + 2])
+          expect(speedOf(lefts, frames, i) / before, trace).toBeGreaterThan(
+            0.5,
+          );
+        expect(Math.max(...lefts)).toBeLessThanOrEqual(end + 0.5);
+      });
+
+      test('sent back before it lands, the popup turns back at once, without carrying on', async ({
+        page,
+      }) => {
+        const start = (await boxOf(page)).x;
+        const recording = recordSwap(page, nav.container, 1100);
+        await hover(page, 'With Icon');
+        await page.waitForFunction(
+          ({ container, left }) =>
+            document.querySelector(container)!.getBoundingClientRect().left >
+            left,
+          // Past Components (131px from Getting started), on its way.
+          { container: nav.container, left: start + 150 },
+          { polling: 'raf' },
+        );
+        await hover(page, 'Components');
+        const frames = await recording;
+        const components = (await boxOf(page)).x;
+        const back = frames.findIndex(shows('Alert Dialog'));
+        expect(back).toBeGreaterThan(1);
+        const lefts = frames.map((frame) => frame.box.left);
+        const at = lefts[back - 1]!;
+        expect(at - components).toBeGreaterThan(10);
+        // No bounce: it doesn't go on right (where it was going) first, and
+        // it eases into Components' place without going past it.
+        expect(Math.max(...lefts.slice(back))).toBeLessThanOrEqual(at + 0.5);
+        expect(Math.min(...lefts.slice(back))).toBeGreaterThanOrEqual(
+          components - 0.5,
+        );
+        expect(Math.abs(lefts.at(-1)! - components)).toBeLessThan(0.5);
+      });
+    }
   });
 
   test.describe(`${title}, reduced motion`, () => {

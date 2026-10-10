@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { paintedLeft } from './menubar-handoff';
-import { recordSwap, seriesOf } from './navigation-menu-swap';
+import { recordSwap, seriesOf, type SwapFrame } from './navigation-menu-swap';
 
 // A navigation menu's content changing between items, in setups the demos
 // don't cover (fixtures), and in the demo's harder sequences: coming back
@@ -77,6 +77,55 @@ function contentsShown(page: Page, duration: number) {
   );
 }
 
+/**
+ * Resizing on to a larger content before it has grown to the one it was
+ * growing to (`container`: the viewport or popup), it keeps growing at its
+ * speed: it neither stops nor shrinks (nor goes past the larger one).
+ */
+async function expectResizeKeepsSpeed(page: Page, container: string) {
+  const widthOf = async () =>
+    (await page.locator(container).boundingBox())!.width;
+  // (At the end of the fixture: up top, with room below for the contents.)
+  await page
+    .getByTestId('sizes')
+    .evaluate((el) => el.scrollIntoView({ block: 'start' }));
+  await hover(page, 'Small');
+  await page.waitForTimeout(700);
+  const start = await widthOf();
+  const recording = recordSwap(page, container, 1100);
+  await hover(page, 'Medium');
+  await page.waitForFunction(
+    ({ container, than }) =>
+      document.querySelector(container)!.getBoundingClientRect().width > than,
+    { container, than: start + 20 },
+    { polling: 'raf' },
+  );
+  await hover(page, 'Large');
+  const frames = await recording;
+  const end = await widthOf();
+  const widths = frames.map((frame) => frame.box.width);
+  const trace = frames
+    .map((f) => `${Math.round(f.clock)}:${f.box.width.toFixed(1)}`)
+    .join(' ');
+  const shows = (frame: SwapFrame) =>
+    frame.contents.some((c) => !c.copy && c.label.startsWith('Large'));
+  const next = frames.findIndex(shows);
+  expect(next, trace).toBeGreaterThan(1);
+  // Never shrinking on the way, nor past the larger content.
+  for (let i = 1; i < widths.length; i++)
+    expect(widths[i]!, trace).toBeGreaterThanOrEqual(widths[i - 1]! - 0.5);
+  expect(Math.max(...widths), trace).toBeLessThanOrEqual(end + 0.5);
+  // Growing at the speed it had as the larger content takes over: no stop
+  // (a resize started from rest, or held a frame).
+  const speed = (i: number) =>
+    (widths[i]! - widths[i - 1]!) / (frames[i]!.clock - frames[i - 1]!.clock);
+  // The fastest it grew toward Medium, and as Large takes over.
+  const before = Math.max(...frames.slice(1, next).map((_, i) => speed(i + 1)));
+  expect(before, trace).toBeGreaterThan(0.1);
+  for (const i of [next, next + 1, next + 2])
+    expect(speed(i) / before, `frame ${i}: ${trace}`).toBeGreaterThan(0.3);
+}
+
 export function describeRadixNavigationMenuCases() {
   test.describe('radix-ui navigation-menu content, more setups', () => {
     test.describe.configure({ timeout: 180_000 });
@@ -124,6 +173,12 @@ export function describeRadixNavigationMenuCases() {
       expect(coming[0]!.left - two).toBeLessThan(-SHIFT / 2);
       const leaving = seriesOf(frames, 'Right one link', true);
       expect(leaving.at(-1)!.left - one).toBeGreaterThan(SHIFT / 2);
+    });
+
+    test('resizing on to a larger content before it has grown, it keeps growing at its speed', async ({
+      page,
+    }) => {
+      await expectResizeKeepsSpeed(page, '[data-testid="sizes-viewport"]');
     });
 
     test("without a viewport, a link's highlight shows on its content", async ({
@@ -211,6 +266,12 @@ export function describeBaseNavigationMenuCases() {
       const [r, g] = await pixel(page, link.x + 3, link.y + 3);
       expect(r).toBeGreaterThan(200);
       expect(g).toBeLessThan(80);
+    });
+
+    test('resizing on to a larger content before it has grown, it keeps growing at its speed', async ({
+      page,
+    }) => {
+      await expectResizeKeepsSpeed(page, '.sizes-popup');
     });
 
     test('a popup with its own translate moves from where it shows', async ({
