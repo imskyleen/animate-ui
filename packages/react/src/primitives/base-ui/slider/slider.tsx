@@ -15,12 +15,16 @@ import {
   useSliderRootMotion,
   useThumbStretch,
 } from '../../../internal/slider';
+import { useHydrationLocale } from '../../../internal/hydration-locale';
 
 // Same API as Base UI's Slider, animated like Animate UI v1's switch thumb
 // (v1 had no slider): the pressed (or dragged) thumb stretches along the
 // track, and a press on the track glides the thumb and the indicator to the
 // new value, on v1's spring (stiffness 300, damping 25; see
 // ../../../internal/slider). Dragging and the keyboard follow instantly.
+// Without a `locale`, its numbers are formatted in en-US on the server and
+// while the page hydrates, then in the browser's
+// (../../../internal/hydration-locale).
 
 /** Animate UI's additions to `Slider.Indicator`. */
 type IndicatorAnimationProps = {
@@ -59,6 +63,7 @@ function RootMotion(props: Root.Props) {
   const [uncontrolled, setUncontrolled] = React.useState(props.defaultValue);
   const value = controlled ? props.value : uncontrolled;
 
+  const locale = useHydrationLocale(props.locale);
   const motionContext = useSliderRootMotion({
     disabled: props.disabled,
     valuesKey: String(value),
@@ -68,6 +73,7 @@ function RootMotion(props: Root.Props) {
     <SliderMotionProvider value={motionContext}>
       <SliderPrimitive.Root
         {...props}
+        locale={locale}
         onValueChange={(next, details) => {
           props.onValueChange?.(next, details);
           // Base UI lets the handler cancel the change.

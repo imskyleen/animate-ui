@@ -41,6 +41,7 @@ The motion of Animate UI v1's progress:
 - Indeterminate (`value={null}`): the indicator is left to your styles, and the Value to Base UI.
 - shadcn/ui's `transition-all` on the indicator would run on top of Motion: the CLI removes it.
 - Under reduced motion, the indicator jumps to each value (the Value still counts).
+- Without a `locale`, Base UI formats the numbers (the Value, `aria-valuetext`) in the runtime's locale: the server's on the server and the browser's in the browser, so a page rendered in English and opened in another language didn't hydrate cleanly ("13%" against "13 %"). Animate UI formats them in en-US on the server and while the page hydrates, then in the browser's locale, as React Aria does. Pass `locale` to pick one yourself.
 
 ## API Reference
 

@@ -79,6 +79,25 @@ export default function BaseSliderFixture() {
           className="mx-auto w-full max-w-xs"
         />
       </section>
+
+      <section data-testid="formatted">
+        {/* Formatted in the browser's locale: 0.5 in English, 0,5 in French. */}
+        <Slider.Root
+          defaultValue={0.5}
+          min={0}
+          max={1}
+          step={0.05}
+          format={{ maximumFractionDigits: 2 }}
+        >
+          <Slider.Value data-testid="formatted-output" />
+          <Slider.Control style={control}>
+            <Slider.Track style={track}>
+              <Slider.Indicator style={{ background: 'black' }} />
+              <Slider.Thumb aria-label="Opacity" style={thumb} />
+            </Slider.Track>
+          </Slider.Control>
+        </Slider.Root>
+      </section>
     </div>
   );
 }

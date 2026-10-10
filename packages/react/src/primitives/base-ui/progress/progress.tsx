@@ -16,12 +16,15 @@ import {
   VALUE_TRANSITION,
   useCountingNumber,
 } from '../../../internal/progress';
+import { useHydrationLocale } from '../../../internal/hydration-locale';
 
 // Same API as Base UI's Progress, animated like Animate UI v1's progress: the
 // Indicator's width (Base UI sizes it with a percentage width) springs to a
 // new value (stiffness 100, damping 30), and the Value counts to it on the
 // same spring, so the number moves with the bar, from 0 when it appears, as
-// v1's `CountingNumber` did.
+// v1's `CountingNumber` did. Without a `locale`, its numbers are formatted
+// in en-US on the server and while the page hydrates, then in the browser's
+// (../../../internal/hydration-locale).
 
 /** Animate UI's additions to `Progress.Indicator`. */
 type IndicatorAnimationProps = {
@@ -52,7 +55,8 @@ const [ProgressMotionProvider, useProgressMotion] = getStrictContext<{
 }>('Progress.Root');
 
 function Root(props: Root.Props) {
-  const { value, min = 0, max = 100, format, locale } = props;
+  const { value, min = 0, max = 100, format } = props;
+  const locale = useHydrationLocale(props.locale);
   const percentage =
     value !== null && Number.isFinite(value) && max > min
       ? Math.min(100, Math.max(0, ((value - min) * 100) / (max - min)))
@@ -63,7 +67,7 @@ function Root(props: Root.Props) {
       value={{ value, percentage, min, max, format, locale }}
     >
       <ReducedMotionConfig>
-        <ProgressPrimitive.Root {...props} />
+        <ProgressPrimitive.Root {...props} locale={locale} />
       </ReducedMotionConfig>
     </ProgressMotionProvider>
   );

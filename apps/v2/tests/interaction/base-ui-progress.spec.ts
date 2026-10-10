@@ -2,11 +2,46 @@ import { expect, test } from '@playwright/test';
 
 import { describeProgressDemo, revealed } from './progress-helpers';
 import { expectSpringPace, type Sample } from './spring-curves';
+import {
+  describeInFrench,
+  hydratesCleanly,
+  inBrowserLocale,
+} from './hydration-locale';
 
 /** The Value's count: the bar's spring, so the number moves with the bar. */
 const COUNT_SPRING = { stiffness: 100, damping: 30 };
 
 describeProgressDemo('base-ui');
+
+describeInFrench('base-ui progress', () => {
+  test('the docs demo hydrates without a mismatch', async ({ page }) => {
+    expect(
+      await hydratesCleanly(
+        page,
+        '/tests/demos/base-ui/progress',
+        '[role="progressbar"]',
+      ),
+    ).toEqual({ errors: [], kept: true });
+  });
+
+  test('its numbers hydrate in en-US, then show in French', async ({
+    page,
+  }) => {
+    expect(
+      await hydratesCleanly(
+        page,
+        '/tests/fixtures/base-ui-progress',
+        '[role="progressbar"], [data-testid="value"]',
+      ),
+    ).toEqual({ errors: [], kept: true });
+    const half = await inBrowserLocale(page, 0.5, { style: 'percent' });
+    expect(half).not.toBe('50%');
+    await expect(
+      page.getByRole('progressbar', { name: 'Export' }),
+    ).toHaveAttribute('aria-valuetext', half);
+    await expect(page.getByTestId('value')).toHaveText(half);
+  });
+});
 
 test.describe('base-ui progress API', () => {
   test.beforeEach(async ({ page }) => {
