@@ -137,8 +137,13 @@ const spring = {
   },
   /** A switch or slider thumb gliding and stretching. */
   thumb: { type: 'spring', stiffness: 300, damping: 25 },
-  /** Small marks popping inside a control (radio dot, OTP characters). */
+  /** Small marks popping inside a control (radio dot). */
   bounce: { type: 'spring', stiffness: 200, damping: 16 },
+  /**
+   * A character growing into a field (an OTP slot's), by a transform: most
+   * of the way in ~175ms, settled by ~450ms, never past its size.
+   */
+  glyph: { type: 'spring', stiffness: 500, damping: 45 },
   /**
    * A check popping in (`checkAnimation="pop"`), from half its size out of a
    * light blur: lively, a little overshoot (~13%, peak at ~170ms).

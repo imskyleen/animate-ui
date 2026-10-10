@@ -230,7 +230,7 @@ const FAMILIES: Family[] = [
       {
         demo: 'animate-ui/input-otp',
         label: 'Input OTP',
-        note: '+50ms par caractère',
+        note: 'chiffre : grandit depuis 0 sur 500/45, sans dépasser (+50ms par caractère collé) ; l’anneau glisse de case en case (500/40) ; un chiffre effacé rétrécit (0,15s) ; code complet : vague de case en case',
       },
       { demo: 'animate-ui/spring', label: 'Spring' },
     ],
