@@ -135,8 +135,14 @@ const spring = {
     bounce: 0,
     restDelta: 0.01,
   },
-  /** A switch or slider thumb gliding and stretching. */
+  /** A switch thumb gliding and stretching. */
   thumb: { type: 'spring', stiffness: 300, damping: 25 },
+  /**
+   * A slider's thumb and range gliding to a pressed value, and its thumb
+   * stretching: as quick as the switch's thumb (90% of the way in ~150ms),
+   * calmer (~1.5% past its value, at ~260ms), settled by ~480ms.
+   */
+  slider: { type: 'spring', stiffness: 400, damping: 32 },
   /** Small marks popping inside a control (radio dot). */
   bounce: { type: 'spring', stiffness: 200, damping: 16 },
   /**

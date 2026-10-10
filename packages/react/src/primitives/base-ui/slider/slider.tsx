@@ -20,7 +20,7 @@ import { useHydrationLocale } from '../../../internal/hydration-locale';
 // Same API as Base UI's Slider, animated like Animate UI v1's switch thumb
 // (v1 had no slider): the pressed (or dragged) thumb stretches along the
 // track, and a press on the track glides the thumb and the indicator to the
-// new value, on v1's spring (stiffness 300, damping 25; see
+// new value, on a spring (stiffness 400, damping 32; see
 // ../../../internal/slider). Dragging and the keyboard follow instantly.
 // Without a `locale`, its numbers are formatted in en-US on the server and
 // while the page hydrates, then in the browser's
@@ -30,7 +30,7 @@ import { useHydrationLocale } from '../../../internal/hydration-locale';
 type IndicatorAnimationProps = {
   /**
    * Transition of the indicator after a press on the track. Defaults to a
-   * spring (stiffness 300, damping 25).
+   * spring (stiffness 400, damping 32).
    */
   transition?: Transition;
 };
@@ -39,7 +39,7 @@ type IndicatorAnimationProps = {
 type ThumbAnimationProps = {
   /**
    * Transition of the thumb after a press on the track, and of its stretch
-   * while pressed. Defaults to a spring (stiffness 300, damping 25).
+   * while pressed. Defaults to a spring (stiffness 400, damping 32).
    */
   transition?: Transition;
 };

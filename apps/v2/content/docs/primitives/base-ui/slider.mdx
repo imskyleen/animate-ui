@@ -37,8 +37,8 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 Animate UI v1 had no slider: it moves like v1's switch thumb.
 
-- **The pressed or dragged thumb stretches along the track**: its width grows by 3/16 (a 16px thumb becomes 19px, v1's switch `pressedWidth`), on v1's switch spring (stiffness 300, damping 25), and springs back on release. It's the thumb's real width, so its round ends stay round, and Base UI centers it on its value, so it grows on both sides (along its height in a vertical slider).
-- **A press on the track glides** the thumb and the indicator to the new value on the same spring (v1's switch thumb `layout` spring). Base UI positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left`. With a range slider, only the thumb that moves glides.
+- **The pressed or dragged thumb stretches along the track**: its width grows by 3/16 (a 16px thumb becomes 19px, v1's switch `pressedWidth`), on a spring (stiffness 400, damping 32), and springs back on release. It's the thumb's real width, so its round ends stay round, and Base UI centers it on its value, so it grows on both sides (along its height in a vertical slider).
+- **A press on the track glides** the thumb and the indicator to the new value on the same spring: as quick as v1's switch thumb, calmer (it goes about 1.5% past the value, where v1's switch thumb went about 4%). Base UI positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left`. With a range slider, only the thumb that moves glides.
 - **Dragging follows the pointer instantly**, and keyboard changes are instant. Dragging right after a press cancels the glide: the thumb sits under the pointer.
 - Under reduced motion, presses jump and nothing stretches.
 - Without a `locale`, Base UI formats the numbers (the Value, `aria-valuetext`) in the runtime's locale: the server's on the server and the browser's in the browser, so a page rendered in English and opened in another language didn't hydrate cleanly ("0.5" against "0,5", "1,000" against "1 000"). Animate UI formats them in en-US on the server and while the page hydrates, then in the browser's locale, as React Aria does. Pass `locale` to pick one yourself.
@@ -60,7 +60,7 @@ Every part takes exactly the props of [Base UI's Slider](https://base-ui.com/rea
     transition: {
       description: 'Transition of the indicator after a press on the track.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 32 }",
     },
   }}
 />
@@ -75,7 +75,7 @@ Every part takes exactly the props of [Base UI's Slider](https://base-ui.com/rea
       description:
         'Transition of the thumb after a press on the track, and of its stretch while pressed.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 32 }",
     },
   }}
 />

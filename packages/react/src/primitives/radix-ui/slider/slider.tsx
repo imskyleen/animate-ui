@@ -17,7 +17,7 @@ import {
 // Same API as Radix's Slider, animated like Animate UI v1's switch thumb (v1
 // had no slider): the pressed (or dragged) thumb stretches along the track,
 // and a press on the track glides the thumb and the range to the new value,
-// on v1's spring (stiffness 300, damping 25; see ../../../internal/slider).
+// on a spring (stiffness 400, damping 32; see ../../../internal/slider).
 // Dragging and the keyboard follow instantly.
 
 type SliderProps = SliderPrimitive.SliderProps;
@@ -29,7 +29,7 @@ type SliderThumbProps = SliderPrimitive.SliderThumbProps & ThumbAnimationProps;
 type RangeAnimationProps = {
   /**
    * Transition of the range after a press on the track. Defaults to a spring
-   * (stiffness 300, damping 25).
+   * (stiffness 400, damping 32).
    */
   transition?: Transition;
 };
@@ -38,7 +38,7 @@ type RangeAnimationProps = {
 type ThumbAnimationProps = {
   /**
    * Transition of the thumb after a press on the track, and of its stretch
-   * while pressed. Defaults to a spring (stiffness 300, damping 25).
+   * while pressed. Defaults to a spring (stiffness 400, damping 32).
    */
   transition?: Transition;
 };
@@ -55,11 +55,28 @@ function RootMotion({
   onPointerDownCapture,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  // Mirrors the values (Radix keeps them private) to know when they change;
-  // Radix stays the source of truth.
+  // Holds the values when uncontrolled, and hands them to Radix: uncontrolled,
+  // Radix reports a change from an effect, after the commit, so a quick tap
+  // on the track could be over before the change reached the root, and the
+  // thumb jumped. Controlled, it reports it in the press itself.
   const controlled = props.value !== undefined;
-  const [uncontrolled, setUncontrolled] = React.useState(props.defaultValue);
+  const [uncontrolled, setUncontrolled] = React.useState(
+    props.defaultValue ?? [props.min ?? 0],
+  );
   const values = controlled ? props.value : uncontrolled;
+  // Radix can't see a switch between controlled and uncontrolled anymore:
+  // warn like it did.
+  const wasControlledRef = React.useRef(controlled);
+  React.useEffect(() => {
+    if (wasControlledRef.current === controlled) return;
+    const [from, to] = controlled
+      ? ['uncontrolled', 'controlled']
+      : ['controlled', 'uncontrolled'];
+    console.warn(
+      `Slider is changing from ${from} to ${to}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`,
+    );
+    wasControlledRef.current = controlled;
+  }, [controlled]);
 
   const motionContext = useSliderRootMotion({
     disabled: props.disabled,
@@ -70,6 +87,7 @@ function RootMotion({
     <SliderMotionProvider value={motionContext}>
       <SliderPrimitive.Root
         {...props}
+        value={values}
         onValueChange={(next) => {
           if (!controlled) setUncontrolled(next);
           props.onValueChange?.(next);

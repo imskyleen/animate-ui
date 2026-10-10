@@ -24,14 +24,14 @@ import {
 // Same API as React Aria's Slider, SliderFill and SliderThumb, animated like
 // Animate UI v1's switch thumb (v1 had no slider): the dragged thumb stretches
 // along the track, and a press on the track glides the thumb and the fill to
-// the new value, on v1's spring (stiffness 300, damping 25; see
+// the new value, on a spring (stiffness 400, damping 32; see
 // ../../../internal/slider). Dragging and the keyboard follow instantly. The
 // animated elements are React Aria's own, through its `render` prop.
 
 type SliderFillProps = AriaSliderFillProps & {
   /**
    * Transition of the fill after a press on the track. Defaults to a spring
-   * (stiffness 300, damping 25).
+   * (stiffness 400, damping 32).
    */
   transition?: Transition;
 };
@@ -39,7 +39,7 @@ type SliderFillProps = AriaSliderFillProps & {
 type SliderThumbProps = AriaSliderThumbProps & {
   /**
    * Transition of the thumb after a press on the track, and of its stretch
-   * while dragged. Defaults to a spring (stiffness 300, damping 25).
+   * while dragged. Defaults to a spring (stiffness 400, damping 32).
    */
   transition?: Transition;
 };

@@ -74,7 +74,7 @@ const FAMILIES: Family[] = [
       {
         demo: 'radix-ui/slider',
         label: 'Slider',
-        note: 'dérivé du thumb du switch',
+        note: 'dérivé du thumb du switch, ressort plus calme 400/32 (~1,5 % de dépassement au lieu de ~4 %)',
       },
     ],
   },

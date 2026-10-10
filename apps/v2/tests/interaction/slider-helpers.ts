@@ -2,7 +2,8 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 // Shared by the Radix UI, Base UI and React Aria slider specs. Animate UI v1
 // had no slider: they move like v1's switch thumb (a pressed thumb stretches
-// along the track, a press on the track glides it, spring 300/25).
+// along the track, a press on the track glides it), on a calmer spring
+// (400/32: ~1.5% past the value, where v1's 300/25 went ~4%).
 
 const ROOT = '[data-slot="slider"]';
 const THUMB = '[data-slot="slider-thumb"]';
@@ -78,6 +79,47 @@ async function startSampling(
     );
 }
 
+/**
+ * Records the first slider's thumb center x and range end on every animation
+ * frame for `ms`, read together. Start it before the interaction.
+ */
+async function startGlideSampling(page: Page, ms: number) {
+  await page.evaluate(
+    ({ root, thumb, range, ms }) => {
+      const slider = document.querySelector(root)!;
+      const thumbEl = slider.querySelector(thumb)!;
+      const rangeEl = slider.querySelector(range)!;
+      const samples: { thumb: number; range: number }[] = [];
+      const w = window as unknown as {
+        __glideSamples?: Promise<typeof samples>;
+      };
+      w.__glideSamples = new Promise((resolve) => {
+        const start = performance.now();
+        const tick = () => {
+          const t = thumbEl.getBoundingClientRect();
+          samples.push({
+            thumb: t.left + t.width / 2,
+            range: rangeEl.getBoundingClientRect().right,
+          });
+          if (performance.now() - start < ms) requestAnimationFrame(tick);
+          else resolve(samples);
+        };
+        requestAnimationFrame(tick);
+      });
+    },
+    { root: ROOT, thumb: THUMB, range: RANGE, ms },
+  );
+  return () =>
+    page.evaluate(
+      () =>
+        (
+          window as unknown as {
+            __glideSamples: Promise<{ thumb: number; range: number }[]>;
+          }
+        ).__glideSamples,
+    );
+}
+
 async function trackPoint(page: Page, sliderIndex: number, ratio: number) {
   const box = (await slider(page, sliderIndex).locator(TRACK).boundingBox())!;
   return { x: box.x + box.width * ratio, y: box.y + box.height / 2 };
@@ -117,6 +159,87 @@ export function describeSliderDemo(library: string) {
       // Settled: the range ends under the thumb.
       expect(Math.abs((await rangeRight(range)) - end)).toBeLessThan(10);
       expect(await thumbScale(thumb)).toBeCloseTo(1, 2);
+    });
+
+    test('quick taps on the track glide, one after the other', async ({
+      page,
+    }) => {
+      // A tap released at once (a trackpad's tap to click, a touch): the
+      // value changes while it's still pressed, or the thumb would jump.
+      const thumb = slider(page, 0).locator(THUMB).first();
+      for (const ratio of [0.95, 0.3, 0.7]) {
+        const start = await centerX(thumb);
+        const target = await trackPoint(page, 0, ratio);
+        const samples = await startSampling(page, 0, THUMB, 0, 400);
+        await page.mouse.move(target.x, target.y);
+        await page.mouse.down();
+        await page.mouse.up();
+        const frames = await samples();
+        await page.waitForTimeout(300);
+        const end = await centerX(thumb);
+        expect(Math.abs(end - start)).toBeGreaterThan(30);
+        const [low, high] = [Math.min(start, end), Math.max(start, end)];
+        expect(
+          frames.some((x) => x > low + 2 && x < high - 2),
+          `the tap to ${ratio} glides`,
+        ).toBe(true);
+      }
+    });
+
+    test('a press on the track goes only a little past the value', async ({
+      page,
+    }) => {
+      // 400/32: ~1.5% of the way past it, where v1's switch spring (300/25)
+      // went ~4%.
+      const thumb = slider(page, 0).locator(THUMB).first();
+      const start = await centerX(thumb);
+      const target = await trackPoint(page, 0, 0.05);
+      const samples = await startGlideSampling(page, 700);
+      await page.mouse.click(target.x, target.y);
+      const frames = await samples();
+      const end = await centerX(thumb);
+      const jump = start - end;
+      expect(jump).toBeGreaterThan(150);
+      const past = Math.max(...frames.map((f) => end - f.thumb)) / jump;
+      expect(past).toBeGreaterThan(0.005);
+      expect(past).toBeLessThan(0.025);
+    });
+
+    test('the range follows the thumb to its rest, frame by frame', async ({
+      page,
+    }) => {
+      // Both on one spring: the same share of the way at every frame. The
+      // range's scale doesn't stop short where the spring turns back.
+      const thumb = slider(page, 0).locator(THUMB).first();
+      const range = slider(page, 0).locator(RANGE).first();
+      const [thumbStart, rangeStart] = [
+        await centerX(thumb),
+        await rangeRight(range),
+      ];
+      const target = await trackPoint(page, 0, 0.05);
+      const samples = await startGlideSampling(page, 700);
+      await page.mouse.click(target.x, target.y);
+      const frames = await samples();
+      const [thumbEnd, rangeEnd] = [
+        await centerX(thumb),
+        await rangeRight(range),
+      ];
+      const jump = thumbStart - thumbEnd;
+      expect(jump).toBeGreaterThan(150);
+      // It glided: a frame on the way.
+      expect(
+        frames.some(
+          (f) => f.thumb < thumbStart - 20 && f.thumb > thumbEnd + 20,
+        ),
+      ).toBe(true);
+      const apart = frames.map((f) =>
+        Math.abs(
+          ((f.thumb - thumbEnd) / (thumbStart - thumbEnd) -
+            (f.range - rangeEnd) / (rangeStart - rangeEnd)) *
+            jump,
+        ),
+      );
+      expect(Math.max(...apart)).toBeLessThan(1.5);
     });
 
     test('dragging follows the pointer with no lag', async ({ page }) => {

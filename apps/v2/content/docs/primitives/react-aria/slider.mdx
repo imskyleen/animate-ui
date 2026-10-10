@@ -42,8 +42,8 @@ export function Volume() {
 
 Animate UI v1 had no slider: it moves like v1's switch thumb.
 
-- **The dragged (React Aria's `isDragging`) thumb stretches along the track**: its width grows by 3/16 (a 16px thumb becomes 19px, v1's switch `pressedWidth`), on v1's switch spring (stiffness 300, damping 25), and springs back on release. It's the thumb's real width, so its round ends stay round, and React Aria centers it on its value, so it grows on both sides (along its height in a vertical slider).
-- **A press on the track glides** the thumb and the fill to the new value on the same spring (v1's switch thumb `layout` spring). React Aria positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left`. With a range slider, only the thumb that moves glides.
+- **The dragged (React Aria's `isDragging`) thumb stretches along the track**: its width grows by 3/16 (a 16px thumb becomes 19px, v1's switch `pressedWidth`), on a spring (stiffness 400, damping 32), and springs back on release. It's the thumb's real width, so its round ends stay round, and React Aria centers it on its value, so it grows on both sides (along its height in a vertical slider).
+- **A press on the track glides** the thumb and the fill to the new value on the same spring: as quick as v1's switch thumb, calmer (it goes about 1.5% past the value, where v1's switch thumb went about 4%). React Aria positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left`. With a range slider, only the thumb that moves glides.
 - **Dragging follows the pointer instantly**, and keyboard changes are instant. Dragging right after a press cancels the glide: the thumb sits under the pointer.
 - Under reduced motion, presses jump and nothing stretches.
 
@@ -64,7 +64,7 @@ Every part takes exactly the props of [React Aria's Slider](https://react-spectr
     transition: {
       description: 'Transition of the fill after a press on the track.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 32 }",
     },
   }}
 />
@@ -79,7 +79,7 @@ Every part takes exactly the props of [React Aria's Slider](https://react-spectr
       description:
         'Transition of the thumb after a press on the track, and of its stretch while pressed.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 32 }",
     },
   }}
 />

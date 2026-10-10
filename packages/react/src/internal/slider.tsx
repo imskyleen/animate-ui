@@ -18,8 +18,9 @@ import { motionTokens, useShouldReduceMotion } from '../utils/motion';
 // slider: they move like v1's switch thumb. While pressed (or dragged), the
 // thumb stretches along the track, its width growing by 3/16 (a 16px thumb
 // becomes 19px, v1's `pressedWidth`), and a press on the track glides the
-// thumb and the range to the new value, both on v1's switch thumb spring
-// (stiffness 300, damping 25).
+// thumb and the range to the new value, both on a spring as quick as v1's
+// switch thumb's, calmer (stiffness 400, damping 32: it goes ~1.5% past the
+// value, where v1's went ~4%).
 //
 // The libraries position the thumbs and the range with layout (percentage
 // `left`/`width`), and dragging or the keyboard must follow instantly. Only a
@@ -32,8 +33,8 @@ import { motionTokens, useShouldReduceMotion } from '../utils/motion';
  */
 const DRAG_THRESHOLD = 3;
 
-/** v1's switch thumb transition (`SwitchThumb`), for the thumb and the range. */
-const SLIDER_TRANSITION: Transition = motionTokens.spring.thumb;
+/** The thumb's and the range's transition. */
+const SLIDER_TRANSITION: Transition = motionTokens.spring.slider;
 
 /** v1's styled switch stretched its 16px thumb to 19px while pressed. */
 const PRESSED_STRETCH = 19 / 16;
@@ -270,11 +271,21 @@ function useSliderPartMotion(
           });
         }
         const t = transitionRef.current;
+        // The range's scale rests within half a pixel of its length, like
+        // the offsets: Motion's default (half a unit past a delta of 5)
+        // would let it stop short where the spring turns back, then jump.
+        // Only on a spring: on a transition naming no curve (`{}`, a
+        // `delay`), it would make Motion pick another default for the scale
+        // than for the offsets.
+        const rest = (size: number): Transition =>
+          t.type === 'spring'
+            ? { restDelta: 0.5 / size, restSpeed: 2 / size, ...t }
+            : t;
         controls = [
           animate(tx, 0, t),
           animate(ty, 0, t),
-          animate(sx, 1, t),
-          animate(sy, 1, t),
+          animate(sx, 1, rest(layout.width)),
+          animate(sy, 1, rest(layout.height)),
         ];
       },
       cancel() {
