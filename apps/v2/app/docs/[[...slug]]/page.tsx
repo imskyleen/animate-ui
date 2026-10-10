@@ -19,6 +19,8 @@ import {
 
 import { Footer } from '@/components/layout/footer';
 import { TOC } from '@/components/layout/toc';
+import { Installation } from '@/components/docs/installation';
+import { LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { LibraryTabs } from '@/components/docs/library-tabs';
 import { CopyPage, PageNavigation } from '@/components/docs/page-actions';
 import { getMDXComponents } from '@/components/mdx';
@@ -30,6 +32,18 @@ import {
   siteUrl,
 } from '@/lib/shared';
 import { source } from '@/lib/source';
+
+/** `<Installation>` on a library's page, which knows its library. */
+const INSTALLATIONS = Object.fromEntries(
+  LIBRARIES.map(({ id }) => [
+    id,
+    function LibraryInstallation(
+      props: React.ComponentProps<typeof Installation>,
+    ) {
+      return <Installation {...props} library={id} />;
+    },
+  ]),
+) as Record<LibraryId, typeof Installation>;
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -91,6 +105,10 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
         <MDX
           components={getMDXComponents({
             a: createRelativeLink(source, page),
+            // Its Manual path shows the imports of the page's library.
+            ...(primitive && {
+              Installation: INSTALLATIONS[primitive.library],
+            }),
           })}
         />
       </DocsBody>

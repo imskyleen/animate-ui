@@ -1,8 +1,8 @@
 'use client';
 
 import {
-  AiElementsIcon,
   BookOpen02Icon,
+  ComponentIcon,
   Cursor01Icon,
   GridIcon,
   Image02Icon,
@@ -50,7 +50,7 @@ const PRIMITIVE_SECTIONS: {
   title: string;
   icon: SectionIcon;
 }[] = [
-  { id: 'libraries', title: 'Libraries', icon: AiElementsIcon },
+  { id: 'components', title: 'Components', icon: ComponentIcon },
   {
     id: 'animate-ui',
     title: 'Animate UI',

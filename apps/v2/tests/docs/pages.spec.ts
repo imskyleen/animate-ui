@@ -1,7 +1,7 @@
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 // Every docs page, from content/docs.
 const CONTENT = path.join(process.cwd(), 'content', 'docs');
@@ -54,6 +54,24 @@ test.describe('primitive page', () => {
     // In LIBRARIES order; the current one is selected.
     await expect(tabs).toHaveText(['Base UI', 'Radix UI', 'React Aria']);
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+  });
+
+  test('installation: the CLI, or the import to swap, as a diff', async ({
+    page,
+  }) => {
+    const tabs = page
+      .getByRole('tablist', { name: 'Installation' })
+      .getByRole('tab');
+    await expect(tabs).toHaveText(['CLI', 'Manual']);
+    await tabs.nth(1).click();
+    // The shadcn/ui component's import, from Radix UI, then from Animate UI.
+    const diff = page.locator('.has-diff');
+    await expect(diff.locator('.line.diff.remove')).toHaveText([
+      "import { Accordion as AccordionPrimitive } from 'radix-ui';",
+    ]);
+    await expect(diff.locator('.line.diff.add')).toHaveText([
+      "import { Accordion as AccordionPrimitive } from '@animate-ui/react/primitives/radix-ui';",
+    ]);
   });
 
   test('the code sits under the demo; View code unfolds it', async ({
@@ -111,6 +129,62 @@ test.describe('primitive page', () => {
   });
 });
 
+/** The import diff of a page's Manual installation: `-`, `+` or ` ` lines. */
+async function importDiff(page: Page, path: string) {
+  await page.goto(path, { waitUntil: 'networkidle' });
+  await page
+    .getByRole('tablist', { name: 'Installation' })
+    .getByRole('tab', { name: 'Manual' })
+    .click();
+  return page
+    .locator('.has-diff .line')
+    .evaluateAll((lines) =>
+      lines.map(
+        (line) =>
+          `${line.classList.contains('remove') ? '-' : line.classList.contains('add') ? '+' : ' '}${line.textContent}`,
+      ),
+    );
+}
+
+test('installation: a multi-line import only swaps its last line', async ({
+  page,
+}) => {
+  const lines = await importDiff(
+    page,
+    '/docs/primitives/react-aria/context-menu',
+  );
+  expect(lines[0]).toBe(' import {');
+  // The component's own import, not the demo's (`Pressable`, used by the
+  // demo only).
+  expect(lines.filter((line) => !line.startsWith(' '))).toEqual([
+    "-} from 'react-aria-components';",
+    "+} from '@animate-ui/react/primitives/react-aria';",
+  ]);
+});
+
+test('installation: the imports the CLI swaps, as shadcn/ui writes them', async ({
+  page,
+}) => {
+  // shadcn/ui's Radix Drawer is built on Vaul.
+  expect(await importDiff(page, '/docs/primitives/radix-ui/drawer')).toEqual([
+    "-import { Drawer as DrawerPrimitive } from 'vaul';",
+    "+import { Drawer as DrawerPrimitive } from '@animate-ui/react/primitives/radix-ui/drawer';",
+  ]);
+  // One line, with the names the component uses (not the demo's pattern).
+  expect(
+    await importDiff(page, '/docs/primitives/animate-ui/input-otp'),
+  ).toEqual([
+    "-import { OTPInput, OTPInputContext } from 'input-otp';",
+    "+import { OTPInput, OTPInputContext } from '@animate-ui/react/primitives/input-otp';",
+  ]);
+  // Type-only imports stay, as the CLI leaves them (`Selection`, the demo's).
+  const menu = await importDiff(
+    page,
+    '/docs/primitives/react-aria/dropdown-menu',
+  );
+  expect(menu.filter((line) => /import type/.test(line))).toEqual([]);
+});
+
 test('the sidebar groups primitives into sections', async ({ page }) => {
   await page.goto('/docs/primitives/animate-ui/cursor');
   const section = (title: string) =>
@@ -120,7 +194,7 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   const titles = await page.locator('#nd-sidebar p').allTextContents();
   expect(titles).toEqual([
     'Guide',
-    'Libraries',
+    'Components',
     'Animate UI',
     'Buttons',
     'Texts',
@@ -128,10 +202,17 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     'Backgrounds',
     'Icons',
   ]);
-  // Primitives with a library page, Animate UI's Tabs and Tooltip included.
+  // Every shadcn/ui component: those with a library page (Animate UI's Tabs
+  // and Tooltip included), and Input OTP (only an Animate UI page).
   await expect(
-    section('Libraries').getByRole('link', { name: 'Tooltip' }),
+    section('Components').getByRole('link', { name: 'Tooltip' }),
   ).toBeVisible();
+  await expect(
+    section('Components').getByRole('link', { name: 'Input OTP' }),
+  ).toBeVisible();
+  await expect(
+    section('Animate UI').getByRole('link', { name: 'Input OTP' }),
+  ).toHaveCount(0);
   await expect(
     section('Animate UI').getByRole('link', { name: 'Cursor' }),
   ).toHaveAttribute('data-active', 'true');
