@@ -15,7 +15,7 @@ test.describe('radix-ui context-menu demo', () => {
     });
   });
 
-  test('grows from the pointer in 250ms', async ({ page }) => {
+  test('grows from the pointer in 220ms', async ({ page }) => {
     const probe = await probeFirstFrame(page, CONTENT);
     await page.getByText('Right click here').click({ button: 'right' });
     const first = await probe.firstFrame();

@@ -31,7 +31,7 @@ import {
 } from '../../../internal/item-indicator';
 
 // Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
-// moves like the menus (a 250ms fade and scale from 0.9, both
+// moves like the menus (a 220ms fade and scale from 0.9, both
 // ways), a highlight glides behind the highlighted item, and the chosen
 // item's check draws itself while the previous one erases itself (with
 // `pop`, the check glides to the chosen item on a quick spring). Choosing
@@ -86,7 +86,7 @@ type unstable_SelectBubbleInputProps =
 type ContentAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
+   * set. Defaults to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */

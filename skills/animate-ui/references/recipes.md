@@ -75,7 +75,7 @@ function PopoverContentMotion({
 
 ## Menu (Dropdown Menu, Context Menu, Menubar, Select, Combobox, Navigation Menu)
 
-Purpose: spatial, but opened all day long: short and exact. The content fades and grows from `scale.menu` (0.9) in `transition.menu` (250ms, `ease.soft`), from its trigger (or the pointer, for a context menu), and closes the same way. Submenus move like their menu. A menubar hands one popover from menu to menu (see Menubar below).
+Purpose: spatial, but opened all day long: short and exact. The content fades and grows from `scale.menu` (0.9) in `transition.menu` (220ms, `ease.soft`), from its trigger (or the pointer, for a context menu), and closes the same way. Submenus move like their menu. A menubar hands one popover from menu to menu (see Menubar below).
 
 ```tsx
 const hidden = { opacity: 0, scale: reduce ? 1 : scale.menu };

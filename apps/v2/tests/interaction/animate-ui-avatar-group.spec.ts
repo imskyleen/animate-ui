@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { overshootOf } from './spring-curves';
 
 /** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
-const POP_SPRING = { stiffness: 300, damping: 25 };
+const POP_SPRING = { stiffness: 400, damping: 29 };
 
 const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/avatar-group', {

@@ -12,7 +12,7 @@ import {
 
 // Base UI's Menubar only lays out its menus: each one is a Menu, animated by
 // Animate UI's Menu. It has no Animate UI v1 counterpart: a menu opens and
-// closes like v1's Base UI Menu (a 250ms fade and scale, a highlight gliding
+// closes like v1's Base UI Menu (a 220ms fade and scale, a highlight gliding
 // behind the highlighted item). Moving from an open menu to another, the
 // popover doesn't close and reopen: it moves to the next menu and resizes,
 // on a spring that eases in, without going past, while the content changes

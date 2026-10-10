@@ -378,7 +378,7 @@ export function describeBaseNavigationMenuCases() {
           () => hover(page, 'Getting started'),
           300,
         );
-        // It slides 24px over 250ms (5px a frame at most, 10 over a dropped
+        // It slides 24px over 220ms (about 5px a frame at most, 10 over a dropped
         // frame): never a jump.
         const seen = lefts.filter((left): left is number => left !== null);
         expect(seen.length).toBeGreaterThan(2);

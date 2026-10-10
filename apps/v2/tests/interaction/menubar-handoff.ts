@@ -430,10 +430,10 @@ export function describeMenubarHandoff(title: string, path: string) {
           .map((f) => `${Math.round(f.clock)}:${f.left.toFixed(1)}`)
           .join(' '),
       ).toBeLessThan(speed(moving + 1) * 0.95);
-      // Never faster than a critically damped spring's peak from rest, ~0.82%
-      // of the way per ms (a tween starting at its fastest goes 1.1% or more).
+      // Never faster than a critically damped spring's peak from rest, ~0.95%
+      // of the way per ms (a tween starting at its fastest goes 1.25% or more).
       const fastest = Math.max(...shown.slice(1).map((_, i) => speed(i + 1)));
-      expect(fastest).toBeLessThan((profiles.left - file.left) * 0.0095);
+      expect(fastest).toBeLessThan((profiles.left - file.left) * 0.0105);
       // No bounce: it never goes past its place.
       const lefts = shown.map((frame) => frame.left);
       expect(Math.max(...lefts)).toBeLessThanOrEqual(profiles.left + 0.5);
@@ -591,7 +591,7 @@ export function describeMenubarHandoff(title: string, path: string) {
         () => hover(page, 'Edit'),
         300,
       );
-      // File's items slide 6px left over 250ms (a pixel a frame at most),
+      // File's items slide 6px left over 220ms (~1.3px a frame at most),
       // until the popover's edge clips them: never a jump. A move of the
       // copy out of step with the popover's would jump them aside at once.
       const seen = lefts.filter((left): left is number => left !== null);

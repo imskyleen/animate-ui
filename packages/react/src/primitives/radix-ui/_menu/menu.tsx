@@ -47,7 +47,7 @@ import {
 // v1's DropdownMenu). Each module passes its own Radix parts to these
 // factories.
 //
-// - Content and SubContent fade and scale from 0.9 in 250ms, both ways.
+// - Content and SubContent fade and scale from 0.9 in 220ms, both ways.
 // - One highlight glides behind the highlighted item (internal/item-highlight).
 // - An item's check draws itself when it's checked (or the menu opens), and
 //   erases itself when it's unchecked, like a checkbox's; with `pop`, it pops
@@ -61,8 +61,8 @@ type PresenceAnimationProps = {
   /**
    * Transition of the entrance (and, in a menubar, of the popover moving to
    * the next menu), and of the exit unless `exitTransition` is set. Defaults
-   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, and in a menubar
-   * the popover moves on `{ type: 'spring', stiffness: 500, damping: 45 }`.
+   * to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`, and in a menubar
+   * the popover moves on `{ type: 'spring', stiffness: 660, damping: 52 }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */

@@ -56,7 +56,7 @@ Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CS
 - **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, ease-out. Hovering or focusing the viewport expands the stack with a 0.75rem gap and fades the contents back in. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
 - **A swipe follows the finger** (Base UI sets the transform while swiping), then springs back, or the toast leaves in the swipe direction.
 - **It leaves through the edge it came from**, sliding and fading out on the same spring.
-- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they enter and leave through it. Anchored toasts (`Toast.Positioner`) are small bubbles, like tooltips: they grow from their anchor from 0.7 with a fade, on a spring (stiffness 300, damping 25).
+- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they enter and leave through it. Anchored toasts (`Toast.Positioner`) are small bubbles, like tooltips: they grow from their anchor from 0.7 with a fade, on a spring (stiffness 400, damping 29).
 - shadcn/ui's own CSS stack (its `[transform:…]` and `[transition:…]` classes and the variables only they read) would fight these: the CLI removes them.
 - Under reduced motion, toasts fade in place and the stack changes at once.
 
@@ -78,7 +78,7 @@ Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/reac
       description: 'Transition of the entrance and the stack.',
       type: 'Transition',
       default:
-        "{ type: 'spring', stiffness: 150, damping: 22 }; anchored: { type: 'spring', stiffness: 300, damping: 25 }",
+        "{ type: 'spring', stiffness: 150, damping: 22 }; anchored: { type: 'spring', stiffness: 400, damping: 29 }",
     },
     exitTransition: {
       description: 'Transition of the exit.',

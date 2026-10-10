@@ -32,7 +32,7 @@ import {
 // while an `actionsRef` is set, until `actionsRef.current.unmount()`.
 //
 // Neither has an Animate UI v1 counterpart: they move like v1's Base UI Menu.
-// The popup fades and scales from 0.9 in 250ms, both ways; a highlight
+// The popup fades and scales from 0.9 in 220ms, both ways; a highlight
 // glides behind the highlighted item; an item's check draws itself when the
 // item is chosen and erases itself when it's not anymore, like a checkbox's
 // (with `pop`, it pops in and out, and a single selection's check glides to
@@ -61,7 +61,7 @@ type OpenChangeDetails = {
 type PopupAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`.
+   * set. Defaults to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`.
    */
   transition?: Transition;
   /** Transition of the closing. Defaults to `transition`. */

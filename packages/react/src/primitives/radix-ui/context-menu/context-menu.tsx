@@ -16,7 +16,7 @@ import {
 } from '../_menu/menu';
 
 // Same API as Radix's Context Menu. It has no Animate UI v1 counterpart: it
-// moves like v1's DropdownMenu (a 250ms fade and scale from the pointer, a
+// moves like v1's DropdownMenu (a 220ms fade and scale from the pointer, a
 // highlight gliding behind the highlighted item, checks popping in). The Root
 // and each Sub mirror their open state (Radix keeps it private) so the
 // Content and SubContent can play an exit before they unmount.

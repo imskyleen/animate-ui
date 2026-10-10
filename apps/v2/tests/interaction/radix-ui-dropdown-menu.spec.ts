@@ -20,7 +20,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
     });
   });
 
-  test('opens with a 250ms scale and fade from the trigger', async ({
+  test('opens with a 220ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);
@@ -62,7 +62,7 @@ test.describe('radix-ui dropdown-menu demo', () => {
     await page.keyboard.press('Enter');
     await expect(page.getByRole('menuitem', { name: /Profile/ })).toBeFocused();
     await page.keyboard.press('Escape');
-    // Not 250ms later, when the exit ends: keys must not reach a leaving menu.
+    // Not 220ms later, when the exit ends: keys must not reach a leaving menu.
     await expect(trigger).toBeFocused({ timeout: 50 });
   });
 

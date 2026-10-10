@@ -158,14 +158,14 @@ Nearly everything moves on a spring from the tokens (`tokens.md`): they retarget
 - Color changes (CSS): `ease`.
 - Constant motion (marquee, loader): `linear`.
 - Never ease-in on UI: it starts slow, exactly when the user is watching. A dialog or a sheet dismissed speeds away on `ease.away` (`transition.dismiss`, 0.2s): a steady push from half its average speed to one and a half, so it leaves at once and its last pixels don't crawl out. The one ease-in that moves something is a drawer closed (`transition.drawerOut`, 0.16s on `ease.in`): short enough that its slow start doesn't wait, and it's seen speeding off its edge (a steady push read as a linear slide there).
-- Content fading in behind content leaving (a menubar's next menu, A16): `ease.arrive` (`cubic-bezier(0.11, 0, 0.5, 0)`, `transition.handoffIn`, 0.3s), a slow start on its opacity only, so what leaves has mostly cleared before it shows. Its slide and the popover's move start at once.
+- Content fading in behind content leaving (a menubar's next menu, A16): `ease.arrive` (`cubic-bezier(0.11, 0, 0.5, 0)`, `transition.handoffIn`, 0.26s), a slow start on its opacity only, so what leaves has mostly cleared before it shows. Its slide and the popover's move start at once.
 
 ```tsx
 // Avoid
 transition={{ duration: 0.2, ease: 'easeInOut' }} // a menu entering
 
 // Do
-transition={motionTransition.menu} // 0.25s, ease.soft
+transition={motionTransition.menu} // 0.22s, ease.soft
 ```
 
 ### B3. Fast where it's frequent, alive everywhere
@@ -175,9 +175,9 @@ Keep what's used constantly quick and let rarer surfaces take their time:
 | Motion                            | Feel                                                                                                                                    | Token                                                                             |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | Press                             | ~120ms                                                                                                                                  | `spring.press`                                                                    |
-| Menus, selects                    | 250ms, soft ease-out                                                                                                                    | `transition.menu`                                                                 |
-| A menubar moving to the next menu | the popover moves on a spring, most of the way in ~175ms, never past; content out in 250ms, in on a ~250ms spring, fading in over 300ms | `spring.morph`, `transition.handoffOut`, `spring.handoff`, `transition.handoffIn` |
-| Tooltips, popovers, hover cards   | there in ~200ms, settled by ~500ms                                                                                                      | `spring.pop`                                                                      |
+| Menus, selects                    | 220ms, soft ease-out                                                                                                                    | `transition.menu`                                                                 |
+| A menubar moving to the next menu | the popover moves on a spring, most of the way in ~155ms, never past; content out in 220ms, in on a ~230ms spring, fading in over 260ms | `spring.morph`, `transition.handoffOut`, `spring.handoff`, `transition.handoffIn` |
+| Tooltips, popovers, hover cards   | there in ~175ms, settled by ~440ms                                                                                                      | `spring.pop`                                                                      |
 | Selection, pointer highlight      | a smooth slide / a quick follow                                                                                                         | `spring.selection`, `spring.highlight`                                            |
 | Disclosures                       | 350ms, soft ease-out                                                                                                                    | `transition.disclosure`                                                           |
 | Dialogs                           | ~450ms in, 200ms out                                                                                                                    | `spring.dialog`, `transition.dismiss`                                             |

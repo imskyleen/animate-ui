@@ -309,7 +309,7 @@ export function describeNavigationMenuSwap(
         () => hover(page, 'Components'),
         300,
       );
-      // Getting started's links slide 24px left over 250ms (5px a frame at
+      // Getting started's links slide 24px left over 220ms (about 5px a frame at
       // most), until the popup's edge clips them: never a jump.
       const seen = lefts.filter((left): left is number => left !== null);
       expect(seen.length).toBeGreaterThan(2);
@@ -383,12 +383,12 @@ export function describeNavigationMenuSwap(
         .map((f) => `${Math.round(f.clock)}:${f.box.width.toFixed(1)}`)
         .join(' ');
       // On a critically damped spring from rest: never faster than its
-      // peak, ~0.82% of the way per ms (a tween starting at its fastest goes
-      // 1.1% or more).
+      // peak, ~0.95% of the way per ms (a tween starting at its fastest goes
+      // 1.25% or more).
       const fastest = Math.max(
         ...widths.slice(1).map((_, i) => speedOf(widths, frames, i + 1)),
       );
-      expect(fastest, trace).toBeLessThan((after - before) * 0.0095);
+      expect(fastest, trace).toBeLessThan((after - before) * 0.0105);
       // Its first frames speed up (a tween, only slowing down, would start
       // at its fastest). (Base UI's CSS transition starts with a frame;
       // Motion's, for Radix, mid-frame, and a frame later if the content is

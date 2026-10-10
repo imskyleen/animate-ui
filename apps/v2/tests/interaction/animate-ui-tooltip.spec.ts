@@ -6,7 +6,7 @@ import { overshootOf } from './spring-curves';
 const CONTENT = '[data-slot="tooltip-content"]';
 
 /** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
-const POP_SPRING = { stiffness: 300, damping: 25 };
+const POP_SPRING = { stiffness: 400, damping: 29 };
 
 const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/tooltip', { waitUntil: 'networkidle' });

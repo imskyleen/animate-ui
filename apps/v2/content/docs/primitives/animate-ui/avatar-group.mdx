@@ -55,7 +55,7 @@ Each child is an avatar. Put an `AvatarGroupTooltip` inside an avatar to give it
 ## Animation
 
 - The hovered (or pressed) avatar rises by `translate` on a bouncy spring (stiffness 300, damping 17): it overshoots by about 17% before it settles, and dips below its place the same way when it comes back down.
-- The tooltips share one popup ([Tooltip](/docs/primitives/animate-ui/tooltip)): it opens at once (`openDelay` is 0) and glides from avatar to avatar on its spring (stiffness 300, damping 25), a little past the next avatar before it settles.
+- The tooltips share one popup ([Tooltip](/docs/primitives/animate-ui/tooltip)): it opens at once (`openDelay` is 0) and glides from avatar to avatar on its spring (stiffness 400, damping 29), a little past the next avatar before it settles.
 - `<AnimateUIProvider tempo>` paces the default springs.
 - Under reduced motion, the avatar rises at once and the tooltip only fades.
 
@@ -91,7 +91,7 @@ Takes the [TooltipProvider](/docs/primitives/animate-ui/tooltip#tooltipprovider)
     tooltipTransition: {
       description: 'Transition of the tooltip.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 29 }",
     },
     openDelay: {
       description: 'Delay in milliseconds before a tooltip opens.',

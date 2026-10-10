@@ -36,8 +36,8 @@ export async function gotoReady(page: Page, path: string) {
 }
 
 /**
- * The popover and tooltip spring (stiffness 300, damping 25): it overshoots by
- * ~4% of its travel around 260ms and settles by ~500ms, both ways. Budgets
+ * The popover and tooltip spring (stiffness 400, damping 29): it overshoots by
+ * ~4% of its travel around 230ms and settles by ~440ms, both ways. Budgets
  * leave room for a loaded machine.
  */
 export const SETTLE_BUDGET = 900;
@@ -150,7 +150,7 @@ export function recordExit(page: Page, selector: string, timeout = 3000) {
 
 /**
  * How an overlay enters: the tooltip and popover spring (from 0.7 or 0.8,
- * with an overshoot), the menus' timing (from 0.9 in 250ms, ease-out), or a
+ * with an overshoot), the menus' timing (from 0.9 in 220ms, ease-out), or a
  * fade alone (lists laid over their trigger).
  */
 export type EntranceKind = 'tooltip' | 'popover' | 'menu' | 'fade';

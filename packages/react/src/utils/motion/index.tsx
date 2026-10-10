@@ -90,9 +90,9 @@ const spring = {
   press: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 },
   /**
    * Tooltips, popovers and hover cards growing from their trigger: there in
-   * ~200ms, a little overshoot, settled by ~500ms.
+   * ~175ms, a little overshoot, settled by ~440ms.
    */
-  pop: { type: 'spring', stiffness: 300, damping: 25 },
+  pop: { type: 'spring', stiffness: 400, damping: 29 },
   /** Dialogs tipping forward: calm, no overshoot. */
   dialog: { type: 'spring', stiffness: 150, damping: 25 },
   /** Toasts from an edge: livelier, they travel farther (v1's sheets'). */
@@ -116,17 +116,17 @@ const spring = {
   /**
    * Content sliding in as a popover is handed from one menu to the next (a
    * menubar's), or as a navigation menu changes items: from rest, there in
-   * ~250ms without overshoot, like Motion's mega menu.
+   * ~230ms without overshoot, like Motion's mega menu (a little quicker).
    */
-  handoff: { type: 'spring', stiffness: 340, damping: 37 },
+  handoff: { type: 'spring', stiffness: 450, damping: 43 },
   /**
    * A popover moving and resizing from one content to the next (a menubar's
    * handed from menu to menu, a navigation menu's changing items): it starts
-   * gently, half the way in ~75ms, most of it in ~175ms, and eases in
-   * without going past its place or size, settled by ~340ms. Started over on
+   * gently, half the way in ~65ms, most of it in ~155ms, and eases in
+   * without going past its place or size, settled by ~300ms. Started over on
    * the way, it keeps the speed it had (internal/momentum).
    */
-  morph: { type: 'spring', stiffness: 500, damping: 45 },
+  morph: { type: 'spring', stiffness: 660, damping: 52 },
   /** A height following its content, without overshoot. */
   height: {
     type: 'spring',
@@ -159,7 +159,7 @@ const transition = {
    * long, on the soft ease-out so they're seen opening rather than snapped
    * open.
    */
-  menu: { duration: 0.25, ease: ease.soft },
+  menu: { duration: 0.22, ease: ease.soft },
   /**
    * An overlay or backdrop (a dialog's, a sheet's, a drawer's) fading in, the
    * page behind blurring from 0, and out: the page dims smoothly while the
@@ -204,14 +204,14 @@ const transition = {
   /**
    * A menu's content leaving the popover it hands over to the next menu (a
    * menubar's), sliding away from where the popover goes: soft, mostly gone
-   * in ~100ms.
+   * in ~90ms.
    */
-  handoffOut: { duration: 0.25, ease: ease.soft },
+  handoffOut: { duration: 0.22, ease: ease.soft },
   /**
    * The next menu's content fading in, once the previous one has mostly
    * cleared.
    */
-  handoffIn: { duration: 0.3, ease: ease.arrive },
+  handoffIn: { duration: 0.26, ease: ease.arrive },
   /**
    * A dialog or a sheet leaving once dismissed: at once, quicker than it
    * came, speeding away (a sheet off its edge, so its last pixels don't
@@ -273,7 +273,7 @@ const shift = {
   /**
    * How far a navigation menu's content slides as it changes for another
    * item's: four times a menubar's, its content being wider (6px barely shows
-   * across 400-600px, the leaving content fading out within ~100ms and the
+   * across 400-600px, the leaving content fading out within ~90ms and the
    * next one fading in once its spring is mostly done).
    */
   navigation: 24,

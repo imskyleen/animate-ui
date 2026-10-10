@@ -31,8 +31,8 @@ import {
 
 // Same API as React Aria's TagGroup, TagList and Tag (shadcn/ui's combobox
 // chips). Animate UI v1 had no tag group: a tag added to the list pops in,
-// opacity from 0 and scale from 0.5, on the popovers' spring (stiffness 300,
-// damping 25), and a removed one shrinks out in place, out of the flow, in
+// opacity from 0 and scale from 0.5, on the popovers' spring (stiffness 400,
+// damping 29), and a removed one shrinks out in place, out of the flow, in
 // 0.15s. The others (an input after them too) glide to make room or close
 // the gap, on a quick spring (internal/reflow), and the input's placeholder
 // showing up fades in once the input is there. Tags already there when the
@@ -142,7 +142,7 @@ function TagList<T extends object>({
 type TagProps = TagPrimitiveProps & {
   /**
    * Transition of a tag being added: it pops in from half its size. Defaults
-   * to a spring (stiffness 300, damping 25).
+   * to a spring (stiffness 400, damping 29).
    */
   transition?: Transition;
   /**

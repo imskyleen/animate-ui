@@ -40,7 +40,7 @@ const load = (page: Page, path: string) =>
 test.describe('base-ui combobox demo', () => {
   test.describe.configure({ timeout: 180_000 });
 
-  test('opens with a 250ms scale and fade from the input', async ({ page }) => {
+  test('opens with a 220ms scale and fade from the input', async ({ page }) => {
     await load(page, DEMO);
     const probe = await probeFirstFrame(page, POPUP);
     await page.getByRole('combobox', { name: NAME }).click();

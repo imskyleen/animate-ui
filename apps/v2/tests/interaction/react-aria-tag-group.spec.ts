@@ -10,7 +10,7 @@ import {
 
 // React Aria's tags (shadcn/ui's combobox chips). Animate UI v1 had no tag
 // group: an added tag pops in like v1's small overlays (opacity from 0, scale
-// from 0.5, spring stiffness 300, damping 25); a removed one shrinks out where
+// from 0.5, spring stiffness 400, damping 29); a removed one shrinks out where
 // it was while the others close the gap.
 
 type Frame = { t: number; scale: number; opacity: number } | null;

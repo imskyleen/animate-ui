@@ -31,7 +31,7 @@ import {
 // Same API as Radix's Menubar. The Root mirrors which menu is open (Radix
 // keeps it private) so each Content can play an exit before it unmounts.
 // Radix's Menubar has no Animate UI v1 counterpart: a menu opens and closes
-// like v1's DropdownMenu (a 250ms fade and scale, a highlight gliding behind
+// like v1's DropdownMenu (a 220ms fade and scale, a highlight gliding behind
 // the highlighted item). Moving from an open menu to another, the popover
 // doesn't close and reopen: it moves to the next menu and resizes, on a
 // spring that eases in, without going past, while the content changes like

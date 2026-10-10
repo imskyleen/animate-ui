@@ -31,7 +31,7 @@ async function openList(page: Page) {
 test.describe('react-aria select demo', () => {
   test.describe.configure({ timeout: 180_000 });
 
-  test('opens with a 250ms scale and fade from the trigger', async ({
+  test('opens with a 220ms scale and fade from the trigger', async ({
     page,
   }) => {
     await load(page, DEMO);

@@ -42,7 +42,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 The motion of Animate UI v1's Base UI Popover, value for value:
 
-- **Popup** grows from 0.8 and fades in, from the trigger (`--transform-origin`), on a spring (stiffness 300, damping 25) that overshoots a little before it settles, in about half a second.
+- **Popup** grows from 0.8 and fades in, from the trigger (`--transform-origin`), on a spring (stiffness 400, damping 29) that overshoots a little before it settles, by ~440ms.
 - It closes the same way: it shrinks back to 0.8 on the same spring while it fades out, then unmounts.
 - The Portal keeps Base UI's portal mounted while the popup exits; Base UI waits for the exit before it hides the positioner, and `onOpenChangeComplete` fires once it's over.
 - Opening from the keyboard animates the same way.
@@ -70,7 +70,7 @@ Every part takes exactly the props of [Base UI's Popover](https://base-ui.com/re
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 29 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',

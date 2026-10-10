@@ -19,10 +19,10 @@ import {
 // gives it) and fades in, from a scale that depends on its size and on how
 // often it opens:
 //
-// - tooltips, small and textual: from 0.7, on the pop spring (stiffness 300,
-//   damping 25) that overshoots a little, both ways;
+// - tooltips, small and textual: from 0.7, on the pop spring (stiffness 400,
+//   damping 29) that overshoots a little, both ways;
 // - popovers, hover cards and preview cards: from 0.8, on the same spring;
-// - menus, opened all day long: from 0.9, in 250ms on a soft ease-out,
+// - menus, opened all day long: from 0.9, in 220ms on a soft ease-out,
 //   both ways.
 //
 // The values are the motion tokens' (utils/motion).
@@ -65,7 +65,7 @@ type AnchoredKind = keyof typeof HIDDEN_SCALE;
 type AnchoredAnimationProps = {
   /**
    * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to a spring (stiffness 300, damping 25); `{ duration: 0.25,
+   * set. Defaults to a spring (stiffness 400, damping 29); `{ duration: 0.22,
    * ease: [0.215, 0.61, 0.355, 1] }` for menus.
    */
   transition?: Transition;

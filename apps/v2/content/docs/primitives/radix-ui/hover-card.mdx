@@ -39,7 +39,7 @@ Coming from the `@radix-ui/react-hover-card` package? Use the subpath: `import *
 
 The motion of Animate UI v1's Hover Card, value for value:
 
-- **Content** grows from 0.8 and fades in, from the trigger (`--radix-hover-card-content-transform-origin`), on a spring (stiffness 300, damping 25) that overshoots a little before it settles.
+- **Content** grows from 0.8 and fades in, from the trigger (`--radix-hover-card-content-transform-origin`), on a spring (stiffness 400, damping 29) that overshoots a little before it settles.
 - Once Radix's `closeDelay` is over, it closes the same way: it shrinks back to 0.8 on the same spring while it fades out, then unmounts.
 - Radix only opens it for mouse-like pointers: a tap on a touch screen follows the link, nothing sticks.
 - With `forceMount` (on the Content or the Portal), the closed content stays in the DOM: it plays its exit, then is hidden and `inert`.
@@ -86,7 +86,7 @@ Every part takes exactly the props of [Radix UI's Hover Card](https://www.radix-
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+      default: "{ type: 'spring', stiffness: 400, damping: 29 }",
     },
     exitTransition: {
       description: 'Transition of the closing.',

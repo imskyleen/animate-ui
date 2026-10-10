@@ -34,8 +34,8 @@ import { Slot, type WithAsChild } from '../slot';
 // the popup (a shared layout animation) instead of closing and reopening it.
 // It moves like the library tooltips (Radix UI, Base UI, React Aria): the
 // popup grows from 0.7 and fades in from the point facing its trigger, and
-// goes back the same way when it closes, on their spring (stiffness 300,
-// damping 25), which overshoots a little.
+// goes back the same way when it closes, on their spring (stiffness 400,
+// damping 29), which overshoots a little.
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';

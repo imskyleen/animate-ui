@@ -94,7 +94,7 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
     await load(page, POPPER);
   });
 
-  test('opens with a 250ms scale and fade from the trigger', async ({
+  test('opens with a 220ms scale and fade from the trigger', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, POPUP);
@@ -139,7 +139,7 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
         intervals: [16],
       })
       .toBeLessThan(0.95);
-    // Straight back, without actionability waits: the exit takes 250ms.
+    // Straight back, without actionability waits: the exit takes 220ms.
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await page.waitForTimeout(650);
     // The same element: it retargeted instead of remounting.

@@ -95,7 +95,7 @@ To pop every check of your app at once (checkboxes, menus, selects, comboboxes),
 
 Base UI's Context Menu has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.
 
-- **Popup** fades and scales in from 0.9, from the pointer (`--transform-origin`, set inline so it works without styles), in 250ms (`{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way. Submenu popups grow from the side of their trigger the same way.
+- **Popup** fades and scales in from 0.9, from the pointer (`--transform-origin`, set inline so it works without styles), in 220ms (`{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way. Submenu popups grow from the side of their trigger the same way.
 - Base UI keeps the popup mounted after it closes, and Animate UI unmounts it once the exit has played (`onOpenChangeComplete` fires then).
 - **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, and into submenus. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms, on CSS's `ease`) when it appears from nothing, and its color changes the same way when the item's highlighted background differs from the previous one's. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a submenu opening for instance, doesn't stall it. Into a submenu or back out of it, each menu clips its own part, as in v1: the previous surface glides along with the new one, the same box on screen, so the two make one highlight crossing from one menu into the other; the entering part fades in as it glides. When the pointer leaves the menu, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted (or still has the focus, or its submenu is open), and a `focus:` background is read again once the item has the focus; its text colors stay.
 - **CheckboxItemIndicator** and **RadioItemIndicator** draw themselves like a Checkbox's check (their stroke and opacity in 0.3s on Motion's easeOut, at once: there's no box to fill first) when the item is checked, and erase themselves in 0.3s when it's unchecked (Animate UI keeps them mounted for that). Checking another radio item erases the old check while the new one draws itself. Only checking and unchecking animate: opening the menu shows its checks at rest, and closing it leaves them as they are.
@@ -128,7 +128,7 @@ Every part takes exactly the props of [Base UI's Context Menu](https://base-ui.c
       description:
         'Transition of the opening, and of the closing unless `exitTransition` is set.',
       type: 'Transition',
-      default: '{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }',
+      default: '{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }',
     },
     exitTransition: {
       description: 'Transition of the closing.',

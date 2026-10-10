@@ -22,8 +22,8 @@ import { HIDDEN_SCALE, POPOVER_TRANSITION } from '../../../internal/anchored';
 // from v1's Sheet (it enters and leaves through its edge, by its own size,
 // with a fade, on the sheet spring: stiffness 150, damping 22). A toast
 // anchored to an element is a small bubble, like a tooltip: it grows from
-// 0.7 and fades in from its anchor, on the tooltips' spring (stiffness 300,
-// damping 25). The content behind the front toast fades in 200ms,
+// 0.7 and fades in from its anchor, on the tooltips' spring (stiffness 400,
+// damping 29). The content behind the front toast fades in 200ms,
 // ease-out.
 //
 // Base UI drives the stack, swipe-to-dismiss and enter/exit itself, through
@@ -50,7 +50,7 @@ type RootAnimationProps = {
    * Transition of the entrance and the stack (a CSS transition: a spring
    * becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier
    * or named `ease`). `{ type: 'spring', stiffness: 150, damping: 22 }` by
-   * default, or `{ type: 'spring', stiffness: 300, damping: 25 }` for a toast
+   * default, or `{ type: 'spring', stiffness: 400, damping: 29 }` for a toast
    * anchored to an element.
    */
   transition?: Transition;

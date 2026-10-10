@@ -210,7 +210,7 @@ declare namespace Chips {
 type ChipAnimationProps = {
   /**
    * Transition of a chip being added: it pops in from half its size. Defaults
-   * to a spring (stiffness 300, damping 25).
+   * to a spring (stiffness 400, damping 29).
    */
   transition?: Transition;
   /**

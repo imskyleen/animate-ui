@@ -24,8 +24,8 @@ const GLOBAL_RULES = [
   'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (panneaux d’onglets) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers, menus) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
   'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
-  'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 300/25), menus, selects et navigation menus depuis 0,9 en 0,25s ease-out doux.',
-  'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets, contenu d’un navigation menu), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
+  'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 400/29), menus, selects et navigation menus depuis 0,9 en 0,22s ease-out doux.',
+  'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
   'Un indicateur de sélection glisse sur 300/30 ; un surlignage qui suit le pointeur glisse sur 500/40, plus vif (tous deux un peu plus vifs que la v1 : 200/25 et 350/35).',
   'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) se déplie en 0,35s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
   'Ce que la v1 n’animait pas reste instantané (couleur du fond d’un switch).',
@@ -85,7 +85,7 @@ const FAMILIES: Family[] = [
     values: [
       'tooltips : scale 0,7 → 1 + fondu',
       'popovers, hover cards : scale 0,8 → 1 + fondu',
-      'ressort 300/25, à l’aller comme au retour, origine = le déclencheur',
+      'ressort 400/29, à l’aller comme au retour, origine = le déclencheur',
       'Tooltip Animate UI : comme ceux des libs (0,7 depuis le déclencheur), et glisse d’un déclencheur à l’autre',
       'tooltips Radix, Base UI, React Aria : une fois l’un ouvert, le suivant apparaît d’un coup et le précédent disparaît d’un coup (300ms de répit après le dernier)',
     ],
@@ -106,7 +106,8 @@ const FAMILIES: Family[] = [
     name: 'Menus',
     rule: 'Les menus, fréquents, apparaissent vite et sobrement ; un surlignage glisse derrière l’élément survolé.',
     values: [
-      'contenu : scale 0,9 → 1 + fondu en 0,25s, ease-out doux',
+      'contenu : scale 0,9 → 1 + fondu en 0,22s, ease-out doux',
+      'menubar et navigation menu, d’un menu à l’autre : le popover se déplace et se redimensionne sur un ressort 660/52 sans dépassement ; le contenu qui part glisse de 6px (24px pour un navigation menu) en 0,22s, le suivant arrive sur 450/43 et apparaît en 0,26s',
       'surlignage : ressort 500/40, un seul surlignage passé d’élément en élément avec sa vitesse',
       'coches : pop ; coche d’un select ou d’une combobox : glisse sur 500/40 (le ressort du surlignage), la liste attend 150ms avant de se fermer quand on choisit un autre item ; indicateur radio des menus : glisse en 0,45s',
     ],
@@ -145,7 +146,7 @@ const FAMILIES: Family[] = [
     rule: 'Quand deux états se remplacent au même endroit, un léger flou fait lire leur chevauchement comme une seule forme qui change.',
     values: [
       'icônes : scale 0,5 + flou 2px + fondu, 0,2s ease-out (copier → coché, soleil → lune)',
-      'panneaux d’onglets, contenu des navigation menus : depuis un flou de 4px',
+      'panneaux d’onglets : depuis un flou de 4px',
       'Morphing Text : flou 10px',
     ],
     demos: [
@@ -206,7 +207,7 @@ const FAMILIES: Family[] = [
     rule: 'Ce qui arrive par un bord glisse de sa propre taille en apparaissant, un peu plus vif qu’une modale (il parcourt plus de distance).',
     values: [
       'glissement + fondu, ressort 150/22 (≈ 550ms)',
-      'toast ancré : comme un tooltip, depuis 0,7, ressort 300/25',
+      'toast ancré : comme un tooltip, depuis 0,7, ressort 400/29',
     ],
     demos: [
       { demo: 'radix-ui/dialog-sheet', label: 'Sheet' },

@@ -36,7 +36,7 @@ import Separator = ContextMenuPrimitive.Separator;
 // Same API as Base UI's Context Menu, which is a Menu opened by a right click
 // or a long press: its Popup, items, indicators and submenus are the animated
 // Menu parts. It has no Animate UI v1 counterpart: it moves like v1's Base UI
-// Menu (a 250ms fade and scale from the pointer, a highlight gliding behind
+// Menu (a 220ms fade and scale from the pointer, a highlight gliding behind
 // the highlighted item, checks popping in).
 
 function Root({ actionsRef, onOpenChange, ...props }: Root.Props) {

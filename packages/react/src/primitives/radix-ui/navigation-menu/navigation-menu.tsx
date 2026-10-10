@@ -46,7 +46,7 @@ import {
 //
 // It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu, and
 // like Animate UI's Menubar between items.
-// - The Viewport fades and scales from 0.9 in 250ms, both ways, like the
+// - The Viewport fades and scales from 0.9 in 220ms, both ways, like the
 //   menus, and its size follows the active content on a spring that eases
 //   in without going past (`spring.morph`), carrying on the speed it has.
 // - Moving to another item, the content changes inside the Viewport like a
@@ -66,9 +66,9 @@ type PresenceAnimationProps = {
   /**
    * Transition of the entrance (and, for the Viewport, of its resizing from
    * item to item), and of the exit unless `exitTransition` is set. Defaults
-   * to `{ duration: 0.25, ease: [0.215, 0.61, 0.355, 1] }` (the Indicator:
+   * to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }` (the Indicator:
    * the highlight's spring), and the Viewport resizes on `{ type: 'spring',
-   * stiffness: 500, damping: 45 }`.
+   * stiffness: 660, damping: 52 }`.
    */
   transition?: Transition;
   /** Transition of the exit. Defaults to `transition`. */
