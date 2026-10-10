@@ -20,9 +20,9 @@ import {
 } from '../../../utils/motion';
 import { PROGRESS_TRANSITION } from '../../../internal/progress';
 
-// Same API as React Aria's ProgressBar, animated like Animate UI v1's Base UI
+// Same API as React Aria's ProgressBar, animated like Animate UI's Base UI
 // progress (v1 had no React Aria one): the bar's width springs to a new value
-// (stiffness 100, damping 30). React Aria only hands its children a
+// like Motion UI's progress bar (stiffness 300, damping 35). React Aria only hands its children a
 // `percentage`; the bar itself is your markup, sized with an inline
 // percentage width (`style={{ width: `${percentage}%` }}`, as shadcn/ui and
 // React Aria's docs do). The ProgressBar finds that element and springs its
@@ -31,7 +31,7 @@ import { PROGRESS_TRANSITION } from '../../../internal/progress';
 type ProgressBarProps = AriaProgressBarProps & {
   /**
    * Transition of the bar moving to a new value. Defaults to a spring
-   * (stiffness 100, damping 30).
+   * (stiffness 300, damping 35).
    */
   transition?: Transition;
 };

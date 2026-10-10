@@ -2,15 +2,15 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { expectSpringPace, type Sample } from './spring-curves';
 
-// Shared by the Radix UI, Base UI and React Aria progress specs. They move
-// like Animate UI v1's progress: the indicator springs to a new value
-// (stiffness 100, damping 30, no overshoot), its `x` for Radix UI (shadcn's
-// translate) and its `width` for Base UI and React Aria.
+// Shared by the Radix UI, Base UI and React Aria progress specs. The
+// indicator springs to a new value like Motion UI's progress bar (stiffness
+// 300, damping 35, no overshoot), its `x` for Radix UI (shadcn's translate)
+// and its `width` for Base UI and React Aria, and lands without a jump.
 
 export const INDICATOR = '[data-slot="progress-indicator"]';
 
 /** The indicator's spring. */
-const SPRING = { stiffness: 100, damping: 30 };
+const SPRING = { stiffness: 300, damping: 35 };
 
 /** shadcn's demo: 13% on mount, then 66% 500ms later. */
 const FROM = 0.13;
@@ -134,8 +134,8 @@ export function describeProgressDemo(library: string) {
       expect(Math.max(...after.map(([, v]) => v))).toBeLessThan(TO + 0.005);
       for (let i = 1; i < after.length; i++)
         expect(after[i]![1]).toBeGreaterThanOrEqual(after[i - 1]![1] - 0.002);
-      // An overdamped spring: still well on its way after 150ms, from 10% to
-      // 90% of the way in the time the spring takes.
+      // Seen on its way, from 10% to 90% of the way in the time the spring
+      // takes (~200ms; 590ms on v1's).
       expect(first.some((v) => v > 0.3 && v < 0.55)).toBe(true);
       expectSpringPace(after, SPRING, {
         from: FROM,
@@ -143,6 +143,25 @@ export function describeProgressDemo(library: string) {
         a: FROM + (TO - FROM) * 0.1,
         b: FROM + (TO - FROM) * 0.9,
       });
+    });
+
+    test('it lands without a jump', async ({ page }) => {
+      // Its last step is no bigger than the ones before it. Motion's default
+      // rest (half a unit, here half a percent) cut a long crawl short: the
+      // bar crept 0.02% of its track per frame, then jumped the last
+      // 0.3-0.5% at once.
+      const after = fromChange(await loadDemo(page, library));
+      const steps = after
+        .slice(1)
+        .map(([, value], i) => value - after[i]![1])
+        // Still frames (the layout rounds to 1/64px) don't count.
+        .filter((step) => Math.abs(step) > 1e-6);
+      const trace = steps.map((step) => (step * 100).toFixed(3)).join(' ');
+      expect(steps.length).toBeGreaterThan(5);
+      // Twice the step before (a frame dropped), and a 1/64px rounding.
+      expect(Math.abs(steps.at(-1)!), trace).toBeLessThanOrEqual(
+        Math.abs(steps.at(-2)!) * 2 + 0.0003,
+      );
     });
 
     test('reduced motion: values apply at once', async ({ page }) => {

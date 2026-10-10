@@ -11,8 +11,8 @@ import {
 } from '../../../utils/motion';
 import { PROGRESS_TRANSITION } from '../../../internal/progress';
 
-// Same API as Radix's Progress, animated like Animate UI v1's progress: the
-// indicator springs to a new value (stiffness 100, damping 30). Radix leaves
+// Same API as Radix's Progress, animated like Motion UI's progress bar: the
+// indicator springs to a new value (stiffness 300, damping 35). Radix leaves
 // the indicator's position to you: shadcn/ui moves it with
 // `style={{ transform: translateX(…) }}` (v1 animated the same `x`). The
 // Indicator animates that transform instead of jumping to it.
@@ -25,7 +25,7 @@ type ProgressIndicatorProps = ProgressPrimitive.ProgressIndicatorProps &
 type IndicatorAnimationProps = {
   /**
    * Transition of the indicator moving to a new value. Defaults to a spring
-   * (stiffness 100, damping 30).
+   * (stiffness 300, damping 35).
    */
   transition?: Transition;
 };

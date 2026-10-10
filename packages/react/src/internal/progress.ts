@@ -9,14 +9,16 @@ import {
 } from 'motion/react';
 import { motionTokens } from '../utils/motion';
 
-// Shared by the Radix UI, Base UI and React Aria progress bars, which move
-// like Animate UI v1's: the indicator springs to a new value (stiffness 100,
-// damping 30, no bounce), as v1's Radix `ProgressIndicator` (its `x`) and
-// Base UI `ProgressIndicator` (its `width`) did. The Base UI `ProgressValue`
-// counts to the new value like v1's (a `CountingNumber`), on the bar's own
-// spring: the number moves with the bar it describes.
+// Shared by the Radix UI, Base UI and React Aria progress bars: the indicator
+// springs to a new value like Motion UI's progress bar (stiffness 300,
+// damping 35: most of the way in ~230ms, never past it, resting within a
+// hundredth of a percent instead of jumping its last half percent), moving
+// what v1's did: Radix's `ProgressIndicator` its `x`, Base UI's its `width`.
+// The Base UI `ProgressValue` counts to the new value like v1's (a
+// `CountingNumber`), on the bar's own spring: the number moves with the bar
+// it describes.
 
-/** v1's `ProgressIndicator` transition. */
+/** The indicator's spring (Motion UI's progress bar's). */
 const PROGRESS_TRANSITION: Transition = motionTokens.spring.progress;
 
 /** The Base UI `ProgressValue` count: the bar's spring, so they move together. */

@@ -146,8 +146,19 @@ const spring = {
   checkPop: { type: 'spring', stiffness: 500, damping: 24 },
   /** Effects bringing content in (Fade, Slide, Zoom, Blur): playful. */
   entrance: { type: 'spring', stiffness: 200, damping: 20 },
-  /** A progress bar and its value. */
-  progress: { type: 'spring', stiffness: 100, damping: 30 },
+  /**
+   * A progress bar and its value, like Motion UI's progress bar (critically
+   * damped): most of the way in ~230ms, settled by ~550ms, never past its
+   * value. It rests within a hundredth of a percent: Motion's default (half
+   * a unit) cut its last crawl short with a jump.
+   */
+  progress: {
+    type: 'spring',
+    stiffness: 300,
+    damping: 35,
+    restDelta: 0.01,
+    restSpeed: 0.1,
+  },
   /** Numbers rolling to their value without overshooting. */
   number: { type: 'spring', stiffness: 90, damping: 50 },
 } as const satisfies Record<string, Transition>;

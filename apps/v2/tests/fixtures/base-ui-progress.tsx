@@ -42,6 +42,8 @@ function useUpload() {
 // API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseProgressFixture() {
   const [value, setValue] = React.useState(30);
+  // Not a number yet (an empty total): Base UI shows it as indeterminate.
+  const [ratio, setRatio] = React.useState(Number.NaN);
   const upload = useUpload();
 
   return (
@@ -68,6 +70,25 @@ export default function BaseProgressFixture() {
             style={{ height: '100%', width: '30%', background: 'black' }}
           />
         </Progress.Track>
+      </Progress.Root>
+
+      <section>
+        <button type="button" onClick={() => setRatio(40)}>
+          Set 40
+        </button>
+        <Progress.Root value={ratio} aria-label="Ratio">
+          <Progress.Value data-testid="ratio-value" />
+        </Progress.Root>
+      </section>
+
+      {/* Past its max, with a format: Base UI shows the max. */}
+      <Progress.Root
+        value={150}
+        max={100}
+        format={{ maximumFractionDigits: 0 }}
+        aria-label="Overflow"
+      >
+        <Progress.Value data-testid="overflow-value" />
       </Progress.Root>
 
       <section>

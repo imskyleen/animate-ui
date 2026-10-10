@@ -257,7 +257,7 @@ const FAMILIES: Family[] = [
     values: [
       'ressort 90/50 (Counting Number, Sliding Number)',
       'Scrolling Number : 90/30 ; chiffres du Sliding Number : 200/20 masse 0,4',
-      'Progress : la barre et sa valeur sur le même ressort 100/30 (le nombre bouge avec la barre)',
+      'Progress : la barre et sa valeur sur le même ressort 300/35, comme la progress bar de Motion UI (le nombre bouge avec la barre), posé sans saut final',
     ],
     demos: [
       { demo: 'animate-ui/counting-number', label: 'Counting Number' },

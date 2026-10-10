@@ -9,7 +9,7 @@ import {
 } from './hydration-locale';
 
 /** The Value's count: the bar's spring, so the number moves with the bar. */
-const COUNT_SPRING = { stiffness: 100, damping: 30 };
+const COUNT_SPRING = { stiffness: 300, damping: 35 };
 
 describeProgressDemo('base-ui');
 
@@ -111,6 +111,26 @@ test.describe('base-ui progress API', () => {
       a: 59.5,
       b: 89.5,
     });
+  });
+
+  test('with a format, a value past its max shows the max, as Base UI does', async ({
+    page,
+  }) => {
+    const bar = page.getByRole('progressbar', { name: 'Overflow' });
+    await expect(bar).toHaveAttribute('aria-valuetext', '100');
+    // It counts up from 0 on mount, and stops at the max.
+    await page.waitForTimeout(1000);
+    await expect(page.getByTestId('overflow-value')).toHaveText('100');
+  });
+
+  test('a value that was not a number counts to the next one', async ({
+    page,
+  }) => {
+    const bar = page.getByRole('progressbar', { name: 'Ratio' });
+    await expect(bar).not.toHaveAttribute('aria-valuenow');
+    await page.getByRole('button', { name: 'Set 40' }).click();
+    await expect(bar).toHaveAttribute('aria-valuenow', '40');
+    await expect(page.getByTestId('ratio-value')).toHaveText('40%');
   });
 
   test('indeterminate: the indicator is left to the styles', async ({

@@ -18,9 +18,9 @@ import {
 } from '../../../internal/progress';
 import { useHydrationLocale } from '../../../internal/hydration-locale';
 
-// Same API as Base UI's Progress, animated like Animate UI v1's progress: the
+// Same API as Base UI's Progress, animated like Motion UI's progress bar: the
 // Indicator's width (Base UI sizes it with a percentage width) springs to a
-// new value (stiffness 100, damping 30), and the Value counts to it on the
+// new value (stiffness 300, damping 35), and the Value counts to it on the
 // same spring, so the number moves with the bar, from 0 when it appears, as
 // v1's `CountingNumber` did. Without a `locale`, its numbers are formatted
 // in en-US on the server and while the page hydrates, then in the browser's
@@ -30,7 +30,7 @@ import { useHydrationLocale } from '../../../internal/hydration-locale';
 type IndicatorAnimationProps = {
   /**
    * Transition of the indicator moving to a new value. Defaults to a spring
-   * (stiffness 100, damping 30).
+   * (stiffness 300, damping 35).
    */
   transition?: Transition;
 };
@@ -39,7 +39,7 @@ type IndicatorAnimationProps = {
 type ValueAnimationProps = {
   /**
    * Transition of the number counting to a new value. Defaults to the bar's
-   * spring (stiffness 100, damping 30), so they move together.
+   * spring (stiffness 300, damping 35), so they move together.
    */
   transition?: Transition;
 };
@@ -137,23 +137,34 @@ function IndicatorMotion({
   );
 }
 
+/** Base UI's: the value within min and max, so it agrees with the bar. */
+const clampValue = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
+
 /** Base UI's default: the percentage, as a percent. */
 function formatValue(
   value: number,
   { min, max, format, locale }: ReturnType<typeof useProgressMotion>,
 ) {
-  if (format) return new Intl.NumberFormat(locale, format).format(value);
+  if (format)
+    return new Intl.NumberFormat(locale, format).format(
+      clampValue(value, min, max),
+    );
   const percentage = max > min ? ((value - min) * 100) / (max - min) : 0;
   return new Intl.NumberFormat(locale, { style: 'percent' }).format(
-    Math.min(100, Math.max(0, percentage)) / 100,
+    clampValue(percentage, 0, 100) / 100,
   );
 }
 
 function Value({ transition, children, ...props }: Value.Props) {
   const context = useProgressMotion();
   const spring = useTempoTransition(transition ?? VALUE_TRANSITION);
+  // Base UI's determinate test; the text is kept within min and max, the
+  // number handed to `children` goes to the value, as Base UI's does.
   const counted = useCountingNumber(
-    context.value ?? context.min,
+    context.value !== null && Number.isFinite(context.value)
+      ? context.value
+      : context.min,
     spring,
     context.min,
   );
