@@ -42,6 +42,7 @@ The motion of Animate UI v1's radio group:
 
 - **Indicator**: the dot pops in when its item is selected. Its scale and its opacity spring from 0 to 1 (stiffness 200, damping 16: it overshoots a little before settling), and back to 0 the same way when another item is selected, then the indicator unmounts, as in Radix. The indicator element itself never moves: its content (the dot) animates, so shadcn/ui's centered dot stays centered.
 - **Item** scales to 0.95 while pressed (no hover scale), on Motion's default spring for scale (stiffness 550, damping 30).
+- In the demo, an item's fill is a layer of its own (`before:` in its classes) that grows from 70% while it fades in, in 300ms, and shrinks back as it fades out, like the [Checkbox](/docs/primitives/radix-ui/checkbox)'s: the dot pops in over it. The layer covers the border (`before:-inset-px`) and the border keeps its color, so no outline rings the growing fill. It's CSS, so copy the classes for the same effect; under reduced motion the layer only fades.
 - An item already selected when the group appears (the page loading, a dialog opening) shows its dot at rest, unlike v1's: only a change of selection animates a dot. On a server-rendered page, the dot is there before any script runs.
 - Selecting with the arrow keys animates like a click, as v1's did.
 - Selecting again mid-animation turns back from where the dot is.

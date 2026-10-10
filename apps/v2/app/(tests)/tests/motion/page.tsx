@@ -222,7 +222,11 @@ const FAMILIES: Family[] = [
     rule: 'Les petits éléments qui apparaissent dans un contrôle rebondissent un peu.',
     values: ['scale et opacité depuis 0, ressort 200/16'],
     demos: [
-      { demo: 'radix-ui/radio-group', label: 'Radio Group' },
+      {
+        demo: 'radix-ui/radio-group',
+        label: 'Radio Group',
+        note: 'fond : un calque qui grandit de 70 % à 100 % en apparaissant, en 0,3s (comme la checkbox)',
+      },
       {
         demo: 'animate-ui/input-otp',
         label: 'Input OTP',

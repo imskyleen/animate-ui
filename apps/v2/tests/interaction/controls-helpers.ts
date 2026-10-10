@@ -180,6 +180,32 @@ async function gotoDemo(page: Page, lib: Lib, name: string, query = '') {
   });
 }
 
+/**
+ * Marks `locator` invalid (the demos style `aria-invalid`, and React Aria's
+ * `data-invalid`), clicks it, and reads its border color frame by frame for
+ * 400ms, sampled in the page.
+ */
+async function invalidBorders(locator: Locator) {
+  return locator.evaluate(async (el) => {
+    el.setAttribute('aria-invalid', 'true');
+    el.setAttribute('data-invalid', 'true');
+    // Its border turning to the invalid color first (a checkbox fades its
+    // colors over 300ms).
+    await new Promise((r) => setTimeout(r, 500));
+    const read = () => getComputedStyle(el).borderTopColor;
+    const out = [read()];
+    // React Aria's control is a label: its input takes the click.
+    const target = el.tagName === 'LABEL' ? el.querySelector('input')! : el;
+    (target as HTMLElement).click();
+    const start = performance.now();
+    while (performance.now() - start < 400) {
+      await new Promise((r) => requestAnimationFrame(r));
+      out.push(read());
+    }
+    return out;
+  });
+}
+
 // ---------------------------------------------------------------------------
 
 const CHECKBOX = '[data-slot="checkbox"]';
@@ -419,6 +445,16 @@ export function describeCheckboxDemo(lib: Lib) {
       expect(frames[0]!.inset).toBe('-1px');
     });
 
+    test('an invalid box keeps its border color as its fill grows', async ({
+      page,
+    }) => {
+      // Turned to the fill's color at once, it would ring the growing layer.
+      const borders = await invalidBorders(
+        page.locator(CHECKBOX).nth(UNCHECKED),
+      );
+      expect(new Set(borders).size, borders.join(' ')).toBe(1);
+    });
+
     test('the box never scales, on press or hover', async ({ page }) => {
       const scales = await pressScale(
         page,
@@ -493,6 +529,47 @@ function expectDotLeaves(samples: NonNullable<Sample>[]) {
   expect(gone!.t - flipped[0]!.t).toBeLessThan(1300);
 }
 
+type Fill = {
+  scale: number;
+  opacity: number;
+  bg: string;
+  border: string;
+  inset: string;
+};
+
+/**
+ * The fills of the first radio (chosen) and the second (left) frame by frame
+ * for 500ms from a click on the first, sampled in the page.
+ */
+async function fillFrames(page: Page) {
+  const radios = page.locator(RADIO);
+  await expect.poll(() => stateOf(radios.nth(1))).toBe('true');
+  return radios.first().evaluate(async (first, selector) => {
+    const [fresh, old] = [...document.querySelectorAll(selector)];
+    const read = (el: Element): Fill => {
+      const layer = getComputedStyle(el, '::before');
+      return {
+        scale: Number(layer.scale === 'none' ? 1 : layer.scale),
+        opacity: Number(layer.opacity),
+        bg: getComputedStyle(el).backgroundColor,
+        border: getComputedStyle(el).borderTopColor,
+        inset: layer.top,
+      };
+    };
+    const out = [[read(fresh!), read(old!)]];
+    // React Aria's radio is a label: its input takes the click.
+    const target =
+      first.tagName === 'LABEL' ? first.querySelector('input')! : first;
+    (target as HTMLElement).click();
+    const start = performance.now();
+    while (performance.now() - start < 500) {
+      await new Promise((r) => requestAnimationFrame(r));
+      out.push([read(fresh!), read(old!)]);
+    }
+    return out;
+  }, RADIO);
+}
+
 export function describeRadioGroupDemo(lib: Lib) {
   test.describe(`${lib} radio group demo`, () => {
     test.beforeEach(async ({ page }) => gotoDemo(page, lib, 'radio-group'));
@@ -529,6 +606,59 @@ export function describeRadioGroupDemo(lib: Lib) {
       await page.waitForTimeout(1500);
       expectDotPops(await readSamples(page, 'new'));
       expectDotLeaves(await readSamples(page, 'old'));
+    });
+
+    test('a click grows the new fill from 70% and shrinks the old one back', async ({
+      page,
+    }) => {
+      // Like the checkbox's: the fill is a layer (the radio's ::before) that
+      // grows and fades in over the whole radio, border included, while the
+      // radio's own background and border keep their colors. The radio left
+      // shrinks its layer back as it fades out.
+      const frames = await fillFrames(page);
+      const grown = frames.map(([fresh]) => fresh!);
+      const shrunk = frames.map(([, old]) => old!);
+      expect(grown[0]!.scale).toBeCloseTo(0.7, 2);
+      expect(grown[0]!.opacity).toBe(0);
+      expect(
+        grown.some((f) => f.scale > 0.75 && f.scale < 0.95 && f.opacity > 0.1),
+      ).toBe(true);
+      expect(grown.at(-1)!.scale).toBe(1);
+      expect(grown.at(-1)!.opacity).toBe(1);
+      expect(shrunk[0]!.scale).toBe(1);
+      expect(shrunk[0]!.opacity).toBe(1);
+      expect(
+        shrunk.some((f) => f.scale > 0.75 && f.scale < 0.95 && f.opacity > 0.1),
+      ).toBe(true);
+      expect(shrunk.at(-1)!.scale).toBeCloseTo(0.7, 2);
+      expect(shrunk.at(-1)!.opacity).toBe(0);
+      for (const side of [grown, shrunk])
+        for (const f of side) {
+          expect(f.bg).toBe(side[0]!.bg);
+          expect(f.border).toBe(side[0]!.border);
+          expect(f.inset).toBe('-1px');
+        }
+    });
+
+    test('an invalid radio keeps its border color as its fill grows', async ({
+      page,
+    }) => {
+      // Turned to the fill's color at once, it would ring the growing layer.
+      await expect.poll(() => stateOf(page.locator(RADIO).nth(1))).toBe('true');
+      const borders = await invalidBorders(page.locator(RADIO).nth(0));
+      expect(new Set(borders).size, borders.join(' ')).toBe(1);
+    });
+
+    test('reduced motion: the fill only fades', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.reload({ waitUntil: 'networkidle' });
+      const frames = await fillFrames(page);
+      const grown = frames.map(([fresh]) => fresh!);
+      expect(grown.some((f) => f.opacity > 0.1 && f.opacity < 0.9)).toBe(true);
+      for (const [fresh, old] of frames) {
+        expect(fresh!.scale).toBe(1);
+        expect(old!.scale).toBe(1);
+      }
     });
 
     test('the radio scales on press, not on hover', async ({ page }) => {
