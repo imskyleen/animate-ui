@@ -10,79 +10,98 @@ import {
   TabsTrigger,
 } from "@animate-ui/react/primitives/tabs"
 
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
-const inputClassName =
-  "h-8 rounded-lg border bg-transparent px-2.5 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+const TABS = [
+  { value: "overview", label: "Overview" },
+  { value: "analytics", label: "Analytics" },
+  { value: "reports", label: "Reports" },
+  { value: "settings", label: "Settings" },
+]
 
 export default function TabsDemo() {
   return (
-    <Tabs className="w-full max-w-sm">
+    <Tabs defaultValue="overview" className="w-[400px]">
       <TabsHighlight className="absolute inset-0 z-0 rounded-md border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30">
-        <TabsList className="inline-flex h-9 w-full rounded-lg bg-muted p-1">
-          <TabsHighlightItem value="account" className="flex-1">
-            <TabsTrigger
-              value="account"
-              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-500 ease-in-out data-[state=active]:text-foreground"
-            >
-              Account
-            </TabsTrigger>
-          </TabsHighlightItem>
-          <TabsHighlightItem value="password" className="flex-1">
-            <TabsTrigger
-              value="password"
-              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-500 ease-in-out data-[state=active]:text-foreground"
-            >
-              Password
-            </TabsTrigger>
-          </TabsHighlightItem>
+        <TabsList className="inline-flex h-8 w-fit items-center rounded-lg bg-muted p-[3px] text-muted-foreground">
+          {TABS.map((tab) => (
+            <TabsHighlightItem key={tab.value} value={tab.value}>
+              <TabsTrigger
+                value={tab.value}
+                className="inline-flex h-full items-center justify-center rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors duration-500 ease-in-out hover:text-foreground data-[state=active]:text-foreground dark:text-muted-foreground dark:data-[state=active]:text-foreground"
+              >
+                {tab.label}
+              </TabsTrigger>
+            </TabsHighlightItem>
+          ))}
         </TabsList>
       </TabsHighlight>
-      <TabsContents className="mt-2 rounded-xl border bg-card">
-        <TabsContent value="account" className="flex flex-col gap-4 p-4">
-          <p className="text-sm text-muted-foreground">
-            Make changes to your account here. Click save when you&apos;re done.
-          </p>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="tabs-name">Name</Label>
-            <input
-              id="tabs-name"
-              defaultValue="Pedro Duarte"
-              className={inputClassName}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="tabs-username">Username</Label>
-            <input
-              id="tabs-username"
-              defaultValue="@peduarte"
-              className={inputClassName}
-            />
-          </div>
-          <Button className="self-start">Save changes</Button>
+      <TabsContents className="mt-2">
+        <TabsContent value="overview" className="p-px">
+          <Card>
+            <CardHeader>
+              <CardTitle>Overview</CardTitle>
+              <CardDescription>
+                View your key metrics and recent project activity. Track
+                progress across all your active projects.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground">
+              You have 12 active projects and 3 pending tasks.
+            </CardContent>
+          </Card>
         </TabsContent>
-        <TabsContent value="password" className="flex flex-col gap-4 p-4">
-          <p className="text-sm text-muted-foreground">
-            Change your password here. After saving, you&apos;ll be logged out.
-          </p>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="tabs-current">Current password</Label>
-            <input id="tabs-current" type="password" className={inputClassName} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="tabs-new">New password</Label>
-            <input id="tabs-new" type="password" className={inputClassName} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="tabs-confirm">Confirm password</Label>
-            <input
-              id="tabs-confirm"
-              type="password"
-              className={inputClassName}
-            />
-          </div>
-          <Button className="self-start">Save password</Button>
+        <TabsContent value="analytics" className="p-px">
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics</CardTitle>
+              <CardDescription>
+                Track performance and user engagement metrics. Monitor trends
+                and identify growth opportunities.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-2 text-sm">
+              {[
+                ["Page views", "+25%"],
+                ["Visitors", "3,240"],
+                ["Bounce rate", "41%"],
+                ["Avg. session", "2m 14s"],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{label}</span>
+                  <span className="font-medium tabular-nums">{value}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="reports" className="p-px">
+          <Card>
+            <CardHeader>
+              <CardTitle>Reports</CardTitle>
+              <CardDescription>5 reports are ready to export.</CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+        <TabsContent value="settings" className="p-px">
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+              <CardDescription>
+                Manage your account preferences and options. Customize your
+                experience to fit your needs.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground">
+              Configure notifications, security, and themes.
+            </CardContent>
+          </Card>
         </TabsContent>
       </TabsContents>
     </Tabs>

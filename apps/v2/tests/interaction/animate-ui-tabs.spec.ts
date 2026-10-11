@@ -25,17 +25,17 @@ test.describe('animate-ui tabs', () => {
   }) => {
     await open(page);
     await expect(page.getByRole('tablist')).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Account' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
       'aria-selected',
       'true',
     );
-    await expect(page.getByRole('tab', { name: 'Password' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Analytics' })).toHaveAttribute(
       'aria-selected',
       'false',
     );
     // The inactive panel can't be focused.
     await expect(
-      page.getByRole('tabpanel').filter({ hasText: 'Change your password' }),
+      page.getByRole('tabpanel').filter({ hasText: 'Track performance' }),
     ).toHaveAttribute('inert', '');
   });
 
@@ -43,26 +43,26 @@ test.describe('animate-ui tabs', () => {
     page,
   }) => {
     await open(page);
-    const tab = page.getByRole('tab', { name: 'Password' });
+    const tab = page.getByRole('tab', { name: 'Analytics' });
     const end = (await tab.boundingBox())!.x;
     await tab.click();
     await page.waitForTimeout(60);
-    const mid = await highlightX(page, 'password');
+    const mid = await highlightX(page, 'analytics');
     expect(mid).toBeLessThan(end - 1);
     expect(await stripX(page)).toBeGreaterThan(-99);
     await expect
-      .poll(async () => Math.abs((await highlightX(page, 'password')) - end))
+      .poll(async () => Math.abs((await highlightX(page, 'analytics')) - end))
       .toBeLessThan(1.5);
     await expect.poll(async () => Math.round(await stripX(page))).toBe(-100);
     await expect(tab).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByLabel('Current password')).toBeVisible();
+    await expect(page.getByText('Page views')).toBeVisible();
   });
 
   test('the height follows the active panel', async ({ page }) => {
     await open(page);
     const contents = page.locator('[data-slot="tabs-contents"]');
     const before = (await contents.boundingBox())!.height;
-    await page.getByRole('tab', { name: 'Password' }).click();
+    await page.getByRole('tab', { name: 'Analytics' }).click();
     await expect
       .poll(async () => (await contents.boundingBox())!.height)
       .not.toBe(before);
@@ -71,11 +71,11 @@ test.describe('animate-ui tabs', () => {
   test('reduced motion: everything changes at once', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
-    const tab = page.getByRole('tab', { name: 'Password' });
+    const tab = page.getByRole('tab', { name: 'Analytics' });
     const end = (await tab.boundingBox())!.x;
     await tab.click();
     await page.waitForTimeout(60);
-    expect(Math.abs((await highlightX(page, 'password')) - end)).toBeLessThan(
+    expect(Math.abs((await highlightX(page, 'analytics')) - end)).toBeLessThan(
       1.5,
     );
     expect(Math.round(await stripX(page))).toBe(-100);
@@ -83,7 +83,7 @@ test.describe('animate-ui tabs', () => {
 
   test('triggers and panels reference each other', async ({ page }) => {
     await open(page);
-    for (const name of ['Account', 'Password']) {
+    for (const name of ['Overview', 'Analytics']) {
       const tab = page.getByRole('tab', { name });
       const panelId = await tab.getAttribute('aria-controls');
       const tabId = await tab.getAttribute('id');
@@ -100,11 +100,11 @@ test.describe('animate-ui tabs', () => {
 
   test('keyboard: the selection animates like a click', async ({ page }) => {
     await open(page);
-    const account = page.getByRole('tab', { name: 'Account' });
-    const password = page.getByRole('tab', { name: 'Password' });
-    const accountX = (await account.boundingBox())!.x;
-    const passwordX = (await password.boundingBox())!.x;
-    await account.focus();
+    const overview = page.getByRole('tab', { name: 'Overview' });
+    const analytics = page.getByRole('tab', { name: 'Analytics' });
+    const overviewX = (await overview.boundingBox())!.x;
+    const analyticsX = (await analytics.boundingBox())!.x;
+    await overview.focus();
     // Sampled in the page from the key press: the highlight slides and the
     // panels strip moves, as on click (no fixed timing, so no flakiness).
     const frames = page.evaluate(
@@ -114,7 +114,7 @@ test.describe('animate-ui tabs', () => {
           const start = performance.now();
           const tick = () => {
             const el = document.querySelector(
-              `${selector}[data-value="password"]`,
+              `${selector}[data-value="analytics"]`,
             );
             const strip = document.querySelector<HTMLElement>(
               '[data-slot="tabs-contents"] > div',
@@ -135,16 +135,16 @@ test.describe('animate-ui tabs', () => {
       HIGHLIGHT,
     );
     await page.keyboard.press('ArrowRight');
-    await expect(password).toBeFocused();
-    await expect(password).toHaveAttribute('aria-selected', 'true');
+    await expect(analytics).toBeFocused();
+    await expect(analytics).toHaveAttribute('aria-selected', 'true');
     const xs = await frames;
-    expect(xs.some((f) => f.x > accountX + 1 && f.x < passwordX - 1)).toBe(
+    expect(xs.some((f) => f.x > overviewX + 1 && f.x < analyticsX - 1)).toBe(
       true,
     );
     expect(xs.some((f) => f.strip < -1 && f.strip > -99)).toBe(true);
     await expect
       .poll(async () =>
-        Math.abs((await highlightX(page, 'password')) - passwordX),
+        Math.abs((await highlightX(page, 'analytics')) - analyticsX),
       )
       .toBeLessThan(1.5);
     await expect.poll(async () => Math.round(await stripX(page))).toBe(-100);
