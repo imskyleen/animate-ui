@@ -58,7 +58,16 @@ const starVariants = cva("size-[18px]", {
 function Star(
   props: Omit<React.ComponentProps<typeof HugeiconsIcon>, "icon">
 ) {
-  return <HugeiconsIcon icon={StarIcon} strokeWidth={2} {...props} />
+  // Hugeicons strokes its paths in currentColor: they take the icon's own
+  // stroke instead, the star's color, not the text's.
+  return (
+    <HugeiconsIcon
+      icon={StarIcon}
+      strokeWidth={2}
+      {...props}
+      className={cn("[&_path]:[stroke:inherit]", props.className)}
+    />
+  )
 }
 
 export const controls = {

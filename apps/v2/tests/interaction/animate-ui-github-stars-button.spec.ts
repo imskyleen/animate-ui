@@ -49,6 +49,26 @@ const filledStar = (page: Page) =>
   button(page).locator('svg[style*="clip-path"]');
 
 test.describe('animate-ui github stars button', () => {
+  test("the demo's star has no outline of its own: stroked like it's filled", async ({
+    page,
+  }) => {
+    // Hugeicons strokes its paths in currentColor: left alone, the star had
+    // a black (or white) border around its gray or yellow fill.
+    await page.goto('/tests/demos/animate-ui/github-stars-button', {
+      waitUntil: 'networkidle',
+    });
+    await page.waitForTimeout(3500);
+    const paths = await page.evaluate(() =>
+      [...document.querySelectorAll('svg path[stroke="currentColor"]')]
+        .filter((p) => getComputedStyle(p).fill !== 'none')
+        .map((p) => {
+          const cs = getComputedStyle(p);
+          return { stroke: cs.stroke, fill: cs.fill };
+        }),
+    );
+    expect(paths.length).toBeGreaterThan(1);
+    for (const p of paths) expect(p.stroke).toBe(p.fill);
+  });
   test('shows up once the stars are loaded, as a link to the repository', async ({
     page,
   }) => {

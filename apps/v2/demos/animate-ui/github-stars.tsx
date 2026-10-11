@@ -7,13 +7,23 @@ import {
   GithubStarsNumber,
   GithubStarsParticles,
 } from "@animate-ui/react/primitives/github-stars"
+import { cn } from "cn"
 import { StarIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 function Star(
   props: Omit<React.ComponentProps<typeof HugeiconsIcon>, "icon">
 ) {
-  return <HugeiconsIcon icon={StarIcon} strokeWidth={2} {...props} />
+  // Hugeicons strokes its paths in currentColor: they take the icon's own
+  // stroke instead, the star's color, not the text's.
+  return (
+    <HugeiconsIcon
+      icon={StarIcon}
+      strokeWidth={2}
+      {...props}
+      className={cn("[&_path]:[stroke:inherit]", props.className)}
+    />
+  )
 }
 
 export default function GithubStarsDemo() {
