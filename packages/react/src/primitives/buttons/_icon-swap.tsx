@@ -34,6 +34,12 @@ type IconSwapProps = Omit<React.ComponentProps<'span'>, 'children'> & {
    * was last rendered, so it must already be set on the render before.
    */
   instant?: boolean;
+  /**
+   * Degrees the icons turn as they swap: the leaving one turns this far on,
+   * the next one turns in from as far back. Swaps on `transition.spin`
+   * instead of `transition.swap` when set.
+   */
+  rotate?: number;
   /** Transition of the swap. */
   transition?: Transition;
 };
@@ -41,21 +47,39 @@ type IconSwapProps = Omit<React.ComponentProps<'span'>, 'children'> & {
 /**
  * The icon `swapKey` names. When it changes, the old icon shrinks to half
  * its size into a light blur as it fades, while the new one grows out of it,
- * so their overlap reads as one shape changing. Nothing animates on mount.
+ * so their overlap reads as one shape changing; with `rotate`, both turn the
+ * same way as they do. Nothing animates on mount.
  * Under reduced motion, the icons crossfade.
  */
 function IconSwap({
   swapKey,
   children,
   instant = false,
+  rotate,
   transition,
   style,
   ...props
 }: IconSwapProps) {
   const reduce = useShouldReduceMotion();
-  const defaultTransition = useTempoTransition(SWAP_TRANSITION);
-  const hidden = reduce ? { opacity: 0 } : HIDDEN;
-  const shown = reduce ? { opacity: 1 } : SHOWN;
+  const defaultTransition = useTempoTransition(
+    rotate ? motionTokens.transition.spin : SWAP_TRANSITION,
+  );
+  const turn = reduce || !rotate ? undefined : rotate;
+  const entering = reduce
+    ? { opacity: 0 }
+    : turn
+      ? { ...HIDDEN, rotate: -turn }
+      : HIDDEN;
+  const leaving = reduce
+    ? { opacity: 0 }
+    : turn
+      ? { ...HIDDEN, rotate: turn }
+      : HIDDEN;
+  const shown = reduce
+    ? { opacity: 1 }
+    : turn
+      ? { ...SHOWN, rotate: 0 }
+      : SHOWN;
 
   return (
     // `relative`: a leaving icon is placed against this wrapper, so it stays
@@ -75,9 +99,9 @@ function IconSwap({
           key={swapKey}
           data-icon={swapKey}
           aria-hidden="true"
-          initial={instant ? false : hidden}
+          initial={instant ? false : entering}
           animate={shown}
-          exit={instant ? undefined : hidden}
+          exit={instant ? undefined : leaving}
           transition={transition ?? defaultTransition}
           style={{ display: 'inline-flex' }}
         >

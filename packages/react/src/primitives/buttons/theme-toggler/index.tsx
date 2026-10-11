@@ -3,16 +3,15 @@
 import * as React from 'react';
 import type { Transition } from 'motion/react';
 
+import { motionTokens } from '../../../utils/motion';
 import { getStrictContext } from '../../../utils/strict-context';
 import { Button, type ButtonProps } from '../button';
 import { IconSwap } from '../_icon-swap';
-import {
-  ThemeToggler,
-  type Direction,
-  type Resolved,
-  type ThemeSelection,
-  type ThemeTogglerProps,
-} from '../../effects/theme-toggler';
+
+/** A theme to choose: light, dark, or the system's. */
+type ThemeSelection = 'light' | 'dark' | 'system';
+/** A theme actually shown. */
+type Resolved = 'light' | 'dark';
 
 type ThemeTogglerButtonContextType = {
   /**
@@ -61,30 +60,25 @@ function getNextTheme(
   return modes[(i + 1) % modes.length]!;
 }
 
-type ThemeTogglerButtonProps = ButtonProps &
-  Pick<
-    ThemeTogglerProps,
-    'theme' | 'resolvedTheme' | 'setTheme' | 'onImmediateChange'
-  > & {
-    /**
-     * The themes a click cycles through, in order.
-     * @default ['light', 'dark', 'system']
-     */
-    modes?: ThemeSelection[];
-    /**
-     * Direction of the wipe.
-     * @default 'ltr'
-     */
-    direction?: Direction;
-  };
+type ThemeTogglerButtonProps = ButtonProps & {
+  /** The selected theme. */
+  theme: ThemeSelection;
+  /** The theme actually shown. */
+  resolvedTheme: Resolved;
+  /** Applies a theme, called on click with the next one of `modes`. */
+  setTheme: (theme: ThemeSelection) => void;
+  /**
+   * The themes a click cycles through, in order.
+   * @default ['light', 'dark', 'system']
+   */
+  modes?: ThemeSelection[];
+};
 
 function ThemeTogglerButton({
   theme,
   resolvedTheme,
   setTheme,
-  onImmediateChange,
   modes = DEFAULT_MODES,
-  direction = 'ltr',
   onClick,
   ...props
 }: ThemeTogglerButtonProps) {
@@ -99,38 +93,26 @@ function ThemeTogglerButton({
     return () => cancelAnimationFrame(frame);
   }, [mounted]);
 
-  return (
-    <ThemeToggler
-      theme={theme}
-      resolvedTheme={resolvedTheme}
-      setTheme={setTheme}
-      direction={direction}
-      onImmediateChange={onImmediateChange}
-    >
-      {({ effective, resolved, toggleTheme }) => {
-        const shown = modes.includes('system') ? effective : resolved;
-        const next = getNextTheme(effective, resolved, modes);
+  const shown = modes.includes('system') ? theme : resolvedTheme;
+  const next = getNextTheme(theme, resolvedTheme, modes);
 
-        return (
-          <ThemeTogglerButtonProvider
-            value={{ theme: shown, effective, resolved, next }}
-          >
-            <InstantContext value={!settled}>
-              <Button
-                data-slot="theme-toggler-button"
-                data-theme={shown}
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  onClick?.(event);
-                  if (event.defaultPrevented) return;
-                  toggleTheme(next);
-                }}
-                {...props}
-              />
-            </InstantContext>
-          </ThemeTogglerButtonProvider>
-        );
-      }}
-    </ThemeToggler>
+  return (
+    <ThemeTogglerButtonProvider
+      value={{ theme: shown, effective: theme, resolved: resolvedTheme, next }}
+    >
+      <InstantContext value={!settled}>
+        <Button
+          data-slot="theme-toggler-button"
+          data-theme={shown}
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            onClick?.(event);
+            if (event.defaultPrevented) return;
+            setTheme(next);
+          }}
+          {...props}
+        />
+      </InstantContext>
+    </ThemeTogglerButtonProvider>
   );
 }
 
@@ -144,6 +126,11 @@ type ThemeTogglerButtonIconProps = Omit<
   dark: React.ReactNode;
   /** The icon of the system theme. */
   system?: React.ReactNode;
+  /**
+   * Degrees the icons turn as they swap.
+   * @default 90
+   */
+  rotate?: number;
   /** Transition of the swap. */
   transition?: Transition;
 };
@@ -152,6 +139,7 @@ function ThemeTogglerButtonIcon({
   light,
   dark,
   system,
+  rotate = motionTokens.rotate.icon,
   ...props
 }: ThemeTogglerButtonIconProps) {
   const { theme, resolved } = useThemeTogglerButton();
@@ -165,6 +153,7 @@ function ThemeTogglerButtonIcon({
       data-slot="theme-toggler-button-icon"
       swapKey={key}
       instant={instant}
+      rotate={rotate}
       {...props}
     >
       {icon}
@@ -181,5 +170,4 @@ export {
   type ThemeTogglerButtonContextType,
   type ThemeSelection,
   type Resolved,
-  type Direction,
 };

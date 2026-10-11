@@ -287,6 +287,11 @@ const transition = {
    */
   swap: { duration: 0.15, ease: ease.out },
   /**
+   * Two icons swapping in place while they turn (`rotate.icon`): twice a
+   * swap, so the turn reads instead of flicking by.
+   */
+  spin: { duration: 0.3, ease: ease.out },
+  /**
    * A menu's content leaving the popover it hands over to the next menu (a
    * menubar's), sliding away from where the popover goes: soft, mostly gone
    * in ~90ms.
@@ -377,6 +382,16 @@ const blur = {
   panel: 'blur(5px)',
 } as const;
 
+/** Rotations, in degrees, by role. */
+const rotate = {
+  /**
+   * How far an icon turns as it swaps for another (`transition.spin`): the
+   * leaving one turns this far on as it goes, the next one turns in from as
+   * far back, so both keep turning the same way.
+   */
+  icon: 90,
+} as const;
+
 /** Distances, in px, by role. */
 const shift = {
   /**
@@ -427,7 +442,7 @@ const stagger: { readonly stack: number } = {
 /**
  * The tokens at a pace: `tempo` multiplies the tweens' durations and delays
  * (and the staggers), and time-scales the springs (see `scaleTransition`). 1 is the default, 0.8
- * feels crisper, 1.2 more relaxed. Curves, scales, blurs and shifts don't
+ * feels crisper, 1.2 more relaxed. Curves, scales, blurs, rotations and shifts don't
  * change.
  */
 function createMotionTokens(tempo = 1) {
@@ -446,6 +461,7 @@ function createMotionTokens(tempo = 1) {
     ease,
     scale,
     blur,
+    rotate,
     shift,
     stagger:
       tempo === 1
@@ -693,6 +709,7 @@ export {
   transition,
   scale,
   blur,
+  rotate,
   shift,
   stagger,
   ReducedMotionConfig,

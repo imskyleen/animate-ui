@@ -79,6 +79,7 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.fill`          | `{ duration: 0.3, ease: ease.fill }`             | A fill growing in from `scale.fill` as it fades in, and shrinking back out (a toggle group's selected surface, like the radio's and checkbox's fill); neighbouring fills joining or splitting   |
 | `transition.popOut`        | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out; a deleted OTP character shrinking out                                                                                                |
 | `transition.swap`          | `{ duration: 0.15, ease: ease.out }`             | Two icons or labels swapping in place                                                                                                                                                           |
+| `transition.spin`          | `{ duration: 0.3, ease: ease.out }`              | Two icons swapping in place while they turn `rotate.icon` (the Theme Toggler Button): twice a swap, so the turn reads                                                                           |
 | `transition.collapse`      | `{ duration: 0.28, ease: ease.inOut }`           | A sidebar collapsing or expanding, and everything resizing with it (the page beside it, its buttons, its group labels): one curve, so their edges stay together                                 |
 | `transition.collapseLabel` | `{ duration: 0.14, ease: ease.out }`             | A collapsing sidebar's labels fading into `blur.icon` in its first half; back in its last half as it expands (delay `collapse − collapseLabel`)                                                 |
 | `transition.handoffOut`    | `{ duration: 0.22, ease: ease.soft }`            | A menu's content leaving the popover it hands to the next menu (a menubar's), sliding away from where it goes: mostly gone in ~90ms                                                             |
@@ -141,6 +142,12 @@ The smaller the element, the farther it starts, so its growth stays visible; the
 | `blur.panel`      | `blur(5px)` | Tab panels leaving into it, then the next one coming in from it          |
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
+
+## Rotations
+
+| Token         | Value      | Use for                                                                                                                                       |
+| ------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rotate.icon` | `90` (deg) | An icon turning as it swaps (`transition.spin`): the leaving one turns this far on, the next one turns in from as far back, both the same way |
 
 ## Shifts
 

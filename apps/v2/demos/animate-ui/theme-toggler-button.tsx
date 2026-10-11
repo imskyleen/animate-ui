@@ -5,7 +5,6 @@ import { cn } from "cn"
 import {
   ThemeTogglerButton,
   ThemeTogglerButtonIcon,
-  type Direction,
   type Resolved,
   type ThemeSelection,
 } from "@animate-ui/react/primitives/buttons/theme-toggler"
@@ -56,10 +55,6 @@ export const controls = {
       value: "default",
       options: { default: "default", sm: "sm", lg: "lg" },
     },
-    direction: {
-      value: "ltr",
-      options: { btt: "btt", ttb: "ttb", ltr: "ltr", rtl: "rtl" },
-    },
     system: { value: false },
   },
 }
@@ -67,10 +62,8 @@ export const controls = {
 export default function ThemeTogglerButtonDemo({
   variant = "default",
   size = "default",
-  direction = "ltr",
   system = false,
 }: VariantProps<typeof themeTogglerButtonVariants> & {
-  direction?: Direction
   system?: boolean | string
 }) {
   const { theme, resolvedTheme, setTheme } = useTheme()
@@ -82,7 +75,6 @@ export default function ThemeTogglerButtonDemo({
       theme={(theme ?? "system") as ThemeSelection}
       resolvedTheme={(resolvedTheme ?? "light") as Resolved}
       setTheme={setTheme}
-      direction={direction}
       modes={withSystem ? ["light", "dark", "system"] : ["light", "dark"]}
       aria-label="Toggle theme"
       className={cn(themeTogglerButtonVariants({ variant, size }))}

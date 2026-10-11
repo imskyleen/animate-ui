@@ -1,6 +1,6 @@
 ---
 title: Theme Toggler Button
-description: A button that cycles the theme, wiping the new one across the page.
+description: A button that cycles the theme, its icon turning into the next one.
 ---
 
 <ComponentPreview name="animate-ui/theme-toggler-button" />
@@ -11,7 +11,7 @@ description: A button that cycles the theme, wiping the new one across the page.
 
 ## Usage
 
-Bring your own theme state, as with [Theme Toggler](/docs/primitives/animate-ui/theme-toggler). With [next-themes](https://github.com/pacocoursey/next-themes):
+Bring your own theme state. With [next-themes](https://github.com/pacocoursey/next-themes):
 
 ```tsx
 import { useTheme } from 'next-themes';
@@ -39,15 +39,14 @@ export function ThemeButton() {
 }
 ```
 
-Each click switches to the next theme of `modes`. When `modes` leave out `system`, the button shows the theme actually displayed, and a system theme counts as the one it resolves to. Read the state in your own parts with `useThemeTogglerButton()`.
+Each click applies the next theme of `modes` at once, through `setTheme`. For a wipe across the page, use [Theme Toggler](/docs/primitives/animate-ui/theme-toggler). When `modes` leave out `system`, the button shows the theme actually displayed, and a system theme counts as the one it resolves to. Read the state in your own parts with `useThemeTogglerButton()`.
 
 ## Animation
 
-- A click wipes the new theme across the page in `direction`, over 700ms with an `ease-in-out` ([Theme Toggler](/docs/primitives/animate-ui/theme-toggler)'s View Transition).
-- The icon swaps as the wipe starts: the old one shrinks to half its size into a light blur (`blur(2px)`) as it fades out, while the new one grows out of it, over 0.15s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`). Icons only swap once the button is used: on mount, and when the theme becomes known after hydrating, the icon shows at rest.
+- The icon swaps as the theme changes: the old one turns 90° on as it shrinks to half its size into a light blur (`blur(2px)`) and fades out, while the new one turns in from 90° back and grows out of it, so both keep turning the same way. Over 0.3s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`), twice the Copy Button's swap, so the turn reads. Icons only swap once the button is used: on mount, and when the theme becomes known after hydrating, the icon shows at rest.
 - Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
-- `<AnimateUIProvider tempo>` paces the wipe, the swap and the press spring.
-- Under reduced motion, the theme changes at once without the wipe, the icons crossfade without scaling or blurring, and the button doesn't scale.
+- `<AnimateUIProvider tempo>` paces the swap and the press spring.
+- Under reduced motion, the icons crossfade without turning, scaling or blurring, and the button doesn't scale.
 
 ## API Reference
 
@@ -66,7 +65,8 @@ Each click switches to the next theme of `modes`. When `modes` leave out `system
       required: true,
     },
     setTheme: {
-      description: 'Applies a theme, called when the wipe ends.',
+      description:
+        'Applies a theme, called on click with the next one of `modes`.',
       type: "(theme: 'light' | 'dark' | 'system') => void",
       required: true,
     },
@@ -74,16 +74,6 @@ Each click switches to the next theme of `modes`. When `modes` leave out `system
       description: 'The themes a click cycles through, in order.',
       type: "('light' | 'dark' | 'system')[]",
       default: "['light', 'dark', 'system']",
-    },
-    direction: {
-      description:
-        'Direction of the wipe: bottom to top, top to bottom, left to right, right to left.',
-      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
-      default: "'ltr'",
-    },
-    onImmediateChange: {
-      description: 'Called as soon as a theme is chosen, before the wipe.',
-      type: "(theme: 'light' | 'dark' | 'system') => void",
     },
     hoverScale: {
       description:
@@ -132,10 +122,15 @@ Each click switches to the next theme of `modes`. When `modes` leave out `system
         'The icon of the system theme. Without it, system shows the icon of the theme it resolves to.',
       type: 'React.ReactNode',
     },
+    rotate: {
+      description: 'Degrees the icons turn as they swap.',
+      type: 'number',
+      default: '90',
+    },
     transition: {
       description: 'Transition of the swap.',
       type: 'Transition',
-      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
+      default: '{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }',
     },
     '...props': {
       description: 'Props of the span holding the icons.',
@@ -154,7 +149,3 @@ Each click switches to the next theme of `modes`. When `modes` leave out `system
     },
   }}
 />
-
-## Credits
-
-- Inspired by [Magic UI](https://magicui.design/docs/components/animated-theme-toggler)'s animated theme toggler.
