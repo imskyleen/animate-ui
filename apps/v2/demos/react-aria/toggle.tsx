@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 import {
@@ -8,6 +9,7 @@ import {
 } from "@animate-ui/react/primitives/react-aria"
 import { BookmarkIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { motion, useReducedMotion } from "motion/react"
 
 const toggleVariants = cva(
   "hover:text-foreground aria-pressed:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-muted gap-1 rounded-lg text-sm font-medium transition-all [&_svg:not([class*='size-'])]:size-4 data-selected:bg-muted group/toggle inline-flex items-center justify-center whitespace-nowrap outline-none hover:bg-muted focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -61,9 +63,36 @@ export default function ToggleDemo({
 }: {
   size?: "default" | "sm" | "lg"
 }) {
+  const [pressed, setPressed] = React.useState(false)
+  const reduce = useReducedMotion()
+
   return (
-    <Toggle aria-label="Toggle bookmark" size={size} variant="outline">
-      <HugeiconsIcon icon={BookmarkIcon} strokeWidth={2} className="group-aria-pressed/toggle:fill-foreground" />
+    <Toggle
+      aria-label="Toggle bookmark"
+      size={size}
+      variant="outline"
+      isSelected={pressed}
+      onChange={setPressed}
+    >
+      {/* The bookmark pops as it fills, and gives a little as it empties. */}
+      <motion.span
+        className="inline-flex"
+        initial={false}
+        animate={{
+          scale: reduce ? 1 : pressed ? [1, 1.2, 1] : [1, 0.9, 1],
+        }}
+        transition={{
+          duration: 0.35,
+          times: [0, 0.4, 1],
+          ease: ["easeOut", [0.34, 1.56, 0.64, 1]],
+        }}
+      >
+        <HugeiconsIcon
+          icon={BookmarkIcon}
+          strokeWidth={2}
+          className="fill-transparent transition-[fill] duration-200 ease-out group-aria-pressed/toggle:fill-foreground"
+        />
+      </motion.span>
       Bookmark
     </Toggle>
   )

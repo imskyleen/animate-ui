@@ -1062,6 +1062,88 @@ export function describeToggleDemo(lib: Lib) {
       );
     });
 
+    // The demo's bookmark (the user's ask): it pops as it fills, gives a
+    // little as it empties, its fill fading; nothing on mount.
+    const sampleBookmark = async (page: Page) => {
+      await page.evaluate((selector) => {
+        const toggle = document.querySelector(selector)!;
+        const icon = toggle.querySelector('svg')!;
+        const holder = icon.parentElement!;
+        const w = window as unknown as {
+          __bookmark: { scale: number; fill: number }[];
+        };
+        const out: { scale: number; fill: number }[] = (w.__bookmark = []);
+        const t0 = performance.now();
+        const tick = () => {
+          const m = getComputedStyle(holder).transform.match(/matrix\(([^,]+)/);
+          // The fill's alpha (transparent when empty, opaque when full), in
+          // rgba() or the `/ alpha` of oklab() and other color functions.
+          const fill = getComputedStyle(icon).fill;
+          const slash = fill.match(/\/\s*([\d.]+)\s*\)/);
+          const rgba = fill.match(/^rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+)\)/);
+          const alpha =
+            fill === 'none'
+              ? 0
+              : slash
+                ? Number(slash[1])
+                : rgba
+                  ? Number(rgba[1])
+                  : 1;
+          out.push({ scale: m ? Number(m[1]) : 1, fill: alpha });
+          if (performance.now() - t0 < 600) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }, TOGGLE);
+      return () =>
+        page.evaluate(
+          () =>
+            (
+              window as unknown as {
+                __bookmark: { scale: number; fill: number }[];
+              }
+            ).__bookmark,
+        );
+    };
+
+    test('its bookmark pops as it fills, and gives a little as it empties', async ({
+      page,
+    }) => {
+      const toggle = page.locator(TOGGLE).nth(0);
+      await toggle.focus();
+      let frames = await sampleBookmark(page);
+      await page.keyboard.press('Space');
+      await page.waitForTimeout(650);
+      const on = await frames();
+      expect(Math.max(...on.map((f) => f.scale))).toBeGreaterThan(1.12);
+      expect(on.at(-1)!.scale).toBeCloseTo(1, 2);
+      expect(on.some((f) => f.fill > 0.05 && f.fill < 0.95)).toBe(true);
+      expect(on.at(-1)!.fill).toBe(1);
+
+      frames = await sampleBookmark(page);
+      await page.keyboard.press('Space');
+      await page.waitForTimeout(650);
+      const off = await frames();
+      expect(Math.min(...off.map((f) => f.scale))).toBeLessThan(0.95);
+      expect(off.at(-1)!.scale).toBeCloseTo(1, 2);
+      expect(off.some((f) => f.fill > 0.05 && f.fill < 0.95)).toBe(true);
+      expect(off.at(-1)!.fill).toBe(0);
+    });
+
+    test('reduced motion: the bookmark only fills, without popping', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.reload({ waitUntil: 'networkidle' });
+      const toggle = page.locator(TOGGLE).nth(0);
+      await toggle.focus();
+      const frames = await sampleBookmark(page);
+      await page.keyboard.press('Space');
+      await page.waitForTimeout(650);
+      const on = await frames();
+      for (const f of on) expect(f.scale).toBe(1);
+      expect(on.some((f) => f.fill > 0.05 && f.fill < 0.95)).toBe(true);
+    });
+
     test('Space toggles it at once', async ({ page }) => {
       const toggle = page.locator(TOGGLE).nth(0);
       await toggle.focus();
