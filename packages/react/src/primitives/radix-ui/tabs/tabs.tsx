@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Tabs as TabsPrimitive } from 'radix-ui';
-import { motion, type Transition } from 'motion/react';
+import type { Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
@@ -12,9 +12,10 @@ import {
   useTabsIndicator,
 } from '../../../internal/tabs';
 
-// Same API as Radix's Tabs, moving like Animate UI v1's Radix Tabs (see
-// ../../../internal/tabs): the active tab's surface slides to the new tab,
-// and the incoming panel fades in from a blur while its height springs.
+// Same API as Radix's Tabs, moving like Motion's Radix tabs example (see
+// ../../../internal/tabs): one indicator slides to the new tab, and the
+// panels change one after the other: the outgoing one fades out into a blur,
+// then the incoming one fades in from it while the height glides.
 
 // An object, not the raw value: no tab selected is `undefined`, which a
 // strict context would read as "no provider".
@@ -29,14 +30,16 @@ type TabsContentProps = TabsPrimitive.TabsContentProps & ContentAnimationProps;
 
 /** Animate UI's additions to `Tabs.List`. */
 type ListAnimationProps = {
-  /** Transition of the active tab's surface sliding to the new tab. Defaults to a spring (stiffness 300, damping 30). */
+  /** Transition of the indicator sliding to the new tab. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
 };
 
 /** Animate UI's additions to `Tabs.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the incoming panel: its fade (500ms ease-out) and, in `height`, its height (a spring, stiffness 300, damping 30). */
+  /** Transition of the panel coming in: its fade from a blur (300ms) and, in `height`, the height gliding from the previous panel's (450ms, Motion's layout curve). */
   transition?: Transition;
+  /** Transition of the panel leaving: its fade into a blur (150ms ease-out). */
+  exitTransition?: Transition;
 };
 
 function Root(props: React.ComponentProps<typeof TabsPrimitive.Root>) {
@@ -101,31 +104,39 @@ function Trigger(props: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
 }
 
 function Content({
+  ref,
   forceMount,
+  hidden,
+  inert,
   transition,
-  children,
+  exitTransition,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Content> & ContentAnimationProps) {
   const { value } = useValue();
   const active = value === props.value;
-  const { ref, initial, animate } = usePanelMotion(active, { transition });
+  const {
+    ref: panelRef,
+    waiting,
+    leaving,
+  } = usePanelMotion(active, { transition, exitTransition });
 
   return (
-    // Radix's props (className, style, data-state, hidden…) land on the
-    // motion.div through asChild; it only carries the animation. The
-    // outgoing panel unmounts at once (no exit), so the two never overlap.
-    <TabsPrimitive.Content {...props} forceMount={forceMount} asChild>
-      <motion.div
-        ref={ref as React.Ref<HTMLDivElement>}
-        // A force-mounted inactive panel stays in the DOM, hidden (the
-        // outgoing panel leaves at once).
-        hidden={!active || undefined}
-        initial={initial}
-        animate={animate}
-      >
-        {children}
-      </motion.div>
-    </TabsPrimitive.Content>
+    <TabsPrimitive.Content
+      {...props}
+      ref={(node: HTMLDivElement | null) => {
+        panelRef.current = node;
+        if (typeof ref === 'function') return ref(node);
+        if (ref) ref.current = node;
+      }}
+      // Radix unmounts a panel the moment it's unselected: kept mounted while
+      // it fades out.
+      forceMount={forceMount || leaving ? true : undefined}
+      // Hidden while the previous panel leaves, and once unselected (a
+      // force-mounted panel stays in the DOM). Leaving, it stays in the page
+      // and can't be reached.
+      hidden={hidden || waiting || (!active && !leaving) || undefined}
+      inert={inert || leaving || undefined}
+    />
   );
 }
 

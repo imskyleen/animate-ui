@@ -42,7 +42,7 @@ Springs first: nearly everything moves on a spring. They retarget with their vel
 | `spring.reflow`    | `stiffness: 500, damping: 40`                                  | Quick, no overshoot                                                                                     | Items making room for one added or closing the gap of one removed (a combobox's chips and its input)                                                                                  |
 | `spring.handoff`   | `stiffness: 450, damping: 43`                                  | From rest, there in ~230ms, no overshoot (critically damped)                                            | A menu's content sliding in as a menubar's popover is handed from one menu to the next (`shift.handoff`), like Motion's mega menu                                                     |
 | `spring.morph`     | `stiffness: 660, damping: 52`                                  | Starts gently, half the way in ~65ms, most in ~155ms, never past (critically damped), settled by ~300ms | A popover moving and resizing from one content to the next (a menubar's handed from menu to menu, a navigation menu's), keeping its speed when it changes course (internal/momentum)  |
-| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01`      | No overshoot                                                                                            | A height following its content (Auto Height, tab panels)                                                                                                                              |
+| `spring.height`    | `stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01`      | No overshoot                                                                                            | A height following its content (Auto Height)                                                                                                                                          |
 | `spring.thumb`     | `stiffness: 300, damping: 25`                                  | There in ~200ms, overshoots ~4%, settled by ~500ms                                                      | A switch thumb gliding and stretching                                                                                                                                                 |
 | `spring.slider`    | `stiffness: 400, damping: 32`                                  | As quick, calmer: 90% of the way in ~150ms, overshoots ~1.5%, settled by ~480ms                         | A slider's thumb and range gliding to a pressed value, and its thumb stretching                                                                                                       |
 | `spring.bounce`    | `stiffness: 200, damping: 16`                                  | Bouncy                                                                                                  | Small marks popping inside a control (radio dot)                                                                                                                                      |
@@ -67,7 +67,9 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.color`         | `{ duration: 0.2, ease: ease.color }`            | A highlight showing up from nothing or going (a hover lighting an item or a trigger), and its color changing (a trigger open, then hovered): never a cut; an OTP field's ring fading in and out |
 | `transition.reveal`        | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                                                                                                                                   |
 | `transition.disclosure`    | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                                                                                                                                      |
-| `transition.panel`         | `{ duration: 0.5, ease: ease.out }`              | A panel coming in from a blur (tab panels)                                                                                                                                                      |
+| `transition.panelOut`      | `{ duration: 0.15, ease: ease.leave }`           | A tab panel leaving into `blur.panel`, staying in the page, before the next one comes in (Motion's tabs example)                                                                                |
+| `transition.panelIn`       | `{ duration: 0.3, ease: ease.enter }`            | The next tab panel fading in from `blur.panel`, once the previous one has gone                                                                                                                  |
+| `transition.panelHeight`   | `{ duration: 0.45, ease: ease.resize }`          | The tab panels' height gliding from the previous panel's to the next one's as it comes in: Motion's own layout animation, no overshoot                                                          |
 | `transition.check`         | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                                                                                                                                                |
 | `transition.uncheck`       | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                                                                                                                                          |
 | `transition.popOut`        | `{ duration: 0.15, ease: ease.out }`             | A popped check, a removed chip or tag, shrinking back out; a deleted OTP character shrinking out                                                                                                |
@@ -97,6 +99,9 @@ Pick a tween's curve by what the element does:
 | A drawer closed, speeding off its edge                  | `ease.in`: `cubic-bezier(0.4, 0, 1, 1)`                                              |
 | Fades in behind content leaving (a menubar's next menu) | `ease.arrive`: `cubic-bezier(0.11, 0, 0.5, 0)`, a slow start                         |
 | A highlight showing up, going, or changing color        | `ease.color`: `cubic-bezier(0.25, 0.1, 0.25, 1)` (CSS's `ease`), gentle at both ends |
+| Fades out to make way for the next (a tab panel)        | `ease.leave`: `cubic-bezier(0, 0, 0.58, 1)`, Motion's `easeOut` (Motion's tabs)      |
+| Fades in where other content just left (a tab panel)    | `ease.enter`: `cubic-bezier(0.25, 0.1, 0.35, 1)`, `ease` landing longer              |
+| Resizes to new content (a tab panel's height)           | `ease.resize`: `cubic-bezier(0.4, 0, 0.1, 1)`, Motion's layout curve                 |
 | Changes color (CSS)                                     | `ease`                                                                               |
 | Moves constantly (marquee, loader)                      | `linear`                                                                             |
 | Thrown off screen by a swipe                            | `linear`, at the finger's speed (see the Sheet recipe)                               |
@@ -118,11 +123,12 @@ The smaller the element, the farther it starts, so its growth stays visible; the
 
 ## Blur
 
-| Token             | Value       | Use for                                                                     |
-| ----------------- | ----------- | --------------------------------------------------------------------------- |
-| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                    |
-| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds    |
-| `blur.surface`    | `blur(4px)` | Panels and surfaces coming in: tab panels, navigation menu content, dialogs |
+| Token             | Value       | Use for                                                                  |
+| ----------------- | ----------- | ------------------------------------------------------------------------ |
+| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                 |
+| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds |
+| `blur.surface`    | `blur(4px)` | Surfaces coming in: dialogs                                              |
+| `blur.panel`      | `blur(5px)` | Tab panels leaving into it, then the next one coming in from it          |
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
 

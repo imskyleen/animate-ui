@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { expect, test, type Page } from '@playwright/test';
@@ -37,6 +37,34 @@ for (const url of ['/', ...PAGES]) {
     expect(errors).toEqual([]);
   });
 }
+
+test.describe('motion review page', () => {
+  // /tests/motion lists demos by path: one deleted or renamed broke the page.
+  const REVIEW = path.join(process.cwd(), 'app', '(tests)', 'tests', 'motion');
+
+  test('every demo it lists exists', () => {
+    const source = readdirSync(REVIEW)
+      .filter((file) => file.endsWith('.tsx'))
+      .map((file) => readFileSync(path.join(REVIEW, file), 'utf8'))
+      .join('\n');
+    const demos = [...source.matchAll(/demo: '([^']+)'/g)].map((m) => m[1]!);
+    expect(demos.length).toBeGreaterThan(10);
+    const missing = demos.filter(
+      (demo) => !existsSync(path.join(process.cwd(), 'demos', `${demo}.tsx`)),
+    );
+    expect(missing).toEqual([]);
+  });
+
+  test('renders without errors', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const response = await page.goto('/tests/motion', {
+      waitUntil: 'networkidle',
+    });
+    expect(response?.status()).toBe(200);
+    expect(errors).toEqual([]);
+  });
+});
 
 test.describe('primitive page', () => {
   test.beforeEach(async ({ page }) => {

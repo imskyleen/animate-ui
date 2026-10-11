@@ -242,11 +242,19 @@ Purpose: spatial, the selection moves between items.
 
 - A shared element with `layoutId` (Animate UI's `Highlight` in children mode) on `spring.selection`: the new surface slides from the previous one while the old copy fades out 200ms later. A spring keeps fast clicking smooth: it retargets with its velocity.
 - The keyboard moves it like a click.
-- Panels: the incoming panel fades in from `blur.surface` on `transition.panel` (500ms, `ease.out`: most of it shows in the first 150ms) while the panels' height springs from the previous one's on `spring.height`; the outgoing panel goes at once, so they never overlap. Drop the blur at rest (`transitionEnd: { filter: 'none' }`).
-- Tab text color: `transition-colors duration-500 ease`.
 - Never follow an item by animating `top`, `left`, `width` or `height`.
 - Base UI Tabs don't select on focus since 1.0 (`activateOnFocus` is `false`): arrow keys move focus, Enter or Space selects.
 - `ReducedMotionConfig` around the Root turns the `layoutId` move into a jump.
+
+### Tabs (internal/tabs)
+
+Like Motion's Radix tabs example (motion.dev/examples/react-radix-tabs):
+
+- One indicator, never two crossfading: a single surface sliding on `spring.selection`, a Web Animation of its `translate` (on the compositor, so the panels changing never hold it up) and of its `width`/`height` only when the tabs' sizes differ (a scale would distort the copied border, radius and shadow). Picked up on the way (quick clicks, arrow keys), it goes on from where it is with the speed it had (internal/momentum), from the frame it was read at. For the library tabs it copies the active tab's classes and data attributes and hides the tab's own surface; Animate UI's Tabs give it `TabsHighlight`'s classes.
+- Tab text color: `transition.color` (200ms, `ease`), whatever the tabs' own transition.
+- Panels one after the other, like `AnimatePresence` `mode="wait"`: the outgoing panel fades out into `blur.panel` on `transition.panelOut` (150ms, `ease.leave`), kept mounted, in the page and `inert`; the incoming one waits `hidden` until it's gone, then fades in from `blur.panel` on `transition.panelIn` (300ms, `ease.enter`) while its height glides from the outgoing panel's to its own on `transition.panelHeight` (450ms, `ease.resize`: Motion's layout curve), clipped on the way. Changed again on the way: a panel passed over never shows, one leaving fades out from where it is, one picked again comes back from there, the height goes on from where it is.
+- Keep a leaving panel mounted the library's way: Radix with `forceMount` (its Presence only waits for CSS animations); Base UI and React Aria wait for the element's running animations, so start the fade out as Web Animations in the commit it leaves in (a layout effect, before React Aria's own looks). Start each animation at the time it's made (`startTime`, `fill: 'backwards'`): left pending, it starts at the frame's time, which a long render leaves behind, and skips its first frames.
+- Nothing moves on page load, nor before the page is painted (a value restored in an effect). Under reduced motion the indicator and the height jump; the panels still go one after the other, fading only (no blur).
 
 ## Press (Button, Toggle, Checkbox, Switch, Radio)
 

@@ -34,16 +34,16 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 ## Animation
 
-- **The active tab's surface slides** to the new tab on a spring (stiffness 300, damping 30), like Animate UI v1's highlight: the new surface fades in as it slides from the previous one, which follows it and fades out 200ms later. The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
-- **The tabs' colors change over 500ms** (`ease`, the curve of a color change), whatever transition your tabs set.
-- Clicking quickly through tabs retargets the slide smoothly.
-- **The incoming panel fades in from a 4px blur** over 500ms on a strong ease-out, while its height springs from the previous panel's to its own, like v1's tab contents, on the spring of [Auto Height](/docs/primitives/animate-ui/auto-height) and Animate UI's [Tabs](/docs/primitives/animate-ui/tabs) (stiffness 300, damping 30). The panels share an element (the tabs root, usually), which remembers the selected panel's height. The outgoing panel leaves at once, so the two never overlap.
-- The selected panel fades in on mount (page load) too, as in v1.
-- Keyboard changes animate like clicks, as in v1: Base UI moves focus with the arrow keys and selects with Enter or Space (or on focus with `activateOnFocus`), and the surface slides and the panel fades in.
-- With `keepMounted`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
+- **One indicator slides** to the new tab on a spring (stiffness 300, damping 30), like Motion's tabs example. Clicking quickly or holding an arrow key retargets it from where it is, at the speed it has. It moves on the compositor (a Web Animation of its `translate`, and of its size when the tabs' sizes differ), so the panels changing never hold it up. The List draws it as an indicator that copies the active tab's own classes and data attributes, so it looks exactly like your active tab (background, border, shadow, and the `line` variant's underline) in every style and theme, while the active tab's own surface is hidden. Its focus ring stays on the tab.
+- **The tabs' colors change over 200ms** (`ease`, the curve of a color change), whatever transition your tabs set.
+- **The panels change one after the other**, like Motion's `AnimatePresence` with `mode="wait"`: the outgoing panel fades out into a 5px blur over 150ms on an ease-out, staying in the page and out of reach (`inert`); once it's gone, the incoming one fades in from the blur over 300ms while its height glides from the outgoing panel's to its own, over 450ms on Motion's layout curve (a gentle start, then a long deceleration, never past its size). The panels share an element (the tabs root, usually), where one shows at a time.
+- Changing tabs again before that's over stays clean: a panel passed over before it showed never shows, one coming in fades back out from where it is, one picked again while it leaves comes back from there, and the height goes on from where it is. Two panels never show at once.
+- Nothing animates on page load (nor a value restored before the page is painted).
+- Keyboard changes animate like clicks: Base UI moves focus with the arrow keys and selects with Enter or Space (or on focus with `activateOnFocus`), and the indicator slides and the panels change.
+- Base UI keeps the outgoing panel mounted until its fade out is over, then removes it. With `keepMounted`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
 - Rendering Base UI's own `Tabs.Indicator` turns the sliding indicator off: yours is used instead.
 - `<AnimateUIProvider tempo>` paces every transition.
-- Under reduced motion, the surface jumps and the height changes at once; the fades still play.
+- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading only (no blur), the incoming one over 200ms.
 
 ## API Reference
 
@@ -60,8 +60,7 @@ Every part takes exactly the props of [Base UI's Tabs](https://base-ui.com/react
 <TypeTable
   type={{
     transition: {
-      description:
-        'Transition of the surface sliding to the new tab (pointer changes); the previous surface fades out 200ms after it starts.',
+      description: 'Transition of the indicator sliding to the new tab.',
       type: 'Transition',
       default: "{ type: 'spring', stiffness: 300, damping: 30 }",
     },
@@ -76,10 +75,16 @@ Every part takes exactly the props of [Base UI's Tabs](https://base-ui.com/react
   type={{
     transition: {
       description:
-        'Transition of the incoming panel: its fade from a blur, and its height (in `height`, or the whole transition when it has none).',
+        "Transition of the panel coming in: its fade from a blur, and its height gliding from the outgoing panel's (in `height`, or the whole transition when it has none).",
       type: 'Transition',
       default:
-        "{ duration: 0.5, ease: [0.23, 1, 0.32, 1], height: { type: 'spring', stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01 } }",
+        '{ duration: 0.3, ease: [0.25, 0.1, 0.35, 1], height: { duration: 0.45, ease: [0.4, 0, 0.1, 1] } }',
+    },
+    exitTransition: {
+      description:
+        'Transition of the panel leaving: its fade into a blur, before the next one comes in.',
+      type: 'Transition',
+      default: '{ duration: 0.15, ease: [0, 0, 0.58, 1] }',
     },
   }}
 />

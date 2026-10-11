@@ -97,7 +97,7 @@ animate={{ top: bounds.top, left: bounds.left, width: bounds.width, height: boun
 <motion.div layoutId="highlight" transition={spring.highlight} />
 ```
 
-Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`) and heights following their content (`spring.height`). And a menubar's popover handed to the next menu resizes to it (`width`/`height`, a Web Animation for its move on `spring.morph`, A16): a scale would change its items' size. Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`); large blurs are expensive to paint.
+Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`), heights following their content (`spring.height`) and tab panels' heights gliding from the previous panel's (`transition.panelHeight`, Motion's layout curve). And a menubar's popover handed to the next menu resizes to it (`width`/`height`, a Web Animation for its move on `spring.morph`, A16): a scale would change its items' size. A tabs indicator resizes too (`width`/`height` on a Web Animation, its `translate` on the compositor) when the tabs' sizes differ: a scale would distort the active tab's border, radius and shadow it copies. Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`, `blur.panel`); large blurs are expensive to paint.
 
 #### A9. Prefer a `transform` string for press and continuous motion
 
@@ -208,7 +208,7 @@ Closing plays the entrance's transition in reverse: one transition both ways (`e
 
 ### B6. Blur to bridge a swap
 
-When two states replace each other in place (an icon swapping for another, a label changing, a panel replacing another), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons, `blur.surface` (4px) for panels. Dialogs also come in from `blur.surface`, a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed. A menubar's content changing as its popover moves to the next menu doesn't swap in place: it slides `shift.handoff` (6px) and fades, without a blur, like Motion's mega menu (A16).
+When two states replace each other in place (an icon swapping for another, a label changing), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons. Tab panels don't overlap: they go one after the other, the outgoing one into `blur.panel` (5px), the incoming one out of it (Motion's tabs example). Dialogs come in from `blur.surface` (4px), a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed. A menubar's content changing as its popover moves to the next menu doesn't swap in place: it slides `shift.handoff` (6px) and fades, without a blur, like Motion's mega menu (A16).
 
 ### B7. Surfaces: modals tip, sheets slide
 

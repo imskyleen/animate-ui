@@ -1,6 +1,6 @@
 ---
 title: Tabs
-description: "Animate UI's own tabs: a highlight glides between triggers and panels slide, with the height following the active panel."
+description: "Animate UI's own tabs: one highlight slides between triggers, and the panels change one after the other while the height glides."
 ---
 
 <ComponentPreview name="animate-ui/tabs" />
@@ -46,15 +46,20 @@ export function Settings() {
 }
 ```
 
-Unlike the library tabs, these are Animate UI's own: no Radix UI, Base UI or React Aria underneath. `TabsHighlight` and `TabsHighlightItem` are optional; without them, style the active trigger with `data-state="active"`. Without `defaultValue`, the first trigger is selected.
+Unlike the library tabs, these are Animate UI's own: no Radix UI, Base UI or React Aria underneath. `TabsHighlight` and `TabsHighlightItem` are optional; without them, style the active trigger with `data-state="active"`. `TabsHighlight`'s classes style the highlight, which the `TabsList` inside draws behind the selected trigger's `TabsHighlightItem`. Without `defaultValue`, the first trigger is selected.
 
 ## Animation
 
-- The highlight slides to the selected trigger on a spring (stiffness 300, damping 30): the new one fades in as it slides from the previous one, which fades out 200ms later ([Highlight](/docs/primitives/animate-ui/highlight)).
-- Panels sit side by side and slide to the selected one on a spring (stiffness 300, damping 30); the container's height follows the active panel on the same spring. Inactive panels blur (4px, spring with stiffness 300, damping 30) and are `inert`.
+They move like the [library tabs](/docs/primitives/radix-ui/tabs), after Motion's tabs example:
+
+- **One highlight slides** to the selected trigger on a spring (stiffness 300, damping 30). Clicking quickly or holding an arrow key retargets it from where it is, at the speed it has. It moves on the compositor (a Web Animation of its `translate`, and of its size when the triggers' sizes differ), so the panels changing never hold it up.
+- **The panels change one after the other**, like Motion's `AnimatePresence` with `mode="wait"`: the outgoing panel fades out into a 5px blur over 150ms on an ease-out, staying in the page and out of reach (`inert`); once it's gone, the incoming one fades in from the blur over 300ms while its height glides from the outgoing panel's to its own, over 450ms on Motion's layout curve (a gentle start, then a long deceleration, never past its size). `TabsContents` follows it: its border and background glide with it. Inactive panels stay mounted, `hidden` and `inert`.
+- Changing tabs again before that's over stays clean: a panel passed over before it showed never shows, one coming in fades back out from where it is, one picked again while it leaves comes back from there, and the height goes on from where it is. Two panels never show at once.
+- Nothing animates on page load (nor a value restored before the page is painted).
+- The triggers' colors are yours: the demo's change over 200ms (`ease`), like the library tabs'.
 - Keyboard: arrow keys move to the next or previous enabled trigger (wrapping) and select it, Home and End jump to the ends; only the selected trigger is in the Tab order. Keyboard selection animates exactly like a click.
-- `<AnimateUIProvider tempo>` paces every spring.
-- Under reduced motion, the highlight, panels and height change at once.
+- `<AnimateUIProvider tempo>` paces every transition.
+- Under reduced motion, the highlight and the height jump; the panels still change one after the other, fading only (no blur), the incoming one over 200ms.
 
 ## API Reference
 
@@ -90,12 +95,22 @@ Unlike the library tabs, these are Animate UI's own: no Radix UI, Base UI or Rea
 
 ### TabsHighlight
 
-Takes the [Highlight](/docs/primitives/animate-ui/highlight#highlight) props, except `controlledItems` and `value`.
+Wraps the `TabsList`, which draws the highlight: one surface behind the selected trigger.
 
 <TypeTable
   type={{
+    className: {
+      description:
+        "Classes of the highlight. It is placed over the selected trigger's `TabsHighlightItem` (or the trigger), whatever position or inset the classes set.",
+      type: 'string',
+    },
+    style: {
+      description: 'Style of the highlight.',
+      type: 'React.CSSProperties',
+    },
     transition: {
-      description: 'Transition of the highlight.',
+      description:
+        'Transition of the highlight sliding to the selected trigger.',
       type: 'Transition',
       default: "{ type: 'spring', stiffness: 300, damping: 30 }",
     },
@@ -104,7 +119,7 @@ Takes the [Highlight](/docs/primitives/animate-ui/highlight#highlight) props, ex
 
 ### TabsHighlightItem
 
-Takes the [HighlightItem](/docs/primitives/animate-ui/highlight#highlightitem) props.
+Wraps a trigger: the highlight covers it while its trigger is selected.
 
 <TypeTable
   type={{
@@ -112,6 +127,10 @@ Takes the [HighlightItem](/docs/primitives/animate-ui/highlight#highlightitem) p
       description: 'Value of the trigger it wraps.',
       type: 'string',
       required: true,
+    },
+    '...props': {
+      description: 'Props of the wrapper.',
+      type: "React.ComponentProps<'div'>",
     },
   }}
 />
@@ -152,15 +171,15 @@ Takes the [HighlightItem](/docs/primitives/animate-ui/highlight#highlightitem) p
 
 ### TabsContents
 
-Holds the panels and animates between them.
+Holds the panels: one shows at a time, the height gliding from the previous one's.
 
 <TypeTable
   type={{
     transition: {
-      description: 'Transition of the slide and the height.',
+      description:
+        "Transition of the height gliding from the outgoing panel's to the incoming one's (a panel's own `transition.height` wins).",
       type: 'Transition',
-      default:
-        "{ type: 'spring', stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01 }",
+      default: '{ duration: 0.45, ease: [0.4, 0, 0.1, 1] }',
     },
     '...props': {
       description: 'Props of the container.',
@@ -183,6 +202,18 @@ Holds the panels and animates between them.
       description: 'Value of the tab.',
       type: 'string',
       required: true,
+    },
+    transition: {
+      description:
+        "Transition of the panel coming in: its fade from a blur, and in `height` its height gliding from the outgoing panel's.",
+      type: 'Transition',
+      default: '{ duration: 0.3, ease: [0.25, 0.1, 0.35, 1] }',
+    },
+    exitTransition: {
+      description:
+        'Transition of the panel leaving: its fade into a blur, before the next one comes in.',
+      type: 'Transition',
+      default: '{ duration: 0.15, ease: [0, 0, 0.58, 1] }',
     },
     '...props': {
       description:

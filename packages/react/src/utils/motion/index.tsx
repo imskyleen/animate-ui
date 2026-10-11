@@ -82,6 +82,23 @@ const ease = {
    * rather than cut.
    */
   color: [0.25, 0.1, 0.25, 1],
+  /**
+   * Content fading out to make way for the next (a tab panel): Motion's own
+   * easeOut, gentle enough for its fade and blur to be seen, like Motion's
+   * tabs example.
+   */
+  leave: [0, 0, 0.58, 1],
+  /**
+   * Content fading in where other content just left (a tab panel): CSS's
+   * `ease` with a longer landing, like Motion's tabs example.
+   */
+  enter: [0.25, 0.1, 0.35, 1],
+  /**
+   * A box resizing to new content (a tab panel's height): Motion's own
+   * layout curve, a gentle start then a long deceleration, never past its
+   * size.
+   */
+  resize: [0.4, 0, 0.1, 1],
 } as const;
 
 /** Springs, one per role (stiffness / damping, mass 1). */
@@ -207,8 +224,22 @@ const transition = {
   reveal: { duration: 0.3, ease: ease.out },
   /** Accordion and collapsible panels unfolding, and folding back. */
   disclosure: { duration: 0.35, ease: ease.soft },
-  /** A panel coming in from a blur (tab panels). */
-  panel: { duration: 0.5, ease: ease.out },
+  /**
+   * A tab panel leaving, into `blur.panel`, staying in the page: quick, so
+   * the next one isn't kept waiting (Motion's tabs example).
+   */
+  panelOut: { duration: 0.15, ease: ease.leave },
+  /**
+   * The next tab panel fading in from `blur.panel`, once the previous one
+   * has gone (Motion's tabs example).
+   */
+  panelIn: { duration: 0.3, ease: ease.enter },
+  /**
+   * The tab panels' height gliding from the previous panel's to the next
+   * one's as it comes in: Motion's own layout animation (Motion's tabs
+   * example), no overshoot.
+   */
+  panelHeight: { duration: 0.45, ease: ease.resize },
   /**
    * A check drawing itself, once the box has answered the press: v1's delay
    * and curve, drawn a little slower than v1's 0.2s so it's seen.
@@ -297,8 +328,13 @@ const blur = {
   icon: 'blur(2px)',
   /** The content of an accordion or collapsible panel, as it unfolds. */
   disclosure: 'blur(2px)',
-  /** Panels and surfaces coming in: tab panels, dialogs. */
+  /** Surfaces coming in: dialogs. */
   surface: 'blur(4px)',
+  /**
+   * Tab panels leaving into it and coming in from it, one after the other
+   * (Motion's tabs example).
+   */
+  panel: 'blur(5px)',
 } as const;
 
 /** Distances, in px, by role. */

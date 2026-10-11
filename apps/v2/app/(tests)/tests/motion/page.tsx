@@ -21,15 +21,15 @@ type Family = {
 
 const GLOBAL_RULES = [
   "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes. Toutes les valeurs par rôle sont des tokens de @animate-ui/react/utils/motion (spring, transition, scale, blur, ease).",
-  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (panneaux d’onglets) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers, menus) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
+  'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) ; panneaux d’onglets → les courbes de l’exemple de Motion (sortie sur l’easeOut de Motion, cubic-bezier(0, 0, 0.58, 1) ; entrée sur cubic-bezier(0.25, 0.1, 0.35, 1) ; hauteur sur sa courbe de layout, cubic-bezier(0.4, 0, 0.1, 1)) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers, menus) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
   'Ce qui se presse réagit à la pression seulement : 0,97 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
   'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 400/29), menus, selects et navigation menus depuis 0,9 en 0,22s ease-out doux.',
-  'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
+  'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune), un léger flou masque le chevauchement : 2px pour une icône, 4px pour une surface (modale). Les panneaux d’onglets ne se chevauchent pas, ils se succèdent : l’ancien part dans un flou de 5px, puis le nouveau en sort (exemple d’onglets de Motion). Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
   'Un indicateur de sélection glisse sur 300/30 ; un surlignage qui suit le pointeur glisse sur 500/40, plus vif (tous deux un peu plus vifs que la v1 : 200/25 et 350/35).',
-  'Une hauteur qui change suit un ressort 300/30 ; une disclosure (accordéon, collapsible) se déplie en 0,35s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
+  'Une hauteur qui change suit un ressort 300/30 (celle des panneaux d’onglets glisse en 0,45s sur la courbe de layout de Motion, sans dépassement) ; une disclosure (accordéon, collapsible) se déplie en 0,35s sur un ease-out doux : hauteur, fondu et flou de 2px, d’après l’exemple d’accordéon de Motion.',
   'Ce que la v1 n’animait pas reste instantané (couleur du fond d’un switch).',
-  'Le clavier anime exactement comme le pointeur. Un élément ouvert par défaut s’anime au montage.',
+  'Le clavier anime exactement comme le pointeur. Un élément ouvert par défaut s’anime au montage (sauf les onglets : rien ne bouge au chargement, comme dans l’exemple de Motion).',
   'Mouvement réduit : plus de transform ni de glissement, les fondus restent.',
   'AnimateUIProvider tempo : multiplie toutes les durées et recale exactement les ressorts (stiffness / tempo², damping / tempo).',
 ];
@@ -131,13 +131,28 @@ const FAMILIES: Family[] = [
     rule: 'Ce qui marque la sélection glisse d’un élément à l’autre et l’ancien s’efface.',
     values: [
       'glissement : ressort 300/30',
-      'onglets : couleur du texte 0,5s ease, panneau depuis un flou de 4px en 0,5s ease-out',
+      'onglets : une seule surface (pas de fondu entre deux), voir « Onglets »',
+    ],
+    demos: [{ demo: 'radix-ui/toggle-group', label: 'Toggle Group' }],
+  },
+  {
+    id: 'tabs',
+    name: 'Onglets',
+    rule: 'Comme l’exemple d’onglets Radix de Motion : un seul indicateur glisse, et les panneaux se succèdent (AnimatePresence mode="wait") : l’ancien s’efface dans un flou en restant dans la page, puis le nouveau en sort pendant que la hauteur glisse.',
+    values: [
+      'indicateur : une seule surface, ressort 300/30, sur le compositeur (Web Animation de translate, et de sa taille quand les onglets diffèrent) ; repris en route là où il est, avec sa vitesse ; aucun à-coup quand les panneaux changent',
+      'couleur du texte des onglets : 0,2s ease',
+      'panneau qui part : opacité 1 → 0 et flou 0 → 5px en 0,15s sur l’easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), en restant dans la page (inert)',
+      'panneau qui arrive, une fois l’ancien parti : opacité 0 → 1 et flou 5px → 0 en 0,3s, cubic-bezier(0.25, 0.1, 0.35, 1)',
+      'hauteur : de celle de l’ancien panneau à celle du nouveau, quand il arrive, en 0,45s sur la courbe de layout de Motion, cubic-bezier(0.4, 0, 0.1, 1), sans dépassement',
+      'changements rapides : un panneau sauté n’apparaît jamais, un panneau qui arrivait repart d’où il en est, la hauteur repart d’où elle en est ; jamais deux panneaux à la fois',
+      'rien ne bouge au chargement ; mouvement réduit : l’indicateur et la hauteur sautent, les panneaux ne font que des fondus (sans flou), le nouveau en 0,2s',
     ],
     demos: [
       { demo: 'radix-ui/tabs', label: 'Tabs (Radix)' },
+      { demo: 'base-ui/tabs', label: 'Tabs (Base UI)' },
       { demo: 'react-aria/tabs', label: 'Tabs (React Aria)' },
       { demo: 'animate-ui/tabs', label: 'Tabs (Animate UI)' },
-      { demo: 'radix-ui/toggle-group', label: 'Toggle Group' },
     ],
   },
   {
@@ -146,13 +161,9 @@ const FAMILIES: Family[] = [
     rule: 'Quand deux états se remplacent au même endroit, un léger flou fait lire leur chevauchement comme une seule forme qui change.',
     values: [
       'icônes : scale 0,5 + flou 2px + fondu, 0,15s ease-out (copier → coché, soleil → lune)',
-      'panneaux d’onglets : depuis un flou de 4px',
       'Morphing Text : flou 10px',
     ],
-    demos: [
-      { demo: 'animate-ui/tabs', label: 'Tabs (Animate UI)' },
-      { demo: 'animate-ui/morphing-text', label: 'Morphing Text' },
-    ],
+    demos: [{ demo: 'animate-ui/morphing-text', label: 'Morphing Text' }],
     live: true,
   },
   {
@@ -168,7 +179,10 @@ const FAMILIES: Family[] = [
     id: 'height',
     name: 'Hauteur',
     rule: 'Quand le contenu change de taille, la hauteur suit sans rebond.',
-    values: ['ressort 300/30 (AutoHeight, panneaux des onglets)'],
+    values: [
+      'ressort 300/30 (AutoHeight)',
+      'panneaux des onglets : 0,45s sur la courbe de layout de Motion, sans dépassement (voir « Onglets »)',
+    ],
     demos: [{ demo: 'animate-ui/auto-height', label: 'Auto Height' }],
   },
   {
@@ -210,7 +224,7 @@ const FAMILIES: Family[] = [
       'toast ancré : comme un tooltip, depuis 0,7, ressort 400/29',
     ],
     demos: [
-      { demo: 'radix-ui/dialog-sheet', label: 'Sheet' },
+      { demo: 'radix-ui/sheet', label: 'Sheet' },
       { demo: 'radix-ui/drawer', label: 'Drawer (Radix)' },
       { demo: 'base-ui/drawer', label: 'Drawer (Base UI)' },
       { demo: 'base-ui/toast', label: 'Toast' },
