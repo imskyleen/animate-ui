@@ -30,6 +30,65 @@ test.describe('animate-ui particles', () => {
     );
   });
 
+  test('a like resizes the button smoothly, swaps the word and pops the heart', async ({
+    page,
+  }) => {
+    await open(page);
+    const button = page.getByRole('button', { name: 'Like' });
+    await button.evaluate((el) => {
+      const w = window as unknown as {
+        __frames: { width: number; heart: number; words: number }[];
+        __button: Element;
+      };
+      w.__frames = [];
+      w.__button = el;
+      const t0 = performance.now();
+      const tick = () => {
+        const svg = el.querySelector('svg')!.parentElement!;
+        const m = getComputedStyle(svg).transform.match(/matrix\(([^,]+)/);
+        w.__frames.push({
+          width: el.getBoundingClientRect().width,
+          heart: m ? Number(m[1]) : 1,
+          words: el.querySelectorAll('[aria-hidden] > span > span').length,
+        });
+        if (performance.now() - t0 < 1500) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    const before = await button.evaluate(
+      (el) => el.getBoundingClientRect().width,
+    );
+    await button.click();
+    await page.waitForTimeout(700);
+    const frames = await page.evaluate(
+      () =>
+        (
+          window as unknown as {
+            __frames: { width: number; heart: number; words: number }[];
+          }
+        ).__frames,
+    );
+    const after = frames.at(-1)!.width;
+    expect(after).toBeGreaterThan(before + 3);
+    // The width glides: several frames strictly between the two sizes.
+    const between = frames.filter(
+      (f) => f.width > before + 0.5 && f.width < after - 0.5,
+    );
+    expect(between.length).toBeGreaterThan(4);
+    // Both words show together for a while: one leaves as the other comes in.
+    expect(frames.some((f) => f.words === 2)).toBe(true);
+    expect(frames.at(-1)!.words).toBe(1);
+    // The heart pops past its size, then settles.
+    expect(Math.max(...frames.map((f) => f.heart))).toBeGreaterThan(1.15);
+    expect(frames.at(-1)!.heart).toBeCloseTo(1, 3);
+    // The button itself stays mounted (it is not re-created to replay the burst).
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { __button: Element }).__button.isConnected,
+      ),
+    ).toBe(true);
+  });
+
   test('reduced motion: no burst', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
