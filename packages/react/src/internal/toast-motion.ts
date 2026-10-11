@@ -506,7 +506,8 @@ const PROGRESS_BAR = 'data-animate-ui-toast-progress-bar';
 
 /**
  * The bar's default look, at zero specificity (any class of yours wins): a
- * 2px line along the toast's bottom edge, in its text color at 25%, clipped
+ * 2px line along the toast's bottom edge, in its type's color (its icon's,
+ * at 80%) or else its text color at 25%, clipped
  * by its corners; only the front toast's shows while the stack is collapsed.
  */
 const PROGRESS_CSS = `
@@ -528,10 +529,11 @@ const PROGRESS_CSS = `
   inset-inline: 0;
   bottom: 0;
   height: 2px;
-  background-color: currentColor;
+  background-color: var(--animate-ui-toast-progress-color, currentColor);
   opacity: 0.25;
   transform-origin: left;
 }
+:where([${PROGRESS_BAR}][data-tinted]) { opacity: 0.8; }
 :where([${PROGRESS_BAR}]:dir(rtl)) { transform-origin: right; }
 `;
 

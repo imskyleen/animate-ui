@@ -68,8 +68,9 @@ import {
 //   came, speeding away (0.2s, like a dialog dismissed).
 // - Its icon shows by type, and an update swaps its icon and text in place
 //   (internal/toast-motion).
-// - `progressBar` (on the Root or the Provider) adds a bar of the time it
-//   has left, paused whenever Base UI pauses its timer.
+// - A bar of the time it has left, in its type's color, paused whenever
+//   Base UI pauses its timer (`progressBar={false}` on the Root or the
+//   Provider leaves it out).
 // - Under reduced motion it fades in place, the stack changes at once, the
 //   icon and text only fade.
 
@@ -111,8 +112,8 @@ type ContentAnimationProps = {
 type ProviderAnimationProps = {
   /**
    * Shows a bar of the time each toast has left (see `Toast.Root`'s
-   * `progressBar`).
-   * @default false
+   * `progressBar`). Pass `false` to leave it out.
+   * @default true
    */
   progressBar?: boolean;
 };
@@ -140,7 +141,7 @@ type ToastSettings = { timeout: number; progressBar: boolean };
 
 const ToastSettingsContext = React.createContext<ToastSettings>({
   timeout: DEFAULT_TIMEOUT,
-  progressBar: false,
+  progressBar: true,
 });
 
 function transitionStyle(
@@ -289,7 +290,7 @@ function resolveStyle<State>(
   return typeof style === 'function' ? style(state) : style;
 }
 
-function Provider({ progressBar = false, ...props }: Provider.Props) {
+function Provider({ progressBar = true, ...props }: Provider.Props) {
   const timeout = props.timeout ?? DEFAULT_TIMEOUT;
   const settings = React.useMemo(
     () => ({ timeout, progressBar }),
@@ -494,6 +495,10 @@ function subscribeToWindowFocus(onChange: () => void) {
  * It starts over when the timer does: a loading toast resolved, a new
  * timeout. A toast without a timer (loading, `timeout: 0`) has no bar.
  */
+/** The bar's color when the toast's type has one (its icon's). */
+const TINT_VAR = '--animate-ui-toast-progress-color';
+const TINTED = 'data-tinted';
+
 function RemainingTime({
   duration,
   running,
@@ -537,6 +542,18 @@ function RemainingTime({
       { duration, easing: 'linear', fill: 'forwards' },
     );
     animationRef.current = animation;
+    // In the color of the toast's type: its icon's (shadcn colors the
+    // error's), else its text's.
+    const root = rootOf();
+    const icon = root?.querySelector('[data-slot="toast-icon"] > *');
+    const tint = icon && root ? getComputedStyle(icon).color : null;
+    if (tint && tint !== getComputedStyle(root!).color) {
+      bar.style.setProperty(TINT_VAR, tint);
+      bar.setAttribute(TINTED, '');
+    } else {
+      bar.style.removeProperty(TINT_VAR);
+      bar.removeAttribute(TINTED);
+    }
     sync();
     return () => {
       animation.cancel();

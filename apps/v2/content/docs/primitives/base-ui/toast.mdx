@@ -60,10 +60,10 @@ Set the `type` option to render a status icon (shadcn/ui's `ToastIcon`, `data-sl
 
 ### Remaining time
 
-`progressBar` on the `Provider` (or on one `Root`) adds a thin bar of the time each toast has left along its bottom edge. It's off by default: Base UI's toast has no such bar, and a drop-in shouldn't add one you didn't ask for. The demo above turns it on (its Controls turn it off).
+A thin bar along each toast's bottom edge shows the time it has left, in the color of its type: its icon's (shadcn colors the error's), else its text's. `progressBar={false}` on the `Provider` (or on one `Root`) leaves it out.
 
 ```tsx
-<Toast.Provider progressBar>…</Toast.Provider>
+<Toast.Provider progressBar={false}>…</Toast.Provider>
 ```
 
 The bar is `[data-animate-ui-toast-progress-bar]` inside `[data-animate-ui-toast-progress]`, styled at zero specificity (2px, the toast's text color at 25%): any class or selector of yours wins, for instance `[data-type=error] [data-animate-ui-toast-progress-bar] { background: var(--destructive) }`.
@@ -80,7 +80,7 @@ Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CS
 - **An update changes it in place** (`toast.update`, `toast.promise`): the previous icon (a spinner still spinning) shrinks into a 2px blur while the new one shows as above, so the spinner turns into a drawn check or cross; text that changed swaps through the same blur (0.15s, ease-out); the toast's height glides to its new content's on its spring. Updated while it's still coming in, it keeps rising; dismissed mid-update, it just leaves.
 - **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, ease-out. Hovering or focusing the viewport unfolds the stack with a 0.75rem gap **front to back**, each toast 30ms after the one in front of it, its content fading back in with it, and it folds back the same way. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
 - **A swipe follows the finger**, fading as it goes (gone at its own size away). Dragged the way it can't be swiped, it rubber-bands: it follows at half the finger's pace at first, then resists up to 48px. Let go short of the threshold, it springs back; past it, it's thrown the way it was swiped at the finger's speed (linear, its own size at that speed, between 80 and 360ms, like a drawer's swipe dismissal).
-- **The remaining-time bar** (`progressBar`) shrinks linearly over the toast's timeout, in real time (`tempo` doesn't pace a timer). It pauses whenever Base UI pauses the timer (the stack hovered or focused, the window in the background) and resumes from there; a loading toast, which has no timer, has no bar, and resolved, its bar starts full. Only the front toast's shows while the stack is collapsed.
+- **The remaining-time bar** (`progressBar`) shrinks linearly over the toast's timeout, in real time (`tempo` doesn't pace a timer). It pauses whenever Base UI pauses the timer (the stack hovered or focused, the window in the background) and resumes from there; a loading toast, which has no timer, has no bar, and resolved, its bar starts full. Only the front toast's shows while the stack is collapsed. It takes the color of the toast's type: its icon's color at 80% when the icon has its own (the error's red in shadcn), else the text's at 25%.
 - Toasts swiped up (`swipeDirection="up"`) live at the top edge: they rise from it and leave through it. Anchored toasts (`Toast.Positioner`) are small bubbles, like tooltips: they grow from their anchor from 0.7 with a fade, on a spring (stiffness 400, damping 29), and leave the same way.
 - shadcn/ui's own CSS stack (its `[transform:…]` and `[transition:…]` classes and the variables only they read) would fight these: the CLI removes them.
 - Under reduced motion, toasts fade in place and the stack changes at once (no cascade); icons and text only fade (no drawing, popping, shaking or blur). A swipe still follows the finger and throws the toast along the swipe, and the remaining-time bar still shrinks: it tells time, it doesn't move anything across the screen.
@@ -97,9 +97,9 @@ Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/reac
   type={{
     progressBar: {
       description:
-        "Shows a bar of the time each toast has left (a Root's own `progressBar` wins).",
+        "Shows a bar of the time each toast has left, in its type's color (a Root's own `progressBar` wins).",
       type: 'boolean',
-      default: 'false',
+      default: 'true',
     },
   }}
 />

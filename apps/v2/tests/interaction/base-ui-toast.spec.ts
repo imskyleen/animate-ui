@@ -364,7 +364,17 @@ test.describe('base-ui toast demo', () => {
     expect(await left()).toBeLessThan(paused - 0.08);
   });
 
-  test('the bar is optional: off by default', async ({ page }) => {
+  test('the bar is on by default, and progressBar={false} leaves it out', async ({
+    page,
+  }) => {
+    await page.goto('/tests/fixtures/base-ui-toast', {
+      waitUntil: 'networkidle',
+    });
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.locator('[data-testid="bottom-toast"]')).toHaveCount(1);
+    await expect(page.locator('[data-animate-ui-toast-progress]')).toHaveCount(
+      1,
+    );
     await page.goto('/tests/demos/base-ui/toast?progressBar=false', {
       waitUntil: 'networkidle',
     });
@@ -373,14 +383,48 @@ test.describe('base-ui toast demo', () => {
     await expect(page.locator('[data-animate-ui-toast-progress]')).toHaveCount(
       0,
     );
-    await page.goto('/tests/fixtures/base-ui-toast', {
+  });
+
+  test("the bar takes the color of the toast's type", async ({ page }) => {
+    // shadcn colors the error's icon (text-destructive): its bar is red; a
+    // success toast's icon has the text's color: its bar too, fainter.
+    await page.goto('/tests/demos/base-ui/toast-types', {
       waitUntil: 'networkidle',
     });
-    await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(page.locator('[data-testid="bottom-toast"]')).toHaveCount(1);
-    await expect(page.locator('[data-animate-ui-toast-progress]')).toHaveCount(
-      0,
-    );
+    const bar = () =>
+      page
+        .locator('[data-animate-ui-toast-progress-bar]')
+        .first()
+        .evaluate((el) => {
+          const cs = getComputedStyle(el);
+          const toast =
+            el.closest('[data-slot="toast"]') ??
+            el.parentElement!.parentElement!;
+          const icon = toast.querySelector('[data-slot="toast-icon"] > *');
+          return {
+            bg: cs.backgroundColor,
+            opacity: Number(cs.opacity),
+            icon: icon ? getComputedStyle(icon).color : null,
+            text: getComputedStyle(toast).color,
+          };
+        });
+    await page.getByRole('button', { name: 'Error' }).click();
+    await expect(
+      page.locator('[data-animate-ui-toast-progress-bar]'),
+    ).toHaveCount(1);
+    const error = await bar();
+    expect(error.icon).not.toBe(error.text);
+    expect(error.bg).toBe(error.icon);
+    expect(error.opacity).toBeCloseTo(0.8, 2);
+
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'Success' }).click();
+    await expect(
+      page.locator('[data-animate-ui-toast-progress-bar]'),
+    ).toHaveCount(1);
+    const success = await bar();
+    expect(success.bg).toBe(success.text);
+    expect(success.opacity).toBeCloseTo(0.25, 2);
   });
 
   test('reduced motion: fades in place, the stack unfolds at once', async ({
