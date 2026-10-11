@@ -12,8 +12,15 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motionTokens } from '@animate-ui/react/utils/motion';
 import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from 'motion/react';
+import {
+  useCallback,
   useDeferredValue,
   useEffect,
   useMemo,
@@ -22,7 +29,12 @@ import {
   type ComponentType,
 } from 'react';
 
-import { ICONS, iconComponent, type IconEntry } from '@/registry/icons';
+import {
+  CATEGORIES,
+  ICONS,
+  iconComponent,
+  type IconEntry,
+} from '@/registry/icons';
 import { Check } from '@/registry/icons/check';
 
 import { DynamicCodeBlock } from './dynamic-codeblock';
@@ -128,6 +140,12 @@ function IconTile({
   );
 }
 
+/** Category titles, by id. */
+const CATEGORY_TITLES = Object.fromEntries(
+  CATEGORIES.map((category) => [category.id, category.title]),
+);
+
+/** The selected icon, in the drawer: its preview, animations and code. */
 function IconDetail({
   entry,
   onClose,
@@ -139,29 +157,15 @@ function IconDetail({
   const [animation, setAnimation] = useState('default');
   const [run, setRun] = useState(0);
   const component = entry.title.replace(/\s+/g, '');
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-
-  // The detail opens above the grid: bring it into view, or a tile clicked
-  // far down the grid would open it off screen.
-  useEffect(() => {
-    ref.current?.scrollIntoView({
-      block: 'nearest',
-      behavior: reduce ? 'auto' : 'smooth',
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
-  }, []);
 
   return (
-    <div
-      ref={ref}
-      className="mb-6 grid scroll-mt-20 gap-6 rounded-2xl border-2 border-neutral-200 p-4 md:grid-cols-[200px_1fr] dark:border-neutral-800"
-    >
-      <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50">
+    <div className="grid gap-4 p-4 sm:grid-cols-[180px_1fr] sm:gap-6">
+      {/* The icon on its 24px grid, as in Lucide's. */}
+      <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[7.5px_7.5px] max-sm:hidden">
         {icon && (
           <icon.Icon
             key={`${animation}-${run}`}
-            size={96}
+            size={120}
             animation={animation}
             animate
           />
@@ -170,28 +174,40 @@ function IconDetail({
           type="button"
           aria-label="Replay"
           onClick={() => setRun((r) => r + 1)}
-          className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-md bg-background/80 text-muted-foreground transition-colors hover:text-foreground"
         >
           <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} size={14} />
         </button>
       </div>
 
-      <div className="flex min-w-0 flex-col gap-4">
+      <div className="flex min-w-0 flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-lg font-medium">{entry.title}</p>
-            <p className="text-sm text-muted-foreground">
-              {entry.keywords.slice(0, 6).join(', ')}
+          <div className="min-w-0">
+            <p className="text-xl font-medium">{entry.name}</p>
+            <p className="truncate text-sm text-muted-foreground">
+              {entry.keywords.slice(0, 6).join(' • ')}
             </p>
           </div>
           <button
             type="button"
             aria-label="Close"
             onClick={onClose}
-            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="flex size-8 shrink-0 items-center justify-center rounded-md bg-accent text-muted-foreground transition-colors hover:text-foreground"
           >
-            <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} size={14} />
+            <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} size={16} />
           </button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5">
+          {entry.categories.map((id) => (
+            <span
+              key={id}
+              data-slot="category"
+              className="rounded-md bg-accent px-2 py-1 text-xs"
+            >
+              {CATEGORY_TITLES[id]}
+            </span>
+          ))}
         </div>
 
         <div className="flex flex-wrap gap-1.5">
@@ -204,7 +220,7 @@ function IconDetail({
                 setRun((r) => r + 1);
               }}
               className={cn(
-                'h-7 rounded-md px-2.5 text-xs transition-colors',
+                'h-7 rounded-full px-3 text-xs transition-colors',
                 name === animation
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-accent text-muted-foreground hover:text-foreground',
@@ -215,17 +231,72 @@ function IconDetail({
           ))}
         </div>
 
-        <DynamicCodeBlock
-          lang="bash"
-          codeblock={{ className: 'my-0' }}
-          code={`pnpm dlx shadcn@latest add @animate-ui/icons-${entry.name}`}
-        />
-        <DynamicCodeBlock
-          lang="tsx"
-          codeblock={{ className: 'my-0' }}
-          code={`import { ${component} } from '@/components/animate-ui/icons/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
-        />
+        <div className="grid min-w-0 gap-2">
+          <DynamicCodeBlock
+            lang="bash"
+            codeblock={{ className: 'my-0' }}
+            code={`pnpm dlx shadcn@latest add @animate-ui/icons-${entry.name}`}
+          />
+          <DynamicCodeBlock
+            lang="tsx"
+            codeblock={{ className: 'my-0' }}
+            code={`import { ${component} } from '@/components/animate-ui/icons/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
+          />
+        </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * A drawer at the bottom of the gallery, as on lucide.dev: it slides up from
+ * the bottom of the screen and stays there while you browse (pinned to the
+ * viewport, along the gallery's column), and picking another icon swaps its
+ * content in place. Escape or its close button closes it.
+ */
+function IconDrawer({
+  entry,
+  onClose,
+}: {
+  entry: IconEntry | null;
+  onClose: () => void;
+}) {
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    if (!entry) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [entry, onClose]);
+
+  return (
+    // Clips the drawer as it slides from the bottom edge, leaving room above
+    // for its shadow; the grid stays clickable through that room.
+    <div className="pointer-events-none sticky bottom-0 z-20 -mt-8 overflow-hidden pt-8">
+      <AnimatePresence initial={false}>
+        {entry && (
+          <motion.div
+            key="drawer"
+            role="dialog"
+            aria-label={entry.title}
+            data-slot="icon-drawer"
+            initial={reduce ? { opacity: 0 } : { y: '100%' }}
+            animate={reduce ? { opacity: 1 } : { y: 0 }}
+            exit={
+              reduce
+                ? { opacity: 0, transition: { duration: 0.15 } }
+                : { y: '100%', transition: motionTokens.transition.drawerOut }
+            }
+            transition={motionTokens.transition.drawer}
+            className="pointer-events-auto mt-4 rounded-t-2xl border border-b-0 bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)]"
+          >
+            <IconDetail key={entry.name} entry={entry} onClose={onClose} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -280,6 +351,7 @@ export function IconsGallery() {
   const [query, setQuery] = useState('');
   const deferred = useDeferredValue(query);
   const [selected, setSelected] = useState<IconEntry | null>(null);
+  const closeDrawer = useCallback(() => setSelected(null), []);
   // 'all', 'new' or a category id.
   const [filter, setFilter] = useState('all');
 
@@ -342,14 +414,6 @@ export function IconsGallery() {
         ))}
       </div>
 
-      {selected && (
-        <IconDetail
-          key={selected.name}
-          entry={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
-
       {icons.length === 0 ? (
         <p className="py-10 text-center text-sm text-muted-foreground">
           {query ? <>No icon matches “{query}”.</> : 'No icon here yet.'}
@@ -366,6 +430,8 @@ export function IconsGallery() {
           ))}
         </div>
       )}
+
+      <IconDrawer entry={selected} onClose={closeDrawer} />
     </div>
   );
 }

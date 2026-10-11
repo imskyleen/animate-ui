@@ -323,4 +323,51 @@ test.describe('icons gallery', () => {
         .locator('[data-slot=animation-count]'),
     ).toHaveText('3');
   });
+
+  test('a picked icon opens in a drawer sliding up from the bottom, swapping in place', async ({
+    page,
+  }) => {
+    await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    // Records the drawer's vertical offset on every frame once it mounts.
+    await page.evaluate(() => {
+      const w = window as unknown as { __ys: number[] };
+      w.__ys = [];
+      const tick = () => {
+        const el = document.querySelector('[data-slot=icon-drawer]');
+        if (el) w.__ys.push(new DOMMatrix(getComputedStyle(el).transform).m42);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await page.locator('button[title="Bell"]').click();
+    await expect(drawer).toBeVisible();
+    await page.waitForTimeout(600);
+    const ys = await page.evaluate(
+      () => (window as unknown as { __ys: number[] }).__ys,
+    );
+    expect(Math.max(...ys)).toBeGreaterThan(100);
+    expect(ys.at(-1)).toBeCloseTo(0, 0);
+    // Pinned to the bottom of the screen.
+    const box = (await drawer.boundingBox())!;
+    expect(box.y + box.height).toBeCloseTo(page.viewportSize()!.height, 0);
+    await expect(drawer.getByText('bell', { exact: true })).toBeVisible();
+    await expect(drawer.locator('[data-slot=category]')).toHaveText([
+      'Accounts & access',
+      'Notifications',
+    ]);
+
+    // Another icon swaps the content; the drawer stays put.
+    const handle = await drawer.elementHandle();
+    await page.locator('button[title="Axe"]').click();
+    await expect(drawer.getByText('axe', { exact: true })).toBeVisible();
+    expect(await handle!.evaluate((el) => el.isConnected)).toBe(true);
+
+    // Escape closes it, sliding back down.
+    await page.keyboard.press('Escape');
+    await expect(drawer).toHaveCount(0);
+    await page.locator('button[title="Bell"]').click();
+    await drawer.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(drawer).toHaveCount(0);
+  });
 });
