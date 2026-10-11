@@ -253,7 +253,9 @@ const transition = {
    * its trigger: a tab panel's entrance, longer, so its slide outlasts the
    * popup's glide (which goes the other way on screen) and reads.
    */
-  tooltipIn: { duration: 0.4, ease: ease.enter },
+  tooltipIn: { duration: 0.34, ease: ease.enter },
+  /** Animate UI's Tooltip's previous content leaving for the next one's. */
+  tooltipOut: { duration: 0.13, ease: ease.leave },
   /**
    * The tab panels' height gliding from the previous panel's to the next
    * one's as it comes in: Motion's own layout animation (Motion's tabs
