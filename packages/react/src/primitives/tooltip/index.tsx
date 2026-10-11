@@ -173,6 +173,20 @@ const SWAP_BLUR = Number.parseFloat(
   motionTokens.blur.tooltip.replace(/[^\d.]/g, ''),
 );
 
+/**
+ * The content's swap, like a menubar's content handed to the next menu: the
+ * leaving label goes softly (`transition.handoffOut`), the next one slides in
+ * on a spring that never goes past its place (`spring.handoff`) and shows
+ * late, as it arrives (`transition.handoffIn`, `ease.arrive`).
+ */
+type SwapTimings = { out: Transition; move: Transition; in: Transition };
+
+const SWAP_TIMINGS: SwapTimings = {
+  out: motionTokens.transition.handoffOut,
+  move: motionTokens.spring.handoff,
+  in: motionTokens.transition.handoffIn,
+};
+
 /** The layout styles the content's layer takes from the popup. */
 const LAYOUT_KEYS = [
   'display',
@@ -211,8 +225,8 @@ const VIEWPORT_STYLE: React.CSSProperties = {
  * - The content is laid out in a layer inside the popup. As the trigger
  *   changes, the layer is copied as it shows (aria-hidden, inert) into the
  *   popup's box, which clips it, and the copy leaves into `blur.tooltip`,
- *   fading out and sliding `shift.tooltip` away from where the popup goes,
- *   on `transition.tooltipSwap`. The layer, showing the next content, comes in from
+ *   fading out and sliding `shift.tooltip` away from where the popup goes
+ *   (see `SWAP_TIMINGS`). The layer, showing the next content, comes in from
  *   there, out of the blur.
  * - The popup resizes on its shared layout animation, which scales it: both
  *   are scaled back every frame (around the point the popup grows from), so
@@ -228,7 +242,7 @@ class ContentSwap {
   private anchor: [number, number] = [0.5, 1];
   /** The popup's own scale (its entrance), not its layout's. */
   private popupScale: () => number = () => 1;
-  private timing: () => Transition = () => motionTokens.transition.tooltipSwap;
+  private timing: () => SwapTimings = () => SWAP_TIMINGS;
   private current: SwapLayer = { values: swapValues(REST), controls: [] };
   private leaving = new Map<string, SwapLayer & { element: HTMLElement }>();
   private pending: {
@@ -246,7 +260,7 @@ class ContentSwap {
   configure(options: {
     anchor: [number, number];
     popupScale: () => number;
-    timing: () => Transition;
+    timing: () => SwapTimings;
   }) {
     this.anchor = options.anchor;
     this.popupScale = options.popupScale;
@@ -295,7 +309,7 @@ class ContentSwap {
     const layer = this.layer;
     const viewport = this.viewport;
     if (!pending || !id || !layer || !viewport || pending.id === id) return;
-    const transition = this.timing();
+    const timings = this.timing();
     const { axis, sign } = pending.way;
     const shift = motionTokens.shift.tooltip * sign;
     const [ax, ay] = this.anchor;
@@ -328,7 +342,12 @@ class ContentSwap {
         opacity: 0,
         blur: SWAP_BLUR,
       },
-      transition,
+      {
+        x: timings.out,
+        y: timings.out,
+        opacity: timings.out,
+        blur: timings.out,
+      },
       () => {
         if (this.leaving.get(pending.id) !== out) return;
         this.leaving.delete(pending.id);
@@ -358,7 +377,12 @@ class ContentSwap {
     values.y.jump(from.y);
     values.opacity.jump(from.opacity);
     values.blur.jump(from.blur);
-    this.run(this.current, REST, transition);
+    this.run(this.current, REST, {
+      x: timings.move,
+      y: timings.move,
+      opacity: timings.in,
+      blur: timings.in,
+    });
 
     this.start();
   }
@@ -381,11 +405,11 @@ class ContentSwap {
   private run(
     layer: SwapLayer,
     to: SwapTarget,
-    transition: Transition,
+    transitions: Record<keyof SwapTarget, Transition>,
     done?: () => void,
   ) {
     layer.controls = (['x', 'y', 'opacity', 'blur'] as const).map((key) =>
-      animate(layer.values[key], to[key], transition),
+      animate(layer.values[key], to[key], transitions[key]),
     );
     if (done) layer.controls[2]!.finished.then(done, () => {});
   }
@@ -723,9 +747,9 @@ function TooltipOverlay() {
 
   // The popup's own scale (its entrance and exit), apart from its layout's.
   const popupScale = useMotionValue(1);
-  const swapTransition = useTempoTransition(
-    motionTokens.transition.tooltipSwap,
-  );
+  const swapOut = useTempoTransition(SWAP_TIMINGS.out);
+  const swapMove = useTempoTransition(SWAP_TIMINGS.move);
+  const swapIn = useTempoTransition(SWAP_TIMINGS.in);
   const [swap] = React.useState(() => new ContentSwap());
 
   const side = rendered.data?.side ?? 'top';
@@ -811,7 +835,7 @@ function TooltipOverlay() {
     swap.configure({
       anchor: [origin.originX, origin.originY],
       popupScale: () => popupScale.get(),
-      timing: () => swapTransition,
+      timing: () => ({ out: swapOut, move: swapMove, in: swapIn }),
     });
   });
 

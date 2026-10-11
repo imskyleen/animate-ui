@@ -9,10 +9,10 @@ const CONTENT = '[data-slot="tooltip-content"]';
 // Animate UI's own Tooltip: a touch calmer than the library tooltips' 400/29.
 const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
-/** `shift.tooltip`, `blur.tooltip` (px) and `transition.tooltipSwap` (s). */
-const SHIFT = 8;
+/** `shift.tooltip`, `blur.tooltip` (px) and the incoming fade, `transition.handoffIn` (s). */
+const SHIFT = 10;
 const BLUR = 4;
-const SWAP = 0.25;
+const SWAP = 0.26;
 
 type Layer = {
   text: string;
@@ -391,7 +391,7 @@ test.describe('animate-ui tooltip', () => {
           swapping[i - 1]!.layer.opacity - 0.01,
         );
       }
-      // On `transition.tooltipSwap` (0.25s): the copy is gone and the next one
+      // On the hand-off timings (0.22s out, 0.26s in): the copy is gone and the next one
       // rests (its styles dropped) shortly after.
       const gone = swapping.find((f) => f.copies.length === 0)!;
       expect(gone.t - first.t).toBeGreaterThan(SWAP * 1000 * 0.7);
