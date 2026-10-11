@@ -315,4 +315,87 @@ test.describe('animate-ui tabs keyboard', () => {
       (await beta.getAttribute('id'))!,
     );
   });
+
+  /** `id`'s height on every frame it's shown, for `ms` from the first. */
+  const shownHeights = (page: Page, id: string, ms = 600) =>
+    page.getByTestId(id).evaluate(
+      (el, ms) =>
+        new Promise<number[]>((resolve) => {
+          const out: number[] = [];
+          let start = 0;
+          const tick = (now: number) => {
+            if (el.getClientRects().length > 0) {
+              start ||= now;
+              out.push(el.getBoundingClientRect().height);
+            }
+            if (!start || now - start < ms) requestAnimationFrame(tick);
+            else resolve(out);
+          };
+          requestAnimationFrame(tick);
+        }),
+      ms,
+    );
+
+  test('mounted hidden, its contents show at the active panel height, without growing', async ({
+    page,
+  }) => {
+    await page.goto('/tests/fixtures/animate-ui-tabs-hidden', {
+      waitUntil: 'networkidle',
+    });
+    const tallest = shownHeights(page, 'tallest');
+    const shorter = shownHeights(page, 'shorter');
+    await page.getByRole('button', { name: 'Show' }).click();
+    // Not grown from 0...
+    for (const height of await tallest) expect(height).toBeCloseTo(120, 0);
+    // ...nor at the row's tallest panel (120px) while its own is 40px.
+    for (const height of await shorter) expect(height).toBeCloseTo(40, 0);
+  });
+
+  test('an active panel empty at first leaves no gap, then shows its content', async ({
+    page,
+  }) => {
+    await page.goto('/tests/fixtures/animate-ui-tabs-hidden', {
+      waitUntil: 'networkidle',
+    });
+    const contents = page.getByTestId('empty');
+    expect((await contents.boundingBox())!.height).toBeCloseTo(0, 0);
+    const frames = shownHeights(page, 'empty');
+    await page.getByRole('button', { name: 'Load' }).click();
+    // Never the other panel's 120px.
+    for (const height of await frames) expect(height).toBeLessThan(41);
+    await expect
+      .poll(async () => (await contents.boundingBox())!.height)
+      .toBeCloseTo(40, 0);
+  });
+
+  test('without defaultValue, the server renders the first panel at its height', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/tests/fixtures/animate-ui-tabs-hidden');
+    expect(
+      (await page.getByTestId('no-default').boundingBox())!.height,
+    ).toBeCloseTo(40, 0);
+    await context.close();
+  });
+
+  test('switching away from a panel left empty glides the height', async ({
+    page,
+  }) => {
+    await page.goto('/tests/fixtures/animate-ui-tabs-hidden', {
+      waitUntil: 'networkidle',
+    });
+    await page.waitForTimeout(300);
+    const frames = shownHeights(page, 'empty', 900);
+    await page
+      .getByTestId('empty')
+      .locator('xpath=..')
+      .getByRole('tab', { name: 'Two' })
+      .click();
+    const heights = await frames;
+    const steps = heights.slice(1).map((h, i) => Math.abs(h - heights[i]!));
+    expect(Math.max(...steps)).toBeLessThan(60);
+    expect(heights.at(-1)!).toBeCloseTo(120, 0);
+  });
 });

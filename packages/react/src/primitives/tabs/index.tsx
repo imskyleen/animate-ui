@@ -387,7 +387,46 @@ function TabsContents({
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const itemRefs = React.useRef<Array<HTMLDivElement | null>>([]);
-  const [height, setHeight] = React.useState(0);
+  // Without defaultValue, Tabs selects the first trigger once mounted: until
+  // then (on the server too), the first panel is the one shown.
+  const shownIndex = activeValue === undefined ? 0 : activeIndex;
+  // Null until the active panel is measured on screen: the container keeps
+  // its natural height meanwhile (mounted hidden, it can't be measured: 0).
+  // The first height is applied at once, so the container doesn't grow from
+  // 0; the next ones animate. `index`: the panel it was first measured on.
+  const [heightState, setHeightState] = React.useState<{
+    value: number;
+    animate: boolean;
+    index: number;
+  } | null>(null);
+  const setHeight = React.useCallback(
+    (value: number, index: number, glide = false) => {
+      setHeightState((previous) =>
+        previous?.value === value
+          ? previous
+          : {
+              value,
+              // A pinned 0 (an empty panel on screen) isn't a first height:
+              // content arriving in it shows at once, a switch away glides.
+              animate: previous !== null && (glide || previous.value > 0),
+              index: previous?.index ?? index,
+            },
+      );
+      // Once that first height is on screen (Motion applies it on the next
+      // frame), the inactive panels unfold and the next heights animate.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          setHeightState((previous) =>
+            previous && !previous.animate && previous.value > 0
+              ? { ...previous, animate: true }
+              : previous,
+          ),
+        ),
+      );
+    },
+    [],
+  );
+
   const roRef = React.useRef<ResizeObserver | null>(null);
 
   const measure = React.useCallback((index: number) => {
@@ -425,11 +464,14 @@ function TabsContents({
     const container = containerRef.current;
     if (!pane || !container) return;
 
-    setHeight(measure(activeIndex));
+    // A switch glides (on mount, the layout effect set this height).
+    const first = measure(activeIndex);
+    if (first > 0) setHeight(first, activeIndex, true);
 
     const ro = new ResizeObserver(() => {
       const next = measure(activeIndex);
-      requestAnimationFrame(() => setHeight(next));
+      // Hidden (display: none) measures 0: keep the last height.
+      if (next > 0) requestAnimationFrame(() => setHeight(next, activeIndex));
     });
 
     ro.observe(pane);
@@ -440,14 +482,18 @@ function TabsContents({
       ro.disconnect();
       roRef.current = null;
     };
-  }, [activeIndex, childrenArray.length, measure]);
+  }, [activeIndex, childrenArray.length, measure, setHeight]);
 
   React.useLayoutEffect(() => {
-    if (height === 0 && activeIndex >= 0) {
+    if (heightState === null && activeIndex >= 0) {
       const next = measure(activeIndex);
-      if (next !== 0) setHeight(next);
+      if (next > 0) setHeight(next, activeIndex);
+      // On screen (not display: none), an empty panel is 0 high: pinned, so
+      // switching away from it glides from 0 instead of 'auto' jumping.
+      else if (containerRef.current?.getClientRects().length)
+        setHeightState({ value: 0, animate: false, index: activeIndex });
     }
-  }, [activeIndex, height, measure]);
+  }, [activeIndex, heightState, measure, setHeight]);
 
   return (
     <motion.div
@@ -458,8 +504,8 @@ function TabsContents({
         else if (ref) ref.current = node;
       }}
       data-slot="tabs-contents"
-      animate={{ height }}
-      transition={transition}
+      animate={{ height: heightState?.value ?? 'auto' }}
+      transition={heightState?.animate ? transition : INSTANT}
       {...props}
       style={{ ...style, overflow: 'hidden' }}
     >
@@ -479,6 +525,16 @@ function TabsContents({
               flexShrink: 0,
               paddingInline: 8,
               height: '100%',
+              // Until its first height is on screen, the container's natural
+              // height is the shown panel's (rendered on the server, mounted
+              // hidden, empty at first), not the row's tallest. The panel it
+              // was first measured on never folds (switched from at once, it
+              // would blank as it slides out).
+              ...(!heightState?.animate &&
+              index !== shownIndex &&
+              index !== heightState?.index
+                ? { maxHeight: 0, overflow: 'hidden' }
+                : null),
             }}
           >
             {child}
