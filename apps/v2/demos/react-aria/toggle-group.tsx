@@ -12,8 +12,7 @@ import {
 
 import { toggleVariants } from "@/components/ui/react-aria/toggle"
 import { TextBoldIcon, TextItalicIcon, TextUnderlineIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { useAnimate, useReducedMotion } from "motion/react"
+import { HugeiconsIcon } from "@hugeicons/react"
 
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
@@ -87,6 +86,8 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
+        // Hovered lighter than selected, so the two read apart.
+        "hover:bg-muted/50 aria-pressed:hover:bg-muted aria-checked:hover:bg-muted data-[state=on]:hover:bg-muted data-selected:hover:bg-muted",
         className
       )}
       {...props}
@@ -115,62 +116,6 @@ export const controls = {
       options: { horizontal: "horizontal", vertical: "vertical" },
     },
   },
-}
-
-// The icons answer their item turning on: bold pops, italic tilts and
-// settles, underline draws its line from left to right; turned off, they
-// give a little. Nothing moves on mount, nor under reduced motion.
-function ToggleIcon({
-  icon,
-  on,
-  motion,
-}: {
-  icon: IconSvgElement
-  on: boolean
-  motion: "pop" | "tilt" | "draw"
-}) {
-  const [scopeRef, animate] = useAnimate<HTMLSpanElement>()
-  const reduce = useReducedMotion()
-  const wasOnRef = React.useRef(on)
-
-  React.useEffect(() => {
-    if (wasOnRef.current === on) return
-    wasOnRef.current = on
-    if (reduce) return
-    if (!on)
-      animate(
-        scopeRef.current,
-        { scale: [1, 0.9, 1] },
-        { duration: 0.35, times: [0, 0.4, 1], ease: ["easeOut", [0.34, 1.56, 0.64, 1]] }
-      )
-    else if (motion === "pop")
-      animate(
-        scopeRef.current,
-        { scale: [1, 1.2, 1] },
-        { duration: 0.35, times: [0, 0.4, 1], ease: ["easeOut", [0.34, 1.56, 0.64, 1]] }
-      )
-    else if (motion === "tilt")
-      animate(
-        scopeRef.current,
-        { rotate: [0, -14, 0] },
-        { duration: 0.4, times: [0, 0.35, 1], ease: ["easeOut", [0.34, 1.56, 0.64, 1]] }
-      )
-    // The underline only: the icon's last stroke, drawn from its start
-    // (shown once it has some length, its dash pattern never repeating: a
-    // round cap would leave a dot).
-    else
-      animate(
-        "path:last-of-type",
-        { pathLength: [0, 1], pathSpacing: 2, opacity: [0, 1] },
-        { duration: 0.35, ease: [0, 0, 0.58, 1], opacity: { duration: 0.05 } }
-      )
-  }, [on, reduce, motion, animate, scopeRef])
-
-  return (
-    <span ref={scopeRef} className="inline-flex">
-      <HugeiconsIcon icon={icon} strokeWidth={2} />
-    </span>
-  )
 }
 
 export default function ToggleGroupDemo({
@@ -202,13 +147,13 @@ export default function ToggleGroupDemo({
       onSelectionChange={(keys) => setValue([...keys].map(String))}
     >
       <ToggleGroupItem id="bold" aria-label="Toggle bold">
-        <ToggleIcon icon={TextBoldIcon} on={value.includes("bold")} motion="pop" />
+        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
       </ToggleGroupItem>
       <ToggleGroupItem id="italic" aria-label="Toggle italic">
-        <ToggleIcon icon={TextItalicIcon} on={value.includes("italic")} motion="tilt" />
+        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
       </ToggleGroupItem>
       <ToggleGroupItem id="strikethrough" aria-label="Toggle strikethrough">
-        <ToggleIcon icon={TextUnderlineIcon} on={value.includes("strikethrough")} motion="draw" />
+        <HugeiconsIcon icon={TextUnderlineIcon} strokeWidth={2} />
       </ToggleGroupItem>
     </ToggleGroup>
   )

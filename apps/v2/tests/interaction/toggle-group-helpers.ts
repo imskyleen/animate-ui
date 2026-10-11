@@ -586,89 +586,55 @@ export function describeToggleGroup(lib: Lib) {
       expect(held).toBe(1);
     });
 
-    /** Records an icon's scale, rotation and drawn underline per frame. */
-    const sampleIcon = async (page: Page, index: number) => {
-      await page
-        .locator(ITEM)
-        .nth(index)
-        .evaluate((item) => {
-          const icon = item.querySelector('span')!;
-          const out: { scale: number; rotate: number; drawn: number }[] = [];
-          (window as unknown as { __icon: typeof out }).__icon = out;
-          let n = 0;
-          const tick = () => {
-            const m = new DOMMatrix(getComputedStyle(icon).transform);
-            const line = icon.querySelector('path:last-of-type')!;
-            const dash = getComputedStyle(line).strokeDasharray;
-            out.push({
-              scale: Math.hypot(m.a, m.b),
-              rotate: (Math.atan2(m.b, m.a) * 180) / Math.PI,
-              drawn: dash === 'none' ? 1 : parseFloat(dash),
-            });
-            if (++n < 40) requestAnimationFrame(tick);
-          };
-          tick();
-        });
-      return async () => {
-        await page.waitForTimeout(700);
-        return page.evaluate(
-          () =>
-            (
-              window as unknown as {
-                __icon: { scale: number; rotate: number; drawn: number }[];
-              }
-            ).__icon,
-        );
+    test('hovering reads lighter than selected', async ({ page }) => {
+      // The demo's items: hovered bg-muted/50, selected bg-muted (the user
+      // asked them apart), so the hover highlight is fainter than a
+      // selected surface, and a selected item hovered keeps its own.
+      const group = page.locator(GROUP).first();
+      await toggle(group, 0);
+      await settle(page);
+      const alphaOf = (color: string) => {
+        const slash = color.match(/\/\s*([\d.]+)\s*\)/);
+        const rgba = color.match(/^rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+)\)/);
+        return slash ? Number(slash[1]) : rgba ? Number(rgba[1]) : 1;
       };
-    };
+      const colors = () =>
+        group.evaluate((root) =>
+          Array.from(
+            root.shadowRoot!.querySelectorAll<HTMLElement>('[data-slot]'),
+          )
+            .filter(
+              (el) =>
+                el.style.visibility !== 'hidden' &&
+                el.style.width !== '' &&
+                Number(el.style.opacity || 1) > 0.99,
+            )
+            .map((el) => ({
+              slot: el.dataset.slot!,
+              color: getComputedStyle(el).backgroundColor,
+            })),
+        );
+      const item = page.locator(ITEM).nth(1);
+      const box = (await item.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.waitForTimeout(500);
+      const lit = await colors();
+      const selected = lit.find((s) => s.slot === 'toggle-group-selection');
+      const hovered = lit.find((s) => s.slot === 'toggle-group-highlight');
+      expect(selected).toBeDefined();
+      expect(hovered).toBeDefined();
+      expect(alphaOf(hovered!.color)).toBeLessThan(alphaOf(selected!.color));
 
-    test('icons answer their item turning on, and give a little turning off', async ({
-      page,
-    }) => {
-      const items = page.locator(ITEM);
-      // Bold pops.
-      await items.nth(0).focus();
-      let frames = await sampleIcon(page, 0);
-      await page.keyboard.press('Space');
-      let run = await frames();
-      expect(Math.max(...run.map((f) => f.scale))).toBeGreaterThan(1.12);
-      expect(run.at(-1)!.scale).toBeCloseTo(1, 2);
-      // Italic tilts, then settles.
-      await items.nth(1).focus();
-      frames = await sampleIcon(page, 1);
-      await page.keyboard.press('Space');
-      run = await frames();
-      expect(Math.min(...run.map((f) => f.rotate))).toBeLessThan(-8);
-      expect(run.at(-1)!.rotate).toBeCloseTo(0, 1);
-      // Underline draws its line from nothing.
-      await items.nth(2).focus();
-      frames = await sampleIcon(page, 2);
-      await page.keyboard.press('Space');
-      run = await frames();
-      expect(run.some((f) => f.drawn > 0.05 && f.drawn < 0.95)).toBe(true);
-      expect(run.at(-1)!.drawn).toBeCloseTo(1, 2);
-      // Turned off: a small give.
-      frames = await sampleIcon(page, 0);
-      await items.nth(0).focus();
-      await page.keyboard.press('Space');
-      run = await frames();
-      expect(Math.min(...run.map((f) => f.scale))).toBeLessThan(0.95);
-      expect(run.at(-1)!.scale).toBeCloseTo(1, 2);
-    });
-
-    test('icons: nothing on mount, nothing under reduced motion', async ({
-      page,
-    }) => {
-      let frames = await sampleIcon(page, 0);
-      let run = await frames();
-      for (const f of run) expect(f.scale).toBe(1);
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.reload({ waitUntil: 'networkidle' });
-      await page.locator(ITEM).nth(0).focus();
-      frames = await sampleIcon(page, 0);
-      await page.keyboard.press('Space');
-      run = await frames();
-      for (const f of run) expect(f.scale).toBe(1);
+      // The selected item hovered: its own surface, no highlight over it.
+      const first = (await page.locator(ITEM).nth(0).boundingBox())!;
+      await page.mouse.move(
+        first.x + first.width / 2,
+        first.y + first.height / 2,
+      );
+      await page.waitForTimeout(600);
+      expect(
+        (await colors()).some((s) => s.slot === 'toggle-group-highlight'),
+      ).toBe(false);
     });
   });
 }
