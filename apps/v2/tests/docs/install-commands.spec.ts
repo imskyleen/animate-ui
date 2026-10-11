@@ -105,3 +105,45 @@ for (const url of [
     await manual.click();
     await expect(manual).toHaveAttribute('data-state', 'active');
   });
+
+// Switching CLI and Manual glides the panel's height: what's below it moves
+// with the glide, without jumping as it starts or ends (a trailing margin
+// trapped inside the gliding steps made it jump ~20px at both ends).
+for (const url of [
+  '/docs/primitives/radix-ui/accordion',
+  '/docs/primitives/base-ui/accordion',
+])
+  test(`${url}: switching CLI and Manual moves what's below without a jump`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1400, height: 1000 });
+    await page.goto(url, { waitUntil: 'networkidle' });
+    const tabs = page.locator('[data-slot="install-tabs"]').first();
+    await tabs.scrollIntoViewIfNeeded();
+    for (const tab of ['Manual', 'CLI']) {
+      // The top of what follows the install tabs, on every frame.
+      const frames = tabs.evaluate(
+        (el) =>
+          new Promise<number[]>((resolve) => {
+            const next = el.nextElementSibling ?? el.parentElement!;
+            const out: number[] = [];
+            const start = performance.now();
+            const tick = (now: number) => {
+              out.push(next.getBoundingClientRect().top);
+              if (now - start < 1100) requestAnimationFrame(tick);
+              else resolve(out);
+            };
+            requestAnimationFrame(tick);
+          }),
+      );
+      await tabs.getByRole('tab', { name: tab }).click();
+      const tops = await frames;
+      const steps = tops
+        .slice(1)
+        .map((top, i) => top - tops[i]!)
+        .filter((step) => Math.abs(step) > 0.05);
+      expect(steps.length, tab).toBeGreaterThan(3);
+      expect(Math.abs(steps[0]!), tab).toBeLessThan(5);
+      expect(Math.abs(steps.at(-1)!), tab).toBeLessThan(5);
+    }
+  });

@@ -509,13 +509,16 @@ type PanelStage = {
   current: object | null;
   /** A panel has been shown: the next ones come in (not the first). */
   shown: boolean;
-  /** Where the next panel's height starts: the last one's, as it went. */
-  height: number | undefined;
+  /**
+   * Where the next panel's height starts: the last one's, as it went, and
+   * the margin it left below it.
+   */
+  height: Extent | undefined;
   /**
    * The last panel's frame as it went, when only its content faded out: the
    * next panel's frame takes over from it, at its height.
    */
-  frame: { look: string; height: number } | null;
+  frame: { look: string; extent: Extent } | null;
   /** The panel shown last: where the next one comes from. */
   last: HTMLElement | null;
   /** The panels, and which is selected: the one coming in. */
@@ -636,6 +639,8 @@ type PanelAnimations = {
   hold?: Animation;
   /** Its height gliding: the panel's, or its frame's. */
   height?: Animation;
+  /** Watches the gliding element's content, to follow it. */
+  follow?: { disconnect(): void };
 };
 
 const panelAnimations = new WeakMap<Element, PanelAnimations>();
@@ -655,6 +660,7 @@ function cancelAll(panel: Element) {
   for (const fade of animations.fades.values()) fade.cancel();
   animations.hold?.cancel();
   animations.height?.cancel();
+  animations.follow?.disconnect();
   panelAnimations.delete(panel);
 }
 
@@ -748,6 +754,8 @@ type PanelTimings = {
   in: CssTiming;
   out: CssTiming;
   height: CssTiming;
+  /** The height following its content when it changes on the way. */
+  follow: Transition;
   /** Off under reduced motion: fades only. */
   blur: boolean;
   /** Off under reduced motion. */
@@ -848,26 +856,90 @@ function fadeOut(
   );
 }
 
+/** Two vertical margins, collapsed into one (CSS). */
+const collapse = (a: number, b: number) =>
+  Math.max(a, b, 0) + Math.min(a, b, 0);
+
+/**
+ * The margin `element` leaves below it: its own, collapsed with a last
+ * child's that escapes through its bottom (no bottom padding or border).
+ * Gliding, min/max-height keep that child's margin inside it (CSS collapses
+ * through a box's bottom only while its height is its content's), where it
+ * would be clipped and everything below would jump by it as the glide starts
+ * and again as it ends: the glide carries it as the element's own margin.
+ * Measured by blocking the collapse (1px of bottom padding, never painted).
+ */
+function marginBelow(element: HTMLElement) {
+  const style = getComputedStyle(element);
+  const own = parseFloat(style.marginBottom) || 0;
+  if (
+    parseFloat(style.paddingBottom) > 0 ||
+    parseFloat(style.borderBottomWidth) > 0
+  )
+    return own;
+  // The probe goes in and out without a trace: the element's own inline
+  // style is put back as it was (custom properties, priorities), and no
+  // transition sees the padding change (it'd fire, and hold the old padding).
+  const inline = element.getAttribute('style');
+  const height = element.getBoundingClientRect().height;
+  element.style.setProperty('transition', 'none', 'important');
+  element.style.setProperty('padding-bottom', '1px', 'important');
+  const one = element.getBoundingClientRect().height;
+  element.style.setProperty('padding-bottom', '2px', 'important');
+  const two = element.getBoundingClientRect().height;
+  // Back, still without transitions, settled before they come back.
+  element.style.removeProperty('padding-bottom');
+  void getComputedStyle(element).paddingBottom;
+  if (inline === null) element.removeAttribute('style');
+  else element.setAttribute('style', inline);
+  // A box whose height doesn't follow its content (set, or held) lets
+  // nothing escape through its bottom.
+  if (Math.abs(two - one - 1) > 0.25) return own;
+  return collapse(own, one - 1 - height);
+}
+
+/** A box's height, and the margin it leaves below it (`marginBelow`). */
+type Extent = { height: number; margin: number };
+
+/** `element`'s extent now (a glide running included). */
+const extentOf = (element: HTMLElement): Extent => ({
+  height: element.offsetHeight,
+  margin: marginBelow(element),
+});
+
 /**
  * Glides `target`'s height (the panel's, or its frame's) from `from` (the
  * previous one's) to its own, holding it between min-height and max-height
  * (`height` alone loses to a flex basis: shadcn's panels are `flex-1`), and
  * clipping what's inside it on the way, vertically only (a frame's own border
  * and corners stay drawn, and what overflows it sideways, a step's badge on
- * its rail, a focus ring, stays seen). One that clips already is left so.
+ * its rail, a focus ring, stays seen). One that clips already is left so. The
+ * margin it leaves below glides along (`marginBelow`).
+ *
+ * Its own height is read as it starts, but its content can still change on
+ * the way (a nested animation settling, content loaded late or added): while
+ * it settles (its glide, then one follow), it follows, from where it is and
+ * at the speed it has, to the new height on `follow` (`spring.morph`: never
+ * past it), rather than ending on a stale height and jumping to the real one.
+ * Content that keeps resizing past that isn't chased: the glide ends and the
+ * panel takes its content's height again.
  */
 function glideHeight(
   panel: HTMLElement,
   target: HTMLElement,
-  from: number,
+  from: Extent,
   timing: CssTiming,
+  follow: Transition,
 ) {
   const animations = animationsOf(panel);
   animations.height?.cancel();
   animations.height = undefined;
-  const to = target.offsetHeight;
-  if (!(to > 0) || Math.abs(from - to) <= 0.5) return;
+  animations.follow?.disconnect();
+  animations.follow = undefined;
+  const to = extentOf(target);
+  if (!(to.height > 0)) return;
   const style = getComputedStyle(target);
+  const own = parseFloat(style.marginBottom) || 0;
   const inset =
     style.boxSizing === 'border-box'
       ? 0
@@ -875,16 +947,117 @@ function glideHeight(
         parseFloat(style.paddingBottom) +
         parseFloat(style.borderTopWidth) +
         parseFloat(style.borderBottomWidth);
-  const start = `${from - inset}px`;
-  const end = `${to - inset}px`;
   const clip =
     style.overflowY === 'visible' ? { overflowY: ['clip', 'clip'] } : {};
-  animations.height = startNow(
-    target.animate(
-      { minHeight: [start, end], maxHeight: [start, end], ...clip },
-      { ...timing, fill: 'backwards' },
-    ),
+  const run = (start: Extent, end: Extent, options: CssTiming) => {
+    const sizes = [`${start.height - inset}px`, `${end.height - inset}px`];
+    // Only when a margin escapes it (shadcn's flex panels and Cards: none).
+    const margin =
+      Math.abs(start.margin - own) > 0.5 || Math.abs(end.margin - own) > 0.5
+        ? { marginBottom: [`${start.margin}px`, `${end.margin}px`] }
+        : {};
+    const animation = startNow(
+      target.animate(
+        { minHeight: sizes, maxHeight: sizes, ...margin, ...clip },
+        { ...options, fill: 'backwards' },
+      ),
+    );
+    animations.height = animation;
+    return animation;
+  };
+  const same = (a: Extent, b: Extent) =>
+    Math.abs(a.height - b.height) <= 0.5 &&
+    Math.abs(a.margin - b.margin) <= 0.5;
+  // Where it's headed (or rests, once there).
+  let end = to;
+  // Already its height: nothing to glide, but still followed.
+  let glide: Animation | null = same(from, to) ? null : run(from, to, timing);
+  // When a follow last started at rest (the panel at its content's height).
+  let rested = -Infinity;
+
+  // Its content changed while the switch settles: from where the glide is
+  // and at the speed it goes (or from its last height, at rest), to its
+  // extent now (the glide cancelled and started again in the same task:
+  // never painted).
+  const check = () => {
+    if (animations.height !== (glide ?? undefined)) return watch.disconnect();
+    let now = end;
+    let velocity = 0;
+    let elapsed = 0;
+    const running = !!glide && glide.playState !== 'finished';
+    if (glide && running) {
+      elapsed = Number(glide.currentTime ?? 0);
+      now = {
+        height: target.offsetHeight,
+        margin: parseFloat(getComputedStyle(target).marginBottom) || 0,
+      };
+      const step = Math.min(elapsed, 8);
+      glide.currentTime = elapsed - step;
+      velocity = step > 0 ? (now.height - target.offsetHeight) / step : 0;
+      glide.cancel();
+    }
+    const natural = extentOf(target);
+    if (same(natural, end)) {
+      // The same after all: the same glide, from where it was.
+      if (glide && running) {
+        glide.play();
+        glide.currentTime = elapsed;
+      }
+      return;
+    }
+    // At rest, content resizing again within a few frames animates its own
+    // height (an accordion opening, a CSS transition, a list entering):
+    // chased, the panel would lag behind it and clip it. It's let go (its
+    // glide cancelled above): the panel takes its content's height, as once
+    // the switch has settled. Content arriving in one go still glides.
+    const time = performance.now();
+    if (time - rested < 50) {
+      animations.height = undefined;
+      return watch.disconnect();
+    }
+    if (!running) rested = time;
+    end = natural;
+    const curve = curveFrom(follow, [now.height - natural.height], [velocity]);
+    glide = run(now, natural, {
+      duration: curve.duration,
+      easing: curve.easing,
+    });
+  };
+  // A ResizeObserver sees the children it watches resize; content added as
+  // a new child, as text, or inside an inline child (always 0 by 0 to it)
+  // shows up as a mutation.
+  // Its first report is checked too: content its own ResizeObserver sizes in
+  // the frame the panel shows (a chart, a canvas) is only reported here, and
+  // `check` measures the content itself: nothing happens when nothing
+  // changed.
+  const resize = new ResizeObserver(check);
+  const mutation = new MutationObserver((records) => {
+    for (const record of records)
+      if (record.target === target)
+        for (const node of record.addedNodes)
+          if (node instanceof Element) resize.observe(node);
+    check();
+  });
+  for (const child of target.children) resize.observe(child);
+  mutation.observe(target, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
+  // Followed while the switch settles (its glide, then one follow): content
+  // that keeps resizing isn't chased, clipped, for as long as it shows.
+  const timer = setTimeout(
+    () => watch.disconnect(),
+    timing.duration + toCssTiming(follow).duration,
   );
+  const watch = {
+    disconnect() {
+      clearTimeout(timer);
+      resize.disconnect();
+      mutation.disconnect();
+    },
+  };
+  animations.follow = watch;
 }
 
 /** The panel coming in (selected), other than `token`'s. */
@@ -971,10 +1144,12 @@ function usePanelMotion(
       motionTokens.transition.panelHeight,
   );
   const quickFade = useTempoTransition(motionTokens.transition.fade);
+  const follow = useTempoTransition(motionTokens.spring.morph);
   const timings: PanelTimings = {
     in: toCssTiming(reduce ? quickFade : enter),
     out: toCssTiming(leave),
     height: toCssTiming(height),
+    follow,
     blur: !reduce,
     glide: !reduce,
     shift: !reduce,
@@ -1047,9 +1222,16 @@ function usePanelMotion(
       left && candidate && lookOf(candidate) === left.look ? candidate : null;
     fadeIn(element, targetsOf(element, frame), frame, timings, { way });
     if (!timings.glide) return;
-    if (frame && left) glideHeight(element, frame, left.height, timings.height);
+    if (frame && left)
+      glideHeight(element, frame, left.extent, timings.height, timings.follow);
     else if (stage.height !== undefined)
-      glideHeight(element, element, stage.height, timings.height);
+      glideHeight(
+        element,
+        element,
+        stage.height,
+        timings.height,
+        timings.follow,
+      );
   }, [selected, waiting, token]);
 
   // Leaving: fades out in the page, then frees the stage.
@@ -1109,9 +1291,9 @@ function usePanelMotion(
         // Its height as it goes (gliding still, maybe): the next one's starts
         // there, and its frame's, when only its content faded.
         const frame = panelAnimations.get(element)?.frame ?? null;
-        stage.height = element.offsetHeight;
+        stage.height = extentOf(element);
         stage.frame = frame
-          ? { look: lookOf(frame), height: frame.offsetHeight }
+          ? { look: lookOf(frame), extent: extentOf(frame) }
           : null;
         // Hidden (or unmounted) in the same commit as the next one shows,
         // before the frame is painted.
