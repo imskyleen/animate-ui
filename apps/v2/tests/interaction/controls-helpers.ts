@@ -1021,10 +1021,10 @@ export function describeSwitchDemo(lib: Lib) {
 
 const TOGGLE = '[data-slot="toggle"]';
 
-/** Every pressable control: 0.95 while pressed, no hover scale. */
+/** Every pressable control: 0.97 while pressed, no hover scale. */
 function expectPressOnly(scales: Awaited<ReturnType<typeof pressScale>>) {
   expect(scales.hovered).toBe(1);
-  expect(scales.held).toBeCloseTo(0.95, 2);
+  expect(scales.held).toBeCloseTo(0.97, 2);
   expect(scales.released).toBeCloseTo(1, 2);
   expect(scales.left).toBeCloseTo(1, 2);
 }
@@ -1052,10 +1052,10 @@ export function describeToggleDemo(lib: Lib) {
       await page.waitForTimeout(500);
       const held = await readSamples(page);
       await page.mouse.up();
-      // On its way, then at 0.95 (Motion's scale spring, stiffness 550,
+      // On its way, then at 0.97 (Motion's scale spring, stiffness 550,
       // damping 30), within ~200ms.
-      expect(held.some((s) => s.scale < 0.995 && s.scale > 0.955)).toBe(true);
-      const reached = held.find((s) => s.scale < 0.952);
+      expect(held.some((s) => s.scale < 0.995 && s.scale > 0.975)).toBe(true);
+      const reached = held.find((s) => s.scale < 0.972);
       expect(reached).toBeDefined();
       expect(reached!.t - held.find((s) => s.scale < 0.999)!.t).toBeLessThan(
         250,

@@ -1,0 +1,132 @@
+---
+title: Copy Button
+description: A button that copies text to the clipboard, its icon swapping for a check.
+---
+
+<ComponentPreview name="animate-ui/copy-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  CopyButton,
+  CopyButtonIcon,
+} from '@animate-ui/react/primitives/buttons/copy';
+
+export function CopyCommand() {
+  return (
+    <CopyButton content="npx animate-ui init" aria-label="Copy">
+      <CopyButtonIcon icon={<CopyIcon />} copiedIcon={<CheckIcon />} />
+    </CopyButton>
+  );
+}
+```
+
+A click writes `content` to the clipboard (`navigator.clipboard.writeText`). Once it's written, the button is copied (`data-copied`) for `delay` milliseconds, then goes back. Copying again restarts the delay. Read the state in your own parts with `useCopyButton()`.
+
+## Animation
+
+- Once copied, the copy icon shrinks to half its size into a light blur (`blur(2px)`) as it fades out, while the check grows out of the same blur in its place, over 0.15s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`). It swaps back the same way after `delay`. Nothing animates on mount.
+- Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
+- `<AnimateUIProvider tempo>` paces the swap and the press spring (not `delay`).
+- Under reduced motion, the icons crossfade without scaling or blurring, and the button doesn't scale.
+
+## API Reference
+
+### CopyButton
+
+<TypeTable
+  type={{
+    content: {
+      description: 'The text written to the clipboard on click.',
+      type: 'string',
+      required: true,
+    },
+    copied: {
+      description:
+        'Whether the content was just copied (controlled). While it is `true`, clicks copy nothing.',
+      type: 'boolean',
+    },
+    defaultCopied: {
+      description: 'Whether the content was just copied, initially.',
+      type: 'boolean',
+      default: 'false',
+    },
+    onCopiedChange: {
+      description:
+        'Called with `true` and the content once it is copied, and with `false` once `delay` has passed.',
+      type: '(copied: boolean, content?: string) => void',
+    },
+    delay: {
+      description: 'Time the button stays copied, in milliseconds.',
+      type: 'number',
+      default: '3000',
+    },
+    hoverScale: {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    transition: {
+      description: 'Transition of the tap (and hover) scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+    asChild: {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### CopyButtonIcon
+
+<TypeTable
+  type={{
+    icon: {
+      description: 'The icon shown until the content is copied.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    copiedIcon: {
+      description: 'The icon shown once the content is copied.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    transition: {
+      description: 'Transition of the swap.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
+    },
+    '...props': {
+      description: 'Props of the span holding the icons.',
+      type: "React.ComponentProps<'span'>",
+    },
+  }}
+/>
+
+### Data attributes
+
+<TypeTable
+  type={{
+    'data-copied': {
+      description: 'On the button while the content is copied.',
+      type: 'present',
+    },
+  }}
+/>

@@ -94,7 +94,7 @@ test.describe('animate-ui flip button', () => {
     await page.mouse.down();
     await expect
       .poll(async () => (await sample(page, BUTTON)).scale)
-      .toBeCloseTo(0.95, 3);
+      .toBeCloseTo(0.97, 3);
     await page.mouse.up();
     await expect
       .poll(async () => (await sample(page, BUTTON)).scale)

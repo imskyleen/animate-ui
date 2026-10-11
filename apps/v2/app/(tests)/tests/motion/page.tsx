@@ -23,7 +23,7 @@ const GLOBAL_RULES = [
   "Ressorts d'abord : presque tout bouge sur un ressort (stiffness / damping). Les tweens sont réservés aux fondus, aux menus (fréquents), aux hauteurs des disclosures et à certains textes. Toutes les valeurs par rôle sont des tokens de @animate-ui/react/utils/motion (spring, transition, scale, blur, ease).",
   'Easing des tweens selon le rôle : entrée et sortie → ease-out fort, cubic-bezier(0.23, 1, 0.32, 1) (panneaux d’onglets) ; coche d’une checkbox qui se dessine → easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), comme la v1 ; grandes surfaces → ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) (accordéons et collapsibles qui se déplient, overlays des modales et des drawers, menus) ; mouvement à l’écran → ease-in-out (tracés, balayages, boucles des icônes) ; couleur → ease ; mouvement continu → linear. Jamais d’ease-in.',
   'La sortie rejoue la même transition que l’entrée, à l’envers (exitTransition = transition par défaut, comme en v1).',
-  'Ce qui se presse réagit à la pression seulement : 0,95 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
+  'Ce qui se presse réagit à la pression seulement : 0,97 sur un ressort 550/30. Rien ne grossit au survol (boutons, radio, toggles, Pinned List). La checkbox ne bouge pas : son fond et sa coche répondent au clic.',
   'Les éléments ancrés grandissent depuis leur déclencheur (origine = le déclencheur) et partent de plus loin quand ils sont petits : tooltips et toasts ancrés depuis 0,7, popovers et hover cards depuis 0,8 (ressort 400/29), menus, selects et navigation menus depuis 0,9 en 0,22s ease-out doux.',
   'Quand deux états se remplacent au même endroit (copier → coché, soleil → lune, panneaux d’onglets), un léger flou masque le chevauchement : 2px pour une icône, 4px pour un panneau. Le contenu d’une disclosure se dévoile depuis un flou de 2px.',
   'Un indicateur de sélection glisse sur 300/30 ; un surlignage qui suit le pointeur glisse sur 500/40, plus vif (tous deux un peu plus vifs que la v1 : 200/25 et 350/35).',
@@ -40,7 +40,7 @@ const FAMILIES: Family[] = [
     name: 'Pression',
     rule: 'Tout ce qui se presse réagit sous le doigt, et seulement là : rien ne grossit au survol.',
     values: [
-      'scale 0,95 à la pression (boutons, radio, toggles, Pinned List) ; pas la checkbox',
+      'scale 0,97 à la pression (boutons, radio, toggles, Pinned List) ; pas la checkbox',
       'ressort 550/30',
       'boutons : hoverScale reste disponible, 1 par défaut',
     ],
@@ -145,7 +145,7 @@ const FAMILIES: Family[] = [
     name: 'Changement d’état (flou)',
     rule: 'Quand deux états se remplacent au même endroit, un léger flou fait lire leur chevauchement comme une seule forme qui change.',
     values: [
-      'icônes : scale 0,5 + flou 2px + fondu, 0,2s ease-out (copier → coché, soleil → lune)',
+      'icônes : scale 0,5 + flou 2px + fondu, 0,15s ease-out (copier → coché, soleil → lune)',
       'panneaux d’onglets : depuis un flou de 4px',
       'Morphing Text : flou 10px',
     ],

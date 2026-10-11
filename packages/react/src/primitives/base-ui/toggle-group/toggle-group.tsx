@@ -11,7 +11,7 @@ import { useToggleGroupHighlight } from '../../../internal/controls/highlight';
 
 // Same API as Base UI's Toggle Group, animated like Animate UI v1's toggle
 // group: its items are Toggles (`@animate-ui/react/primitives/base-ui/toggle`,
-// pressed: 0.95) and, without `multiple`, the selected item's surface slides
+// pressed: 0.97) and, without `multiple`, the selected item's surface slides
 // to the next selected item (see ../../../internal/controls/highlight). Arrow
 // keys only move the focus.
 

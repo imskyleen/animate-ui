@@ -4,12 +4,12 @@ import { Button } from "@animate-ui/react/primitives/buttons/button"
 
 export const controls = {
   Button: {
-    tapScale: { value: 0.95, min: 0, max: 2, step: 0.05 },
+    tapScale: { value: 0.97, min: 0, max: 2, step: 0.01 },
   },
 }
 
 export default function ButtonDemo({
-  tapScale = 0.95,
+  tapScale = 0.97,
 }: {
   tapScale?: number
 }) {

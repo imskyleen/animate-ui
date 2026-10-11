@@ -13,7 +13,7 @@ import {
 } from '../../../internal/controls/highlight';
 
 // Same API as Radix's Toggle Group, animated like Animate UI v1's toggle
-// group: items scale to 0.95 while pressed and, with `type="single"`, the
+// group: items scale to 0.97 while pressed and, with `type="single"`, the
 // selected item's surface slides to the next selected item (see
 // ../../../internal/controls/highlight). Arrow keys only move the focus
 // (roving tabindex), which never animates.

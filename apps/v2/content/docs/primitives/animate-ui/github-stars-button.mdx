@@ -1,0 +1,95 @@
+---
+title: GitHub Stars Button
+description: A button showing a repository's GitHub stars, counted up with a filling star.
+---
+
+<ComponentPreview name="animate-ui/github-stars-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  GitHubStarsButton,
+  GitHubStarsButtonIcon,
+  GitHubStarsButtonLogo,
+  GitHubStarsButtonNumber,
+  GitHubStarsButtonParticles,
+} from '@animate-ui/react/primitives/buttons/github-stars';
+
+export function Stars() {
+  return (
+    <GitHubStarsButton username="imskyleen" repo="animate-ui" asChild>
+      <a href="https://github.com/imskyleen/animate-ui">
+        <GitHubStarsButtonLogo className="size-4" />
+        <GitHubStarsButtonNumber />
+        <GitHubStarsButtonParticles className="text-yellow-500">
+          <GitHubStarsButtonIcon icon={StarIcon} color="gold" />
+        </GitHubStarsButtonParticles>
+      </a>
+    </GitHubStarsButton>
+  );
+}
+```
+
+A button built on [GitHub Stars](/docs/primitives/animate-ui/github-stars): its parts are GitHub Stars' (`GithubStarsLogo`, `GithubStarsNumber`, `GithubStarsIcon`, `GithubStarsParticles`), exported here under the button's name. The count is fetched from the GitHub API (`api.github.com/repos/<username>/<repo>`), unauthenticated; pass it with `value` to skip the request.
+
+## Animation
+
+- Nothing is rendered until the count is loaded. Then the number counts up from 0 with rolling digits ([Sliding Number](/docs/primitives/animate-ui/sliding-number)), the star fills from the bottom as it climbs, and bursts into particles when the count is reached.
+- Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
+- `<AnimateUIProvider tempo>` paces the press spring.
+- Under reduced motion, the digits change without rolling, the burst is skipped and the button doesn't scale.
+
+## API Reference
+
+### GitHubStarsButton
+
+<TypeTable
+  type={{
+    username: {
+      description: 'Owner of the repository.',
+      type: 'string',
+    },
+    repo: {
+      description: 'Name of the repository.',
+      type: 'string',
+    },
+    value: {
+      description: 'A fixed star count. The API is not called.',
+      type: 'number',
+    },
+    delay: {
+      description: 'Delay before the request, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    hoverScale: {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    asChild: {
+      description: 'Render your child element (a link) instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### GitHubStarsButtonLogo, GitHubStarsButtonNumber, GitHubStarsButtonIcon, GitHubStarsButtonParticles
+
+The parts of [GitHub Stars](/docs/primitives/animate-ui/github-stars#api-reference): `GithubStarsLogo`, `GithubStarsNumber`, `GithubStarsIcon` and `GithubStarsParticles`.

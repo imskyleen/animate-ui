@@ -33,7 +33,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 
 The motion of Animate UI v1's toggle:
 
-- **Toggle** scales to 0.95 while pressed, on Motion's default spring for scale (stiffness 550, damping 30). No hover scale.
+- **Toggle** scales to 0.97 while pressed, on Motion's default spring for scale (stiffness 550, damping 30). No hover scale.
 - The press scale runs on the compositor (a `transform`), so shadcn/ui's `transition-all` doesn't tween its frames.
 - The on/off colours are the component's CSS: shadcn/ui colours the toggle itself (`data-[state=on]:bg-muted`) and fades it with `transition-all`. v1's styled toggle faded a separate highlight in and out instead (0.3s).
 - Toggling with Space changes the state at once.

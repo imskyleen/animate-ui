@@ -19,7 +19,7 @@ import {
 
 // Same API as React Aria's ToggleButton and ToggleButtonGroup, animated like
 // Animate UI v1's Radix UI toggle and toggle group (v1 had no React Aria
-// ones): a toggle button scales to 0.95 while pressed (pointer or keyboard),
+// ones): a toggle button scales to 0.97 while pressed (pointer or keyboard),
 // and in a single-selection group the selected item's surface slides to the
 // next selected item (see ../../../internal/controls/highlight). The
 // selected colours stay the component's CSS.

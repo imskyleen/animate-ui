@@ -54,7 +54,7 @@ test.describe('animate-ui pinned list', () => {
     await page.waitForTimeout(300);
     expect(await scale()).toBe(1);
     await page.mouse.down();
-    await expect.poll(scale).toBeCloseTo(0.95, 2);
+    await expect.poll(scale).toBeCloseTo(0.97, 2);
     await page.mouse.up();
   });
 

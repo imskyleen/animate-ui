@@ -190,7 +190,7 @@ A tween on `ease.out` reads faster than its duration: most of the movement happe
 
 ### B4. Scale: press only, and from a size that fits
 
-- Pressables (buttons, radio, toggles) scale to `scale.press` (0.95) on `spring.press` while pressed. **Nothing scales on hover**: hover changes color, a button answers the press. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
+- Pressables (buttons, radio, toggles) scale to `scale.press` (0.97) on `spring.press` while pressed. **Nothing scales on hover**: hover changes color, a button answers the press. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
 - Anchored popups grow from their trigger, from farther when they are small: tooltips `scale.tooltip` (0.7), popovers and hover cards `scale.popover` (0.8), menus `scale.menu` (0.9).
 - A dialog tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)`.
 
@@ -241,6 +241,6 @@ Style (defaults; deviations named in the output):
 
 - [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
 - [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays, menus and sheets, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a closed drawer's `transition.drawerOut`, and a menubar's next content fading in on `transition.handoffIn`; a dismissed dialog or sheet speeds away on `ease.away`)
-- [ ] Press at `scale.press` (0.95), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
+- [ ] Press at `scale.press` (0.97), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance (a dismissed modal: at once, quicker, speeding away; its overlay clear before it unmounts)
 - [ ] Swaps bridged with a light blur

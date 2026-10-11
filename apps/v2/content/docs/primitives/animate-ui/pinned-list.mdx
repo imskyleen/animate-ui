@@ -72,7 +72,7 @@ You own the pinned state: `onPinnedChange` tells you which item to move. Without
 
 - The item glides to its new place on a spring (stiffness 320, damping 25, mass 0.8: a shared layout animation with a slight overshoot), above the other items while it moves. The others make room.
 - Labels fade in and out when a group becomes empty or filled, and slide along with the layout (220ms, ease-out).
-- Triggers, and items without `customTrigger`, shrink on press (scale 0.95) on a quick spring (the item's own spring for items). Nothing scales on hover.
+- Triggers, and items without `customTrigger`, shrink on press (scale 0.97) on a quick spring (the item's own spring for items). Nothing scales on hover.
 - `<AnimateUIProvider tempo>` paces the default transitions.
 - Under reduced motion, items jump to their new place and don't scale.
 

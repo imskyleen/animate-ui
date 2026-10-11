@@ -17,9 +17,13 @@ const SHADCN_COMPONENTS = new Set(['input-otp']);
 // Anything else with only an Animate UI page goes under Animate UI.
 const SECTIONS: Record<string, 'buttons' | 'texts' | 'effects'> = {
   button: 'buttons',
+  'copy-button': 'buttons',
   'flip-button': 'buttons',
+  'github-stars-button': 'buttons',
+  'icon-button': 'buttons',
   'liquid-button': 'buttons',
   'ripple-button': 'buttons',
+  'theme-toggler-button': 'buttons',
 
   'counting-number': 'texts',
   'gradient-text': 'texts',

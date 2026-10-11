@@ -66,7 +66,7 @@ test.describe('animate-ui button', () => {
     await page.mouse.down();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
-      .toBeCloseTo(0.95, 3);
+      .toBeCloseTo(0.97, 3);
     await page.mouse.up();
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
@@ -80,11 +80,11 @@ test.describe('animate-ui button', () => {
     await page.mouse.down();
     const scales = await frames;
     // Motion's spring for scale (stiffness 550, damping 30): on its way, then
-    // at 0.95. Its rest thresholds (restSpeed 10) snap it once within 0.005,
+    // at 0.97. Its rest thresholds (restSpeed 10) snap it once within 0.005,
     // so a 0.05 press doesn't visibly overshoot.
-    expect(scales.some((s) => s < 0.995 && s > 0.951)).toBe(true);
+    expect(scales.some((s) => s < 0.995 && s > 0.971)).toBe(true);
     expect(Math.min(...scales)).toBeGreaterThan(0.94);
-    expect(scales.at(-1)).toBeCloseTo(0.95, 3);
+    expect(scales.at(-1)).toBeCloseTo(0.97, 3);
     await page.mouse.up();
   });
 

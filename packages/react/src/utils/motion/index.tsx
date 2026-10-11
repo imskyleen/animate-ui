@@ -221,8 +221,11 @@ const transition = {
    * came: a popped check (`checkAnimation="pop"`), a removed chip or tag.
    */
   popOut: { duration: 0.15, ease: ease.out },
-  /** Two icons or labels swapping in place. */
-  swap: { duration: 0.2, ease: ease.out },
+  /**
+   * Two icons or labels swapping in place: short, so the swap reads as the
+   * press's answer.
+   */
+  swap: { duration: 0.15, ease: ease.out },
   /**
    * A menu's content leaving the popover it hands over to the next menu (a
    * menubar's), sliding away from where the popover goes: soft, mostly gone
@@ -256,6 +259,20 @@ const transition = {
    * past its rest would open a gap there.
    */
   sheet: { duration: 0.4, ease: ease.soft },
+  /**
+   * A sidebar collapsing or expanding, and everything that resizes with it
+   * (the page beside it, its buttons, its group labels): one curve and one
+   * duration, so the sidebar's edge and the page's stay together. Toggled
+   * all day (Cmd/Ctrl+B): quicker than v1's 400ms.
+   */
+  collapse: { duration: 0.28, ease: ease.inOut },
+  /**
+   * A collapsing sidebar's labels fading out into a light blur in its first
+   * half, and back in its last half as it expands (a `delay` of
+   * `collapse.duration - collapseLabel.duration`): they're gone before the
+   * buttons are narrow, and only show once they're nearly wide again.
+   */
+  collapseLabel: { duration: 0.14, ease: ease.out },
   /** Deliberately no animation. */
   instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;
@@ -263,7 +280,7 @@ const transition = {
 /** Scales, by role. */
 const scale = {
   /** Anything pressed. Nothing scales on hover. */
-  press: 0.95,
+  press: 0.97,
   /** Where anchored popups grow from: the smaller, the farther. */
   tooltip: 0.7,
   popover: 0.8,

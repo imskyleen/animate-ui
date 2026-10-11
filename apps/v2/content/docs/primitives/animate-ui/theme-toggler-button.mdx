@@ -1,0 +1,160 @@
+---
+title: Theme Toggler Button
+description: A button that cycles the theme, wiping the new one across the page.
+---
+
+<ComponentPreview name="animate-ui/theme-toggler-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+Bring your own theme state, as with [Theme Toggler](/docs/primitives/animate-ui/theme-toggler). With [next-themes](https://github.com/pacocoursey/next-themes):
+
+```tsx
+import { useTheme } from 'next-themes';
+import {
+  ThemeTogglerButton,
+  ThemeTogglerButtonIcon,
+  type Resolved,
+  type ThemeSelection,
+} from '@animate-ui/react/primitives/buttons/theme-toggler';
+
+export function ThemeButton() {
+  const { theme, resolvedTheme, setTheme } = useTheme();
+
+  return (
+    <ThemeTogglerButton
+      theme={theme as ThemeSelection}
+      resolvedTheme={resolvedTheme as Resolved}
+      setTheme={setTheme}
+      modes={['light', 'dark']}
+      aria-label="Toggle theme"
+    >
+      <ThemeTogglerButtonIcon light={<SunIcon />} dark={<MoonIcon />} />
+    </ThemeTogglerButton>
+  );
+}
+```
+
+Each click switches to the next theme of `modes`. When `modes` leave out `system`, the button shows the theme actually displayed, and a system theme counts as the one it resolves to. Read the state in your own parts with `useThemeTogglerButton()`.
+
+## Animation
+
+- A click wipes the new theme across the page in `direction`, over 700ms with an `ease-in-out` ([Theme Toggler](/docs/primitives/animate-ui/theme-toggler)'s View Transition).
+- The icon swaps as the wipe starts: the old one shrinks to half its size into a light blur (`blur(2px)`) as it fades out, while the new one grows out of it, over 0.15s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`). Icons only swap once the button is used: on mount, and when the theme becomes known after hydrating, the icon shows at rest.
+- Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
+- `<AnimateUIProvider tempo>` paces the wipe, the swap and the press spring.
+- Under reduced motion, the theme changes at once without the wipe, the icons crossfade without scaling or blurring, and the button doesn't scale.
+
+## API Reference
+
+### ThemeTogglerButton
+
+<TypeTable
+  type={{
+    theme: {
+      description: 'The selected theme.',
+      type: "'light' | 'dark' | 'system'",
+      required: true,
+    },
+    resolvedTheme: {
+      description: 'The theme actually shown.',
+      type: "'light' | 'dark'",
+      required: true,
+    },
+    setTheme: {
+      description: 'Applies a theme, called when the wipe ends.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: true,
+    },
+    modes: {
+      description: 'The themes a click cycles through, in order.',
+      type: "('light' | 'dark' | 'system')[]",
+      default: "['light', 'dark', 'system']",
+    },
+    direction: {
+      description:
+        'Direction of the wipe: bottom to top, top to bottom, left to right, right to left.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      default: "'ltr'",
+    },
+    onImmediateChange: {
+      description: 'Called as soon as a theme is chosen, before the wipe.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+    },
+    hoverScale: {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    tapScale: {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    transition: {
+      description: 'Transition of the tap (and hover) scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+    asChild: {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### ThemeTogglerButtonIcon
+
+<TypeTable
+  type={{
+    light: {
+      description: 'The icon of the light theme.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    dark: {
+      description: 'The icon of the dark theme.',
+      type: 'React.ReactNode',
+      required: true,
+    },
+    system: {
+      description:
+        'The icon of the system theme. Without it, system shows the icon of the theme it resolves to.',
+      type: 'React.ReactNode',
+    },
+    transition: {
+      description: 'Transition of the swap.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
+    },
+    '...props': {
+      description: 'Props of the span holding the icons.',
+      type: "React.ComponentProps<'span'>",
+    },
+  }}
+/>
+
+### Data attributes
+
+<TypeTable
+  type={{
+    'data-theme': {
+      description: 'On the button: the theme it shows.',
+      type: "'light' | 'dark' | 'system'",
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Magic UI](https://magicui.design/docs/components/animated-theme-toggler)'s animated theme toggler.

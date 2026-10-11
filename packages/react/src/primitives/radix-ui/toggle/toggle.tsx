@@ -8,7 +8,7 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import { usePressMotion } from '../../../internal/controls/press';
 
 // Same API as Radix's Toggle, animated like Animate UI v1's toggle: it scales
-// to 0.95 while pressed. The on/off colours stay the component's CSS.
+// to 0.97 while pressed. The on/off colours stay the component's CSS.
 
 /** Animate UI's additions to `Toggle.Root`. */
 type RootAnimationProps = {

@@ -21,7 +21,7 @@ type ButtonProps = WithAsChild<
     hoverScale?: number;
     /**
      * Scale while pressed.
-     * @default 0.95
+     * @default 0.97
      */
     tapScale?: number;
   }

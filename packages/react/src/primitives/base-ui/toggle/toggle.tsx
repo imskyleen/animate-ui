@@ -10,7 +10,7 @@ import { usePressMotion } from '../../../internal/controls/press';
 import { toggleGroupItemProps } from '../../../internal/controls/highlight';
 
 // Same API as Base UI's Toggle (also the item of a Toggle Group), animated
-// like Animate UI v1's toggle: it scales to 0.95 while pressed. The pressed
+// like Animate UI v1's toggle: it scales to 0.97 while pressed. The pressed
 // colours stay the component's CSS.
 
 /** Animate UI's additions to `Toggle`. */

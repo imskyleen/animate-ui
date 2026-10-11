@@ -12,7 +12,7 @@ import {
 } from '../../../internal/controls/indicator';
 
 // Same API as Radix's Radio Group, animated like Animate UI v1's radio group:
-// items scale to 0.95 while pressed (no hover scale), and the
+// items scale to 0.97 while pressed (no hover scale), and the
 // Indicator's dot pops in (scale and opacity from 0, spring stiffness 200,
 // damping 16) and out the same way, staying mounted until it has left. Only
 // choosing animates: selected as it appears, the dot is at rest.

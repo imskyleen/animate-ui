@@ -13,7 +13,7 @@ import {
 } from '../../../internal/controls/indicator';
 
 // Same API as Base UI's Radio, animated like Animate UI v1's radio: the Root
-// scales to 0.95 while pressed (no hover scale), and the Indicator's dot
+// scales to 0.97 while pressed (no hover scale), and the Indicator's dot
 // pops in (scale and opacity from 0, spring stiffness 200, damping 16) and out
 // the same way, staying mounted until it has left. Only choosing animates:
 // selected as it appears, the dot is at rest.

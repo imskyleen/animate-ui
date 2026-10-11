@@ -29,7 +29,7 @@ With `asChild`, the animation lands on your own element:
 
 ## Animation
 
-- Pressing scales the button to `tapScale` (0.95), on Motion's spring for scale (`stiffness: 550, damping: 30`): quick, with a slight overshoot. It doesn't scale on hover, unless you set `hoverScale`.
+- Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`): quick, with a slight overshoot. It doesn't scale on hover, unless you set `hoverScale`.
 - `transition` replaces that spring.
 - `<AnimateUIProvider tempo>` paces the default spring.
 - Under reduced motion, the button doesn't scale.
@@ -49,7 +49,7 @@ With `asChild`, the animation lands on your own element:
     tapScale: {
       description: 'Scale of the button while pressed.',
       type: 'number',
-      default: '0.95',
+      default: '0.97',
     },
     transition: {
       description: 'Transition of the tap (and hover) scale.',
