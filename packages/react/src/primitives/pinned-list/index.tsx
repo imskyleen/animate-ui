@@ -18,16 +18,21 @@ import {
   useTempoTransition,
 } from '../../utils/motion';
 
-/** The label appearing and disappearing: a short fade, strong ease-out. */
-const LABEL_TRANSITION: Transition = {
-  duration: 0.22,
-  ease: motionTokens.ease.out,
-};
 const ITEM_TRANSITION: Transition = {
   stiffness: 320,
   damping: 25,
   mass: 0.8,
   type: 'spring',
+};
+/**
+ * The label appearing and disappearing: a short fade, strong ease-out. It
+ * slides with the items making room, on their spring (on a 220ms tween it
+ * reached its place well ahead of them, abruptly).
+ */
+const LABEL_TRANSITION: Transition = {
+  duration: 0.22,
+  ease: motionTokens.ease.out,
+  layout: ITEM_TRANSITION,
 };
 /**
  * The press spring (Motion's default for a `scale` target other than 0: the

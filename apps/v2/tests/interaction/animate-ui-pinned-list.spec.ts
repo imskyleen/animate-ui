@@ -85,6 +85,39 @@ test.describe('animate-ui pinned list', () => {
     expect(offsets.at(-1)).toBeCloseTo(0, 0);
   });
 
+  test('the labels slide with the items, on their spring, not ahead', async ({
+    page,
+  }) => {
+    // On a 220ms strong ease-out, "All" reached its place within ~80ms of
+    // moving, well ahead of the items making room around it.
+    await open(page);
+    await page.evaluate(() => {
+      const label = [...document.querySelectorAll('p')].find(
+        (p) => p.textContent?.trim() === 'All',
+      )!;
+      const w = window as unknown as { __label: [number, number][] };
+      const out: [number, number][] = (w.__label = []);
+      const t0 = performance.now();
+      const tick = () => {
+        out.push([performance.now() - t0, label.getBoundingClientRect().top]);
+        if (performance.now() - t0 < 800) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await page.getByRole('button', { name: 'Pin Inbox' }).click();
+    await page.waitForTimeout(900);
+    const frames = await page.evaluate(
+      () => (window as unknown as { __label: [number, number][] }).__label,
+    );
+    const [, from] = frames[0]!;
+    const [, to] = frames.at(-1)!;
+    expect(Math.abs(to - from)).toBeGreaterThan(20);
+    const progress = (y: number) => (y - from) / (to - from);
+    const moving = frames.find(([, y]) => Math.abs(y - from) > 0.5)!;
+    const there = frames.find(([, y]) => progress(y) >= 0.95)!;
+    expect(there[0] - moving[0]).toBeGreaterThan(100);
+  });
+
   test('unpinning every item hides the pinned label', async ({ page }) => {
     await open(page);
     await page.getByRole('button', { name: 'Unpin Drafts' }).click();
