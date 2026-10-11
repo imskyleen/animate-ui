@@ -76,7 +76,7 @@ export default function CodeBlockDemo({
         aria-label="Copy code"
         className={cn(
           buttonVariants({ variant: "ghost", size: "icon-sm" }),
-          "absolute top-2 right-2"
+          "absolute top-2 right-2 text-muted-foreground hover:bg-foreground/10 hover:text-foreground dark:hover:bg-foreground/10"
         )}
       >
         <CopyButtonIcon
