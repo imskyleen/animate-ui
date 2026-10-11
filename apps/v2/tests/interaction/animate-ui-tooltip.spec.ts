@@ -9,10 +9,10 @@ const CONTENT = '[data-slot="tooltip-content"]';
 // Animate UI's own Tooltip: a touch calmer than the library tooltips' 400/29.
 const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
-/** `shift.tooltip`, `blur.tooltip` (px) and the incoming slide and fade, `transition.panelIn` (s). */
-const SHIFT = 24;
+/** `shift.tooltip`, `blur.tooltip` (px) and the incoming slide and fade, `transition.tooltipIn` (s). */
+const SHIFT = 40;
 const BLUR = 6;
-const SWAP = 0.3;
+const SWAP = 0.4;
 /** The leaving content's fade, `transition.panelOut` (s). */
 const OUT = 0.15;
 
@@ -394,7 +394,7 @@ test.describe('animate-ui tooltip', () => {
         );
       }
       // On the tab panels' timings: the copy is gone after its 0.15s, and
-      // the next one rests (its styles dropped) after its 0.3s.
+      // the next one rests (its styles dropped) after its 0.4s.
       const gone = swapping.find((f) => f.copies.length === 0)!;
       expect(gone.t - first.t).toBeGreaterThan(OUT * 1000 * 0.7);
       expect(gone.t - first.t).toBeLessThan(OUT * 1000 + 120);

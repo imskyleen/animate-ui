@@ -86,7 +86,7 @@ const FAMILIES: Family[] = [
       'tooltips : scale 0,7 → 1 + fondu',
       'popovers, hover cards : scale 0,8 → 1 + fondu',
       'ressort 400/29, à l’aller comme au retour, origine = le déclencheur',
-      'Tooltip Animate UI : comme ceux des libs (0,7 depuis le déclencheur), et glisse d’un déclencheur à l’autre ; pendant ce temps son contenu change dans le sens du déplacement, comme un panneau d’onglets : l’ancien libellé part à l’opposé dans un flou de 6px en glissant de 24px (0,15s), le suivant arrive du côté où va la bulle, sort du flou et se voit dès le début de son glissement (0,3s) ; vers la droite, l’ancien part à gauche et le nouveau arrive par la droite ; vers le haut, l’ancien descend et le nouveau arrive par le haut, jamais étiré par le redimensionnement, coupé par le popup, la flèche ne fait que glisser',
+      'Tooltip Animate UI : comme ceux des libs (0,7 depuis le déclencheur), et glisse d’un déclencheur à l’autre ; pendant ce temps son contenu change dans le sens du déplacement, comme un panneau d’onglets : l’ancien libellé part à l’opposé dans un flou de 6px en glissant de 40px (0,15s), le suivant arrive de 40px du côté où va la bulle, sort du flou et se voit dès le début de son glissement (0,4s, plus long que la bulle, qui va dans l’autre sens à l’écran) ; vers la droite, l’ancien part à gauche et le nouveau arrive par la droite ; vers le haut, l’ancien descend et le nouveau arrive par le haut, jamais étiré par le redimensionnement, coupé par le popup, la flèche ne fait que glisser',
       'tooltips Radix, Base UI, React Aria : une fois l’un ouvert, le suivant apparaît d’un coup et le précédent disparaît d’un coup (300ms de répit après le dernier)',
     ],
     demos: [

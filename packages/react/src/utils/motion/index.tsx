@@ -249,6 +249,12 @@ const transition = {
    */
   panelIn: { duration: 0.3, ease: ease.enter },
   /**
+   * Animate UI's Tooltip's next content sliding in as the popup glides to
+   * its trigger: a tab panel's entrance, longer, so its slide outlasts the
+   * popup's glide (which goes the other way on screen) and reads.
+   */
+  tooltipIn: { duration: 0.4, ease: ease.enter },
+  /**
    * The tab panels' height gliding from the previous panel's to the next
    * one's as it comes in: Motion's own layout animation (Motion's tabs
    * example), no overshoot.
@@ -396,10 +402,10 @@ const shift = {
    * trigger's while the popup glides there: the leaving label away from where
    * the popup goes, the next one in from there, through `blur.tooltip`, on
    * the tab panels' timings. Far enough for the way it comes from to read
-   * next to the popup's own glide (16px wasn't marked enough); clipped by
-   * the popup.
+   * next to the popup's own glide, which travels the other way on screen
+   * (24px wasn't marked enough); clipped by the popup.
    */
-  tooltip: 24,
+  tooltip: 40,
   /** How far a mark swings as it shakes (`transition.shake`). */
   shake: 3,
 } as const;

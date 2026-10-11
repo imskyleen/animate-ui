@@ -176,15 +176,15 @@ const SWAP_BLUR = Number.parseFloat(
 /**
  * The content's swap, like a tab panel's: the leaving label goes quickly
  * (`transition.panelOut`, 0.15s), the next one slides in and shows from the
- * start of its slide (`transition.panelIn`, 0.3s), so the way it comes from
- * reads.
+ * start of its slide (`transition.tooltipIn`, 0.4s: longer than a panel's,
+ * so it outlasts the popup's glide), so the way it comes from reads.
  */
 type SwapTimings = { out: Transition; move: Transition; in: Transition };
 
 const SWAP_TIMINGS: SwapTimings = {
   out: motionTokens.transition.panelOut,
-  move: motionTokens.transition.panelIn,
-  in: motionTokens.transition.panelIn,
+  move: motionTokens.transition.tooltipIn,
+  in: motionTokens.transition.tooltipIn,
 };
 
 /** The layout styles the content's layer takes from the popup. */
