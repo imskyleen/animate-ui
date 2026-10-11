@@ -6,7 +6,8 @@ import { overshootOf } from './spring-curves';
 const CONTENT = '[data-slot="tooltip-content"]';
 
 /** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
-const POP_SPRING = { stiffness: 400, damping: 29 };
+// Animate UI's own Tooltip: a touch calmer than the library tooltips' 400/29.
+const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
 const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/tooltip', { waitUntil: 'networkidle' });
@@ -74,9 +75,9 @@ test.describe('animate-ui tooltip', () => {
     expect(seen[0]!.scale).toBeLessThan(0.85);
     expect(seen[0]!.y).toBe(0);
     expect(seen[0]!.opacity).toBeLessThan(1);
-    // On the pop spring: past full size by the spring's overshoot over that
+    // On its spring (400/31): past full size by its overshoot over that
     // 0.3 travel (frames may miss the very peak), then back.
-    const overshoot = overshootOf(POP_SPRING);
+    const overshoot = overshootOf(TOOLTIP_SPRING);
     const peak = Math.max(...seen.map((f) => f.scale));
     expect(peak).toBeGreaterThan(1 + 0.3 * overshoot * 0.7);
     expect(peak).toBeLessThan(1 + 0.3 * overshoot + 0.003);
@@ -214,7 +215,7 @@ test.describe('animate-ui tooltip', () => {
     expect(to - from).toBeGreaterThan(100);
     // On the same spring: a little past the new trigger, by the spring's
     // overshoot of the distance, then back.
-    const expected = overshootOf(POP_SPRING) * (to - from);
+    const expected = overshootOf(TOOLTIP_SPRING) * (to - from);
     const past = Math.max(...centers) - to;
     expect(past).toBeGreaterThan(expected * 0.7);
     expect(past).toBeLessThan(expected + 1);

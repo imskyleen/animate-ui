@@ -34,8 +34,8 @@ import { Slot, type WithAsChild } from '../slot';
 // the popup (a shared layout animation) instead of closing and reopening it.
 // It moves like the library tooltips (Radix UI, Base UI, React Aria): the
 // popup grows from 0.7 and fades in from the point facing its trigger, and
-// goes back the same way when it closes, on their spring (stiffness 400,
-// damping 29), which overshoots a little.
+// goes back the same way when it closes, on a spring as quick as theirs, a
+// touch calmer (stiffness 400, damping 31: about 2% past, theirs 4%).
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
@@ -94,10 +94,10 @@ function getResolvedSide(placement: Side | `${Side}-${Align}`) {
 }
 
 /**
- * The library tooltips' and popovers' spring: the entrance, the exit and the
- * glide between triggers.
+ * The entrance, the exit and the glide between triggers: as quick as the
+ * library tooltips' spring, a touch calmer.
  */
-const TOOLTIP_TRANSITION = motionTokens.spring.pop;
+const TOOLTIP_TRANSITION = motionTokens.spring.tooltip;
 
 /**
  * The point of the popup facing its trigger (Motion's `originX`/`originY`,

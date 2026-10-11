@@ -116,6 +116,11 @@ const spring = {
    * ~175ms, a little overshoot, settled by ~440ms.
    */
   pop: { type: 'spring', stiffness: 400, damping: 29 },
+  /**
+   * Animate UI's own Tooltip, growing from its trigger and gliding between
+   * triggers: as quick as `pop`, a touch calmer (about 2% past, not 4%).
+   */
+  tooltip: { type: 'spring', stiffness: 400, damping: 31 },
   /** Dialogs tipping forward: calm, no overshoot. */
   dialog: { type: 'spring', stiffness: 150, damping: 25 },
   /**
