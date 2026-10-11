@@ -35,13 +35,19 @@ test.describe('animate-ui code-block', () => {
     await expect(block(page)).toContainText(LAST_LINE);
   });
 
-  test('replay starts over', async ({ page }) => {
+  test('the copy button copies the whole code, even while it writes', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await open(page);
-    await page.waitForTimeout(1500);
-    const before = await textLength(page);
-    await page.getByRole('button', { name: 'Replay' }).click();
-    await page.waitForTimeout(300);
-    expect(await textLength(page)).toBeLessThan(before);
+    await expect(page.getByRole('button', { name: 'Replay' })).toHaveCount(0);
+    const copy = page.getByRole('button', { name: 'Copy code' });
+    await copy.click();
+    await expect(copy).toHaveAttribute('data-copied');
+    const text = await page.evaluate(() => navigator.clipboard.readText());
+    expect(text).toContain("'use client';");
+    expect(text).toContain(LAST_LINE);
   });
 
   test('reduced motion: the whole code at once', async ({ page }) => {

@@ -1,13 +1,16 @@
 "use client"
 
-import * as React from "react"
 import { cn } from "cn"
-import { RefreshIcon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  CopyButton,
+  CopyButtonIcon,
+} from "@animate-ui/react/primitives/buttons/copy"
 import { CodeBlock } from "@animate-ui/react/primitives/code-block"
 import { useTheme } from "next-themes"
 
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 
 const CODE = `'use client';
 
@@ -49,13 +52,12 @@ export default function CodeBlockDemo({
   cursor?: boolean
 }) {
   const { resolvedTheme } = useTheme()
-  const [key, setKey] = React.useState(0)
 
   return (
     <div className="relative w-[420px] max-w-full">
       <div className="h-[372px] overflow-auto rounded-xl bg-accent p-4 text-sm">
         <CodeBlock
-          key={`${key}-${delay}-${duration}-${writing}`}
+          key={`${delay}-${duration}-${writing}`}
           code={CODE}
           lang="tsx"
           theme={resolvedTheme === "dark" ? "dark" : "light"}
@@ -69,15 +71,19 @@ export default function CodeBlockDemo({
           )}
         />
       </div>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        className="absolute top-2 right-2"
-        aria-label="Replay"
-        onClick={() => setKey((value) => value + 1)}
+      <CopyButton
+        content={CODE}
+        aria-label="Copy code"
+        className={cn(
+          buttonVariants({ variant: "ghost", size: "icon-sm" }),
+          "absolute top-2 right-2"
+        )}
       >
-        <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} />
-      </Button>
+        <CopyButtonIcon
+          icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />}
+          copiedIcon={<HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />}
+        />
+      </CopyButton>
     </div>
   )
 }
