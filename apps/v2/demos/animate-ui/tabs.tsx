@@ -11,7 +11,6 @@ import {
 } from "@animate-ui/react/primitives/tabs"
 
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -42,9 +41,11 @@ export default function TabsDemo() {
           ))}
         </TabsList>
       </TabsHighlight>
-      <TabsContents className="mt-2">
-        <TabsContent value="overview" className="p-px">
-          <Card>
+      <TabsContents className="mt-2 rounded-xl bg-card text-sm text-card-foreground ring-1 ring-foreground/10">
+        <TabsContent
+          value="overview"
+          className="flex flex-col gap-(--card-spacing) py-(--card-spacing) [--card-spacing:--spacing(4)]"
+        >
             <CardHeader>
               <CardTitle>Overview</CardTitle>
               <CardDescription>
@@ -55,10 +56,11 @@ export default function TabsDemo() {
             <CardContent className="text-sm text-muted-foreground">
               You have 12 active projects and 3 pending tasks.
             </CardContent>
-          </Card>
         </TabsContent>
-        <TabsContent value="analytics" className="p-px">
-          <Card>
+        <TabsContent
+          value="analytics"
+          className="flex flex-col gap-(--card-spacing) py-(--card-spacing) [--card-spacing:--spacing(4)]"
+        >
             <CardHeader>
               <CardTitle>Analytics</CardTitle>
               <CardDescription>
@@ -79,18 +81,20 @@ export default function TabsDemo() {
                 </div>
               ))}
             </CardContent>
-          </Card>
         </TabsContent>
-        <TabsContent value="reports" className="p-px">
-          <Card>
+        <TabsContent
+          value="reports"
+          className="flex flex-col gap-(--card-spacing) py-(--card-spacing) [--card-spacing:--spacing(4)]"
+        >
             <CardHeader>
               <CardTitle>Reports</CardTitle>
               <CardDescription>5 reports are ready to export.</CardDescription>
             </CardHeader>
-          </Card>
         </TabsContent>
-        <TabsContent value="settings" className="p-px">
-          <Card>
+        <TabsContent
+          value="settings"
+          className="flex flex-col gap-(--card-spacing) py-(--card-spacing) [--card-spacing:--spacing(4)]"
+        >
             <CardHeader>
               <CardTitle>Settings</CardTitle>
               <CardDescription>
@@ -101,7 +105,6 @@ export default function TabsDemo() {
             <CardContent className="text-sm text-muted-foreground">
               Configure notifications, security, and themes.
             </CardContent>
-          </Card>
         </TabsContent>
       </TabsContents>
     </Tabs>
