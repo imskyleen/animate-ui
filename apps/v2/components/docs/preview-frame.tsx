@@ -116,6 +116,10 @@ const toolbarButton =
  * (under the demo on mobile): the demo re-renders with the values as props.
  * `values` starts some of them elsewhere than the demo's defaults (the same
  * demo, shown again in another mode). Without `code`, there's only the demo.
+ *
+ * A demo that lays out a whole page (a sidebar) shows in an `iframe` of its
+ * own page instead, like shadcn/ui's blocks: at a desktop width from md up
+ * (its right side cut off), the frame's width below (a phone's layout).
  */
 export function PreviewFrame({
   children,
@@ -124,6 +128,7 @@ export function PreviewFrame({
   demo: Demo,
   controls: initialControls,
   values,
+  iframe,
 }: {
   /** The demo, when it has no controls. */
   children?: ReactNode;
@@ -135,6 +140,8 @@ export function PreviewFrame({
   controls?: Controls;
   /** The controls' values to start with, instead of the demo's. */
   values?: Record<string, ControlValue>;
+  /** The URL of the demo's own page: shown in an iframe of it. */
+  iframe?: string;
 }) {
   const [run, setRun] = useState(0);
   const [controls, setControls] = useState(() =>
@@ -173,7 +180,7 @@ export function PreviewFrame({
           data-slot="preview"
           className={cn(
             'relative flex flex-col rounded-lg bg-background md:flex-row',
-            fullBleed && 'overflow-hidden',
+            (fullBleed || iframe) && 'overflow-hidden',
           )}
         >
           <div
@@ -181,7 +188,11 @@ export function PreviewFrame({
             data-slot="preview-stage"
             className={cn(
               'relative flex min-w-0 items-center justify-center md:flex-1',
-              fullBleed ? 'h-[420px]' : 'min-h-[400px] px-6 py-16 sm:px-10',
+              iframe
+                ? 'h-[600px] overflow-hidden rounded-lg'
+                : fullBleed
+                  ? 'h-[420px]'
+                  : 'min-h-[400px] px-6 py-16 sm:px-10',
             )}
           >
             <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
@@ -215,19 +226,30 @@ export function PreviewFrame({
                 </Button>
               )}
             </div>
-            <div
-              key={run}
-              className={cn(
-                'flex w-full items-center justify-center',
-                fullBleed && 'absolute inset-0',
-              )}
-            >
-              {Demo && controls ? (
-                <Demo {...controlsToProps(controls)} />
-              ) : (
-                children
-              )}
-            </div>
+            {iframe ? (
+              <iframe
+                key={run}
+                src={iframe}
+                title="Demo"
+                loading="lazy"
+                data-slot="preview-iframe"
+                className="absolute inset-y-0 left-0 h-full w-full md:min-w-[1024px]"
+              />
+            ) : (
+              <div
+                key={run}
+                className={cn(
+                  'flex w-full items-center justify-center',
+                  fullBleed && 'absolute inset-0',
+                )}
+              >
+                {Demo && controls ? (
+                  <Demo {...controlsToProps(controls)} />
+                ) : (
+                  children
+                )}
+              </div>
+            )}
           </div>
 
           {controls && (

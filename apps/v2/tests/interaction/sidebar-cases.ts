@@ -1,0 +1,1140 @@
+import { expect, test, type Page } from '@playwright/test';
+
+// shadcn/ui's sidebar demo (sidebar-demo: collapsible to icons), wired onto
+// @animate-ui/react/primitives/sidebar, in every base (Radix UI, Base UI,
+// React Aria), alone on its page (/examples/<library>/sidebar, the page the
+// docs show in an iframe):
+//
+// - its menu buttons share one highlight: a surface beside each button (in
+//   its menu item, the button clips its content) that glides from button to
+//   button on `spring.highlight`, fades in from nothing and out where it is
+//   on `transition.color`, sub-menu buttons included;
+// - collapsing and expanding, the gap's and the container's widths change on
+//   v1's 400ms curves (the container on the in-out curve, the gap with a
+//   hint of anticipation and of overshoot), none under reduced motion, never
+//   on mount;
+// - Cmd/Ctrl+B toggles it (and the `sidebar_state` cookie keeps it);
+// - collapsed to icons, its buttons show their (animated) tooltips;
+// - on a phone, it's a sheet sliding in from the left.
+
+const SURFACE = '[data-slot="trigger-highlight"]';
+const BUTTONS =
+  '[data-sidebar="menu-button"], [data-sidebar="menu-sub-button"]';
+const GAP = '[data-slot="sidebar-gap"]';
+const CONTAINER = '[data-slot="sidebar-container"]';
+const TRANSPARENT = 'rgba(0, 0, 0, 0)';
+
+/** shadcn/ui's widths: 16rem expanded, 3rem collapsed to icons. */
+const EXPANDED = 256;
+const ICONS = 48;
+
+type Surface = {
+  /** The button it stands for (its menu item's). */
+  button: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  opacity: number;
+  color: string;
+  /** How far its fade (in or out) is, in ms (null: none running). */
+  fade: number | null;
+  /**
+   * The share of it its clipping ancestors (`overflow`) let show: a surface
+   * inside a button that clips its content shows only once inside it.
+   */
+  shown: number;
+  /** Its button's box, the same frame. */
+  item: { top: number; left: number; width: number; height: number };
+};
+
+type HighlightFrame = {
+  t: number;
+  /** Surfaces on screen (not transparent). */
+  surfaces: Surface[];
+  /** The buttons' own backgrounds, by name. */
+  own: Record<string, string>;
+};
+
+/** Records, frame by frame, the menu buttons' highlight, for `duration` ms. */
+function recordHighlight(page: Page, duration: number) {
+  return page.evaluate(
+    ({ selector, buttons, duration }) =>
+      new Promise<HighlightFrame[]>((resolve) => {
+        const frames: HighlightFrame[] = [];
+        const t0 = performance.now();
+        const name = (el: Element | null | undefined) =>
+          (el?.textContent ?? '').trim();
+        const tick = () => {
+          const surfaces = [...document.querySelectorAll<HTMLElement>(selector)]
+            .map((el) => {
+              const style = getComputedStyle(el);
+              const box = el.getBoundingClientRect();
+              const fade = el
+                .getAnimations()
+                .find((a) =>
+                  (a.effect as KeyframeEffect | null)
+                    ?.getKeyframes()
+                    .some((k) => 'opacity' in k),
+                );
+              let clip = { top: box.top, bottom: box.bottom };
+              for (
+                let parent = el.parentElement;
+                parent && parent !== document.body;
+                parent = parent.parentElement
+              ) {
+                if (getComputedStyle(parent).overflow === 'visible') continue;
+                const rect = parent.getBoundingClientRect();
+                clip = {
+                  top: Math.max(clip.top, rect.top),
+                  bottom: Math.min(clip.bottom, rect.bottom),
+                };
+              }
+              const item = el.parentElement?.matches(buttons)
+                ? el.parentElement
+                : el.parentElement?.querySelector(buttons);
+              const itemBox = item?.getBoundingClientRect();
+              return {
+                button: name(item),
+                item: {
+                  top: itemBox?.top ?? 0,
+                  left: itemBox?.left ?? 0,
+                  width: itemBox?.width ?? 0,
+                  height: itemBox?.height ?? 0,
+                },
+                shown: Math.max(0, clip.bottom - clip.top) / box.height,
+                top: box.top,
+                left: box.left,
+                width: box.width,
+                height: box.height,
+                opacity: Number(style.opacity),
+                color: style.backgroundColor,
+                fade:
+                  fade && fade.playState === 'running'
+                    ? Number(fade.currentTime)
+                    : null,
+              };
+            })
+            .filter((surface) => surface.opacity > 0.02);
+          const own: Record<string, string> = {};
+          for (const el of document.querySelectorAll<HTMLElement>(buttons))
+            own[name(el)] = getComputedStyle(el).backgroundColor;
+          frames.push({ t: Math.round(performance.now() - t0), surfaces, own });
+          if (performance.now() - t0 < duration) requestAnimationFrame(tick);
+          else resolve(frames);
+        };
+        requestAnimationFrame(tick);
+      }),
+    { selector: SURFACE, buttons: BUTTONS, duration },
+  );
+}
+
+type WidthFrame = {
+  t: number;
+  gap: number;
+  container: number;
+  state: string | null;
+};
+
+/** Records the desktop sidebar's gap and container widths, frame by frame. */
+function recordWidths(page: Page, duration: number) {
+  return page.evaluate(
+    ({ gap, container, duration }) =>
+      new Promise<WidthFrame[]>((resolve) => {
+        const frames: WidthFrame[] = [];
+        const t0 = performance.now();
+        // The first one at once: before the interaction that follows.
+        const tick = () => {
+          frames.push({
+            t: Math.round(performance.now() - t0),
+            gap: document.querySelector(gap)!.getBoundingClientRect().width,
+            container: document
+              .querySelector(container)!
+              .getBoundingClientRect().width,
+            state: document
+              .querySelector('[data-slot="sidebar"][data-state]')!
+              .getAttribute('data-state'),
+          });
+          if (performance.now() - t0 < duration) requestAnimationFrame(tick);
+          else resolve(frames);
+        };
+        tick();
+      }),
+    { gap: GAP, container: CONTAINER, duration },
+  );
+}
+
+/** Only ever goes one way (1: up the axis, -1: down), within `slack`. */
+function expectOneWay(values: number[], way: 1 | -1, slack = 0.5) {
+  for (let i = 1; i < values.length; i++)
+    expect((values[i]! - values[i - 1]!) * way).toBeGreaterThanOrEqual(-slack);
+}
+
+const button = (page: Page, name: string) =>
+  page.locator(BUTTONS).filter({ hasText: new RegExp(`^\\s*${name}\\s*$`) });
+
+const boxOf = async (page: Page, name: string) =>
+  (await button(page, name).boundingBox())!;
+
+/** Hovers a menu button (its center), at once. */
+async function hover(page: Page, name: string) {
+  const box = await boxOf(page, name);
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+}
+
+/** Into the page, beside the sidebar. */
+const leave = (page: Page) => page.mouse.move(700, 400);
+
+/** The sidebar's collapse, frame by frame: from a width to another. */
+function expectCollapse(frames: WidthFrame[], from: number, to: number) {
+  const way = to > from ? 1 : -1;
+  expect(frames[0]!.container).toBeCloseTo(from, 0);
+  expect(frames[0]!.gap).toBeCloseTo(from, 0);
+  // The container slides and resizes one way, seen on its way (not a jump).
+  const containers = frames.map((frame) => frame.container);
+  expectOneWay(containers, way);
+  const between = (width: number) =>
+    (width - from) * way > 1 && (to - width) * way > 1;
+  expect(containers.filter(between).length).toBeGreaterThanOrEqual(5);
+  expect(frames.at(-1)!.container).toBeCloseTo(to, 0);
+  // The page's gap moves with it, every frame: no sliver, no overlap.
+  for (const frame of frames)
+    expect(Math.abs(frame.gap - frame.container), `${frame.t}ms`).toBeLessThan(
+      0.5,
+    );
+}
+
+/** A CSS `cubic-bezier()`'s progress at `x` (share of the time). */
+function bezier([x1, y1, x2, y2]: number[], x: number) {
+  const at = (a: number, b: number, t: number) =>
+    3 * a * t * (1 - t) ** 2 + 3 * b * t ** 2 * (1 - t) + t ** 3;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (at(x1!, x2!, mid) < x) lo = mid;
+    else hi = mid;
+  }
+  return at(y1!, y2!, (lo + hi) / 2);
+}
+
+/** `transition.collapse`: 280ms on `ease.inOut`, for all that resizes. */
+const COLLAPSE_MS = 280;
+const COLLAPSE_CURVE = [0.77, 0, 0.175, 1];
+const COLLAPSE_EASING = `cubic-bezier(${COLLAPSE_CURVE.join(', ')})`;
+/** `transition.collapseLabel`: labels fade in 140ms. */
+const LABEL_MS = 140;
+/** The moments the toggle is seeked to. */
+const STEPS = [0, 35, 70, 105, 140, 175, 210, 245, 280];
+
+type Seek = {
+  t: number;
+  container: number;
+  gap: number;
+  /** The container's right edge minus the page's left edge. */
+  edges: number;
+  /** A menu button's icon, and the team switcher's logo (lg). */
+  icon: number;
+  logo: number;
+  /** The "Platform" group label's top margin and opacity. */
+  groupLabel: { marginTop: number; opacity: number; filter: string };
+  /** A button label (`Models`), as it shows. */
+  label: { opacity: number; filter: string };
+  /** Labels truncated with an ellipsis while they show. */
+  ellipses: string[];
+  /** Playground's sub-menu and the Projects group (both hidden in icons). */
+  sub: { height: number; opacity: number };
+  projects: { height: number; opacity: number };
+};
+
+type Seeked = {
+  /** The CSS transitions and Web Animations the toggle runs. */
+  running: {
+    target: string;
+    property: string;
+    duration: number;
+    easing: string;
+    delay: number;
+  }[];
+  steps: Seek[];
+};
+
+/**
+ * Right after a toggle: every animation it started in the sidebar (the CSS
+ * transitions of the widths, the buttons, the group labels, and Animate
+ * UI's label and part animations), paused together and seeked through the
+ * collapse, read at each step: exact, however busy the machine.
+ */
+function seekToggle(page: Page) {
+  return page.evaluate(
+    ({ steps }) => {
+      const wrapper = document.querySelector('[data-slot="sidebar-wrapper"]')!;
+      const animations = document.getAnimations().filter((animation) => {
+        const target = (animation.effect as KeyframeEffect | null)?.target;
+        return target instanceof Element && wrapper.contains(target);
+      });
+      const describe = (element: Element) =>
+        (element.getAttribute('data-sidebar') === 'menu-button'
+          ? 'sidebar-menu-button'
+          : element.getAttribute('data-slot')) ??
+        element.getAttribute('data-sidebar') ??
+        element.tagName.toLowerCase();
+      const running = animations.map((animation) => {
+        const effect = animation.effect as KeyframeEffect;
+        const timing = effect.getTiming();
+        return {
+          target: describe(effect.target!),
+          property:
+            animation instanceof CSSTransition
+              ? animation.transitionProperty
+              : effect
+                  .getKeyframes()
+                  .flatMap((k) =>
+                    Object.keys(k).filter(
+                      (key) =>
+                        ![
+                          'offset',
+                          'easing',
+                          'composite',
+                          'computedOffset',
+                        ].includes(key),
+                    ),
+                  )
+                  .filter((key, i, all) => all.indexOf(key) === i)
+                  .join('+'),
+          duration: Number(timing.duration),
+          easing: String(timing.easing),
+          delay: Number(timing.delay ?? 0),
+        };
+      });
+      for (const animation of animations) animation.pause();
+      const button = (name: string) =>
+        [
+          ...document.querySelectorAll<HTMLElement>(
+            '[data-sidebar="menu-button"]',
+          ),
+        ].find((el) => el.textContent?.trim().startsWith(name))!;
+      const shownOpacity = (element: Element) => {
+        let opacity = 1;
+        for (let el: Element | null = element; el; el = el.parentElement)
+          opacity *= Number(getComputedStyle(el).opacity);
+        return opacity;
+      };
+      const read = (t: number) => {
+        for (const animation of animations) animation.currentTime = t;
+        const container = document
+          .querySelector('[data-slot="sidebar-container"]')!
+          .getBoundingClientRect();
+        const inset = document
+          .querySelector('[data-slot="sidebar-inset"]')!
+          .getBoundingClientRect();
+        const models = button('Models');
+        const groupLabel = document.querySelector<HTMLElement>(
+          '[data-sidebar="group-label"]',
+        )!;
+        const label = models.querySelector('span')!;
+        const sub = document.querySelector<HTMLElement>(
+          '[data-sidebar="menu-sub"]',
+        )!;
+        const projects = button('Design Engineering').closest<HTMLElement>(
+          '[data-sidebar="group"]',
+        )!;
+        const ellipses = [
+          ...wrapper.querySelectorAll<HTMLElement>('[data-sidebar] span'),
+        ]
+          .filter(
+            (span) =>
+              span.textContent?.trim() &&
+              span.scrollWidth > span.clientWidth + 0.5 &&
+              span.clientWidth > 1 &&
+              getComputedStyle(span).textOverflow === 'ellipsis' &&
+              shownOpacity(span) > 0.02 &&
+              getComputedStyle(span).display !== 'none',
+          )
+          .map((span) => span.textContent!.trim());
+        return {
+          t,
+          container: container.width,
+          gap: document
+            .querySelector('[data-slot="sidebar-gap"]')!
+            .getBoundingClientRect().width,
+          edges: container.right - inset.left,
+          icon: models.querySelector('svg')!.getBoundingClientRect().left,
+          logo: button('Acme').firstElementChild!.getBoundingClientRect().left,
+          groupLabel: {
+            marginTop: parseFloat(getComputedStyle(groupLabel).marginTop),
+            opacity: Number(getComputedStyle(groupLabel).opacity),
+            filter: getComputedStyle(groupLabel).filter,
+          },
+          label: {
+            opacity: Number(getComputedStyle(label).opacity),
+            filter: getComputedStyle(label).filter,
+          },
+          ellipses,
+          sub: {
+            height: sub.getBoundingClientRect().height,
+            opacity: shownOpacity(sub),
+          },
+          projects: {
+            height: projects.getBoundingClientRect().height,
+            opacity: shownOpacity(projects),
+          },
+        };
+      };
+      const result = steps.map(read);
+      for (const animation of animations) animation.finish();
+      return { running, steps: result };
+    },
+    { steps: STEPS },
+  ) as Promise<Seeked>;
+}
+
+/** What shows before a toggle: the parts' heights. */
+function heightsBefore(page: Page) {
+  return page.evaluate(() => ({
+    sub: document
+      .querySelector('[data-sidebar="menu-sub"]')!
+      .getBoundingClientRect().height,
+    projects: [
+      ...document.querySelectorAll<HTMLElement>('[data-sidebar="menu-button"]'),
+    ]
+      .find((el) => el.textContent?.includes('Design Engineering'))!
+      .closest('[data-sidebar="group"]')!
+      .getBoundingClientRect().height,
+  }));
+}
+
+/**
+ * The toggle, seeked: everything on one curve and one duration (280ms on
+ * the in-out curve), edges together, icons anchored, labels fading with no
+ * ellipsis, group labels sliding in step, hidden parts folding.
+ */
+function expectToggle(
+  seeked: Seeked,
+  collapsing: boolean,
+  heights: { sub: number; projects: number },
+) {
+  // The widths, and the buttons' own resizing, on the collapse's timing.
+  for (const target of [
+    'sidebar-gap',
+    'sidebar-container',
+    'sidebar-menu-button',
+  ]) {
+    const transitions = seeked.running.filter(
+      (r) => r.target === target && /width/.test(r.property),
+    );
+    expect(transitions.length, target).toBeGreaterThan(0);
+    for (const r of transitions) {
+      expect(r.duration, target).toBe(COLLAPSE_MS);
+      expect(r.easing, target).toBe(COLLAPSE_EASING);
+    }
+  }
+  const from = collapsing ? EXPANDED : ICONS;
+  const to = collapsing ? ICONS : EXPANDED;
+  for (const step of seeked.steps) {
+    const at = `${step.t}ms`;
+    const p = bezier(COLLAPSE_CURVE, step.t / COLLAPSE_MS);
+    const shrink = collapsing ? p : 1 - p;
+    expect(
+      Math.abs(step.container - (from + (to - from) * p)),
+      at,
+    ).toBeLessThan(1);
+    // Edges together: the page's edge is the sidebar's.
+    expect(Math.abs(step.edges), at).toBeLessThan(0.5);
+    expect(Math.abs(step.gap - step.container), at).toBeLessThan(0.5);
+    // Icons stay put; the team logo (lg: its padding goes) moves on the
+    // same curve.
+    expect(Math.abs(step.icon - 16), at).toBeLessThan(0.5);
+    expect(Math.abs(step.logo - (16 - 8 * shrink)), at).toBeLessThan(0.5);
+    // The group label slides up in step (shadcn/ui's -mt-8).
+    expect(Math.abs(step.groupLabel.marginTop + 32 * shrink), at).toBeLessThan(
+      0.5,
+    );
+    // Labels: gone in the first half collapsing, back in the last half.
+    const labelShown = collapsing
+      ? step.t >= LABEL_MS
+        ? 0
+        : null
+      : step.t <= COLLAPSE_MS - LABEL_MS
+        ? 0
+        : null;
+    if (labelShown === 0) {
+      expect(step.label.opacity, at).toBeLessThan(0.01);
+      expect(step.groupLabel.opacity, at).toBeLessThan(0.01);
+    }
+    expect(step.ellipses, at).toEqual([]);
+    // The hidden parts fold on the same curve.
+    expect(
+      Math.abs(step.sub.height - heights.sub * (1 - shrink)),
+      at,
+    ).toBeLessThan(1);
+    expect(
+      Math.abs(step.projects.height - heights.projects * (1 - shrink)),
+      at,
+    ).toBeLessThan(1);
+    expect(step.sub.opacity, at).toBeLessThanOrEqual(1);
+  }
+  const first = seeked.steps[0]!;
+  const last = seeked.steps.at(-1)!;
+  if (collapsing) {
+    expect(first.label.opacity).toBe(1);
+    expect(first.label.filter).toBe('blur(0px)');
+    // Into a light blur (blur.icon).
+    const faded = seeked.steps.find((step) => step.t === LABEL_MS)!;
+    expect(faded.label.filter).toBe('blur(2px)');
+    expect(last.sub.opacity).toBeLessThan(0.01);
+  } else {
+    expect(last.label.opacity).toBe(1);
+    expect(['none', 'blur(0px)']).toContain(last.label.filter);
+    expect(last.groupLabel.opacity).toBe(1);
+    expect(last.sub.opacity).toBe(1);
+    expect(last.projects.opacity).toBe(1);
+  }
+}
+
+export function describeSidebar(library: string) {
+  const path = `/examples/${library}/sidebar`;
+  const title = `${library} sidebar demo`;
+  const trigger = (page: Page) =>
+    page.locator('[data-sidebar="trigger"]').first();
+  const state = (page: Page) =>
+    page
+      .locator('[data-slot="sidebar"][data-state]')
+      .getAttribute('data-state');
+
+  test.describe(title, () => {
+    test.describe.configure({ timeout: 120_000 });
+    test.beforeEach(async ({ page, context }) => {
+      await context.clearCookies();
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await page.mouse.move(700, 400);
+    });
+
+    test('hovering a menu button lights it from nothing, with its own background', async ({
+      page,
+    }) => {
+      const recording = recordHighlight(page, 500);
+      await hover(page, 'Models');
+      const frames = await recording;
+      const models = await boxOf(page, 'Models');
+      const lit = frames.filter((frame) => frame.surfaces.length);
+      expect(lit.length).toBeGreaterThan(5);
+      for (const frame of frames) {
+        expect(frame.surfaces.length, `${frame.t}ms`).toBeLessThanOrEqual(1);
+        expect(frame.own.Models, `${frame.t}ms`).toBe(TRANSPARENT);
+      }
+      for (const { surfaces } of lit) {
+        const [surface] = surfaces;
+        expect(surface!.button).toBe('Models');
+        expect(Math.abs(surface!.top - models.y)).toBeLessThan(0.5);
+        expect(Math.abs(surface!.left - models.x)).toBeLessThan(0.5);
+        expect(Math.abs(surface!.width - models.width)).toBeLessThan(0.5);
+        expect(Math.abs(surface!.height - models.height)).toBeLessThan(0.5);
+        expect(surface!.color).not.toBe(TRANSPARENT);
+      }
+      // It fades in, on the color's curve (CSS's `ease` over 200ms: under
+      // half in at 40ms).
+      expect(lit[0]!.surfaces[0]!.opacity).toBeLessThan(0.7);
+      for (const { surfaces } of lit) {
+        const { fade, opacity } = surfaces[0]!;
+        if (fade !== null && fade > 10 && fade <= 40)
+          expect(opacity, `${fade}ms`).toBeLessThan(0.5);
+      }
+      expect(lit.at(-1)!.surfaces[0]!.opacity).toBe(1);
+      // Under the button's content: its text stays on top.
+      const covered = await button(page, 'Models').evaluate((el) => {
+        const box = el.getBoundingClientRect();
+        const hit = document.elementFromPoint(
+          box.x + 40,
+          box.y + box.height / 2,
+        );
+        return el.contains(hit);
+      });
+      expect(covered).toBe(true);
+    });
+
+    test('moving to another button, the highlight glides there', async ({
+      page,
+    }) => {
+      await hover(page, 'Models');
+      await page.waitForTimeout(400);
+      const recording = recordHighlight(page, 500);
+      await hover(page, 'Documentation');
+      const frames = await recording;
+      const models = await boxOf(page, 'Models');
+      const documentation = await boxOf(page, 'Documentation');
+      for (const frame of frames) {
+        expect(frame.surfaces.length, `${frame.t}ms`).toBe(1);
+        // On screen all along, fully: one surface handed over, never cut
+        // by a button's edge.
+        expect(frame.surfaces[0]!.opacity, `${frame.t}ms`).toBeGreaterThan(
+          0.99,
+        );
+        expect(frame.surfaces[0]!.shown, `${frame.t}ms`).toBeGreaterThan(0.99);
+        for (const [name, color] of Object.entries(frame.own))
+          if (name === 'Models' || name === 'Documentation')
+            expect(color, `${frame.t}ms: ${name}`).toBe(TRANSPARENT);
+      }
+      const tops = frames.map((frame) => frame.surfaces[0]!.top);
+      expectOneWay(tops, 1);
+      // Through every frame on the way, not a jump.
+      expect(
+        tops.filter((top) => top > models.y + 1 && top < documentation.y - 1)
+          .length,
+      ).toBeGreaterThanOrEqual(3);
+      // On the highlight's spring (stiffness 500, damping 40): most of the
+      // way within ~100ms, there by ~300ms.
+      const moved = frames.findIndex(
+        (frame) => frame.surfaces[0]!.top > models.y + 0.5,
+      );
+      const start = frames[moved]!.t;
+      const at = (t: number) =>
+        frames.find((frame) => frame.t >= start + t) ?? frames.at(-1)!;
+      const progress = (frame: HighlightFrame) =>
+        (frame.surfaces[0]!.top - models.y) / (documentation.y - models.y);
+      expect(progress(at(100))).toBeGreaterThan(0.6);
+      expect(progress(at(100))).toBeLessThan(0.995);
+      const last = frames.at(-1)!.surfaces[0]!;
+      expect(last.button).toBe('Documentation');
+      expect(Math.abs(last.top - documentation.y)).toBeLessThan(0.5);
+      expect(progress(at(320))).toBeGreaterThan(0.99);
+    });
+
+    test('it glides into a sub-menu button, and back out', async ({ page }) => {
+      await hover(page, 'Playground');
+      await page.waitForTimeout(400);
+      let recording = recordHighlight(page, 500);
+      await hover(page, 'Starred');
+      let frames = await recording;
+      const playground = await boxOf(page, 'Playground');
+      const starred = await boxOf(page, 'Starred');
+      // Something lit all along: the sub-button's surface glides in from
+      // Playground's (the sub-menu clips its own, so Playground's glides
+      // along with it and goes once there).
+      for (const frame of frames)
+        expect(
+          Math.max(...frame.surfaces.map((surface) => surface.opacity)),
+          `${frame.t}ms`,
+        ).toBeGreaterThan(0.99);
+      const entering = frames.flatMap((frame) =>
+        frame.surfaces.filter((surface) => surface.button === 'Starred'),
+      );
+      expect(entering.length).toBeGreaterThan(5);
+      expect(Math.abs(entering[0]!.top - playground.y)).toBeLessThan(
+        (starred.y - playground.y) / 2,
+      );
+      expectOneWay(
+        entering.map((surface) => surface.top),
+        1,
+      );
+      const last = frames.at(-1)!.surfaces;
+      expect(last).toHaveLength(1);
+      expect(last[0]!.button).toBe('Starred');
+      expect(Math.abs(last[0]!.top - starred.y)).toBeLessThan(0.5);
+      expect(Math.abs(last[0]!.left - starred.x)).toBeLessThan(0.5);
+      expect(Math.abs(last[0]!.width - starred.width)).toBeLessThan(0.5);
+
+      // And back to a top-level button.
+      recording = recordHighlight(page, 500);
+      await hover(page, 'Models');
+      frames = await recording;
+      const models = await boxOf(page, 'Models');
+      for (const frame of frames)
+        expect(
+          Math.max(...frame.surfaces.map((surface) => surface.opacity)),
+          `${frame.t}ms`,
+        ).toBeGreaterThan(0.99);
+      const back = frames.at(-1)!.surfaces;
+      expect(back).toHaveLength(1);
+      expect(back[0]!.button).toBe('Models');
+      expect(Math.abs(back[0]!.top - models.y)).toBeLessThan(0.5);
+    });
+
+    for (const [where, name] of [
+      ['header', 'Acme Inc'],
+      ['footer', 'shadcn'],
+    ] as const)
+      test(`the ${where}'s dropdown trigger stays lit while its menu is open`, async ({
+        page,
+      }) => {
+        const trigger = page.locator(BUTTONS).filter({ hasText: name });
+        const surfaces = () =>
+          page.locator(SURFACE).evaluateAll(
+            (els, buttons) =>
+              els
+                .filter((el) => Number(getComputedStyle(el).opacity) > 0.02)
+                .map((el) => ({
+                  button: (
+                    el.parentElement?.querySelector(buttons)?.textContent ?? ''
+                  ).trim(),
+                  opacity: Number(getComputedStyle(el).opacity),
+                  color: getComputedStyle(el).backgroundColor,
+                })),
+            BUTTONS,
+          );
+        const expectLit = async (when: string) => {
+          const lit = await surfaces();
+          expect(lit, when).toHaveLength(1);
+          expect(lit[0]!.button, when).toContain(name);
+          expect(lit[0]!.opacity, when).toBe(1);
+          expect(lit[0]!.color, when).not.toBe(TRANSPARENT);
+          // Its own background stays cleared: one surface.
+          expect(
+            await trigger.evaluate(
+              (el) => getComputedStyle(el).backgroundColor,
+            ),
+            when,
+          ).toBe(TRANSPARENT);
+        };
+        await trigger.click();
+        const menu = page.getByRole('menu');
+        await expect(menu).toBeVisible();
+        await page.waitForTimeout(400);
+        await expectLit('open');
+        // The pointer goes into the menu: still lit.
+        const box = (await menu.boundingBox())!;
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.waitForTimeout(400);
+        await expectLit('pointer in the menu');
+        // The keyboard moves in the menu: still lit.
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(300);
+        await expectLit('keyboard in the menu');
+        // Closed, it fades out where it is, on the color's curve.
+        await page.mouse.move(700, 400);
+        const recording = recordHighlight(page, 600);
+        await page.keyboard.press('Escape');
+        const frames = await recording;
+        const fading = frames.filter(
+          (frame) =>
+            frame.surfaces[0] &&
+            frame.surfaces[0].opacity > 0.05 &&
+            frame.surfaces[0].opacity < 0.95,
+        );
+        expect(fading.length).toBeGreaterThanOrEqual(2);
+        for (const frame of frames)
+          expect(frame.surfaces.length, `${frame.t}ms`).toBeLessThanOrEqual(1);
+        expect(frames.at(-1)!.surfaces).toEqual([]);
+      });
+
+    test('leaving the sidebar, it fades out where it is, on the color curve', async ({
+      page,
+    }) => {
+      await hover(page, 'Documentation');
+      await page.waitForTimeout(400);
+      const recording = recordHighlight(page, 500);
+      await leave(page);
+      const frames = await recording;
+      const documentation = await boxOf(page, 'Documentation');
+      const fading = frames.filter(
+        (frame) => frame.surfaces[0] && frame.surfaces[0].opacity < 0.99,
+      );
+      // Never a hard cut: seen on its way out.
+      expect(fading.length).toBeGreaterThanOrEqual(3);
+      for (const { surfaces } of fading) {
+        expect(surfaces).toHaveLength(1);
+        expect(Math.abs(surfaces[0]!.top - documentation.y)).toBeLessThan(0.5);
+        const { fade, opacity } = surfaces[0]!;
+        // CSS's `ease` over 200ms: still more than half there at 40ms.
+        if (fade !== null && fade > 10 && fade <= 40)
+          expect(opacity, `${fade}ms`).toBeGreaterThan(0.5);
+      }
+      expectOneWay(
+        fading.map((frame) => frame.surfaces[0]!.opacity),
+        -1,
+      );
+      expect(frames.at(-1)!.surfaces).toEqual([]);
+      await expect(page.locator(SURFACE)).toHaveCount(0);
+      // The button's own background is back, and it's transparent.
+      expect(frames.at(-1)!.own.Documentation).toBe(TRANSPARENT);
+    });
+
+    test('collapsing to icons and expanding again: one curve for all, edges together', async ({
+      page,
+    }) => {
+      let recording = recordWidths(page, 700);
+      await trigger(page).click();
+      let frames = await recording;
+      expect(frames.at(-1)!.state).toBe('collapsed');
+      expectCollapse(frames, EXPANDED, ICONS);
+
+      recording = recordWidths(page, 700);
+      await trigger(page).click();
+      frames = await recording;
+      expect(frames.at(-1)!.state).toBe('expanded');
+      expectCollapse(frames, ICONS, EXPANDED);
+
+      // Exactly, seeked: both ways.
+      await page.waitForTimeout(100);
+      let heights = await heightsBefore(page);
+      await trigger(page).click();
+      expectToggle(await seekToggle(page), true, heights);
+      await page.waitForTimeout(100);
+      await trigger(page).click();
+      expectToggle(await seekToggle(page), false, heights);
+      heights = await heightsBefore(page);
+      expect(heights.sub).toBeGreaterThan(50);
+    });
+
+    test('Cmd/Ctrl+B toggles it, and the cookie keeps its state', async ({
+      page,
+      context,
+    }) => {
+      const cookie = async () =>
+        (await context.cookies()).find((c) => c.name === 'sidebar_state')
+          ?.value;
+      expect(await state(page)).toBe('expanded');
+      const heights = await heightsBefore(page);
+      await page.keyboard.press('ControlOrMeta+b');
+      expectToggle(await seekToggle(page), true, heights);
+      expect(await state(page)).toBe('collapsed');
+      expect(await cookie()).toBe('false');
+      await page.keyboard.press('ControlOrMeta+b');
+      expect(await state(page)).toBe('expanded');
+      expect(await cookie()).toBe('true');
+    });
+
+    test('collapsed to icons, a button shows its animated tooltip', async ({
+      page,
+    }) => {
+      const tooltip = page
+        .locator('[data-slot="tooltip-content"]')
+        .filter({ hasText: 'Models' });
+      await page.keyboard.press('ControlOrMeta+b');
+      await page.waitForTimeout(600);
+      const frames = page.evaluate(
+        () =>
+          new Promise<{ t: number; opacity: number; transform: string }[]>(
+            (resolve) => {
+              const out: { t: number; opacity: number; transform: string }[] =
+                [];
+              const t0 = performance.now();
+              const tick = () => {
+                const el = [
+                  ...document.querySelectorAll<HTMLElement>(
+                    '[data-slot="tooltip-content"]',
+                  ),
+                ].find(
+                  (node) =>
+                    node.textContent?.includes('Models') &&
+                    node.getClientRects().length > 0,
+                );
+                if (el) {
+                  const style = getComputedStyle(el);
+                  out.push({
+                    t: performance.now() - t0,
+                    opacity: Number(style.opacity),
+                    transform: style.transform,
+                  });
+                }
+                if (performance.now() - t0 < 1200) requestAnimationFrame(tick);
+                else resolve(out);
+              };
+              requestAnimationFrame(tick);
+            },
+          ),
+      );
+      await hover(page, 'Models');
+      const shown = await frames;
+      await expect(tooltip).toBeVisible();
+      // It grows and fades in (Animate UI's tooltip), to the button's right
+      // (Base UI's after its own delay: shadcn/ui's sidebar sets none).
+      expect(shown.length).toBeGreaterThan(5);
+      expect(shown[0]!.opacity).toBeLessThan(1);
+      expect(shown.at(-1)!.opacity).toBe(1);
+      const models = await boxOf(page, 'Models');
+      const box = (await tooltip.boundingBox())!;
+      expect(box.x).toBeGreaterThan(models.x + models.width);
+
+      // Expanded, none.
+      await leave(page);
+      await page.keyboard.press('ControlOrMeta+b');
+      await page.waitForTimeout(600);
+      await hover(page, 'Models');
+      await page.waitForTimeout(400);
+      await expect(tooltip).toBeHidden();
+    });
+
+    test("the trigger's icon swaps as the sidebar opens and closes", async ({
+      page,
+    }) => {
+      const icons = trigger(page).locator('[data-icon]');
+      // At rest, one icon: the panel closing (it's open).
+      await expect(icons).toHaveCount(1);
+      await expect(icons).toHaveAttribute('data-icon', 'open');
+      const frames = page.evaluate(
+        () =>
+          new Promise<{ key: string; opacity: number; scale: number }[][]>(
+            (resolve) => {
+              const out: { key: string; opacity: number; scale: number }[][] =
+                [];
+              const t0 = performance.now();
+              const tick = () => {
+                out.push(
+                  [
+                    ...document.querySelectorAll<HTMLElement>(
+                      '[data-sidebar="trigger"] [data-icon]',
+                    ),
+                  ].map((el) => {
+                    const style = getComputedStyle(el);
+                    const scale = style.transform.match(/matrix\(([^,]+)/);
+                    return {
+                      key: el.dataset.icon!,
+                      opacity: Number(style.opacity),
+                      scale: scale ? Number(scale[1]) : 1,
+                    };
+                  }),
+                );
+                if (performance.now() - t0 < 400) requestAnimationFrame(tick);
+                else resolve(out);
+              };
+              requestAnimationFrame(tick);
+            },
+          ),
+      );
+      await page.keyboard.press('ControlOrMeta+b');
+      const shown = await frames;
+      // The panel opening grows in, out of a half-size, faded icon, while
+      // the closing one shrinks out (the swap: 150ms).
+      const entering = shown.flatMap((icons) =>
+        icons.filter((icon) => icon.key === 'closed'),
+      );
+      expect(entering.length).toBeGreaterThan(3);
+      expect(
+        entering.some((icon) => icon.scale < 0.9 && icon.opacity < 0.9),
+      ).toBe(true);
+      expect(shown.some((icons) => icons.length === 2)).toBe(true);
+      expect(shown.at(-1)!).toEqual([{ key: 'closed', opacity: 1, scale: 1 }]);
+    });
+
+    test("the rail's hover line fades on the color's curve", async ({
+      page,
+    }) => {
+      const rail = page.locator('[data-sidebar="rail"]');
+      const timing = await rail.evaluate((el) => {
+        const after = getComputedStyle(el, '::after');
+        return {
+          property: after.transitionProperty,
+          duration: after.transitionDuration,
+          easing: after.transitionTimingFunction,
+        };
+      });
+      expect(timing).toEqual({
+        property: 'background-color',
+        duration: '0.2s',
+        easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+      });
+    });
+
+    test("a sub-menu's chevron turns as it opens, on the disclosure's timing", async ({
+      page,
+    }) => {
+      const chevron = (name: string) =>
+        button(page, name).locator('svg').last();
+      const angle = (name: string) =>
+        // Tailwind's `rotate-90` is the `rotate` property.
+        chevron(name).evaluate(
+          (el) => parseFloat(getComputedStyle(el).rotate) || 0,
+        );
+      // Playground is open from the start: its chevron points down.
+      await expect.poll(() => angle('Playground')).toBe(90);
+      expect(await angle('Models')).toBe(0);
+      expect(
+        await chevron('Models').evaluate((el) => {
+          const style = getComputedStyle(el);
+          return [style.transitionDuration, style.transitionTimingFunction];
+        }),
+      ).toEqual(['0.35s', 'cubic-bezier(0.215, 0.61, 0.355, 1)']);
+      await button(page, 'Models').click();
+      await expect.poll(() => angle('Models')).toBe(90);
+      await button(page, 'Models').click();
+      await expect.poll(() => angle('Models')).toBe(0);
+    });
+
+    test('nothing animates on mount', async ({ page }) => {
+      await page.addInitScript(
+        ({ gap, surface }) => {
+          const w = window as unknown as {
+            __mount: { gap: number | null; surfaces: number }[];
+          };
+          w.__mount = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const el = document.querySelector(gap);
+            w.__mount.push({
+              gap: el ? el.getBoundingClientRect().width : null,
+              surfaces: document.querySelectorAll(surface).length,
+            });
+            if (performance.now() - t0 < 1500) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        },
+        { gap: GAP, surface: SURFACE },
+      );
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(400);
+      const frames = await page.evaluate(
+        () =>
+          (
+            window as unknown as {
+              __mount: { gap: number | null; surfaces: number }[];
+            }
+          ).__mount,
+      );
+      const shown = frames.filter((frame) => frame.gap !== null);
+      expect(shown.length).toBeGreaterThan(5);
+      for (const frame of shown) {
+        expect(frame.gap).toBeCloseTo(EXPANDED, 0);
+        expect(frame.surfaces).toBe(0);
+      }
+    });
+  });
+
+  test.describe(`${title}, in the docs`, () => {
+    test.describe.configure({ timeout: 120_000 });
+    test('the preview shows it in an iframe of its page, at a desktop width', async ({
+      page,
+    }) => {
+      await page.goto(`/docs/primitives/${library}/sidebar`, {
+        waitUntil: 'networkidle',
+      });
+      const iframe = page.locator('[data-slot="preview-iframe"]');
+      await expect(iframe).toHaveAttribute('src', path);
+      const frame = page.frameLocator('[data-slot="preview-iframe"]');
+      // Desktop (the iframe is wider than md), cut off on the right.
+      await expect(frame.locator(CONTAINER)).toBeVisible();
+      expect((await iframe.boundingBox())!.width).toBeGreaterThanOrEqual(1024);
+      await expect(
+        frame.locator(BUTTONS).filter({ hasText: /^\s*Models\s*$/ }),
+      ).toBeVisible();
+      // The replay button reloads it.
+      await page.getByRole('button', { name: 'Replay' }).first().click();
+      await expect(frame.locator(CONTAINER)).toBeVisible();
+    });
+  });
+
+  test.describe(`${title}, reduced motion`, () => {
+    test.describe.configure({ timeout: 120_000 });
+    test.beforeEach(async ({ page, context }) => {
+      await context.clearCookies();
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await page.mouse.move(700, 400);
+    });
+
+    test('it collapses and expands at once', async ({ page }) => {
+      const recording = recordWidths(page, 400);
+      await trigger(page).click();
+      const frames = await recording;
+      expect(frames.at(-1)!.state).toBe('collapsed');
+      for (const frame of frames) {
+        for (const width of [frame.gap, frame.container])
+          expect(
+            Math.min(Math.abs(width - EXPANDED), Math.abs(width - ICONS)),
+            `${frame.t}ms`,
+          ).toBeLessThan(0.5);
+      }
+      // Expanding, labels still fade back in, without a blur.
+      await trigger(page).click();
+      const { running } = await seekToggle(page);
+      const fades = running.filter((r) => /opacity/.test(r.property));
+      expect(fades.length).toBeGreaterThan(3);
+      for (const r of running) expect(r.property).not.toMatch(/filter|height/);
+    });
+
+    test('the highlight moves to the next button at once, and still fades', async ({
+      page,
+    }) => {
+      await hover(page, 'Models');
+      await page.waitForTimeout(400);
+      let recording = recordHighlight(page, 400);
+      await hover(page, 'Documentation');
+      let frames = await recording;
+      const models = await boxOf(page, 'Models');
+      const documentation = await boxOf(page, 'Documentation');
+      for (const frame of frames) {
+        expect(frame.surfaces).toHaveLength(1);
+        const { top } = frame.surfaces[0]!;
+        expect(
+          Math.min(Math.abs(top - models.y), Math.abs(top - documentation.y)),
+          `${frame.t}ms`,
+        ).toBeLessThan(0.5);
+      }
+      expect(frames.at(-1)!.surfaces[0]!.button).toBe('Documentation');
+
+      recording = recordHighlight(page, 400);
+      await leave(page);
+      frames = await recording;
+      expect(
+        frames.filter(
+          (frame) =>
+            frame.surfaces[0] &&
+            frame.surfaces[0].opacity > 0.05 &&
+            frame.surfaces[0].opacity < 0.95,
+        ).length,
+      ).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  test.describe(`${title}, on a phone`, () => {
+    test.describe.configure({ timeout: 120_000 });
+    test.use({ viewport: { width: 390, height: 844 } });
+
+    test('the trigger opens a sheet that slides in from the left', async ({
+      page,
+    }) => {
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await expect(page.locator(CONTAINER)).toBeHidden();
+      // The sliding element (React Aria's Modal, inside the overlay that
+      // shadcn/ui's Sheet passes the sidebar's attributes to).
+      const sheet =
+        '[data-mobile="true"][data-side], [data-slot="sheet-content"][data-side]';
+      const frames = page.evaluate(
+        (sheet) =>
+          new Promise<{ t: number; left: number; opacity: number }[]>(
+            (resolve) => {
+              const out: { t: number; left: number; opacity: number }[] = [];
+              const t0 = performance.now();
+              const tick = () => {
+                const el = document.querySelector<HTMLElement>(sheet);
+                if (el)
+                  out.push({
+                    t: performance.now() - t0,
+                    left: el.getBoundingClientRect().left,
+                    opacity: Number(getComputedStyle(el).opacity),
+                  });
+                if (performance.now() - t0 < 800) requestAnimationFrame(tick);
+                else resolve(out);
+              };
+              requestAnimationFrame(tick);
+            },
+          ),
+        sheet,
+      );
+      await trigger(page).click();
+      const shown = await frames;
+      expect(shown.length).toBeGreaterThan(5);
+      // From off its edge (left), all the way in, one way.
+      expect(shown[0]!.left).toBeLessThan(-100);
+      expectOneWay(
+        shown.map((frame) => frame.left),
+        1,
+      );
+      expect(Math.abs(shown.at(-1)!.left)).toBeLessThan(0.5);
+      expect(
+        shown.filter((frame) => frame.left < -5 && frame.left > -250).length,
+      ).toBeGreaterThanOrEqual(3);
+
+      // Its menu buttons share the highlight too.
+      const recording = recordHighlight(page, 400);
+      await hover(page, 'Models');
+      const lit = (await recording).filter((frame) => frame.surfaces.length);
+      expect(lit.length).toBeGreaterThan(3);
+      expect(lit.at(-1)!.surfaces[0]!.button).toBe('Models');
+
+      // Cmd/Ctrl+B closes it.
+      await page.keyboard.press('ControlOrMeta+b');
+      await expect(page.locator(sheet)).toHaveCount(0);
+    });
+  });
+}

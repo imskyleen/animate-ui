@@ -35,6 +35,7 @@ export async function ComponentPreview({
   fullBleed = false,
   values,
   code: showCode = true,
+  iframe = false,
 }: {
   name: string;
   /** Backgrounds: the demo fills the whole preview. */
@@ -46,6 +47,11 @@ export async function ComponentPreview({
   values?: Record<string, string | number | boolean>;
   /** Show the demo's code under it (not when the page shows it already). */
   code?: boolean;
+  /**
+   * The demo lays out a whole page (a sidebar): shown in an iframe of its
+   * own page (/examples/<library>/<name>), like shadcn/ui's blocks.
+   */
+  iframe?: boolean;
 }) {
   // demos/<library>/<name>.tsx: discovered by path, no registry to update.
   const { default: Demo, controls } = await import(`@/demos/${name}`);
@@ -77,6 +83,7 @@ export async function ComponentPreview({
   return (
     <PreviewFrame
       fullBleed={fullBleed}
+      {...(iframe && { iframe: `/examples/${name}` })}
       {...(hasControls && { demo: Demo, controls, values })}
       code={
         showCode ? (
@@ -93,7 +100,7 @@ export async function ComponentPreview({
         ) : undefined
       }
     >
-      {!hasControls && <Demo />}
+      {!hasControls && !iframe && <Demo />}
     </PreviewFrame>
   );
 }

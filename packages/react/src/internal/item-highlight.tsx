@@ -60,6 +60,11 @@ import {
 // its menu open (`hover:bg-muted`, `aria-expanded:bg-muted`…). The surface
 // glides from trigger to trigger, goes back to a trigger still lit when the
 // one it's on goes dark, and fades out where it is once none is lit.
+//
+// An item that clips its content (`overflow-hidden`, a sidebar's menu
+// buttons) would clip a surface gliding in from beside it too: rendered
+// `beside` the item (a sibling, in its positioned parent), the surface is
+// laid over the item's box and follows it as it resizes.
 
 /** The highlight's spring: the glide. */
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
@@ -457,6 +462,16 @@ type ItemHighlightOptions = {
   attribute?: string;
 };
 
+type TriggerHighlightOptions = {
+  /**
+   * The caller renders `highlight` beside the item (a sibling, in a
+   * positioned parent) instead of inside it: the surface is laid over the
+   * item's box. For items that clip their content (`overflow: hidden`), which
+   * would clip a surface gliding in from another item.
+   */
+  beside?: boolean;
+};
+
 /**
  * Makes an item take part in its scope's highlight: it becomes the active
  * item when the library marks it highlighted, and stays active until another
@@ -473,8 +488,11 @@ function useItemHighlight(
  * Makes a menubar's trigger take part in its triggers' highlight (see
  * `TriggerHighlightScope`): the highlight is on it while it's lit.
  */
-function useTriggerHighlight(disabled?: boolean): ItemHighlight {
-  return useHighlightIn(React.use(TriggerScopeContext), disabled, null);
+function useTriggerHighlight(
+  disabled?: boolean,
+  { beside = false }: TriggerHighlightOptions = {},
+): ItemHighlight {
+  return useHighlightIn(React.use(TriggerScopeContext), disabled, null, beside);
 }
 
 /** Painted alike (no new surface to render). */
@@ -502,6 +520,7 @@ function useHighlightIn(
   scope: HighlightScopeValue | null,
   disabled: boolean | undefined,
   attribute: string | null,
+  beside = false,
 ): ItemHighlight {
   const id = React.useId();
   const [node, setNode] = React.useState<HTMLElement | null>(null);
@@ -521,7 +540,9 @@ function useHighlightIn(
   // its menu is open; its own background is cleared while it's lit.
   React.useLayoutEffect(() => {
     if (attribute !== null || !light || !unlight || !node) return;
-    if (getComputedStyle(node).position === 'static')
+    // The surface is positioned inside the trigger (beside it, in its
+    // parent, it's laid over its box).
+    if (!beside && getComputedStyle(node).position === 'static')
       node.style.setProperty('position', 'relative');
     // Hover states are read from the pointer: `:hover` can lag behind it.
     let hovered = false;
@@ -578,7 +599,7 @@ function useHighlightIn(
       clearOwnSurface(node, false);
       if (lit) unlight(id);
     };
-  }, [attribute, light, unlight, node, id, disabled]);
+  }, [attribute, light, unlight, node, id, disabled, beside]);
 
   React.useLayoutEffect(() => {
     if (attribute === null || !activate || !paint || !node) return;
@@ -643,6 +664,7 @@ function useHighlightIn(
         leaving={leaving}
         item={node}
         scope={scope}
+        beside={beside}
       />
     ) : null,
   };
@@ -658,6 +680,8 @@ type HighlightSurfaceProps = {
   leaving: Leaving | null;
   item: HTMLElement | null;
   scope: HighlightScopeValue;
+  /** Rendered beside the item: laid over its box (see `beside`). */
+  beside: boolean;
 };
 
 function HighlightSurface({
@@ -667,6 +691,7 @@ function HighlightSurface({
   leaving,
   item,
   scope,
+  beside,
 }: HighlightSurfaceProps) {
   if (!surface || !item) return null;
   return (
@@ -678,6 +703,7 @@ function HighlightSurface({
           surface={surface}
           item={item}
           scope={scope}
+          beside={beside}
         />
       )}
       {leaving && !active && (
@@ -688,12 +714,56 @@ function HighlightSurface({
           surface={surface}
           item={item}
           scope={scope}
+          beside={beside}
           leavingTo={leaving.to}
           fadeOut={leaving.to === null}
         />
       )}
     </>
   );
+}
+
+/**
+ * Lays a surface rendered beside its item over the item's box: its
+ * containing block's terms (scaled ancestors and the item's own transform
+ * included, as the item shows on screen).
+ */
+function placeOver(element: HTMLElement, item: HTMLElement) {
+  const host = element.offsetParent as HTMLElement | null;
+  const box = item.getBoundingClientRect();
+  const origin = host?.getBoundingClientRect();
+  const ratioX =
+    origin && host?.offsetWidth ? origin.width / host.offsetWidth : 1;
+  const ratioY =
+    origin && host?.offsetHeight ? origin.height / host.offsetHeight : 1;
+  const left = origin
+    ? (box.left - origin.left) / ratioX - host!.clientLeft + host!.scrollLeft
+    : box.left + window.scrollX;
+  const top = origin
+    ? (box.top - origin.top) / ratioY - host!.clientTop + host!.scrollTop
+    : box.top + window.scrollY;
+  element.style.left = `${left}px`;
+  element.style.top = `${top}px`;
+  element.style.width = `${box.width / ratioX}px`;
+  element.style.height = `${box.height / ratioY}px`;
+}
+
+/** Keeps a surface rendered beside its item over it (`placeOver`). */
+function useBesideBox(
+  elementRef: React.RefObject<HTMLElement | null>,
+  item: HTMLElement,
+  beside: boolean,
+) {
+  React.useLayoutEffect(() => {
+    const element = elementRef.current;
+    if (!beside || !element) return;
+    const place = () => placeOver(element, item);
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(item);
+    if (element.offsetParent) observer.observe(element.offsetParent);
+    return () => observer.disconnect();
+  }, [elementRef, item, beside]);
 }
 
 type Start = {
@@ -845,6 +915,8 @@ type SurfaceCopyProps = {
   leavingTo?: HTMLElement | null;
   /** No item is lit anymore: it fades out where it is. */
   fadeOut?: boolean;
+  /** Rendered beside the item: laid over its box (see `beside`). */
+  beside?: boolean;
 };
 
 function SurfaceCopy({
@@ -854,6 +926,7 @@ function SurfaceCopy({
   scope,
   leavingTo = null,
   fadeOut = false,
+  beside = false,
 }: SurfaceCopyProps) {
   const reduce = useShouldReduceMotion();
   const glide = useTempoTransition<Transition>(HIGHLIGHT_TRANSITION);
@@ -873,6 +946,8 @@ function SurfaceCopy({
   // mustn't restart the glide.
   const transitionsRef = React.useRef({ glide, fade, resume });
   const { register, gone, left } = scope;
+  // Beside its item: over the item's box first (its glide is in those terms).
+  useBesideBox(elementRef, item, beside);
 
   // Before paint: the first frame already shows the surface where it starts.
   React.useLayoutEffect(() => {
@@ -998,7 +1073,8 @@ function SurfaceCopy({
       data-leaving={leavingTo || fadeOut ? '' : undefined}
       style={{
         position: 'absolute',
-        inset: 0,
+        // Beside its item, its box is the item's (`useBesideBox`).
+        ...(!beside && { inset: 0 }),
         zIndex: -1,
         pointerEvents: 'none',
         transformOrigin: '0 0',
@@ -1046,4 +1122,5 @@ export {
   withHighlight,
   HIGHLIGHT_TRANSITION,
   type ItemHighlight,
+  type TriggerHighlightOptions,
 };

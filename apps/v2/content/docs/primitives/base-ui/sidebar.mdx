@@ -1,0 +1,299 @@
+---
+title: Sidebar
+description: A composable, themeable and customizable sidebar. Its menu buttons share one gliding highlight, and it collapses to icons and back with everything inside on one curve.
+---
+
+<ComponentPreview name="base-ui/sidebar" iframe />
+
+## Installation
+
+shadcn/ui's Sidebar isn't a Base UI primitive: the CLI has no import to swap in it. Its behaviour and motion come from `@animate-ui/react/primitives/sidebar`, a headless primitive that works with every shadcn/ui base. The mobile sheet and the tooltips are shadcn/ui's Sheet and Tooltip, which the CLI animates.
+
+### 1. Install the packages
+
+```npm
+npm install @animate-ui/react motion
+```
+
+### 2. Add shadcn/ui's sidebar, and animate its sheet and tooltips
+
+```npm
+npx shadcn@latest add sidebar
+```
+
+```npm
+npx @animate-ui/cli@latest animate sheet tooltip
+```
+
+Animate the components you put in the sidebar too (`collapsible`, `dropdown-menu`…), or all of them at once: `animate all`.
+
+### 3. Build `components/ui/sidebar.tsx` on the primitive
+
+Import the primitive instead of `useIsMobile`, and drop the constants it now keeps:
+
+```tsx title="components/ui/sidebar.tsx"
+import { useIsMobile } from '@/hooks/use-mobile'; // [!code --]
+import * as SidebarPrimitive from '@animate-ui/react/primitives/sidebar'; // [!code ++]
+
+const SIDEBAR_COOKIE_NAME = 'sidebar_state'; // [!code --]
+const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // [!code --]
+const SIDEBAR_WIDTH = '16rem';
+const SIDEBAR_WIDTH_MOBILE = '18rem';
+const SIDEBAR_WIDTH_ICON = '3rem';
+const SIDEBAR_KEYBOARD_SHORTCUT = 'b'; // [!code --]
+```
+
+Replace `SidebarContextProps`, `SidebarContext`, `useSidebar` and `SidebarProvider` with the primitive's: its `Provider` keeps the open state, the cookie and Cmd/Ctrl+B, and `useSidebar` returns the same values.
+
+```tsx title="components/ui/sidebar.tsx"
+const useSidebar = SidebarPrimitive.useSidebar;
+
+function SidebarProvider({
+  className,
+  style,
+  ...props
+}: React.ComponentProps<typeof SidebarPrimitive.Provider>) {
+  return (
+    <SidebarPrimitive.Provider
+      data-slot="sidebar-wrapper"
+      style={
+        {
+          '--sidebar-width': SIDEBAR_WIDTH,
+          '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
+          ...style,
+        } as React.CSSProperties
+      }
+      className={cn(
+        'group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+In `Sidebar`, five elements become the primitive's parts (their classes and props stay), and the gap and the container lose their CSS transitions:
+
+```diff title="components/ui/sidebar.tsx"
+   if (collapsible === "none") {
+     return (
+-      <div
++      <SidebarPrimitive.Highlight
+         data-slot="sidebar"
+         // …
+       >
+         {children}
+-      </div>
++      </SidebarPrimitive.Highlight>
+     )
+   }
+
+   if (isMobile) {
+     return (
+       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+         <SheetContent /* … */>
+           {/* … */}
+-          <div className="flex h-full w-full flex-col">{children}</div>
++          <SidebarPrimitive.Highlight className="flex h-full w-full flex-col">
++            {children}
++          </SidebarPrimitive.Highlight>
+         </SheetContent>
+       </Sheet>
+     )
+   }
+
+   return (
+     <div className="group peer hidden text-sidebar-foreground md:block" /* … */>
+-      <div
++      <SidebarPrimitive.Gap
+         data-slot="sidebar-gap"
+         className={cn(
+-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
++          "relative w-(--sidebar-width) bg-transparent",
+           // …
+         )}
+       />
+-      <div
++      <SidebarPrimitive.Container
+         data-slot="sidebar-container"
+         data-side={side}
+         className={cn(
+-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear …",
++          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) …",
+           // …
+         )}
+         {...props}
+       >
+-        <div
++        <SidebarPrimitive.Highlight
+           data-sidebar="sidebar"
+           data-slot="sidebar-inner"
+           // …
+         >
+           {children}
+-        </div>
+-      </div>
++        </SidebarPrimitive.Highlight>
++      </SidebarPrimitive.Container>
+     </div>
+   )
+```
+
+In `SidebarTrigger`, let the icon answer the toggle (any two icons: a panel closing, a panel opening):
+
+```diff title="components/ui/sidebar.tsx"
+-      <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={2} />
++      <SidebarPrimitive.TriggerIcon
++        open={<HugeiconsIcon icon={PanelLeftCloseIcon} strokeWidth={2} />}
++        closed={<HugeiconsIcon icon={PanelLeftOpenIcon} strokeWidth={2} />}
++      />
+```
+
+That's all: `SidebarRail` and the menu parts stay as they are (the primitive retimes their transitions). The menu buttons take part in the highlight through the `data-sidebar="menu-button"` and `data-sidebar="menu-sub-button"` attributes shadcn/ui already gives them.
+
+## Usage
+
+Use shadcn/ui's sidebar as usual.
+
+```tsx title="app/layout.tsx"
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        {children}
+      </main>
+    </SidebarProvider>
+  );
+}
+```
+
+The primitive is library-agnostic: the same parts build the sidebar of the [Radix UI](/docs/primitives/radix-ui/sidebar) and [React Aria](/docs/primitives/react-aria/sidebar) bases, or your own.
+
+## Animation
+
+Animate UI v1's sidebar, in Animate UI's motion.
+
+- **Highlight**: the menu buttons and sub-menu buttons share one surface. When a button's own styles paint it (`hover:bg-sidebar-accent`, an open dropdown's `data-[state=open]:bg-sidebar-accent`…), its background is painted on that surface, which glides to it from the button lit before on a spring (stiffness 500, damping 40, a little quicker than v1's 350/35): one highlight handed from button to button, never two. It fades in from nothing when none was lit, and out where it is once none is, over 200ms on CSS's `ease` (the color's curve), so it's never cut at once. A button whose dropdown is open stays lit as long as it is, wherever the pointer and the focus go (the menu's items, the keyboard), because its own styles paint it open: Base UI marks an open trigger `data-popup-open`, so the demo's team switcher and user menu use `data-popup-open:bg-sidebar-accent` (shadcn/ui's demo writes `data-[state=open]:…`, which Base UI never matches). The menu closed, the surface fades out, or glides to the button hovered next. An active button (`isActive`) keeps its own background; hovered, the surface stands for it.
+- The buttons clip their content (`overflow-hidden`): the surface goes beside each one, in its menu item, laid over its box, so it glides in from the previous button instead of showing up at the button's edge. It follows a button's size as the sidebar collapses to icons. Into a sub-menu (which clips its own), the previous surface glides along with the new one, which fades in on the way, then goes. The surface is under the buttons' content and above the sidebar's background: the highlight's container is its own stacking context.
+- **Collapsing and expanding** (offcanvas, or to icons), in 280ms on the in-out curve of what moves on screen (`cubic-bezier(0.77, 0, 0.175, 1)`): quicker than v1's 400ms, for a toggle used all day (Cmd/Ctrl+B). The container slides and resizes (`left`, `right`, `width`) and the gap it leaves in the page follows on the same curve and duration, so the sidebar's edge is the page's at every frame: no sliver, no overlap. Both are CSS transitions of your classes' widths: only the timing is the primitive's. Re-toggled on the way, it turns back from where it is.
+- **Everything inside follows it**, collapsing to icons and back: the menu buttons resize on the sidebar's timing (their `transition-[width,height,padding]`, retimed from Tailwind's 150ms), so the icons stay put (the team switcher's and the user's avatars, whose padding goes, move on the same curve), and the group labels (`Platform`) slide up on it (their `transition-[margin,opacity]`, retimed from 200ms linear).
+- **Labels** (a menu button's text, chevron, a team's name and plan, a user's name and email) fade out into a light blur (2px) in the first half of the collapse (140ms, ease-out), before the buttons get narrow, and fade back in from it in the last half of the expand, once they're nearly wide again. Their ellipsis is held off meanwhile: a label cut by its narrowing button never flickers through `Mo…`, `Model…`. Group labels fade with them.
+- **Parts the collapse hides** (`group-data-[collapsible=icon]:hidden`: a sub-menu, a menu action or badge, a whole group like the demo's Projects) fold on the sidebar's curve and fade with the labels, instead of vanishing: the items below them move with the sidebar instead of jumping. Expanding, they unfold the same way and fade in at the end.
+- **The trigger's icon** swaps as the sidebar opens or closes (`TriggerIcon`): a panel closing while it's open, a panel opening while it's closed, so the icon says what a click does. The old icon shrinks to half its size into a light blur as it fades while the new one grows out of it (150ms, ease-out), Animate UI's swap. A rotating icon would read as a direction, not an action.
+- **The rail's** hover line fades on the color's curve (200ms, CSS's `ease`).
+- Content beside the sidebar can follow its timing too: the Provider sets `--animate-ui-sidebar-duration` and `--animate-ui-sidebar-easing` (the demo's header shrinks with `duration-(--animate-ui-sidebar-duration) ease-(--animate-ui-sidebar-easing)`).
+- **Mobile**: the sidebar is shadcn/ui's Sheet, which Animate UI's Dialog slides in from its side (400ms on a soft ease-out) and dismisses quicker, speeding away.
+- **Collapsed to icons**, the buttons' tooltips are Animate UI's Tooltip: they grow from the button, from 0.7, on a spring (after Base UI's delay: shadcn/ui's sidebar sets no `TooltipProvider`).
+- Collapsibles inside (shadcn/ui's `sidebar-menu-collapsible`) unfold like Animate UI's Collapsible. Their chevrons turn as they do, over 350ms on the same soft ease-out (`transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-data-open/collapsible:rotate-90`, on the collapsible's `data-open` (Base UI has no `data-state`)). shadcn/ui's demo writes `group-data-[state=open]/collapsible:rotate-90`, which never matches with Base UI: its chevrons don't turn.
+- Nothing animates on mount: a sidebar collapsed from the start (its cookie) shows collapsed at once, and the trigger shows its icon at once.
+- Under reduced motion, the sidebar and all inside it collapse and expand at once (hidden parts too), and the highlight moves to the next button at once. The highlight, the labels and the trigger's icon still fade, without blur or scale.
+- `AnimateUIProvider tempo` scales every duration and spring.
+
+## API Reference
+
+`@animate-ui/react/primitives/sidebar` exports the parts of shadcn/ui's sidebar that carry behaviour or motion. Each renders a `div` and takes its props.
+
+### Provider
+
+shadcn/ui's `SidebarProvider` without its styles: the sidebar's open state (kept in the `sidebar_state` cookie for 7 days), the mobile sheet's, and Cmd/Ctrl+B. Below 768px, `isMobile` is true and the trigger toggles the sheet. It sets `--animate-ui-sidebar-duration` and `--animate-ui-sidebar-easing` (the collapse's timing, `0ms` under reduced motion) on its `div`, and adds a small style sheet that retimes the menu buttons', the group labels' and the rail's transitions.
+
+<TypeTable
+  type={{
+    defaultOpen: {
+      description: 'Open at first (uncontrolled).',
+      type: 'boolean',
+      default: 'true',
+    },
+    open: {
+      description: 'Open (controlled).',
+      type: 'boolean',
+    },
+    onOpenChange: {
+      description: 'Called when the sidebar opens or closes.',
+      type: '(open: boolean) => void',
+    },
+    animateOnHover: {
+      description:
+        "The menu buttons share one gliding highlight. False keeps their own hover styles. Animate UI's addition (v1's).",
+      type: 'boolean',
+      default: 'true',
+    },
+  }}
+/>
+
+### useSidebar
+
+shadcn/ui's: `state` (`'expanded' | 'collapsed'`), `open`, `setOpen`, `openMobile`, `setOpenMobile`, `isMobile` and `toggleSidebar`. It throws outside a Provider.
+
+### Gap
+
+The room the desktop sidebar makes in the page: its width animates.
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        "Transition of its width (a tween: its duration and curve become a CSS transition). Give the Container the same one, or the sidebar's edge and the page's drift apart.",
+      type: 'Transition',
+      default: '{ duration: 0.28, ease: [0.77, 0, 0.175, 1] }',
+    },
+  }}
+/>
+
+### Container
+
+The desktop sidebar's fixed container: it slides and resizes. shadcn/ui's `Sidebar` passes it its props.
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of its left, right and width (a tween: its duration and curve become a CSS transition).',
+      type: 'Transition',
+      default: '{ duration: 0.28, ease: [0.77, 0, 0.175, 1] }',
+    },
+  }}
+/>
+
+### Highlight
+
+A sidebar's content (the desktop container's inner element, the mobile sheet's, a `collapsible="none"` sidebar): its menu buttons (`data-sidebar="menu-button"` and `"menu-sub-button"`) share one highlight. Buttons that are `disabled` or `aria-disabled` stay out of it. Collapsing to icons and back, it fades the labels (a menu button's children but its leading icon, the group labels) and folds the parts the collapse hides (any `data-sidebar` part). Wrap a label in an element (shadcn/ui's `<span>`): bare text can't fade on its own.
+
+<TypeTable
+  type={{
+    animateOnHover: {
+      description:
+        'The menu buttons inside share one gliding highlight. False keeps their own hover styles.',
+      type: 'boolean',
+      default: "the Provider's animateOnHover",
+    },
+  }}
+/>
+
+### TriggerIcon
+
+The trigger's icon: `open` while the sidebar is open (the mobile sheet, on a phone), `closed` while it's closed, swapping as it toggles. Renders a `span`.
+
+<TypeTable
+  type={{
+    open: {
+      description: 'The icon while the sidebar is open: a panel closing.',
+      type: 'ReactNode',
+    },
+    closed: {
+      description: "The icon while it's closed: a panel opening.",
+      type: 'ReactNode',
+    },
+    transition: {
+      description: 'Transition of the swap.',
+      type: 'Transition',
+      default: '{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }',
+    },
+  }}
+/>
