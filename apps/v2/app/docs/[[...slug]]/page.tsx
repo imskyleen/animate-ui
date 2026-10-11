@@ -92,7 +92,8 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           <PageNavigation previous={previous} next={next} />
         </div>
       </div>
-      <DocsDescription className="mb-2">
+      {/* Half the page's 16px gap: the description reads as the title's. */}
+      <DocsDescription className="-mt-2 mb-2">
         {page.data.description}
       </DocsDescription>
       {primitive && (
