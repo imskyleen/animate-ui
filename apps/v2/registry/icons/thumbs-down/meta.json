@@ -5,5 +5,10 @@
     "dislike",
     "bad",
     "emotion"
+  ],
+  "categories": [
+    "account",
+    "social",
+    "emoji"
   ]
 }

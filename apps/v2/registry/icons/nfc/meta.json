@@ -6,5 +6,11 @@
     "payment",
     "near-field",
     "communication"
-  ]
+  ],
+  "categories": [
+    "communication",
+    "finance",
+    "devices"
+  ],
+  "added": "2025-09-24"
 }

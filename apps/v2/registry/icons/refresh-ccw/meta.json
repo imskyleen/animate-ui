@@ -9,5 +9,8 @@
     "rerun",
     "circular",
     "cycle"
+  ],
+  "categories": [
+    "arrows"
   ]
 }

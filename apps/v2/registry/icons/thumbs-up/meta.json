@@ -5,5 +5,10 @@
     "like",
     "good",
     "emotion"
+  ],
+  "categories": [
+    "account",
+    "social",
+    "emoji"
   ]
 }

@@ -8,5 +8,10 @@
     "socket",
     "outlet",
     "disconnect"
-  ]
+  ],
+  "categories": [
+    "devices",
+    "development"
+  ],
+  "added": "2025-09-24"
 }

@@ -10,5 +10,8 @@
     "direction",
     "east",
     "<-"
+  ],
+  "categories": [
+    "arrows"
   ]
 }

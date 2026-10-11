@@ -5,5 +5,8 @@
     "time",
     "timer",
     "stopwatch"
+  ],
+  "categories": [
+    "time"
   ]
 }

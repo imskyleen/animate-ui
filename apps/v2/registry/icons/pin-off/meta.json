@@ -8,5 +8,8 @@
     "unfix",
     "unsave",
     "remove"
+  ],
+  "categories": [
+    "navigation"
   ]
 }

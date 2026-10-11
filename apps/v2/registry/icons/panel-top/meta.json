@@ -8,5 +8,10 @@
     "menu",
     "drawer",
     "navigation"
+  ],
+  "categories": [
+    "layout",
+    "design",
+    "development"
   ]
 }

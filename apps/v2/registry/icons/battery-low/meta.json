@@ -7,5 +7,9 @@
     "energy",
     "accumulator",
     "charge"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
   ]
 }

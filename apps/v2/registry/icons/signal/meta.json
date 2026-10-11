@@ -10,5 +10,9 @@
     "3g",
     "4g",
     "5g"
-  ]
+  ],
+  "categories": [
+    "connectivity"
+  ],
+  "added": "2025-10-02"
 }

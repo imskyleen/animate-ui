@@ -1,6 +1,8 @@
 // Builds the icons registry from registry/icons/<name>/{index.tsx,meta.json}:
 // - public/r/icons-<name>.json, installable with `shadcn add @animate-ui/icons-<name>`
-// - registry/icons/index.ts, the list the docs gallery lazy-loads.
+// - registry/icons/index.ts, the list the docs gallery lazy-loads, with each
+//   icon's Lucide categories (titles in registry/icons/categories.json) and the
+//   date it was added, if known (the gallery's New filter).
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -9,7 +11,19 @@ const iconsDir = path.join(root, 'registry', 'icons');
 const outDir = path.join(root, 'public', 'r');
 mkdirSync(outDir, { recursive: true });
 
-type Meta = { title: string; description: string; keywords: string[] };
+type Meta = {
+  title: string;
+  description: string;
+  keywords: string[];
+  /** Lucide's categories for the icon (lucide/icons/<name>.json). */
+  categories: string[];
+  /** When the icon was added (YYYY-MM-DD). */
+  added?: string;
+};
+
+const categoryTitles = JSON.parse(
+  readFileSync(path.join(iconsDir, 'categories.json'), 'utf8'),
+) as Record<string, string>;
 
 const names = readdirSync(iconsDir, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
@@ -19,7 +33,9 @@ const names = readdirSync(iconsDir, { withFileTypes: true })
 const list: (Meta & { name: string })[] = [];
 
 for (const name of names) {
-  const meta = JSON.parse(readFileSync(path.join(iconsDir, name, 'meta.json'), 'utf8')) as Meta;
+  const meta = JSON.parse(
+    readFileSync(path.join(iconsDir, name, 'meta.json'), 'utf8'),
+  ) as Meta;
   const content = readFileSync(path.join(iconsDir, name, 'index.tsx'), 'utf8');
   writeFileSync(
     path.join(outDir, `icons-${name}.json`),
@@ -59,6 +75,8 @@ writeFileSync(
     '  name: string;',
     '  title: string;',
     '  keywords: string[];',
+    '  categories: string[];',
+    '  added?: string;',
     '  load: () => Promise<{',
     '    default?: never;',
     '    animations: Record<string, unknown>;',
@@ -69,9 +87,20 @@ writeFileSync(
     'export const ICONS: IconEntry[] = [',
     ...list.map(
       (icon) =>
-        `  { name: ${JSON.stringify(icon.name)}, title: ${JSON.stringify(icon.title.replace(/ Icon$/, ''))}, keywords: ${JSON.stringify(icon.keywords)}, load: () => import('./${icon.name}') },`,
+        `  { name: ${JSON.stringify(icon.name)}, title: ${JSON.stringify(icon.title.replace(/ Icon$/, ''))}, keywords: ${JSON.stringify(icon.keywords)}, categories: ${JSON.stringify(icon.categories)}, ${icon.added ? `added: ${JSON.stringify(icon.added)}, ` : ''}load: () => import('./${icon.name}') },`,
     ),
     '];',
+    '',
+    '/** Every category an icon is in, by title. */',
+    `export const CATEGORIES: { id: string; title: string }[] = ${JSON.stringify(
+      [...new Set(list.flatMap((icon) => icon.categories))]
+        .map((id) => {
+          if (!categoryTitles[id])
+            throw new Error(`No title for category ${id}`);
+          return { id, title: categoryTitles[id] };
+        })
+        .sort((a, b) => a.title.localeCompare(b.title)),
+    )};`,
     '',
     '/** The icon component a loaded module exports (its name, whatever the casing). */',
     'export function iconComponent(mod: Record<string, unknown>, name: string) {',

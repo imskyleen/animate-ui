@@ -15,5 +15,11 @@
     "increase",
     "positive",
     "calculate"
+  ],
+  "categories": [
+    "math",
+    "tools",
+    "development",
+    "text"
   ]
 }

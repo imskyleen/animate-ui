@@ -3,5 +3,10 @@
   "description": "Alarm clock icon component.",
   "keywords": [
     "morning"
+  ],
+  "categories": [
+    "devices",
+    "notifications",
+    "time"
   ]
 }

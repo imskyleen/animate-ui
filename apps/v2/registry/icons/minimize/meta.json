@@ -5,5 +5,9 @@
     "exit fullscreen",
     "close",
     "shrink"
+  ],
+  "categories": [
+    "layout",
+    "design"
   ]
 }

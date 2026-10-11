@@ -10,5 +10,10 @@
     "keychain",
     "key ring",
     "fob"
-  ]
+  ],
+  "categories": [
+    "security",
+    "account"
+  ],
+  "added": "2025-12-15"
 }

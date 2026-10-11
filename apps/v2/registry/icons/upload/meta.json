@@ -3,5 +3,9 @@
   "description": "Upload icon component.",
   "keywords": [
     "file"
+  ],
+  "categories": [
+    "arrows",
+    "files"
   ]
 }

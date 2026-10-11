@@ -9,5 +9,10 @@
     "monitor",
     "macos",
     "osx"
-  ]
+  ],
+  "categories": [
+    "multimedia",
+    "connectivity"
+  ],
+  "added": "2025-09-07"
 }

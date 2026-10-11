@@ -10,5 +10,10 @@
     "paint",
     "color",
     "artist"
+  ],
+  "categories": [
+    "text",
+    "design",
+    "tools"
   ]
 }

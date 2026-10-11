@@ -5,5 +5,9 @@
     "settings",
     "filters",
     "controls"
-  ]
+  ],
+  "categories": [
+    "account"
+  ],
+  "added": "2025-09-24"
 }

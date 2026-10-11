@@ -10,5 +10,10 @@
     "crafts",
     "instructions",
     "diagram"
-  ]
+  ],
+  "categories": [
+    "design",
+    "tools"
+  ],
+  "added": "2025-10-02"
 }

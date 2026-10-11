@@ -6,5 +6,10 @@
     "off",
     "switch",
     "boolean"
+  ],
+  "categories": [
+    "layout",
+    "account",
+    "development"
   ]
 }

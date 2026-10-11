@@ -292,4 +292,35 @@ test.describe('icons gallery', () => {
     const close = page.getByRole('button', { name: 'Close', exact: true });
     await expect(close).toBeInViewport();
   });
+
+  test('category tags filter the icons, each showing its number of animations', async ({
+    page,
+  }) => {
+    await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+    const tiles = page.locator('button[title]');
+    const all = await tiles.count();
+    const weather = page.getByRole('button', { name: 'Weather', exact: true });
+    await weather.click();
+    await expect(weather).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      page.getByRole('button', { name: 'Cloud Rain', exact: true }),
+    ).toBeVisible();
+    await expect(page.locator('button[title="Bell"]')).toHaveCount(0);
+    expect(await tiles.count()).toBeLessThan(all);
+    // A row of tags, not every category.
+    expect(
+      await page
+        .locator('.not-prose button[aria-pressed]:not([title])')
+        .count(),
+    ).toBeLessThanOrEqual(11);
+    await page.getByRole('button', { name: 'All', exact: true }).click();
+    // Icons load once in view.
+    await page.locator('button[title="Bell"]').scrollIntoViewIfNeeded();
+    // Bell's own default animation plus path and path-loop.
+    await expect(
+      page
+        .locator('button[title="Bell"]')
+        .locator('[data-slot=animation-count]'),
+    ).toHaveText('3');
+  });
 });

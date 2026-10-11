@@ -6,5 +6,9 @@
     "navigation",
     "hamburger",
     "options"
+  ],
+  "categories": [
+    "layout",
+    "account"
   ]
 }

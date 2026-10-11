@@ -6,5 +6,9 @@
     "waypoint",
     "marker",
     "remove"
+  ],
+  "categories": [
+    "navigation",
+    "travel"
   ]
 }

@@ -9,5 +9,9 @@
     "tick",
     "complete",
     "task"
-  ]
+  ],
+  "categories": [
+    "text"
+  ],
+  "added": "2025-10-13"
 }

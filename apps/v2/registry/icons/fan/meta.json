@@ -7,5 +7,9 @@
     "ventilation",
     "ventilator",
     "blower"
-  ]
+  ],
+  "categories": [
+    "home"
+  ],
+  "added": "2025-10-02"
 }

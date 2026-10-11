@@ -16,5 +16,9 @@
     "silence",
     "mute",
     "moderate"
+  ],
+  "categories": [
+    "account",
+    "social"
   ]
 }

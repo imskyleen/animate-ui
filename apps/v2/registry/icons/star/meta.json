@@ -7,5 +7,14 @@
     "like",
     "review",
     "rating"
+  ],
+  "categories": [
+    "account",
+    "social",
+    "shapes",
+    "multimedia",
+    "weather",
+    "emoji",
+    "gaming"
   ]
 }

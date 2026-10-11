@@ -7,5 +7,10 @@
     "building",
     "wifi",
     "connectivity"
+  ],
+  "categories": [
+    "home",
+    "buildings",
+    "connectivity"
   ]
 }

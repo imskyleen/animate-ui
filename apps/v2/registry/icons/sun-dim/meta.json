@@ -6,5 +6,10 @@
     "dim",
     "low",
     "brightness low"
-  ]
+  ],
+  "categories": [
+    "accessibility",
+    "weather"
+  ],
+  "added": "2025-09-09"
 }

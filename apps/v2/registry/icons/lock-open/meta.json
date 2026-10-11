@@ -3,5 +3,9 @@
   "description": "Lock open icon component.",
   "keywords": [
     "security"
-  ]
+  ],
+  "categories": [
+    "security"
+  ],
+  "added": "2025-09-13"
 }

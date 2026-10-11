@@ -5,5 +5,10 @@
     "dark",
     "night",
     "star"
-  ]
+  ],
+  "categories": [
+    "accessibility",
+    "weather"
+  ],
+  "added": "2025-09-09"
 }

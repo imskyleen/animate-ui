@@ -12,7 +12,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
-import { useInView, useReducedMotion } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import {
   useDeferredValue,
   useEffect,
@@ -23,6 +23,7 @@ import {
 } from 'react';
 
 import { ICONS, iconComponent, type IconEntry } from '@/registry/icons';
+import { Check } from '@/registry/icons/check';
 
 import { DynamicCodeBlock } from './dynamic-codeblock';
 
@@ -62,6 +63,17 @@ function useIcon(entry: IconEntry, enabled = true) {
   return loaded;
 }
 
+/** Icons added in the last 30 days (v1's New filter). */
+const NEW_ICONS = (() => {
+  const since = new Date();
+  since.setDate(since.getDate() - 30);
+  return new Set(
+    ICONS.filter((icon) => icon.added && new Date(icon.added) >= since).map(
+      (icon) => icon.name,
+    ),
+  );
+})();
+
 function IconTile({
   entry,
   selected,
@@ -71,6 +83,7 @@ function IconTile({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const isNew = NEW_ICONS.has(entry.name);
   const ref = useRef<HTMLButtonElement>(null);
   const inView = useInView(ref, { once: true, margin: '200px' });
   const icon = useIcon(entry, inView);
@@ -84,7 +97,7 @@ function IconTile({
         aria-pressed={selected}
         title={entry.title}
         className={cn(
-          'flex aspect-square flex-col items-center justify-center gap-2 rounded-xl bg-accent p-2 text-muted-foreground transition-colors hover:text-foreground',
+          'relative flex aspect-square flex-col items-center justify-center gap-2 rounded-xl bg-accent p-2 text-muted-foreground transition-colors hover:text-foreground',
           selected && 'text-foreground ring-2 ring-primary',
         )}
       >
@@ -94,6 +107,22 @@ function IconTile({
         <span className="w-full truncate text-center text-xs">
           {entry.title}
         </span>
+        {isNew && (
+          <span
+            data-slot="new"
+            aria-label="New"
+            className="absolute top-2 left-2 size-1.5 rounded-full bg-foreground"
+          />
+        )}
+        {icon && (
+          <span
+            data-slot="animation-count"
+            title={`${icon.animations.length} animations`}
+            className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-background px-1 text-[10px] leading-none font-medium text-muted-foreground tabular-nums"
+          >
+            {icon.animations.length}
+          </span>
+        )}
       </button>
     </AnimateIcon>
   );
@@ -201,21 +230,73 @@ function IconDetail({
   );
 }
 
+/**
+ * The categories offered as tags: the ones easiest to browse, not every
+ * Lucide category (38 tags filled five rows).
+ */
+const TAGS: { id: string; title: string }[] = [
+  { id: 'arrows', title: 'Arrows' },
+  { id: 'charts', title: 'Charts' },
+  { id: 'weather', title: 'Weather' },
+  { id: 'time', title: 'Time' },
+  { id: 'devices', title: 'Devices' },
+  { id: 'connectivity', title: 'Connectivity' },
+  { id: 'multimedia', title: 'Multimedia' },
+  { id: 'notifications', title: 'Notifications' },
+  { id: 'development', title: 'Development' },
+];
+
+/** A filter chip: the active one fills in and checks itself, like v1's. */
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <motion.button
+      type="button"
+      layout
+      onClick={onClick}
+      aria-pressed={active}
+      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+      className={cn(
+        'flex h-7 items-center gap-1 overflow-hidden rounded-full px-3 text-xs transition-colors duration-200',
+        active
+          ? 'bg-primary pl-2 text-primary-foreground'
+          : 'bg-accent text-muted-foreground hover:text-foreground',
+      )}
+    >
+      {active && <Check animate size={14} className="shrink-0" />}
+      <motion.span layout="position">{children}</motion.span>
+    </motion.button>
+  );
+}
+
 export function IconsGallery() {
   const [query, setQuery] = useState('');
   const deferred = useDeferredValue(query);
   const [selected, setSelected] = useState<IconEntry | null>(null);
+  // 'all', 'new' or a category id.
+  const [filter, setFilter] = useState('all');
 
   const icons = useMemo(() => {
     const q = deferred.trim().toLowerCase();
-    if (!q) return ICONS;
     return ICONS.filter(
       (icon) =>
-        icon.name.includes(q) ||
-        icon.title.toLowerCase().includes(q) ||
-        icon.keywords.some((keyword) => keyword.includes(q)),
+        (filter === 'all' ||
+          (filter === 'new'
+            ? NEW_ICONS.has(icon.name)
+            : icon.categories.includes(filter))) &&
+        (!q ||
+          icon.name.includes(q) ||
+          icon.title.toLowerCase().includes(q) ||
+          icon.keywords.some((keyword) => keyword.includes(q))),
     );
-  }, [deferred]);
+  }, [deferred, filter]);
 
   return (
     <div className="not-prose my-6">
@@ -237,6 +318,30 @@ export function IconsGallery() {
         </span>
       </label>
 
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        <FilterChip active={filter === 'all'} onClick={() => setFilter('all')}>
+          All
+        </FilterChip>
+        {/* Only while some icons are new. */}
+        {NEW_ICONS.size > 0 && (
+          <FilterChip
+            active={filter === 'new'}
+            onClick={() => setFilter('new')}
+          >
+            New
+          </FilterChip>
+        )}
+        {TAGS.map((category) => (
+          <FilterChip
+            key={category.id}
+            active={filter === category.id}
+            onClick={() => setFilter(category.id)}
+          >
+            {category.title}
+          </FilterChip>
+        ))}
+      </div>
+
       {selected && (
         <IconDetail
           key={selected.name}
@@ -247,7 +352,7 @@ export function IconsGallery() {
 
       {icons.length === 0 ? (
         <p className="py-10 text-center text-sm text-muted-foreground">
-          No icon matches “{query}”.
+          {query ? <>No icon matches “{query}”.</> : 'No icon here yet.'}
         </p>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2">

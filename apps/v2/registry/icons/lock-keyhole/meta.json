@@ -6,5 +6,9 @@
     "password",
     "secure",
     "admin"
-  ]
+  ],
+  "categories": [
+    "security"
+  ],
+  "added": "2025-09-13"
 }

@@ -14,5 +14,10 @@
     "prompt",
     "shell",
     ">"
+  ],
+  "categories": [
+    "arrows",
+    "math",
+    "development"
   ]
 }

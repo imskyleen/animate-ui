@@ -5,5 +5,9 @@
     "fullscreen",
     "expand",
     "dashed"
+  ],
+  "categories": [
+    "layout",
+    "design"
   ]
 }

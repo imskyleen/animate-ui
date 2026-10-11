@@ -15,5 +15,8 @@
     "error",
     "disconnect",
     "ignore"
+  ],
+  "categories": [
+    "arrows"
   ]
 }

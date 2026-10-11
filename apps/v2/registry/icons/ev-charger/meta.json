@@ -14,5 +14,10 @@
     "energy",
     "accumulator",
     "charge"
-  ]
+  ],
+  "categories": [
+    "transportation",
+    "navigation"
+  ],
+  "added": "2025-09-24"
 }

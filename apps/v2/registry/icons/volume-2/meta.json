@@ -5,5 +5,10 @@
     "music",
     "sound",
     "speaker"
+  ],
+  "categories": [
+    "connectivity",
+    "communication",
+    "multimedia"
   ]
 }

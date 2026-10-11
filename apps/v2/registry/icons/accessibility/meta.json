@@ -6,5 +6,10 @@
     "disabled",
     "dda",
     "wheelchair"
-  ]
+  ],
+  "categories": [
+    "accessibility",
+    "medical"
+  ],
+  "added": "2025-09-07"
 }

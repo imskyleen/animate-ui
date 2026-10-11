@@ -8,5 +8,9 @@
     "lock",
     "fixed",
     "anchor"
+  ],
+  "categories": [
+    "navigation",
+    "account"
   ]
 }

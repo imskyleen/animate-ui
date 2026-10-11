@@ -8,5 +8,10 @@
     "zero",
     "one",
     "boolean"
-  ]
+  ],
+  "categories": [
+    "text",
+    "development"
+  ],
+  "added": "2025-09-07"
 }

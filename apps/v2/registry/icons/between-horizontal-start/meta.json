@@ -25,5 +25,11 @@
     "between",
     "horizontal",
     "start"
-  ]
+  ],
+  "categories": [
+    "layout",
+    "design",
+    "tools"
+  ],
+  "added": "2025-10-21"
 }

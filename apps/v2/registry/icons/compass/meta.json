@@ -9,5 +9,9 @@
     "west",
     "safari",
     "browser"
+  ],
+  "categories": [
+    "navigation",
+    "travel"
   ]
 }

@@ -6,5 +6,9 @@
     "notification",
     "sound",
     "reminder"
+  ],
+  "categories": [
+    "account",
+    "notifications"
   ]
 }

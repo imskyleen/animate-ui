@@ -9,5 +9,8 @@
     "direction",
     "east",
     "->"
+  ],
+  "categories": [
+    "arrows"
   ]
 }

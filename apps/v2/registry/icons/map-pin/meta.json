@@ -8,5 +8,10 @@
     "waypoint",
     "marker",
     "drop"
+  ],
+  "categories": [
+    "navigation",
+    "travel",
+    "account"
   ]
 }

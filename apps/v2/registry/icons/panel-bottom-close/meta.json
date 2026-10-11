@@ -9,5 +9,10 @@
     "drawer",
     "navigation",
     "close"
-  ]
+  ],
+  "categories": [
+    "layout",
+    "arrows"
+  ],
+  "added": "2025-10-27"
 }

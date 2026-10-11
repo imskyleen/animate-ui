@@ -7,5 +7,9 @@
     "tick",
     "complete",
     "task"
-  ]
+  ],
+  "categories": [
+    "notifications"
+  ],
+  "added": "2025-09-24"
 }

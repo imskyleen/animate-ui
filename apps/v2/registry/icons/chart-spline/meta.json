@@ -13,5 +13,9 @@
     "quadratic",
     "function",
     "interpolation"
-  ]
+  ],
+  "categories": [
+    "charts"
+  ],
+  "added": "2025-09-07"
 }

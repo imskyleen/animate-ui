@@ -6,5 +6,8 @@
     "edit",
     "gear",
     "preferences"
+  ],
+  "categories": [
+    "account"
   ]
 }

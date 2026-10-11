@@ -9,5 +9,10 @@
     "relation",
     "union",
     "attach"
-  ]
+  ],
+  "categories": [
+    "text",
+    "account"
+  ],
+  "added": "2025-10-27"
 }

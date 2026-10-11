@@ -3,5 +3,9 @@
   "description": "Cloud download icon component.",
   "keywords": [
     "import"
+  ],
+  "categories": [
+    "arrows",
+    "files"
   ]
 }

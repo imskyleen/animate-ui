@@ -7,5 +7,9 @@
     "maximize",
     "minimize",
     "contract"
+  ],
+  "categories": [
+    "text",
+    "arrows"
   ]
 }

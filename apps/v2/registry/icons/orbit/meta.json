@@ -7,5 +7,9 @@
     "physics",
     "satellites",
     "moons"
-  ]
+  ],
+  "categories": [
+    "science"
+  ],
+  "added": "2025-09-09"
 }

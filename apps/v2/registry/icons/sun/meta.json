@@ -6,5 +6,12 @@
     "weather",
     "light",
     "summer"
-  ]
+  ],
+  "categories": [
+    "accessibility",
+    "weather",
+    "seasons",
+    "sustainability"
+  ],
+  "added": "2025-09-09"
 }

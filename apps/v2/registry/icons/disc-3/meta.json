@@ -12,5 +12,9 @@
     "spin",
     "rotate",
     "rpm"
+  ],
+  "categories": [
+    "devices",
+    "multimedia"
   ]
 }

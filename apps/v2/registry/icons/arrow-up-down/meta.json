@@ -8,5 +8,9 @@
     "sort",
     "direction",
     "vertical"
-  ]
+  ],
+  "categories": [
+    "arrows"
+  ],
+  "added": "2025-10-18"
 }

@@ -8,5 +8,9 @@
     "points",
     "stops",
     "stations"
-  ]
+  ],
+  "categories": [
+    "navigation"
+  ],
+  "added": "2025-10-02"
 }

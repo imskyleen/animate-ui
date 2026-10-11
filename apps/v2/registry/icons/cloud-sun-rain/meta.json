@@ -5,5 +5,9 @@
     "weather",
     "partly",
     "rainfall"
-  ]
+  ],
+  "categories": [
+    "weather"
+  ],
+  "added": "2025-09-09"
 }

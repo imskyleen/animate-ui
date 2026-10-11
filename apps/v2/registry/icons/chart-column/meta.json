@@ -6,5 +6,9 @@
     "analytics",
     "diagram",
     "graph"
-  ]
+  ],
+  "categories": [
+    "charts"
+  ],
+  "added": "2025-09-07"
 }

@@ -19,5 +19,12 @@
     "vitals",
     "vital signs",
     "heart rate monitor"
+  ],
+  "categories": [
+    "medical",
+    "account",
+    "social",
+    "science",
+    "multimedia"
   ]
 }

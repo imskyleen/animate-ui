@@ -10,5 +10,9 @@
     "dialog",
     "feedback",
     "speech bubble"
+  ],
+  "categories": [
+    "social",
+    "notifications"
   ]
 }

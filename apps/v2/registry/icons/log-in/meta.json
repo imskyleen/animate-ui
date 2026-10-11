@@ -6,5 +6,9 @@
     "arrow",
     "enter",
     "auth"
+  ],
+  "categories": [
+    "arrows",
+    "account"
   ]
 }
