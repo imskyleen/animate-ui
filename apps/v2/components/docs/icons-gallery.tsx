@@ -38,6 +38,7 @@ import {
 import { Check } from '@/registry/icons/check';
 
 import { DynamicCodeBlock } from './dynamic-codeblock';
+import { DocsTabs } from './tabs';
 
 type Loaded = {
   Icon: ComponentType<IconProps<string>>;
@@ -145,6 +146,88 @@ const CATEGORY_TITLES = Object.fromEntries(
   CATEGORIES.map((category) => [category.id, category.title]),
 );
 
+/** An icon's registry item, fetched once (its source, for Manual). */
+const items = new Map<string, Promise<{ content: string; target: string }>>();
+
+function loadItem(name: string) {
+  let item = items.get(name);
+  if (!item) {
+    item = fetch(`/r/icons-${name}.json`)
+      .then((response) => response.json())
+      .then(
+        (json: { files: { content: string; target: string }[] }) =>
+          json.files[0]!,
+      );
+    items.set(name, item);
+  }
+  return item;
+}
+
+/**
+ * Installing the icon, as on every docs page: the CLI adds the file, Manual
+ * installs the dependencies and shows the file to copy. The choice is
+ * remembered.
+ */
+function IconInstallation({ entry }: { entry: IconEntry }) {
+  const [file, setFile] = useState<{ content: string; target: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    let active = true;
+    void loadItem(entry.name).then((item) => active && setFile(item));
+    return () => {
+      active = false;
+    };
+  }, [entry.name]);
+
+  return (
+    <DocsTabs
+      groupId="icon-installation"
+      persist
+      lazy
+      label="Installation"
+      className="my-0"
+      tabs={[
+        {
+          value: 'cli',
+          label: 'CLI',
+          content: (
+            <DynamicCodeBlock
+              lang="bash"
+              codeblock={{ className: 'my-0' }}
+              code={`pnpm dlx shadcn@latest add @animate-ui/icons-${entry.name}`}
+            />
+          ),
+        },
+        {
+          value: 'manual',
+          label: 'Manual',
+          content: (
+            <div className="flex flex-col gap-2">
+              <DynamicCodeBlock
+                lang="bash"
+                codeblock={{ className: 'my-0' }}
+                code="pnpm add @animate-ui/react motion"
+              />
+              {file && (
+                <DynamicCodeBlock
+                  lang="tsx"
+                  codeblock={{
+                    className: 'my-0',
+                    title: file.target,
+                    viewportClassName: 'max-h-44',
+                  }}
+                  code={file.content.trimEnd()}
+                />
+              )}
+            </div>
+          ),
+        },
+      ]}
+    />
+  );
+}
+
 /** The selected icon, in the drawer: its preview, animations and code. */
 function IconDetail({
   entry,
@@ -231,18 +314,12 @@ function IconDetail({
           ))}
         </div>
 
-        <div className="grid min-w-0 gap-2">
-          <DynamicCodeBlock
-            lang="bash"
-            codeblock={{ className: 'my-0' }}
-            code={`pnpm dlx shadcn@latest add @animate-ui/icons-${entry.name}`}
-          />
-          <DynamicCodeBlock
-            lang="tsx"
-            codeblock={{ className: 'my-0' }}
-            code={`import { ${component} } from '@/components/animate-ui/icons/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
-          />
-        </div>
+        <IconInstallation entry={entry} />
+        <DynamicCodeBlock
+          lang="tsx"
+          codeblock={{ className: 'my-0' }}
+          code={`import { ${component} } from '@/components/animate-ui/icons/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
+        />
       </div>
     </div>
   );
@@ -291,7 +368,7 @@ function IconDrawer({
                 : { y: '100%', transition: motionTokens.transition.drawerOut }
             }
             transition={motionTokens.transition.drawer}
-            className="pointer-events-auto mt-4 rounded-t-2xl border border-b-0 bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)]"
+            className="pointer-events-auto mt-4 max-h-[70vh] overflow-y-auto rounded-t-2xl border border-b-0 bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)]"
           >
             <IconDetail key={entry.name} entry={entry} onClose={onClose} />
           </motion.div>

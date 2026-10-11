@@ -327,6 +327,8 @@ test.describe('icons gallery', () => {
   test('a picked icon opens in a drawer sliding up from the bottom, swapping in place', async ({
     page,
   }) => {
+    // Tall enough for the drawer to leave the first rows uncovered.
+    await page.setViewportSize({ width: 1400, height: 1000 });
     await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
     const drawer = page.locator('[data-slot=icon-drawer]');
     // Records the drawer's vertical offset on every frame once it mounts.
@@ -356,6 +358,18 @@ test.describe('icons gallery', () => {
       'Accounts & access',
       'Notifications',
     ]);
+
+    // Installation: the CLI command, or Manual with the icon's source.
+    await expect(drawer.getByText('@animate-ui/icons-bell')).toBeVisible();
+    await drawer.getByRole('tab', { name: 'Manual' }).click();
+    await expect(
+      drawer.getByText('components/animate-ui/icons/bell.tsx'),
+    ).toBeVisible();
+    await expect(
+      drawer.getByText('pnpm add @animate-ui/react motion'),
+    ).toBeVisible();
+
+    await drawer.getByRole('tab', { name: 'CLI' }).click();
 
     // Another icon swaps the content; the drawer stays put.
     const handle = await drawer.elementHandle();
