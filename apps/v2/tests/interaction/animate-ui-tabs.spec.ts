@@ -58,6 +58,41 @@ test.describe('animate-ui tabs', () => {
     await expect(page.getByText('Page views')).toBeVisible();
   });
 
+  test('the panels glide into place without bouncing past it', async ({
+    page,
+  }) => {
+    await open(page);
+    // The strip's offset (px) on every frame of the slide to the last tab.
+    const frames = page.locator('[data-slot="tabs-contents"] > div').evaluate(
+      (el) =>
+        new Promise<{ x: number; width: number }[]>((resolve) => {
+          const out: { x: number; width: number }[] = [];
+          const start = performance.now();
+          const tick = (now: number) => {
+            const m = getComputedStyle(el).transform.match(/matrix\(([^)]+)\)/);
+            out.push({
+              x: m ? Number(m[1]!.split(',')[4]) : 0,
+              width: el.getBoundingClientRect().width,
+            });
+            if (now - start < 900) requestAnimationFrame(tick);
+            else resolve(out);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    await page.getByRole('tab', { name: 'Settings' }).click();
+    const xs = await frames;
+    const target = -3 * xs[0]!.width;
+    // It gets there...
+    expect(xs.at(-1)!.x).toBeCloseTo(target, 0);
+    // ...without ever going past it (a bounce would, by a pixel or two).
+    expect(Math.min(...xs.map((f) => f.x))).toBeGreaterThan(target - 0.25);
+    // And still glides: several frames on the way.
+    expect(
+      xs.filter((f) => f.x < -1 && f.x > target + 1).length,
+    ).toBeGreaterThan(6);
+  });
+
   test('the height follows the active panel', async ({ page }) => {
     await open(page);
     const contents = page.locator('[data-slot="tabs-contents"]');

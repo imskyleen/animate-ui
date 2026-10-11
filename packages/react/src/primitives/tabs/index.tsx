@@ -24,8 +24,8 @@ type TabsOrientation = 'horizontal' | 'vertical';
 // v1's (stiffness 300, damping 30, was 200/25).
 /** The highlight sliding to the active trigger. */
 const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.selection;
-/** The panels sliding and the height following the active one. */
-const CONTENTS_TRANSITION: Transition = motionTokens.spring.height;
+/** The panels sliding and the height following the active one, without bounce. */
+const CONTENTS_TRANSITION: Transition = motionTokens.spring.slide;
 /** The blur of the panels coming in and going out, with the selection. */
 const CONTENT_TRANSITION: Transition = motionTokens.spring.selection;
 

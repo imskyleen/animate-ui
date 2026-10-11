@@ -166,6 +166,13 @@ const spring = {
     bounce: 0,
     restDelta: 0.01,
   },
+  /**
+   * Animate UI's Tabs' panels sliding to the next one, and their height
+   * following: critically damped, so they glide into place without going
+   * past it (`height`'s damping ratio of 0.87 sent a wide panel ~2px past),
+   * as quick (90% of the way in ~225ms).
+   */
+  slide: { type: 'spring', stiffness: 300, damping: 35, restDelta: 0.01 },
   /** A switch thumb gliding and stretching. */
   thumb: { type: 'spring', stiffness: 300, damping: 25 },
   /**
