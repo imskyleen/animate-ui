@@ -15,11 +15,14 @@ import { CodeTabs } from './tabs';
  */
 export function ClientCommand({
   command,
+  className,
 }: {
   command: (manager: ManagerCommands) => string;
+  className?: string;
 }) {
   return (
     <CodeTabs
+      className={className}
       groupId={MANAGER_GROUP}
       persist
       tabs={MANAGER_NAMES.map((manager) => ({

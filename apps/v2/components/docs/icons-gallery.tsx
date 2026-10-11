@@ -195,6 +195,7 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
           label: 'CLI',
           content: (
             <ClientCommand
+              className="my-0"
               command={(m) =>
                 `${m.dlx} shadcn@latest add @animate-ui/icons-${entry.name}`
               }
@@ -205,8 +206,9 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
           value: 'manual',
           label: 'Manual',
           content: (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               <ClientCommand
+                className="my-0"
                 command={(m) => `${m.add} @animate-ui/react motion`}
               />
               {file && (

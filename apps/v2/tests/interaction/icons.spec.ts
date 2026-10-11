@@ -438,4 +438,31 @@ test.describe('icons gallery', () => {
       drawer.getByRole('button', { name: 'Loop', exact: true }),
     ).toHaveAttribute('aria-pressed', 'true');
   });
+
+  test('CLI and Manual open the same gap under their tabs', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1400, height: 1100 });
+    await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+    await page.locator('button[title="Accessibility"]').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    // From the CLI / Manual row to the first block of the open tab.
+    const gap = () =>
+      drawer.evaluate((el) => {
+        const row = el
+          .querySelector('[aria-label="Installation"]')!
+          .getBoundingClientRect();
+        const block = el
+          .querySelector(
+            '[data-slot=tabs-content][data-state=active] [data-slot=code-tabs]',
+          )!
+          .getBoundingClientRect();
+        return Math.round(block.top - row.bottom);
+      });
+    await page.waitForTimeout(600);
+    const cli = await gap();
+    await drawer.getByRole('tab', { name: 'Manual' }).click();
+    await page.waitForTimeout(600);
+    expect(await gap()).toBe(cli);
+  });
 });
