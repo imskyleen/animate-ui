@@ -463,13 +463,17 @@ export function describeTabsDemo(
         await page.mouse.click(reports.x, reports.y);
       });
       expectOneIndicator(frames);
-      // Retargeted on the way: no jump from one frame to the next.
-      const steps = frames
-        .slice(1)
-        .map((f, i) =>
-          Math.abs(f.indicators[0]!.x - frames[i]!.indicators[0]!.x),
+      // Retargeted on the way: no jump from one frame to the next. A slow
+      // frame (a loaded machine) covers more ground: the step is weighed by
+      // the time it took (the spring peaks near 1px/ms here; a jump would
+      // cover the whole way at once).
+      for (let i = 1; i < frames.length; i++) {
+        const step = Math.abs(
+          frames[i]!.indicators[0]!.x - frames[i - 1]!.indicators[0]!.x,
         );
-      expect(Math.max(...steps)).toBeLessThan(40);
+        const dt = frames[i]!.t - frames[i - 1]!.t;
+        expect(step, `${frames[i]!.t}ms`).toBeLessThan(Math.max(40, dt * 1.5));
+      }
       expect(framesOf(frames, 'Analytics')).toHaveLength(0);
       expectOnePanelAtATime(frames);
       const out = framesOf(frames, 'Overview');

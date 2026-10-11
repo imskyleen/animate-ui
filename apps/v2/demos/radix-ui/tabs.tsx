@@ -128,8 +128,18 @@ export default function TabsDemo() {
               identify growth opportunities.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            Page views are up 25% compared to last month.
+          <CardContent className="grid gap-2 text-sm">
+            {[
+              ["Page views", "+25%"],
+              ["Visitors", "3,240"],
+              ["Bounce rate", "41%"],
+              ["Avg. session", "2m 14s"],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between">
+                <span className="text-muted-foreground">{label}</span>
+                <span className="font-medium tabular-nums">{value}</span>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </TabsContent>
@@ -138,13 +148,9 @@ export default function TabsDemo() {
           <CardHeader>
             <CardTitle>Reports</CardTitle>
             <CardDescription>
-              Generate and download your detailed reports. Export data in
-              multiple formats for analysis.
+              5 reports are ready to export.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            You have 5 reports ready and available to export.
-          </CardContent>
         </Card>
       </TabsContent>
       <TabsContent value="settings">
