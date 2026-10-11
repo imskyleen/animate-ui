@@ -9,6 +9,12 @@ import {
   SunMediumIcon,
   Tick02Icon,
 } from '@hugeicons/core-free-icons';
+import {
+  ThemeTogglerButton,
+  ThemeTogglerButtonIcon,
+  type Resolved,
+  type ThemeSelection,
+} from '@animate-ui/react/primitives/buttons/theme-toggler';
 import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
@@ -19,7 +25,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSyncExternalStore, type ComponentProps } from 'react';
 
-import { IconSwap } from '@/components/docs/icon-swap';
 import { AnimateUILogo } from '@/lib/libraries';
 import { docsVersions, gitConfig } from '@/lib/shared';
 
@@ -106,46 +111,53 @@ function SearchButton() {
 const subscribeNever = () => () => {};
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { resolvedTheme, setTheme } = useTheme();
-  // The theme is only known in the browser: until then, both icons render
-  // and CSS shows the right one, so the server HTML matches.
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  // The theme is only known in the browser, so the server HTML can't pick an
+  // icon.
   const hydrated = useSyncExternalStore(
     subscribeNever,
     () => true,
     () => false,
   );
 
+  // Until then, both icons render and CSS shows the right one.
+  if (!hydrated)
+    return (
+      <button
+        type="button"
+        aria-label="Toggle theme"
+        className={cn(iconButton, className)}
+      >
+        <HugeiconsIcon
+          icon={SunMediumIcon}
+          strokeWidth={2}
+          size={18}
+          className="dark:hidden"
+        />
+        <HugeiconsIcon
+          icon={Moon02Icon}
+          strokeWidth={2}
+          size={18}
+          className="hidden dark:block"
+        />
+      </button>
+    );
+
+  // Theme Toggler Button: the icons turn as they swap.
   return (
-    <button
-      type="button"
+    <ThemeTogglerButton
+      theme={(theme ?? 'system') as ThemeSelection}
+      resolvedTheme={(resolvedTheme ?? 'light') as Resolved}
+      setTheme={setTheme}
+      modes={['light', 'dark']}
       aria-label="Toggle theme"
-      onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className={cn(iconButton, className)}
     >
-      {hydrated ? (
-        <IconSwap
-          active={resolvedTheme === 'dark'}
-          icon={SunMediumIcon}
-          activeIcon={Moon02Icon}
-          size={18}
-        />
-      ) : (
-        <>
-          <HugeiconsIcon
-            icon={SunMediumIcon}
-            strokeWidth={2}
-            size={18}
-            className="dark:hidden"
-          />
-          <HugeiconsIcon
-            icon={Moon02Icon}
-            strokeWidth={2}
-            size={18}
-            className="hidden dark:block"
-          />
-        </>
-      )}
-    </button>
+      <ThemeTogglerButtonIcon
+        light={<HugeiconsIcon icon={SunMediumIcon} strokeWidth={2} size={18} />}
+        dark={<HugeiconsIcon icon={Moon02Icon} strokeWidth={2} size={18} />}
+      />
+    </ThemeTogglerButton>
   );
 }
 
