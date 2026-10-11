@@ -3,22 +3,33 @@
 import * as React from 'react';
 import { motion, type Transition, type HTMLMotionProps } from 'motion/react';
 
-import { ReducedMotionConfig } from '../../utils/motion';
 import {
-  TAB_ATTRIBUTE,
-  usePanelMotion,
-  useTabsIndicator,
-} from '../../internal/tabs';
+  motionTokens,
+  ReducedMotionConfig,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../utils/motion';
+import {
+  Highlight,
+  HighlightItem,
+  type HighlightItemProps,
+  type HighlightProps,
+} from '../effects/highlight';
 import { getStrictContext } from '../../utils/strict-context';
 import { Slot, type WithAsChild } from '../slot';
 
 type TabsOrientation = 'horizontal' | 'vertical';
 
-// Animate UI's own tabs move like the library tabs, after Motion's Radix tabs
-// example (see ../../internal/tabs): the highlight is one surface sliding to
-// the selected trigger on a spring (stiffness 300, damping 30), and the
-// panels change one after the other: the outgoing one fades out into a blur,
-// then the incoming one fades in from it while the height glides.
+// Animate UI v1's motion; the selection's spring is a little quicker than
+// v1's (stiffness 300, damping 30, was 200/25).
+/** The highlight sliding to the active trigger. */
+const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.selection;
+/** The panels sliding and the height following the active one. */
+const CONTENTS_TRANSITION: Transition = motionTokens.spring.height;
+/** The blur of the panels coming in and going out, with the selection. */
+const CONTENT_TRANSITION: Transition = motionTokens.spring.selection;
+
+const INSTANT: Transition = { duration: 0 };
 
 type TabsContextType = {
   activeValue: string;
@@ -181,57 +192,35 @@ function isEnabled(tab: HTMLElement) {
   );
 }
 
-type TabsHighlightProps = {
-  children: React.ReactNode;
-  /** Classes of the highlight: the surface behind the selected trigger. */
-  className?: string;
-  style?: React.CSSProperties;
-  /** Transition of the highlight sliding to the selected trigger. */
-  transition?: Transition;
-};
+type TabsHighlightProps = Omit<HighlightProps, 'controlledItems' | 'value'>;
 
-const TabsHighlightContext = React.createContext<Omit<
-  TabsHighlightProps,
-  'children'
-> | null>(null);
+function TabsHighlight({
+  transition,
+  exitDelay,
+  ...props
+}: TabsHighlightProps) {
+  const { activeValue } = useTabs();
 
-/**
- * The highlight behind the selected trigger, drawn by the `TabsList` inside:
- * one surface, sliding from trigger to trigger.
- */
-function TabsHighlight({ children, ...highlight }: TabsHighlightProps) {
   return (
-    <TabsHighlightContext value={highlight}>{children}</TabsHighlightContext>
+    <Highlight
+      data-slot="tabs-highlight"
+      controlledItems
+      value={activeValue}
+      // Highlight paces it with the provider's tempo.
+      transition={transition ?? HIGHLIGHT_TRANSITION}
+      exitDelay={exitDelay}
+      click={false}
+      {...props}
+    />
   );
-}
-
-const HIGHLIGHT_ITEM_SLOT = 'tabs-highlight-item';
-
-/** The highlight covers a trigger's `TabsHighlightItem`, or the trigger. */
-function highlightBoxOf(tab: HTMLElement, list: HTMLElement): Element {
-  const item = tab.closest(`[data-slot="${HIGHLIGHT_ITEM_SLOT}"]`);
-  return item && list.contains(item) ? item : tab;
 }
 
 type TabsListProps = React.ComponentProps<'div'> & {
   children: React.ReactNode;
 };
 
-function TabsList({ ref, children, ...props }: TabsListProps) {
+function TabsList(props: TabsListProps) {
   const { orientation } = useTabs();
-  const highlight = React.use(TabsHighlightContext);
-  const [list, setList] = React.useState<HTMLDivElement | null>(null);
-  const { indicator } = useTabsIndicator(list, {
-    enabled: highlight !== null,
-    transition: highlight?.transition,
-    surface: {
-      className: highlight?.className,
-      style: highlight?.style,
-      slot: 'tabs-highlight',
-    },
-    boxOf: highlightBoxOf,
-  });
-
   return (
     <div
       role="tablist"
@@ -239,34 +228,16 @@ function TabsList({ ref, children, ...props }: TabsListProps) {
       data-slot="tabs-list"
       data-orientation={orientation}
       {...props}
-      ref={(node: HTMLDivElement | null) => {
-        setList(node);
-        if (typeof ref === 'function') return ref(node);
-        if (ref) ref.current = node;
-      }}
-    >
-      {indicator}
-      {children}
-    </div>
+    />
   );
 }
 
-type TabsHighlightItemProps = React.ComponentProps<'div'> & {
-  /** Value of the trigger it wraps. */
+type TabsHighlightItemProps = HighlightItemProps & {
   value: string;
 };
 
-/** Wraps a trigger: the highlight covers it when its trigger is selected. */
-function TabsHighlightItem({ value, ...props }: TabsHighlightItemProps) {
-  const { activeValue } = useTabs();
-  return (
-    <div
-      data-slot={HIGHLIGHT_ITEM_SLOT}
-      data-value={value}
-      data-active={activeValue === value ? 'true' : 'false'}
-      {...props}
-    />
-  );
+function TabsHighlightItem(props: TabsHighlightItemProps) {
+  return <HighlightItem data-slot="tabs-highlight-item" {...props} />;
 }
 
 type TabsTriggerProps = WithAsChild<
@@ -368,7 +339,6 @@ function TabsTrigger({
     <Component
       ref={localRef}
       id={id ?? getTriggerId(value)}
-      {...{ [TAB_ATTRIBUTE]: '' }}
       data-slot="tabs-trigger"
       role="tab"
       type="button"
@@ -390,35 +360,132 @@ function TabsTrigger({
 
 type TabsContentsProps = HTMLMotionProps<'div'> & {
   children: React.ReactNode;
-  /** Transition of the height gliding from the previous panel's to the next one's. */
   transition?: Transition;
 };
 
-/** The panels' height transition, from `TabsContents`. */
-const TabsContentsContext = React.createContext<Transition | undefined>(
-  undefined,
-);
-
-/**
- * Holds the panels: one shows at a time, its height gliding from the
- * previous one's.
- */
 function TabsContents({
   children,
-  transition,
+  transition: transitionProp,
+  ref,
   style,
   ...props
 }: TabsContentsProps) {
+  const { activeValue } = useTabs();
+  const spring = useTempoTransition(transitionProp ?? CONTENTS_TRANSITION);
+  // Reduced motion: the panel and the height change at once.
+  const reduce = useShouldReduceMotion();
+  const transition: Transition = reduce ? INSTANT : spring;
+  const childrenArray = React.Children.toArray(children);
+  const activeIndex = childrenArray.findIndex(
+    (child): child is React.ReactElement<{ value: string }> =>
+      React.isValidElement(child) &&
+      typeof child.props === 'object' &&
+      child.props !== null &&
+      'value' in child.props &&
+      child.props.value === activeValue,
+  );
+
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const itemRefs = React.useRef<Array<HTMLDivElement | null>>([]);
+  const [height, setHeight] = React.useState(0);
+  const roRef = React.useRef<ResizeObserver | null>(null);
+
+  const measure = React.useCallback((index: number) => {
+    const pane = itemRefs.current[index];
+    const container = containerRef.current;
+    if (!pane || !container) return 0;
+
+    const base = pane.getBoundingClientRect().height || 0;
+
+    const cs = getComputedStyle(container);
+    const isBorderBox = cs.boxSizing === 'border-box';
+    const paddingY =
+      (parseFloat(cs.paddingTop || '0') || 0) +
+      (parseFloat(cs.paddingBottom || '0') || 0);
+    const borderY =
+      (parseFloat(cs.borderTopWidth || '0') || 0) +
+      (parseFloat(cs.borderBottomWidth || '0') || 0);
+
+    let total = base + (isBorderBox ? paddingY + borderY : 0);
+
+    const dpr =
+      typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    total = Math.ceil(total * dpr) / dpr;
+
+    return total;
+  }, []);
+
+  React.useEffect(() => {
+    if (roRef.current) {
+      roRef.current.disconnect();
+      roRef.current = null;
+    }
+
+    const pane = itemRefs.current[activeIndex];
+    const container = containerRef.current;
+    if (!pane || !container) return;
+
+    setHeight(measure(activeIndex));
+
+    const ro = new ResizeObserver(() => {
+      const next = measure(activeIndex);
+      requestAnimationFrame(() => setHeight(next));
+    });
+
+    ro.observe(pane);
+    ro.observe(container);
+
+    roRef.current = ro;
+    return () => {
+      ro.disconnect();
+      roRef.current = null;
+    };
+  }, [activeIndex, childrenArray.length, measure]);
+
+  React.useLayoutEffect(() => {
+    if (height === 0 && activeIndex >= 0) {
+      const next = measure(activeIndex);
+      if (next !== 0) setHeight(next);
+    }
+  }, [activeIndex, height, measure]);
+
   return (
-    <TabsContentsContext value={transition}>
+    <motion.div
+      // The container is measured: a ref passed in gets it too.
+      ref={(node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        if (typeof ref === 'function') ref(node);
+        else if (ref) ref.current = node;
+      }}
+      data-slot="tabs-contents"
+      animate={{ height }}
+      transition={transition}
+      {...props}
+      style={{ ...style, overflow: 'hidden' }}
+    >
       <motion.div
-        data-slot="tabs-contents"
-        {...props}
-        style={{ ...style, overflow: 'hidden' }}
+        style={{ display: 'flex', marginInline: -8 }}
+        animate={{ x: activeIndex * -100 + '%' }}
+        transition={transition}
       >
-        {children}
+        {childrenArray.map((child, index) => (
+          <div
+            key={index}
+            ref={(el) => {
+              itemRefs.current[index] = el;
+            }}
+            style={{
+              width: '100%',
+              flexShrink: 0,
+              paddingInline: 8,
+              height: '100%',
+            }}
+          >
+            {child}
+          </div>
+        ))}
       </motion.div>
-    </TabsContentsContext>
+    </motion.div>
   );
 }
 
@@ -426,35 +493,19 @@ type TabsContentProps = WithAsChild<
   {
     value: string;
     children: React.ReactNode;
-    /** Transition of the panel coming in: its fade from a blur (300ms) and, in `height`, the height gliding from the previous panel's (450ms, Motion's layout curve). */
-    transition?: Transition;
-    /** Transition of the panel leaving: its fade into a blur (150ms ease-out). */
-    exitTransition?: Transition;
   } & HTMLMotionProps<'div'>
 >;
 
 function TabsContent({
-  ref,
   value,
   id,
-  hidden,
-  transition,
-  exitTransition,
+  style,
   asChild = false,
   ...props
 }: TabsContentProps) {
   const { activeValue, getTriggerId, getContentId, registerId } = useTabs();
-  const heightTransition = React.use(TabsContentsContext);
+  const blur = useTempoTransition(CONTENT_TRANSITION);
   const isActive = activeValue === value;
-  const {
-    ref: panelRef,
-    waiting,
-    leaving,
-  } = usePanelMotion(isActive, {
-    transition,
-    exitTransition,
-    heightTransition,
-  });
 
   React.useEffect(() => {
     registerId('content', value, id);
@@ -465,11 +516,6 @@ function TabsContent({
 
   return (
     <Component
-      ref={(node: HTMLDivElement | null) => {
-        panelRef.current = node;
-        if (typeof ref === 'function') return ref(node);
-        if (ref) ref.current = node;
-      }}
       role="tabpanel"
       id={id ?? getContentId(value)}
       aria-labelledby={getTriggerId(value)}
@@ -477,9 +523,11 @@ function TabsContent({
       data-slot="tabs-content"
       data-state={isActive ? 'active' : 'inactive'}
       inert={!isActive}
-      // Hidden while the previous panel leaves, and once unselected; leaving,
-      // it fades out in the page.
-      hidden={hidden || waiting || (!isActive && !leaving) || undefined}
+      style={{ overflow: 'hidden', ...style }}
+      initial={{ filter: 'blur(0px)' }}
+      animate={{ filter: isActive ? 'blur(0px)' : 'blur(4px)' }}
+      exit={{ filter: 'blur(0px)' }}
+      transition={blur}
       {...props}
     />
   );

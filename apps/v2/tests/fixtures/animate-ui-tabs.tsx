@@ -60,14 +60,6 @@ function Example({
   );
 }
 
-/** A box a panel holds (a frame): a border, a background. */
-const BOX = {
-  border: '1px solid rgb(212, 212, 212)',
-  borderRadius: 8,
-  background: 'white',
-  padding: 12,
-};
-
 // Keyboard navigation: a disabled tab, vertical orientation and RTL.
 export default function AnimateUITabsFixture() {
   return (
@@ -88,28 +80,6 @@ export default function AnimateUITabsFixture() {
             Alpha panel
           </TabsContent>
           <TabsContent value="beta">Beta panel</TabsContent>
-        </TabsContents>
-      </Tabs>
-      {/* Panels holding a box: it stays, its content fades. */}
-      <Tabs defaultValue="boxed" className="w-80">
-        <TabsList aria-label="Frames" className="flex gap-1">
-          <TabsTrigger value="boxed">Boxed</TabsTrigger>
-          <TabsTrigger value="boxed-tall">Boxed tall</TabsTrigger>
-        </TabsList>
-        <TabsContents>
-          <TabsContent value="boxed">
-            <div data-box style={BOX}>
-              <p>Boxed panel</p>
-            </div>
-          </TabsContent>
-          <TabsContent value="boxed-tall">
-            <div data-box style={BOX}>
-              <p>Boxed tall panel</p>
-              <p>Its second line</p>
-              <p>Its third line</p>
-              <p>Its fourth line</p>
-            </div>
-          </TabsContent>
         </TabsContents>
       </Tabs>
     </div>

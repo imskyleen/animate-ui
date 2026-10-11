@@ -138,13 +138,14 @@ const FAMILIES: Family[] = [
   {
     id: 'tabs',
     name: 'Onglets',
-    rule: 'Comme l’exemple d’onglets Radix de Motion : un seul indicateur glisse, et les panneaux se succèdent (AnimatePresence mode="wait") : l’ancien s’efface dans un flou en restant dans la page, puis le nouveau en sort pendant que la hauteur glisse.',
+    rule: 'Onglets de Radix, Base UI et React Aria (les Tabs d’Animate UI gardent l’animation de la v1) : comme l’exemple d’onglets Radix de Motion : un seul indicateur glisse, et les panneaux se succèdent (AnimatePresence mode="wait") : l’ancien s’efface dans un flou en restant dans la page, puis le nouveau en sort pendant que la hauteur glisse.',
     values: [
       'indicateur : une seule surface, ressort 300/30, sur le compositeur (Web Animation de translate, et de sa taille quand les onglets diffèrent) ; repris en route là où il est, avec sa vitesse ; aucun à-coup quand les panneaux changent',
       'couleur du texte des onglets : 0,2s ease',
       'panneau qui part : opacité 1 → 0 et flou 0 → 5px en 0,15s sur l’easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), en restant dans la page (inert)',
       'panneau qui arrive, une fois l’ancien parti : opacité 0 → 1 et flou 5px → 0 en 0,3s, cubic-bezier(0.25, 0.1, 0.35, 1)',
       'hauteur : de celle de l’ancien panneau à celle du nouveau, quand il arrive, en 0,45s sur la courbe de layout de Motion, cubic-bezier(0.4, 0, 0.1, 1), sans dépassement',
+      'glissement du contenu selon l’ordre des onglets, comme le menubar et le navigation menu : vers un onglet suivant, le contenu qui part glisse de 12px vers le début en s’effaçant et le suivant arrive de 12px vers la fin (mêmes durées et courbes que les fondus, 0,15s puis 0,3s) ; l’inverse en revenant ; à la verticale pour des onglets verticaux, inversé en RTL ; dans un cadre (la Card), le cadre ne bouge pas, seul son contenu glisse, coupé par lui ; sans cadre, tout le panneau glisse ; un contenu qui arrivait et qu’on quitte repart d’où il en est, vers le côté opposé à la nouvelle direction ; mouvement réduit : pas de glissement',
       'panneau qui tient un cadre (la Card de shadcn : le panneau s’il dessine une bordure, un fond ou une ombre, sinon le premier élément qui le fait en descendant ses enfants uniques) : le cadre reste à l’écran, entier et net, seul son contenu s’efface puis revient ; le cadre suivant prend le relais à la même hauteur dans la même image, puis glisse à sa hauteur (son contenu coupé, jamais sa bordure ni ses coins) : la bordure ne clignote plus ; cadres différents (bordure, rayon, fond, ombre) ou texte posé directement dedans → panneaux entiers ; contenu placé contre un élément extérieur (pastille d’une étape sur son rail) → fondu sans flou',
       'changements rapides : un panneau sauté n’apparaît jamais, un panneau qui arrivait repart d’où il en est, la hauteur repart d’où elle en est ; jamais deux panneaux à la fois',
       'rien ne bouge au chargement ; mouvement réduit : l’indicateur et la hauteur sautent, les panneaux ne font que des fondus (sans flou), le nouveau en 0,2s',
@@ -153,7 +154,11 @@ const FAMILIES: Family[] = [
       { demo: 'radix-ui/tabs', label: 'Tabs (Radix)' },
       { demo: 'base-ui/tabs', label: 'Tabs (Base UI)' },
       { demo: 'react-aria/tabs', label: 'Tabs (React Aria)' },
-      { demo: 'animate-ui/tabs', label: 'Tabs (Animate UI)' },
+      {
+        demo: 'animate-ui/tabs',
+        label: 'Tabs (Animate UI)',
+        note: 'animation de la v1, inchangée',
+      },
     ],
   },
   {

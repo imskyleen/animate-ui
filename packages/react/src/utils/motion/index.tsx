@@ -352,6 +352,13 @@ const shift = {
    * next one fading in once its spring is mostly done).
    */
   navigation: 24,
+  /**
+   * How far tab panels' content slides as it changes, by the tabs' order:
+   * going to a later tab, the leaving content slides toward the start as it
+   * fades out and the next one comes in from the end (vertically for
+   * vertical tabs, mirrored right to left).
+   */
+  tabs: 12,
 } as const;
 
 /**

@@ -37,6 +37,8 @@ export const PANEL_HEIGHT: CurveOptions = {
   duration: 450,
   ease: [0.4, 0, 0.1, 1],
 };
+/** `shift.tabs`: how far the content slides, in px. */
+export const PANEL_SHIFT = 12;
 /** `blur.panel`, in px. */
 export const PANEL_BLUR = 5;
 /** The tabs' text color: `transition.color`. */
@@ -154,6 +156,9 @@ export type PanelFrame = {
   h: number;
   o: number;
   blur: number;
+  /** Its content's slide (translate), in px. */
+  tx: number;
+  ty: number;
   inert: boolean;
 };
 
@@ -213,10 +218,20 @@ export async function recordSwitch(
               // header, which fades while the Card stays).
               let o = 1;
               let blur = 0;
+              // Its slide: the translates along the way, summed.
+              let tx = 0;
+              let ty = 0;
+              const slide = (style: CSSStyleDeclaration) => {
+                if (style.translate === 'none') return;
+                const [x = '0', y = '0'] = style.translate.split(' ');
+                tx += parseFloat(x);
+                ty += parseFloat(y);
+              };
               let node: Element | undefined = el;
               while (node) {
                 const style = getComputedStyle(node);
                 o *= Number(style.opacity);
+                slide(style);
                 blur = Math.max(
                   blur,
                   parseFloat(style.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0'),
@@ -227,6 +242,7 @@ export async function recordSwitch(
                   if (node) {
                     const own = getComputedStyle(node);
                     o *= Number(own.opacity);
+                    slide(own);
                     blur = Math.max(
                       blur,
                       parseFloat(
@@ -243,6 +259,8 @@ export async function recordSwitch(
                 h: box.height,
                 o,
                 blur,
+                tx,
+                ty,
                 inert: el.inert,
               };
             });
@@ -292,6 +310,44 @@ export const framesOf = (frames: SwitchFrame[], name: string) =>
           .map((p) => ({ ...p, t: f.t }))
       : [],
   );
+
+/**
+ * The content slides along `axis` (`tx` or `ty`) by `shift.tabs`, `sign` the
+ * way it travels (1: toward the end, a later tab): the leaving one away from
+ * where the next comes from, the next one in from there, to rest.
+ */
+export function expectSlides(
+  frames: SwitchFrame[],
+  from: string,
+  to: string,
+  axis: 'tx' | 'ty',
+  sign: 1 | -1,
+) {
+  const out = framesOf(frames, from);
+  const comes = framesOf(frames, to);
+  const away = out.map((p) => p[axis] * -sign);
+  expect(
+    Math.min(...away),
+    `${from} never slides the other way`,
+  ).toBeGreaterThan(-0.5);
+  expect(Math.max(...away), `${from} slides away`).toBeGreaterThan(
+    PANEL_SHIFT / 2,
+  );
+  expect(Math.max(...away)).toBeLessThanOrEqual(PANEL_SHIFT + 0.01);
+  const first = comes[0]![axis] * sign;
+  expect(first, `${to} comes in from the far side`).toBeGreaterThan(
+    PANEL_SHIFT * 0.6,
+  );
+  expect(first).toBeLessThanOrEqual(PANEL_SHIFT + 0.01);
+  const ins = comes.map((p) => p[axis] * sign);
+  expect(
+    ins.slice(1).every((v, i) => v <= ins[i]! + 0.01),
+    `${to} settles`,
+  ).toBe(true);
+  expect(comes.at(-1)![axis]).toBe(0);
+  const other = axis === 'tx' ? 'ty' : 'tx';
+  expect([...out, ...comes].every((p) => p[other] === 0)).toBe(true);
+}
 
 /** Never two panels on screen at once. */
 export function expectOnePanelAtATime(frames: SwitchFrame[]) {
@@ -468,6 +524,62 @@ export function describeTabsDemo(
     }) => {
       const frames = await recordSwitch(page, 'Analytics', 900);
       expectPanelsInSequence(frames, 'Overview', 'Analytics');
+    });
+
+    test("the content slides by the tabs' order: toward the start going to a later tab, toward the end going back", async ({
+      page,
+    }) => {
+      expectSlides(
+        await recordSwitch(page, 'Analytics', 900),
+        'Overview',
+        'Analytics',
+        'tx',
+        1,
+      );
+      expectSlides(
+        await recordSwitch(page, 'Overview', 900),
+        'Analytics',
+        'Overview',
+        'tx',
+        -1,
+      );
+    });
+
+    test('turned back as it comes in, the content slides back out from where it is', async ({
+      page,
+    }) => {
+      const analytics = await tabCenter(page, 'Analytics');
+      const frames = await recordSwitch(page, 'Analytics', 1000, async () => {
+        await page.mouse.click(analytics.x, analytics.y);
+        // Coming in, part of the way.
+        await page.waitForFunction((panel) => {
+          const el = [...document.querySelectorAll<HTMLElement>(panel)].find(
+            (p) => !p.hidden && p.textContent?.trim().startsWith('Analytics'),
+          );
+          const header = el?.querySelector('[data-slot="card-header"]');
+          if (!header) return false;
+          const x = parseFloat(getComputedStyle(header).translate) || 0;
+          return x > 2 && x < 9;
+        }, ANY_PANEL);
+        const overview = await tabCenterNow(page, 'Overview');
+        await page.mouse.click(overview.x, overview.y);
+      });
+      expectOnePanelAtATime(frames);
+      const passed = framesOf(frames, 'Analytics');
+      // In from the end, then back out to the end: no jump.
+      const xs = passed.map((p) => p.tx);
+      expect(Math.min(...xs)).toBeGreaterThan(0);
+      const low = xs.indexOf(Math.min(...xs));
+      expect(low).toBeLessThan(xs.length - 2);
+      expect(xs.at(-1)!).toBeGreaterThan(xs[low]! + 2);
+      const steps = xs.slice(1).map((x, i) => Math.abs(x - xs[i]!));
+      expect(Math.max(...steps)).toBeLessThan(5);
+      // Back to the first tab: it comes in from the start.
+      const back = framesOf(frames, 'Overview').filter(
+        (p) => p.t > passed.at(-1)!.t,
+      );
+      expect(back[0]!.tx).toBeLessThan(-PANEL_SHIFT * 0.6);
+      expect(back.at(-1)!.tx).toBe(0);
     });
 
     test('keyboard: the selection animates like a click', async ({ page }) => {
@@ -703,10 +815,13 @@ export function describeTabsHeights(library: string) {
       const frames = await recordSwitch(page, 'Tall', 700, undefined, scope);
       const after = frames.at(-1)!.panels[0]!.h;
       expect(after).toBeGreaterThan(before + 20);
-      // No blur, no height in between, no indicator in between.
+      // No blur, no slide, no height in between, no indicator in between.
       expect(frames.every((f) => f.panels.every((p) => p.blur === 0))).toBe(
         true,
       );
+      expect(
+        frames.every((f) => f.panels.every((p) => p.tx === 0 && p.ty === 0)),
+      ).toBe(true);
       const heights = frames.flatMap((f) => f.panels.map((p) => p.h));
       expect(heights.some((h) => h > before + 1 && h < after - 1)).toBe(false);
       const lefts = frames.map((f) => f.indicators[0]!.x);

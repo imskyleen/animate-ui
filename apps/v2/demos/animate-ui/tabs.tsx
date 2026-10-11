@@ -24,7 +24,7 @@ export default function TabsDemo() {
           <TabsHighlightItem value="account" className="flex-1">
             <TabsTrigger
               value="account"
-              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-200 ease-[ease] data-[state=active]:text-foreground"
+              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-500 ease-in-out data-[state=active]:text-foreground"
             >
               Account
             </TabsTrigger>
@@ -32,7 +32,7 @@ export default function TabsDemo() {
           <TabsHighlightItem value="password" className="flex-1">
             <TabsTrigger
               value="password"
-              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-200 ease-[ease] data-[state=active]:text-foreground"
+              className="h-full w-full text-sm font-medium text-muted-foreground transition-colors duration-500 ease-in-out data-[state=active]:text-foreground"
             >
               Password
             </TabsTrigger>

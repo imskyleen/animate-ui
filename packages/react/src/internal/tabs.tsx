@@ -39,8 +39,9 @@ import { curveFrom, velocityOf, INSTANT, type Run } from './momentum';
 // without touching the component, the list renders an indicator that copies
 // the active tab's classes and data attributes (so it looks exactly like the
 // active tab, in every style and theme) and sits behind the tabs, while a
-// small stylesheet hides the active tab's own surface. Animate UI's own Tabs
-// give the indicator its look instead (`surface`).
+// small stylesheet hides the active tab's own surface, unless the caller
+// gives the indicator its own look (`surface`). Animate UI's own Tabs don't
+// use this file: they keep v1's motion.
 
 /** Set on every animated tab, so the stylesheet only touches ours. */
 const TAB_ATTRIBUTE = 'data-animate-ui-tab';
@@ -217,7 +218,7 @@ type TabsIndicatorOptions = {
   /** Transition of the slide. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
   /**
-   * The indicator's own look (Animate UI's Tabs). Without it, it copies the
+   * The indicator's own look. Without it, it copies the
    * active tab's classes and data attributes, and the tab's own surface is
    * hidden.
    */
@@ -515,6 +516,8 @@ type PanelStage = {
    * next panel's frame takes over from it, at its height.
    */
   frame: { look: string; height: number } | null;
+  /** The panel shown last: where the next one comes from. */
+  last: HTMLElement | null;
   /** The panels, and which is selected: the one coming in. */
   panels: Map<object, { element: HTMLElement; selected: boolean }>;
   /** Panels waiting for the stage to be free. */
@@ -533,6 +536,7 @@ function stageOf(holder: Element) {
       shown: false,
       height: undefined,
       frame: null,
+      last: null,
       panels: new Map(),
       waiting: new Set(),
       painted: false,
@@ -654,19 +658,56 @@ function cancelAll(panel: Element) {
   panelAnimations.delete(panel);
 }
 
-/** Its opacity and filter on screen now (a fade running included). */
-function shownNow(element: Element, blur: boolean): Keyframe {
-  const style = getComputedStyle(element);
-  return blur
-    ? {
-        opacity: style.opacity,
-        filter: style.filter === 'none' ? 'blur(0px)' : style.filter,
-      }
-    : { opacity: style.opacity };
+/** A direction on screen: x and y, each -1, 0 or 1. */
+type Way = [number, number];
+
+/**
+ * Which way the content travels going from the panel `from` to `to`: toward
+ * the end for a later tab (in the panels' order), along the tabs' axis
+ * (vertical tabs: down), mirrored right to left. None without both.
+ */
+function wayOf(holder: Element, from: Element | null, to: Element | null) {
+  if (!from?.isConnected || !to?.isConnected || from === to) return null;
+  const later =
+    from.compareDocumentPosition(to) & Node.DOCUMENT_POSITION_FOLLOWING
+      ? 1
+      : -1;
+  // The tabs' list: in the element holding the panels, or around it
+  // (Animate UI's panels are in TabsContents).
+  let list: Element | null = null;
+  for (let around: Element | null = holder; around && !list;)
+    [list, around] = [
+      around.querySelector('[role="tablist"]'),
+      around.parentElement,
+    ];
+  const vertical =
+    list?.getAttribute('aria-orientation') === 'vertical' ||
+    list?.getAttribute('data-orientation') === 'vertical';
+  if (vertical) return [0, later] as Way;
+  const rtl = getComputedStyle(list ?? holder).direction === 'rtl';
+  return [rtl ? -later : later, 0] as Way;
 }
 
-const gone = (blur: boolean): Keyframe =>
-  blur ? { opacity: 0, filter: motionTokens.blur.panel } : { opacity: 0 };
+/** Its opacity, filter and translate on screen now (a fade running included). */
+function shownNow(element: Element, blur: boolean, move: boolean): Keyframe {
+  const style = getComputedStyle(element);
+  const shown: Keyframe = { opacity: style.opacity };
+  if (blur) shown.filter = style.filter === 'none' ? 'blur(0px)' : style.filter;
+  if (move)
+    shown.translate = style.translate === 'none' ? '0px 0px' : style.translate;
+  return shown;
+}
+
+/** Faded out: blurred, and `shift.tabs` that way. */
+function gone(blur: boolean, way: Way | null): Keyframe {
+  const hidden: Keyframe = { opacity: 0 };
+  if (blur) hidden.filter = motionTokens.blur.panel;
+  if (way) {
+    const [x, y] = way.map((side) => side * motionTokens.shift.tabs);
+    hidden.translate = `${x}px ${y}px`;
+  }
+  return hidden;
+}
 
 const POSITIONED = ['absolute', 'fixed'];
 
@@ -694,9 +735,14 @@ function anchorsOutside(target: Element) {
   return false;
 }
 
-/** It fades with the blur: not under reduced motion, nor `anchorsOutside`. */
-const blurs = (target: Element, timings: PanelTimings) =>
-  timings.blur && !anchorsOutside(target);
+/**
+ * How it fades: with the blur and the slide, but not under reduced motion,
+ * nor when `anchorsOutside` (a `translate` would move that content too).
+ */
+function effectsOf(target: Element, timings: PanelTimings) {
+  const plain = anchorsOutside(target);
+  return { blur: timings.blur && !plain, move: timings.shift && !plain };
+}
 
 type PanelTimings = {
   in: CssTiming;
@@ -706,6 +752,8 @@ type PanelTimings = {
   blur: boolean;
   /** Off under reduced motion. */
   glide: boolean;
+  /** Off under reduced motion: the content doesn't slide. */
+  shift: boolean;
 };
 
 /** What fades: the frame's content, or the whole panel. */
@@ -747,7 +795,8 @@ function fadeIn(
   targets: Element[],
   frame: HTMLElement | null,
   timings: PanelTimings,
-  fresh: boolean,
+  /** Comes in from hidden, `shift.tabs` that way; else from where it is. */
+  from: { way: Way | null } | null,
 ) {
   const animations = animationsOf(panel);
   animations.hold?.cancel();
@@ -757,8 +806,11 @@ function fadeIn(
     targets,
     frame,
     (target) => {
-      const blur = blurs(target, timings);
-      return [{ ...(fresh ? gone(blur) : shownNow(target, blur)), offset: 0 }];
+      const { blur, move } = effectsOf(target, timings);
+      const start = from
+        ? gone(blur, move ? from.way : null)
+        : shownNow(target, blur, move);
+      return [{ ...start, offset: 0 }];
     },
     {
       duration: timings.in.duration,
@@ -775,14 +827,17 @@ function fadeOut(
   targets: Element[],
   frame: HTMLElement | null,
   timings: PanelTimings,
+  /** Where the content goes: away from the next one's side. */
+  way: Way | null,
 ) {
   fade(
     panel,
     targets,
     frame,
     (target) => {
-      const blur = blurs(target, timings);
-      return [shownNow(target, blur), gone(blur)];
+      const { blur, move } = effectsOf(target, timings);
+      const away = move && way ? ([-way[0], -way[1]] as Way) : null;
+      return [shownNow(target, blur, move), gone(blur, away)];
     },
     {
       duration: timings.out.duration,
@@ -832,12 +887,18 @@ function glideHeight(
   );
 }
 
+/** The panel coming in (selected), other than `token`'s. */
+const nextOf = (stage: PanelStage, token: object) =>
+  [...stage.panels].find(
+    ([other, entry]) => other !== token && entry.selected,
+  )?.[1].element ?? null;
+
 /**
  * The frame whose content fades as `panel` leaves, or null to fade it whole:
  * the panel coming in must have a frame that looks the same, and a panel
  * still fading in whole leaves whole.
  */
-function leavingFrame(panel: HTMLElement, stage: PanelStage, token: object) {
+function leavingFrame(panel: HTMLElement, next: HTMLElement | null) {
   const animations = panelAnimations.get(panel);
   if (
     animations &&
@@ -847,9 +908,6 @@ function leavingFrame(panel: HTMLElement, stage: PanelStage, token: object) {
     return null;
   const frame = frameOf(panel);
   if (!frame) return null;
-  const next = [...stage.panels].find(
-    ([other, entry]) => other !== token && entry.selected,
-  )?.[1].element;
   const nextFrame = next ? frameOf(next) : null;
   return nextFrame && lookOf(nextFrame) === lookOf(frame) ? frame : null;
 }
@@ -866,7 +924,7 @@ type PanelMotionOptions = {
   transition?: Transition;
   /** The outgoing panel's fade. */
   exitTransition?: Transition;
-  /** The height's transition when `transition` has no `height` (Animate UI's TabsContents). */
+  /** The height's transition when `transition` has no `height`. */
   heightTransition?: Transition;
 };
 
@@ -919,6 +977,7 @@ function usePanelMotion(
     height: toCssTiming(height),
     blur: !reduce,
     glide: !reduce,
+    shift: !reduce,
   };
   // Read by the effects below, which only run when the panel changes.
   const timingsRef = React.useRef(timings);
@@ -968,11 +1027,14 @@ function usePanelMotion(
     if (stage.current === token) {
       // Picked again while leaving: back from where its fade has it.
       const own = panelAnimations.get(element);
-      if (own?.leaving) fadeIn(element, own.targets, own.frame, timings, false);
+      if (own?.leaving) fadeIn(element, own.targets, own.frame, timings, null);
       return;
     }
 
     stage.current = token;
+    // From the side of the panel shown before it.
+    const way = wayOf(holder, stage.last, element);
+    stage.last = element;
     const comesIn = stage.shown && stage.painted;
     stage.shown = true;
     const left = stage.frame;
@@ -983,7 +1045,7 @@ function usePanelMotion(
     const candidate = left ? frameOf(element) : null;
     const frame =
       left && candidate && lookOf(candidate) === left.look ? candidate : null;
-    fadeIn(element, targetsOf(element, frame), frame, timings, true);
+    fadeIn(element, targetsOf(element, frame), frame, timings, { way });
     if (!timings.glide) return;
     if (frame && left) glideHeight(element, frame, left.height, timings.height);
     else if (stage.height !== undefined)
@@ -1034,8 +1096,12 @@ function usePanelMotion(
     // every panel of this commit has told the stage whether it's selected.
     queueMicrotask(() => {
       if (cancelled) return;
-      const frame = leavingFrame(element, stage, token);
-      fadeOut(element, targetsOf(element, frame), frame, timings);
+      const next = nextOf(stage, token);
+      const frame = leavingFrame(element, next);
+      const way = element.parentElement
+        ? wayOf(element.parentElement, element, next)
+        : null;
+      fadeOut(element, targetsOf(element, frame), frame, timings, way);
     });
     hold.finished.then(
       () => {

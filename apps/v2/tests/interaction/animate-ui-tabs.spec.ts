@@ -1,42 +1,23 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import {
-  expectCurvePace,
-  expectSpringPace,
-  type Sample,
-} from './spring-curves';
-import {
-  PANEL_HEIGHT,
-  SELECTION_SPRING,
-  expectBoxStays,
-  expectOneIndicator,
-  expectOnePanelAtATime,
-  expectPanelsInSequence,
-  framesOf,
-  gotoTabs,
-  offsetFrom,
-  recordBoxes,
-  recordSwitch,
-  tabCenter,
-  tabLeft,
-} from './tabs-helpers';
-
-// Animate UI's own tabs move like the library tabs (Motion's Radix tabs
-// example): one highlight slides to the selected trigger, and the panels
-// change one after the other while the height glides.
+import { gotoTabs } from './tabs-helpers';
 
 const open = (page: Page) => gotoTabs(page, '/tests/demos/animate-ui/tabs');
 
-const HIGHLIGHT = '[data-slot="tabs-highlight"]';
-/** The demo's panels, by the start of their text. */
-const ACCOUNT = 'Make changes';
-const PASSWORD = 'Change your password';
+const HIGHLIGHT = '[data-slot="motion-highlight"]';
 
-const panelHeight = (page: Page, name: string) =>
+const highlightX = (page: Page, value: string) =>
   page
-    .getByRole('tabpanel')
-    .filter({ hasText: name })
-    .evaluate((el) => el.getBoundingClientRect().height);
+    .locator(`${HIGHLIGHT}[data-value="${value}"]`)
+    .evaluate((el) => el.getBoundingClientRect().x);
+
+/** translateX of the panels strip, in % of its width. */
+const stripX = (page: Page) =>
+  page.locator('[data-slot="tabs-contents"] > div').evaluate((el) => {
+    const m = getComputedStyle(el).transform.match(/matrix\(([^)]+)\)/);
+    const tx = m ? Number(m[1]!.split(',')[4]) : 0;
+    return (tx / el.getBoundingClientRect().width) * 100;
+  });
 
 test.describe('animate-ui tabs', () => {
   test('the first tab is selected; tabs are exposed as tabs', async ({
@@ -52,156 +33,52 @@ test.describe('animate-ui tabs', () => {
       'aria-selected',
       'false',
     );
-    // The inactive panel is hidden and can't be focused.
-    const inactive = page
-      .getByRole('tabpanel', { includeHidden: true })
-      .filter({ hasText: PASSWORD });
-    await expect(inactive).toHaveAttribute('inert', '');
-    await expect(inactive).toBeHidden();
+    // The inactive panel can't be focused.
+    await expect(
+      page.getByRole('tabpanel').filter({ hasText: 'Change your password' }),
+    ).toHaveAttribute('inert', '');
   });
 
-  test('page load: nothing moves, the highlight sits on the selected trigger', async ({
-    page,
-  }) => {
-    await page.addInitScript(() => {
-      const w = window as unknown as { __load: number[][] };
-      w.__load = [];
-      const tick = () => {
-        const el = document.querySelector<HTMLElement>(
-          '[data-slot="tabs-content"]',
-        );
-        if (el) {
-          const style = getComputedStyle(el);
-          w.__load.push([
-            Number(style.opacity),
-            parseFloat(style.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0'),
-          ]);
-        }
-        if (w.__load.length < 3600) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    });
-    await open(page);
-    await expect(page.locator(HIGHLIGHT)).toHaveCount(1);
-    expect(
-      Math.abs(await offsetFrom(page, 'Account', undefined, HIGHLIGHT)),
-    ).toBeLessThan(1);
-    await page.waitForTimeout(400);
-    const load = await page.evaluate(
-      () => (window as unknown as { __load: number[][] }).__load,
-    );
-    expect(load.length).toBeGreaterThan(10);
-    expect(load.every(([o, blur]) => o === 1 && blur === 0)).toBe(true);
-  });
-
-  test('one highlight slides to the selected trigger on the selection spring', async ({
+  test('switching glides the highlight and slides the panel', async ({
     page,
   }) => {
     await open(page);
-    const start = await tabLeft(page, 'Account');
-    const target = await tabLeft(page, 'Password');
-    const frames = await recordSwitch(
-      page,
-      'Password',
-      900,
-      undefined,
-      undefined,
-      HIGHLIGHT,
-    );
-    expectOneIndicator(frames);
-    expect(
-      frames.some(
-        (f) =>
-          f.indicators[0]!.x > start + 4 && f.indicators[0]!.x < target - 4,
-      ),
-    ).toBe(true);
-    expectSpringPace(
-      frames.map((f): Sample => [f.t, f.indicators[0]!.x]),
-      SELECTION_SPRING,
-      {
-        from: start,
-        to: target,
-        a: start + (target - start) * 0.1,
-        b: start + (target - start) * 0.9,
-      },
-    );
-    await expect(page.getByRole('tab', { name: 'Password' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
-    expect(
-      Math.abs(await offsetFrom(page, 'Password', undefined, HIGHLIGHT)),
-    ).toBeLessThan(1);
+    const tab = page.getByRole('tab', { name: 'Password' });
+    const end = (await tab.boundingBox())!.x;
+    await tab.click();
+    await page.waitForTimeout(60);
+    const mid = await highlightX(page, 'password');
+    expect(mid).toBeLessThan(end - 1);
+    expect(await stripX(page)).toBeGreaterThan(-99);
+    await expect
+      .poll(async () => Math.abs((await highlightX(page, 'password')) - end))
+      .toBeLessThan(1.5);
+    await expect.poll(async () => Math.round(await stripX(page))).toBe(-100);
+    await expect(tab).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByLabel('Current password')).toBeVisible();
   });
 
-  test("the panels change one after the other, the height gliding from the old panel's", async ({
-    page,
-  }) => {
+  test('the height follows the active panel', async ({ page }) => {
     await open(page);
     const contents = page.locator('[data-slot="tabs-contents"]');
-    const before = await panelHeight(page, ACCOUNT);
-    const box = (await contents.boundingBox())!.height;
-    const frames = await recordSwitch(
-      page,
-      'Password',
-      1100,
-      undefined,
-      undefined,
-      HIGHLIGHT,
-    );
-    expectPanelsInSequence(frames, ACCOUNT, PASSWORD);
-    const comes = framesOf(frames, PASSWORD);
-    const after = comes.at(-1)!.h;
-    expect(after).toBeGreaterThan(before + 20);
-    expect(Math.abs(comes[0]!.h - before)).toBeLessThan(3);
-    expect(comes.every((p) => p.h <= after + 0.5)).toBe(true);
-    expectCurvePace(
-      comes.map((p): Sample => [p.t, p.h]),
-      PANEL_HEIGHT,
-      {
-        from: before,
-        to: after,
-        a: before + (after - before) * 0.1,
-        b: before + (after - before) * 0.9,
-      },
-    );
-    // The container follows: its border and background glide with it.
-    expect((await contents.boundingBox())!.height - box).toBeCloseTo(
-      after - before,
-      0,
-    );
+    const before = (await contents.boundingBox())!.height;
+    await page.getByRole('tab', { name: 'Password' }).click();
+    await expect
+      .poll(async () => (await contents.boundingBox())!.height)
+      .not.toBe(before);
   });
 
-  test('reduced motion: the highlight and the height jump, the panels only fade', async ({
-    page,
-  }) => {
+  test('reduced motion: everything changes at once', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
-    const before = await panelHeight(page, ACCOUNT);
-    const start = await tabLeft(page, 'Account');
-    const target = await tabLeft(page, 'Password');
-    const frames = await recordSwitch(
-      page,
-      'Password',
-      700,
-      undefined,
-      undefined,
-      HIGHLIGHT,
+    const tab = page.getByRole('tab', { name: 'Password' });
+    const end = (await tab.boundingBox())!.x;
+    await tab.click();
+    await page.waitForTimeout(60);
+    expect(Math.abs((await highlightX(page, 'password')) - end)).toBeLessThan(
+      1.5,
     );
-    const after = framesOf(frames, PASSWORD).at(-1)!.h;
-    expect(after).toBeGreaterThan(before + 20);
-    expect(frames.every((f) => f.panels.every((p) => p.blur === 0))).toBe(true);
-    const heights = frames.flatMap((f) => f.panels.map((p) => p.h));
-    expect(heights.some((h) => h > before + 1 && h < after - 1)).toBe(false);
-    const lefts = frames.map((f) => f.indicators[0]!.x);
-    expect(lefts.some((x) => x > start + 1 && x < target - 1)).toBe(false);
-    expectOnePanelAtATime(frames);
-    expect(framesOf(frames, ACCOUNT).some((p) => p.o > 0 && p.o < 1)).toBe(
-      true,
-    );
-    expect(framesOf(frames, PASSWORD).some((p) => p.o > 0 && p.o < 1)).toBe(
-      true,
-    );
+    expect(Math.round(await stripX(page))).toBe(-100);
   });
 
   test('triggers and panels reference each other', async ({ page }) => {
@@ -223,104 +100,54 @@ test.describe('animate-ui tabs', () => {
 
   test('keyboard: the selection animates like a click', async ({ page }) => {
     await open(page);
-    const start = await tabLeft(page, 'Account');
-    const target = await tabLeft(page, 'Password');
-    await page.getByRole('tab', { name: 'Account' }).focus();
-    const frames = await recordSwitch(
-      page,
-      'Password',
-      900,
-      () => page.keyboard.press('ArrowRight'),
-      undefined,
+    const account = page.getByRole('tab', { name: 'Account' });
+    const password = page.getByRole('tab', { name: 'Password' });
+    const accountX = (await account.boundingBox())!.x;
+    const passwordX = (await password.boundingBox())!.x;
+    await account.focus();
+    // Sampled in the page from the key press: the highlight slides and the
+    // panels strip moves, as on click (no fixed timing, so no flakiness).
+    const frames = page.evaluate(
+      (selector) =>
+        new Promise<{ x: number; strip: number }[]>((resolve) => {
+          const out: { x: number; strip: number }[] = [];
+          const start = performance.now();
+          const tick = () => {
+            const el = document.querySelector(
+              `${selector}[data-value="password"]`,
+            );
+            const strip = document.querySelector<HTMLElement>(
+              '[data-slot="tabs-contents"] > div',
+            )!;
+            const m =
+              getComputedStyle(strip).transform.match(/matrix\(([^)]+)\)/);
+            const tx = m ? Number(m[1]!.split(',')[4]) : 0;
+            if (el)
+              out.push({
+                x: el.getBoundingClientRect().x,
+                strip: (tx / strip.getBoundingClientRect().width) * 100,
+              });
+            if (performance.now() - start < 900) requestAnimationFrame(tick);
+            else resolve(out);
+          };
+          requestAnimationFrame(tick);
+        }),
       HIGHLIGHT,
     );
-    const password = page.getByRole('tab', { name: 'Password' });
+    await page.keyboard.press('ArrowRight');
     await expect(password).toBeFocused();
     await expect(password).toHaveAttribute('aria-selected', 'true');
-    expectOneIndicator(frames);
-    expect(
-      frames.some(
-        (f) =>
-          f.indicators[0]!.x > start + 4 && f.indicators[0]!.x < target - 4,
-      ),
-    ).toBe(true);
-    expectPanelsInSequence(frames, ACCOUNT, PASSWORD);
-  });
-
-  test('quick changes: a panel passed over never shows, one picked again comes back from where it is', async ({
-    page,
-  }) => {
-    await gotoTabs(page, '/tests/fixtures/animate-ui-tabs');
-    const scope = '[data-slot="tabs"]:has([aria-label="Horizontal"])';
-    const three = await tabCenter(page, 'Three', scope);
-    const four = await tabCenter(page, 'Four', scope);
-    const one = await tabCenter(page, 'One', scope);
-    // One → Three → Four at once: Three never shows.
-    let frames = await recordSwitch(
-      page,
-      'Three',
-      900,
-      async () => {
-        await page.mouse.click(three.x, three.y);
-        await page.mouse.click(four.x, four.y);
-      },
-      scope,
-      HIGHLIGHT,
+    const xs = await frames;
+    expect(xs.some((f) => f.x > accountX + 1 && f.x < passwordX - 1)).toBe(
+      true,
     );
-    expectOneIndicator(frames);
-    expectOnePanelAtATime(frames);
-    expect(framesOf(frames, 'Horizontal Three')).toHaveLength(0);
-    expect(framesOf(frames, 'Horizontal Four').length).toBeGreaterThan(2);
-    // Four → One, then Four again as One comes in: One fades back out from
-    // where it is, Four comes back in.
-    frames = await recordSwitch(
-      page,
-      'One',
-      1000,
-      async () => {
-        await page.mouse.click(one.x, one.y);
-        await page.waitForFunction((scope) => {
-          const el = [
-            ...document
-              .querySelector(scope)!
-              .querySelectorAll<HTMLElement>('[data-slot="tabs-content"]'),
-          ].find((p) => !p.hidden && p.textContent?.includes('One'));
-          const o = el ? Number(getComputedStyle(el).opacity) : 0;
-          return o > 0.25 && o < 0.75;
-        }, scope);
-        await page.mouse.click(four.x, four.y);
-      },
-      scope,
-      HIGHLIGHT,
-    );
-    expectOneIndicator(frames);
-    expectOnePanelAtATime(frames);
-    const passed = framesOf(frames, 'Horizontal One');
-    const peak = passed.reduce((i, p, j) => (p.o > passed[i]!.o ? j : i), 0);
-    expect(passed[peak]!.o).toBeLessThan(0.98);
-    expect(passed.at(-1)!.o).toBeLessThan(0.2);
-    const steps = passed.slice(1).map((p, i) => Math.abs(p.o - passed[i]!.o));
-    expect(Math.max(...steps)).toBeLessThan(0.3);
-    const back = framesOf(frames, 'Horizontal Four').filter(
-      (p) => p.t > passed.at(-1)!.t,
-    );
-    expect(back[0]!.o).toBeLessThan(0.2);
-    expect(back.at(-1)!.o).toBe(1);
-  });
-});
-
-test.describe('animate-ui tabs, panels holding a box', () => {
-  test('the box stays on screen as the next one takes over: only its content fades', async ({
-    page,
-  }) => {
-    await gotoTabs(page, '/tests/fixtures/animate-ui-tabs');
-    const scope = '[data-slot="tabs"]:has([aria-label="Frames"])';
-    await page.locator(scope).scrollIntoViewIfNeeded();
-    const target = await tabCenter(page, 'Boxed tall', scope);
-    const recorded = await recordBoxes(page, scope, 'Boxed tall', () =>
-      page.mouse.click(target.x, target.y),
-    );
-    expectBoxStays(recorded, 'Boxed panel', 'Boxed tall');
+    expect(xs.some((f) => f.strip < -1 && f.strip > -99)).toBe(true);
+    await expect
+      .poll(async () =>
+        Math.abs((await highlightX(page, 'password')) - passwordX),
+      )
+      .toBeLessThan(1.5);
+    await expect.poll(async () => Math.round(await stripX(page))).toBe(-100);
   });
 });
 
