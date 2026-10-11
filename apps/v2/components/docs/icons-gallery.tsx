@@ -38,6 +38,7 @@ import {
 } from '@/registry/icons';
 import { Check } from '@/registry/icons/check';
 
+import { ClientCommand } from './client-command';
 import { DynamicCodeBlock } from './dynamic-codeblock';
 import { DocsTabs } from './tabs';
 
@@ -193,10 +194,10 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
           value: 'cli',
           label: 'CLI',
           content: (
-            <DynamicCodeBlock
-              lang="bash"
-              codeblock={{ className: 'my-0' }}
-              code={`pnpm dlx shadcn@latest add @animate-ui/icons-${entry.name}`}
+            <ClientCommand
+              command={(m) =>
+                `${m.dlx} shadcn@latest add @animate-ui/icons-${entry.name}`
+              }
             />
           ),
         },
@@ -205,10 +206,8 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
           label: 'Manual',
           content: (
             <div className="flex flex-col gap-2">
-              <DynamicCodeBlock
-                lang="bash"
-                codeblock={{ className: 'my-0' }}
-                code="pnpm add @animate-ui/react motion"
+              <ClientCommand
+                command={(m) => `${m.add} @animate-ui/react motion`}
               />
               {file && (
                 <DynamicCodeBlock

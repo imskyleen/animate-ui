@@ -4,29 +4,27 @@ import path from 'node:path';
 
 import type { LibraryId } from '@/lib/libraries';
 
+import {
+  MANAGER_GROUP,
+  MANAGER_NAMES,
+  MANAGERS,
+  type ManagerCommands,
+} from './package-managers';
 import { ServerCodeBlock } from './server-codeblock';
 import { CodeTabs, DocsTabs } from './tabs';
 
-export const MANAGERS = {
-  pnpm: { add: 'pnpm add', dlx: 'pnpm dlx' },
-  npm: { add: 'npm install', dlx: 'npx' },
-  yarn: { add: 'yarn add', dlx: 'yarn dlx' },
-  bun: { add: 'bun add', dlx: 'bunx --bun' },
-} as const;
-
-type Manager = keyof typeof MANAGERS;
+export { MANAGERS };
 
 export async function Command({
   command,
 }: {
-  command: (manager: (typeof MANAGERS)[Manager]) => string;
+  command: (manager: ManagerCommands) => string;
 }) {
-  const managers = Object.keys(MANAGERS) as Manager[];
   return (
     <CodeTabs
-      groupId="package-manager"
+      groupId={MANAGER_GROUP}
       persist
-      tabs={managers.map((manager) => ({
+      tabs={MANAGER_NAMES.map((manager) => ({
         value: manager,
         label: manager,
         content: (

@@ -360,13 +360,16 @@ test.describe('icons gallery', () => {
     ]);
 
     // Installation: the CLI command, or Manual with the icon's source.
-    await expect(drawer.getByText('@animate-ui/icons-bell')).toBeVisible();
+    await expect(
+      // In every package manager; npm's shows first.
+      drawer.getByText('npx shadcn@latest add @animate-ui/icons-bell').first(),
+    ).toBeVisible();
     await drawer.getByRole('tab', { name: 'Manual' }).click();
     await expect(
       drawer.getByText('components/animate-ui/icons/bell.tsx'),
     ).toBeVisible();
     await expect(
-      drawer.getByText('pnpm add @animate-ui/react motion'),
+      drawer.getByText('npm install @animate-ui/react motion').first(),
     ).toBeVisible();
 
     await drawer.getByRole('tab', { name: 'CLI' }).click();

@@ -23,6 +23,7 @@ import {
 
 import { InCodeTabsContext } from './codeblock';
 import { CopyButton, getPreText } from './copy-button';
+import { MANAGER_GROUP, MANAGER_NAMES } from './package-managers';
 
 export type TabItem = { value: string; label: ReactNode; content: ReactNode };
 
@@ -65,7 +66,7 @@ const listeners = new Map<string, Set<(value: string) => void>>();
  * Fumadocs' tab sync, kept: same keys (sessionStorage, plus localStorage with
  * `persist`), so readers' saved package manager carries over.
  */
-function useSyncedValue(
+export function useSyncedValue(
   values: string[],
   { groupId, persist = false, defaultValue }: SyncProps,
 ) {
@@ -332,8 +333,6 @@ export function CodeBlockTab({ children }: CodeBlockTabProps) {
   return <>{children}</>;
 }
 
-const PACKAGE_MANAGERS = ['npm', 'pnpm', 'yarn', 'bun'];
-
 export function CodeBlockTabs({
   children,
   groupId,
@@ -364,7 +363,7 @@ export function CodeBlockTabs({
 
   // Package manager blocks share the installation commands' choice.
   const isPackageManager = tabs.every((tab) =>
-    PACKAGE_MANAGERS.includes(tab.value),
+    (MANAGER_NAMES as readonly string[]).includes(tab.value),
   );
 
   return (
@@ -372,7 +371,7 @@ export function CodeBlockTabs({
       tabs={tabs}
       className={className}
       defaultValue={defaultValue}
-      groupId={groupId ?? (isPackageManager ? 'package-manager' : undefined)}
+      groupId={groupId ?? (isPackageManager ? MANAGER_GROUP : undefined)}
       persist={persist ?? isPackageManager}
     />
   );

@@ -4,13 +4,23 @@ import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@animate-ui/react/primitives/buttons/button';
 import { ease, ReducedMotionConfig } from '@animate-ui/react/utils/motion';
 import { motion } from 'motion/react';
+import { cn } from 'cn';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { IconSwap } from '@/components/docs/icon-swap';
+import {
+  MANAGER_GROUP,
+  MANAGER_NAMES,
+  MANAGERS,
+  type Manager,
+} from '@/components/docs/package-managers';
+import { useSyncedValue } from '@/components/docs/tabs';
 import { LIBRARIES } from '@/lib/libraries';
 
-const COMMAND = 'pnpm dlx @animate-ui/cli@latest animate all';
+/** The command, in the reader's package manager (the docs' saved choice). */
+const command = (manager: Manager) =>
+  `${MANAGERS[manager].dlx} @animate-ui/cli@latest animate all`;
 
 // Each block rises into place in turn (600ms, strong ease-out, 80ms apart);
 // reduced motion keeps only the fade.
@@ -22,27 +32,57 @@ const rise = (index: number) => ({
 
 function CopyCommand() {
   const [copied, setCopied] = useState(false);
+  const [manager, setManager] = useSyncedValue(MANAGER_NAMES, {
+    groupId: MANAGER_GROUP,
+    persist: true,
+  });
+  const COMMAND = command(manager as Manager);
   return (
-    <Button
-      type="button"
-      aria-label={copied ? 'Copied' : 'Copy the command'}
-      onClick={async () => {
-        await navigator.clipboard.writeText(COMMAND);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }}
-      className="group flex h-11 max-w-full items-center gap-3 rounded-xl border bg-accent/40 pr-3 pl-4 font-mono text-sm transition-colors hover:bg-accent"
-    >
-      <span className="text-muted-foreground select-none">$</span>
-      <span className="truncate">{COMMAND}</span>
-      <IconSwap
-        active={copied}
-        icon={Copy01Icon}
-        activeIcon={Tick02Icon}
-        size={16}
-        className="text-muted-foreground group-hover:text-foreground"
-      />
-    </Button>
+    <div className="flex max-w-full flex-col items-center gap-2">
+      <div
+        role="radiogroup"
+        aria-label="Package manager"
+        className="flex gap-1 text-xs"
+      >
+        {MANAGER_NAMES.map((name) => (
+          <button
+            key={name}
+            type="button"
+            role="radio"
+            aria-checked={name === manager}
+            onClick={() => setManager(name)}
+            className={cn(
+              'rounded-md px-2 py-1 transition-colors',
+              name === manager
+                ? 'bg-accent text-foreground'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
+      <Button
+        type="button"
+        aria-label={copied ? 'Copied' : 'Copy the command'}
+        onClick={async () => {
+          await navigator.clipboard.writeText(COMMAND);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        }}
+        className="group flex h-11 max-w-full items-center gap-3 rounded-xl border bg-accent/40 pr-3 pl-4 font-mono text-sm transition-colors hover:bg-accent"
+      >
+        <span className="text-muted-foreground select-none">$</span>
+        <span className="truncate">{COMMAND}</span>
+        <IconSwap
+          active={copied}
+          icon={Copy01Icon}
+          activeIcon={Tick02Icon}
+          size={16}
+          className="text-muted-foreground group-hover:text-foreground"
+        />
+      </Button>
+    </div>
   );
 }
 

@@ -1,0 +1,90 @@
+import { expect, test } from '@playwright/test';
+
+// Every install command on the docs is offered in npm, pnpm, yarn and bun,
+// and follows the reader's choice; installs that can be done by hand offer
+// CLI or Manual.
+
+const PAGES = [
+  '/docs',
+  '/docs/installation',
+  '/docs/skills',
+  '/docs/backgrounds',
+  '/docs/icons/get-started',
+  '/docs/icons/lucide-icons',
+  '/docs/primitives/animate-ui/tooltip',
+  '/docs/primitives/animate-ui/avatar-group',
+  '/docs/primitives/animate-ui/code-block',
+  '/docs/primitives/radix-ui/preview-link-card',
+  '/docs/primitives/base-ui/preview-link-card',
+  '/docs/primitives/react-aria/preview-link-card',
+  '/docs/primitives/radix-ui/sidebar',
+  '/docs/primitives/radix-ui/accordion',
+  '/docs/backgrounds/bubble',
+];
+
+const COMMAND = /^\s*(npm|npx|pnpm|yarn|bun|bunx)\s/;
+
+for (const url of PAGES)
+  test(`${url}: every command offers each package manager`, async ({
+    page,
+  }) => {
+    await page.goto(url, { waitUntil: 'networkidle' });
+    const commands = await page
+      .locator('article pre')
+      .evaluateAll((pres, source) => {
+        const pattern = new RegExp(source);
+        return pres
+          .filter((pre) => pattern.test(pre.textContent ?? ''))
+          .map((pre) => {
+            // The tab group the block is a panel of (its closest one).
+            const GROUP = '[data-slot="code-tabs"], [data-slot="tabs"]';
+            const group = pre.closest(GROUP);
+            const tabs = group
+              ? [...group.querySelectorAll('[role="tab"]')]
+                  .filter((tab) => tab.closest(GROUP) === group)
+                  .map((tab) => tab.textContent?.trim())
+              : [];
+            return { text: pre.textContent?.trim().slice(0, 60), tabs };
+          });
+      }, COMMAND.source);
+    expect(commands.length).toBeGreaterThan(0);
+    for (const command of commands)
+      expect(command.tabs, command.text).toEqual(
+        expect.arrayContaining(['npm', 'pnpm', 'yarn', 'bun']),
+      );
+  });
+
+for (const url of [
+  '/docs/backgrounds',
+  '/docs/icons/get-started',
+  '/docs/icons/lucide-icons',
+])
+  test(`${url}: installs by CLI or by hand`, async ({ page }) => {
+    await page.goto(url, { waitUntil: 'networkidle' });
+    const article = page.locator('article');
+    await expect(article.getByRole('tab', { name: 'CLI' })).toBeVisible();
+    await article.getByRole('tab', { name: 'Manual' }).click();
+    await expect(
+      article.getByText(/components\/animate-ui\/.+\.tsx/).first(),
+    ).toBeVisible();
+  });
+
+test('the home command follows the chosen package manager', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  const managers = page.getByRole('radiogroup', { name: 'Package manager' });
+  await managers.getByRole('radio', { name: 'pnpm' }).click();
+  await expect(
+    page.getByText('pnpm dlx @animate-ui/cli@latest animate all'),
+  ).toBeVisible();
+  await managers.getByRole('radio', { name: 'bun' }).click();
+  await expect(
+    page.getByText('bunx --bun @animate-ui/cli@latest animate all'),
+  ).toBeVisible();
+  // The docs' commands follow the same choice.
+  await page.goto('/docs/installation', { waitUntil: 'networkidle' });
+  await expect(
+    page.getByRole('tab', { name: 'bun', selected: true }).first(),
+  ).toBeVisible();
+});
