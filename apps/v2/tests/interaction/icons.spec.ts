@@ -148,6 +148,64 @@ test.describe('icons', () => {
     expect(fast! / normal!).toBeLessThan(0.6);
   });
 
+  test('a grouped icon with a prop of its own follows its group', async ({
+    page,
+  }) => {
+    await open(page);
+    const group = page.getByTestId('group-override');
+    const svg = group.locator('svg');
+    await record(svg, 5);
+    await group.hover();
+    // It swings with the group's hover, at its own speed...
+    await waitForThreshold(page);
+    await page.mouse.move(600, 10);
+    // ...and returns to rest when the pointer leaves the group.
+    await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
+  });
+
+  test("a grouped icon with a prop of its own waits the group's delay once", async ({
+    page,
+  }) => {
+    await open(page);
+    const section = page.getByTestId('group-delay');
+    const svg = section.locator('svg');
+    await record(svg, 1);
+    const clicked = await now(page);
+    await section.getByRole('button', { name: 'Play delayed' }).click();
+    await waitForThreshold(page);
+    const started = await page.evaluate(
+      () =>
+        (window as unknown as { __recorder: Recorder }).__recorder.reachedAt,
+    );
+    // 400ms, not 800ms (the group's delay, then the same delay again).
+    expect(started - clicked).toBeGreaterThan(350);
+    expect(started - clicked).toBeLessThan(650);
+  });
+
+  test('tap: a cancelled touch stops the animation', async ({ page }) => {
+    await open(page);
+    const svg = page.getByTestId('tap-loop').locator('svg');
+    await svg.dispatchEvent('pointerdown', { pointerType: 'touch' });
+    await page.waitForTimeout(200);
+    // The browser takes the touch over to scroll: no pointerup ever comes.
+    await svg.dispatchEvent('pointercancel', { pointerType: 'touch' });
+    await page.waitForTimeout(1200);
+    await record(svg, 1);
+    await page.waitForTimeout(1200);
+    expect(maxAbs(await between(page, 0))).toBeLessThan(1);
+  });
+
+  test('animateOnView plays even when the AnimateIcon is given a ref', async ({
+    page,
+  }) => {
+    await open(page);
+    const view = page.getByTestId('view-ref');
+    const svg = view.locator('svg');
+    await record(svg, 5);
+    await view.scrollIntoViewIfNeeded();
+    await waitForThreshold(page);
+  });
+
   test.describe('reduced motion', () => {
     test.use({ reducedMotion: 'reduce' });
 
@@ -160,5 +218,18 @@ test.describe('icons', () => {
         'none',
       );
     });
+  });
+});
+
+test.describe('icons gallery', () => {
+  test('a tile clicked far down the grid opens its detail in view', async ({
+    page,
+  }) => {
+    await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+    const tile = page.locator('button[aria-pressed]').nth(200);
+    await tile.scrollIntoViewIfNeeded();
+    await tile.click();
+    const close = page.getByRole('button', { name: 'Close', exact: true });
+    await expect(close).toBeInViewport();
   });
 });

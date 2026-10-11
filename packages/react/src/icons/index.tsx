@@ -169,10 +169,12 @@ function AnimateIconRoot({
   delay = 0,
   speed,
   children,
+  ref,
   onMouseEnter,
   onMouseLeave,
   onPointerDown,
   onPointerUp,
+  onPointerCancel,
   ...props
 }: AnimateIconProps) {
   const controls = useAnimation();
@@ -257,12 +259,16 @@ function AnimateIconRoot({
     };
   }, []);
 
-  const viewOuterRef = React.useRef<HTMLElement>(null);
-  const { ref: inViewRef, isInView } = useIsInView(viewOuterRef, {
-    inView: !!animateOnView,
-    inViewOnce: animateOnViewOnce,
-    inViewMargin: animateOnViewMargin,
-  });
+  // Your ref gets the element too: it's exposed by the in-view ref, which
+  // would otherwise replace it.
+  const { ref: inViewRef, isInView } = useIsInView(
+    ref as React.Ref<HTMLElement>,
+    {
+      inView: !!animateOnView,
+      inViewOnce: animateOnViewOnce,
+      inViewMargin: animateOnViewMargin,
+    },
+  );
 
   const startAnim = React.useCallback(
     async (anim: 'initial' | 'animate', method: 'start' | 'set' = 'start') => {
@@ -444,11 +450,19 @@ function AnimateIconRoot({
     if (animateOnTap) stopAnimation();
   };
 
+  // A touch the browser takes over (to scroll) never comes up: it cancels.
+  const handlePointerCancel = (event: React.PointerEvent<HTMLElement>) => {
+    childProps.onPointerCancel?.(event);
+    onPointerCancel?.(event);
+    if (animateOnTap) stopAnimation();
+  };
+
   const handlers = {
     onMouseEnter: handleMouseEnter,
     onMouseLeave: handleMouseLeave,
     onPointerDown: handlePointerDown,
     onPointerUp: handlePointerUp,
+    onPointerCancel: handlePointerCancel,
   };
 
   const content = asChild ? (
@@ -538,13 +552,13 @@ function IconWrapper<T extends string>({
       completeOnStop !== undefined;
 
     if (hasOverrides) {
+      // The parent plays while it's active, whatever triggered it (its own
+      // `animate`, hover, tap or view), once its delay has passed.
       const inheritedAnimate: Trigger = parentActive
         ? (animationProp ?? parentAnimation ?? 'default')
         : false;
 
-      const finalAnimate: Trigger = (animate ??
-        parentAnimate ??
-        inheritedAnimate) as Trigger;
+      const finalAnimate: Trigger = (animate ?? inheritedAnimate) as Trigger;
 
       return (
         <AnimateIcon
@@ -559,7 +573,8 @@ function IconWrapper<T extends string>({
           loopDelay={loopDelay ?? parentLoopDelay}
           persistOnAnimateEnd={persistOnAnimateEnd ?? parentPersistOnAnimateEnd}
           initialOnAnimateEnd={initialOnAnimateEnd ?? parentInitialOnAnimateEnd}
-          delay={delay ?? parentDelay}
+          // The parent's delay has already passed once it's active.
+          delay={delay}
           speed={speed ?? parentSpeed}
           completeOnStop={completeOnStop ?? parentCompleteOnStop}
           asChild
