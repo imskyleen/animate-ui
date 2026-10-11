@@ -46,27 +46,67 @@ export function Toaster({ children }: { children: React.ReactNode }) {
 
 Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `import { Toast } from '@animate-ui/react/primitives/base-ui'`.
 
+### Types
+
+Set the `type` option to render a status icon (shadcn/ui's `ToastIcon`, `data-slot="toast-icon"`). Each type's icon shows in its own way once the toast has landed: the success check draws itself, the error cross draws itself and shakes, the others pop in.
+
+<ComponentPreview name="base-ui/toast-types" />
+
+### Promise
+
+`toast.promise` (or `toast.update`) changes one toast in place: its spinner turns into a drawn check (or cross), its text swaps through a light blur, and its height glides to the new content's.
+
+<ComponentPreview name="base-ui/toast-promise" />
+
+### Remaining time
+
+`progressBar` on the `Provider` (or on one `Root`) adds a thin bar of the time each toast has left along its bottom edge. It's off by default: Base UI's toast has no such bar, and a drop-in shouldn't add one you didn't ask for. The demo above turns it on (its Controls turn it off).
+
+```tsx
+<Toast.Provider progressBar>…</Toast.Provider>
+```
+
+The bar is `[data-animate-ui-toast-progress-bar]` inside `[data-animate-ui-toast-progress]`, styled at zero specificity (2px, the toast's text color at 25%): any class or selector of yours wins, for instance `[data-type=error] [data-animate-ui-toast-progress-bar] { background: var(--destructive) }`.
+
 ## Animation
 
-Animate UI v1 had no toast. Its motion comes from v1's Sheet (it enters and leaves through its edge with a fade, on v1's sheet spring: stiffness 150, damping 22), a tooltip's motion for anchored toasts, and a 200ms ease-out fade.
+Animate UI v1 had no toast. A toast rises from its edge like v1's Sheet, and lands; anchored toasts move like tooltips.
 
-Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), springs written as the `linear()` curve Motion itself would use (550ms for the sheet spring), and sets them itself from its state, so `AnimateUIProvider tempo` applies.
+Base UI drives the stack, swipe-to-dismiss and the enter/exit itself, through CSS variables and its transition status, and waits for CSS transitions before removing a toast. So the Root animates with CSS transitions too (a JavaScript animation would fight the swipe), springs written as the `linear()` curve Motion itself would use, and sets them itself from its state, so `AnimateUIProvider tempo` applies.
 
-- **A toast enters from its edge**, a full toast height away, sliding and fading in on the spring.
-- **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, ease-out. Hovering or focusing the viewport expands the stack with a 0.75rem gap and fades the contents back in. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
-- **A swipe follows the finger** (Base UI sets the transform while swiping), then springs back, or the toast leaves in the swipe direction.
-- **It leaves through the edge it came from**, sliding and fading out on the same spring.
-- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they enter and leave through it. Anchored toasts (`Toast.Positioner`) are small bubbles, like tooltips: they grow from their anchor from 0.7 with a fade, on a spring (stiffness 400, damping 29).
+- **A toast rises from its edge**, a full toast height away, from 0.96 and out of a 4px blur, fading in, on a spring (stiffness 280, damping 24): there in ~165ms, it goes ~4% past its rest and settles by ~525ms, so it lands rather than stops.
+- **Dismissed, it leaves the way it came, quicker**: back through its edge, to 0.96 and into the blur, fading out, in 0.2s on the dismissal curve of dialogs and sheets (`cubic-bezier(0.33, 0.17, 0.67, 0.5)`): it leaves at once, speeding away.
+- **Its icon shows by type**, once the toast has landed (after 0.2s): a success check draws its stroke in 0.3s like a checkbox's check; an error cross draws the same way and, half drawn, shakes "no" (3px, a few dying swings in 0.4s); any other icon (info, warning, the loading spinner) pops in from half its size out of a 2px blur (stiffness 500, damping 24). The icon is the first element of `data-slot="toast-icon"` (shadcn/ui's).
+- **An update changes it in place** (`toast.update`, `toast.promise`): the previous icon (a spinner still spinning) shrinks into a 2px blur while the new one shows as above, so the spinner turns into a drawn check or cross; text that changed swaps through the same blur (0.15s, ease-out); the toast's height glides to its new content's on its spring. Updated while it's still coming in, it keeps rising; dismissed mid-update, it just leaves.
+- **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, ease-out. Hovering or focusing the viewport unfolds the stack with a 0.75rem gap **front to back**, each toast 30ms after the one in front of it, its content fading back in with it, and it folds back the same way. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
+- **A swipe follows the finger**, fading as it goes (gone at its own size away). Dragged the way it can't be swiped, it rubber-bands: it follows at half the finger's pace at first, then resists up to 48px. Let go short of the threshold, it springs back; past it, it's thrown the way it was swiped at the finger's speed (linear, its own size at that speed, between 80 and 360ms, like a drawer's swipe dismissal).
+- **The remaining-time bar** (`progressBar`) shrinks linearly over the toast's timeout, in real time (`tempo` doesn't pace a timer). It pauses whenever Base UI pauses the timer (the stack hovered or focused, the window in the background) and resumes from there; a loading toast, which has no timer, has no bar, and resolved, its bar starts full. Only the front toast's shows while the stack is collapsed.
+- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they rise from it and leave through it. Anchored toasts (`Toast.Positioner`) are small bubbles, like tooltips: they grow from their anchor from 0.7 with a fade, on a spring (stiffness 400, damping 29), and leave the same way.
 - shadcn/ui's own CSS stack (its `[transform:…]` and `[transition:…]` classes and the variables only they read) would fight these: the CLI removes them.
-- Under reduced motion, toasts fade in place and the stack changes at once.
+- Under reduced motion, toasts fade in place and the stack changes at once (no cascade); icons and text only fade (no drawing, popping, shaking or blur). A swipe still follows the finger and throws the toast along the swipe, and the remaining-time bar still shrinks: it tells time, it doesn't move anything across the screen.
 
 ## API Reference
 
 Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/react/components/toast#api-reference). Animate UI adds the animation props below. They are CSS transitions: a spring becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier or named `ease`.
 
-### Provider, Viewport, Portal, Positioner, Title, Description, Action, Close, Arrow
+### Provider
 
-[Base UI props](https://base-ui.com/react/components/toast#provider) only.
+[Base UI props](https://base-ui.com/react/components/toast#provider), plus:
+
+<TypeTable
+  type={{
+    progressBar: {
+      description:
+        "Shows a bar of the time each toast has left (a Root's own `progressBar` wins).",
+      type: 'boolean',
+      default: 'false',
+    },
+  }}
+/>
+
+### Viewport, Portal, Positioner, Title, Description, Action, Close, Arrow
+
+[Base UI props](https://base-ui.com/react/components/toast#viewport) only.
 
 ### Root
 
@@ -78,17 +118,25 @@ Every part takes exactly the props of [Base UI's Toast](https://base-ui.com/reac
       description: 'Transition of the entrance and the stack.',
       type: 'Transition',
       default:
-        "{ type: 'spring', stiffness: 150, damping: 22 }; anchored: { type: 'spring', stiffness: 400, damping: 29 }",
+        "{ type: 'spring', stiffness: 280, damping: 24 }; anchored: { type: 'spring', stiffness: 400, damping: 29 }",
     },
     exitTransition: {
-      description: 'Transition of the exit.',
+      description:
+        "Transition of the exit (a swiped toast is thrown at the finger's speed instead).",
       type: 'Transition',
-      default: 'transition',
+      default:
+        '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }; anchored: transition',
+    },
+    progressBar: {
+      description:
+        'Shows a bar of the time the toast has left, paused while Base UI pauses its timer.',
+      type: 'boolean',
+      default: "the Provider's progressBar",
     },
   }}
 />
 
-The Root sets its `transform`, transition and `opacity` through Base UI's `style` prop; a `style` of your own (object or function) still applies on top.
+The Root sets its `transform`, `filter`, transition and `opacity` through Base UI's `style` prop; a `style` of your own (object or function) still applies on top. Its swipe handlers (`onPointerDown`, `onPointerMove`, `onPointerUp`, `onPointerCancel`) still run yours.
 
 ### Content
 

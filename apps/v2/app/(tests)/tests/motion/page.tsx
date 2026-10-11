@@ -226,14 +226,22 @@ const FAMILIES: Family[] = [
     name: 'Sheets, drawers, toasts',
     rule: 'Ce qui arrive par un bord glisse de sa propre taille en apparaissant, un peu plus vif qu’une modale (il parcourt plus de distance).',
     values: [
-      'glissement + fondu, ressort 150/22 (≈ 550ms)',
+      'toast : monte de son bord depuis 0,96 et un flou de 4px, en fondu, sur un ressort 280/24 qui dépasse un peu (≈ 4 %) et se pose (90 % en ≈ 165ms, posé en ≈ 525ms) ; fermé, repart pareil mais plus vite : 0,2s sur la courbe de fermeture des dialogs (cubic-bezier(0.33, 0.17, 0.67, 0.5))',
+      'toast, icône selon le type, une fois posé (après 0,2s) : succès → la coche se trace (0,3s, comme la checkbox) ; erreur → la croix se trace puis secoue « non » (3px, 0,4s) ; info, warning, spinner → pop depuis 0,5 et un flou de 2px (ressort 500/24)',
+      'toast mis à jour (toast.promise / toast.update) : l’ancienne icône (le spinner qui tourne encore) rétrécit dans un flou de 2px pendant que la nouvelle se trace, le texte changé passe par le même flou (0,15s), la hauteur glisse vers la nouvelle sur le ressort du toast',
+      'pile : se déplie au survol de l’avant vers l’arrière, 30ms entre chaque toast, et se replie pareil',
+      'swipe : suit le doigt en s’effaçant (invisible à sa propre taille) ; dans le mauvais sens, élastique (moitié du geste puis butée à 48px) ; lâché, lancé à la vitesse du doigt (linéaire, entre 80 et 360ms)',
+      'barre de temps restant (progressBar, désactivée par défaut, activée dans la démo) : rétrécit linéairement en temps réel, en pause quand Base UI met les minuteurs en pause (survol, focus, fenêtre en arrière-plan)',
       'toast ancré : comme un tooltip, depuis 0,7, ressort 400/29',
+      'mouvement réduit : fondus seulement (pas de flou, de dépassement, de tracé, de secousse ni de cascade) ; la barre continue de rétrécir',
     ],
     demos: [
       { demo: 'radix-ui/sheet', label: 'Sheet' },
       { demo: 'radix-ui/drawer', label: 'Drawer (Radix)' },
       { demo: 'base-ui/drawer', label: 'Drawer (Base UI)' },
       { demo: 'base-ui/toast', label: 'Toast' },
+      { demo: 'base-ui/toast-types', label: 'Toast (types)' },
+      { demo: 'base-ui/toast-promise', label: 'Toast (promise)' },
     ],
   },
   {

@@ -112,8 +112,11 @@ const spring = {
   pop: { type: 'spring', stiffness: 400, damping: 29 },
   /** Dialogs tipping forward: calm, no overshoot. */
   dialog: { type: 'spring', stiffness: 150, damping: 25 },
-  /** Toasts from an edge: livelier, they travel farther (v1's sheets'). */
-  toast: { type: 'spring', stiffness: 150, damping: 22 },
+  /**
+   * Toasts rising from an edge, and their stack moving: there in ~165ms, a
+   * slight overshoot (~4%, at ~270ms) so it lands, settled by ~525ms.
+   */
+  toast: { type: 'spring', stiffness: 280, damping: 24 },
   /**
    * A selection sliding between items (tabs, toggle groups): a smooth slide,
    * a little quicker than v1's (stiffness 200, damping 25).
@@ -269,11 +272,16 @@ const transition = {
    */
   handoffIn: { duration: 0.26, ease: ease.arrive },
   /**
-   * A dialog or a sheet leaving once dismissed: at once, quicker than it
-   * came, speeding away (a sheet off its edge, so its last pixels don't
-   * crawl out). Its overlay clears behind it.
+   * A dialog, a sheet or a toast leaving once dismissed: at once, quicker
+   * than it came, speeding away (a sheet off its edge, so its last pixels
+   * don't crawl out). Its overlay clears behind it.
    */
   dismiss: { duration: 0.2, ease: ease.away },
+  /**
+   * A mark shaking "no" (a toast's error cross, once drawn): a few quick
+   * swings of `shift.shake`, dying out.
+   */
+  shake: { duration: 0.4, ease: ease.inOut },
   /**
    * A drawer closed (a button, Escape, a click outside): quick, and seen
    * speeding off its edge, so it never reads as a constant slide.
@@ -320,6 +328,8 @@ const scale = {
   dialog: 0.8,
   /** An icon swapping for another. */
   icon: 0.5,
+  /** Where a toast rising from its edge grows from (with `blur.surface`). */
+  toast: 0.96,
 } as const;
 
 /** Blurs bridging two states. */
@@ -328,7 +338,7 @@ const blur = {
   icon: 'blur(2px)',
   /** The content of an accordion or collapsible panel, as it unfolds. */
   disclosure: 'blur(2px)',
-  /** Surfaces coming in: dialogs. */
+  /** Surfaces coming in: dialogs, toasts. */
   surface: 'blur(4px)',
   /**
    * Tab panels leaving into it and coming in from it, one after the other
@@ -359,11 +369,25 @@ const shift = {
    * vertical tabs, mirrored right to left).
    */
   tabs: 12,
+  /** How far a mark swings as it shakes (`transition.shake`). */
+  shake: 3,
 } as const;
 
 /**
- * The tokens at a pace: `tempo` multiplies the tweens' durations and delays,
- * and time-scales the springs (see `scaleTransition`). 1 is the default, 0.8
+ * Delays between items moving one after another, in seconds: paced by
+ * `tempo` like durations.
+ */
+const stagger: { readonly stack: number } = {
+  /**
+   * A toast stack unfolding on hover, and folding back: each toast starts
+   * this long after the one in front of it.
+   */
+  stack: 0.03,
+};
+
+/**
+ * The tokens at a pace: `tempo` multiplies the tweens' durations and delays
+ * (and the staggers), and time-scales the springs (see `scaleTransition`). 1 is the default, 0.8
  * feels crisper, 1.2 more relaxed. Curves, scales, blurs and shifts don't
  * change.
  */
@@ -384,6 +408,15 @@ function createMotionTokens(tempo = 1) {
     scale,
     blur,
     shift,
+    stagger:
+      tempo === 1
+        ? stagger
+        : (Object.fromEntries(
+            Object.entries(stagger).map(([role, delay]) => [
+              role,
+              delay * tempo,
+            ]),
+          ) as typeof stagger),
     spring: pace(spring),
     transition: pace(transition),
   } as const;
@@ -622,6 +655,7 @@ export {
   scale,
   blur,
   shift,
+  stagger,
   ReducedMotionConfig,
   useShouldReduceMotion,
   scaleTransition,

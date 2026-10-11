@@ -60,8 +60,8 @@ export const DRAWER_EXIT_TRANSITION = motionTokens.transition.drawerOut;
 const CONTENT_FADE = motionTokens.transition.dialogFade;
 
 /**
- * The toasts that enter from an edge: v1's sheet spring, a little livelier
- * than the dialog's (they travel farther).
+ * The toasts that rise from an edge, and their stack: quick, a slight
+ * overshoot so they land (stiffness 280, damping 24).
  */
 export const TOAST_TRANSITION = motionTokens.spring.toast;
 

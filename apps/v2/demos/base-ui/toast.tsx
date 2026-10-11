@@ -248,7 +248,18 @@ export {
   useToastManager,
 }
 
-export default function ToastDemo() {
+export const controls = {
+  Toaster: {
+    progressBar: { value: true },
+  },
+}
+
+export default function ToastDemo({
+  progressBar = true,
+}: {
+  /** Shows the time each toast has left. */
+  progressBar?: boolean | string
+}) {
   function showToast() {
     const id = toast.add({
       title: "Event created",
@@ -263,7 +274,8 @@ export default function ToastDemo() {
   }
 
   return (
-    <Toaster>
+    // Query strings (the test pages) pass booleans as text.
+    <Toaster progressBar={progressBar === true || progressBar === "true"}>
       <Button variant="outline" onClick={showToast}>
         Show Toast
       </Button>

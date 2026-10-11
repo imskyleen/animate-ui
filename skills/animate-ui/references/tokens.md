@@ -10,6 +10,7 @@ import {
   scale,
   blur,
   shift,
+  stagger,
   useMotionTokens, // the same tokens, paced by AnimateUIProvider's tempo
   useTempoTransition,
   toCssTiming,
@@ -36,7 +37,7 @@ Springs first: nearly everything moves on a spring. They retarget with their vel
 | `spring.press`     | `stiffness: 550, damping: 30, restSpeed: 10`                   | Quick: there in ~120ms                                                                                  | Press feedback (Motion's own spring for `scale`)                                                                                                                                      |
 | `spring.pop`       | `stiffness: 400, damping: 29`                                  | There in ~175ms, overshoots ~4%, settled by ~440ms                                                      | Tooltips, popovers, hover cards, anchored toasts, tags                                                                                                                                |
 | `spring.dialog`    | `stiffness: 150, damping: 25`                                  | Calm, no overshoot, ~450ms                                                                              | Dialogs and alert dialogs                                                                                                                                                             |
-| `spring.toast`     | `stiffness: 150, damping: 22`                                  | A touch livelier, ~550ms                                                                                | Toasts entering from an edge (they travel farther)                                                                                                                                    |
+| `spring.toast`     | `stiffness: 280, damping: 24`                                  | There in ~165ms, overshoots ~4% (at ~270ms), settled by ~525ms: it lands                                | Toasts rising from an edge (from `scale.toast` out of `blur.surface`), and their stack                                                                                                |
 | `spring.selection` | `stiffness: 300, damping: 30`                                  | Smooth slide                                                                                            | A selection moving between items (tabs, toggle groups)                                                                                                                                |
 | `spring.highlight` | `stiffness: 500, damping: 40`                                  | Quick, there in ~150ms, never trails the pointer                                                        | A surface following the pointer (menu items, Highlight, nav indicator), a list's or a menu's check gliding to the chosen item (`pop`); an OTP field's ring gliding to the active slot |
 | `spring.reflow`    | `stiffness: 500, damping: 40`                                  | Quick, no overshoot                                                                                     | Items making room for one added or closing the gap of one removed (a combobox's chips and its input)                                                                                  |
@@ -78,7 +79,8 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.collapseLabel` | `{ duration: 0.14, ease: ease.out }`             | A collapsing sidebar's labels fading into `blur.icon` in its first half; back in its last half as it expands (delay `collapse − collapseLabel`)                                                 |
 | `transition.handoffOut`    | `{ duration: 0.22, ease: ease.soft }`            | A menu's content leaving the popover it hands to the next menu (a menubar's), sliding away from where it goes: mostly gone in ~90ms                                                             |
 | `transition.handoffIn`     | `{ duration: 0.26, ease: ease.arrive }`          | The next menu's content fading in behind it, once it has mostly cleared                                                                                                                         |
-| `transition.dismiss`       | `{ duration: 0.2, ease: ease.away }`             | A dialog or a sheet dismissed: at once, quicker than it came, speeding away                                                                                                                     |
+| `transition.dismiss`       | `{ duration: 0.2, ease: ease.away }`             | A dialog, a sheet or a toast dismissed: at once, quicker than it came, speeding away                                                                                                            |
+| `transition.shake`         | `{ duration: 0.4, ease: ease.inOut }`            | A mark shaking "no" by `shift.shake`, a few dying swings (a toast's error cross, once half drawn)                                                                                               |
 | `transition.drawerOut`     | `{ duration: 0.16, ease: ease.in }`              | A drawer closed: quick, seen speeding off its edge                                                                                                                                              |
 | `transition.drawer`        | `{ duration: 0.4, ease: ease.drawer }`           | A drawer sliding in, snapping or easing back after a drag: a hint of bounce                                                                                                                     |
 | `transition.sheet`         | `{ duration: 0.4, ease: ease.soft }`             | A sheet sliding in, no bounce (held against the screen's edge)                                                                                                                                  |
@@ -118,6 +120,7 @@ Pick a tween's curve by what the element does:
 | `scale.menu`    | 0.9   | Where menus, selects and navigation menus grow from                                    |
 | `scale.dialog`  | 0.8   | Dialog content, with `perspective(500px) rotateX(-20deg)`                              |
 | `scale.icon`    | 0.5   | An icon swapping for another                                                           |
+| `scale.toast`   | 0.96  | Where a toast rising from its edge grows from (with `blur.surface`), and leaves to     |
 
 The smaller the element, the farther it starts, so its growth stays visible; the more often a large one opens, the subtler it gets. A tooltip's 0.7 is only a few pixels on a small label, a popover's 0.8 shows where it came from, a menu opened all day stays at 0.9.
 
@@ -127,7 +130,7 @@ The smaller the element, the farther it starts, so its growth stays visible; the
 | ----------------- | ----------- | ------------------------------------------------------------------------ |
 | `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                 |
 | `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds |
-| `blur.surface`    | `blur(4px)` | Surfaces coming in: dialogs                                              |
+| `blur.surface`    | `blur(4px)` | Surfaces coming in: dialogs, toasts                                      |
 | `blur.panel`      | `blur(5px)` | Tab panels leaving into it, then the next one coming in from it          |
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
@@ -139,8 +142,17 @@ A light blur during a swap makes two overlapping states read as one shape changi
 | `shift.handoff`    | `6` (px)  | How far a menu's content slides as a menubar's popover is handed to the next menu: the leaving content away from where the popover goes, the next one in from there                                                                                                                                                                             |
 | `shift.navigation` | `24` (px) | The same for a navigation menu's content, four times as far: across 400-600px, 6px barely shows (the leaving content fades out within ~90ms, the next one fades in once its spring is mostly done)                                                                                                                                              |
 | `shift.tabs`       | `12` (px) | Tab panels' content changing, by the tabs' order: going to a later tab, the leaving content slides toward the start as it fades out (`transition.panelOut`) and the next one comes in from the end (`transition.panelIn`); vertical for vertical tabs, mirrored right to left. Inside a box (a Card) only the content moves, clipped by the box |
+| `shift.shake`      | `3` (px)  | How far a mark swings as it shakes (`transition.shake`): a toast's error cross. Swings of 1, 0.66 and 0.33 times it, both ways                                                                                                                                                                                                                  |
 
 Distances in px, for content that slides a little while it fades, whatever its size: a hint of direction, not a journey. A menubar's content slides 6px on screen, like Motion's mega menu, without a blur: it stays where it is while its popover slides over it, it doesn't swap in place.
+
+## Staggers
+
+| Token           | Value      | Use for                                                                                                                      |
+| --------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `stagger.stack` | `0.03` (s) | A toast stack unfolding on hover, and folding back: each toast starts this long after the one in front of it (front to back) |
+
+Delays between items moving one after another, in seconds, paced by `tempo` like durations (read them from `useMotionTokens()`). Only the change that unfolds or folds the group cascades: anything else that moves it afterwards (an item added, removed, swiped back) starts at once. None under reduced motion.
 
 ## Tempo
 
