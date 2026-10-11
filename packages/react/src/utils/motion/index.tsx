@@ -357,7 +357,7 @@ const blur = {
   /** Icons and short labels swapping in place. */
   icon: 'blur(2px)',
   /** Animate UI's Tooltip's content changing for the next trigger's. */
-  tooltip: 'blur(4px)',
+  tooltip: 'blur(6px)',
   /** The content of an accordion or collapsible panel, as it unfolds. */
   disclosure: 'blur(2px)',
   /** Surfaces coming in: dialogs, toasts. */
@@ -396,9 +396,10 @@ const shift = {
    * trigger's while the popup glides there: the leaving label away from where
    * the popup goes, the next one in from there, through `blur.tooltip`, on
    * the tab panels' timings. Far enough for the way it comes from to read
-   * next to the popup's own glide; clipped by the popup.
+   * next to the popup's own glide (16px wasn't marked enough); clipped by
+   * the popup.
    */
-  tooltip: 16,
+  tooltip: 24,
   /** How far a mark swings as it shakes (`transition.shake`). */
   shake: 3,
 } as const;

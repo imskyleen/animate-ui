@@ -10,8 +10,8 @@ const CONTENT = '[data-slot="tooltip-content"]';
 const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
 /** `shift.tooltip`, `blur.tooltip` (px) and the incoming slide and fade, `transition.panelIn` (s). */
-const SHIFT = 16;
-const BLUR = 4;
+const SHIFT = 24;
+const BLUR = 6;
 const SWAP = 0.3;
 /** The leaving content's fade, `transition.panelOut` (s). */
 const OUT = 0.15;
