@@ -16,7 +16,6 @@ import {
   TooltipTrigger,
   type TooltipProps,
 } from "@animate-ui/react/primitives/tooltip"
-import { motion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
 
@@ -88,14 +87,10 @@ export default function TooltipDemo({
                 className="size-2.5 fill-foreground"
                 withTransition={withTransition}
               />
-              {/* Keeps the text from stretching while the popup resizes. */}
-              <motion.p
-                layout="preserve-aspect"
-                className="flex items-center gap-2 whitespace-nowrap"
-              >
+              <p className="flex items-center gap-2 whitespace-nowrap">
                 {tool.label}
                 <span className="opacity-60">{tool.shortcut}</span>
-              </motion.p>
+              </p>
             </TooltipContent>
           </Tooltip>
         ))}

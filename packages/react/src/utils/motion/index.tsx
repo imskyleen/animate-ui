@@ -389,6 +389,14 @@ const shift = {
    * vertical tabs, mirrored right to left).
    */
   tabs: 12,
+  /**
+   * How far Animate UI's Tooltip's content slides as it changes for the next
+   * trigger's while the popup glides there: the leaving label away from where
+   * the popup goes, the next one in from there (`transition.swap`, through
+   * `blur.icon`). A hint on a short label: it stays inside the popup's
+   * padding, and the popup itself is already traveling the distance.
+   */
+  tooltip: 4,
   /** How far a mark swings as it shakes (`transition.shake`). */
   shake: 3,
 } as const;

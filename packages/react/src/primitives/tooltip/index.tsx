@@ -3,8 +3,15 @@
 import * as React from 'react';
 import {
   motion,
+  animate,
+  cancelFrame,
+  frame,
+  motionValue,
+  useMotionValue,
   AnimatePresence,
   LayoutGroup,
+  type AnimationPlaybackControls,
+  type MotionValue,
   type Transition,
   type HTMLMotionProps,
 } from 'motion/react';
@@ -36,6 +43,9 @@ import { Slot, type WithAsChild } from '../slot';
 // popup grows from 0.7 and fades in from the point facing its trigger, and
 // goes back the same way when it closes, on a spring as quick as theirs, a
 // touch calmer (stiffness 400, damping 31: about 2% past, theirs 4%).
+// While it glides, its content changes like an icon swapping: the previous
+// label leaves into a light blur, fading out and sliding a few px away from
+// where the popup goes, the next one comes in from there (ContentSwap).
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
@@ -111,6 +121,385 @@ function originFor(side: Side, align: Align) {
   if (side === 'left') return { originX: 1, originY: along };
   return { originX: 0, originY: along };
 }
+
+/* Content swap ------------------------------------------------------------ */
+
+/** Where the next content comes from: its axis, and 1 the end, -1 the start. */
+type Way = { axis: 'x' | 'y'; sign: number };
+
+/** From a trigger to the next: by their centers on screen (RTL included). */
+function wayBetween(from: DOMRect, to: DOMRect): Way {
+  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+  if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return { axis: 'x', sign: 0 };
+  return Math.abs(dx) >= Math.abs(dy)
+    ? { axis: 'x', sign: Math.sign(dx) }
+    : { axis: 'y', sign: Math.sign(dy) };
+}
+
+type SwapValues = {
+  x: MotionValue<number>;
+  y: MotionValue<number>;
+  opacity: MotionValue<number>;
+  /** In px. */
+  blur: MotionValue<number>;
+};
+
+type SwapTarget = { x: number; y: number; opacity: number; blur: number };
+
+type SwapLayer = {
+  values: SwapValues;
+  controls: AnimationPlaybackControls[];
+};
+
+const swapValues = (from: SwapTarget): SwapValues => ({
+  x: motionValue(from.x),
+  y: motionValue(from.y),
+  opacity: motionValue(from.opacity),
+  blur: motionValue(from.blur),
+});
+
+const REST: SwapTarget = { x: 0, y: 0, opacity: 1, blur: 0 };
+
+const readValues = (values: SwapValues): SwapTarget => ({
+  x: values.x.get(),
+  y: values.y.get(),
+  opacity: values.opacity.get(),
+  blur: values.blur.get(),
+});
+
+/** `blur.icon`, in px. */
+const SWAP_BLUR = Number.parseFloat(
+  motionTokens.blur.icon.replace(/[^\d.]/g, ''),
+);
+
+/** The layout styles the content's layer takes from the popup. */
+const LAYOUT_KEYS = [
+  'display',
+  'flexDirection',
+  'flexWrap',
+  'alignItems',
+  'justifyContent',
+  'alignContent',
+  'rowGap',
+  'columnGap',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridAutoFlow',
+] as const;
+
+/**
+ * The content's layer: it lays its content out like the popup would
+ * (whatever display the popup has), so it changes nothing until it moves.
+ */
+const LAYER_STYLE: React.CSSProperties = Object.fromEntries(
+  LAYOUT_KEYS.map((key) => [key, 'inherit']),
+);
+
+/** Where a leaving content is copied: the popup's box, which clips it. */
+const VIEWPORT_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  overflow: 'hidden',
+  borderRadius: 'inherit',
+  pointerEvents: 'none',
+};
+
+/**
+ * The content changing while the popup glides from a trigger to the next.
+ *
+ * - The content is laid out in a layer inside the popup. As the trigger
+ *   changes, the layer is copied as it shows (aria-hidden, inert) into the
+ *   popup's box, which clips it, and the copy leaves into `blur.icon`, fading
+ *   out and sliding `shift.tooltip` away from where the popup goes, on
+ *   `transition.swap`. The layer, showing the next content, comes in from
+ *   there, out of the blur.
+ * - The popup resizes on its shared layout animation, which scales it: both
+ *   are scaled back every frame (around the point the popup grows from), so
+ *   no text is ever stretched, and the layer is clipped by the popup too.
+ * - Each content is one layer: coming back to a content still leaving takes
+ *   it back from where its copy is, and what was coming in leaves from where
+ *   it is.
+ */
+class ContentSwap {
+  private layer: HTMLElement | null = null;
+  private viewport: HTMLElement | null = null;
+  /** The point the popup grows from, as fractions of its box. */
+  private anchor: [number, number] = [0.5, 1];
+  /** The popup's own scale (its entrance), not its layout's. */
+  private popupScale: () => number = () => 1;
+  private timing: () => Transition = () => motionTokens.transition.swap;
+  private current: SwapLayer = { values: swapValues(REST), controls: [] };
+  private leaving = new Map<string, SwapLayer & { element: HTMLElement }>();
+  private pending: {
+    id: string;
+    element: HTMLElement;
+    width: number;
+    height: number;
+    from: SwapTarget;
+    way: Way;
+  } | null = null;
+  private running = false;
+  /** Frames the popup's resizing has been settled for. */
+  private settled = 0;
+
+  configure(options: {
+    anchor: [number, number];
+    popupScale: () => number;
+    timing: () => Transition;
+  }) {
+    this.anchor = options.anchor;
+    this.popupScale = options.popupScale;
+    this.timing = options.timing;
+  }
+
+  /** The content's layer (null: unmounted, everything stops). */
+  setLayer(el: HTMLElement | null) {
+    if (!el) this.reset();
+    this.layer = el;
+  }
+
+  /** Where leaving contents are copied. */
+  setViewport(el: HTMLElement | null) {
+    this.viewport = el;
+  }
+
+  /** The layer showing `id` is about to show the next trigger's content. */
+  capture(id: string, way: Way) {
+    const layer = this.layer;
+    if (!layer?.isConnected) return;
+    const element = layer.cloneNode(true) as HTMLElement;
+    const style = getComputedStyle(layer);
+    for (const key of LAYOUT_KEYS) element.style[key] = style[key];
+    for (const el of [element, ...element.querySelectorAll('*')]) {
+      el.removeAttribute('id');
+      el.removeAttribute('data-slot');
+    }
+    element.setAttribute('aria-hidden', 'true');
+    element.setAttribute('inert', '');
+    element.setAttribute('data-tooltip-leaving', id);
+    this.pending = {
+      id,
+      element,
+      width: layer.offsetWidth,
+      height: layer.offsetHeight,
+      from: readValues(this.current.values),
+      way,
+    };
+  }
+
+  /** The layer shows the next content `id`: the swap starts. */
+  commit(id: string | undefined) {
+    const pending = this.pending;
+    this.pending = null;
+    const layer = this.layer;
+    const viewport = this.viewport;
+    if (!pending || !id || !layer || !viewport || pending.id === id) return;
+    const transition = this.timing();
+    const { axis, sign } = pending.way;
+    const shift = motionTokens.shift.tooltip * sign;
+    const [ax, ay] = this.anchor;
+
+    // The previous content leaves from where it is.
+    const { element } = pending;
+    Object.assign(element.style, {
+      position: 'absolute',
+      margin: '0px',
+      boxSizing: 'border-box',
+      width: `${pending.width}px`,
+      height: `${pending.height}px`,
+      left: `${layer.offsetLeft + ax * (layer.offsetWidth - pending.width)}px`,
+      top: `${layer.offsetTop + ay * (layer.offsetHeight - pending.height)}px`,
+      pointerEvents: 'none',
+    });
+    viewport.appendChild(element);
+    const out: SwapLayer & { element: HTMLElement } = {
+      element,
+      values: swapValues(pending.from),
+      controls: [],
+    };
+    this.leaving.get(pending.id)?.element.remove();
+    this.leaving.set(pending.id, out);
+    this.run(
+      out,
+      {
+        x: axis === 'x' ? -shift : 0,
+        y: axis === 'y' ? -shift : 0,
+        opacity: 0,
+        blur: SWAP_BLUR,
+      },
+      transition,
+      () => {
+        if (this.leaving.get(pending.id) !== out) return;
+        this.leaving.delete(pending.id);
+        element.remove();
+      },
+    );
+
+    // The next one comes in from where the popup goes, or, coming back to a
+    // content still leaving, from where its copy is.
+    const back = this.leaving.get(id);
+    const from = back
+      ? readValues(back.values)
+      : {
+          x: axis === 'x' ? shift : 0,
+          y: axis === 'y' ? shift : 0,
+          opacity: 0,
+          blur: SWAP_BLUR,
+        };
+    if (back) {
+      for (const control of back.controls) control.stop();
+      back.element.remove();
+      this.leaving.delete(id);
+    }
+    for (const control of this.current.controls) control.stop();
+    const values = this.current.values;
+    values.x.jump(from.x);
+    values.y.jump(from.y);
+    values.opacity.jump(from.opacity);
+    values.blur.jump(from.blur);
+    this.run(this.current, REST, transition);
+
+    this.start();
+  }
+
+  /** Stops everything: the content shows as it is, at rest. */
+  reset() {
+    this.pending = null;
+    for (const out of this.leaving.values()) {
+      for (const control of out.controls) control.stop();
+      out.element.remove();
+    }
+    this.leaving.clear();
+    for (const control of this.current.controls) control.stop();
+    this.current = { values: swapValues(REST), controls: [] };
+    if (this.running) cancelFrame(this.tick);
+    this.running = false;
+    this.clear();
+  }
+
+  private run(
+    layer: SwapLayer,
+    to: SwapTarget,
+    transition: Transition,
+    done?: () => void,
+  ) {
+    layer.controls = (['x', 'y', 'opacity', 'blur'] as const).map((key) =>
+      animate(layer.values[key], to[key], transition),
+    );
+    if (done) layer.controls[2]!.finished.then(done, () => {});
+  }
+
+  private start() {
+    this.settled = 0;
+    if (!this.running) {
+      this.running = true;
+      // After Motion has drawn the popup (its layout animation), every frame.
+      frame.postRender(this.tick, true);
+    }
+    // And now (already running too): the swap's first frame, once Motion has
+    // started the popup's layout animation (in a microtask after this
+    // commit).
+    queueMicrotask(() => this.tick());
+  }
+
+  private clear() {
+    const layer = this.layer;
+    if (!layer) return;
+    for (const key of [
+      'transform',
+      'transform-origin',
+      'opacity',
+      'filter',
+      'clip-path',
+    ])
+      layer.style.removeProperty(key);
+  }
+
+  private tick = () => {
+    if (!this.running) return;
+    const layer = this.layer;
+    const popup = layer?.parentElement;
+    if (!layer?.isConnected || !popup) {
+      this.reset();
+      return;
+    }
+    // The popup's layout animation's scale: what it shows over its size,
+    // without its own (entrance) scale.
+    const [sx, sy] = this.layoutScale(popup);
+    const values = readValues(this.current.values);
+    this.draw(layer, values, sx, sy);
+    // The layer, clipped by the popup's box, as it shows.
+    const [ax, ay] = this.anchor;
+    const { offsetLeft: l, offsetTop: t } = layer;
+    const { offsetWidth: w, offsetHeight: h } = layer;
+    const ox = l + ax * w;
+    const oy = t + ay * h;
+    const ux = (c: number) => ax * w - values.x + sx * (c - ox);
+    const uy = (c: number) => ay * h - values.y + sy * (c - oy);
+    layer.style.clipPath = `inset(${uy(0)}px ${w - ux(popup.clientWidth)}px ${
+      h - uy(popup.clientHeight)
+    }px ${ux(0)}px)`;
+    for (const out of this.leaving.values())
+      this.draw(out.element, readValues(out.values), sx, sy);
+
+    // Settled for a few frames: not a spring crossing its rest as it
+    // overshoots.
+    this.settled =
+      Math.abs(sx - 1) > 1e-3 || Math.abs(sy - 1) > 1e-3 ? 0 : this.settled + 1;
+    const moving =
+      this.leaving.size > 0 ||
+      Object.values(this.current.values).some((value) => value.isAnimating()) ||
+      this.settled < 4;
+    if (!moving) {
+      cancelFrame(this.tick);
+      this.running = false;
+      this.clear();
+    }
+  };
+
+  /**
+   * The popup's layout animation's scale: what it shows over its size, apart
+   * from its own (entrance) scale. 1 once Motion has dropped its transform.
+   */
+  private layoutScale(popup: HTMLElement): [number, number] {
+    const transform = popup.style.transform;
+    if (!transform || transform === 'none') return [1, 1];
+    const rect = popup.getBoundingClientRect();
+    const own = this.popupScale() || 1;
+    // Its size, unrounded (offsetWidth is rounded to whole pixels).
+    const style = getComputedStyle(popup);
+    const extra = (a: string, b: string) =>
+      style.boxSizing === 'border-box'
+        ? 0
+        : Number.parseFloat(style[`padding${a}` as 'paddingLeft']) +
+          Number.parseFloat(style[`padding${b}` as 'paddingLeft']) +
+          Number.parseFloat(style[`border${a}Width` as 'borderLeftWidth']) +
+          Number.parseFloat(style[`border${b}Width` as 'borderLeftWidth']);
+    const width = Number.parseFloat(style.width) + extra('Left', 'Right');
+    const height = Number.parseFloat(style.height) + extra('Top', 'Bottom');
+    return [
+      width ? rect.width / (width * own) || 1 : 1,
+      height ? rect.height / (height * own) || 1 : 1,
+    ];
+  }
+
+  /** Scaled back from the popup's resizing, around the popup's origin. */
+  private draw(el: HTMLElement, v: SwapTarget, sx: number, sy: number) {
+    const [ax, ay] = this.anchor;
+    el.style.transformOrigin = `${ax * 100}% ${ay * 100}%`;
+    el.style.transform = `scale(${1 / sx}, ${1 / sy}) translate(${v.x}px, ${
+      v.y
+    }px)`;
+    el.style.opacity = String(v.opacity);
+    el.style.filter = v.blur > 0.01 ? `blur(${v.blur}px)` : '';
+  }
+}
+
+/** A `TooltipArrow` inside the content hands its props to the popup's. */
+const ArrowSlotContext = React.createContext<
+  ((props: TooltipArrowProps | null) => void) | null
+>(null);
 
 type TooltipProviderProps = {
   children: React.ReactNode;
@@ -240,7 +629,7 @@ type TooltipArrowProps = Omit<
   withTransition?: boolean;
 };
 
-function TooltipArrow({
+function TooltipArrowImpl({
   ref,
   withTransition = true,
   ...props
@@ -272,6 +661,36 @@ function TooltipArrow({
   );
 }
 
+function shallowEqualProps(a: object | null, b: object | null) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  const keysA = Object.keys(a);
+  if (keysA.length !== Object.keys(b).length) return false;
+  return keysA.every(
+    (key) =>
+      (a as Record<string, unknown>)[key] ===
+      (b as Record<string, unknown>)[key],
+  );
+}
+
+/**
+ * The popup's arrow. Written inside `TooltipContent`, it's drawn by the popup
+ * itself, outside the content that changes from a trigger to the next: it
+ * glides with the popup, never fades or blurs with the content.
+ */
+function TooltipArrow(props: TooltipArrowProps) {
+  const register = React.use(ArrowSlotContext);
+  React.useLayoutEffect(() => {
+    register?.(props);
+  });
+  React.useLayoutEffect(
+    () => (register ? () => register(null) : undefined),
+    [register],
+  );
+  if (register) return null;
+  return <TooltipArrowImpl {...props} />;
+}
+
 type TooltipPortalProps = React.ComponentProps<typeof FloatingPortal>;
 
 function TooltipPortal(props: TooltipPortalProps) {
@@ -289,6 +708,23 @@ function TooltipOverlay() {
   }>({ data: null, open: false });
 
   const arrowRef = React.useRef<SVGSVGElement | null>(null);
+
+  // The arrow written in the content, drawn by the popup.
+  const [arrowProps, setArrowProps] = React.useState<TooltipArrowProps | null>(
+    null,
+  );
+  const registerArrow = React.useCallback(
+    (props: TooltipArrowProps | null) =>
+      setArrowProps((previous) =>
+        shallowEqualProps(previous, props) ? previous : props,
+      ),
+    [],
+  );
+
+  // The popup's own scale (its entrance and exit), apart from its layout's.
+  const popupScale = useMotionValue(1);
+  const swapTransition = useTempoTransition(motionTokens.transition.swap);
+  const [swap] = React.useState(() => new ContentSwap());
 
   const side = rendered.data?.side ?? 'top';
   const align = rendered.data?.align ?? 'center';
@@ -309,13 +745,50 @@ function TooltipOverlay() {
     ],
   });
 
+  const swapStateRef = React.useRef({ rendered, positioned: false, reduce });
+  React.useLayoutEffect(() => {
+    swapStateRef.current = { rendered, positioned: isPositioned, reduce };
+  });
+
   React.useEffect(() => {
     if (currentTooltip) {
+      // Another trigger's content while the popup shows: it swaps (the
+      // layer is copied as it shows, before it changes).
+      const { rendered: previous, positioned, reduce } = swapStateRef.current;
+      if (
+        previous.data &&
+        previous.data.id !== currentTooltip.id &&
+        positioned &&
+        !reduce
+      )
+        swap.capture(
+          previous.data.id,
+          wayBetween(previous.data.rect, currentTooltip.rect),
+        );
       setRendered({ data: currentTooltip, open: true });
     } else {
       setRendered((p) => (p.data ? { ...p, open: false } : p));
     }
-  }, [currentTooltip]);
+  }, [currentTooltip, swap]);
+
+  const renderedId = rendered.data?.id;
+  React.useLayoutEffect(() => {
+    swap.commit(renderedId);
+  }, [swap, renderedId]);
+
+  // Under reduced motion, contents change at once, like the popup jumps.
+  React.useEffect(() => {
+    if (reduce) swap.reset();
+  }, [swap, reduce]);
+
+  const setLayer = React.useCallback(
+    (el: HTMLDivElement | null) => swap.setLayer(el),
+    [swap],
+  );
+  const setViewport = React.useCallback(
+    (el: HTMLDivElement | null) => swap.setViewport(el),
+    [swap],
+  );
 
   React.useLayoutEffect(() => {
     if (referenceElRef.current) {
@@ -331,6 +804,51 @@ function TooltipOverlay() {
 
   // Grows from 0.7 out of the trigger. Under reduced motion it only fades,
   // and moving between triggers jumps.
+  const origin = originFor(resolvedSide, resolvedAlign);
+  React.useLayoutEffect(() => {
+    swap.configure({
+      anchor: [origin.originX, origin.originY],
+      popupScale: () => popupScale.get(),
+      timing: () => swapTransition,
+    });
+  });
+
+  // The content, in its layer (see ContentSwap), and the arrow apart from
+  // it. With `asChild`, inside the child, which is the popup.
+  const contentProps = rendered.data?.contentProps;
+  const wrap = (children: React.ReactNode) => (
+    <>
+      {arrowProps && <TooltipArrowImpl {...arrowProps} />}
+      <ArrowSlotContext value={registerArrow}>
+        <div
+          ref={setLayer}
+          data-slot="tooltip-content-layer"
+          style={LAYER_STYLE}
+        >
+          {children}
+        </div>
+      </ArrowSlotContext>
+      <div
+        ref={setViewport}
+        data-slot="tooltip-content-swap"
+        aria-hidden
+        style={VIEWPORT_STYLE}
+      />
+    </>
+  );
+  const asChildElement =
+    rendered.data?.contentAsChild &&
+    React.isValidElement<{ children?: React.ReactNode }>(contentProps?.children)
+      ? contentProps.children
+      : null;
+  const children = asChildElement
+    ? React.cloneElement(
+        asChildElement,
+        undefined,
+        wrap(asChildElement.props.children),
+      )
+    : wrap(contentProps?.children as React.ReactNode);
+
   const hidden = rendered.data
     ? { opacity: 0, scale: reduce ? 1 : motionTokens.scale.tooltip }
     : { opacity: 0 };
@@ -398,10 +916,13 @@ function TooltipOverlay() {
                   {...rendered.data.contentProps}
                   style={{
                     position: 'relative',
-                    ...originFor(resolvedSide, resolvedAlign),
+                    scale: popupScale,
+                    ...origin,
                     ...(rendered.data.contentProps?.style || {}),
                   }}
-                />
+                >
+                  {children}
+                </Component>
               </RenderedTooltipProvider>
             </FloatingProvider>
           </div>
