@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-import { describeToggleGroupDemo } from './controls-helpers';
+import { describeToggleGroup } from './toggle-group-helpers';
 
-describeToggleGroupDemo('radix-ui');
+describeToggleGroup('radix-ui');
 
 test.describe('radix-ui toggle group API', () => {
   test.beforeEach(async ({ page }) => {

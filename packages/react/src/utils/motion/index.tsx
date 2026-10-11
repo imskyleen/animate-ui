@@ -99,6 +99,12 @@ const ease = {
    * size.
    */
   resize: [0.4, 0, 0.1, 1],
+  /**
+   * A fill growing into a control or shrinking out of it (a toggle group's
+   * selected surface; the radio's and checkbox's fill in the demos, in CSS):
+   * Tailwind's default curve, a quick start and a long landing.
+   */
+  fill: [0.4, 0, 0.2, 1],
 } as const;
 
 /** Springs, one per role (stiffness / damping, mass 1). */
@@ -251,6 +257,13 @@ const transition = {
   /** A check erasing itself, as slowly as it draws. */
   uncheck: { duration: 0.3, ease: ease.draw },
   /**
+   * A fill growing in from `scale.fill` as it fades in, and shrinking back
+   * out as it fades (a toggle group's selected surface, like the radio's and
+   * checkbox's fill); neighbouring fills joining into one surface, or
+   * splitting, on the same curve.
+   */
+  fill: { duration: 0.3, ease: ease.fill },
+  /**
    * Something that popped in shrinking back out and fading, quicker than it
    * came: a popped check (`checkAnimation="pop"`), a removed chip or tag.
    */
@@ -330,6 +343,8 @@ const scale = {
   icon: 0.5,
   /** Where a toast rising from its edge grows from (with `blur.surface`). */
   toast: 0.96,
+  /** Where a fill grows from, from its center (`transition.fill`). */
+  fill: 0.7,
 } as const;
 
 /** Blurs bridging two states. */

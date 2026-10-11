@@ -17,12 +17,14 @@ import {
   useToggleGroupHighlight,
 } from '../../../internal/controls/highlight';
 
-// Same API as React Aria's ToggleButton and ToggleButtonGroup, animated like
-// Animate UI v1's Radix UI toggle and toggle group (v1 had no React Aria
-// ones): a toggle button scales to 0.97 while pressed (pointer or keyboard),
-// and in a single-selection group the selected item's surface slides to the
-// next selected item (see ../../../internal/controls/highlight). The
-// selected colours stay the component's CSS.
+// Same API as React Aria's ToggleButton and ToggleButtonGroup: a toggle
+// button scales to 0.97 while pressed (pointer or keyboard), like Animate UI
+// v1's Radix UI toggle (v1 had no React Aria ones). In a group, selected
+// items' surfaces grow in like a fill and neighbours join into one surface
+// (multiple selection), or one surface slides to the selected item (single
+// selection), and a hover highlight glides between items (see
+// ../../../internal/controls/highlight). A toggle button alone keeps its
+// colours in the component's CSS.
 
 /** React Aria's props, plus Animate UI's `transition` (the press scale's). */
 type ToggleButtonProps = ToggleButtonPrimitiveProps & {
@@ -62,10 +64,10 @@ function ToggleButton({
   );
 }
 
-/** React Aria's props, plus Animate UI's `transition` (the highlight's). */
+/** React Aria's props, plus Animate UI's `transition` (the slide's). */
 type ToggleButtonGroupProps = ToggleButtonGroupPrimitiveProps & {
   /**
-   * Transition of the highlight sliding between items (single selection).
+   * Transition of the surface sliding between items (single selection).
    * Defaults to a spring (stiffness 300, damping 30).
    */
   transition?: Transition;
@@ -80,7 +82,7 @@ function ToggleButtonGroup({
   const mergedRef = React.useMemo(() => mergeRefs(ref, setRoot), [ref]);
   const { style, rootProps } = useToggleGroupHighlight(root, {
     library: 'aria',
-    enabled: (props.selectionMode ?? 'single') === 'single',
+    multiple: props.selectionMode === 'multiple',
     transition,
   });
 

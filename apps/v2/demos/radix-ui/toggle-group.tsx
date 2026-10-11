@@ -7,7 +7,8 @@ import { ToggleGroup as ToggleGroupPrimitive } from "@animate-ui/react/primitive
 
 import { toggleVariants } from "@/components/ui/toggle"
 import { TextBoldIcon, TextItalicIcon, TextUnderlineIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { useAnimate, useReducedMotion } from "motion/react"
 
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
@@ -101,34 +102,110 @@ export const controls = {
       value: "default",
       options: { default: "default", sm: "sm", lg: "lg" },
     },
+    spacing: { value: 2, min: 0, max: 4, step: 1 },
+    orientation: {
+      value: "horizontal",
+      options: { horizontal: "horizontal", vertical: "vertical" },
+    },
   },
+}
+
+// The icons answer their item turning on: bold pops, italic tilts and
+// settles, underline draws its line from left to right; turned off, they
+// give a little. Nothing moves on mount, nor under reduced motion.
+function ToggleIcon({
+  icon,
+  on,
+  motion,
+}: {
+  icon: IconSvgElement
+  on: boolean
+  motion: "pop" | "tilt" | "draw"
+}) {
+  const [scopeRef, animate] = useAnimate<HTMLSpanElement>()
+  const reduce = useReducedMotion()
+  const wasOnRef = React.useRef(on)
+
+  React.useEffect(() => {
+    if (wasOnRef.current === on) return
+    wasOnRef.current = on
+    if (reduce) return
+    if (!on)
+      animate(
+        scopeRef.current,
+        { scale: [1, 0.9, 1] },
+        { duration: 0.35, times: [0, 0.4, 1], ease: ["easeOut", [0.34, 1.56, 0.64, 1]] }
+      )
+    else if (motion === "pop")
+      animate(
+        scopeRef.current,
+        { scale: [1, 1.2, 1] },
+        { duration: 0.35, times: [0, 0.4, 1], ease: ["easeOut", [0.34, 1.56, 0.64, 1]] }
+      )
+    else if (motion === "tilt")
+      animate(
+        scopeRef.current,
+        { rotate: [0, -14, 0] },
+        { duration: 0.4, times: [0, 0.35, 1], ease: ["easeOut", [0.34, 1.56, 0.64, 1]] }
+      )
+    // The underline only: the icon's last stroke, drawn from its start
+    // (shown once it has some length, its dash pattern never repeating: a
+    // round cap would leave a dot).
+    else
+      animate(
+        "path:last-of-type",
+        { pathLength: [0, 1], pathSpacing: 2, opacity: [0, 1] },
+        { duration: 0.35, ease: [0, 0, 0.58, 1], opacity: { duration: 0.05 } }
+      )
+  }, [on, reduce, motion, animate, scopeRef])
+
+  return (
+    <span ref={scopeRef} className="inline-flex">
+      <HugeiconsIcon icon={icon} strokeWidth={2} />
+    </span>
+  )
 }
 
 export default function ToggleGroupDemo({
   multiple = true,
   variant = "outline",
   size = "default",
+  spacing = 2,
+  orientation = "horizontal",
 }: {
   /** Several items pressed at once (Radix's type="multiple"). */
   multiple?: boolean
   variant?: "default" | "outline"
   size?: "default" | "sm" | "lg"
+  /** Gap between the items (0: joined); a string from the test URL. */
+  spacing?: number | string
+  orientation?: "horizontal" | "vertical"
 }) {
+  const [value, setValue] = React.useState<string[]>([])
+
   return (
     <ToggleGroup
       key={String(multiple)}
       variant={variant}
-      type={multiple ? "multiple" : "single"}
       size={size}
+      spacing={Number(spacing)}
+      orientation={orientation}
+      {...(multiple
+        ? { type: "multiple" as const, value, onValueChange: setValue }
+        : {
+            type: "single" as const,
+            value: value[0] ?? "",
+            onValueChange: (next: string) => setValue(next ? [next] : []),
+          })}
     >
       <ToggleGroupItem value="bold" aria-label="Toggle bold">
-        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
+        <ToggleIcon icon={TextBoldIcon} on={value.includes("bold")} motion="pop" />
       </ToggleGroupItem>
       <ToggleGroupItem value="italic" aria-label="Toggle italic">
-        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
+        <ToggleIcon icon={TextItalicIcon} on={value.includes("italic")} motion="tilt" />
       </ToggleGroupItem>
       <ToggleGroupItem value="strikethrough" aria-label="Toggle strikethrough">
-        <HugeiconsIcon icon={TextUnderlineIcon} strokeWidth={2} />
+        <ToggleIcon icon={TextUnderlineIcon} on={value.includes("strikethrough")} motion="draw" />
       </ToggleGroupItem>
     </ToggleGroup>
   )

@@ -131,9 +131,16 @@ const FAMILIES: Family[] = [
     rule: 'Ce qui marque la sélection glisse d’un élément à l’autre et l’ancien s’efface.',
     values: [
       'glissement : ressort 300/30',
-      'onglets : une seule surface (pas de fondu entre deux), voir « Onglets »',
+      'onglets et toggle group (sélection simple) : une seule surface (pas de fondu entre deux), reprise en route avec sa vitesse ; voir « Onglets »',
+      'remplissage (toggle group, sélection multiple) : de 70 % à 100 % en apparaissant, 0,3s cubic-bezier(0.4, 0, 0.2, 1) ; voisins réunis en une surface',
     ],
-    demos: [{ demo: 'radix-ui/toggle-group', label: 'Toggle Group' }],
+    demos: [
+      {
+        demo: 'radix-ui/toggle-group',
+        label: 'Toggle Group',
+        note: 'sélection multiple : la surface d’un élément sélectionné grandit de 70 % à 100 % depuis son centre en apparaissant, en 0,3s sur cubic-bezier(0.4, 0, 0.2, 1) (comme le fond du radio), et rétrécit en s’effaçant ; deux voisins sélectionnés se rejoignent en une seule surface (chacun s’étire jusqu’au milieu de l’écart, ses coins intérieurs deviennent droits, même durée), et se séparent quand on désélectionne celui du milieu ; ils se rejoignent s’ils se touchent (spacing 0) ou par-dessus un écart d’au plus la moitié de leur hauteur quand ils n’ont pas de bordure (variante outline espacée : chacun garde la sienne) ; lignes, colonnes, RTL. Sélection simple : une seule surface glisse sur 300/30 et garde sa vitesse si on en choisit un autre en route ; la première sélection la fait grandir, la vider la fait rétrécir. Survol : un surlignage glisse d’un élément à l’autre sur 500/40, apparaît et disparaît en 0,2s ease, au-dessus des surfaces sélectionnées, pas sur un élément déjà sélectionné ; cliqué, il reste le temps que la surface arrive dessous (pas de creux). Démo : icônes au passage à « on » : gras qui grossit (1 → 1,2 → 1, 0,35s), italique qui penche puis revient, soulignement qui se trace de gauche à droite ; à « off », un petit recul (0,9) ; contrôles spacing et orientation. Rien au montage ; mouvement réduit : fondus seulement (la sélection simple passe d’un élément à l’autre en fondu, le surlignage saute)',
+      },
+    ],
   },
   {
     id: 'tabs',

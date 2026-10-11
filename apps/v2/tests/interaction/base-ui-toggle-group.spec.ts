@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-import { describeToggleGroupDemo } from './controls-helpers';
+import { describeToggleGroup } from './toggle-group-helpers';
 
-describeToggleGroupDemo('base-ui');
+describeToggleGroup('base-ui');
 
 test.describe('base-ui toggle group API', () => {
   test.beforeEach(async ({ page }) => {

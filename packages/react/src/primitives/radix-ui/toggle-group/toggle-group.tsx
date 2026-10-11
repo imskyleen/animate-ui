@@ -12,16 +12,17 @@ import {
   useToggleGroupHighlight,
 } from '../../../internal/controls/highlight';
 
-// Same API as Radix's Toggle Group, animated like Animate UI v1's toggle
-// group: items scale to 0.97 while pressed and, with `type="single"`, the
-// selected item's surface slides to the next selected item (see
+// Same API as Radix's Toggle Group: items scale to 0.97 while pressed; with
+// `type="multiple"` each selected item's surface grows in like a fill and
+// neighbours join into one surface, with `type="single"` one surface slides
+// to the selected item, and a hover highlight glides between items (see
 // ../../../internal/controls/highlight). Arrow keys only move the focus
 // (roving tabindex), which never animates.
 
 /** Animate UI's additions to `ToggleGroup.Root`. */
 type RootAnimationProps = {
   /**
-   * Transition of the highlight sliding between items (`type="single"`).
+   * Transition of the surface sliding between items (`type="single"`).
    * Defaults to a spring (stiffness 300, damping 30).
    */
   transition?: Transition;
@@ -54,7 +55,7 @@ function Root({
   const mergedRef = React.useMemo(() => mergeRefs(ref, setRoot), [ref]);
   const { style, rootProps } = useToggleGroupHighlight(root, {
     library: 'radix',
-    enabled: props.type === 'single',
+    multiple: props.type === 'multiple',
     transition,
   });
 

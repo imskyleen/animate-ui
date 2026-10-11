@@ -259,6 +259,17 @@ Like Motion's Radix tabs example (motion.dev/examples/react-radix-tabs):
 - Keep a leaving panel mounted the library's way: Radix with `forceMount` (its Presence only waits for CSS animations); Base UI and React Aria wait for the element's running animations, so start the fade out as Web Animations in the commit it leaves in (a layout effect, before React Aria's own looks). Start each animation at the time it's made (`startTime`, `fill: 'backwards'`): left pending, it starts at the frame's time, which a long render leaves behind, and skips its first frames.
 - Nothing moves on page load, nor before the page is painted (a value restored in an effect). Under reduced motion the indicator and the height jump; the panels still go one after the other, fading only (no blur).
 
+### Toggle Group (internal/controls/highlight)
+
+Radix UI, Base UI and React Aria toggle groups. shadcn/ui paints the items themselves (`data-[state=on]:bg-muted`, `hover:bg-muted`): the group reads each item's own background and corners and paints them on its own surfaces, behind the items and under their borders, in the group's shadow root around a `<slot>` (children added to the group would break the items' `first:` / `last:` styles); a stylesheet clears the items' own backgrounds.
+
+- Multiple selection: a selected item's surface grows in from `scale.fill` (70%, from its center) as it fades in, on `transition.fill` (300ms, `ease.fill`), and shrinks back out as it fades.
+- Neighbours selected together join into one surface on `transition.fill`: each stretches to the middle of the gap (0.5px past it, so no seam shows) as its inner corners square off; deselecting one splits them. They join when they touch, or across a gap no wider than half their height when the facing sides have no border: bordered items apart keep their own surfaces (a band between two frames reads as a stray strip). Geometry, not transforms: the merge changes corners and lengths, which a scale would distort. Rows, columns and RTL from the items' boxes.
+- Single selection: one surface slides on `spring.selection`; picked up on the way it keeps its speed (internal/momentum's `startOf`), started from the frame it was drawn on (a negative `delay`), else its first frame stalls. Grows in on the first selection, shrinks out when cleared.
+- Hover: one highlight glides on `spring.highlight`, fades in from nothing and out on `transition.color` (back to full on `transition.fade` when taken over halfway), like a menubar's triggers. Lit only where the hover style paints something the selection doesn't; above the selected surfaces; it stays over an item clicked until the surface growing or sliding in under it has arrived (fading as the surface grows shows a dip), and lights at once over a surface deselected under it.
+- A pressed item's surfaces follow its press scale (read from its box each frame while pressed).
+- Reduced motion: fades only. A single selection crossfades between items; a fill fading in next to a selected one covers the gap (and the neighbour's rounded corners) as it fades; the highlight jumps.
+
 ## Press (Button, Toggle, Checkbox, Switch, Radio)
 
 Purpose: feedback.
