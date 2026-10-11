@@ -174,17 +174,17 @@ const SWAP_BLUR = Number.parseFloat(
 );
 
 /**
- * The content's swap, like a menubar's content handed to the next menu: the
- * leaving label goes softly (`transition.handoffOut`), the next one slides in
- * on a spring that never goes past its place (`spring.handoff`) and shows
- * late, as it arrives (`transition.handoffIn`, `ease.arrive`).
+ * The content's swap, like a tab panel's: the leaving label goes quickly
+ * (`transition.panelOut`, 0.15s), the next one slides in and shows from the
+ * start of its slide (`transition.panelIn`, 0.3s), so the way it comes from
+ * reads.
  */
 type SwapTimings = { out: Transition; move: Transition; in: Transition };
 
 const SWAP_TIMINGS: SwapTimings = {
-  out: motionTokens.transition.handoffOut,
-  move: motionTokens.spring.handoff,
-  in: motionTokens.transition.handoffIn,
+  out: motionTokens.transition.panelOut,
+  move: motionTokens.transition.panelIn,
+  in: motionTokens.transition.panelIn,
 };
 
 /** The layout styles the content's layer takes from the popup. */

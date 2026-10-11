@@ -9,10 +9,12 @@ const CONTENT = '[data-slot="tooltip-content"]';
 // Animate UI's own Tooltip: a touch calmer than the library tooltips' 400/29.
 const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
-/** `shift.tooltip`, `blur.tooltip` (px) and the incoming fade, `transition.handoffIn` (s). */
-const SHIFT = 10;
+/** `shift.tooltip`, `blur.tooltip` (px) and the incoming slide and fade, `transition.panelIn` (s). */
+const SHIFT = 16;
 const BLUR = 4;
-const SWAP = 0.26;
+const SWAP = 0.3;
+/** The leaving content's fade, `transition.panelOut` (s). */
+const OUT = 0.15;
 
 type Layer = {
   text: string;
@@ -391,11 +393,11 @@ test.describe('animate-ui tooltip', () => {
           swapping[i - 1]!.layer.opacity - 0.01,
         );
       }
-      // On the hand-off timings (0.22s out, 0.26s in): the copy is gone and the next one
-      // rests (its styles dropped) shortly after.
+      // On the tab panels' timings: the copy is gone after its 0.15s, and
+      // the next one rests (its styles dropped) after its 0.3s.
       const gone = swapping.find((f) => f.copies.length === 0)!;
-      expect(gone.t - first.t).toBeGreaterThan(SWAP * 1000 * 0.7);
-      expect(gone.t - first.t).toBeLessThan(SWAP * 1000 + 120);
+      expect(gone.t - first.t).toBeGreaterThan(OUT * 1000 * 0.7);
+      expect(gone.t - first.t).toBeLessThan(OUT * 1000 + 120);
       const last = frames.at(-1)!;
       expect(last.layer).toMatchObject({ x: 0, y: 0, opacity: 1, blur: 0 });
       expect(last.layer.clip).toBe('');

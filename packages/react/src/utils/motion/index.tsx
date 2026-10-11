@@ -395,10 +395,10 @@ const shift = {
    * How far Animate UI's Tooltip's content slides as it changes for the next
    * trigger's while the popup glides there: the leaving label away from where
    * the popup goes, the next one in from there, through `blur.tooltip`, on
-   * the menubar's content hand-off timings. Enough to be seen next to the
-   * popup's own glide (4px went unnoticed), still inside its padding.
+   * the tab panels' timings. Far enough for the way it comes from to read
+   * next to the popup's own glide; clipped by the popup.
    */
-  tooltip: 10,
+  tooltip: 16,
   /** How far a mark swings as it shakes (`transition.shake`). */
   shake: 3,
 } as const;
