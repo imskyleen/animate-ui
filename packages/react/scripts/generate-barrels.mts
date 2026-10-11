@@ -6,6 +6,12 @@ import path from 'node:path';
 
 const root = path.join(import.meta.dirname, '..', 'src', 'primitives');
 
+/**
+ * Animate UI's own primitives built on a library (not part of it): imported
+ * from their subpath only.
+ */
+const OWN = new Set(['preview-link-card']);
+
 const LIBRARIES = [
   // One namespace per primitive, like `import { Accordion } from 'radix-ui'`.
   { dir: 'radix-ui', from: 'radix-ui', style: 'namespace' },
@@ -22,16 +28,24 @@ function exportedNames(file: string) {
   const code = readFileSync(file, 'utf8');
   const values = new Set<string>();
   const types = new Set<string>();
-  for (const [, typeOnly, list] of code.matchAll(/export\s+(type\s+)?\{([^}]*)\}/g)) {
+  for (const [, typeOnly, list] of code.matchAll(
+    /export\s+(type\s+)?\{([^}]*)\}/g,
+  )) {
     for (const raw of list!.split(',')) {
       const item = raw.trim();
       if (!item) continue;
       const isType = Boolean(typeOnly) || item.startsWith('type ');
-      const name = item.replace(/^type\s+/, '').split(/\s+as\s+/).pop()!.trim();
+      const name = item
+        .replace(/^type\s+/, '')
+        .split(/\s+as\s+/)
+        .pop()!
+        .trim();
       (isType ? types : values).add(name);
     }
   }
-  for (const [, name] of code.matchAll(/export\s+(?:function|const|class)\s+(\w+)/g))
+  for (const [, name] of code.matchAll(
+    /export\s+(?:function|const|class)\s+(\w+)/g,
+  ))
     values.add(name!);
   for (const [, name] of code.matchAll(/export\s+(?:type|interface)\s+(\w+)/g))
     types.add(name!);
@@ -45,6 +59,9 @@ for (const library of LIBRARIES) {
         .filter((entry) => entry.isDirectory())
         .map((entry) => entry.name)
         .filter((name) => existsSync(path.join(dir, name, 'index.tsx')))
+        // Animate UI's own primitives built on a library: no part of the
+        // library, so imported from their subpath only.
+        .filter((name) => !OWN.has(name))
         .sort()
     : [];
 
@@ -59,8 +76,10 @@ for (const library of LIBRARIES) {
       continue;
     }
     const { values, types } = exportedNames(path.join(dir, name, 'index.tsx'));
-    if (values.length) lines.push(`export { ${values.join(', ')} } from './${name}';`);
-    if (types.length) lines.push(`export type { ${types.join(', ')} } from './${name}';`);
+    if (values.length)
+      lines.push(`export { ${values.join(', ')} } from './${name}';`);
+    if (types.length)
+      lines.push(`export type { ${types.join(', ')} } from './${name}';`);
   }
   writeFileSync(path.join(dir, 'index.tsx'), `${lines.join('\n')}\n`);
   console.log(`${library.dir}: ${primitives.length} primitive(s)`);

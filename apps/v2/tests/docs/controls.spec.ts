@@ -273,6 +273,10 @@ const ONLY: Record<string, Partial<Record<Lib, string[]>>> = {
   // Animate UI's `followCursor`, on the Radix UI and Base UI primitives.
   tooltip: { 'radix-ui': ['followCursor'], 'base-ui': ['followCursor'] },
   'hover-card': { 'radix-ui': ['followCursor'], 'base-ui': ['followCursor'] },
+  'preview-link-card': {
+    'radix-ui': ['followCursor'],
+    'base-ui': ['followCursor'],
+  },
   // An item-aligned select: React Aria has none.
   select: { 'radix-ui': ['position'], 'base-ui': ['position'] },
 };

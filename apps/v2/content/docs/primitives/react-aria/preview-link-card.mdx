@@ -1,0 +1,152 @@
+---
+title: Preview Link Card
+description: A link that shows a screenshot of the page it leads to when hovered, in a card that links there too. Built on React Aria's PreviewTrigger and Popover.
+---
+
+<ComponentPreview name="react-aria/preview-link-card" />
+
+## Installation
+
+<Installation />
+
+It's built on React Aria Components, a peer dependency of this primitive:
+
+```bash
+npm install react-aria-components
+```
+
+## Usage
+
+```tsx
+import {
+  PreviewLinkCard,
+  PreviewLinkCardImage,
+  PreviewLinkCardPopover,
+  PreviewLinkCardTrigger,
+} from '@animate-ui/react/primitives/react-aria/preview-link-card';
+
+export function DocsLink() {
+  return (
+    <PreviewLinkCard href="https://animate-ui.com/docs">
+      <PreviewLinkCardTrigger>Animate UI Docs</PreviewLinkCardTrigger>
+      <PreviewLinkCardPopover>
+        <PreviewLinkCardImage alt="Animate UI Docs" />
+      </PreviewLinkCardPopover>
+    </PreviewLinkCard>
+  );
+}
+```
+
+Animate UI v1 had no React Aria version: this one has the parts of the Radix UI and Base UI ones, the React Aria way. The Root is a `PreviewTrigger` (`delay`, `closeDelay`, `isOpen`…), the trigger a `Link`, and the card a `Popover` (`placement`, `offset`…), which portals itself: there is no Portal part.
+
+The screenshot comes from [Microlink](https://microlink.io)'s API, as in Animate UI v1: it captures `href` on a mobile viewport three times the image's size. Pass `src` to show an image of your own instead. Either way, it's preloaded (a `<link rel="preload">` in the head) as soon as the card mounts, so it's there when the card opens.
+
+## Animation
+
+The card is Animate UI's [Popover](/docs/primitives/react-aria/popover) under a `PreviewTrigger`, so it moves exactly like the [Hover Card](/docs/primitives/react-aria/hover-card):
+
+- **Popover** grows from 0.8 and fades in, from the link (`--trigger-anchor-point`), on a spring (stiffness 400, damping 29) that overshoots a little before it settles.
+- It opens after the `delay` (600ms by default) and, once the `closeDelay` is over (200ms), closes the same way: it shrinks back to 0.8 on the same spring while it fades out, then unmounts.
+- Moving straight from one preview to the next during `PreviewTrigger`'s warmup swaps them without animation, as React Aria intends.
+- React Aria opens it on hover for pointer input, after a delay on keyboard focus, and on a long press: nothing sticks on touch screens.
+- Under reduced motion, it only fades (no scale).
+
+## API Reference
+
+### PreviewLinkCard
+
+React Aria's `PreviewTrigger` props (`delay`, `closeDelay`, `isOpen`, `onOpenChange`…), plus:
+
+<TypeTable
+  type={{
+    href: {
+      description:
+        'The page the link leads to, and the one the screenshot shows.',
+      type: 'string',
+      required: true,
+    },
+    src: {
+      description: 'The image to show instead of the screenshot of `href`.',
+      type: 'string',
+    },
+    width: {
+      description:
+        'The width of the image, in CSS pixels. The page is captured on a viewport three times as wide.',
+      type: 'number',
+      default: '240',
+    },
+    height: {
+      description:
+        'The height of the image, in CSS pixels. The page is captured on a viewport three times as tall.',
+      type: 'number',
+      default: '135',
+    },
+    deviceScaleFactor: {
+      description: 'The device scale factor of the screenshot.',
+      type: 'number',
+      default: '1',
+    },
+    colorScheme: {
+      description: 'The color scheme the page is captured in.',
+      type: "'light' | 'dark'",
+      default: "'light'",
+    },
+  }}
+/>
+
+### PreviewLinkCardTrigger
+
+[React Aria's Link props](https://react-spectrum.adobe.com/react-aria/Link.html#props): a link, to the Root's `href` unless it has its own.
+
+### PreviewLinkCardPopover
+
+Animate UI's [Popover](/docs/primitives/react-aria/popover#api-reference) (`transition`, `exitTransition`, `placement`…), filled with a `Link` to the Root's `href`: the Popover is the card, and its `className` styles it.
+
+<TypeTable
+  type={{
+    placement: {
+      description: 'Where the card opens, against the trigger.',
+      type: 'Placement',
+      default: "'top'",
+    },
+    offset: {
+      description: 'The distance from the trigger, in pixels.',
+      type: 'number',
+      default: '10',
+    },
+    href: {
+      description: "The card's link. Defaults to the Root's `href`.",
+      type: 'string',
+    },
+    'target, rel, download, hrefLang, ping, referrerPolicy': {
+      description: "The card's link attributes.",
+      type: 'LinkProps',
+    },
+  }}
+/>
+
+### PreviewLinkCardImage
+
+<TypeTable
+  type={{
+    alt: {
+      description: 'The text alternative of the image.',
+      type: 'string',
+      default: "'preview image'",
+    },
+    '...props': {
+      description:
+        "An `<img>`'s props, but `src`, `width` and `height`: they come from the Root.",
+      type: "Omit<React.ComponentProps<'img'>, 'src' | 'width' | 'height'>",
+    },
+  }}
+/>
+
+### usePreviewLinkCard
+
+Returns the card's `href`, its image's `src`, `width` and `height`: for an image of your own.
+
+## Credits
+
+- React Aria's `PreviewTrigger`.
+- Inspired by [Aceternity UI's Link Preview](https://ui.aceternity.com/components/link-preview).
