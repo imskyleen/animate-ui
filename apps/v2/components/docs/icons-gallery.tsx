@@ -12,7 +12,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
-import { useInView } from 'motion/react';
+import { useInView, useReducedMotion } from 'motion/react';
 import {
   useDeferredValue,
   useEffect,
@@ -110,9 +110,24 @@ function IconDetail({
   const [animation, setAnimation] = useState('default');
   const [run, setRun] = useState(0);
   const component = entry.title.replace(/\s+/g, '');
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+
+  // The detail opens above the grid: bring it into view, or a tile clicked
+  // far down the grid would open it off screen.
+  useEffect(() => {
+    ref.current?.scrollIntoView({
+      block: 'nearest',
+      behavior: reduce ? 'auto' : 'smooth',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
+  }, []);
 
   return (
-    <div className="mb-6 grid gap-6 rounded-2xl border-2 border-neutral-200 p-4 md:grid-cols-[200px_1fr] dark:border-neutral-800">
+    <div
+      ref={ref}
+      className="mb-6 grid scroll-mt-20 gap-6 rounded-2xl border-2 border-neutral-200 p-4 md:grid-cols-[200px_1fr] dark:border-neutral-800"
+    >
       <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50">
         {icon && (
           <icon.Icon
