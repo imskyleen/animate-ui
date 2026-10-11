@@ -17,6 +17,7 @@ import { motionTokens } from '@animate-ui/react/utils/motion';
 import {
   AnimatePresence,
   motion,
+  PresenceContext,
   useInView,
   useReducedMotion,
 } from 'motion/react';
@@ -24,6 +25,7 @@ import {
   useCallback,
   useDeferredValue,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -113,7 +115,7 @@ function IconTile({
         title={entry.title}
         className={cn(
           'relative flex aspect-square flex-col items-center justify-center gap-2 rounded-xl bg-accent p-2 text-muted-foreground transition-colors hover:text-foreground',
-          selected && 'text-foreground ring-2 ring-primary',
+          selected && 'text-foreground ring-2 ring-primary ring-inset',
         )}
       >
         <span className="flex size-8 items-center justify-center">
@@ -350,6 +352,10 @@ function IconDetail({
  * the bottom of the screen and stays there while you browse (pinned to the
  * viewport, along the gallery's column), and picking another icon swaps its
  * content in place. Escape or its close button closes it.
+ *
+ * Scrolled to the end of the gallery, it comes off the screen's edge and is
+ * drawn whole (bottom border and corners); opened or closed there, with no
+ * edge to slide from, it fades in place instead.
  */
 function IconDrawer({
   entry,
@@ -360,6 +366,63 @@ function IconDrawer({
 }) {
   const reduce = useReducedMotion();
   const [loop, setLoop] = useState(false);
+  const holderRef = useRef<HTMLDivElement>(null);
+  const open = entry !== null;
+  // Off the screen's edge (the gallery's end above it): drawn whole.
+  const [detached, setDetached] = useState(false);
+  // Opened off the edge: it fades in place (and out, if it closes there).
+  const [fade, setFade] = useState(false);
+
+  const isDetached = () => {
+    const holder = holderRef.current;
+    return (
+      !!holder && holder.getBoundingClientRect().bottom < window.innerHeight - 1
+    );
+  };
+
+  // Still leaving: opened again, it comes back from where it is.
+  const leavingRef = useRef(false);
+  const wasOpenRef = useRef(false);
+  // Where it opens, before it's painted: the drawer is in its holder now.
+  useLayoutEffect(() => {
+    const wasOpen = wasOpenRef.current;
+    wasOpenRef.current = open;
+    if (!open) {
+      if (wasOpen) leavingRef.current = true;
+      return;
+    }
+    const off = isDetached();
+    setDetached(off);
+    setFade(off && !leavingRef.current);
+  }, [open]);
+
+  // Kept up as the page scrolls, resizes, or changes under it without
+  // scrolling (a search, a filter, the drawer's own content).
+  useEffect(() => {
+    if (!open) return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      setDetached(isDetached());
+    };
+    const schedule = () => {
+      frame ||= requestAnimationFrame(check);
+    };
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    const observer = new ResizeObserver(schedule);
+    const holder = holderRef.current;
+    if (holder) {
+      observer.observe(holder);
+      if (holder.parentElement) observer.observe(holder.parentElement);
+    }
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!entry) return;
@@ -371,32 +434,70 @@ function IconDrawer({
   }, [entry, onClose]);
 
   return (
-    // Clips the drawer as it slides from the bottom edge, leaving room above
-    // for its shadow; the grid stays clickable through that room.
-    <div className="pointer-events-none sticky bottom-0 z-20 -mt-8 overflow-hidden pt-8">
-      <AnimatePresence initial={false}>
+    // Clips the drawer as it slides from the bottom edge, leaving room around
+    // it for its shadow; the grid stays clickable through that room.
+    <div
+      ref={holderRef}
+      className="pointer-events-none sticky bottom-0 z-20 -mx-4 -mt-8 overflow-hidden px-4 pt-8"
+    >
+      <AnimatePresence
+        initial={false}
+        onExitComplete={() => (leavingRef.current = false)}
+      >
         {entry && (
           <motion.div
             key="drawer"
             role="dialog"
             aria-label={entry.title}
             data-slot="icon-drawer"
+            data-detached={detached ? '' : undefined}
             initial={reduce ? { opacity: 0 } : { y: '100%' }}
-            animate={reduce ? { opacity: 1 } : { y: 0 }}
+            animate={
+              reduce
+                ? { opacity: 1 }
+                : fade
+                  ? // Keyframes: they replace the slide begun as it mounted,
+                    // before it's painted.
+                    { y: [0, 0], opacity: [0, 1], scale: [0.98, 1] }
+                  : { y: 0, opacity: 1, scale: 1 }
+            }
             exit={
               reduce
                 ? { opacity: 0, transition: { duration: 0.15 } }
-                : { y: '100%', transition: motionTokens.transition.drawerOut }
+                : detached
+                  ? {
+                      opacity: 0,
+                      scale: 0.98,
+                      transition: motionTokens.transition.drawerOut,
+                    }
+                  : { y: '100%', transition: motionTokens.transition.drawerOut }
             }
-            transition={motionTokens.transition.drawer}
-            className="pointer-events-auto mt-4 max-h-[70vh] overflow-y-auto rounded-t-2xl border border-b-0 bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)]"
+            transition={
+              fade
+                ? { duration: 0.2, ease: motionTokens.ease.out }
+                : motionTokens.transition.drawer
+            }
+            style={{ transformOrigin: 'bottom' }}
+            className="pointer-events-auto relative mt-4 rounded-2xl rounded-b-none border border-b-transparent bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)] transition-[border-radius,border-color] duration-200 ease-out data-detached:rounded-b-2xl data-detached:border-b-border"
           >
-            <IconDetail
-              key={entry.name}
-              entry={entry}
-              onClose={onClose}
-              loop={loop}
-              onLoopChange={setLoop}
+            <div className="max-h-[70vh] overflow-y-auto">
+              {/* It leaves once its own exit ends: the install tabs' panels
+                  fading out inside it don't hold it on screen. */}
+              <PresenceContext value={null}>
+                <IconDetail
+                  key={entry.name}
+                  entry={entry}
+                  onClose={onClose}
+                  loop={loop}
+                  onLoopChange={setLoop}
+                />
+              </PresenceContext>
+            </div>
+            {/* Below its bottom border, clipped at rest: covers what its
+                entrance's overshoot would uncover below it. */}
+            <div
+              aria-hidden
+              className="absolute inset-x-[-1px] top-[calc(100%+1px)] h-6 border-x bg-background"
             />
           </motion.div>
         )}
@@ -455,7 +556,20 @@ export function IconsGallery() {
   const [query, setQuery] = useState('');
   const deferred = useDeferredValue(query);
   const [selected, setSelected] = useState<IconEntry | null>(null);
-  const closeDrawer = useCallback(() => setSelected(null), []);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  // Closed with the focus inside it (Escape, its close button): the focus
+  // goes back to the icon's tile instead of the page.
+  const closeDrawer = useCallback(() => {
+    const root = galleryRef.current;
+    const drawer = root?.querySelector('[data-slot=icon-drawer]');
+    if (selected && drawer?.contains(document.activeElement))
+      root
+        ?.querySelector<HTMLElement>(
+          `button[aria-pressed][title="${CSS.escape(selected.title)}"]`,
+        )
+        ?.focus();
+    setSelected(null);
+  }, [selected]);
   // 'all', 'new' or a category id.
   const [filter, setFilter] = useState('all');
 
@@ -475,7 +589,7 @@ export function IconsGallery() {
   }, [deferred, filter]);
 
   return (
-    <div className="not-prose my-6 text-foreground">
+    <div ref={galleryRef} className="not-prose my-6 text-foreground">
       <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
         <HugeiconsIcon
           icon={Search01Icon}
