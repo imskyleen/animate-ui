@@ -48,7 +48,7 @@ Icons inside an `AnimateIcon` inherit its props and can override them individual
 
 ### Animations
 
-Every icon has a `default` animation, often a few named ones, plus `path` (draws the strokes) and `path-loop`. Pick one with `animation`; the gallery above lists each icon's.
+Every icon has a `default` animation, often a few named ones, plus `path` (draws the strokes) and `path-loop`. Pick one with `animation`; the gallery above lists each icon's. Icons drawing their strokes add one small CSS rule to the page themselves, so their paths rest solid: no Tailwind setup needed.
 
 ```tsx
 <ArrowRight animateOnHover animation="pointing" />

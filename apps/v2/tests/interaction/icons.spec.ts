@@ -206,6 +206,66 @@ test.describe('icons', () => {
     await waitForThreshold(page);
   });
 
+  test('fully drawn paths rest solid, without Tailwind generating any class', async ({
+    page,
+  }) => {
+    await open(page);
+    const section = page.getByTestId('path');
+    await section.getByRole('button', { name: 'Draw' }).click();
+    await page.waitForTimeout(1200);
+    const dashes = await section.evaluate((root) => {
+      // Only the icons' own rule applies: the app's stylesheets (Tailwind's)
+      // are switched off.
+      for (const sheet of document.styleSheets)
+        if (!sheet.ownerNode?.textContent?.includes('animate-ui-icon-path'))
+          sheet.disabled = true;
+      return [...root.querySelectorAll('svg [stroke-dasharray]')].map((el) => [
+        el.getAttribute('stroke-dasharray'),
+        getComputedStyle(el).strokeDasharray,
+      ]);
+    });
+    // The drawn circle-plus (3 paths) and the fingerprint at rest (9).
+    expect(dashes.length).toBeGreaterThanOrEqual(12);
+    for (const [attribute, computed] of dashes) {
+      expect(attribute).toBe('1 1');
+      expect(computed).toBe('1px, 0px');
+    }
+  });
+
+  test('the rule behind pathClassName is server-rendered once, in the head', async ({
+    page,
+  }) => {
+    const html = await (await page.request.get('/tests/fixtures/icons')).text();
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(
+      head.match(/<style[^>]*>[^<]*\.animate-ui-icon-path /g),
+    ).toHaveLength(1);
+    await open(page);
+    expect(
+      await page.evaluate(
+        () =>
+          [...document.querySelectorAll('style')].filter((el) =>
+            el.textContent?.includes('animate-ui-icon-path'),
+          ).length,
+      ),
+    ).toBe(1);
+  });
+
+  test('a static icon renders its svg alone; a drawing one adds the rule', async ({
+    page,
+  }) => {
+    await page.goto('/tests/fixtures/icons-markup', {
+      waitUntil: 'networkidle',
+    });
+    for (const i of [0, 1]) {
+      const html = await page.getByTestId(`markup-${i}`).textContent();
+      expect(html).toMatch(/^<svg[^]*<\/svg>$/);
+    }
+    expect(await page.getByTestId('markup-2').textContent()).toContain(
+      '.animate-ui-icon-path [stroke-dasharray',
+    );
+  });
+
   test.describe('reduced motion', () => {
     test.use({ reducedMotion: 'reduce' });
 

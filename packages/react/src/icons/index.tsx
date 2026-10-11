@@ -496,12 +496,54 @@ function AnimateIconRoot({
   );
 }
 
-// A fully drawn path is solid: Motion 12 writes it `stroke-dasharray="1px 1px"`,
-// Motion 13+ `"1 1"`.
-const pathClassName =
-  "[&_[stroke-dasharray='1px_1px']]:![stroke-dasharray:1px_0px] [&_[stroke-dasharray='1_1']]:![stroke-dasharray:1px_0px]";
+/**
+ * Put on an icon's `svg`: its fully drawn paths are solid. A path drawn with
+ * `pathLength` rests at `pathLength: 1`, which Motion writes
+ * `stroke-dasharray="1 1"` (Motion 12: `"1px 1px"`), dashes the length of the
+ * whole path; this class makes them `1px 0px`, with no gaps at all. Icons
+ * playing `path` or `path-loop` get it, and its rule, on their own; an icon
+ * putting it on itself renders `<IconPathStyle />` next to its `svg`.
+ *
+ * A plain class, styled by a rule the icons add to the page themselves
+ * (`IconPathStyle`): it works without Tailwind scanning this package.
+ */
+const pathClassName = 'animate-ui-icon-path';
 
-function IconWrapper<T extends string>({
+const PATH_STYLE = `.${pathClassName} [stroke-dasharray='1 1'],.${pathClassName} [stroke-dasharray='1px 1px']{stroke-dasharray:1px 0px!important}`;
+
+/**
+ * The rule behind `pathClassName`. React 19 hoists it into the document's
+ * head and adds it once however many icons render it, server-rendered pages
+ * included.
+ */
+function IconPathStyle() {
+  return (
+    <style href="animate-ui-icon-path" precedence="animate-ui">
+      {PATH_STYLE}
+    </style>
+  );
+}
+
+/**
+ * Renders `icon` with the triggers and timing props, under the closest
+ * `AnimateIcon` if there is one.
+ */
+function IconWrapper<T extends string>(props: IconWrapperProps<T>) {
+  const context = React.use(AnimateIconContext);
+  const animation = props.animation ?? context?.animation;
+  // Only icons drawing their paths get the rule: a static icon renders its
+  // `svg` alone (e.g. into an SVG string with `renderToStaticMarkup`).
+  const drawsPaths = animation === 'path' || animation === 'path-loop';
+
+  return (
+    <>
+      {drawsPaths && <IconPathStyle />}
+      <IconWrapperContent {...props} />
+    </>
+  );
+}
+
+function IconWrapperContent<T extends string>({
   size = 28,
   animation: animationProp,
   animate,
@@ -779,6 +821,7 @@ const getVariants = useIconVariants;
 
 export {
   pathClassName,
+  IconPathStyle,
   staticAnimations,
   AnimateIcon,
   IconWrapper,

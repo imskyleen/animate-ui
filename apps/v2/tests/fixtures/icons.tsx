@@ -4,6 +4,8 @@ import * as React from 'react';
 import { AnimateIcon } from '@animate-ui/react/icons';
 
 import { Bell } from '@/registry/icons/bell';
+import { CirclePlus } from '@/registry/icons/circle-plus';
+import { Fingerprint } from '@/registry/icons/fingerprint';
 
 // The icon core's triggers, on the Bell icon: its group rotates through
 // [0, 20, -10, 10, -5, 3, 0]° in 0.9s and its clapper slides through
@@ -11,6 +13,7 @@ import { Bell } from '@/registry/icons/bell';
 export default function IconsFixture() {
   const [play, setPlay] = React.useState(false);
   const [delayed, setDelayed] = React.useState(false);
+  const [drawn, setDrawn] = React.useState(false);
   const viewRef = React.useRef<HTMLSpanElement>(null);
 
   return (
@@ -46,6 +49,14 @@ export default function IconsFixture() {
             <Bell speed={1} size={48} />
           </span>
         </AnimateIcon>
+      </section>
+      {/* Paths drawn with pathLength rest solid (pathClassName). */}
+      <section data-testid="path" className="flex items-center gap-4">
+        <button type="button" onClick={() => setDrawn(true)}>
+          Draw
+        </button>
+        <CirclePlus animate={drawn} animation="path" size={48} />
+        <Fingerprint size={48} />
       </section>
       <section data-testid="tap-loop">
         <Bell animateOnTap loop size={48} />
