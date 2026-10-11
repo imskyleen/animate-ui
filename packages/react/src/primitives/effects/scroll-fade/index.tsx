@@ -5,8 +5,18 @@ import { useSpring, type MotionValue, type SpringOptions } from 'motion/react';
 
 import { useMotionTokens, useShouldReduceMotion } from '../../../utils/motion';
 
-/** The edge fades' duration (ms), paced by the provider's tempo. */
-const FADE_DURATION = 600;
+/**
+ * The edge fades' duration (ms), paced by the provider's tempo: short, so the
+ * fade answers the scroll's first pixels.
+ */
+const FADE_DURATION = 300;
+
+/**
+ * Scroll distance (px) past which an edge is fully faded (or `size`, when
+ * smaller): a few pixels of scroll are enough to set the fade going, and the
+ * spring animates it in from there.
+ */
+const RAMP = 16;
 
 type ScrollFadeOrientation = 'vertical' | 'horizontal' | 'both';
 
@@ -16,8 +26,9 @@ type UseScrollFadeOptions = {
   /** Which axis fades: top/bottom, left/right or all four edges. */
   orientation?: ScrollFadeOrientation;
   /**
-   * Depth of the fade, in pixels. It's also the scroll distance over which an
-   * edge fades in: scroll `size` pixels away from it and it's fully faded.
+   * Depth of the fade, in pixels, once an edge is fully faded. An edge fades
+   * in once you scroll 16 pixels away from it (or `size`, when smaller): its
+   * fade grows out of the edge to this depth as it clears.
    */
   size?: number;
   /**
@@ -44,14 +55,17 @@ const VAR = {
 
 /**
  * One gradient per axis: opaque in the middle, and at each edge an alpha of
- * `1 - amount` (amount 0 → no fade at all, 1 → the edge is fully clear).
- * The depth stays constant; only how clear the edge gets animates.
+ * `1 - amount` (amount 0 → no fade at all, 1 → the edge is fully clear)
+ * over a depth of `size × amount`: the fade grows out of the edge as it
+ * clears, instead of only clearing in place.
  */
 const edgeStop = (edge: ScrollFadeEdge) =>
   `rgb(0 0 0 / calc(1 - var(${VAR[edge]}, 0)))`;
+const depth = (edge: ScrollFadeEdge) =>
+  `calc(var(${VAR.size}) * var(${VAR[edge]}, 0))`;
 
-const GRADIENT_Y = `linear-gradient(to bottom, ${edgeStop('top')} 0, #000 var(${VAR.size}), #000 calc(100% - var(${VAR.size})), ${edgeStop('bottom')} 100%)`;
-const GRADIENT_X = `linear-gradient(to right, ${edgeStop('left')} 0, #000 var(${VAR.size}), #000 calc(100% - var(${VAR.size})), ${edgeStop('right')} 100%)`;
+const GRADIENT_Y = `linear-gradient(to bottom, ${edgeStop('top')} 0, #000 ${depth('top')}, #000 calc(100% - ${depth('bottom')}), ${edgeStop('bottom')} 100%)`;
+const GRADIENT_X = `linear-gradient(to right, ${edgeStop('left')} 0, #000 ${depth('left')}, #000 calc(100% - ${depth('right')}), ${edgeStop('right')} 100%)`;
 
 const MASKS: Record<ScrollFadeOrientation, string> = {
   vertical: GRADIENT_Y,
@@ -152,8 +166,9 @@ function useScrollFade(
     const unsubscribe = EDGES.map((edge) => values[edge].on('change', write));
 
     /** Distance to scroll before an edge, in pixels, → 0 to 1. */
+    const ramp = Math.min(RAMP, size);
     const amount = (distance: number) =>
-      size > 0 ? clamp01(distance / size) : distance > 0.5 ? 1 : 0;
+      ramp > 0 ? clamp01(distance / ramp) : distance > 0.5 ? 1 : 0;
 
     const measure = (instant: boolean) => {
       const targets: Record<ScrollFadeEdge, number> = {

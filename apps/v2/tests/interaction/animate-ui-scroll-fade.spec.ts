@@ -105,6 +105,52 @@ test.describe('animate-ui scroll fade', () => {
       expect(values[i]!).toBeGreaterThanOrEqual(values[i - 1]! - 1e-3);
   });
 
+  test('a few pixels of scroll fade the edge in fully, within ~300ms', async ({
+    page,
+  }) => {
+    await open(page);
+    const frames = page.getByTestId('long').evaluate(
+      (el) =>
+        new Promise<{ t: number; v: number }[]>((resolve) => {
+          const values: { t: number; v: number }[] = [];
+          let start = 0;
+          const tick = (now: number) => {
+            if (!start) {
+              start = now;
+              el.scrollTop = 20;
+            }
+            values.push({
+              t: now - start,
+              v: Number(el.style.getPropertyValue('--scroll-fade-top') || 0),
+            });
+            if (now - start < 600) requestAnimationFrame(tick);
+            else resolve(values);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    const values = await frames;
+    // 20px is past the 16px ramp: the edge fades in fully...
+    expect(values.at(-1)!.v).toBeCloseTo(1, 2);
+    // ...and quickly: 90% of the way within 350ms.
+    const ninety = values.find((f) => f.v >= 0.9)!;
+    expect(ninety.t).toBeLessThan(350);
+  });
+
+  test('the fade grows out of the edge as it clears', async ({ page }) => {
+    await open(page);
+    // The gradient's depth follows each edge's amount, not only its alpha.
+    const mask = await page
+      .getByTestId('long')
+      .evaluate((el) => el.style.getPropertyValue('mask-image'));
+    expect(mask).toContain(
+      'calc(var(--scroll-fade-size) * var(--scroll-fade-top, 0))',
+    );
+    expect(mask).toContain(
+      'calc(var(--scroll-fade-size) * var(--scroll-fade-bottom, 0))',
+    );
+  });
+
   test('reduced motion: the fade follows the scroll at once', async ({
     page,
   }) => {

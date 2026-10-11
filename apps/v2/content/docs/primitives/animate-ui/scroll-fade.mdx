@@ -41,7 +41,7 @@ function Sidebar() {
 
 ## Animation
 
-- An edge fades only when there is content past it: none at the edge you're at, none at all when nothing overflows. The fade grows over the first `size` pixels of scroll, then a spring without bounce (600ms) smooths it.
+- An edge fades only when there is content past it: none at the edge you're at, none at all when nothing overflows. The first 16 pixels of scroll away from an edge (or `size`, when smaller) set its fade going, and a spring without bounce (300ms) animates it in: the fade grows out of the edge to `size` deep as the edge clears. It leaves the same way as you reach the edge.
 - On page load, the fade is already in place: nothing animates in.
 - It's a `mask-image`, so the content itself dissolves: it works on any background, in light and dark.
 - Scrolling never re-renders React: the amounts are motion values written to CSS variables (`--scroll-fade-top`, `--scroll-fade-bottom`, `--scroll-fade-left`, `--scroll-fade-right`, from 0 to 1).
@@ -67,7 +67,7 @@ function Sidebar() {
     },
     size: {
       description:
-        'Depth of the fade, in pixels. Also the scroll distance over which an edge fades in.',
+        'Depth of the fade, in pixels, once an edge is fully faded. An edge fades in once you scroll 16 pixels away from it (or `size`, when smaller).',
       type: 'number',
       default: '40',
     },
@@ -75,7 +75,7 @@ function Sidebar() {
       description:
         'Spring of the fade (`useSpring` options, `duration` in milliseconds).',
       type: 'SpringOptions',
-      default: '{ duration: 600, bounce: 0 }',
+      default: '{ duration: 300, bounce: 0 }',
     },
     enabled: {
       description: 'Apply the fade.',
