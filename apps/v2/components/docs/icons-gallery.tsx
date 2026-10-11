@@ -84,8 +84,8 @@ function IconTile({
         aria-pressed={selected}
         title={entry.title}
         className={cn(
-          'flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
-          selected && 'border-primary bg-accent text-foreground',
+          'flex aspect-square flex-col items-center justify-center gap-2 rounded-xl bg-accent p-2 text-muted-foreground transition-colors hover:text-foreground',
+          selected && 'text-foreground ring-2 ring-primary',
         )}
       >
         <span className="flex size-8 items-center justify-center">
@@ -219,7 +219,7 @@ export function IconsGallery() {
 
   return (
     <div className="not-prose my-6">
-      <label className="mb-4 flex h-10 items-center gap-2 rounded-lg border bg-background px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
+      <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
         <HugeiconsIcon
           icon={Search01Icon}
           strokeWidth={2}
