@@ -1,0 +1,114 @@
+---
+title: Sheet
+description: Extends the Dialog component to display content that complements the main content of the screen.
+---
+
+<ComponentPreview name="radix-ui/sheet" />
+
+## Installation
+
+<Installation name="sheet" />
+
+shadcn/ui's Sheet is built on Radix UI's Dialog: there is no separate primitive. Its content carries `data-side`, and Animate UI's [Dialog](/docs/primitives/radix-ui/dialog) then slides it in from that edge instead of tipping it in.
+
+## Usage
+
+Import the Dialog from Animate UI instead of Radix UI, and give the Content the edge it comes from with `data-side`. Everything else stays the same.
+
+```tsx
+import { Dialog as SheetPrimitive } from '@animate-ui/react/primitives/radix-ui';
+
+export function EditProfile() {
+  return (
+    <SheetPrimitive.Root>
+      <SheetPrimitive.Trigger>Open</SheetPrimitive.Trigger>
+      <SheetPrimitive.Portal>
+        <SheetPrimitive.Overlay className="fixed inset-0" />
+        <SheetPrimitive.Content
+          data-side="right"
+          className="fixed inset-y-0 right-0 w-3/4 sm:max-w-sm"
+        >
+          <SheetPrimitive.Title>Edit profile</SheetPrimitive.Title>
+          <SheetPrimitive.Description>
+            Make changes to your profile here.
+          </SheetPrimitive.Description>
+          <SheetPrimitive.Close>Close</SheetPrimitive.Close>
+        </SheetPrimitive.Content>
+      </SheetPrimitive.Portal>
+    </SheetPrimitive.Root>
+  );
+}
+```
+
+### Side
+
+Use the `side` prop on `SheetContent` to set the edge of the screen where the sheet appears. Values are `top`, `right`, `bottom`, or `left`.
+
+<ComponentPreview name="radix-ui/sheet-side" />
+
+### No Close Button
+
+Use `showCloseButton={false}` on `SheetContent` to hide the close button.
+
+<ComponentPreview name="radix-ui/sheet-no-close-button" />
+
+## Animation
+
+Animate UI v1's Sheet, sliding in on a soft ease-out, with a smoother overlay and a quicker exit.
+
+- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out (`cubic-bezier(0.215, 0.61, 0.355, 1)`), and it clears the same way, outlasting the sheet.
+- **Content** slides in from its `data-side` edge by its own size (`translateX(100%)` from the right, `-100%` from the left, `translateY(-100%)` from the top, `100%` from the bottom) and fades in, in 0.4s on the same soft ease-out: it answers at once and slows down all the way in. Unlike a drawer it never goes past its rest: held against the screen's edge, it would open a gap there.
+- Dismissed (Escape, a click on the overlay, the close button or a `Close`), it leaves at once, quicker than it came, speeding off its edge (0.2s, a steady push from half its average speed to one and a half) and fading out, then unmounts. The overlay clears behind it.
+- On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The sheet's own exit is the quicker one above unless you set `exitTransition`.
+- Radix keeps the Overlay and the Content mounted while they exit. Clicks go through to the page as soon as the sheet closes, and focus returns to the trigger once the exit is over.
+- A sheet doesn't follow the finger: for a panel you drag away, use the [Drawer](/docs/primitives/radix-ui/drawer).
+- Under reduced motion, the sheet fades in place without sliding; the overlay still fades.
+- `AnimateUIProvider tempo` scales every duration.
+
+## API Reference
+
+The Sheet takes exactly the props of [Radix UI's Dialog](https://www.radix-ui.com/primitives/docs/components/dialog#api-reference): see the [Dialog's API Reference](/docs/primitives/radix-ui/dialog#api-reference). Animate UI adds the animation props below.
+
+### Overlay
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/dialog#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the fade in (background color and backdrop filter).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>
+
+### Content
+
+[Radix UI props](https://www.radix-ui.com/primitives/docs/components/dialog#content), plus:
+
+<TypeTable
+  type={{
+    'data-side': {
+      description:
+        'The edge the sheet slides in from. Without it, the content is a dialog and tips in.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+    },
+    transition: {
+      description: 'Transition of the opening (slide and fade).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',
+    },
+  }}
+/>

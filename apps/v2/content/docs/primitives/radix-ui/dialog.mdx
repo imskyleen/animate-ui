@@ -39,9 +39,7 @@ Coming from the `@radix-ui/react-dialog` package? Use the subpath: `import * as 
 
 ## Sheet
 
-shadcn/ui's Sheet is the same primitive: its content carries `data-side`, and the Dialog then slides it in from that edge, fading in, like Animate UI v1's Sheet, instead of tipping it in. Add it with `shadcn add sheet`, then animate it with `animate-ui animate sheet`.
-
-<ComponentPreview name="radix-ui/dialog-sheet" />
+shadcn/ui's Sheet is built on this primitive: with `data-side` on its content, it slides in from that edge instead of tipping in. See [Sheet](/docs/primitives/radix-ui/sheet).
 
 ## Animation
 
@@ -50,7 +48,6 @@ Animate UI v1's dialog motion, with a smoother overlay and a quicker exit.
 - **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, along with the content's fade, and it leaves the same way.
 - **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it with the overlay (400ms on a soft ease-out): it's there first, then it settles. Dismissed, it goes back the way it came, at once, quicker and speeding away (0.2s, a steady push from half its average speed to one and a half), out of sight just before the overlay has cleared, then unmounts.
 - `from` picks the edge the content tips from, as in v1: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`) (a sheet, with `data-side`, slides from its side instead).
-- With `data-side="top" | "right" | "bottom" | "left"` (shadcn/ui's Sheet), the content slides in from that edge by its own size and fades in, in 0.4s on a soft ease-out (`cubic-bezier(0.215, 0.61, 0.355, 1)`): it answers at once and slows down all the way in. Unlike a drawer it doesn't go past its rest: held against the screen's edge, it would open a gap there. Dismissed, it leaves like a dialog, at once, quicker than it came and speeding off its edge (0.2s, a steady push), fading out.
 - On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. A dialog's or a sheet's own exit is the quicker one above unless you set `exitTransition`.
 - Radix keeps the Overlay and the Content mounted while they exit. Clicks go through to the page as soon as the dialog closes, and focus returns to the trigger once the exit is over.
 - Reopening while it closes picks up from where it is.

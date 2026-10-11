@@ -228,9 +228,31 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       open,
       keepMounted,
     );
+    // Presses that start while it's closing (its layer still mounted). Radix
+    // holds a click's "pointer down outside" until the click: pressing the
+    // trigger reopened it, then that held event closed it again at once.
+    const startedClosedRef = React.useRef(new WeakSet<Event>());
+    React.useEffect(() => {
+      if (open) return;
+      const startedClosed = startedClosedRef.current;
+      const note = (event: Event) => startedClosed.add(event);
+      document.addEventListener('pointerdown', note, true);
+      return () => document.removeEventListener('pointerdown', note, true);
+    }, [open]);
 
     return (
-      <parts.Content {...props} forceMount asChild>
+      <parts.Content
+        {...props}
+        onPointerDownOutside={(
+          event: CustomEvent<{ originalEvent: PointerEvent }>,
+        ) => {
+          if (startedClosedRef.current.has(event.detail.originalEvent))
+            event.preventDefault();
+          props.onPointerDownOutside?.(event);
+        }}
+        forceMount
+        asChild
+      >
         {motionChild(asChild, children, {
           initial: targets.initial,
           animate: getAnimateTarget(targets, open, keepMounted),

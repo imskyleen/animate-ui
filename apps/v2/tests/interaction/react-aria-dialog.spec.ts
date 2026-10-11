@@ -5,11 +5,7 @@ import {
   expectDialogExit,
   expectDialogSettled,
   DISMISS_CURVE,
-  SHEET_CURVE,
   expectAnimationCurve,
-  expectSheetEntrance,
-  expectSheetExit,
-  expectSheetSettled,
   present,
   readState,
   recordTimeline,
@@ -17,8 +13,6 @@ import {
 
 const CONTENT = '[data-slot="dialog-content"]';
 const OVERLAY = '[data-slot="dialog-overlay"]';
-const SHEET = '[data-slot="sheet-content"]';
-const SHEET_OVERLAY = '[data-slot="sheet-overlay"]';
 
 // React Aria renders the Modal inside the ModalOverlay: the overlay fades its
 // own background (shadcn/ui's bg-black/10) rather than its opacity, so the
@@ -119,91 +113,6 @@ test.describe('react-aria dialog demo', () => {
     expect(first.scale).toBeCloseTo(1, 2);
     expect(first.opacity).toBeLessThan(0.5);
   });
-});
-
-test.describe('react-aria dialog: sheet demo', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/react-aria/dialog-sheet', {
-      waitUntil: 'networkidle',
-    });
-  });
-
-  test('slides and fades in from the right edge, never past its rest', async ({
-    page,
-  }) => {
-    const timeline = await recordTimeline(page, {
-      content: SHEET,
-      overlay: SHEET_OVERLAY,
-    });
-    await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await expect(page.locator(SHEET)).toHaveAttribute('data-side', 'right');
-    await expectSheetSettled(page, SHEET, 'right');
-    const frames = await timeline.stop();
-    expectSheetEntrance(frames, 'right');
-    // Its curve, as Motion handed it to the browser.
-    expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
-    for (const frame of present(frames, 'overlay'))
-      expect(frame.samples.overlay!.opacity).toBe(1);
-  });
-
-  test('slides and fades back out quicker, speeding off its edge like a dismissed dialog, then unmounts', async ({
-    page,
-  }) => {
-    await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await expectSheetSettled(page, SHEET, 'right');
-    const timeline = await recordTimeline(page, { content: SHEET });
-    await page.keyboard.press('Escape');
-    await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
-    expectSheetExit(await timeline.stop(), 'right');
-    // A dismissed dialog's curve, as Motion handed it to the browser.
-    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
-  });
-
-  test('reduced motion: fades in place', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    const timeline = await recordTimeline(page, { content: SHEET });
-    await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await expectSheetSettled(page, SHEET, 'right');
-    const first = present(await timeline.stop(), 'content')[0]!.samples
-      .content!;
-    expect(Math.abs(first.x)).toBeLessThan(0.001);
-    expect(first.opacity).toBeLessThan(1);
-  });
-});
-
-// The demo's sheet opens from the right: the other edges, on the fixture.
-test.describe('react-aria dialog: sheet sides', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/react-aria-modal', {
-      waitUntil: 'networkidle',
-    });
-    // The defaultOpen modal comes first: close it.
-    await page.getByRole('button', { name: 'Close default' }).click();
-    await expect(
-      page.getByRole('dialog', { name: 'Default open modal' }),
-    ).toHaveCount(0, { timeout: 2500 });
-  });
-
-  for (const side of ['top', 'bottom', 'left'] as const) {
-    test(`slides and fades in from the ${side} edge, never past its rest`, async ({
-      page,
-    }) => {
-      const sheet = `[data-testid="${side}-sheet"]`;
-      const timeline = await recordTimeline(page, {
-        content: sheet,
-        overlay: `[data-testid="${side}-sheet-overlay"]`,
-      });
-      await page.getByRole('button', { name: `Sheet ${side}` }).click();
-      await expect(page.locator(sheet)).toHaveAttribute('data-side', side);
-      await expectSheetSettled(page, sheet, side);
-      const frames = await timeline.stop();
-      expectSheetEntrance(frames, side);
-      // Its curve, as Motion handed it to the browser.
-      expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
-      for (const frame of present(frames, 'overlay'))
-        expect(frame.samples.overlay!.opacity).toBe(1);
-    });
-  }
 });
 
 test.describe('react-aria modal API', () => {

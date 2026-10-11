@@ -277,3 +277,13 @@ html {
     opacity: 0;
   }
 }
+
+/* shadcn/ui's scroll areas without a scrollbar (its style's utility). */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

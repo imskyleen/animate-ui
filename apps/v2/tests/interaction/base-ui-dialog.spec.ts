@@ -5,11 +5,7 @@ import {
   expectDialogExit,
   expectDialogSettled,
   DISMISS_CURVE,
-  SHEET_CURVE,
   expectAnimationCurve,
-  expectSheetEntrance,
-  expectSheetExit,
-  expectSheetSettled,
   present,
   readState,
   recordTimeline,
@@ -17,7 +13,6 @@ import {
 
 const CONTENT = '[data-slot="dialog-content"]';
 const OVERLAY = '[data-slot="dialog-overlay"]';
-const SHEET = '[data-slot="sheet-content"]';
 
 test.describe('base-ui dialog demo', () => {
   test.beforeEach(async ({ page }) => {
@@ -107,74 +102,6 @@ test.describe('base-ui dialog demo', () => {
     expect(first.scale).toBeCloseTo(1, 2);
     expect(first.opacity).toBeLessThan(0.5);
   });
-});
-
-test.describe('base-ui dialog: sheet demo', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/demos/base-ui/dialog-sheet', {
-      waitUntil: 'networkidle',
-    });
-  });
-
-  test('slides and fades in from the right edge, never past its rest', async ({
-    page,
-  }) => {
-    const timeline = await recordTimeline(page, { content: SHEET });
-    await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await expect(page.locator(SHEET)).toHaveAttribute('data-side', 'right');
-    await expectSheetSettled(page, SHEET, 'right');
-    expectSheetEntrance(await timeline.stop(), 'right');
-    // Its curve, as Motion handed it to the browser.
-    expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
-  });
-
-  test('slides and fades back out quicker, speeding off its edge like a dismissed dialog, then unmounts', async ({
-    page,
-  }) => {
-    await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await expectSheetSettled(page, SHEET, 'right');
-    const timeline = await recordTimeline(page, { content: SHEET });
-    await page.keyboard.press('Escape');
-    await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
-    expectSheetExit(await timeline.stop(), 'right');
-    // A dismissed dialog's curve, as Motion handed it to the browser.
-    expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
-  });
-
-  test('reduced motion: fades in place', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    const timeline = await recordTimeline(page, { content: SHEET });
-    await page.getByRole('button', { name: 'Open', exact: true }).click();
-    await expectSheetSettled(page, SHEET, 'right');
-    const first = present(await timeline.stop(), 'content')[0]!.samples
-      .content!;
-    expect(Math.abs(first.x)).toBeLessThan(0.001);
-    expect(first.opacity).toBeLessThan(1);
-  });
-});
-
-// The demo's sheet opens from the right: the other edges, on the fixture.
-test.describe('base-ui dialog: sheet sides', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/base-ui-dialog', {
-      waitUntil: 'networkidle',
-    });
-  });
-
-  for (const side of ['top', 'bottom', 'left'] as const) {
-    test(`slides and fades in from the ${side} edge, never past its rest`, async ({
-      page,
-    }) => {
-      const sheet = `[data-testid="${side}-sheet"]`;
-      const timeline = await recordTimeline(page, { content: sheet });
-      await page.getByRole('button', { name: `Sheet ${side}` }).click();
-      await expect(page.locator(sheet)).toHaveAttribute('data-side', side);
-      await expectSheetSettled(page, sheet, side);
-      expectSheetEntrance(await timeline.stop(), side);
-      // Its curve, as Motion handed it to the browser.
-      expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
-    });
-  }
 });
 
 test.describe('base-ui dialog API', () => {

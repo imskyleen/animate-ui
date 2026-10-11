@@ -1,0 +1,117 @@
+---
+title: Sheet
+description: Extends the Dialog component to display content that complements the main content of the screen.
+---
+
+<ComponentPreview name="react-aria/sheet" />
+
+## Installation
+
+<Installation name="sheet" />
+
+shadcn/ui's Sheet is built on React Aria's `ModalOverlay`, `Modal` and `Dialog`: there is no separate primitive. Its `Modal` carries `data-side`, and Animate UI's [Modal](/docs/primitives/react-aria/dialog) then slides it in from that edge instead of tipping it in.
+
+## Usage
+
+Import from Animate UI instead of `react-aria-components`, and give the `Modal` the edge it comes from with `data-side`. Everything else stays the same.
+
+```tsx
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Heading,
+  Modal,
+  ModalOverlay,
+} from '@animate-ui/react/primitives/react-aria';
+
+export function EditProfile() {
+  return (
+    <DialogTrigger>
+      <Button>Open</Button>
+      <ModalOverlay isDismissable className="fixed inset-0">
+        <Modal
+          data-side="right"
+          className="fixed inset-y-0 right-0 w-3/4 sm:max-w-sm"
+        >
+          <Dialog>
+            <Heading slot="title">Edit profile</Heading>
+            <Button slot="close">Close</Button>
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
+}
+```
+
+### Side
+
+Use the `side` prop on `Sheet` to set the edge of the screen where the sheet appears. Values are `top`, `right`, `bottom`, or `left`.
+
+<ComponentPreview name="react-aria/sheet-side" />
+
+### No Close Button
+
+Use `showCloseButton={false}` on `Sheet` to hide the close button.
+
+<ComponentPreview name="react-aria/sheet-no-close-button" />
+
+## Animation
+
+React Aria has no Animate UI v1 counterpart: the motion is v1's Sheet (Radix UI's), sliding in on a soft ease-out, with a smoother overlay and a quicker exit.
+
+- **ModalOverlay** fades in over 400ms on a soft ease-out (`cubic-bezier(0.215, 0.61, 0.355, 1)`), and clears the same way, outlasting the sheet. React Aria renders the Modal inside it: fading its opacity (or filter) would fade the sheet too and cut its exit short. So it fades its own background color and backdrop filter, from transparent to the values its classes set, and the page behind blurs progressively from 0.
+- **Modal** slides in from its `data-side` edge by its own size (`translateX(100%)` from the right, `-100%` from the left, `translateY(-100%)` from the top, `100%` from the bottom) and fades in, in 0.4s on the same soft ease-out: it answers at once and slows down all the way in. Unlike a drawer it never goes past its rest: held against the screen's edge, it would open a gap there.
+- Dismissed (Escape, a click on the overlay with `isDismissable`, the close button or a `slot="close"` button), it leaves at once, quicker than it came, speeding off its edge (0.2s, a steady push from half its average speed to one and a half) and fading out, then unmounts. The overlay clears behind it.
+- On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The sheet's own exit is the quicker one above unless you set `exitTransition`.
+- React Aria only keeps a closing modal mounted if animations are running when it closes, before Motion starts any. Animate UI passes `isExiting` while the exit plays, so `data-exiting` and the `isExiting` render prop stay accurate, focus stops being trapped and returns to the trigger.
+- Reopening while it closes picks up from where it is: it slides back in from there.
+- Under reduced motion, the sheet fades in place without sliding; the overlay still fades.
+- `AnimateUIProvider tempo` scales every duration.
+
+## API Reference
+
+`Modal` and `ModalOverlay` take exactly the props of [React Aria's Modal](https://react-spectrum.adobe.com/react-aria/Modal.html#props): see the [Dialog's API Reference](/docs/primitives/react-aria/dialog#api-reference). Animate UI adds the animation props below.
+
+### ModalOverlay
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the fade in (of its background color and backdrop filter).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>
+
+### Modal
+
+<TypeTable
+  type={{
+    'data-side': {
+      description:
+        'The edge the sheet slides in from. Without it, the modal is a dialog and tips in.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+    },
+    transition: {
+      description: 'Transition of the opening (slide and fade).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',
+    },
+  }}
+/>
+
+`DialogTrigger`, `Dialog`, `Heading` and the other components take [React Aria props](https://react-spectrum.adobe.com/react-aria/Dialog.html#props) only. They are not animated.
