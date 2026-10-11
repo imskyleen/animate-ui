@@ -88,3 +88,20 @@ test('the home command follows the chosen package manager', async ({
     page.getByRole('tab', { name: 'bun', selected: true }).first(),
   ).toBeVisible();
 });
+
+// CLI / Manual switch on Radix's Tabs (shadcn/ui's), not Animate UI's own.
+for (const url of [
+  '/docs/primitives/radix-ui/accordion',
+  '/docs/backgrounds/bubble',
+  '/docs/icons/lucide-icons',
+])
+  test(`${url}: CLI and Manual are Radix tabs`, async ({ page }) => {
+    await page.goto(url, { waitUntil: 'networkidle' });
+    const tabs = page.locator('[data-slot="install-tabs"]').first();
+    const manual = tabs.getByRole('tab', { name: 'Manual' });
+    // Radix's ids, and no Animate UI highlight.
+    await expect(manual).toHaveAttribute('id', /radix-/);
+    await expect(tabs.locator('[data-slot="tabs-highlight"]')).toHaveCount(0);
+    await manual.click();
+    await expect(manual).toHaveAttribute('data-state', 'active');
+  });

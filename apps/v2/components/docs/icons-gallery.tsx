@@ -40,7 +40,7 @@ import { Check } from '@/registry/icons/check';
 
 import { ClientCommand } from './client-command';
 import { DynamicCodeBlock } from './dynamic-codeblock';
-import { DocsTabs } from './tabs';
+import { InstallTabs } from './install-tabs';
 
 type Loaded = {
   Icon: ComponentType<IconProps<string>>;
@@ -183,11 +183,8 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
   }, [entry.name]);
 
   return (
-    <DocsTabs
+    <InstallTabs
       groupId="icon-installation"
-      persist
-      lazy
-      label="Installation"
       className="my-0"
       tabs={[
         {

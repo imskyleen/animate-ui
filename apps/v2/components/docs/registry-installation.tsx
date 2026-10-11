@@ -5,7 +5,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 import { Command } from './installation';
 import { ServerCodeBlock } from './server-codeblock';
-import { DocsTabs } from './tabs';
+import { InstallTabs } from './install-tabs';
 
 /**
  * A shadcn registry item (backgrounds): the CLI adds the file to your
@@ -24,11 +24,8 @@ export async function RegistryInstallation({ name }: { name: string }) {
   const file = item.files[0]!;
 
   return (
-    <DocsTabs
+    <InstallTabs
       groupId="registry-installation"
-      persist
-      lazy
-      label="Installation"
       tabs={[
         {
           value: 'cli',

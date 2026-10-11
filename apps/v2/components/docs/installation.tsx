@@ -11,7 +11,8 @@ import {
   type ManagerCommands,
 } from './package-managers';
 import { ServerCodeBlock } from './server-codeblock';
-import { CodeTabs, DocsTabs } from './tabs';
+import { InstallTabs } from './install-tabs';
+import { CodeTabs } from './tabs';
 
 export { MANAGERS };
 
@@ -166,11 +167,8 @@ export function Installation({
   }
 
   return (
-    <DocsTabs
+    <InstallTabs
       groupId="installation"
-      persist
-      lazy
-      label="Installation"
       tabs={[
         {
           value: 'cli',
