@@ -145,6 +145,7 @@ const FAMILIES: Family[] = [
       'panneau qui part : opacité 1 → 0 et flou 0 → 5px en 0,15s sur l’easeOut de Motion, cubic-bezier(0, 0, 0.58, 1), en restant dans la page (inert)',
       'panneau qui arrive, une fois l’ancien parti : opacité 0 → 1 et flou 5px → 0 en 0,3s, cubic-bezier(0.25, 0.1, 0.35, 1)',
       'hauteur : de celle de l’ancien panneau à celle du nouveau, quand il arrive, en 0,45s sur la courbe de layout de Motion, cubic-bezier(0.4, 0, 0.1, 1), sans dépassement',
+      'panneau qui tient un cadre (la Card de shadcn : le panneau s’il dessine une bordure, un fond ou une ombre, sinon le premier élément qui le fait en descendant ses enfants uniques) : le cadre reste à l’écran, entier et net, seul son contenu s’efface puis revient ; le cadre suivant prend le relais à la même hauteur dans la même image, puis glisse à sa hauteur (son contenu coupé, jamais sa bordure ni ses coins) : la bordure ne clignote plus ; cadres différents (bordure, rayon, fond, ombre) ou texte posé directement dedans → panneaux entiers ; contenu placé contre un élément extérieur (pastille d’une étape sur son rail) → fondu sans flou',
       'changements rapides : un panneau sauté n’apparaît jamais, un panneau qui arrivait repart d’où il en est, la hauteur repart d’où elle en est ; jamais deux panneaux à la fois',
       'rien ne bouge au chargement ; mouvement réduit : l’indicateur et la hauteur sautent, les panneaux ne font que des fondus (sans flou), le nouveau en 0,2s',
     ],

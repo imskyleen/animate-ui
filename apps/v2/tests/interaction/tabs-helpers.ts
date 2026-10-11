@@ -62,6 +62,9 @@ export async function waitForTabs(page: Page) {
 export async function gotoTabs(page: Page, url: string) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await waitForTabs(page);
+  // Past the page's own start (a busy dev server's), so the first change's
+  // frames aren't held up by it.
+  await page.waitForTimeout(250);
 }
 
 // The helpers below look at the whole page, or only inside the element the
@@ -104,6 +107,18 @@ export async function tabCenter(page: Page, name: string, scope?: string) {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }
 
+/**
+ * Where the tab `name` is right now, without waiting for it to hold still
+ * (the demo is centered in the page: its tabs move as the panels' height
+ * glides).
+ */
+export async function tabCenterNow(page: Page, name: string) {
+  const box = (await page
+    .getByRole('tab', { name, exact: true })
+    .boundingBox())!;
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
 export const panelOpacity = (page: Page, scope?: string) =>
   within(page, scope)
     .locator(`${PANEL}:not([hidden])`)
@@ -130,7 +145,8 @@ export async function expectSurfaceOnIndicator(page: Page, scope?: string) {
 
 /**
  * A panel on screen in a frame (its top in the element holding the panels),
- * and the start of its text.
+ * the start of its text, and what's seen of its content (`o`, `blur`): the
+ * panel's, or its Card's content's when only that fades.
  */
 export type PanelFrame = {
   text: string;
@@ -188,19 +204,45 @@ export async function recordSwitch(
           const panels = [...root.querySelectorAll<HTMLElement>(panel)]
             .filter((el) => !el.hidden && el.getClientRects().length > 0)
             .map((el) => {
-              const style = getComputedStyle(el);
               const box = el.getBoundingClientRect();
               // Its place in the element holding the panels, whatever
               // scrolls the page.
               const holder = el.parentElement!.getBoundingClientRect();
+              // What's seen of its content: the panel, down its chain of
+              // single children, to the first piece of content (a Card's
+              // header, which fades while the Card stays).
+              let o = 1;
+              let blur = 0;
+              let node: Element | undefined = el;
+              while (node) {
+                const style = getComputedStyle(node);
+                o *= Number(style.opacity);
+                blur = Math.max(
+                  blur,
+                  parseFloat(style.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0'),
+                );
+                const last: Element = node;
+                node = last.firstElementChild ?? undefined;
+                if (last.children.length !== 1) {
+                  if (node) {
+                    const own = getComputedStyle(node);
+                    o *= Number(own.opacity);
+                    blur = Math.max(
+                      blur,
+                      parseFloat(
+                        own.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0',
+                      ),
+                    );
+                  }
+                  break;
+                }
+              }
               return {
                 text: el.textContent?.trim().slice(0, 40) ?? '',
                 y: box.top - holder.top,
                 h: box.height,
-                o: Number(style.opacity),
-                blur: parseFloat(
-                  style.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0',
-                ),
+                o,
+                blur,
                 inert: el.inert,
               };
             });
@@ -495,7 +537,6 @@ export function describeTabsDemo(
       page,
     }) => {
       const analytics = await tabCenter(page, 'Analytics');
-      const reports = await tabCenter(page, 'Reports');
       const frames = await recordSwitch(page, 'Analytics', 1000, async () => {
         await page.mouse.click(analytics.x, analytics.y);
         // Halfway in.
@@ -503,9 +544,22 @@ export function describeTabsDemo(
           const el = [...document.querySelectorAll<HTMLElement>(panel)].find(
             (p) => !p.hidden && p.textContent?.trim().startsWith('Analytics'),
           );
-          const o = el ? Number(getComputedStyle(el).opacity) : 0;
+          // What's seen of its content (its Card's, which fades alone).
+          let o = el ? 1 : 0;
+          for (let node = el?.firstElementChild ? el : null; node;) {
+            o *= Number(getComputedStyle(node).opacity);
+            if (node.children.length !== 1) {
+              const first = node.firstElementChild;
+              if (first) o *= Number(getComputedStyle(first).opacity);
+              break;
+            }
+            node = node.firstElementChild as HTMLElement;
+          }
           return o > 0.25 && o < 0.75;
         }, ANY_PANEL);
+        // Read now: the demo is centered in the page, so its tabs move as
+        // the panel's height changes.
+        const reports = await tabCenterNow(page, 'Reports');
         await page.mouse.click(reports.x, reports.y);
       });
       expectOneIndicator(frames);
@@ -666,6 +720,301 @@ export function describeTabsHeights(library: string) {
         true,
       );
       expect(Math.abs(await offsetFrom(page, 'Tall', scope))).toBeLessThan(1);
+    });
+  });
+}
+
+/** A panel's box (its frame): a demo's Card, a fixture's `data-box`. */
+const BOX = '[data-box], [data-slot="card"]';
+
+/** A box on screen in a frame. */
+export type BoxFrame = {
+  text: string;
+  /** Its opacity times its ancestors'. */
+  o: number;
+  /** The strongest blur on it or an ancestor, in px. */
+  blur: number;
+  /** How far (px) an ancestor clipping its content cuts into it (ring included). */
+  clip: number;
+  h: number;
+  /** What's seen of its first piece of content. */
+  content: number;
+};
+
+/**
+ * Selects with `select` and records, on every frame (on the frames' own
+ * times, from the first), until `ms` after the tab `last` is selected: the
+ * boxes on screen inside `root`.
+ */
+export async function recordBoxes(
+  page: Page,
+  root: string,
+  /** The tab selected last: the recording lasts `ms` from then. */
+  last: string,
+  select: () => Promise<void>,
+  ms = 1000,
+) {
+  await page.evaluate(
+    ({ root, box, last, ms }) => {
+      const host = document.querySelector(root)!;
+      const tab = [...host.querySelectorAll('[role="tab"]')].find(
+        (el) => el.textContent?.trim() === last,
+      )!;
+      const w = window as unknown as { __boxes?: Promise<unknown> };
+      w.__boxes = new Promise((resolve) => {
+        const frames: { t: number; boxes: unknown[] }[] = [];
+        let start: number | null = null;
+        let selectedAt: number | null = null;
+        const blurOf = (style: CSSStyleDeclaration) =>
+          parseFloat(style.filter.match(/blur\(([^)]+)\)/)?.[1] ?? '0');
+        const tick = (now: number) => {
+          start ??= now;
+          const boxes = [...host.querySelectorAll<HTMLElement>(box)]
+            .filter((el) => el.getClientRects().length > 0)
+            .map((el) => {
+              const rect = el.getBoundingClientRect();
+              // A ring (shadcn's Card: a 1px box-shadow) is drawn outside it.
+              const ring = getComputedStyle(el).boxShadow === 'none' ? 0 : 1;
+              let o = 1;
+              let blur = 0;
+              let clip = 0;
+              for (
+                let node: Element | null = el;
+                node && node !== document.documentElement;
+                node = node.parentElement
+              ) {
+                const style = getComputedStyle(node);
+                o *= Number(style.opacity);
+                blur = Math.max(blur, blurOf(style));
+                if (
+                  node !== el &&
+                  (style.overflowX !== 'visible' ||
+                    style.overflowY !== 'visible')
+                ) {
+                  const a = node.getBoundingClientRect();
+                  clip = Math.max(
+                    clip,
+                    rect.bottom + ring - a.bottom,
+                    a.top - (rect.top - ring),
+                    rect.right + ring - a.right,
+                    a.left - (rect.left - ring),
+                  );
+                }
+              }
+              const first = el.firstElementChild;
+              return {
+                text: el.textContent?.trim().slice(0, 40) ?? '',
+                o,
+                blur,
+                clip,
+                h: rect.height,
+                content: first
+                  ? o * Number(getComputedStyle(first).opacity)
+                  : o,
+              };
+            });
+          frames.push({ t: now, boxes });
+          if (
+            selectedAt === null &&
+            tab.getAttribute('aria-selected') === 'true'
+          )
+            selectedAt = now;
+          const done =
+            selectedAt === null ? now - start > 30_000 : now - selectedAt > ms;
+          if (!done) requestAnimationFrame(tick);
+          else resolve(frames.map((f) => ({ ...f, t: f.t - start! })));
+        };
+        requestAnimationFrame(tick);
+      });
+    },
+    { root, box: BOX, last, ms },
+  );
+  await select();
+  return (await page.evaluate(
+    () => (window as unknown as { __boxes: Promise<unknown> }).__boxes,
+  )) as { t: number; boxes: BoxFrame[] }[];
+}
+
+/**
+ * The box stays on screen through the change, as in Motion's example: one
+ * box on every frame, fully opaque, sharp, never cut by an ancestor; only
+ * its content fades; its height never jumps (the next box takes over at the
+ * previous one's height), from `from`'s box to `to`'s.
+ */
+export function expectBoxStays(
+  frames: { t: number; boxes: BoxFrame[] }[],
+  from: string,
+  to: string,
+) {
+  expect(
+    frames.every((f) => f.boxes.length === 1),
+    'one box on every frame',
+  ).toBe(true);
+  const boxes = frames.map((f) => ({ t: f.t, ...f.boxes[0]! }));
+  const worst = (key: 'o' | 'blur' | 'clip', pick: typeof Math.min) =>
+    pick(...boxes.map((b) => b[key]));
+  expect(worst('o', Math.min), 'the box is never faded').toBe(1);
+  expect(worst('blur', Math.max), 'the box is never blurred').toBe(0);
+  expect(worst('clip', Math.max), 'the box is never cut').toBeLessThan(0.5);
+  // Only its content fades, out then in (a slow frame on a loaded machine
+  // may show it well on its way).
+  expect(
+    boxes.some((b) => b.text.startsWith(from) && b.content < 0.9),
+    `${from}'s content fades out`,
+  ).toBe(true);
+  expect(
+    boxes.some((b) => b.text.startsWith(to) && b.content < 0.9),
+    `${to}'s content fades in`,
+  ).toBe(true);
+  expect(boxes.at(-1)!.text.startsWith(to), `${to} at the end`).toBe(true);
+  expect(boxes.at(-1)!.content).toBe(1);
+  // Its height never jumps: the next box takes over at the previous one's
+  // height, then glides (Motion's layout curve peaks near 1px/ms on the
+  // demo's largest change; a jump covers the whole way at once).
+  for (let i = 1; i < boxes.length; i++) {
+    const step = Math.abs(boxes[i]!.h - boxes[i - 1]!.h);
+    const dt = boxes[i]!.t - boxes[i - 1]!.t;
+    expect(step, `height step at ${Math.round(boxes[i]!.t)}ms`).toBeLessThan(
+      Math.max(20, dt * 1.2),
+    );
+  }
+  const swap = boxes.findIndex((b) => b.text.startsWith(to));
+  expect(swap).toBeGreaterThan(0);
+  // (A frame of the previous box's own glide apart, at most.)
+  expect(Math.abs(boxes[swap]!.h - boxes[swap - 1]!.h)).toBeLessThan(8);
+}
+
+/**
+ * Panels holding a box, a Card in shadcn's demo: the box stays on screen,
+ * only its content fades (Motion's example), unless the boxes don't look
+ * alike, or the box holds text right inside it (the `frames` section of the
+ * library's fixture: Boxed, Boxed tall, Other box, Text box).
+ */
+export function describeTabsFrames(library: string) {
+  test.describe(`${library} tabs, panels holding a box`, () => {
+    const demo = `/tests/demos/${library}/tabs`;
+    const fixture = `/tests/fixtures/${library}-tabs`;
+    const root = '[data-slot="tabs"]';
+    const frames = '[data-testid="frames"]';
+
+    for (const [from, to, label] of [
+      ['Overview', 'Analytics', 'a taller one'],
+      ['Analytics', 'Reports', 'a shorter one'],
+    ] as const)
+      test(`the Card stays on screen as the next one takes over, ${label}: only its content fades`, async ({
+        page,
+      }) => {
+        await gotoTabs(page, demo);
+        if (from !== 'Overview') {
+          await page.getByRole('tab', { name: from }).click();
+          // Its content in, its height there.
+          await page.waitForTimeout(900);
+        }
+        const before = await page
+          .locator(`${PANEL}:not([hidden]) [data-slot="card"]`)
+          .evaluate((el) => el.getBoundingClientRect().height);
+        const target = await tabCenter(page, to);
+        const recorded = await recordBoxes(page, root, to, () =>
+          page.mouse.click(target.x, target.y),
+        );
+        expectBoxStays(recorded, from, to);
+        // Its height glides from the previous Card's on Motion's layout
+        // curve.
+        const after = recorded.at(-1)!.boxes[0]!.h;
+        expect(Math.abs(after - before)).toBeGreaterThan(20);
+        const glide = recorded
+          .map((f) => ({ t: f.t, ...f.boxes[0]! }))
+          .filter((b) => b.text.startsWith(to));
+        expectCurvePace(
+          glide.map((b): Sample => [b.t, b.h]),
+          PANEL_HEIGHT,
+          {
+            from: before,
+            to: after,
+            a: before + (after - before) * 0.1,
+            b: before + (after - before) * 0.9,
+          },
+        );
+      });
+
+    test('quick changes: the Card stays on screen, its height goes on from where it is', async ({
+      page,
+    }) => {
+      await gotoTabs(page, demo);
+      const analytics = await tabCenter(page, 'Analytics');
+      const recorded = await recordBoxes(page, root, 'Settings', async () => {
+        await page.mouse.click(analytics.x, analytics.y);
+        // Analytics coming in, its Card growing.
+        await page.waitForFunction(() => {
+          const card = [
+            ...document.querySelectorAll<HTMLElement>('[data-slot="card"]'),
+          ].find((el) => el.getClientRects().length > 0);
+          return (
+            !!card?.textContent?.startsWith('Analytics') &&
+            card.getBoundingClientRect().height > 150
+          );
+        });
+        // Read now: the demo is centered in the page, so its tabs move as
+        // the Card grows.
+        const settings = await tabCenterNow(page, 'Settings');
+        await page.mouse.click(settings.x, settings.y);
+      });
+      expectBoxStays(recorded, 'Overview', 'Settings');
+      expect(
+        recorded.some((f) => f.boxes[0]!.text.startsWith('Analytics')),
+        'Analytics showed on the way',
+      ).toBe(true);
+    });
+
+    test('a box that looks different: the panels fade whole', async ({
+      page,
+    }) => {
+      await gotoTabs(page, fixture);
+      await page.locator(frames).scrollIntoViewIfNeeded();
+      const target = await tabCenter(page, 'Other box', frames);
+      const recorded = await recordBoxes(page, frames, 'Other box', () =>
+        page.mouse.click(target.x, target.y),
+      );
+      const boxes = recorded.flatMap((f) => f.boxes);
+      expect(
+        boxes.some((b) => b.text.startsWith('Boxed panel') && b.o < 0.3),
+      ).toBe(true);
+      expect(
+        boxes.some((b) => b.text.startsWith('Other box') && b.o < 0.3),
+      ).toBe(true);
+      expect(recorded.every((f) => f.boxes.length <= 1)).toBe(true);
+      expect(boxes.at(-1)!.o).toBe(1);
+    });
+
+    test('text right inside the box: the panels fade whole', async ({
+      page,
+    }) => {
+      await gotoTabs(page, fixture);
+      await page.locator(frames).scrollIntoViewIfNeeded();
+      const target = await tabCenter(page, 'Text box', frames);
+      const recorded = await recordBoxes(page, frames, 'Text box', () =>
+        page.mouse.click(target.x, target.y),
+      );
+      const boxes = recorded.flatMap((f) => f.boxes);
+      expect(
+        boxes.some((b) => b.text.startsWith('Boxed panel') && b.o < 0.3),
+      ).toBe(true);
+      expect(
+        boxes.some((b) => b.text.startsWith('Text box') && b.o < 0.3),
+      ).toBe(true);
+      expect(recorded.every((f) => f.boxes.length <= 1)).toBe(true);
+    });
+
+    test('boxes that look alike in a fixture: the box stays', async ({
+      page,
+    }) => {
+      await gotoTabs(page, fixture);
+      await page.locator(frames).scrollIntoViewIfNeeded();
+      const target = await tabCenter(page, 'Boxed tall', frames);
+      const recorded = await recordBoxes(page, frames, 'Boxed tall', () =>
+        page.mouse.click(target.x, target.y),
+      );
+      expectBoxStays(recorded, 'Boxed panel', 'Boxed tall');
     });
   });
 }

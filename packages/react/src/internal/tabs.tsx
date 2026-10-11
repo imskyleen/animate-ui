@@ -485,8 +485,23 @@ function useTabsIndicator(
 // it while it leaves; the incoming one waits, hidden, until it's free, then
 // comes in. Each library keeps a leaving panel mounted its own way (see the
 // adapters): Radix through `forceMount`, Base UI and React Aria waiting for
-// its running animations (its Web Animations are there from the commit it
-// leaves in, before they look).
+// its running animations (one held on the panel from the commit it leaves
+// in, before they look).
+//
+// Frames: shadcn's panels each hold a bordered Card. Fading whole panels
+// would fade one Card's border out and the next one's in (it blinks), and
+// gliding the panel's height would clip the Card's bottom edge. As in
+// Motion's example, where the bordered box stays and only what's inside it
+// changes, a panel's frame (the panel itself if it paints a box, or else the
+// first element down a chain of single children that does: the Card) stays
+// on screen: only its content fades out, the next panel's frame takes over at
+// the same height in the same frame, then glides to its own height while its
+// content fades in, clipping its content and never its own border or
+// corners. Panels without a frame, with frames that don't look alike, or
+// with text right inside the frame, fade whole.
+
+/** Held on a leaving panel (no visual effect): what libraries wait for. */
+const HOLD_PROPERTY = '--animate-ui-tab-leaving';
 
 type PanelStage = {
   /** The panel on screen: shown, coming in, or leaving. */
@@ -495,6 +510,13 @@ type PanelStage = {
   shown: boolean;
   /** Where the next panel's height starts: the last one's, as it went. */
   height: number | undefined;
+  /**
+   * The last panel's frame as it went, when only its content faded out: the
+   * next panel's frame takes over from it, at its height.
+   */
+  frame: { look: string; height: number } | null;
+  /** The panels, and which is selected: the one coming in. */
+  panels: Map<object, { element: HTMLElement; selected: boolean }>;
   /** Panels waiting for the stage to be free. */
   waiting: Set<() => void>;
   /** The page has been painted: before, changes are instant. */
@@ -510,6 +532,8 @@ function stageOf(holder: Element) {
       current: null,
       shown: false,
       height: undefined,
+      frame: null,
+      panels: new Map(),
       waiting: new Set(),
       painted: false,
     };
@@ -527,30 +551,107 @@ function release(stage: PanelStage, token: object) {
   for (const go of [...stage.waiting]) go();
 }
 
+/* Frames */
+
+const TRANSPARENT = /^transparent$|[,/]\s*0(?:\.0*)?\s*\)$/;
+const SIDES = ['Top', 'Right', 'Bottom', 'Left'] as const;
+
+/** It draws a box: a border, a background or a shadow. */
+function paintsBox(style: CSSStyleDeclaration) {
+  return (
+    SIDES.some(
+      (side) =>
+        parseFloat(style[`border${side}Width`]) > 0 &&
+        style[`border${side}Style`] !== 'none' &&
+        !TRANSPARENT.test(style[`border${side}Color`]),
+    ) ||
+    !TRANSPARENT.test(style.backgroundColor) ||
+    style.backgroundImage !== 'none' ||
+    style.boxShadow !== 'none'
+  );
+}
+
+const hasText = (element: Element) =>
+  Array.from(element.childNodes).some(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+  );
+
+/**
+ * The panel's frame: the panel if it paints a box, or else the first element
+ * down a chain of single children that does (shadcn's Card). None when the
+ * chain branches first, or when the frame holds text of its own (only
+ * elements can fade inside it).
+ */
+function frameOf(panel: HTMLElement): HTMLElement | null {
+  let element: Element = panel;
+  for (;;) {
+    if (!(element instanceof HTMLElement)) return null;
+    if (paintsBox(getComputedStyle(element)))
+      return hasText(element) ? null : element;
+    const [child] = element.children;
+    if (element.children.length !== 1 || !child || hasText(element))
+      return null;
+    element = child;
+  }
+}
+
+const LOOK = [
+  ...SIDES.flatMap((side) => [
+    `border-${side.toLowerCase()}-width`,
+    `border-${side.toLowerCase()}-style`,
+    `border-${side.toLowerCase()}-color`,
+  ]),
+  'border-top-left-radius',
+  'border-top-right-radius',
+  'border-bottom-right-radius',
+  'border-bottom-left-radius',
+  'background-color',
+  'background-image',
+  'box-shadow',
+];
+
+/** How a frame looks: one can take over from another that looks the same. */
+function lookOf(frame: HTMLElement) {
+  const style = getComputedStyle(frame);
+  return LOOK.map((property) => style.getPropertyValue(property)).join('|');
+}
+
+/* Animations */
+
 /** A panel's running animations. */
 type PanelAnimations = {
-  /** Its fade, in or out. */
-  fade?: Animation;
-  leaving?: boolean;
+  /** Its fades, by element: the panel, or its frame's content. */
+  fades: Map<Element, Animation>;
+  /** What its last fade moved: the panel, or its frame's content. */
+  targets: Element[];
+  /** The frame whose content its last fade moved, if any. */
+  frame: HTMLElement | null;
+  /** Fading out: picked again, it comes back from where it is. */
+  leaving: boolean;
+  /** Held while it leaves: what Base UI and React Aria wait for. */
+  hold?: Animation;
+  /** Its height gliding: the panel's, or its frame's. */
   height?: Animation;
 };
 
 const panelAnimations = new WeakMap<Element, PanelAnimations>();
 
-function animationsOf(element: Element) {
-  let animations = panelAnimations.get(element);
+function animationsOf(panel: Element) {
+  let animations = panelAnimations.get(panel);
   if (!animations) {
-    animations = {};
-    panelAnimations.set(element, animations);
+    animations = { fades: new Map(), targets: [], frame: null, leaving: false };
+    panelAnimations.set(panel, animations);
   }
   return animations;
 }
 
-function cancelAll(element: Element) {
-  const animations = panelAnimations.get(element);
-  animations?.fade?.cancel();
-  animations?.height?.cancel();
-  panelAnimations.delete(element);
+function cancelAll(panel: Element) {
+  const animations = panelAnimations.get(panel);
+  if (!animations) return;
+  for (const fade of animations.fades.values()) fade.cancel();
+  animations.hold?.cancel();
+  animations.height?.cancel();
+  panelAnimations.delete(panel);
 }
 
 /** Its opacity and filter on screen now (a fade running included). */
@@ -564,6 +665,39 @@ function shownNow(element: Element, blur: boolean): Keyframe {
     : { opacity: style.opacity };
 }
 
+const gone = (blur: boolean): Keyframe =>
+  blur ? { opacity: 0, filter: motionTokens.blur.panel } : { opacity: 0 };
+
+const POSITIONED = ['absolute', 'fixed'];
+
+/**
+ * A blur (`filter`) would make `target` the containing block of what's
+ * positioned inside it against an element outside it (Fumadocs' step badge,
+ * on its steps' rail): it would move. Such content fades without the blur.
+ * Content positioned against something inside it stays where it is (the
+ * search stops at positioned elements).
+ */
+function anchorsOutside(target: Element) {
+  if (getComputedStyle(target).position !== 'static') return false;
+  const stack = [target];
+  while (stack.length) {
+    const element = stack.pop()!;
+    for (const pseudo of ['::before', '::after'])
+      if (POSITIONED.includes(getComputedStyle(element, pseudo).position))
+        return true;
+    for (const child of element.children) {
+      const position = getComputedStyle(child).position;
+      if (POSITIONED.includes(position)) return true;
+      if (position === 'static') stack.push(child);
+    }
+  }
+  return false;
+}
+
+/** It fades with the blur: not under reduced motion, nor `anchorsOutside`. */
+const blurs = (target: Element, timings: PanelTimings) =>
+  timings.blur && !anchorsOutside(target);
+
 type PanelTimings = {
   in: CssTiming;
   out: CssTiming;
@@ -574,61 +708,111 @@ type PanelTimings = {
   glide: boolean;
 };
 
-/** Fades a panel in: from hidden, or from where its fade has it. */
-function fadeIn(element: HTMLElement, timings: PanelTimings, fresh: boolean) {
-  const animations = animationsOf(element);
-  const hidden: Keyframe = timings.blur
-    ? { opacity: 0, filter: motionTokens.blur.panel }
-    : { opacity: 0 };
-  const from = fresh ? hidden : shownNow(element, timings.blur);
-  animations.fade?.cancel();
-  // To its own opacity and filter (none): the blur is gone at rest, where
-  // `filter` would make it the containing block of its fixed descendants.
-  animations.fade = startNow(
-    element.animate([{ ...from, offset: 0 }], {
-      duration: timings.in.duration,
-      easing: timings.in.easing,
-      fill: 'backwards',
-    }),
-  );
-  animations.leaving = false;
-}
+/** What fades: the frame's content, or the whole panel. */
+const targetsOf = (panel: HTMLElement, frame: HTMLElement | null) =>
+  frame ? Array.from(frame.children) : [panel];
 
-/** Fades a panel out, from where it is, and stays out until it's hidden. */
-function fadeOut(element: HTMLElement, timings: PanelTimings) {
-  const animations = animationsOf(element);
-  const from = shownNow(element, timings.blur);
-  animations.fade?.cancel();
-  animations.fade = startNow(
-    element.animate(
-      [
-        from,
-        timings.blur
-          ? { opacity: 0, filter: motionTokens.blur.panel }
-          : { opacity: 0 },
-      ],
-      {
-        duration: timings.out.duration,
-        easing: timings.out.easing,
-        fill: 'both',
-      },
-    ),
-  );
-  animations.leaving = true;
-  return animations.fade;
+/**
+ * Fades `targets` (a panel, or its frame's content) on the keyframes
+ * `keyframes` gives each (all read before any fade is stopped), with
+ * `options`.
+ */
+function fade(
+  panel: HTMLElement,
+  targets: Element[],
+  frame: HTMLElement | null,
+  keyframes: (target: Element) => Keyframe[],
+  options: KeyframeAnimationOptions,
+  leaving: boolean,
+) {
+  const animations = animationsOf(panel);
+  const frames = targets.map(keyframes);
+  targets.forEach((target, i) => {
+    animations.fades.get(target)?.cancel();
+    animations.fades.set(target, startNow(target.animate(frames[i]!, options)));
+  });
+  animations.targets = targets;
+  animations.frame = frame;
+  animations.leaving = leaving;
 }
 
 /**
- * Glides a panel's height from `from` (the previous panel's) to its own,
- * holding it between min-height and max-height (`height` alone loses to a
- * flex basis: shadcn's panels are `flex-1`), and clipping it on the way.
+ * Fades a panel (or its frame's content) in: from hidden, or from where its
+ * fade has it. To its own opacity and filter (none): the blur is gone at
+ * rest, where `filter` would make it the containing block of its fixed
+ * descendants.
  */
-function glideHeight(element: HTMLElement, from: number, timing: CssTiming) {
-  const animations = animationsOf(element);
+function fadeIn(
+  panel: HTMLElement,
+  targets: Element[],
+  frame: HTMLElement | null,
+  timings: PanelTimings,
+  fresh: boolean,
+) {
+  const animations = animationsOf(panel);
+  animations.hold?.cancel();
+  animations.hold = undefined;
+  fade(
+    panel,
+    targets,
+    frame,
+    (target) => {
+      const blur = blurs(target, timings);
+      return [{ ...(fresh ? gone(blur) : shownNow(target, blur)), offset: 0 }];
+    },
+    {
+      duration: timings.in.duration,
+      easing: timings.in.easing,
+      fill: 'backwards',
+    },
+    false,
+  );
+}
+
+/** Fades a panel (or its frame's content) out, from where it is, and stays out. */
+function fadeOut(
+  panel: HTMLElement,
+  targets: Element[],
+  frame: HTMLElement | null,
+  timings: PanelTimings,
+) {
+  fade(
+    panel,
+    targets,
+    frame,
+    (target) => {
+      const blur = blurs(target, timings);
+      return [shownNow(target, blur), gone(blur)];
+    },
+    {
+      duration: timings.out.duration,
+      easing: timings.out.easing,
+      fill: 'both',
+    },
+    true,
+  );
+}
+
+/**
+ * Glides `target`'s height (the panel's, or its frame's) from `from` (the
+ * previous one's) to its own, holding it between min-height and max-height
+ * (`height` alone loses to a flex basis: shadcn's panels are `flex-1`), and
+ * clipping what's inside it on the way, vertically only (a frame's own border
+ * and corners stay drawn, and what overflows it sideways, a step's badge on
+ * its rail, a focus ring, stays seen). One that clips already is left so.
+ */
+function glideHeight(
+  panel: HTMLElement,
+  target: HTMLElement,
+  from: number,
+  timing: CssTiming,
+) {
+  const animations = animationsOf(panel);
   animations.height?.cancel();
-  const to = element.offsetHeight;
+  animations.height = undefined;
+  const to = target.offsetHeight;
   if (!(to > 0) || Math.abs(from - to) <= 0.5) return;
-  const style = getComputedStyle(element);
+  const style = getComputedStyle(target);
   const inset =
     style.boxSizing === 'border-box'
       ? 0
@@ -638,16 +822,36 @@ function glideHeight(element: HTMLElement, from: number, timing: CssTiming) {
         parseFloat(style.borderBottomWidth);
   const start = `${from - inset}px`;
   const end = `${to - inset}px`;
+  const clip =
+    style.overflowY === 'visible' ? { overflowY: ['clip', 'clip'] } : {};
   animations.height = startNow(
-    element.animate(
-      {
-        minHeight: [start, end],
-        maxHeight: [start, end],
-        overflow: ['hidden', 'hidden'],
-      },
+    target.animate(
+      { minHeight: [start, end], maxHeight: [start, end], ...clip },
       { ...timing, fill: 'backwards' },
     ),
   );
+}
+
+/**
+ * The frame whose content fades as `panel` leaves, or null to fade it whole:
+ * the panel coming in must have a frame that looks the same, and a panel
+ * still fading in whole leaves whole.
+ */
+function leavingFrame(panel: HTMLElement, stage: PanelStage, token: object) {
+  const animations = panelAnimations.get(panel);
+  if (
+    animations &&
+    !animations.frame &&
+    [...animations.fades.values()].some(isRunning)
+  )
+    return null;
+  const frame = frameOf(panel);
+  if (!frame) return null;
+  const next = [...stage.panels].find(
+    ([other, entry]) => other !== token && entry.selected,
+  )?.[1].element;
+  const nextFrame = next ? frameOf(next) : null;
+  return nextFrame && lookOf(nextFrame) === lookOf(frame) ? frame : null;
 }
 
 /** Displayed: not `hidden`, not `display: none` (a user's CSS). */
@@ -669,7 +873,8 @@ type PanelMotionOptions = {
 /**
  * A tab panel's motion. Pass `ref` to the panel's element, and:
  *
- * - keep it mounted and visible while `leaving` (it fades out in the page);
+ * - keep it mounted and visible while `leaving` (its content fades out in the
+ *   page);
  * - hide it while `waiting` (selected, the previous panel still leaving);
  * - hide it otherwise when it isn't `selected`, as its library does.
  *
@@ -707,9 +912,9 @@ function usePanelMotion(
       transition ??
       motionTokens.transition.panelHeight,
   );
-  const fade = useTempoTransition(motionTokens.transition.fade);
+  const quickFade = useTempoTransition(motionTokens.transition.fade);
   const timings: PanelTimings = {
-    in: toCssTiming(reduce ? fade : enter),
+    in: toCssTiming(reduce ? quickFade : enter),
     out: toCssTiming(leave),
     height: toCssTiming(height),
     blur: !reduce,
@@ -721,6 +926,19 @@ function usePanelMotion(
     timingsRef.current = timings;
   });
   const stageRef = React.useRef<PanelStage | null>(null);
+
+  // Tells the stage which panel is selected: a panel leaving fades its
+  // frame's content only if the one coming in has a frame like it.
+  React.useLayoutEffect(() => {
+    const element = ref.current;
+    const holder = element?.parentElement;
+    if (!element || !holder) return;
+    const stage = stageOf(holder);
+    stage.panels.set(token, { element, selected });
+    return () => {
+      stage.panels.delete(token);
+    };
+  });
 
   // Selected: takes the stage, or waits for it.
   React.useLayoutEffect(() => {
@@ -750,17 +968,26 @@ function usePanelMotion(
     if (stage.current === token) {
       // Picked again while leaving: back from where its fade has it.
       const own = panelAnimations.get(element);
-      if (own?.leaving) fadeIn(element, timings, false);
+      if (own?.leaving) fadeIn(element, own.targets, own.frame, timings, false);
       return;
     }
 
     stage.current = token;
     const comesIn = stage.shown && stage.painted;
     stage.shown = true;
+    const left = stage.frame;
+    stage.frame = null;
     if (!comesIn || typeof element.animate !== 'function') return;
-    fadeIn(element, timings, true);
-    if (timings.glide && stage.height !== undefined)
-      glideHeight(element, stage.height, timings.height);
+    // Its frame takes over from the previous one, at its height, when they
+    // look the same: only its content fades in. Else it comes in whole.
+    const candidate = left ? frameOf(element) : null;
+    const frame =
+      left && candidate && lookOf(candidate) === left.look ? candidate : null;
+    fadeIn(element, targetsOf(element, frame), frame, timings, true);
+    if (!timings.glide) return;
+    if (frame && left) glideHeight(element, frame, left.height, timings.height);
+    else if (stage.height !== undefined)
+      glideHeight(element, element, stage.height, timings.height);
   }, [selected, waiting, token]);
 
   // Leaving: fades out in the page, then frees the stage.
@@ -769,7 +996,7 @@ function usePanelMotion(
     if (exit !== 'leaving') return;
     const stage = stageRef.current;
     let cancelled = false;
-    const gone = () => {
+    const goes = () => {
       setExit('closed');
       if (stage) release(stage, token);
     };
@@ -783,21 +1010,47 @@ function usePanelMotion(
     ) {
       // Nothing to see leave: it goes at once.
       if (element) cancelAll(element);
-      if (stage?.current === token) stage.height = undefined;
-      gone();
+      if (stage?.current === token) {
+        stage.height = undefined;
+        stage.frame = null;
+      }
+      goes();
       return;
     }
 
-    fadeOut(element, timingsRef.current).finished.then(
+    // Held on the panel for as long as it leaves, from this commit: Base UI
+    // and React Aria wait for it before removing the panel.
+    const timings = timingsRef.current;
+    const animations = animationsOf(element);
+    animations.hold?.cancel();
+    const hold = startNow(
+      element.animate(
+        { [HOLD_PROPERTY]: ['1', '1'] },
+        { duration: timings.out.duration },
+      ),
+    );
+    animations.hold = hold;
+    // What fades depends on the panel coming in (its frame): known once
+    // every panel of this commit has told the stage whether it's selected.
+    queueMicrotask(() => {
+      if (cancelled) return;
+      const frame = leavingFrame(element, stage, token);
+      fadeOut(element, targetsOf(element, frame), frame, timings);
+    });
+    hold.finished.then(
       () => {
         if (cancelled) return;
         // Its height as it goes (gliding still, maybe): the next one's starts
-        // there.
+        // there, and its frame's, when only its content faded.
+        const frame = panelAnimations.get(element)?.frame ?? null;
         stage.height = element.offsetHeight;
+        stage.frame = frame
+          ? { look: lookOf(frame), height: frame.offsetHeight }
+          : null;
         // Hidden (or unmounted) in the same commit as the next one shows,
         // before the frame is painted.
         // eslint-disable-next-line @eslint-react/dom-no-flush-sync
-        flushSync(gone);
+        flushSync(goes);
         cancelAll(element);
       },
       () => {},

@@ -42,22 +42,34 @@ type ContentAnimationProps = {
   exitTransition?: Transition;
 };
 
-function Root(props: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  // Mirrors the selected tab (Radix keeps it private) for force-mounted
-  // panels; Radix stays the source of truth.
-  const controlled = props.value !== undefined;
-  const [uncontrolled, setUncontrolled] = React.useState(props.defaultValue);
-  const value = controlled ? props.value : uncontrolled;
+function Root({
+  value: valueProp,
+  defaultValue,
+  onValueChange,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  // The selected tab, known to the panels in the same render as Radix's: an
+  // uncontrolled Radix Tabs only reports a change from an effect, a commit
+  // later, and in that commit a panel leaving would be unmounted by Radix and
+  // its content mounted again (losing what it was doing). So Radix is always
+  // controlled from here ('' while no tab is selected: no tab has that value).
+  const controlled = valueProp !== undefined;
+  const [uncontrolled, setUncontrolled] = React.useState(defaultValue);
+  const value = controlled ? valueProp : uncontrolled;
 
-  const onValueChange = (next: string) => {
+  const handleValueChange = (next: string) => {
     if (!controlled) setUncontrolled(next);
-    props.onValueChange?.(next);
+    onValueChange?.(next);
   };
 
   return (
     <ValueProvider value={{ value }}>
       <ReducedMotionConfig>
-        <TabsPrimitive.Root {...props} onValueChange={onValueChange} />
+        <TabsPrimitive.Root
+          {...props}
+          value={value ?? ''}
+          onValueChange={handleValueChange}
+        />
       </ReducedMotionConfig>
     </ValueProvider>
   );

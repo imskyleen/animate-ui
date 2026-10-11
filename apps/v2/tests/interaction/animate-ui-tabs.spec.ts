@@ -8,12 +8,14 @@ import {
 import {
   PANEL_HEIGHT,
   SELECTION_SPRING,
+  expectBoxStays,
   expectOneIndicator,
   expectOnePanelAtATime,
   expectPanelsInSequence,
   framesOf,
   gotoTabs,
   offsetFrom,
+  recordBoxes,
   recordSwitch,
   tabCenter,
   tabLeft,
@@ -304,6 +306,21 @@ test.describe('animate-ui tabs', () => {
     );
     expect(back[0]!.o).toBeLessThan(0.2);
     expect(back.at(-1)!.o).toBe(1);
+  });
+});
+
+test.describe('animate-ui tabs, panels holding a box', () => {
+  test('the box stays on screen as the next one takes over: only its content fades', async ({
+    page,
+  }) => {
+    await gotoTabs(page, '/tests/fixtures/animate-ui-tabs');
+    const scope = '[data-slot="tabs"]:has([aria-label="Frames"])';
+    await page.locator(scope).scrollIntoViewIfNeeded();
+    const target = await tabCenter(page, 'Boxed tall', scope);
+    const recorded = await recordBoxes(page, scope, 'Boxed tall', () =>
+      page.mouse.click(target.x, target.y),
+    );
+    expectBoxStays(recorded, 'Boxed panel', 'Boxed tall');
   });
 });
 

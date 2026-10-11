@@ -4,6 +4,7 @@ import {
   INDICATOR,
   PANEL,
   describeTabsDemo,
+  describeTabsFrames,
   describeTabsHeights,
   gotoTabs,
 } from './tabs-helpers';
@@ -11,6 +12,7 @@ import {
 // Base UI moves focus with the arrows (activateOnFocus is off), Enter selects.
 describeTabsDemo('base-ui', { selectKeys: ['ArrowRight', 'Enter'] });
 describeTabsHeights('base-ui');
+describeTabsFrames('base-ui');
 
 test.describe('base-ui tabs API', () => {
   test.beforeEach(async ({ page }) => {

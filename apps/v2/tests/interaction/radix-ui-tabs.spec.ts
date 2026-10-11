@@ -4,12 +4,55 @@ import {
   INDICATOR,
   PANEL,
   describeTabsDemo,
+  describeTabsFrames,
   describeTabsHeights,
   gotoTabs,
 } from './tabs-helpers';
 
 describeTabsDemo('radix-ui', { selectKeys: ['ArrowRight'] });
 describeTabsHeights('radix-ui');
+describeTabsFrames('radix-ui');
+
+test.describe('radix-ui tabs, the panel leaving', () => {
+  test('keeps its content: Radix never mounts it again as it fades out', async ({
+    page,
+  }) => {
+    await gotoTabs(page, '/tests/demos/radix-ui/tabs');
+    // Uncontrolled, Radix reports the new value from an effect, a commit
+    // late: in that commit the leaving panel was unmounted, then mounted
+    // again (what it was doing, its Card's glide and fades, was lost).
+    await page.evaluate(() => {
+      const w = window as unknown as { __mutations: string[] };
+      w.__mutations = [];
+      const panel = document.querySelector('[role="tabpanel"]:not([hidden])')!;
+      new MutationObserver((records) => {
+        for (const record of records)
+          if (record.addedNodes.length || record.removedNodes.length)
+            w.__mutations.push(record.target.nodeName);
+      }).observe(panel, { childList: true, subtree: true });
+    });
+    const card = page.locator('[data-slot="card"]').first();
+    await card.evaluate((el) => {
+      (window as unknown as { __card: Element }).__card = el;
+    });
+    await page.getByRole('tab', { name: 'Analytics' }).click();
+    // Still leaving: the same Card, fading out.
+    expect(
+      await card.evaluate(
+        (el) => el === (window as unknown as { __card: Element }).__card,
+      ),
+    ).toBe(true);
+    await expect(
+      page.getByRole('tabpanel').filter({ hasText: 'Analytics' }),
+    ).toBeVisible();
+    // Nothing in it was mounted again on the way out (it's emptied once
+    // gone, as Radix does).
+    const mutations = await page.evaluate(
+      () => (window as unknown as { __mutations: string[] }).__mutations,
+    );
+    expect(mutations.length).toBeLessThanOrEqual(1);
+  });
+});
 
 test.describe('radix-ui tabs API', () => {
   test.beforeEach(async ({ page }) => {

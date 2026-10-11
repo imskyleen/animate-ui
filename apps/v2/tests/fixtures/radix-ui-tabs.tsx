@@ -4,6 +4,16 @@ import * as React from 'react';
 import { Tabs } from '@animate-ui/react/primitives/radix-ui/tabs';
 import * as TabsStar from '@animate-ui/react/primitives/radix-ui/tabs';
 
+/** A box a panel holds (a frame): a border, a background. */
+const BOX = {
+  border: '1px solid rgb(212, 212, 212)',
+  borderRadius: 8,
+  background: 'white',
+  padding: 12,
+};
+/** A box that looks different (its border). */
+const OTHER_BOX = { ...BOX, border: '2px solid rgb(239, 68, 68)' };
+
 // API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixTabsFixture() {
   const [value, setValue] = React.useState('a');
@@ -76,6 +86,41 @@ export default function RadixTabsFixture() {
             <p>Its second line</p>
             <p>Its third line</p>
             <p>Its fourth line</p>
+          </Tabs.Content>
+        </Tabs.Root>
+      </section>
+      <section data-testid="frames">
+        {/* Panels holding a box: it stays, its content fades, unless the
+            boxes look different or hold text right inside. */}
+        <Tabs.Root defaultValue="boxed">
+          <Tabs.List aria-label="Frames">
+            <Tabs.Trigger value="boxed">Boxed</Tabs.Trigger>
+            <Tabs.Trigger value="boxed-tall">Boxed tall</Tabs.Trigger>
+            <Tabs.Trigger value="other">Other box</Tabs.Trigger>
+            <Tabs.Trigger value="text">Text box</Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content value="boxed">
+            <div data-box style={BOX}>
+              <p>Boxed panel</p>
+            </div>
+          </Tabs.Content>
+          <Tabs.Content value="boxed-tall">
+            <div data-box style={BOX}>
+              <p>Boxed tall panel</p>
+              <p>Its second line</p>
+              <p>Its third line</p>
+              <p>Its fourth line</p>
+            </div>
+          </Tabs.Content>
+          <Tabs.Content value="other">
+            <div data-box style={OTHER_BOX}>
+              <p>Other box panel</p>
+            </div>
+          </Tabs.Content>
+          <Tabs.Content value="text">
+            <div data-box style={BOX}>
+              Text box panel
+            </div>
           </Tabs.Content>
         </Tabs.Root>
       </section>

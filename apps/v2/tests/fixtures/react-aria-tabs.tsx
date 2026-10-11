@@ -9,6 +9,16 @@ import {
   type Key,
 } from '@animate-ui/react/primitives/react-aria';
 
+/** A box a panel holds (a frame): a border, a background. */
+const BOX = {
+  border: '1px solid rgb(212, 212, 212)',
+  borderRadius: 8,
+  background: 'white',
+  padding: 12,
+};
+/** A box that looks different (its border). */
+const OTHER_BOX = { ...BOX, border: '2px solid rgb(239, 68, 68)' };
+
 // API compatibility: the components must behave exactly like React Aria's.
 export default function ReactAriaTabsFixture() {
   const [selected, setSelected] = React.useState<Key>('a');
@@ -105,6 +115,41 @@ export default function ReactAriaTabsFixture() {
             <p>Its second line</p>
             <p>Its third line</p>
             <p>Its fourth line</p>
+          </TabPanel>
+        </Tabs>
+      </section>
+      <section data-testid="frames">
+        {/* Panels holding a box: it stays, its content fades, unless the
+            boxes look different or hold text right inside. */}
+        <Tabs defaultSelectedKey="boxed">
+          <TabList aria-label="Frames">
+            <Tab id="boxed">Boxed</Tab>
+            <Tab id="boxed-tall">Boxed tall</Tab>
+            <Tab id="other">Other box</Tab>
+            <Tab id="text">Text box</Tab>
+          </TabList>
+          <TabPanel id="boxed">
+            <div data-box style={BOX}>
+              <p>Boxed panel</p>
+            </div>
+          </TabPanel>
+          <TabPanel id="boxed-tall">
+            <div data-box style={BOX}>
+              <p>Boxed tall panel</p>
+              <p>Its second line</p>
+              <p>Its third line</p>
+              <p>Its fourth line</p>
+            </div>
+          </TabPanel>
+          <TabPanel id="other">
+            <div data-box style={OTHER_BOX}>
+              <p>Other box panel</p>
+            </div>
+          </TabPanel>
+          <TabPanel id="text">
+            <div data-box style={BOX}>
+              Text box panel
+            </div>
           </TabPanel>
         </Tabs>
       </section>

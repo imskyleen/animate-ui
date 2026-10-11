@@ -3,6 +3,16 @@
 import * as React from 'react';
 import { Tabs } from '@animate-ui/react/primitives/base-ui/tabs';
 
+/** A box a panel holds (a frame): a border, a background. */
+const BOX = {
+  border: '1px solid rgb(212, 212, 212)',
+  borderRadius: 8,
+  background: 'white',
+  padding: 12,
+};
+/** A box that looks different (its border). */
+const OTHER_BOX = { ...BOX, border: '2px solid rgb(239, 68, 68)' };
+
 // API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseTabsFixture() {
   const [value, setValue] = React.useState('a');
@@ -85,6 +95,41 @@ export default function BaseTabsFixture() {
             <p>Its second line</p>
             <p>Its third line</p>
             <p>Its fourth line</p>
+          </Tabs.Panel>
+        </Tabs.Root>
+      </section>
+      <section data-testid="frames">
+        {/* Panels holding a box: it stays, its content fades, unless the
+            boxes look different or hold text right inside. */}
+        <Tabs.Root defaultValue="boxed">
+          <Tabs.List aria-label="Frames">
+            <Tabs.Tab value="boxed">Boxed</Tabs.Tab>
+            <Tabs.Tab value="boxed-tall">Boxed tall</Tabs.Tab>
+            <Tabs.Tab value="other">Other box</Tabs.Tab>
+            <Tabs.Tab value="text">Text box</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="boxed">
+            <div data-box style={BOX}>
+              <p>Boxed panel</p>
+            </div>
+          </Tabs.Panel>
+          <Tabs.Panel value="boxed-tall">
+            <div data-box style={BOX}>
+              <p>Boxed tall panel</p>
+              <p>Its second line</p>
+              <p>Its third line</p>
+              <p>Its fourth line</p>
+            </div>
+          </Tabs.Panel>
+          <Tabs.Panel value="other">
+            <div data-box style={OTHER_BOX}>
+              <p>Other box panel</p>
+            </div>
+          </Tabs.Panel>
+          <Tabs.Panel value="text">
+            <div data-box style={BOX}>
+              Text box panel
+            </div>
           </Tabs.Panel>
         </Tabs.Root>
       </section>

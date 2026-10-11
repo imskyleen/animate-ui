@@ -4,12 +4,14 @@ import {
   INDICATOR,
   PANEL,
   describeTabsDemo,
+  describeTabsFrames,
   describeTabsHeights,
   gotoTabs,
 } from './tabs-helpers';
 
 describeTabsDemo('react-aria', { selectKeys: ['ArrowRight'] });
 describeTabsHeights('react-aria');
+describeTabsFrames('react-aria');
 
 test.describe('react-aria tabs API', () => {
   test.beforeEach(async ({ page }) => {
