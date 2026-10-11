@@ -175,7 +175,7 @@ export function PreviewFrame({
 
   return (
     <ReducedMotionConfig>
-      <div className="not-prose my-6 flex flex-col gap-1 rounded-xl bg-accent p-1 first:mt-0">
+      <div className="not-prose my-6 flex flex-col gap-1 rounded-xl bg-accent p-1 text-foreground first:mt-0">
         <div
           data-slot="preview"
           className={cn(

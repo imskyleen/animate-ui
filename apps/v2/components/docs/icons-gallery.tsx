@@ -7,6 +7,7 @@ import {
 } from '@animate-ui/react/icons';
 import {
   Cancel01Icon,
+  InfinityIcon,
   RefreshIcon,
   Search01Icon,
 } from '@hugeicons/core-free-icons';
@@ -232,9 +233,14 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
 function IconDetail({
   entry,
   onClose,
+  loop,
+  onLoopChange,
 }: {
   entry: IconEntry;
   onClose: () => void;
+  /** Loop the preview (kept from one icon to the next). */
+  loop: boolean;
+  onLoopChange: (loop: boolean) => void;
 }) {
   const icon = useIcon(entry);
   const [animation, setAnimation] = useState('default');
@@ -247,17 +253,33 @@ function IconDetail({
       <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[7.5px_7.5px] max-sm:hidden">
         {icon && (
           <icon.Icon
-            key={`${animation}-${run}`}
+            key={`${animation}-${run}-${loop}`}
             size={120}
             animation={animation}
             animate
+            loop={loop}
           />
         )}
+        {/* As in v1: loop on the left, replay on the right. */}
+        <button
+          type="button"
+          aria-label="Loop"
+          aria-pressed={loop}
+          onClick={() => onLoopChange(!loop)}
+          className={cn(
+            'absolute top-2 left-2 flex size-7 items-center justify-center rounded-md transition-colors',
+            loop
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-background/80 text-muted-foreground hover:text-foreground',
+          )}
+        >
+          <HugeiconsIcon icon={InfinityIcon} strokeWidth={2} size={14} />
+        </button>
         <button
           type="button"
           aria-label="Replay"
           onClick={() => setRun((r) => r + 1)}
-          className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-md bg-background/80 text-muted-foreground transition-colors hover:text-foreground"
+          className="absolute top-2 right-2 flex size-7 items-center justify-center rounded-md bg-background/80 text-muted-foreground transition-colors hover:text-foreground"
         >
           <HugeiconsIcon icon={RefreshIcon} strokeWidth={2} size={14} />
         </button>
@@ -339,6 +361,7 @@ function IconDrawer({
   onClose: () => void;
 }) {
   const reduce = useReducedMotion();
+  const [loop, setLoop] = useState(false);
 
   useEffect(() => {
     if (!entry) return;
@@ -370,7 +393,13 @@ function IconDrawer({
             transition={motionTokens.transition.drawer}
             className="pointer-events-auto mt-4 max-h-[70vh] overflow-y-auto rounded-t-2xl border border-b-0 bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)]"
           >
-            <IconDetail key={entry.name} entry={entry} onClose={onClose} />
+            <IconDetail
+              key={entry.name}
+              entry={entry}
+              onClose={onClose}
+              loop={loop}
+              onLoopChange={setLoop}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -448,7 +477,7 @@ export function IconsGallery() {
   }, [deferred, filter]);
 
   return (
-    <div className="not-prose my-6">
+    <div className="not-prose my-6 text-foreground">
       <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
         <HugeiconsIcon
           icon={Search01Icon}

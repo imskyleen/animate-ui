@@ -384,4 +384,55 @@ test.describe('icons gallery', () => {
     await drawer.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(drawer).toHaveCount(0);
   });
+
+  test('icons draw in an opaque color, so their crossing strokes read as one', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1400, height: 1000 });
+    await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+    await page.locator('button[title="Arrow Up"]').click();
+    const colors = await page.evaluate(() =>
+      [
+        document.querySelector('button[title="Arrow Up"] svg')!,
+        document.querySelector('[data-slot=icon-drawer] svg')!,
+      ].map((el) => getComputedStyle(el).color),
+    );
+    // The docs' prose text is 90% opaque: no alpha may reach the icons.
+    for (const color of colors) expect(color).not.toMatch(/\/\s*0?\.\d+\)/);
+  });
+
+  test('the preview loops its animation when asked', async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 1000 });
+    await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+    await page.locator('button[title="Bell"]').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    const loop = drawer.getByRole('button', { name: 'Loop', exact: true });
+    await loop.click();
+    await expect(loop).toHaveAttribute('aria-pressed', 'true');
+    // Bell swings for 0.9s: looping, it still swings well after.
+    await page.waitForTimeout(2200);
+    const turns = await drawer
+      .locator('svg')
+      .first()
+      .evaluate(
+        (el) =>
+          new Promise<number>((resolve) => {
+            let max = 0;
+            const start = performance.now();
+            const tick = (now: number) => {
+              const { a, b } = new DOMMatrix(getComputedStyle(el).transform);
+              max = Math.max(max, Math.abs((Math.atan2(b, a) * 180) / Math.PI));
+              if (now - start < 1200) requestAnimationFrame(tick);
+              else resolve(max);
+            };
+            requestAnimationFrame(tick);
+          }),
+      );
+    expect(turns).toBeGreaterThan(5);
+    // The choice carries over to the next icon.
+    await page.locator('button[title="Axe"]').click();
+    await expect(
+      drawer.getByRole('button', { name: 'Loop', exact: true }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  });
 });
