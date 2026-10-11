@@ -9,10 +9,10 @@ const CONTENT = '[data-slot="tooltip-content"]';
 // Animate UI's own Tooltip: a touch calmer than the library tooltips' 400/29.
 const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
-/** `shift.tooltip`, `blur.icon` (px) and `transition.swap` (s). */
-const SHIFT = 4;
-const BLUR = 2;
-const SWAP = 0.15;
+/** `shift.tooltip`, `blur.tooltip` (px) and `transition.tooltipSwap` (s). */
+const SHIFT = 8;
+const BLUR = 4;
+const SWAP = 0.25;
 
 type Layer = {
   text: string;
@@ -391,7 +391,7 @@ test.describe('animate-ui tooltip', () => {
           swapping[i - 1]!.layer.opacity - 0.01,
         );
       }
-      // On `transition.swap` (0.15s): the copy is gone and the next one
+      // On `transition.tooltipSwap` (0.25s): the copy is gone and the next one
       // rests (its styles dropped) shortly after.
       const gone = swapping.find((f) => f.copies.length === 0)!;
       expect(gone.t - first.t).toBeGreaterThan(SWAP * 1000 * 0.7);
@@ -499,7 +499,7 @@ test.describe('animate-ui tooltip', () => {
       const resumed = frames[back]!.layer;
       expect(Math.abs(resumed.opacity - leaving.opacity)).toBeLessThan(0.25);
       expect(resumed.x).toBeLessThan(0);
-      expect(Math.abs(resumed.x - leaving.x)).toBeLessThan(1.2);
+      expect(Math.abs(resumed.x - leaving.x)).toBeLessThan(SHIFT * 0.3);
       // And what was coming in leaves from where it was: one copy, "Italic".
       expect(frames[back]!.copies.map((c) => c.text)).toEqual([
         expect.stringContaining('Italic'),

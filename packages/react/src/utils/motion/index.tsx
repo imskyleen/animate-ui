@@ -279,6 +279,11 @@ const transition = {
    */
   swap: { duration: 0.15, ease: ease.out },
   /**
+   * Animate UI's Tooltip's content changing as the popup glides to the next
+   * trigger: slower than an icon swap, so it's seen beside the glide.
+   */
+  tooltipSwap: { duration: 0.25, ease: ease.out },
+  /**
    * A menu's content leaving the popover it hands over to the next menu (a
    * menubar's), sliding away from where the popover goes: soft, mostly gone
    * in ~90ms.
@@ -356,6 +361,8 @@ const scale = {
 const blur = {
   /** Icons and short labels swapping in place. */
   icon: 'blur(2px)',
+  /** Animate UI's Tooltip's content changing for the next trigger's. */
+  tooltip: 'blur(4px)',
   /** The content of an accordion or collapsible panel, as it unfolds. */
   disclosure: 'blur(2px)',
   /** Surfaces coming in: dialogs, toasts. */
@@ -392,11 +399,11 @@ const shift = {
   /**
    * How far Animate UI's Tooltip's content slides as it changes for the next
    * trigger's while the popup glides there: the leaving label away from where
-   * the popup goes, the next one in from there (`transition.swap`, through
-   * `blur.icon`). A hint on a short label: it stays inside the popup's
-   * padding, and the popup itself is already traveling the distance.
+   * the popup goes, the next one in from there (`transition.tooltipSwap`,
+   * through `blur.tooltip`). Enough to be seen next to the popup's own glide
+   * (4px went unnoticed), still inside its padding.
    */
-  tooltip: 4,
+  tooltip: 8,
   /** How far a mark swings as it shakes (`transition.shake`). */
   shake: 3,
 } as const;

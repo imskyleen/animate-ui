@@ -168,9 +168,9 @@ const readValues = (values: SwapValues): SwapTarget => ({
   blur: values.blur.get(),
 });
 
-/** `blur.icon`, in px. */
+/** `blur.tooltip`, in px. */
 const SWAP_BLUR = Number.parseFloat(
-  motionTokens.blur.icon.replace(/[^\d.]/g, ''),
+  motionTokens.blur.tooltip.replace(/[^\d.]/g, ''),
 );
 
 /** The layout styles the content's layer takes from the popup. */
@@ -210,9 +210,9 @@ const VIEWPORT_STYLE: React.CSSProperties = {
  *
  * - The content is laid out in a layer inside the popup. As the trigger
  *   changes, the layer is copied as it shows (aria-hidden, inert) into the
- *   popup's box, which clips it, and the copy leaves into `blur.icon`, fading
- *   out and sliding `shift.tooltip` away from where the popup goes, on
- *   `transition.swap`. The layer, showing the next content, comes in from
+ *   popup's box, which clips it, and the copy leaves into `blur.tooltip`,
+ *   fading out and sliding `shift.tooltip` away from where the popup goes,
+ *   on `transition.tooltipSwap`. The layer, showing the next content, comes in from
  *   there, out of the blur.
  * - The popup resizes on its shared layout animation, which scales it: both
  *   are scaled back every frame (around the point the popup grows from), so
@@ -228,7 +228,7 @@ class ContentSwap {
   private anchor: [number, number] = [0.5, 1];
   /** The popup's own scale (its entrance), not its layout's. */
   private popupScale: () => number = () => 1;
-  private timing: () => Transition = () => motionTokens.transition.swap;
+  private timing: () => Transition = () => motionTokens.transition.tooltipSwap;
   private current: SwapLayer = { values: swapValues(REST), controls: [] };
   private leaving = new Map<string, SwapLayer & { element: HTMLElement }>();
   private pending: {
@@ -723,7 +723,9 @@ function TooltipOverlay() {
 
   // The popup's own scale (its entrance and exit), apart from its layout's.
   const popupScale = useMotionValue(1);
-  const swapTransition = useTempoTransition(motionTokens.transition.swap);
+  const swapTransition = useTempoTransition(
+    motionTokens.transition.tooltipSwap,
+  );
   const [swap] = React.useState(() => new ContentSwap());
 
   const side = rendered.data?.side ?? 'top';
