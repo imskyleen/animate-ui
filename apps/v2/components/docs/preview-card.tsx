@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRef, useState, type ReactNode } from 'react';
 
 import { getLibrary, LIBRARIES, type LibraryId } from '@/lib/libraries';
+import { BadgeLabel, type PageBadge } from '@/lib/page-badges';
 import { usePreferredLibrary } from '@/lib/preferred-library';
 
 /**
@@ -23,12 +24,15 @@ export function PreviewCard({
   href,
   title,
   logo,
+  badge,
   preview,
   children,
 }: {
   href: string;
   title: ReactNode;
   logo?: ReactNode;
+  /** Its page's status (new, beta…), written by hand like the sidebar's. */
+  badge?: PageBadge | null;
   /** The clip: public/previews/<preview>-<light|dark>.(webm|jpg). */
   preview?: string;
   children?: (hovered: boolean) => ReactNode;
@@ -107,6 +111,7 @@ export function PreviewCard({
       <div className="flex items-center gap-2 px-2.5 pt-2.5 pb-1.5 text-sm font-medium">
         {logo}
         <span className="flex-1 truncate">{title}</span>
+        {badge && <BadgeLabel badge={badge} className="mr-1" />}
         <HugeiconsIcon
           icon={ArrowUpRight01Icon}
           strokeWidth={2}
@@ -121,6 +126,7 @@ export function PreviewCard({
 export type PrimitiveCardEntry = {
   slug: string;
   title: string;
+  badge: PageBadge | null;
   urls: Partial<Record<LibraryId, string>>;
 };
 
@@ -136,6 +142,7 @@ export function PrimitiveCard({ entry }: { entry: PrimitiveCardEntry }) {
     <PreviewCard
       href={entry.urls[library.id] ?? Object.values(entry.urls)[0]!}
       title={entry.title}
+      badge={entry.badge}
       preview={`primitives/${entry.slug}`}
     />
   );

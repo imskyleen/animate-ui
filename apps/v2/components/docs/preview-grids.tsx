@@ -1,5 +1,6 @@
 import { LucideLogo } from '@/lib/icon-libraries';
 import { LIBRARIES, type LibraryId } from '@/lib/libraries';
+import { pageBadge } from '@/lib/page-badges';
 import {
   primitiveSection,
   type PrimitiveSection,
@@ -53,9 +54,11 @@ export function PrimitivesGrid() {
       LibraryId,
       string,
     ];
+    // Its title and status are its default library's page's (the first).
     const entry = entries.get(slug) ?? {
       slug,
       title: page.data.title,
+      badge: pageBadge(page.data),
       urls: {},
     };
     entry.urls[library] = page.url;
@@ -104,6 +107,7 @@ export function BackgroundsGrid() {
           key={page.url}
           href={page.url}
           title={page.data.title.replace(/ Background$/, '')}
+          badge={pageBadge(page.data)}
           preview={`backgrounds/${page.url.split('/').pop()}`}
         />
       ))}

@@ -123,3 +123,19 @@ test('the Icons page shows its libraries, their icons playing when hovered', asy
   await card.hover();
   await expect.poll(moving).toBeGreaterThan(0);
 });
+
+test("cards carry their page's badge, like the sidebar", async ({ page }) => {
+  await page.goto('/docs/primitives', { waitUntil: 'networkidle' });
+  const marked = (selector: string) =>
+    page.locator(selector).evaluateAll((links) =>
+      links
+        .filter((link) => link.querySelector('[data-slot="badge"]'))
+        .map((link) => link.getAttribute('href')!.split('/').pop()!)
+        .sort(),
+    );
+  const cards = await marked('[data-slot="preview-card"]');
+  expect(cards.length).toBeGreaterThan(0);
+  expect(cards).toEqual(
+    [...new Set(await marked('aside a[href^="/docs/primitives/"]'))].sort(),
+  );
+});
