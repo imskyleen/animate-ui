@@ -13,6 +13,11 @@ import { LucideLogo } from '@/lib/icon-libraries';
 import { CodeBlock, Pre, type CodeBlockProps } from './docs/codeblock';
 import { ComponentPreview } from './docs/component-preview';
 import { IconsGallery } from './docs/icons-gallery';
+import {
+  BackgroundsGrid,
+  IconLibrariesGrid,
+  PrimitivesGrid,
+} from './docs/preview-grids';
 import { Installation } from './docs/installation';
 import { RegistryInstallation } from './docs/registry-installation';
 import {
@@ -50,6 +55,9 @@ export function getMDXComponents(components?: MDXComponents) {
     Cards,
     ComponentPreview,
     IconsGallery,
+    PrimitivesGrid,
+    BackgroundsGrid,
+    IconLibrariesGrid,
     Installation,
     RegistryInstallation,
     TypeTable,

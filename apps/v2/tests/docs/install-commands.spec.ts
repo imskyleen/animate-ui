@@ -8,7 +8,6 @@ const PAGES = [
   '/docs',
   '/docs/installation',
   '/docs/skills',
-  '/docs/backgrounds',
   '/docs/icons/get-started',
   '/docs/icons/lucide-icons',
   '/docs/primitives/animate-ui/tooltip',
@@ -54,11 +53,7 @@ for (const url of PAGES)
       );
   });
 
-for (const url of [
-  '/docs/backgrounds',
-  '/docs/icons/get-started',
-  '/docs/icons/lucide-icons',
-])
+for (const url of ['/docs/icons/get-started', '/docs/icons/lucide-icons'])
   test(`${url}: installs by CLI or by hand`, async ({ page }) => {
     await page.goto(url, { waitUntil: 'networkidle' });
     const article = page.locator('article');

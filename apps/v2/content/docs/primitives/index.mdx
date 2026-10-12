@@ -3,18 +3,4 @@ title: Primitives
 description: Animated versions of Radix UI, Base UI and React Aria primitives, with exactly their API.
 ---
 
-Each primitive is a drop-in replacement for its library's. Pick one in the sidebar, then the library your components use.
-
-The import mirrors your library's own import style, so swapping is a change of source only:
-
-| Your import                   | Animate UI import                                   |
-| ----------------------------- | --------------------------------------------------- |
-| `radix-ui`                    | `@animate-ui/react/primitives/radix-ui`             |
-| `@radix-ui/react-<primitive>` | `@animate-ui/react/primitives/radix-ui/<primitive>` |
-| `vaul`                        | `@animate-ui/react/primitives/radix-ui/drawer`      |
-| `@base-ui/react`              | `@animate-ui/react/primitives/base-ui`              |
-| `@base-ui/react/<primitive>`  | `@animate-ui/react/primitives/base-ui/<primitive>`  |
-| `react-aria-components`       | `@animate-ui/react/primitives/react-aria`           |
-| `input-otp`                   | `@animate-ui/react/primitives/input-otp`            |
-
-The umbrella mirrors re-export everything from their library, with the animated primitives in place of the originals: `import { Accordion, Slot } from 'radix-ui'` becomes `import { Accordion, Slot } from '@animate-ui/react/primitives/radix-ui'`. Unused primitives are tree-shaken from production bundles.
+<PrimitivesGrid />

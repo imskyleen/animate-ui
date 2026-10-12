@@ -1,0 +1,664 @@
+// Records the preview clips of the docs' card grids (Primitives, Backgrounds):
+// for each entry and theme, its demo plays an interaction (opening, checking,
+// hovering…) that ends where it started, so the clip loops.
+// - public/previews/<id>-<light|dark>.webm: the looping clip (VP8)
+// - public/previews/<id>-<light|dark>.jpg: its first frame (the card at rest)
+//
+// Needs the docs dev server on http://localhost:3300. From apps/v2:
+//   node scripts/record-previews.mts            every entry
+//   node scripts/record-previews.mts tabs dialog only these
+// Clips are recorded on the GPU (headless SwiftShader fakes blurs).
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import path from 'node:path';
+
+import { chromium, type Page } from '@playwright/test';
+
+const BASE = 'http://localhost:3300';
+const root = path.join(import.meta.dirname, '..');
+const outDir = path.join(root, 'public', 'previews');
+mkdirSync(outDir, { recursive: true });
+
+/** Playwright's own ffmpeg: decodes and encodes VP8, writes PNGs. */
+function ffmpegPath() {
+  const cache = path.join(homedir(), 'Library', 'Caches', 'ms-playwright');
+  const dir = readdirSync(cache).find((name) => name.startsWith('ffmpeg-'));
+  if (!dir)
+    throw new Error(
+      'No Playwright ffmpeg: run `pnpm exec playwright install ffmpeg`.',
+    );
+  const bin = readdirSync(path.join(cache, dir)).find((name) =>
+    name.startsWith('ffmpeg'),
+  );
+  return path.join(cache, dir, bin!);
+}
+const FFMPEG = ffmpegPath();
+
+/**
+ * The demo's page: small, so a card shows the demo large (it's ~300px wide);
+ * demos needing room (dialogs, menus, panels) get `LARGE`. 4:3, like a card.
+ */
+const VIEWPORT = { width: 400, height: 300 };
+const LARGE = { width: 480, height: 360 };
+
+/** Next's dev indicator stays out of the clips. */
+const HIDE_DEV = 'nextjs-portal{display:none!important}';
+
+async function settle(page: Page) {
+  await page.addStyleTag({ content: HIDE_DEV });
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(400);
+}
+
+type Preview = {
+  /** Where its clips go: public/previews/<id>-<theme>.webm. */
+  id: string;
+  /** The demo page. */
+  demo: string;
+  /** It plays as it mounts: recorded from a fresh load. */
+  mount?: boolean;
+  /** The interaction, back to where it started. */
+  play?: (page: Page) => Promise<void>;
+  /** Held after it (ms). */
+  tail?: number;
+  /** Its page's size, when it needs more room (4:3, like the clip). */
+  viewport?: { width: number; height: number };
+};
+
+/* Interactions ------------------------------------------------------------ */
+
+const wait = (page: Page, ms: number) => page.waitForTimeout(ms);
+
+/** Where the pointer is. */
+const pointer = { x: 4, y: 4 };
+
+/** Moves the pointer to (x, y) over `ms`, a frame at a time (a real hand). */
+async function glide(page: Page, x: number, y: number, ms = 250) {
+  const steps = Math.max(1, Math.round(ms / 16));
+  const from = { ...pointer };
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+    await page.mouse.move(from.x + (x - from.x) * e, from.y + (y - from.y) * e);
+    await page.waitForTimeout(16);
+  }
+  pointer.x = x;
+  pointer.y = y;
+}
+
+/** Moves the pointer to the center of `target`. */
+async function pointAt(page: Page, target: ReturnType<Page['locator']>) {
+  const box = (await target.boundingBox())!;
+  await glide(page, box.x + box.width / 2, box.y + box.height / 2);
+}
+
+/** Clicks `target` after moving to it, as a hand would. */
+async function press(page: Page, target: ReturnType<Page['locator']>) {
+  await pointAt(page, target);
+  await wait(page, 120);
+  await target.click();
+}
+
+/** The pointer leaves to the page's corner. */
+const away = (page: Page) => glide(page, 4, 4, 300);
+
+const buttons = (page: Page) => page.locator('main button:visible');
+
+/** Opens with its trigger (the first button), then closes with Escape. */
+const openClose =
+  (
+    trigger: (page: Page) => ReturnType<Page['locator']> = (page) =>
+      buttons(page).first(),
+    hold = 1300,
+  ) =>
+  async (page: Page) => {
+    await press(page, trigger(page));
+    await wait(page, hold);
+    await page.keyboard.press('Escape');
+    await away(page);
+  };
+
+/** Hovers its trigger, then leaves. */
+const hoverOver =
+  (target: (page: Page) => ReturnType<Page['locator']>, hold = 1300) =>
+  async (page: Page) => {
+    await pointAt(page, target(page));
+    await wait(page, hold);
+    await away(page);
+  };
+
+/** Clicks each target in turn, then the first again (back to the start). */
+const clickThrough =
+  (targets: (page: Page) => ReturnType<Page['locator']>, hold = 700) =>
+  async (page: Page) => {
+    const all = targets(page);
+    const count = await all.count();
+    for (let i = 1; i < count; i++) {
+      await press(page, all.nth(i));
+      await wait(page, hold);
+    }
+    await press(page, all.first());
+    await away(page);
+  };
+
+/** Clicks it on, then off. */
+const toggle =
+  (target: (page: Page) => ReturnType<Page['locator']>, hold = 900) =>
+  async (page: Page) => {
+    await press(page, target(page));
+    await wait(page, hold);
+    await press(page, target(page));
+    await away(page);
+  };
+
+/** Replays it (the demo's Replay button), then waits for it to play. */
+const replay =
+  (hold = 1800) =>
+  async (page: Page) => {
+    await press(page, page.getByRole('button', { name: /replay/i }).first());
+    await away(page);
+    await wait(page, hold);
+  };
+
+/** Sweeps the pointer slowly across `target`, then leaves. */
+const sweep =
+  (target: (page: Page) => ReturnType<Page['locator']>) =>
+  async (page: Page) => {
+    const box = (await target(page).boundingBox())!;
+    const y = box.y + box.height / 2;
+    await glide(page, box.x - 10, y, 300);
+    await glide(page, box.x + box.width * 0.3, box.y + box.height * 0.3, 500);
+    await glide(page, box.x + box.width * 0.7, box.y + box.height * 0.7, 700);
+    await glide(page, box.x + box.width + 10, y, 500);
+    await away(page);
+  };
+
+const role = (name: Parameters<Page['getByRole']>[0]) => (page: Page) =>
+  page.locator('main').getByRole(name);
+
+/** By primitive slug: what its clip plays. */
+const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
+  accordion: { play: clickThrough(role('button')) },
+  'alert-dialog': { play: openClose() },
+  checkbox: { play: toggle((page) => role('checkbox')(page).first()) },
+  collapsible: { play: toggle((page) => buttons(page).first(), 1100) },
+  combobox: {
+    async play(page) {
+      await press(page, page.locator('main input').first());
+      await wait(page, 500);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 250);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 700);
+      await page.keyboard.press('Escape');
+      await away(page);
+    },
+  },
+  'context-menu': {
+    async play(page) {
+      const area = page
+        .locator('main [data-slot="context-menu-trigger"]')
+        .first();
+      await pointAt(page, area);
+      await area.click({ button: 'right' });
+      await wait(page, 400);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 250);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 700);
+      await page.keyboard.press('Escape');
+      await away(page);
+    },
+  },
+  dialog: { play: openClose() },
+  drawer: { play: openClose() },
+  'dropdown-menu': {
+    async play(page) {
+      await press(page, buttons(page).first());
+      await wait(page, 400);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 250);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 700);
+      await page.keyboard.press('Escape');
+      await away(page);
+    },
+  },
+  'hover-card': { play: hoverOver((page) => buttons(page).first()) },
+  menubar: {
+    async play(page) {
+      const triggers = role('menuitem')(page);
+      await press(page, triggers.first());
+      await wait(page, 600);
+      await pointAt(page, triggers.nth(1));
+      await wait(page, 600);
+      await pointAt(page, triggers.nth(2));
+      await wait(page, 600);
+      await page.keyboard.press('Escape');
+      await away(page);
+    },
+  },
+  'navigation-menu': {
+    async play(page) {
+      const triggers = page
+        .locator('main [data-slot="navigation-menu-trigger"]')
+        .filter({ visible: true });
+      await pointAt(page, triggers.first());
+      await wait(page, 800);
+      await pointAt(page, triggers.nth(1));
+      await wait(page, 900);
+      await away(page);
+    },
+    tail: 900,
+  },
+  popover: { play: openClose() },
+  'preview-link-card': {
+    play: hoverOver((page) => page.locator('main a').first()),
+  },
+  progress: { mount: true, tail: 1600 },
+  'radio-group': { play: clickThrough(role('radio')) },
+  select: {
+    async play(page) {
+      await press(page, role('combobox')(page).first());
+      await wait(page, 400);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 250);
+      await page.keyboard.press('ArrowDown');
+      await wait(page, 700);
+      await page.keyboard.press('Escape');
+      await away(page);
+    },
+  },
+  sheet: { play: openClose() },
+  sidebar: {
+    play: toggle(
+      (page) => page.locator('main [data-sidebar="trigger"]').first(),
+      1100,
+    ),
+    // Wide enough for the desktop sidebar (under 768px it's a sheet).
+    viewport: { width: 960, height: 720 },
+  },
+  slider: {
+    async play(page) {
+      const thumb = role('slider')(page).first();
+      const box = (await thumb.boundingBox())!;
+      const y = box.y + box.height / 2;
+      await pointAt(page, thumb);
+      await page.mouse.down();
+      await glide(page, box.x + 90, y, 500);
+      await glide(page, box.x - 70, y, 700);
+      await glide(page, box.x + box.width / 2, y, 400);
+      await page.mouse.up();
+      await away(page);
+    },
+  },
+  switch: { play: toggle((page) => role('switch')(page).first()) },
+  tabs: { play: clickThrough(role('tab'), 800) },
+  toast: {
+    async play(page) {
+      await press(page, buttons(page).first());
+      await wait(page, 2200);
+      await away(page);
+    },
+    tail: 1500,
+  },
+  toggle: { play: toggle((page) => buttons(page).first()) },
+  'toggle-group': { play: clickThrough((page) => buttons(page)) },
+  tooltip: { play: hoverOver((page) => buttons(page).first(), 1100) },
+  'input-otp': {
+    async play(page) {
+      await press(page, page.locator('main input').first());
+      await page.keyboard.type('123456', { delay: 160 });
+      await wait(page, 700);
+      for (let i = 0; i < 6; i++) {
+        await page.keyboard.press('Backspace');
+        await wait(page, 60);
+      }
+      await away(page);
+    },
+  },
+
+  // Animate UI
+  'auto-height': { play: toggle((page) => buttons(page).first(), 1000) },
+  'avatar-group': {
+    play: sweep((page) => page.locator('main [data-slot]').first()),
+  },
+  blur: { play: replay() },
+  button: {
+    async play(page) {
+      for (let i = 0; i < 2; i++) {
+        await pointAt(page, buttons(page).first());
+        await page.mouse.down();
+        await wait(page, 450);
+        await page.mouse.up();
+        await wait(page, 450);
+      }
+      await away(page);
+    },
+  },
+  click: {
+    play: toggle((page) => page.locator('main').getByText(/./).first(), 500),
+  },
+  'code-block': { mount: true, tail: 2500 },
+  'copy-button': {
+    async play(page) {
+      await press(page, buttons(page).first());
+      await wait(page, 1500);
+      await away(page);
+    },
+  },
+  'counting-number': { play: replay(2000) },
+  cursor: { play: sweep((page) => page.locator('main > *').first()) },
+  effect: { play: replay() },
+  fade: { play: replay() },
+  'flip-button': { play: hoverOver((page) => buttons(page).first(), 900) },
+  'github-stars-button': { mount: true, tail: 2200 },
+  'github-stars': { mount: true, tail: 2200 },
+  'gradient-text': { mount: true, tail: 2500 },
+  'highlight-text': { play: replay() },
+  highlight: { play: clickThrough((page) => buttons(page)) },
+  'icon-button': { play: toggle((page) => buttons(page).first(), 900) },
+  'image-zoom': { play: sweep((page) => page.locator('main img').first()) },
+  'liquid-button': { play: hoverOver((page) => buttons(page).first(), 1000) },
+  magnetic: { play: sweep((page) => buttons(page).first()) },
+  'morphing-text': { mount: true, tail: 3000 },
+  'motion-grid': { mount: true, tail: 2500 },
+  particles: { play: toggle((page) => buttons(page).first(), 900) },
+  'pinned-list': {
+    async play(page) {
+      const pins = page.locator('main [data-slot="pinned-list-trigger"]');
+      await press(page, pins.nth(2));
+      await wait(page, 900);
+      await press(page, pins.first());
+      await wait(page, 900);
+      await away(page);
+    },
+  },
+  'ripple-button': { play: toggle((page) => buttons(page).first(), 600) },
+  'rolling-text': { play: replay() },
+  'rotating-text': { mount: true, tail: 3000 },
+  'scroll-fade': {
+    async play(page) {
+      const list = page.locator('main [data-slot="scroll-fade"]').first();
+      await pointAt(page, list);
+      for (let i = 0; i < 6; i++) {
+        await page.mouse.wheel(0, 60);
+        await wait(page, 80);
+      }
+      await wait(page, 500);
+      for (let i = 0; i < 6; i++) {
+        await page.mouse.wheel(0, -60);
+        await wait(page, 80);
+      }
+      await away(page);
+    },
+  },
+  'scroll-progress': {
+    async play(page) {
+      const box = page
+        .locator('main [data-slot="scroll-progress-container"]')
+        .first();
+      await pointAt(page, box);
+      for (let i = 0; i < 8; i++) {
+        await page.mouse.wheel(0, 80);
+        await wait(page, 80);
+      }
+      await wait(page, 400);
+      for (let i = 0; i < 8; i++) {
+        await page.mouse.wheel(0, -80);
+        await wait(page, 80);
+      }
+      await away(page);
+    },
+  },
+  'scrolling-number': { play: replay() },
+  'shimmering-text': { mount: true, tail: 2500 },
+  shine: { play: hoverOver((page) => buttons(page).first(), 900) },
+  slide: { play: replay() },
+  'sliding-number': { play: replay() },
+  'splitting-text': { play: replay() },
+  spring: {
+    async play(page) {
+      const handle = page.locator('main [aria-label="Drag me"]').first();
+      const box = (await handle.boundingBox())!;
+      const x = box.x + box.width / 2;
+      const y = box.y + box.height / 2;
+      await pointAt(page, handle);
+      await page.mouse.down();
+      await glide(page, x + 100, y - 50, 450);
+      await glide(page, x - 80, y + 40, 600);
+      await page.mouse.up();
+      await away(page);
+    },
+    tail: 1400,
+  },
+  'theme-toggler-button': {
+    play: toggle((page) => buttons(page).first(), 1100),
+  },
+  'theme-toggler': { play: toggle((page) => buttons(page).first(), 1100) },
+  tilt: { play: sweep((page) => page.locator('main > *').first()) },
+  'typing-text': { mount: true, tail: 2800 },
+  zoom: { play: replay() },
+};
+
+/**
+ * The library whose demo a primitive's clip shows: the docs' default one
+ * first (lib/libraries.tsx's order, what a card opens without a choice).
+ */
+const LIBRARIES = ['base-ui', 'radix-ui', 'react-aria', 'animate-ui'];
+
+/** Demos needing room: recorded on `LARGE`. */
+const ROOMY = new Set([
+  'accordion',
+  'alert-dialog',
+  'auto-height',
+  'checkbox',
+  'click',
+  'code-block',
+  'collapsible',
+  'combobox',
+  'context-menu',
+  'cursor',
+  'dialog',
+  'drawer',
+  'dropdown-menu',
+  'hover-card',
+  'image-zoom',
+  'menubar',
+  'navigation-menu',
+  'pinned-list',
+  'popover',
+  'preview-link-card',
+  'scroll-fade',
+  'scroll-progress',
+  'scrolling-number',
+  'select',
+  'sheet',
+  'tabs',
+  'tilt',
+  'toast',
+  'typing-text',
+]);
+
+function previews(): Preview[] {
+  const docs = path.join(root, 'content', 'docs');
+  const primitives = new Map<string, string>();
+  for (const library of LIBRARIES)
+    for (const file of readdirSync(path.join(docs, 'primitives', library)))
+      if (file.endsWith('.mdx')) {
+        const slug = file.slice(0, -4);
+        if (
+          !primitives.has(slug) &&
+          existsSync(path.join(root, 'demos', library, `${slug}.tsx`))
+        )
+          primitives.set(slug, library);
+      }
+  const list: Preview[] = [...primitives].map(([slug, library]) => ({
+    id: `primitives/${slug}`,
+    demo: `/tests/demos/${library}/${slug}`,
+    ...(ROOMY.has(slug) ? { viewport: LARGE } : {}),
+    ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
+  }));
+  for (const file of readdirSync(path.join(docs, 'backgrounds')))
+    if (file.endsWith('.mdx') && file !== 'index.mdx') {
+      const slug = file.slice(0, -4);
+      list.push({
+        id: `backgrounds/${slug}`,
+        demo: `/tests/demos/backgrounds/${slug}`,
+        play: async (page) => {
+          // Backgrounds move on their own; the pointer crosses those that
+          // follow it.
+          await glide(page, VIEWPORT.width * 0.3, VIEWPORT.height * 0.4, 600);
+          await glide(page, VIEWPORT.width * 0.7, VIEWPORT.height * 0.6, 900);
+          await away(page);
+        },
+        tail: 1200,
+      });
+    }
+  return list;
+}
+
+/** Clips' frame rate. */
+const FPS = 30;
+
+/**
+ * Records `preview` in `theme`: the compositor's frames (CDP screencast, as
+ * painted, device pixels) from the moment it's ready, encoded once.
+ */
+async function record(
+  preview: Preview,
+  theme: 'light' | 'dark',
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+) {
+  const context = await browser.newContext({
+    viewport: preview.viewport ?? VIEWPORT,
+    deviceScaleFactor: 2,
+    colorScheme: theme,
+  });
+  const page = await context.newPage();
+  await page.goto(`${BASE}${preview.demo}`, { waitUntil: 'networkidle' });
+  await settle(page);
+  // Pointer parked out of the way, so nothing starts hovered.
+  await page.mouse.move(4, 4);
+  pointer.x = 4;
+  pointer.y = 4;
+
+  const cdp = await context.newCDPSession(page);
+  const frames: { data: Buffer; time: number }[] = [];
+  cdp.on('Page.screencastFrame', (event) => {
+    frames.push({
+      data: Buffer.from(event.data, 'base64'),
+      time: event.metadata.timestamp! * 1000,
+    });
+    void cdp
+      .send('Page.screencastFrameAck', { sessionId: event.sessionId })
+      .catch(() => {});
+  });
+  const startScreencast = () =>
+    cdp.send('Page.startScreencast', {
+      format: 'jpeg',
+      quality: 92,
+      // A card shows it ~300px wide: 840px is sharp enough on a 2x screen.
+      maxWidth: 840,
+      maxHeight: 630,
+    });
+
+  if (preview.mount) {
+    // Plays as it mounts: shown again from a fresh load, from its first
+    // painted frame.
+    await page.reload({ waitUntil: 'commit' });
+    await startScreencast();
+    await page.waitForLoadState('domcontentloaded');
+    await page.addStyleTag({ content: HIDE_DEV });
+    await page.waitForLoadState('networkidle');
+    if (preview.play) await preview.play(page);
+  } else {
+    await startScreencast();
+    await page.waitForTimeout(300);
+    await preview.play!(page);
+  }
+  await page.waitForTimeout(preview.tail ?? 600);
+  const end = Date.now();
+  await cdp.send('Page.stopScreencast');
+  await context.close();
+  if (!frames.length) throw new Error('no frames');
+
+  // Constant frame rate: each tick shows the latest frame painted by then.
+  // The screencast sends a frame when the page changes: still moments have
+  // none, so the clip runs to the end of the interaction, not its last frame.
+  const first = frames[0]!.time;
+  const last = Math.max(end, first);
+  const sequence: Buffer[] = [];
+  let index = 0;
+  for (let time = first; time <= last; time += 1000 / FPS) {
+    while (index + 1 < frames.length && frames[index + 1]!.time <= time)
+      index++;
+    sequence.push(frames[index]!.data);
+  }
+
+  const name = `${preview.id}-${theme}`;
+  const out = path.join(outDir, name);
+  mkdirSync(path.dirname(out), { recursive: true });
+  execFileSync(
+    FFMPEG,
+    [
+      '-y',
+      '-loglevel',
+      'error',
+      '-f',
+      'image2pipe',
+      '-c:v',
+      'mjpeg',
+      '-framerate',
+      String(FPS),
+      '-i',
+      'pipe:0',
+      '-c:v',
+      'libvpx',
+      '-b:v',
+      '900k',
+      '-crf',
+      '8',
+      '-deadline',
+      'good',
+      '-auto-alt-ref',
+      '0',
+      '-an',
+      `${out}.webm`,
+    ],
+    { input: Buffer.concat(sequence), maxBuffer: 1 << 30 },
+  );
+  // Shown at rest: its first frame, or its last for one playing as it mounts
+  // (its first is still blank).
+  writeFileSync(`${out}.jpg`, preview.mount ? sequence.at(-1)! : sequence[0]!);
+}
+
+const only = process.argv.slice(2);
+const all = previews();
+const chosen = only.length
+  ? all.filter((p) => only.some((id) => p.id === id || p.id.endsWith(`/${id}`)))
+  : all;
+const browser = await chromium.launch({
+  channel: 'chromium',
+  // Device pixels in the recording (a screencast is otherwise at CSS size).
+  args: [
+    '--enable-gpu',
+    '--ignore-gpu-blocklist',
+    '--use-angle=metal',
+    '--force-device-scale-factor=2',
+  ],
+});
+for (const preview of chosen) {
+  for (const theme of ['light', 'dark'] as const) {
+    try {
+      await record(preview, theme, browser);
+      console.log(`✓ ${preview.id} ${theme}`);
+    } catch (error) {
+      console.log(
+        `✗ ${preview.id} ${theme}: ${(error as Error).message.split('\n')[0]}`,
+      );
+    }
+  }
+}
+await browser.close();
