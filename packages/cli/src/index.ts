@@ -15,6 +15,9 @@ Commands:
 Options:
   --cwd <path>    Project directory (default: current directory)
   --dry-run       Show the changes without writing them
+  --exclude <components...>
+                  Leave these components out (with all): --exclude sidebar,
+                  or several, comma-separated or repeated
   --delete        migrate: delete the v1 files nothing imports anymore,
                   without asking (in a terminal, migrate asks)
   --keep          migrate: keep them, without asking
@@ -36,6 +39,7 @@ async function main(argv: string[]) {
     options: {
       cwd: { type: 'string', default: process.cwd() },
       'dry-run': { type: 'boolean', default: false },
+      exclude: { type: 'string', multiple: true, default: [] },
       delete: { type: 'boolean', default: false },
       keep: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
@@ -67,11 +71,17 @@ async function main(argv: string[]) {
     return 1;
   }
 
+  // `--exclude a,b --exclude c`: a, b and c.
+  const exclude = values.exclude.flatMap((value) =>
+    value.split(',').flatMap((name) => (name.trim() ? [name.trim()] : [])),
+  );
+
   try {
     if (command === 'animate') {
       return animate(components, {
         cwd: values.cwd,
         dryRun: values['dry-run'],
+        exclude,
       });
     }
     if (values.delete && values.keep) {
@@ -81,6 +91,7 @@ async function main(argv: string[]) {
     return await migrate(components, {
       cwd: values.cwd,
       dryRun: values['dry-run'],
+      exclude,
       delete: values.delete,
       keep: values.keep,
     });

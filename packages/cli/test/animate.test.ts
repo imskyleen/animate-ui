@@ -1,4 +1,5 @@
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { beforeEach, expect, test } from 'vitest';
@@ -86,4 +87,59 @@ test('outside a shadcn/ui project', () => {
   expect(() =>
     animate(['all'], { cwd: tmpdir(), dryRun: false, log: () => {} }),
   ).toThrow(/components\.json/);
+});
+
+test('animate all --exclude leaves those components as they are', () => {
+  const tooltip = path.join(path.dirname(uiFile()), 'tooltip.tsx');
+  const before = readFileSync(
+    path.join(import.meta.dirname, 'fixtures', 'radix-ui', 'tooltip.nova.tsx'),
+    'utf8',
+  );
+  writeFileSync(tooltip, before);
+  const lines: string[] = [];
+  const code = animate(['all'], {
+    cwd: root,
+    dryRun: false,
+    exclude: ['tooltip', 'sidebar'],
+    log: (l) => lines.push(l),
+  });
+  expect(code).toBe(0);
+  expect(readFileSync(tooltip, 'utf8')).toBe(before);
+  expect(readFileSync(uiFile(), 'utf8')).toContain(
+    'from "@animate-ui/react/primitives/radix-ui"',
+  );
+  const output = lines.join('\n');
+  expect(output).toContain('1 file animated');
+  expect(output).toContain("sidebar isn't installed in src/components/ui");
+});
+
+test('--exclude takes several components, comma-separated or repeated', () => {
+  const tooltip = path.join(path.dirname(uiFile()), 'tooltip.tsx');
+  const before = readFileSync(
+    path.join(import.meta.dirname, 'fixtures', 'radix-ui', 'tooltip.nova.tsx'),
+    'utf8',
+  );
+  writeFileSync(tooltip, before);
+  const cli = path.join(import.meta.dirname, '../src/index.ts');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--import',
+      'tsx',
+      cli,
+      'animate',
+      'all',
+      '--cwd',
+      root,
+      '--exclude',
+      'tooltip,button',
+      '--exclude',
+      'accordion',
+    ],
+    { cwd: path.join(import.meta.dirname, '..'), encoding: 'utf8' },
+  );
+  expect(result.status).toBe(0);
+  expect(result.stdout).toContain('Nothing to animate');
+  expect(readFileSync(tooltip, 'utf8')).toBe(before);
+  expect(readFileSync(uiFile(), 'utf8')).toBe(ACCORDION);
 });

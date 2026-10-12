@@ -9,6 +9,8 @@ import { transform } from '../lib/transform';
 type AnimateOptions = {
   cwd: string;
   dryRun: boolean;
+  /** Components left out (`all` but these). */
+  exclude?: string[];
   log?: (message: string) => void;
 };
 
@@ -61,6 +63,21 @@ export function animate(components: string[], options: AnimateOptions) {
       }
     }
   }
+
+  // `--exclude`: left out, as named (`sidebar`) or with their extension.
+  const excluded = new Set(
+    (options.exclude ?? []).map((name) => name.replace(/\.[jt]sx?$/, '')),
+  );
+  for (const name of excluded) {
+    if (findComponent(project.uiDir, name)) continue;
+    log(
+      `${styleText('yellow', '!')} ${name} isn't installed in ${relative(project.uiDir)}: nothing to exclude.`,
+    );
+  }
+  const baseName = (file: string) => path.basename(file, path.extname(file));
+  const kept = files.filter((file) => !excluded.has(baseName(file)));
+  files.length = 0;
+  files.push(...kept);
 
   let changedFiles = 0;
   const unsupported = new Set<string>();

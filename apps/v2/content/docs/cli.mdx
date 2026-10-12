@@ -19,6 +19,12 @@ Name the components to animate only some of them:
 npx @animate-ui/cli@latest animate dialog dropdown-menu tooltip
 ```
 
+Or animate all of them but some, with `--exclude`:
+
+```npm
+npx @animate-ui/cli@latest animate all --exclude sidebar
+```
+
 **Usage**
 
 ```txt
@@ -31,6 +37,9 @@ Arguments:
 Options:
   --cwd <path>    the project directory (default: the current directory)
   --dry-run       show the changes without writing them
+  --exclude <components...>
+                  leave these components out: comma-separated
+                  (--exclude sidebar,tooltip) or repeated
   -h, --help      show the help
 ```
 
@@ -108,6 +117,12 @@ Name the v1 primitives to migrate only some of them (`accordion`, `dropdown-menu
 npx @animate-ui/cli@latest migrate accordion tooltip
 ```
 
+Or migrate all of them but some, with `--exclude`. Their imports and v1 files stay as they are:
+
+```npm
+npx @animate-ui/cli@latest migrate all --exclude sidebar
+```
+
 **Usage**
 
 ```txt
@@ -119,6 +134,9 @@ Arguments:
 Options:
   --cwd <path>    the project directory (default: the current directory)
   --dry-run       show the changes without writing them
+  --exclude <components...>
+                  leave these components out: comma-separated
+                  (--exclude sidebar,tooltip) or repeated
   --delete        delete the v1 files nothing imports anymore, without asking
   --keep          keep them, without asking
   -h, --help      show the help
@@ -165,13 +183,14 @@ It also tells you what to install: `@animate-ui/react` and `motion`, plus `@base
 
 ## Options
 
-| Option          | Commands             | Description                                                  |
-| --------------- | -------------------- | ------------------------------------------------------------ |
-| `--cwd <path>`  | `animate`, `migrate` | The project directory, with its `components.json`.           |
-| `--dry-run`     | `animate`, `migrate` | Show the changes without writing them.                       |
-| `--delete`      | `migrate`            | Delete the v1 files nothing imports anymore, without asking. |
-| `--keep`        | `migrate`            | Keep them, without asking. Not with `--delete`.              |
-| `-h, --help`    |                      | Show the help.                                               |
-| `-v, --version` |                      | Show the CLI's version.                                      |
+| Option                      | Commands             | Description                                                                                     |
+| --------------------------- | -------------------- | ----------------------------------------------------------------------------------------------- |
+| `--cwd <path>`              | `animate`, `migrate` | The project directory, with its `components.json`.                                              |
+| `--dry-run`                 | `animate`, `migrate` | Show the changes without writing them.                                                          |
+| `--exclude <components...>` | `animate`, `migrate` | Leave these components out of `all`: comma-separated (`--exclude sidebar,tooltip`) or repeated. |
+| `--delete`                  | `migrate`            | Delete the v1 files nothing imports anymore, without asking.                                    |
+| `--keep`                    | `migrate`            | Keep them, without asking. Not with `--delete`.                                                 |
+| `-h, --help`                |                      | Show the help.                                                                                  |
+| `-v, --version`             |                      | Show the CLI's version.                                                                         |
 
 The CLI exits with code 1 when a component can't be found or a command fails, and 130 when you stop the `migrate` prompt.

@@ -417,6 +417,28 @@ test('migrate <name> only touches the imports of that primitive', async () => {
   );
 });
 
+test('migrate all --exclude leaves that primitive on v1', async () => {
+  const { code, output } = await run(['all'], { exclude: ['tooltip'] });
+  expect(code).toBe(0);
+  const page = read(PAGE);
+  expect(page).toContain(
+    "from '@/components/animate-ui/primitives/radix/tooltip';",
+  );
+  expect(page).toContain(
+    "from '@animate-ui/react/primitives/radix-ui/accordion';",
+  );
+  // Still the user's: never offered for deletion.
+  expect(output).not.toContain(`${V1}/primitives/radix/tooltip.tsx\n`);
+});
+
+test('--exclude warns about a name that is not a v1 primitive', async () => {
+  const { code, output } = await run(['all'], { exclude: ['nope'] });
+  expect(code).toBe(0);
+  expect(output).toContain(
+    "nope isn't an Animate UI v1 primitive: nothing to exclude.",
+  );
+});
+
 test('migrate icons rewrites the icon core imports', async () => {
   await run(['icons']);
   expect(read(`${V1}/icons/bell.tsx`)).toContain(

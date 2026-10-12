@@ -27,6 +27,8 @@ import {
 export type MigrateOptions = {
   cwd: string;
   dryRun: boolean;
+  /** v1 primitives left out (`all` but these). */
+  exclude?: string[];
   /** Remove the v1 files nothing imports anymore, without asking. */
   delete?: boolean;
   /** Keep them all, without asking. */
@@ -93,8 +95,22 @@ export async function migrate(components: string[], options: MigrateOptions) {
   }
   if (!all && names.size === 0) return exitCode;
 
+  // `--exclude`: left out, their imports and files untouched.
+  const excluded = new Set<string>();
+  for (const name of options.exclude ?? []) {
+    if (!known.has(name)) {
+      log(
+        `${styleText('yellow', '!')} ${name} isn't an Animate UI v1 primitive: nothing to exclude.`,
+      );
+      continue;
+    }
+    excluded.add(name === 'icon' ? 'icons' : name);
+  }
+  for (const name of excluded) names.delete(name);
+
   const selected = (module: V1Module) =>
-    all || names.has(selectionName(module));
+    !excluded.has(selectionName(module)) &&
+    (all || names.has(selectionName(module)));
 
   /** The v1 module a file is, when v2 replaces it (a deletion candidate). */
   const replacedModule = (file: string) => {
