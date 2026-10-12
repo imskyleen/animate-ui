@@ -76,7 +76,7 @@ Keyboard navigation animates like the pointer. Name the purpose in one word (fee
 | Centered overlay                                                               | Dialog, Alert Dialog                                                    | Modal      |
 | Edge overlay                                                                   | Sheet, Drawer                                                           | Sheet      |
 | Disclosure                                                                     | Accordion, Collapsible                                                  | Disclosure |
-| Moving indicator                                                               | Tabs, Toggle Group, Navigation Menu indicator                           | Indicator  |
+| Moving indicator                                                               | Tabs, Toggle Group, Pagination, Navigation Menu indicator               | Indicator  |
 | Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio                                 | Press      |
 | Two states swapping in place                                                   | Copy → copied, sun → moon, a changing label                             | Swap       |
 | Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                                         | CSS-driven |

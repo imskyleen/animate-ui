@@ -6,12 +6,14 @@ import {
   describeTabsDemo,
   describeTabsFrames,
   describeTabsHeights,
+  describeTabsMounted,
   gotoTabs,
 } from './tabs-helpers';
 
 describeTabsDemo('radix-ui', { selectKeys: ['ArrowRight'] });
 describeTabsHeights('radix-ui');
 describeTabsFrames('radix-ui');
+describeTabsMounted('radix-ui');
 
 test.describe('radix-ui tabs, the panel leaving', () => {
   test('keeps its content: Radix never mounts it again as it fades out', async ({

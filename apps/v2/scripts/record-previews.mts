@@ -252,6 +252,24 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     },
     tail: 900,
   },
+  pagination: {
+    // From page 2 (the demo's) to 5, to 1, then Next: back to 2.
+    async play(page) {
+      // Base UI's links are role="button" (shadcn's nativeButton={false}).
+      const link = (name: string) =>
+        page
+          .locator('main [data-slot="pagination-link"]')
+          .filter({ hasText: new RegExp(`^${name}$`) });
+      await press(page, link('5'));
+      await wait(page, 800);
+      await press(page, link('1'));
+      await wait(page, 700);
+      await press(page, page.locator('main [aria-label="Go to next page"]'));
+      await away(page);
+    },
+    // A row of small links: a smaller page, so they read larger in the card.
+    viewport: { width: 320, height: 240 },
+  },
   popover: { play: openClose() },
   'preview-link-card': {
     play: hoverOver((page) => page.locator('main a').first()),

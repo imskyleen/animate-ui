@@ -19,6 +19,7 @@ const PAGES = [
   '/docs/primitives/base-ui/preview-link-card',
   '/docs/primitives/react-aria/preview-link-card',
   '/docs/primitives/radix-ui/sidebar',
+  '/docs/primitives/base-ui/pagination',
   '/docs/primitives/radix-ui/accordion',
   '/docs/backgrounds/bubble',
 ];

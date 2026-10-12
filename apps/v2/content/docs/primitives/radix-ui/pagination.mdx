@@ -1,0 +1,162 @@
+---
+title: Pagination
+description: Pagination with page navigation, next and previous links. The current page's outline slides from link to link as the page changes.
+new: true
+---
+
+<ComponentPreview name="radix-ui/pagination" />
+
+## Installation
+
+shadcn/ui's Pagination isn't a Radix UI primitive: the CLI has no import to swap in it. Its motion comes from `@animate-ui/react/primitives/pagination`, a headless primitive that works with every shadcn/ui base.
+
+### 1. Install the packages
+
+```npm
+npm install @animate-ui/react motion
+```
+
+### 2. Add shadcn/ui's pagination
+
+```npm
+npx shadcn@latest add pagination
+```
+
+### 3. Build `components/ui/pagination.tsx` on the primitive
+
+Import the primitive:
+
+```tsx title="components/ui/pagination.tsx"
+import * as React from 'react';
+import * as PaginationPrimitive from '@animate-ui/react/primitives/pagination'; // [!code ++]
+```
+
+In `Pagination`, the `<nav>` becomes the primitive's `Root` (its classes and props stay):
+
+```diff title="components/ui/pagination.tsx"
+-function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
++function Pagination({
++  className,
++  ...props
++}: React.ComponentProps<typeof PaginationPrimitive.Root>) {
+   return (
+-    <nav
++    <PaginationPrimitive.Root
+       role="navigation"
+       aria-label="pagination"
+       data-slot="pagination"
+       className={cn("mx-auto flex w-full justify-center", className)}
+       {...props}
+     />
+   )
+ }
+```
+
+That's all: the links need nothing. shadcn/ui's `PaginationLink` already marks them (`data-slot="pagination-link"`) and the current one (`aria-current="page"`).
+
+## Usage
+
+Use shadcn/ui's pagination as usual.
+
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+
+export function Pages() {
+  return (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">3</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
+```
+
+The outline slides when another link becomes current while the pagination stays mounted: a page kept in state (the demo's), or a search param (`?page=3`) read by the same page, which Next.js's `<Link>` and `router.push` render again without remounting it. A navigation that loads a new document remounts the pagination, which shows the new page at once: nothing moves on mount. shadcn/ui's `PaginationLink` renders a plain `<a>`, a full navigation in Next.js: to keep the page mounted, render your router's link in its Button's `asChild` (`next/link`'s `Link` instead of the `<a>`).
+
+The primitive is library-agnostic: the same `Root` builds the pagination of the [Base UI](/docs/primitives/base-ui/pagination) and [React Aria](/docs/primitives/react-aria/pagination) bases, or your own.
+
+## Animation
+
+- **One surface slides** from the current link to the next current one, on a spring (stiffness 300, damping 30, the tabs' and the toggle group's selection spring): the outline moves along the row instead of jumping from link to link. It moves on the compositor: a Web Animation of its `translate` that replaces it (rather than adding to it), which Chromium runs off the main thread, so a heavy render after the click doesn't hold it up. Its size (`width` and `height`) is animated too only when the two links' sizes differ: a scale would distort the copied border, corners and shadow. Clicked again on the way (Next pressed twice quickly), it goes on from where it is with the speed it had; sent back the way it came, it turns back from where it is, without carrying on first.
+- **It wears the current link's look**: it copies the link's classes and data attributes (shadcn/ui's outline variant, `data-active`), so its border, background, corners, shadow and dark mode are the link's, in every style and theme. It doesn't copy `aria-current`: style the current page through the variant or `data-active`, shadcn/ui's way, not with an `aria-[current=page]:` class, which the surface wouldn't match while the link's own look is hidden. It's drawn over the backgrounds of the list and its items and under the links, while a small stylesheet hides the current link's own border, background and shadow as long as the surface stands in for them.
+- **The link keeps its states**: hovered (on devices that hover), the current link paints its own hover background (`hover:bg-muted`), and the surface's own background fades away under it (200ms, `ease`), so the two don't add up: dark mode's `bg-input/30` under the link's `hover:bg-input/50` would look lighter than the link hovered on its own. It only fades once the surface has arrived: while it slides, it keeps its background. Its border and shadow stay. A pagination nested in this one has its own surface: hovering that one's current link leaves this surface as it is. Focused from the keyboard, the link keeps its own focus ring (`focus-visible:border-ring`, `ring-3`). The surface itself is never hovered, pressed or focused.
+- **It slides from where it was drawn**, not from where the previous link is after the render: page numbers shifting in the same render as the current page (a window of pages around it) don't make it jump. A current page that stays in place (the numbers changing around it) doesn't move it.
+- **It lands where the link rests**: the links are measured without their own transforms, those that move or scale them (shadcn/ui's press nudge, `active:translate-y-px`; a press scale, like Motion's `whileTap`; a percentage translate, `-translate-y-1/2`), so a link clicked and still easing back doesn't leave it off by a pixel. At rest it follows the link at once when the `Root` or a link resizes (the Previous and Next labels showing from `sm`, the page's layout changing), when text beside the links changes (a "Page 2 of 10" label), and when a list inside the `Root` scrolls. While an ancestor transforms the pagination (a dialog scaling or tilting in), the links are read again on each frame until it's drawn at its own size, so the surface doesn't keep a box read on the way.
+- Keyboard changes animate like clicks: Tab to a link, Enter.
+- **Nothing moves on mount**, nor before the page has been painted: a page restored as it loads, or a pagination remounted by a navigation, shows its current page at once. In the frame the surface shows in, the current link's own look goes without its transition: shadcn/ui's `transition-all` would fade its border out over the surface, doubling it for a moment.
+- Under reduced motion it doesn't slide: it crossfades over 200ms on an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`), a copy of it fading out on the link it leaves while it fades in on the new one. Changed again while it crossfades, the copy leaves from the opacity the surface had (it doesn't pop back to full), and the copies already leaving go on.
+- `<AnimateUIProvider tempo>` paces the slide, the crossfade and the hover fade.
+- The demo is shadcn/ui's `pagination-demo` with its page in state (its own is static): its links change the current page (1 to 5, Previous and Next stopping at the ends), each with `onClick` and `preventDefault` so `href="#"` doesn't navigate.
+
+### How it works
+
+The `Root` finds its current link: the first `[data-slot="pagination-link"][aria-current="page"]` inside it that's its own (not one of a pagination nested in it) and drawn (one hidden at this breakpoint, `display: none`, is skipped). It renders the surface as its first child: a `<span data-slot="pagination-indicator" aria-hidden>` positioned absolutely over the link's border box (`box-sizing: border-box`), at `z-index: 1`. The `Root` gets `position: relative` (unless it's positioned already) and `isolation: isolate`, inline, so the surface is drawn inside it: over its background and the backgrounds of the list and its items (positioned or not), under the links and the ellipsis, which get `position: relative` and `z-index: 2` once the surface is on screen (in `@layer base`, so a link's own `absolute` or `fixed` class wins; a `static` one would draw the link under the surface).
+
+Once the surface is on screen, the `Root` gets `data-animate-ui-pagination-ready`, and an unlayered stylesheet (it wins over Tailwind's layers) clears the current link's `border-color` and `box-shadow` (unless it's `:focus-visible`) and its background (unless it's hovered, on devices that hover). Under a hovered current link it clears the surface's background too, unless the surface is sliding (`data-animate-ui-sliding`): the surface's inline `transition: background-color` (`transition.color`) fades it. In the frame the surface shows in, the `Root` also has `data-animate-ui-pagination-settling`, which turns the current link's `transition` off.
+
+The slide is a Web Animation replacing the surface's `translate`, from its own translate plus the distance to its own (added to it only when its own isn't in pixels), so Chromium runs it on the compositor; a second one animates its `width` and `height` when the links' sizes differ. A MutationObserver (elements added or removed, text changing, and the `aria-current`, `class`, `data-active` and `data-disabled` attributes), a ResizeObserver (the `Root` and the links) and a capturing scroll listener (a list scrolling inside the `Root`) keep the surface on the current link, measured in the `Root`'s own pixels whatever an ancestor's scale. While the `Root` is drawn at another size than its own (an ancestor's transform), the links are read again on each frame, 90 frames at most. Under reduced motion, the copy fading out is another `span` with `data-animate-ui-leaving`, removed once it has faded.
+
+## API Reference
+
+`@animate-ui/react/primitives/pagination` exports `Root`.
+
+### Root
+
+shadcn/ui's pagination `<nav>`: renders a `nav` and takes its props. Its page links are the `[data-slot="pagination-link"]` elements inside it (shadcn/ui's `PaginationLink`), the current one the link with `aria-current="page"` (its own, and drawn). On itself, it sets:
+
+- `data-animate-ui-pagination`, always: each `Root` only animates its own links.
+- `data-animate-ui-pagination-ready` once the surface is on screen: the current link's own border, shadow and background are hidden then.
+- `data-animate-ui-pagination-settling` in the frame the surface shows in: the current link's `transition` is off.
+- `position: relative` (unless it's positioned already) and `isolation: isolate`, inline.
+
+It adds no attribute to the links: once the surface is on screen, its stylesheet gives them and the ellipsis (`[data-slot="pagination-ellipsis"]`) `position: relative`, in `@layer base`, so a class of yours wins. Its first child is the surface, a `<span data-slot="pagination-indicator" aria-hidden>` with `data-animate-ui-sliding` while it slides; under reduced motion, the copies fading out carry `data-animate-ui-leaving`.
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        "Transition of the current page's surface sliding from link to link. The reduced motion crossfade keeps its 200ms.",
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 30 }",
+    },
+  }}
+/>
+
+`AnimateUIProvider`'s `tempo` scales it with everything else.
+
+## Accessibility
+
+The links stay yours: the primitive reads their `aria-current` but never sets it, and adds no role, `tabindex` or handler to them. Focus, Tab and Enter, and the browser's link behaviour (open in a new tab, the URL on hover) are unchanged. The surface (and its fading copy) is `aria-hidden` and never takes pointer events: screen readers and clicks reach the links as before. It sits in the `<nav>`, outside the `<ul>`, so the list's items are the same.
+
+## Credits
+
+- [shadcn/ui's Pagination](https://ui.shadcn.com/docs/components/radix/pagination).
+- The motion is inspired by [EasyUI's Slide Pagination](https://easyui.site/components/slide-pagination).

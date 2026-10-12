@@ -6,6 +6,7 @@ import {
   describeTabsDemo,
   describeTabsFrames,
   describeTabsHeights,
+  describeTabsMounted,
   gotoTabs,
 } from './tabs-helpers';
 
@@ -13,6 +14,7 @@ import {
 describeTabsDemo('base-ui', { selectKeys: ['ArrowRight', 'Enter'] });
 describeTabsHeights('base-ui');
 describeTabsFrames('base-ui');
+describeTabsMounted('base-ui');
 
 test.describe('base-ui tabs API', () => {
   test.beforeEach(async ({ page }) => {

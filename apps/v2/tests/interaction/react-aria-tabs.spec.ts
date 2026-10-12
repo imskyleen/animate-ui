@@ -6,12 +6,14 @@ import {
   describeTabsDemo,
   describeTabsFrames,
   describeTabsHeights,
+  describeTabsMounted,
   gotoTabs,
 } from './tabs-helpers';
 
 describeTabsDemo('react-aria', { selectKeys: ['ArrowRight'] });
 describeTabsHeights('react-aria');
 describeTabsFrames('react-aria');
+describeTabsMounted('react-aria');
 
 test.describe('react-aria tabs API', () => {
   test.beforeEach(async ({ page }) => {

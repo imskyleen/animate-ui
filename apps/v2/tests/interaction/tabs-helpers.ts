@@ -145,6 +145,70 @@ export async function expectSurfaceOnIndicator(page: Page, scope?: string) {
   expect(indicator).not.toBe('rgba(0, 0, 0, 0)');
 }
 
+/** Resolves after `count` frames. */
+export const nextFrames = (page: Page, count: number) =>
+  page.evaluate(
+    (count) =>
+      new Promise<void>((resolve) => {
+        let left = count;
+        const tick = () =>
+          --left <= 0 ? resolve() : requestAnimationFrame(tick);
+        requestAnimationFrame(tick);
+      }),
+    count,
+  );
+
+/** Waits until the indicator holds still (no slide under way), then a few frames. */
+export async function waitForIndicatorRest(page: Page, scope?: string) {
+  await page.waitForFunction(
+    ({ indicator, scope }) => {
+      const root = scope ? document.querySelector(scope) : document;
+      const el = root?.querySelector(indicator);
+      return (
+        !!el &&
+        !el.hasAttribute('data-animate-ui-sliding') &&
+        el
+          .getAnimations()
+          .every((a) => a.playState === 'finished' || a.playState === 'idle')
+      );
+    },
+    { indicator: INDICATOR, scope },
+    { polling: 'raf' },
+  );
+  await nextFrames(page, 3);
+}
+
+/**
+ * The indicator covers the active tab: its box on screen (left, top, width
+ * and height) within `tolerance` px of the tab's.
+ */
+export async function expectOnActiveTab(
+  page: Page,
+  tolerance: number,
+  scope?: string,
+) {
+  const off = await page.evaluate(
+    ({ indicator, scope }) => {
+      const root = scope ? document.querySelector(scope)! : document;
+      const tab = root.querySelector('[role="tab"][aria-selected="true"]')!;
+      const a = root.querySelector(indicator)!.getBoundingClientRect();
+      const b = tab.getBoundingClientRect();
+      return {
+        left: a.left - b.left,
+        top: a.top - b.top,
+        width: a.width - b.width,
+        height: a.height - b.height,
+      };
+    },
+    { indicator: INDICATOR, scope },
+  );
+  for (const [side, by] of Object.entries(off))
+    expect(
+      Math.abs(by),
+      `the indicator's ${side} is ${by}px off the active tab's`,
+    ).toBeLessThanOrEqual(tolerance);
+}
+
 /**
  * A panel on screen in a frame (its top in the element holding the panels),
  * the start of its text, and what's seen of its content (`o`, `blur`): the
@@ -689,6 +753,249 @@ export function describeTabsDemo(
       expect(comes[0]!.t).toBeGreaterThan(passed.at(-1)!.t);
       expect(comes[0]!.o).toBeLessThan(0.2);
       await expect.poll(() => panelOpacity(page)).toBe(1);
+    });
+
+    test('a list of a fractional width: the indicator sits exactly on the active tab', async ({
+      page,
+    }) => {
+      // Measured against the list's rounded width (offsetWidth), it ended a
+      // fraction of a pixel off, more the further the tab (0.28px on the
+      // last one). 301.37px is held as 301.359375 (64ths of a pixel) and
+      // reported as 301.359px (6 significant digits): read as a tiny scale,
+      // it ended a 64th off.
+      const list = page.getByRole('tablist');
+      const rounding = await list.evaluate((el: HTMLElement) => {
+        el.style.width = '301.37px';
+        return parseFloat(getComputedStyle(el).width) - el.offsetWidth;
+      });
+      expect(Math.abs(rounding)).toBeGreaterThan(0.1);
+      await waitForIndicatorRest(page);
+      await expectOnActiveTab(page, 0.005);
+      for (const name of ['Settings', 'Reports']) {
+        await page.getByRole('tab', { name }).click();
+        await waitForIndicatorRest(page);
+        await expectOnActiveTab(page, 0.005);
+      }
+    });
+
+    test('under an ancestor scaled close to 1: the indicator sits on the active tab, scaled and once the scale has gone', async ({
+      page,
+    }) => {
+      // Within about 3% of 1, the scale was read as none along the list's
+      // height (a 1px threshold): the indicator was half a pixel too tall at
+      // 1.02, and a quarter off along its width (divided by the rounded
+      // offsetWidth), and stayed so (a transform resizes nothing the
+      // observers see).
+      const list = page.getByRole('tablist');
+      for (const [scale, name] of [
+        ['1.02', 'Settings'],
+        ['0.985', 'Reports'],
+      ] as const) {
+        await list.evaluate((el, scale) => {
+          el.parentElement!.style.scale = scale;
+        }, scale);
+        await page.getByRole('tab', { name }).click();
+        await waitForIndicatorRest(page);
+        await expectOnActiveTab(page, 0.05);
+        await list.evaluate((el) => {
+          el.parentElement!.style.scale = '';
+        });
+        await nextFrames(page, 5);
+        await expectOnActiveTab(page, 0.05);
+      }
+    });
+
+    test('selected while drawn tilted and scaled (a dialog coming in): once the transform has gone, the indicator sits on the active tab', async ({
+      page,
+    }) => {
+      // A box read under a perspective is off (about 1px): the tabs are read
+      // again on each frame until the list is drawn at its own size (before,
+      // it stayed off: a transform resizes nothing the observers see).
+      const transform = 'perspective(500px) rotateX(-20deg) scale(0.8)';
+      const list = page.getByRole('tablist');
+      await list.evaluate((el, transform) => {
+        el.parentElement!.style.transform = transform;
+      }, transform);
+      await nextFrames(page, 2);
+      await page.getByRole('tab', { name: 'Settings' }).click();
+      await list.evaluate(async (el, transform) => {
+        const parent = el.parentElement!;
+        parent.style.transform = '';
+        await parent.animate([{ transform }, { transform: 'none' }], {
+          duration: 300,
+          easing: 'ease-out',
+        }).finished;
+      }, transform);
+      await waitForIndicatorRest(page);
+      await expectOnActiveTab(page, 0.05);
+    });
+
+    test("the slide runs on the compositor: its translate replaces the indicator's own (added to it, it ran on the main thread)", async ({
+      page,
+    }) => {
+      await page.locator(INDICATOR).evaluate((el) => {
+        const w = window as unknown as { __slide?: Promise<unknown> };
+        w.__slide = new Promise((resolve) => {
+          new MutationObserver((_, observer) => {
+            if (!el.hasAttribute('data-animate-ui-sliding')) return;
+            observer.disconnect();
+            resolve(
+              el.getAnimations().map((animation) => {
+                const effect = animation.effect as KeyframeEffect;
+                return {
+                  composite: effect.composite,
+                  keyframes: effect.getKeyframes().map((keyframe) => ({
+                    translate: keyframe.translate as string | undefined,
+                    composite: keyframe.composite,
+                  })),
+                };
+              }),
+            );
+          }).observe(el, {
+            attributes: true,
+            attributeFilter: ['data-animate-ui-sliding'],
+          });
+        });
+      });
+      await page.getByRole('tab', { name: 'Settings' }).click();
+      const animations = (await page.evaluate(
+        () => (window as unknown as { __slide: Promise<unknown> }).__slide,
+      )) as {
+        composite: string;
+        keyframes: { translate?: string; composite: string }[];
+      }[];
+      const slide = animations.find((animation) =>
+        animation.keyframes.some((keyframe) => keyframe.translate),
+      );
+      expect(slide, 'a translate animation').toBeDefined();
+      expect(slide!.composite).toBe('replace');
+      expect(
+        slide!.keyframes.every((keyframe) =>
+          ['auto', 'replace'].includes(keyframe.composite),
+        ),
+      ).toBe(true);
+      // From the old tab, to its own place (no translate of its own).
+      const still = (translate = '') =>
+        translate.split(/\s+/).every((value) => parseFloat(value) === 0);
+      expect(still(slide!.keyframes[0]!.translate)).toBe(false);
+      expect(still(slide!.keyframes.at(-1)!.translate)).toBe(true);
+    });
+  });
+}
+
+/**
+ * shadcn's tabs (the demos' parts) mounted after the page has loaded, as in a
+ * dialog (tests/fixtures/tabs-indicator-mount.tsx), in dark mode: the active
+ * tab's own border and background are translucent.
+ */
+export function describeTabsMounted(library: string) {
+  test.describe(`${library} tabs, mounted after the page has loaded`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/tests/fixtures/tabs-indicator-mount', {
+        waitUntil: 'networkidle',
+      });
+      // Hydrated: a click before then does nothing.
+      await page.waitForFunction(() => {
+        const buttons = [...document.querySelectorAll('button')];
+        return (
+          buttons.length > 0 &&
+          buttons.every((button) =>
+            Object.keys(button).some((key) => key.startsWith('__reactProps')),
+          )
+        );
+      });
+      await page.waitForTimeout(250);
+    });
+
+    test("the active tab's own look goes at once as the indicator shows, never fading out over it (shadcn's transition-all)", async ({
+      page,
+    }) => {
+      // Hidden with its transition, the tab's own border and background
+      // faded out over the indicator for 200ms: a doubled, brighter border.
+      const scope = `[data-testid="${library}-settle"]`;
+      const section = page.locator(scope);
+      for (const round of ['mounted', 'mounted again']) {
+        await page.evaluate(
+          ({ scope, indicator }) => {
+            const root = document.querySelector(scope)!;
+            const alpha = (color: string) => {
+              if (color === 'transparent') return 0;
+              const slash = color.match(/\/\s*([\d.]+)(%?)\s*\)$/);
+              if (slash) return parseFloat(slash[1]!) / (slash[2] ? 100 : 1);
+              const rgba = color.match(/^rgba\(.*,\s*([\d.]+)\)$/);
+              return rgba ? parseFloat(rgba[1]!) : 1;
+            };
+            const w = window as unknown as { __mount?: Promise<unknown> };
+            w.__mount = new Promise((resolve) => {
+              const frames: unknown[] = [];
+              const start = performance.now();
+              let shownAt: number | null = null;
+              const tick = (now: number) => {
+                const el = root.querySelector(indicator);
+                const tab = root.querySelector(
+                  '[role="tab"][aria-selected="true"]',
+                );
+                if (el && tab) {
+                  shownAt ??= now;
+                  const own = getComputedStyle(tab);
+                  frames.push({
+                    t: now - shownAt,
+                    border: alpha(own.borderTopColor),
+                    background: alpha(own.backgroundColor),
+                    indicator: alpha(getComputedStyle(el).borderTopColor),
+                  });
+                }
+                const done =
+                  shownAt === null ? now - start > 30_000 : now - shownAt > 400;
+                if (done) resolve(frames);
+                else requestAnimationFrame(tick);
+              };
+              requestAnimationFrame(tick);
+            });
+          },
+          { scope, indicator: INDICATOR },
+        );
+        await section.getByRole('button', { name: 'Show tabs' }).click();
+        const frames = (await page.evaluate(
+          () => (window as unknown as { __mount: Promise<unknown> }).__mount,
+        )) as {
+          t: number;
+          border: number;
+          background: number;
+          indicator: number;
+        }[];
+        // From the frame it shows in, past the 200ms the fade took (a loaded
+        // machine draws fewer frames).
+        expect(frames.length, `${round}: frames shown`).toBeGreaterThan(2);
+        expect(frames.at(-1)!.t).toBeGreaterThan(300);
+        // The indicator wears the tab's translucent border.
+        expect(frames[0]!.indicator).toBeGreaterThan(0);
+        expect(frames[0]!.indicator).toBeLessThan(1);
+        for (const { t, border, background } of frames) {
+          expect(border, `${round}: the tab's own border at ${t}ms`).toBe(0);
+          expect(
+            background,
+            `${round}: the tab's own background at ${t}ms`,
+          ).toBe(0);
+        }
+        await section.getByRole('button', { name: 'Hide tabs' }).click();
+        await expect(section.locator(INDICATOR)).toHaveCount(0);
+      }
+    });
+
+    test('mounted in a box coming in like a dialog (tilted and scaled): once it has come in, the indicator sits on the active tab', async ({
+      page,
+    }) => {
+      // Read as it mounts, under the box's perspective (about 1px off), it
+      // stayed there: a transform resizes nothing the observers see.
+      const scope = `[data-testid="${library}-entrance"]`;
+      const section = page.locator(scope);
+      await section.getByRole('button', { name: 'Show in entrance' }).click();
+      await section.getByTestId('entrance-box').evaluate(async (el) => {
+        await Promise.all(el.getAnimations().map((a) => a.finished));
+      });
+      await waitForIndicatorRest(page, scope);
+      await expectOnActiveTab(page, 0.05, scope);
     });
   });
 }

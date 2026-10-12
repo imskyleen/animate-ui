@@ -131,7 +131,7 @@ const FAMILIES: Family[] = [
     rule: 'Ce qui marque la sélection glisse d’un élément à l’autre et l’ancien s’efface.',
     values: [
       'glissement : ressort 300/30',
-      'onglets et toggle group (sélection simple) : une seule surface (pas de fondu entre deux), reprise en route avec sa vitesse ; voir « Onglets »',
+      'onglets, toggle group (sélection simple) et pagination : une seule surface (pas de fondu entre deux), reprise en route avec sa vitesse ; voir « Onglets »',
       'remplissage (toggle group, sélection multiple) : de 70 % à 100 % en apparaissant, 0,3s cubic-bezier(0.4, 0, 0.2, 1) ; voisins réunis en une surface',
     ],
     demos: [
@@ -139,6 +139,11 @@ const FAMILIES: Family[] = [
         demo: 'radix-ui/toggle-group',
         label: 'Toggle Group',
         note: 'sélection multiple : la surface d’un élément sélectionné grandit de 70 % à 100 % depuis son centre en apparaissant, en 0,3s sur cubic-bezier(0.4, 0, 0.2, 1) (comme le fond du radio), et rétrécit en s’effaçant ; deux voisins sélectionnés se rejoignent en une seule surface (chacun s’étire jusqu’au milieu de l’écart, ses coins intérieurs deviennent droits, même durée), et se séparent quand on désélectionne celui du milieu ; ils se rejoignent s’ils se touchent (spacing 0) ou par-dessus un écart d’au plus la moitié de leur hauteur quand ils n’ont pas de bordure (variante outline espacée : chacun garde la sienne) ; lignes, colonnes, RTL. Sélection simple : une seule surface glisse sur 300/30 et garde sa vitesse si on en choisit un autre en route ; la première sélection la fait grandir, la vider la fait rétrécir. Survol : un surlignage glisse d’un élément à l’autre sur 500/40, apparaît et disparaît en 0,2s ease, au-dessus des surfaces sélectionnées, pas sur un élément déjà sélectionné ; cliqué, il reste le temps que la surface arrive dessous (pas de creux). Démo : survol plus clair que la sélection (bg-muted/50 contre bg-muted) ; contrôles spacing et orientation. Rien au montage ; mouvement réduit : fondus seulement (la sélection simple passe d’un élément à l’autre en fondu, le surlignage saute)',
+      },
+      {
+        demo: 'base-ui/pagination',
+        label: 'Pagination',
+        note: 'une seule surface, celle du lien courant (aria-current="page") : un span derrière les liens copie ses classes et ses attributs data (variante outline : bordure, fond, coins, ombre, mode sombre), et une feuille de style masque la bordure, le fond et l’ombre du lien lui-même ; elle glisse d’un lien à l’autre sur 300/30 (translate, et sa taille seulement quand les liens diffèrent), reprise en route avec sa vitesse ; elle part de là où elle était dessinée (des numéros de page qui se décalent dans le même rendu ne la font pas sauter) et ne bouge pas si le lien courant reste en place ; mesurée sans l’enfoncement du bouton (active:translate-y-px). Survolé, le lien courant garde son propre fond de survol ; au clavier, son anneau de focus. Démo : la pagination-demo de shadcn avec sa page en state (1 à 3, Previous et Next s’arrêtent aux bouts). Rien au montage (une navigation qui la remonte montre la nouvelle page d’un coup) ; mouvement réduit : fondu enchaîné en 0,2s ease-out, cubic-bezier(0.23, 1, 0.32, 1) (une copie s’efface sur l’ancien lien pendant que la surface apparaît sur le nouveau)',
       },
     ],
   },
