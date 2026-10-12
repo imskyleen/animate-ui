@@ -1,37 +1,67 @@
 ---
 title: Skills
-description: Teach your coding agent to animate components the Animate UI way.
+description: Give your AI assistant the knowledge to animate components the Animate UI way.
 ---
 
-Animate UI ships an [agent skill](https://github.com/imskyleen/animate-ui/tree/main/skills/animate-ui): instructions your coding agent loads when you ask it to animate something. With it, the agent knows when to run the CLI, when to swap an import, and how to animate a custom component with the same rules as every Animate UI primitive.
+Skills give AI assistants like Claude Code, Cursor or Codex project-aware knowledge of Animate UI. Once installed, your assistant knows when to run the CLI, when to swap an import, and how to animate a custom component with the same motion as every Animate UI primitive.
+
+For example, you can ask your AI assistant to:
+
+- _"Animate my shadcn dialog and dropdown menu."_
+- _"Make this notification panel slide in like an Animate UI sheet."_
+- _"Add a press animation to every button."_
+- _"Review the motion in `components/command-menu.tsx`."_
+- _"Slow every animation down a little."_
+- _"Migrate this project from Animate UI v1."_
+
+The skill reads your project (`components.json`, `package.json` and the component's imports) to find what the component is built on: shadcn/ui, Radix UI, Base UI, React Aria or plain markup.
 
 ## Install
 
-Copy the skill into your agent's skills directory. For Claude Code, in your project:
-
 ```npm
-npx degit imskyleen/animate-ui/skills/animate-ui .claude/skills/animate-ui
+npx skills add imskyleen/animate-ui
 ```
 
-Use `~/.claude/skills/animate-ui` instead to make it available in every project. Other agents that support skills read the same folder format: point them at `skills/animate-ui/SKILL.md`.
+This installs the Animate UI skill in your project. Your AI assistant loads it automatically when you ask it to animate something. Add `-g` to install it for every project. Learn more about skills at [skills.sh](https://skills.sh).
 
-## What it does
+## What's Included
 
-Ask your agent to animate a component, and the skill picks the right path:
+The skill gives your AI assistant the following knowledge:
 
-- **A shadcn/ui component**: it runs `@animate-ui/cli animate`, which swaps the component's primitives for Animate UI's.
-- **A component built on Radix UI, Base UI or React Aria**: it swaps the import to `@animate-ui/react` and removes the CSS animations Motion replaces.
-- **Anything else**: it decides whether the component should animate at all, then applies Animate UI's recipes (overlay, menu, modal, sheet, disclosure, indicator, press, swap) with the package's motion tokens (springs, curves, scales, blur), reduced-motion support and trigger-anchored origins.
-- **An Animate UI v1 project**: it runs `@animate-ui/cli migrate`.
+### The Right Path
 
-It also reviews existing motion against Animate UI's rules: quality rules (accessibility, keyboard, performance, interruptions) that must pass, and style defaults (springs, curves, scales, blur) it can tune on purpose.
+Every component takes the shortest path to its animation:
 
-## Example prompts
+- **shadcn/ui components**: runs `@animate-ui/cli animate`, which swaps their primitives for Animate UI's and removes the CSS animations Motion replaces.
+- **Built on Radix UI, Base UI or React Aria**: swaps the import to `@animate-ui/react`, keeping every part, prop and data attribute.
+- **Anything else**: animates it with Motion, following Animate UI's recipes and tokens.
+- **Animate UI v1 projects**: runs `@animate-ui/cli migrate`, then walks through the manual steps it lists.
 
-- "Animate my shadcn dialog and dropdown menu."
-- "Make this custom notification panel slide in like an Animate UI sheet."
-- "Review the motion in `components/command-menu.tsx`."
-- "Slow every animation down a little."
+### Motion Tokens
+
+The values every Animate UI primitive moves with: springs, tweens and curves by role, scales, blur, shifts, rotations and staggers, plus the `tempo` of `AnimateUIProvider` to change the pace of every animation at once.
+
+### Recipes
+
+How each kind of component animates: overlays, menus, modals, sheets and drawers, disclosures, moving indicators, presses and swaps, and the components a base library drives with CSS variables. Each recipe shows how to wire Motion into Radix UI, Base UI, React Aria or plain markup.
+
+### Motion Rules
+
+Quality rules that must pass (reduced motion, keyboard, hover-capable pointers, trigger-anchored origins, performance, interruptions) and style defaults it can tune on purpose (springs first, ease-out, press-only scales, blur to bridge a swap). It uses them to review the motion you already have, too.
+
+## How It Works
+
+1. **Gate**: the skill first decides whether the component should animate at all, from how often it's used. Writing no motion code is a valid outcome.
+2. **Path detection**: it finds what the component is built on, and picks the CLI, an import swap or a recipe.
+3. **Token use**: every value comes from `@animate-ui/react/utils/motion`, never a hand-typed spring, so your animations stay coherent and follow your `tempo`.
+4. **Verification**: it checks reduced motion, the keyboard path, interruptions and origins before it's done, then tells you the path, the recipe and any default it changed.
+
+## Learn More
+
+- [Installation](/docs/installation): set up `@animate-ui/react` and the CLI.
+- [Accessibility](/docs/accessibility): reduced motion in Animate UI.
+- [Source](https://github.com/imskyleen/animate-ui/tree/main/skills/animate-ui): the skill's instructions and references.
+- [skills.sh](https://skills.sh): discover and install skills for AI assistants.
 
 ## Credits
 
