@@ -1,7 +1,13 @@
 import type { ComponentProps, ReactNode } from 'react';
 
 /** Lucide's logo: two interlocking curves. */
-export function LucideLogo(props: ComponentProps<'svg'>) {
+export function LucideLogo({
+  monochrome = false,
+  ...props
+}: ComponentProps<'svg'> & {
+  /** In the text color only (Lucide's red stroke too). */
+  monochrome?: boolean;
+}) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -18,13 +24,15 @@ export function LucideLogo(props: ComponentProps<'svg'>) {
       />
       <path
         d="M10 12a4 4 0 0 0 4 4 4 4 0 0 0 4-4 8 8 0 0 0-8-8 8 8 0 0 0-8 8c0 3.58 1.57 6.8 4.06 9"
-        stroke="#F56565"
+        stroke={monochrome ? 'currentColor' : '#F56565'}
       />
     </svg>
   );
 }
 
-/** The logo shown before each icon library's name, by docs URL. */
+/** The logo shown before each icon library's name, by docs URL (monochrome). */
 export const ICON_LIBRARY_LOGOS: Record<string, ReactNode> = {
-  '/docs/icons/lucide-icons': <LucideLogo className="size-4 shrink-0" />,
+  '/docs/icons/lucide-icons': (
+    <LucideLogo monochrome className="size-4 shrink-0" />
+  ),
 };
