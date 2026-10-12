@@ -15,51 +15,71 @@ type Link01Props = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     path1: {
-      initial: {
-        x: 0,
-        y: 0,
-        pathLength: 1,
-        transition: { duration: 0.4, ease: 'easeInOut' },
-      },
+      initial: { x: 0, y: 0 },
       animate: {
-        x: -1,
-        y: 1,
-        pathLength: 0.85,
-        transition: { duration: 0.4, ease: 'easeInOut' },
+        x: [0, -1, 0],
+        y: [0, 1, 0],
+        transition: {
+          duration: 0.6,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
       },
     },
     path2: {
-      initial: {
-        x: 0,
-        y: 0,
-        pathLength: 1,
-        transition: { duration: 0.4, ease: 'easeInOut' },
-      },
+      initial: { x: 0, y: 0 },
       animate: {
-        x: 1,
-        y: -1,
-        pathLength: 0.85,
-        transition: { duration: 0.4, ease: 'easeInOut' },
+        x: [0, 1, 0],
+        y: [0, -1, 0],
+        transition: {
+          duration: 0.6,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
       },
     },
   } satisfies Record<string, Variants>,
   'default-loop': {
     path1: {
-      initial: { x: 0, y: 0, pathLength: 1 },
+      initial: { x: 0, y: 0 },
       animate: {
         x: [0, -1, 0],
         y: [0, 1, 0],
-        pathLength: [1, 0.85, 1],
-        transition: { duration: 0.8, ease: 'easeInOut' },
+        transition: {
+          duration: 0.8,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
       },
     },
     path2: {
-      initial: { x: 0, y: 0, pathLength: 1 },
+      initial: { x: 0, y: 0 },
       animate: {
         x: [0, 1, 0],
         y: [0, -1, 0],
-        pathLength: [1, 0.85, 1],
-        transition: { duration: 0.8, ease: 'easeInOut' },
+        transition: {
+          duration: 0.8,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  unlink: {
+    path1: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: -1,
+        y: 1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: 1,
+        y: -1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
       },
     },
   } satisfies Record<string, Variants>,

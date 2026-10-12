@@ -242,6 +242,53 @@ test.describe('hugeicons', () => {
     expect(bottom).toBeLessThanOrEqual(24.01);
   });
 
+  test('Link 01: the links unhook along the chain, whole (never shortened), within the grid, and snap back', async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    await tile(page, 'link-01').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    const svg = drawer.locator('svg').first();
+    await drawer.getByRole('button', { name: 'default', exact: true }).click();
+    const frames = await svg.evaluate(
+      (svg) =>
+        new Promise<{ x: number; y: number; dash: string }[][]>((resolve) => {
+          const out: { x: number; y: number; dash: string }[][] = [];
+          const start = performance.now();
+          const tick = () => {
+            out.push(
+              [...svg.querySelectorAll('path')].map((path) => {
+                const style = getComputedStyle(path);
+                const m = new DOMMatrix(style.transform);
+                return { x: m.e, y: m.f, dash: style.strokeDasharray };
+              }),
+            );
+            if (performance.now() - start < 900) requestAnimationFrame(tick);
+            else resolve(out);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    let apart = 0;
+    for (const [a, b] of frames) {
+      // Whole: no dash cutting a link short.
+      expect(a!.dash).toBe('none');
+      expect(b!.dash).toBe('none');
+      // Along the chain's axis (down-left, up-right), mirrored.
+      expect(Math.abs(a!.x + a!.y)).toBeLessThan(0.01);
+      expect(Math.abs(a!.x + b!.x)).toBeLessThan(0.01);
+      // Never past the grid's edge (1 each way), a hair of snap aside.
+      expect(Math.abs(a!.x)).toBeLessThanOrEqual(1.01);
+      apart = Math.max(apart, -a!.x);
+    }
+    expect(apart, 'unhooked').toBeGreaterThan(0.9);
+    const end = frames.at(-1)!;
+    expect(end.map(({ x, y }) => [x, y])).toEqual([
+      [0, 0],
+      [0, 0],
+    ]);
+  });
+
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,
   }) => {
