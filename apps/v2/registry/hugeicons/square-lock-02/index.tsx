@@ -37,8 +37,15 @@ const animations = {
     keyhole: {},
     body: {},
     shackle: {
-      initial: { y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
-      animate: { y: -1, transition: { duration: 0.3, ease: 'easeInOut' } },
+      initial: {
+        d: 'M7.5 9V6.5C7.5 4.01472 9.51471 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9',
+        opacity: 1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+      animate: {
+        d: 'M7.5 9V6.5C7.5 4.01472 9.51472 2 12 2C13.9593 2 15.8664 3.25221 16.5 5V5',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
     },
   } satisfies Record<string, Variants>,
 } as const;
@@ -76,7 +83,7 @@ function IconComponent({ size, ...props }: SquareLock02Props) {
           animate={controls}
         />
         <motion.path
-          d="M16.5 9V6.5C16.5 4.01472 14.4853 2 12 2C9.51471 2 7.49999 4.01472 7.49999 6.5V9"
+          d="M7.5 9V6.5C7.5 4.01472 9.51471 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9"
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.shackle}

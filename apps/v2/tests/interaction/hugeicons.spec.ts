@@ -464,6 +464,134 @@ test.describe('hugeicons', () => {
     }
   });
 
+  test('Gift: the lid and its bow lift off and the box opens below them, 4 apart (not 1), never past the grid', async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    const button = tile(page, 'gift');
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'default', exact: true }).click();
+    const run = await drawer
+      .locator('svg')
+      .first()
+      .evaluate(
+        (svg) =>
+          new Promise<{ gap: number; top: number; bottom: number }>(
+            (resolve) => {
+              const frame = svg.getBoundingClientRect();
+              const unit = frame.height / 24;
+              // In the icon's grid, its stroke (2) included.
+              const box = (el: Element) => {
+                const r = el.getBoundingClientRect();
+                return {
+                  top: (r.top - frame.top) / unit - 1,
+                  bottom: (r.bottom - frame.top) / unit + 1,
+                };
+              };
+              const paths = [...svg.querySelectorAll('path')];
+              const [body, , lid] = paths;
+              const lidGroup = svg.querySelector('g')!;
+              let top = Infinity;
+              let bottom = -Infinity;
+              const start = performance.now();
+              const tick = () => {
+                top = Math.min(top, box(lidGroup).top);
+                bottom = Math.max(bottom, box(body!).bottom);
+                if (performance.now() - start < 800)
+                  requestAnimationFrame(tick);
+                else
+                  resolve({
+                    // Between the lid's bottom edge and the box's top one
+                    // (their strokes' centers).
+                    gap: box(body!).top + 1 - (box(lid!).bottom - 1),
+                    top,
+                    bottom,
+                  });
+              };
+              requestAnimationFrame(tick);
+            },
+          ),
+      );
+    expect(run.gap).toBeGreaterThan(3.9);
+    expect(run.top).toBeGreaterThanOrEqual(-0.05);
+    expect(run.bottom).toBeLessThanOrEqual(24.05);
+  });
+
+  test('Gift open: it opens on one side only, the lid hinged on its left corner, never past the grid', async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    const button = tile(page, 'gift');
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'open', exact: true }).click();
+    await page.waitForTimeout(700);
+    const run = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        const root = (svg as SVGSVGElement).getScreenCTM()!.inverse();
+        const at = (el: SVGGraphicsElement, x: number, y: number) =>
+          new DOMPoint(x, y).matrixTransform(root.multiply(el.getScreenCTM()!));
+        const [box, , lid] = [
+          ...svg.querySelectorAll('path'),
+        ] as SVGPathElement[];
+        // The box's top corners: its path's ends.
+        const boxLeft = box!
+          .getPointAtLength(0)
+          .matrixTransform(root.multiply(box!.getScreenCTM()!));
+        const boxRight = box!
+          .getPointAtLength(box!.getTotalLength())
+          .matrixTransform(root.multiply(box!.getScreenCTM()!));
+        // The lid and bow's highest point drawn (their stroke, 1, above).
+        let top = Infinity;
+        for (const path of svg.querySelectorAll(
+          'g path',
+        ) as NodeListOf<SVGPathElement>) {
+          const m = root.multiply(path.getScreenCTM()!);
+          for (let l = 0; l <= path.getTotalLength(); l += 0.05)
+            top = Math.min(
+              top,
+              path.getPointAtLength(l).matrixTransform(m).y - 1,
+            );
+        }
+        return {
+          left: boxLeft.y - at(lid!, 3, 11).y,
+          right: boxRight.y - at(lid!, 21, 11).y,
+          top,
+        };
+      });
+    expect(run.left, 'the hinge, on the box').toBeLessThan(0.6);
+    expect(run.right, 'opened on the right').toBeGreaterThan(3);
+    expect(run.top).toBeGreaterThanOrEqual(-0.05);
+  });
+
+  test("Square Lock 02 unlock: the shackle's right leg comes out of the body, open (Hugeicons' unlocked lock)", async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    const button = tile(page, 'square-lock-02');
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'unlock', exact: true }).click();
+    await page.waitForTimeout(600);
+    const end = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        const shackle = [...svg.querySelectorAll('path')].at(-1)!;
+        const p = shackle.getPointAtLength(shackle.getTotalLength());
+        return { x: p.x, y: p.y };
+      });
+    // Out of the body (its top at 9), as Hugeicons draws it unlocked.
+    expect(end.x).toBeCloseTo(16.5, 1);
+    expect(end.y).toBeCloseTo(5, 1);
+  });
+
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,
   }) => {

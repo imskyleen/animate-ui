@@ -14,8 +14,30 @@ type GiftProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
-    box: {},
-    ribbon: {},
+    box: {
+      initial: {
+        y: 0,
+        d: 'M4 11V15C4 18.2998 4 19.9497 5.02513 20.9749C6.05025 22 7.70017 22 11 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9497 20 18.2998 20 15V11',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+      animate: {
+        y: 1,
+        d: 'M4 13V15C4 18.2998 4 19.9497 5.02513 20.9749C6.05025 22 7.70017 22 11 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9497 20 18.2998 20 15V13',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    ribbon: {
+      initial: {
+        y: 0,
+        d: 'M12 11L12 22',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+      animate: {
+        y: 1,
+        d: 'M12 13L12 22',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
     group: {
       initial: {
         y: 0,
@@ -24,8 +46,52 @@ const animations = {
       },
       animate: {
         y: -1,
-        rotate: [0, -4, 4, 0],
-        transition: { duration: 0.6, ease: 'easeInOut' },
+        rotate: [0, -3, 3, 0],
+        transition: {
+          duration: 0.6,
+          ease: 'easeInOut',
+          // It wobbles on the way, done before the lid's at the grid's top.
+          rotate: {
+            duration: 0.33,
+            ease: 'easeInOut',
+            times: [0, 0.3, 0.65, 1],
+          },
+        },
+      },
+    },
+    lid: {},
+    bow1: {},
+    bow2: {},
+  } satisfies Record<string, Variants>,
+  open: {
+    box: {
+      initial: {
+        y: 0,
+        d: 'M4 11V15C4 18.2998 4 19.9497 5.02513 20.9749C6.05025 22 7.70017 22 11 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9497 20 18.2998 20 15V11',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+      animate: {
+        y: 1,
+        d: 'M4 11V15C4 18.2998 4 19.9497 5.02513 20.9749C6.05025 22 7.70017 22 11 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9497 20 18.2998 20 15V13',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    ribbon: {
+      initial: { y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: { y: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
+    },
+    group: {
+      initial: {
+        y: 0,
+        rotate: 0,
+        transformOrigin: '0% 100%',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+      animate: {
+        y: 1,
+        rotate: -7,
+        transformOrigin: '0% 100%',
+        transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
     lid: {},
