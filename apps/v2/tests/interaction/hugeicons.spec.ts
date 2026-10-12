@@ -4,6 +4,8 @@ import path from 'node:path';
 import * as Hugeicons from '@hugeicons/core-free-icons';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { playWaves, wavesOf } from './icon-waves';
+
 // Hugeicons' animated icons (registry/hugeicons): Hugeicons' free set, drawn
 // at a stroke of 2, in the same gallery as Lucide's, installed as
 // `@animate-ui/hugeicons-<name>` into components/animate-ui/icons/hugeicons.
@@ -591,6 +593,32 @@ test.describe('hugeicons', () => {
     expect(end.x).toBeCloseTo(16.5, 1);
     expect(end.y).toBeCloseTo(5, 1);
   });
+
+  for (const [title, count] of [
+    ['Wifi 01', 4],
+    ['Volume High', 2],
+  ] as const)
+    test(`${title} blink: Lucide's, its waves gone and back one after the other`, async ({
+      page,
+    }) => {
+      const dips = await playWaves(page, URL, title, 'blink');
+      const waves = wavesOf(dips, 0.05);
+      expect(waves).toHaveLength(count);
+      for (let i = 1; i < waves.length; i++)
+        expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(100);
+    });
+
+  for (const [title, count] of [
+    ['Wifi 01', 4],
+    ['Volume High', 2],
+  ] as const)
+    test(`${title} by default: its waves pulse one after the other, never gone`, async ({
+      page,
+    }) => {
+      const dips = await playWaves(page, URL, title, 'default');
+      for (const dip of dips) expect(dip.min).toBeGreaterThan(0.2);
+      expect(wavesOf(dips)).toHaveLength(count);
+    });
 
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,

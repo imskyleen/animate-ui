@@ -1,5 +1,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { playWaves, wavesOf } from './icon-waves';
+
 // The icon core (@animate-ui/react/icons) on the Bell icon
 // (tests/fixtures/icons.tsx), whose group swings through
 // [0, 20, -10, 10, -5, 3, 0]° in 0.9s. Its triggers work as in v1: hover and
@@ -750,4 +752,40 @@ test.describe('icons gallery', () => {
       await expect(page.locator('button[title="Bell"]')).toBeFocused();
     });
   });
+});
+
+// Lucide's wave icons also pulse, as Hugeicons' wifi and volume do.
+test.describe('lucide waves pulse', () => {
+  for (const title of [
+    'Wifi',
+    'Wifi High',
+    'Wifi Low',
+    'Wifi Zero',
+    'Volume 1',
+    'Volume 2',
+    'Cast',
+    'Nfc',
+    'Radio',
+    'Radio Tower',
+    'Router',
+    'Phone Call',
+    'House Wifi',
+  ])
+    test(`${title}: pulse dims its waves one after the other, never gone`, async ({
+      page,
+    }) => {
+      const dips = await playWaves(
+        page,
+        '/docs/icons/lucide-icons',
+        title,
+        'pulse',
+      );
+      for (const dip of dips)
+        expect(dip.min, 'never gone').toBeGreaterThan(0.2);
+      const waves = wavesOf(dips);
+      expect(waves.length, 'its waves dim').toBeGreaterThanOrEqual(1);
+      // One after the other.
+      for (let i = 1; i < waves.length; i++)
+        expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(60);
+    });
 });

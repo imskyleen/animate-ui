@@ -48,6 +48,29 @@ const animations = {
 
     return animation;
   })() satisfies Record<string, Variants>,
+  // The waves pulse one after the other, never gone (as Hugeicons').
+  pulse: (() => {
+    const animation: Record<string, Variants> = {
+      path4: {},
+    };
+
+    for (let i = 1; i <= 3; i++) {
+      animation[`path${i}`] = {
+        initial: { opacity: 1, scale: 1 },
+        animate: {
+          opacity: [1, 0.25, 1],
+          scale: [1, 0.85, 1],
+          transition: {
+            duration: 0.5,
+            ease: 'easeInOut',
+            delay: 0.15 * (i - 1),
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: CastProps) {

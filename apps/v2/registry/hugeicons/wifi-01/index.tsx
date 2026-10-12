@@ -47,6 +47,106 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  blink: {
+    circle: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+        },
+      },
+    },
+    arc1: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.2,
+          },
+        },
+      },
+    },
+    arc2: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.4,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.4,
+          },
+        },
+      },
+    },
+    arc3: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.6,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.6,
+          },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Wifi01Props) {

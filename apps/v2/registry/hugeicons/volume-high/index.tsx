@@ -32,6 +32,57 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  blink: {
+    path1: {},
+    wave1: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+        },
+      },
+    },
+    wave2: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.2,
+          },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: VolumeHighProps) {
