@@ -295,6 +295,9 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   const lucide = section('Icons').getByRole('link', { name: 'Lucide Icons' });
   await expect(lucide).toHaveAttribute('href', '/docs/icons/lucide-icons');
   await expect(lucide.locator('svg')).toBeVisible();
+  const hugeicons = section('Icons').getByRole('link', { name: 'Hugeicons' });
+  await expect(hugeicons).toHaveAttribute('href', '/docs/icons/hugeicons');
+  await expect(hugeicons.locator('svg')).toBeVisible();
   // Animate UI's own section shows the Animate UI logo.
   await expect(
     page.locator('#nd-sidebar p', { hasText: /^Animate UI$/ }).locator('svg'),

@@ -23,7 +23,7 @@ import { useTreeContext } from 'fumadocs-ui/contexts/tree';
 import type { SidebarProps } from 'fumadocs-ui/layouts/docs/slots/sidebar';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import { usePathname } from 'next/navigation';
-import { useMemo, type ReactNode } from 'react';
+import { Fragment, useMemo, type ReactNode } from 'react';
 
 import { AnimateUILogo, LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { ICON_LIBRARY_LOGOS } from '@/lib/icon-libraries';
@@ -201,9 +201,12 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
               ? {
                   ...link,
                   name: (
+                    // Keyed: a page's badge comes as the server rendered it.
                     <span className="flex items-center gap-2">
-                      {ICON_LIBRARY_LOGOS[link.url]}
-                      {link.name}
+                      <Fragment key="logo">
+                        {ICON_LIBRARY_LOGOS[link.url]}
+                      </Fragment>
+                      <Fragment key="name">{link.name}</Fragment>
                     </span>
                   ),
                 }

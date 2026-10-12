@@ -22,6 +22,8 @@ import {
   useReducedMotion,
 } from 'motion/react';
 import {
+  createContext,
+  use,
   useCallback,
   useDeferredValue,
   useEffect,
@@ -32,12 +34,9 @@ import {
   type ComponentType,
 } from 'react';
 
-import {
-  CATEGORIES,
-  ICONS,
-  iconComponent,
-  type IconEntry,
-} from '@/registry/icons';
+import * as hugeicons from '@/registry/hugeicons';
+import * as lucide from '@/registry/icons';
+import type { IconEntry } from '@/registry/icons';
 import { Check } from '@/registry/icons/check';
 
 import { ClientCommand } from './client-command';
@@ -49,47 +48,107 @@ type Loaded = {
   animations: string[];
 };
 
+/** An icon library's gallery: its icons, tags, registry items and files. */
+type IconLibrary = {
+  icons: IconEntry[];
+  /** Category titles, by id. */
+  categoryTitles: Record<string, string>;
+  /**
+   * The categories offered as tags: the ones easiest to browse, not every
+   * category.
+   */
+  tags: { id: string; title: string }[];
+  iconComponent: typeof lucide.iconComponent;
+  /** Its registry items' prefix (`@animate-ui/<prefix>-<name>`). */
+  prefix: string;
+  /** Where the CLI adds its icons. */
+  importPath: string;
+  /** Icons added in the last 30 days (v1's New filter). */
+  newIcons: Set<string>;
+};
+
+/** Icons added in the last 30 days (v1's New filter). */
+function newIcons(icons: IconEntry[]) {
+  const since = new Date();
+  since.setDate(since.getDate() - 30);
+  return new Set(
+    icons
+      .filter((icon) => icon.added && new Date(icon.added) >= since)
+      .map((icon) => icon.name),
+  );
+}
+
+const ICON_LIBRARIES = {
+  lucide: {
+    icons: lucide.ICONS,
+    categoryTitles: Object.fromEntries(
+      lucide.CATEGORIES.map((category) => [category.id, category.title]),
+    ),
+    // Not every Lucide category (38 tags filled five rows).
+    tags: [
+      { id: 'arrows', title: 'Arrows' },
+      { id: 'charts', title: 'Charts' },
+      { id: 'weather', title: 'Weather' },
+      { id: 'time', title: 'Time' },
+      { id: 'devices', title: 'Devices' },
+      { id: 'connectivity', title: 'Connectivity' },
+      { id: 'multimedia', title: 'Multimedia' },
+      { id: 'notifications', title: 'Notifications' },
+      { id: 'development', title: 'Development' },
+    ],
+    iconComponent: lucide.iconComponent,
+    prefix: 'icons',
+    importPath: '@/components/animate-ui/icons',
+    newIcons: newIcons(lucide.ICONS),
+  },
+  hugeicons: {
+    icons: hugeicons.ICONS,
+    categoryTitles: {},
+    tags: [],
+    iconComponent: hugeicons.iconComponent,
+    prefix: 'hugeicons',
+    importPath: '@/components/animate-ui/icons/hugeicons',
+    newIcons: newIcons(hugeicons.ICONS),
+  },
+} satisfies Record<string, IconLibrary>;
+
+type IconLibraryId = keyof typeof ICON_LIBRARIES;
+
+const LibraryContext = createContext<IconLibrary>(ICON_LIBRARIES.lucide);
+
+// By library: Lucide and Hugeicons share names (star, user, sparkles).
 const cache = new Map<string, Promise<Loaded>>();
 
-function loadIcon(entry: IconEntry) {
-  let promise = cache.get(entry.name);
+function loadIcon(library: IconLibrary, entry: IconEntry) {
+  const key = `${library.prefix}-${entry.name}`;
+  let promise = cache.get(key);
   if (!promise) {
     promise = entry.load().then((mod) => ({
-      Icon: iconComponent(mod, entry.name)!,
+      Icon: library.iconComponent(mod, entry.name)!,
       animations: [
         ...Object.keys(mod.animations),
         ...Object.keys(staticAnimations),
       ],
     }));
-    cache.set(entry.name, promise);
+    cache.set(key, promise);
   }
   return promise;
 }
 
 /** Loads the icon module once it scrolls into view. */
 function useIcon(entry: IconEntry, enabled = true) {
+  const library = use(LibraryContext);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   useEffect(() => {
     if (!enabled) return;
     let active = true;
-    void loadIcon(entry).then((icon) => active && setLoaded(icon));
+    void loadIcon(library, entry).then((icon) => active && setLoaded(icon));
     return () => {
       active = false;
     };
-  }, [entry, enabled]);
+  }, [library, entry, enabled]);
   return loaded;
 }
-
-/** Icons added in the last 30 days (v1's New filter). */
-const NEW_ICONS = (() => {
-  const since = new Date();
-  since.setDate(since.getDate() - 30);
-  return new Set(
-    ICONS.filter((icon) => icon.added && new Date(icon.added) >= since).map(
-      (icon) => icon.name,
-    ),
-  );
-})();
 
 function IconTile({
   entry,
@@ -100,7 +159,7 @@ function IconTile({
   selected: boolean;
   onSelect: () => void;
 }) {
-  const isNew = NEW_ICONS.has(entry.name);
+  const isNew = use(LibraryContext).newIcons.has(entry.name);
   const ref = useRef<HTMLButtonElement>(null);
   const inView = useInView(ref, { once: true, margin: '200px' });
   const icon = useIcon(entry, inView);
@@ -145,18 +204,13 @@ function IconTile({
   );
 }
 
-/** Category titles, by id. */
-const CATEGORY_TITLES = Object.fromEntries(
-  CATEGORIES.map((category) => [category.id, category.title]),
-);
-
 /** An icon's registry item, fetched once (its source, for Manual). */
 const items = new Map<string, Promise<{ content: string; target: string }>>();
 
 function loadItem(name: string) {
   let item = items.get(name);
   if (!item) {
-    item = fetch(`/r/icons-${name}.json`)
+    item = fetch(`/r/${name}.json`)
       .then((response) => response.json())
       .then(
         (json: { files: { content: string; target: string }[] }) =>
@@ -173,16 +227,17 @@ function loadItem(name: string) {
  * remembered.
  */
 function IconInstallation({ entry }: { entry: IconEntry }) {
+  const item = `${use(LibraryContext).prefix}-${entry.name}`;
   const [file, setFile] = useState<{ content: string; target: string } | null>(
     null,
   );
   useEffect(() => {
     let active = true;
-    void loadItem(entry.name).then((item) => active && setFile(item));
+    void loadItem(item).then((loaded) => active && setFile(loaded));
     return () => {
       active = false;
     };
-  }, [entry.name]);
+  }, [item]);
 
   return (
     <InstallTabs
@@ -195,9 +250,7 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
           content: (
             <ClientCommand
               className="my-0"
-              command={(m) =>
-                `${m.dlx} shadcn@latest add @animate-ui/icons-${entry.name}`
-              }
+              command={(m) => `${m.dlx} shadcn@latest add @animate-ui/${item}`}
             />
           ),
         },
@@ -242,6 +295,7 @@ function IconDetail({
   loop: boolean;
   onLoopChange: (loop: boolean) => void;
 }) {
+  const library = use(LibraryContext);
   const icon = useIcon(entry);
   const [animation, setAnimation] = useState('default');
   const [run, setRun] = useState(0);
@@ -249,7 +303,7 @@ function IconDetail({
 
   return (
     <div className="grid gap-4 p-4 sm:grid-cols-[180px_1fr] sm:gap-6">
-      {/* The icon on its 24px grid, as in Lucide's. */}
+      {/* The icon on its 24px grid, as on Lucide's and Hugeicons' sites. */}
       <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[7.5px_7.5px] max-sm:hidden">
         {icon && (
           <icon.Icon
@@ -303,17 +357,19 @@ function IconDetail({
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5">
-          {entry.categories.map((id) => (
-            <span
-              key={id}
-              data-slot="category"
-              className="rounded-md bg-accent px-2 py-1 text-xs"
-            >
-              {CATEGORY_TITLES[id]}
-            </span>
-          ))}
-        </div>
+        {entry.categories.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {entry.categories.map((id) => (
+              <span
+                key={id}
+                data-slot="category"
+                className="rounded-md bg-accent px-2 py-1 text-xs"
+              >
+                {library.categoryTitles[id]}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-1.5">
           {icon?.animations.map((name) => (
@@ -340,7 +396,7 @@ function IconDetail({
         <DynamicCodeBlock
           lang="tsx"
           codeblock={{ className: 'my-0' }}
-          code={`import { ${component} } from '@/components/animate-ui/icons/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
+          code={`import { ${component} } from '${library.importPath}/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
         />
       </div>
     </div>
@@ -506,22 +562,6 @@ function IconDrawer({
   );
 }
 
-/**
- * The categories offered as tags: the ones easiest to browse, not every
- * Lucide category (38 tags filled five rows).
- */
-const TAGS: { id: string; title: string }[] = [
-  { id: 'arrows', title: 'Arrows' },
-  { id: 'charts', title: 'Charts' },
-  { id: 'weather', title: 'Weather' },
-  { id: 'time', title: 'Time' },
-  { id: 'devices', title: 'Devices' },
-  { id: 'connectivity', title: 'Connectivity' },
-  { id: 'multimedia', title: 'Multimedia' },
-  { id: 'notifications', title: 'Notifications' },
-  { id: 'development', title: 'Development' },
-];
-
 /** A filter chip: the active one fills in and checks itself, like v1's. */
 function FilterChip({
   active,
@@ -552,7 +592,14 @@ function FilterChip({
   );
 }
 
-export function IconsGallery() {
+/** An icon library's icons, to search, filter, preview and install. */
+export function IconsGallery({
+  library: id = 'lucide',
+}: {
+  library?: IconLibraryId;
+}) {
+  const library: IconLibrary = ICON_LIBRARIES[id];
+  const { icons: allIcons, newIcons: newOnes, tags } = library;
   const [query, setQuery] = useState('');
   const deferred = useDeferredValue(query);
   const [selected, setSelected] = useState<IconEntry | null>(null);
@@ -575,81 +622,96 @@ export function IconsGallery() {
 
   const icons = useMemo(() => {
     const q = deferred.trim().toLowerCase();
-    return ICONS.filter(
+    return allIcons.filter(
       (icon) =>
         (filter === 'all' ||
           (filter === 'new'
-            ? NEW_ICONS.has(icon.name)
+            ? newOnes.has(icon.name)
             : icon.categories.includes(filter))) &&
         (!q ||
           icon.name.includes(q) ||
           icon.title.toLowerCase().includes(q) ||
           icon.keywords.some((keyword) => keyword.includes(q))),
     );
-  }, [deferred, filter]);
+  }, [allIcons, newOnes, deferred, filter]);
+
+  // Searched or filtered, the icons found load at once (not as each tile
+  // scrolls into view): the grid's first rows show them as it changes.
+  useEffect(() => {
+    if (!deferred.trim() && filter === 'all') return;
+    for (const entry of icons.slice(0, 60)) void loadIcon(library, entry);
+  }, [icons, library, deferred, filter]);
 
   return (
-    <div ref={galleryRef} className="not-prose my-6 text-foreground">
-      <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
-        <HugeiconsIcon
-          icon={Search01Icon}
-          strokeWidth={2}
-          size={16}
-          className="text-muted-foreground"
-        />
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={`Search ${ICONS.length} icons…`}
-          className="h-full flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
-        />
-        <span className="text-xs text-muted-foreground tabular-nums">
-          {icons.length}
-        </span>
-      </label>
+    <LibraryContext value={library}>
+      <div ref={galleryRef} className="not-prose my-6 text-foreground">
+        <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
+          <HugeiconsIcon
+            icon={Search01Icon}
+            strokeWidth={2}
+            size={16}
+            className="text-muted-foreground"
+          />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={`Search ${allIcons.length} icons…`}
+            className="h-full flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+          />
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {icons.length}
+          </span>
+        </label>
 
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        <FilterChip active={filter === 'all'} onClick={() => setFilter('all')}>
-          All
-        </FilterChip>
-        {/* Only while some icons are new. */}
-        {NEW_ICONS.size > 0 && (
-          <FilterChip
-            active={filter === 'new'}
-            onClick={() => setFilter('new')}
-          >
-            New
-          </FilterChip>
+        {/* Only with something to filter by (a tag, or some new icons). */}
+        {(tags.length > 0 || newOnes.size > 0) && (
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            <FilterChip
+              active={filter === 'all'}
+              onClick={() => setFilter('all')}
+            >
+              All
+            </FilterChip>
+            {/* Only while some icons are new. */}
+            {newOnes.size > 0 && (
+              <FilterChip
+                active={filter === 'new'}
+                onClick={() => setFilter('new')}
+              >
+                New
+              </FilterChip>
+            )}
+            {tags.map((category) => (
+              <FilterChip
+                key={category.id}
+                active={filter === category.id}
+                onClick={() => setFilter(category.id)}
+              >
+                {category.title}
+              </FilterChip>
+            ))}
+          </div>
         )}
-        {TAGS.map((category) => (
-          <FilterChip
-            key={category.id}
-            active={filter === category.id}
-            onClick={() => setFilter(category.id)}
-          >
-            {category.title}
-          </FilterChip>
-        ))}
+
+        {icons.length === 0 ? (
+          <p className="py-10 text-center text-sm text-muted-foreground">
+            {query ? <>No icon matches “{query}”.</> : 'No icon here yet.'}
+          </p>
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2">
+            {icons.map((icon) => (
+              <IconTile
+                key={icon.name}
+                entry={icon}
+                selected={selected?.name === icon.name}
+                onSelect={() => setSelected(icon)}
+              />
+            ))}
+          </div>
+        )}
+
+        <IconDrawer entry={selected} onClose={closeDrawer} />
       </div>
-
-      {icons.length === 0 ? (
-        <p className="py-10 text-center text-sm text-muted-foreground">
-          {query ? <>No icon matches “{query}”.</> : 'No icon here yet.'}
-        </p>
-      ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2">
-          {icons.map((icon) => (
-            <IconTile
-              key={icon.name}
-              entry={icon}
-              selected={selected?.name === icon.name}
-              onSelect={() => setSelected(icon)}
-            />
-          ))}
-        </div>
-      )}
-
-      <IconDrawer entry={selected} onClose={closeDrawer} />
-    </div>
+    </LibraryContext>
   );
 }

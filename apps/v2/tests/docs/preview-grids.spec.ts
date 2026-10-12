@@ -103,26 +103,32 @@ test('the Backgrounds page is one card per background', async ({ page }) => {
   );
 });
 
-test('the Icons page shows its libraries, their icons playing when hovered', async ({
-  page,
-}) => {
-  await page.goto('/docs/icons', { waitUntil: 'networkidle' });
-  const card = page.locator('[data-slot="preview-card"]', {
-    hasText: 'Lucide Icons',
+for (const [title, href] of [
+  ['Lucide Icons', '/docs/icons/lucide-icons'],
+  ['Hugeicons', '/docs/icons/hugeicons'],
+])
+  test(`the Icons page shows its libraries, their icons playing when hovered: ${title}`, async ({
+    page,
+  }) => {
+    await page.goto('/docs/icons', { waitUntil: 'networkidle' });
+    await expect(page.locator('[data-slot="preview-card"]')).toHaveCount(2);
+    const card = page.locator('[data-slot="preview-card"]', {
+      hasText: title,
+    });
+    await expect(card).toHaveAttribute('href', href);
+    await expect(card.locator('svg')).not.toHaveCount(0);
+    const moving = () =>
+      card.evaluate(
+        (el) =>
+          [...el.querySelectorAll('svg, svg *')].filter((node) => {
+            const style = getComputedStyle(node);
+            return style.transform !== 'none' || Number(style.opacity) < 1;
+          }).length,
+      );
+    expect(await moving()).toBe(0);
+    await card.hover();
+    await expect.poll(moving).toBeGreaterThan(0);
   });
-  await expect(card).toHaveAttribute('href', '/docs/icons/lucide-icons');
-  const moving = () =>
-    card.evaluate(
-      (el) =>
-        [...el.querySelectorAll('svg, svg *')].filter((node) => {
-          const style = getComputedStyle(node);
-          return style.transform !== 'none' || Number(style.opacity) < 1;
-        }).length,
-    );
-  expect(await moving()).toBe(0);
-  await card.hover();
-  await expect.poll(moving).toBeGreaterThan(0);
-});
 
 test("cards carry their page's badge, like the sidebar", async ({ page }) => {
   await page.goto('/docs/primitives', { waitUntil: 'networkidle' });

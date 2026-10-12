@@ -1,4 +1,12 @@
-import { LucideLogo } from '@/lib/icon-libraries';
+import { HugeiconsLogo, LucideLogo } from '@/lib/icon-libraries';
+import { Delete02 } from '@/registry/hugeicons/delete-02';
+import { Favourite } from '@/registry/hugeicons/favourite';
+import { Mail01 } from '@/registry/hugeicons/mail-01';
+import { Notification01 } from '@/registry/hugeicons/notification-01';
+import { Sent } from '@/registry/hugeicons/sent';
+import { Settings02 } from '@/registry/hugeicons/settings-02';
+import { Sparkles as HugeSparkles } from '@/registry/hugeicons/sparkles';
+import { Sun03 } from '@/registry/hugeicons/sun-03';
 import { LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { pageBadge } from '@/lib/page-badges';
 import {
@@ -134,6 +142,21 @@ export function IconLibrariesGrid() {
           CheckCheck,
           MessageSquare,
           RefreshCw,
+        ]}
+      />
+      <IconLibraryCard
+        href="/docs/icons/hugeicons"
+        title="Hugeicons"
+        logo={<HugeiconsLogo className="size-4 text-muted-foreground" />}
+        icons={[
+          Notification01,
+          HugeSparkles,
+          Settings02,
+          Favourite,
+          Sent,
+          Sun03,
+          Mail01,
+          Delete02,
         ]}
       />
     </PreviewGrid>
