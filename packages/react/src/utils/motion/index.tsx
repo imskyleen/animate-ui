@@ -358,6 +358,11 @@ const transition = {
 const scale = {
   /** Anything pressed. Nothing scales on hover. */
   press: 0.97,
+  /**
+   * A choice in a questionnaire pressed: a whole row, wider than a button,
+   * so a lighter press.
+   */
+  choice: 0.985,
   /** Where anchored popups grow from: the smaller, the farther. */
   tooltip: 0.7,
   popover: 0.8,
@@ -370,6 +375,12 @@ const scale = {
   toast: 0.96,
   /** Where a fill grows from, from its center (`transition.fill`). */
   fill: 0.7,
+  /**
+   * Where a button appearing or leaving in place grows from and shrinks to
+   * (a questionnaire's Next giving way to its Submit, its Previous showing
+   * after the first step), with `blur.icon` on `transition.swap`.
+   */
+  action: 0.9,
 } as const;
 
 /** Blurs bridging two states. */
@@ -421,6 +432,14 @@ const shift = {
    * vertical tabs, mirrored right to left).
    */
   tabs: 12,
+  /**
+   * How far a step of a flow slides as it changes (a questionnaire's
+   * question), by its order: going on, the leaving step slides toward the
+   * start as it fades out and the next one comes in from the end; the
+   * reverse going back (mirrored right to left). Twice the tab panels':
+   * a step is the whole content, the slide is the change.
+   */
+  step: 24,
   /**
    * How far Animate UI's Tooltip's content slides as it changes for the next
    * trigger's while the popup glides there: the leaving label away from where

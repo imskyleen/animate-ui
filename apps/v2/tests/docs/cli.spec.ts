@@ -70,4 +70,10 @@ test('the supported primitives table lists every primitive the CLI animates', as
     ];
     await expect(aria).toContainText(new RegExp(`\\b(${names.join('|')})\\b`));
   }
+  // Animate UI's own drop-ins (Input OTP, Questionnaire), under Others.
+  const others = row('Others');
+  for (const file of readdirSync(join(PRIMITIVES, 'animate-ui')))
+    await expect(others).toContainText(
+      new RegExp(`\\b${title(file.replace(/\.ts$/, ''))}\\b`, 'i'),
+    );
 });

@@ -28,10 +28,17 @@ const toProject = (source: string) =>
 
 const IGNORED = new Set(['react', 'react-dom', 'next']);
 
+// @animate-ui/react's optional peers, by the module (`primitives/<name>`)
+// that needs them: the primitive libraries, the packages Animate UI's own
+// drop-ins are built on, and its own primitives' dependencies.
 const PEERS: Record<string, string> = {
   'radix-ui': 'radix-ui',
   'base-ui': '@base-ui/react',
   'react-aria': 'react-aria-components',
+  'input-otp': 'input-otp',
+  questionnaire: '@shadcn/react',
+  tooltip: '@floating-ui/react',
+  'code-block': 'shiki',
 };
 
 function resolveLocal(specifier: string) {
@@ -70,13 +77,12 @@ for (const library of readdirSync(demosDir)) {
         } else if (!specifier!.startsWith('.')) {
           const pkg = specifier!.match(/^(@[^/]+\/[^/]+|[^/]+)/)![1]!;
           if (!IGNORED.has(pkg)) dependencies.add(pkg);
-          // @animate-ui/react's peers: Motion, and the primitive library.
+          // @animate-ui/react's peers: Motion, and the module's own.
           if (pkg === '@animate-ui/react') {
             dependencies.add('motion');
-            const library = specifier!.match(
-              /primitives\/(radix-ui|base-ui|react-aria)/,
-            )?.[1];
-            if (library) dependencies.add(PEERS[library]!);
+            const library = specifier!.match(/primitives\/([\w-]+)/)?.[1];
+            if (library && Object.hasOwn(PEERS, library))
+              dependencies.add(PEERS[library]!);
           }
         }
       }

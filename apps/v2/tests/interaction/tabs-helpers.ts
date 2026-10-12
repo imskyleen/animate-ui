@@ -1110,6 +1110,74 @@ export function describeTabsHeights(library: string) {
       expect(Math.max(...steps)).toBeLessThan(12);
     });
 
+    test("under an ancestor's scale: the height glides from the old panel's own height to the new one's (laid out, unrounded), not as drawn scaled", async ({
+      page,
+    }) => {
+      // A panel's height is read as drawn, unless an ancestor scales it:
+      // then as laid out. Exact either way: a rounded offsetHeight was up to
+      // half a pixel off (the old panel is 40.37px tall), and the drawn
+      // height under the scale a tenth off.
+      const section = page.locator(scope);
+      const before = await section
+        .locator(`${PANEL}:not([hidden])`)
+        .first()
+        .evaluate((el: HTMLElement) => {
+          el.style.height = '40.37px';
+          el.closest<HTMLElement>('[data-testid]')!.style.scale = '0.9';
+          return {
+            layout: parseFloat(getComputedStyle(el).height),
+            drawn: el.getBoundingClientRect().height,
+          };
+        });
+      expect(before.layout % 1, 'a fractional height').not.toBe(0);
+      expect(before.drawn, 'drawn scaled').toBeCloseTo(before.layout * 0.9, 2);
+      // The new panel's glide, as it starts.
+      const glide = page.evaluate(
+        ({ scope, panel }) =>
+          new Promise<string[]>((resolve) => {
+            const read = () => {
+              const tall = [
+                ...document.querySelector(scope)!.querySelectorAll(panel),
+              ].find((el) => el.textContent?.trim().startsWith('Tall'));
+              const animation = tall
+                ?.getAnimations()
+                .find((a) =>
+                  (a.effect as KeyframeEffect)
+                    .getKeyframes()
+                    .some((k) => k.minHeight),
+                );
+              if (animation)
+                resolve(
+                  (animation.effect as KeyframeEffect)
+                    .getKeyframes()
+                    .map((k) => String(k.minHeight)),
+                );
+              else requestAnimationFrame(read);
+            };
+            read();
+          }),
+        { scope, panel: ANY_PANEL },
+      );
+      await section.getByRole('tab', { name: 'Tall', exact: true }).click();
+      const [from, to] = await glide;
+      const tall = section.locator(`${PANEL}:not([hidden])`);
+      await expect(tall).toContainText('Tall panel');
+      await expect
+        .poll(() => tall.evaluate((el) => el.getAnimations().length))
+        .toBe(0);
+      const after = await tall.evaluate((el) =>
+        parseFloat(getComputedStyle(el).height),
+      );
+      expect(
+        Math.abs(parseFloat(from!) - before.layout),
+        `it starts at ${from} (the old panel: ${before.layout}px laid out, ${before.drawn}px drawn)`,
+      ).toBeLessThan(0.01);
+      expect(
+        Math.abs(parseFloat(to!) - after),
+        `it ends at ${to} (its own: ${after}px laid out)`,
+      ).toBeLessThan(0.01);
+    });
+
     test('reduced motion: the indicator and the height jump, the panels only fade', async ({
       page,
     }) => {

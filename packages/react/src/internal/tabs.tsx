@@ -19,6 +19,7 @@ import {
   useSlidingIndicator,
   type SlidingIndicatorConfig,
   type SlidingIndicatorOptions,
+  layoutSizeOf,
 } from './sliding-indicator';
 
 // Shared by the Radix UI, Base UI and React Aria tabs, and by Animate UI's own
@@ -564,9 +565,21 @@ function marginBelow(element: HTMLElement) {
 /** A box's height, and the margin it leaves below it (`marginBelow`). */
 type Extent = { height: number; margin: number };
 
+/**
+ * `element`'s height now (a glide running included), unrounded: an
+ * `offsetHeight` rounded off would start or end a glide half a pixel away.
+ */
+function heightOf(element: HTMLElement) {
+  // getComputedStyle's height has 6 significant digits (a 1/64px off on a
+  // 300px panel): the drawn height, exact, unless an ancestor scales it.
+  const drawn = element.getBoundingClientRect().height;
+  const layout = layoutSizeOf(element).height;
+  return Math.abs(drawn - layout) < 0.01 ? drawn : layout;
+}
+
 /** `element`'s extent now (a glide running included). */
 const extentOf = (element: HTMLElement): Extent => ({
-  height: element.offsetHeight,
+  height: heightOf(element),
   margin: marginBelow(element),
 });
 
@@ -601,6 +614,8 @@ function glideHeight(
   animations.follow = undefined;
   const to = extentOf(target);
   if (!(to.height > 0)) return;
+  // Held at `from` before it starts (a questionnaire's next question).
+  const delay = (timing as CssTiming & { delay?: number }).delay ?? 0;
   const style = getComputedStyle(target);
   const own = parseFloat(style.marginBottom) || 0;
   const inset =
@@ -635,6 +650,9 @@ function glideHeight(
   let end = to;
   // Already its height: nothing to glide, but still followed.
   let glide: Animation | null = same(from, to) ? null : run(from, to, timing);
+  // That glide while it waits for its `delay` (never a follow started since,
+  // which hasn't started either in the frame it's made).
+  let waiting = delay > 0 ? glide : null;
   // When a follow last started at rest (the panel at its content's height).
   let rested = -Infinity;
 
@@ -644,6 +662,20 @@ function glideHeight(
   // never painted).
   const check = () => {
     if (animations.height !== (glide ?? undefined)) return watch.disconnect();
+    // Still waiting to start (a `delay`: a questionnaire's next question,
+    // its leaving one going): it'll glide to its content's height now.
+    if (glide && glide === waiting && Number(glide.currentTime ?? 0) < 0) {
+      // Its content's height, read without the glide holding it.
+      // On the same schedule: its start kept, its delay still to come.
+      const started = glide.startTime;
+      glide.cancel();
+      const natural = extentOf(target);
+      if (!same(natural, end)) end = natural;
+      glide = run(from, end, timing);
+      glide.startTime = started;
+      waiting = glide;
+      return;
+    }
     let now = end;
     let velocity = 0;
     let elapsed = 0;
@@ -651,12 +683,12 @@ function glideHeight(
     if (glide && running) {
       elapsed = Number(glide.currentTime ?? 0);
       now = {
-        height: target.offsetHeight,
+        height: heightOf(target),
         margin: parseFloat(getComputedStyle(target).marginBottom) || 0,
       };
       const step = Math.min(elapsed, 8);
       glide.currentTime = elapsed - step;
-      velocity = step > 0 ? (now.height - target.offsetHeight) / step : 0;
+      velocity = step > 0 ? (now.height - heightOf(target)) / step : 0;
       glide.cancel();
     }
     const natural = extentOf(target);
@@ -711,7 +743,7 @@ function glideHeight(
   // that keeps resizing isn't chased, clipped, for as long as it shows.
   const timer = setTimeout(
     () => watch.disconnect(),
-    timing.duration + toCssTiming(follow).duration,
+    delay + timing.duration + toCssTiming(follow).duration,
   );
   const watch = {
     disconnect() {
@@ -721,6 +753,22 @@ function glideHeight(
     },
   };
   animations.follow = watch;
+}
+
+/** Whether `panel`'s height is gliding now. */
+function isGliding(panel: HTMLElement) {
+  const height = panelAnimations.get(panel)?.height;
+  return height !== undefined && isRunning(height);
+}
+
+/** Stops `panel`'s height glide and its follow, at once (its own height). */
+function stopGlide(panel: HTMLElement) {
+  const animations = panelAnimations.get(panel);
+  if (!animations) return;
+  animations.height?.cancel();
+  animations.height = undefined;
+  animations.follow?.disconnect();
+  animations.follow = undefined;
 }
 
 /** The panel coming in (selected), other than `token`'s. */
@@ -994,6 +1042,12 @@ export {
   TAB_ATTRIBUTE,
   useTabsIndicator,
   usePanelMotion,
+  glideHeight,
+  stopGlide,
+  isGliding,
+  extentOf,
+  heightOf,
   type TabsIndicatorOptions,
   type PanelMotionOptions,
+  type Extent,
 };

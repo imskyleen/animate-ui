@@ -20,6 +20,7 @@ const PAGES = [
   '/docs/primitives/react-aria/preview-link-card',
   '/docs/primitives/radix-ui/sidebar',
   '/docs/primitives/base-ui/pagination',
+  '/docs/primitives/base-ui/questionnaire',
   '/docs/primitives/radix-ui/accordion',
   '/docs/backgrounds/bubble',
 ];

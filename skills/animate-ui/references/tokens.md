@@ -70,11 +70,11 @@ Tweens are for fades, menus (opened all day long, so short and exact), disclosur
 | `transition.color`         | `{ duration: 0.2, ease: ease.color }`            | A highlight showing up from nothing or going (a hover lighting an item or a trigger), and its color changing (a trigger open, then hovered): never a cut; an OTP field's ring fading in and out |
 | `transition.reveal`        | `{ duration: 0.3, ease: ease.out }`              | A label showing up once what moved has landed (a placeholder)                                                                                                                                   |
 | `transition.disclosure`    | `{ duration: 0.35, ease: ease.soft }`            | Accordion and collapsible panels unfolding                                                                                                                                                      |
-| `transition.panelOut`      | `{ duration: 0.15, ease: ease.leave }`           | A tab panel leaving into `blur.panel`, staying in the page, before the next one comes in (Motion's tabs example)                                                                                |
-| `transition.panelIn`       | `{ duration: 0.3, ease: ease.enter }`            | The next tab panel fading in from `blur.panel`, once the previous one has gone                                                                                                                  |
+| `transition.panelOut`      | `{ duration: 0.15, ease: ease.leave }`           | A tab panel (a questionnaire's question) leaving into `blur.panel`, staying in the page, before the next one comes in (Motion's tabs example)                                                   |
+| `transition.panelIn`       | `{ duration: 0.3, ease: ease.enter }`            | The next tab panel (question) fading in from `blur.panel`, once the previous one has gone                                                                                                       |
 | `transition.tooltipIn`     | `{ duration: 0.34, ease: ease.enter }`           | A panel's entrance, longer                                                                                                                                                                      | Animate UI's Tooltip's next content sliding in as the popup glides to its trigger |
 | `transition.tooltipOut`    | `{ duration: 0.13, ease: ease.leave }`           | Quick                                                                                                                                                                                           | Animate UI's Tooltip's previous content leaving for the next one's                |
-| `transition.panelHeight`   | `{ duration: 0.45, ease: ease.resize }`          | The tab panels' height gliding from the previous panel's to the next one's as it comes in: Motion's own layout animation, no overshoot                                                          |
+| `transition.panelHeight`   | `{ duration: 0.45, ease: ease.resize }`          | The tab panels' (questions') height gliding from the previous panel's to the next one's as it comes in: Motion's own layout animation, no overshoot                                             |
 | `transition.check`         | `{ duration: 0.3, delay: 0.2, ease: ease.draw }` | A check drawing itself once the box has answered                                                                                                                                                |
 | `transition.uncheck`       | `{ duration: 0.3, ease: ease.draw }`             | A check erasing itself                                                                                                                                                                          |
 | `transition.fill`          | `{ duration: 0.3, ease: ease.fill }`             | A fill growing in from `scale.fill` as it fades in, and shrinking back out (a toggle group's selected surface, like the radio's and checkbox's fill); neighbouring fills joining or splitting   |
@@ -119,28 +119,30 @@ Pick a tween's curve by what the element does:
 
 ## Scales
 
-| Token           | Value | Use for                                                                                |
-| --------------- | ----- | -------------------------------------------------------------------------------------- |
-| `scale.press`   | 0.97  | Anything pressed (buttons, radio, toggles; not the checkbox). Nothing scales on hover. |
-| `scale.tooltip` | 0.7   | Where tooltips (and anchored toasts) grow from                                         |
-| `scale.popover` | 0.8   | Where popovers, hover cards and preview cards grow from                                |
-| `scale.menu`    | 0.9   | Where menus, selects and navigation menus grow from                                    |
-| `scale.dialog`  | 0.8   | Dialog content, with `perspective(500px) rotateX(-20deg)`                              |
-| `scale.icon`    | 0.5   | An icon swapping for another                                                           |
-| `scale.toast`   | 0.96  | Where a toast rising from its edge grows from (with `blur.surface`), and leaves to     |
-| `scale.fill`    | 0.7   | Where a fill grows from, from its center (a toggle group's selected surface)           |
+| Token           | Value | Use for                                                                                                                                                                                                    |
+| --------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scale.press`   | 0.97  | Anything pressed (buttons, radio, toggles; not the checkbox). Nothing scales on hover.                                                                                                                     |
+| `scale.choice`  | 0.985 | A questionnaire's choice pressed: a whole row, so lighter than `scale.press`.                                                                                                                              |
+| `scale.tooltip` | 0.7   | Where tooltips (and anchored toasts) grow from                                                                                                                                                             |
+| `scale.popover` | 0.8   | Where popovers, hover cards and preview cards grow from                                                                                                                                                    |
+| `scale.menu`    | 0.9   | Where menus, selects and navigation menus grow from                                                                                                                                                        |
+| `scale.dialog`  | 0.8   | Dialog content, with `perspective(500px) rotateX(-20deg)`                                                                                                                                                  |
+| `scale.icon`    | 0.5   | An icon swapping for another                                                                                                                                                                               |
+| `scale.toast`   | 0.96  | Where a toast rising from its edge grows from (with `blur.surface`), and leaves to                                                                                                                         |
+| `scale.fill`    | 0.7   | Where a fill grows from, from its center (a toggle group's selected surface)                                                                                                                               |
+| `scale.action`  | 0.9   | Where a button appearing or leaving in place grows from and shrinks to, with `blur.icon` on `transition.swap` (a questionnaire's Previous showing after the first step, its Next giving way to its Submit) |
 
 The smaller the element, the farther it starts, so its growth stays visible; the more often a large one opens, the subtler it gets. A tooltip's 0.7 is only a few pixels on a small label, a popover's 0.8 shows where it came from, a menu opened all day stays at 0.9.
 
 ## Blur
 
-| Token             | Value       | Use for                                                                  |
-| ----------------- | ----------- | ------------------------------------------------------------------------ |
-| `blur.tooltip`    | `blur(6px)` | Animate UI's Tooltip's content changing for the next trigger's           |
-| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                 |
-| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds |
-| `blur.surface`    | `blur(4px)` | Surfaces coming in: dialogs, toasts                                      |
-| `blur.panel`      | `blur(5px)` | Tab panels leaving into it, then the next one coming in from it          |
+| Token             | Value       | Use for                                                                                           |
+| ----------------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| `blur.tooltip`    | `blur(6px)` | Animate UI's Tooltip's content changing for the next trigger's                                    |
+| `blur.icon`       | `blur(2px)` | Icons and short labels swapping in place (copy → copied)                                          |
+| `blur.disclosure` | `blur(2px)` | The content of an accordion or collapsible panel, clearing as it unfolds                          |
+| `blur.surface`    | `blur(4px)` | Surfaces coming in: dialogs, toasts                                                               |
+| `blur.panel`      | `blur(5px)` | Tab panels (and a questionnaire's questions) leaving into it, then the next one coming in from it |
 
 A light blur during a swap makes two overlapping states read as one shape changing. Keep it at these values on anything large: heavy blur is expensive to paint, especially in Safari.
 
@@ -157,6 +159,7 @@ A light blur during a swap makes two overlapping states read as one shape changi
 | `shift.handoff`    | `6` (px)  | How far a menu's content slides as a menubar's popover is handed to the next menu: the leaving content away from where the popover goes, the next one in from there                                                                                                                                                                                                                          |
 | `shift.navigation` | `24` (px) | The same for a navigation menu's content, four times as far: across 400-600px, 6px barely shows (the leaving content fades out within ~90ms, the next one fades in once its spring is mostly done)                                                                                                                                                                                           |
 | `shift.tabs`       | `12` (px) | Tab panels' content changing, by the tabs' order: going to a later tab, the leaving content slides toward the start as it fades out (`transition.panelOut`) and the next one comes in from the end (`transition.panelIn`); vertical for vertical tabs, mirrored right to left. Inside a box (a Card) only the content moves, clipped by the box                                              |
+| `shift.step`       | `24` (px) | A step of a flow changing (a questionnaire's question), by its order: going on, the leaving step slides toward the start as it fades out into `blur.panel` (`transition.panelOut`) and the next one comes in from the end (`transition.panelIn`); the reverse going back, mirrored right to left. Twice the tab panels': a step is the whole content, the slide is the change                |
 | `shift.tooltip`    | `40` (px) | Animate UI's Tooltip's content changing while its popup glides to the next trigger: the leaving label slides away from where the popup goes as it fades out into `blur.icon`, the next one comes in from there out of it (`transition.swap`); vertically for stacked triggers. A hint on a short label: it stays inside the popup's padding, and the popup is already traveling the distance |
 | `shift.shake`      | `3` (px)  | How far a mark swings as it shakes (`transition.shake`): a toast's error cross. Swings of 1, 0.66 and 0.33 times it, both ways                                                                                                                                                                                                                                                               |
 

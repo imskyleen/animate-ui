@@ -17,6 +17,7 @@
     "@animate-ui/react": "workspace:*",
     "@hugeicons/core-free-icons": "^4.3.5",
     "@hugeicons/react": "^1.1.10",
+    "@shadcn/react": "^0.3.1",
     "cn": "^0.4.0",
     "fumadocs-core": "16.15.18",
     "fumadocs-mdx": "15.4.6",

@@ -28,7 +28,7 @@ pnpm dlx @animate-ui/cli@latest animate <component> --dry-run   # preview
 pnpm dlx @animate-ui/cli@latest animate <component>             # or: animate all
 ```
 
-The CLI finds the components through `components.json`, swaps their primitive imports (`radix-ui`, `@radix-ui/react-*`, `@base-ui/react[/…]`, `react-aria-components`, `vaul`) for `@animate-ui/react`, and removes the CSS animation classes Motion replaces (tw-animate utilities, Base UI `data-starting-style`/`data-ending-style` transitions, React Aria `data-entering`/`data-exiting`, CSS-variable heights). It works for every shadcn base and style, is idempotent, and lists primitives it doesn't animate yet. Don't hand-edit what the CLI does; if its output looks wrong, report it.
+The CLI finds the components through `components.json`, swaps their primitive imports (`radix-ui`, `@radix-ui/react-*`, `@base-ui/react[/…]`, `react-aria-components`, `vaul`, `input-otp`, `@shadcn/react/questionnaire`) for `@animate-ui/react`, and removes the CSS animation classes Motion replaces (tw-animate utilities, Base UI `data-starting-style`/`data-ending-style` transitions, React Aria `data-entering`/`data-exiting`, CSS-variable heights). It works for every shadcn base and style, is idempotent, and lists primitives it doesn't animate yet. Don't hand-edit what the CLI does; if its output looks wrong, report it.
 
 ## B. Built on Radix UI, Base UI or React Aria: swap the import
 
@@ -45,9 +45,9 @@ import { Popover, Button } from 'react-aria-components'; // before
 import { Popover, Button } from '@animate-ui/react/primitives/react-aria'; // after (re-exports all of React Aria)
 ```
 
-Mirror the library's import style: an umbrella import (`radix-ui`, `@base-ui/react`, `react-aria-components`) keeps its specifiers and only changes source; a per-package or subpath import (`@radix-ui/react-*`, `@base-ui/react/*`, `vaul` → `radix-ui/drawer`, `input-otp`) uses the per-primitive path.
+Mirror the library's import style: an umbrella import (`radix-ui`, `@base-ui/react`, `react-aria-components`) keeps its specifiers and only changes source; a per-package or subpath import (`@radix-ui/react-*`, `@base-ui/react/*`, `vaul` → `radix-ui/drawer`, `input-otp`, `@shadcn/react/questionnaire` → `@animate-ui/react/primitives/questionnaire`) uses the per-primitive path.
 
-Then remove the component's own CSS animation classes (same list as the CLI) so they don't run on top of Motion. Everything else stays: parts, props, data attributes, `forceMount`/`keepMounted`, render props. Animated parts accept two optional props, `transition` and `exitTransition` (Motion `Transition`s). To change the pace of every animation at once, wrap the app in `<AnimateUIProvider tempo={1.2}>` (`@animate-ui/react/provider`); without it the defaults apply.
+Then remove the component's own CSS animation classes (same list as the CLI) so they don't run on top of Motion. Everything else stays: parts, props, data attributes, `forceMount`/`keepMounted`, render props. Animated parts accept two optional props, `transition` and `exitTransition` (Motion `Transition`s), except Animate UI's own drop-ins (`input-otp`, `@shadcn/react/questionnaire`): they take exactly their package's props, neither of those (`AnimateUIProvider`'s `tempo`, and `checkAnimation` for the questionnaire's checks, still apply). On a `QuestionnaireItem`, drop shadcn/ui's Animated Items example's tw-animate classes (`data-active:animate-in`, `data-active:fade-in-0`, `data-active:slide-in-from-bottom-2`, `data-active:duration-300`): they'd run on top of the step's entrance. To change the pace of every animation at once, wrap the app in `<AnimateUIProvider tempo={1.2}>` (`@animate-ui/react/provider`); without it the defaults apply.
 
 ## C. Anything else: animate it with the rules
 
@@ -77,6 +77,7 @@ Keyboard navigation animates like the pointer. Name the purpose in one word (fee
 | Edge overlay                                                                   | Sheet, Drawer                                                           | Sheet      |
 | Disclosure                                                                     | Accordion, Collapsible                                                  | Disclosure |
 | Moving indicator                                                               | Tabs, Toggle Group, Pagination, Navigation Menu indicator               | Indicator  |
+| Steps of a flow                                                                | Questionnaire                                                           | Steps      |
 | Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio                                 | Press      |
 | Two states swapping in place                                                   | Copy → copied, sun → moon, a changing label                             | Swap       |
 | Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                                         | CSS-driven |

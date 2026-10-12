@@ -271,6 +271,29 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     viewport: { width: 320, height: 240 },
   },
   popover: { play: openClose() },
+  questionnaire: {
+    // An answer, Next (the step slides on), Previous (back), then the form
+    // reset: the answer goes, back where it started.
+    async play(page) {
+      const main = page.locator('main');
+      await press(
+        page,
+        main.locator('label', { hasText: 'Tool call timeline' }),
+      );
+      await wait(page, 700);
+      await press(page, main.locator('[data-slot="questionnaire-next"]'));
+      await wait(page, 1100);
+      await press(page, main.locator('[data-slot="questionnaire-previous"]'));
+      await wait(page, 1000);
+      await main
+        .locator('form')
+        .evaluate((form: HTMLFormElement) => form.reset());
+      await away(page);
+      await wait(page, 600);
+    },
+    // A whole form (about 400px tall): a taller page.
+    viewport: { width: 640, height: 480 },
+  },
   'preview-link-card': {
     play: hoverOver((page) => page.locator('main a').first()),
   },

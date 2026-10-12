@@ -2,7 +2,8 @@ import { PRIMITIVES as ALL } from '../primitives';
 
 /**
  * Where shadcn/ui components import their primitives from. `animate-ui`:
- * packages Animate UI replaces with its own drop-in (`input-otp`).
+ * packages Animate UI replaces with its own drop-in (`input-otp`,
+ * `@shadcn/react/questionnaire`).
  */
 export type Library = 'radix-ui' | 'base-ui' | 'react-aria' | 'animate-ui';
 

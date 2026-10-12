@@ -23,13 +23,19 @@ const PRESSED_SCALE = motionTokens.scale.press;
 type PressOptions = {
   disabled?: boolean;
   transition?: Transition;
+  /** The pressed scale (`scale.press` by default). */
+  scale?: number;
 };
 
 /**
  * Motion props for a control's root rendered as a motion element (Radix
  * `asChild`, Base UI `render`). None under reduced motion.
  */
-function usePressMotion({ disabled, transition }: PressOptions = {}) {
+function usePressMotion({
+  disabled,
+  transition,
+  scale = PRESSED_SCALE,
+}: PressOptions = {}) {
   const reduce = useShouldReduceMotion();
   const spring = useTempoTransition(transition ?? PRESS_TRANSITION);
   if (reduce || disabled) return {};
@@ -39,7 +45,7 @@ function usePressMotion({ disabled, transition }: PressOptions = {}) {
   // from `scale(0)`: the resting value is written out.
   return {
     initial: { transform: 'scale(1)' },
-    whileTap: { transform: `scale(${PRESSED_SCALE})` },
+    whileTap: { transform: `scale(${scale})` },
     transition: spring,
   };
 }

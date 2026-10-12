@@ -161,6 +161,12 @@ export function transform(code: string): TransformResult {
       // shadcn/ui's InputOTP (every base) imports input-otp: Animate UI's
       // own input-otp is a drop-in replacement.
       ['animate-ui', source === 'input-otp' ? 'input-otp' : undefined],
+      // shadcn/ui's Questionnaire (every base) imports @shadcn/react's:
+      // Animate UI's own questionnaire is a drop-in replacement.
+      [
+        'animate-ui',
+        source === '@shadcn/react/questionnaire' ? 'questionnaire' : undefined,
+      ],
     ];
     for (const [library, name] of perPackage) {
       if (!name) continue;

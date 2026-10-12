@@ -39,6 +39,17 @@ export async function Command({
 const PRIMITIVES = '@animate-ui/react/primitives/';
 
 /**
+ * Animate UI's own drop-ins, by module (`primitives/<name>`, named after
+ * shadcn/ui's component): the package import each one stands in for. Their
+ * shadcn/ui components have no CSS animation to delete (InputOTP's caret
+ * blink stays).
+ */
+const DROP_INS: Record<string, string> = {
+  'input-otp': 'input-otp',
+  questionnaire: '@shadcn/react/questionnaire',
+};
+
+/**
  * The package an Animate UI primitive's module stands in for, and the module
  * the CLI writes for it (shadcn/ui's Radix Drawer imports Vaul, whose
  * replacement is Radix UI's drawer).
@@ -59,8 +70,7 @@ function swap(module: string, names: string[]) {
           : '@base-ui/react'
         : library === 'react-aria'
           ? 'react-aria-components'
-          : // Animate UI's own drop-ins (`input-otp`) stand in for the package.
-            library!;
+          : (DROP_INS[library!] ?? library!);
   return { from, to: module };
 }
 
@@ -71,7 +81,10 @@ const PRINT_WIDTH = 80;
  * The imports to swap, as a diff: those of the shadcn/ui component (the
  * page's demo, before its demo function), from the library and from Animate
  * UI, as the CLI swaps them: value imports only, each with the names the
- * component uses. A multi-line import only changes its last line.
+ * component uses, laid out as Prettier prints them in shadcn/ui's file (past
+ * the print width, an import of several names breaks over lines; one of a
+ * single name stays on one line). A multi-line import only changes its last
+ * line.
  */
 async function ImportDiff({
   library,
@@ -131,7 +144,11 @@ async function ImportDiff({
     const single = named
       ? `import { ${specifiers.join(', ')} }`
       : `import ${clause!.trim()}`;
-    if (!named || `${single} from '${from}';`.length <= PRINT_WIDTH) {
+    if (
+      !named ||
+      specifiers.length === 1 ||
+      `${single} from '${from}';`.length <= PRINT_WIDTH
+    ) {
       lines.push(`${single} from '${from}';`, `${single} from '${to}';`);
       diff += '-+';
       continue;
@@ -214,7 +231,7 @@ export function Installation({
               <Step>
                 <h3>Swap the import</h3>
                 {library && <ImportDiff library={library} name={name} />}
-                {library !== 'animate-ui' && (
+                {library !== 'animate-ui' && !Object.hasOwn(DROP_INS, name) && (
                   <p>
                     Then delete the component&apos;s CSS animation classes, if
                     it has any (<code>animate-in</code>, <code>fade-in-0</code>,{' '}

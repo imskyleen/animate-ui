@@ -63,6 +63,7 @@ import { Dialog as DialogPrimitive } from '@animate-ui/react/primitives/radix-ui
 | `react-aria-components`       | `@animate-ui/react/primitives/react-aria`           |
 | `vaul` (the Radix UI Drawer)  | `@animate-ui/react/primitives/radix-ui/drawer`      |
 | `input-otp`                   | `@animate-ui/react/primitives/input-otp`            |
+| `@shadcn/react/questionnaire` | `@animate-ui/react/primitives/questionnaire`        |
 
 The umbrella entries (`radix-ui`, `@base-ui/react`, `react-aria-components`) re-export everything else from the library, so an import mixing animated and plain parts (`{ Dialog, Slot }`) keeps working. An import with nothing to animate is left alone.
 
@@ -99,7 +100,7 @@ The rest of the file stays as it is: your styles, parts, props and markup.
 | Radix UI   | Accordion, Alert Dialog, Checkbox, Collapsible, Context Menu, Dialog, Drawer (Vaul), Dropdown Menu, Hover Card, Menubar, Navigation Menu, Popover, Progress, Radio Group, Select, Slider, Switch, Tabs, Toggle, Toggle Group, Tooltip           |
 | Base UI    | Accordion, Alert Dialog, Checkbox, Collapsible, Combobox, Context Menu, Dialog, Drawer, Menu, Menubar, Navigation Menu, Popover, Preview Card, Progress, Radio, Radio Group, Select, Slider, Switch, Tabs, Toast, Toggle, Toggle Group, Tooltip |
 | React Aria | Checkbox, Disclosure, ListBox, Menu, Modal, Popover, ProgressBar, RadioGroup, Slider, Switch, Tabs, TagGroup, ToggleButton, ToggleButtonGroup, Tooltip                                                                                          |
-| Others     | Input OTP (`input-otp`)                                                                                                                                                                                                                         |
+| Others     | Input OTP (`input-otp`), Questionnaire (`@shadcn/react`)                                                                                                                                                                                        |
 
 It works with every shadcn/ui style.
 

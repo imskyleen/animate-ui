@@ -772,6 +772,7 @@ function useSlidingIndicator(
 
 export {
   useSlidingIndicator,
+  layoutSizeOf,
   SLIDING_ATTRIBUTE,
   LEAVING_ATTRIBUTE,
   onNextFrame,

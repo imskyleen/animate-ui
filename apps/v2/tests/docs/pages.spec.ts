@@ -205,12 +205,44 @@ test('installation: the imports the CLI swaps, as shadcn/ui writes them', async 
     "-import { OTPInput, OTPInputContext } from 'input-otp';",
     "+import { OTPInput, OTPInputContext } from '@animate-ui/react/primitives/input-otp';",
   ]);
+  // A single name past the print width: one line, as Prettier leaves it in
+  // shadcn/ui's file (several names past it break over lines, above).
+  expect(
+    await importDiff(page, '/docs/primitives/base-ui/navigation-menu'),
+  ).toEqual([
+    "-import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui/react/navigation-menu';",
+    "+import { NavigationMenu as NavigationMenuPrimitive } from '@animate-ui/react/primitives/base-ui/navigation-menu';",
+  ]);
   // Type-only imports stay, as the CLI leaves them (`Selection`, the demo's).
   const menu = await importDiff(
     page,
     '/docs/primitives/react-aria/dropdown-menu',
   );
   expect(menu.filter((line) => /import type/.test(line))).toEqual([]);
+});
+
+/** The Manual tab's step after the diff, for a library's own components. */
+const DELETE_CLASSES = /^Then delete the component's CSS animation classes/;
+
+test("installation: a drop-in's library page swaps the package it stands in for", async ({
+  page,
+}) => {
+  // shadcn/ui's Questionnaire imports @shadcn/react's on every base, not the
+  // base's library; it has no CSS animation classes to delete. Its import
+  // has a single name: on one line, as in shadcn/ui's file, though it's
+  // past the print width.
+  for (const library of ['base-ui', 'radix-ui', 'react-aria']) {
+    expect(
+      await importDiff(page, `/docs/primitives/${library}/questionnaire`),
+    ).toEqual([
+      "-import { Questionnaire as QuestionnairePrimitive } from '@shadcn/react/questionnaire';",
+      "+import { Questionnaire as QuestionnairePrimitive } from '@animate-ui/react/primitives/questionnaire';",
+    ]);
+    await expect(page.getByText(DELETE_CLASSES)).toHaveCount(0);
+  }
+  // A library's own component still has the step.
+  await importDiff(page, '/docs/primitives/radix-ui/accordion');
+  await expect(page.getByText(DELETE_CLASSES)).toHaveCount(1);
 });
 
 test('the sidebar groups primitives into sections', async ({ page }) => {

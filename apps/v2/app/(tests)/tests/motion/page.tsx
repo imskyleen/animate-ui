@@ -174,6 +174,36 @@ const FAMILIES: Family[] = [
     ],
   },
   {
+    id: 'steps',
+    name: 'Étapes',
+    rule: 'Questionnaire de shadcn/ui (sur @shadcn/react, même composant sur les trois bases) : les questions se succèdent comme les panneaux d’onglets, en glissant selon leur ordre, pendant que la hauteur glisse de l’une à l’autre ; les boutons, l’erreur et les coches s’animent sur place. Rien n’est re-rendu : la Root observe les attributs de ses parties (MutationObserver) et anime les éléments (Web Animations).',
+    values: [
+      'question qui part : remontrée hors du flux par-dessus la suivante (toujours inert), glisse de 24px vers le début en s’effaçant dans un flou de 5px, en 0,15s sur l’easeOut de Motion, cubic-bezier(0, 0, 0.58, 1)',
+      'question qui arrive, une fois l’autre partie : de 24px vers la fin, opacité 0 → 1 et flou 5px → 0 en 0,3s, cubic-bezier(0.25, 0.1, 0.35, 1) ; jamais cachée (le focus que lui donne la bibliothèque reste sur elle)',
+      'en revenant (Previous, flèche gauche, reset) : l’inverse ; inversé en RTL ; un saut de plusieurs questions va droit au but',
+      'hauteur : de celle de la question qui part à celle qui arrive, une fois la question partie (tenue jusque-là), en 0,45s sur la courbe de layout de Motion, cubic-bezier(0.4, 0, 0.1, 1), sans dépassement ; les boutons dessous suivent',
+      'changements rapides : chacune repart d’où elle en est (une question qui repart s’efface en 0,15s × son opacité, une question reprise revient tout de suite), la hauteur aussi',
+      'progression : les chiffres de « Question 2 of 3 » roulent (deux pseudo-éléments sur le nombre, ressort 300/35, 0,6em, flou 2px ; le texte reste le nombre) ; dans une question, ils ne roulent pas',
+      'choix : pressé, il descend à 0,985 (ressort 550/30), comme les boutons en plus léger',
+      'choix : le point grandit depuis 0 sur un ressort 200/16 et repart de même ; la coche se trace en 0,3s après 0,2s et s’efface en 0,3s (pop : depuis 0,5 et un flou de 2px, ressort 500/24) ; couleurs de l’indicateur en 0,2s ease',
+      'erreur : se déplie (hauteur depuis 0, marge du haut depuis moins l’écart de la question), fondu et flou 2px → 0, en 0,35s ease-out doux, cubic-bezier(0.215, 0.61, 0.355, 1) ; se replie de même',
+      'Previous, Skip, Next, Submit : sur place, depuis 0,9 et un flou de 2px en apparaissant, 0,15s ease-out, cubic-bezier(0.23, 1, 0.32, 1) ; Next et Submit partagent une case et se croisent',
+      'rien au montage ni avant la première image ; mouvement réduit : les questions se succèdent en fondu seulement (0,2s puis 0,2s), la hauteur change une fois la question partie, le reste en fondu, rien ne rétrécit',
+    ],
+    demos: [
+      {
+        demo: 'base-ui/questionnaire',
+        label: 'Questionnaire (Base UI)',
+        note: 'la questionnaire-demo de shadcn : trois questions (une obligatoire avec trois choix décrits et une réponse libre, une facultative à choix multiples où Skip apparaît, une dernière obligatoire où Submit affiche « Save plan »), raccourcis par lettres, réponses dans un toast',
+      },
+      { demo: 'radix-ui/questionnaire', label: 'Questionnaire (Radix UI)' },
+      {
+        demo: 'react-aria/questionnaire',
+        label: 'Questionnaire (React Aria)',
+      },
+    ],
+  },
+  {
     id: 'swap',
     name: 'Changement d’état (flou)',
     rule: 'Quand deux états se remplacent au même endroit, un léger flou fait lire leur chevauchement comme une seule forme qui change.',
