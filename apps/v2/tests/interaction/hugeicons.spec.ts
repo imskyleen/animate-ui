@@ -202,6 +202,46 @@ test.describe('hugeicons', () => {
     }
   });
 
+  test('Delete 02: the lid lifts and the bin opens below it, 4 apart (not 2), within the grid', async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    await tile(page, 'delete-02').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'default', exact: true }).click();
+    await page.waitForTimeout(700);
+    const { gap, top, bottom } = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        // Where an element is drawn: its box moved by its own and its
+        // group's transforms.
+        const drawn = (el: SVGGraphicsElement) => {
+          let y = 0;
+          for (
+            let node: Element | null = el;
+            node && node !== svg;
+            node = node.parentElement
+          )
+            y += new DOMMatrix(getComputedStyle(node).transform).f;
+          const box = el.getBBox();
+          return { top: box.y + y, bottom: box.y + box.height + y };
+        };
+        const [lid, bin] = [...svg.querySelectorAll('path')].map(drawn) as [
+          { top: number; bottom: number },
+          { top: number; bottom: number },
+        ];
+        return {
+          gap: bin.top - lid.bottom,
+          top: lid.top - 1,
+          bottom: bin.bottom + 1,
+        };
+      });
+    expect(gap).toBeGreaterThan(3.9);
+    expect(top).toBeGreaterThanOrEqual(-0.01);
+    expect(bottom).toBeLessThanOrEqual(24.01);
+  });
+
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,
   }) => {
