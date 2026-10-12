@@ -391,12 +391,16 @@ test.describe('hugeicons', () => {
     expect(Math.max(...frames.map((f) => f.scale))).toBeGreaterThan(1.1);
   });
 
-  test("every clock: the minute hand goes round once, the hour hand a step on and back (as Lucide's), both pinned at the clock's center", async ({
+  test("every clock (the calendar's, file's and folder's too): the minute hand goes round once, the hour hand a step on and back (as Lucide's), both pinned at the clock's center", async ({
     page,
   }) => {
     await gotoGallery(page);
-    const clocks = NAMES.filter((name) => name.startsWith('clock-'));
-    expect(clocks.length).toBeGreaterThanOrEqual(20);
+    // Every clock with hands (the alarm clock shakes, its hands still, as
+    // Lucide's).
+    const clocks = NAMES.filter(
+      (name) => name.includes('clock') && name !== 'alarm-clock',
+    );
+    expect(clocks.length).toBeGreaterThanOrEqual(26);
     for (const name of clocks) {
       const button = tile(page, name);
       await button.scrollIntoViewIfNeeded();
