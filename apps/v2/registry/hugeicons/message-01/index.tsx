@@ -19,7 +19,11 @@ const animations = {
       animate: {
         transformOrigin: 'bottom left',
         rotate: [0, 8, -8, 2, 0],
-        transition: { ease: 'easeInOut', duration: 0.8, times: [0, 0.4, 0.6, 0.8, 1] },
+        transition: {
+          ease: 'easeInOut',
+          duration: 0.8,
+          times: [0, 0.4, 0.6, 0.8, 1],
+        },
       },
     },
     path: {},

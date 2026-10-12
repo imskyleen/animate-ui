@@ -15,7 +15,12 @@ type Link01Props = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     path1: {
-      initial: { x: 0, y: 0, pathLength: 1, transition: { duration: 0.4, ease: 'easeInOut' } },
+      initial: {
+        x: 0,
+        y: 0,
+        pathLength: 1,
+        transition: { duration: 0.4, ease: 'easeInOut' },
+      },
       animate: {
         x: -1,
         y: 1,
@@ -24,7 +29,12 @@ const animations = {
       },
     },
     path2: {
-      initial: { x: 0, y: 0, pathLength: 1, transition: { duration: 0.4, ease: 'easeInOut' } },
+      initial: {
+        x: 0,
+        y: 0,
+        pathLength: 1,
+        transition: { duration: 0.4, ease: 'easeInOut' },
+      },
       animate: {
         x: 1,
         y: -1,

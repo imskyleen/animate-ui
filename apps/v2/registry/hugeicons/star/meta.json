@@ -1,11 +1,6 @@
 {
   "title": "Star Icon",
   "description": "Star icon component.",
-  "keywords": [
-    "favorite",
-    "rating",
-    "bookmark",
-    "like"
-  ],
+  "keywords": ["favorite", "rating", "bookmark", "like"],
   "categories": []
 }

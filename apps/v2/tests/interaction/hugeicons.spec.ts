@@ -166,6 +166,49 @@ test.describe('hugeicons', () => {
     await expect(drawer).toContainText('@animate-ui/react motion');
   });
 
+  test("Copy 01: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    await tile(page, 'copy-01').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'default', exact: true }).click();
+    await page.waitForTimeout(700);
+    const fit = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        const [sheet, copy] = [...svg.querySelectorAll('path')] as [
+          SVGPathElement,
+          SVGPathElement,
+        ];
+        const points = (path: SVGPathElement, step: number) => {
+          const m = new DOMMatrix(getComputedStyle(path).transform);
+          const out: DOMPoint[] = [];
+          const length = path.getTotalLength();
+          for (let at = 0; at <= length; at += step)
+            out.push(m.transformPoint(path.getPointAtLength(at)));
+          return out;
+        };
+        const outline = points(copy, 0.02);
+        let worst = 0;
+        for (const p of points(sheet, 0.25)) {
+          let near = Infinity;
+          for (const q of outline)
+            near = Math.min(near, Math.hypot(p.x - q.x, p.y - q.y));
+          worst = Math.max(worst, near);
+        }
+        return {
+          worst,
+          opacity: Number(getComputedStyle(sheet).opacity),
+          length: sheet.getTotalLength(),
+        };
+      });
+    expect(fit.opacity, 'the sheet still drawn').toBe(1);
+    expect(fit.length, 'a sheet, not a point').toBeGreaterThan(20);
+    expect(fit.worst, 'every point of the sheet on the copy').toBeLessThan(0.1);
+  });
+
   test("Lucide's and Hugeicons' icons of the same name don't mix up, from one gallery to the other", async ({
     page,
   }) => {

@@ -24,7 +24,10 @@ const animations = {
   'default-loop': {
     group: {
       initial: { y: 0 },
-      animate: { y: [0, 1.5, 0], transition: { duration: 0.6, ease: 'easeInOut' } },
+      animate: {
+        y: [0, 1.5, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
     },
     path1: {},
     path2: {},

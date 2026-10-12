@@ -22,7 +22,10 @@ const animations = {
   'default-loop': {
     path: {
       initial: { x: 0 },
-      animate: { x: [0, 4, 0], transition: { duration: 0.6, ease: 'easeInOut' } },
+      animate: {
+        x: [0, 4, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
     },
   } satisfies Record<string, Variants>,
 } as const;

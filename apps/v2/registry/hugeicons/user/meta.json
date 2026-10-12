@@ -1,11 +1,6 @@
 {
   "title": "User Icon",
   "description": "User icon component.",
-  "keywords": [
-    "person",
-    "account",
-    "profile",
-    "avatar"
-  ],
+  "keywords": ["person", "account", "profile", "avatar"],
   "categories": []
 }

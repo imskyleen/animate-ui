@@ -27,7 +27,22 @@ const animations = {
       animate: {
         opacity: 0,
         scale: 0,
-        transition: { opacity: { duration: 0.2, ease: 'easeInOut', repeat: 1, repeatType: 'reverse', repeatDelay: 0.2 }, scale: { duration: 0.2, ease: 'easeInOut', repeat: 1, repeatType: 'reverse', repeatDelay: 0.2 } },
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+        },
       },
     },
   } satisfies Record<string, Variants>,
@@ -51,8 +66,20 @@ const animations = {
         scale: 0,
         transition: {
           fillOpacity: { delay: 0.2 },
-          opacity: { duration: 0.2, ease: 'easeInOut', repeat: 1, repeatType: 'reverse', repeatDelay: 0.2 },
-          scale: { duration: 0.2, ease: 'easeInOut', repeat: 1, repeatType: 'reverse', repeatDelay: 0.2 },
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
         },
       },
     },

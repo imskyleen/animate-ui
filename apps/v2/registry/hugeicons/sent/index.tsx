@@ -22,8 +22,16 @@ const animations = {
         y: [0, '10%', '-100%', '125%', 0],
         transition: {
           default: { ease: 'easeInOut', duration: 1.2 },
-          x: { ease: 'easeInOut', duration: 1.2, times: [0, 0.25, 0.5, 0.5, 1] },
-          y: { ease: 'easeInOut', duration: 1.2, times: [0, 0.25, 0.5, 0.5, 1] },
+          x: {
+            ease: 'easeInOut',
+            duration: 1.2,
+            times: [0, 0.25, 0.5, 0.5, 1],
+          },
+          y: {
+            ease: 'easeInOut',
+            duration: 1.2,
+            times: [0, 0.25, 0.5, 0.5, 1],
+          },
         },
       },
     },
