@@ -289,6 +289,49 @@ test.describe('hugeicons', () => {
     ]);
   });
 
+  test('Sparkles: both stars stay drawn, the small one twinkling (a pulse and a quarter turn) after the big one pulses', async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    await tile(page, 'sparkles').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    const svg = drawer.locator('svg').first();
+    await drawer.getByRole('button', { name: 'default', exact: true }).click();
+    const frames = await svg.evaluate(
+      (svg) =>
+        new Promise<{ opacity: number; scale: number; turn: number }[]>(
+          (resolve) => {
+            const small = svg.querySelectorAll('path')[1]!;
+            const out: { opacity: number; scale: number; turn: number }[] = [];
+            const start = performance.now();
+            const tick = () => {
+              const style = getComputedStyle(small);
+              const m = new DOMMatrix(style.transform);
+              out.push({
+                opacity: Math.min(
+                  Number(style.opacity),
+                  Number(getComputedStyle(svg.querySelector('path')!).opacity),
+                ),
+                scale: Math.hypot(m.a, m.b),
+                turn: (Math.atan2(m.b, m.a) * 180) / Math.PI,
+              });
+              if (performance.now() - start < 900) requestAnimationFrame(tick);
+              else resolve(out);
+            };
+            requestAnimationFrame(tick);
+          },
+        ),
+    );
+    for (const f of frames) {
+      expect(f.opacity, 'both stars drawn').toBe(1);
+      expect(f.scale, 'never shrunk away').toBeGreaterThan(0.65);
+    }
+    expect(Math.max(...frames.map((f) => Math.abs(f.turn)))).toBeGreaterThan(
+      30,
+    );
+    expect(Math.max(...frames.map((f) => f.scale))).toBeGreaterThan(1.1);
+  });
+
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,
   }) => {
