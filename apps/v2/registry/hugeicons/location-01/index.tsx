@@ -18,7 +18,9 @@ const animations = {
       initial: { scale: 1, rotate: 0, y: 0, transformOrigin: 'bottom center' },
       animate: {
         scale: [1, 0.75, 1, 1],
-        rotate: [0, 30, -15, 0],
+        // Its counter-swing small: full size, the pin's top would leave the
+        // grid.
+        rotate: [0, 30, -6, 0],
         y: [0, -4, 0, 0],
         transformOrigin: 'bottom center',
         transition: { duration: 1, ease: 'easeInOut' },
@@ -31,7 +33,8 @@ const animations = {
     group: {
       initial: { rotate: 0, transformOrigin: 'bottom center' },
       animate: {
-        rotate: [0, 12, -10, 0],
+        // (Wider, the pin's side would leave the grid.)
+        rotate: [0, 8, -7, 0],
         transformOrigin: 'bottom center',
         transition: { duration: 1, ease: 'easeInOut' },
       },

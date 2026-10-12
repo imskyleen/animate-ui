@@ -18,7 +18,6 @@ const animations = {
       initial: { rotate: 0 },
       animate: {
         rotate: [0, -20, -12],
-        transformOrigin: 'bottom left',
         transition: { duration: 0.4, ease: 'easeInOut' },
       },
     },
@@ -30,7 +29,6 @@ const animations = {
       initial: { rotate: 0 },
       animate: {
         rotate: [0, -20, 5, 0],
-        transformOrigin: 'bottom left',
         transition: { duration: 0.8, ease: 'easeInOut' },
       },
     },

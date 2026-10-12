@@ -2,5 +2,6 @@
   "title": "Clock Alert Icon",
   "description": "Clock Alert icon component.",
   "keywords": ["time", "alert", "warning", "late"],
-  "categories": []
+  "categories": [],
+  "added": "2026-10-12"
 }

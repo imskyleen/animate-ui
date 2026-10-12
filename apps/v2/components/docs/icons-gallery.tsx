@@ -187,7 +187,7 @@ function IconTile({
           <span
             data-slot="new"
             aria-label="New"
-            className="absolute top-2 left-2 size-1.5 rounded-full bg-foreground"
+            className="absolute top-2.5 left-2.5 size-2 rounded-full bg-foreground"
           />
         )}
         {icon && (

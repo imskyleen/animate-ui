@@ -4,7 +4,7 @@ import path from 'node:path';
 import * as Hugeicons from '@hugeicons/core-free-icons';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { playWaves, wavesOf } from './icon-waves';
+import { playWaves, track, wavesOf } from './icon-waves';
 
 // Hugeicons' animated icons (registry/hugeicons): Hugeicons' free set, drawn
 // at a stroke of 2, in the same gallery as Lucide's, installed as
@@ -99,17 +99,27 @@ test.describe('hugeicons', () => {
       const off = await page.evaluate(
         ([theirs, ours]) => {
           const svg = document.querySelector('svg')!;
+          // Each subpath on its own: sampled as one path, a tiny one (a
+          // dot) could fall between two samples.
           const make = (elements: typeof theirs) =>
-            elements.map(([tag, attrs]) => {
-              const el = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                tag,
-              ) as SVGGeometryElement;
-              for (const [k, v] of Object.entries(attrs))
-                if (['d', 'cx', 'cy', 'r'].includes(k)) el.setAttribute(k, v);
-              svg.append(el);
-              return el;
-            });
+            elements
+              .flatMap(([tag, attrs]) =>
+                tag === 'path'
+                  ? attrs
+                      .d!.split(/(?=M)/)
+                      .map((d) => [tag, { ...attrs, d }] as const)
+                  : [[tag, attrs] as const],
+              )
+              .map(([tag, attrs]) => {
+                const el = document.createElementNS(
+                  'http://www.w3.org/2000/svg',
+                  tag,
+                ) as SVGGeometryElement;
+                for (const [k, v] of Object.entries(attrs))
+                  if (['d', 'cx', 'cy', 'r'].includes(k)) el.setAttribute(k, v);
+                svg.append(el);
+                return el;
+              });
           const points = (els: SVGGeometryElement[], step: number) =>
             els.flatMap((el) => {
               const out: DOMPoint[] = [];
@@ -158,7 +168,7 @@ test.describe('hugeicons', () => {
     }
   });
 
-  test('the gallery lists every icon, searchable by keyword, with no empty filter row', async ({
+  test('the gallery lists every icon, searchable by keyword, each new one dotted at its top left (New filters them)', async ({
     page,
   }) => {
     await gotoGallery(page);
@@ -167,40 +177,30 @@ test.describe('hugeicons', () => {
     await expect(
       page.getByPlaceholder(`Search ${NAMES.length} icons…`),
     ).toBeVisible();
-    // No tags, no new icons: no row of chips with "All" alone.
-    await expect(
-      page.getByRole('button', { name: 'All', exact: true }),
-    ).toHaveCount(0);
+    // Every one new to Animate UI: a dot at its top left, as on Hugeicons'
+    // site.
+    await expect(tiles.locator('[data-slot=new]')).toHaveCount(NAMES.length);
+    const dot = await tiles.first().evaluate((tile) => {
+      const box = tile.getBoundingClientRect();
+      const dot = tile
+        .querySelector('[data-slot=new]')!
+        .getBoundingClientRect();
+      return {
+        left: dot.left - box.left,
+        top: dot.top - box.top,
+        size: dot.width,
+      };
+    });
+    expect(dot.left).toBeLessThan(16);
+    expect(dot.top).toBeLessThan(16);
+    expect(dot.size).toBe(8);
+    // No tags: All and New only.
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    await expect(tiles).toHaveCount(NAMES.length);
+    await page.getByRole('button', { name: 'All', exact: true }).click();
     await page.getByPlaceholder(/Search/).fill('bell');
     await expect(tiles).toHaveCount(1);
     await expect(tile(page, 'notification-01')).toBeVisible();
-  });
-
-  test('every icon plays on hover and goes back to rest when left', async ({
-    page,
-  }) => {
-    await gotoGallery(page);
-    for (const name of NAMES) {
-      const button = tile(page, name);
-      const svg = button.locator('svg').first();
-      await button.scrollIntoViewIfNeeded();
-      await expect(svg).toBeVisible();
-      await page.mouse.move(0, 0);
-      await expect
-        .poll(() => moving(svg), { message: `${name} at rest` })
-        .toBe(0);
-      await button.hover();
-      await expect
-        .poll(() => moving(svg), { message: `${name} plays`, intervals: [16] })
-        .toBeGreaterThan(0);
-      await page.mouse.move(0, 0);
-      await expect
-        .poll(() => moving(svg), {
-          message: `${name} back to rest`,
-          timeout: 3000,
-        })
-        .toBe(0);
-    }
   });
 
   test('a picked icon installs from its drawer as @animate-ui/hugeicons-<name>, and imports from icons/hugeicons', async ({
@@ -682,4 +682,213 @@ test.describe('hugeicons', () => {
       runs(source('star')[0]![1].d!),
     );
   });
+});
+
+// Drawn whole: no animation takes a piece past the icon's 24-unit grid (its
+// stroke, 1, included), where the icon would be cut. (Sent flies off and
+// back in, on purpose, as Lucide's Send.)
+test.describe('hugeicons within the grid', () => {
+  for (const name of NAMES)
+    test(`${name}: every animation stays within the grid`, async ({ page }) => {
+      await gotoGallery(page);
+      await page.getByPlaceholder(/Search/).fill(title(name).toLowerCase());
+      await tile(page, name).click();
+      const drawer = page.locator('[data-slot=icon-drawer]');
+      const buttons = drawer
+        .getByRole('button')
+        .filter({ hasNotText: /^(path|path-loop)$/ })
+        .filter({ hasText: /^[a-z-]+$/ });
+      await expect(buttons.first()).toBeVisible();
+      for (const animation of await buttons.allInnerTexts()) {
+        if (name === 'sent' && animation === 'default') continue;
+        await drawer
+          .getByRole('button', { name: animation, exact: true })
+          .click();
+        const out = await drawer
+          .locator('svg')
+          .first()
+          .evaluate(
+            (svg) =>
+              new Promise<number>((resolve) => {
+                // In the icon's own grid, where it's cut: what moves the
+                // whole icon (its svg) moves its grid with it.
+                const shapes = [
+                  ...svg.querySelectorAll('path, circle'),
+                ] as SVGGeometryElement[];
+                let worst = 0;
+                const start = performance.now();
+                const tick = () => {
+                  for (const shape of shapes) {
+                    if (Number(getComputedStyle(shape).opacity) < 0.05)
+                      continue;
+                    // (To the svg's own pixels: back to its 24 units.)
+                    const m = new DOMMatrix()
+                      .scale(24 / (svg as SVGSVGElement).width.baseVal.value)
+                      .multiply(shape.getCTM()!);
+                    const length = shape.getTotalLength();
+                    for (let at = 0; at <= length; at += 0.5) {
+                      const q = shape.getPointAtLength(at);
+                      const p = new DOMPoint(q.x, q.y).matrixTransform(m);
+                      worst = Math.max(
+                        worst,
+                        1 - p.x,
+                        1 - p.y,
+                        p.x + 1 - 24,
+                        p.y + 1 - 24,
+                      );
+                    }
+                  }
+                  if (performance.now() - start < 1300)
+                    requestAnimationFrame(tick);
+                  else resolve(worst);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+        expect(out, `${name} ${animation}: past the grid by`).toBeLessThan(0.1);
+      }
+    });
+});
+
+// Waves (wifi, volume): they pulse one after the other by default, never
+// gone, and blink as Lucide's (gone and back).
+test.describe('hugeicons waves', () => {
+  const waved = NAMES.filter((name) =>
+    readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').includes(
+      'variants.wave1',
+    ),
+  );
+  test('every wifi and volume icon with waves has them', () => {
+    expect(waved.length).toBeGreaterThanOrEqual(20);
+  });
+  for (const name of waved) {
+    const count = (
+      readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').match(
+        /variants=\{variants\.wave\d+\}/g,
+      ) ?? []
+    ).length;
+    test(`${name}: its ${count} waves pulse one after the other, never gone; blink takes them and brings them back`, async ({
+      page,
+    }) => {
+      const pulsed = await playWaves(page, URL, title(name), 'default');
+      // (Its waves; a badge moves its own way.)
+      for (const dip of pulsed.filter((dip) => dip.wave))
+        expect(dip.min).toBeGreaterThan(0.2);
+      const waves = wavesOf(pulsed);
+      expect(waves).toHaveLength(count);
+      for (let i = 1; i < waves.length; i++)
+        expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(60);
+      const blinked = wavesOf(
+        await playWaves(page, URL, title(name), 'blink'),
+        0.05,
+      );
+      expect(blinked).toHaveLength(count);
+    });
+  }
+});
+
+// Icons marked off, disconnected or in error move as Lucide's (they shake,
+// what marks them moving its own way), and badges animate after or along
+// their waves.
+test.describe('hugeicons wifi and volume states', () => {
+  const shaken = (tracks: { tag: string; dx: [number, number] }[]) => {
+    const group = tracks.find((t) => t.tag === 'g')!;
+    // (Sampled frame by frame: a little under its ±0.6.)
+    expect(group.dx[0], 'shakes left').toBeLessThan(-0.35);
+    expect(group.dx[1], 'and right').toBeGreaterThan(0.35);
+  };
+
+  for (const name of ['volume-off', 'wifi-off-01', 'wifi-off-02'])
+    test(`${name}: it shakes (its waves never pulse); off draws its slash again`, async ({
+      page,
+    }) => {
+      const tracks = await track(page, URL, title(name), 'default');
+      shaken(tracks);
+      for (const t of tracks) expect(t.minOpacity).toBeGreaterThan(0.9);
+      const off = await track(page, URL, title(name), 'off');
+      // The slash: the last piece of the shaken group.
+      expect(off.filter((t) => t.dashed)).toHaveLength(1);
+      expect(off.findLast((t) => t.tag !== 'g')!.dashed).toBe(true);
+    });
+
+  for (const name of [
+    'wifi-disconnected-01',
+    'wifi-disconnected-02',
+    'wifi-disconnected-03',
+    'wifi-disconnected-04',
+  ])
+    test(`${name}: it shakes as its x turns`, async ({ page }) => {
+      const tracks = await track(page, URL, title(name), 'default');
+      shaken(tracks);
+      const turned = tracks.filter((t) => t.turn > 25);
+      expect(turned, 'both strokes of its x').toHaveLength(2);
+    });
+
+  for (const name of ['wifi-error-01', 'wifi-error-02'])
+    test(`${name}: it shakes as its ! bounces`, async ({ page }) => {
+      const tracks = await track(page, URL, title(name), 'default');
+      shaken(tracks);
+      const bounced = tracks.filter((t) => t.tag !== 'g' && t.dy[1] > 0.6);
+      expect(bounced, 'its !').toHaveLength(1);
+    });
+
+  for (const name of [
+    'wifi-connected-01',
+    'wifi-connected-02',
+    'wifi-connected-03',
+  ])
+    test(`${name}: its waves pulse, then its check draws itself`, async ({
+      page,
+    }) => {
+      const tracks = await track(page, URL, title(name), 'default');
+      const check = tracks.filter((t) => t.dashed);
+      expect(check, 'its check').toHaveLength(1);
+      const waves = tracks.filter((t) => !t.dashed && t.minOpacity < 0.6);
+      expect(waves.length).toBeGreaterThanOrEqual(2);
+      // It starts once they have.
+      expect(check[0]!.delay).toBeGreaterThan(
+        Math.min(...waves.map((w) => w.delay)),
+      );
+    });
+
+  for (const [name, check] of [
+    ['wifi-sync', (t: { turn: number }) => t.turn > 100],
+    ['wifi-cog', (t: { turn: number }) => t.turn > 100],
+    ['wifi-lock', (t: { turn: number }) => t.turn > 3 && t.turn < 20],
+    ['wifi-unlock', (t: { dy: [number, number] }) => t.dy[0] < -0.6],
+    ['wifi-pen', (t: { dx: [number, number] }) => t.dx[0] < -0.6],
+  ] as const)
+    test(`${name}: its badge moves its own way as its waves pulse`, async ({
+      page,
+    }) => {
+      const tracks = await track(page, URL, title(name), 'default');
+      expect(tracks.filter((t) => check(t as never))).toHaveLength(1);
+      expect(
+        tracks.filter((t) => t.minOpacity < 0.6).length,
+      ).toBeGreaterThanOrEqual(2);
+    });
+});
+
+// Each icon on its own page: hovered, it plays; left, it goes back to rest.
+test.describe('hugeicons on hover', () => {
+  for (const name of NAMES)
+    test(`${name} plays on hover and goes back to rest when left`, async ({
+      page,
+    }) => {
+      await gotoGallery(page);
+      await page.getByPlaceholder(/Search/).fill(title(name).toLowerCase());
+      const button = tile(page, name);
+      const svg = button.locator('svg').first();
+      await expect(svg).toBeVisible();
+      await page.mouse.move(0, 0);
+      await expect.poll(() => moving(svg), { message: 'at rest' }).toBe(0);
+      await button.hover();
+      await expect
+        .poll(() => moving(svg), { message: 'plays', intervals: [16] })
+        .toBeGreaterThan(0);
+      await page.mouse.move(0, 0);
+      await expect
+        .poll(() => moving(svg), { message: 'back to rest', timeout: 6000 })
+        .toBe(0);
+    });
 });
