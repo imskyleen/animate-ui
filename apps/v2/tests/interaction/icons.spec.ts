@@ -754,8 +754,9 @@ test.describe('icons gallery', () => {
   });
 });
 
-// Lucide's wave icons also pulse, as Hugeicons' wifi and volume do.
-test.describe('lucide waves pulse', () => {
+// Lucide's wave icons pulse by default, as Hugeicons' wifi and volume do;
+// their waves going and coming back (Lucide's own) is blink.
+test.describe('lucide waves', () => {
   for (const title of [
     'Wifi',
     'Wifi High',
@@ -770,15 +771,15 @@ test.describe('lucide waves pulse', () => {
     'Router',
     'Phone Call',
     'House Wifi',
-  ])
-    test(`${title}: pulse dims its waves one after the other, never gone`, async ({
+  ]) {
+    test(`${title} by default: its waves dim one after the other, never gone`, async ({
       page,
     }) => {
       const dips = await playWaves(
         page,
         '/docs/icons/lucide-icons',
         title,
-        'pulse',
+        'default',
       );
       for (const dip of dips)
         expect(dip.min, 'never gone').toBeGreaterThan(0.2);
@@ -788,4 +789,20 @@ test.describe('lucide waves pulse', () => {
       for (let i = 1; i < waves.length; i++)
         expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(60);
     });
+
+    test(`${title} blink: its waves gone and back, one after the other`, async ({
+      page,
+    }) => {
+      const dips = await playWaves(
+        page,
+        '/docs/icons/lucide-icons',
+        title,
+        'blink',
+      );
+      const waves = wavesOf(dips, 0.05);
+      expect(waves.length, 'its waves gone').toBeGreaterThanOrEqual(1);
+      for (let i = 1; i < waves.length; i++)
+        expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(100);
+    });
+  }
 });

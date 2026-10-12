@@ -13,7 +13,20 @@ import {
 type Volume1Props = IconProps<keyof typeof animations>;
 
 const animations = {
+  // The waves pulse one after the other, never gone (as Hugeicons').
   default: {
+    path1: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+    path2: {},
+  } satisfies Record<string, Variants>,
+  // The waves gone and back, one after the other.
+  blink: {
     path1: {
       initial: { opacity: 1, scale: 1 },
       animate: {
@@ -35,18 +48,6 @@ const animations = {
             repeatDelay: 0.2,
           },
         },
-      },
-    },
-    path2: {},
-  } satisfies Record<string, Variants>,
-  // The waves pulse one after the other, never gone (as Hugeicons').
-  pulse: {
-    path1: {
-      initial: { opacity: 1, scale: 1 },
-      animate: {
-        opacity: [1, 0.25, 1],
-        scale: [1, 0.85, 1],
-        transition: { duration: 0.5, ease: 'easeInOut' },
       },
     },
     path2: {},

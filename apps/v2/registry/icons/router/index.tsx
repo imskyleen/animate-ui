@@ -13,7 +13,53 @@ import {
 type RouterProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // The waves pulse one after the other and the lights dim, never gone
+  // (as Hugeicons').
   default: (() => {
+    const animation: Record<string, Variants> = {
+      rect: {},
+      path3: {
+        initial: { opacity: 1 },
+        animate: {
+          opacity: [1, 0.25, 1, 0.25, 1],
+          transition: {
+            duration: 0.8,
+            ease: 'easeInOut',
+          },
+        },
+      },
+      path4: {
+        initial: { opacity: 1 },
+        animate: {
+          opacity: [0.25, 1, 0.25, 1],
+          transition: {
+            duration: 0.8,
+            ease: 'easeInOut',
+          },
+        },
+      },
+      path5: {},
+    };
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`path${i}`] = {
+        initial: { opacity: 1, scale: 1 },
+        animate: {
+          opacity: [1, 0.25, 1],
+          scale: [1, 0.85, 1],
+          transition: {
+            duration: 0.5,
+            ease: 'easeInOut',
+            delay: 0.15 * (i - 1),
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+  // The waves gone and back, one after the other.
+  blink: (() => {
     const animation: Record<string, Variants> = {
       rect: {},
       path3: {
@@ -62,51 +108,6 @@ const animations = {
               repeatDelay: 0.2,
               delay: 0.2 * (i - 1),
             },
-          },
-        },
-      };
-    }
-
-    return animation;
-  })() satisfies Record<string, Variants>,
-  // The waves pulse one after the other and the lights dim, never gone
-  // (as Hugeicons').
-  pulse: (() => {
-    const animation: Record<string, Variants> = {
-      rect: {},
-      path3: {
-        initial: { opacity: 1 },
-        animate: {
-          opacity: [1, 0.25, 1, 0.25, 1],
-          transition: {
-            duration: 0.8,
-            ease: 'easeInOut',
-          },
-        },
-      },
-      path4: {
-        initial: { opacity: 1 },
-        animate: {
-          opacity: [0.25, 1, 0.25, 1],
-          transition: {
-            duration: 0.8,
-            ease: 'easeInOut',
-          },
-        },
-      },
-      path5: {},
-    };
-
-    for (let i = 1; i <= 2; i++) {
-      animation[`path${i}`] = {
-        initial: { opacity: 1, scale: 1 },
-        animate: {
-          opacity: [1, 0.25, 1],
-          scale: [1, 0.85, 1],
-          transition: {
-            duration: 0.5,
-            ease: 'easeInOut',
-            delay: 0.15 * (i - 1),
           },
         },
       };
