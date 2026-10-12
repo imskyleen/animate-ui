@@ -166,13 +166,49 @@ test.describe('hugeicons', () => {
     await expect(drawer).toContainText('@animate-ui/react motion');
   });
 
-  test("Copy 01: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
+  test('Copy 01 by default: the two pieces part, the copy down to the right, the sheet up to the left, within the grid', async ({
     page,
   }) => {
     await gotoGallery(page);
     await tile(page, 'copy-01').click();
     const drawer = page.locator('[data-slot=icon-drawer]');
     await drawer.getByRole('button', { name: 'default', exact: true }).click();
+    await page.waitForTimeout(700);
+    const parted = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) =>
+        [...svg.querySelectorAll('path')].map((path) => {
+          const m = new DOMMatrix(getComputedStyle(path).transform);
+          const box = path.getBBox();
+          return {
+            x: m.e,
+            y: m.f,
+            // Its stroke (2) included.
+            min: Math.min(box.x + m.e, box.y + m.f) - 1,
+            max:
+              Math.max(box.x + box.width + m.e, box.y + box.height + m.f) + 1,
+          };
+        }),
+      );
+    // The sheet (drawn first), then the copy.
+    expect(parted.map(({ x, y }) => [x, y])).toEqual([
+      [-1.5, -1.5],
+      [1.5, 1.5],
+    ]);
+    for (const piece of parted) {
+      expect(piece.min).toBeGreaterThanOrEqual(-0.01);
+      expect(piece.max).toBeLessThanOrEqual(24.01);
+    }
+  });
+
+  test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    await tile(page, 'copy-01').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'merge', exact: true }).click();
     await page.waitForTimeout(700);
     const fit = await drawer
       .locator('svg')

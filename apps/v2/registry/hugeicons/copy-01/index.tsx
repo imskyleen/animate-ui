@@ -28,6 +28,42 @@ const animations = {
     path1: {
       initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
       animate: {
+        x: 1.5,
+        y: 1.5,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: -1.5,
+        y: -1.5,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  'default-loop': {
+    path1: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, 1.5, 0],
+        y: [0, 1.5, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, -1.5, 0],
+        y: [0, -1.5, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  merge: {
+    path1: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
         x: -2.5,
         y: -2.5,
         transition: { duration: 0.3, ease: 'easeInOut' },
@@ -38,7 +74,7 @@ const animations = {
       animate: { d: LANDED, transition: { duration: 0.3, ease: 'easeInOut' } },
     },
   } satisfies Record<string, Variants>,
-  'default-loop': {
+  'merge-loop': {
     path1: {
       initial: { x: 0, y: 0 },
       animate: {
