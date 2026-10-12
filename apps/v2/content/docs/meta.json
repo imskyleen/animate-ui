@@ -1,10 +1,10 @@
 {
   "pages": [
     "index",
+    "installation",
     "primitives",
     "backgrounds",
     "icons",
-    "installation",
     "skills",
     "accessibility",
     "changelog"
