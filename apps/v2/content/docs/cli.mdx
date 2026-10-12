@@ -1,0 +1,177 @@
+---
+title: CLI
+description: Use the Animate UI CLI to animate your shadcn/ui components and migrate from Animate UI v1.
+---
+
+The CLI changes your components in place, without copying anything: it swaps the primitives they import for `@animate-ui/react`'s animated ones and removes the CSS animations Motion replaces. It needs Node.js 22.12 or later.
+
+## animate
+
+Use the `animate` command to animate the shadcn/ui components installed in your project.
+
+```npm
+npx @animate-ui/cli@latest animate all
+```
+
+Name the components to animate only some of them:
+
+```npm
+npx @animate-ui/cli@latest animate dialog dropdown-menu tooltip
+```
+
+**Usage**
+
+```txt
+Usage: animate-ui animate <components...|all> [options]
+
+Arguments:
+  components      the components to animate (their file names in your ui
+                  folder), or all
+
+Options:
+  --cwd <path>    the project directory (default: the current directory)
+  --dry-run       show the changes without writing them
+  -h, --help      show the help
+```
+
+### What it changes
+
+`animate` finds your components through `components.json` (its `ui` alias, resolved with your `tsconfig.json` paths) and changes two things in each file:
+
+1. **The import source.** It mirrors your library's import style, so the code that uses the import doesn't change:
+
+```tsx
+import { Dialog as DialogPrimitive } from 'radix-ui'; // [!code --]
+import { Dialog as DialogPrimitive } from '@animate-ui/react/primitives/radix-ui'; // [!code ++]
+```
+
+| Your import                   | Becomes                                             |
+| ----------------------------- | --------------------------------------------------- |
+| `radix-ui`                    | `@animate-ui/react/primitives/radix-ui`             |
+| `@radix-ui/react-<primitive>` | `@animate-ui/react/primitives/radix-ui/<primitive>` |
+| `@base-ui/react`              | `@animate-ui/react/primitives/base-ui`              |
+| `@base-ui/react/<primitive>`  | `@animate-ui/react/primitives/base-ui/<primitive>`  |
+| `react-aria-components`       | `@animate-ui/react/primitives/react-aria`           |
+| `vaul` (the Radix UI Drawer)  | `@animate-ui/react/primitives/radix-ui/drawer`      |
+| `input-otp`                   | `@animate-ui/react/primitives/input-otp`            |
+
+The umbrella entries (`radix-ui`, `@base-ui/react`, `react-aria-components`) re-export everything else from the library, so an import mixing animated and plain parts (`{ Dialog, Slot }`) keeps working. An import with nothing to animate is left alone.
+
+2. **The CSS animations Motion replaces.** Left in place, they would run on top of Motion, so `animate` removes them from `className`, `cn()`, `clsx()`, `cva()` and `tv()`:
+
+- the tw-animate-css utilities (`animate-in`, `animate-out`, `fade-in-0`, `zoom-in-95`, `slide-in-from-top-2`…), whatever their variants (`data-open:`, `data-[state=closed]:`…);
+- shadcn/ui's keyframes (`animate-accordion-down`, `animate-collapsible-up`…);
+- each primitive's own CSS transitions: Base UI's `data-starting-style` and `data-ending-style` classes, React Aria's `data-entering` and `data-exiting` ones, and heights read from CSS variables (`h-(--accordion-panel-height)`).
+
+The rest of the file stays as it is: your styles, parts, props and markup.
+
+### Output
+
+```txt
+✔ components/ui/accordion.tsx
+    Accordion: radix-ui → @animate-ui/react/primitives/radix-ui
+    removed CSS animations: data-open:animate-accordion-down data-closed:animate-accordion-up
+✔ components/ui/dialog.tsx
+    Dialog: radix-ui → @animate-ui/react/primitives/radix-ui
+    removed CSS animations: data-open:animate-in data-closed:animate-out data-closed:fade-out-0 …
+
+2 files animated.
+```
+
+- A component that isn't installed is reported with the `shadcn add` command to install it, and the CLI exits with code 1.
+- Primitives imported from a supported library that Animate UI doesn't animate yet are listed under **Not animated yet** and left as they are.
+- If `@animate-ui/react` isn't in your `package.json`, the CLI tells you to install it with `motion`.
+- Running it again changes nothing: a component already animated is skipped.
+
+### Supported primitives
+
+| Library    | Primitives                                                                                                                                                                                                                                      |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Radix UI   | Accordion, Alert Dialog, Checkbox, Collapsible, Context Menu, Dialog, Drawer (Vaul), Dropdown Menu, Hover Card, Menubar, Navigation Menu, Popover, Progress, Radio Group, Select, Slider, Switch, Tabs, Toggle, Toggle Group, Tooltip           |
+| Base UI    | Accordion, Alert Dialog, Checkbox, Collapsible, Combobox, Context Menu, Dialog, Drawer, Menu, Menubar, Navigation Menu, Popover, Preview Card, Progress, Radio, Radio Group, Select, Slider, Switch, Tabs, Toast, Toggle, Toggle Group, Tooltip |
+| React Aria | Checkbox, Disclosure, ListBox, Menu, Modal, Popover, ProgressBar, RadioGroup, Slider, Switch, Tabs, TagGroup, ToggleButton, ToggleButtonGroup, Tooltip                                                                                          |
+| Others     | Input OTP (`input-otp`)                                                                                                                                                                                                                         |
+
+It works with every shadcn/ui style.
+
+## migrate
+
+Use the `migrate` command to move a project from Animate UI v1 (the files the registry copied into `components/animate-ui`) to `@animate-ui/react`.
+
+```npm
+npx @animate-ui/cli@latest migrate all
+```
+
+Name the v1 primitives to migrate only some of them (`accordion`, `dropdown-menu`, `icons`…):
+
+```npm
+npx @animate-ui/cli@latest migrate accordion tooltip
+```
+
+**Usage**
+
+```txt
+Usage: animate-ui migrate <components...|all> [options]
+
+Arguments:
+  components      the v1 primitives to migrate, or all
+
+Options:
+  --cwd <path>    the project directory (default: the current directory)
+  --dry-run       show the changes without writing them
+  --delete        delete the v1 files nothing imports anymore, without asking
+  --keep          keep them, without asking
+  -h, --help      show the help
+```
+
+Preview it first with `--dry-run`: the migration rewrites files across your project.
+
+### What it changes
+
+`migrate` follows your aliases from `components.json` (`components`, `lib`, `hooks`) and rewrites every file that imports a v1 file:
+
+- **Imports**: v1 primitives, the icon core (`icons/icon`) and v1's utilities (`get-strict-context`, `use-controlled-state`…) move to `@animate-ui/react`, and v1 export names map to the v2 parts. v1's Radix UI Sheet becomes the Dialog it was built on.
+- **Props**: what changed between v1 and v2 is rewritten (`keepRendered` → `forceMount`, `side` → `data-side`…), and v1 parts that rendered their own portal get one around them.
+- **Base UI**: v1's Base UI primitives were built on its beta (`@base-ui-components/react`). The props Base UI 1 renamed, moved or inverted are rewritten or reported.
+
+### Manual steps
+
+Some changes need you. `migrate` lists them with their file and line, marked `!`:
+
+```txt
+✔ src/app/page.tsx
+    Accordion, AccordionItem, AccordionTrigger, AccordionContent: @/components/animate-ui/primitives/radix/accordion → @animate-ui/react/primitives/radix-ui/accordion
+    line 66: <Content> keepRendered → forceMount
+    ! src/app/page.tsx:25 `useAccordionItem` is a v1 context hook, left on v1: its v1 parent is now v2, so it throws at runtime. …
+    ! src/app/page.tsx:66 <Content> `initial` is a Motion prop: v2 parts aren't motion components …
+
+8 files migrated, 17 manual steps left (marked !).
+```
+
+- **v1-only parts and hooks** (`DropdownMenuHighlight`, `useAccordionItem`…): in an import mixing them with parts v2 has, the parts move and the v1-only names stay on the v1 file. Their parent is v2 now, so they throw at runtime: remove them (v2 parts animate themselves: style their `data-state` attributes or control the state yourself), or replace the component with shadcn/ui's and run `animate`.
+- **Motion props** (`initial`, `animate`, `layoutId`…): v2 parts aren't motion components. Animated parts take `transition` and `exitTransition` instead.
+- **No v2 equivalent**: Files, Preview Link Card, the Headless UI primitives (Headless UI isn't supported in v2) and a few hooks (`use-auto-height`, `use-data-state`, `use-motion-value-state`) stay yours and keep working.
+
+Your v1 components (`components/animate-ui/components/…`) keep working on v2. The CLI also suggests swapping each one for shadcn/ui's and running `animate`.
+
+### v1 files
+
+At the end, `migrate` lists the v1 files `@animate-ui/react` replaces:
+
+- **Still imported**: v1 files that v1-only parts still import. They're kept, with what imports them.
+- **No longer imported**: in a terminal, the CLI asks about each one: delete it, delete it and all the others, keep it, or keep them all. `--delete` deletes them all and `--keep` keeps them all, without asking. Outside a terminal (CI, an AI assistant's shell), they're kept unless you pass `--delete`.
+
+It also tells you what to install: `@animate-ui/react` and `motion`, plus `@base-ui/react` (Base UI 1) when Base UI primitives were migrated.
+
+## Options
+
+| Option          | Commands             | Description                                                  |
+| --------------- | -------------------- | ------------------------------------------------------------ |
+| `--cwd <path>`  | `animate`, `migrate` | The project directory, with its `components.json`.           |
+| `--dry-run`     | `animate`, `migrate` | Show the changes without writing them.                       |
+| `--delete`      | `migrate`            | Delete the v1 files nothing imports anymore, without asking. |
+| `--keep`        | `migrate`            | Keep them, without asking. Not with `--delete`.              |
+| `-h, --help`    |                      | Show the help.                                               |
+| `-v, --version` |                      | Show the CLI's version.                                      |
+
+The CLI exits with code 1 when a component can't be found or a command fails, and 130 when you stop the `migrate` prompt.
