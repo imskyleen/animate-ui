@@ -69,24 +69,72 @@ const moving = (svg: Locator) =>
   );
 
 test.describe('hugeicons', () => {
-  test('the registry holds Hugeicons’ own icons, at a stroke of 2', () => {
+  test('the registry draws Hugeicons’ own icons at rest, at a stroke of 2 (split into pieces to animate, never reshaped)', async ({
+    page,
+  }) => {
     expect(NAMES.length).toBeGreaterThanOrEqual(16);
+    await page.setContent('<svg viewBox="0 0 24 24"></svg>');
     for (const name of NAMES) {
       const file = readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8');
       expect(file, name).toContain('strokeWidth={2}');
       expect(file, name).not.toMatch(/strokeWidth=\{?"?1\.5/);
-      const drawn = [...file.matchAll(/\sd="([^"]+)"/g)].flatMap((m) =>
-        runs(m[1]!),
+      // The elements it draws at rest (their JSX attributes).
+      const drawn: Source = [
+        ...[...file.matchAll(/\sd="([^"]+)"/g)].map(
+          (m) => ['path', { d: m[1]! }] as Source[number],
+        ),
+        ...[
+          ...file.matchAll(
+            /<motion\.circle\s+cx=\{([\d.]+)\}\s+cy=\{([\d.]+)\}\s+r=\{([\d.]+)\}/g,
+          ),
+        ].map(
+          (m) =>
+            ['circle', { cx: m[1]!, cy: m[2]!, r: m[3]! }] as Source[number],
+        ),
+      ];
+      // Every point of Hugeicons' icon is on what's drawn, and the other
+      // way round: the same icon, whatever its pieces.
+      const off = await page.evaluate(
+        ([theirs, ours]) => {
+          const svg = document.querySelector('svg')!;
+          const make = (elements: typeof theirs) =>
+            elements.map(([tag, attrs]) => {
+              const el = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                tag,
+              ) as SVGGeometryElement;
+              for (const [k, v] of Object.entries(attrs))
+                if (['d', 'cx', 'cy', 'r'].includes(k)) el.setAttribute(k, v);
+              svg.append(el);
+              return el;
+            });
+          const points = (els: SVGGeometryElement[], step: number) =>
+            els.flatMap((el) => {
+              const out: DOMPoint[] = [];
+              const length = el.getTotalLength();
+              for (let at = 0; at <= length; at += step)
+                out.push(el.getPointAtLength(at));
+              out.push(el.getPointAtLength(length));
+              return out;
+            });
+          const a = make(theirs);
+          const b = make(ours);
+          const far = (from: DOMPoint[], to: DOMPoint[]) =>
+            Math.max(
+              ...from.map((p) =>
+                Math.min(...to.map((q) => Math.hypot(p.x - q.x, p.y - q.y))),
+              ),
+            );
+          const result = Math.max(
+            far(points(a, 0.25), points(b, 0.02)),
+            far(points(b, 0.25), points(a, 0.02)),
+          );
+          svg.replaceChildren();
+          return result;
+        },
+        [source(name), drawn] as const,
       );
-      // Every run of Hugeicons' paths is drawn (some split to animate
-      // apart, the sun's rays drawn outward).
-      for (const [tag, attrs] of source(name)) {
-        if (tag === 'circle') {
-          expect(file, name).toContain(`r={${Number(attrs.r)}}`);
-          continue;
-        }
-        for (const run of runs(attrs.d!)) expect(drawn, name).toContain(run);
-      }
+      expect(off, name).toBeLessThan(0.05);
     }
   });
 
@@ -343,6 +391,75 @@ test.describe('hugeicons', () => {
     expect(Math.max(...frames.map((f) => f.scale))).toBeGreaterThan(1.1);
   });
 
+  test("every clock: the minute hand goes round once, the hour hand a step on and back (as Lucide's), both pinned at the clock's center", async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    const clocks = NAMES.filter((name) => name.startsWith('clock-'));
+    expect(clocks.length).toBeGreaterThanOrEqual(20);
+    for (const name of clocks) {
+      const button = tile(page, name);
+      await button.scrollIntoViewIfNeeded();
+      const svg = button.locator('svg').first();
+      await expect(svg).toBeVisible();
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(700);
+      await button.hover();
+      const run = await svg.evaluate(
+        (svg) =>
+          new Promise<{ minute: number; hour: number; drift: number }>(
+            (resolve) => {
+              const paths = [...svg.querySelectorAll('path')];
+              const [minute, hour] = paths.slice(-2) as SVGPathElement[];
+              const root = (svg as SVGSVGElement).getScreenCTM()!.inverse();
+              // Where a hand's center end is drawn now, in the icon's grid.
+              const pinned = (hand: SVGPathElement) =>
+                hand
+                  .getPointAtLength(hand.getTotalLength())
+                  .matrixTransform(root.multiply(hand.getScreenCTM()!));
+              const rest = [pinned(minute), pinned(hour)];
+              const angle = (el: Element) => {
+                const m = new DOMMatrix(getComputedStyle(el).transform);
+                return (Math.atan2(m.b, m.a) * 180) / Math.PI;
+              };
+              let last = 0;
+              let turned = 0;
+              let hour2 = 0;
+              let drift = 0;
+              const start = performance.now();
+              const tick = () => {
+                const a = angle(minute);
+                let step = a - last;
+                if (step > 180) step -= 360;
+                if (step < -180) step += 360;
+                turned += step;
+                last = a;
+                hour2 = Math.max(hour2, Math.abs(angle(hour)));
+                [minute, hour].forEach((hand, i) => {
+                  const p = pinned(hand);
+                  drift = Math.max(
+                    drift,
+                    Math.hypot(p.x - rest[i]!.x, p.y - rest[i]!.y),
+                  );
+                });
+                if (performance.now() - start < 800)
+                  requestAnimationFrame(tick);
+                else resolve({ minute: Math.abs(turned), hour: hour2, drift });
+              };
+              requestAnimationFrame(tick);
+            },
+          ),
+      );
+      expect(
+        run.minute,
+        `${name}: the minute hand, once round`,
+      ).toBeGreaterThan(300);
+      expect(run.hour, `${name}: the hour hand, a step`).toBeGreaterThan(10);
+      expect(run.hour).toBeLessThan(40);
+      expect(run.drift, `${name}: pinned at the center`).toBeLessThan(0.05);
+    }
+  });
+
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,
   }) => {
@@ -397,6 +514,8 @@ test.describe('hugeicons', () => {
     // Client-side, the loaded modules kept.
     await page.locator('aside a[href="/docs/icons/hugeicons"]').click();
     await page.waitForURL(`**${URL}`);
+    // (Loaded once in view.)
+    await tile(page, 'star').scrollIntoViewIfNeeded();
     const star = tile(page, 'star').locator('svg path');
     await expect(star).toHaveCount(1);
     expect(runs((await star.getAttribute('d'))!)).toEqual(

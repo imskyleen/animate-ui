@@ -14,17 +14,29 @@ type Clock01Props = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
-    circle: {},
-    hands: {
+    face1: {},
+    minute: {
       initial: {
         rotate: 0,
-        transformOrigin: '0% 66.667%',
-        transition: { duration: 0.8, ease: 'easeInOut' },
+        transformOrigin: '50% 100%',
+        transition: { duration: 0.6, ease: 'easeInOut' },
       },
       animate: {
         rotate: 360,
-        transformOrigin: '0% 66.667%',
-        transition: { duration: 0.8, ease: 'easeInOut' },
+        transformOrigin: '50% 100%',
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    hour: {
+      initial: {
+        rotate: 0,
+        transformOrigin: '0% 0%',
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+      animate: {
+        rotate: [0, 20, 0],
+        transformOrigin: '0% 0%',
+        transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
   } satisfies Record<string, Variants>,
@@ -49,15 +61,23 @@ function IconComponent({ size, ...props }: Clock01Props) {
         cx={12}
         cy={12}
         r={10}
-        variants={variants.circle}
+        variants={variants.face1}
         initial="initial"
         animate={controls}
       />
       <motion.path
-        d="M12 8V12L14 14"
+        d="M12 8L12 12"
         strokeLinecap="round"
         strokeLinejoin="round"
-        variants={variants.hands}
+        variants={variants.minute}
+        initial="initial"
+        animate={controls}
+      />
+      <motion.path
+        d="M14 14L12 12"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        variants={variants.hour}
         initial="initial"
         animate={controls}
       />
