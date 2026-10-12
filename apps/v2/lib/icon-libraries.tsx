@@ -33,6 +33,6 @@ export function LucideLogo({
 /** The logo shown before each icon library's name, by docs URL (monochrome). */
 export const ICON_LIBRARY_LOGOS: Record<string, ReactNode> = {
   '/docs/icons/lucide-icons': (
-    <LucideLogo monochrome className="size-4 shrink-0" />
+    <LucideLogo monochrome className="size-4 shrink-0 text-muted-foreground" />
   ),
 };
