@@ -1,0 +1,113 @@
+---
+title: '@animate-ui/react'
+description: Animated drop-in primitives for Radix UI, Base UI and React Aria, built with Motion.
+---
+
+`@animate-ui/react` ships every primitive of Radix UI, Base UI and React Aria with **exactly its library's API** and Motion inside. Swap the import and your components animate: parts, props, data attributes and accessibility stay the library's.
+
+## Installation
+
+```npm
+npm install @animate-ui/react motion
+```
+
+It uses the primitive library your components already depend on. The other packages are optional peer dependencies: install only what you use.
+
+| Package                 | Needed for                              |
+| ----------------------- | --------------------------------------- |
+| `motion`                | Everything                              |
+| `react`, `react-dom`    | Everything (React 19)                   |
+| `radix-ui`              | `primitives/radix-ui`                   |
+| `@base-ui/react`        | `primitives/base-ui`                    |
+| `react-aria-components` | `primitives/react-aria`                 |
+| `input-otp`             | `primitives/input-otp`                  |
+| `@floating-ui/react`    | `primitives/tooltip` (Animate UI's own) |
+| `shiki`                 | `primitives/code-block`                 |
+
+## Usage
+
+Change the import source, nothing else:
+
+```tsx
+import { Dialog } from 'radix-ui'; // [!code --]
+import { Dialog } from '@animate-ui/react/primitives/radix-ui'; // [!code ++]
+```
+
+The imports mirror the library's:
+
+| Library    | Umbrella import                           | Per primitive                                       |
+| ---------- | ----------------------------------------- | --------------------------------------------------- |
+| Radix UI   | `@animate-ui/react/primitives/radix-ui`   | `@animate-ui/react/primitives/radix-ui/<primitive>` |
+| Base UI    | `@animate-ui/react/primitives/base-ui`    | `@animate-ui/react/primitives/base-ui/<primitive>`  |
+| React Aria | `@animate-ui/react/primitives/react-aria` |                                                     |
+
+The umbrella imports re-export everything else from the library (`Slot`, `Label`, `Field`…), so an import mixing animated and plain parts keeps working. In a shadcn/ui project, the [CLI](/docs/cli) makes the change for you.
+
+## Entry points
+
+| Import                                    | What it holds                                                                                         |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `@animate-ui/react/primitives/radix-ui`   | [Radix UI primitives](/docs/primitives/radix-ui/accordion), animated                                  |
+| `@animate-ui/react/primitives/base-ui`    | [Base UI primitives](/docs/primitives/base-ui/accordion), animated                                    |
+| `@animate-ui/react/primitives/react-aria` | [React Aria components](/docs/primitives/react-aria/accordion), animated                              |
+| `@animate-ui/react/primitives/<name>`     | Animate UI's own [components, buttons, texts and effects](/docs/primitives) (`tabs`, `texts/typing`…) |
+| `@animate-ui/react/icons`                 | The animated [icons](/docs/icons)' core: `AnimateIcon`, `IconWrapper`…                                |
+| `@animate-ui/react/provider`              | `AnimateUIProvider`                                                                                   |
+| `@animate-ui/react/utils/motion`          | The motion tokens and reduced-motion helpers                                                          |
+
+Every entry point is its own module: you only ship what you import.
+
+## Customization
+
+### Pace and checks
+
+`AnimateUIProvider` is optional. Without it, the defaults apply.
+
+```tsx
+import { AnimateUIProvider } from '@animate-ui/react/provider';
+
+<AnimateUIProvider tempo={1.2} checkAnimation="pop">
+  {children}
+</AnimateUIProvider>;
+```
+
+| Prop             | Type              | Default  | Description                                                              |
+| ---------------- | ----------------- | -------- | ------------------------------------------------------------------------ |
+| `tempo`          | `number`          | `1`      | Multiplies every duration and spring: `0.8` crisper, `1.2` more relaxed. |
+| `checkAnimation` | `'draw' \| 'pop'` | `'draw'` | How checks show and hide: drawn like a pen, or popped in.                |
+
+Providers can be nested: the closest one sets what it's given, the rest comes from the one around it. See [Installation](/docs/installation) for more.
+
+### One animation
+
+Animated parts accept two optional props, `transition` and `exitTransition` (Motion [transitions](https://motion.dev/docs/react-transitions)), to change their own timing:
+
+```tsx
+<Dialog.Content transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+```
+
+### Your own components
+
+The tokens every primitive moves with are exported, to animate your own components the same way:
+
+```tsx
+import { motion } from 'motion/react';
+import { spring, useTempoTransition } from '@animate-ui/react/utils/motion';
+
+function Badge() {
+  const transition = useTempoTransition(spring.pop);
+  return (
+    <motion.span
+      initial={{ scale: 0.7, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={transition}
+    />
+  );
+}
+```
+
+`useTempoTransition` applies the provider's `tempo`. For the full set of rules and recipes, give your AI assistant the [skill](/docs/skills).
+
+## Accessibility
+
+Reduced motion, keyboard and focus work without any setup. See [Accessibility](/docs/accessibility).

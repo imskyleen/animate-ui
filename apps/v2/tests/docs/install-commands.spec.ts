@@ -7,6 +7,7 @@ import { expect, test } from '@playwright/test';
 const PAGES = [
   '/docs',
   '/docs/installation',
+  '/docs/react',
   '/docs/cli',
   '/docs/skills',
   '/docs/icons/get-started',
