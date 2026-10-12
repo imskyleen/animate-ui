@@ -46,14 +46,25 @@ async function gotoGallery(page: Page) {
 const tile = (page: Page, name: string) =>
   page.locator(`button[aria-pressed][title="${title(name)}"]`);
 
-/** Elements of the icon moved or faded (off rest). */
+/**
+ * Elements of the icon moved, faded or reshaped (off rest): a path's shape
+ * against the one it had when first seen.
+ */
 const moving = (svg: Locator) =>
   svg.evaluate(
     (el) =>
       [el, ...el.querySelectorAll('*')].filter((node) => {
         const style = getComputedStyle(node);
         const m = new DOMMatrix(style.transform);
-        return !m.isIdentity || Number(style.opacity) < 0.99;
+        const d = node.getAttribute('d');
+        const rest = (node as HTMLElement).dataset?.restD;
+        if (d !== null && rest === undefined)
+          node.setAttribute('data-rest-d', d);
+        return (
+          !m.isIdentity ||
+          Number(style.opacity) < 0.99 ||
+          (rest !== undefined && rest !== d)
+        );
       }).length,
   );
 
