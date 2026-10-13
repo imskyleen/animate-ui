@@ -51,11 +51,6 @@ function subscribeToNothing() {
   return () => {};
 }
 
-/**
- * False during SSR and hydration, true afterwards. The effect layer is a
- * portal into `document.body`, which doesn't exist on the server: rendering
- * it on the hydration pass would add a node the server HTML doesn't have.
- */
 function useIsMounted() {
   return React.useSyncExternalStore(
     subscribeToNothing,
@@ -90,7 +85,6 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
   const reduce = useShouldReduceMotion();
 
   React.useEffect(() => {
-    // Reduced motion: no click effects at all.
     if (disabled || reduce) return;
     const target = scope?.current ?? document;
     const isDoc = target instanceof Document;

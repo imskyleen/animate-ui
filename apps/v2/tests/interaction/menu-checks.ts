@@ -12,41 +12,19 @@ import {
 } from './item-checks';
 import { expectEscapeWithoutHold, expectPickHold } from './pick-hold';
 
-// The checks of a menu's checkbox and radio items, shared by the specs of the
-// dropdown and context menus and the menubars of every library, in both
-// animations. `draw` (the default): an item's check draws itself, like a
-// checkbox's, and erases itself when it's unchecked; a radio item's new check
-// draws itself while the old one erases itself. `pop`: a checkbox item's
-// check pops in and shrinks back out; a radio item's check glides to the
-// newly checked item, like a select's. When choosing an item closes the menu
-// (Radix, React Aria's single selection), the menu holds still while the
-// check changes, then fades out. Only checking and unchecking animate: the
-// menu opening or closing leaves its checks at rest.
-
 type MenuChecksCase = {
   path: string;
-  /** Opens the menu (the one of the checkbox items). */
   open: (page: Page) => Promise<void>;
-  /**
-   * Opens the menu of the radio items, when it's another one (a menubar's).
-   * Defaults to `open`.
-   */
   openRadios?: (page: Page) => Promise<void>;
-  /** The menu's popup. */
   popup: string;
-  /** The element of a check, inside its item (the one that moves). */
   indicator: string;
-  /** A checked and an unchecked checkbox item. */
   checkbox: { checked: string; unchecked: string };
-  /** The checked radio item, and another of its group. */
   radio: { from: string; to: string };
-  /** Choosing a radio item closes the menu. */
   radioCloses: boolean;
 };
 
 const ITEMS = '[role^="menuitem"]';
 
-/** Opens the menu of the checkbox or the radio items, and lets it settle. */
 async function openMenu(
   page: Page,
   c: MenuChecksCase,
@@ -56,10 +34,6 @@ async function openMenu(
   await page.waitForTimeout(500);
 }
 
-/**
- * In the open menus: how far each check sits from its item's middle, with
- * its item's role.
- */
 function checkOffsets(page: Page) {
   return page.evaluate(() =>
     [
@@ -84,7 +58,6 @@ function checkOffsets(page: Page) {
   );
 }
 
-/** Moves the pointer onto an item, and lets the highlight settle there. */
 async function hover(page: Page, label: string) {
   const item = page.locator(ITEMS, { hasText: label }).first();
   const box = await item.boundingBox();
@@ -98,7 +71,6 @@ async function press(page: Page) {
   await page.mouse.up();
 }
 
-/** Clicks an item, recording a check (its own, or `of`'s) for 700ms. */
 async function clickRecording(
   page: Page,
   c: MenuChecksCase,
@@ -157,8 +129,6 @@ function describeAnimation(
     test('the checks sit where they did, centered on their item', async ({
       page,
     }) => {
-      // Made a box so it can glide (radio items, `pop`), a plain <span>
-      // indicator lays out as it would inline.
       await openMenu(page, c, 'checkbox');
       const offsets = await checkOffsets(page);
       if (c.openRadios) {
@@ -167,7 +137,6 @@ function describeAnimation(
         await openMenu(page, c, 'radio');
         offsets.push(...(await checkOffsets(page)));
       }
-      // A checkbox item's check and a radio item's.
       const roles = offsets.map((check) => check.role);
       expect(roles).toContain('menuitemcheckbox');
       expect(roles).toContain('menuitemradio');
@@ -230,8 +199,6 @@ function describeAnimation(
       test(`a radio item's check ${change}`, async ({ page }) => {
         await openMenu(page, c, 'radio');
         await hover(page, c.radio.to);
-        // Both from the click on: started before the pointer got there, a
-        // loaded machine could spend the whole recording getting there.
         const leaving = recordCheck(page, {
           items: ITEMS,
           label: c.radio.from,
@@ -265,7 +232,6 @@ function describeAnimation(
                 const mark = owner?.querySelector<HTMLElement>(indicator);
                 const icon = mark?.querySelector('svg');
                 const parent = mark?.offsetParent as HTMLElement | null;
-                // While its check shows.
                 if (
                   mark &&
                   icon &&
@@ -285,7 +251,6 @@ function describeAnimation(
         );
         await press(page);
         const recorded = await offsets;
-        // It starts on the previous item (above it), and lands.
         expect(Math.max(...recorded.map((o) => Math.abs(o)))).toBeGreaterThan(
           10,
         );

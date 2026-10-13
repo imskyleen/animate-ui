@@ -11,7 +11,6 @@ import {
   type ReactNode,
 } from 'react';
 
-/** v1's cards, with Animate UI's Highlight following the pointer. */
 export function Cards({
   className,
   children,

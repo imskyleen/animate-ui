@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion';
@@ -10,10 +10,6 @@ import {
   BaseUIPanel,
   type PanelAnimationProps,
 } from '../../../internal/disclosure-panel';
-
-// Same API as Base UI's Accordion. The Root mirrors the open items and hands
-// them back to Base UI (one source of truth), so each Panel can animate in
-// and out like Animate UI v1's (see ../../../internal/disclosure-panel).
 
 type RootContext = {
   value: readonly unknown[];
@@ -44,7 +40,6 @@ function Root<Value = any>({
     details,
   ) => {
     onValueChange?.(next, details);
-    // Base UI lets the handler cancel the change.
     if (details.isCanceled) return;
     if (!controlled) setUncontrolled(next);
   };
@@ -84,8 +79,6 @@ function Item({
   value: valueProp,
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
-  // Base UI generates a value when there is none: generate it here so the
-  // open state can be read from the Root's value.
   const fallbackId = React.useId();
   const value: unknown = valueProp ?? fallbackId;
   const open = useRoot().value.includes(value);
@@ -130,7 +123,6 @@ function Panel({
   return (
     <BaseUIPanel
       {...props}
-      // Like Base UI, the panel's props win over the Root's.
       keepMounted={keepMounted ?? root.keepMounted}
       hiddenUntilFound={hiddenUntilFound ?? root.hiddenUntilFound}
       component={AccordionPrimitive.Panel}
@@ -141,7 +133,6 @@ function Panel({
 }
 
 namespace Panel {
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
   export type Props = AccordionPrimitive.Panel.Props & PanelAnimationProps;
   export type State = AccordionPrimitive.Panel.State;
 }

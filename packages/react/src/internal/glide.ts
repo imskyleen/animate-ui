@@ -4,38 +4,24 @@ import type { Transition } from 'motion/react';
 
 import { toCssTiming } from '../utils/motion';
 
-// An element moving from where it was on screen to where it now rests (FLIP),
-// on the compositor: a Web Animation of `translate`, added to the element's
-// own (a `translate` or `transform` from its styles stays as it is). A list's
-// check gliding to the chosen item, chips making room for one added.
-
 type Glide = {
   animation: Animation;
-  /** How far it travels, in px. */
   distance: number;
 };
 
-/** Running glides, by element. */
 const glides = new WeakMap<Element, Glide>();
 
-/** Stops `element`'s glide: it's where it rests. */
 function stopGlide(element: Element) {
   glides.get(element)?.animation.cancel();
   glides.delete(element);
 }
 
-/**
- * Moves `element` from `start` (a box on screen, read before it moved) to
- * `end`: where it rests, measured now (its glide stopped first), unless the
- * caller measured it. Returns the glide, if it moves.
- */
 function glideFrom(
   element: HTMLElement,
   start: DOMRect,
   glide: Transition,
   end?: DOMRect,
 ) {
-  // Without Web Animations (a test DOM), it's where it rests.
   if (typeof element.animate !== 'function') return;
   stopGlide(element);
   end ??= element.getBoundingClientRect();
@@ -56,11 +42,6 @@ function glideFrom(
   return animation;
 }
 
-/**
- * Calls `landed` once `element` is where it rests, to the eye: its glide less
- * than half a pixel away (a spring's tail goes on unseen), over, stopped, or
- * none. Returns a function that stops waiting.
- */
 function whenLanded(element: Element, landed: () => void) {
   const glide = glides.get(element);
   let frame = 0;
@@ -80,7 +61,6 @@ function whenLanded(element: Element, landed: () => void) {
   }
   const { animation, distance } = glide;
   const check = () => {
-    // Eased: how far along it is. None once it's over.
     const progress = animation.effect?.getComputedTiming().progress;
     if (progress == null || Math.abs(1 - progress) * distance < 0.5) land();
     else frame = requestAnimationFrame(check);

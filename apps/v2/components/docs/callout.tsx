@@ -34,7 +34,6 @@ type CalloutContainerProps = Omit<
   icon?: ReactNode;
 };
 
-/** v1's callout: an accent card, a colored bar and icon. */
 export function CalloutContainer({
   type: inputType = 'info',
   icon,

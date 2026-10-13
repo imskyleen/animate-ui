@@ -8,8 +8,6 @@ import { probeFirstFrame, sample } from './motion-probe';
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
-// shadcn's demo menu (~575px tall) doesn't fit under its trigger, in the
-// middle of a 720px viewport: it would scroll, and hide its last items.
 test.use({ viewport: { width: 1280, height: 1280 } });
 
 test.describe('radix-ui dropdown-menu demo', () => {
@@ -29,7 +27,6 @@ test.describe('radix-ui dropdown-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
-    // align="start" below the trigger: it grows from its top-left corner.
     expect(first.origin.startsWith('0px 0px')).toBe(true);
 
     await page.waitForTimeout(400);
@@ -42,7 +39,6 @@ test.describe('radix-ui dropdown-menu demo', () => {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, CONTENT)).opacity, {
         intervals: [16],
@@ -55,14 +51,11 @@ test.describe('radix-ui dropdown-menu demo', () => {
   });
 
   test('Escape gives focus back to the trigger at once', async ({ page }) => {
-    // By selector: Radix hides the page from assistive tech while a modal
-    // menu is mounted, which includes its exit.
     const trigger = page.locator('[data-slot="dropdown-menu-trigger"]');
     await trigger.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('menuitem', { name: /Profile/ })).toBeFocused();
     await page.keyboard.press('Escape');
-    // Not 220ms later, when the exit ends: keys must not reach a leaving menu.
     await expect(trigger).toBeFocused({ timeout: 50 });
   });
 
@@ -80,12 +73,10 @@ test.describe('radix-ui dropdown-menu demo', () => {
     const lefts = (await frames)
       .map((f) => f.copies.at(-1)?.left)
       .filter((left): left is number => left !== undefined);
-    // From the sub trigger in the menu to the item in the submenu.
     expect(lefts.some((left) => left > from.x + 2 && left < to.x - 2)).toBe(
       true,
     );
     expect(Math.abs(lefts.at(-1)! - to.x)).toBeLessThan(1);
-    // The open sub trigger keeps no background of its own.
     expect(
       await trigger.evaluate((el) => getComputedStyle(el).backgroundColor),
     ).toBe('rgba(0, 0, 0, 0)');
@@ -100,7 +91,6 @@ test.describe('radix-ui dropdown-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
-    // Opens on the right: anchored on its left edge.
     expect(first.origin.startsWith('0px')).toBe(true);
     await page.waitForTimeout(400);
     expect((await sample(page, SUB_CONTENT)).opacity).toBe(1);
@@ -111,8 +101,6 @@ test.describe('radix-ui dropdown-menu demo', () => {
   }) => {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
-    // Click and sample in the page: the first frames go by too fast for a
-    // round trip.
     const frames = await page.evaluate(async () => {
       const item = [
         ...document.querySelectorAll<HTMLElement>('[role="menuitemcheckbox"]'),
@@ -133,7 +121,6 @@ test.describe('radix-ui dropdown-menu demo', () => {
       }
       return seen;
     });
-    // Its stroke draws itself from nothing as it fades in, to the whole check.
     expect(frames[0]!.dash).toBeLessThan(0.3);
     expect(frames[0]!.opacity).toBeLessThan(0.3);
     expect(frames.some((f) => f.dash > 0.3 && f.dash < 0.9)).toBe(true);
@@ -169,7 +156,6 @@ test.describe('radix-ui dropdown-menu demo', () => {
       }
       return seen;
     });
-    // It comes from the item below ("Bottom"), while the menu closes.
     expect(offsets.some((y) => y > 5)).toBe(true);
   });
 
@@ -245,13 +231,10 @@ test.describe('radix-ui dropdown-menu API', () => {
     await page.getByRole('button', { name: 'Show force-mounted menu' }).click();
     const trigger = page.getByRole('button', { name: 'Force mounted' });
     const item = page.getByText('Kept item');
-    // A closed force-mounted menu is still a dismissable layer: the pointer
-    // down that opens it must not count as one outside it.
     await trigger.click();
     await expect(item).toBeVisible();
     await page.waitForTimeout(400);
     await expect(item).toBeVisible();
-    // A click outside still closes it, and so does its trigger.
     await page.mouse.click(5, 5);
     await expect(item).toBeHidden({ timeout: 600 });
     await trigger.click();
@@ -265,8 +248,6 @@ test.describe('radix-ui dropdown-menu API', () => {
   test('a checkbox item that keeps the menu open draws its check there', async ({
     page,
   }) => {
-    // Its onSelect is prevented (as the demo's used to be): the menu stays
-    // open, nothing holds, and the check draws itself in it.
     await page.getByRole('button', { name: 'View', exact: true }).click();
     const item = page.getByRole('menuitemcheckbox', { name: 'Show grid' });
     await item.hover();
@@ -300,9 +281,6 @@ describeMenuHighlight('radix-ui dropdown-menu highlight', {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(400);
   },
-  // Two rows above the submenu trigger, as the old demo's were: leaving the
-  // submenu for an item further up, the part in the submenu is cut by it
-  // before the new one has faded in.
   first: (page) => page.getByRole('menuitem', { name: /Settings/ }),
   second: (page) => page.getByRole('menuitem', { name: 'Team', exact: true }),
   submenuTrigger: (page) =>

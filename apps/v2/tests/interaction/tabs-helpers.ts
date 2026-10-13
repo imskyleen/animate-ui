@@ -8,47 +8,25 @@ import {
   type Sample,
 } from './spring-curves';
 
-// Shared by the Radix UI, Base UI and React Aria tabs specs (and Animate UI's
-// own Tabs). They move like Motion's Radix tabs example: one indicator slides
-// to the new tab, and the panels change one after the other (the outgoing one
-// fades out into a blur, then the incoming one fades in from it while the
-// height glides).
-
 export const INDICATOR = '[data-slot="tabs-indicator"]';
 export const PANEL = '[role="tabpanel"]';
-/**
- * Every panel, selected or not: React Aria only gives the selected one its
- * `tabpanel` role (not one leaving).
- */
 export const ANY_PANEL =
   '[role="tabpanel"], [data-slot="tabs-content"], .react-aria-TabPanel';
 
-/** The indicator's slide: `spring.selection`. */
 export const SELECTION_SPRING = { stiffness: 300, damping: 30 };
-/** The outgoing panel's fade into the blur: `transition.panelOut`. */
 export const PANEL_OUT: CurveOptions = { duration: 150, ease: [0, 0, 0.58, 1] };
-/** The incoming panel's fade from the blur: `transition.panelIn`. */
 export const PANEL_IN: CurveOptions = {
   duration: 300,
   ease: [0.25, 0.1, 0.35, 1],
 };
-/** The height gliding from the outgoing panel's: `transition.panelHeight`. */
 export const PANEL_HEIGHT: CurveOptions = {
   duration: 450,
   ease: [0.4, 0, 0.1, 1],
 };
-/** `shift.tabs`: how far the content slides, in px. */
 export const PANEL_SHIFT = 12;
-/** `blur.panel`, in px. */
 export const PANEL_BLUR = 5;
-/** The tabs' text color: `transition.color`. */
 const COLOR: CurveOptions = { duration: 200, ease: [0.25, 0.1, 0.25, 1] };
 
-/**
- * Waits until React has hydrated the tabs (in dev, `networkidle` can come
- * before hydration, and a click then does nothing). React Aria's tabs aren't
- * buttons, so the tabs themselves are checked.
- */
 export async function waitForTabs(page: Page) {
   await page.waitForFunction(() => {
     const tabs = [...document.querySelectorAll('[role="tab"]')];
@@ -64,18 +42,12 @@ export async function waitForTabs(page: Page) {
 export async function gotoTabs(page: Page, url: string) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await waitForTabs(page);
-  // Past the page's own start (a busy dev server's), so the first change's
-  // frames aren't held up by it.
   await page.waitForTimeout(250);
 }
-
-// The helpers below look at the whole page, or only inside the element the
-// selector `scope` matches (a fixture's section: the page holds other tabs).
 
 const within = (page: Page, scope?: string) =>
   scope ? page.locator(scope) : page;
 
-/** Left edge of the indicator relative to the tab `name`. */
 export const offsetFrom = (
   page: Page,
   name: string,
@@ -101,7 +73,6 @@ export const tabLeft = (page: Page, name: string, scope?: string) =>
     .getByRole('tab', { name, exact: true })
     .evaluate((el) => el.getBoundingClientRect().left);
 
-/** Where to click the tab `name`: read ahead, so quick clicks land in time. */
 export async function tabCenter(page: Page, name: string, scope?: string) {
   const tab = within(page, scope).getByRole('tab', { name, exact: true });
   await tab.scrollIntoViewIfNeeded();
@@ -109,11 +80,6 @@ export async function tabCenter(page: Page, name: string, scope?: string) {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }
 
-/**
- * Where the tab `name` is right now, without waiting for it to hold still
- * (the demo is centered in the page: its tabs move as the panels' height
- * glides).
- */
 export async function tabCenterNow(page: Page, name: string) {
   const box = (await page
     .getByRole('tab', { name, exact: true })
@@ -127,7 +93,6 @@ export const panelOpacity = (page: Page, scope?: string) =>
     .first()
     .evaluate((el) => Number(getComputedStyle(el).opacity));
 
-/** The active tab's own surface is hidden; the indicator carries it. */
 export async function expectSurfaceOnIndicator(page: Page, scope?: string) {
   const { tab, indicator } = await page.evaluate(
     ({ selector, scope }) => {
@@ -145,7 +110,6 @@ export async function expectSurfaceOnIndicator(page: Page, scope?: string) {
   expect(indicator).not.toBe('rgba(0, 0, 0, 0)');
 }
 
-/** Resolves after `count` frames. */
 export const nextFrames = (page: Page, count: number) =>
   page.evaluate(
     (count) =>
@@ -158,7 +122,6 @@ export const nextFrames = (page: Page, count: number) =>
     count,
   );
 
-/** Waits until the indicator holds still (no slide under way), then a few frames. */
 export async function waitForIndicatorRest(page: Page, scope?: string) {
   await page.waitForFunction(
     ({ indicator, scope }) => {
@@ -178,10 +141,6 @@ export async function waitForIndicatorRest(page: Page, scope?: string) {
   await nextFrames(page, 3);
 }
 
-/**
- * The indicator covers the active tab: its box on screen (left, top, width
- * and height) within `tolerance` px of the tab's.
- */
 export async function expectOnActiveTab(
   page: Page,
   tolerance: number,
@@ -209,18 +168,12 @@ export async function expectOnActiveTab(
     ).toBeLessThanOrEqual(tolerance);
 }
 
-/**
- * A panel on screen in a frame (its top in the element holding the panels),
- * the start of its text, and what's seen of its content (`o`, `blur`): the
- * panel's, or its Card's content's when only that fades.
- */
 export type PanelFrame = {
   text: string;
   y: number;
   h: number;
   o: number;
   blur: number;
-  /** Its content's slide (translate), in px. */
   tx: number;
   ty: number;
   inert: boolean;
@@ -229,24 +182,14 @@ export type PanelFrame = {
 export type SwitchFrame = {
   t: number;
   indicators: { x: number; width: number; o: number }[];
-  /** The panels on screen (neither `hidden` nor `display: none`). */
   panels: PanelFrame[];
   color: string;
 };
 
-/**
- * Clicks the tab `name` and records, on every frame (in the page, on the
- * frames' own times, so it holds up on a busy machine): the indicators (left edge, width and opacity of
- * each), the panels on screen (top, height, opacity, blur, inert) and the
- * tab's text color. Times are relative to the frame the tab is selected in
- * (earlier frames are negative), and the recording lasts `ms` from there,
- * however long the click takes.
- */
 export async function recordSwitch(
   page: Page,
   name: string,
   ms = 900,
-  /** How the tab gets selected: a click by default. */
   select?: () => Promise<void>,
   scope?: string,
   indicator = INDICATOR,
@@ -262,8 +205,6 @@ export async function recordSwitch(
         const frames: { t: number }[] = [];
         const start = performance.now();
         let selectedAt: number | null = null;
-        // On the frame's time: the clock the animations run on (a frame
-        // late after a long task still says when it was meant to show).
         const tick = (now: number) => {
           if (
             selectedAt === null &&
@@ -274,15 +215,9 @@ export async function recordSwitch(
             .filter((el) => !el.hidden && el.getClientRects().length > 0)
             .map((el) => {
               const box = el.getBoundingClientRect();
-              // Its place in the element holding the panels, whatever
-              // scrolls the page.
               const holder = el.parentElement!.getBoundingClientRect();
-              // What's seen of its content: the panel, down its chain of
-              // single children, to the first piece of content (a Card's
-              // header, which fades while the Card stays).
               let o = 1;
               let blur = 0;
-              // Its slide: the translates along the way, summed.
               let tx = 0;
               let ty = 0;
               const slide = (style: CSSStyleDeclaration) => {
@@ -362,10 +297,6 @@ export async function recordSwitch(
   )) as SwitchFrame[];
 }
 
-/**
- * The frames where the panel whose text starts with `name` is on screen, from
- * the selection on.
- */
 export const framesOf = (frames: SwitchFrame[], name: string) =>
   frames.flatMap((f) =>
     f.t >= 0
@@ -375,11 +306,6 @@ export const framesOf = (frames: SwitchFrame[], name: string) =>
       : [],
   );
 
-/**
- * The content slides along `axis` (`tx` or `ty`) by `shift.tabs`, `sign` the
- * way it travels (1: toward the end, a later tab): the leaving one away from
- * where the next comes from, the next one in from there, to rest.
- */
 export function expectSlides(
   frames: SwitchFrame[],
   from: string,
@@ -413,13 +339,11 @@ export function expectSlides(
   expect([...out, ...comes].every((p) => p[other] === 0)).toBe(true);
 }
 
-/** Never two panels on screen at once. */
 export function expectOnePanelAtATime(frames: SwitchFrame[]) {
   const most = Math.max(...frames.map((f) => f.panels.length));
   expect(most, 'panels on screen in one frame').toBeLessThanOrEqual(1);
 }
 
-/** A single indicator on every frame, never fading. */
 export function expectOneIndicator(frames: SwitchFrame[]) {
   expect(
     frames.every((f) => f.indicators.length === 1),
@@ -428,11 +352,6 @@ export function expectOneIndicator(frames: SwitchFrame[]) {
   expect(frames.every((f) => f.indicators[0]!.o === 1)).toBe(true);
 }
 
-/**
- * The panel `from` fades out into the blur, staying in the page, then `to`
- * fades in from it, once `from` has gone: on `transition.panelOut`, then
- * `transition.panelIn`.
- */
 export function expectPanelsInSequence(
   frames: SwitchFrame[],
   from: string,
@@ -445,14 +364,12 @@ export function expectPanelsInSequence(
     2,
   );
   expect(comes.length).toBeGreaterThan(2);
-  // In the page while it leaves, out of reach.
   const y = (
     frames.find((f) => f.t < 0 && f.panels[0]?.text.startsWith(from))
       ?.panels[0] ?? out[0]!
   ).y;
   expect(out.every((p) => Math.abs(p.y - y) < 0.5)).toBe(true);
   expect(out.every((p) => p.inert)).toBe(true);
-  // Into the blur, on the ease-out.
   expect(out.some((p) => p.o > 0.1 && p.o < 0.9 && p.blur > 0.5)).toBe(true);
   const blurred = Math.max(...out.map((p) => p.blur));
   expect(blurred).toBeGreaterThan(PANEL_BLUR - 1);
@@ -462,7 +379,6 @@ export function expectPanelsInSequence(
     PANEL_OUT,
     { from: 1, to: 0, a: 0.8, b: 0.2 },
   );
-  // Once it has gone (150ms), the next one, from the blur, where it was.
   const last = out.at(-1)!.t;
   const first = comes[0]!;
   expect(first.t).toBeGreaterThan(last);
@@ -475,17 +391,12 @@ export function expectPanelsInSequence(
     PANEL_IN,
     { from: 0, to: 1, a: 0.2, b: 0.8 },
   );
-  // At rest: shown, without a filter.
   const rest = frames.at(-1)!.panels[0]!;
   expect(rest.text.startsWith(to)).toBe(true);
   expect(rest.o).toBe(1);
   expect(rest.blur).toBe(0);
 }
 
-/**
- * shadcn's tabs demo: Overview (selected), Analytics, Reports and Settings,
- * each panel a card of the same height.
- */
 export function describeTabsDemo(
   library: string,
   { selectKeys }: { selectKeys: string[] },
@@ -499,8 +410,6 @@ export function describeTabsDemo(
     test('page load: nothing moves, the indicator sits on the active tab', async ({
       page,
     }) => {
-      // Sampled from the first frames (for up to a minute: a busy dev server
-      // can hydrate late).
       await page.addInitScript((panel) => {
         const w = window as unknown as { __load: number[][] };
         w.__load = [];
@@ -536,7 +445,6 @@ export function describeTabsDemo(
       const start = await tabLeft(page, 'Overview');
       const target = await tabLeft(page, 'Settings');
       const frames = await recordSwitch(page, 'Settings');
-      // One surface, never two crossfading.
       expectOneIndicator(frames);
       expect(
         frames.some(
@@ -578,7 +486,6 @@ export function describeTabsDemo(
       const started = frames.find((f) => f.color !== frames[0]!.color)!;
       const reached = frames.find((f) => f.color === final)!;
       expect(new Set(frames.map((f) => f.color)).size).toBeGreaterThan(3);
-      // From its first change to the final color: 200ms, give or take frames.
       expect(reached.t - started.t).toBeGreaterThan(120);
       expect(reached.t - started.t).toBeLessThan(COLOR.duration + 80);
     });
@@ -615,7 +522,6 @@ export function describeTabsDemo(
       const analytics = await tabCenter(page, 'Analytics');
       const frames = await recordSwitch(page, 'Analytics', 1000, async () => {
         await page.mouse.click(analytics.x, analytics.y);
-        // Coming in, part of the way.
         await page.waitForFunction((panel) => {
           const el = [...document.querySelectorAll<HTMLElement>(panel)].find(
             (p) => !p.hidden && p.textContent?.trim().startsWith('Analytics'),
@@ -630,7 +536,6 @@ export function describeTabsDemo(
       });
       expectOnePanelAtATime(frames);
       const passed = framesOf(frames, 'Analytics');
-      // In from the end, then back out to the end: no jump.
       const xs = passed.map((p) => p.tx);
       expect(Math.min(...xs)).toBeGreaterThan(0);
       const low = xs.indexOf(Math.min(...xs));
@@ -638,7 +543,6 @@ export function describeTabsDemo(
       expect(xs.at(-1)!).toBeGreaterThan(xs[low]! + 2);
       const steps = xs.slice(1).map((x, i) => Math.abs(x - xs[i]!));
       expect(Math.max(...steps)).toBeLessThan(5);
-      // Back to the first tab: it comes in from the start.
       const back = framesOf(frames, 'Overview').filter(
         (p) => p.t > passed.at(-1)!.t,
       );
@@ -651,8 +555,6 @@ export function describeTabsDemo(
       const target = await tabLeft(page, 'Analytics');
       await page.getByRole('tab', { name: 'Overview' }).focus();
       const frames = await recordSwitch(page, 'Analytics', 900, async () => {
-        // Radix and React Aria select on arrow keys; Base UI moves focus,
-        // then Enter selects.
         for (const key of selectKeys) await page.keyboard.press(key);
       });
       await expect(
@@ -667,7 +569,6 @@ export function describeTabsDemo(
       ).toBe(true);
       expectPanelsInSequence(frames, 'Overview', 'Analytics');
       expect(Math.abs(await offsetFrom(page, 'Analytics'))).toBeLessThan(1);
-      // Focus moved with the selection, nothing delayed it.
       await expect(page.getByRole('tab', { name: 'Analytics' })).toBeFocused();
     });
 
@@ -681,10 +582,6 @@ export function describeTabsDemo(
         await page.mouse.click(reports.x, reports.y);
       });
       expectOneIndicator(frames);
-      // Retargeted on the way: no jump from one frame to the next. A slow
-      // frame (a loaded machine) covers more ground: the step is weighed by
-      // the time it took (the spring peaks near 1px/ms here; a jump would
-      // cover the whole way at once).
       for (let i = 1; i < frames.length; i++) {
         const step = Math.abs(
           frames[i]!.indicators[0]!.x - frames[i - 1]!.indicators[0]!.x,
@@ -715,12 +612,10 @@ export function describeTabsDemo(
       const analytics = await tabCenter(page, 'Analytics');
       const frames = await recordSwitch(page, 'Analytics', 1000, async () => {
         await page.mouse.click(analytics.x, analytics.y);
-        // Halfway in.
         await page.waitForFunction((panel) => {
           const el = [...document.querySelectorAll<HTMLElement>(panel)].find(
             (p) => !p.hidden && p.textContent?.trim().startsWith('Analytics'),
           );
-          // What's seen of its content (its Card's, which fades alone).
           let o = el ? 1 : 0;
           for (let node = el?.firstElementChild ? el : null; node;) {
             o *= Number(getComputedStyle(node).opacity);
@@ -733,8 +628,6 @@ export function describeTabsDemo(
           }
           return o > 0.25 && o < 0.75;
         }, ANY_PANEL);
-        // Read now: the demo is centered in the page, so its tabs move as
-        // the panel's height changes.
         const reports = await tabCenterNow(page, 'Reports');
         await page.mouse.click(reports.x, reports.y);
       });
@@ -742,7 +635,6 @@ export function describeTabsDemo(
       expectOnePanelAtATime(frames);
       const passed = framesOf(frames, 'Analytics');
       const peak = passed.reduce((i, p, j) => (p.o > passed[i]!.o ? j : i), 0);
-      // Up, then back down from there: no jump either way.
       expect(passed[peak]!.o).toBeLessThan(0.98);
       const after = passed.slice(peak);
       expect(after.length).toBeGreaterThan(2);
@@ -758,11 +650,6 @@ export function describeTabsDemo(
     test('a list of a fractional width: the indicator sits exactly on the active tab', async ({
       page,
     }) => {
-      // Measured against the list's rounded width (offsetWidth), it ended a
-      // fraction of a pixel off, more the further the tab (0.28px on the
-      // last one). 301.37px is held as 301.359375 (64ths of a pixel) and
-      // reported as 301.359px (6 significant digits): read as a tiny scale,
-      // it ended a 64th off.
       const list = page.getByRole('tablist');
       const rounding = await list.evaluate((el: HTMLElement) => {
         el.style.width = '301.37px';
@@ -781,11 +668,6 @@ export function describeTabsDemo(
     test('under an ancestor scaled close to 1: the indicator sits on the active tab, scaled and once the scale has gone', async ({
       page,
     }) => {
-      // Within about 3% of 1, the scale was read as none along the list's
-      // height (a 1px threshold): the indicator was half a pixel too tall at
-      // 1.02, and a quarter off along its width (divided by the rounded
-      // offsetWidth), and stayed so (a transform resizes nothing the
-      // observers see).
       const list = page.getByRole('tablist');
       for (const [scale, name] of [
         ['1.02', 'Settings'],
@@ -808,9 +690,6 @@ export function describeTabsDemo(
     test('selected while drawn tilted and scaled (a dialog coming in): once the transform has gone, the indicator sits on the active tab', async ({
       page,
     }) => {
-      // A box read under a perspective is off (about 1px): the tabs are read
-      // again on each frame until the list is drawn at its own size (before,
-      // it stayed off: a transform resizes nothing the observers see).
       const transform = 'perspective(500px) rotateX(-20deg) scale(0.8)';
       const list = page.getByRole('tablist');
       await list.evaluate((el, transform) => {
@@ -874,7 +753,6 @@ export function describeTabsDemo(
           ['auto', 'replace'].includes(keyframe.composite),
         ),
       ).toBe(true);
-      // From the old tab, to its own place (no translate of its own).
       const still = (translate = '') =>
         translate.split(/\s+/).every((value) => parseFloat(value) === 0);
       expect(still(slide!.keyframes[0]!.translate)).toBe(false);
@@ -883,18 +761,12 @@ export function describeTabsDemo(
   });
 }
 
-/**
- * shadcn's tabs (the demos' parts) mounted after the page has loaded, as in a
- * dialog (tests/fixtures/tabs-indicator-mount.tsx), in dark mode: the active
- * tab's own border and background are translucent.
- */
 export function describeTabsMounted(library: string) {
   test.describe(`${library} tabs, mounted after the page has loaded`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/tests/fixtures/tabs-indicator-mount', {
         waitUntil: 'networkidle',
       });
-      // Hydrated: a click before then does nothing.
       await page.waitForFunction(() => {
         const buttons = [...document.querySelectorAll('button')];
         return (
@@ -910,8 +782,6 @@ export function describeTabsMounted(library: string) {
     test("the active tab's own look goes at once as the indicator shows, never fading out over it (shadcn's transition-all)", async ({
       page,
     }) => {
-      // Hidden with its transition, the tab's own border and background
-      // faded out over the indicator for 200ms: a doubled, brighter border.
       const scope = `[data-testid="${library}-settle"]`;
       const section = page.locator(scope);
       for (const round of ['mounted', 'mounted again']) {
@@ -964,11 +834,8 @@ export function describeTabsMounted(library: string) {
           background: number;
           indicator: number;
         }[];
-        // From the frame it shows in, past the 200ms the fade took (a loaded
-        // machine draws fewer frames).
         expect(frames.length, `${round}: frames shown`).toBeGreaterThan(2);
         expect(frames.at(-1)!.t).toBeGreaterThan(300);
-        // The indicator wears the tab's translucent border.
         expect(frames[0]!.indicator).toBeGreaterThan(0);
         expect(frames[0]!.indicator).toBeLessThan(1);
         for (const { t, border, background } of frames) {
@@ -986,8 +853,6 @@ export function describeTabsMounted(library: string) {
     test('mounted in a box coming in like a dialog (tilted and scaled): once it has come in, the indicator sits on the active tab', async ({
       page,
     }) => {
-      // Read as it mounts, under the box's perspective (about 1px off), it
-      // stayed there: a transform resizes nothing the observers see.
       const scope = `[data-testid="${library}-entrance"]`;
       const section = page.locator(scope);
       await section.getByRole('button', { name: 'Show in entrance' }).click();
@@ -1000,11 +865,6 @@ export function describeTabsMounted(library: string) {
   });
 }
 
-/**
- * The panels' height, on the `heights` section of the library's fixture:
- * shadcn's demo has panels of one height. Its tabs are Short (selected) and
- * Tall, whose panel is taller.
- */
 export function describeTabsHeights(library: string) {
   const url = `/tests/fixtures/${library}-tabs`;
   const scope = '[data-testid="heights"]';
@@ -1012,7 +872,6 @@ export function describeTabsHeights(library: string) {
   test.describe(`${library} tabs, panels of different heights`, () => {
     test.beforeEach(async ({ page }) => {
       await gotoTabs(page, url);
-      // In view before anything is measured: a click would scroll it there.
       await page.locator(scope).scrollIntoViewIfNeeded();
     });
 
@@ -1032,14 +891,11 @@ export function describeTabsHeights(library: string) {
       await expect(panel).toHaveCount(1);
       await expect(panel).toContainText('Tall panel');
       expectPanelsInSequence(frames, 'Short', 'Tall');
-      // The old panel keeps its height while it leaves.
       const out = framesOf(frames, 'Short');
       expect(out.every((p) => Math.abs(p.h - before) < 0.5)).toBe(true);
       const comes = framesOf(frames, 'Tall');
       const after = comes.at(-1)!.h;
       expect(after).toBeGreaterThan(before + 20);
-      // The new one starts at the old one's height, then glides to its own,
-      // never past it.
       expect(Math.abs(comes[0]!.h - before)).toBeLessThan(3);
       expect(comes.some((p) => p.h > before + 2 && p.h < after - 2)).toBe(true);
       expect(comes.every((p) => p.h <= after + 0.5)).toBe(true);
@@ -1088,21 +944,18 @@ export function describeTabsHeights(library: string) {
       );
       expectOnePanelAtATime(frames);
       const leaving = framesOf(frames, 'Tall');
-      // Tall fades out from where it is, its height still gliding.
       const peak = leaving.reduce(
         (i, p, j) => (p.o > leaving[i]!.o ? j : i),
         0,
       );
       expect(leaving.slice(peak).length).toBeGreaterThan(2);
       expect(leaving.at(-1)!.o).toBeLessThan(0.2);
-      // Then Short comes in from Tall's height, back down to its own.
       const back = framesOf(frames, 'Short').filter(
         (p) => p.t > leaving.at(-1)!.t,
       );
       expect(back.length).toBeGreaterThan(2);
       expect(Math.abs(back[0]!.h - leaving.at(-1)!.h)).toBeLessThan(6);
       expect(back.at(-1)!.h).toBeCloseTo(before, 0);
-      // No jump in the height on the way.
       const heights = frames
         .filter((f) => f.t >= 0 && f.panels.length)
         .map((f) => f.panels[0]!.h);
@@ -1113,10 +966,6 @@ export function describeTabsHeights(library: string) {
     test("under an ancestor's scale: the height glides from the old panel's own height to the new one's (laid out, unrounded), not as drawn scaled", async ({
       page,
     }) => {
-      // A panel's height is read as drawn, unless an ancestor scales it:
-      // then as laid out. Exact either way: a rounded offsetHeight was up to
-      // half a pixel off (the old panel is 40.37px tall), and the drawn
-      // height under the scale a tenth off.
       const section = page.locator(scope);
       const before = await section
         .locator(`${PANEL}:not([hidden])`)
@@ -1131,7 +980,6 @@ export function describeTabsHeights(library: string) {
         });
       expect(before.layout % 1, 'a fractional height').not.toBe(0);
       expect(before.drawn, 'drawn scaled').toBeCloseTo(before.layout * 0.9, 2);
-      // The new panel's glide, as it starts.
       const glide = page.evaluate(
         ({ scope, panel }) =>
           new Promise<string[]>((resolve) => {
@@ -1190,7 +1038,6 @@ export function describeTabsHeights(library: string) {
       const frames = await recordSwitch(page, 'Tall', 700, undefined, scope);
       const after = frames.at(-1)!.panels[0]!.h;
       expect(after).toBeGreaterThan(before + 20);
-      // No blur, no slide, no height in between, no indicator in between.
       expect(frames.every((f) => f.panels.every((p) => p.blur === 0))).toBe(
         true,
       );
@@ -1201,7 +1048,6 @@ export function describeTabsHeights(library: string) {
       expect(heights.some((h) => h > before + 1 && h < after - 1)).toBe(false);
       const lefts = frames.map((f) => f.indicators[0]!.x);
       expect(lefts.some((x) => x > start + 1 && x < target - 1)).toBe(false);
-      // Still one after the other, fading.
       expectOnePanelAtATime(frames);
       expect(framesOf(frames, 'Short').some((p) => p.o > 0 && p.o < 1)).toBe(
         true,
@@ -1214,32 +1060,20 @@ export function describeTabsHeights(library: string) {
   });
 }
 
-/** A panel's box (its frame): a demo's Card, a fixture's `data-box`. */
 const BOX = '[data-box], [data-slot="card"]';
 
-/** A box on screen in a frame. */
 export type BoxFrame = {
   text: string;
-  /** Its opacity times its ancestors'. */
   o: number;
-  /** The strongest blur on it or an ancestor, in px. */
   blur: number;
-  /** How far (px) an ancestor clipping its content cuts into it (ring included). */
   clip: number;
   h: number;
-  /** What's seen of its first piece of content. */
   content: number;
 };
 
-/**
- * Selects with `select` and records, on every frame (on the frames' own
- * times, from the first), until `ms` after the tab `last` is selected: the
- * boxes on screen inside `root`.
- */
 export async function recordBoxes(
   page: Page,
   root: string,
-  /** The tab selected last: the recording lasts `ms` from then. */
   last: string,
   select: () => Promise<void>,
   ms = 1000,
@@ -1263,7 +1097,6 @@ export async function recordBoxes(
             .filter((el) => el.getClientRects().length > 0)
             .map((el) => {
               const rect = el.getBoundingClientRect();
-              // A ring (shadcn's Card: a 1px box-shadow) is drawn outside it.
               const ring = getComputedStyle(el).boxShadow === 'none' ? 0 : 1;
               let o = 1;
               let blur = 0;
@@ -1325,12 +1158,6 @@ export async function recordBoxes(
   )) as { t: number; boxes: BoxFrame[] }[];
 }
 
-/**
- * The box stays on screen through the change, as in Motion's example: one
- * box on every frame, fully opaque, sharp, never cut by an ancestor; only
- * its content fades; its height never jumps (the next box takes over at the
- * previous one's height), from `from`'s box to `to`'s.
- */
 export function expectBoxStays(
   frames: { t: number; boxes: BoxFrame[] }[],
   from: string,
@@ -1346,8 +1173,6 @@ export function expectBoxStays(
   expect(worst('o', Math.min), 'the box is never faded').toBe(1);
   expect(worst('blur', Math.max), 'the box is never blurred').toBe(0);
   expect(worst('clip', Math.max), 'the box is never cut').toBeLessThan(0.5);
-  // Only its content fades, out then in (a slow frame on a loaded machine
-  // may show it well on its way).
   expect(
     boxes.some((b) => b.text.startsWith(from) && b.content < 0.9),
     `${from}'s content fades out`,
@@ -1358,9 +1183,6 @@ export function expectBoxStays(
   ).toBe(true);
   expect(boxes.at(-1)!.text.startsWith(to), `${to} at the end`).toBe(true);
   expect(boxes.at(-1)!.content).toBe(1);
-  // Its height never jumps: the next box takes over at the previous one's
-  // height, then glides (Motion's layout curve peaks near 1px/ms on the
-  // demo's largest change; a jump covers the whole way at once).
   for (let i = 1; i < boxes.length; i++) {
     const step = Math.abs(boxes[i]!.h - boxes[i - 1]!.h);
     const dt = boxes[i]!.t - boxes[i - 1]!.t;
@@ -1370,16 +1192,9 @@ export function expectBoxStays(
   }
   const swap = boxes.findIndex((b) => b.text.startsWith(to));
   expect(swap).toBeGreaterThan(0);
-  // (A frame of the previous box's own glide apart, at most.)
   expect(Math.abs(boxes[swap]!.h - boxes[swap - 1]!.h)).toBeLessThan(8);
 }
 
-/**
- * Panels holding a box, a Card in shadcn's demo: the box stays on screen,
- * only its content fades (Motion's example), unless the boxes don't look
- * alike, or the box holds text right inside it (the `frames` section of the
- * library's fixture: Boxed, Boxed tall, Other box, Text box).
- */
 export function describeTabsFrames(library: string) {
   test.describe(`${library} tabs, panels holding a box`, () => {
     const demo = `/tests/demos/${library}/tabs`;
@@ -1397,7 +1212,6 @@ export function describeTabsFrames(library: string) {
         await gotoTabs(page, demo);
         if (from !== 'Overview') {
           await page.getByRole('tab', { name: from }).click();
-          // Its content in, its height there.
           await page.waitForTimeout(900);
         }
         const before = await page
@@ -1408,8 +1222,6 @@ export function describeTabsFrames(library: string) {
           page.mouse.click(target.x, target.y),
         );
         expectBoxStays(recorded, from, to);
-        // Its height glides from the previous Card's on Motion's layout
-        // curve.
         const after = recorded.at(-1)!.boxes[0]!.h;
         expect(Math.abs(after - before)).toBeGreaterThan(20);
         const glide = recorded
@@ -1434,7 +1246,6 @@ export function describeTabsFrames(library: string) {
       const analytics = await tabCenter(page, 'Analytics');
       const recorded = await recordBoxes(page, root, 'Settings', async () => {
         await page.mouse.click(analytics.x, analytics.y);
-        // Analytics coming in, its Card growing.
         await page.waitForFunction(() => {
           const card = [
             ...document.querySelectorAll<HTMLElement>('[data-slot="card"]'),
@@ -1444,8 +1255,6 @@ export function describeTabsFrames(library: string) {
             card.getBoundingClientRect().height > 150
           );
         });
-        // Read now: the demo is centered in the page, so its tabs move as
-        // the Card grows.
         const settings = await tabCenterNow(page, 'Settings');
         await page.mouse.click(settings.x, settings.y);
       });

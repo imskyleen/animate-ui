@@ -36,7 +36,6 @@ function Items({
   ));
 }
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseSelectFixture() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<string | null>('banana');
@@ -86,7 +85,6 @@ export default function BaseSelectFixture() {
       </section>
 
       <section data-testid="aligned">
-        {/* Base UI's default: the list is laid over the trigger. */}
         <Select.Root defaultValue="cherry" items={FRUITS}>
           <Select.Trigger aria-label="Aligned">
             <Select.Value />

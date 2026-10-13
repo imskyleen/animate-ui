@@ -16,17 +16,11 @@ import {
   type TooltipArrowProps,
 } from '../tooltip';
 
-// Overlapping avatars: the hovered one rises, and the group's tooltips share
-// one popup that glides from avatar to avatar (Animate UI's Tooltip). The
-// rise is a transform, so it's skipped under reduced motion (the Tooltip's
-// provider sets that up for the whole group).
-
 const DEFAULT_TRANSITION: Transition = {
   type: 'spring',
   stiffness: 300,
   damping: 17,
 };
-/** Animate UI's Tooltip spring (the library tooltips' and popovers'). */
 const DEFAULT_TOOLTIP_TRANSITION: Transition = motionTokens.spring.pop;
 
 type AvatarProps = Omit<HTMLMotionProps<'div'>, 'translate'> & {

@@ -29,7 +29,6 @@ export default function SlidingNumberDemo({
   delay = 0,
 }: {
   number?: number
-  /** Count up from 0 instead of rolling each digit straight to its value. */
   fromNumber?: boolean
   padStart?: boolean
   decimalSeparator?: string

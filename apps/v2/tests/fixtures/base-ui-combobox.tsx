@@ -2,14 +2,11 @@
 
 import * as React from 'react';
 import { Combobox } from '@animate-ui/react/primitives/base-ui/combobox';
-// The barrel, like `import { Combobox } from '@base-ui/react'` (the import
-// shadcn/ui's Radix and Base UI comboboxes use).
 import { Combobox as BarrelCombobox } from '@animate-ui/react/primitives/base-ui';
 
 const FRUITS = ['Apple', 'Banana', 'Cherry', 'Grape'];
 const FRAMEWORKS = ['Next.js', 'SvelteKit', 'Nuxt.js', 'Remix', 'Astro'];
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseComboboxFixture() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<string | null>('Banana');
@@ -112,7 +109,6 @@ export default function BaseComboboxFixture() {
         </BarrelCombobox.Root>
       </section>
 
-      {/* shadcn/ui's chips field, its input showing a placeholder once empty. */}
       <section data-testid="chips">
         <Combobox.Root
           multiple

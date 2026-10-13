@@ -14,9 +14,6 @@ import {
 const CONTENT = '[data-slot="dialog-content"]';
 const OVERLAY = '[data-slot="dialog-overlay"]';
 
-// React Aria renders the Modal inside the ModalOverlay: the overlay fades its
-// own background (shadcn/ui's bg-black/10) rather than its opacity, so the
-// modal keeps v1's motion.
 const BACKGROUND = { overlayFade: 'bg', overlayRest: 0.1 } as const;
 
 test.describe('react-aria dialog demo', () => {
@@ -37,11 +34,9 @@ test.describe('react-aria dialog demo', () => {
     await expectDialogSettled(page, CONTENT);
     const frames = await timeline.stop();
     expectDialogEntrance(frames, BACKGROUND);
-    // The overlay itself never fades the modal it contains.
     for (const frame of present(frames, 'overlay'))
       expect(frame.samples.overlay!.opacity).toBe(1);
 
-    // Modals stay centered: the origin is the middle of the content.
     const centered = await page.locator(CONTENT).evaluate((el) => {
       const [x, y] = getComputedStyle(el).transformOrigin.split(' ');
       const box = el as HTMLElement;
@@ -68,7 +63,6 @@ test.describe('react-aria dialog demo', () => {
     await expect(page.locator(OVERLAY)).toHaveCount(0);
     const frames = await timeline.stop();
     expectDialogExit(frames, BACKGROUND);
-    // A dismissed dialog's curve, as Motion handed it to the browser.
     expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
     for (const frame of present(frames, 'overlay'))
       expect(frame.samples.overlay!.opacity).toBe(1);
@@ -81,7 +75,6 @@ test.describe('react-aria dialog demo', () => {
     await trigger.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
-    // React Aria focuses the dialog right away, while the entrance plays.
     await expect(page.getByRole('dialog')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 2500 });
@@ -120,7 +113,6 @@ test.describe('react-aria modal API', () => {
     await page.goto('/tests/fixtures/react-aria-modal', {
       waitUntil: 'networkidle',
     });
-    // The defaultOpen modal comes first: close it.
     await page.getByRole('button', { name: 'Close default' }).click();
     await expect(
       page.getByRole('dialog', { name: 'Default open modal' }),
@@ -170,7 +162,6 @@ test.describe('react-aria modal API', () => {
     await expect(overlay).toHaveClass(/is-shown/);
     await page.getByRole('button', { name: 'Read ref' }).click();
     await expect(page.getByTestId('ref-tag')).toHaveText('div');
-    // Its class's background, once faded in.
     await expect
       .poll(
         async () =>
@@ -181,7 +172,6 @@ test.describe('react-aria modal API', () => {
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('controlled-state')).toHaveText('closed');
     await expect(page.getByTestId('controlled-changes')).toHaveText('false');
-    // While it exits, the render props see isExiting.
     await expect(overlay).toHaveClass(/is-exiting/);
     expect(
       await overlay.evaluate((el) => (el as HTMLElement).style.outlineWidth),

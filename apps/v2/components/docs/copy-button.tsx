@@ -7,10 +7,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import { IconSwap } from './icon-swap';
 
-/**
- * Animate UI's copy button: the press scales the button down, the icon swaps
- * with a blur. `getText` reads what to copy at click time.
- */
 export function CopyButton({
   getText,
   className,
@@ -54,7 +50,6 @@ export function CopyButton({
   );
 }
 
-/** The text of the first `<pre>` in `container`, as Fumadocs copies it. */
 export function getPreText(container: HTMLElement | null | undefined) {
   const pre = container?.getElementsByTagName('pre').item(0);
   if (!pre) return undefined;

@@ -93,7 +93,6 @@ function IconComponent({ size, className, ...props }: FingerprintProps) {
 
   return (
     <>
-      {/* The rule behind pathClassName. */}
       <IconPathStyle />
       <motion.svg
         xmlns="http://www.w3.org/2000/svg"

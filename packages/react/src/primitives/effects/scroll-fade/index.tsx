@@ -5,17 +5,8 @@ import { useSpring, type MotionValue, type SpringOptions } from 'motion/react';
 
 import { useMotionTokens, useShouldReduceMotion } from '../../../utils/motion';
 
-/**
- * The edge fades' duration (ms), paced by the provider's tempo: short, so the
- * fade answers the scroll's first pixels.
- */
 const FADE_DURATION = 300;
 
-/**
- * Scroll distance (px) past which an edge is fully faded (or `size`, when
- * smaller): a few pixels of scroll are enough to set the fade going, and the
- * spring animates it in from there.
- */
 const RAMP = 16;
 
 type ScrollFadeOrientation = 'vertical' | 'horizontal' | 'both';
@@ -23,21 +14,9 @@ type ScrollFadeOrientation = 'vertical' | 'horizontal' | 'both';
 type ScrollFadeEdge = 'top' | 'bottom' | 'left' | 'right';
 
 type UseScrollFadeOptions = {
-  /** Which axis fades: top/bottom, left/right or all four edges. */
   orientation?: ScrollFadeOrientation;
-  /**
-   * Depth of the fade, in pixels, once an edge is fully faded. An edge fades
-   * in once you scroll 16 pixels away from it (or `size`, when smaller): its
-   * fade grows out of the edge to this depth as it clears.
-   */
   size?: number;
-  /**
-   * Spring of the fade amount. `useSpring` options: `duration` in
-   * milliseconds. Ignored under reduced motion: the fade follows the scroll
-   * position at once.
-   */
   transition?: SpringOptions;
-  /** Apply the fade. */
   enabled?: boolean;
 };
 
@@ -53,12 +32,6 @@ const VAR = {
   size: '--scroll-fade-size',
 } as const;
 
-/**
- * One gradient per axis: opaque in the middle, and at each edge an alpha of
- * `1 - amount` (amount 0 → no fade at all, 1 → the edge is fully clear)
- * over a depth of `size × amount`: the fade grows out of the edge as it
- * clears, instead of only clearing in place.
- */
 const edgeStop = (edge: ScrollFadeEdge) =>
   `rgb(0 0 0 / calc(1 - var(${VAR[edge]}, 0)))`;
 const depth = (edge: ScrollFadeEdge) =>
@@ -93,19 +66,6 @@ function setMask(el: HTMLElement, mask: string | null) {
   }
 }
 
-/**
- * Fades the edges of a scroll container where there's content to scroll to,
- * and only there: no fade at an edge you're at, none at all when nothing
- * overflows. Works on any scroll element (e.g. a library's viewport), not just
- * `ScrollFade`.
- *
- * Each edge's amount is a spring driven by the scroll position, written to
- * CSS variables (`--scroll-fade-top`, `-bottom`, `-left`, `-right`, 0 to 1)
- * that a `mask-image` reads. Scrolling never re-renders React. The mask is
- * removed entirely while every edge is at 0.
- *
- * Returns the springs, should you want to drive something else with them.
- */
 function useScrollFade(
   ref: React.RefObject<HTMLElement | null>,
   {
@@ -118,8 +78,6 @@ function useScrollFade(
   const { tempo } = useMotionTokens();
   const reduce = useShouldReduceMotion();
   const transition: SpringOptions = transitionProp ?? {
-    // useSpring takes its duration in milliseconds. No bounce: a fade has
-    // nothing to overshoot.
     duration: FADE_DURATION * tempo,
     bounce: 0,
   };
@@ -133,7 +91,6 @@ function useScrollFade(
     [top, bottom, left, right],
   );
 
-  // Read from listeners: changing the preference doesn't resubscribe.
   const reduceRef = React.useRef(reduce);
   React.useEffect(() => {
     reduceRef.current = reduce;
@@ -165,7 +122,6 @@ function useScrollFade(
 
     const unsubscribe = EDGES.map((edge) => values[edge].on('change', write));
 
-    /** Distance to scroll before an edge, in pixels, → 0 to 1. */
     const ramp = Math.min(RAMP, size);
     const amount = (distance: number) =>
       ramp > 0 ? clamp01(distance / ramp) : distance > 0.5 ? 1 : 0;
@@ -180,7 +136,6 @@ function useScrollFade(
 
       if (vertical) {
         const max = el.scrollHeight - el.clientHeight;
-        // Sub-pixel rounding can leave 1px of fake overflow.
         if (max > 1) {
           targets.top = amount(el.scrollTop);
           targets.bottom = amount(max - el.scrollTop);
@@ -190,8 +145,6 @@ function useScrollFade(
       if (horizontal) {
         const max = el.scrollWidth - el.clientWidth;
         if (max > 1) {
-          // In RTL, scrollLeft runs from 0 (inline start, on the right) to
-          // -max: measure from the inline start, then map to left/right.
           const fromStart = Math.abs(el.scrollLeft);
           const fromEnd = max - fromStart;
           const rtl = getComputedStyle(el).direction === 'rtl';
@@ -204,18 +157,14 @@ function useScrollFade(
         if (instant || reduceRef.current) values[edge].jump(targets[edge]);
         else values[edge].set(targets[edge]);
       }
-      // `jump` to an unchanged value fires no change event.
       write();
     };
 
-    // First paint: the fade is already right, nothing animates in.
     measure(true);
 
     const onScroll = () => measure(false);
     el.addEventListener('scroll', onScroll, { passive: true });
 
-    // Overflow changes when the container or its content resizes, or when
-    // content is added or removed.
     const resizeObserver = new ResizeObserver(() => measure(false));
     const observeChildren = () => {
       resizeObserver.disconnect();
@@ -245,10 +194,6 @@ function useScrollFade(
 
 type ScrollFadeProps = React.ComponentProps<'div'> &
   UseScrollFadeOptions & {
-    /**
-     * Make the child element the scroll container instead of a wrapping div,
-     * merging their props and refs.
-     */
     asChild?: boolean;
   };
 
@@ -285,7 +230,6 @@ function ScrollFade({
   };
 
   if (asChild && React.isValidElement<ChildProps>(children)) {
-    // A plain slot (no Motion element needed): the hook writes the DOM.
     const child = children;
     const childRef = child.props.ref;
     return React.cloneElement(child, {

@@ -20,8 +20,6 @@ const BACKGROUNDS = {
   stars: <StarsBackground className="absolute inset-0" />,
 };
 
-// Every background in its own section, a screen and a half apart: scrolling
-// one into view puts the others off screen.
 export default function BackgroundsFixture() {
   return (
     <div>

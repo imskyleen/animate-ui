@@ -34,12 +34,9 @@ import { CopyButton, getPreText } from './copy-button';
 const COLLAPSED_HEIGHT = 160;
 const PANEL_SIZE = 250;
 
-// The docs' own disclosures (the controls panel, View code): unfolding takes
-// 600ms on a strong ease-out, folding 400ms; the fade over folded code 600ms.
 const UNFOLD = { duration: 0.6, ease: ease.out };
 const FOLD = { duration: 0.4, ease: ease.out };
 
-// Below md the controls open under the demo, as in v1.
 const MOBILE_QUERY = '(max-width: 767px)';
 const subscribeMobile = (onChange: () => void) => {
   const mql = window.matchMedia(MOBILE_QUERY);
@@ -53,7 +50,6 @@ const useIsMobile = () =>
     () => false,
   );
 
-/** Attributes that point at ids, fixed up along with them. */
 const ID_REFERENCES = [
   'for',
   'aria-labelledby',
@@ -61,14 +57,6 @@ const ID_REFERENCES = [
   'aria-controls',
 ] as const;
 
-/**
- * A page can show a demo twice (a second preview starting it with other
- * `values`): its static ids, like shadcn/ui's `id="terms-checkbox"`, are then
- * twice in the page, and a label's `htmlFor` reaches the first preview's box.
- * An id the preview shares with an element outside it gets the preview's own
- * suffix, and so do the references to it inside the preview. Generated ids,
- * already unique, stay as they are, and so does the demo's code.
- */
 function useOwnIds(ref: RefObject<HTMLElement | null>) {
   const ownId = useId();
   useLayoutEffect(() => {
@@ -97,7 +85,6 @@ function useOwnIds(ref: RefObject<HTMLElement | null>) {
       }
     };
     own();
-    // The demo renders more later (a list, a replay).
     const observer = new MutationObserver(own);
     observer.observe(root, { childList: true, subtree: true });
     return () => observer.disconnect();
@@ -107,20 +94,6 @@ function useOwnIds(ref: RefObject<HTMLElement | null>) {
 const toolbarButton =
   'flex size-8 items-center justify-center rounded-lg bg-accent text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50';
 
-/**
- * The demo, then its code below it (like shadcn/ui): collapsed to a few
- * lines behind a "View code" button, which unfolds the rest. Both sit in
- * Animate UI's accent frame; the replay button remounts the demo.
- *
- * A demo with `controls` gets a sliders button that opens them on the right
- * (under the demo on mobile): the demo re-renders with the values as props.
- * `values` starts some of them elsewhere than the demo's defaults (the same
- * demo, shown again in another mode). Without `code`, there's only the demo.
- *
- * A demo that lays out a whole page (a sidebar) shows in an `iframe` of its
- * own page instead, like shadcn/ui's blocks: at a desktop width from md up
- * (its right side cut off), the frame's width below (a phone's layout).
- */
 export function PreviewFrame({
   children,
   code,
@@ -130,17 +103,13 @@ export function PreviewFrame({
   values,
   iframe,
 }: {
-  /** The demo, when it has no controls. */
   children?: ReactNode;
   code?: ReactNode;
   fullBleed?: boolean;
-  /** A demo with controls: rendered here with their values. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   demo?: ComponentType<any>;
   controls?: Controls;
-  /** The controls' values to start with, instead of the demo's. */
   values?: Record<string, ControlValue>;
-  /** The URL of the demo's own page: shown in an iframe of it. */
   iframe?: string;
 }) {
   const [run, setRun] = useState(0);
@@ -159,7 +128,6 @@ export function PreviewFrame({
   const unfold = useTempoTransition(UNFOLD);
   const fold = useTempoTransition(FOLD);
   const panelId = useId();
-  // Short code shows whole, without the button.
   const [fits, setFits] = useState(false);
   useLayoutEffect(() => {
     const content = contentRef.current;

@@ -5,9 +5,7 @@ import { Checkbox } from '@animate-ui/react/primitives/base-ui/checkbox';
 
 const box = 'grid size-5 place-content-center border';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseCheckboxFixture() {
-  // Mounted checked after the page has loaded, as a dialog's would be.
   const [shown, setShown] = React.useState(false);
   const [checked, setChecked] = React.useState(false);
   const [indeterminate, setIndeterminate] = React.useState(false);

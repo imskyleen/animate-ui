@@ -3,19 +3,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { paintedLeft } from './menubar-handoff';
 import { recordSwap, seriesOf, type SwapFrame } from './navigation-menu-swap';
 
-// A navigation menu's content changing between items, in setups the demos
-// don't cover (fixtures), and in the demo's harder sequences: coming back
-// faster than it settles, switching again mid-move, many switches in a row.
-
 const COPY = '[data-animate-ui-handoff]';
 const SURFACE = '[data-slot="trigger-highlight"]';
-/** How far the contents slide (`shift.navigation`). */
 const SHIFT = 24;
 
 const button = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });
 
-/** Hovers an element (its center), at once. */
 async function hoverBox(
   page: Page,
   box: { x: number; y: number; width: number; height: number },
@@ -27,14 +21,12 @@ async function hover(page: Page, name: string) {
   await hoverBox(page, (await button(page, name).boundingBox())!);
 }
 
-/** A content's first link, at rest. */
 async function restOf(page: Page, label: string) {
   return (await page
     .getByRole('link', { name: label, exact: true })
     .boundingBox())!.x;
 }
 
-/** The color painted at a point of the page, as the browser shows it. */
 async function pixel(page: Page, x: number, y: number) {
   const png = await page.screenshot({
     clip: { x: Math.round(x), y: Math.round(y), width: 1, height: 1 },
@@ -52,7 +44,6 @@ async function pixel(page: Page, x: number, y: number) {
   }, png.toString('base64'));
 }
 
-/** Records how much each content shows, until it settles. */
 function contentsShown(page: Page, duration: number) {
   return page.evaluate(
     (duration) =>
@@ -77,15 +68,9 @@ function contentsShown(page: Page, duration: number) {
   );
 }
 
-/**
- * Resizing on to a larger content before it has grown to the one it was
- * growing to (`container`: the viewport or popup), it keeps growing at its
- * speed: it neither stops nor shrinks (nor goes past the larger one).
- */
 async function expectResizeKeepsSpeed(page: Page, container: string) {
   const widthOf = async () =>
     (await page.locator(container).boundingBox())!.width;
-  // (At the end of the fixture: up top, with room below for the contents.)
   await page
     .getByTestId('sizes')
     .evaluate((el) => el.scrollIntoView({ block: 'start' }));
@@ -111,15 +96,11 @@ async function expectResizeKeepsSpeed(page: Page, container: string) {
     frame.contents.some((c) => !c.copy && c.label.startsWith('Large'));
   const next = frames.findIndex(shows);
   expect(next, trace).toBeGreaterThan(1);
-  // Never shrinking on the way, nor past the larger content.
   for (let i = 1; i < widths.length; i++)
     expect(widths[i]!, trace).toBeGreaterThanOrEqual(widths[i - 1]! - 0.5);
   expect(Math.max(...widths), trace).toBeLessThanOrEqual(end + 0.5);
-  // Growing at the speed it had as the larger content takes over: no stop
-  // (a resize started from rest, or held a frame).
   const speed = (i: number) =>
     (widths[i]! - widths[i - 1]!) / (frames[i]!.clock - frames[i - 1]!.clock);
-  // The fastest it grew toward Medium, and as Large takes over.
   const before = Math.max(...frames.slice(1, next).map((_, i) => speed(i + 1)));
   expect(before, trace).toBeGreaterThan(0.1);
   for (const i of [next, next + 1, next + 2])
@@ -146,13 +127,10 @@ export function describeRadixNavigationMenuCases() {
       await hover(page, 'Strict two');
       const frames = await recording;
       const two = await restOf(page, 'Strict two link');
-      // The previous content leaves as a copy of itself (not of the next
-      // one), from where it was.
       const leaving = seriesOf(frames, 'Strict one link', true);
       expect(leaving.length).toBeGreaterThan(2);
       expect(Math.abs(leaving[0]!.left - one)).toBeLessThan(1.5);
       expect(seriesOf(frames, 'Strict two link', true)).toEqual([]);
-      // The next one comes in from its side.
       const coming = seriesOf(frames, 'Strict two link', false);
       expect(coming[0]!.shown).toBeLessThan(0.2);
       expect(coming[0]!.left - two).toBeGreaterThan(SHIFT / 2);
@@ -161,7 +139,6 @@ export function describeRadixNavigationMenuCases() {
     test('right to left, the next content comes from the side the pointer goes', async ({
       page,
     }) => {
-      // "Right one" is on the right, "Right two" on its left.
       await hover(page, 'Right one');
       await page.waitForTimeout(700);
       const one = await restOf(page, 'Right one link');
@@ -233,7 +210,6 @@ export function describeBaseNavigationMenuCases() {
     test('a submenu shown in its content (no popup of its own) changes in place too', async ({
       page,
     }) => {
-      // The pointer moving down the submenu's list (Base UI follows it).
       const glide = async (name: string) => {
         const box = (await button(page, name).boundingBox())!;
         await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
@@ -315,7 +291,6 @@ export function describeBaseNavigationMenuCases() {
     test('back and forth faster than it settles, the popup never ends up empty', async ({
       page,
     }) => {
-      // Back to a content still being removed, which came in by a change.
       for (const gap of [130, 200]) {
         await hover(page, 'Components');
         await page.waitForTimeout(700);
@@ -324,7 +299,6 @@ export function describeBaseNavigationMenuCases() {
           await hover(page, name);
         }
         const frames = await contentsShown(page, 900);
-        // Settled, Components shows, fully.
         for (const frame of frames.filter((frame) => frame.t > 600))
           expect(Math.max(...frame.shown), `${gap}ms, ${frame.t}ms`).toBe(1);
         await expect(
@@ -351,7 +325,6 @@ export function describeBaseNavigationMenuCases() {
       });
       const copied = seen.findIndex((frame) => frame.copy);
       expect(copied).toBeGreaterThan(0);
-      // From where it showed, give or take a frame of its slide.
       expect(
         Math.abs(seen[copied]!.left - seen[copied - 1]!.left),
       ).toBeLessThan(SHIFT / 4);
@@ -360,7 +333,6 @@ export function describeBaseNavigationMenuCases() {
     test('as painted, switch after switch, the content leaving never jumps', async ({
       page,
     }) => {
-      // Back from Components, its content leaves to the right, in sight.
       await hover(page, 'Components');
       await page.waitForTimeout(700);
       const row = (await page
@@ -378,8 +350,6 @@ export function describeBaseNavigationMenuCases() {
           () => hover(page, 'Getting started'),
           300,
         );
-        // It slides 24px over 220ms (about 5px a frame at most, 10 over a dropped
-        // frame): never a jump.
         const seen = lefts.filter((left): left is number => left !== null);
         expect(seen.length).toBeGreaterThan(2);
         for (let i = 1; i < seen.length; i++) {

@@ -6,7 +6,6 @@ import * as NavigationMenuStar from '@animate-ui/react/primitives/radix-ui/navig
 
 const panel = 'w-48 rounded-md border bg-white p-2 shadow-md';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixNavigationMenuFixture() {
   const [value, setValue] = React.useState('');
 
@@ -37,7 +36,6 @@ export default function RadixNavigationMenuFixture() {
       </section>
 
       <section data-testid="inline">
-        {/* No Viewport: each Content is displayed under its item. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             <NavigationMenu.Item className="relative">
@@ -55,7 +53,6 @@ export default function RadixNavigationMenuFixture() {
       </section>
 
       <section>
-        {/* The `import * as` style of @radix-ui/react-navigation-menu. */}
         <NavigationMenuStar.Root className="relative">
           <NavigationMenuStar.List className="flex gap-8">
             {['one', 'two'].map((item) => (
@@ -81,7 +78,6 @@ export default function RadixNavigationMenuFixture() {
         </NavigationMenuStar.Root>
       </section>
       <section>
-        {/* A trigger that is a link (asChild). */}
         <NavigationMenu.Root className="relative">
           <NavigationMenu.List className="flex gap-2">
             <NavigationMenu.Item value="anchor">

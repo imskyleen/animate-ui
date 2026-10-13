@@ -147,7 +147,6 @@ export default function PaginationDemo() {
   const [page, setPage] = React.useState(2)
   const go = (next: number) => () => setPage(Math.min(Math.max(next, 1), 5))
 
-  // No navigation: the links only change the page.
   return (
     <RouterProvider navigate={() => {}}>
       <Pagination>

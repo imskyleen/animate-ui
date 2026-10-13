@@ -13,9 +13,7 @@ import {
 } from './table';
 
 export type ManualStep = {
-  /** Line in the original code. */
   line: number;
-  /** Line in the rewritten code. */
   migratedLine: number;
   message: string;
   offset: number;
@@ -31,26 +29,19 @@ export type ImportChange = {
 export type RewriteResult = {
   code: string;
   imports: ImportChange[];
-  /** Mechanical changes beyond the imports (renamed props, added Portals…). */
   changes: string[];
   manual: ManualStep[];
-  /** The selected v1 modules this file imports (`radix/accordion`, `hooks/use-is-in-view`…). */
   found: string[];
 };
 
 export type RewriteContext = {
   project: Pick<MigrateProject, 'resolve' | 'classify'>;
   file: string;
-  /** Whether `migrate` was asked to migrate this v1 module. */
   selected: (module: V1Module) => boolean;
 };
 
 type Edit = { start: number; end: number; text: string };
 
-/**
- * Props only a Motion component takes. v2's Radix UI and Base UI parts are
- * the library's (Animate UI's own primitives keep v1's Motion props).
- */
 const MOTION_PROPS = new Set([
   'initial',
   'animate',
@@ -95,14 +86,12 @@ const MOTION_PROPS = new Set([
   'transformTemplate',
 ]);
 
-/** The key of a v1 module in the tables (`radix/accordion`, `lib/get-strict-context`). */
 export function moduleKey(module: V1Module) {
   return module.kind === 'primitive'
     ? `${module.library}/${module.name}`
     : module.id;
 }
 
-/** The migration of a v1 module, if v2 replaces it. */
 export function findMigration(module: V1Module): Migration | undefined {
   return module.kind === 'primitive'
     ? PRIMITIVES[moduleKey(module)]
@@ -117,11 +106,6 @@ function isV1Export(name: string, migration: Migration) {
   );
 }
 
-/**
- * What to do about a v1 name v2 doesn't have. `parentMigrated`: the file's
- * other imports of the module moved to v2, so a part or hook reading the v1
- * contexts has no v1 provider above it anymore.
- */
 function unmappedMessage(
   name: string,
   migration: Migration,
@@ -150,7 +134,6 @@ type ParsedTarget = {
   head: string;
   rest: string[];
   componentProps: boolean;
-  /** What the local type alias adds to the v2 type (`{ side?: … }`). */
   extra?: string;
 };
 
@@ -167,19 +150,16 @@ function parseTarget(target: string, migration: Migration): ParsedTarget {
   return { module, head: head!, rest, componentProps: Boolean(props), extra };
 }
 
-/** Whether a target is printed as a local alias rather than imported as is. */
 function needsDeclaration(target: ParsedTarget) {
   return (
     target.rest.length > 0 || target.componentProps || Boolean(target.extra)
   );
 }
 
-/** v2's Radix UI and Base UI parts: the library's props, and no Motion props. */
 function isLibraryModule(migration: Migration) {
   return /^primitives\/(radix-ui|base-ui)\//.test(migration.module);
 }
 
-/** Calls `visit` on every node, with its parent. */
 function walk(
   node: t.Node,
   visit: (node: t.Node, parent: t.Node | undefined) => void,
@@ -232,24 +212,17 @@ type Declaration = {
   target: ParsedTarget;
 };
 
-/** What one v1 import (or re-export) becomes. */
 type Plan = {
   node: t.ImportDeclaration | t.ExportNamedDeclaration;
   source: string;
   migration: Migration;
-  /** Named specifiers per v2 module. */
   named: Map<string, NamedSpecifier[]>;
-  /** Specifiers that stay on the v1 file, as printed. */
   kept: string[];
   keptDefault?: string;
   declarations: Declaration[];
   names: string[];
 };
 
-/**
- * Rewrites the imports of Animate UI v1 in one file for @animate-ui/react.
- * Pure: returns the new code and what changed.
- */
 export function rewrite(code: string, context: RewriteContext): RewriteResult {
   const { project, file, selected } = context;
   const typescriptOnly = /\.[cm]?ts$/.test(file);
@@ -265,7 +238,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     manual: [],
     found: [],
   };
-  /** `name`: where to point once the node's import has been reprinted. */
   const hints = new Map<ManualStep, string>();
   const manual = (node: t.Node, message: string, name?: string) => {
     const line = node.loc?.start.line ?? 0;
@@ -275,7 +247,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   };
   const found = new Set<string>();
 
-  // Every name the file uses, so new bindings never shadow one.
   const taken = new Set<string>();
   walk(ast.program, (node) => {
     if (node.type === 'Identifier' || node.type === 'JSXIdentifier')
@@ -304,7 +275,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     return module;
   };
 
-  /** The migration of a v1 module, reporting the ones v2 doesn't replace. */
   const migrationFor = (module: V1Module, node: t.Node) => {
     const key = moduleKey(module);
     if (module.kind === 'primitive' && module.library === 'headless') {
@@ -335,9 +305,7 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   };
 
   const plans: Plan[] = [];
-  /** Mapped value parts by local name: their JSX gets checked. */
   const parts = new Map<string, { name: string; plan: Plan }>();
-  /** v1 names v2 doesn't have: reported once we know what moved to v2. */
   const unmapped: {
     node: t.Node;
     name: string;
@@ -345,18 +313,14 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     migration: Migration;
     key: string;
   }[] = [];
-  /** The v1 modules some of whose imports moved to v2. */
   const migratedModules = new Set<string>();
 
   for (const node of ast.program.body) {
-    // import { … } from '<v1>'
     if (node.type === 'ImportDeclaration') {
       const module = migrationOf(node.source.value);
       if (!module) continue;
       const migration = migrationFor(module, node);
       if (!migration) continue;
-      // A v1 lib or hook path may hold the user's own file: v1's exports
-      // or nothing.
       if (
         module.kind === 'utility' &&
         node.specifiers.some(
@@ -400,7 +364,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
             `${specifier.importKind === 'type' ? 'type ' : ''}${name === local ? name : `${name} as ${local}`}`,
           );
         if (!target) {
-          // Stays on the v1 file; its siblings move to v2 all the same.
           keep();
           unmapped.push({
             node: specifier,
@@ -434,7 +397,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       continue;
     }
 
-    // export { … } from '<v1>'
     if (node.type === 'ExportNamedDeclaration' && node.source) {
       const module = migrationOf(node.source.value);
       if (!module) continue;
@@ -494,7 +456,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       continue;
     }
 
-    // export * from '<v1>'
     if (node.type === 'ExportAllDeclaration') {
       const module = migrationOf(node.source.value);
       if (!module) continue;
@@ -514,7 +475,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       local,
     );
 
-  // import('<v1>')
   walk(ast.program, (node) => {
     const source =
       node.type === 'ImportExpression'
@@ -533,7 +493,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   const edits: Edit[] = [];
   const lineOf = (node: t.Node) => node.loc?.start.line ?? 0;
 
-  // JSX of the migrated parts: renamed and v1-only props, defaults, Portals.
   walk(ast.program, (node, parent) => {
     if (node.type !== 'JSXOpeningElement' || node.name.type !== 'JSXIdentifier')
       return;
@@ -603,7 +562,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       const lineStart = code.lastIndexOf('\n', parent.start! - 1) + 1;
       const indent = code.slice(lineStart, parent.start!);
       if (/^\s*$/.test(indent)) {
-        // On its own line: the wrapper gets its own lines, the element moves in.
         edits.push(
           {
             start: parent.start!,
@@ -630,7 +588,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     }
   });
 
-  /** The local name of a part of the plan's module, imported if needed. */
   function wrapperLocal(plan: Plan, part: string, head: string) {
     const module = plan.migration.module;
     for (const p of plans) {
@@ -640,7 +597,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
       if (existing && p.node.type === 'ImportDeclaration')
         return existing.local;
     }
-    // `DropdownMenuContent` → `DropdownMenuPortal`.
     const local = freeName([`${part.replace(/[A-Z][a-z]*$/, '')}${head}`]);
     const list = plan.named.get(module) ?? [];
     list.push({ head, local, type: false });
@@ -654,7 +610,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     return result;
   }
 
-  // Bindings the declarations go through: `Popover` for `Popover.Trigger`.
   const aliases = new Map<
     string,
     { local: string; type: boolean; plan?: Plan }
@@ -668,7 +623,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         alias.type &&= declaration.type;
         continue;
       }
-      // Reuse a named import of the same export (`motionTokens`).
       const reused = plans
         .flatMap((p) =>
           p.node.type === 'ImportDeclaration'
@@ -680,7 +634,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         aliases.set(key, { local: reused.local, type: false });
         continue;
       }
-      // `AccordionProps` → `Accordion` for `ComponentProps<Root>`.
       const base = declaration.target.componentProps
         ? declaration.local.replace(/Props$/, '')
         : head;
@@ -706,7 +659,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     alias.plan.named.set(module, list);
   }
 
-  // React's ComponentProps, for v1 prop types v2 doesn't name.
   let componentProps: string | undefined;
   let reactImport: string | undefined;
   if (
@@ -731,7 +683,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     }
   }
 
-  // Print the new imports in place of the v1 ones.
   const declarations: string[] = [];
   for (const [index, plan] of plans.entries()) {
     const { node } = plan;
@@ -739,7 +690,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     const semi = raw.trimEnd().endsWith(';') ? ';' : '';
     const quote = code[node.source!.start!] === '"' ? '"' : "'";
     const keyword = node.type === 'ImportDeclaration' ? 'import' : 'export';
-    // One line when it fits in 80 columns (or has one name), like Prettier.
     const statement = (head: string, items: string[], tail: string) => {
       const line = `${head}{ ${items.join(', ')} }${tail}`;
       return line.length <= 80 || items.length === 1
@@ -800,7 +750,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     });
   }
 
-  // v1 names that became local aliases go right after the imports.
   if (declarations.length > 0) {
     const imports = ast.program.body.filter(
       (node) => node.type === 'ImportDeclaration',
@@ -813,21 +762,18 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     });
   }
 
-  // Apply from the end; at one position, the later insertion goes first.
   edits.sort((a, b) => b.start - a.start || b.end - a.end);
   let output = code;
   for (const edit of edits)
     output = output.slice(0, edit.start) + edit.text + output.slice(edit.end);
 
   result.code = output;
-  // Where each manual step ends up in the rewritten code.
   for (const step of result.manual) {
     let offset = step.offset;
     for (const edit of edits) {
       if (edit.end <= step.offset)
         offset += edit.text.length - (edit.end - edit.start);
       else if (edit.start < step.offset) {
-        // Inside a reprinted import: point at the name in the new text.
         const name = hints.get(step);
         const at = name ? edit.text.search(new RegExp(`\\b${name}\\b`)) : -1;
         offset -= step.offset - edit.start - Math.max(at, 0);
@@ -840,7 +786,6 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   return result;
 }
 
-/** The module specifiers a file imports or re-exports (static and dynamic). */
 export function listImports(code: string, file: string) {
   const ast = parse(code, {
     sourceType: 'module',

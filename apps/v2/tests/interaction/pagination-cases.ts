@@ -10,42 +10,16 @@ import {
   type SpringOptions,
 } from './spring-curves';
 
-// shadcn/ui's pagination demo (pagination-demo: Previous, 1, 2, 3, …, Next,
-// page 2 current, the links changing the page), on
-// @animate-ui/react/primitives/pagination, in every base (Radix UI, Base UI,
-// React Aria), at /tests/demos/<library>/pagination:
-//
-// - the page links share one surface, the current page's (shadcn/ui's
-//   outline link, copied: the same border, background and corners, in light
-//   and dark), the current link's own look hidden while it's on screen;
-// - another page becoming current (a click, Previous or Next, Enter, and
-//   Space on Base UI's links) slides it there on `spring.selection`,
-//   replacing its translate (on the compositor); picked again on the way, it
-//   goes on from where it is with the speed it had;
-// - nothing moves as the page loads; under reduced motion it crossfades;
-// - the links never navigate (`href="#"`: React Aria's under a
-//   RouterProvider).
-//
-// The helpers are shared with animate-ui-pagination.spec.ts (the primitive
-// on its own).
-
 export const LINK = '[data-slot="pagination-link"]';
 export const INDICATOR = '[data-slot="pagination-indicator"]';
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
-/** The slide: `spring.selection`. */
 export const SELECTION: SpringOptions = { stiffness: 300, damping: 30 };
-/** The crossfade under reduced motion: `transition.fade` (200ms, ease.out). */
 export const FADE = { duration: 200, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' };
-/**
- * The surface's background fading under a hovered current link:
- * `transition.color` (200ms, CSS's `ease`).
- */
 export const COLOR = {
   duration: 200,
   easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
 };
 
-/** A crossfade's Web Animation: `opacities` on FADE (paced, `duration`). */
 export const fadeTiming = (
   opacities: string[],
   duration: number = FADE.duration,
@@ -58,7 +32,6 @@ export const fadeTiming = (
   translates: opacities.map(() => null),
 });
 
-/** A spring paced by `AnimateUIProvider`'s tempo (utils/motion scaleTransition). */
 export const atTempo = (
   spring: SpringOptions,
   tempo: number,
@@ -67,10 +40,8 @@ export const atTempo = (
   damping: spring.damping / tempo,
 });
 
-/** A box in the pagination's pixels. */
 export type Box = { x: number; y: number; w: number; h: number };
 
-/** How a surface looks: what the indicator copies from the current link. */
 export type Paint = {
   background: string;
   border: string;
@@ -78,56 +49,35 @@ export type Paint = {
   radius: string;
 };
 
-/** A surface on screen: the indicator, or its copy fading out. */
 export type Surface = Box &
   Paint & {
-    /** Its opacity (computed). */
     o: number;
-    /** The copy fading out on the link it leaves (reduced motion). */
     leaving: boolean;
-    /** Web Animations on it. */
     animations: number;
-    /** One of them moves it (`translate`). */
     slides: boolean;
-    /** That one's start time (the document timeline's), if any. */
     slideStart: number | null;
-    /** That one's current time (ms into it) on this frame, if any. */
     slideTime: number | null;
-    /** Their timings. */
     timings: Timing[];
   };
 
-/** A Web Animation's timing, and the properties it animates. */
 export type Timing = {
   duration: number;
   easing: string;
   properties: string[];
-  /** Its keyframes' opacities (a fade's). */
   opacities: (string | null)[];
-  /** How it combines with the surface's own values. */
   composite: string;
-  /** Its keyframes' translates (a slide's). */
   translates: (string | null)[];
 };
 
-/** What a pagination draws on one frame. */
 export type Drawn = {
-  /** Its own surfaces (not a nested pagination's). */
   surfaces: Surface[];
-  /** The current link's text. */
   current: string | null;
-  /** The current link's own look. */
   own: Paint | null;
-  /** The current link's box, as drawn. */
   link: Box | null;
 };
 
 export type Frame = Drawn & { t: number };
 
-/**
- * In the page (serialised): what the pagination `nav` draws now, in its
- * pixels.
- */
 function readPagination(nav: Element | null) {
   if (!nav) return { surfaces: [], current: null, own: null, link: null };
   const origin = nav.getBoundingClientRect();
@@ -154,8 +104,6 @@ function readPagination(nav: Element | null) {
   const surfaces = Array.from(nav.children)
     .filter((el) => el.getAttribute('data-slot') === 'pagination-indicator')
     .map((el) => {
-      // Its Web Animations (a slide, a fade), not the CSS transition of its
-      // background (fading under a hovered current link).
       const animations = el
         .getAnimations()
         .filter((animation) => !('transitionProperty' in animation));
@@ -200,7 +148,6 @@ function readPagination(nav: Element | null) {
         ...paint(el),
       };
     });
-  // Its own (not a nested pagination's), drawn (not a copy hidden here).
   const current = Array.from(
     nav.querySelectorAll('[data-slot="pagination-link"][aria-current="page"]'),
   ).find(
@@ -217,7 +164,6 @@ function readPagination(nav: Element | null) {
 }
 const READ = readPagination.toString();
 
-/** What the pagination `nav` (a selector) draws now. */
 export const drawnNow = (page: Page, nav: string) =>
   page.evaluate(
     ({ read, nav }) =>
@@ -227,12 +173,6 @@ export const drawnNow = (page: Page, nav: string) =>
     { read: READ, nav },
   );
 
-/**
- * Records, on every frame (on the frames' own times), what the pagination
- * `nav` draws while `act` runs, until `ms` after the link `target` is
- * current. Times are relative to the frame it became current in (earlier
- * frames are negative). The frames so far are `window.__frames`.
- */
 export async function record(
   page: Page,
   nav: string,
@@ -250,8 +190,6 @@ export async function record(
         __recording: Promise<unknown>;
       };
       const frames: { t: number }[] = (w.__frames = []);
-      // `act` waits for two frames to be recorded: what was on screen before
-      // it, whatever a busy machine does to the first frame's time.
       let started: () => void;
       const ready = new Promise<void>((resolve) => (started = resolve));
       w.__recording = new Promise((resolve) => {
@@ -282,7 +220,6 @@ export async function record(
   )) as Frame[];
 }
 
-/** The link `label` of the pagination `nav` (drawn), in its pixels. */
 export const linkBox = (page: Page, nav: string, label: string) =>
   page.evaluate(
     ({ nav, label }): Box => {
@@ -307,10 +244,6 @@ export const linkBox = (page: Page, nav: string, label: string) =>
     { nav, label },
   );
 
-/**
- * Clicks the link `label` (drawn) from the page itself: no pointer, no
- * hover.
- */
 export const clickLink = (page: Page, nav: string, label: string) =>
   page.evaluate(
     ({ nav, label }) => {
@@ -329,15 +262,6 @@ export const clickLink = (page: Page, nav: string, label: string) =>
     { nav, label },
   );
 
-/**
- * Clicks `first`, then `second` once the surface is under way, from the page
- * itself, noting the frame the second click lands before (`window.__at`, an
- * index in the frames `record` is taking). `when`: `gap` ms into the change
- * `first` started (its animation's own start, whatever a busy machine does
- * to the time it takes to get there), once `record` has taken two frames of
- * it (a stalled machine draws none for a while), or (`past`) once the
- * surface is drawn past that x (in the pagination's pixels).
- */
 export const clickTwice = (
   page: Page,
   nav: string,
@@ -374,7 +298,6 @@ export const clickTwice = (
           const el = surface();
           if (performance.now() - clicked > 5000) return resolve();
           if ('gap' in when) {
-            // Its Web Animation (a slide, a fade), not a CSS transition.
             const start = el
               ?.getAnimations()
               .find(
@@ -408,10 +331,6 @@ export const clickTwice = (
 export const clickedAt = (page: Page) =>
   page.evaluate(() => (window as unknown as { __at: number }).__at);
 
-/**
- * The current link's look without the stylesheet hiding it: a copy of it
- * outside the pagination (the look the surface must wear).
- */
 export const outlineOf = (page: Page, nav: string) =>
   page.evaluate((nav): Paint => {
     const root = document.querySelector(nav)!;
@@ -447,10 +366,6 @@ export const paintOf = ({ background, border, shadow, radius }: Paint) => ({
   radius,
 });
 
-/**
- * The timings of the first animations the frames show on the indicator (or,
- * `leaving`, on its copy fading out).
- */
 export function timingsIn(frames: Frame[], leaving = false) {
   for (const f of frames)
     for (const s of f.surfaces)
@@ -458,12 +373,6 @@ export function timingsIn(frames: Frame[], leaving = false) {
   return [];
 }
 
-/**
- * Expects a slide's Web Animation to run `spring` (its exact CSS curve),
- * replacing the surface's `translate` (Chromium runs it on the compositor; an
- * additive one runs on the main thread), from an offset to none (the surface
- * has no translate of its own).
- */
 export function expectSlideTiming(timings: Timing[], spring: SpringOptions) {
   const slide = timings.find((t) => t.properties.includes('translate'))!;
   expect(slide, 'a translate animation').toBeDefined();
@@ -480,10 +389,6 @@ export function expectSlideTiming(timings: Timing[], spring: SpringOptions) {
   );
 }
 
-/**
- * A `translate` keyframe (`-108px`, `-10px 4px`: in pixels) as [x, y]; NaN
- * where it isn't in pixels.
- */
 export function translateOf(value: string) {
   const [x = '0px', y = '0px'] = value.trim().split(/\s+/);
   return [x, y].map((part) =>
@@ -491,7 +396,6 @@ export function translateOf(value: string) {
   );
 }
 
-/** One surface on every frame, fully shown, never fading. */
 export function expectOneSurface(frames: Frame[]) {
   for (const f of frames) {
     expect(f.surfaces, `${Math.round(f.t)}ms`).toHaveLength(1);
@@ -500,7 +404,6 @@ export function expectOneSurface(frames: Frame[]) {
   }
 }
 
-/** At rest on `box`: one surface, there, shown, nothing running on it. */
 export function expectAtRest(drawn: Drawn, box: Box, label = '') {
   expect(drawn.surfaces, label).toHaveLength(1);
   const [surface] = drawn.surfaces;
@@ -512,10 +415,6 @@ export function expectAtRest(drawn: Drawn, box: Box, label = '') {
   expect(surface!.animations, label).toBe(0);
 }
 
-/**
- * One surface, shown, covering the current link as it's drawn exactly
- * (within `tolerance` px on each side).
- */
 export function expectCovers(drawn: Drawn, tolerance: number, label = '') {
   expect(drawn.surfaces, label).toHaveLength(1);
   expect(drawn.link, `${label}: a current link`).not.toBeNull();
@@ -528,7 +427,6 @@ export function expectCovers(drawn: Drawn, tolerance: number, label = '') {
   expect(surface!.o, label).toBe(1);
 }
 
-/** Waits for `count` frames to be drawn. */
 export const waitFrames = (page: Page, count: number) =>
   page.evaluate(
     (count) =>
@@ -541,10 +439,6 @@ export const waitFrames = (page: Page, count: number) =>
     count,
   );
 
-/**
- * Waits for the pagination `nav` to rest on `label`: one surface, nothing
- * running on it.
- */
 export async function restOn(page: Page, nav: string, label: string) {
   await expect
     .poll(async () => {
@@ -558,11 +452,6 @@ export async function restOn(page: Page, nav: string, label: string) {
     .toBe('rest');
 }
 
-/**
- * The surface slides from `from` to `to` (along x): through frames strictly
- * between, at the pace of `spring`, never past `to` by more than the spring's
- * own overshoot, and rests there.
- */
 export function expectSlide(
   frames: Frame[],
   from: Box,
@@ -594,21 +483,11 @@ export function expectSlide(
   expect(last.animations).toBe(0);
 }
 
-/**
- * Picked again `gap` ms into a slide (toward the same side), on frame `at`:
- * the second slide starts with the speed the first one had, its curve
- * starting well above the spring's from rest (more than twice as far in its
- * first 10ms); no jump, no restart, and its first frames move at least 0.6
- * times as fast as the first slide's last ones (from rest, a spring's first
- * frames barely move), without lurching either (2.5 times).
- */
 export function expectMomentum(frames: Frame[], at: number, to: Box) {
   expectOneSurface(frames);
   const xs = frames.map((f) => f.surfaces[0]!.x);
   const ts = frames.map((f) => f.t);
   const speed = (i: number) => (xs[i]! - xs[i - 1]!) / (ts[i]! - ts[i - 1]!);
-  // The first slide's last two frames before the second change, both drawn
-  // once it was under way (its own time past 0).
   const first = frames[at - 1]?.surfaces[0]?.slideStart ?? null;
   const underWay = (i: number) => {
     const surface = frames[i]?.surfaces[0];
@@ -624,7 +503,6 @@ export function expectMomentum(frames: Frame[], at: number, to: Box) {
   ).toBe(true);
   const before = speed(at - 1);
   expect(before, 'moving when picked again').toBeGreaterThan(0.05);
-  // The second slide: another translate animation.
   const next = frames.findIndex(
     (f, i) =>
       i >= at && f.surfaces[0]!.slides && f.surfaces[0]!.slideStart !== first,
@@ -642,8 +520,6 @@ export function expectMomentum(frames: Frame[], at: number, to: Box) {
     expect(speed(i) / before, `frame ${i - next} after`).toBeGreaterThan(0.6);
     expect(speed(i) / before, `frame ${i - next} after`).toBeLessThan(2.5);
   }
-  // From where it was, on: never back, never a jump (the spring's own
-  // speed peaks near 1px per ms here).
   for (let i = 1; i < xs.length; i++) {
     const step = xs[i]! - xs[i - 1]!;
     expect(step, `${Math.round(ts[i]!)}ms`).toBeGreaterThan(-0.5);
@@ -656,10 +532,6 @@ export function expectMomentum(frames: Frame[], at: number, to: Box) {
   expect(Math.abs(xs.at(-1)! - to.x)).toBeLessThan(0.5);
 }
 
-/**
- * Reduced motion: never sliding, only at `from` or `to`; a copy fading out
- * on `from` while the surface fades in on `to`, the copy gone afterwards.
- */
 export function expectCrossfade(frames: Frame[], from: Box, to: Box) {
   for (const f of frames) {
     const when = `${Math.round(f.t)}ms`;
@@ -667,8 +539,6 @@ export function expectCrossfade(frames: Frame[], from: Box, to: Box) {
     expect(f.surfaces.length, when).toBeLessThanOrEqual(2);
     for (const s of f.surfaces) {
       expect(s.slides, when).toBe(false);
-      // On one link or the other (the surface on `from` until the change
-      // reaches it), never in between; the copy on `from`.
       const on = [from, to].find(
         (b) =>
           Math.abs(s.x - b.x) < 0.5 &&
@@ -691,7 +561,6 @@ export function expectCrossfade(frames: Frame[], from: Box, to: Box) {
     expect(Math.abs(leaving.x - from.x)).toBeLessThan(0.5);
     expect(Math.abs(coming.x - to.x)).toBeLessThan(0.5);
   }
-  // Out, then in: one way each.
   const outs = frames.flatMap((f) =>
     f.surfaces.filter((s) => s.leaving).map((s) => s.o),
   );
@@ -709,11 +578,6 @@ export function expectCrossfade(frames: Frame[], from: Box, to: Box) {
   expect(Math.abs(last.surfaces[0]!.x - to.x)).toBeLessThan(0.5);
 }
 
-/**
- * Waits until React has hydrated the links (in dev, `networkidle` can come
- * before hydration, and a click then does nothing) and every pagination's
- * surface is on screen.
- */
 export async function waitForPagination(page: Page) {
   await page.waitForFunction(() => {
     const links = [
@@ -737,8 +601,6 @@ export async function gotoPagination(page: Page, url: string) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await waitForPagination(page);
   await page.mouse.move(0, 0);
-  // Past the page's own start (a busy dev server's), so the first change's
-  // frames aren't held up by it.
   await page.waitForTimeout(250);
 }
 
@@ -771,7 +633,6 @@ export function describePagination(library: string) {
       expect(drawn.own!.background).toBe(TRANSPARENT);
       expect(drawn.own!.border).toBe(TRANSPARENT);
       expect(drawn.own!.shadow).toBe('none');
-      // Behind the link: its text and clicks are the link's.
       const hit = await link(page, '2').evaluate((el) => {
         const b = el.getBoundingClientRect();
         return el.contains(
@@ -791,10 +652,6 @@ export function describePagination(library: string) {
       );
       expectSlideTiming(timingsIn(frames), SELECTION);
       expectSlide(frames, from, to);
-      // The outline look all the way while it slides; the links' own border
-      // stays hidden. The clicked link is hovered: its own hover background
-      // shows, and once the surface has arrived under it, the surface's own
-      // background goes (so the two don't add up).
       for (const f of frames) {
         const when = `${Math.round(f.t)}ms`;
         const paint = paintOf(f.surfaces[0]!);
@@ -837,7 +694,6 @@ export function describePagination(library: string) {
           target.y + target.height / 2,
         );
         await page.mouse.down();
-        // Its press nudge (active:translate-y-px, transition-all) all the way.
         await expect
           .poll(() =>
             link(page, '3').evaluate((el) => getComputedStyle(el).translate),
@@ -867,15 +723,12 @@ export function describePagination(library: string) {
       );
       expectSlide(frames, from, to);
       await expect(link(page, '3')).toBeFocused();
-      // Keyboard-focused, the current link keeps its own focus border and
-      // ring; its background stays the surface's.
       const own = frames.at(-1)!.own!;
       expect(own.border).not.toBe(TRANSPARENT);
       expect(own.shadow).not.toBe('none');
       expect(own.background).toBe(TRANSPARENT);
     });
 
-    // Base UI's Button (`nativeButton={false}`, an `<a>`) takes Space too.
     if (library === 'base-ui')
       test('keyboard: Space on a page link changes the page too, sliding like a click, without scrolling', async ({
         page,
@@ -934,7 +787,6 @@ export function describePagination(library: string) {
         .locator(NAV)
         .locator(INDICATOR)
         .evaluate((el) => [...el.attributes].map((a) => a.name));
-      // React Aria's pressable marker, Radix's, Base UI's: the real link's.
       expect(
         attributes.filter((name) =>
           /^data-(react-aria-|rac|radix-|base-ui-)/.test(name),
@@ -984,7 +836,6 @@ export function describePagination(library: string) {
       const two = await box(page, '2');
       expect(load.length).toBeGreaterThan(10);
       for (const [i, drawn] of load.entries()) {
-        // Before the primitive is ready: the link's own outline look.
         if (!drawn.surfaces.length) {
           expect(drawn.own!.border, `frame ${i}`).not.toBe(TRANSPARENT);
           continue;
@@ -1025,7 +876,6 @@ export function describePagination(library: string) {
       await expect(page.locator('html')).toHaveClass(/dark/);
       const dark = await outlineOf(page, NAV);
       expect(paintOf((await drawnNow(page, NAV)).surfaces[0]!)).toEqual(dark);
-      // It slides wearing it.
       const [from, to] = [await box(page, '2'), await box(page, '3')];
       const frames = await record(page, NAV, '3', () =>
         clickLink(page, NAV, '3'),
@@ -1033,8 +883,6 @@ export function describePagination(library: string) {
       expectSlide(frames, from, to);
       for (const f of frames)
         expect(paintOf(f.surfaces[0]!), `${Math.round(f.t)}ms`).toEqual(dark);
-      // Switched to light: the light outline (another background and
-      // border: dark:bg-input/30 dark:border-input are dark mode's).
       await page.emulateMedia({ colorScheme: 'light' });
       await expect(page.locator('html')).not.toHaveClass(/dark/);
       const light = await outlineOf(page, NAV);
@@ -1051,8 +899,6 @@ export function describePagination(library: string) {
       await gotoPagination(page, url);
       const dark = await outlineOf(page, NAV);
       const surface = async () => (await drawnNow(page, NAV)).surfaces[0]!;
-      // dark:hover:bg-input/50 over dark:bg-input/30 would look lighter
-      // than shadcn's own hovered outline link.
       await link(page, '2').hover();
       await expect
         .poll(async () => (await surface()).background)
@@ -1060,13 +906,10 @@ export function describePagination(library: string) {
       const drawn = await drawnNow(page, NAV);
       expect(drawn.own!.background).not.toBe(TRANSPARENT);
       expect((await surface()).border).toBe(dark.border);
-      // Left: the surface's own background is back.
       await page.mouse.move(0, 0);
       await expect
         .poll(async () => (await surface()).background)
         .toBe(dark.background);
-      // Clicked with the pointer: it slides wearing its background, which
-      // goes once it has arrived under the hovered link.
       await link(page, '3').hover();
       const frames = await record(page, NAV, '3', () =>
         link(page, '3').click(),

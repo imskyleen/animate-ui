@@ -57,7 +57,6 @@ export default function CheckboxDemo({
   checkAnimation = "draw",
 }: {
   checked?: boolean | "indeterminate"
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   const [checked, setChecked] = React.useState(checkedProp)

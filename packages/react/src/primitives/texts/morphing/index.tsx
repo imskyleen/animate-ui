@@ -21,11 +21,6 @@ import {
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN, splitGraphemes } from '../_text';
 
-/**
- * Reduced motion turns the morph into a crossfade: object targets keep only
- * their opacity (Motion's reduced motion skips `scale` and layout, but not
- * the blur), variant labels are left to the user.
- */
 function toCrossfade<T>(target: T): T {
   if (!target || typeof target !== 'object' || Array.isArray(target)) {
     return target;
@@ -45,11 +40,8 @@ const DEFAULT_TRANSITION: Transition = {
 };
 
 type MorphingTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
-  /** Delay before the texts start cycling, in milliseconds. Only used if `text` is an array. */
   delay?: number;
-  /** Whether to go back to the first text after the last. Only used if `text` is an array. */
   loop?: boolean;
-  /** How long each text stays on screen, in milliseconds. Only used if `text` is an array. */
   holdDelay?: number;
   text: string | string[];
 } & UseIsInViewOptions;
@@ -87,8 +79,6 @@ function MorphingTextContent({
     },
   );
 
-  // The cycle pauses off screen and in a hidden tab. Under reduced motion it
-  // keeps cycling as a crossfade: the texts are content.
   const onScreen = useInView(localRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -110,7 +100,6 @@ function MorphingTextContent({
     return () => clearTimeout(timeoutId);
   }, [isInView, started, delay]);
 
-  // The array can shrink while the index points past its end.
   const index = Math.min(currentIndex, count - 1);
   const finished = !loop && index >= count - 1;
   const playing = started && count > 1 && !finished && onScreen && pageVisible;
@@ -132,8 +121,6 @@ function MorphingTextContent({
       const key = raw.normalize('NFC');
       const n = (counts.get(key) ?? 0) + 1;
       counts.set(key, n);
-      // The nth occurrence of a letter keeps its identity across texts, so
-      // shared letters glide to their new place instead of fading out and in.
       return {
         layoutId: `${uniqueId}-${key}-${n}`,
         label: key === ' ' ? ' ' : key,
@@ -143,7 +130,6 @@ function MorphingTextContent({
 
   return (
     <motion.span ref={localRef} data-slot="morphing-text" {...props}>
-      {/* Not a live region: the current text is read when reached, whole. */}
       <span className="sr-only" style={VISUALLY_HIDDEN}>
         {currentText}
       </span>

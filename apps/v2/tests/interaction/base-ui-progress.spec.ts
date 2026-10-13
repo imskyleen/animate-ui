@@ -8,7 +8,6 @@ import {
   inBrowserLocale,
 } from './hydration-locale';
 
-/** The Value's count: the bar's spring, so the number moves with the bar. */
 const COUNT_SPRING = { stiffness: 300, damping: 35 };
 
 describeProgressDemo('base-ui');
@@ -68,7 +67,6 @@ test.describe('base-ui progress API', () => {
         timeout: 3000,
       })
       .toBeGreaterThan(0.995);
-    // The Value counted there (v1's counting value).
     await expect(page.getByTestId('value')).toHaveText('100%');
   });
 
@@ -77,7 +75,6 @@ test.describe('base-ui progress API', () => {
   }) => {
     const value = page.getByTestId('value');
     await expect(value).toHaveText('50%');
-    // The number shown, on every frame for 3.5s.
     await page.evaluate(() => {
       const el = document.querySelector('[data-testid="value"]')!;
       const w = window as unknown as { __shown: Promise<Sample[]> };
@@ -98,13 +95,10 @@ test.describe('base-ui progress API', () => {
     const shown = await page.evaluate(
       () => (window as unknown as { __shown: Promise<Sample[]> }).__shown,
     );
-    // Through the numbers in between, not straight to 100%.
     const between = new Set(
       shown.map(([, n]) => n).filter((n) => n > 52 && n < 98),
     );
     expect(between.size).toBeGreaterThan(5);
-    // On the spring: from 60% to 90% shown (59.5 and 89.5, rounded) in the
-    // time it takes from 50 to 100.
     expectSpringPace(shown, COUNT_SPRING, {
       from: 50,
       to: 100,
@@ -118,7 +112,6 @@ test.describe('base-ui progress API', () => {
   }) => {
     const bar = page.getByRole('progressbar', { name: 'Overflow' });
     await expect(bar).toHaveAttribute('aria-valuetext', '100');
-    // It counts up from 0 on mount, and stops at the max.
     await page.waitForTimeout(1000);
     await expect(page.getByTestId('overflow-value')).toHaveText('100');
   });

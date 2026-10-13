@@ -19,18 +19,10 @@ import {
   renderChildren,
 } from '../../../internal/controls/aria';
 
-// Same API as React Aria's RadioGroup and Radio, animated like Animate UI
-// v1's Radix UI radio group (v1 had no React Aria one): radios scale to 0.95
-// while pressed (no hover scale), and the dot the user renders inside
-// `data-slot="radio-group-indicator"` (shadcn/ui's indicator) pops in (scale
-// and opacity from 0, spring stiffness 200, damping 16) and out the same way.
-
-/** React Aria's props, plus Animate UI's `transition` and `exitTransition`. */
 type RadioProps = RadioPrimitiveProps & IndicatorAnimationProps;
 
 const INDICATOR = '[data-slot="radio-group-indicator"]';
 
-// Nothing animates on the group itself.
 const RadioGroup = RadioGroupPrimitive;
 
 function Radio(props: RadioProps & React.RefAttributes<HTMLLabelElement>) {

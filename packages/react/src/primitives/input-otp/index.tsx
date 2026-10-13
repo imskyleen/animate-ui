@@ -26,77 +26,23 @@ import {
   useTempoTransition,
 } from '../../utils/motion';
 
-// A drop-in replacement for the `input-otp` package: the same exports with the
-// same API, plus motion. shadcn/ui's InputOTP (every base) works unchanged.
-//
-// How: the slots are the user's markup (shadcn/ui renders the `char` of
-// OTPInputContext as plain text in a `data-slot="input-otp-slot"` div), and
-// the context keeps input-otp's values, strings included. After each change,
-// the characters that were just typed or pasted are found by comparing the
-// old and new values, and their slots — the `[data-slot="input-otp-slot"]`
-// elements of the container, in index order — are animated with the Web
-// Animations API: the glyph grows in from nothing as it fades in, on a spring
-// that never goes past its size (`spring.glyph`). It's a copy that grows, by
-// a transform, laid exactly over the slot's own text (the slot's box, borders,
-// padding, layout and font), while the slot's text is hidden (`color`
-// transparent); the copy goes in the frame the slot's text shows again, at
-// the same place. A growing `font-size` was laid out again on every frame:
-// the line box grew with it and the glyph snapped up and down a pixel as it
-// grew, then once more as it ended (measured on the GPU). A paste staggers
-// its characters like v1's text splitting (50ms).
-//
-// - The active slot's ring glides from slot to slot, like Animate UI's
-//   highlights: an overlay in the container wears the ring the slot's own
-//   styles paint (the end of its box-shadow transition, or its box-shadow),
-//   while the slot's box-shadow is held at its resting value (inline), and
-//   springs to the next active slot on `spring.highlight`. It's read again
-//   on every render (an invalid code turns it red), fades in where the focus
-//   lands, and out where it is when the field loses it.
-// - A character deleted from the end (Backspace) shrinks to half its size
-//   and fades out where it was (`transition.popOut`), as a copy too (from
-//   where it was if it was still growing in): the slot is already empty.
-// - A code completed (the last slot filled) runs a wave through the slots:
-//   each one rises a few pixels and springs back, one after the other; the
-//   ring and the copies on a slot ride its wave.
-//
-// Under reduced motion characters only fade (the slot's `color`, no copy),
-// the ring moves to the next slot at once (it still fades in and out),
-// nothing shrinks or waves, and the fake caret (any CSS animation inside a
-// slot) stops blinking.
-
-/** A character growing in, without going past its size. */
 const SPRING: Transition = motionTokens.spring.glyph;
-/** The ring gliding to the next slot: the highlights' spring. */
 const RING_TRANSITION: Transition = motionTokens.spring.highlight;
-/** The ring showing up or going: a highlight's fade. */
 const RING_FADE: Transition = motionTokens.transition.color;
-/** A deleted character shrinking out, quicker than it came. */
 const GHOST_TRANSITION: Transition = motionTokens.transition.popOut;
-/** Where a deleted character shrinks to. */
 const GHOST_SCALE = 0.5;
 
-/** Delay between characters that arrive together (paste, autofill), in seconds. */
 const STAGGER = 0.05;
 
-/** The completion wave: how far each slot rises (px), and its rise (s). */
 const WAVE_RISE = 4;
 const WAVE_UP = 0.1;
-/** Each slot springs back down, lively: the popped checks' spring. */
 const WAVE_DOWN: Transition = motionTokens.spring.checkPop;
-/** Delay between the slots of the wave, in seconds. */
 const WAVE_STAGGER = 0.04;
-/** The wave starts once the last character has mostly grown in (s). */
 const WAVE_AFTER = 0.12;
-/** Its Web Animations, by id (tests and devtools tell them apart). */
 const WAVE_ID = 'animate-ui-otp-wave';
 
 const SLOT_SELECTOR = '[data-slot="input-otp-slot"]';
 
-/**
- * Finds the characters that were inserted between two values: `[start, end)`
- * of `next`. Characters that only shifted (deleting in the middle moves the
- * following ones) are not considered new, so deleting never grows one in.
- */
 function getEntry(prev: string, next: string) {
   let start = 0;
   while (
@@ -119,15 +65,10 @@ function getEntry(prev: string, next: string) {
   return { start, end };
 }
 
-// The fake caret's blink is the user's CSS: stop it under reduced motion (the
-// OS setting, or `data-reduced-motion`, set from Motion's config). React 19
-// hoists and dedupes this sheet.
 const REDUCED_MOTION_CSS = `@media (prefers-reduced-motion:reduce){[data-input-otp-container] ${SLOT_SELECTOR} *{animation:none!important}}[data-input-otp-container][data-reduced-motion] ${SLOT_SELECTOR} *{animation:none!important}`;
 
-/** A slot's own animation: its text hidden (or fading in). */
 const running = new WeakMap<Element, Animation>();
 
-/** The overlays, laid over the container: never in the way of the input. */
 const OVERLAY_STYLE: React.CSSProperties = {
   position: 'absolute',
   left: 0,
@@ -135,7 +76,6 @@ const OVERLAY_STYLE: React.CSSProperties = {
   width: 0,
   height: 0,
   pointerEvents: 'none',
-  // Above the active slot (shadcn/ui lifts it with z-10).
   zIndex: 10,
 };
 const RING_STYLE: React.CSSProperties = {
@@ -144,7 +84,6 @@ const RING_STYLE: React.CSSProperties = {
   opacity: 0,
 };
 
-/** A spring as a Web Animations timing: its duration (ms) and easing. */
 function springTiming(transition: Transition) {
   const { ease, duration } = createGeneratorEasing(transition, 100, spring);
   return {
@@ -155,7 +94,6 @@ function springTiming(transition: Transition) {
   };
 }
 
-/** A `translate` computed value, as px: `'none'`, `'4px'`, `'0px -4px'`. */
 function translateOf(el: Element) {
   const [x = 0, y = 0] = getComputedStyle(el)
     .translate.split(' ')
@@ -165,16 +103,9 @@ function translateOf(el: Element) {
 
 type Box = { left: number; top: number; width: number; height: number };
 
-/**
- * `el`'s box in `container`'s padding box, to the subpixel: in the
- * container's own units (a dialog scaling it in doesn't count), without the
- * wave's translate (what rides on `el` rides its wave on its own).
- */
 function boxIn(container: HTMLElement, el: HTMLElement): Box {
   const outer = container.getBoundingClientRect();
   const rect = el.getBoundingClientRect();
-  // offsetWidth is rounded to whole pixels: only a difference beyond that is
-  // a transform.
   const scaleOf = (shown: number, laid: number) =>
     laid && Math.abs(shown - laid) >= 1 ? shown / laid : 1;
   const scaleX = scaleOf(outer.width, container.offsetWidth);
@@ -195,7 +126,6 @@ const sameBox = (a: Box | null, b: Box) =>
   Math.abs(a.width - b.width) < 0.01 &&
   Math.abs(a.height - b.height) < 0.01;
 
-/** The text properties a copy takes from its slot. */
 const TEXT_PROPERTIES = [
   'fontFamily',
   'fontSize',
@@ -220,10 +150,6 @@ const TEXT_PROPERTIES = [
   'webkitTextStrokeColor',
 ] as const;
 
-/**
- * A copy of `text` laid exactly as `slot` lays its own: its box, borders
- * (transparent), padding, layout and font, at its place in `container`.
- */
 function glyphCopy(container: HTMLElement, slot: HTMLElement, text: string) {
   const style = getComputedStyle(slot);
   const box = boxIn(container, slot);
@@ -260,10 +186,6 @@ function glyphCopy(container: HTMLElement, slot: HTMLElement, text: string) {
   return copy;
 }
 
-/**
- * Starts on `el` the waves running on `slot`, in step: a copy, or the ring,
- * placed over a slot that rises.
- */
 function rideWave(slot: Element, el: Element) {
   for (const wave of slot.getAnimations()) {
     if (wave.id !== WAVE_ID) continue;
@@ -292,13 +214,6 @@ const RADII = [
 
 type Ring = { boxShadow: string; radii: string[] };
 
-/**
- * The ring `slot`'s own styles paint now that it's active, while the slot
- * keeps painting its resting box-shadow (held inline): the overlay wears the
- * ring. With a transition on it, the ring is where that transition goes, the
- * rest where it comes from (the transition is cancelled, its other
- * transitions, its border color's, go on).
- */
 function takeRing(slot: HTMLElement): Ring {
   slot.style.removeProperty('box-shadow');
   const style = getComputedStyle(slot);
@@ -312,14 +227,12 @@ function takeRing(slot: HTMLElement): Ring {
   transition?.cancel();
   if (ring !== 'none') {
     slot.style.boxShadow = rest;
-    // Back from the ring to its rest: not a transition either.
     void getComputedStyle(slot).boxShadow;
     shadowTransition(slot)?.cancel();
   }
   return { boxShadow: ring, radii: RADII.map((corner) => style[corner]) };
 }
 
-/** `slot`'s running box-shadow transition (a `transition-all`), if any. */
 function shadowTransition(slot: HTMLElement) {
   return slot
     .getAnimations()
@@ -331,7 +244,6 @@ function shadowTransition(slot: HTMLElement) {
 }
 
 type RingState = {
-  /** The slot it's on (the active one), whose ring it wears. */
   slot: HTMLElement | null;
   shown: boolean;
   box: Box | null;
@@ -346,7 +258,6 @@ type SlotsMotionProps = {
   children?: React.ReactNode;
 };
 
-/** Animates the slots of the characters that were just entered. */
 function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
   const { tempo } = useMotionTokens();
   const transition = useTempoTransition(SPRING);
@@ -355,7 +266,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
   const ghostTransition = useTempoTransition(GHOST_TRANSITION);
   const waveDown = useTempoTransition(WAVE_DOWN);
   const reduce = useShouldReduceMotion();
-  // The value is contiguous from the first slot.
   const value = slots.map((slot) => slot.char ?? '').join('');
   const prevValueRef = React.useRef(value);
   const ringRef = React.useRef<HTMLSpanElement>(null);
@@ -368,9 +278,7 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     glide: null,
     fade: null,
   });
-  // Deleted characters still shrinking out, by slot.
   const leavingRef = React.useRef(new Map<HTMLElement, HTMLElement>());
-  // Characters growing in: their copies, by slot.
   const enteringRef = React.useRef(new Map<HTMLElement, HTMLElement>());
 
   const getContainer = React.useCallback(
@@ -380,10 +288,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     [inputRef],
   );
 
-  /**
-   * Places the ring on `box` (gliding there when it's shown and moving is
-   * allowed), always through Motion, which keeps the values it glides from.
-   */
   const placeRing = React.useCallback(
     (box: Box, radii: string[], glide: boolean) => {
       const ring = ringRef.current;
@@ -407,9 +311,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     [ringTransition],
   );
 
-  // The ring follows the active slot, after every render (input-otp renders
-  // its slots again when the value, the selection, the focus or the hover
-  // changes): the slot it's on, how that slot paints its ring, and its box.
   React.useLayoutEffect(() => {
     const container = getContainer();
     const ring = ringRef.current;
@@ -420,7 +321,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     );
     const moved = active !== state.slot;
     if (moved) {
-      // The slot it leaves paints its own box-shadow again.
       state.slot?.style.removeProperty('box-shadow');
       state.slot = active;
     }
@@ -437,7 +337,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     };
 
     const worn = active ? takeRing(active) : null;
-    // No active slot, or one whose styles paint no ring: nothing to wear.
     if (!active || !worn || worn.boxShadow === 'none') {
       if (state.shown) fadeTo(0);
       state.shown = false;
@@ -454,7 +353,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       return;
     placeRing(box, worn.radii, state.shown && !reduce);
     if (moved) {
-      // It rides the wave of the slot it's on, if one runs.
       cancelWaves(ring);
       rideWave(active, ring);
     }
@@ -462,8 +360,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     state.shown = true;
   });
 
-  // The container laid out again without a render (a responsive width):
-  // the ring goes to its slot's new place at once.
   React.useEffect(() => {
     const container = getContainer();
     if (!container || typeof ResizeObserver === 'undefined') return;
@@ -491,8 +387,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     const leaving = leavingRef.current;
     const entering = enteringRef.current;
 
-    // Deleted from the end: each character shrinks out where it was, from
-    // where it was (still growing in, it leaves from there).
     if (
       !reduce &&
       layer &&
@@ -516,7 +410,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
         }
         running.get(slot)?.cancel();
         leaving.get(slot)?.remove();
-        // Still waiting its turn in a paste: nothing showed.
         if (from.opacity < 0.01) continue;
         const ghost = glyphCopy(container, slot, prev[index]!);
         ghost.dataset.glyph = 'leave';
@@ -538,8 +431,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       }
     }
 
-    // Copies over slots whose character is no longer theirs (a deletion in
-    // the middle shifted them): gone, the slot shows its own text.
     for (const [slot, copy] of entering) {
       const index = elements.indexOf(slot);
       if (index !== -1 && copy.textContent === value[index]) continue;
@@ -550,7 +441,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
 
     const { start, end } = getEntry(prev, value);
     if (end <= start) return;
-    // The character growing in grows from nothing: no copy leaving over it.
     for (let index = start; index < end; index++) {
       const slot = elements[index];
       if (!slot) continue;
@@ -558,7 +448,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       leaving.delete(slot);
     }
 
-    // The spring as a progress curve and its duration.
     const { duration, easing } = springTiming(transition);
     const stagger = !reduce && end - start > 1 ? STAGGER * tempo : 0;
 
@@ -570,19 +459,15 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       entering.delete(el);
       const delay = (index - start) * stagger * 1000;
       if (reduce || !layer) {
-        // It only fades: one keyframe at offset 0, ending on its own style.
         const animation = el.animate([{ offset: 0, color: 'transparent' }], {
           duration,
           delay,
           easing,
-          // Waiting characters of a paste stay hidden until their turn.
           fill: 'backwards',
         });
         running.set(el, animation);
         continue;
       }
-      // Its copy grows in over it while its own text is hidden; the copy goes
-      // as the text shows again, in the same frame.
       const copy = glyphCopy(container, el, value[index]!);
       copy.dataset.glyph = 'enter';
       layer.append(copy);
@@ -618,8 +503,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       hidden.finished.then(done, done);
     }
 
-    // The last slot filled: a wave runs through them, once the characters
-    // that just came in have mostly grown in. One wave at a time.
     if (reduce || value.length < elements.length || prev.length >= value.length)
       return;
     const up = WAVE_UP * tempo * 1000;
@@ -643,11 +526,9 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
         id: WAVE_ID,
         duration: up + down.duration,
         delay: waveStart + index * WAVE_STAGGER * tempo * 1000,
-        // Added to the slot's own translate, if it has one.
         composite: 'add',
       };
       slot.animate(keyframes, timing);
-      // The ring on it, and its copies, ride along.
       for (const rider of [
         slot === ringSlot ? ring : null,
         entering.get(slot),
@@ -672,8 +553,6 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     getContainer()?.toggleAttribute('data-reduced-motion', reduce);
   }, [reduce, getContainer]);
 
-  // Unmounting: the slot it was on paints its own box-shadow again, and the
-  // slots hidden under a copy show their text.
   React.useEffect(() => {
     const state = ringStateRef.current;
     const leaving = leavingRef.current;

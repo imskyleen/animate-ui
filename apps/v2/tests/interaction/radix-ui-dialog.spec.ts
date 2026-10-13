@@ -32,7 +32,6 @@ test.describe('radix-ui dialog demo', () => {
     await expectDialogSettled(page, CONTENT);
     expectDialogEntrance(await timeline.stop());
 
-    // Modals stay centered: the origin is the middle of the content.
     const centered = await page.locator(CONTENT).evaluate((el) => {
       const [x, y] = getComputedStyle(el).transformOrigin.split(' ');
       const box = el as HTMLElement;
@@ -60,7 +59,6 @@ test.describe('radix-ui dialog demo', () => {
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     await expect(page.locator(OVERLAY)).toHaveCount(0);
     expectDialogExit(await timeline.stop());
-    // A dismissed dialog's curve, as Motion handed it to the browser.
     expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
   });
 
@@ -71,7 +69,6 @@ test.describe('radix-ui dialog demo', () => {
     await trigger.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog')).toBeVisible();
-    // Radix focuses the first field right away, while the entrance plays.
     await expect(
       page.getByRole('textbox', { name: 'Name', exact: true }),
     ).toBeFocused();
@@ -82,9 +79,6 @@ test.describe('radix-ui dialog demo', () => {
 
   test('reopening during the exit comes back fully', async ({ page }) => {
     const trigger = page.getByRole('button', { name: 'Open Dialog' });
-    // Where the trigger is: hidden from the accessibility tree while the
-    // dialog is open, so clicked there, part way through the exit (Radix
-    // held the press as outside the reopened dialog and closed it again).
     const box = (await trigger.boundingBox())!;
     await trigger.click();
     await expectDialogSettled(page, CONTENT);
@@ -162,8 +156,6 @@ test.describe('radix-ui dialog API', () => {
     await expect(overlay).toHaveCount(1);
     expect(await state()).toEqual(closed);
 
-    // Radix hides the rest of the page from assistive tech while a modal
-    // Content is mounted, even closed: find the trigger by its text.
     await page.getByText('Force mounted trigger').click();
     await expect(content).toBeVisible();
     await expectDialogSettled(page, '[data-testid="kept-content"]');

@@ -13,7 +13,6 @@ const Indicator = ({ show }: { show: boolean }) => (
   </span>
 );
 
-// API compatibility: the component must behave exactly like React Aria's.
 export default function ReactAriaCheckboxFixture() {
   const [selected, setSelected] = React.useState(false);
   const [indeterminate, setIndeterminate] = React.useState(false);

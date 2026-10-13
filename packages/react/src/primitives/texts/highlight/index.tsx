@@ -21,7 +21,6 @@ const DEFAULT_TRANSITION: Transition = { duration: 2, ease: 'easeInOut' };
 
 type HighlightTextProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   text: string;
-  /** Delay before the highlight starts, in milliseconds. */
   delay?: number;
 } & UseIsInViewOptions;
 
@@ -56,8 +55,6 @@ function HighlightTextContent({
     },
   );
 
-  // backgroundSize is not covered by Motion's reduced motion: under reduced
-  // motion the highlight is simply there.
   const reduce = useShouldReduceMotion();
   const shown = reduce || isInView;
 
@@ -66,8 +63,6 @@ function HighlightTextContent({
       ref={localRef}
       data-slot="highlight-text"
       initial={reduce ? false : { backgroundSize: HIDDEN_SIZE }}
-      // Resetting (instantly, it is off screen) when leaving the viewport lets
-      // `inViewOnce={false}` replay the sweep on the next entrance.
       animate={{ backgroundSize: shown ? VISIBLE_SIZE : HIDDEN_SIZE }}
       transition={
         reduce || !shown

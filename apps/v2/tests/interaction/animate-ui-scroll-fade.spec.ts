@@ -7,7 +7,6 @@ const open = (page: Page) =>
 
 type Edge = 'top' | 'bottom' | 'left' | 'right';
 
-/** Fade amount of each edge (0 to 1) and whether a mask is applied. */
 const state = (page: Page, testId: string) =>
   page.getByTestId(testId).evaluate((el) => {
     const read = (edge: string) =>
@@ -32,7 +31,6 @@ const scrollTo = (page: Page, testId: string, to: 'start' | 'middle' | 'end') =>
     else el.scrollLeft = value;
   }, to);
 
-/** Samples an edge's amount on every frame for `ms`. */
 const sample = (page: Page, testId: string, edge: Edge, ms: number) =>
   page.getByTestId(testId).evaluate(
     (el, { edge, ms }) =>
@@ -100,7 +98,6 @@ test.describe('animate-ui scroll fade', () => {
     const values = await frames;
     const between = values.filter((v) => v > 0.05 && v < 0.95);
     expect(between.length).toBeGreaterThan(2);
-    // Monotonic: no bounce on a fade.
     for (let i = 1; i < values.length; i++)
       expect(values[i]!).toBeGreaterThanOrEqual(values[i - 1]! - 1e-3);
   });
@@ -130,16 +127,13 @@ test.describe('animate-ui scroll fade', () => {
         }),
     );
     const values = await frames;
-    // 20px is past the 16px ramp: the edge fades in fully...
     expect(values.at(-1)!.v).toBeCloseTo(1, 2);
-    // ...and quickly: 90% of the way within 350ms.
     const ninety = values.find((f) => f.v >= 0.9)!;
     expect(ninety.t).toBeLessThan(350);
   });
 
   test('the fade grows out of the edge as it clears', async ({ page }) => {
     await open(page);
-    // The gradient's depth follows each edge's amount, not only its alpha.
     const mask = await page
       .getByTestId('long')
       .evaluate((el) => el.style.getPropertyValue('mask-image'));

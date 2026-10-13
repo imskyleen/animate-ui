@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { PreviewCard } from '@animate-ui/react/primitives/base-ui/preview-card';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseUIPreviewCardFixture() {
   const [open, setOpen] = React.useState(false);
 

@@ -1,11 +1,5 @@
 import type { Primitive } from '../../lib/primitives';
 
-// shadcn/ui's Drawer on Base UI. The primitive now owns the popup's transform
-// (it still reads shadcn's `--translate-x/y`, `--stack-scale` and
-// `--closed-transform`), the backdrop's opacity, and every duration and curve
-// of both, including 0ms while swiping and the release scaled by
-// `--drawer-swipe-strength`. The classes doing that in CSS go; the variables
-// they feed, the swipe handle's and the content's own fades stay.
 export default {
   library: 'base-ui',
   name: 'drawer',

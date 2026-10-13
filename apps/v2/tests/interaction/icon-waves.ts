@@ -1,13 +1,5 @@
 import { expect, type Page } from '@playwright/test';
 
-// Waves (wifi, volume, radio…) animated one after the other: each
-// element's lowest opacity while the animation plays, and when it got
-// there.
-
-/**
- * Plays `animation` from the drawer: its preview is mounted again, so the
- * previous one is let go before the new one is read.
- */
 async function play(page: Page, animation: string) {
   const drawer = page.locator('[data-slot=icon-drawer]');
   await expect(
@@ -19,13 +11,8 @@ async function play(page: Page, animation: string) {
   return drawer.locator('svg').first();
 }
 
-/** Its lowest opacity, when (ms), and whether it's a wave. */
 type Dip = { min: number; at: number; wave: boolean };
 
-/**
- * Picks `title`'s icon in the gallery at `url`, plays `animation` from its
- * drawer, and returns each element's dip.
- */
 export async function playWaves(
   page: Page,
   url: string,
@@ -34,7 +21,6 @@ export async function playWaves(
 ) {
   if (!page.url().endsWith(url))
     await page.goto(url, { waitUntil: 'networkidle' });
-  // A drawer still open covers the tiles under it.
   else {
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-slot=icon-drawer]')).toHaveCount(0);
@@ -42,9 +28,6 @@ export async function playWaves(
   const tile = page.locator(`button[aria-pressed][title="${title}"]`);
   await page.getByPlaceholder(/Search/).fill(title.toLowerCase());
   await tile.click();
-  // Read from each element's opacity animation when Motion runs it as a
-  // Web Animation (its lowest keyframe and when it gets there, whatever the
-  // frame rate), or else frame by frame (a blink, repeating).
   return (await play(page, animation)).evaluate(async (svg) => {
     await new Promise(requestAnimationFrame);
     const elements = [...svg.querySelectorAll('path, circle, line, rect')];
@@ -67,8 +50,6 @@ export async function playWaves(
         at:
           Number(timing.delay) +
           Number(timing.duration) * frames[lowest]!.computedOffset!,
-        // A wave goes from its full opacity down and back once: not a
-        // light blinking on its own (a router's), nor a badge drawn in.
         wave: opacities[0] === 1 && opacities.length <= 3,
       };
     });
@@ -91,10 +72,6 @@ export async function playWaves(
   });
 }
 
-/**
- * The waves dimmed (below `below`), in the order they dipped: the elements
- * of one wave (its arcs on either side) dip together.
- */
 export function wavesOf(dips: Dip[], below = 0.6) {
   const waves: Dip[] = [];
   for (const dip of dips
@@ -104,21 +81,15 @@ export function wavesOf(dips: Dip[], below = 0.6) {
   return waves;
 }
 
-/** How each element of the icon moved while `animation` played. */
 export type Track = {
   tag: string;
   minOpacity: number;
-  /** When its opacity was lowest (ms). */
   at: number;
   dx: [number, number];
   dy: [number, number];
-  /** Its largest turn either way (degrees). */
   turn: number;
-  /** How far its scale went from 1, either way. */
   scaled: number;
-  /** Drawn with a dash (its path drawing itself) at some point. */
   dashed: boolean;
-  /** When its opacity starts changing (its Web Animation's delay, ms). */
   delay: number;
 };
 
@@ -140,7 +111,6 @@ export async function track(
     (svg) =>
       new Promise<Track[]>((resolve) => {
         const elements = [
-          // (The icon itself too: some move as a whole.)
           svg,
           ...svg.querySelectorAll('g, path, circle, rect, line'),
         ];
@@ -162,7 +132,6 @@ export async function track(
               ),
           ),
         }));
-        // (A transform inside the icon is in its own units already.)
         const start = performance.now();
         const tick = () => {
           const now = performance.now() - start;
@@ -181,7 +150,6 @@ export async function track(
               t.turn,
               Math.abs((Math.atan2(m.b, m.a) * 180) / Math.PI),
             );
-            // (Either way: across or up and down.)
             t.scaled = Math.max(
               t.scaled,
               Math.abs(Math.hypot(m.a, m.b) - 1),

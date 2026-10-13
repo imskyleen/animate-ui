@@ -34,7 +34,6 @@ export default function CountingNumberDemo({
   delay?: number
 }) {
   const [run, setRun] = React.useState(0)
-  // Any change replays the count.
   const key = [run, number, fromNumber, padStart, decimalSeparator, decimalPlaces, delay].join()
 
   return (

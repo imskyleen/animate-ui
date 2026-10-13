@@ -52,10 +52,6 @@ function ShimmeringTextContent({
   React.useImperativeHandle(ref, () => localRef.current as HTMLSpanElement);
   const { tempo } = useMotionTokens();
 
-  // The shimmer loops forever: it pauses off screen and in a hidden tab, and
-  // stops under reduced motion (color is not covered by Motion's reduced
-  // motion). Pausing resets to the resting state, which is invisible since
-  // nobody is looking.
   const inView = useInView(localRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -80,7 +76,6 @@ function ShimmeringTextContent({
       }
       {...props}
     >
-      {/* Screen readers read the text once, not character by character. */}
       <span className="sr-only" style={VISUALLY_HIDDEN}>
         {text}
       </span>

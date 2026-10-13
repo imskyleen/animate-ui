@@ -12,10 +12,6 @@ type IconFrame = {
   blur: number;
 };
 
-/**
- * Counts the view transitions started, and records the button's icons on
- * every frame from the start of the page.
- */
 const open = async (page: Page, query = '') => {
   await page.addInitScript(() => {
     const w = window as unknown as {
@@ -62,7 +58,6 @@ const open = async (page: Page, query = '') => {
   await hydrated(page, SELECTOR);
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -83,7 +78,6 @@ const transitions = (page: Page) =>
   page.evaluate(
     () => (window as unknown as { __transitions: number }).__transitions,
   );
-/** The icon frames recorded since the page started, then clears them. */
 const takeIcons = (page: Page) =>
   page.evaluate(() => {
     const w = window as unknown as { __icons: IconFrame[][] };
@@ -98,7 +92,6 @@ const shown = (page: Page) => button(page).getAttribute('data-theme');
 test.describe('animate-ui theme toggler button', () => {
   test('toggles light and dark at once, without a wipe', async ({ page }) => {
     await open(page);
-    // System, light here: the button shows the theme on screen.
     await expect(button(page)).toHaveAttribute('data-theme', 'light');
     await button(page).click();
     await expect(button(page)).toHaveAttribute('data-theme', 'dark');
@@ -116,7 +109,6 @@ test.describe('animate-ui theme toggler button', () => {
     await expect(button(page)).toHaveAttribute('data-theme', 'system');
     await button(page).click();
     await expect(button(page)).toHaveAttribute('data-theme', 'light');
-    // System was light already: nothing changes on screen.
     expect(await isDark(page)).toBe(false);
     await button(page).click();
     await expect(button(page)).toHaveAttribute('data-theme', 'dark');
@@ -129,7 +121,6 @@ test.describe('animate-ui theme toggler button', () => {
   test('the icon shows at rest on load, even when the theme resolves after hydrating', async ({
     page,
   }) => {
-    // Dark system theme: the server rendered the light icon.
     await page.emulateMedia({ colorScheme: 'dark' });
     await open(page);
     await expect(button(page)).toHaveAttribute('data-theme', 'dark');
@@ -166,15 +157,12 @@ test.describe('animate-ui theme toggler button', () => {
     expect(Math.max(...dark.map((i) => i.blur))).toBeGreaterThan(0.5);
     expect(Math.max(...dark.map((i) => i.blur))).toBeLessThanOrEqual(2);
     expect(light.some((i) => i.opacity < 1 && i.scale < 0.9)).toBe(true);
-    // Both turn clockwise: the new icon from up to 90° back, the old one on
-    // toward 90°.
     expect(Math.min(...dark.map((i) => i.rotate))).toBeLessThan(-45);
     expect(Math.min(...dark.map((i) => i.rotate))).toBeGreaterThanOrEqual(-90);
     expect(dark.every((i) => i.rotate <= 0.01)).toBe(true);
     const leaving = light.filter((i) => i.opacity < 1);
     expect(Math.max(...leaving.map((i) => i.rotate))).toBeGreaterThan(20);
     expect(leaving.every((i) => i.rotate >= -0.01)).toBe(true);
-    // The turn is 0.3s: it is still turning ~0.2s in (a 0.15s swap is done).
     const turning = frames.filter((f) =>
       f.some((i) => i.icon === 'dark' && i.rotate < -0.5),
     ).length;

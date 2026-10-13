@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="sliding-number"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -27,7 +25,6 @@ async function hydrated(page: Page, selector: string) {
 const root = (page: Page) => page.locator('[data-slot="sliding-number"]');
 const srText = (page: Page) => root(page).locator('.sr-only');
 
-/** The digit each roller shows: the display sitting at translateY(0). */
 const shownDigits = (page: Page) =>
   root(page)
     .locator('[data-slot="sliding-number-roller"]')
@@ -47,13 +44,11 @@ const shownDigits = (page: Page) =>
         .join(''),
     );
 
-/** Position of each roller's wheel, in digits (2.5: halfway from 2 to 3). */
 const wheels = (page: Page) =>
   root(page)
     .locator('[data-slot="sliding-number-roller"]')
     .evaluateAll((rollers) =>
       rollers.map((roller) => {
-        // Digit 0's display sits `-position` digits away from the center.
         const zero = roller.querySelector<HTMLElement>(
           '[data-slot="sliding-number-display"]',
         )!;
@@ -67,7 +62,6 @@ test.describe('animate-ui sliding number', () => {
     page,
   }) => {
     await open(page);
-    // padStart: four rollers from the start, "." between thousands.
     await expect(srText(page)).toHaveText('2.025');
     const rollers = root(page).locator('[data-slot="sliding-number-roller"]');
     await expect(rollers).toHaveCount(4);
@@ -82,7 +76,6 @@ test.describe('animate-ui sliding number', () => {
   }) => {
     await open(page);
     await page.getByRole('button', { name: 'Replay' }).click();
-    // Mid-count (a spring of about 4.5s), the number isn't there yet.
     await page.waitForTimeout(800);
     expect(await shownDigits(page)).not.toBe('2025');
     await expect
@@ -95,8 +88,6 @@ test.describe('animate-ui sliding number', () => {
   }) => {
     await open(page);
     await page.getByRole('button', { name: 'Replay' }).click();
-    // While the count passes 2000, the hundreds wheel goes from 9 back to 0
-    // (through 8, 7… on its spring), never forward past 9.
     const seen: number[] = [];
     await expect
       .poll(

@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { NavigationMenu } from '@animate-ui/react/primitives/radix-ui/navigation-menu';
 
-// The content changing between items, in setups the demo doesn't cover.
-
 const content = 'absolute top-0 left-0 w-64 p-2';
 const link = 'block rounded px-2 py-1 hover:bg-[rgb(255,0,0)]';
 const sizes = [
@@ -46,7 +44,6 @@ export default function RadixNavigationMenuSwapFixture() {
   return (
     <div className="flex flex-col items-start gap-40">
       <section data-testid="strict">
-        {/* React's StrictMode (Next.js's default) remounts effects. */}
         <React.StrictMode>
           <Menu names={['Strict one', 'Strict two']} />
         </React.StrictMode>
@@ -57,8 +54,6 @@ export default function RadixNavigationMenuSwapFixture() {
       </section>
 
       <section data-testid="inline">
-        {/* No Viewport: the Content shows under its item, on its own
-            background. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             <NavigationMenu.Item className="relative">
@@ -78,7 +73,6 @@ export default function RadixNavigationMenuSwapFixture() {
         </NavigationMenu.Root>
       </section>
       <section data-testid="sizes" className="pb-96">
-        {/* Contents of growing sizes. */}
         <NavigationMenu.Root className="relative">
           <NavigationMenu.List className="flex gap-2">
             {sizes.map(({ name, className }) => (

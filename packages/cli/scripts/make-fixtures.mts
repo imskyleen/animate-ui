@@ -1,8 +1,3 @@
-// Builds CLI test fixtures from shadcn/ui sources: one file per create style,
-// with its cn-* classes inlined the way `shadcn add` does at install time.
-//   node scripts/make-fixtures.mts <shadcn-dir> <radix|base|aria> <component...>
-// <shadcn-dir> holds style-<style>.css and <base>/<component>.tsx, from
-// github.com/shadcn-ui/ui apps/v4/registry/{styles,bases/<base>/ui}.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -47,7 +42,6 @@ for (const style of STYLES) {
       path.join(dir, base, `${component}.tsx`),
       'utf8',
     );
-    // Inline cn-* tokens in string literals; unknown ones disappear.
     const code = source.replace(
       /(["'`])([^"'`\n]*\bcn-[^"'`\n]*)\1/g,
       (_, quote: string, value: string) => {

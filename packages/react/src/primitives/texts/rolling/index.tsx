@@ -30,18 +30,11 @@ const DEFAULT_TRANSITION: Transition = {
   ease: 'easeOut',
 };
 
-// The front copy rolls away from its upper quarter while the back copy rolls
-// in from its baseline, 0.3s later, which reads as the letter turning over.
 const BACK_OFFSET = 0.3;
 
 type RollingTextProps = Omit<React.ComponentProps<'span'>, 'children'> & {
   text: string;
-  /**
-   * Transition of each letter. Its `delay` is the stagger between letters
-   * (in seconds), not a start delay: use the `delay` prop for that.
-   */
   transition?: Transition;
-  /** Delay before the first letter rolls, in milliseconds. */
   delay?: number;
 } & UseIsInViewOptions;
 
@@ -76,8 +69,6 @@ function RollingTextContent({
   const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
   const transition = transitionProp ?? defaultTransition;
 
-  // Reduced motion: no rotation at all, the letters sit in their final state.
-  // Once rolled, the text stays rolled (leaving the viewport doesn't reverse it).
   const rolled = isInView || reduce;
 
   const words = React.useMemo(
@@ -98,7 +89,6 @@ function RollingTextContent({
 
   return (
     <span ref={localRef} data-slot="rolling-text" {...props}>
-      {/* The letters are visual only: assistive tech reads the sr-only copy once. */}
       <span aria-hidden="true">
         {words.map((word, wi) => {
           if (word.space) return <span key={`space-${wi}`}>{word.part}</span>;
@@ -150,7 +140,6 @@ function RollingTextContent({
                     >
                       {label}
                     </motion.span>
-                    {/* Reserves the letter's width, the copies are absolute. */}
                     <span style={{ visibility: 'hidden' }}>{label}</span>
                   </span>
                 );

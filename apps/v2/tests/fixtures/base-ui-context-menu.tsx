@@ -6,7 +6,6 @@ import { ContextMenu } from '@animate-ui/react/primitives/base-ui/context-menu';
 const area = 'flex h-24 w-64 items-center justify-center rounded-md border';
 const popup = 'min-w-40 rounded-md border bg-white p-1 shadow-md outline-none';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseContextMenuFixture() {
   const [open, setOpen] = React.useState(false);
 

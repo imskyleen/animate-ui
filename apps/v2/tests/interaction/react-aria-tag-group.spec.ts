@@ -8,14 +8,8 @@ import {
   recordChips,
 } from './chip-motion';
 
-// React Aria's tags (shadcn/ui's combobox chips). Animate UI v1 had no tag
-// group: an added tag pops in like v1's small overlays (opacity from 0, scale
-// from 0.5, spring stiffness 400, damping 29); a removed one shrinks out where
-// it was while the others close the gap.
-
 type Frame = { t: number; scale: number; opacity: number } | null;
 
-/** Records the tag's scale and opacity on every frame, from its first one. */
 async function sampleTag(page: Page, testId: string, frames = 45) {
   await page.evaluate(
     ([id, n]) => {
@@ -66,10 +60,8 @@ test.describe('react-aria tag group', () => {
     await page.getByRole('button', { name: 'Add Nuxt' }).click();
     await page.waitForTimeout(1000);
     const samples = await frames();
-    // Its very first frame is already the start: no flash at full size.
     expect(samples[0]!.scale).toBeCloseTo(0.5, 1);
     expect(samples[0]!.opacity).toBeLessThan(0.1);
-    // A spring: on its way, then a touch past 1, then at rest.
     expect(samples.some((s) => s.scale > 0.6 && s.scale < 0.95)).toBe(true);
     expect(Math.max(...samples.map((s) => s.scale))).toBeGreaterThan(1.005);
     const last = samples[samples.length - 1]!;
@@ -86,7 +78,6 @@ test.describe('react-aria tag group', () => {
       chip: { selector: '[data-testid="tag-Astro"]', text: 'Astro' },
       act: () => page.getByRole('button', { name: 'Remove first' }).click(),
     });
-    // Out of the list at once: only its copy (no test id) leaves.
     await expect(page.getByTestId('tag-Astro')).toHaveCount(0, {
       timeout: 50,
     });

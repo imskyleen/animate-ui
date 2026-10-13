@@ -5,9 +5,6 @@ import { expect, test } from 'vitest';
 import { findPrimitive, primitiveModule } from '../src/lib/primitives';
 import { transform } from '../src/lib/transform';
 
-// shadcn/ui's InputOTP imports input-otp in every base. Animate UI's own
-// input-otp replaces the package with the same API: `"input-otp"` maps to
-// `primitives/input-otp` (no library folder).
 const INPUT_OTP = '@animate-ui/react/primitives/input-otp';
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 
@@ -15,7 +12,6 @@ test('animate-ui primitives live directly under primitives/', () => {
   const primitive = findPrimitive('animate-ui', 'input-otp');
   expect(primitive).toBeDefined();
   expect(primitiveModule(primitive!)).toBe(INPUT_OTP);
-  // The libraries keep their folder.
   expect(primitiveModule({ library: 'radix-ui', name: 'tooltip' })).toBe(
     '@animate-ui/react/primitives/radix-ui/tooltip',
   );
@@ -37,7 +33,6 @@ for (const library of ['radix-ui', 'base-ui', 'react-aria']) {
       expect(result.imports).toEqual([
         { from: 'input-otp', to: INPUT_OTP, name: 'input-otp' },
       ]);
-      // The caret's blink doesn't fight Motion: it stays.
       expect(result.code).toContain('animate-caret-blink');
       expect(result.unsupported).toEqual([]);
     }

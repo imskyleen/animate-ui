@@ -15,13 +15,6 @@ import {
   type PresenceAnimationProps,
 } from '../_menu/menu';
 
-// Same API as Radix's Dropdown Menu, animated like Animate UI v1's: the
-// Content and SubContent fade and scale in 220ms, a highlight glides behind
-// the highlighted item (into submenus too), checks pop in and the radio
-// indicator glides. The Root and each Sub mirror their open state (Radix
-// keeps it private) so the Content and SubContent can play an exit before
-// they unmount.
-
 type DropdownMenuProps = DropdownMenuPrimitive.DropdownMenuProps;
 type DropdownMenuTriggerProps = DropdownMenuPrimitive.DropdownMenuTriggerProps;
 type DropdownMenuPortalProps = DropdownMenuPrimitive.DropdownMenuPortalProps;
@@ -67,7 +60,6 @@ const Arrow = DropdownMenuPrimitive.Arrow;
 const Sub = createOpenRoot(DropdownMenuPrimitive.Sub, { sub: true });
 const SubTrigger = createItem(DropdownMenuPrimitive.SubTrigger);
 const SubContent = createContent(DropdownMenuPrimitive.SubContent, {
-  // Radix sets the same variable on submenus: they grow from their side.
   origin: '--radix-dropdown-menu-content-transform-origin',
   sub: true,
   returnFocus: 'none',
@@ -93,8 +85,6 @@ export {
   Sub,
   SubTrigger,
   SubContent,
-  // `DropdownMenu` is Radix's alias of Root: with the radix-ui import style,
-  // `DropdownMenuPrimitive.DropdownMenu` keeps working.
   Root as DropdownMenu,
   Trigger as DropdownMenuTrigger,
   Portal as DropdownMenuPortal,

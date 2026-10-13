@@ -3,17 +3,14 @@
 import * as React from 'react';
 import { Tabs } from '@animate-ui/react/primitives/base-ui/tabs';
 
-/** A box a panel holds (a frame): a border, a background. */
 const BOX = {
   border: '1px solid rgb(212, 212, 212)',
   borderRadius: 8,
   background: 'white',
   padding: 12,
 };
-/** A box that looks different (its border). */
 const OTHER_BOX = { ...BOX, border: '2px solid rgb(239, 68, 68)' };
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseTabsFixture() {
   const [value, setValue] = React.useState('a');
 
@@ -35,7 +32,6 @@ export default function BaseTabsFixture() {
       </section>
 
       <section data-testid="uncontrolled">
-        {/* No defaultValue: Base UI selects the first tab (value 0). */}
         <Tabs.Root>
           <Tabs.List aria-label="Uncontrolled">
             <Tabs.Tab value={0}>Uncontrolled 0</Tabs.Tab>
@@ -83,7 +79,6 @@ export default function BaseTabsFixture() {
       </section>
 
       <section data-testid="heights">
-        {/* Panels of different heights: the height springs between them. */}
         <Tabs.Root defaultValue="short">
           <Tabs.List aria-label="Heights">
             <Tabs.Tab value="short">Short</Tabs.Tab>
@@ -99,8 +94,6 @@ export default function BaseTabsFixture() {
         </Tabs.Root>
       </section>
       <section data-testid="frames">
-        {/* Panels holding a box: it stays, its content fades, unless the
-            boxes look different or hold text right inside. */}
         <Tabs.Root defaultValue="boxed">
           <Tabs.List aria-label="Frames">
             <Tabs.Tab value="boxed">Boxed</Tabs.Tab>

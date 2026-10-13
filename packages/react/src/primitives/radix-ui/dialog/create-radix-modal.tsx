@@ -25,18 +25,7 @@ import {
   type ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
-// Animated Root, Portal, Overlay and Content for Radix's Dialog and Alert
-// Dialog, which share their structure.
-//
-// Radix unmounts closed content at once. The Root mirrors `open` so the
-// Portal can gate itself with AnimatePresence and pass `forceMount` down:
-// Radix keeps the Overlay and the Content mounted while their exit plays.
-// Both render through `asChild` onto a motion.div, so every Radix attribute
-// (data-state, role, ids, data-side…) stays on the element shadcn styles.
-
-/* eslint-disable @typescript-eslint/no-explicit-any -- the factory serves two
-   Radix primitives with different prop types; the public types are set by
-   each primitive. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyComponent = React.ComponentType<any>;
 
 type RadixModalParts = {
@@ -72,7 +61,6 @@ type PartProps = ModalAnimationProps &
 
 export function createRadixModal(parts: RadixModalParts, name: string) {
   const [OpenProvider, useOpen] = getStrictContext<OpenState>(`${name}.Root`);
-  // Set inside our Portal: presence is handled there.
   const PortalContext = React.createContext<{ forceMount: boolean } | null>(
     null,
   );
@@ -102,7 +90,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     return (
       <AnimatePresence>
         {(open || forceMount) && (
-          // Radix's Overlay and Content inherit `forceMount` from the Portal.
           <parts.Portal key="portal" {...props} forceMount>
             <PortalBody forceMount={Boolean(forceMount)}>{children}</PortalBody>
           </parts.Portal>
@@ -125,10 +112,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     );
   }
 
-  /**
-   * Inside our Portal, the Portal's presence drives the exit. Rendered on its
-   * own (Radix allows an inline Content), the part gates itself.
-   */
   function usePresence(forceMount: true | undefined) {
     const portal = React.use(PortalContext);
     const { open } = useOpen();
@@ -161,8 +144,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     style,
     ...props
   }: PartProps & { open: boolean; keepMounted: boolean }) {
-    // The Portal (or the Overlay's own AnimatePresence) waits for its fade
-    // out before unmounting.
     const [isPresent, safeToRemove] = useMotionPresence();
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(
       open,
@@ -181,8 +162,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       <parts.Overlay {...props} forceMount asChild>
         {motionChild(asChild, children, {
           ref,
-          // Once closed (exiting, or kept mounted), clicks go through to the
-          // page: Radix sets `pointer-events: auto` on the overlay.
           style: closedStyle(style, open, hidden),
         })}
       </parts.Overlay>
@@ -216,7 +195,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     ...props
   }: PartProps & { open: boolean; keepMounted: boolean }) {
     const reduce = useShouldReduceMotion();
-    // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
     const side = getModalSide(props['data-side']);
     const { enter, exit } = useContentTransitions(
       side,
@@ -228,9 +206,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       open,
       keepMounted,
     );
-    // Presses that start while it's closing (its layer still mounted). Radix
-    // holds a click's "pointer down outside" until the click: pressing the
-    // trigger reopened it, then that held event closed it again at once.
     const startedClosedRef = React.useRef(new WeakSet<Event>());
     React.useEffect(() => {
       if (open) return;
@@ -258,9 +233,7 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
           animate: getAnimateTarget(targets, open, keepMounted),
           exit: targets.exit,
           onAnimationComplete,
-          // A closed Content kept mounted stays out of reach.
           inert: keepMounted && !open ? true : undefined,
-          // Once closed (exiting, or kept mounted), clicks go through.
           style: closedStyle(style, open, hidden),
         })}
       </parts.Content>
@@ -270,10 +243,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
   return { Root, Portal, Overlay, Content };
 }
 
-/**
- * The motion element Radix renders the part onto: a motion.div around the
- * children, or with `asChild`, the user's child made animatable.
- */
 function motionChild(
   asChild: boolean | undefined,
   children: React.ReactNode,

@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-// Demos inherit the preview's color: the docs' prose text is 90% opaque, and
-// icons drawn in it would show their crossing strokes.
 test('the component preview gives its demo an opaque color', async ({
   page,
 }) => {

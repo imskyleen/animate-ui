@@ -18,22 +18,12 @@ import {
   useTabsIndicator,
 } from '../../../internal/tabs';
 
-// Same API as React Aria's TabList, Tab and TabPanel, moving like Motion's
-// Radix tabs example (see ../../../internal/tabs): one indicator slides to
-// the new tab, and the panels change one after the other: the outgoing one
-// fades out into a blur, then the incoming one fades in from it while the
-// height glides. Both go through React Aria's `render` prop, so the animated
-// elements are React Aria's own.
-
 type ListAnimationProps = {
-  /** Transition of the indicator sliding to the new tab. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
 };
 
 type PanelAnimationProps = {
-  /** Transition of the panel coming in: its fade from a blur (300ms) and, in `height`, the height gliding from the previous panel's (450ms, Motion's layout curve). */
   transition?: Transition;
-  /** Transition of the panel leaving: its fade into a blur (150ms ease-out). */
   exitTransition?: Transition;
 };
 
@@ -65,7 +55,6 @@ function TabList<T extends object>({
               setList(node);
               assignRef(domProps.ref as React.Ref<HTMLDivElement>, node);
             },
-            // The indicator renders next to React Aria's collection.
             children: (
               <>
                 {indicator}
@@ -95,7 +84,6 @@ function TabPanel({
       <AriaTabPanel
         {...props}
         render={(domProps, renderProps) =>
-          // A custom `render` keeps working, without the animation.
           render ? (
             render(domProps, renderProps)
           ) : (
@@ -123,13 +111,10 @@ function PanelElement({
   ...props
 }: React.ComponentProps<'div'> & {
   selected: boolean;
-  /** React Aria keeps it mounted until its running animations end. */
   isExiting: boolean;
   panelTransition: Transition | undefined;
   panelExitTransition: Transition | undefined;
 }) {
-  // React Aria waits for the running animations of an unselected panel (its
-  // fade out, started in the commit it leaves in) before removing it.
   const {
     ref: panelRef,
     waiting,
@@ -146,9 +131,6 @@ function PanelElement({
         panelRef.current = node;
         assignRef(ref as React.Ref<HTMLDivElement>, node);
       }}
-      // Hidden while the previous panel leaves, and once its own fade out is
-      // over (React Aria removes it right after). A force-mounted panel then
-      // stays as React Aria leaves it (inert).
       hidden={
         hidden || waiting || (!selected && !leaving && isExiting) || undefined
       }

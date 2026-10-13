@@ -232,14 +232,11 @@ function FireworksBackgroundContent({
   const containerRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
-  // Fireworks launch and animate only while on screen, in a visible tab and
-  // without reduced motion. Paused, the last frame stays on the canvas.
   const inView = useInView(containerRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
   const playing = inView && pageVisible && !reduce;
 
-  // New props apply to the next rockets, without restarting the show.
   const optionsRef = React.useRef({
     population,
     color,
@@ -272,14 +269,8 @@ function FireworksBackgroundContent({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // The show takes place in a space as wide as the window, with the
-    // container's aspect ratio, stretched over the container: in a container
-    // narrower than the window, everything is drawn smaller and moves slower.
-    // Speeds and sizes are in pixels of that space. The canvas backing store
-    // is the container's size at the device pixel ratio.
     let maxX = 0;
     let maxY = 0;
-    // Canvas pixels per unit of the show's space.
     let scale = 1;
 
     const explosions: ParticleType[] = [];
@@ -295,7 +286,6 @@ function FireworksBackgroundContent({
       ctx.setTransform(scale, 0, 0, scale, 0, 0);
     };
 
-    // Draws the current frame without moving anything (paused, resized).
     const render = () => {
       clear();
       for (let i = fireworks.length - 1; i >= 0; i--) fireworks[i]?.draw(ctx);
@@ -312,7 +302,6 @@ function FireworksBackgroundContent({
       canvas.width = Math.max(1, Math.round(width * dpr));
       canvas.height = Math.max(1, Math.round(height * dpr));
       scale = canvas.width / maxX;
-      // Resizing clears the canvas: redraw the held frame while paused.
       if (!running) render();
     };
     setCanvasSize();
@@ -347,7 +336,6 @@ function FireworksBackgroundContent({
       launchTimeoutId = setTimeout(launchFirework, timeout);
     };
 
-    // One step per displayed frame, as in v1.
     const animate = () => {
       clear();
 
@@ -386,7 +374,6 @@ function FireworksBackgroundContent({
       cancelAnimationFrame(frameId);
     };
 
-    // Reduced motion: a still frame of a few bursts instead of a blank canvas.
     const still = () => {
       if (running || fireworks.length || explosions.length) return;
       const options = optionsRef.current;
@@ -410,7 +397,6 @@ function FireworksBackgroundContent({
       render();
     };
 
-    // A click launches a rocket towards the pointer.
     const handleClick = (event: MouseEvent) => {
       if (!running) return;
       const rect = container.getBoundingClientRect();
@@ -461,7 +447,6 @@ function FireworksBackgroundContent({
   );
 }
 
-// Under reduced motion the show stops on a still frame.
 function FireworksBackground(props: FireworksBackgroundProps) {
   return (
     <ReducedMotionConfig>

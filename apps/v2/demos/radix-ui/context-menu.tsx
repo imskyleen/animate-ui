@@ -275,7 +275,6 @@ export const controls = {
 export default function ContextMenuDemo({
   checkAnimation = "draw",
 }: {
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   const [showBookmarks, setShowBookmarks] = React.useState(true)

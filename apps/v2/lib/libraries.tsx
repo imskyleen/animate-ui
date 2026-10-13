@@ -7,9 +7,7 @@ type Logo = (props: ComponentProps<'svg'>) => React.JSX.Element;
 export type Library = {
   id: LibraryId;
   title: string;
-  /** Where the library documents its own API. */
   docsUrl?: (name: string) => string;
-  /** npm package the primitives come from (for the install step). */
   peer?: string;
   Logo: Logo;
 };
@@ -47,7 +45,6 @@ export function AnimateUILogo(props: ComponentProps<'svg'>) {
   );
 }
 
-/** In tab order. */
 export const LIBRARIES: Library[] = [
   {
     id: 'base-ui',

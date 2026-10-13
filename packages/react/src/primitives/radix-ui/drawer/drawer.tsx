@@ -29,54 +29,13 @@ import {
   type Scrub,
 } from '../../../internal/modal-motion';
 
-// A drop-in replacement for Vaul (https://vaul.emilkowal.ski), with exactly
-// its public API: the `Drawer` object and its parts, the same props and the
-// same data attributes, built on Radix's Dialog and Motion.
-//
-// One motion value drives everything: `position`, the drawer's translation
-// along its axis in px. The open and close animations, the drag (the finger
-// sets it directly: 1:1, no lag), snap points and the release all write it,
-// and the rest is derived from it on the same frame: the overlay's opacity,
-// the scaled background (`shouldScaleBackground`) and the progress reported
-// to `onDrag`. Below, a "distance" is that translation measured towards the
-// closed edge: 0 is fully open, `closed` is off screen.
-//
-// Radix unmounts closed content at once: the Portal gates itself with
-// AnimatePresence and passes `forceMount` down, and the Overlay and the
-// Content play their exit through `usePresence`.
-//
-// Its motion (v1 had no drawer): the drawer stays opaque, a sheet sliding in
-// (it only fades in place under reduced motion).
-// - Opening, snapping and settling back after a drag: 0.4s of
-//   cubic-bezier(0.34, 1.2, 0.64, 1). It answers at once, goes a hair past
-//   its rest (~1%, which Vaul's bleed below it covers), then settles back: a
-//   hint of bounce, where Vaul's curve zips in, then stops.
-// - Closing: quick, and seen speeding off its edge (0.16s on an ease-in), so
-//   it never reads as a constant slide and its last pixels don't crawl out.
-// - Thrown by a drag: it keeps the finger's speed off its edge, linear, over
-//   the time the rest of the way takes at that speed (Base UI's drawer
-//   bounds).
-// - Its shadow, if it has one, lifts off the page with it: none off screen,
-//   all of it once it's in, following the position, so it fades as it leaves
-//   instead of riding out at full strength.
-// The overlay comes in and clears like a dialog's: its tint deepens while its
-// backdrop blur grows from 0, in 400ms on a soft ease-out both ways, so the
-// page behind blurs progressively instead of cross-fading with an already
-// blurred copy. Once a drag has moved the drawer, or with snap points, it
-// also follows the position, like Vaul's.
-
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
-/** px/ms: a release faster than this is a flick. */
 const VELOCITY_THRESHOLD = 0.4;
-/** px/ms: with snap points, a flick this fast skips to the first or last one. */
 const SNAP_SKIP_VELOCITY = 2;
-/** ms of pointer history used for the release velocity. */
 const VELOCITY_WINDOW = 100;
-/** px/ms: Base UI's bounds on a thrown drawer's speed. */
 const MIN_THROW_VELOCITY = 0.2;
 const MAX_THROW_VELOCITY = 4;
-/** ms: Base UI's bounds on a thrown drawer's way out. */
 const MIN_THROW_DURATION = 80;
 const MAX_THROW_DURATION = 360;
 const NESTED_DISPLACEMENT = 16;
@@ -85,7 +44,6 @@ const BORDER_RADIUS = 8;
 const DRAG_CLASS = 'vaul-dragging';
 const LONG_HANDLE_PRESS_TIMEOUT = 250;
 const DOUBLE_TAP_TIMEOUT = 120;
-/** Rubber band past the open position: slope at the start, then a limit. */
 const RUBBER_BAND_FACTOR = 0.5;
 const RUBBER_BAND_LIMIT = 48;
 const INSTANT: Transition = { duration: 0 };
@@ -94,24 +52,11 @@ type Direction = 'top' | 'bottom' | 'left' | 'right';
 type SnapPoint = number | string;
 
 interface WithFadeFromProps {
-  /**
-   * Array of numbers from 0 to 100 that corresponds to % of the screen a given snap point should take up.
-   * Should go from least visible. Example `[0.2, 0.5, 0.8]`.
-   * You can also use px values, which doesn't take screen height into account.
-   */
   snapPoints: (number | string)[];
-  /**
-   * Index of a `snapPoint` from which the overlay fade should be applied. Defaults to the last snap point.
-   */
   fadeFromIndex: number;
 }
 
 interface WithoutFadeFromProps {
-  /**
-   * Array of numbers from 0 to 100 that corresponds to % of the screen a given snap point should take up.
-   * Should go from least visible. Example `[0.2, 0.5, 0.8]`.
-   * You can also use px values, which doesn't take screen height into account.
-   */
   snapPoints?: (number | string)[];
   fadeFromIndex?: never;
 }
@@ -121,42 +66,14 @@ type DialogProps = {
   setActiveSnapPoint?: (snapPoint: number | string | null) => void;
   children?: React.ReactNode;
   open?: boolean;
-  /**
-   * Number between 0 and 1 that determines when the drawer should be closed.
-   * Example: threshold of 0.5 would close the drawer if the user swiped for 50% of the height of the drawer or more.
-   * @default 0.25
-   */
   closeThreshold?: number;
-  /**
-   * When `true` the `body` doesn't get any styles assigned from Vaul
-   */
   noBodyStyles?: boolean;
   onOpenChange?: (open: boolean) => void;
   shouldScaleBackground?: boolean;
-  /**
-   * When `false` we don't change body's background color when the drawer is open.
-   * @default true
-   */
   setBackgroundColorOnScale?: boolean;
-  /**
-   * Duration for which the drawer is not draggable after scrolling content inside of the drawer.
-   * @default 100 (ms; Vaul's runtime default, its docs say 500ms)
-   */
   scrollLockTimeout?: number;
-  /**
-   * When `true`, don't move the drawer upwards if there's space, but rather only change it's height so it's fully scrollable when the keyboard is open
-   */
   fixed?: boolean;
-  /**
-   * When `true` only allows the drawer to be dragged by the `<Drawer.Handle />` component.
-   * @default false
-   */
   handleOnly?: boolean;
-  /**
-   * When `false` dragging, clicking outside, pressing esc, etc. will not close the drawer.
-   * Use this in comination with the `open` prop, otherwise you won't be able to open/close the drawer.
-   * @default true
-   */
   dismissible?: boolean;
   onDrag?: (
     event: React.PointerEvent<HTMLDivElement>,
@@ -166,77 +83,27 @@ type DialogProps = {
     event: React.PointerEvent<HTMLDivElement>,
     open: boolean,
   ) => void;
-  /**
-   * When `false` it allows to interact with elements outside of the drawer without closing it.
-   * @default true
-   */
   modal?: boolean;
   nested?: boolean;
   onClose?: () => void;
-  /**
-   * Direction of the drawer. Can be `top` or `bottom`, `left`, `right`.
-   * @default 'bottom'
-   */
   direction?: 'top' | 'bottom' | 'left' | 'right';
-  /**
-   * Opened by default, skips initial enter animation. Still reacts to `open` state changes
-   * @default false
-   */
   defaultOpen?: boolean;
-  /**
-   * When set to `true` prevents scrolling on the document body on mount, and restores it on unmount.
-   * @default false
-   */
   disablePreventScroll?: boolean;
-  /**
-   * When `true` Vaul will reposition inputs rather than scroll then into view if the keyboard is in the way.
-   * Setting it to `false` will fall back to the default browser behavior.
-   * @default true when {@link snapPoints} is defined
-   */
   repositionInputs?: boolean;
-  /**
-   * Disabled velocity based swiping for snap points.
-   * This means that a snap point won't be skipped even if the velocity is high enough.
-   * Useful if each snap point in a drawer is equally important.
-   * @default false
-   */
   snapToSequentialPoint?: boolean;
   container?: HTMLElement | null;
-  /**
-   * Gets triggered after the open or close animation ends, it receives an `open` argument with the `open` state of the drawer by the time the function was triggered.
-   * Useful to revert any state changes for example.
-   */
   onAnimationEnd?: (open: boolean) => void;
   preventScrollRestoration?: boolean;
   autoFocus?: boolean;
 } & (WithFadeFromProps | WithoutFadeFromProps);
 
-/** Animate UI's additions to `Drawer.Content`. */
 type ContentAnimationProps = {
-  /**
-   * Opening (slide in), moving between snap points and settling back after
-   * a drag that doesn't dismiss.
-   * @default { duration: 0.4, ease: [0.34, 1.2, 0.64, 1] }
-   */
   transition?: Transition;
-  /**
-   * Closing (slide out) by a button, Escape or a click outside: at once,
-   * quicker than it came, speeding off its edge. A drag dismissal is thrown
-   * instead: it keeps the finger's speed.
-   * @default { duration: 0.16, ease: [0.4, 0, 1, 1] }
-   */
   exitTransition?: Transition;
 };
 
-/** Animate UI's additions to `Drawer.Overlay`. */
 type OverlayAnimationProps = {
-  /**
-   * Its tint and backdrop blur coming in, like a dialog's overlay. After a
-   * drag, they also follow the drawer.
-   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: Transition;
-  /** Its tint and backdrop blur clearing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -256,9 +123,7 @@ type HandleProps = React.ComponentPropsWithoutRef<'div'> & {
 };
 
 type Geometry = {
-  /** The drawer's size along its axis. */
   size: number;
-  /** Distance at which it's off screen (its size plus any gap to the edge). */
   closed: number;
 };
 
@@ -278,19 +143,15 @@ type DrawerContextValue = {
   noBodyStyles: boolean;
   repositionInputs: boolean;
   fixed: boolean | undefined;
-  /** False for the first frame of a `defaultOpen` drawer. */
   shouldAnimate: boolean;
   snapPoints: SnapPoint[] | undefined;
-  /** The distance of each snap point. */
   snapDistances: number[];
   activeSnapPoint: SnapPoint | null | undefined;
   activeSnapPointIndex: number | null;
   setActiveSnapPoint: (snapPoint: SnapPoint | null) => void;
   shouldFade: boolean;
   position: MotionValue<number>;
-  /** 1 once a drag has moved it since it opened: the overlay follows it. */
   dragged: MotionValue<number>;
-  /** 0 → 1 while a nested drawer is open: this one steps back. */
   nestedShift: MotionValue<number>;
   getGeometry: () => Geometry;
   setGeometry: (geometry: Geometry) => void;
@@ -317,19 +178,16 @@ function useDrawerContext() {
   return context;
 }
 
-// Set inside our Portal: presence is handled there.
 const PortalContext = React.createContext<{ forceMount: boolean } | null>(null);
 
 const isVertical = (direction: Direction) =>
   direction === 'top' || direction === 'bottom';
 
-/** +1 when the closed edge is towards positive coordinates. */
 const closedSign = (direction: Direction) =>
   direction === 'bottom' || direction === 'right' ? 1 : -1;
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
-/** Resistance past a limit: follows at half speed, then saturates. */
 function rubberBand(overshoot: number) {
   const pulled = RUBBER_BAND_FACTOR * overshoot;
   return (pulled * RUBBER_BAND_LIMIT) / (RUBBER_BAND_LIMIT + pulled);
@@ -343,11 +201,6 @@ function useLatest<T>(value: T) {
   return ref;
 }
 
-/**
- * Starts an animation on the next frame (the effect's cleanup cancels it), so
- * the commit that mounts or closes the drawer doesn't eat its first frames,
- * as Motion's own enter and exit animations start.
- */
 function onNextFrame(start: () => void) {
   const id = requestAnimationFrame(start);
   return () => cancelAnimationFrame(id);
@@ -358,10 +211,6 @@ function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
   else if (ref) (ref as React.RefObject<T | null>).current = node;
 }
 
-// Vaul's stylesheet, minus its keyframes and transitions (Motion animates):
-// touch handling, the background bleed past the open edge (seen while the
-// drawer is pulled beyond it) and the Handle's default look. Zero
-// specificity, hoisted once by React.
 const STYLE_HREF = 'animate-ui-radix-ui-drawer';
 const STYLESHEET = `
 :where([data-vaul-drawer]) { touch-action: none; }
@@ -383,10 +232,6 @@ function DrawerStyle() {
     </style>
   );
 }
-
-/* ------------------------------------------------------------------------ */
-/* Root                                                                     */
-/* ------------------------------------------------------------------------ */
 
 function Root(props: DialogProps): React.JSX.Element {
   return (
@@ -426,9 +271,7 @@ function DrawerRoot({
   autoFocus = false,
 }: DialogProps) {
   const reduce = useShouldReduceMotion();
-  // The drawer's curve, for the nested step back and the snap point reset.
   const sheet = useTempoTransition<Transition>(DRAWER_TRANSITION);
-  // The drawer this one is nested in, if any.
   const parent = React.use(DrawerContext);
 
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
@@ -460,7 +303,6 @@ function DrawerRoot({
       !Number.isNaN(fadeFromIndex) &&
       snapPoints[fadeFromIndex] === activeSnapPoint);
 
-  // Snap points are measured against the container (or the window).
   const [viewport, setViewport] = React.useState(() =>
     typeof window === 'undefined'
       ? null
@@ -487,7 +329,6 @@ function DrawerRoot({
     );
   }, [snapPoints, viewport, container, vertical]);
 
-  // Skips the entrance of a `defaultOpen` drawer.
   const [shouldAnimate, setShouldAnimate] = React.useState(!defaultOpen);
   React.useEffect(() => {
     if (shouldAnimate) return;
@@ -505,11 +346,9 @@ function DrawerRoot({
     geometryRef.current = next;
   }, []);
 
-  // Read by the motion value callbacks, which can't wait for a render.
   const snappingRef = useLatest({ distances: snapDistances, fadeFromIndex });
   const sign = closedSign(direction);
 
-  /** Overlay opacity at a position: 1 open, 0 closed, Vaul's `fadeFromIndex`. */
   const overlayProgress = React.useCallback(
     (value: number) => {
       const distance = value * sign;
@@ -529,7 +368,6 @@ function DrawerRoot({
     [sign, snappingRef],
   );
 
-  /** How much the background is scaled: 1 from the first snap point up. */
   const backgroundProgress = React.useCallback(
     (value: number) => {
       const distance = value * sign;
@@ -548,7 +386,6 @@ function DrawerRoot({
   const closeDrawer = (fromWithin?: boolean) => {
     onClose?.();
     if (!fromWithin) setOpen(false);
-    // Back to the first snap point once it's gone.
     window.clearTimeout(resetTimerRef.current);
     if (snapPoints) {
       resetTimerRef.current = window.setTimeout(
@@ -564,7 +401,6 @@ function DrawerRoot({
     setOpen(open);
   };
 
-  // As a parent: step back while a nested drawer is open.
   const moveShift = (to: number, transition: Transition) => {
     if (reduce) nestedShift.jump(to);
     else animate(nestedShift, to, transition);
@@ -579,7 +415,6 @@ function DrawerRoot({
     if (open) moveShift(1, sheet);
   };
 
-  // As a nested drawer: tell the parent.
   const notifiedOpenRef = React.useRef<boolean | null>(null);
   React.useEffect(() => {
     if (!nested || !parent) return;
@@ -665,10 +500,6 @@ function NestedRoot({
   );
 }
 
-/* ------------------------------------------------------------------------ */
-/* Portal                                                                   */
-/* ------------------------------------------------------------------------ */
-
 function Portal(props: PortalProps): React.JSX.Element {
   const context = useDrawerContext();
   const {
@@ -681,7 +512,6 @@ function Portal(props: PortalProps): React.JSX.Element {
   return (
     <AnimatePresence>
       {(context.isOpen || forceMount) && (
-        // Radix's Overlay and Content inherit `forceMount` from the Portal.
         <DialogPrimitive.Portal
           key="portal"
           {...portalProps}
@@ -697,17 +527,12 @@ function Portal(props: PortalProps): React.JSX.Element {
   );
 }
 
-/* ------------------------------------------------------------------------ */
-/* Overlay                                                                  */
-/* ------------------------------------------------------------------------ */
-
 const Overlay: React.FC<OverlayProps & React.RefAttributes<HTMLDivElement>> = (
   props,
 ) => {
   const context = useDrawerContext();
   const portal = React.use(PortalContext);
   const keepMounted = Boolean(props.forceMount ?? portal?.forceMount);
-  // Vaul: a non-modal drawer has no overlay.
   if (!context.modal) return null;
 
   const body = <OverlayMotion {...props} keepMounted={keepMounted} />;
@@ -733,16 +558,11 @@ function OverlayMotion({
 }: OverlayProps &
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
-  // A dialog's overlay: 400ms on a soft ease-out, both ways.
   const { enter, exit } = useOverlayTransitions(transition, exitTransition);
   const [isPresent, safeToRemove] = usePresence();
   const visible = context.isOpen && isPresent;
   const hasSnapPoints = Boolean(context.snapPoints?.length);
 
-  // How far in it is, from nothing (0) to its classes' tint and backdrop
-  // blur (1): its own fade, capped by the drawer's position once a drag has
-  // moved it, or with snap points (Vaul's `fadeFromIndex`): it follows the
-  // drag.
   const presence = useMotionValue(0);
   const linkedRef = useLatest(hasSnapPoints);
   const level = useTransform(
@@ -760,14 +580,10 @@ function OverlayMotion({
     },
     [ref],
   );
-  // Held at its level on every frame, between nothing and its classes'
-  // values, read again at each opening (they may have changed since), and
-  // kept through the exit: it clears on the same scrub.
   const scrubRef = React.useRef<Scrub | null>(null);
   React.useLayoutEffect(() => {
     const node = elementRef.current;
     if (!node || !visible) return;
-    // Its classes' values, with nothing holding them.
     scrubRef.current?.stop();
     scrubRef.current = scrubBackdrop(node);
     scrubRef.current.set(level.get());
@@ -833,8 +649,6 @@ function OverlayMotion({
       asChild
     >
       {motionChild(asChild, children, {
-        // Once closed (exiting, or kept mounted), clicks go through to the
-        // page: Radix sets `pointer-events: auto` on the overlay.
         style: closedStyle(
           { ...style },
           visible,
@@ -845,10 +659,6 @@ function OverlayMotion({
   );
 }
 
-/* ------------------------------------------------------------------------ */
-/* Content                                                                  */
-/* ------------------------------------------------------------------------ */
-
 const Content: React.FC<ContentProps & React.RefAttributes<HTMLDivElement>> = (
   props,
 ) => {
@@ -858,7 +668,6 @@ const Content: React.FC<ContentProps & React.RefAttributes<HTMLDivElement>> = (
 
   const body = <ContentMotion {...props} keepMounted={keepMounted} />;
   if (portal) return body;
-  // Rendered without a Portal (Radix allows it): it gates itself.
   return (
     <AnimatePresence>
       {(context.isOpen || keepMounted) && (
@@ -873,7 +682,6 @@ type Press = {
   x: number;
   y: number;
   dragging: boolean;
-  /** Distance when the drag started. */
   start: number;
   samples: { time: number; distance: number }[];
 };
@@ -899,7 +707,6 @@ function ContentMotion({
   React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
   const context = useDrawerContext();
   const reduce = useShouldReduceMotion();
-  // In with a hint of bounce; closed, out quickly, speeding off its edge.
   const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
   const exit = useTempoTransition(exitTransition ?? DRAWER_EXIT_TRANSITION);
   const [isPresent, safeToRemove] = usePresence();
@@ -914,7 +721,6 @@ function ContentMotion({
     : 0;
 
   const instant = INSTANT;
-  // Under reduced motion it fades in place, and settles without moving.
   const settle = reduce ? instant : enter;
 
   const elementRef = React.useRef<HTMLDivElement | null>(null);
@@ -927,8 +733,6 @@ function ContentMotion({
   );
 
   const opacity = useMotionValue(1);
-  // Updated synchronously (not on the next frame like `useTransform`): the
-  // first frame must already show the drawer off screen.
   const transform = useMotionValue(
     toTransform(direction, position.get(), nestedShift.get()),
   );
@@ -967,11 +771,6 @@ function ContentMotion({
     vertical,
   });
 
-  // Its shadow (shadcn/ui's has none; yours may) lifts off the page with it:
-  // none off screen, all of it once it's in (from its first snap point up),
-  // on every frame of a slide or a drag, so it fades as it leaves. Read again
-  // at each opening (its classes may have changed since), before the opening
-  // below moves it off screen.
   const shadowRef = React.useRef<Scrub | null>(null);
   React.useLayoutEffect(() => {
     const node = elementRef.current;
@@ -1016,10 +815,8 @@ function ContentMotion({
     context.setGeometry({ size, closed: size + Math.max(0, gap) });
   }, [liveRef]);
 
-  // Every animation of the position goes through here: the latest one wins.
   const generationRef = React.useRef(0);
   const targetRef = React.useRef<number | null>(null);
-  /** px/ms towards its edge when a drag dismissed it: it's thrown out. */
   const throwRef = React.useRef<number | null>(null);
   const moveTo = React.useCallback(
     (distance: number, how: Transition, fade?: [number, Transition]) => {
@@ -1034,7 +831,6 @@ function ContentMotion({
     [position, opacity, liveRef],
   );
 
-  // Open and close.
   const firstRef = React.useRef(true);
   React.useLayoutEffect(() => {
     const { context, reduce, enter, exit, instant, restDistance, sign } =
@@ -1045,21 +841,16 @@ function ContentMotion({
     const { closed } = context.getGeometry();
 
     if (visible) {
-      // A new opening: the overlay fades on its own until the next drag.
       context.dragged.jump(0);
       if (isFirst) {
         if (!context.shouldAnimate) {
-          // `defaultOpen`: already there.
           position.jump(sign * restDistance);
           opacity.jump(1);
           targetRef.current = restDistance;
           return;
         }
         position.jump(sign * (reduce ? restDistance : closed));
-        // Opaque, a sheet sliding in; it only fades in place under reduced
-        // motion.
         opacity.jump(reduce ? 0 : 1);
-        // Before the first paint: Motion writes the style on its next frame.
         const node = elementRef.current;
         if (node) {
           node.style.transform = toTransform(
@@ -1070,8 +861,6 @@ function ContentMotion({
           node.style.opacity = String(opacity.get());
         }
       }
-      // It slides in opaque (shown again if it was kept mounted closed), or
-      // fades in place under reduced motion.
       targetRef.current = restDistance;
       if (!reduce) opacity.jump(1);
       return onNextFrame(() =>
@@ -1086,15 +875,11 @@ function ContentMotion({
     }
 
     if (isFirst) {
-      // Mounted closed (`forceMount`).
       position.jump(sign * closed);
       opacity.jump(0);
       targetRef.current = closed;
       return;
     }
-    // From wherever it is: a drag dismissal continues from the release,
-    // thrown at the finger's speed; otherwise it speeds off its edge. It
-    // slides out opaque, or fades in place under reduced motion.
     const thrown = throwRef.current;
     throwRef.current = null;
     const out =
@@ -1116,7 +901,6 @@ function ContentMotion({
     );
   }, [visible, liveRef, measure, moveTo, position, opacity]);
 
-  // A new snap point (dragged, cycled with the Handle, controlled, resized).
   const pressRef = React.useRef<Press | null>(null);
   React.useEffect(() => {
     if (!visible || pressRef.current?.dragging) return;
@@ -1127,7 +911,6 @@ function ContentMotion({
     );
   }, [visible, restDistance, moveTo, liveRef, instant]);
 
-  // Size changes, scroll timestamps, and touch scrolling while dragging.
   const lastScrollRef = React.useRef(0);
   React.useEffect(() => {
     const node = elementRef.current;
@@ -1137,7 +920,6 @@ function ContentMotion({
     const onScroll = () => {
       lastScrollRef.current = performance.now();
     };
-    // Once the drawer follows the finger, the page must not scroll too.
     const onTouchMove = (event: TouchEvent) => {
       if (pressRef.current?.dragging && event.cancelable)
         event.preventDefault();
@@ -1151,7 +933,6 @@ function ContentMotion({
     };
   }, [measure]);
 
-  // `shouldScaleBackground`: the wrapper follows the drawer's position.
   const {
     shouldScaleBackground,
     setBackgroundColorOnScale,
@@ -1213,7 +994,6 @@ function ContentMotion({
     vertical,
   ]);
 
-  // `repositionInputs`: a bottom drawer stays above the on-screen keyboard.
   const keyboardOpenRef = React.useRef(false);
   const { repositionInputs, fixed } = context;
   React.useEffect(() => {
@@ -1256,21 +1036,16 @@ function ContentMotion({
     return () => visualViewport.removeEventListener('resize', onResize);
   }, [repositionInputs, fixed, direction, hasSnapPoints, liveRef]);
 
-  /* Dragging ------------------------------------------------------------- */
-
-  /** Whether a gesture moving `along` px on the axis should move the drawer. */
   const shouldDrag = (target: Element, along: number) => {
     const node = elementRef.current;
     if (!node) return false;
     if (target.closest('select, [data-vaul-no-drag]')) return false;
     if (window.getSelection()?.toString()) return false;
-    // Partly closed (a lower snap point, or mid-animation): it moves first.
     const distance = position.get() * sign;
     const mostOpen = hasSnapPoints ? (context.snapDistances.at(-1) ?? 0) : 0;
     if (distance > mostOpen + 1) return true;
     if (performance.now() - lastScrollRef.current < context.scrollLockTimeout)
       return false;
-    // Content that can scroll that way scrolls instead.
     for (let el: Element | null = target; el; el = el.parentElement) {
       if (canScroll(el, vertical, along)) return false;
       if (el === node) break;
@@ -1281,7 +1056,6 @@ function ContentMotion({
   const startDrag = (current: Press) => {
     generationRef.current++;
     position.stop();
-    // From now on, the overlay follows the drawer's position too.
     context.dragged.jump(1);
     current.dragging = true;
     current.start = position.get() * sign;
@@ -1295,11 +1069,9 @@ function ContentMotion({
   ) => {
     const distances = context.snapDistances;
     let distance = current.start + along * sign;
-    // Past the most open position: rubber band.
     const mostOpen = hasSnapPoints ? (distances.at(-1) ?? 0) : 0;
     if (distance < mostOpen)
       distance = mostOpen - rubberBand(mostOpen - distance);
-    // Not dismissible: it resists past the least open position too.
     if (!context.dismissible) {
       const leastOpen = hasSnapPoints ? (distances[0] ?? 0) : 0;
       if (distance > leastOpen)
@@ -1317,10 +1089,6 @@ function ContentMotion({
     );
   };
 
-  /**
-   * Close, thrown at `velocity` (px/ms towards its edge); a controlled drawer
-   * whose owner keeps it open settles back.
-   */
   const requestClose = (velocity: number) => {
     throwRef.current = velocity;
     context.closeDrawer();
@@ -1375,7 +1143,6 @@ function ContentMotion({
       if (towardsOpen) return snapTo(last);
       return context.dismissible ? requestClose(velocity) : snapTo(0);
     }
-    // Pulled well below the first snap point.
     const firstDistance = distances[0]!;
     if (
       context.dismissible &&
@@ -1426,16 +1193,11 @@ function ContentMotion({
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     const target = event.target as Element;
     const node = elementRef.current;
-    // Events from portals rendered inside the content don't drag it.
     if (!node || !node.contains(target)) return;
     if (context.handleOnly && !target.closest('[data-vaul-handle]')) return;
-    // Like Vaul: the pointer stays with what it pressed (clicks still work)
-    // even when the drag leaves the drawer.
     try {
       target.setPointerCapture(event.pointerId);
-    } catch {
-      // The pointer is already gone.
-    }
+    } catch {}
     pressRef.current = {
       id: event.pointerId,
       x: event.clientX,
@@ -1514,8 +1276,6 @@ function ContentMotion({
         }}
         onPointerDownOutside={(event) => {
           onPointerDownOutside?.(event);
-          // Its own Trigger toggles it: pressing it while the closed drawer
-          // is kept mounted (`forceMount`) isn't an outside dismissal.
           const pressed = event.target as Element | null;
           const id = elementRef.current?.id;
           if (id && pressed?.closest?.(`[aria-controls="${CSS.escape(id)}"]`))
@@ -1532,7 +1292,6 @@ function ContentMotion({
         }}
       >
         {motionChild(asChild, children, {
-          // A closed Content kept mounted stays out of reach.
           inert: keepMounted && !visible ? true : undefined,
           style: closedStyle(
             { ...snapStyle, ...style, transform, opacity },
@@ -1544,10 +1303,6 @@ function ContentMotion({
     </>
   );
 }
-
-/* ------------------------------------------------------------------------ */
-/* Handle                                                                   */
-/* ------------------------------------------------------------------------ */
 
 const Handle: React.FC<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
   preventCycle = false,
@@ -1566,7 +1321,6 @@ const Handle: React.FC<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
     shouldCancelRef.current = false;
   };
 
-  // A tap cycles through the snap points, then closes from the last one.
   const cycle = () => {
     if (preventCycle || shouldCancelRef.current) {
       cancelInteraction();
@@ -1590,7 +1344,6 @@ const Handle: React.FC<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
       <div
         onClick={(event) => {
           onClick?.(event);
-          // The second click of a double click.
           if (shouldCancelRef.current) {
             cancelInteraction();
             return;
@@ -1603,8 +1356,6 @@ const Handle: React.FC<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
         }}
         onPointerDown={(event) => {
           onPointerDown?.(event);
-          // A long press isn't a tap. (A press that became a drag never
-          // clicks: start afresh.)
           cancelInteraction();
           longPressRef.current = window.setTimeout(() => {
             shouldCancelRef.current = true;
@@ -1623,16 +1374,7 @@ const Handle: React.FC<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
   );
 };
 
-/* ------------------------------------------------------------------------ */
-/* Helpers                                                                  */
-/* ------------------------------------------------------------------------ */
-
-/* eslint-disable @typescript-eslint/no-explicit-any -- motion props of any
-   element. */
-/**
- * The motion element Radix renders the part onto: a motion.div around the
- * children, or with `asChild`, the user's child made animatable.
- */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function motionChild(
   asChild: boolean | undefined,
   children: React.ReactNode,
@@ -1657,10 +1399,8 @@ function closedStyle<T extends object>(
   };
 }
 
-/** The Content's transform: its position, stepped back under a nested drawer. */
 function toTransform(direction: Direction, value: number, shift: number) {
   const vertical = isVertical(direction);
-  // Smaller and towards the open edge while a nested drawer is open.
   const lift = -NESTED_DISPLACEMENT * shift * closedSign(direction);
   const across =
     typeof window === 'undefined'
@@ -1676,7 +1416,6 @@ function toTransform(direction: Direction, value: number, shift: number) {
     : `translate3d(${offset}px, 0px, 0px) scale(${scale})`;
 }
 
-/** Whether `el` can scroll on the axis in the direction a finger moving `along` scrolls it. */
 function canScroll(el: Element, vertical: boolean, along: number) {
   const style = getComputedStyle(el);
   const overflow = vertical ? style.overflowY : style.overflowX;
@@ -1692,13 +1431,11 @@ function canScroll(el: Element, vertical: boolean, along: number) {
   return along > 0 ? left > 0 : left + el.clientWidth < el.scrollWidth - 1;
 }
 
-/** px/ms over the last moments of the gesture, positive towards closing. */
 function releaseVelocity(
   samples: { time: number; distance: number }[],
   now: number,
 ) {
   const to = samples[samples.length - 1];
-  // Held still before letting go: no flick.
   if (!to || now - to.time > VELOCITY_WINDOW / 2) return 0;
   const from = samples.find(
     (sample) => to.time - sample.time <= VELOCITY_WINDOW,
@@ -1708,12 +1445,6 @@ function releaseVelocity(
     : 0;
 }
 
-/**
- * A drawer a drag dismissed, `remaining` px from its edge, released at
- * `velocity` px/ms: it keeps the finger's speed (linear, so it neither stalls
- * nor crawls), over the time the rest of the way takes at that speed, within
- * Base UI's drawer bounds; a slow release takes the longest of them.
- */
 function throwTransition(remaining: number, velocity: number): Transition {
   const ms =
     velocity > MIN_THROW_VELOCITY
@@ -1728,7 +1459,6 @@ function throwTransition(remaining: number, velocity: number): Transition {
   return { duration: ms / 1000, ease: 'linear' };
 }
 
-/** After a drag, the click that ends it doesn't activate what's under it. */
 function suppressNextClick() {
   const stop = (event: Event) => {
     event.preventDefault();
@@ -1760,10 +1490,6 @@ function isTextInput(target: Element | null) {
     (target instanceof HTMLElement && target.isContentEditable)
   );
 }
-
-/* ------------------------------------------------------------------------ */
-/* Exports                                                                  */
-/* ------------------------------------------------------------------------ */
 
 type DrawerParts = {
   Root: typeof Root;

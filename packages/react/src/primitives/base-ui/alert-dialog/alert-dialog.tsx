@@ -1,8 +1,6 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-namespace -- each part merges a
-   namespace of types with its component, like Base UI's own parts
-   (`AlertDialog.Popup.Props`, `AlertDialog.Root.Actions`…). */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';
 
@@ -17,40 +15,16 @@ import type {
   ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
-// Same API as Base UI's Alert Dialog, animated like the Dialog (Animate UI
-// v1): the Backdrop fades in (the page behind blurs from 0), the Popup tips forward from
-// `perspective(500px) rotateX(-20deg) scale(0.8)` on a spring. Base UI's Alert
-// Dialog reuses the Dialog's parts, and so does this one (see
-// ../dialog/base-modal.tsx).
-
-/** Animate UI's additions to `AlertDialog.Backdrop`. */
 type BackdropAnimationProps = {
-  /**
-   * Fade in (its background color and backdrop filter, from nothing).
-   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
-   */
   transition?: ModalAnimationProps['transition'];
-  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
-/** The edge `AlertDialog.Popup` tips from (Animate UI v1's `from`). */
 type AlertDialogFlipDirection = FlipDirection;
 
-/** Animate UI's additions to `AlertDialog.Popup`. */
 type PopupAnimationProps = {
-  /**
-   * The edge the popup tips from as it comes in (and goes back to), as in
-   * Animate UI v1.
-   * @default 'top'
-   */
   from?: AlertDialogFlipDirection;
-  /**
-   * Transition of the opening.
-   * @default { type: 'spring', stiffness: 150, damping: 25 }
-   */
   transition?: ModalAnimationProps['transition'];
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

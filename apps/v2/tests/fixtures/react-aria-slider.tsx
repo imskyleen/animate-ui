@@ -25,7 +25,6 @@ const thumb = {
   background: 'black',
 } as const;
 
-// API compatibility: the components must behave exactly like React Aria's.
 export default function ReactAriaSliderFixture() {
   const [value, setValue] = React.useState(20);
   const [committed, setCommitted] = React.useState<number | null>(null);
@@ -66,7 +65,6 @@ export default function ReactAriaSliderFixture() {
       </section>
 
       <section data-testid="range">
-        {/* shadcn's slider-range example, on the docs demo's Slider. */}
         <DemoSlider
           aria-label="Range"
           defaultValue={[25, 50]}

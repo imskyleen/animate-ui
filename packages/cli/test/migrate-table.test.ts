@@ -1,7 +1,3 @@
-// The migration table against both ends: every v1 module the production
-// registry installs (apps/v1/apps/www, the files Animate UI v1 users have) is handled,
-// every export of each is accounted for, and every v2 name it maps to exists
-// (checked by TypeScript on the code `migrate` generates).
 import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -32,7 +28,6 @@ const APP = path.resolve(
 );
 const V1 = path.join(APP, 'registry');
 
-/** The value and type exports of a v1 registry file. */
 function v1Exports(file: string) {
   const ast = parse(readFileSync(file, 'utf8'), {
     sourceType: 'module',
@@ -72,12 +67,10 @@ const dirs = (dir: string) =>
     .map((entry) => entry.name)
     .sort();
 
-/** Every v1 primitive: `<library>/<name>`. */
 const v1Primitives = dirs('primitives').flatMap((library) =>
   dirs(`primitives/${library}`).map((name) => `${library}/${name}`),
 );
 
-/** The v1 libs, hooks and icon core: `icons/icon`, `hooks/<name>`, `lib/<name>`. */
 const v1Utilities = [
   'icons/icon',
   ...dirs('hooks').map((name) => `hooks/${name}`),
@@ -91,7 +84,6 @@ function expectCovers(migration: Migration, file: string) {
     ...Object.keys(migration.types),
     ...migration.unmapped,
   ];
-  // Nothing dropped, nothing invented, nothing listed twice.
   expect([...listed].sort()).toEqual([...values, ...types].sort());
   for (const name of Object.keys(migration.values))
     expect(values, `${name} is a value in v1`).toContain(name);
@@ -148,7 +140,6 @@ describe('every v1 module is handled', () => {
       for (const { target } of item.files ?? []) {
         if (!target) continue;
         const module = target.replace(/\.tsx?$/, '');
-        // Components and icons are the user's: they import the modules.
         if (/^components\/animate-ui\/(components|icons)\//.test(module))
           continue;
         expect(modules, `${name}: ${target}`).toContain(module);
@@ -175,7 +166,6 @@ describe('every v1 module is handled', () => {
   });
 });
 
-/** Where the synthetic files import v1 from. */
 function v1Path(id: string, utility: boolean) {
   if (!utility) return `@/components/animate-ui/primitives/${id}`;
   if (id === 'icons/icon') return '@/components/animate-ui/icons/icon';
@@ -209,8 +199,6 @@ test('every v2 name the table maps to exists, with a part where v1 had one', () 
     const from = v1Path(id, utility);
     const values = Object.keys(m.values);
     const types = Object.keys(m.types);
-    // What a user file looks like: the v1 names, the parts used as
-    // components. (A type that doesn't exist fails at its import.)
     const source = [
       "import type { JSXElementConstructor } from 'react';",
       values.length > 0

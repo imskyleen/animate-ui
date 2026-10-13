@@ -3,8 +3,6 @@
 import * as React from 'react';
 import { NavigationMenu } from '@animate-ui/react/primitives/base-ui/navigation-menu';
 
-// The content changing between items, in setups the demo doesn't cover.
-
 const popup =
   'relative h-(--popup-height) w-(--popup-width) rounded-md border bg-white';
 const content = 'w-64 p-2';
@@ -56,7 +54,6 @@ export default function BaseNavigationMenuSwapFixture() {
   return (
     <div className="flex flex-col items-start gap-40">
       <section data-testid="keep">
-        {/* Contents kept mounted while closed. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             <Items names={['Alpha', 'Beta', 'Gamma']} keepMounted />
@@ -66,7 +63,6 @@ export default function BaseNavigationMenuSwapFixture() {
       </section>
 
       <section data-testid="nested">
-        {/* A submenu in a content, shown in place: no Popup of its own. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             <NavigationMenu.Item value="parent">
@@ -111,7 +107,6 @@ export default function BaseNavigationMenuSwapFixture() {
       </section>
 
       <section data-testid="render">
-        {/* A link whose label is in its render element. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             <NavigationMenu.Item>
@@ -125,7 +120,6 @@ export default function BaseNavigationMenuSwapFixture() {
       </section>
 
       <section data-testid="translate">
-        {/* A Popup with its own `translate`. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             <Items names={['Delta', 'Epsilon']} />
@@ -134,7 +128,6 @@ export default function BaseNavigationMenuSwapFixture() {
         </NavigationMenu.Root>
       </section>
       <section data-testid="sizes" className="pb-96">
-        {/* Contents of growing sizes. */}
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex gap-2">
             {sizes.map(({ name, className }) => (

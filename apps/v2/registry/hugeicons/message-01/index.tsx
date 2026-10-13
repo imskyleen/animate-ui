@@ -17,8 +17,6 @@ const animations = {
     group: {
       initial: { rotate: 0 },
       animate: {
-        // Around its center: from its bottom left corner, its top right one
-        // would leave the grid.
         rotate: [0, 6, -6, 2, 0],
         transition: {
           ease: 'easeInOut',

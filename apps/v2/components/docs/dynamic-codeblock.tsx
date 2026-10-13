@@ -9,7 +9,6 @@ const CodeBlockPropsContext = createContext<
   Omit<CodeBlockProps, 'children'> | undefined
 >(undefined);
 
-// Module level: a new component per render would remount the block.
 function DynamicPre(props: ComponentProps<'pre'>) {
   const codeblock = use(CodeBlockPropsContext);
   return (
@@ -24,10 +23,6 @@ const OPTIONS = {
   components: { pre: DynamicPre },
 } as const;
 
-/**
- * Highlighted in the browser by Fumadocs (Shiki), shown in Animate UI's code
- * block.
- */
 export function DynamicCodeBlock({
   code,
   lang,

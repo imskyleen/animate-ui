@@ -8,7 +8,6 @@ import RadixUISwitch from '@/demos/radix-ui/switch';
 import ReactAriaTabs from '@/demos/react-aria/tabs';
 import { getLibrary, type LibraryId } from '@/lib/libraries';
 
-// Real primitives, one per library: the page proves what it says.
 const SHOWCASE: {
   library: LibraryId;
   name: string;

@@ -3,10 +3,6 @@
 import * as React from 'react';
 import * as SidebarPrimitive from '@animate-ui/react/primitives/sidebar';
 
-// The sidebar primitive on its own (no shadcn/ui, no library): a collapsed
-// start, an offcanvas collapse, controlled state, the highlight switched off,
-// and useSidebar outside a Provider.
-
 function Bar({ label }: { label: string }) {
   const { state, toggleSidebar, open } = SidebarPrimitive.useSidebar();
   return (
@@ -26,7 +22,6 @@ function Bar({ label }: { label: string }) {
   );
 }
 
-/** An offcanvas sidebar, inside a box: the container slides out by `left`. */
 function Offcanvas({
   label,
   animateOnHover,
@@ -59,7 +54,6 @@ function Offcanvas({
                 <button
                   type="button"
                   data-sidebar="menu-button"
-                  // shadcn/ui's isActive: its own background, at rest.
                   data-active={name === 'Drafts'}
                   className="flex h-8 w-full items-center overflow-hidden rounded-md px-2 text-sm hover:bg-zinc-300 data-active:bg-zinc-200"
                 >
@@ -75,10 +69,6 @@ function Offcanvas({
   );
 }
 
-/**
- * Collapsing to icons: its buttons shrink. One is lit while it's expanded
- * (`aria-expanded:bg-…`), whatever the pointer does.
- */
 function Icons() {
   const { state } = SidebarPrimitive.useSidebar();
   const [expanded, setExpanded] = React.useState(false);

@@ -53,11 +53,9 @@ test.describe('radix-ui collapsible API', () => {
     await expect(
       page.getByRole('button', { name: 'Hidden button' }),
     ).toBeVisible({ timeout: 800 });
-    // Out of `inert` as it opens (Radix updates it a tick after the height).
     await expect.poll(inert).toBe(false);
     await page.getByRole('button', { name: 'Force mounted' }).click();
     await page.waitForTimeout(500);
-    // Still mounted, collapsed and inert.
     await expect(page.getByText('Hidden button')).toHaveCount(1);
     expect(await inert()).toBe(true);
   });

@@ -13,7 +13,6 @@ function subscribeToCoarsePointer(onChange: () => void) {
   return () => mql.removeEventListener('change', onChange);
 }
 
-/** True on touch-first devices. False on the server and while hydrating. */
 function useIsTouch() {
   return React.useSyncExternalStore(
     subscribeToCoarsePointer,
@@ -147,7 +146,6 @@ export function ImageZoom({
       role="img"
       {...props}
     >
-      {/* Reduced motion: the zoom jumps instead of scaling. */}
       <ReducedMotionConfig>
         <motion.div
           animate={{ scale: disabled ? 1 : isZoomed ? zoomScale : 1 }}

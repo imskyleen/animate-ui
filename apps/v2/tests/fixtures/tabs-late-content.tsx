@@ -10,7 +10,6 @@ import {
   Tabs as AriaTabs,
 } from '@animate-ui/react/primitives/react-aria';
 
-/** A box a panel holds (a frame): its height glides, its content fades. */
 const BOX = {
   border: '1px solid rgb(212, 212, 212)',
   borderRadius: 8,
@@ -18,11 +17,6 @@ const BOX = {
   padding: 12,
 };
 
-/**
- * Content that grows after it mounts, while its panel comes in: 20px, then
- * 200px 300ms later, mid-glide (content loaded late, a nested animation
- * settling).
- */
 function Grows() {
   const [grown, setGrown] = React.useState(false);
   React.useEffect(() => {
@@ -32,7 +26,6 @@ function Grows() {
   return <div data-testid="grows" style={{ height: grown ? 200 : 20 }} />;
 }
 
-/** Content added mid-glide as a new child (a list loaded late). */
 function Added() {
   const [items, setItems] = React.useState(0);
   React.useEffect(() => {
@@ -51,7 +44,6 @@ function Added() {
   );
 }
 
-/** Text that grows mid-glide, right in the panel (no element around it). */
 function Text() {
   const [long, setLong] = React.useState(false);
   React.useEffect(() => {
@@ -61,7 +53,6 @@ function Text() {
   return <>{long ? 'Loaded. '.repeat(120) : 'Loading'}</>;
 }
 
-/** Content that never stops resizing (an endless animation). */
 function Endless() {
   return (
     <div
@@ -75,10 +66,6 @@ function Endless() {
   );
 }
 
-/**
- * A child animating its own height right after its panel shows (an accordion
- * opened at once): 400ms after it mounts, once its panel waited its turn.
- */
 function Animates() {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
@@ -97,7 +84,6 @@ function Animates() {
   );
 }
 
-/** Sized by its own ResizeObserver, in the frame it shows (a chart). */
 function SelfSized() {
   const ref = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -118,7 +104,6 @@ function RadixCase({
 }: {
   id: string;
   children: React.ReactNode;
-  /** Props of the panel coming in. */
   panel?: Partial<React.ComponentProps<typeof RadixTabs.Content>>;
 }) {
   return (
@@ -140,8 +125,6 @@ function RadixCase({
   );
 }
 
-// The incoming panel's content resizing while its height glides: the glide
-// follows it, instead of ending on the height it read as it started.
 export default function TabsLateContentFixture() {
   return (
     <div className="flex flex-col gap-10">
@@ -197,9 +180,6 @@ export default function TabsLateContentFixture() {
         </BaseTabs.Root>
       </section>
 
-      {/* A panel ending in a margin that escapes through its bottom: the
-          glide carries it, so what's below doesn't jump as it starts and
-          ends. */}
       <RadixCase id="margin">
         <p style={{ margin: '0 0 24px' }}>Long panel</p>
         <div style={{ height: 120 }} />
@@ -211,7 +191,6 @@ export default function TabsLateContentFixture() {
       <RadixCase id="text">
         <Text />
       </RadixCase>
-      {/* The same height as panel a: nothing to glide as it shows. */}
       <RadixCase id="animated">
         <p style={{ margin: 0 }}>Long panel</p>
         <Animates />
@@ -220,8 +199,6 @@ export default function TabsLateContentFixture() {
         <p style={{ margin: 0 }}>Long panel</p>
         <SelfSized />
       </RadixCase>
-      {/* Its own inline style, with a custom property and a priority: the
-          margin probe leaves it as it was. */}
       <div style={{ ['--pad' as string]: '0px' }}>
         <RadixCase
           id="inline"

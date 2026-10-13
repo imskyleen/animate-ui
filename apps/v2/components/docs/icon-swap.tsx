@@ -13,12 +13,6 @@ import { AnimatePresence, motion } from 'motion/react';
 const HIDDEN = { scale: scale.icon, opacity: 0, filter: blur.icon };
 const SHOWN = { scale: 1, opacity: 1, filter: 'blur(0px)' };
 
-/**
- * Swaps an icon for another in place (copy → check, sun → moon): the old one
- * shrinks and fades out while the new one grows in, both slightly blurred so
- * their overlap reads as one shape changing. Under reduced motion they only
- * fade.
- */
 export function IconSwap({
   active,
   icon,
@@ -26,7 +20,6 @@ export function IconSwap({
   size,
   className,
 }: {
-  /** Shows `activeIcon` instead of `icon`. */
   active: boolean;
   icon: IconSvgElement;
   activeIcon: IconSvgElement;
@@ -35,8 +28,6 @@ export function IconSwap({
 }) {
   return (
     <ReducedMotionConfig>
-      {/* Positioned: the leaving icon (popped out of the layout) stays in
-          place even while a press scales the button around it. */}
       <span
         data-slot="icon-swap"
         className={cn('relative flex shrink-0', className)}

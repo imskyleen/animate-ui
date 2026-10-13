@@ -4,7 +4,6 @@ import * as React from 'react';
 import { HoverCard } from '@animate-ui/react/primitives/radix-ui/hover-card';
 import * as HoverCardStar from '@animate-ui/react/primitives/radix-ui/hover-card';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixHoverCardFixture() {
   const [open, setOpen] = React.useState(false);
 
@@ -50,7 +49,6 @@ export default function RadixHoverCardFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-hover-card. */}
         <HoverCardStar.Root openDelay={0} closeDelay={0}>
           <HoverCardStar.Trigger href="#star">Star link</HoverCardStar.Trigger>
           <HoverCardStar.Portal>

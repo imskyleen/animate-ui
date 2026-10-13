@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Next 16 refuses a second `next dev` in the same app: if one is already
-// running, point the suite at it with TEST_PORT=<its port>.
 const PORT = Number(process.env.TEST_PORT ?? 3300);
 
 export default defineConfig({
@@ -10,8 +8,6 @@ export default defineConfig({
   fullyParallel: true,
   workers: process.env.CI ? 2 : 4,
   timeout: 60_000,
-  // The dev server compiles pages on demand: under load a test can time out.
-  // One retry, reported as flaky rather than hidden.
   retries: 1,
   reporter: 'list',
   use: {

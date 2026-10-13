@@ -13,7 +13,6 @@ const center = async (page: Page, selector: string) => {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
-/** The cursor's scale on every frame for `ms`, from now. */
 const scales = (page: Page, ms: number) =>
   page.evaluate(async (ms) => {
     const values: number[] = [];
@@ -43,8 +42,6 @@ test.describe('animate-ui cursor', () => {
     await expect(follow(page)).toBeVisible();
     await expect(area(page)).toHaveClass(/animate-ui-cursor-none/);
     await expect(area(page)).toHaveCSS('cursor', 'none');
-    // The label's offset includes half the cursor's size as rendered: let the
-    // cursor finish popping in first.
     await expect
       .poll(() =>
         cursor(page).evaluate(
@@ -53,15 +50,12 @@ test.describe('animate-ui cursor', () => {
       )
       .toBe(1);
     await page.mouse.move(box.x + 160, box.y + 120, { steps: 2 });
-    // Its top-left corner is on the pointer (the arrow's tip).
     await expect
       .poll(async () => {
         const c = (await cursor(page).boundingBox())!;
         return [Math.round(c.x - box.x), Math.round(c.y - box.y)];
       })
       .toEqual([160, 120]);
-    // The label settles below and to the right of the pointer: offset by
-    // alignOffset 5 / sideOffset 15, plus half the 24px cursor.
     await expect
       .poll(async () => {
         const f = (await follow(page).boundingBox())!;
@@ -76,7 +70,6 @@ test.describe('animate-ui cursor', () => {
     const sampling = scales(page, 600);
     await page.mouse.move(box.x + 100, box.y + 80);
     const values = await sampling;
-    // From 0, past 1 (Motion's default scale spring overshoots ~7%), to 1.
     expect(Math.min(...values)).toBeLessThan(0.9);
     expect(Math.max(...values)).toBeGreaterThan(1.03);
     expect(values.at(-1)).toBeCloseTo(1, 2);
@@ -103,7 +96,6 @@ test.describe('animate-ui cursor', () => {
     await page.mouse.move(box.x + 260, box.y + 60);
     await page.waitForTimeout(30);
     const during = await center(page, '[data-slot="cursor-follow"]');
-    // Mid-way: it has started but not caught up with the 200px move.
     expect(during.x - before.x).toBeLessThan(190);
   });
 

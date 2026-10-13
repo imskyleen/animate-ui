@@ -12,13 +12,6 @@ import {
   useTabsIndicator,
 } from '../../../internal/tabs';
 
-// Same API as Radix's Tabs, moving like Motion's Radix tabs example (see
-// ../../../internal/tabs): one indicator slides to the new tab, and the
-// panels change one after the other: the outgoing one fades out into a blur,
-// then the incoming one fades in from it while the height glides.
-
-// An object, not the raw value: no tab selected is `undefined`, which a
-// strict context would read as "no provider".
 const [ValueProvider, useValue] = getStrictContext<{
   value: string | undefined;
 }>('Tabs.Root');
@@ -28,17 +21,12 @@ type TabsListProps = TabsPrimitive.TabsListProps & ListAnimationProps;
 type TabsTriggerProps = TabsPrimitive.TabsTriggerProps;
 type TabsContentProps = TabsPrimitive.TabsContentProps & ContentAnimationProps;
 
-/** Animate UI's additions to `Tabs.List`. */
 type ListAnimationProps = {
-  /** Transition of the indicator sliding to the new tab. Defaults to a spring (stiffness 300, damping 30). */
   transition?: Transition;
 };
 
-/** Animate UI's additions to `Tabs.Content`. */
 type ContentAnimationProps = {
-  /** Transition of the panel coming in: its fade from a blur (300ms) and, in `height`, the height gliding from the previous panel's (450ms, Motion's layout curve). */
   transition?: Transition;
-  /** Transition of the panel leaving: its fade into a blur (150ms ease-out). */
   exitTransition?: Transition;
 };
 
@@ -48,11 +36,6 @@ function Root({
   onValueChange,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  // The selected tab, known to the panels in the same render as Radix's: an
-  // uncontrolled Radix Tabs only reports a change from an effect, a commit
-  // later, and in that commit a panel leaving would be unmounted by Radix and
-  // its content mounted again (losing what it was doing). So Radix is always
-  // controlled from here ('' while no tab is selected: no tab has that value).
   const controlled = valueProp !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue);
   const value = controlled ? valueProp : uncontrolled;
@@ -82,8 +65,6 @@ function List({
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> & ListAnimationProps) {
   const [list, setList] = React.useState<HTMLDivElement | null>(null);
-  // With `asChild`, Radix's Slot takes a single child: no room for the
-  // indicator, so the list keeps the active tab's own surface.
   const { indicator, listProps } = useTabsIndicator(list, {
     transition,
     enabled: !props.asChild,
@@ -140,12 +121,7 @@ function Content({
         if (typeof ref === 'function') return ref(node);
         if (ref) ref.current = node;
       }}
-      // Radix unmounts a panel the moment it's unselected: kept mounted while
-      // it fades out.
       forceMount={forceMount || leaving ? true : undefined}
-      // Hidden while the previous panel leaves, and once unselected (a
-      // force-mounted panel stays in the DOM). Leaving, it stays in the page
-      // and can't be reached.
       hidden={hidden || waiting || (!active && !leaving) || undefined}
       inert={inert || leaving || undefined}
     />

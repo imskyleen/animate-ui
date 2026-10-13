@@ -257,7 +257,6 @@ export const controls = {
 export default function ToastDemo({
   progressBar = true,
 }: {
-  /** Shows the time each toast has left. */
   progressBar?: boolean | string
 }) {
   function showToast() {
@@ -274,7 +273,6 @@ export default function ToastDemo({
   }
 
   return (
-    // Query strings (the test pages) pass booleans as text.
     <Toaster progressBar={progressBar === true || progressBar === "true"}>
       <Button variant="outline" onClick={showToast}>
         Show Toast

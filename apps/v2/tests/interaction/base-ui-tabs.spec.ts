@@ -10,7 +10,6 @@ import {
   gotoTabs,
 } from './tabs-helpers';
 
-// Base UI moves focus with the arrows (activateOnFocus is off), Enter selects.
 describeTabsDemo('base-ui', { selectKeys: ['ArrowRight', 'Enter'] });
 describeTabsHeights('base-ui');
 describeTabsFrames('base-ui');

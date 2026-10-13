@@ -9,7 +9,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="button"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -17,7 +16,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -28,7 +26,6 @@ async function hydrated(page: Page, selector: string) {
 
 const SELECTOR = '[data-slot="button"]';
 
-/** The element's scale on every animation frame for `ms`. */
 const recordScales = (page: Page, selector: string, ms: number) =>
   page.evaluate(
     ([sel, duration]) =>
@@ -79,9 +76,6 @@ test.describe('animate-ui button', () => {
     const frames = recordScales(page, SELECTOR, 600);
     await page.mouse.down();
     const scales = await frames;
-    // Motion's spring for scale (stiffness 550, damping 30): on its way, then
-    // at 0.97. Its rest thresholds (restSpeed 10) snap it once within 0.005,
-    // so a 0.05 press doesn't visibly overshoot.
     expect(scales.some((s) => s < 0.995 && s > 0.971)).toBe(true);
     expect(Math.min(...scales)).toBeGreaterThan(0.94);
     expect(scales.at(-1)).toBeCloseTo(0.97, 3);

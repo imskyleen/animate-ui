@@ -147,7 +147,6 @@ function EffectInner({
         : `blur(${blur.blur ?? DEFAULT_BLUR_BLUR}px)`;
   }
 
-  // Reduced motion: no travel, scale or blur. The element still fades in.
   if (reduce && (slide || zoom || blur)) {
     hiddenVariant.opacity ??= DEFAULT_FADE_INITIAL_OPACITY;
     visibleVariant.opacity ??= DEFAULT_FADE_OPACITY;

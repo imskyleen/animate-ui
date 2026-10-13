@@ -13,7 +13,6 @@ import {
 type PinProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // It swings on its tip, as Hugeicons' Pin; its jump is `bounce`.
   default: {
     group: {
       initial: { rotate: 0, transformOrigin: 'bottom center' },

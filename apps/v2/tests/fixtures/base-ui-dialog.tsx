@@ -8,10 +8,6 @@ const popup =
   'fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg border bg-background p-6';
 const backdrop = 'fixed inset-0 z-50 bg-black/20';
 
-/**
- * Sheets from the edges the sheet demo doesn't use (it opens from the right):
- * a Popup with `data-side`, placed like shadcn/ui's Sheet.
- */
 const sheets = {
   top: 'fixed inset-x-0 top-0 z-50 border-b bg-background p-6',
   bottom: 'fixed inset-x-0 bottom-0 z-50 border-t bg-background p-6',
@@ -20,7 +16,6 @@ const sheets = {
 
 const handle = Dialog.createHandle<{ label: string }>();
 
-// API compatibility: the primitives must behave exactly like Base UI's.
 export default function BaseDialogFixture() {
   const [open, setOpen] = React.useState(false);
   const [reasons, setReasons] = React.useState<string[]>([]);
@@ -54,7 +49,6 @@ export default function BaseDialogFixture() {
       </section>
 
       <section data-testid="cancel">
-        {/* `eventDetails.cancel()` keeps it open. */}
         <Dialog.Root
           onOpenChange={(next, details) => {
             if (!next && details.reason === 'escape-key') details.cancel();
@@ -73,7 +67,6 @@ export default function BaseDialogFixture() {
       </section>
 
       <section data-testid="handle">
-        {/* A detached trigger with a payload. */}
         <Dialog.Trigger handle={handle} payload={{ label: 'from the handle' }}>
           Detached trigger
         </Dialog.Trigger>

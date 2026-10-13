@@ -1,16 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import { describeAnchoredOverlay, gotoReady } from './anchored-overlay';
 
-// The Preview Link Card of every library (Radix UI, Base UI, React Aria): the
-// anchored-overlay grid (grows from 0.8 from the trigger on the pop spring,
-// shrinks back, reduced motion), plus what the card adds: its open delay, the
-// screenshot (Microlink's, stubbed: the tests never hit the network) and its
-// preload, and the links.
-
-/** A 240×135 screenshot, served for every Microlink request. */
 const SCREENSHOT = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="135"><rect width="240" height="135" fill="#3b82f6"/></svg>`;
 
-/** Answers Microlink's (and the fixtures' own `src`) with a stub image. */
 export async function stubScreenshots(page: Page) {
   const requests: string[] = [];
   await page.route(
@@ -29,10 +21,8 @@ export async function stubScreenshots(page: Page) {
   return requests;
 }
 
-/** v1's URL for the demo's `href`, at the default size (240×135). */
 export const DEMO_HREF = 'https://animate-ui.com/docs';
 
-/** The query v1 sends Microlink for a card. */
 export function expectMicrolinkQuery(
   src: string,
   {
@@ -60,11 +50,8 @@ export function expectMicrolinkQuery(
 
 type PreviewLinkCardCase = {
   library: 'radix-ui' | 'base-ui' | 'react-aria';
-  /** The card (the animated element). */
   selector: string;
-  /** The library's default open delay (the demo keeps v1's: the default). */
   openDelay: number;
-  /** The library's default close delay. */
   closeDelay: number;
 };
 
@@ -123,15 +110,12 @@ export function describePreviewLinkCard(c: PreviewLinkCardCase) {
       expectMicrolinkQuery((await image.getAttribute('src'))!);
       await expect(image).toHaveAttribute('width', '240');
       await expect(image).toHaveAttribute('height', '135');
-      // Loaded (from the stub): it has its natural size.
       await expect
         .poll(() => image.evaluate((el: HTMLImageElement) => el.naturalWidth))
         .toBe(240);
-      // The card itself is a link to the page, in a new tab (v1's demo).
       const link = card.locator('xpath=descendant-or-self::a').first();
       await expect(link).toHaveAttribute('href', DEMO_HREF);
       await expect(link).toHaveAttribute('target', '_blank');
-      // Settled, the card fits the image (no gap under it).
       await expect(card).toHaveCSS('transform', 'none', { timeout: 3000 });
       const [cardBox, imageBox] = await Promise.all([
         card.boundingBox(),
@@ -186,5 +170,4 @@ export function describePreviewLinkCard(c: PreviewLinkCardCase) {
   });
 }
 
-/** The fixture's `src`. */
 const CUSTOM_SRC = 'https://screenshots.test/custom.svg';

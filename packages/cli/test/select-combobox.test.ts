@@ -12,7 +12,6 @@ const fixtures = (library: string, component: string) =>
     file.startsWith(`${component}.`),
   );
 
-// The list's tw-animate duration only made sense with its keyframes.
 const KEYFRAMES =
   /\b(animate-in|animate-out|zoom-in-95|fade-in-0|duration-100)\b/;
 
@@ -27,7 +26,6 @@ test('select: every base swaps its primitive and loses the CSS keyframes', () =>
       const { code } = transform(read(library, file));
       expect(code, file).toContain(swap);
       expect(code, file).not.toMatch(KEYFRAMES);
-      // Trigger colour transitions are not Motion's: they stay.
       expect(code, file).toMatch(/transition-(colors|\[color)/);
     }
   }

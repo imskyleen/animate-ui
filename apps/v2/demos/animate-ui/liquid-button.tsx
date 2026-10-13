@@ -15,9 +15,7 @@ export default function LiquidButtonDemo({
   fillHeight = 3,
   tapScale = 0.97,
 }: {
-  /** In seconds. */
   delay?: number
-  /** In pixels. */
   fillHeight?: number
   tapScale?: number
 }) {

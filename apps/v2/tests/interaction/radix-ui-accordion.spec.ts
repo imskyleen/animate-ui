@@ -44,7 +44,6 @@ test.describe('radix-ui accordion demo, Radix behavior', () => {
       'transition-timing-function',
       'cubic-bezier(0.215, 0.61, 0.355, 1)',
     );
-    // Sampled in the page from the click: intermediate angles, then 180°.
     const angles = await trigger.evaluate(async (button) => {
       const icon = button.querySelector('svg')!;
       const frames: string[] = [];
@@ -87,7 +86,6 @@ test.describe('radix-ui accordion API', () => {
   });
 
   test('forceMount keeps closed content out of reach', async ({ page }) => {
-    // Still in the DOM, but collapsed and inert (no focus, no a11y tree).
     const inert = () =>
       page
         .getByText('Hidden button')

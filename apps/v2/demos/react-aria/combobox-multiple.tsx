@@ -407,7 +407,6 @@ export const controls = {
 export default function ComboboxMultiple({
   checkAnimation = "draw",
 }: {
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   return (

@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
@@ -12,18 +12,7 @@ import {
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
-// Same API as Base UI's Radio, animated like Animate UI v1's radio: the Root
-// scales to 0.97 while pressed (no hover scale), and the Indicator's dot
-// pops in (scale and opacity from 0, spring stiffness 200, damping 16) and out
-// the same way, staying mounted until it has left. Only choosing animates:
-// selected as it appears, the dot is at rest.
-
-/** Animate UI's additions to `Radio.Root`. */
 type RootAnimationProps = {
-  /**
-   * Transition of the press scale. Defaults to a spring (stiffness 550,
-   * damping 30).
-   */
   transition?: Transition;
 };
 
@@ -38,7 +27,6 @@ function Root<Value = any>(props: Root.Props<Value>) {
 
 namespace Root {
   export type State = RadioPrimitive.Root.State;
-  /** Base UI's props, plus Animate UI's `transition`. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export type Props<TValue = any> = RadioPrimitive.Root.Props<TValue> &
     RootAnimationProps;
@@ -54,10 +42,8 @@ function AnimatedRoot<Value = any>({
     disabled: props.disabled,
     transition,
   });
-  // The user's own element: Base UI's behaviour, no animation.
   if (render) return <RadioPrimitive.Root<Value> {...props} render={render} />;
 
-  // A native <button> when the user asks Base UI for one (`nativeButton`).
   const Element = (
     props.nativeButton ? motion.button : motion.span
   ) as typeof motion.span;
@@ -89,8 +75,6 @@ function Indicator({
 
   return (
     <ReducedMotionConfig>
-      {/* Always mounted for Base UI: the presence below decides, from the
-          state Base UI hands to `render`. */}
       <RadioPrimitive.Indicator
         {...props}
         keepMounted
@@ -110,7 +94,6 @@ function Indicator({
 }
 
 namespace Indicator {
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
   export type Props = RadioPrimitive.Indicator.Props & IndicatorAnimationProps;
   export type State = RadioPrimitive.Indicator.State;
 }

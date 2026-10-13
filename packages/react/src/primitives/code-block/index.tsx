@@ -8,10 +8,6 @@ import {
   type UseIsInViewOptions,
 } from '../../utils/use-is-in-view';
 
-// Highlights code with Shiki (loaded on demand) and, with `writing`, types it
-// out character by character over `duration`. Under reduced motion the code
-// is shown at once.
-
 type CodeBlockProps = React.ComponentProps<'div'> & {
   code: string;
   lang: string;
@@ -67,8 +63,6 @@ function CodeBlockContent({
   const [highlightedCode, setHighlightedCode] = React.useState('');
   const [isDone, setIsDone] = React.useState(false);
 
-  // Callbacks in refs: passing new functions on each render doesn't restart
-  // the writing.
   const onDoneRef = React.useRef(onDone);
   const onWriteRef = React.useRef(onWrite);
   React.useLayoutEffect(() => {
@@ -81,7 +75,6 @@ function CodeBlockContent({
 
   React.useEffect(() => {
     if (!visibleCode.length || !isInView) return;
-    // Highlighting is async: a slower result must not replace a newer one.
     let cancelled = false;
 
     const loadHighlightedCode = async () => {

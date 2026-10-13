@@ -341,7 +341,6 @@ export default function ComboboxBasic({
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   return (

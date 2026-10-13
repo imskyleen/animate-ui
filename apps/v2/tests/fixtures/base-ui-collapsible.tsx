@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Collapsible } from '@animate-ui/react/primitives/base-ui/collapsible';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseCollapsibleFixture() {
   const [open, setOpen] = React.useState(true);
   const [changes, setChanges] = React.useState(0);

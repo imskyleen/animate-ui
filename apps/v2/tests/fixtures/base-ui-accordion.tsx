@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Accordion } from '@animate-ui/react/primitives/base-ui/accordion';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseAccordionFixture() {
   const [value, setValue] = React.useState<string[]>(['a']);
 
@@ -37,7 +36,6 @@ export default function BaseAccordionFixture() {
       </section>
 
       <section>
-        {/* Items without a value: Base UI generates one. */}
         <Accordion.Root>
           {['1', '2'].map((item) => (
             <Accordion.Item key={item}>
@@ -51,7 +49,6 @@ export default function BaseAccordionFixture() {
       </section>
 
       <section>
-        {/* keepMounted on the Root applies to every panel. */}
         <Accordion.Root keepMounted defaultValue={['k']}>
           <Accordion.Item value="k">
             <Accordion.Header>

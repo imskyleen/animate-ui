@@ -13,7 +13,6 @@ test.describe('react-aria switch API', () => {
 
   test('controlled, changed from both sides', async ({ page }) => {
     const sw = page.getByTestId('controlled').getByRole('switch');
-    // The visible switch: React Aria's input is visually hidden.
     const root = page.getByTestId('controlled').locator('label');
     await expect(page.getByTestId('controlled-value')).toHaveText('false');
     await root.click();

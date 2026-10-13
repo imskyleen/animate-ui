@@ -36,7 +36,6 @@ const githubStarsButtonVariants = cva(
   }
 )
 
-// The empty star: dark on the primary button, light on the others.
 const starVariants = cva("size-[18px]", {
   variants: {
     variant: {
@@ -58,8 +57,6 @@ const starVariants = cva("size-[18px]", {
 function Star(
   props: Omit<React.ComponentProps<typeof HugeiconsIcon>, "icon">
 ) {
-  // Hugeicons strokes its paths in currentColor: they take the icon's own
-  // stroke instead, the star's color, not the text's.
   return (
     <HugeiconsIcon
       icon={StarIcon}
@@ -96,8 +93,6 @@ export default function GitHubStarsButtonDemo({
     <GitHubStarsButton
       username="imskyleen"
       repo="animate-ui"
-      // A fixed count keeps the demo offline-friendly; drop `value` to fetch
-      // the live count from the GitHub API.
       value={3200}
       asChild
       className={cn(githubStarsButtonVariants({ variant, size }))}

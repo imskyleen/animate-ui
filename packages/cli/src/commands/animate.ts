@@ -9,7 +9,6 @@ import { transform } from '../lib/transform';
 type AnimateOptions = {
   cwd: string;
   dryRun: boolean;
-  /** Components left out (`all` but these). */
   exclude?: string[];
   log?: (message: string) => void;
 };
@@ -35,10 +34,6 @@ function findComponent(dir: string, name: string) {
   return undefined;
 }
 
-/**
- * `animate-ui animate <components...|all>`: swaps the primitives of installed
- * shadcn/ui components for Animate UI's. Returns the exit code.
- */
 export function animate(components: string[], options: AnimateOptions) {
   const log = options.log ?? console.log;
   const project = loadProject(options.cwd);
@@ -64,7 +59,6 @@ export function animate(components: string[], options: AnimateOptions) {
     }
   }
 
-  // `--exclude`: left out, as named (`sidebar`) or with their extension.
   const excluded = new Set(
     (options.exclude ?? []).map((name) => name.replace(/\.[jt]sx?$/, '')),
   );

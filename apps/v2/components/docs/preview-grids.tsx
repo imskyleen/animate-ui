@@ -31,7 +31,6 @@ import {
   type PrimitiveCardEntry,
 } from './preview-card';
 
-/** The sidebar's sections, in its order. */
 const SECTIONS: { id: PrimitiveSection; title: string }[] = [
   { id: 'components', title: 'Components' },
   { id: 'animate-ui', title: 'Animate UI' },
@@ -42,13 +41,11 @@ const SECTIONS: { id: PrimitiveSection; title: string }[] = [
 
 const LIBRARY_ORDER = LIBRARIES.map((library) => library.id);
 
-/** Every primitive, once (its pages in each library), by section. */
 export function PrimitivesGrid() {
   const entries = new Map<string, PrimitiveCardEntry>();
   const pages = source
     .getPages()
     .filter((page) => /^\/docs\/primitives\/[^/]+\/[^/]+$/.test(page.url))
-    // The default library's title first (Base UI's).
     .sort(
       (a, b) =>
         LIBRARY_ORDER.indexOf(a.url.split('/')[3] as LibraryId) -
@@ -62,7 +59,6 @@ export function PrimitivesGrid() {
       LibraryId,
       string,
     ];
-    // Its title and status are its default library's page's (the first).
     const entry = entries.get(slug) ?? {
       slug,
       title: page.data.title,
@@ -102,7 +98,6 @@ export function PrimitivesGrid() {
   );
 }
 
-/** Every background. */
 export function BackgroundsGrid() {
   const pages = source
     .getPages()
@@ -123,7 +118,6 @@ export function BackgroundsGrid() {
   );
 }
 
-/** Every icon library, with some of its best icons. */
 export function IconLibrariesGrid() {
   return (
     <PreviewGrid>

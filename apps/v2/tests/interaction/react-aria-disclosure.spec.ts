@@ -2,11 +2,6 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { clickAndInspect, gotoHydrated } from './disclosure-timeline';
 
-/**
- * Find-in-page: the browser reveals the panel and fires `beforematch`.
- * Returns the panel's opacity one frame after the library reports it open:
- * 1 means it opened without animating.
- */
 const revealByFind = (panel: Locator) =>
   panel.evaluate(async (el) => {
     const frame = () => new Promise((r) => requestAnimationFrame(r));
@@ -32,7 +27,6 @@ test.describe('react-aria disclosure API', () => {
   test('controlled isExpanded and onExpandedChange', async ({ page }) => {
     const panel = page.getByTestId('controlled-panel');
     await expect(panel).toBeVisible();
-    // Collapsing: still shown and out of the tab order, then hidden until found.
     const during = await clickAndInspect(page, 'Controlled', panel);
     await expect(page.getByTestId('controlled-expanded')).toHaveText('false');
     expect(during.hidden).toBe(false);
@@ -41,7 +35,6 @@ test.describe('react-aria disclosure API', () => {
     await expect(panel).toHaveAttribute('hidden', 'until-found', {
       timeout: 600,
     });
-    // Hidden until found: not inert, or find-in-page would skip it.
     expect(await panel.evaluate((el) => (el as HTMLElement).inert)).toBe(false);
     await button(page, 'Controlled').click();
     await expect(page.getByTestId('controlled-expanded')).toHaveText('true');

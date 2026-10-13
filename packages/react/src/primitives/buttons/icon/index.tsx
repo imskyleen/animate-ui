@@ -11,7 +11,6 @@ import {
 } from '../../effects/particles';
 
 type IconButtonContextType = {
-  /** How many times the button was clicked: each click is a new burst. */
   bursts: number;
 };
 
@@ -36,7 +35,6 @@ function IconButton({ onClick, style, ...props }: IconButtonProps) {
       <Button
         data-slot="icon-button"
         onClick={handleClick}
-        // The particles burst from the button's edges.
         style={{ position: 'relative', ...style }}
         {...props}
       />
@@ -45,14 +43,9 @@ function IconButton({ onClick, style, ...props }: IconButtonProps) {
 }
 
 type IconButtonParticlesProps = ParticlesEffectProps & {
-  /**
-   * Diameter of a particle, in pixels.
-   * @default 4
-   */
   size?: number;
 };
 
-/** Covers the button, so the burst is placed against its edges. */
 const LAYER_STYLE: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
@@ -74,7 +67,6 @@ function IconButtonParticles({
       style={LAYER_STYLE}
     >
       <span aria-hidden="true">
-        {/* A new key per click: the burst plays again from the start. */}
         <ParticlesEffect
           key={bursts}
           style={{

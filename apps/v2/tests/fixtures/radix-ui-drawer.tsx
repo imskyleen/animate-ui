@@ -9,13 +9,10 @@ const bottom =
   'fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-xl border bg-white p-6';
 const sides = {
   top: 'fixed inset-x-0 top-0 z-50 h-64 border bg-white p-6',
-  // A shadow, which lifts off the page with the drawer.
   right: 'fixed inset-y-0 right-0 z-50 w-80 border bg-white p-6 shadow-xl',
   left: 'fixed inset-y-0 left-0 z-50 w-80 border bg-white p-6',
 } as const;
 
-// API compatibility: the primitive must behave exactly like Vaul.
-// Unstyled apart from layout: the motion comes from the primitive itself.
 export default function RadixDrawerFixture() {
   const [open, setOpen] = React.useState(false);
   const [log, setLog] = React.useState<string[]>([]);
@@ -64,7 +61,6 @@ export default function RadixDrawerFixture() {
 
         <section data-testid="directions" className="flex gap-2">
           {(['top', 'right', 'left'] as const).map((direction) => (
-            // The `import * as Vaul` style.
             <Vaul.Root key={direction} direction={direction}>
               <Vaul.Drawer.Trigger>Open {direction}</Vaul.Drawer.Trigger>
               <Vaul.Portal>
@@ -218,7 +214,6 @@ export default function RadixDrawerFixture() {
           <Drawer.Root>
             <Drawer.Trigger>Open gradient</Drawer.Trigger>
             <Drawer.Portal>
-              {/* No color to deepen over an image: it fades instead. */}
               <Drawer.Overlay
                 className="fixed inset-0 z-50 bg-linear-to-t from-black/40 to-transparent"
                 data-testid="gradient-overlay"
@@ -239,7 +234,6 @@ export default function RadixDrawerFixture() {
               <Drawer.Content
                 className={sides.right}
                 data-testid="default-content"
-                // A faster custom timing.
                 transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                 exitTransition={{ duration: 0.1 }}
               >

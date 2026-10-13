@@ -78,12 +78,6 @@ type DefaultIconProps<T = string> = {
   completeOnStop?: boolean;
   persistOnAnimateEnd?: boolean;
   delay?: number;
-  /**
-   * Playback rate of the icon's animation: 2 plays it twice as fast, 0.5 at
-   * half speed. Scales every duration, delay and spring of the icon's
-   * variants. At 1, the icon plays exactly as authored.
-   * @default 1
-   */
   speed?: number;
 };
 
@@ -130,11 +124,6 @@ function useAnimateIconContext() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
 
-/**
- * Wraps the icon tree in `ReducedMotionConfig` so reduced motion works
- * without any app setup. Under reduced motion icons never animate, whatever
- * the trigger: they stay in their `initial` state.
- */
 function AnimateIcon(props: AnimateIconProps) {
   return (
     <ReducedMotionConfig>
@@ -143,15 +132,6 @@ function AnimateIcon(props: AnimateIconProps) {
   );
 }
 
-/**
- * Triggers:
- * - `animate`: animates while truthy.
- * - `animateOnHover`: animates while the pointer is over the icon, returns to
- *   rest when it leaves.
- * - `animateOnTap`: animates while pressed, returns to rest on release or
- *   when the pointer leaves (add `completeOnStop` to always finish).
- * - `animateOnView`: animates while in view (once by default).
- */
 function AnimateIconRoot({
   asChild = false,
   animate = false,
@@ -189,7 +169,6 @@ function AnimateIconRoot({
   >(typeof animate === 'string' ? animate : animation);
   const [status, setStatus] = React.useState<'initial' | 'animate'>('initial');
 
-  // Reduced motion: the icon stays at rest, whatever the trigger.
   const playing = localAnimate && !reduceMotion;
 
   const delayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -259,8 +238,6 @@ function AnimateIconRoot({
     };
   }, []);
 
-  // Your ref gets the element too: it's exposed by the in-view ref, which
-  // would otherwise replace it.
   const { ref: inViewRef, isInView } = useIsInView(
     ref as React.Ref<HTMLElement>,
     {
@@ -310,9 +287,7 @@ function AnimateIconRoot({
         ) {
           try {
             await animateEndPromiseRef.current;
-          } catch {
-            // noop
-          }
+          } catch {}
         }
         if (!persistOnAnimateEnd) {
           if (cancelledRef.current || gen !== runGenRef.current) {
@@ -419,7 +394,6 @@ function AnimateIconRoot({
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, [playing, controls]);
 
-  // With `asChild`, the Slot's handlers replace the child's: call them here.
   const childProps = (
     asChild && React.isValidElement(children)
       ? (children as React.ReactElement).props
@@ -450,7 +424,6 @@ function AnimateIconRoot({
     if (animateOnTap) stopAnimation();
   };
 
-  // A touch the browser takes over (to scroll) never comes up: it cancels.
   const handlePointerCancel = (event: React.PointerEvent<HTMLElement>) => {
     childProps.onPointerCancel?.(event);
     onPointerCancel?.(event);
@@ -496,26 +469,10 @@ function AnimateIconRoot({
   );
 }
 
-/**
- * Put on an icon's `svg`: its fully drawn paths are solid. A path drawn with
- * `pathLength` rests at `pathLength: 1`, which Motion writes
- * `stroke-dasharray="1 1"` (Motion 12: `"1px 1px"`), dashes the length of the
- * whole path; this class makes them `1px 0px`, with no gaps at all. Icons
- * playing `path` or `path-loop` get it, and its rule, on their own; an icon
- * putting it on itself renders `<IconPathStyle />` next to its `svg`.
- *
- * A plain class, styled by a rule the icons add to the page themselves
- * (`IconPathStyle`): it works without Tailwind scanning this package.
- */
 const pathClassName = 'animate-ui-icon-path';
 
 const PATH_STYLE = `.${pathClassName} [stroke-dasharray='1 1'],.${pathClassName} [stroke-dasharray='1px 1px']{stroke-dasharray:1px 0px!important}`;
 
-/**
- * The rule behind `pathClassName`. React 19 hoists it into the document's
- * head and adds it once however many icons render it, server-rendered pages
- * included.
- */
 function IconPathStyle() {
   return (
     <style href="animate-ui-icon-path" precedence="animate-ui">
@@ -524,15 +481,9 @@ function IconPathStyle() {
   );
 }
 
-/**
- * Renders `icon` with the triggers and timing props, under the closest
- * `AnimateIcon` if there is one.
- */
 function IconWrapper<T extends string>(props: IconWrapperProps<T>) {
   const context = React.use(AnimateIconContext);
   const animation = props.animation ?? context?.animation;
-  // Only icons drawing their paths get the rule: a static icon renders its
-  // `svg` alone (e.g. into an SVG string with `renderToStaticMarkup`).
   const drawsPaths = animation === 'path' || animation === 'path-loop';
 
   return (
@@ -594,8 +545,6 @@ function IconWrapperContent<T extends string>({
       completeOnStop !== undefined;
 
     if (hasOverrides) {
-      // The parent plays while it's active, whatever triggered it (its own
-      // `animate`, hover, tap or view), once its delay has passed.
       const inheritedAnimate: Trigger = parentActive
         ? (animationProp ?? parentAnimation ?? 'default')
         : false;
@@ -615,7 +564,6 @@ function IconWrapperContent<T extends string>({
           loopDelay={loopDelay ?? parentLoopDelay}
           persistOnAnimateEnd={persistOnAnimateEnd ?? parentPersistOnAnimateEnd}
           initialOnAnimateEnd={initialOnAnimateEnd ?? parentInitialOnAnimateEnd}
-          // The parent's delay has already passed once it's active.
           delay={delay}
           speed={speed ?? parentSpeed}
           completeOnStop={completeOnStop ?? parentCompleteOnStop}
@@ -751,9 +699,6 @@ function isPlainObject(value: unknown): value is AnyProps {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// Time-scales a transition (and its per-property transitions) by `factor`:
-// durations and delays are multiplied, a stiffness/damping spring keeps its
-// exact shape (stiffness / factor², damping / factor).
 function scaleTiming(transition: AnyProps, factor: number) {
   const result: AnyProps = {};
   for (const key in transition) {
@@ -794,17 +739,11 @@ function scaleVariants<T extends Record<string, Variants>>(
   return result as T;
 }
 
-/**
- * Returns the variants of the animation selected by the closest `AnimateIcon`.
- * At the default `speed` (1) and tempo, they are the icon's own variants,
- * untouched; otherwise their timing is scaled.
- */
 function useIconVariants<
   V extends { default: T; [key: string]: T },
   T extends Record<string, Variants>,
 >(animations: V): T {
   const { animation, speed = 1 } = useAnimateIconContext();
-  // The provider's tempo slows icons down like every other animation.
   const { tempo } = useMotionTokens();
   const factor = tempo / speed;
   return React.useMemo(() => {
@@ -813,10 +752,6 @@ function useIconVariants<
   }, [animations, animation, factor]);
 }
 
-/**
- * @deprecated Use `useIconVariants`. It is a hook: call it unconditionally at
- * the top level of the icon component.
- */
 const getVariants = useIconVariants;
 
 export {

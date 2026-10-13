@@ -45,7 +45,6 @@ test.describe('radix-ui alert dialog demo', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     expectDialogExit(await timeline.stop());
-    // A dismissed dialog's curve, as Motion handed it to the browser.
     expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
     await expect(
       page.getByRole('button', { name: 'Show Dialog' }),

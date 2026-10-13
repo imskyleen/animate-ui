@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="counting-number"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -40,7 +38,6 @@ test.describe('animate-ui counting number', () => {
     expect(early).toBeGreaterThan(0);
     expect(early).toBeLessThan(2025);
     await expect(ticking(page)).toHaveText('2025', { timeout: 10_000 });
-    // The copy is visually hidden without relying on a CSS framework.
     const box = await srText(page).boundingBox();
     expect(box?.width).toBeLessThanOrEqual(1);
   });
@@ -48,8 +45,6 @@ test.describe('animate-ui counting number', () => {
   test('the spring slows down on the last units', async ({ page }) => {
     await open(page);
     await page.getByRole('button', { name: 'Replay' }).click();
-    // Spring stiffness 90, damping 50 (overdamped): most of the range in the
-    // first second, then a long tail (2025 lands after about 4.5s).
     await page.waitForTimeout(1000);
     expect(Number(await ticking(page).textContent())).toBeGreaterThan(500);
     await page.waitForTimeout(2000);

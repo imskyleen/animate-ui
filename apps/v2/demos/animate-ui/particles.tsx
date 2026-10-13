@@ -48,14 +48,8 @@ type ParticlesDemoProps = Pick<
   | "delay"
 >
 
-/** Strong ease-out: the resize and the label swap answer the click at once. */
 const EASE_OUT = [0.23, 1, 0.32, 1] as const
 
-/**
- * The button's label: the old word slides up and out into a light blur as
- * the new one comes in from below, while the label's width glides to the new
- * word's, so the button resizes instead of jumping.
- */
 function Label({ children }: { children: string }) {
   const reduce = useReducedMotion()
   const ref = React.useRef<HTMLSpanElement>(null)
@@ -104,7 +98,6 @@ function Label({ children }: { children: string }) {
 
 export default function ParticlesDemo(props: ParticlesDemoProps) {
   const [liked, setLiked] = React.useState(false)
-  // Each like replays the burst.
   const [burst, setBurst] = React.useState(0)
   const reduce = useReducedMotion()
 
@@ -119,7 +112,6 @@ export default function ParticlesDemo(props: ParticlesDemoProps) {
           setBurst((value) => value + 1)
         }}
       >
-        {/* The heart pops as it fills, and gives a little as it empties. */}
         <motion.span
           className="inline-flex"
           initial={false}

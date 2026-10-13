@@ -12,7 +12,6 @@ const track = {
 
 const STEPS = [12, 27, 41, 58, 64, 83, 100];
 
-/** From 64% to 0, then up to 100% in steps faster than the spring settles. */
 function useUpload() {
   const [value, setValue] = React.useState(64);
   const [running, setRunning] = React.useState(false);
@@ -39,10 +38,8 @@ function useUpload() {
   return { value, running, start };
 }
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseProgressFixture() {
   const [value, setValue] = React.useState(30);
-  // Not a number yet (an empty total): Base UI shows it as indeterminate.
   const [ratio, setRatio] = React.useState(Number.NaN);
   const upload = useUpload();
 
@@ -81,7 +78,6 @@ export default function BaseProgressFixture() {
         </Progress.Root>
       </section>
 
-      {/* Past its max, with a format: Base UI shows the max. */}
       <Progress.Root
         value={150}
         max={100}

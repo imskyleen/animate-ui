@@ -13,7 +13,6 @@ const track = {
 
 const STEPS = [12, 27, 41, 58, 64, 83, 100];
 
-/** From 64% to 0, then up to 100% in steps faster than the spring settles. */
 function useUpload() {
   const [value, setValue] = React.useState(64);
   const [running, setRunning] = React.useState(false);
@@ -40,7 +39,6 @@ function useUpload() {
   return { value, running, start };
 }
 
-// API compatibility: the component must behave exactly like React Aria's.
 export default function ReactAriaProgressFixture() {
   const [value, setValue] = React.useState(30);
   const upload = useUpload();

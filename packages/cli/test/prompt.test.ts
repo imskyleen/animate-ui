@@ -1,4 +1,3 @@
-// The arrow-key select, driven through fake terminal streams.
 import { PassThrough } from 'node:stream';
 import { describe, expect, test } from 'vitest';
 

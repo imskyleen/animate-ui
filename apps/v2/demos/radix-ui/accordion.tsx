@@ -94,9 +94,7 @@ export default function AccordionDemo({
   multiple = false,
   collapsible = true,
 }: {
-  /** type="multiple": several items open at once. */
   multiple?: boolean
-  /** type="single": the open item can close. */
   collapsible?: boolean
 }) {
   const props = multiple

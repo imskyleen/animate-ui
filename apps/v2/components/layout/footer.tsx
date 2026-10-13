@@ -1,4 +1,3 @@
-/** The end of every docs page, as in v1: credits and the last update. */
 export function Footer({ lastUpdate }: { lastUpdate?: Date }) {
   return (
     <footer className="mt-16 mb-7 flex w-full flex-col-reverse justify-between gap-2 text-sm text-muted-foreground lg:flex-row lg:items-center">

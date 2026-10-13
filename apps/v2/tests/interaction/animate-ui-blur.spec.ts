@@ -9,7 +9,6 @@ import {
 
 type Frame = { t: number; cards: EntranceSample[] };
 
-/** Clicks Replay and samples the three cards on every frame for `ms`. */
 const replayTimeline = (page: Page, ms: number) =>
   page.evaluate(async (ms) => {
     const read = (el: Element) => {
@@ -43,10 +42,6 @@ const replayTimeline = (page: Page, ms: number) =>
     return frames;
   }, ms);
 
-/**
- * A card's blur 200ms after it got below 8px. Read mid-animation, so a slow
- * first frame doesn't skew it.
- */
 const blurAfter8px = (frames: Frame[], card: number) => {
   const start = frames.find(
     (f) => f.cards[card]!.blur > 0 && f.cards[card]!.blur <= 8,
@@ -71,10 +66,7 @@ test.describe('animate-ui blur', () => {
   }) => {
     await open(page, 'blur');
     const frames = await replayTimeline(page, 900);
-    // The v1 spring (stiffness 200, damping 20) goes from 8px to sharp in
-    // ~180ms; a 600ms ease-out is still at ~0.9px 200ms later.
     expect(blurAfter8px(frames, 0)).toBeLessThan(0.5);
-    // holdDelay 100: the last card is still blurred when the first is sharp.
     const firstSharp = frames.find(
       (f, i) => i > 2 && f.cards[0]!.blur < 0.1 && f.cards[2]!.blur > 0,
     );

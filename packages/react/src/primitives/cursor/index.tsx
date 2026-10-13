@@ -23,10 +23,6 @@ import {
 } from '../../utils/motion';
 import { Slot, type WithAsChild } from '../slot';
 
-// The cursor and its follower pop in and out with a scale and a fade, on
-// Motion's default transitions for those values (written out so the tempo
-// applies): `scale` on a spring, critically damped on the way out so it
-// doesn't overshoot past 0, and `opacity` on a 300ms ease.
 const OPACITY_TRANSITION: Transition = {
   duration: 0.3,
   ease: [0.25, 0.1, 0.35, 1],
@@ -47,10 +43,6 @@ const EXIT_TRANSITION: Transition = {
 const FOLLOW_SPRING: SpringOptions = { stiffness: 500, damping: 50, bounce: 0 };
 
 type CursorContextType = {
-  /**
-   * Snapshot of the pointer position when read. Pointer moves don't
-   * re-render: subscribe to `cursorX` / `cursorY` to follow them.
-   */
   cursorPos: { x: number; y: number };
   cursorX: MotionValue<number>;
   cursorY: MotionValue<number>;
@@ -75,7 +67,6 @@ function CursorProvider({ children, global = false }: CursorProviderProps) {
   const active = activeState;
   const activeRef = React.useRef(false);
 
-  // Pointer moves only re-render when the cursor shows or hides.
   const setActive = React.useCallback((next: boolean) => {
     if (activeRef.current === next) return;
     activeRef.current = next;
@@ -102,7 +93,6 @@ function CursorProvider({ children, global = false }: CursorProviderProps) {
 
     if (global) {
       const handlePointerMove = (e: PointerEvent) => {
-        // A custom cursor only makes sense for pointers that hover.
         if (e.pointerType === 'touch') return;
         cursorX.set(e.clientX);
         cursorY.set(e.clientY);
@@ -247,8 +237,6 @@ function Cursor({
   const enterTransition = useTempoTransition(ENTER_TRANSITION);
   const exitTransition = useTempoTransition(EXIT_TRANSITION);
 
-  // Copies of the pointer position: a re-mount resetting the element's own
-  // values (Strict Mode, Suspense) can't rewind the provider's.
   const positionX = useTransform(cursorX, (value) => value);
   const positionY = useTransform(cursorY, (value) => value);
 
@@ -286,8 +274,6 @@ function Cursor({
             position: global ? 'fixed' : 'absolute',
             top: 0,
             left: 0,
-            // Its top-left corner sits on the pointer. Follows it through
-            // motion values: no re-render per move.
             x: positionX,
             y: positionY,
             ...style,
@@ -349,9 +335,6 @@ function CursorFollow({
 
   const springX = useSpring(x, transition);
   const springY = useSpring(y, transition);
-  // Copies position the element: a re-mount resetting the element's own
-  // values (Strict Mode, Suspense) can't stop or rewind the spring.
-  // Reduced motion: sticks to the pointer instead of trailing it.
   const positionX = useTransform(() => (reduce ? x : springX).get());
   const positionY = useTransform(() => (reduce ? y : springY).get());
 
@@ -428,8 +411,6 @@ function CursorFollow({
     return { x: offsetX, y: offsetY };
   }, [side, align, sideOffset, alignOffset]);
 
-  // The follower's target: the pointer, offset by `side`/`align` and by half
-  // the cursor's current size (measured as rendered, mid-animation included).
   const update = React.useCallback(() => {
     const offset = calculateOffset();
     const cursorRect = cursorRef.current?.getBoundingClientRect();
@@ -440,15 +421,12 @@ function CursorFollow({
     y.set(cursorY.get() - offset.y + cursorHeight / 2);
   }, [calculateOffset, cursorRef, cursorX, cursorY, x, y]);
 
-  // Also before the first move (from the 0,0 pointer and a 20px cursor): the
-  // follower first springs in from there.
   React.useEffect(() => {
     update();
   }, [update]);
 
   React.useEffect(() => {
     if (!active) return;
-    // On the frame after the cursor first renders, then on every move.
     frame.postRender(update);
     const unsubscribeX = cursorX.on('change', update);
     const unsubscribeY = cursorY.on('change', update);

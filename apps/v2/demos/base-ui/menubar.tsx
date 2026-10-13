@@ -281,7 +281,6 @@ export const controls = {
 export default function MenubarDemo({
   checkAnimation = "draw",
 }: {
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   return (

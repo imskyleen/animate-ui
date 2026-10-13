@@ -2,11 +2,6 @@ import type { Page } from '@playwright/test';
 
 export type MotionSample = { opacity: number; scale: number; origin: string };
 
-/**
- * Records the computed style of the first element matching `selector` on the
- * first animation frame after it is added to the DOM.
- * Call before triggering the element, then await `firstFrame()`.
- */
 export async function probeFirstFrame(page: Page, selector: string) {
   await page.evaluate((sel) => {
     const w = window as unknown as { __firstFrame?: Promise<unknown> };
@@ -63,7 +58,6 @@ function toSample(raw: {
   transform: string;
   origin: string;
 }): MotionSample {
-  // matrix(a, b, c, d, e, f): scale = a when there is no rotation.
   const match = raw.transform.match(/matrix\(([^,]+)/);
   return {
     opacity: Number(raw.opacity),
@@ -76,24 +70,15 @@ export type MotionFrame = {
   t: number;
   opacity: number;
   scale: number;
-  /** An SVG shape's drawn stroke (0 to 1; 1 when not dashed), else null. */
   dash: number | null;
 };
 
 type MotionTarget = {
   selector: string;
-  /** The first match whose text includes it. */
   text?: string;
-  /** An element inside the match, e.g. `:scope > div`. */
   child?: string;
 };
 
-/**
- * Records the opacity and scale of an element frame by frame for `duration`
- * ms, from its first frame in the DOM: call it right before the interaction,
- * then await it. Sampled in the page, so a loaded machine can't miss the
- * start of an entrance.
- */
 export function recordMotion(
   page: Page,
   { selector, text, child }: MotionTarget,

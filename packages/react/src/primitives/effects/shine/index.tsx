@@ -50,7 +50,6 @@ const ShineInner = ({
   onPointerDown,
   ...props
 }: ShineProps) => {
-  // Reduced motion: the shine is decorative, so it doesn't play at all.
   const reduce = useShouldReduceMotion();
   const enable = enableProp && !reduce;
   const isAlwaysOn = enable && !enableOnHover && !enableOnTap;

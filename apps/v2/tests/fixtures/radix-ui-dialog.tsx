@@ -9,17 +9,12 @@ const content =
   'fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg border bg-background p-6';
 const overlay = 'fixed inset-0 z-50 bg-black/20';
 
-/**
- * Sheets from the edges the sheet demo doesn't use (it opens from the right):
- * a Content with `data-side`, placed like shadcn/ui's Sheet.
- */
 const sheets = {
   top: 'fixed inset-x-0 top-0 z-50 border-b bg-background p-6',
   bottom: 'fixed inset-x-0 bottom-0 z-50 border-t bg-background p-6',
   left: 'fixed inset-y-0 left-0 z-50 h-full w-3/4 border-r bg-background p-6 sm:max-w-sm',
 } as const;
 
-// API compatibility: the primitives must behave exactly like Radix's.
 export default function RadixDialogFixture() {
   const [open, setOpen] = React.useState(false);
   const [changes, setChanges] = React.useState<boolean[]>([]);
@@ -53,7 +48,6 @@ export default function RadixDialogFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-dialog. */}
         <DialogStar.Root defaultOpen>
           <DialogStar.Trigger>Star trigger</DialogStar.Trigger>
           <DialogStar.Portal>
@@ -68,7 +62,6 @@ export default function RadixDialogFixture() {
       </section>
 
       <section data-testid="inline">
-        {/* Radix allows a Content without a Portal. */}
         <Dialog.Root modal={false}>
           <Dialog.Trigger>Inline trigger</Dialog.Trigger>
           <Dialog.Content

@@ -226,13 +226,11 @@ export default function SelectDemo({
   alignOffset = 0,
   checkAnimation = "draw",
 }: {
-  /** side and align apply to "popper". */
   position?: "popper" | "item-aligned"
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   return (

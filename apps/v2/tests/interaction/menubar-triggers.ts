@@ -1,28 +1,13 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-// A bar's triggers share one highlight (shared by the Radix UI and Base UI
-// menubar and navigation menu specs), like a menu's items: a trigger hovered,
-// focused or with its menu open is lit by its own styles (`hover:bg-muted`,
-// `aria-expanded:bg-muted`), and that background is one surface gliding from
-// trigger to trigger, on the highlight's spring. It fades in from nothing,
-// fades out where it is once no trigger is lit, and lit again meanwhile, it
-// comes back from there.
-
-/** A bar on a page: how to find its triggers, and which ones to use. */
 export type BarSetup = {
-  /** Every trigger of the bar (their own backgrounds are checked). */
   triggers: string;
-  /** A trigger by its name. */
   locate: (page: Page, name: string) => Locator;
-  /** Three triggers side by side, left to right. */
   first: string;
   second: string;
   third: string;
-  /** A trigger right of `first` that opens a menu, and that menu. */
   menu: { trigger: string; content: (page: Page) => Locator };
-  /** Opens a trigger's menu. */
   open: (page: Page, name: string) => Promise<void>;
-  /** Escape takes the focus off the bar (a menubar), or onto a lit trigger. */
   escapeClears: boolean;
 };
 
@@ -45,25 +30,20 @@ const MENUBAR: BarSetup = {
 const SURFACE = '[data-slot="trigger-highlight"]';
 
 type Surface = {
-  /** The trigger it's in. */
   trigger: string;
   left: number;
   width: number;
   opacity: number;
   color: string;
-  /** How far its fade (in or out) is, in ms (null: none running). */
   fade: number | null;
 };
 
 type TriggerFrame = {
   t: number;
-  /** Surfaces on screen (not transparent). */
   surfaces: Surface[];
-  /** The triggers' own backgrounds, by name. */
   own: Record<string, string>;
 };
 
-/** Records, frame by frame, the triggers' highlight, for `duration` ms. */
 function recordTriggers(page: Page, bar: BarSetup, duration: number) {
   return page.evaluate(
     ({ selector, triggers, duration }) =>
@@ -112,7 +92,6 @@ function recordTriggers(page: Page, bar: BarSetup, duration: number) {
 
 const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
-/** One highlight at most, every frame, and no trigger painting its own. */
 function expectOneHighlight(frames: TriggerFrame[]) {
   expect(frames.length).toBeGreaterThan(5);
   for (const frame of frames) {
@@ -122,10 +101,6 @@ function expectOneHighlight(frames: TriggerFrame[]) {
   }
 }
 
-/**
- * Only ever goes one way (`way` 1: right, -1: left), within `slack` pixels
- * (the spring's slight overshoot, on a long glide).
- */
 function expectOneWay(values: number[], way: 1 | -1, slack = 0.5) {
   for (let i = 1; i < values.length; i++)
     expect((values[i]! - values[i - 1]!) * way).toBeGreaterThanOrEqual(-slack);
@@ -142,12 +117,10 @@ export function describeBarTriggers(
 ) {
   const boxOf = async (page: Page, name: string) =>
     (await bar.locate(page, name).boundingBox())!;
-  /** Hovers a trigger (its center), at once. */
   const hover = async (page: Page, name: string) => {
     const box = await boxOf(page, name);
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   };
-  /** Moves the pointer off the bar, beside it, where nothing opens. */
   const leave = async (page: Page) => {
     const box = await boxOf(page, bar.first);
     await page.mouse.move(Math.max(2, box.x - 120), box.y + box.height / 2);
@@ -176,7 +149,6 @@ export function describeBarTriggers(
         expect(Math.abs(surfaces[0]!.left - file.x)).toBeLessThan(0.5);
         expect(surfaces[0]!.color).not.toBe(TRANSPARENT);
       }
-      // It fades in.
       expect(lit[0]!.surfaces[0]!.opacity).toBeLessThan(0.7);
       expect(lit.at(-1)!.surfaces[0]!.opacity).toBe(1);
     });
@@ -193,7 +165,6 @@ export function describeBarTriggers(
       const file = await boxOf(page, first);
       const edit = await boxOf(page, second);
       const lefts = frames.map((frame) => frame.surfaces[0]!.left);
-      // On screen all along, fully, and on its way through every frame.
       for (const frame of frames)
         expect(frame.surfaces[0]!.opacity, `${frame.t}ms`).toBeGreaterThan(
           0.99,
@@ -211,8 +182,6 @@ export function describeBarTriggers(
     test("it shows up and goes on the color's curve, gently, not at once", async ({
       page,
     }) => {
-      // CSS's `ease` over 200ms is under half in at 40ms, and under three
-      // quarters at 80ms (a strong ease-out is 85% in at 40ms: a cut).
       const expectGentle = (
         frames: TriggerFrame[],
         shown: (opacity: number) => number,
@@ -231,8 +200,6 @@ export function describeBarTriggers(
       let recording = recordTriggers(page, bar, 400);
       await hover(page, first);
       expectGentle(await recording, (opacity) => opacity);
-      // Out, the same way (a menu opened on hover closes a moment after the
-      // pointer left).
       await page.waitForTimeout(600);
       recording = recordTriggers(page, bar, 1500);
       await leave(page);
@@ -242,7 +209,6 @@ export function describeBarTriggers(
     test('leaving the bar, it fades out where it is', async ({ page }) => {
       await hover(page, second);
       await page.waitForTimeout(400);
-      // A menu opened on hover closes a moment after the pointer left.
       const recording = recordTriggers(page, bar, 900);
       await leave(page);
       const frames = await recording;
@@ -269,7 +235,6 @@ export function describeBarTriggers(
       await page.waitForTimeout(400);
       const recording = recordTriggers(page, bar, 1000);
       await leave(page);
-      // Once it fades out (a menu opened on hover closes a moment later).
       await expect
         .poll(
           () =>
@@ -297,14 +262,12 @@ export function describeBarTriggers(
         (frame) => frame.surfaces[0]!.trigger === third,
       );
       expect(back).toBeGreaterThan(0);
-      // From Edit's place, at the opacity it had faded to, without a gap.
       const before = shown[back - 1]!.surfaces[0]!;
       const after = shown[back]!.surfaces[0]!;
       expect(before.opacity).toBeLessThan(0.95);
       expect(after.opacity).toBeGreaterThan(before.opacity * 0.6);
       expect(Math.abs(after.left - edit.x)).toBeLessThan(1.5);
       expect(shown[back]!.t - shown[back - 1]!.t).toBeLessThan(40);
-      // Then it glides to View, showing again.
       const rest = shown.slice(back).map((frame) => frame.surfaces[0]!);
       expectOneWay(
         rest.map((surface) => surface.left),
@@ -326,7 +289,6 @@ export function describeBarTriggers(
       const recording = recordTriggers(page, bar, 900);
       await hover(page, bar.menu.trigger);
       await page.waitForTimeout(400);
-      // Into its menu: the pointer leaves the bar.
       await bar.menu.content(page).hover();
       const frames = await recording;
       expectOneHighlight(frames);
@@ -343,8 +305,6 @@ export function describeBarTriggers(
         expect(frame.surfaces[0]!.opacity).toBe(1);
       }
 
-      // Its menu closed (the pointer elsewhere, the focus off the bar), it
-      // goes.
       if (!bar.escapeClears) return;
       await page.keyboard.press('Escape');
       await expect(page.locator(SURFACE)).toHaveCount(0, { timeout: 1000 });

@@ -18,16 +18,9 @@ import {
 
 type GitHubStarsButtonProps = ButtonProps &
   UseIsInViewOptions & {
-    /** Owner of the repository. */
     username?: string;
-    /** Name of the repository. */
     repo?: string;
-    /** A fixed star count: skips the request to the GitHub API. */
     value?: number;
-    /**
-     * Wait before fetching the stars, in milliseconds.
-     * @default 0
-     */
     delay?: number;
   };
 
@@ -43,7 +36,6 @@ function GitHubStarsButton({
   ...props
 }: GitHubStarsButtonProps) {
   return (
-    // The button shows up once the stars are loaded.
     <GithubStars
       asChild
       ref={ref as React.Ref<HTMLDivElement>}
@@ -60,7 +52,6 @@ function GitHubStarsButton({
   );
 }
 
-// The GitHub stars parts, named after the button.
 const GitHubStarsButtonLogo = GithubStarsLogo;
 const GitHubStarsButtonNumber = GithubStarsNumber;
 const GitHubStarsButtonIcon = GithubStarsIcon;

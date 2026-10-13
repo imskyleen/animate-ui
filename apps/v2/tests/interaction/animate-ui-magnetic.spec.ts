@@ -6,7 +6,6 @@ const open = (page: Page) =>
 const button = (page: Page) =>
   page.getByRole('button', { name: 'Come closer' });
 
-/** The magnetic wrapper's translation. */
 const offset = (page: Page) =>
   button(page).evaluate((el) => {
     const m = getComputedStyle(el.parentElement!).transform.match(
@@ -16,7 +15,6 @@ const offset = (page: Page) =>
     return { x: v[4]!, y: v[5]! };
   });
 
-/** The wrapper's x offset on every frame for `ms`. */
 const timeline = (page: Page, ms: number) =>
   button(page).evaluate(async (el, ms) => {
     const xs: number[] = [];
@@ -34,9 +32,7 @@ test.describe('animate-ui magnetic', () => {
     const box = (await button(page).boundingBox())!;
     const cx = box.x + box.width / 2;
     const cy = box.y + box.height / 2;
-    // Within range, to the right of and below the center.
     await page.mouse.move(cx + 60, cy + 30, { steps: 4 });
-    // On a spring: it takes a moment to get there.
     await page.waitForTimeout(30);
     const early = (await offset(page)).x;
     await page.waitForTimeout(700);
@@ -44,7 +40,6 @@ test.describe('animate-ui magnetic', () => {
     expect(settled).toBeGreaterThan(5);
     expect(early).toBeLessThan(settled - 1);
     expect((await offset(page)).y).toBeGreaterThan(0);
-    // Out of range: back to rest.
     await page.mouse.move(cx + 400, cy + 300, { steps: 4 });
     await expect
       .poll(async () => {
@@ -64,11 +59,9 @@ test.describe('animate-ui magnetic', () => {
     const sampling = timeline(page, 900);
     await page.mouse.move(cx + 60, cy + 30);
     const xs = await sampling;
-    // Pulled by (1 - distance / range) * strength of the offset: 13.2px.
     const settled = xs.at(-1)!;
     expect(settled).toBeGreaterThan(12.5);
     expect(settled).toBeLessThan(14);
-    // The v1 spring (stiffness 100, damping 10, mass 0.5) overshoots a little.
     expect(Math.max(...xs)).toBeGreaterThan(settled + 0.3);
   });
 

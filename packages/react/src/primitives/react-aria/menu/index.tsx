@@ -23,43 +23,16 @@ import {
 import { HighlightScope } from '../../../internal/item-highlight';
 import { PickContext, useCheckGroup } from '../../../internal/item-indicator';
 
-// Same API as React Aria's Menu, MenuSection and MenuItem: the menus of
-// MenuTrigger (dropdown and context menus) and SubmenuTrigger. React Aria has
-// no Animate UI v1 counterpart: the items move like the Radix UI and Base UI
-// menus'.
-//
-// One highlight glides behind the focused item, the one React Aria marks
-// `data-focused` (the pointer and the arrow keys move it alike), like v1's
-// menu highlight (internal/item-highlight). It goes into submenus, whose Menu
-// shares their root menu's highlight, and stays on the last item when the
-// pointer leaves the menu. It wears the item's own focused background, read
-// from your styles; a submenu trigger's background is cleared while its
-// submenu is open, the highlight having moved into it.
-//
-// A SelectionIndicator inside an item (the list-box primitive's) is its check:
-// it draws itself and erases itself, like a checkbox's; with `pop`, it pops in
-// and out, and a single selection's check glides to the chosen item, between
-// the items of its Menu or MenuSection. Choosing an item that closes the menu
-// (from the pointer or Enter) holds the menu still while its check changes
-// (the Popover waits: 250ms for a drawn check, 150ms for a pop or a glide).
-//
-// Items are collection items: the highlight goes through their `render` prop
-// (internal/aria-item-highlight).
-
-/** React Aria's props. */
 type MenuProps<T> = MenuPrimitiveProps<T>;
 
-/** The popovers React Aria opens for menus. */
 const MENU_POPOVER =
   '[data-trigger="MenuTrigger"], [data-trigger="SubmenuTrigger"]';
 
-/** How far a menu reaches into its popover's padding (px), and its own. */
 type Reach = {
   left: number;
   right: number;
   ownLeft: number;
   ownRight: number;
-  /** Its items' width, which must not change. */
   content: number;
 };
 
@@ -68,18 +41,11 @@ function Menu<T extends object>({
   ref,
   ...props
 }: MenuProps<T> & React.RefAttributes<HTMLDivElement>) {
-  // Its items' checks (a selection on the Menu itself) glide between them.
   const group = useCheckGroup();
   const menuRef = React.useRef<HTMLDivElement>(null);
   const mergedRef = React.useMemo(() => mergeRefs(ref, menuRef), [ref]);
   const [reach, setReach] = React.useState<Reach | 'none' | null>(null);
 
-  // A popover pads its menu, which clips its items flush with them: the
-  // highlight crossing into a submenu (one surface leaving, one entering) was
-  // cut through both paddings. The menu reaches into its popover's padding
-  // (a negative margin, as much padding on top of its own), so it clips
-  // where the popover's padding ends, like the Radix UI and Base UI menus;
-  // its items stay where they were.
   React.useLayoutEffect(() => {
     const menu = menuRef.current;
     const popover = menu?.parentElement;
@@ -103,7 +69,6 @@ function Menu<T extends object>({
       content: menu.clientWidth - ownLeft - ownRight,
     });
   }, [reach]);
-  // A menu with a width of its own would get narrower items: it stays put.
   React.useLayoutEffect(() => {
     const menu = menuRef.current;
     if (!menu || !reach || reach === 'none') return;
@@ -116,16 +81,12 @@ function Menu<T extends object>({
 
   const reaching = reach && reach !== 'none' ? reach : null;
   return (
-    // Mounted with its popover: each opening starts without a highlight. A
-    // submenu's Menu uses its root menu's.
     <HighlightScope open shared>
       <IndicatorGroupContext value={group}>
         <MenuPrimitive
           {...props}
           ref={mergedRef}
           style={(renderProps) => ({
-            // The highlight goes under the items' content, above the menu's
-            // background: the menu is its own stacking context.
             isolation: 'isolate',
             ...(reaching && {
               marginLeft: -reaching.left,
@@ -141,10 +102,8 @@ function Menu<T extends object>({
   );
 }
 
-/** React Aria's props. */
 type MenuSectionProps<T> = MenuSectionPrimitiveProps<T>;
 
-/** Its own selection: its items' checks glide between them (`pop`). */
 function MenuSection<T extends object>(
   props: MenuSectionProps<T> & React.RefAttributes<HTMLElement>,
 ) {
@@ -156,7 +115,6 @@ function MenuSection<T extends object>(
   );
 }
 
-/** React Aria's props. */
 type MenuItemProps<T = object> = MenuItemPrimitiveProps<T>;
 
 type ClickProps = { onClick?: (event: React.MouseEvent<HTMLElement>) => void };
@@ -172,15 +130,10 @@ function MenuItem<T extends object>({
       render={(domProps, values) => {
         const own = domProps as ClickProps;
         return (
-          // Its check reads its selection mode.
           <IndicatorModeContext value={values.selectionMode}>
             <HighlightedItem
               domProps={{
                 ...own,
-                // React Aria closes the menu in its click (pointer, Enter):
-                // the pick is marked first when the item's check changes (a
-                // multiple selection's, or another item's than the chosen
-                // one).
                 onClick: (event: React.MouseEvent<HTMLElement>) => {
                   const { selectionMode, isSelected } = values;
                   const look = picks?.checkOf(event.currentTarget);

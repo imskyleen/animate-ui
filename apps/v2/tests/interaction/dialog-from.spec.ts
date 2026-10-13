@@ -1,18 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Animate UI v1's `from` on every library's dialog content: it tips from that
-// edge, around the Y axis for left and right (left: rotateY(20deg)), the X
-// axis for top and bottom (bottom: rotateX(20deg)), scaled to 0.8. Read from
-// the computed matrix: rotateY(a) puts -sin(a) in m13, rotateX(a) puts
-// sin(a) in m23.
-
 const LIBS = [
   ['radix', 'Radix'],
   ['base', 'Base'],
   ['aria', 'Aria'],
 ] as const;
 
-/** The transform matrix of `selector` on its first frame in the DOM. */
 async function probeMatrix(page: Page, selector: string) {
   await page.evaluate((sel) => {
     const w = window as unknown as { __firstMatrix?: Promise<number[]> };

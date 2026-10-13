@@ -6,8 +6,6 @@ import { Drawer } from '@animate-ui/react/primitives/base-ui/drawer';
 const backdrop = 'fixed inset-0 z-50 bg-black/20';
 const viewport = 'fixed inset-0 z-50';
 
-// API compatibility: the primitive must behave exactly like Base UI's Drawer.
-// Unstyled apart from layout: the motion comes from the primitive itself.
 export default function BaseDrawerFixture() {
   const [open, setOpen] = React.useState(false);
   const [changes, setChanges] = React.useState<string[]>([]);
@@ -55,7 +53,6 @@ export default function BaseDrawerFixture() {
               <Drawer.Popup
                 className="fixed inset-y-0 right-0 w-80 border bg-background p-6"
                 data-testid="right-popup"
-                // A faster custom timing.
                 transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                 exitTransition={{ duration: 0.1 }}
               >
@@ -72,7 +69,6 @@ export default function BaseDrawerFixture() {
         <Drawer.Root>
           <Drawer.Trigger>Open gradient drawer</Drawer.Trigger>
           <Drawer.Portal>
-            {/* No color to deepen over an image: it fades instead. */}
             <Drawer.Backdrop
               className="fixed inset-0 z-50 bg-linear-to-t from-black/40 to-transparent"
               data-testid="gradient-backdrop"

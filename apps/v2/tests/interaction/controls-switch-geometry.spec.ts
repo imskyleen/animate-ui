@@ -1,10 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// At rest, Animate UI's switches sit exactly like shadcn/ui's: the thumb's
-// size and its insets in the track come from shadcn's classes alone (the
-// fixture renders the same classes with plain Radix UI as the reference),
-// in both states, before and after the animations ran.
-
 const LIBS = ['radix-ui', 'base-ui', 'react-aria'] as const;
 
 type Geometry = {
@@ -14,7 +9,6 @@ type Geometry = {
   bottom: number;
   width: number;
   height: number;
-  /** Inline styles left on the track and the thumb. */
   styles: string;
 };
 
@@ -76,8 +70,6 @@ test.describe('switch geometry at rest', () => {
     page,
   }) => {
     await expectLikePlain(page);
-    // shadcn's nova insets: 1px from the edge it rests against, the rest of
-    // the track on the other side.
     const [off, on] = await geometry(page, 'radix-ui');
     expect(off!.left).toBeCloseTo(1, 1);
     expect(off!.right).toBeCloseTo(15, 1);
@@ -94,8 +86,6 @@ test.describe('switch geometry at rest', () => {
           .getByRole('switch', { name: `${section} ${i}` })
           .click({ force: section === 'react-aria' });
     await page.mouse.move(0, 0);
-    // The springs settle, then the thumbs are left as the library rendered
-    // them.
     await expect
       .poll(
         async () =>

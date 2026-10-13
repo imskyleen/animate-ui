@@ -20,7 +20,6 @@ test.describe('react-aria progress API', () => {
 
     await page.getByRole('button', { name: 'Complete' }).click();
     await expect(page.getByTestId('value-text')).toHaveText('100%');
-    // Its width springs there (v1's Base UI progress), then rests at 100%.
     await expect
       .poll(
         () =>

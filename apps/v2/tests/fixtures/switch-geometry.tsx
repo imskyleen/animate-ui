@@ -6,10 +6,6 @@ import { Switch as RadixSwitch } from '@animate-ui/react/primitives/radix-ui/swi
 import { Switch as BaseSwitch } from '@animate-ui/react/primitives/base-ui/switch';
 import { Switch as AriaSwitch } from '@animate-ui/react/primitives/react-aria';
 
-// shadcn/ui's switch (nova), its classes untouched but the transitions the
-// CLI strips: rendered with plain Radix UI (the reference) and with Animate
-// UI's three switches. At rest they must sit exactly alike.
-
 const track =
   'data-checked:bg-primary data-unchecked:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-unchecked:bg-input/80 shrink-0 rounded-full border border-transparent focus-visible:ring-3 data-[size=default]:h-[18.4px] data-[size=default]:w-[32px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] peer group/switch relative inline-flex items-center outline-none';
 const ariaTrack = `${track} data-selected:bg-primary not-data-selected:bg-input dark:not-data-selected:bg-input/80`;

@@ -11,7 +11,6 @@ const highlightX = (page: Page, value: string) =>
     .locator(`${HIGHLIGHT}[data-value="${value}"]`)
     .evaluate((el) => el.getBoundingClientRect().x);
 
-/** translateX of the panels strip, in % of its width. */
 const stripX = (page: Page) =>
   page.locator('[data-slot="tabs-contents"] > div').evaluate((el) => {
     const m = getComputedStyle(el).transform.match(/matrix\(([^)]+)\)/);
@@ -33,7 +32,6 @@ test.describe('animate-ui tabs', () => {
       'aria-selected',
       'false',
     );
-    // The inactive panel can't be focused.
     await expect(
       page.getByRole('tabpanel').filter({ hasText: 'Track performance' }),
     ).toHaveAttribute('inert', '');
@@ -62,7 +60,6 @@ test.describe('animate-ui tabs', () => {
     page,
   }) => {
     await open(page);
-    // The strip's offset (px) on every frame of the slide to the last tab.
     const frames = page.locator('[data-slot="tabs-contents"] > div').evaluate(
       (el) =>
         new Promise<{ x: number; width: number }[]>((resolve) => {
@@ -83,11 +80,8 @@ test.describe('animate-ui tabs', () => {
     await page.getByRole('tab', { name: 'Settings' }).click();
     const xs = await frames;
     const target = -3 * xs[0]!.width;
-    // It gets there...
     expect(xs.at(-1)!.x).toBeCloseTo(target, 0);
-    // ...without ever going past it (a bounce would, by a pixel or two).
     expect(Math.min(...xs.map((f) => f.x))).toBeGreaterThan(target - 0.25);
-    // And still glides: several frames on the way.
     expect(
       xs.filter((f) => f.x < -1 && f.x > target + 1).length,
     ).toBeGreaterThan(6);
@@ -140,8 +134,6 @@ test.describe('animate-ui tabs', () => {
     const overviewX = (await overview.boundingBox())!.x;
     const analyticsX = (await analytics.boundingBox())!.x;
     await overview.focus();
-    // Sampled in the page from the key press: the highlight slides and the
-    // panels strip moves, as on click (no fixed timing, so no flakiness).
     const frames = page.evaluate(
       (selector) =>
         new Promise<{ x: number; strip: number }[]>((resolve) => {
@@ -220,7 +212,6 @@ test.describe('animate-ui tabs keyboard', () => {
     await page.getByRole('button', { name: 'Before' }).focus();
     await page.keyboard.press('Tab');
     await expect(tab(page, 'Horizontal', 'One')).toBeFocused();
-    // Next stop is the active panel, not the other tabs.
     await page.keyboard.press('Tab');
     await expect(page.getByText('Horizontal One panel')).toBeFocused();
   });
@@ -231,16 +222,15 @@ test.describe('animate-ui tabs keyboard', () => {
     await openFixture(page);
     await tab(page, 'Horizontal', 'One').focus();
     await page.keyboard.press('ArrowRight');
-    await expectSelected(page, 'Horizontal', 'Three'); // Two is disabled
+    await expectSelected(page, 'Horizontal', 'Three');
     await page.keyboard.press('ArrowRight');
     await expectSelected(page, 'Horizontal', 'Four');
     await page.keyboard.press('ArrowRight');
-    await expectSelected(page, 'Horizontal', 'One'); // wraps
+    await expectSelected(page, 'Horizontal', 'One');
     await page.keyboard.press('ArrowLeft');
-    await expectSelected(page, 'Horizontal', 'Four'); // wraps back
+    await expectSelected(page, 'Horizontal', 'Four');
     await page.keyboard.press('ArrowLeft');
     await expectSelected(page, 'Horizontal', 'Three');
-    // Up/Down do nothing in a horizontal list.
     await page.keyboard.press('ArrowDown');
     await expectSelected(page, 'Horizontal', 'Three');
     await expect(tab(page, 'Horizontal', 'Two')).toHaveAttribute(
@@ -305,7 +295,6 @@ test.describe('animate-ui tabs keyboard', () => {
     const panel = page.locator('#my-panel');
     await expect(panel).toHaveAttribute('role', 'tabpanel');
     await expect(panel).toHaveAttribute('aria-labelledby', 'my-trigger');
-    // The other pair keeps its generated ids.
     const beta = tab(page, 'Custom ids', 'Beta');
     const betaPanel = page.locator(
       `[id="${await beta.getAttribute('aria-controls')}"]`,
@@ -316,7 +305,6 @@ test.describe('animate-ui tabs keyboard', () => {
     );
   });
 
-  /** `id`'s height on every frame it's shown, for `ms` from the first. */
   const shownHeights = (page: Page, id: string, ms = 600) =>
     page.getByTestId(id).evaluate(
       (el, ms) =>
@@ -345,9 +333,7 @@ test.describe('animate-ui tabs keyboard', () => {
     const tallest = shownHeights(page, 'tallest');
     const shorter = shownHeights(page, 'shorter');
     await page.getByRole('button', { name: 'Show' }).click();
-    // Not grown from 0...
     for (const height of await tallest) expect(height).toBeCloseTo(120, 0);
-    // ...nor at the row's tallest panel (120px) while its own is 40px.
     for (const height of await shorter) expect(height).toBeCloseTo(40, 0);
   });
 
@@ -361,7 +347,6 @@ test.describe('animate-ui tabs keyboard', () => {
     expect((await contents.boundingBox())!.height).toBeCloseTo(0, 0);
     const frames = shownHeights(page, 'empty');
     await page.getByRole('button', { name: 'Load' }).click();
-    // Never the other panel's 120px.
     for (const height of await frames) expect(height).toBeLessThan(41);
     await expect
       .poll(async () => (await contents.boundingBox())!.height)

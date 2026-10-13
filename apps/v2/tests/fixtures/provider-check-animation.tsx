@@ -31,8 +31,6 @@ function Box({
   );
 }
 
-// `checkAnimation` from the closest provider that sets it, `animation` on the
-// indicator first, and a nested provider keeping what it doesn't set.
 export default function ProviderCheckAnimationFixture() {
   return (
     <div className="flex flex-col gap-6">

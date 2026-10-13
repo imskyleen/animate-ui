@@ -6,7 +6,6 @@ describeAnchoredOverlay('radix-ui hover-card demo', {
   selector: '[data-slot="hover-card-content"]',
   open: (page) => page.getByRole('button', { name: 'Hover Here' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
-  // The demo's closeDelay (shadcn/ui's).
   closeDelay: 100,
 });
 

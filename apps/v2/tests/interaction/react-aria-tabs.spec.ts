@@ -38,7 +38,6 @@ test.describe('react-aria tabs API', () => {
     await expect(section.getByText('Panel one')).toBeVisible();
     await section.getByRole('tab', { name: 'One' }).focus();
     await page.keyboard.press('ArrowRight');
-    // "Two" is disabled: the arrow lands on "Three".
     await expect(section.getByRole('tab', { name: 'Three' })).toHaveAttribute(
       'aria-selected',
       'true',
@@ -49,7 +48,6 @@ test.describe('react-aria tabs API', () => {
 
   test('shouldForceMount keeps inactive panels mounted', async ({ page }) => {
     const section = page.getByTestId('force-mount');
-    // React Aria only gives the selected panel its tabpanel role.
     await expect(section.locator(PANEL)).toHaveCount(1);
     await expect(section.getByTestId('forced-2')).toHaveAttribute('inert', '');
     await section.getByRole('tab', { name: 'Forced 2' }).click();

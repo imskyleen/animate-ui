@@ -3,14 +3,9 @@ import path from 'node:path';
 
 import { expect, test, type Page } from '@playwright/test';
 
-// The live controls of a demo (v1's tweakpane): a demo exporting `controls`
-// gets a sliders button next to Replay, which opens a panel whose values are
-// passed to the demo as props.
-
 const open = (page: Page, url: string) =>
   page.goto(url, { waitUntil: 'networkidle' });
 
-// The first demo of the page.
 const preview = (page: Page) => page.locator('[data-slot="preview"]').first();
 const stage = (page: Page) =>
   preview(page).locator('[data-slot="preview-stage"]');
@@ -25,7 +20,6 @@ test.describe('demo controls', () => {
   test('the sliders button opens and closes the panel', async ({ page }) => {
     await open(page, '/docs/primitives/radix-ui/accordion');
     await expect(toggle(page)).toHaveAttribute('aria-expanded', 'false');
-    // Closed: no width, out of the tab order.
     expect(await width(page)).toBeLessThan(1);
     await expect(panel(page)).toHaveAttribute('inert', '');
 
@@ -58,11 +52,9 @@ test.describe('demo controls', () => {
 
   test('a text field updates a text primitive live', async ({ page }) => {
     await open(page, '/docs/primitives/animate-ui/counting-number');
-    // The visible digits (the screen reader copy holds the target at once).
     const number = stage(page).locator(
       '[data-slot="counting-number"] > [aria-hidden="true"]',
     );
-    // v1's counting spring lands about 4.5s after mount.
     await expect(number).toHaveText('2025', { timeout: 10_000 });
     await toggle(page).click();
     const field = panel(page).getByLabel('number', { exact: true });
@@ -81,7 +73,6 @@ test.describe('demo controls', () => {
     await expect(control).toBeChecked();
     await control.click();
     await expect(control).not.toBeChecked();
-    // The pointer-following bubble is gone.
     await expect(bubbles).toHaveCount(interactive - 1);
   });
 
@@ -104,7 +95,6 @@ test.describe('demo controls', () => {
     page,
   }) => {
     await open(page, '/docs/primitives/radix-ui/checkbox');
-    // shadcn/ui's second box: the one checked by default.
     const box = stage(page).getByRole('checkbox').nth(1);
     await expect(box).toHaveAttribute('aria-checked', 'true');
     await toggle(page).click();
@@ -112,7 +102,6 @@ test.describe('demo controls', () => {
     await control.click();
     await page.getByRole('option', { name: 'indeterminate' }).click();
     await expect(box).toHaveAttribute('aria-checked', 'mixed');
-    // `false` arrives as a boolean (the string "false" would be truthy).
     await control.click();
     await page.getByRole('option', { name: 'false' }).click();
     await expect(box).toHaveAttribute('aria-checked', 'false');
@@ -123,8 +112,6 @@ test.describe('demo controls', () => {
     await toggle(page).click();
     await panel(page).getByRole('combobox', { name: 'checkAnimation' }).click();
     await page.getByRole('option', { name: 'pop' }).click();
-    // Checking the first box, its icon's scale while it shows (sampled in
-    // the page: the first frames go by too fast for a round trip).
     const scales = await stage(page)
       .getByRole('checkbox')
       .nth(0)
@@ -142,7 +129,6 @@ test.describe('demo controls', () => {
         }
         return seen;
       });
-    // From half its size, a little past it (a drawn check doesn't scale).
     expect(Math.min(...scales)).toBeLessThan(0.9);
     expect(Math.max(...scales)).toBeGreaterThan(1.02);
   });
@@ -151,7 +137,6 @@ test.describe('demo controls', () => {
     page,
   }) => {
     await open(page, '/docs/primitives/radix-ui/checkbox');
-    // The page's demo, then the same demo again under "Check animation".
     const frames = await page
       .locator('[data-slot="preview"]')
       .evaluateAll((previews) =>
@@ -168,7 +153,6 @@ test.describe('demo controls', () => {
       { code: true, animation: 'draw' },
       { code: false, animation: 'pop' },
     ]);
-    // It pops: from half its size, a little past it.
     const scales = await page
       .locator('[data-slot="preview"]')
       .nth(1)
@@ -206,13 +190,11 @@ test.describe('demo controls', () => {
             ),
           ),
         );
-    // shadcn/ui's demo: its second box checked, the third one disabled.
     expect(await states()).toEqual([
       [false, true, false, false],
       [false, true, false, false],
     ]);
     const second = page.locator('[data-slot="preview"]').nth(1);
-    // A label wrapping its box.
     await second
       .getByText('You can enable or disable notifications at any time.')
       .click();
@@ -220,8 +202,6 @@ test.describe('demo controls', () => {
       [false, true, false, false],
       [false, true, false, true],
     ]);
-    // A label pointing at its box by id (`htmlFor="terms-checkbox"`): the
-    // demo's static ids are twice in the page, each preview keeps its own.
     await second.getByText('Accept terms and conditions').first().click();
     expect(await states()).toEqual([
       [false, true, false, false],
@@ -233,11 +213,9 @@ test.describe('demo controls', () => {
     await open(page, '/docs/primitives/radix-ui/toggle-group');
     const radios = stage(page).getByRole('radio', { name: /^Toggle/ });
     const buttons = stage(page).getByRole('button', { name: /^Toggle/ });
-    // shadcn/ui's demo is type="multiple": toggle buttons.
     await expect(buttons).toHaveCount(3);
     await toggle(page).click();
     await panel(page).getByRole('switch', { name: 'multiple' }).click();
-    // type="single": the toggle buttons become radios.
     await expect(buttons).toHaveCount(0);
     await expect(radios).toHaveCount(3);
   });
@@ -261,29 +239,22 @@ test.describe('demo controls', () => {
   });
 });
 
-// The same component gets the same controls in Radix UI, Base UI and React
-// Aria, but for the features a library doesn't have.
 const LIBS = ['radix-ui', 'base-ui', 'react-aria'] as const;
 type Lib = (typeof LIBS)[number];
 
-/** Controls of features only some libraries have. */
 const ONLY: Record<string, Partial<Record<Lib, string[]>>> = {
-  // Radix's single-mode `collapsible` (Base UI's and React Aria's always are).
   accordion: { 'radix-ui': ['collapsible'] },
-  // Animate UI's `followCursor`, on the Radix UI and Base UI primitives.
   tooltip: { 'radix-ui': ['followCursor'], 'base-ui': ['followCursor'] },
   'hover-card': { 'radix-ui': ['followCursor'], 'base-ui': ['followCursor'] },
   'preview-link-card': {
     'radix-ui': ['followCursor'],
     'base-ui': ['followCursor'],
   },
-  // An item-aligned select: React Aria has none.
   select: { 'radix-ui': ['position'], 'base-ui': ['position'] },
 };
 
 const DEMOS = path.join(process.cwd(), 'demos');
 
-/** A demo's control names, or null when the library has no such demo. */
 function controlsOf(lib: Lib, name: string) {
   const file = path.join(DEMOS, lib, `${name}.tsx`);
   if (!fs.existsSync(file)) return null;

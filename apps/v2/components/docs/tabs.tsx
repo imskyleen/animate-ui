@@ -28,14 +28,11 @@ import { MANAGER_GROUP, MANAGER_NAMES } from './package-managers';
 export type TabItem = { value: string; label: ReactNode; content: ReactNode };
 
 type SyncProps = {
-  /** Tabs sharing a `groupId` switch together (and across pages, with `persist`). */
   groupId?: string;
-  /** Remember the choice across visits (localStorage). */
   persist?: boolean;
   defaultValue?: string;
 };
 
-/** Fumadocs' tab values: lower case, whitespace as dashes. */
 function escapeValue(value: string) {
   return value.toLowerCase().replace(/\s/g, '-');
 }
@@ -55,23 +52,16 @@ function writeStorage(groupId: string, persist: boolean, value: string) {
   try {
     sessionStorage.setItem(groupId, value);
     if (persist) localStorage.setItem(groupId, value);
-  } catch {
-    // Storage blocked: the choice still syncs on the page.
-  }
+  } catch {}
 }
 
 const listeners = new Map<string, Set<(value: string) => void>>();
 
-/**
- * Fumadocs' tab sync, kept: same keys (sessionStorage, plus localStorage with
- * `persist`), so readers' saved package manager carries over.
- */
 export function useSyncedValue(
   values: string[],
   { groupId, persist = false, defaultValue }: SyncProps,
 ) {
   const [stored, setStored] = useState(defaultValue ?? values[0] ?? '');
-  // The first switch (restoring a saved choice) happens without animation.
   const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
@@ -100,18 +90,12 @@ export function useSyncedValue(
     [groupId, persist],
   );
 
-  // A saved value this block doesn't have falls back to its first tab.
   const active = values.includes(stored) ? stored : (values[0] ?? '');
   return [active, setValue, ready] as const;
 }
 
 const INSTANT = { duration: 0 };
 
-/**
- * v1's tabs: a row of triggers under Animate UI's sliding highlight, the
- * panels in Animate UI's TabsContents (height and slide animated). With
- * `lazy`, a panel mounts the first time it's opened.
- */
 export function DocsTabs({
   tabs,
   label,
@@ -122,19 +106,16 @@ export function DocsTabs({
   ...sync
 }: SyncProps & {
   tabs: TabItem[];
-  /** Accessible name of the tab list. */
   label?: string;
   lazy?: boolean;
   className?: string;
   listClassName?: string;
-  /** Rendered at the end of the tab row. */
   toolbar?: ReactNode;
 }) {
   const values = tabs.map((tab) => tab.value);
   const [active, setActive, ready] = useSyncedValue(values, sync);
   const [visited, setVisited] = useState(() => new Set([active]));
 
-  // Adjusted while rendering, not in an effect: no extra commit.
   if (!visited.has(active)) setVisited(new Set(visited).add(active));
 
   return (
@@ -178,8 +159,6 @@ export function DocsTabs({
           <TabsContent
             key={tab.value}
             value={tab.value}
-            // The tab row sets the spacing: a panel's own block margins
-            // (code blocks, steps) would add to it.
             className="outline-none *:first:mt-0 *:last:mb-0 [&_.fd-step:first-child>h3:first-child]:mt-0"
           >
             {!lazy || visited.has(tab.value) || tab.value === active
@@ -192,10 +171,6 @@ export function DocsTabs({
   );
 }
 
-/**
- * v1's code tabs: package managers (or files) in a row under an underline
- * highlight, Animate UI's copy button copying the open tab's code.
- */
 export function CodeTabs({
   tabs,
   className,
@@ -247,7 +222,6 @@ export function CodeTabs({
           }
         />
       </div>
-      {/* The ref sits here: TabsContents keeps its own ref to measure. */}
       <div ref={contentsRef} className="px-1 pb-1">
         <InCodeTabsContext value>
           <TabsContents
@@ -266,11 +240,8 @@ export function CodeTabs({
   );
 }
 
-/* ---------- MDX: Fumadocs' <Tabs>/<Tab> API, Animate UI's tabs ---------- */
-
 type TabProps = { value?: string; children?: ReactNode };
 
-/** A panel of `<Tabs>`; its value defaults to the item at its index. */
 export function Tab({ children }: TabProps) {
   return <>{children}</>;
 }
@@ -316,8 +287,6 @@ export function Tabs({
   );
 }
 
-/* ---- MDX: the code block tabs Fumadocs' remark plugins generate (```npm) ---- */
-
 type CodeBlockTabsTriggerProps = { value: string; children?: ReactNode };
 type CodeBlockTabProps = { value: string; children?: ReactNode };
 
@@ -344,7 +313,6 @@ export function CodeBlockTabs({
     (child): child is ReactElement<{ value?: string; children?: ReactNode }> =>
       isValidElement(child),
   );
-  // The list is the child without a value; the panels have one.
   const list = elements.find((element) => element.props.value === undefined);
   const labels = new Map(
     Children.toArray(list?.props.children)
@@ -361,7 +329,6 @@ export function CodeBlockTabs({
       content: element.props.children,
     }));
 
-  // Package manager blocks share the installation commands' choice.
   const isPackageManager = tabs.every((tab) =>
     (MANAGER_NAMES as readonly string[]).includes(tab.value),
   );

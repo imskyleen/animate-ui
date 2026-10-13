@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible';
@@ -10,10 +10,6 @@ import {
   BaseUIPanel,
   type PanelAnimationProps,
 } from '../../../internal/disclosure-panel';
-
-// Same API as Base UI's Collapsible. The Root mirrors the open state and
-// hands it back to Base UI (one source of truth), so the Panel can animate in
-// and out like Animate UI v1's (see ../../../internal/disclosure-panel).
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Collapsible.Root',
@@ -31,7 +27,6 @@ function Root({
 
   const handleOpenChange: Root.Props['onOpenChange'] = (next, details) => {
     onOpenChange?.(next, details);
-    // Base UI lets the handler cancel the change.
     if (details.isCanceled) return;
     if (!controlled) setUncontrolled(next);
   };
@@ -79,7 +74,6 @@ function Panel(
 }
 
 namespace Panel {
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
   export type Props = CollapsiblePrimitive.Panel.Props & PanelAnimationProps;
   export type State = CollapsiblePrimitive.Panel.State;
 }

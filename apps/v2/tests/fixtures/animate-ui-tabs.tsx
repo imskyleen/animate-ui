@@ -60,7 +60,6 @@ function Example({
   );
 }
 
-// Keyboard navigation: a disabled tab, vertical orientation and RTL.
 export default function AnimateUITabsFixture() {
   return (
     <div className="flex flex-col gap-10">

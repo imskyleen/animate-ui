@@ -15,10 +15,6 @@ import {
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
 
-// Same API as Radix's Collapsible. The Root mirrors the open state (Radix
-// keeps it private) so the Content can unfold and fold back like the
-// accordions: its height grows while the content fades in from a light blur.
-
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Collapsible.Root',
 );
@@ -28,14 +24,8 @@ type CollapsibleTriggerProps = CollapsiblePrimitive.CollapsibleTriggerProps;
 type CollapsibleContentProps = CollapsiblePrimitive.CollapsibleContentProps &
   ContentAnimationProps;
 
-/** Animate UI's additions to `Collapsible.Content`. */
 type ContentAnimationProps = {
-  /**
-   * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -71,23 +61,16 @@ function Content({
 }: React.ComponentProps<typeof CollapsiblePrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useOpen();
-  // The content: 350ms on a soft ease-out both ways; under reduced motion
-  // the height jumps (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
   const ref = React.useRef<HTMLDivElement>(null);
 
   return (
-    // Open on mount (an item open by default), it animates open, as in v1.
     <AnimatePresence>
       {(open || forceMount) && (
-        // Radix's props (className, style, data-state, ids…) land on the
-        // motion.div through asChild; it only carries the animation.
         <CollapsiblePrimitive.Content {...props} forceMount asChild>
           <motion.div
             ref={ref}
             initial={collapsed}
-            // Transitions live in the targets: an exiting element keeps the
-            // props of its last render, when it was still open.
             animate={
               open
                 ? { ...expanded, transition: enter }
@@ -98,14 +81,9 @@ function Content({
             onAnimationComplete={() => {
               if (open) releasePanel(ref.current);
             }}
-            // A force-mounted closed panel stays in the DOM: keep it out of
-            // the tab order and the accessibility tree.
             inert={!open}
             style={{
               ...panelStyle,
-              // Radix measures these once; Motion owns the size now, so
-              // classes reading them (h-(--radix-collapsible-content-height))
-              // follow the content instead of a stale measure.
               ['--radix-collapsible-content-height' as string]: 'auto',
               ['--radix-collapsible-content-width' as string]: 'auto',
             }}
@@ -125,8 +103,6 @@ export {
   Root,
   Trigger,
   Content,
-  // `Collapsible` is Radix's alias of Root: with the radix-ui import style,
-  // `CollapsiblePrimitive.Collapsible` keeps working.
   Root as Collapsible,
   Trigger as CollapsibleTrigger,
   Content as CollapsibleContent,

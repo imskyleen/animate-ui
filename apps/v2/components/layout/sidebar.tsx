@@ -42,7 +42,6 @@ const PRIMITIVES_URL = '/docs/primitives';
 const BACKGROUNDS_URL = '/docs/backgrounds';
 const ICONS_URL = '/docs/icons';
 
-/** A Hugeicons icon, or a logo (Animate UI's). */
 type SectionIcon = IconSvgElement | ReactNode;
 
 const PRIMITIVE_SECTIONS: {
@@ -61,7 +60,6 @@ const PRIMITIVE_SECTIONS: {
   { id: 'effects', title: 'Effects', icon: MagicWand01Icon },
 ];
 
-/** The pages of a folder (Backgrounds, Icons), with an optional suffix cut. */
 function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {
   return folder.children.flatMap((page) =>
     page.type === 'page'
@@ -78,7 +76,6 @@ function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {
   );
 }
 
-/** One entry per primitive, with the URL of each library that has it. */
 type PrimitiveEntry = {
   name: ReactNode;
   slug: string;
@@ -163,8 +160,6 @@ function Section({
   );
 }
 
-// The scrolling list: no rubber-band bounce, and edges that fade only where
-// there's more to scroll (Fumadocs' viewport masks them all the time).
 function SidebarScroll({ children }: { children: ReactNode }) {
   return (
     <ScrollFade
@@ -191,17 +186,14 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
       if (node.type === 'folder' && node.index) {
         guide.push({ name: node.name, url: node.index.url });
         if (node.index.url === PRIMITIVES_URL) primitivesFolder = node;
-        // The section says it: "Bubble", not "Bubble Background".
         if (node.index.url === BACKGROUNDS_URL)
           backgrounds = folderLinks(node, / Background$/);
-        // Icon libraries show their logo before their name.
         if (node.index.url === ICONS_URL)
           icons = folderLinks(node).map((link) =>
             ICON_LIBRARY_LOGOS[link.url]
               ? {
                   ...link,
                   name: (
-                    // Keyed: a page's badge comes as the server rendered it.
                     <span className="flex items-center gap-2">
                       <Fragment key="logo">
                         {ICON_LIBRARY_LOGOS[link.url]}
@@ -245,7 +237,6 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
           <Section
             title="Menu"
             icon={Menu01Icon}
-            // The Guide marks the current page: one active bar at a time.
             links={NAV_ITEMS.map((item) => ({
               name: item.title,
               url: item.url,
@@ -290,8 +281,6 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
   );
 }
 
-// `slots.sidebar.root` of DocsLayout: Fumadocs' placement, Animate UI's
-// sections. Desktop shows it in the grid, mobile in a drawer.
 export function Sidebar({ className }: SidebarProps) {
   return (
     <>

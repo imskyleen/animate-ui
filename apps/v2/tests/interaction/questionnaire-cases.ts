@@ -11,147 +11,76 @@ import {
   type SpringOptions,
 } from './spring-curves';
 
-// shadcn/ui's questionnaire demo (questionnaire-demo: three questions,
-// "direction" required with three described choices and a freeform input,
-// "signals" multiple and optional (Skip shows), "timing" required and last
-// (Submit reads "Save plan"); letter shortcuts), on
-// @animate-ui/react/primitives/questionnaire, in every base (Radix UI, Base
-// UI, React Aria: only the Button helper differs), at
-// /tests/demos/<library>/questionnaire:
-//
-// - a step changing (Next, Previous, Skip, Enter, an arrow key): the leaving
-//   question is shown again, pinned over the next one (out of the flow,
-//   inert), and slides `shift.step` (24px) toward the start into
-//   `blur.panel` (5px) as it fades out on `transition.panelOut` (150ms,
-//   ease.leave); then, once it has gone, the next one comes in from 24px
-//   toward the end, out of the blur, on `transition.panelIn` (300ms,
-//   ease.enter), while its height glides from the leaving one's (held until
-//   then: what's below never moves over the question leaving) on
-//   `transition.panelHeight` (450ms, ease.resize), what's below following;
-//   going back, the reverse. The focus stays on the next one all the way;
-//   changed again on the way, each goes on from where it is (a third
-//   question waits for any still leaving);
-// - the progress label's numbers roll (two pseudo-elements over the number,
-//   whose own text stays the number, and the only text read);
-// - a choice checked: its dot pops on `spring.bounce`, its check draws after
-//   200ms in 300ms (`transition.check`), both leaving the way they came (held
-//   shown), the indicator's colors changing on `transition.color`;
-// - an error unfolds (its height, and the gap above it) out of
-//   `blur.disclosure` on `transition.disclosure` (350ms, ease.soft), and
-//   folds back, from where it is when changed again, its question's height
-//   following it (from where it is too);
-// - Previous, Skip, Next and Submit come and go in place from
-//   `scale.action` (0.9) and `blur.icon` (2px) on `transition.swap` (150ms,
-//   ease.out), Next and Submit swapping through each other;
-// - nothing moves as the page loads; under reduced motion the questions
-//   still change one after the other, fading only (200ms, ease.out), the
-//   height jumping once the question leaving has faded out.
-//
-// The helpers are shared with animate-ui-questionnaire.spec.ts (the
-// primitive's API, on tests/fixtures/animate-ui-questionnaire).
-
-/** A Questionnaire Root (the form). */
 export const FORM = 'form[data-animate-ui-questionnaire]';
-/** The leaving question: `transition.panelOut`. */
 export const STEP_OUT: CurveOptions = { duration: 150, ease: [0, 0, 0.58, 1] };
-/** The next question: `transition.panelIn`, once the leaving one has gone. */
 export const STEP_IN: CurveOptions = {
   duration: 300,
   ease: [0.25, 0.1, 0.35, 1],
 };
-/** The next question's height: `transition.panelHeight`. */
 export const STEP_HEIGHT: CurveOptions = {
   duration: 450,
   ease: [0.4, 0, 0.1, 1],
 };
-/** An error unfolding and folding: `transition.disclosure`. */
 export const DISCLOSURE: CurveOptions = {
   duration: 350,
   ease: [0.215, 0.61, 0.355, 1],
 };
-/** A button coming or going in place: `transition.swap`. */
 export const SWAP: CurveOptions = { duration: 150, ease: [0.23, 1, 0.32, 1] };
-/** Everything under reduced motion: `transition.fade`. */
 export const FADE: CurveOptions = { duration: 200, ease: [0.23, 1, 0.32, 1] };
-/** The indicator's colors: `transition.color` (CSS's `ease`). */
 export const COLOR: CurveOptions = {
   duration: 200,
   ease: [0.25, 0.1, 0.25, 1],
 };
-/** A check drawing (after 200ms) or erasing: `transition.check`/`uncheck`. */
 export const CHECK: CurveOptions = { duration: 300, ease: [0, 0, 0.58, 1] };
 export const CHECK_DELAY = 200;
-/** A radio's dot, in and out: `spring.bounce`. */
 export const DOT: SpringOptions = { stiffness: 200, damping: 16 };
-/** `shift.step`: how far a question slides, in px. */
 export const SHIFT = 24;
-/** `blur.panel`, in px. */
 export const BLUR = 5;
-/** `scale.action`: where a button comes from and goes to. */
 export const ACTION_SCALE = 0.9;
-/** `blur.icon` (a button) and `blur.disclosure` (an error), in px. */
 export const ACTION_BLUR = 2;
 export const ERROR_BLUR = 2;
 
-/** The demo's questions (their titles). */
 export const DIRECTION = 'What should the agent build next?';
 export const SIGNALS = 'What should every progress update include?';
 export const TIMING = 'When should work begin?';
 
-/** A curve's timings, `tempo` times slower (AnimateUIProvider's tempo). */
 export const atTempo = (curve: CurveOptions, tempo: number): CurveOptions => ({
   ...curve,
   duration: curve.duration * tempo,
 });
 
-/** `cubic-bezier(…)` as a Web Animation's timing reports it. */
 export const easingOf = ({ ease }: CurveOptions) =>
   `cubic-bezier(${ease.join(', ')})`;
 
-/* What a questionnaire draws ------------------------------------------------ */
-
-/** A Web Animation (not a CSS transition) on an element. */
 export type Anim = {
   properties: string[];
   duration: number;
   delay: number;
   easing: string;
   fill: string;
-  /** Its time on this frame (ms, its delay included). */
   currentTime: number | null;
-  /** Its keyframes' values (the properties this suite looks at). */
   keyframes: Record<string, string>[];
 };
 
-/** A rolling number's pseudo-element (`::before` or `::after`). */
 export type PseudoFrame = {
-  /** The number it draws. */
   value: string;
-  /** Its alternative text (`content: … / ""`), if it has one. */
   alt: string | null;
   o: number;
-  /** Its translate along y, in px. */
   ty: number;
   blur: number;
 };
 
-/** A number of a Progress's label (the drop-in's rolling count). */
 export type CountFrame = {
-  /** Its own text (what's read and copied). */
   text: string;
   from: string | null;
   to: string | null;
-  /** The number it's held at (a question leaving). */
   hold: string | null;
-  /** Its own text is painted (else only its pseudo-elements are). */
   filled: boolean;
   before: PseudoFrame | null;
   after: PseudoFrame | null;
-  /** Its pseudo-elements' animations running. */
   rolling: number;
 };
 
-/** What a number shows on screen: its text, or what its pseudo-elements draw. */
 export const paintedOf = (count: CountFrame) =>
   count.filled
     ? [count.text]
@@ -159,7 +88,6 @@ export const paintedOf = (count: CountFrame) =>
         .filter((p): p is PseudoFrame => !!p && p.o > 0.02)
         .map((p) => p.value);
 
-/** A question on screen (displayed), in the form's pixels. */
 export type ItemFrame = {
   legend: string;
   active: boolean;
@@ -168,23 +96,17 @@ export type ItemFrame = {
   y: number;
   w: number;
   h: number;
-  /** Its opacity (computed). */
   o: number;
-  /** Its blur, in px. */
   blur: number;
-  /** Its translate, in px. */
   tx: number;
   ty: number;
   position: string;
   inert: boolean;
-  /** The pinning styles it wears inline. */
   pinned: string[];
   animations: Anim[];
-  /** The numbers of a Progress in it (shadcn/ui's card and dialog). */
   counts: CountFrame[];
 };
 
-/** Previous, Skip, Next or Submit. */
 export type ActionFrame = {
   slot: string;
   displayed: boolean;
@@ -199,15 +121,12 @@ export type ActionFrame = {
   animations: Anim[];
 };
 
-/** A question's error. */
 export type ErrorFrame = {
   legend: string;
   displayed: boolean;
   invalid: boolean;
-  /** Its top, in the form's pixels. */
   y: number;
   h: number;
-  /** Its margin-top, in px. */
   mt: number;
   o: number;
   blur: number;
@@ -215,53 +134,35 @@ export type ErrorFrame = {
   animations: Anim[];
 };
 
-/** A choice of a question on screen. */
 export type ChoiceFrame = {
   legend: string;
   name: string;
   type: string | null;
   checked: boolean;
-  /** A radio's dot. */
   dot: { display: string; scale: number; o: number } | null;
-  /** A checkbox's check (its first shape's dash and opacity). */
   check: { display: string; o: number; dash: number } | null;
-  /** The indicator's background. */
   bg: string | null;
 };
 
 export type Drawn = {
   formH: number;
-  /** The questions on screen. */
   items: ItemFrame[];
   actions: ActionFrame[];
   errors: ErrorFrame[];
   choices: ChoiceFrame[];
   progress: {
-    /** What reads on screen ("Question 2 of 3"). */
     text: string;
     valuetext: string | null;
-    /**
-     * Each number's position (2.5: halfway from 2 to 3): rolling, the eased
-     * progress of the new value's pseudo-element coming in.
-     */
     rolls: number[];
-    /** Its numbers are the drop-in's rolling counts. */
     counts: boolean;
-    /** Those numbers, as drawn. */
     numbers: CountFrame[];
   } | null;
-  /** The element after the questions (the demo's actions row). */
   below: { y: number; h: number } | null;
-  /** What has the focus: `item:<legend>`, `choice:<name>`, a slot. */
   focus: string | null;
 };
 
 export type Frame = Drawn & { t: number };
 
-/**
- * In the page (serialised): what the questionnaire `form` draws now, in its
- * pixels. Its own parts only (not a nested questionnaire's).
- */
 function readQuestionnaire(form: Element | null) {
   if (!form) return null;
   const origin = form.getBoundingClientRect();
@@ -336,8 +237,6 @@ function readQuestionnaire(form: Element | null) {
           ),
         };
       });
-  // A rolling number's pseudo-element: its content (`"2"`, or `"2" / ""`
-  // with an empty alternative text), opacity, slide and blur.
   const pseudoOf = (el: Element, which: string) => {
     const style = getComputedStyle(el, which);
     if (!style.content || /^(none|normal)$/.test(style.content)) return null;
@@ -494,8 +393,6 @@ function readQuestionnaire(form: Element | null) {
       }),
   );
 
-  // What the progress reads: its text (the numbers' own text, kept while
-  // they roll), and where each number is in its roll.
   const bar = [...form.querySelectorAll('[role="progressbar"]')].find(own);
   let progress = null;
   if (bar) {
@@ -508,7 +405,6 @@ function readQuestionnaire(form: Element | null) {
       const value = Number(count.textContent);
       const from = count.getAttribute('data-animate-ui-from');
       if (from === null) return value;
-      // A pseudo-element's animations are its element's subtree's.
       const coming = count
         .getAnimations({ subtree: true })
         .find((a) => (a.effect as KeyframeEffect).pseudoElement === '::after');
@@ -553,21 +449,13 @@ function readQuestionnaire(form: Element | null) {
 }
 const READ = readQuestionnaire.toString();
 
-/**
- * When a recording's time 0 is: the first frame showing the change (after a
- * frame that didn't).
- */
 export type Origin =
-  /** The question (its title) becomes the active one. */
   | { active: string }
-  /** The choice (its label) becomes checked, or unchecked. */
   | { checked: string }
   | { unchecked: string }
-  /** The question's error shows, or goes. */
   | { invalid: string }
   | { valid: string };
 
-/** In the page (serialised): whether `drawn` shows `origin`. */
 function reachedOrigin(drawn: Drawn | null, origin: Origin) {
   if (!drawn) return false;
   if ('active' in origin)
@@ -582,7 +470,6 @@ function reachedOrigin(drawn: Drawn | null, origin: Origin) {
 }
 const REACHED = reachedOrigin.toString();
 
-/** What the questionnaire `form` (a selector) draws now. */
 export const drawnNow = (page: Page, form: string) =>
   page.evaluate(
     ({ read, form }) =>
@@ -594,13 +481,6 @@ export const drawnNow = (page: Page, form: string) =>
     { read: READ, form },
   );
 
-/**
- * Records, on every frame (on the frames' own times), what the
- * questionnaire `form` draws while `act` runs, until `ms` after `origin`
- * shows. Times are relative to the first frame showing it after one that
- * didn't (earlier frames are negative). The frames so far are
- * `window.__frames`.
- */
 export async function record(
   page: Page,
   form: string,
@@ -624,8 +504,6 @@ export async function record(
       };
       const frames: { t: number }[] = (w.__frames = []);
       w.__hook = undefined;
-      // `act` waits for two frames to be recorded: what was on screen before
-      // it, whatever a busy machine does to the first frame's time.
       let started: () => void;
       const ready = new Promise<void>((resolve) => (started = resolve));
       w.__recording = new Promise((resolve) => {
@@ -641,9 +519,6 @@ export async function record(
           if (frames.length === 2) started();
           const done = at === null ? now - start > 30_000 : now - at > ms;
           if (!done) {
-            // A press waiting for its frame (`pressWhen`): in a callback of
-            // its own, as the next frame begins, before it's read (input
-            // dispatched as a frame begins, as Chromium does).
             if (w.__hook)
               requestAnimationFrame(() => {
                 if (w.__hook?.(frames as unknown as Drawn[]))
@@ -668,16 +543,8 @@ export async function record(
   )) as Frame[];
 }
 
-/** What `clickWhen` clicks: a button (its slot), or a choice (its label). */
 type Target = { slot: string } | { choice: string };
 
-/**
- * From the page itself, once a frame `record` is taking shows `when` (the
- * source of a `(drawn) => boolean`, in the page), clicks `target` in the
- * questionnaire `form` as the next frame begins, before it's read (as
- * Chromium dispatches input), and notes that frame's index (`window.__at`):
- * the first drawn after the click.
- */
 const clickWhen = (page: Page, form: string, when: string, target: Target) =>
   page.evaluate(
     ({ form, when, target }) => {
@@ -691,7 +558,6 @@ const clickWhen = (page: Page, form: string, when: string, target: Target) =>
       const root = document.querySelector(form)!;
       const own = (el: Element) =>
         el.closest('[data-animate-ui-questionnaire]') === root;
-      // Found as it's clicked: a choice of the question shown then.
       const find = () =>
         'slot' in target
           ? [
@@ -734,11 +600,6 @@ const clickWhen = (page: Page, form: string, when: string, target: Target) =>
     { form, when, target },
   );
 
-/**
- * Once a frame `record` is taking shows `when`, presses the button `slot`
- * (`previous`, `skip`, `next`, `submit`) of the questionnaire `form`
- * (`clickWhen`).
- */
 export const pressWhen = (
   page: Page,
   form: string,
@@ -746,10 +607,6 @@ export const pressWhen = (
   slot: string,
 ) => clickWhen(page, form, when, { slot });
 
-/**
- * Once a frame `record` is taking shows `when`, picks the choice `name` of
- * the question shown then (`clickWhen`).
- */
 export const pickWhen = (
   page: Page,
   form: string,
@@ -760,10 +617,6 @@ export const pickWhen = (
 export const pressedAt = (page: Page) =>
   page.evaluate(() => (window as unknown as { __at: number }).__at);
 
-/**
- * Clicks the button `slot` of the questionnaire `form` from the page itself:
- * no pointer, no waiting for it to hold still.
- */
 export const press = (page: Page, form: string, slot: string) =>
   page.evaluate(
     ({ form, slot }) => {
@@ -779,11 +632,6 @@ export const press = (page: Page, form: string, slot: string) =>
     { form, slot },
   );
 
-/**
- * Picks (or unpicks) the choice `name` of the question shown in the
- * questionnaire `form`, from the page itself: a click on its input (which
- * covers the label).
- */
 export const pick = (page: Page, form: string, name: string) =>
   page.evaluate(
     ({ form, name }) => {
@@ -805,7 +653,6 @@ export const pick = (page: Page, form: string, name: string) =>
     { form, name },
   );
 
-/** Resolves after `count` frames. */
 export const nextFrames = (page: Page, count: number) =>
   page.evaluate(
     (count) =>
@@ -818,11 +665,6 @@ export const nextFrames = (page: Page, count: number) =>
     count,
   );
 
-/**
- * Waits for the questionnaire `form` to rest: one question shown, no Web
- * Animation running in it, no choice indicator or progress digit on its
- * way; then a few frames.
- */
 export async function settle(page: Page, form: string) {
   await page.waitForFunction(
     (form) => {
@@ -840,9 +682,6 @@ export async function settle(page: Page, form: string) {
             !('transitionProperty' in animation) &&
             animation.playState !== 'finished',
         );
-      // Motion's own (the dots and checks): held shown while they leave,
-      // an inline opacity while they come in (one gone keeps its own, out
-      // of sight).
       const indicators = [
         ...root.querySelectorAll<HTMLElement | SVGElement>(
           '[data-slot^="questionnaire-choice-indicator-"], [data-slot="questionnaire-choice-indicator-check"] *',
@@ -852,7 +691,6 @@ export async function settle(page: Page, form: string) {
           el.style.display === '' &&
           (el.style.opacity === '' || el.getClientRects().length === 0),
       );
-      // The numbers are at rest (not rolling).
       const digits = !root.querySelector('[data-animate-ui-from]');
       return shownItems.length === 1 && !animating && indicators && digits;
     },
@@ -862,11 +700,6 @@ export async function settle(page: Page, form: string) {
   await nextFrames(page, 3);
 }
 
-/**
- * Waits until React has hydrated every questionnaire (in dev, `networkidle`
- * can come before hydration, and a click then does nothing) and each Root
- * is ready (painted: changes animate from then on).
- */
 export async function waitForQuestionnaires(page: Page) {
   await page.waitForFunction(() => {
     const forms = [
@@ -890,37 +723,27 @@ export async function gotoQuestionnaire(page: Page, url: string) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await waitForQuestionnaires(page);
   await page.mouse.move(0, 0);
-  // Past the page's own start (a busy dev server's), so the first change's
-  // frames aren't held up by it.
   await page.waitForTimeout(250);
 }
 
-/* Reading the frames --------------------------------------------------------- */
-
-/** The question `legend` on screen in frame `f`, if it is. */
 export const itemIn = (f: Drawn, legend: string) =>
   f.items.find((i) => i.legend === legend);
 
-/** The frames where the question `legend` is on screen, from `from` (ms) on. */
 export const itemFrames = (frames: Frame[], legend: string, from = 0) =>
   frames.flatMap((f) => {
     const item = f.t >= from ? itemIn(f, legend) : undefined;
     return item ? [{ ...item, t: f.t }] : [];
   });
 
-/** The button `slot` in frame `f`. */
 export const actionIn = (f: Drawn, slot: string) =>
   f.actions.find((a) => a.slot === slot)!;
 
-/** The question in the flow in frame `f` (not pinned over it). */
 export const inFlow = (f: Drawn) =>
   f.items.filter((i) => i.position !== 'absolute');
 
-/** The animation of `animations` that animates `property`. */
 export const animating = (animations: Anim[], property: string) =>
   animations.find((a) => a.properties.includes(property));
 
-/** The first Web Animation the frames show animating `property` on `pick`. */
 export function firstAnimation<T extends { animations: Anim[] }>(
   frames: Frame[],
   pick: (f: Frame) => T | undefined,
@@ -933,17 +756,14 @@ export function firstAnimation<T extends { animations: Anim[] }>(
   return undefined;
 }
 
-/** A length keyframe (`-24px`, `24px 0px`, `blur(5px)`) as a number. */
 export const pxOf = (value: string | undefined) =>
   parseFloat(value?.replace(/^blur\(/, '') ?? 'NaN');
 
-/** Where `curve` has gone (0 to 1) `time` ms into an animation on it. */
 export function curveAt(curve: CurveOptions, time: number, delay = 0) {
   const progress = Math.min(1, Math.max(0, (time - delay) / curve.duration));
   return cubicBezier(...curve.ease)(progress);
 }
 
-/** The steepest `curve` gets (its progress per unit of its own time). */
 export function steepestOf(curve: CurveOptions) {
   const ease = cubicBezier(...curve.ease);
   let steepest = 0;
@@ -955,7 +775,6 @@ export function steepestOf(curve: CurveOptions) {
   return steepest;
 }
 
-/** Expects a Web Animation's timing to be `curve`'s, after `delay`. */
 export function expectTiming(
   animation: Anim | undefined,
   curve: CurveOptions,
@@ -967,10 +786,6 @@ export function expectTiming(
   expect(animation!.easing, 'its curve').toBe(easingOf(curve));
 }
 
-/**
- * Expects `samples` (a value read on a frame, and the time its animation was
- * at then) to sit on `curve` from `from` to `to`, after `delay`.
- */
 export function expectOnCurve(
   samples: { time: number | null; value: number }[],
   curve: CurveOptions,
@@ -989,7 +804,6 @@ export function expectOnCurve(
   }
 }
 
-/** Expects `values` never to go back (`sign` 1: up, -1: down). */
 export function expectMonotonic(values: number[], sign: 1 | -1, label = '') {
   for (let i = 1; i < values.length; i++)
     expect(
@@ -998,35 +812,18 @@ export function expectMonotonic(values: number[], sign: 1 | -1, label = '') {
     ).toBeGreaterThanOrEqual(-1e-3);
 }
 
-/* A step changing ------------------------------------------------------------ */
-
 type StepOptions = {
-  /** The question leaving, and the next one (their titles). */
   from: string;
   to: string;
-  /**
-   * 1: the leaving question slides to the left, the next one comes in from
-   * the right (going on, left to right); -1: the other way (going back, or
-   * going on right to left).
-   */
   way: 1 | -1;
-  /** The tokens (paced by a tempo). */
   out?: CurveOptions;
   into?: CurveOptions;
 };
 
-/**
- * One step to the next: the leaving question pinned over the next one (out
- * of the flow, inert, where the next one is), sliding `SHIFT` away (`way`)
- * into the blur as it fades out on `out`; once it has gone, the next one in
- * from the other side, out of the blur, on `into`; one question in the flow
- * on every frame; at rest on the next one.
- */
 export function expectStep(
   frames: Frame[],
   { from, to, way, out = STEP_OUT, into = STEP_IN }: StepOptions,
 ) {
-  // One question in the flow on every frame, two on screen at most.
   for (const f of frames) {
     const when = `${Math.round(f.t)}ms`;
     expect(inFlow(f), when).toHaveLength(1);
@@ -1037,8 +834,6 @@ export function expectStep(
   for (const f of frames.filter((f) => f.t >= 0))
     expect(inFlow(f)[0]!.legend, `${Math.round(f.t)}ms`).toBe(to);
 
-  // The leaving one: shown again, pinned over the next one, out of reach,
-  // exactly (not at a box rounded to whole pixels).
   const leaving = itemFrames(frames, from);
   expect(leaving.length, `${from} shows as it leaves`).toBeGreaterThan(2);
   for (const f of frames.filter((f) => f.t >= 0)) {
@@ -1056,8 +851,6 @@ export function expectStep(
     ).toBeLessThan(EXACT);
     expect(Math.abs(left.w - next.w), `${when}: its width`).toBeLessThan(EXACT);
   }
-  // Toward the start (going on) into the blur, as it fades out, all on one
-  // curve.
   const exit = firstAnimation(frames, (f) => itemIn(f, from), 'opacity');
   expectTiming(exit, out);
   expect(exit!.keyframes[0]).toMatchObject({ opacity: '1' });
@@ -1102,7 +895,6 @@ export function expectStep(
     1,
     0,
   );
-  // On the frames' clock too, from the last frame before the change.
   const last = frames.filter((f) => f.t < 0).at(-1)!;
   expectCurvePace(
     [
@@ -1113,9 +905,6 @@ export function expectStep(
     { from: 1, to: 0, a: 0.8, b: 0.2 },
   );
 
-  // The next one: on screen (and focusable) from the change on, out of
-  // sight until the leaving one has gone, then from the other side, out of
-  // the blur.
   const coming = itemFrames(frames, to);
   const enter = firstAnimation(frames, (f) => itemIn(f, to), 'opacity');
   expectTiming(enter, into, out.duration);
@@ -1174,7 +963,6 @@ export function expectStep(
     into,
     { from: 0, to: 1, a: 0.2, b: 0.8 },
   );
-  // One after the other: never both seen.
   for (const f of frames) {
     const [a, b] = [itemIn(f, from), itemIn(f, to)];
     if (a && b)
@@ -1184,7 +972,6 @@ export function expectStep(
       ).toBeLessThan(0.02);
   }
 
-  // At rest: the next one alone, shown, still.
   const end = frames.at(-1)!;
   expect(end.items).toHaveLength(1);
   expect(end.items[0]).toMatchObject({
@@ -1199,21 +986,8 @@ export function expectStep(
   expect(end.items[0]!.animations).toEqual([]);
 }
 
-/**
- * How far (px) heights and boxes may be from the exact ones they stand for:
- * a question's height is read unrounded (as drawn, a glide's included), and
- * a leaving question or button is pinned at its unrounded box, so they match
- * within float noise (whole pixels, `offsetHeight` and friends, were up to
- * half a pixel off).
- */
 export const EXACT = 0.02;
 
-/**
- * The next question's height holds the leaving one's (`before`) until that
- * one has gone (`delay`: the exit, `transition.panelOut`), so what's below
- * never moves over it; then glides to its own (`after`) on `height`, never
- * past it, and what's below follows it exactly, continuously.
- */
 export function expectHeightGlide(
   frames: Frame[],
   {
@@ -1227,7 +1001,6 @@ export function expectHeightGlide(
     before: number;
     after: number;
     height?: CurveOptions;
-    /** How long the leaving one takes to go (ms): the glide waits for it. */
     delay?: number;
   },
 ) {
@@ -1247,8 +1020,6 @@ export function expectHeightGlide(
   expect(
     Math.abs(pxOf(glide!.keyframes.at(-1)!.minHeight) - after),
   ).toBeLessThanOrEqual(EXACT);
-  // Held at the leaving one's height while it goes, then on the curve, on
-  // the glide's own clock.
   const timed = coming.map((p) => ({
     p,
     time: animating(p.animations, 'minHeight')?.currentTime ?? null,
@@ -1269,7 +1040,6 @@ export function expectHeightGlide(
     after,
     { delay },
   );
-  // Nothing below moves while the leaving one is seen.
   for (const f of frames.filter((f) => f.t >= 0)) {
     const item = itemIn(f, to);
     if (!item || Math.abs(item.h - before) <= EXACT) continue;
@@ -1305,8 +1075,6 @@ export function expectHeightGlide(
     },
   );
   expect(coming.at(-1)!.animations, 'at rest').toEqual([]);
-  // What's below sits right under the question in the flow on every frame,
-  // moving with its height, continuously.
   const gap = (f: Frame) => {
     const item = inFlow(f)[0]!;
     return f.below!.y - (item.y + item.h);
@@ -1329,11 +1097,6 @@ export function expectHeightGlide(
   }
 }
 
-/**
- * The next question takes over at the leaving one's exact height (`before`)
- * and comes to rest on its own (`after`) without a jump: what's below only
- * ever moves one way.
- */
 export function expectExactHeights(
   frames: Frame[],
   {
@@ -1345,8 +1108,6 @@ export function expectExactHeights(
 ) {
   const coming = itemFrames(frames, to);
   const sign = Math.sign(after - before) as 1 | -1;
-  // The glide's ends are the exact heights, never the half pixel a rounded
-  // height (offsetHeight) was off by.
   const glide = firstAnimation(frames, (f) => itemIn(f, to), 'minHeight');
   expect(glide, 'a height glide').toBeDefined();
   expect(
@@ -1357,11 +1118,6 @@ export function expectExactHeights(
     Math.abs(pxOf(glide!.keyframes.at(-1)!.minHeight) - after),
     `it ends at ${glide!.keyframes.at(-1)!.minHeight} (its own: ${after}px)`,
   ).toBeLessThan(0.01);
-  // Every frame, the first included, where the curve has it then (on the
-  // glide's own clock, whatever a loaded machine does to the frames): the
-  // leaving one's exact height while it goes, its own once at rest. Within
-  // layout's unit (a 64th of a pixel, heights snap to it), and half a
-  // millisecond of the clock (its precision) at the curve's pace then.
   const at = (time: number) =>
     before + (after - before) * curveAt(STEP_HEIGHT, time, delay);
   for (const p of coming) {
@@ -1387,12 +1143,6 @@ export function expectExactHeights(
   expect(coming.at(-1)!.h).toBeCloseTo(after, 2);
 }
 
-/**
- * Between consecutive frames, no question on screen in both jumps: its
- * opacity and slide move at most as fast as the step's curves do (a jump
- * covers the whole way at once; a slow frame on a loaded machine covers
- * more ground, so each step is weighed by the time it took).
- */
 export function expectNoJumps(frames: Frame[]) {
   for (let i = 1; i < frames.length; i++) {
     const [a, b] = [frames[i - 1]!, frames[i]!];
@@ -1413,13 +1163,6 @@ export function expectNoJumps(frames: Frame[]) {
   }
 }
 
-/**
- * The question in the flow, and what's below it, never jump: between frames
- * what's below moves at most as fast as a step's height glide or an error
- * unfolding could take it over the whole way it goes (a jump covers it at
- * once), and a height glide that ends lands where the question rests (one
- * left holding it snapped it as it ended).
- */
 export function expectSteadyHeight(frames: Frame[]) {
   const ys = frames.map((f) => f.below!.y);
   const range = Math.max(...ys) - Math.min(...ys);
@@ -1450,10 +1193,6 @@ export function expectSteadyHeight(frames: Frame[]) {
   }
 }
 
-/**
- * At rest on `legend`: it alone on screen, still; the others hidden again
- * (the library's `hidden`), unpinned, still.
- */
 export async function expectRestingOn(
   page: Page,
   form: string,
@@ -1507,11 +1246,6 @@ export async function expectRestingOn(
     });
 }
 
-/**
- * The error of the question `legend` unfolds (`exact`: the question ends
- * where the error does on every frame, growing with it; else it never cuts
- * it), to its full height, shown, sharp.
- */
 export function expectErrorShows(
   frames: Frame[],
   legend: string,
@@ -1543,13 +1277,6 @@ export function expectErrorShows(
   });
 }
 
-/**
- * The progress's number `index` rolls from `from` to `to` as drawn: at rest,
- * its own text painted and no pseudo-element; rolling, its own text not
- * painted (it stays the number, read and copied), the old number drawn by
- * `::before` fading out as the new one, by `::after`, fades in (their
- * opacities summing to 1), neither read (an empty alternative text).
- */
 export function expectRollPainted(
   frames: Frame[],
   index: number,
@@ -1604,12 +1331,6 @@ export function expectRollPainted(
   expect(numbers.at(-1)!.from, 'at rest at the end').toBeNull();
 }
 
-/**
- * Snapshots the progressbar of the questionnaire `form` (its accessibility
- * tree) while its numbers roll, after `act`: it reads its own text only,
- * never the numbers drawn on the way. Taken again (after `again`) until
- * one is taken mid-roll on a busy machine.
- */
 export async function expectRollReadAs(
   page: Page,
   form: string,
@@ -1640,12 +1361,6 @@ export async function expectRollReadAs(
   throw new Error('No snapshot taken mid-roll');
 }
 
-/* The demo ------------------------------------------------------------------- */
-
-/**
- * Holds the pointer down on the choice `label` for `ms`, sampling its scale
- * (its transform) on every frame, then lets go and samples on.
- */
 async function pressChoice(page: Page, form: string, label: string, ms = 250) {
   const choice = page.locator(form).locator('label', { hasText: label });
   const box = (await choice.boundingBox())!;
@@ -1682,11 +1397,9 @@ async function pressChoice(page: Page, form: string, label: string, ms = 250) {
 export function describeQuestionnaire(library: string) {
   const url = `/tests/demos/${library}/questionnaire`;
   const form = FORM;
-  /** The source of a frame test: `legend` alone on screen, still. */
   const restingOn = (legend: string) =>
     `(d) => d.items.length === 1 && d.items[0].legend === ${JSON.stringify(legend)} && d.items[0].animations.length === 0`;
 
-  /** On step 2 ("signals"), at rest: "Approval checkpoints" picked first. */
   const toSignals = async (page: Page) => {
     await pick(page, form, 'Approval checkpoints');
     await press(page, form, 'next');
@@ -1709,11 +1422,8 @@ export function describeQuestionnaire(library: string) {
       );
       expect(scales[0], 'at rest').toBe(1);
       const down = scales.slice(0, held);
-      // Down to 0.985 (a spring: within a hair, maybe a touch past), not
-      // the buttons' 0.97.
       expect(Math.min(...down)).toBeGreaterThan(0.981);
       expect(Math.abs(down.at(-1)! - 0.985)).toBeLessThan(0.0015);
-      // Through frames in between: it moves, it doesn't jump.
       expect(
         down.filter((v) => v < 0.998 && v > 0.988).length,
       ).toBeGreaterThanOrEqual(1);
@@ -1745,7 +1455,6 @@ export function describeQuestionnaire(library: string) {
         page.locator(form).locator('[data-slot="questionnaire-next"]').click(),
       );
       expectStep(frames, { from: DIRECTION, to: SIGNALS, way: 1 });
-      // The focus is the next question's from the change on, all the way.
       for (const f of frames.filter((f) => f.t >= 0))
         expect(f.focus, `${Math.round(f.t)}ms`).toBe(`item:${SIGNALS}`);
       await settle(page, form);
@@ -1785,7 +1494,6 @@ export function describeQuestionnaire(library: string) {
       const after = itemIn(await drawnNow(page, form), DIRECTION)!.h;
       expectHeightGlide(frames, { to: DIRECTION, before, after });
       await expectRestingOn(page, form, DIRECTION);
-      // The answer given is still there.
       expect(
         (await drawnNow(page, form)).choices.find(
           (c) => c.name === 'Approval checkpoints',
@@ -1797,7 +1505,6 @@ export function describeQuestionnaire(library: string) {
     test("the next question takes over at the leaving one's exact height and comes to rest on its own exactly: what's below never jumps, even by a fraction of a pixel", async ({
       page,
     }) => {
-      // The first question isn't a whole number of pixels tall (301.5px).
       await pick(page, form, 'Approval checkpoints');
       await settle(page, form);
       const first = itemIn(await drawnNow(page, form), DIRECTION)!.h;
@@ -1825,15 +1532,12 @@ export function describeQuestionnaire(library: string) {
       await expect(
         page.locator(form).locator('input[value="approvals"]'),
       ).toBeFocused();
-      // Time 0: back on the first question (whatever the keys take to get
-      // there on a busy machine).
       const frames = await record(
         page,
         form,
         { active: DIRECTION },
         async () => {
           await page.keyboard.press('Enter');
-          // On its way in (drawn at least once): back.
           await page.waitForFunction(
             (legend) =>
               (window as unknown as { __frames: Drawn[] }).__frames.some((f) =>
@@ -1849,8 +1553,6 @@ export function describeQuestionnaire(library: string) {
       const back = frames.findIndex((f) => f.t >= 0);
       expect(on, 'on to the next question').toBeGreaterThan(0);
       expect(back, 'back to the first question').toBeGreaterThan(on);
-      // Going on as a click does: the first question leaving, pinned over
-      // the next one.
       for (const f of frames.slice(on, back)) {
         expect(inFlow(f)[0]!.legend, `${Math.round(f.t)}ms`).toBe(SIGNALS);
         const leaving = itemIn(f, DIRECTION);
@@ -1860,7 +1562,6 @@ export function describeQuestionnaire(library: string) {
             inert: true,
           });
       }
-      // On the way: the next question was still coming in.
       const before = frames[back - 1]!;
       expect(
         itemIn(before, SIGNALS)!.animations.some(
@@ -1868,8 +1569,6 @@ export function describeQuestionnaire(library: string) {
         ),
         `${Math.round(before.t)}ms: still coming in`,
       ).toBe(true);
-      // The focus: the next question from the change on, then the previous
-      // one once back, never anywhere else.
       for (const f of frames.slice(on, back))
         expect(f.focus, `${Math.round(f.t)}ms`).toBe(`item:${SIGNALS}`);
       for (const f of frames.slice(back))
@@ -1878,8 +1577,6 @@ export function describeQuestionnaire(library: string) {
         expect(inFlow(f), `${Math.round(f.t)}ms`).toHaveLength(1);
       await settle(page, form);
       await expectRestingOn(page, form, DIRECTION);
-      // Neither question jumps on the way: the one leaving goes on from its
-      // look, never drawn as at rest on the frame its exit starts in.
       expectNoJumps(frames);
     });
 
@@ -1907,19 +1604,15 @@ export function describeQuestionnaire(library: string) {
       expect(at, 'Previous pressed').toBeGreaterThan(0);
       const was = itemIn(frames[at - 1]!, DIRECTION)!;
       expect(was.position, 'leaving when Previous is pressed').toBe('absolute');
-      // Back from where it is: active, in the flow again, on to rest.
       const now = itemIn(frames[at]!, DIRECTION)!;
       expect(now).toMatchObject({ active: true, position: 'static' });
       const comeback = animating(now.animations, 'opacity')!;
       expectTiming(comeback, STEP_IN);
-      // (A frame on: as far as the step's curves go in that time.)
       const dt = frames[at]!.t - frames[at - 1]!.t;
       expect(
         Math.abs(Number(comeback.keyframes[0]!.opacity) - was.o),
         'from where it was',
       ).toBeLessThan(0.0125 * dt + 0.02);
-      // (Pressed as that frame began: from its look then, a frame on from
-      // the last one read.)
       const back = itemFrames(frames.slice(at), DIRECTION);
       expect(Number(comeback.keyframes[0]!.opacity)).toBeCloseTo(back[0]!.o, 2);
       expectMonotonic(
@@ -1937,7 +1630,6 @@ export function describeQuestionnaire(library: string) {
         -1,
         'its blur',
       );
-      // The height: from where it was (barely started), back to its own.
       const heights = frames.map((f) => inFlow(f)[0]!.h);
       for (let i = 1; i < heights.length; i++)
         expect(
@@ -1947,8 +1639,6 @@ export function describeQuestionnaire(library: string) {
       expect(itemIn(frames.at(-1)!, SIGNALS)).toBeUndefined();
       await settle(page, form);
       await expectRestingOn(page, form, DIRECTION);
-      // The next one never showed (it hadn't started coming in), not even
-      // on the frame Previous was pressed in.
       for (const f of frames)
         expect(
           itemIn(f, SIGNALS)?.o ?? 0,
@@ -1981,15 +1671,11 @@ export function describeQuestionnaire(library: string) {
       expect(at, 'Previous pressed').toBeGreaterThan(0);
       const was = itemIn(frames[at - 1]!, SIGNALS)!;
       expect(itemIn(frames[at]!, DIRECTION)?.active).toBe(true);
-      // It leaves from where it is (its look as Previous is pressed), on
-      // what's left of the exit: fading on, sliding back toward the end
-      // (where it came from), pinned over the previous one.
       const exit = animating(
         itemIn(frames[at]!, SIGNALS)!.animations,
         'opacity',
       )!;
       const from = Number(exit.keyframes[0]!.opacity);
-      // (A frame on: as far as the step's curves go in that time.)
       const dt = frames[at]!.t - frames[at - 1]!.t;
       expect(Math.abs(from - was.o), 'from where it was').toBeLessThan(
         0.0125 * dt + 0.02,
@@ -2020,7 +1706,6 @@ export function describeQuestionnaire(library: string) {
         expect(p.position).toBe('absolute');
         expect(p.tx).toBeLessThanOrEqual(SHIFT + 0.01);
       }
-      // Then the previous one, from the start, once it has gone.
       const enter = animating(
         itemIn(frames[at]!, DIRECTION)!.animations,
         'opacity',
@@ -2039,8 +1724,6 @@ export function describeQuestionnaire(library: string) {
       );
       await settle(page, form);
       await expectRestingOn(page, form, DIRECTION);
-      // No jump on the frame Previous was pressed in: the leaving one drawn
-      // where it was, not as at rest.
       const pressed = itemIn(frames[at]!, SIGNALS)!;
       expect(
         Math.abs(pressed.o - was.o),
@@ -2109,7 +1792,6 @@ export function describeQuestionnaire(library: string) {
         .filter((f) => f.t >= 0)
         .map((f) => ({ t: f.t, ...choice(f) }));
       for (const c of shown) expect(c.dot!.display).toBe('block');
-      // From nothing, past its size (the spring's overshoot), to rest.
       expect(shown[0]!.dot!.scale).toBeLessThan(0.35);
       const peak = Math.max(...shown.map((c) => c.dot!.scale));
       expect(peak).toBeGreaterThan(1 + overshootOf(DOT) * 0.6);
@@ -2123,8 +1805,6 @@ export function describeQuestionnaire(library: string) {
         { from: 0, to: 1, a: 0.2, b: 0.8 },
       );
       expect(shown.at(-1)!.dot).toEqual({ display: 'block', scale: 1, o: 1 });
-      // The indicator's background: from its first change to its final
-      // color, 200ms give or take a frame.
       const colors = frames.map((f) => choice(f).bg);
       expect(new Set(colors).size).toBeGreaterThan(3);
       const changed = frames.find((f) => choice(f).bg !== colors[0])!;
@@ -2132,8 +1812,6 @@ export function describeQuestionnaire(library: string) {
       expect(reached.t - changed.t).toBeGreaterThan(120);
       expect(reached.t - changed.t).toBeLessThan(COLOR.duration + 80);
 
-      // Another answer: this dot springs back out (past nothing, the
-      // spring's mirror), held shown until it has gone.
       const left = await record(page, form, { unchecked: name }, () =>
         pick(page, form, 'Tool call timeline'),
       );
@@ -2165,8 +1843,6 @@ export function describeQuestionnaire(library: string) {
         .filter((f) => f.t >= 0)
         .map((f) => ({ t: f.t, ...choice(f).check! }));
       for (const c of drawn) expect(c.display).toBe('block');
-      // Nothing for 200ms (give or take a frame), then drawn, its stroke and
-      // its opacity together, on transition.check.
       for (const c of drawn.filter((c) => c.t < CHECK_DELAY - 25))
         expect(c.o, `${Math.round(c.t)}ms`).toBeLessThan(0.02);
       const drawing = drawn.filter((c) => c.dash > 0.05 && c.dash < 0.95);
@@ -2188,8 +1864,6 @@ export function describeQuestionnaire(library: string) {
       const going = erased
         .filter((f) => f.t >= 0)
         .map((f) => ({ t: f.t, ...choice(f).check! }));
-      // Held shown while it erases (at once, on transition.uncheck), then
-      // hidden.
       const shown = going.filter((c) => c.display === 'block');
       expect(shown.length).toBeGreaterThan(3);
       expect(shown.some((c) => c.dash > 0.1 && c.dash < 0.9)).toBe(true);
@@ -2216,8 +1890,6 @@ export function describeQuestionnaire(library: string) {
       page,
     }) => {
       await toSignals(page);
-      // Past the step's height glide, and the time it follows its content
-      // after it (the next test presses right as it has arrived).
       await page.waitForTimeout(1000);
       const before = itemIn(await drawnNow(page, form), SIGNALS)!.h;
       const frames = await record(page, form, { invalid: SIGNALS }, () =>
@@ -2235,8 +1907,6 @@ export function describeQuestionnaire(library: string) {
         text: 'Choose an answer or skip this question.',
       });
       expect(open.h).toBeGreaterThan(10);
-      // Folded: no height, and the gap above it taken back (the question's
-      // own gap: 16px).
       const gap = await page
         .locator(form)
         .locator('fieldset[data-active]')
@@ -2253,8 +1923,6 @@ export function describeQuestionnaire(library: string) {
       expect(pxOf(animation!.keyframes.at(-1)!.height)).toBeCloseTo(open.h, 1);
       expect(pxOf(animation!.keyframes.at(-1)!.marginTop)).toBe(open.mt);
       for (const e of unfolding) {
-        // One progress for all (the curve's): its height, its margin, its
-        // opacity and its blur.
         const p = e.h / open.h;
         const when = `${Math.round(e.t)}ms`;
         expect(Math.abs(e.o - p), when).toBeLessThan(0.02);
@@ -2280,8 +1948,6 @@ export function describeQuestionnaire(library: string) {
         DISCLOSURE,
         { from: 0, to: 1, a: 0.2, b: 0.8 },
       );
-      // The question grows with it, from its height, continuously: it ends
-      // where the error does.
       expectErrorShows(frames, SIGNALS);
       const heights = frames.map((f) => itemIn(f, SIGNALS)!.h);
       expect(Math.abs(heights[0]! - before)).toBeLessThan(0.01);
@@ -2297,7 +1963,6 @@ export function describeQuestionnaire(library: string) {
         );
       expect(heights.at(-1)! - before).toBeCloseTo(grows, 1);
 
-      // Answered: it folds back the same way, held shown, then hidden.
       const folding = await record(page, form, { valid: SIGNALS }, () =>
         pick(page, form, 'Decisions'),
       );
@@ -2332,9 +1997,6 @@ export function describeQuestionnaire(library: string) {
     test('an error showing as soon as the question has arrived unfolds the same: the question grows with it, never cutting it', async ({
       page,
     }) => {
-      // Next again (no answer) the frame the question's height has glided
-      // to its own: it still follows its content's size then, which mustn't
-      // hold the error's unfolding back.
       await pick(page, form, 'Approval checkpoints');
       await settle(page, form);
       const frames = await record(
@@ -2349,7 +2011,6 @@ export function describeQuestionnaire(library: string) {
       );
       expect(await pressedAt(page), 'Next pressed again').toBeGreaterThan(0);
       expectErrorShows(frames, SIGNALS);
-      // From the error showing on (itemFrames: from time 0).
       const heights = itemFrames(frames, SIGNALS).map((p) => p.h);
       expect(heights.length).toBeGreaterThan(10);
       expectMonotonic(heights, 1, "the question's height");
@@ -2388,9 +2049,6 @@ export function describeQuestionnaire(library: string) {
     test("Next pressed again the frame the next question shows, without an answer: its height holds on that frame (the leaving one's), then follows its error, never dropping", async ({
       page,
     }) => {
-      // The question's height following its error starts ahead of the
-      // frame's time: held at its height until then (else drawn at its
-      // natural height for a frame, 43px off).
       await pick(page, form, 'Approval checkpoints');
       await settle(page, form);
       const before = itemIn(await drawnNow(page, form), DIRECTION)!.h;
@@ -2429,11 +2087,6 @@ export function describeQuestionnaire(library: string) {
     test('the error answered as it unfolds, the step still settling: the question goes on from its height, never jumping as an earlier glide ends', async ({
       page,
     }) => {
-      // Next again as the first question leaves (the error unfolds, its
-      // question's height following it), then an answer as it unfolds (it
-      // folds back, the height following from where it is): an earlier
-      // glide left holding the question snapped it by the error's room
-      // (44px) as it ended.
       await pick(page, form, 'Approval checkpoints');
       await settle(page, form);
       const frames = await record(
@@ -2464,7 +2117,6 @@ export function describeQuestionnaire(library: string) {
         'the error showed',
       ).toBe(true);
       expectSteadyHeight(frames);
-      // At rest: its own height, the error gone.
       await settle(page, form);
       const end = await drawnNow(page, form);
       expect(error(end).displayed).toBe(false);
@@ -2478,7 +2130,6 @@ export function describeQuestionnaire(library: string) {
       page,
     }) => {
       await toSignals(page);
-      // Past the step's height glide and its follow.
       await page.waitForTimeout(1000);
       const frames = await record(
         page,
@@ -2502,7 +2153,6 @@ export function describeQuestionnaire(library: string) {
       const now = error(frames[at]!);
       expect(was.invalid).toBe(true);
       expect(now.invalid).toBe(false);
-      // Its fold starts from its look then (a frame on from the last read).
       const fold = animating(now.animations, 'height')!;
       expectTiming(fold, DISCLOSURE);
       const first = fold.keyframes[0]!;
@@ -2517,8 +2167,6 @@ export function describeQuestionnaire(library: string) {
         `it folds from ${first.height}, drawn at ${was.h}px`,
       ).toBeLessThan(frame);
       expect(Math.abs(Number(first.opacity) - was.o)).toBeLessThan(0.2);
-      // From the fold's own first frame on (the unfold went on until the
-      // change reached it, after the last frame read before the click).
       const going = frames
         .slice(at)
         .map(error)
@@ -2539,7 +2187,6 @@ export function describeQuestionnaire(library: string) {
         -1,
         'its opacity',
       );
-      // What's below only goes back up from the fold on.
       expectMonotonic(
         frames.slice(at).map((f) => f.below!.y),
         -1,
@@ -2557,8 +2204,6 @@ export function describeQuestionnaire(library: string) {
       const error = (f: Drawn) => f.errors.find((e) => e.legend === SIGNALS)!;
       const open = error(await drawnNow(page, form));
       expect(open).toMatchObject({ displayed: true, invalid: true, o: 1 });
-      // Answered (it folds), then unanswered again as it folds: invalid
-      // again (the library checks it again once it has failed).
       const frames = await record(
         page,
         form,
@@ -2580,8 +2225,6 @@ export function describeQuestionnaire(library: string) {
       const now = error(frames[at]!);
       expect(was).toMatchObject({ invalid: false, displayed: true });
       expect(now.invalid).toBe(true);
-      // Its unfolding starts from its look then (a frame on from the last
-      // read).
       const unfold = animating(now.animations, 'height')!;
       expectTiming(unfold, DISCLOSURE);
       const first = unfold.keyframes[0]!;
@@ -2595,7 +2238,6 @@ export function describeQuestionnaire(library: string) {
         `it unfolds from ${first.height}, drawn at ${was.h}px`,
       ).toBeLessThan(frame);
       expect(Math.abs(Number(first.opacity) - was.o)).toBeLessThan(0.2);
-      // (It folded on until then: up from the frame it turns in.)
       const coming = frames.slice(at).map(error);
       for (const e of coming) expect(e.displayed).toBe(true);
       expectMonotonic(
@@ -2637,7 +2279,6 @@ export function describeQuestionnaire(library: string) {
       const rest = frames.filter((f) => f.t < 0).at(-1)!;
       const leaving = frames.filter((f) => f.t >= 0 && itemIn(f, SIGNALS));
       expect(leaving.length, `${SIGNALS} seen leaving`).toBeGreaterThan(2);
-      // Its error folds from its full height, in the question leaving.
       const fold = firstAnimation(frames, error, 'height');
       expectTiming(fold, DISCLOSURE);
       expect(
@@ -2655,8 +2296,6 @@ export function describeQuestionnaire(library: string) {
         -1,
         'its height',
       );
-      // What's below stays where it was while the question leaves (the next
-      // one holds its height, with its error).
       for (const f of leaving)
         expect(
           Math.abs(f.below!.y - rest.below!.y),
@@ -2689,8 +2328,6 @@ export function describeQuestionnaire(library: string) {
       const at = await pressedAt(page);
       expect(at, 'Skip pressed').toBeGreaterThan(0);
       const left = itemIn(frames[at - 1]!, DIRECTION)!;
-      // It comes in once the first has gone: after what was left of its
-      // exit.
       const enter = animating(
         itemIn(frames[at]!, TIMING)!.animations,
         'opacity',
@@ -2704,7 +2341,6 @@ export function describeQuestionnaire(library: string) {
         `its delay (${DIRECTION} had ${remaining}ms left)`,
       ).toBeGreaterThan(remaining - 40);
       expect(enter.delay).toBeLessThanOrEqual(STEP_OUT.duration);
-      // One question seen at a time.
       for (const f of frames) {
         const seen = f.items.filter((i) => i.o > 0.02).map((i) => i.legend);
         expect(
@@ -2746,7 +2382,6 @@ export function describeQuestionnaire(library: string) {
       const number = (f: Frame) => f.progress!.numbers[0]!;
       const was = number(frames[at - 1]!);
       const now = number(frames[at]!);
-      // "2" was coming in (::after); now it goes (::before), from there.
       expect(was).toMatchObject({ from: '1', to: '2' });
       expect(now).toMatchObject({ from: '2', to: '3' });
       expect(was.after!.value).toBe('2');
@@ -2764,7 +2399,6 @@ export function describeQuestionnaire(library: string) {
         Math.abs(now.before!.blur - was.after!.blur),
         `"2" blurred from ${was.after!.blur}px to ${now.before!.blur}px`,
       ).toBeLessThan(0.02 * dt + 0.1);
-      // Then on out, "3" in.
       const rolling = frames
         .slice(at)
         .map(number)
@@ -2827,7 +2461,6 @@ export function describeQuestionnaire(library: string) {
           scale: '1',
           filter: 'blur(0px)',
         });
-        // Its scale and blur on its opacity's progress, on the curve.
         for (const a of coming) {
           const when = `${slot} ${Math.round(a.t)}ms`;
           expect(
@@ -2855,7 +2488,6 @@ export function describeQuestionnaire(library: string) {
         expect(coming.at(-1)).toMatchObject({ o: 1, scale: 1, blur: 0 });
         expect(coming.at(-1)!.animations).toEqual([]);
       }
-      // Next stays as it is.
       for (const f of frames)
         expect(actionIn(f, 'next')).toMatchObject({
           displayed: true,
@@ -2879,7 +2511,6 @@ export function describeQuestionnaire(library: string) {
       expect(both.length, 'frames with both').toBeGreaterThanOrEqual(2);
       for (const f of both) {
         const [next, submit] = [actionIn(f, 'next'), actionIn(f, 'submit')];
-        // Through each other, in one cell.
         expect(
           Math.abs(next.y + next.h / 2 - (submit.y + submit.h / 2)),
         ).toBeLessThan(1);
@@ -2930,9 +2561,6 @@ export function describeQuestionnaire(library: string) {
     test('the buttons staying or leaving never jump sideways as Next and Submit swap', async ({
       page,
     }) => {
-      // Next and Submit share a cell: what sits beside it stays put while
-      // they swap (the one leaving, held shown, mustn't keep the cell at its
-      // own width, nor widen it to the other's).
       await toSignals(page);
       await pick(page, form, 'Risks');
       await settle(page, form);
@@ -2948,14 +2576,12 @@ export function describeQuestionnaire(library: string) {
             ).toBeLessThan(1);
           }
       };
-      // On to the last step: Skip leaves from where it is.
       centers(
         await record(page, form, { active: TIMING }, () =>
           press(page, form, 'next'),
         ),
       );
       await settle(page, form);
-      // Back: Skip comes in where it rests.
       centers(
         await record(page, form, { active: SIGNALS }, () =>
           press(page, form, 'previous'),
@@ -2966,7 +2592,6 @@ export function describeQuestionnaire(library: string) {
     test("submitting: every answer is the form's, the hidden questions' included", async ({
       page,
     }) => {
-      // Quick, without waiting for the steps to rest.
       await pick(page, form, 'Approval checkpoints');
       await press(page, form, 'next');
       await pick(page, form, 'Decisions');
@@ -3072,9 +2697,6 @@ export function describeQuestionnaire(library: string) {
           expect(i.tx, when).toBe(0);
           expect(i.blur, when).toBe(0);
         }
-      // The height: the leaving one's while it fades out (what's below
-      // never moves over it), then the next one's own at once (a 1ms step
-      // once it has gone), nothing in between.
       const jump = firstAnimation(
         frames,
         (f) => itemIn(f, SIGNALS),
@@ -3099,7 +2721,6 @@ export function describeQuestionnaire(library: string) {
         } else if (time === undefined || time === null) {
           expect(item.h, `${when}: its own`).toBeCloseTo(after, 2);
         }
-        // Moved: the leaving one has gone.
         if (Math.abs(f.below!.y - rest) > 0.05)
           expect(
             itemIn(f, DIRECTION)?.o ?? 0,
@@ -3148,7 +2769,6 @@ export function describeQuestionnaire(library: string) {
         if (a && b) expect(Math.min(a.o, b.o)).toBeLessThan(0.02);
         expect(inFlow(f)).toHaveLength(1);
       }
-      // The buttons coming in fade in place.
       for (const f of frames.filter((f) => f.t >= 0))
         for (const slot of ['previous', 'skip'])
           expect(actionIn(f, slot)).toMatchObject({ scale: 1, blur: 0 });

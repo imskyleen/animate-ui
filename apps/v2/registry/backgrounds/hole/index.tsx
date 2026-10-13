@@ -31,8 +31,6 @@ function HoleBackgroundContent({
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [particleR, particleG, particleB] = particleRGBColor;
 
-  // The canvas loop and the aurora pause off screen and in a hidden tab, and
-  // render a single static frame under reduced motion.
   const inView = useInView(canvasRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -145,7 +143,6 @@ function HoleBackgroundContent({
         stateRef.current.lines[i].push(p);
       }
     });
-    // Drawn once at the device pixel ratio, then copied every frame.
     const { dpi } = stateRef.current.render;
     const offCanvas = document.createElement('canvas');
     offCanvas.width = Math.max(1, Math.round(width * dpi));
@@ -159,7 +156,6 @@ function HoleBackgroundContent({
       line.forEach((p1: any, j: number) => {
         if (j === 0) return;
         const p0 = line[j - 1];
-        // Hit tests take canvas pixels, unaffected by the dpi scale.
         if (
           !lineIsIn &&
           (ctx.isPointInPath(
@@ -345,10 +341,8 @@ function HoleBackgroundContent({
   }, [init, draw]);
 
   React.useEffect(() => {
-    // Paused or reduced motion: the last (or first) frame stays on screen.
     if (!playing) return;
     let frameId = 0;
-    // One step per displayed frame, as in v1.
     const tick = () => {
       moveDiscs();
       moveParticles();
@@ -392,7 +386,6 @@ function HoleBackgroundContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
 function HoleBackground(props: HoleBackgroundProps) {
   return (
     <ReducedMotionConfig>

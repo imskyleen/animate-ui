@@ -12,11 +12,6 @@ import {
 } from './indicator';
 import { useSwitchThumb, type ThumbAnimationProps } from './thumb';
 
-// React Aria pieces of the toggles and choice controls. React Aria renders
-// these controls with render props (`isSelected`, `isPressed`…): the root
-// becomes a motion element through its `render` prop, and the parts the
-// user renders (indicator, thumb) are found by their shadcn/ui `data-slot`.
-
 type PressedMotionProps = Record<string, unknown> & {
   as: 'label' | 'button';
   isPressed: boolean;
@@ -24,7 +19,6 @@ type PressedMotionProps = Record<string, unknown> & {
   transition?: Transition;
 };
 
-/** A control's root (React Aria's `render` output) with press feedback. */
 function PressedMotion({
   as,
   isPressed,
@@ -47,13 +41,11 @@ type RenderedIndicatorProps = IndicatorAnimationProps & {
   rootRef: React.RefObject<Element | null>;
   selector: string;
   kind: IndicatorKind;
-  /** How a check shows and hides (a dot always pops). */
   animation?: CheckAnimation;
   checked: boolean;
   indeterminate?: boolean;
 };
 
-/** Animates the indicator the user renders; renders nothing itself. */
 function RenderedIndicator({
   rootRef,
   selector,
@@ -80,10 +72,6 @@ type RenderedThumbProps = ThumbAnimationProps & {
   pressed: boolean;
 };
 
-/**
- * Animates the thumb the user renders (`data-slot="switch-thumb"`): stretched
- * while pressed, gliding to its new side. Renders nothing itself.
- */
 function RenderedThumb({
   rootRef,
   checked,
@@ -98,7 +86,6 @@ function RenderedThumb({
   return null;
 }
 
-/** Calls a React Aria `children` render prop like React Aria does. */
 function renderChildren<T extends object>(
   children: React.ReactNode | ((values: T) => React.ReactNode),
   values: T,

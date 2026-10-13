@@ -1,36 +1,19 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-// Shared suites for the toggles and choice controls (Checkbox, Radio Group,
-// Switch, Toggle, Toggle Group) across Radix UI, Base UI and React Aria.
-
 export type Lib = 'radix-ui' | 'base-ui' | 'react-aria';
 
 export type Sample = {
   t: number;
-  /** The control's state on that frame: "true" / "false" (aria-checked, aria-pressed or the input). */
   state: string | null;
   opacity: number;
   scale: number;
-  /** Left offset from the control's root, in px (switch thumbs). */
   x: number;
-  /** Width on screen, in px (-1: the content isn't in the DOM). */
   width: number;
-  /** The root's background colour. */
   bg: string;
-  /**
-   * How much of the check's stroke is drawn (0 to 1; 1 when not dashed), when
-   * the content is (or holds) an SVG shape.
-   */
   dash: number | null;
-  /** The content's blur, in px. */
   blur: number;
 } | null;
 
-/**
- * Records, on every animation frame, the state of the `index`-th `root` and
- * the computed style of `content` inside it (or the root itself). Start it
- * before the interaction, then read it with `readSamples`.
- */
 export async function startSampling(
   page: Page,
   root: string,
@@ -101,7 +84,6 @@ export async function startSampling(
                 }
               : null,
           );
-          // Marks "content absent" for the frame.
           const last = out[out.length - 1];
           if (last) last.width = -1;
         }
@@ -123,7 +105,6 @@ export async function readSamples(page: Page, key = 'default') {
   )) as NonNullable<Sample>[];
 }
 
-/** Frames where the content is in the DOM. */
 export const present = (samples: NonNullable<Sample>[]) =>
   samples.filter((s) => s.width !== -1);
 
@@ -138,10 +119,6 @@ export async function opacityOf(locator: Locator) {
   return locator.evaluate((el) => Number(getComputedStyle(el).opacity));
 }
 
-/**
- * Hovers `locator`, presses it, releases it and moves away: its scale at
- * rest under the pointer, held, released (still hovered) and left.
- */
 export async function pressScale(page: Page, locator: Locator) {
   const box = (await locator.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -159,9 +136,7 @@ export async function pressScale(page: Page, locator: Locator) {
   return { hovered, held, released, left };
 }
 
-/** The element that takes keyboard focus for a control. */
 function focusTarget(lib: Lib, root: Locator) {
-  // React Aria focuses the hidden input inside its label.
   return lib === 'react-aria' ? root.locator('input') : root;
 }
 
@@ -180,21 +155,13 @@ async function gotoDemo(page: Page, lib: Lib, name: string, query = '') {
   });
 }
 
-/**
- * Marks `locator` invalid (the demos style `aria-invalid`, and React Aria's
- * `data-invalid`), clicks it, and reads its border color frame by frame for
- * 400ms, sampled in the page.
- */
 async function invalidBorders(locator: Locator) {
   return locator.evaluate(async (el) => {
     el.setAttribute('aria-invalid', 'true');
     el.setAttribute('data-invalid', 'true');
-    // Its border turning to the invalid color first (a checkbox fades its
-    // colors over 300ms).
     await new Promise((r) => setTimeout(r, 500));
     const read = () => getComputedStyle(el).borderTopColor;
     const out = [read()];
-    // React Aria's control is a label: its input takes the click.
     const target = el.tagName === 'LABEL' ? el.querySelector('input')! : el;
     (target as HTMLElement).click();
     const start = performance.now();
@@ -206,38 +173,24 @@ async function invalidBorders(locator: Locator) {
   });
 }
 
-// ---------------------------------------------------------------------------
-
 const CHECKBOX = '[data-slot="checkbox"]';
 const CHECK = '[data-slot="checkbox-indicator"] svg path';
-/** The check's icon: what pops (`checkAnimation="pop"`). */
 const ICON = '[data-slot="checkbox-indicator"] svg';
-/** shadcn's demo: its second box, the `checked` control's, checked on load. */
 const CHECKED = 1;
-/** shadcn's demo: its first box, unchecked on load. */
 const UNCHECKED = 0;
 
-/**
- * v1's check drawing itself: hidden for 0.2s after the state flips, then its
- * stroke and its opacity going to 1 together in 0.3s, on Motion's easeOut.
- */
 function expectCheckDraws(samples: NonNullable<Sample>[], reduce = false) {
   const shown = present(samples).filter((s) => s.state === 'true');
   expect(shown.length).toBeGreaterThan(3);
   const first = shown[0]!;
-  // The state flipped after the last unchecked frame: on a busy machine, a
-  // long frame can show the flip well after it happened.
   const flip = samples.findIndex((s) => s.state === 'true');
   const before = samples[Math.max(flip - 1, 0)]!;
-  // Still hidden 150ms later: the 0.2s delay.
   const waiting = shown.filter((s) => s.t - before.t < 150);
   for (const s of waiting) expect(s.opacity).toBeLessThan(0.05);
   const drawing = shown.filter((s) => s.opacity > 0.1 && s.opacity < 0.9);
   expect(drawing.length).toBeGreaterThan(0);
   for (const s of drawing) {
     expect(s.t - before.t).toBeGreaterThan(150);
-    // The stroke and the opacity move together (one transition); under
-    // reduced motion the stroke stays whole and only the opacity fades.
     if (reduce) expect(s.dash).toBe(1);
     else expect(Math.abs(s.dash! - s.opacity)).toBeLessThan(0.12);
   }
@@ -247,10 +200,6 @@ function expectCheckDraws(samples: NonNullable<Sample>[], reduce = false) {
   for (const s of shown) expect(s.scale).toBe(1);
 }
 
-/**
- * v1's check erasing itself in 0.3s, no delay, on Motion's easeOut; then the
- * indicator goes.
- */
 function expectCheckErases(samples: NonNullable<Sample>[]) {
   const flipped = samples.filter((s) => s.state === 'false');
   expect(flipped.length).toBeGreaterThan(3);
@@ -266,22 +215,11 @@ function expectCheckErases(samples: NonNullable<Sample>[]) {
   expect(gone!.t - flipped[0]!.t).toBeLessThan(550);
 }
 
-/**
- * A popped check, partway: its scale, blur and opacity follow one progress
- * (from half its size, 2px of blur and transparent, to rest), whatever the
- * frames a busy machine skips.
- */
 function expectPopShape(s: NonNullable<Sample>) {
   expect(Math.abs(s.scale - (0.5 + 0.5 * s.opacity))).toBeLessThan(0.06);
   expect(Math.abs(s.blur - 2 * (1 - s.opacity))).toBeLessThan(0.3);
 }
 
-/**
- * A check popping in (`pop`): hidden for 0.2s after the state flips, like a
- * drawn one, then springing from half its size out of a blur, a little past
- * its size, to rest. Its stroke stays whole. Under reduced motion it only
- * fades.
- */
 function expectCheckPops(samples: NonNullable<Sample>[], reduce = false) {
   const shown = present(samples).filter((s) => s.state === 'true');
   expect(shown.length).toBeGreaterThan(3);
@@ -309,7 +247,6 @@ function expectCheckPops(samples: NonNullable<Sample>[], reduce = false) {
   expect(last.blur).toBe(0);
 }
 
-/** A popped check shrinking back into its blur in 0.15s; then it goes. */
 function expectCheckUnpops(samples: NonNullable<Sample>[]) {
   const flipped = samples.filter((s) => s.state === 'false');
   expect(flipped.length).toBeGreaterThan(3);
@@ -353,7 +290,6 @@ export function describeCheckboxDemo(lib: Lib) {
     test('unchecking shrinks it back out in 0.15s, then removes it', async ({
       page,
     }) => {
-      // At rest first: a checked box's check pops in as the page loads.
       const icon = page.locator(CHECKBOX).nth(CHECKED).locator(ICON);
       await expect.poll(() => opacityOf(icon)).toBe(1);
       await expect.poll(() => scaleOf(icon)).toBe(1);
@@ -405,10 +341,6 @@ export function describeCheckboxDemo(lib: Lib) {
       page,
     }) => {
       const box = page.locator(CHECKBOX).nth(UNCHECKED);
-      // Sampled in the page from the click: the layer (the box's ::before)
-      // grows and fades in together over the whole box, border included,
-      // while the box's own background and border keep their colors (a
-      // border turning to the fill's color would ring the growing layer).
       const frames = await box.evaluate(async (el) => {
         const read = () => {
           const layer = getComputedStyle(el, '::before');
@@ -421,7 +353,6 @@ export function describeCheckboxDemo(lib: Lib) {
           };
         };
         const out = [read()];
-        // React Aria's box is a label: its input takes the click.
         const target = el.tagName === 'LABEL' ? el.querySelector('input')! : el;
         (target as HTMLElement).click();
         const start = performance.now();
@@ -448,7 +379,6 @@ export function describeCheckboxDemo(lib: Lib) {
     test('an invalid box keeps its border color as its fill grows', async ({
       page,
     }) => {
-      // Turned to the fill's color at once, it would ring the growing layer.
       const borders = await invalidBorders(
         page.locator(CHECKBOX).nth(UNCHECKED),
       );
@@ -460,7 +390,6 @@ export function describeCheckboxDemo(lib: Lib) {
         page,
         page.locator(CHECKBOX).nth(UNCHECKED),
       );
-      // The check and the box's fill answer the click: the box stays put.
       expect(scales).toEqual({ hovered: 1, held: 1, released: 1, left: 1 });
     });
 
@@ -494,19 +423,12 @@ export function describeCheckboxDemo(lib: Lib) {
   });
 }
 
-// ---------------------------------------------------------------------------
-
 const RADIO = '[data-slot="radio-group-item"]';
 const DOT = '[data-slot="radio-group-indicator"] span';
 
-/**
- * v1's dot popping in: scale and opacity from 0 on a spring (stiffness 200,
- * damping 16) that overshoots 1, then at rest.
- */
 function expectDotPops(samples: NonNullable<Sample>[]) {
   const shown = present(samples).filter((s) => s.state === 'true');
   expect(shown.length).toBeGreaterThan(3);
-  // From nothing: small on its first frame (~45ms in on a busy machine).
   expect(shown[0]!.scale).toBeLessThan(0.35);
   expect(shown[0]!.opacity).toBeLessThan(0.45);
   expect(Math.max(...shown.map((s) => s.scale))).toBeGreaterThan(1.06);
@@ -517,7 +439,6 @@ function expectDotPops(samples: NonNullable<Sample>[]) {
   expect(settled!.t - shown[0]!.t).toBeLessThan(1100);
 }
 
-/** The old dot springs out the mirror way (past 0), then goes. */
 function expectDotLeaves(samples: NonNullable<Sample>[]) {
   const flipped = samples.filter((s) => s.state === 'false');
   expect(flipped.length).toBeGreaterThan(3);
@@ -537,10 +458,6 @@ type Fill = {
   inset: string;
 };
 
-/**
- * The fills of the first radio (chosen) and the second (left) frame by frame
- * for 500ms from a click on the first, sampled in the page.
- */
 async function fillFrames(page: Page) {
   const radios = page.locator(RADIO);
   await expect.poll(() => stateOf(radios.nth(1))).toBe('true');
@@ -557,7 +474,6 @@ async function fillFrames(page: Page) {
       };
     };
     const out = [[read(fresh!), read(old!)]];
-    // React Aria's radio is a label: its input takes the click.
     const target =
       first.tagName === 'LABEL' ? first.querySelector('input')! : first;
     (target as HTMLElement).click();
@@ -597,8 +513,6 @@ export function describeRadioGroupDemo(lib: Lib) {
       await focusTarget(lib, page.locator(RADIO).nth(1)).focus();
       await startSampling(page, RADIO, 2, DOT, 90, 'new');
       await startSampling(page, RADIO, 1, DOT, 90, 'old');
-      // Held like a real key press: Radix selects on the focus that follows
-      // the keydown, only while the arrow key is down.
       await page.keyboard.down('ArrowDown');
       await page.waitForTimeout(50);
       await page.keyboard.up('ArrowDown');
@@ -611,10 +525,6 @@ export function describeRadioGroupDemo(lib: Lib) {
     test('a click grows the new fill from 70% and shrinks the old one back', async ({
       page,
     }) => {
-      // Like the checkbox's: the fill is a layer (the radio's ::before) that
-      // grows and fades in over the whole radio, border included, while the
-      // radio's own background and border keep their colors. The radio left
-      // shrinks its layer back as it fades out.
       const frames = await fillFrames(page);
       const grown = frames.map(([fresh]) => fresh!);
       const shrunk = frames.map(([, old]) => old!);
@@ -643,7 +553,6 @@ export function describeRadioGroupDemo(lib: Lib) {
     test('an invalid radio keeps its border color as its fill grows', async ({
       page,
     }) => {
-      // Turned to the fill's color at once, it would ring the growing layer.
       await expect.poll(() => stateOf(page.locator(RADIO).nth(1))).toBe('true');
       const borders = await invalidBorders(page.locator(RADIO).nth(0));
       expect(new Set(borders).size, borders.join(' ')).toBe(1);
@@ -680,20 +589,10 @@ export function describeRadioGroupDemo(lib: Lib) {
   });
 }
 
-// ---------------------------------------------------------------------------
-
 const SWITCH = '[data-slot="switch"]';
 const THUMB = '[data-slot="switch-thumb"]';
 
-/**
- * Consecutive frames never jump: the thumb moves continuously. Allows for
- * dropped frames on a busy machine (the spring peaks well under 0.3px/ms; a
- * jump is a whole thumb width in one frame).
- */
 export function expectContinuous(samples: NonNullable<Sample>[]) {
-  // A jump would be the thumb landing on the other side at once (14px). Like
-  // v1, a spring starts on the current frame's clock, so after a slow frame
-  // (a loaded machine) its first painted step catches up a few pixels.
   for (let i = 1; i < samples.length; i++) {
     const step = Math.abs(samples[i]!.x - samples[i - 1]!.x);
     const dt = samples[i]!.t - samples[i - 1]!.t;
@@ -701,23 +600,14 @@ export function expectContinuous(samples: NonNullable<Sample>[]) {
   }
 }
 
-/** Presses the pointer on the middle of `locator` (and keeps it down). */
 async function pointerDown(page: Page, locator: Locator) {
   const box = (await locator.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
 }
 
-/** v1's styled switch stretched its 16px thumb to 19px while pressed. */
 const STRETCH = 19 / 16;
 
-/**
- * The thumb's left and right edges as the browser paints them, frame by
- * frame (its compositor's frames, a screencast), while `act` runs and
- * `duration` ms after: along the switch's middle row, from each edge pixel's
- * coverage, a white thumb on a black page and track (colours only). Layout reads
- * can't show it: the browser paints a box whole device pixels wide.
- */
 async function paintedThumbEdges(
   page: Page,
   root: Locator,
@@ -742,8 +632,6 @@ async function paintedThumbEdges(
   await act();
   await page.waitForTimeout(duration);
   await cdp.send('Page.stopScreencast');
-  // In the order they were painted (they can arrive out of it), from the
-  // last one before the interaction.
   const painted = frames
     .filter((frame) => frame.t >= before)
     .sort((a, b) => a.t - b.t)
@@ -757,7 +645,6 @@ async function paintedThumbEdges(
         const image = new Image();
         image.src = `data:image/png;base64,${data}`;
         await image.decode();
-        // Screencast frames are in CSS pixels, the viewport's size.
         const scale = image.naturalWidth / window.innerWidth;
         canvas.width = image.naturalWidth;
         canvas.height = image.naturalHeight;
@@ -799,12 +686,9 @@ export function describeSwitchDemo(lib: Lib) {
       const held = await readSamples(page);
       const first = held[0]!;
       const last = held[held.length - 1]!;
-      // Its width (not a scale), 16px → 19px, the left edge in place.
       expect(last.width).toBeCloseTo(first.width * STRETCH, 0);
       expect(last.scale).toBe(1);
       for (const s of held) expect(Math.abs(s.x - first.x)).toBeLessThan(0.5);
-      // A spring, seen on its way, its width on whole device pixels (as
-      // painted: its overshoot, a tenth of a pixel, never showed).
       expect(
         held.some(
           (s) => s.width > first.width + 0.5 && s.width < last.width - 0.5,
@@ -815,7 +699,6 @@ export function describeSwitchDemo(lib: Lib) {
         const pixels = s.width * ratio;
         expect(Math.abs(pixels - Math.round(pixels))).toBeLessThan(0.01);
       }
-      // No press feedback on the switch itself.
       expect(await scaleOf(root)).toBe(1);
       await page.mouse.up();
     });
@@ -823,8 +706,6 @@ export function describeSwitchDemo(lib: Lib) {
     test('pressed while on, it stretches toward the start, its right edge in place', async ({
       page,
     }) => {
-      // shadcn's demo has one switch, off: turned on first, its thumb left to
-      // come to rest (the glide settles within 650ms, see below).
       const root = page.locator(SWITCH).nth(0);
       await root.click();
       await page.mouse.move(0, 0);
@@ -848,8 +729,6 @@ export function describeSwitchDemo(lib: Lib) {
     test('a quick click while on: the thumb leaves without its right edge going right', async ({
       page,
     }) => {
-      // The stretch stops where it is on release: kept going, it grew the
-      // thumb to the right as it left to the left (a tremble).
       const root = page.locator(SWITCH).nth(0);
       await root.click();
       await page.mouse.move(0, 0);
@@ -867,7 +746,6 @@ export function describeSwitchDemo(lib: Lib) {
       );
       const leftRight = samples.slice(flip).map((s) => s.x + s.width);
       expect(Math.max(...leftRight) - pressedRight).toBeLessThan(0.05);
-      // It did leave.
       expect(Math.min(...leftRight)).toBeLessThan(pressedRight - 10);
     });
 
@@ -880,11 +758,6 @@ export function describeSwitchDemo(lib: Lib) {
       test(`a ${hold}ms click while ${on ? 'on' : 'off'}: as painted, the thumb never steps back`, async ({
         page,
       }) => {
-        // Stretched while on, the thumb's right edge stays put as its offset
-        // follows its width: painted whole device pixels wide, the width
-        // stepped that edge out, then the offset slid it back (a tremble).
-        // Each edge moves one way only, the way the thumb goes, until the
-        // thumb has gone (its spring then comes back a little).
         const root = page.locator(SWITCH).nth(0);
         if (on) {
           await root.click();
@@ -896,8 +769,6 @@ export function describeSwitchDemo(lib: Lib) {
           root,
           async () => {
             await pointerDown(page, root);
-            // Released mid-stretch, or once stretched across a few device
-            // pixels.
             await page.waitForTimeout(hold);
             await page.mouse.up();
           },
@@ -907,7 +778,6 @@ export function describeSwitchDemo(lib: Lib) {
         const way = on ? -1 : 1;
         const back = (e: { left: number; right: number }) =>
           on ? e.right : e.left;
-        // It went: the back edge travelled the track.
         const gone = edges.reduce(
           (far, e, i) => (way * back(e) > way * back(edges[far]!) ? i : far),
           0,
@@ -940,11 +810,8 @@ export function describeSwitchDemo(lib: Lib) {
       const before = samples[flip - 1]!;
       const changed = samples[flip]!;
       const last = samples[samples.length - 1]!;
-      // The track: its new colour on the frame the state changes.
       expect(changed.bg).toBe(last.bg);
       expect(changed.bg).not.toBe(before.bg);
-      // The thumb: from where it was, still travelling 100ms later, past its
-      // end a little (stiffness 300, damping 25), then at rest.
       const end = last.x;
       expect(Math.abs(changed.x - before.x)).toBeLessThan(0.5);
       const later = samples.find((s) => s.t >= changed.t + 100)!;
@@ -952,7 +819,6 @@ export function describeSwitchDemo(lib: Lib) {
       expect(samples.some((s) => s.x > end + 0.2)).toBe(true);
       const settled = samples.findLast((s) => Math.abs(s.x - end) >= 0.3)!;
       expect(settled.t - changed.t).toBeLessThan(650);
-      // Its width back to its own.
       expect(last.width).toBeCloseTo(samples[0]!.width / STRETCH, 0);
     });
 
@@ -967,7 +833,6 @@ export function describeSwitchDemo(lib: Lib) {
       await page.waitForTimeout(1200);
       const samples = await readSamples(page);
       expectContinuous(samples);
-      // Back where it started once the samples cover the turn-back.
       const rest = await page
         .locator(SWITCH)
         .nth(0)
@@ -1017,11 +882,8 @@ export function describeSwitchDemo(lib: Lib) {
   });
 }
 
-// ---------------------------------------------------------------------------
-
 const TOGGLE = '[data-slot="toggle"]';
 
-/** Every pressable control: 0.97 while pressed, no hover scale. */
 function expectPressOnly(scales: Awaited<ReturnType<typeof pressScale>>) {
   expect(scales.hovered).toBe(1);
   expect(scales.held).toBeCloseTo(0.97, 2);
@@ -1029,7 +891,6 @@ function expectPressOnly(scales: Awaited<ReturnType<typeof pressScale>>) {
   expect(scales.left).toBeCloseTo(1, 2);
 }
 
-// shadcn's demo: a single toggle (Bookmark), off.
 export function describeToggleDemo(lib: Lib) {
   test.describe(`${lib} toggle demo`, () => {
     test.beforeEach(async ({ page }) => gotoDemo(page, lib, 'toggle'));
@@ -1052,8 +913,6 @@ export function describeToggleDemo(lib: Lib) {
       await page.waitForTimeout(500);
       const held = await readSamples(page);
       await page.mouse.up();
-      // On its way, then at 0.97 (Motion's scale spring, stiffness 550,
-      // damping 30), within ~200ms.
       expect(held.some((s) => s.scale < 0.995 && s.scale > 0.975)).toBe(true);
       const reached = held.find((s) => s.scale < 0.972);
       expect(reached).toBeDefined();
@@ -1062,8 +921,6 @@ export function describeToggleDemo(lib: Lib) {
       );
     });
 
-    // The demo's bookmark (the user's ask): it pops as it fills, gives a
-    // little as it empties, its fill fading; nothing on mount.
     const sampleBookmark = async (page: Page) => {
       await page.evaluate((selector) => {
         const toggle = document.querySelector(selector)!;
@@ -1076,8 +933,6 @@ export function describeToggleDemo(lib: Lib) {
         const t0 = performance.now();
         const tick = () => {
           const m = getComputedStyle(holder).transform.match(/matrix\(([^,]+)/);
-          // The fill's alpha (transparent when empty, opaque when full), in
-          // rgba() or the `/ alpha` of oklab() and other color functions.
           const fill = getComputedStyle(icon).fill;
           const slash = fill.match(/\/\s*([\d.]+)\s*\)/);
           const rgba = fill.match(/^rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+)\)/);

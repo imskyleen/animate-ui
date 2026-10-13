@@ -18,16 +18,6 @@ import {
   type PreviewImageOptions,
 } from '../../../internal/preview-link';
 
-// Animate UI v1's Preview Link Card, on Base UI's PreviewCard: hovering a link
-// shows a screenshot of the page it leads to, and the card is itself a link
-// there. It is Animate UI's PreviewCard, so the card moves exactly like it:
-// it grows from 0.8 and fades in from the trigger on a spring, and shrinks
-// back the same way.
-//
-// The screenshot comes from Microlink's API (as in v1) unless `src` is given,
-// and is preloaded as soon as the Root mounts, so it's there when the card
-// opens.
-
 type PreviewLinkCardContextType = {
   href: string;
   src: string;
@@ -40,7 +30,6 @@ const [PreviewLinkCardProvider, usePreviewLinkCard] =
 
 type PreviewLinkCardProps = Root.Props &
   PreviewImageOptions & {
-    /** The page the link leads to, and the one the screenshot shows. */
     href: string;
   };
 
@@ -67,7 +56,6 @@ function PreviewLinkCard({
 
 type PreviewLinkCardTriggerProps = Trigger.Props;
 
-/** Base UI's Trigger is a link: it leads to the Root's `href`. */
 function PreviewLinkCardTrigger({
   href,
   ...props
@@ -108,7 +96,6 @@ function PreviewLinkCardPositioner({
   );
 }
 
-/** The attributes of the card's link. */
 type LinkAttributes = Pick<
   React.ComponentProps<'a'>,
   | 'href'
@@ -123,11 +110,6 @@ type LinkAttributes = Pick<
 type PreviewLinkCardPopupProps = Omit<Popup.Props, keyof LinkAttributes> &
   LinkAttributes;
 
-/**
- * The card: Base UI's Popup, rendered as a link to the Root's `href` (it is
- * the animated element, so its className styles the card). A `render` of
- * your own replaces the link.
- */
 function PreviewLinkCardPopup({
   href,
   target,
@@ -175,7 +157,6 @@ type PreviewLinkCardImageProps = Omit<
   'src' | 'width' | 'height'
 >;
 
-/** The screenshot, at the Root's `width` and `height`. */
 function PreviewLinkCardImage({
   alt = 'preview image',
   ...props

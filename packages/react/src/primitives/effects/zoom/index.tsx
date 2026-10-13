@@ -70,8 +70,7 @@ function ZoomInner({
       exit="hidden"
       variants={
         reduce
-          ? // Reduced motion: no scale, a fade instead.
-            { hidden: { opacity: 0 }, visible: { opacity: 1 } }
+          ? { hidden: { opacity: 0 }, visible: { opacity: 1 } }
           : {
               hidden: { scale: initialScale },
               visible: { scale },

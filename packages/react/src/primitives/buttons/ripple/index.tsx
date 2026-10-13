@@ -31,16 +31,7 @@ const [RippleButtonProvider, useRippleButton] =
 
 type RippleButtonProps = WithAsChild<
   HTMLMotionProps<'button'> & {
-    /**
-     * Scale while hovered. Animate UI buttons answer the press, not the
-     * hover: no hover scale unless you set one.
-     * @default 1
-     */
     hoverScale?: number;
-    /**
-     * Scale while pressed.
-     * @default 0.97
-     */
     tapScale?: number;
   }
 >;
@@ -67,7 +58,6 @@ function RippleButtonContent({
   const defaultTransition = useTempoTransition(SCALE_SPRING);
   const [ripples, setRipples] = React.useState<Ripple[]>([]);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-  // Two clicks within the same millisecond still get distinct keys.
   const nextIdRef = React.useRef(0);
   const reduce = useShouldReduceMotion();
   React.useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
@@ -78,8 +68,6 @@ function RippleButtonContent({
       if (!button) return;
 
       const rect = button.getBoundingClientRect();
-      // The rect includes the tap (or hover) scale: convert back to the
-      // button's own pixels so the ripple starts right under the pointer.
       const x = (event.clientX - rect.left) * (button.offsetWidth / rect.width);
       const y =
         (event.clientY - rect.top) * (button.offsetHeight / rect.height);
@@ -94,7 +82,6 @@ function RippleButtonContent({
 
       setTimeout(() => {
         setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
-        // The ripple's default 600ms, paced by the provider's tempo.
       }, 600 * tempo);
     },
     [tempo],
@@ -151,7 +138,6 @@ function RippleButtonRipples({
 }: RippleButtonRipplesProps) {
   const { ripples } = useRippleButton();
   const defaultTransition = useTempoTransition(RIPPLE_TRANSITION);
-  // Under reduced motion the ripple fades in place instead of growing.
   const reduce = useShouldReduceMotion();
 
   const Component = asChild ? Slot : motion.span;

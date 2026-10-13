@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="shimmering-text"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -26,7 +24,6 @@ async function hydrated(page: Page, selector: string) {
 
 const root = (page: Page) => page.locator('[data-slot="shimmering-text"]');
 
-/** Colors of every character, sampled a few times. */
 async function colorsOverTime(page: Page) {
   const seen = new Set<string>();
   for (let i = 0; i < 6; i++) {

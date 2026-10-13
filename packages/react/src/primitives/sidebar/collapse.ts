@@ -1,23 +1,3 @@
-// What moves inside a sidebar as it collapses to icons or expands back
-// (`data-collapsible="icon"` on an ancestor), on the collapse's own timing
-// (`transition.collapse`), so nothing drifts from its edge:
-//
-// - Labels (a menu button's content but its leading icon, and group labels)
-//   fade into a light blur in the first half of the collapse
-//   (`transition.collapseLabel`), before the buttons get narrow, and fade
-//   back in the last half of the expand, once they're nearly wide again.
-//   Their ellipses are held off meanwhile (`text-overflow: clip`): a label
-//   being cut by its narrowing button never flickers through `…`, `Mo…`,
-//   `Model…`.
-// - Parts the collapse hides (`group-data-[collapsible=icon]:hidden`: a
-//   sub-menu, a menu action or badge, a whole group) fade out with the
-//   labels while their height folds on the collapse's curve, kept shown
-//   until then; expanding, they unfold the same way and fade in at the end.
-//   The items below them move with the sidebar instead of jumping.
-//
-// Under reduced motion, labels and parts only fade (no blur, no folding).
-
-/** A sidebar part and how it was laid out, before a toggle. */
 type Laid = {
   display: string;
   position: string;
@@ -29,25 +9,19 @@ type Laid = {
 };
 
 type CollapseSnapshot = {
-  /** `data-collapsible` before the toggle. */
   mode: string;
-  /** The parts shown before it. */
   shown: Map<HTMLElement, Laid>;
 };
 
 type CollapseTimings = {
-  /** The collapse, ms and CSS easing. */
   duration: number;
   easing: string;
-  /** Labels fading, ms and CSS easing. */
   labelDuration: number;
   labelEasing: string;
-  /** The light blur labels fade into. */
   blur: string;
   reduce: boolean;
 };
 
-/** shadcn/ui's sidebar parts: what the collapse may hide. */
 const PARTS = '[data-sidebar]';
 const BUTTONS = '[data-sidebar="menu-button"]';
 const GROUP_LABELS = '[data-sidebar="group-label"]';
@@ -68,10 +42,8 @@ function laidOut(element: HTMLElement): Laid {
   };
 }
 
-/** Before a toggle's DOM changes: what's shown, and the mode. */
 function snapshotCollapse(root: HTMLElement): CollapseSnapshot | null {
   const mode = modeOf(root);
-  // Mobile (a sheet): nothing collapses to icons.
   if (mode === null) return null;
   const shown = new Map<HTMLElement, Laid>();
   for (const element of root.querySelectorAll<HTMLElement>(PARTS)) {
@@ -81,24 +53,18 @@ function snapshotCollapse(root: HTMLElement): CollapseSnapshot | null {
   return { mode, shown };
 }
 
-/** What a toggle runs, to stop it when the next one comes. */
 type Running = {
   animations: Animation[];
-  /** Puts back the inline styles it set. */
   restore: () => void;
-  /** Parts it keeps shown while they fold. */
   kept: Set<HTMLElement>;
 };
 
 const running = new WeakMap<HTMLElement, Running>();
 
-/** Stops a toggle's motion; returns what its elements showed then. */
 function stopCollapse(root: HTMLElement) {
   const current = running.get(root);
   const shown = new Map<HTMLElement, { opacity: number; height: number }>();
   if (!current) return { shown, kept: new Set<HTMLElement>() };
-  // What its animations show right now (those still on: once a toggle is
-  // over, only its faded labels are).
   const moved = new Set(
     current.animations.flatMap((animation) => {
       const target = (animation.effect as KeyframeEffect | null)?.target;
@@ -116,7 +82,6 @@ function stopCollapse(root: HTMLElement) {
   return { shown, kept: current.kept };
 }
 
-/** A label: a menu button's content but its leading icon, a group label. */
 function labelsOf(root: HTMLElement) {
   const labels: HTMLElement[] = [
     ...root.querySelectorAll<HTMLElement>(GROUP_LABELS),
@@ -133,7 +98,6 @@ function labelsOf(root: HTMLElement) {
   return labels;
 }
 
-/** After a toggle's DOM changes: moves what changed with the collapse. */
 function runCollapse(
   root: HTMLElement,
   before: CollapseSnapshot,
@@ -148,7 +112,6 @@ function runCollapse(
   const { duration, easing, labelDuration, labelEasing, reduce } = timings;
   const blurred = reduce ? {} : { filter: timings.blur };
   const sharp = reduce ? {} : { filter: 'blur(0px)' };
-  // Expanding, labels come back in the last part.
   const labelDelay = expanding && !reduce ? duration - labelDuration : 0;
   const animations: Animation[] = [];
   const restores: (() => void)[] = [];
@@ -170,7 +133,6 @@ function runCollapse(
     });
   };
 
-  /** Fades out (collapsing) or in (expanding), from where it showed. */
   const fade = (element: HTMLElement, fill: FillMode) => {
     const from = interrupted.shown.get(element)?.opacity;
     animations.push(
@@ -194,8 +156,6 @@ function runCollapse(
     );
   };
 
-  // Parts the collapse hides, or shows again: only the outermost ones move
-  // (their content goes with them).
   const hidden: HTMLElement[] = [];
   const shown: HTMLElement[] = [];
   for (const element of root.querySelectorAll<HTMLElement>(PARTS)) {
@@ -217,7 +177,6 @@ function runCollapse(
 
   if (!reduce) {
     for (const element of hidden) {
-      // Kept shown until it has folded.
       setInline(
         element,
         'display',
@@ -285,9 +244,7 @@ function runCollapse(
     }
   }
 
-  // Labels: no ellipsis while their button resizes.
   for (const label of labelsOf(root)) {
-    // Inside a part that folds, its part fades for it.
     if (reduce || ![...hidden, ...shown].some((part) => part.contains(label)))
       fade(label, collapsing ? 'forwards' : 'backwards');
     for (const element of [label, ...label.querySelectorAll<HTMLElement>('*')])
@@ -295,9 +252,6 @@ function runCollapse(
         setInline(element, 'text-overflow', 'clip');
   }
 
-  // Once it's all done, the inline styles go: the parts kept shown hide as
-  // their own classes say, folded already. Labels faded out stay faded
-  // (`fill: forwards`) until the next toggle.
   const persistent = collapsing
     ? animations.filter((animation) => {
         const target = (animation.effect as KeyframeEffect | null)?.target;
@@ -312,7 +266,6 @@ function runCollapse(
   running.set(root, state);
   void Promise.all(transient.map((animation) => animation.finished))
     .then(() =>
-      // Not before the collapse is over (the widths still move).
       transient.length
         ? undefined
         : new Promise((resolve) => setTimeout(resolve, duration)),
@@ -321,14 +274,11 @@ function runCollapse(
       if (running.get(root) !== state) return;
       for (const animation of transient) animation.cancel();
       restore();
-      // What stays: the labels faded out.
       state.animations = persistent;
       state.kept = new Set();
       state.restore = () => {};
     })
-    .catch(() => {
-      // Cancelled: the next toggle took over.
-    });
+    .catch(() => {});
 }
 
 export {

@@ -13,7 +13,6 @@ import {
 type PhoneCallProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // The waves pulse one after the other, never gone (as Hugeicons').
   default: (() => {
     const animation: Record<string, Variants> = {
       phone: {},
@@ -36,7 +35,6 @@ const animations = {
 
     return animation;
   })() satisfies Record<string, Variants>,
-  // The waves gone and back, one after the other.
   blink: (() => {
     const animation: Record<string, Variants> = {
       phone: {},
@@ -91,7 +89,6 @@ function IconComponent({ size, ...props }: PhoneCallProps) {
       strokeLinejoin="round"
       {...props}
     >
-      {/* Waves (inner first, then outer with delay) */}
       <motion.path
         d="M13 6a5 5 0 0 1 5 5"
         variants={variants.wave1}
@@ -104,7 +101,6 @@ function IconComponent({ size, ...props }: PhoneCallProps) {
         initial="initial"
         animate={controls}
       />
-      {/* Phone body */}
       <motion.path
         d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
         variants={variants.phone}

@@ -28,7 +28,6 @@ const INITIAL_STATE: TypingState = { index: 0, count: 0, phase: 'typing' };
 type TypingTextContextType = {
   isTyping: boolean;
   setIsTyping: (isTyping: boolean) => void;
-  /** False when the cursor should hold still (off screen, hidden tab, reduced motion). */
   canBlink: boolean;
 };
 
@@ -36,13 +35,9 @@ const [TypingTextProvider, useTypingText] =
   getStrictContext<TypingTextContextType>('TypingTextContext');
 
 type TypingTextProps = React.ComponentProps<'span'> & {
-  /** Delay per typed or erased character, in milliseconds. */
   duration?: number;
-  /** Delay before typing starts, in milliseconds. */
   delay?: number;
-  /** Erase the last text and start over from the first one. */
   loop?: boolean;
-  /** Pause on a fully typed text before erasing it, in milliseconds. */
   holdDelay?: number;
   text: string | string[];
 } & UseIsInViewOptions;
@@ -79,13 +74,8 @@ function TypingTextContent({
 
   const reduce = useShouldReduceMotion();
   const pageVisible = usePageVisible();
-  // Actual visibility, independent of the `inView` start trigger. Assumed
-  // visible until measured, so the cursor starts blinking on mount and fades
-  // in as typing begins.
   const onScreen = useInView(localRef, { initial: true });
 
-  // Inline arrays get a new identity every render: only restart typing when
-  // the texts themselves change.
   const textsKey = JSON.stringify(typeof text === 'string' ? [text] : text);
   const texts = React.useMemo(
     () => JSON.parse(textsKey) as string[],
@@ -102,15 +92,11 @@ function TypingTextContent({
     return () => clearTimeout(timeoutId);
   }, [isInView, delay]);
 
-  // Timings are read when the next character is scheduled, so changing them
-  // mid-animation takes effect without restarting.
   const timingRef = React.useRef({ duration, holdDelay });
   React.useEffect(() => {
     timingRef.current = { duration, holdDelay };
   });
 
-  // The visible text is written straight to the DOM: typing a character
-  // never re-renders React.
   const textRef = React.useRef<HTMLSpanElement>(null);
   const stateRef = React.useRef<TypingState>({ ...INITIAL_STATE });
 
@@ -121,8 +107,6 @@ function TypingTextContent({
     el.textContent = (segments[index] ?? []).slice(0, count).join('');
   }, [segments]);
 
-  // New texts restart from scratch (typing is that kind of effect). Under
-  // reduced motion the final text is shown at once.
   React.useLayoutEffect(() => {
     if (reduce) {
       const last = segments.length - 1;
@@ -138,8 +122,6 @@ function TypingTextContent({
     write();
   }, [segments, loop, reduce, write]);
 
-  // A loop pauses off screen and in a hidden tab; a single run only in a
-  // hidden tab (it then finishes where it is, it doesn't wait to be seen).
   const paused = !pageVisible || (loop && !onScreen);
 
   React.useEffect(() => {
@@ -150,9 +132,6 @@ function TypingTextContent({
       timeoutId = setTimeout(step, ms);
     };
 
-    // One tick per `duration`: a typed (or erased) character per tick, plus
-    // one tick on the full (or empty) text before holding (or typing the
-    // next one). The cursor turns solid as soon as a text starts.
     function step() {
       const state = stateRef.current;
       const length = segments[state.index]?.length ?? 0;
@@ -194,7 +173,6 @@ function TypingTextContent({
       }
     }
 
-    // Resuming after a pause continues where it stopped.
     const { phase, count } = stateRef.current;
     if (phase === 'typing' && count === 0) setIsTyping(true);
     if (phase !== 'done') {
@@ -208,7 +186,6 @@ function TypingTextContent({
     return () => clearTimeout(timeoutId);
   }, [segments, loop, reduce, started, paused, write]);
 
-  // Screen readers get every text once, never the partial ones.
   const srText = texts.join(', ');
 
   return (
@@ -259,8 +236,6 @@ function TypingTextCursor({
         },
         ...variants,
       }}
-      // The blink is a loop: it holds still while typing, off screen, in a
-      // hidden tab and under reduced motion.
       animate={isTyping || !canBlink ? 'visible' : 'blinking'}
       style={{
         display: 'inline-block',

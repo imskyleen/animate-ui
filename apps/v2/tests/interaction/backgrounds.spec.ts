@@ -1,8 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-// The registry backgrounds (registry/backgrounds), all on one fixture page
-// (tests/fixtures/backgrounds.tsx), each in a section a screen and a half
-// from the next: scrolling one into view puts the others off screen.
 const ANIMATED = [
   'bubble',
   'fireworks',
@@ -30,7 +27,6 @@ async function show(section: Locator) {
   );
 }
 
-// Scrolls to the gap below the section: it and its neighbours are off screen.
 async function hide(section: Locator) {
   await section.evaluate((el) => {
     const { bottom } = el.getBoundingClientRect();
@@ -48,10 +44,6 @@ async function setPageVisible(page: Page, visible: boolean) {
   }, visible);
 }
 
-/**
- * What is on screen in the section: a hash of every canvas, plus the
- * transform and background position of every element. Works off screen too.
- */
 function frame(section: Locator) {
   return section.evaluate((root) => {
     const hash = (text: string) => {
@@ -71,16 +63,11 @@ function frame(section: Locator) {
   });
 }
 
-/** Resolves once the section draws a frame different from the current one. */
 async function expectMoving(section: Locator) {
   const before = await frame(section);
   await expect.poll(() => frame(section), { timeout: 5_000 }).not.toBe(before);
 }
 
-/**
- * Waits for the section to settle (two frames 250ms apart match), then checks
- * it stays the same for another second.
- */
 async function expectStill(page: Page, section: Locator) {
   let previous = await frame(section);
   await expect
@@ -99,7 +86,6 @@ async function expectStill(page: Page, section: Locator) {
   expect(await frame(section)).toBe(previous);
 }
 
-/** Number of non-transparent pixels on the section's canvas. */
 function paintedPixels(section: Locator) {
   return section.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
     const { data } = canvas
@@ -161,7 +147,6 @@ test.describe('backgrounds', () => {
         await page.mouse.move(200, 200);
         await page.mouse.move(400, 300, { steps: 5 });
         await expectStill(page, section);
-        // Something is drawn: the background doesn't go blank.
         if (CANVAS.includes(name))
           expect(await paintedPixels(section)).toBeGreaterThan(100);
         expect(errors).toEqual([]);
@@ -170,7 +155,6 @@ test.describe('backgrounds', () => {
   }
 
   test.describe('pointer', () => {
-    // The layer that follows the mouse.
     const follower = {
       bubble: '[class*="sixth-color"]',
       stars: '[data-slot="stars-background"] > div',
@@ -196,8 +180,6 @@ test.describe('backgrounds', () => {
       });
     }
 
-    // As in v1, the follower listens to mousemove, which browsers also fire
-    // for a tap.
     test.describe('touch', () => {
       test.use({ hasTouch: true });
 
@@ -225,8 +207,6 @@ test.describe('backgrounds', () => {
     const section = page.getByTestId('fireworks');
     await show(section);
     await expectMoving(section);
-    // As in v1, sizes and speeds are in pixels of a space as wide as the
-    // window: the 640px container shows it at 640 / window width.
     const { scale, expected } = await section
       .locator('canvas')
       .evaluate((canvas: HTMLCanvasElement) => ({
@@ -245,7 +225,6 @@ test.describe('backgrounds', () => {
         '[data-slot="hexagon-background"] .inline-flex > div',
       );
       expect(await cells.count()).toBeGreaterThan(20);
-      // The last row reaches the bottom edge.
       const sectionBox = (await section.boundingBox())!;
       const lastBox = (await cells.last().boundingBox())!;
       expect(lastBox.y + lastBox.height).toBeGreaterThanOrEqual(

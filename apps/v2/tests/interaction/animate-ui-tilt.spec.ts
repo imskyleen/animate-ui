@@ -6,7 +6,6 @@ const open = (page: Page) =>
 const card = (page: Page) =>
   page.getByText('Matt Mug').locator('xpath=ancestor::div[2]');
 
-/** Whether the tilting content is rotated in 3D. */
 const rotated = (page: Page) =>
   card(page).evaluate((el) => {
     const t = getComputedStyle(el).transform;

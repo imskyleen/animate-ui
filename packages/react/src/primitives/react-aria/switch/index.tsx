@@ -11,15 +11,6 @@ import { mergeRefs } from '../../../internal/controls/indicator';
 import { type ThumbAnimationProps } from '../../../internal/controls/thumb';
 import { RenderedThumb, renderChildren } from '../../../internal/controls/aria';
 
-// Same API as React Aria's Switch, animated like Animate UI v1's Radix and
-// Headless UI switches: while the switch is pressed (pointer or keyboard,
-// React Aria's `isPressed`), the thumb the user renders
-// (`data-slot="switch-thumb"`, shadcn/ui's thumb) stretches toward the middle
-// of the track; when it changes, the thumb springs to its new side (stiffness
-// 300, damping 25). The switch itself doesn't move, and its colours are the
-// component's CSS.
-
-/** React Aria's props, plus Animate UI's `transition` (the thumb's). */
 type SwitchProps = SwitchPrimitiveProps & ThumbAnimationProps;
 
 function Switch({

@@ -1,11 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
 
-// A panel whose content grows while it comes in (tests/fixtures/
-// tabs-late-content.tsx): its height glides on to the content's new height,
-// never ending on the stale one and jumping. Shared by the Radix UI, Base UI
-// and React Aria tabs (internal/tabs).
-
-/** The height of `target` on every frame for `ms`, once started. */
 const heights = (target: Locator, ms: number) =>
   target.evaluate(
     (el, ms) =>
@@ -13,7 +7,6 @@ const heights = (target: Locator, ms: number) =>
         const out: number[] = [];
         const start = performance.now();
         const tick = (now: number) => {
-          // The panel shown now (a leaving one first, then the next).
           const shown = [
             ...el.querySelectorAll<HTMLElement>(
               '[role="tabpanel"], .react-aria-TabPanel',
@@ -45,10 +38,7 @@ test.describe('tabs: content growing as its panel comes in', () => {
       await section.getByRole('tab', { name: tab }).click();
       const hs = await frames;
       const end = hs.at(-1)!;
-      // It ends at the content's full height (the long panel: > 200px)...
       expect(end).toBeGreaterThan(200);
-      // ...gliding there: no frame jumps more than a glide's step (the stale
-      // glide ended ~180px short, then jumped).
       const steps = hs.slice(1).map((h, i) => Math.abs(h - hs[i]!));
       expect(Math.max(...steps)).toBeLessThan(40);
     });
@@ -81,7 +71,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
     expect(Math.max(...steps)).toBeLessThan(40);
   });
 
-  /** What's below the tabs, every frame: its top, from the click on. */
   const below = (page: import('@playwright/test').Page, id: string) =>
     page.getByTestId(`${id}-below`).evaluate(
       (el) =>
@@ -112,8 +101,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
         .slice(1)
         .map((top, i) => top - tops[i]!)
         .filter((step) => Math.abs(step) > 0.05);
-      // The glide's first and last steps are small (the trapped margin made
-      // them ~20px jumps), and none jumps.
       expect(Math.abs(steps[0]!), tab).toBeLessThan(5);
       expect(Math.abs(steps.at(-1)!), tab).toBeLessThan(5);
       expect(Math.max(...steps.map(Math.abs)), tab).toBeLessThan(40);
@@ -130,8 +117,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
       await section.getByRole('tab', { name: `${id} b`, exact: true }).click();
       const hs = await frames;
       expect(hs.at(-1)!).toBeGreaterThan(150);
-      // Glided there: no frame covers more than a quarter of the way (a jump
-      // covers all of it at once).
       const steps = hs.slice(1).map((h, i) => Math.abs(h - hs[i]!));
       const way = Math.abs(hs.at(-1)! - hs[0]!);
       expect(Math.max(...steps)).toBeLessThan(Math.max(40, way / 4));
@@ -149,7 +134,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
     const panel = section
       .locator('[role="tabpanel"]')
       .filter({ visible: true });
-    // No glide left, nothing clipped: the panel takes its content's height.
     expect(
       await panel.evaluate(
         (el) =>
@@ -170,7 +154,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
         waitUntil: 'networkidle',
       });
       const section = page.getByTestId(id);
-      // On screen first: a click would scroll it there mid-recording.
       await section.scrollIntoViewIfNeeded();
       for (const tab of [`${id} b`, `${id} a`]) {
         const frames = below(page, id);
@@ -197,7 +180,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
     await section.getByRole('tab', { name: 'inline b', exact: true }).click();
     await page.waitForTimeout(1200);
     const style = await panel().getAttribute('style');
-    // React's own style, untouched (padding: var(--pad) kept whole).
     expect(style?.replace(/\s/g, '')).toBe(
       'padding:var(--pad);transition:all300ms',
     );
@@ -211,7 +193,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
     });
     const section = page.getByTestId('animated');
     await section.scrollIntoViewIfNeeded();
-    // How far the panel's bottom is above its content's, every frame.
     const frames = section.evaluate(
       (el) =>
         new Promise<number[]>((resolve) => {
@@ -233,7 +214,6 @@ test.describe('tabs: content growing as its panel comes in', () => {
     );
     await section.getByRole('tab', { name: 'animated b', exact: true }).click();
     const gaps = await frames;
-    // At most a frame behind it (it grows ~8px a frame), never clipping it.
     expect(Math.max(...gaps)).toBeLessThan(20);
     expect(gaps.at(-1)!).toBeLessThan(0.5);
   });

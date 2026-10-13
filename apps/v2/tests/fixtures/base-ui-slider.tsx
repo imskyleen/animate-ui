@@ -26,7 +26,6 @@ const thumb = {
   background: 'black',
 } as const;
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseSliderFixture() {
   const [value, setValue] = React.useState(20);
   const [committed, setCommitted] = React.useState<number | null>(null);
@@ -71,7 +70,6 @@ export default function BaseSliderFixture() {
       </section>
 
       <section data-testid="range">
-        {/* shadcn's slider-range example, on the docs demo's Slider. */}
         <DemoSlider
           defaultValue={[25, 50]}
           max={100}
@@ -81,7 +79,6 @@ export default function BaseSliderFixture() {
       </section>
 
       <section data-testid="formatted">
-        {/* Formatted in the browser's locale: 0.5 in English, 0,5 in French. */}
         <Slider.Root
           defaultValue={0.5}
           min={0}

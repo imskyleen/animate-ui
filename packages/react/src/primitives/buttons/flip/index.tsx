@@ -113,7 +113,6 @@ function FlipButtonFront({
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
   const defaultTransition = useTempoTransition(FACE_TRANSITION);
-  // Under reduced motion the faces crossfade without rotating or sliding.
   const reduce = useShouldReduceMotion();
 
   const frontOffset = from === 'top' || from === 'left' ? '50%' : '-50%';
@@ -162,7 +161,6 @@ function FlipButtonBack({
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
   const defaultTransition = useTempoTransition(FACE_TRANSITION);
-  // Under reduced motion the faces crossfade without rotating or sliding.
   const reduce = useShouldReduceMotion();
 
   const backOffset = from === 'top' || from === 'left' ? '-50%' : '50%';

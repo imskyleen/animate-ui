@@ -48,26 +48,16 @@ type Loaded = {
   animations: string[];
 };
 
-/** An icon library's gallery: its icons, tags, registry items and files. */
 type IconLibrary = {
   icons: IconEntry[];
-  /** Category titles, by id. */
   categoryTitles: Record<string, string>;
-  /**
-   * The categories offered as tags: the ones easiest to browse, not every
-   * category.
-   */
   tags: { id: string; title: string }[];
   iconComponent: typeof lucide.iconComponent;
-  /** Its registry items' prefix (`@animate-ui/<prefix>-<name>`). */
   prefix: string;
-  /** Where the CLI adds its icons. */
   importPath: string;
-  /** Icons added in the last 30 days (v1's New filter). */
   newIcons: Set<string>;
 };
 
-/** Icons added in the last 30 days (v1's New filter). */
 function newIcons(icons: IconEntry[]) {
   const since = new Date();
   since.setDate(since.getDate() - 30);
@@ -78,10 +68,6 @@ function newIcons(icons: IconEntry[]) {
   );
 }
 
-/**
- * The categories offered as tags, in both libraries: the easiest to browse,
- * not every category (38 tags filled five rows).
- */
 const TAGS = [
   { id: 'arrows', title: 'Arrows' },
   { id: 'charts', title: 'Charts' },
@@ -123,7 +109,6 @@ type IconLibraryId = keyof typeof ICON_LIBRARIES;
 
 const LibraryContext = createContext<IconLibrary>(ICON_LIBRARIES.lucide);
 
-// By library: Lucide and Hugeicons share names (star, user, sparkles).
 const cache = new Map<string, Promise<Loaded>>();
 
 function loadIcon(library: IconLibrary, entry: IconEntry) {
@@ -142,7 +127,6 @@ function loadIcon(library: IconLibrary, entry: IconEntry) {
   return promise;
 }
 
-/** Loads the icon module once it scrolls into view. */
 function useIcon(entry: IconEntry, enabled = true) {
   const library = use(LibraryContext);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -200,7 +184,6 @@ function IconTile({
         {icon && (
           <span
             data-slot="animation-count"
-            // Seen, not read: the tile's name stays the icon's.
             aria-hidden
             title={`${icon.animations.length} animations`}
             className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-background px-1 text-[10px] leading-none font-medium text-muted-foreground tabular-nums"
@@ -213,7 +196,6 @@ function IconTile({
   );
 }
 
-/** An icon's registry item, fetched once (its source, for Manual). */
 const items = new Map<string, Promise<{ content: string; target: string }>>();
 
 function loadItem(name: string) {
@@ -230,11 +212,6 @@ function loadItem(name: string) {
   return item;
 }
 
-/**
- * Installing the icon, as on every docs page: the CLI adds the file, Manual
- * installs the dependencies and shows the file to copy. The choice is
- * remembered.
- */
 function IconInstallation({ entry }: { entry: IconEntry }) {
   const item = `${use(LibraryContext).prefix}-${entry.name}`;
   const [file, setFile] = useState<{ content: string; target: string } | null>(
@@ -291,7 +268,6 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
   );
 }
 
-/** The selected icon, in the drawer: its preview, animations and code. */
 function IconDetail({
   entry,
   onClose,
@@ -300,7 +276,6 @@ function IconDetail({
 }: {
   entry: IconEntry;
   onClose: () => void;
-  /** Loop the preview (kept from one icon to the next). */
   loop: boolean;
   onLoopChange: (loop: boolean) => void;
 }) {
@@ -312,7 +287,6 @@ function IconDetail({
 
   return (
     <div className="grid gap-4 p-4 sm:grid-cols-[180px_1fr] sm:gap-6">
-      {/* The icon on its 24px grid, as on Lucide's and Hugeicons' sites. */}
       <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[7.5px_7.5px] max-sm:hidden">
         {icon && (
           <icon.Icon
@@ -323,7 +297,6 @@ function IconDetail({
             loop={loop}
           />
         )}
-        {/* As in v1: loop on the left, replay on the right. */}
         <button
           type="button"
           aria-label="Loop"
@@ -412,16 +385,6 @@ function IconDetail({
   );
 }
 
-/**
- * A drawer at the bottom of the gallery, as on lucide.dev: it slides up from
- * the bottom of the screen and stays there while you browse (pinned to the
- * viewport, along the gallery's column), and picking another icon swaps its
- * content in place. Escape or its close button closes it.
- *
- * Scrolled to the end of the gallery, it comes off the screen's edge and is
- * drawn whole (bottom border and corners); opened or closed there, with no
- * edge to slide from, it fades in place instead.
- */
 function IconDrawer({
   entry,
   onClose,
@@ -433,9 +396,7 @@ function IconDrawer({
   const [loop, setLoop] = useState(false);
   const holderRef = useRef<HTMLDivElement>(null);
   const open = entry !== null;
-  // Off the screen's edge (the gallery's end above it): drawn whole.
   const [detached, setDetached] = useState(false);
-  // Opened off the edge: it fades in place (and out, if it closes there).
   const [fade, setFade] = useState(false);
 
   const isDetached = () => {
@@ -445,10 +406,8 @@ function IconDrawer({
     );
   };
 
-  // Still leaving: opened again, it comes back from where it is.
   const leavingRef = useRef(false);
   const wasOpenRef = useRef(false);
-  // Where it opens, before it's painted: the drawer is in its holder now.
   useLayoutEffect(() => {
     const wasOpen = wasOpenRef.current;
     wasOpenRef.current = open;
@@ -461,8 +420,6 @@ function IconDrawer({
     setFade(off && !leavingRef.current);
   }, [open]);
 
-  // Kept up as the page scrolls, resizes, or changes under it without
-  // scrolling (a search, a filter, the drawer's own content).
   useEffect(() => {
     if (!open) return;
     let frame = 0;
@@ -499,8 +456,6 @@ function IconDrawer({
   }, [entry, onClose]);
 
   return (
-    // Clips the drawer as it slides from the bottom edge, leaving room around
-    // it for its shadow; the grid stays clickable through that room.
     <div
       ref={holderRef}
       className="pointer-events-none sticky bottom-0 z-20 -mx-4 -mt-8 overflow-hidden px-4 pt-8"
@@ -521,9 +476,7 @@ function IconDrawer({
               reduce
                 ? { opacity: 1 }
                 : fade
-                  ? // Keyframes: they replace the slide begun as it mounted,
-                    // before it's painted.
-                    { y: [0, 0], opacity: [0, 1], scale: [0.98, 1] }
+                  ? { y: [0, 0], opacity: [0, 1], scale: [0.98, 1] }
                   : { y: 0, opacity: 1, scale: 1 }
             }
             exit={
@@ -546,8 +499,6 @@ function IconDrawer({
             className="pointer-events-auto relative mt-4 rounded-2xl rounded-b-none border border-b-transparent bg-background shadow-[0_-8px_32px_-12px_rgb(0_0_0/0.25)] transition-[border-radius,border-color] duration-200 ease-out data-detached:rounded-b-2xl data-detached:border-b-border"
           >
             <div className="max-h-[70vh] overflow-y-auto">
-              {/* It leaves once its own exit ends: the install tabs' panels
-                  fading out inside it don't hold it on screen. */}
               <PresenceContext value={null}>
                 <IconDetail
                   key={entry.name}
@@ -558,8 +509,6 @@ function IconDrawer({
                 />
               </PresenceContext>
             </div>
-            {/* Below its bottom border, clipped at rest: covers what its
-                entrance's overshoot would uncover below it. */}
             <div
               aria-hidden
               className="absolute inset-x-[-1px] top-[calc(100%+1px)] h-6 border-x bg-background"
@@ -571,7 +520,6 @@ function IconDrawer({
   );
 }
 
-/** A filter chip: the active one fills in and checks itself, like v1's. */
 function FilterChip({
   active,
   onClick,
@@ -601,7 +549,6 @@ function FilterChip({
   );
 }
 
-/** An icon library's icons, to search, filter, preview and install. */
 export function IconsGallery({
   library: id = 'lucide',
 }: {
@@ -613,8 +560,6 @@ export function IconsGallery({
   const deferred = useDeferredValue(query);
   const [selected, setSelected] = useState<IconEntry | null>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
-  // Closed with the focus inside it (Escape, its close button): the focus
-  // goes back to the icon's tile instead of the page.
   const closeDrawer = useCallback(() => {
     const root = galleryRef.current;
     const drawer = root?.querySelector('[data-slot=icon-drawer]');
@@ -626,7 +571,6 @@ export function IconsGallery({
         ?.focus();
     setSelected(null);
   }, [selected]);
-  // 'all', 'new' or a category id.
   const [filter, setFilter] = useState('all');
 
   const icons = useMemo(() => {
@@ -644,8 +588,6 @@ export function IconsGallery({
     );
   }, [allIcons, newOnes, deferred, filter]);
 
-  // Searched or filtered, the icons found load at once (not as each tile
-  // scrolls into view): the grid's first rows show them as it changes.
   useEffect(() => {
     if (!deferred.trim() && filter === 'all') return;
     for (const entry of icons.slice(0, 60)) void loadIcon(library, entry);
@@ -672,7 +614,6 @@ export function IconsGallery({
           </span>
         </label>
 
-        {/* Only with something to filter by (a tag, or some new icons). */}
         {(tags.length > 0 || newOnes.size > 0) && (
           <div className="mb-4 flex flex-wrap gap-1.5">
             <FilterChip
@@ -681,7 +622,6 @@ export function IconsGallery({
             >
               All
             </FilterChip>
-            {/* Only while some icons are new. */}
             {newOnes.size > 0 && (
               <FilterChip
                 active={filter === 'new'}

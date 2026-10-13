@@ -13,7 +13,6 @@ import {
 type CopyProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // The two sheets part, as Hugeicons' Copy; their merge is `merge`.
   default: {
     rect: {
       initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },

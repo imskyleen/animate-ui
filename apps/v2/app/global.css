@@ -6,7 +6,6 @@
 
 @import 'fumadocs-ui/css/black.css';
 @import 'fumadocs-ui/css/preset.css';
-/* shadcn/ui's variants (data-open:, data-checked:…), as in shadcn projects. */
 @import 'shadcn/tailwind.css';
 
 :root {
@@ -155,7 +154,6 @@
   --color-fd-primary: oklch(1 0 0);
 }
 
-/* Animate UI motion curves (packages/react/src/utils/motion). */
 @theme {
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
@@ -245,8 +243,6 @@
     @apply border-border outline-ring/50;
   }
 
-  /* No rubber-band bounce: the page is scrolled by html (the viewport),
-     so it carries overscroll-behavior, not body. */
   html,
   body {
     overscroll-behavior: none;
@@ -261,7 +257,6 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* shadcn/ui's input-otp caret, as its registry adds it. */
 @theme inline {
   --animate-caret-blink: caret-blink 1.25s ease-out infinite;
 }
@@ -278,7 +273,6 @@ html {
   }
 }
 
-/* shadcn/ui's scroll areas without a scrollbar (its style's utility). */
 @utility no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

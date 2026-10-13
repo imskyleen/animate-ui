@@ -1,8 +1,6 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-namespace -- each part merges a
-   namespace of types with its component, like Base UI's own parts
-   (`Dialog.Popup.Props`, `Dialog.Root.ChangeEventDetails`…). */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 
@@ -17,43 +15,16 @@ import type {
   ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
-// Same API as Base UI's Dialog, animated like Animate UI v1: the Backdrop
-// fades in (the page behind blurs from 0), the Popup tips forward from `perspective(500px)
-// rotateX(-20deg) scale(0.8)` on a spring, or slides and fades in from its edge
-// when it has `data-side` (shadcn/ui's Sheet). See base-modal.tsx for the
-// wiring and ../../../internal/modal-motion.ts for the motion.
-
-/** Animate UI's additions to `Dialog.Backdrop`. */
 type BackdropAnimationProps = {
-  /**
-   * Fade in (its background color and backdrop filter, from nothing).
-   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: ModalAnimationProps['transition'];
-  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
-/** The edge `Dialog.Popup` tips from (Animate UI v1's `from`). */
 type DialogFlipDirection = FlipDirection;
 
-/** Animate UI's additions to `Dialog.Popup`. */
 type PopupAnimationProps = {
-  /**
-   * The edge the popup tips from as it comes in (and goes back to), as in
-   * Animate UI v1. Ignored by a sheet (`data-side`), which slides from its
-   * side.
-   * @default 'top'
-   */
   from?: DialogFlipDirection;
-  /**
-   * Transition of the opening, a sheet's slide from its `data-side` edge
-   * included.
-   * @default { type: 'spring', stiffness: 150, damping: 25 } (damping 22 for a
-   * sheet, with `data-side`)
-   */
   transition?: ModalAnimationProps['transition'];
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 

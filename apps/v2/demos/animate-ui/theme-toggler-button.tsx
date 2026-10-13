@@ -67,7 +67,6 @@ export default function ThemeTogglerButtonDemo({
   system?: boolean | string
 }) {
   const { theme, resolvedTheme, setTheme } = useTheme()
-  // Query strings (the test pages) pass booleans as text.
   const withSystem = system === true || system === "true"
 
   return (

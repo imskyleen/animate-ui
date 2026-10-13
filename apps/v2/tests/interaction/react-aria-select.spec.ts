@@ -11,18 +11,15 @@ import {
 
 const POPOVER = '[data-slot="select-content"]';
 const DEMO = '/tests/demos/react-aria/select';
-/** The SelectionIndicator. */
 const CHECK = ':scope > div';
 
 const trigger = (page: Page) => page.locator('[data-slot="select-trigger"]');
 const option = (page: Page, name: string) =>
   page.getByRole('option', { name, exact: true });
 
-/** Loads a demo page. */
 const load = (page: Page, path: string) =>
   page.goto(path, { waitUntil: 'networkidle' });
 
-/** Opens the list with a click and lets its entrance finish. */
 async function openList(page: Page) {
   await trigger(page).click();
   await page.waitForTimeout(650);
@@ -46,7 +43,6 @@ test.describe('react-aria select demo', () => {
     const settled = await sample(page, POPOVER);
     expect(settled.opacity).toBe(1);
     expect(settled.scale).toBe(1);
-    // Placed below the trigger: it grew from its top edge.
     expect(parseFloat(settled.origin.split(' ')[1]!)).toBeLessThanOrEqual(0);
   });
 
@@ -57,7 +53,6 @@ test.describe('react-aria select demo', () => {
     await openList(page);
     await option(page, 'Grapes').click();
 
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, POPOVER)).opacity, {
         intervals: [16],
@@ -112,7 +107,6 @@ test.describe('react-aria select demo', () => {
     await option(page, 'Banana').click();
     await expect(page.locator(POPOVER)).toHaveCount(0, { timeout: 1000 });
     await openList(page);
-    // Nothing changes: no check to wait for.
     await expectCloseWithoutHold(page, POPOVER, () =>
       option(page, 'Banana').click(),
     );
@@ -130,7 +124,6 @@ test.describe('react-aria select demo', () => {
     await trigger(page).focus();
     await page.keyboard.press('ArrowDown');
     await expect(page.locator(POPOVER)).toHaveCount(1);
-    // No value yet: React Aria focuses the first item.
     await expect(option(page, 'Apple')).toBeFocused();
     await page.keyboard.press('ArrowDown');
     await expect(option(page, 'Banana')).toBeFocused({
@@ -167,7 +160,6 @@ test.describe('react-aria select API', () => {
     await page.getByRole('option', { name: 'Cherry' }).click();
     await expect(page.getByTestId('controlled-value')).toHaveText('cherry');
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
-    // exitTransition reaches the Popover.
     await expect(page.getByTestId('controlled-popover')).toHaveCount(0, {
       timeout: 200,
     });
@@ -195,14 +187,11 @@ describeMenuHighlight('react-aria select highlight', {
     await trigger(page).click();
     await page.waitForTimeout(400);
   },
-  // No value yet: React Aria focuses the list, not an item, as it opens.
   first: (page) => option(page, 'Apple'),
   second: (page) => option(page, 'Banana'),
   keyboardNext: 'ArrowDown',
 });
 
-// Only choosing animates a check: the list opening shows the chosen item's
-// at rest, and closing leaves it as it is.
 test.describe('react-aria select checks', () => {
   test.describe.configure({ timeout: 180_000 });
   for (const animation of ['draw', 'pop'] as const) {

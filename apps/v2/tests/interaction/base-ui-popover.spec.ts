@@ -44,7 +44,6 @@ test.describe('base-ui popover API', () => {
     await page.getByRole('button', { name: 'Close controlled' }).click();
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
     await expect(content).toHaveCount(0, { timeout: 1500 });
-    // Fires once the exit is over, not when it starts.
     await expect(page.getByTestId('completed')).toHaveText('opened,closed');
     await page.getByRole('button', { name: 'Open from outside' }).click();
     await expect(content).toBeVisible();
@@ -89,7 +88,6 @@ test.describe('base-ui popover API', () => {
     expect(
       await content.evaluate((el) => Number(getComputedStyle(el).opacity)),
     ).toBeLessThan(1);
-    // A 200ms entrance instead of the spring.
     await page.waitForTimeout(260);
     expect(
       await content.evaluate((el) => Number(getComputedStyle(el).opacity)),

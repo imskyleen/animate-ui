@@ -7,7 +7,6 @@ import { getStrictContext } from '../../utils/strict-context';
 import { usePageVisible } from '../../utils/use-page-visible';
 import { Slot, type WithAsChild } from '../slot';
 
-/** Joins class names, skipping empty ones. */
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(' ') || undefined;
 }
@@ -51,7 +50,6 @@ const MotionGrid = ({
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
-  // The loop pauses while nobody can see it: off screen or in a hidden tab.
   const inView = useInView(localRef);
   const pageVisible = usePageVisible();
   const playing = animate && inView && pageVisible;

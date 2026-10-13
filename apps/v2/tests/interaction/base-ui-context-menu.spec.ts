@@ -21,7 +21,6 @@ test.describe('base-ui context-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
-    // Opens to the bottom right of the pointer: anchored near its top-left.
     const [x, y] = first.origin.split(' ').map(parseFloat);
     expect(Math.abs(x!)).toBeLessThan(8);
     expect(Math.abs(y!)).toBeLessThan(8);
@@ -36,7 +35,6 @@ test.describe('base-ui context-menu demo', () => {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(700);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, CONTENT)).opacity, {
         intervals: [16],
@@ -93,7 +91,6 @@ describeMenuHighlight('base-ui context-menu highlight', {
     await page.getByText('Right click here').click({ button: 'right' });
     await page.waitForTimeout(400);
   },
-  // Adjacent enabled items (Base UI's arrow keys visit disabled ones too).
   first: (page) => page.getByRole('menuitem', { name: /Reload/ }),
   second: (page) => page.getByRole('menuitem', { name: 'More Tools' }),
   submenuTrigger: (page) => page.getByRole('menuitem', { name: 'More Tools' }),

@@ -13,16 +13,7 @@ import { SCALE_SPRING, TAP_SCALE } from '../_button';
 
 type ButtonProps = WithAsChild<
   HTMLMotionProps<'button'> & {
-    /**
-     * Scale while hovered. Animate UI buttons answer the press, not the
-     * hover: no hover scale unless you set one.
-     * @default 1
-     */
     hoverScale?: number;
-    /**
-     * Scale while pressed.
-     * @default 0.97
-     */
     tapScale?: number;
   }
 >;

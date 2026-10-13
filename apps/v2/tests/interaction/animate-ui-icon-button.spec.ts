@@ -11,7 +11,6 @@ const open = async (page: Page) => {
   await hydrated(page, SELECTOR);
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -33,7 +32,6 @@ const particles = (page: Page) =>
 
 type Particle = { x: number; y: number; opacity: number };
 
-/** Each particle's center (relative to the button's top center) and opacity, every frame. */
 const recordParticles = (page: Page, ms: number) =>
   page.evaluate(
     ([sel, duration]) =>
@@ -81,15 +79,12 @@ test.describe('animate-ui icon button', () => {
     const bursting = frames.filter((f) => f.length > 0);
     expect(bursting.length).toBeGreaterThan(0);
     expect(Math.max(...bursting.map((f) => f.length))).toBe(6);
-    // They start at the top center and travel 30px out, in every direction.
     const reach = Math.max(...bursting.flat().map((p) => Math.hypot(p.x, p.y)));
     expect(reach).toBeGreaterThan(20);
     expect(reach).toBeLessThan(34);
-    // Above and below the edge: they spread all around.
     const ys = bursting.flat().map((p) => p.y);
     expect(Math.max(...ys)).toBeGreaterThan(15);
     expect(Math.min(...ys)).toBeLessThan(-15);
-    // Fading in, then out.
     expect(bursting.flat().some((p) => p.opacity > 0.5)).toBe(true);
     await expect
       .poll(() =>
@@ -127,8 +122,6 @@ test.describe('animate-ui icon button', () => {
     await expect
       .poll(async () => (await sample(page, SELECTOR)).scale)
       .toBeCloseTo(0.97, 3);
-    // Released: the click bursts, and the button springs back (it isn't
-    // remounted, which would snap it to 1 at once).
     const scales = page.evaluate(
       ([sel]) =>
         new Promise<number[]>((resolve) => {

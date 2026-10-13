@@ -15,68 +15,8 @@ import {
   useTempoTransition,
 } from '../utils/motion';
 
-// Animate UI v1's menu highlight (DropdownMenuHighlight, MenuHighlight): one
-// surface glides behind the highlighted item, on a spring (stiffness 500,
-// damping 40, a little quicker than v1's 350/35), instead of each item
-// lighting up on its own. It follows the pointer and the arrow keys, goes into
-// submenus, and stays on the last item when the pointer leaves the menu.
-//
-// Drop-in, it reuses the styles already written for the items: when an item
-// gets highlighted, its own highlighted background (`focus:bg-accent`,
-// `data-highlighted:bg-accent`…) is read and painted on the surface, and the
-// item's background is cleared while it's highlighted (or its submenu is
-// open, or it has the focus). Text colors stay on the item. Base UI and React
-// Aria mark an item highlighted a moment before they focus it: a background
-// on `:focus` (a submenu trigger's, often) is read again once the item has
-// the focus.
-//
-// The active item renders the surface. When another item becomes active, the
-// surface moves into it: the new element starts exactly where the previous
-// one is on screen, at its opacity and with its velocity, and the previous one
-// goes in the same frame. However fast the pointer or the arrow keys go,
-// there's one highlight on screen, and a glide retargeted on the way keeps its
-// momentum instead of starting over from rest. (v1 got the glide from a shared
-// layoutId; Motion now crossfades shared layouts, so the hand-off is explicit
-// here.) Only a highlight appearing from nothing fades in.
-//
-// Into a submenu (or back out of it), each menu clips its own surfaces, as
-// v1's did: the previous surface doesn't go at once but glides along with the
-// new one, the same way at the same time, so the two make one highlight
-// crossing from one menu into the other, the part still in the menu it leaves
-// and the part already in the one it enters. The entering one fades in as it
-// glides; the leaving one goes once it has left its menu.
-//
-// The glide runs on the compositor: a Web Animation of `transform`, eased by
-// the spring itself (a `linear()` curve, with the velocity it was handed). A
-// busy main thread, a submenu mounting as the pointer reaches its trigger,
-// doesn't stall it.
-//
-// The surface sits under every item's content: the menu becomes its own
-// stacking context and the surface goes below its content (z-index -1), so
-// gliding over another item never covers that item's text.
-//
-// A menubar's triggers share one the same way (`TriggerHighlightScope`):
-// a trigger is lit while its own styles paint it, hovered, focused or with
-// its menu open (`hover:bg-muted`, `aria-expanded:bg-muted`…). The surface
-// glides from trigger to trigger, goes back to a trigger still lit when the
-// one it's on goes dark, and fades out where it is once none is lit.
-//
-// An item that clips its content (`overflow-hidden`, a sidebar's menu
-// buttons) would clip a surface gliding in from beside it too: rendered
-// `beside` the item (a sibling, in its positioned parent), the surface is
-// laid over the item's box and follows it as it resizes.
-
-/** The highlight's spring: the glide. */
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
-/**
- * A highlight appearing from nothing, or going: a short fade, in place, on
- * the color's curve (a background showing up). Its color changing too.
- */
 const FADE_TRANSITION = motionTokens.transition.color;
-/**
- * A highlight taken over halfway through a fade (it was showing up, or
- * going): back to full at once, as it was on its way.
- */
 const RESUME_TRANSITION = motionTokens.transition.fade;
 
 type Surface = {
@@ -85,7 +25,6 @@ type Surface = {
   borderRadius: string;
 };
 
-/** A surface's offset from its item: a translation, and a scale. */
 type Offset = {
   x: number;
   y: number;
@@ -93,60 +32,33 @@ type Offset = {
   scaleY: number;
 };
 
-/** A running glide, enough to know how fast it moves at any time. */
 type Glide = {
   animation: Animation;
-  /** The spring's curve: the share of the time elapsed to the share of the way. */
   ease: (progress: number) => number;
-  /** Milliseconds. */
   duration: number;
-  /** Where it started, in its item's terms. */
   from: Offset;
 };
 
-/** The surface on screen: where the next one starts from. */
 type SurfaceHandle = {
-  /** Its item's id in the scope. */
   id: string;
   element: HTMLElement;
   item: HTMLElement;
   glide: Glide | null;
 };
 
-/**
- * An item whose surface glides along with the new one into another menu
- * (see `crossesClip`), toward `to`, the item the highlight went to. When the
- * highlight moves on, `to` follows it, under a new `key`: the surface starts
- * again from where the highlight is, on its way. With `to` null, no item is
- * lit anymore (a menubar's triggers): it fades out where it is.
- */
 type Leaving = { id: string; to: HTMLElement | null; key: number };
 
 type HighlightScopeValue = {
   activeId: string | null;
   leaving: readonly Leaving[];
-  /** The surfaces' `data-slot`. */
   slot: string;
   activate: (id: string, item: HTMLElement) => void;
-  /** A trigger is lit: the highlight goes to it. */
   light: (id: string, item: HTMLElement) => void;
-  /**
-   * A trigger went dark: the highlight goes back to the latest one still lit,
-   * or fades out.
-   */
   unlight: (id: string) => void;
-  /** A leaving surface is gone. */
   left: (id: string) => void;
-  /** Where a surface entering `item` starts (see `handOff`). */
   handOff: (item: HTMLElement, reduce: boolean) => Start;
-  /** The surface on screen registers itself; returns its unregistration. */
   register: (handle: SurfaceHandle) => () => void;
-  /** The surface on screen is going, at this opacity. */
   gone: (opacity: number) => void;
-  /**
-   * The paint for an item's surface: what its styles give it, or, when
-   * they give it nothing yet, the last highlight's (see `paint`).
-   */
   paint: (surface: Surface) => Surface;
 };
 
@@ -154,26 +66,16 @@ const HighlightScopeContext = React.createContext<HighlightScopeValue | null>(
   null,
 );
 
-/** A menubar's triggers' highlight (apart from its menus' items'). */
 const TriggerScopeContext = React.createContext<HighlightScopeValue | null>(
   null,
 );
 
 type HighlightScopeProps = {
-  /** The menu is open: reopening it starts without a highlight. */
   open: boolean;
-  /**
-   * Inside another scope (a submenu inside its menu), use that one: the
-   * highlight goes into the submenu, like v1's.
-   */
   shared?: boolean;
   children?: React.ReactNode;
 };
 
-/**
- * One highlight for the items inside: render it in the root content of a
- * menu (its submenus share it, like v1), a select, a combobox or a listbox.
- */
 function HighlightScope({ shared, ...props }: HighlightScopeProps) {
   const parent = React.use(HighlightScopeContext);
   if (shared && parent) return props.children;
@@ -186,10 +88,6 @@ function HighlightScope({ shared, ...props }: HighlightScopeProps) {
   );
 }
 
-/**
- * One highlight for a menubar's triggers (`useTriggerHighlight`): render it
- * in the menubar. Its menus' items keep their own.
- */
 function TriggerHighlightScope({ children }: { children?: React.ReactNode }) {
   return (
     <OwnHighlightScope
@@ -216,14 +114,11 @@ function OwnHighlightScope({
   const surfaceRef = React.useRef<SurfaceHandle | null>(null);
   const keyRef = React.useRef(0);
   const paintRef = React.useRef<Surface | null>(null);
-  // Triggers lit, the latest last, and the active item as of the last event.
   const litRef = React.useRef(new Map<string, HTMLElement>());
   const activeRef = React.useRef<string | null>(null);
   React.useLayoutEffect(() => {
     activeRef.current = activeId;
   }, [activeId]);
-  // A kept-mounted menu reopens without a highlight, like a new one. Closing
-  // keeps it: the menu fades out as it was.
   const [wasOpen, setWasOpen] = React.useState(open);
   if (wasOpen !== open) {
     setWasOpen(open);
@@ -244,12 +139,8 @@ function OwnHighlightScope({
     const cross = moves !== null && crossesClip(moves.item, item);
     const key = (keyRef.current += 1);
     setLeaving((list) => {
-      // Coming back to an item while its surface leaves: it's the active one
-      // again. A surface fading out gives way to the new one, which starts
-      // from it.
       const rest = without(list, id).filter((other) => other.to !== null);
       if (!moves || (!cross && rest.length === 0)) return rest;
-      // The highlight moves on: the surfaces leaving for it follow.
       const along = rest.map((other) => ({ ...other, to: item, key }));
       return cross
         ? [...without(along, moves.id), { id: moves.id, to: item, key }]
@@ -284,9 +175,6 @@ function OwnHighlightScope({
     },
     [activate],
   );
-  // The last surface on screen, gone a moment ago (a submenu closing before
-  // the menu's next item is highlighted): the next one doesn't start from
-  // nothing, it picks up where that one was.
   const goneRef = React.useRef<{ opacity: number; at: number } | null>(null);
   const handOffFrom = React.useCallback(
     (item: HTMLElement, reduce: boolean) => {
@@ -311,11 +199,6 @@ function OwnHighlightScope({
       if (surfaceRef.current === handle) surfaceRef.current = null;
     };
   }, []);
-  // An item highlighted before it's focused, whose highlighted background is
-  // on `:focus` (shadcn/ui's React Aria submenu trigger), reads nothing; the
-  // focus reads it again, unless the pointer has already moved on, on a busy
-  // main thread. Meanwhile it wears the last highlight's paint: the menu's
-  // items share one, and a transparent surface would be no highlight at all.
   const paint = React.useCallback((surface: Surface) => {
     if (isBare(surface)) return paintRef.current ?? surface;
     paintRef.current = surface;
@@ -356,7 +239,6 @@ function OwnHighlightScope({
 
 const SURFACE_PROPERTIES = ['background-color', 'background-image'] as const;
 type SavedStyle = [property: string, value: string, priority: string][];
-/** Inline styles an item had before its background was cleared. */
 const savedStyles = new WeakMap<HTMLElement, SavedStyle>();
 
 function save(node: HTMLElement, properties: readonly string[]): SavedStyle {
@@ -374,10 +256,6 @@ function restore(node: HTMLElement, saved: SavedStyle) {
   }
 }
 
-/**
- * Clears (or gives back) the item's own background. Inline and important,
- * so it wins over any class, `!important` utilities included.
- */
 function clearOwnSurface(node: HTMLElement, clear: boolean) {
   const saved = savedStyles.get(node);
   if (clear && !saved) {
@@ -390,17 +268,14 @@ function clearOwnSurface(node: HTMLElement, clear: boolean) {
   }
 }
 
-/** No background at all: nothing to paint. */
 const isBare = ({ backgroundColor, backgroundImage }: Surface) =>
   backgroundImage === 'none' &&
   (backgroundColor === 'transparent' ||
     /^rgba\(.*,\s*0\)$/.test(backgroundColor));
 
-/** The background the item's own styles give it right now. */
 function readSurface(node: HTMLElement): Surface {
   const cleared = savedStyles.get(node);
   const transition = save(node, ['transition']);
-  // No transition: read the final color, and clear it again at once.
   node.style.setProperty('transition', 'none', 'important');
   if (cleared) restore(node, cleared);
   const style = getComputedStyle(node);
@@ -413,14 +288,11 @@ function readSurface(node: HTMLElement): Surface {
     node.style.setProperty('background-color', 'transparent', 'important');
     node.style.setProperty('background-image', 'none', 'important');
   }
-  // Applied before the transition comes back, so nothing fades.
   void getComputedStyle(node).backgroundColor;
   restore(node, transition);
   return surface;
 }
 
-// A submenu trigger whose submenu is open keeps its highlighted style in most
-// themes: in v1, the highlight leaves it for the submenu.
 const isExpanded = (node: HTMLElement) =>
   node.getAttribute('aria-expanded') === 'true';
 
@@ -429,7 +301,6 @@ const without = (list: readonly Leaving[], id: string) =>
     ? list.filter((other) => other.id !== id)
     : list;
 
-/** The closest element clipping the item (its menu or list scrolls). */
 function clipperOf(item: HTMLElement) {
   const body = item.ownerDocument.body;
   for (let el = item.parentElement; el && el !== body; el = el.parentElement) {
@@ -439,44 +310,22 @@ function clipperOf(item: HTMLElement) {
   return null;
 }
 
-/**
- * Whether the highlight goes from one menu into another (into a submenu, or
- * back): menus clip their content (`overflow`), so a surface gliding in from
- * the menu beside would be cut at the menu's edge.
- */
 const crossesClip = (from: HTMLElement, to: HTMLElement) =>
   clipperOf(from) !== clipperOf(to);
 
 type ItemHighlight = {
-  /** The item's element (merge it with the user's ref). */
   ref: (node: HTMLElement | null) => void;
-  /** Render it inside the item. Null outside a HighlightScope. */
   highlight: React.ReactNode;
 };
 
 type ItemHighlightOptions = {
-  /**
-   * The attribute the library sets on the highlighted item: Radix UI and
-   * Base UI's `data-highlighted`, React Aria's `data-focused`.
-   */
   attribute?: string;
 };
 
 type TriggerHighlightOptions = {
-  /**
-   * The caller renders `highlight` beside the item (a sibling, in a
-   * positioned parent) instead of inside it: the surface is laid over the
-   * item's box. For items that clip their content (`overflow: hidden`), which
-   * would clip a surface gliding in from another item.
-   */
   beside?: boolean;
 };
 
-/**
- * Makes an item take part in its scope's highlight: it becomes the active
- * item when the library marks it highlighted, and stays active until another
- * one is.
- */
 function useItemHighlight(
   disabled?: boolean,
   { attribute = 'data-highlighted' }: ItemHighlightOptions = {},
@@ -484,10 +333,6 @@ function useItemHighlight(
   return useHighlightIn(React.use(HighlightScopeContext), disabled, attribute);
 }
 
-/**
- * Makes a menubar's trigger take part in its triggers' highlight (see
- * `TriggerHighlightScope`): the highlight is on it while it's lit.
- */
 function useTriggerHighlight(
   disabled?: boolean,
   { beside = false }: TriggerHighlightOptions = {},
@@ -495,14 +340,12 @@ function useTriggerHighlight(
   return useHighlightIn(React.use(TriggerScopeContext), disabled, null, beside);
 }
 
-/** Painted alike (no new surface to render). */
 const samePaint = (a: Surface | null, b: Surface) =>
   a !== null &&
   a.backgroundColor === b.backgroundColor &&
   a.backgroundImage === b.backgroundImage &&
   a.borderRadius === b.borderRadius;
 
-/** The attributes a trigger's styles may depend on. */
 const TRIGGER_ATTRIBUTES = [
   'aria-expanded',
   'data-state',
@@ -512,10 +355,6 @@ const TRIGGER_ATTRIBUTES = [
   'data-disabled',
 ];
 
-/**
- * `attribute`: the item is active while it has it (menus' items). Null: a
- * trigger, active while it's lit (see `TriggerHighlightScope`).
- */
 function useHighlightIn(
   scope: HighlightScopeValue | null,
   disabled: boolean | undefined,
@@ -529,31 +368,21 @@ function useHighlightIn(
   const paint = scope?.paint;
   const light = scope?.light;
   const unlight = scope?.unlight;
-  // Stable, and only a new element counts: React calls a ref with null and
-  // the element again whenever it's recreated.
   const ref = React.useCallback((element: HTMLElement | null) => {
     if (element)
       setNode((current) => (current === element ? current : element));
   }, []);
 
-  // A trigger: lit while its own styles paint it as it's hovered, focused or
-  // its menu is open; its own background is cleared while it's lit.
   React.useLayoutEffect(() => {
     if (attribute !== null || !light || !unlight || !node) return;
-    // The surface is positioned inside the trigger (beside it, in its
-    // parent, it's laid over its box).
     if (!beside && getComputedStyle(node).position === 'static')
       node.style.setProperty('position', 'relative');
-    // Hover states are read from the pointer: `:hover` can lag behind it.
     let hovered = false;
     let lit = false;
     let frame = 0;
     const sync = () => {
       const interactive =
         !disabled && (hovered || isExpanded(node) || node.matches(':focus'));
-      // Cleared before it's read: read first, its highlighted background
-      // would be where a CSS transition (`transition-all`) starts from, and
-      // fade out on the trigger, a second highlight.
       if (interactive) clearOwnSurface(node, true);
       const surface = interactive ? readSurface(node) : null;
       const now = surface !== null && !isBare(surface);
@@ -570,7 +399,6 @@ function useHighlightIn(
     const enter = () => {
       hovered = true;
       sync();
-      // Read again once the hover styles surely apply.
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(sync);
     };
@@ -603,14 +431,9 @@ function useHighlightIn(
 
   React.useLayoutEffect(() => {
     if (attribute === null || !activate || !paint || !node) return;
-    // The surface is positioned inside the item.
     if (getComputedStyle(node).position === 'static')
       node.style.setProperty('position', 'relative');
 
-    // The item's own background is cleared while the surface stands for it
-    // (highlighted, or its submenu open), and while it has the focus: React
-    // Aria moves the highlight a moment before the focus, and the item it
-    // leaves would show its `focus:` background meanwhile, a second highlight.
     const clear = () =>
       clearOwnSurface(
         node,
@@ -625,9 +448,6 @@ function useHighlightIn(
       }
       clear();
     };
-    // Highlighted before it's focused (Base UI, React Aria): read before the
-    // focus, a `focus:` background is missing, and the surface would glide in
-    // transparent. The focus comes before the surface is rendered.
     const focus = () => {
       if (node.hasAttribute(attribute)) setSurface(paint(readSurface(node)));
       clear();
@@ -654,8 +474,6 @@ function useHighlightIn(
 
   return {
     ref,
-    // Always an element inside a scope, so the item's children keep their
-    // place in the tree whether it's active or not.
     highlight: scope ? (
       <HighlightSurface
         id={id}
@@ -672,15 +490,11 @@ function useHighlightIn(
 
 type HighlightSurfaceProps = {
   id: string;
-  /** The item's highlighted background. */
   surface: Surface | null;
-  /** It's the active item: its surface is the highlight. */
   active: boolean;
-  /** The highlight went into another menu: its surface goes along. */
   leaving: Leaving | null;
   item: HTMLElement | null;
   scope: HighlightScopeValue;
-  /** Rendered beside the item: laid over its box (see `beside`). */
   beside: boolean;
 };
 
@@ -708,7 +522,6 @@ function HighlightSurface({
       )}
       {leaving && !active && (
         <SurfaceCopy
-          // A new way: it starts again from the highlight on screen.
           key={`leaving-${leaving.key}`}
           id={id}
           surface={surface}
@@ -723,11 +536,6 @@ function HighlightSurface({
   );
 }
 
-/**
- * Lays a surface rendered beside its item over the item's box: its
- * containing block's terms (scaled ancestors and the item's own transform
- * included, as the item shows on screen).
- */
 function placeOver(element: HTMLElement, item: HTMLElement) {
   const host = element.offsetParent as HTMLElement | null;
   const box = item.getBoundingClientRect();
@@ -748,7 +556,6 @@ function placeOver(element: HTMLElement, item: HTMLElement) {
   element.style.height = `${box.height / ratioY}px`;
 }
 
-/** Keeps a surface rendered beside its item over it (`placeOver`). */
 function useBesideBox(
   elementRef: React.RefObject<HTMLElement | null>,
   item: HTMLElement,
@@ -769,20 +576,15 @@ function useBesideBox(
 type Start = {
   offset: Offset;
   opacity: number;
-  /** The color it shows at first: the previous surface's (null: its own). */
   color: string | null;
-  /** Nothing was on screen: it shows up (not a fade taken over). */
   fresh: boolean;
-  /** Per millisecond, in the new item's terms. */
   velocity: Offset;
-  /** It comes from another menu (see `crossesClip`). */
   cross: boolean;
 };
 
 const IN_PLACE: Offset = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
 const STILL: Offset = { x: 0, y: 0, scaleX: 0, scaleY: 0 };
 
-/** How fast a glide moves right now, in its item's terms (per ms). */
 function velocityOf({ animation, ease, duration, from }: Glide): Offset {
   const time = Number(animation.currentTime ?? duration);
   if (!(time < duration)) return STILL;
@@ -799,11 +601,6 @@ function velocityOf({ animation, ease, duration, from }: Glide): Offset {
   };
 }
 
-/**
- * Where a surface entering `item` starts: on the previous surface, as it is
- * on screen, with its opacity and velocity. With nothing on screen, it fades
- * in, in place. Under reduced motion, it doesn't glide.
- */
 function handOff(
   previous: SurfaceHandle | null,
   item: HTMLElement,
@@ -822,7 +619,6 @@ function handOff(
   const opacity = Number(style.opacity);
   const color = style.backgroundColor;
   const cross = crossesClip(previous.item, item);
-  // Its box on screen, mid-glide included.
   const offset = offsetOn(previous.element.getBoundingClientRect(), item);
   if (reduce || !offset)
     return {
@@ -845,7 +641,6 @@ function handOff(
     velocity: {
       x: velocity.x,
       y: velocity.y,
-      // Scales are relative to the item: the new one may differ in size.
       scaleX: (velocity.scaleX * from.width) / own.width,
       scaleY: (velocity.scaleY * from.height) / own.height,
     },
@@ -853,14 +648,9 @@ function handOff(
   };
 }
 
-/**
- * The offset that lays a surface of `item` over `box` on screen (origin top
- * left). Null for an item without a box.
- */
 function offsetOn(box: DOMRect, item: HTMLElement): Offset | null {
   const own = item.getBoundingClientRect();
   if (!own.width || !own.height) return null;
-  // Screen pixels per CSS pixel: a menu still scaling in shrinks both boxes.
   const ratioX = own.width / (item.offsetWidth || own.width);
   const ratioY = own.height / (item.offsetHeight || own.height);
   return {
@@ -871,17 +661,12 @@ function offsetOn(box: DOMRect, item: HTMLElement): Offset | null {
   };
 }
 
-/**
- * The glide from `offset` to `to`, as a share of the way: its initial
- * velocity is the handed velocity along the way (per ms).
- */
 function initialRate(
   { offset, velocity }: Start,
   to: Offset,
   width: number,
   height: number,
 ) {
-  // The way to go, and the velocity, in pixels (scales on the item's size).
   const way = [
     to.x - offset.x,
     to.y - offset.y,
@@ -903,19 +688,12 @@ const toTransform = ({ x, y, scaleX, scaleY }: Offset) =>
   `translate(${x}px, ${y}px) scale(${scaleX}, ${scaleY})`;
 
 type SurfaceCopyProps = {
-  /** Its item's id in the scope. */
   id: string;
   surface: Surface;
   item: HTMLElement;
   scope: HighlightScopeValue;
-  /**
-   * The highlight went into another menu, to this item: this surface glides
-   * along with the new one, then goes.
-   */
   leavingTo?: HTMLElement | null;
-  /** No item is lit anymore: it fades out where it is. */
   fadeOut?: boolean;
-  /** Rendered beside the item: laid over its box (see `beside`). */
   beside?: boolean;
 };
 
@@ -932,30 +710,22 @@ function SurfaceCopy({
   const glide = useTempoTransition<Transition>(HIGHLIGHT_TRANSITION);
   const fade = useTempoTransition<Transition>(FADE_TRANSITION);
   const resume = useTempoTransition<Transition>(RESUME_TRANSITION);
-  // Read while rendering: the previous surface is still on screen (it goes
-  // in this same commit).
   const [start] = React.useState(() => scope.handOff(item, reduce));
-  // Leaving: where the highlight went, in this item's terms.
   const [target] = React.useState(() =>
     leavingTo && !reduce
       ? offsetOn(leavingTo.getBoundingClientRect(), item)
       : null,
   );
   const elementRef = React.useRef<HTMLSpanElement>(null);
-  // Read when it mounts: a new transition object each render (a tempo)
-  // mustn't restart the glide.
   const transitionsRef = React.useRef({ glide, fade, resume });
   const { register, gone, left } = scope;
-  // Beside its item: over the item's box first (its glide is in those terms).
   useBesideBox(elementRef, item, beside);
 
-  // Before paint: the first frame already shows the surface where it starts.
   React.useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element) return undefined;
     const animations: Animation[] = [];
     let running: Glide | null = null;
-    // Leaving without a way to go (reduced motion): it goes at once.
     if (leavingTo && !target) {
       left(id);
       return undefined;
@@ -965,8 +735,6 @@ function SurfaceCopy({
     const rate = initialRate(start, to, item.offsetWidth, item.offsetHeight);
     let timing: { duration: number; easing: string } | null = null;
     if (rate !== null) {
-      // The spring as a curve, with the velocity it was handed (Motion's
-      // velocity is per second, on a 0-100 way).
       const { ease, duration } = createGeneratorEasing(
         { ...transitionsRef.current.glide, velocity: rate * 1000 * 100 },
         100,
@@ -979,7 +747,6 @@ function SurfaceCopy({
           { transform: toTransform(start.offset) },
           { transform: target ? toTransform(target) : 'none' },
         ],
-        // A leaving surface stays where it went until it goes.
         { ...timing, fill: target ? 'forwards' : 'auto' },
       );
       animations.push(animation);
@@ -987,11 +754,9 @@ function SurfaceCopy({
     }
 
     if (target) {
-      // Gone once there: out of its menu, under the one it went into.
       if (running)
         running.animation.finished.then(
           () => left(id),
-          // Cancelled: it unmounted first.
           () => {},
         );
       else left(id);
@@ -1001,9 +766,6 @@ function SurfaceCopy({
     }
 
     if (fadeOut) {
-      // Gliding on to its item if it was on its way, it fades out. It's the
-      // surface on screen until it's gone: lit again meanwhile, the highlight
-      // starts from it.
       const { duration, easing } = toCssTiming(transitionsRef.current.fade);
       const fading = element.animate(
         [{ opacity: start.opacity }, { opacity: 0 }],
@@ -1012,17 +774,13 @@ function SurfaceCopy({
       animations.push(fading);
       fading.finished.then(
         () => left(id),
-        // Cancelled: it unmounted first.
         () => {},
       );
     } else if (start.cross && timing) {
-      // Into another menu: it shows as it glides in, as v1's did.
       animations.push(
         element.animate([{ opacity: 0 }, { opacity: 1 }], timing),
       );
     } else if (start.opacity < 1) {
-      // From nothing, gently; halfway through a fade (another surface's,
-      // showing up or going), back at once.
       const { duration, easing } = toCssTiming(
         start.fresh
           ? transitionsRef.current.fade
@@ -1036,8 +794,6 @@ function SurfaceCopy({
       );
     }
 
-    // From the previous surface's color, when it wore another one (an open
-    // trigger's lighter background, then a hovered one's).
     const color = getComputedStyle(element).backgroundColor;
     if (start.color && start.color !== color && !target) {
       const { duration, easing } = toCssTiming(transitionsRef.current.fade);
@@ -1051,7 +807,6 @@ function SurfaceCopy({
 
     const unregister = register({ id, element, item, glide: running });
     return () => {
-      // As it shows, before its fade stops.
       const opacity = element.isConnected
         ? Number(getComputedStyle(element).opacity)
         : 0;
@@ -1061,8 +816,6 @@ function SurfaceCopy({
     };
   }, [register, gone, left, id, item, start, target, leavingTo, fadeOut]);
 
-  // Its color changing while it's on (the item's styles: a trigger open,
-  // then hovered) changes on the color's curve too.
   const { duration: colorDuration, easing: colorEasing } = toCssTiming(fade);
 
   return (
@@ -1073,7 +826,6 @@ function SurfaceCopy({
       data-leaving={leavingTo || fadeOut ? '' : undefined}
       style={{
         position: 'absolute',
-        // Beside its item, its box is the item's (`useBesideBox`).
         ...(!beside && { inset: 0 }),
         zIndex: -1,
         pointerEvents: 'none',
@@ -1087,10 +839,6 @@ function SurfaceCopy({
   );
 }
 
-/**
- * Adds the highlight to an item's children. With `asChild`, it goes inside
- * the element the user renders.
- */
 function withHighlight(
   children: React.ReactNode,
   highlight: React.ReactNode,

@@ -42,8 +42,6 @@ test.describe('radix-ui radio group API', () => {
   }) => {
     await expect(page.getByTestId('forced-indicator-2')).toHaveCount(1);
     expect(await opacityOf(page.getByTestId('forced-dot-2'))).toBe(0);
-    // The selected dot popped in when the group mounted (v1): at rest once
-    // its spring has settled.
     await expect
       .poll(() => opacityOf(page.getByTestId('forced-dot-1')), {
         timeout: 1500,

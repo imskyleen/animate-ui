@@ -70,8 +70,7 @@ function BlurInner({
       exit="hidden"
       variants={
         reduce
-          ? // Reduced motion: a fade instead of the blur.
-            { hidden: { opacity: 0 }, visible: { opacity: 1 } }
+          ? { hidden: { opacity: 0 }, visible: { opacity: 1 } }
           : {
               hidden: { filter: `blur(${initialBlur}px)` },
               visible: { filter: `blur(${blur}px)` },

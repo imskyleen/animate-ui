@@ -23,12 +23,10 @@ test.describe('animate-ui code-block', () => {
     const later = await textLength(page);
     expect(later).toBeGreaterThan(early);
     await expect(block(page)).not.toContainText(LAST_LINE);
-    // Tokens are colored by Shiki.
     expect(
       await block(page).locator('.line span[style*="color"]').count(),
     ).toBeGreaterThan(0);
 
-    // 10s duration.
     await expect(block(page)).toHaveAttribute('data-done', 'true', {
       timeout: 14000,
     });

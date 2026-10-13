@@ -18,12 +18,9 @@ import {
 import { useSyncedValue } from '@/components/docs/tabs';
 import { LIBRARIES } from '@/lib/libraries';
 
-/** The command, in the reader's package manager (the docs' saved choice). */
 const command = (manager: Manager) =>
   `${MANAGERS[manager].dlx} @animate-ui/cli@latest animate all`;
 
-// Each block rises into place in turn (600ms, strong ease-out, 80ms apart);
-// reduced motion keeps only the fade.
 const rise = (index: number) => ({
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },

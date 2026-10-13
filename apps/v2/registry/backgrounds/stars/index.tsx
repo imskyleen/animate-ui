@@ -18,11 +18,6 @@ import {
 import { usePageVisible } from '@animate-ui/react/utils/use-page-visible';
 import { cn } from 'cn';
 
-/**
- * Whether the StarsBackground is on screen. A StarLayer moves outside its own
- * box while it loops, so it reads the background's visibility instead of
- * observing itself. Standalone layers default to visible.
- */
 const StarsInViewContext = React.createContext(true);
 
 type StarLayerProps = HTMLMotionProps<'div'> & {
@@ -53,15 +48,11 @@ function StarLayerContent({
   const firstRef = React.useRef<HTMLDivElement>(null);
   const secondRef = React.useRef<HTMLDivElement>(null);
 
-  // The loop pauses off screen and in a hidden tab, and stops under reduced
-  // motion.
   const inView = React.use(StarsInViewContext);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
   const playing = inView && pageVisible && !reduce;
 
-  // Random, so generated on the client only (no hydration mismatch), and
-  // written to the DOM directly: no extra render.
   React.useEffect(() => {
     const boxShadow = generateStars(count, starColor);
     if (firstRef.current) firstRef.current.style.boxShadow = boxShadow;
@@ -95,7 +86,6 @@ function StarLayerContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
 function StarLayer(props: StarLayerProps) {
   return (
     <ReducedMotionConfig>
@@ -135,9 +125,6 @@ function StarsBackgroundContent({
   const springX = useSpring(offsetX, transition);
   const springY = useSpring(offsetY, transition);
 
-  // The sky shifts away from the mouse (and from a tap, which browsers report
-  // as a mousemove), relative to the center of the container. No parallax
-  // under reduced motion.
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     onMouseMove?.(e);
     if (reduce) return;
@@ -197,7 +184,6 @@ function StarsBackgroundContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
 function StarsBackground(props: StarsBackgroundProps) {
   return (
     <ReducedMotionConfig>

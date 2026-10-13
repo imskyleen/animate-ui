@@ -24,7 +24,6 @@ import { IconSwap } from './icon-swap';
 const button =
   'inline-flex h-8 items-center justify-center gap-1.5 bg-accent text-sm text-accent-foreground transition-colors hover:bg-accent/70';
 
-/** v0's logo. */
 function V0Logo(props: ComponentProps<'svg'>) {
   return (
     <svg viewBox="0 0 40 20" fill="currentColor" aria-hidden {...props}>
@@ -40,9 +39,7 @@ export function CopyPage({
   v0Url,
 }: {
   markdownUrl: string;
-  /** The page's MDX file on GitHub. */
   githubUrl: string;
-  /** The page's demo as a registry item, opened in v0. */
   v0Url?: string;
 }) {
   const [copied, setCopied] = useState(false);

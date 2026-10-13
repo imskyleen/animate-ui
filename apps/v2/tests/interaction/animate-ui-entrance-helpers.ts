@@ -2,18 +2,11 @@ import type { Page } from '@playwright/test';
 
 export type EntranceSample = {
   opacity: number;
-  /** translateY in px (matrix f). */
   y: number;
   scale: number;
-  /** blur radius in px, 0 when no filter. */
   blur: number;
 };
 
-/**
- * The entrance demos (fade, blur, slide, zoom, effect) render three cards
- * ("Design", "Build", "Ship"), each wrapped in the animated element, and a
- * Replay button that remounts them.
- */
 export const open = (page: Page, slug: string) =>
   page.goto(`/tests/demos/animate-ui/${slug}`, { waitUntil: 'networkidle' });
 
@@ -30,7 +23,6 @@ function read(el: Element): EntranceSample {
   };
 }
 
-/** Clicks Replay and samples the three cards on the first frames after. */
 export async function replayFirstFrame(page: Page) {
   return page.evaluate(
     async ({ readSource }) => {
@@ -53,7 +45,6 @@ export async function replayFirstFrame(page: Page) {
   );
 }
 
-/** The current state of the three cards. */
 export async function sampleCards(page: Page) {
   return page.evaluate(
     ({ readSource }) => {

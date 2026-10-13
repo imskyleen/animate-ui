@@ -24,20 +24,11 @@ const ITEM_TRANSITION: Transition = {
   mass: 0.8,
   type: 'spring',
 };
-/**
- * The label appearing and disappearing: a short fade, strong ease-out. It
- * slides with the items making room, on their spring (on a 220ms tween it
- * reached its place well ahead of them, abruptly).
- */
 const LABEL_TRANSITION: Transition = {
   duration: 0.22,
   ease: motionTokens.ease.out,
   layout: ITEM_TRANSITION,
 };
-/**
- * The press spring (Motion's default for a `scale` target other than 0: the
- * trigger has no transition of its own), paced by the tempo.
- */
 const TRIGGER_TRANSITION: Transition = motionTokens.spring.press;
 
 type PinnedListContextType = {
@@ -173,7 +164,6 @@ function PinnedListItem({
           onClick?.(e);
         }}
         transition={transition ?? defaultTransition}
-        // Pressed, it scales down (no hover scale); not under reduced motion.
         whileTap={
           !customTrigger && !reduce
             ? { scale: motionTokens.scale.press }
@@ -208,7 +198,6 @@ function PinnedListTrigger({
         onPinnedChange?.(id);
         onClick?.(e);
       }}
-      // Pressed, it scales down (no hover scale); not under reduced motion.
       whileTap={reduce ? undefined : { scale: motionTokens.scale.press }}
       transition={defaultTransition}
       {...props}

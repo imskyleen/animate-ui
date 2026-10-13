@@ -1,13 +1,3 @@
-// Records the preview clips of the docs' card grids (Primitives, Backgrounds):
-// for each entry and theme, its demo plays an interaction (opening, checking,
-// hovering…) that ends where it started, so the clip loops.
-// - public/previews/<id>-<light|dark>.webm: the looping clip (VP8)
-// - public/previews/<id>-<light|dark>.jpg: its first frame (the card at rest)
-//
-// Needs the docs dev server on http://localhost:3300. From apps/v2:
-//   node scripts/record-previews.mts            every entry
-//   node scripts/record-previews.mts tabs dialog only these
-// Clips are recorded on the GPU (headless SwiftShader fakes blurs).
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -20,7 +10,6 @@ const root = path.join(import.meta.dirname, '..');
 const outDir = path.join(root, 'public', 'previews');
 mkdirSync(outDir, { recursive: true });
 
-/** Playwright's own ffmpeg: decodes and encodes VP8, writes PNGs. */
 function ffmpegPath() {
   const cache = path.join(homedir(), 'Library', 'Caches', 'ms-playwright');
   const dir = readdirSync(cache).find((name) => name.startsWith('ffmpeg-'));
@@ -35,14 +24,9 @@ function ffmpegPath() {
 }
 const FFMPEG = ffmpegPath();
 
-/**
- * The demo's page: small, so a card shows the demo large (it's ~300px wide);
- * demos needing room (dialogs, menus, panels) get `LARGE`. 4:3, like a card.
- */
 const VIEWPORT = { width: 400, height: 300 };
 const LARGE = { width: 480, height: 360 };
 
-/** Next's dev indicator stays out of the clips. */
 const HIDE_DEV = 'nextjs-portal{display:none!important}';
 
 async function settle(page: Page) {
@@ -52,28 +36,18 @@ async function settle(page: Page) {
 }
 
 type Preview = {
-  /** Where its clips go: public/previews/<id>-<theme>.webm. */
   id: string;
-  /** The demo page. */
   demo: string;
-  /** It plays as it mounts: recorded from a fresh load. */
   mount?: boolean;
-  /** The interaction, back to where it started. */
   play?: (page: Page) => Promise<void>;
-  /** Held after it (ms). */
   tail?: number;
-  /** Its page's size, when it needs more room (4:3, like the clip). */
   viewport?: { width: number; height: number };
 };
 
-/* Interactions ------------------------------------------------------------ */
-
 const wait = (page: Page, ms: number) => page.waitForTimeout(ms);
 
-/** Where the pointer is. */
 const pointer = { x: 4, y: 4 };
 
-/** Moves the pointer to (x, y) over `ms`, a frame at a time (a real hand). */
 async function glide(page: Page, x: number, y: number, ms = 250) {
   const steps = Math.max(1, Math.round(ms / 16));
   const from = { ...pointer };
@@ -87,25 +61,21 @@ async function glide(page: Page, x: number, y: number, ms = 250) {
   pointer.y = y;
 }
 
-/** Moves the pointer to the center of `target`. */
 async function pointAt(page: Page, target: ReturnType<Page['locator']>) {
   const box = (await target.boundingBox())!;
   await glide(page, box.x + box.width / 2, box.y + box.height / 2);
 }
 
-/** Clicks `target` after moving to it, as a hand would. */
 async function press(page: Page, target: ReturnType<Page['locator']>) {
   await pointAt(page, target);
   await wait(page, 120);
   await target.click();
 }
 
-/** The pointer leaves to the page's corner. */
 const away = (page: Page) => glide(page, 4, 4, 300);
 
 const buttons = (page: Page) => page.locator('main button:visible');
 
-/** Opens with its trigger (the first button), then closes with Escape. */
 const openClose =
   (
     trigger: (page: Page) => ReturnType<Page['locator']> = (page) =>
@@ -119,7 +89,6 @@ const openClose =
     await away(page);
   };
 
-/** Hovers its trigger, then leaves. */
 const hoverOver =
   (target: (page: Page) => ReturnType<Page['locator']>, hold = 1300) =>
   async (page: Page) => {
@@ -128,7 +97,6 @@ const hoverOver =
     await away(page);
   };
 
-/** Clicks each target in turn, then the first again (back to the start). */
 const clickThrough =
   (targets: (page: Page) => ReturnType<Page['locator']>, hold = 700) =>
   async (page: Page) => {
@@ -142,7 +110,6 @@ const clickThrough =
     await away(page);
   };
 
-/** Clicks it on, then off. */
 const toggle =
   (target: (page: Page) => ReturnType<Page['locator']>, hold = 900) =>
   async (page: Page) => {
@@ -152,7 +119,6 @@ const toggle =
     await away(page);
   };
 
-/** Replays it (the demo's Replay button), then waits for it to play. */
 const replay =
   (hold = 1800) =>
   async (page: Page) => {
@@ -161,7 +127,6 @@ const replay =
     await wait(page, hold);
   };
 
-/** Sweeps the pointer slowly across `target`, then leaves. */
 const sweep =
   (target: (page: Page) => ReturnType<Page['locator']>) =>
   async (page: Page) => {
@@ -177,7 +142,6 @@ const sweep =
 const role = (name: Parameters<Page['getByRole']>[0]) => (page: Page) =>
   page.locator('main').getByRole(name);
 
-/** By primitive slug: what its clip plays. */
 const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   accordion: { play: clickThrough(role('button')) },
   'alert-dialog': { play: openClose() },
@@ -253,9 +217,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     tail: 900,
   },
   pagination: {
-    // From page 2 (the demo's) to 5, to 1, then Next: back to 2.
     async play(page) {
-      // Base UI's links are role="button" (shadcn's nativeButton={false}).
       const link = (name: string) =>
         page
           .locator('main [data-slot="pagination-link"]')
@@ -267,13 +229,10 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await press(page, page.locator('main [aria-label="Go to next page"]'));
       await away(page);
     },
-    // A row of small links: a smaller page, so they read larger in the card.
     viewport: { width: 320, height: 240 },
   },
   popover: { play: openClose() },
   questionnaire: {
-    // An answer, Next (the step slides on), Previous (back), then the form
-    // reset: the answer goes, back where it started.
     async play(page) {
       const main = page.locator('main');
       await press(
@@ -291,7 +250,6 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await away(page);
       await wait(page, 600);
     },
-    // A whole form (about 400px tall): a taller page.
     viewport: { width: 640, height: 480 },
   },
   'preview-link-card': {
@@ -317,7 +275,6 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       (page) => page.locator('main [data-sidebar="trigger"]').first(),
       1100,
     ),
-    // Wide enough for the desktop sidebar (under 768px it's a sheet).
     viewport: { width: 960, height: 720 },
   },
   slider: {
@@ -360,7 +317,6 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     },
   },
 
-  // Animate UI
   'auto-height': { play: toggle((page) => buttons(page).first(), 1000) },
   'avatar-group': {
     play: sweep((page) => page.locator('main [data-slot]').first()),
@@ -483,13 +439,8 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   zoom: { play: replay() },
 };
 
-/**
- * The library whose demo a primitive's clip shows: the docs' default one
- * first (lib/libraries.tsx's order, what a card opens without a choice).
- */
 const LIBRARIES = ['base-ui', 'radix-ui', 'react-aria', 'animate-ui'];
 
-/** Demos needing room: recorded on `LARGE`. */
 const ROOMY = new Set([
   'accordion',
   'alert-dialog',
@@ -548,8 +499,6 @@ function previews(): Preview[] {
         id: `backgrounds/${slug}`,
         demo: `/tests/demos/backgrounds/${slug}`,
         play: async (page) => {
-          // Backgrounds move on their own; the pointer crosses those that
-          // follow it.
           await glide(page, VIEWPORT.width * 0.3, VIEWPORT.height * 0.4, 600);
           await glide(page, VIEWPORT.width * 0.7, VIEWPORT.height * 0.6, 900);
           await away(page);
@@ -560,13 +509,8 @@ function previews(): Preview[] {
   return list;
 }
 
-/** Clips' frame rate. */
 const FPS = 30;
 
-/**
- * Records `preview` in `theme`: the compositor's frames (CDP screencast, as
- * painted, device pixels) from the moment it's ready, encoded once.
- */
 async function record(
   preview: Preview,
   theme: 'light' | 'dark',
@@ -580,7 +524,6 @@ async function record(
   const page = await context.newPage();
   await page.goto(`${BASE}${preview.demo}`, { waitUntil: 'networkidle' });
   await settle(page);
-  // Pointer parked out of the way, so nothing starts hovered.
   await page.mouse.move(4, 4);
   pointer.x = 4;
   pointer.y = 4;
@@ -600,14 +543,11 @@ async function record(
     cdp.send('Page.startScreencast', {
       format: 'jpeg',
       quality: 92,
-      // A card shows it ~300px wide: 840px is sharp enough on a 2x screen.
       maxWidth: 840,
       maxHeight: 630,
     });
 
   if (preview.mount) {
-    // Plays as it mounts: shown again from a fresh load, from its first
-    // painted frame.
     await page.reload({ waitUntil: 'commit' });
     await startScreencast();
     await page.waitForLoadState('domcontentloaded');
@@ -625,9 +565,6 @@ async function record(
   await context.close();
   if (!frames.length) throw new Error('no frames');
 
-  // Constant frame rate: each tick shows the latest frame painted by then.
-  // The screencast sends a frame when the page changes: still moments have
-  // none, so the clip runs to the end of the interaction, not its last frame.
   const first = frames[0]!.time;
   const last = Math.max(end, first);
   const sequence: Buffer[] = [];
@@ -670,8 +607,6 @@ async function record(
     ],
     { input: Buffer.concat(sequence), maxBuffer: 1 << 30 },
   );
-  // Shown at rest: its first frame, or its last for one playing as it mounts
-  // (its first is still blank).
   writeFileSync(`${out}.jpg`, preview.mount ? sequence.at(-1)! : sequence[0]!);
 }
 
@@ -682,7 +617,6 @@ const chosen = only.length
   : all;
 const browser = await chromium.launch({
   channel: 'chromium',
-  // Device pixels in the recording (a screencast is otherwise at CSS size).
   args: [
     '--enable-gpu',
     '--ignore-gpu-blocklist',

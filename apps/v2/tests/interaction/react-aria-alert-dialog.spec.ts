@@ -13,8 +13,6 @@ import {
 const CONTENT = '[data-slot="alert-dialog-content"]';
 const OVERLAY = '[data-slot="alert-dialog-overlay"]';
 
-// React Aria renders the Modal inside the ModalOverlay: the overlay fades its
-// own background (shadcn/ui's bg-black/10), so the modal keeps v1's motion.
 const BACKGROUND = { overlayFade: 'bg', overlayRest: 0.1 } as const;
 
 test.describe('react-aria alert dialog demo', () => {
@@ -49,7 +47,6 @@ test.describe('react-aria alert dialog demo', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     expectDialogExit(await timeline.stop(), BACKGROUND);
-    // A dismissed dialog's curve, as Motion handed it to the browser.
     expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
     await expect(
       page.getByRole('button', { name: 'Show Dialog' }),

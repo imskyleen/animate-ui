@@ -1,49 +1,26 @@
 import { expect, test, type Page } from '@playwright/test';
 import { probeFirstFrame } from './motion-probe';
 
-// The grading grid of an anchored overlay (popover, hover card, tooltip):
-// shared by every library's demo spec.
-
-/**
- * Where each kind of anchored popup grows from: tooltips from 0.7, popovers
- * (hover cards, preview cards) from 0.8, menus from 0.9.
- */
 export const HIDDEN_SCALE = { tooltip: 0.7, popover: 0.8, menu: 0.9 } as const;
 
 export type OverlayCase = {
-  /** Demo route, e.g. `/tests/demos/radix-ui/popover`. */
   path: string;
-  /** The popup itself (the element shadcn/ui styles). */
   selector: string;
   open: (page: Page) => Promise<void>;
   close: (page: Page) => Promise<void>;
-  /** Hover overlays wait for the library's close delay before they exit. */
   closeDelay?: number;
-  /** Tooltips grow from 0.7, the others from 0.8. */
   kind?: 'popover' | 'tooltip';
 };
 
-/**
- * Opens a route once it's hydrated. Generous timeout: the dev server compiles
- * routes on first visit, and other suites share it.
- */
 export async function gotoReady(page: Page, path: string) {
   await page.goto(path, { waitUntil: 'networkidle', timeout: 150_000 });
-  // React Aria learns the input modality from pointer moves; a mouse that
-  // jumps straight onto a trigger would hover it before it knows.
   await page.mouse.move(1, 1);
   await page.mouse.move(2, 2);
 }
 
-/**
- * The popover and tooltip spring (stiffness 400, damping 29): it overshoots by
- * ~4% of its travel around 230ms and settles by ~440ms, both ways. Budgets
- * leave room for a loaded machine.
- */
 export const SETTLE_BUDGET = 900;
 export const UNMOUNT_BUDGET = 1000;
 
-/** True when the transform origin is off-centre (anchored to the trigger). */
 export async function originIsAnchored(page: Page, selector: string) {
   return page
     .locator(selector)
@@ -64,10 +41,6 @@ export type Frame = {
   scale: number;
 };
 
-/**
- * Starts recording the popup frame by frame (its computed opacity and scale)
- * for `duration` ms: call it right before the interaction, then await it.
- */
 export function recordFrames(page: Page, selector: string, duration: number) {
   return page.evaluate(
     ({ selector, duration }) =>
@@ -103,10 +76,6 @@ export function recordFrames(page: Page, selector: string, duration: number) {
 
 const shown = (frames: Frame[]) => frames.filter((f) => f.present);
 
-/**
- * Starts watching the popup's exit, frame by frame: call it right before
- * closing, then await the result. `goneAt` is when it unmounted (or hid).
- */
 export function recordExit(page: Page, selector: string, timeout = 3000) {
   return page.evaluate(
     ({ selector, timeout }) =>
@@ -148,19 +117,8 @@ export function recordExit(page: Page, selector: string, timeout = 3000) {
   );
 }
 
-/**
- * How an overlay enters: the tooltip and popover spring (from 0.7 or 0.8,
- * with an overshoot), the menus' timing (from 0.9 in 220ms, ease-out), or a
- * fade alone (lists laid over their trigger).
- */
 export type EntranceKind = 'tooltip' | 'popover' | 'menu' | 'fade';
 
-/**
- * Loads `path` and checks that the popup open from the start (`defaultOpen`)
- * plays v1's entrance on page load. It's recorded frame by frame from its
- * first frame in the DOM (an init script, before anything hydrates).
- * `reduced`: under reduced motion, it only fades.
- */
 export async function expectEntranceOnLoad(
   page: Page,
   path: string,
@@ -186,7 +144,6 @@ export async function expectEntranceOnLoad(
   await gotoReady(page, path);
   const popup = page.locator(selector).first();
   await expect(popup).toHaveCSS('opacity', '1', { timeout: 5000 });
-  // Settled: Motion writes `transform: none` once the scale is back to 1.
   if (kind !== 'fade')
     await expect(popup).toHaveCSS('transform', 'none', { timeout: 5000 });
   const frames = await page.evaluate(
@@ -195,36 +152,25 @@ export async function expectEntranceOnLoad(
   const scales = frames.map(([, scale]) => scale);
   const [firstOpacity, firstScale] = frames[0]!;
 
-  // It appears transparent, then fades in: not at full opacity at once.
   expect(firstOpacity).toBeLessThan(0.5);
   expect(frames.some(([o]) => o > 0.02 && o < 0.98)).toBe(true);
   if (reduced || kind === 'fade') {
-    // No scale while it can be seen (a popup rendered on the server starts
-    // from its hidden scale, transparent, until it hydrates).
     expect(frames.filter(([o]) => o > 0.02).every(([, s]) => s === 1)).toBe(
       true,
     );
   } else if (kind === 'tooltip' || kind === 'popover') {
-    // From its hidden scale, past full size (the spring's overshoot), back
-    // to 1.
     const from = HIDDEN_SCALE[kind];
     expect(firstScale).toBeGreaterThanOrEqual(from - 0.01);
     expect(firstScale).toBeLessThan(from + 0.1);
     expect(Math.max(...scales)).toBeGreaterThan(1 + (1 - from) * 0.02);
     expect(Math.max(...scales)).toBeLessThan(1.05);
   } else {
-    // From 0.9, without overshoot (an ease-out tween).
     expect(firstScale).toBeGreaterThanOrEqual(HIDDEN_SCALE.menu - 0.01);
     expect(firstScale).toBeLessThan(0.97);
     expect(Math.max(...scales)).toBeLessThanOrEqual(1.001);
   }
 }
 
-/**
- * The grading grid of a popover, hover card or tooltip. It grows (a tooltip
- * from 0.7, the others from 0.8) and fades in from its trigger on a spring
- * that overshoots a little, and shrinks back the same way.
- */
 export function describeAnchoredOverlay(name: string, c: OverlayCase) {
   const from = HIDDEN_SCALE[c.kind ?? 'popover'];
   test.describe(name, () => {
@@ -250,7 +196,6 @@ export function describeAnchoredOverlay(name: string, c: OverlayCase) {
       await page.locator(c.selector).first().waitFor();
       const frames = shown(await recordFrames(page, c.selector, SETTLE_BUDGET));
       const peak = Math.max(...frames.map((f) => f.scale));
-      // The spring's overshoot (~4% of the way), not an ease that stops at 1.
       expect(peak).toBeGreaterThan(1 + (1 - from) * 0.02);
       expect(peak).toBeLessThan(1.05);
       const last = frames.at(-1)!;
@@ -269,7 +214,6 @@ export function describeAnchoredOverlay(name: string, c: OverlayCase) {
       const result = await exit;
       expect(result.timedOut).toBe(false);
       expect(result.sawFade).toBe(true);
-      // The same spring, down to its hidden scale.
       expect(result.minScale).toBeLessThan(from + 0.05);
       expect(result.goneAt).toBeLessThanOrEqual(
         (c.closeDelay ?? 0) + UNMOUNT_BUDGET,
@@ -288,10 +232,6 @@ export function describeAnchoredOverlay(name: string, c: OverlayCase) {
   });
 }
 
-/**
- * Like `probeFirstFrame`, for the first element matching `selector` whose
- * text includes `text` (several popups of the same kind can be mounted).
- */
 export async function probeFirstFrameOf(
   page: Page,
   selector: string,
@@ -333,18 +273,11 @@ export async function probeFirstFrameOf(
   };
 }
 
-/**
- * A toolbar of tooltips (Bold, Italic, Underline). Tooltips warm up: once one
- * is open, moving along the toolbar shows the next one at once (no entrance)
- * and hides the previous one at once. Once they have all gone, the next one
- * plays its entrance again.
- */
 export function describeToolbarTooltips(
   name: string,
   path: string,
   selector: string,
 ) {
-  /** Whether a tooltip whose text includes `text` can be seen. */
   const shows = (page: Page, text: string) =>
     page.evaluate(
       ({ selector, text }) =>
@@ -370,8 +303,6 @@ export function describeToolbarTooltips(
       await expect(page.locator(selector)).toBeVisible();
       await page.waitForTimeout(SETTLE_BUDGET);
       const probe = await probeFirstFrameOf(page, selector, 'Italic');
-      // A real sweep: Radix ignores a single jump while the pointer is in
-      // transit towards the previous tooltip.
       const box = (await page
         .getByRole('button', { name: 'Italic' })
         .boundingBox())!;
@@ -381,8 +312,6 @@ export function describeToolbarTooltips(
       const first = await probe.firstFrame();
       expect(first.opacity).toBe(1);
       expect(first.scale).toBeCloseTo(1, 3);
-      // The previous one doesn't shrink away next to it: hidden at once
-      // (its exit would keep it visible for ~400ms).
       await expect
         .poll(() => shows(page, 'Bold'), { intervals: [16], timeout: 150 })
         .toBe(false);
@@ -397,10 +326,8 @@ export function describeToolbarTooltips(
       await expect(page.locator(selector)).toBeVisible();
       await page.mouse.move(5, 5, { steps: 2 });
       await expect(page.locator(selector)).toHaveCount(0);
-      // Past the warm-up's 300ms.
       await page.waitForTimeout(100);
       const probe = await probeFirstFrameOf(page, selector, 'Bold');
-      // Straight back (no actionability checks in between).
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
         steps: 2,
       });

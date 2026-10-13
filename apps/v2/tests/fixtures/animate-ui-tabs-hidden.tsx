@@ -34,15 +34,10 @@ function Example({
   );
 }
 
-/** Nothing until loaded, then 40px (content loaded late). */
 function Late({ loaded }: { loaded: boolean }) {
   return loaded ? <div style={{ height: 40 }}>Loaded</div> : null;
 }
 
-// Animate UI's Tabs mounted hidden (display: none: a closed panel, a tab
-// waiting its turn), then shown: TabsContents is measured once on screen and
-// shows at its active panel's height at once, without growing from 0 or
-// taking the tallest panel's.
 export default function AnimateUITabsHiddenFixture() {
   const [shown, setShown] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
@@ -67,12 +62,10 @@ export default function AnimateUITabsHiddenFixture() {
           one={<div style={{ height: 40 }}>Panel one</div>}
         />
       </div>
-      {/* No defaultValue: the first panel shows, from the server on. */}
       <Example
         id="no-default"
         one={<div style={{ height: 40 }}>Panel one</div>}
       />
-      {/* Its active panel is empty at first. */}
       <Example id="empty" defaultValue="one" one={<Late loaded={loaded} />} />
     </div>
   );

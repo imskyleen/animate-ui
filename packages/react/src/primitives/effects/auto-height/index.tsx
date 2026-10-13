@@ -18,7 +18,6 @@ import {
 import { Slot, type WithAsChild } from '../../slot';
 import { useAutoHeight } from './use-auto-height';
 
-/** Animate UI v1's spring. */
 const AUTO_HEIGHT_TRANSITION: Transition = motionTokens.spring.height;
 
 type AutoHeightProps = WithAsChild<
@@ -51,7 +50,6 @@ function AutoHeightInner({
   const reduce = useShouldReduceMotion();
   const { ref, height } = useAutoHeight<HTMLDivElement>(deps);
 
-  // Reduced motion: the height changes at once.
   const heightTransition: Transition = reduce ? { duration: 0 } : spring;
 
   const Comp = asChild ? Slot : motion.div;

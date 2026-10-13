@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { ToggleButton } from '@animate-ui/react/primitives/react-aria';
 
-// API compatibility: the component must behave exactly like React Aria's.
 export default function ReactAriaToggleFixture() {
   const [selected, setSelected] = React.useState(false);
 

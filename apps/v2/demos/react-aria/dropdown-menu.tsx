@@ -272,7 +272,6 @@ export const controls = {
   },
 }
 
-/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
 function toPlacement(
   side: "top" | "right" | "bottom" | "left",
   align: "start" | "center" | "end"
@@ -293,7 +292,6 @@ export default function DropdownMenuDemo({
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(

@@ -15,14 +15,8 @@ import {
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
 
-// Same API as Radix's Accordion. The Root mirrors the open items (Radix keeps
-// them private) so each Content can unfold and fold back: its height grows
-// while the content fades in from a light blur.
-
 type Value = string | string[] | undefined;
 
-// Objects, not raw values: an accordion with nothing open has an undefined
-// value, which a strict context would read as "no provider".
 const [OpenItemsProvider, useOpenItems] = getStrictContext<{ value: Value }>(
   'Accordion.Root',
 );
@@ -38,14 +32,8 @@ type AccordionTriggerProps = AccordionPrimitive.AccordionTriggerProps;
 type AccordionContentProps = AccordionPrimitive.AccordionContentProps &
   ContentAnimationProps;
 
-/** Animate UI's additions to `Accordion.Content`. */
 type ContentAnimationProps = {
-  /**
-   * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -95,23 +83,16 @@ function Content({
 }: React.ComponentProps<typeof AccordionPrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useItemOpen();
-  // The content: 350ms on a soft ease-out both ways; under reduced motion
-  // the height jumps (see internal/disclosure-panel).
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
   const ref = React.useRef<HTMLDivElement>(null);
 
   return (
-    // Open on mount (an item open by default), it animates open, as in v1.
     <AnimatePresence>
       {(open || forceMount) && (
-        // Radix's props (className, style, data-state, ids…) land on the
-        // motion.div through asChild; it only carries the animation.
         <AccordionPrimitive.Content {...props} forceMount asChild>
           <motion.div
             ref={ref}
             initial={collapsed}
-            // Transitions live in the targets: an exiting element keeps the
-            // props of its last render, when it was still open.
             animate={
               open
                 ? { ...expanded, transition: enter }
@@ -122,14 +103,9 @@ function Content({
             onAnimationComplete={() => {
               if (open) releasePanel(ref.current);
             }}
-            // A force-mounted closed item stays in the DOM: keep it out of
-            // the tab order and the accessibility tree.
             inert={!open}
             style={{
               ...panelStyle,
-              // Radix measures these once; Motion owns the height now, so
-              // classes reading them (h-(--radix-accordion-content-height))
-              // follow the content instead of a stale measure.
               ['--radix-collapsible-content-height' as string]: 'auto',
               ['--radix-accordion-content-height' as string]: 'auto',
             }}

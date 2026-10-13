@@ -13,8 +13,6 @@ import {
 type SparklesProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // Every piece stays: the star pulses, the plus and the dot twinkle after it,
-  // as Hugeicons' Sparkles; gone and back is `blink`.
   default: {
     group: {
       initial: { scale: 1 },

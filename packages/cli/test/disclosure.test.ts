@@ -2,9 +2,6 @@ import { expect, test } from 'vitest';
 
 import { transform } from '../src/lib/transform';
 
-// Disclosures: Motion animates the panel's height, so the CSS height
-// animations reading the libraries' measured variables go, and nothing else.
-
 test('base-ui accordion: the CSS-variable height animation is gone', () => {
   const input = `import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 export const C = () => (
@@ -18,7 +15,6 @@ export const C = () => (
     'from "@animate-ui/react/primitives/base-ui/accordion"',
   );
   expect(result.code).toContain('className="overflow-hidden"');
-  // Only the starting/ending-style heights: other h-0 variants stay.
   expect(result.code).toContain('className="pb-4 data-open:h-0"');
 });
 

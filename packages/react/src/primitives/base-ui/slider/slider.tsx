@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Slider as SliderPrimitive } from '@base-ui/react/slider';
@@ -17,30 +17,11 @@ import {
 } from '../../../internal/slider';
 import { useHydrationLocale } from '../../../internal/hydration-locale';
 
-// Same API as Base UI's Slider, animated like Animate UI v1's switch thumb
-// (v1 had no slider): the pressed (or dragged) thumb stretches along the
-// track, and a press on the track glides the thumb and the indicator to the
-// new value, on a spring (stiffness 400, damping 32; see
-// ../../../internal/slider). Dragging and the keyboard follow instantly.
-// Without a `locale`, its numbers are formatted in en-US on the server and
-// while the page hydrates, then in the browser's
-// (../../../internal/hydration-locale).
-
-/** Animate UI's additions to `Slider.Indicator`. */
 type IndicatorAnimationProps = {
-  /**
-   * Transition of the indicator after a press on the track. Defaults to a
-   * spring (stiffness 400, damping 32).
-   */
   transition?: Transition;
 };
 
-/** Animate UI's additions to `Slider.Thumb`. */
 type ThumbAnimationProps = {
-  /**
-   * Transition of the thumb after a press on the track, and of its stretch
-   * while pressed. Defaults to a spring (stiffness 400, damping 32).
-   */
   transition?: Transition;
 };
 
@@ -57,8 +38,6 @@ function Root<Value extends SliderValue = SliderValue>(
 }
 
 function RootMotion(props: Root.Props) {
-  // Mirrors the value (Base UI keeps it private) to know when it changes;
-  // Base UI stays the source of truth.
   const controlled = props.value !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(props.defaultValue);
   const value = controlled ? props.value : uncontrolled;
@@ -76,7 +55,6 @@ function RootMotion(props: Root.Props) {
         locale={locale}
         onValueChange={(next, details) => {
           props.onValueChange?.(next, details);
-          // Base UI lets the handler cancel the change.
           if (!controlled && !details.isCanceled) setUncontrolled(next);
         }}
       />
@@ -114,7 +92,6 @@ function Control({ onPointerDownCapture, ...props }: Control.Props) {
   return (
     <SliderPrimitive.Control
       {...props}
-      // Presses on the track (and the thumbs) start here.
       onPointerDownCapture={(event) => {
         onPointerDownCapture?.(event);
         startPress(event);
@@ -143,8 +120,6 @@ function Indicator({ ref, transition, ...props }: Indicator.Props) {
   return (
     <SliderPrimitive.Indicator
       {...props}
-      // Base UI's props (className, style, data-*…) land on the motion.div;
-      // it only carries the transform.
       render={
         <motion.div
           ref={(node: HTMLDivElement | null) => {
@@ -159,7 +134,6 @@ function Indicator({ ref, transition, ...props }: Indicator.Props) {
 }
 
 namespace Indicator {
-  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = SliderPrimitive.Indicator.Props &
     IndicatorAnimationProps &
     React.RefAttributes<HTMLDivElement>;
@@ -172,15 +146,12 @@ function Thumb({ ref, transition, onFocus, onBlur, ...props }: Thumb.Props) {
   const [isFocused, setIsFocused] = React.useState(false);
   const { ref: motionRef, transform } = useSliderPartMotion('thumb', spring);
 
-  // Base UI focuses the thumb it moves, so the pressed thumb is the focused
-  // one while the pointer is down.
   const isPressed = isPressing && isFocused;
   useThumbStretch(motionRef, isPressed, spring);
 
   return (
     <SliderPrimitive.Thumb
       {...props}
-      // Base UI forwards focus handlers to the thumb's nested input.
       onFocus={(event) => {
         setIsFocused(true);
         onFocus?.(event);
@@ -196,7 +167,6 @@ function Thumb({ ref, transition, onFocus, onBlur, ...props }: Thumb.Props) {
             assignRef(ref, node);
           }}
           data-pressed={isPressed || undefined}
-          // Composes with the `translate` Base UI centers the thumb with.
           style={{ transform }}
         />
       }
@@ -205,7 +175,6 @@ function Thumb({ ref, transition, onFocus, onBlur, ...props }: Thumb.Props) {
 }
 
 namespace Thumb {
-  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = SliderPrimitive.Thumb.Props &
     ThumbAnimationProps &
     React.RefAttributes<HTMLDivElement>;

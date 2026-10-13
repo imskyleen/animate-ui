@@ -17,14 +17,9 @@ import {
   useRadixOpenState,
 } from '../popover/radix-anchored';
 
-// Same API as Radix's HoverCard. The Content grows from 0.8 and fades in
-// from the trigger on a spring, and shrinks back the same way. Radix ignores touch pointers, so hover never
-// sticks on touch screens.
-
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'HoverCard.Root',
 );
-// The `forceMount` of the closest Portal: it keeps the Content mounted too.
 const PortalForceMountContext = React.createContext(false);
 
 type HoverCardProps = HoverCardPrimitive.HoverCardProps & FollowCursorProps;
@@ -81,8 +76,6 @@ function Trigger({
 function Portal({ forceMount, ...props }: HoverCardPortalProps) {
   return (
     <PortalForceMountContext value={Boolean(forceMount)}>
-      {/* Always mounted: the Content decides when it leaves the DOM, after
-          its exit. Closed, it renders nothing, so neither does the portal. */}
       <HoverCardPrimitive.Portal {...props} forceMount />
     </PortalForceMountContext>
   );

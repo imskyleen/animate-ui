@@ -10,7 +10,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="typing-text"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -18,7 +17,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -46,7 +44,6 @@ const hideTab = (page: Page) =>
 
 type Frame = { t: number; length: number; cursor: number };
 
-/** Records, from the first paint, the typed length and the cursor opacity. */
 const recordFrames = (page: Page) =>
   page.addInitScript(() => {
     const frames: Frame[] = [];
@@ -87,22 +84,18 @@ test.describe('animate-ui typing text', () => {
     await recordFrames(page);
     await open(page);
     await expect(visual(page)).toHaveText(TEXT, { timeout: 15_000 });
-    // A single text without `loop` is never erased; the cursor then blinks.
     await page.waitForTimeout(2000);
     await expect(visual(page)).toHaveText(TEXT);
 
     const frames = await framesOf(page);
     const first = frames.find((f) => f.length >= 1)!;
     const done = frames.find((f) => f.length === TEXT.length)!;
-    // 100ms per character (timers can run late, never early).
     const perChar = (done.t - first.t) / (TEXT.length - 1);
     expect(perChar).toBeGreaterThanOrEqual(95);
     expect(perChar).toBeLessThan(200);
-    // Solid while typing, once it has faded in (0.3s) as typing started.
     const typing = frames.filter((f) => f.t > first.t + 400 && f.t <= done.t);
     expect(typing.length).toBeGreaterThan(0);
     for (const f of typing) expect(f.cursor).toBe(1);
-    // Then a 1s on/off blink.
     const idle = frames.filter((f) => f.t > done.t + 200);
     expect(idle.some((f) => f.cursor === 0)).toBe(true);
     expect(idle.some((f) => f.cursor === 1)).toBe(true);

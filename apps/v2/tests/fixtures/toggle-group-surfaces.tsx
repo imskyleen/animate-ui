@@ -6,17 +6,10 @@ import * as Radix from '@/demos/radix-ui/toggle-group';
 import * as Base from '@/demos/base-ui/toggle-group';
 import * as Aria from '@/demos/react-aria/toggle-group';
 
-// The toggle groups' surfaces in every layout the demos' component takes:
-// both variants, items touching (`spacing={0}`) or apart, in a row or a
-// column, left to right or right to left, with several items selected or
-// one. Each group is `data-testid="<lib>-<variant>-<spacing>-<orientation>
-// [-rtl][-single]"`.
-
 type Variant = 'default' | 'outline';
 type Orientation = 'horizontal' | 'vertical';
 
 type GroupProps = {
-  /** Radix UI takes its direction as a prop (it sets `dir` on its root). */
   dir?: 'rtl';
   variant: Variant;
   spacing: number;

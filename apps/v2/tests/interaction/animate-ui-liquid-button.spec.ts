@@ -9,7 +9,6 @@ const open = async (page: Page) => {
   await hydrated(page, 'button');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -17,7 +16,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -36,7 +34,6 @@ const fillWidth = (page: Page) =>
 
 const SELECTOR = 'button';
 
-/** The button's fill width and scale on every animation frame for `ms`. */
 const record = (page: Page, ms: number) =>
   page.evaluate(
     (duration) =>
@@ -74,15 +71,12 @@ test.describe('animate-ui liquid button', () => {
     let frames = record(page, 600);
     await button(page).hover();
     let values = await frames;
-    // The fill variables jump; the button doesn't scale on hover.
     expect(values.at(-1)).toEqual({ fill: '100%', scale: 1 });
     expect(values.every((v) => v.scale === 1)).toBeTruthy();
 
     frames = record(page, 700);
     await page.mouse.move(0, 0);
     values = await frames;
-    // Leaving, the variables ease back over a few frames before the liquid
-    // drains (CSS).
     expect(
       values.some((v) => v.fill !== '100%' && v.fill !== '-1%'),
     ).toBeTruthy();

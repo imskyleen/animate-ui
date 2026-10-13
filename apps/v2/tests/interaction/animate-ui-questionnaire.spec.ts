@@ -35,28 +35,12 @@ import {
   type Drawn,
 } from './questionnaire-cases';
 
-// @animate-ui/react/primitives/questionnaire's API, as @shadcn/react's
-// (tests/fixtures/animate-ui-questionnaire: shadcn/ui's questionnaire, the
-// Base UI demo's parts, three questions of different heights): a step
-// changed from outside (a controlled `item`, a reset) slides like one
-// changed from inside; a questionnaire resumed on a later question rests as
-// it loads; a Progress of its own is left alone; AnimateUIProvider's tempo
-// paces it; right to left mirrors it; the answers stay the form's. And the
-// patterns of shadcn/ui's other examples: a Progress in each question (card,
-// dialog), buttons disabled and dimmed (navigation-state), a question
-// enabled by an answer (conditional), Submit going back to a question
-// unanswered; and the consumer's own styles: inline styles on a question, a
-// button and the parents they're pinned in, content-box questions, boxes at
-// fractions of a pixel. The shadcn/ui demos (radix-ui-, base-ui-,
-// react-aria-questionnaire.spec.ts) cover the motion itself in every base.
-
 const PATH = '/tests/fixtures/animate-ui-questionnaire';
 const formIn = (id: string) => `[data-testid="${id}"] ${FORM}`;
 const COLOR = 'Pick a color';
 const EXTRAS = 'Any extras?';
 const SIZE = 'Which size?';
 
-/** The duration (ms) of the next roll of the progress's numbers in `form`. */
 const rollDuration = (page: Page, form: string) =>
   page.locator(form).evaluate(
     (root) =>
@@ -78,10 +62,6 @@ const rollDuration = (page: Page, form: string) =>
       }),
   );
 
-/**
- * The inline `property` (its own `style`, not computed) of the element
- * `selector` matches in `form` (`:scope`: the form).
- */
 const inlineOf = (
   page: Page,
   form: string,
@@ -115,13 +95,11 @@ test.describe('animate-ui questionnaire', () => {
     );
     expectStep(on, { from: COLOR, to: EXTRAS, way: 1 });
     await expect(calls).toHaveText('');
-    // The library focuses the question shown from outside too: it stays.
     for (const f of on.filter((f) => f.t >= 0))
       expect(f.focus, `${Math.round(f.t)}ms`).toBe(`item:${EXTRAS}`);
     await settle(page, form);
     await expectRestingOn(page, form, EXTRAS);
 
-    // From inside: onItemChange, and the slide back.
     const back = await record(page, form, { active: COLOR }, () =>
       press(page, form, 'previous'),
     );
@@ -129,7 +107,6 @@ test.describe('animate-ui questionnaire', () => {
     await expect(calls).toHaveText('color');
     await settle(page, form);
 
-    // Further on from outside, past a question: it never shows.
     const far = await record(page, form, { active: SIZE }, () =>
       page.getByRole('button', { name: 'Show size' }).click(),
     );
@@ -205,18 +182,14 @@ test.describe('animate-ui questionnaire', () => {
       firstAnimation(frames, (f) => actionIn(f, 'previous'), 'opacity'),
       atTempo(SWAP, 2),
     );
-    // The numbers: twice as long as at tempo 1 (the reset section's).
     const base = formIn('reset');
     await pick(page, base, 'Red');
     await settle(page, base);
     const baseRoll = rollDuration(page, base);
     await press(page, base, 'next');
-    // (A spring paced by the tempo settles in close to twice the time: its
-    // rest thresholds cut it a little short. Unpaced, the same.)
     const rolls = (await roll) / (await baseRoll);
     expect(rolls, 'the roll, against tempo 1').toBeGreaterThan(1.5);
     expect(rolls).toBeLessThanOrEqual(2.05);
-    // An error (Next without an answer).
     const error = await record(page, form, { invalid: EXTRAS }, () =>
       press(page, form, 'next'),
     );
@@ -233,10 +206,6 @@ test.describe('animate-ui questionnaire', () => {
   test('AnimateUIProvider tempo={2}: content added to the next question as its height waits to glide starts the glide again, on its timing paced by the tempo (twice as long)', async ({
     page,
   }) => {
-    // At tempo 1 (the reset section) and 2: the same questions, the same
-    // content added the frame the step shows (the glide still waiting for
-    // the question leaving: from its height, at rest), so the glide started
-    // again differs by its pace alone.
     const follow = async (id: string) => {
       const form = formIn(id);
       await pick(page, form, 'Red');
@@ -291,8 +260,6 @@ test.describe('animate-ui questionnaire', () => {
       expect(run.follows, 'a follow, in place of the glide').toHaveLength(1);
       expect(run.follows[0]!.same).toBe(false);
     }
-    // (A spring paced by the tempo settles in close to twice the time: its
-    // rest thresholds cut it a little short. Unpaced, the same.)
     const ratio = two.follows[0]!.duration / one.follows[0]!.duration;
     expect(ratio, 'the follow, against tempo 1').toBeGreaterThan(1.5);
     expect(ratio).toBeLessThanOrEqual(2.05);
@@ -301,10 +268,6 @@ test.describe('animate-ui questionnaire', () => {
   test("AnimateUIProvider tempo={2}: content added halfway through the height's glide is followed on spring.morph paced by the tempo (twice as long)", async ({
     page,
   }) => {
-    // Halfway at tempo 1 and 2: the same distance left, at half the speed
-    // at tempo 2, which a spring paced by the tempo (stiffness / 4, damping
-    // / 2) settles in exactly twice the time. (Added as the glide waits,
-    // or once it has ended, it glides on the height's timing instead.)
     const follow = async (id: string) => {
       const form = formIn(id);
       await pick(page, form, 'Red');
@@ -362,13 +325,9 @@ test.describe('animate-ui questionnaire', () => {
     for (const run of [one!, two!]) {
       expect(run.follows, 'a follow, in place of the glide').toHaveLength(1);
       expect(run.follows[0]!.same).toBe(false);
-      // From where it was (not the glide started again from the question
-      // that left: its height going back down).
       expect(Math.abs(run.follows[0]!.from - run.at)).toBeLessThan(6);
       expect(run.after).toBeGreaterThanOrEqual(run.at - 0.5);
     }
-    // (A spring paced by the tempo settles in close to twice the time: its
-    // rest thresholds cut it a little short. Unpaced, far less.)
     const ratio = two!.follows[0]!.duration / one!.follows[0]!.duration;
     expect(ratio, 'the follow, against tempo 1').toBeGreaterThan(1.6);
     expect(ratio).toBeLessThanOrEqual(2.15);
@@ -405,7 +364,6 @@ test.describe('animate-ui questionnaire', () => {
     page,
   }) => {
     const form = formIn('submit');
-    // Quick, without waiting for the steps to rest.
     await pick(page, form, 'Blue');
     await press(page, form, 'next');
     await pick(page, form, 'Cheese');
@@ -453,7 +411,6 @@ test.describe('animate-ui questionnaire', () => {
   test('Submit with an earlier question unanswered: back to it, its error unfolding as it comes in, the question following it in one glide on transition.disclosure (never a glide chasing the error)', async ({
     page,
   }) => {
-    // Resumed on "Which size?", Large checked: "Pick a color" unanswered.
     const form = formIn('jump-back');
     const before = itemIn(await drawnNow(page, form), SIZE)!.h;
     const frames = await record(
@@ -470,9 +427,6 @@ test.describe('animate-ui questionnaire', () => {
         invalid: true,
         displayed: true,
       });
-    // Its height: one glide, from the leaving one's to its own with the
-    // error open, on the error's curve (never a step's glide chasing the
-    // error as it grows).
     const glides = new Map<string, NonNullable<ReturnType<typeof animating>>>();
     for (const p of itemFrames(frames, COLOR, -Infinity)) {
       const glide = animating(p.animations, 'minHeight');
@@ -480,8 +434,6 @@ test.describe('animate-ui questionnaire', () => {
     }
     expect([...glides.keys()], 'its height glides').toHaveLength(1);
     const [glide] = [...glides.values()];
-    // Not before the question comes in: once the leaving one has gone
-    // (what's below doesn't move over it), what's left of its exit.
     expect(glide!.duration).toBeCloseTo(DISCLOSURE.duration, 1);
     expect(glide!.easing).toBe(easingOf(DISCLOSURE));
     expect(glide!.delay, 'its delay: the exit left').toBeGreaterThan(
@@ -507,10 +459,8 @@ test.describe('animate-ui questionnaire', () => {
       after,
       { delay: glide!.delay },
     );
-    // At rest: the question ends where its error does.
     expect(e).toMatchObject({ displayed: true, o: 1, blur: 0 });
     expect(item.y + item.h).toBeCloseTo(e.y + e.h, 1);
-    // The focus moves into it once, and stays.
     const focus = frames.filter((f) => f.t >= 0).map((f) => f.focus);
     expect(new Set(focus).size, `the focus: ${[...new Set(focus)]}`).toBe(1);
     expectNoJumps(frames);
@@ -533,7 +483,6 @@ test.describe('animate-ui questionnaire', () => {
       for (const p of leaving) {
         const when = `${Math.round(p.t)}ms: ${from}`;
         const [current, total] = p.counts;
-        // Held at its number, painted, not rolling.
         expect(current, when).toMatchObject({
           text: then,
           hold: at,
@@ -562,7 +511,6 @@ test.describe('animate-ui questionnaire', () => {
         });
       }
       await settle(page, form);
-      // Let go once hidden; the one shown never held.
       expect(
         await page
           .locator(form)
@@ -589,13 +537,10 @@ test.describe('animate-ui questionnaire', () => {
   }) => {
     const form = formIn('navigation-state');
     const section = page.getByTestId('navigation-state');
-    // Unanswered: Next disabled, dimmed.
     expect(actionIn(await drawnNow(page, form), 'next')).toMatchObject({
       displayed: true,
       o: 0.5,
     });
-    // Sent on from outside, unanswered: Next leaves dimmed, Submit comes in
-    // dimmed (disabled).
     const frames = await record(page, form, { active: SIZE }, () =>
       section.getByRole('button', { name: 'Go to size' }).click(),
     );
@@ -644,7 +589,6 @@ test.describe('animate-ui questionnaire', () => {
       1,
       'submit',
     );
-    // At rest at its own look: no step as the swap ends.
     expect(submit.at(-1)).toMatchObject({ o: 0.5, scale: 1, animations: [] });
     await settle(page, form);
     expect(actionIn(await drawnNow(page, form), 'submit').o).toBe(0.5);
@@ -653,10 +597,6 @@ test.describe('animate-ui questionnaire', () => {
   test("a button turning disabled or enabled as it goes (shadcn/ui's navigation-state, going on and back) leaves from its look as drawn", async ({
     page,
   }) => {
-    // Next, enabled on an answered question, turns disabled (dimmed) as it
-    // leaves for an unanswered one; Submit, disabled there, turns enabled as
-    // it leaves going back: each leaves from how it was drawn, not from its
-    // new look.
     const form = formIn('navigation-state');
     await pick(page, form, 'Red');
     await expect
@@ -712,8 +652,6 @@ test.describe('animate-ui questionnaire', () => {
       form: 'static',
       actions: 'static',
     });
-    // The question leaves (pinned over the next one, in the form made
-    // relative meanwhile), and comes back.
     await pick(page, form, 'Red');
     await settle(page, form);
     const on = await record(page, form, { active: EXTRAS }, () =>
@@ -721,7 +659,6 @@ test.describe('animate-ui questionnaire', () => {
     );
     expectStep(on, { from: COLOR, to: EXTRAS, way: 1 });
     await settle(page, form);
-    // Next leaves (pinned in the actions row), and comes back.
     await press(page, form, 'skip');
     await settle(page, form);
     await press(page, form, 'previous');
@@ -737,9 +674,6 @@ test.describe('animate-ui questionnaire', () => {
   test('a margin of its own on a question (style={{ marginBottom }}) is kept after it leaves and comes back', async ({
     page,
   }) => {
-    // Pinned, the question's margin is set (`margin: 0`) and put back: a
-    // margin longhand of its own (no `margin` shorthand to save) must come
-    // back too.
     const form = formIn('inline-styles');
     const item = () =>
       page
@@ -782,8 +716,6 @@ test.describe('animate-ui questionnaire', () => {
   test('a question leaving keeps its own height (its border box drawn as it was), whatever the next one is', async ({
     page,
   }) => {
-    // Bordered (content-box section): pinned at the next one's height, its
-    // border would jump to that height as it starts leaving.
     const form = formIn('content-box');
     await pick(page, form, 'Red');
     await settle(page, form);
@@ -821,7 +753,6 @@ test.describe('animate-ui questionnaire', () => {
         press(page, form, 'next'),
       );
       if (scale === 1) expectStep(frames, { from: COLOR, to: EXTRAS, way: 1 });
-      // Over the next one, exactly (drawn: their translates scaled too).
       const leaving = itemFrames(frames, COLOR);
       expect(leaving.length).toBeGreaterThan(2);
       for (const f of frames.filter((f) => f.t >= 0)) {
@@ -845,8 +776,6 @@ test.describe('animate-ui questionnaire', () => {
         ).toBeLessThan(EXACT);
       }
       await settle(page, form);
-      // Skip and Next leave (Submit comes in), where they were, exactly:
-      // their centers and their own widths (scaled on the way).
       const before = await drawnNow(page, form);
       const buttons = await record(page, form, { active: SIZE }, () =>
         press(page, form, 'skip'),
@@ -888,7 +817,6 @@ test.describe('animate-ui questionnaire', () => {
     const ENVIRONMENT = 'Which environment?';
     const APPROVAL = 'When to ask?';
     expect((await drawnNow(page, form)).progress!.text).toBe('Question 1 of 2');
-    // Cloud: a question more, the total rolling from 2 to 3.
     const more = await record(page, form, { checked: 'Cloud' }, () =>
       pick(page, form, 'Cloud'),
     );
@@ -906,13 +834,11 @@ test.describe('animate-ui questionnaire', () => {
     await settle(page, form);
     await press(page, form, 'previous');
     await settle(page, form);
-    // Local: the question goes, the total rolls back to 2.
     const fewer = await record(page, form, { checked: 'Local' }, () =>
       pick(page, form, 'Local'),
     );
     expectRollPainted(fewer, 1, '3', '2');
     await settle(page, form);
-    // Going on passes it.
     const past = await record(page, form, { active: APPROVAL }, () =>
       press(page, form, 'next'),
     );
@@ -987,9 +913,6 @@ test.describe('animate-ui questionnaire, on load', () => {
         ).__resume,
     );
     expect(load.length).toBeGreaterThan(10);
-    // Without `items`, the library knows its questions and their answers
-    // once mounted: its buttons and the answer given show from then on (not
-    // in the server's HTML), at rest.
     const mounted = load.findIndex((frame) => frame.actions.length > 0);
     expect(mounted).toBeGreaterThan(-1);
     for (const frame of load.slice(0, mounted))
@@ -1014,7 +937,6 @@ test.describe('animate-ui questionnaire, on load', () => {
     }
     expect((await drawnNow(page, form)).progress!.text).toBe('Question 2 of 3');
 
-    // Back: its answer given (Green) rests on every frame.
     const frames = await record(page, form, { active: COLOR }, () =>
       press(page, form, 'previous'),
     );

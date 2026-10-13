@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="splitting-text"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -50,12 +48,10 @@ test.describe('animate-ui splitting text', () => {
     page,
   }) => {
     await open(page);
-    // Replay: the first load may be past the entrance by network idle.
     await page.getByRole('button', { name: 'Replay' }).click();
     await page.waitForTimeout(150);
     const early = await pieces(page);
     expect(early).toHaveLength(13);
-    // The first characters are on their way, the last ones haven't started.
     expect(early[0]!.opacity).toBeGreaterThan(0);
     expect(early.at(-1)!.opacity).toBe(0);
     await expect

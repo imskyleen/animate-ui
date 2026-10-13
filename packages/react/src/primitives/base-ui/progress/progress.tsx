@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Progress as ProgressPrimitive } from '@base-ui/react/progress';
@@ -18,33 +18,14 @@ import {
 } from '../../../internal/progress';
 import { useHydrationLocale } from '../../../internal/hydration-locale';
 
-// Same API as Base UI's Progress, animated like Motion UI's progress bar: the
-// Indicator's width (Base UI sizes it with a percentage width) springs to a
-// new value (stiffness 300, damping 35), and the Value counts to it on the
-// same spring, so the number moves with the bar, from 0 when it appears, as
-// v1's `CountingNumber` did. Without a `locale`, its numbers are formatted
-// in en-US on the server and while the page hydrates, then in the browser's
-// (../../../internal/hydration-locale).
-
-/** Animate UI's additions to `Progress.Indicator`. */
 type IndicatorAnimationProps = {
-  /**
-   * Transition of the indicator moving to a new value. Defaults to a spring
-   * (stiffness 300, damping 35).
-   */
   transition?: Transition;
 };
 
-/** Animate UI's additions to `Progress.Value`. */
 type ValueAnimationProps = {
-  /**
-   * Transition of the number counting to a new value. Defaults to the bar's
-   * spring (stiffness 300, damping 35), so they move together.
-   */
   transition?: Transition;
 };
 
-// Base UI keeps its percentage and formatting private: the Root mirrors them.
 const [ProgressMotionProvider, useProgressMotion] = getStrictContext<{
   value: number | null;
   percentage: number | null;
@@ -90,8 +71,6 @@ function Indicator({ transition, ...props }: Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator
       {...props}
-      // Base UI's props (className, style, data-*…) land on the motion.div,
-      // which animates the width Base UI sets.
       render={(renderProps) => (
         <IndicatorMotion
           {...(renderProps as HTMLMotionProps<'div'>)}
@@ -103,7 +82,6 @@ function Indicator({ transition, ...props }: Indicator.Props) {
 }
 
 namespace Indicator {
-  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = ProgressPrimitive.Indicator.Props &
     IndicatorAnimationProps &
     React.RefAttributes<HTMLDivElement>;
@@ -119,17 +97,14 @@ function IndicatorMotion({
   const reduce = useShouldReduceMotion();
   const spring = useTempoTransition(moveTransition ?? PROGRESS_TRANSITION);
 
-  // Indeterminate: Base UI sets no size, the styles decide.
   if (percentage === null) return <motion.div {...props} style={style} />;
 
-  // Base UI's width is ours to animate.
   const rest: Record<string, unknown> = { ...style };
   delete rest.width;
   return (
     <motion.div
       {...props}
       style={rest as HTMLMotionProps<'div'>['style']}
-      // No animation on mount: it starts where the value is.
       initial={false}
       animate={{ width: `${percentage}%` }}
       transition={reduce ? { duration: 0 } : spring}
@@ -137,11 +112,9 @@ function IndicatorMotion({
   );
 }
 
-/** Base UI's: the value within min and max, so it agrees with the bar. */
 const clampValue = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
-/** Base UI's default: the percentage, as a percent. */
 function formatValue(
   value: number,
   { min, max, format, locale }: ReturnType<typeof useProgressMotion>,
@@ -159,8 +132,6 @@ function formatValue(
 function Value({ transition, children, ...props }: Value.Props) {
   const context = useProgressMotion();
   const spring = useTempoTransition(transition ?? VALUE_TRANSITION);
-  // Base UI's determinate test; the text is kept within min and max, the
-  // number handed to `children` goes to the value, as Base UI's does.
   const counted = useCountingNumber(
     context.value !== null && Number.isFinite(context.value)
       ? context.value
@@ -173,7 +144,6 @@ function Value({ transition, children, ...props }: Value.Props) {
   return (
     <ProgressPrimitive.Value {...props}>
       {(formattedValue, value) => {
-        // Indeterminate: Base UI's own output.
         if (formattedValue === 'indeterminate' || value === null)
           return children ? children(formattedValue, value) : null;
         return children ? children(formatted, counted) : formatted;
@@ -183,7 +153,6 @@ function Value({ transition, children, ...props }: Value.Props) {
 }
 
 namespace Value {
-  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = ProgressPrimitive.Value.Props & ValueAnimationProps;
   export type State = ProgressPrimitive.Value.State;
 }

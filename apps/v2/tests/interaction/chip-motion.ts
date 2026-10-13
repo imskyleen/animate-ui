@@ -1,57 +1,33 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// A combobox's chips (Base UI's chips, React Aria's tags) and what follows
-// them (the input), in a wrapping row. A chip added pops in while what
-// follows glides to make room; a chip removed leaves through a copy of itself
-// (`data-exiting`), shrinking in place out of the flow, while what follows
-// glides to close the gap. Recorded frame by frame in the page.
-
 type Box = { x: number; y: number; width: number; height: number };
 
 type ChipFrame = {
   t: number;
-  /** The removed chip's copy, while it leaves. */
   copy: (Box & { opacity: number; scale: number }) | null;
-  /** The element that moves (the next chip, the input), on screen. */
   next: Box | null;
-  /** Its placeholder's opacity, to the eye: 0 hidden or none. */
   placeholder: number;
-  /** Its placeholder's blur, in px. */
   placeholderBlur: number;
-  /** The element the chips are laid out in (the field). */
   container: Box;
-  /** A chip that stays on its line, if watched. */
   stay: Box | null;
 };
 
 type ChipCase = {
-  /** The element the chips are laid out in. */
   container: string;
-  /** The element that moves, inside the container. */
   next: string;
-  /** A chip about to be removed: its selector and its text. */
   chip?: { selector: string; text: string };
-  /** A chip that stays on its line: its selector and its text. */
   stay?: { selector: string; text: string };
-  /** Adds or removes a chip. */
   act: () => Promise<void>;
-  /** How long to record from the change it makes, in ms (500 by default). */
   ms?: number;
 };
 
 type Recording = {
-  /** Where things were, before. */
   before: { next: Box; chip: Box | null; container: Box; stay: Box | null };
   frames: ChipFrame[];
 };
 
 type Recorder = { __chips?: Promise<Recording> };
 
-/**
- * Records the frames that follow `act`: for 500ms (or `ms`) from the first
- * frame the page changes (a loaded machine can deliver the act late), or for
- * 3s at most without a change.
- */
 export async function recordChips(page: Page, c: ChipCase) {
   await page.evaluate(
     ({ container, next, chip, stay, ms }) => {
@@ -61,7 +37,6 @@ export async function recordChips(page: Page, c: ChipCase) {
         return { x: r.x, y: r.y, width: r.width, height: r.height };
       };
       const root = document.querySelector(container)!;
-      // An empty one matches :placeholder-shown too, but shows nothing.
       const placeholder = (el: Element | null) => {
         if (
           !el?.matches(':placeholder-shown') ||
@@ -92,14 +67,11 @@ export async function recordChips(page: Page, c: ChipCase) {
       (window as Recorder).__chips = new Promise((resolve) => {
         const frames: ChipFrame[] = [];
         const t0 = performance.now();
-        // When the page changed: a copy showed up, or what follows the chips
-        // or the field moved.
         let changed: number | null = null;
         const tick = () => {
           const t = performance.now() - t0;
           const copy = root.querySelector<HTMLElement>('[data-exiting]');
           const style = copy && getComputedStyle(copy);
-          // Its transform's scale, times its `scale`.
           const matrix = style?.transform.match(/matrix\(([^,]+)/);
           const own =
             style && style.scale !== 'none' ? parseFloat(style.scale) : 1;
@@ -148,10 +120,6 @@ export async function recordChips(page: Page, c: ChipCase) {
   return page.evaluate(() => (window as Recorder).__chips!);
 }
 
-/**
- * What follows moved (more than 10px) and glided there: frames on the way.
- * Under reduced motion, it's at once where it rests.
- */
 function expectGlided(
   { before, frames }: Recording,
   { reduce }: { reduce: boolean },
@@ -167,11 +135,6 @@ function expectGlided(
   else expect(onTheWay.length).toBeGreaterThan(2);
 }
 
-/**
- * A removed chip: its copy, where it was, shrinks out (its scale and opacity
- * on one progress, to half its size and transparent), gone within 450ms;
- * what follows glides to close the gap.
- */
 export function expectChipLeaves(
   recording: Recording,
   { reduce = false }: { reduce?: boolean } = {},
@@ -179,7 +142,6 @@ export function expectChipLeaves(
   const { before, frames } = recording;
   const leaving = frames.filter((f) => f.copy !== null);
   expect(leaving.length).toBeGreaterThan(1);
-  // Where the chip was (it shrinks around its center).
   const copy = leaving[0]!.copy!;
   const chip = before.chip!;
   expect(
@@ -203,12 +165,6 @@ export function expectChipLeaves(
   expectGlided(recording, { reduce });
 }
 
-/**
- * The field grew or shrank with its rows (more than 10px), through heights on
- * the way, and a chip that stays on its line moved with the field (no jump
- * inside it, wherever the field's free space puts its rows). Under reduced
- * motion, it's at its height at once.
- */
 export function expectResized(
   { before, frames }: Recording,
   { reduce = false }: { reduce?: boolean } = {},
@@ -230,11 +186,6 @@ export function expectResized(
       expect(Math.abs(offset(f.stay, f.container) - was)).toBeLessThan(1);
 }
 
-/**
- * What follows glided in one go: from where it was when its glide starts,
- * then always closer to where it lands, never jumping back (the copy
- * leaving mustn't move it).
- */
 export function expectOneGo({ before, frames }: Recording) {
   const end = frames.at(-1)!.next!;
   const away = (box: Box) => Math.hypot(box.x - end.x, box.y - end.y);
@@ -247,12 +198,6 @@ export function expectOneGo({ before, frames }: Recording) {
       expect(away(f.next!)).toBeLessThan(away(frames[i - 1]!.next!) + 0.5);
 }
 
-/**
- * The input's placeholder, showing up as it glides back (the last chip
- * removed), stays hidden on the way, then fades in where the input rests,
- * from the frame it lands: from a 2px blur clearing on the same progress (no
- * blur under reduced motion, where the input jumps).
- */
 export function expectPlaceholderComesIn(
   { frames }: Recording,
   { reduce = false }: { reduce?: boolean } = {},
@@ -280,12 +225,10 @@ export function expectPlaceholderComesIn(
   expect(last.placeholderBlur).toBe(0);
 }
 
-/** The input's placeholder, there all along, goes with it: never hidden. */
 export function expectPlaceholderRides({ frames }: Recording) {
   for (const f of frames) expect(f.placeholder).toBe(1);
 }
 
-/** An added chip: what follows glides to make room. */
 export function expectRoomMade(
   recording: Recording,
   { reduce = false }: { reduce?: boolean } = {},
@@ -300,26 +243,14 @@ const REMOVE = '[data-slot="combobox-chip-remove"]';
 
 type ChipsDemo = {
   path: string;
-  /**
-   * The combobox's accessible name. Without one (shadcn/ui's Base UI chips
-   * input has none), its input is found by its slot.
-   */
   label?: string;
-  /** The first chip and the last one, on load (the same when there's one). */
   first: string;
   last: string;
-  /** An item to add. */
   add: string;
-  /** Items to add, in turn, until the row wraps. */
   more: string[];
-  /**
-   * When the input shows its placeholder: once it's empty, or always. None
-   * by default, like shadcn/ui's chips inputs (the fixtures show one).
-   */
   placeholder?: 'empty' | 'always';
 };
 
-/** The chips of a combobox demo (shadcn/ui's, Base UI's or React Aria's). */
 export function describeChipMotion(name: string, c: ChipsDemo) {
   const chip = (page: Page, text: string) =>
     page.locator(`${CHIP}:not([data-exiting])`, { hasText: text });
@@ -327,7 +258,6 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     c.label === undefined
       ? page.locator(INPUT)
       : page.getByRole('combobox', { name: c.label });
-  /** Removes the first chip, unless it's the last one: one is left. */
   const keepLast = async (page: Page) => {
     if (c.first === c.last) return;
     await chip(page, c.first).locator(REMOVE).click();
@@ -365,7 +295,6 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
         chip: { selector: CHIP, text: c.first },
         act: () => chip(page, c.first).locator(REMOVE).click(),
       });
-      // Out of the selection at once: only its copy leaves.
       await expect(chip(page, c.first)).toHaveCount(0, { timeout: 50 });
       expectChipLeaves(recording);
     });
@@ -388,7 +317,6 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
       await input(page).click();
       await page.keyboard.press('ArrowDown');
       await page.waitForTimeout(650);
-      // Chips added until the row wraps onto a line more: the field grows.
       let grown: { recording: Recording; added: string } | null = null;
       for (const added of c.more) {
         const recording = await recordChips(page, {
@@ -408,7 +336,6 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
       }
       expect(grown).not.toBeNull();
       expectResized(grown!.recording);
-      // Removed, the row comes back onto its line: the field shrinks.
       await page.keyboard.press('Escape');
       expectResized(
         await recordChips(page, {

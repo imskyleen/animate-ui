@@ -2,8 +2,6 @@
 
 import { Drawer } from '@animate-ui/react/primitives/radix-ui/drawer';
 
-// On its own page: a modal Content kept mounted hides the rest of the page
-// from assistive tech, even closed (Radix).
 export default function RadixDrawerForceMountFixture() {
   return (
     <Drawer.Root>

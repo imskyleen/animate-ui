@@ -10,17 +10,6 @@ import {
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
-// Same API as Radix's Checkbox, animated like Animate UI v1's checkbox: the
-// check draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in
-// 0.3s; with `animation="pop"` (or an `AnimateUIProvider`'s
-// `checkAnimation`), it pops in from half its size out of a light blur after
-// the same 0.2s, and shrinks back out in 0.15s. Only checking and
-// unchecking animate: checked as it appears (the page loading, a dialog
-// opening), the check is at rest. The Indicator stays mounted while its
-// check leaves, then unmounts like Radix's. The Root is Radix's:
-// unlike v1's, it doesn't scale when pressed or hovered, the check (and the
-// box's own fill) answer the click.
-
 type CheckboxProps = CheckboxPrimitive.CheckboxProps;
 type CheckboxIndicatorProps = CheckboxPrimitive.CheckboxIndicatorProps &
   IndicatorAnimationProps &
@@ -50,8 +39,6 @@ function Indicator({
 
   return (
     <ReducedMotionConfig>
-      {/* Always mounted for Radix: the presence below decides, from the
-          data-state Radix passes down. */}
       <CheckboxPrimitive.Indicator {...props} forceMount asChild>
         <RadixIndicator
           keepMounted={forceMount}
@@ -88,8 +75,6 @@ function RadixIndicator(
 const createCheckboxScope: typeof CheckboxPrimitive.createCheckboxScope =
   CheckboxPrimitive.createCheckboxScope;
 
-// Radix's unstable composition API, untouched (an Indicator inside it still
-// animates).
 const unstable_CheckboxProvider = CheckboxPrimitive.unstable_CheckboxProvider;
 const unstable_CheckboxTrigger = CheckboxPrimitive.unstable_CheckboxTrigger;
 const unstable_CheckboxBubbleInput =

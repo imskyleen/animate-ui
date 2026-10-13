@@ -9,10 +9,6 @@ import {
 } from './package-managers';
 import { CodeTabs } from './tabs';
 
-/**
- * An install command in every package manager, for client components (the
- * server `Command`'s twin): it follows the reader's saved choice.
- */
 export function ClientCommand({
   command,
   className,

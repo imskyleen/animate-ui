@@ -72,7 +72,6 @@ export default function ToggleDemo({
       pressed={pressed}
       onPressedChange={setPressed}
     >
-      {/* The bookmark pops as it fills, and gives a little as it empties. */}
       <motion.span
         className="inline-flex"
         initial={false}

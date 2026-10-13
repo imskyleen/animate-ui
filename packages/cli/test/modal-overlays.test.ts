@@ -4,7 +4,6 @@ import { expect, test } from 'vitest';
 
 import { transform } from '../src/lib/transform';
 
-// Dialog, sheet, alert dialog and drawer, in every base and style.
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 const read = (library: string, file: string) =>
   readFileSync(path.join(FIXTURES, library, file), 'utf8');
@@ -12,15 +11,12 @@ const files = (library: string, component: RegExp) =>
   readdirSync(path.join(FIXTURES, library)).filter((f) => component.test(f));
 
 const MODULE: Record<string, (component: string) => string> = {
-  // shadcn imports the `radix-ui` umbrella: it moves to the barrel.
   'radix-ui': () => '@animate-ui/react/primitives/radix-ui',
   'base-ui': (component) =>
     `@animate-ui/react/primitives/base-ui/${component === 'sheet' ? 'dialog' : component}`,
   'react-aria': () => '@animate-ui/react/primitives/react-aria',
 };
 
-// Motion owns the modals: no keyframe, no CSS transition, no duration left on
-// the overlay or the content; the centering translate and the layout stay.
 for (const library of Object.keys(MODULE)) {
   for (const file of files(library, /^(dialog|sheet|alert-dialog)\./)) {
     test(`${library}/${file}: Motion owns the modal`, () => {
@@ -45,9 +41,6 @@ for (const library of Object.keys(MODULE)) {
   }
 }
 
-// The drawer stays CSS-driven, now by the primitive: shadcn's timing and
-// transform classes go, the variables they fed (which the primitive reads)
-// and the handle's and content's own fades stay.
 for (const library of ['base-ui', 'react-aria']) {
   for (const file of files(library, /^drawer\./)) {
     test(`${library}/${file}: the primitive owns the drawer's motion`, () => {
@@ -59,11 +52,9 @@ for (const library of ['base-ui', 'react-aria']) {
         /transform-\[translate3d|transform-\(--closed-transform\)|duration-450|data-swiping:duration|data-ending-style:duration/,
       );
       expect(result.code).not.toContain('opacity-[max(');
-      // Read by the primitive.
       expect(result.code).toContain('[--closed-transform:translate3d(');
       expect(result.code).toContain('[--translate-y:calc(');
       expect(result.code).toContain('[--stack-scale:clamp(');
-      // The swipe handle's and the content's fades for nested drawers.
       expect(result.code).toContain('transition-opacity duration-200');
       expect(result.code).toContain(
         'transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)]',

@@ -34,7 +34,6 @@ export default function AvatarGroupDemo() {
           {person.initials}
           <AvatarGroupTooltip className="rounded-md bg-foreground px-3 py-1.5 text-xs text-background">
             <AvatarGroupTooltipArrow className="size-2.5 fill-foreground" />
-            {/* Keeps the text from stretching while the popup resizes. */}
             <motion.p layout="preserve-aspect" className="whitespace-nowrap">
               {person.name}
             </motion.p>

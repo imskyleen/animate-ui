@@ -56,7 +56,6 @@ function TiltInner({
   asChild = false,
   ...props
 }: TiltProps) {
-  // Reduced motion: the element stays flat.
   const reduce = useShouldReduceMotion();
   const rX = useMotionValue(0);
   const rY = useMotionValue(0);

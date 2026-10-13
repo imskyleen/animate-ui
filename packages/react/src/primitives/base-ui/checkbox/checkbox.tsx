@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
@@ -10,17 +10,6 @@ import {
   type CheckAnimationProps,
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
-
-// Same API as Base UI's Checkbox, animated like Animate UI v1's checkbox: the
-// check draws itself (its stroke and opacity, 0.3s after 0.2s) and erases in
-// 0.3s; with `animation="pop"` (or an `AnimateUIProvider`'s
-// `checkAnimation`), it pops in from half its size out of a light blur after
-// the same 0.2s, and shrinks back out in 0.15s. Only checking and
-// unchecking animate: checked as it appears (the page loading, a dialog
-// opening), the check is at rest. The Indicator stays mounted while its
-// check leaves, then unmounts like Base UI's. The Root is Base
-// UI's: unlike v1's, it doesn't scale when pressed or hovered, the check (and
-// the box's own fill) answer the click.
 
 const Root = CheckboxPrimitive.Root;
 
@@ -51,8 +40,6 @@ function Indicator({
 
   return (
     <ReducedMotionConfig>
-      {/* Always mounted for Base UI: the presence below decides, from the
-          state Base UI hands to `render`. */}
       <CheckboxPrimitive.Indicator
         {...props}
         keepMounted
@@ -74,10 +61,6 @@ function Indicator({
 }
 
 namespace Indicator {
-  /**
-   * Base UI's props, plus Animate UI's `animation`, `transition` and
-   * `exitTransition`.
-   */
   export type Props = CheckboxPrimitive.Indicator.Props &
     IndicatorAnimationProps &
     CheckAnimationProps;

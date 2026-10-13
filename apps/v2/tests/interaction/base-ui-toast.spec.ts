@@ -8,21 +8,9 @@ import {
 } from './modal-timeline';
 import { expectCssCurve, expectCssSpring, overshootOf } from './spring-curves';
 
-// Animate UI v1 had no toast. A toast from an edge rises from it by its own
-// size, from 0.96 out of a 4px blur, fading in, on a spring that goes a
-// little past its rest (stiffness 280, damping 24): it lands. Dismissed, it
-// leaves the way it came in 0.2s, speeding away (a dialog's dismissal). Its
-// icon shows by type (a success check draws itself, an error cross draws and
-// shakes, other icons pop), an update swaps its icon and text through a
-// light blur, a swipe rubber-bands the wrong way and fades, and is thrown at
-// the finger's speed, the stack unfolds front to back, and a bar can show the
-// time left, paused with Base UI's timers.
-
 const TOAST = '[data-slot="toast"]';
-/** A toast rising from its edge, and its stack. */
 const TOAST_SPRING = { stiffness: 280, damping: 24 };
 
-/** Vertical offset (in toast heights), scale and opacity of toast `i`. */
 const read = (page: Page, i: number, selector = TOAST) =>
   page
     .locator(selector)
@@ -60,10 +48,6 @@ const settled = (page: Page, i = 0, selector = TOAST) =>
     )
     .toBe(true);
 
-/**
- * Records `sample` (run in the page, given the document) on every animation
- * frame until `stop()`: `[t, value]` pairs, t in ms from the start.
- */
 async function recordFrames<T>(page: Page, sample: string) {
   await page.evaluate((sample) => {
     const w = window as unknown as {
@@ -94,7 +78,6 @@ async function recordFrames<T>(page: Page, sample: string) {
   };
 }
 
-/** The exit's timing, read as soon as Base UI marks the toast as ending. */
 async function watchExit(page: Page, selector = TOAST) {
   await page
     .locator(selector)
@@ -121,7 +104,6 @@ async function watchExit(page: Page, selector = TOAST) {
     ) as Promise<{ duration: string; easing: string }>;
 }
 
-/** Drags the front toast by `dx` in `steps` moves, one frame apart. */
 async function drag(page: Page, dx: number, steps = 10, release = true) {
   const box = (await page.locator(TOAST).first().boundingBox())!;
   const x = box.x + box.width / 3;
@@ -135,12 +117,6 @@ async function drag(page: Page, dx: number, steps = 10, release = true) {
   if (release) await page.mouse.up();
 }
 
-/**
- * Flicks the front toast right by `dx` px in `steps` moves `every` ms apart,
- * then lets go `every` ms after the last: the moves land on separate frames
- * and carry those times (the toast reads a release's speed from event
- * times), so a busy machine can't stretch the flick into a slow drag.
- */
 async function flick(page: Page, dx: number, steps = 6, every = 16) {
   const box = (await page.locator(TOAST).first().boundingBox())!;
   const x = box.x + 40;
@@ -189,13 +165,11 @@ test.describe('base-ui toast demo', () => {
     expect(first.opacity).toBeLessThan(0.3);
     expect(first.scale).toBeLessThan(0.975);
     expect(first.blur).toBeGreaterThan(2);
-    // It goes past its rest (up, toward the page), then settles: it lands.
     const peak = Math.min(...shown.map((frame) => frame.samples.toast!.y));
     expect(peak).toBeLessThan(-overshootOf(TOAST_SPRING) / 3);
     const last = shown.at(-1)!.samples.toast!;
     expect(last.blur).toBe(0);
     expect(last.scale).toBeCloseTo(1, 3);
-    // The spring as CSS: the duration and `linear()` curve Motion computes.
     expectCssSpring(await timing(page, TOAST), TOAST_SPRING);
   });
 
@@ -221,7 +195,6 @@ test.describe('base-ui toast demo', () => {
     await page.waitForTimeout(700);
     expect(Math.min(...(await scales()))).toBeGreaterThanOrEqual(0.9);
 
-    // When each toast behind starts moving as the stack unfolds.
     const frames = await recordFrames<number[]>(
       page,
       `() => [...document.querySelectorAll('[data-slot="toast"]')].map((el) => new DOMMatrix(getComputedStyle(el).transform).m42)`,
@@ -232,16 +205,13 @@ test.describe('base-ui toast demo', () => {
     const unfold = await frames.stop();
     const start = (i: number) =>
       unfold.find((f) => Math.abs(f.v[i]! - unfold[0]!.v[i]!) > 1)!.t;
-    // Front to back: the third toast starts a stagger (30ms) after the second.
     expect(start(2) - start(1)).toBeGreaterThan(15);
     expect(start(2) - start(1)).toBeLessThan(80);
     expect((await scales()).every((s) => Math.abs(s - 1) < 0.005)).toBe(true);
-    // The content behind fades back in with the overlay's 200ms ease-out.
     const content = await timing(page, '[data-slot="toast-content"]');
     expect(content.duration).toBe('0.2s');
     expect(content.easing).toBe('cubic-bezier(0.23, 1, 0.32, 1)');
 
-    // It folds back the same way, front to back.
     const fold = await recordFrames<number[]>(
       page,
       `() => [...document.querySelectorAll('[data-slot="toast"]')].map((el) => new DOMMatrix(getComputedStyle(el).transform).m42)`,
@@ -253,7 +223,6 @@ test.describe('base-ui toast demo', () => {
     const back = (i: number) =>
       folded.find((f) => Math.abs(f.v[i]! - folded[0]!.v[i]!) > 1)!.t;
     expect(back(2) - back(1)).toBeGreaterThan(15);
-    // Changes once folded (a toast added) don't wait.
     await page.waitForTimeout(200);
     await page.getByRole('button', { name: 'Show Toast' }).click();
     await page.waitForTimeout(50);
@@ -290,12 +259,9 @@ test.describe('base-ui toast demo', () => {
     const width = (await page.locator(TOAST).first().boundingBox())!.width;
     await drag(page, 60, 10, false);
     const dragged = await read(page, 0);
-    // Base UI measures from the first move: 54px of the 60.
     expect(dragged.x).toBeGreaterThan(45);
-    // Gone at its own width away: 1 - x / width.
     expect(dragged.opacity).toBeCloseTo(1 - dragged.x / width, 2);
     expect(dragged.opacity).toBeLessThan(0.95);
-    // Back under the threshold: it springs back, opaque again.
     await page.mouse.move(0, 0);
     await page.mouse.up();
     await expect.poll(async () => (await read(page, 0)).opacity).toBe(1);
@@ -306,8 +272,6 @@ test.describe('base-ui toast demo', () => {
     await settled(page);
     await drag(page, -120, 12, false);
     const left = await read(page, 0);
-    // Half the finger's way at first, then saturating at 48px: about 29px
-    // for 120px (Base UI's own damping, a square root, gave 11px).
     expect(left.x).toBeLessThan(-22);
     expect(left.x).toBeGreaterThan(-36);
     expect(left.opacity).toBe(1);
@@ -321,8 +285,6 @@ test.describe('base-ui toast demo', () => {
     await settled(page);
     const width = (await page.locator(TOAST).first().boundingBox())!.width;
     let exit = await watchExit(page);
-    // A flick: 32px every 16ms. Its speed over the last 100ms before letting
-    // go: 160px in 96ms. It leaves its width at that speed, linear.
     await flick(page, 192);
     const flung = await exit();
     expect(flung.easing).toBe('linear');
@@ -330,7 +292,6 @@ test.describe('base-ui toast demo', () => {
     expect(Math.abs(flickMs - width / (160 / 96))).toBeLessThan(12);
     await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 2500 });
 
-    // A slow drag: thrown at the slowest, 360ms (a drawer's).
     await page.getByRole('button', { name: 'Show Toast' }).click();
     await settled(page);
     exit = await watchExit(page);
@@ -351,7 +312,6 @@ test.describe('base-ui toast demo', () => {
     await expect(bar).toHaveCount(1);
     await page.waitForTimeout(500);
     const before = await left();
-    // 5s by default: about a tenth gone after half a second.
     expect(before).toBeLessThan(0.95);
     expect(before).toBeGreaterThan(0.8);
     await page.locator(TOAST).first().hover({ force: true });
@@ -386,8 +346,6 @@ test.describe('base-ui toast demo', () => {
   });
 
   test("the bar takes the color of the toast's type", async ({ page }) => {
-    // shadcn colors the error's icon (text-destructive): its bar is red; a
-    // success toast's icon has the text's color: its bar too, fainter.
     await page.goto('/tests/demos/base-ui/toast-types', {
       waitUntil: 'networkidle',
     });
@@ -458,7 +416,6 @@ test.describe('base-ui toast demo', () => {
   });
 });
 
-/** The stroke drawn of the icon's shapes (1 whole), and its transform. */
 const ICON_SAMPLE = `() => {
   const svg = document.querySelector('[data-slot="toast"] [data-slot="toast-icon"] svg');
   if (!svg) return null;
@@ -483,7 +440,6 @@ type IconSample = {
   blur: number;
 } | null;
 
-/** shadcn/ui's toast-types example: each type's description. */
 const TYPE_TEXT: Record<string, string> = {
   Success: 'Event has been created.',
   Info: 'Arrive 10 minutes before the event.',
@@ -491,7 +447,6 @@ const TYPE_TEXT: Record<string, string> = {
   Error: 'The event could not be created.',
 };
 
-/** The frames of the toast of `type` (the newest, in front). */
 const framesOf = (frames: { t: number; v: IconSample }[], type: string) =>
   frames.filter((f) => f.v?.text === TYPE_TEXT[type]);
 
@@ -509,7 +464,6 @@ test.describe('base-ui toast types', () => {
     await page.getByRole('button', { name: 'Success' }).click();
     await page.waitForTimeout(900);
     const samples = framesOf(await frames.stop(), 'Success');
-    // Hidden from its first frame, then drawn, whole at rest.
     expect(samples[0]!.v!.drawn).toBeLessThan(0.05);
     expect(samples.some((f) => f.v!.drawn > 0.2 && f.v!.drawn < 0.8)).toBe(
       true,
@@ -525,7 +479,6 @@ test.describe('base-ui toast types', () => {
     const samples = framesOf(await frames.stop(), 'Error');
     expect(samples[0]!.v!.drawn).toBeLessThan(0.05);
     expect(samples.at(-1)!.v!.drawn).toBe(1);
-    // Swings both ways, up to 3px, then rests.
     const xs = samples.map((f) => f.v!.x);
     expect(Math.min(...xs)).toBeLessThan(-1.5);
     expect(Math.max(...xs)).toBeGreaterThan(1.5);
@@ -542,11 +495,9 @@ test.describe('base-ui toast types', () => {
       await page.waitForTimeout(800);
       const samples = framesOf(await frames.stop(), type);
       expect(samples[0]!.v!.opacity).toBeLessThan(0.05);
-      // Showing from half its size, out of a 2px blur.
       const first = samples.find((f) => f.v!.opacity > 0.02)!.v!;
       expect(first.scale).toBeLessThan(0.75);
       expect(first.blur).toBeGreaterThan(0.8);
-      // A little past its size, then at rest.
       expect(Math.max(...samples.map((f) => f.v!.scale))).toBeGreaterThan(1.02);
       expect(samples.at(-1)!.v!.scale).toBe(1);
       expect(samples.at(-1)!.v!.drawn).toBe(1);
@@ -606,25 +557,20 @@ test.describe('base-ui toast promise', () => {
     await page.waitForTimeout(800);
     const samples = await frames.stop();
     const swap = samples.findIndex((f) => f.v.text === 'Event created.');
-    // The previous text leaves as a copy, into a light blur...
     const leaving = samples
       .slice(swap)
       .flatMap((f) => f.v.copies)
       .filter((c) => c.text === 'Creating event…');
     expect(leaving.length).toBeGreaterThan(0);
     expect(leaving.some((c) => c.blur > 0.5 && c.opacity < 0.9)).toBe(true);
-    // ...the spinner too...
     expect(
       samples.slice(swap).some((f) => f.v.copies.some((c) => c.text === '')),
     ).toBe(true);
-    // ...while the new text comes out of it.
     const arriving = samples.slice(swap, swap + 4).map((f) => f.v);
     expect(arriving.some((v) => v.opacity < 0.8 && v.blur > 0.3)).toBe(true);
-    // The check draws itself where the spinner was.
     const icons = samples.slice(swap).map((f) => f.v.icon!.drawn);
     expect(Math.min(...icons)).toBeLessThan(0.1);
     expect(icons.at(-1)).toBe(1);
-    // The copies are gone once it's done.
     expect(samples.at(-1)!.v.copies).toEqual([]);
   });
 });
@@ -651,7 +597,6 @@ test.describe('base-ui toast updates', () => {
     const heights = (await frames.stop()).map((f) => f.v);
     const after = heights.at(-1)!;
     expect(after).toBeGreaterThan(before + 15);
-    // In between on the way: no jump.
     expect(heights.some((h) => h > before + 3 && h < after - 3)).toBe(true);
   });
 
@@ -683,7 +628,6 @@ test.describe('base-ui toast updates', () => {
     const state = await readState(page, TOAST);
     expect(state.blur).toBe(0);
     expect(state.opacity).toBe(1);
-    // No copy left behind.
     await expect(
       page.locator(
         `${TOAST} > [aria-hidden="true"]:not([data-animate-ui-toast-progress])`,
@@ -712,7 +656,6 @@ test.describe('base-ui toast updates', () => {
     const state = await readState(page, TOAST);
     expect(state.blur).toBe(0);
     expect(state.scale).toBeCloseTo(1, 3);
-    // The timeouts still close them.
     await expect(page.locator(TOAST)).toHaveCount(0, { timeout: 4000 });
   });
 });
@@ -748,7 +691,6 @@ test.describe('base-ui toast API', () => {
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     const toast = page.locator('[data-testid="bottom-toast"]');
     await expect(toast).toHaveCSS('outline-style', 'dashed');
-    // 1s timeout, then the exit.
     await expect(toast).toHaveCount(0, { timeout: 3000 });
   });
 });

@@ -20,13 +20,8 @@ import { Slot, type WithAsChild } from '../slot';
 
 type TabsOrientation = 'horizontal' | 'vertical';
 
-// Animate UI v1's motion; the selection's spring is a little quicker than
-// v1's (stiffness 300, damping 30, was 200/25).
-/** The highlight sliding to the active trigger. */
 const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.selection;
-/** The panels sliding and the height following the active one, without bounce. */
 const CONTENTS_TRANSITION: Transition = motionTokens.spring.slide;
-/** The blur of the panels coming in and going out, with the selection. */
 const CONTENT_TRANSITION: Transition = motionTokens.spring.selection;
 
 const INSTANT: Transition = { duration: 0 };
@@ -35,15 +30,10 @@ type TabsContextType = {
   activeValue: string;
   handleValueChange: (value: string) => void;
   registerTrigger: (value: string, node: HTMLElement | null) => void;
-  /** Arrow keys follow it: Left/Right when horizontal, Up/Down when vertical. */
   orientation: TabsOrientation;
-  /** Id of a trigger, referenced by its panel's `aria-labelledby`. */
   getTriggerId: (value: string) => string;
-  /** Id of a panel, referenced by its trigger's `aria-controls`. */
   getContentId: (value: string) => string;
-  /** Value of a registered trigger element. */
   getTriggerValue: (node: HTMLElement) => string | undefined;
-  /** Records a trigger's or panel's own `id`, so its pair references it. */
   registerId: (
     kind: 'trigger' | 'content',
     value: string,
@@ -56,7 +46,6 @@ const [TabsProvider, useTabs] =
 
 type BaseTabsProps = React.ComponentProps<'div'> & {
   children: React.ReactNode;
-  /** Which arrow keys move between triggers. */
   orientation?: TabsOrientation;
 };
 
@@ -129,7 +118,6 @@ function Tabs({
     [isControlled, onValueChange],
   );
 
-  // Own ids passed to triggers and panels, by value.
   const [customIds, setCustomIds] = React.useState<
     Record<string, { trigger?: string; content?: string }>
   >({});
@@ -180,7 +168,6 @@ function Tabs({
   );
 }
 
-/** Ids can't hold whitespace. */
 function toIdPart(value: string) {
   return value.replace(/\s+/g, '-');
 }
@@ -206,7 +193,6 @@ function TabsHighlight({
       data-slot="tabs-highlight"
       controlledItems
       value={activeValue}
-      // Highlight paces it with the provider's tempo.
       transition={transition ?? HIGHLIGHT_TRANSITION}
       exitDelay={exitDelay}
       click={false}
@@ -281,10 +267,6 @@ function TabsTrigger({
     return () => registerTrigger(value, null);
   }, [value, registerTrigger]);
 
-  // WAI-ARIA tabs pattern: arrows move between the enabled triggers of the
-  // list (wrapping), Home/End jump to the ends, and the focused tab is
-  // selected at once (automatic activation, like Radix UI). The selection
-  // animates as on click, with no delay.
   const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
@@ -306,7 +288,6 @@ function TabsTrigger({
       orientation === 'vertical' ? 'ArrowUp' : rtl ? 'ArrowRight' : 'ArrowLeft';
     if (![next, prev, 'Home', 'End'].includes(event.key)) return;
 
-    // The enabled triggers of this list (not of nested ones), in DOM order.
     const tabs = Array.from(
       list.querySelectorAll<HTMLElement>('[role="tab"]'),
     ).filter(
@@ -344,7 +325,6 @@ function TabsTrigger({
       type="button"
       aria-selected={isActive}
       aria-controls={getContentId(value)}
-      // Roving tabindex: Tab enters the list on the selected trigger only.
       tabIndex={isActive ? 0 : -1}
       data-state={isActive ? 'active' : 'inactive'}
       data-orientation={orientation}
@@ -372,7 +352,6 @@ function TabsContents({
 }: TabsContentsProps) {
   const { activeValue } = useTabs();
   const spring = useTempoTransition(transitionProp ?? CONTENTS_TRANSITION);
-  // Reduced motion: the panel and the height change at once.
   const reduce = useShouldReduceMotion();
   const transition: Transition = reduce ? INSTANT : spring;
   const childrenArray = React.Children.toArray(children);
@@ -387,13 +366,7 @@ function TabsContents({
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const itemRefs = React.useRef<Array<HTMLDivElement | null>>([]);
-  // Without defaultValue, Tabs selects the first trigger once mounted: until
-  // then (on the server too), the first panel is the one shown.
   const shownIndex = activeValue === undefined ? 0 : activeIndex;
-  // Null until the active panel is measured on screen: the container keeps
-  // its natural height meanwhile (mounted hidden, it can't be measured: 0).
-  // The first height is applied at once, so the container doesn't grow from
-  // 0; the next ones animate. `index`: the panel it was first measured on.
   const [heightState, setHeightState] = React.useState<{
     value: number;
     animate: boolean;
@@ -406,14 +379,10 @@ function TabsContents({
           ? previous
           : {
               value,
-              // A pinned 0 (an empty panel on screen) isn't a first height:
-              // content arriving in it shows at once, a switch away glides.
               animate: previous !== null && (glide || previous.value > 0),
               index: previous?.index ?? index,
             },
       );
-      // Once that first height is on screen (Motion applies it on the next
-      // frame), the inactive panels unfold and the next heights animate.
       requestAnimationFrame(() =>
         requestAnimationFrame(() =>
           setHeightState((previous) =>
@@ -464,13 +433,11 @@ function TabsContents({
     const container = containerRef.current;
     if (!pane || !container) return;
 
-    // A switch glides (on mount, the layout effect set this height).
     const first = measure(activeIndex);
     if (first > 0) setHeight(first, activeIndex, true);
 
     const ro = new ResizeObserver(() => {
       const next = measure(activeIndex);
-      // Hidden (display: none) measures 0: keep the last height.
       if (next > 0) requestAnimationFrame(() => setHeight(next, activeIndex));
     });
 
@@ -488,8 +455,6 @@ function TabsContents({
     if (heightState === null && activeIndex >= 0) {
       const next = measure(activeIndex);
       if (next > 0) setHeight(next, activeIndex);
-      // On screen (not display: none), an empty panel is 0 high: pinned, so
-      // switching away from it glides from 0 instead of 'auto' jumping.
       else if (containerRef.current?.getClientRects().length)
         setHeightState({ value: 0, animate: false, index: activeIndex });
     }
@@ -497,7 +462,6 @@ function TabsContents({
 
   return (
     <motion.div
-      // The container is measured: a ref passed in gets it too.
       ref={(node: HTMLDivElement | null) => {
         containerRef.current = node;
         if (typeof ref === 'function') ref(node);
@@ -525,11 +489,6 @@ function TabsContents({
               flexShrink: 0,
               paddingInline: 8,
               height: '100%',
-              // Until its first height is on screen, the container's natural
-              // height is the shown panel's (rendered on the server, mounted
-              // hidden, empty at first), not the row's tallest. The panel it
-              // was first measured on never folds (switched from at once, it
-              // would blank as it slides out).
               ...(!heightState?.animate &&
               index !== shownIndex &&
               index !== heightState?.index

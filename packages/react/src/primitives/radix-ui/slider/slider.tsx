@@ -14,32 +14,16 @@ import {
   useThumbStretch,
 } from '../../../internal/slider';
 
-// Same API as Radix's Slider, animated like Animate UI v1's switch thumb (v1
-// had no slider): the pressed (or dragged) thumb stretches along the track,
-// and a press on the track glides the thumb and the range to the new value,
-// on a spring (stiffness 400, damping 32; see ../../../internal/slider).
-// Dragging and the keyboard follow instantly.
-
 type SliderProps = SliderPrimitive.SliderProps;
 type SliderTrackProps = SliderPrimitive.SliderTrackProps;
 type SliderRangeProps = SliderPrimitive.SliderRangeProps & RangeAnimationProps;
 type SliderThumbProps = SliderPrimitive.SliderThumbProps & ThumbAnimationProps;
 
-/** Animate UI's additions to `Slider.Range`. */
 type RangeAnimationProps = {
-  /**
-   * Transition of the range after a press on the track. Defaults to a spring
-   * (stiffness 400, damping 32).
-   */
   transition?: Transition;
 };
 
-/** Animate UI's additions to `Slider.Thumb`. */
 type ThumbAnimationProps = {
-  /**
-   * Transition of the thumb after a press on the track, and of its stretch
-   * while pressed. Defaults to a spring (stiffness 400, damping 32).
-   */
   transition?: Transition;
 };
 
@@ -55,17 +39,11 @@ function RootMotion({
   onPointerDownCapture,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  // Holds the values when uncontrolled, and hands them to Radix: uncontrolled,
-  // Radix reports a change from an effect, after the commit, so a quick tap
-  // on the track could be over before the change reached the root, and the
-  // thumb jumped. Controlled, it reports it in the press itself.
   const controlled = props.value !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(
     props.defaultValue ?? [props.min ?? 0],
   );
   const values = controlled ? props.value : uncontrolled;
-  // Radix can't see a switch between controlled and uncontrolled anymore:
-  // warn like it did.
   const wasControlledRef = React.useRef(controlled);
   React.useEffect(() => {
     if (wasControlledRef.current === controlled) return;
@@ -112,8 +90,6 @@ function Range({
   const { ref, transform } = useSliderPartMotion('range', spring);
 
   return (
-    // Radix's props (className, style, data-*…) land on the motion.span
-    // through asChild; it only carries the transform.
     <SliderPrimitive.Range {...props} asChild>
       <motion.span
         ref={ref as React.Ref<HTMLSpanElement>}
@@ -137,8 +113,6 @@ function Thumb({
   const [isFocused, setIsFocused] = React.useState(false);
   const { ref, transform } = useSliderPartMotion('thumb', spring);
 
-  // Radix focuses the thumb it moves, so the pressed thumb is the focused
-  // one while the pointer is down.
   const isPressed = isPressing && isFocused;
   useThumbStretch(ref, isPressed, spring);
 
@@ -169,7 +143,6 @@ function Thumb({
 const createSliderScope: typeof SliderPrimitive.createSliderScope =
   SliderPrimitive.createSliderScope;
 
-// Radix's unstable parts, unchanged (not animated).
 const unstable_BubbleInput = SliderPrimitive.unstable_BubbleInput;
 const unstable_SliderBubbleInput = SliderPrimitive.unstable_SliderBubbleInput;
 const unstable_SliderThumbProvider =

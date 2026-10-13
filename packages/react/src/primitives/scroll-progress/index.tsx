@@ -58,7 +58,6 @@ function ScrollProgressProviderInner({
 
   const progress = direction === 'vertical' ? scrollYProgress : scrollXProgress;
   const smoothed = useSpring(progress, transition);
-  // Reduced motion: the bar tracks the scroll position without easing.
   const scale = reduce ? progress : smoothed;
 
   return (
@@ -91,7 +90,6 @@ function ScrollProgress({
 }: ScrollProgressProps) {
   const { scale, direction, global } = useScrollProgress();
 
-  // A motion value: scrolling never re-renders the component.
   const size = useTransform(scale, (value) => `${value * 100}%`);
 
   const Component = asChild ? Slot : motion.div;

@@ -23,17 +23,13 @@ import {
 } from './pick-hold';
 
 const POPUP = '[data-slot="combobox-content"]';
-/** An item's check (its ItemIndicator), beside the highlight. */
 const CHECK = ':scope > span:not([data-slot="item-highlight"])';
-/** The demo's input, named by its placeholder. */
 const NAME = 'Select a framework';
-/** The chips demo's input: shadcn/ui's has no name. */
 const chipsInput = (page: Page) =>
   page.locator('[data-slot="combobox-chip-input"]');
 const DEMO = '/tests/demos/base-ui/combobox';
 const CHIPS_DEMO = '/tests/demos/base-ui/combobox-multiple';
 
-/** Loads a page, once per test: a loaded machine is slow to load one. */
 const load = (page: Page, path: string) =>
   page.goto(path, { waitUntil: 'networkidle' });
 
@@ -49,7 +45,6 @@ test.describe('base-ui combobox demo', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
-    // Below the input: it grows from its top edge (minus the side offset).
     expect(parseFloat(first.origin.split(' ')[1]!)).toBeLessThanOrEqual(0);
 
     await page.waitForTimeout(650);
@@ -67,7 +62,6 @@ test.describe('base-ui combobox demo', () => {
     await expect(page.getByRole('option')).toHaveCount(5);
 
     await input.pressSequentially('x');
-    // No per-item exit: the list is filtered on the next frame.
     await expect(page.getByRole('option')).toHaveCount(3, { timeout: 100 });
     expect((await sample(page, '[role="option"]:first-child')).opacity).toBe(1);
     await expect(page.locator(POPUP)).toHaveCount(1);
@@ -82,8 +76,6 @@ test.describe('base-ui combobox demo', () => {
       await input.click();
       await page.keyboard.press('ArrowDown');
       await page.waitForTimeout(650);
-      // Recorded in the page from before the click: a loaded machine can
-      // deliver the click late, and miss it with a poll.
       await expectPickHold(page, {
         popup: POPUP,
         item: 'Astro',
@@ -136,7 +128,6 @@ test.describe('base-ui combobox demo', () => {
     await page.getByRole('option', { name: 'Astro' }).click();
     await expect(page.locator(POPUP)).toBeHidden({ timeout: 1000 });
     await open();
-    // Nothing changes: no check to wait for.
     await expectCloseWithoutHold(page, POPUP, () =>
       page.getByRole('option', { name: 'Astro' }).click(),
     );
@@ -198,11 +189,8 @@ test.describe('base-ui combobox chips demo', () => {
       900,
     );
     await page.getByRole('option', { name: 'Nuxt.js' }).click();
-    // Multiple selection: the list stays open.
     await expect(page.locator(POPUP)).toBeVisible();
     const recorded = await frames;
-    // Fading in from transparent and from half its size, like v1's checkbox
-    // check (its first frame can be read before Motion's first update).
     expect(Math.min(...recorded.map((f) => f.opacity))).toBeLessThan(0.5);
     expect(Math.min(...recorded.map((f) => f.scale))).toBeLessThan(0.9);
     expect(recorded.at(-1)!.opacity).toBe(1);
@@ -214,8 +202,6 @@ test.describe('base-ui combobox chips demo', () => {
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(650);
     const nuxt = page.getByRole('option', { name: 'Nuxt.js' });
-    // The ItemIndicator's icon (the demo renders it in a span), not the
-    // highlight: its stroke draws itself, like a checkbox's check.
     const frames = recordMotion(
       page,
       {
@@ -251,7 +237,6 @@ test.describe('base-ui combobox chips demo', () => {
     const leaving = recordCheck(page, target, 500);
     await nuxt.click();
     expectPoppedOut(await leaving);
-    // Multiple selection: the list stays open.
     await expect(page.locator(POPUP)).toBeVisible();
   });
 });
@@ -293,8 +278,6 @@ test.describe('base-ui combobox API', () => {
     await page.waitForTimeout(650);
     expect((await sample(page, '[data-testid="check-Apple"]')).opacity).toBe(1);
 
-    // Recorded in the page from their first frame: a loaded machine can't
-    // miss the fade.
     const chip = recordMotion(
       page,
       { selector: '[data-testid="chip-Grape"]' },
@@ -317,7 +300,6 @@ test.describe('base-ui combobox API', () => {
     );
     await page.getByRole('option', { name: 'Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('Grape');
-    // Deselected: the check fades out (kept mounted).
     const out = await leaving;
     expect(out.some((f) => f.opacity > 0.03 && f.opacity < 0.95)).toBe(true);
     expect(out.at(-1)!.opacity).toBe(0);
@@ -380,15 +362,12 @@ describeMenuHighlight('base-ui combobox highlight', {
 
 describeChipMotion('base-ui combobox', {
   path: CHIPS_DEMO,
-  // One chip on load, and no name nor placeholder on the input.
   first: 'Next.js',
   last: 'Next.js',
   add: 'Nuxt.js',
   more: ['SvelteKit', 'Nuxt.js', 'Remix', 'Astro'],
 });
 
-// shadcn/ui's chips input has no placeholder: a field like it, whose input
-// shows one once it's empty (Next.js and Astro on load).
 test.describe('base-ui combobox chips placeholder', () => {
   test.describe.configure({ timeout: 180_000 });
 
@@ -426,8 +405,6 @@ test.describe('base-ui combobox chips placeholder', () => {
   });
 });
 
-// Only choosing animates a check: the list opening shows the chosen item's
-// at rest, and closing leaves it as it is.
 test.describe('base-ui combobox checks', () => {
   test.describe.configure({ timeout: 180_000 });
   for (const animation of ['draw', 'pop'] as const) {

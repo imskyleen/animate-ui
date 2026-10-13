@@ -33,7 +33,6 @@ import {
 } from '@/lib/shared';
 import { source } from '@/lib/source';
 
-/** `<Installation>` on a library's page, which knows its library. */
 const INSTALLATIONS = Object.fromEntries(
   LIBRARIES.map(({ id }) => [
     id,
@@ -54,8 +53,6 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const primitive = getPrimitive(page);
   const { previous, next } = getNeighbours(page);
 
-  // Edit on GitHub, and Open in v0 for pages with a demo (its registry item
-  // comes from scripts/build-demos.mts).
   const contentPath = path.join('apps/v2/content/docs', page.path);
   const githubUrl = `https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/${contentPath}`;
   const demo = (
@@ -78,7 +75,6 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       slots={{
         toc: { provider: TOCProvider, main: TOC, popover: TOCPopover },
       }}
-      // The title lines up with the top of the sidebar and the TOC.
       className="md:pt-6 xl:pt-6"
     >
       <div className="flex items-start justify-between gap-4">
@@ -92,7 +88,6 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           <PageNavigation previous={previous} next={next} />
         </div>
       </div>
-      {/* Half the page's 16px gap: the description reads as the title's. */}
       <DocsDescription className="-mt-2 mb-2">
         {page.data.description}
       </DocsDescription>
@@ -106,7 +101,6 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
         <MDX
           components={getMDXComponents({
             a: createRelativeLink(source, page),
-            // Its Manual path shows the imports of the page's library.
             ...(primitive && {
               Installation: INSTALLATIONS[primitive.library],
             }),

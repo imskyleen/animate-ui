@@ -28,7 +28,6 @@ export default function ClickDemo({
   duration = 400,
   size = 100,
 }: {
-  /** Listen to clicks on the whole page, not only this area. */
   global?: boolean
   duration?: number
   size?: number

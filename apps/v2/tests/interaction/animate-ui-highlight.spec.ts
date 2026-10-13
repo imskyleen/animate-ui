@@ -7,7 +7,6 @@ const open = (page: Page) =>
 
 const HIGHLIGHT = '[data-slot="motion-highlight"]';
 
-/** The highlight of an item (the previous one fades out meanwhile). */
 const highlightX = (page: Page, value = 'overview') =>
   page
     .locator(`${HIGHLIGHT}[data-value="${value}"]`)
@@ -24,7 +23,6 @@ test.describe('animate-ui highlight', () => {
 
   test('sets no ARIA state: it is a visual effect', async ({ page }) => {
     await open(page);
-    // aria-selected is invalid on buttons and links; the state is data-active.
     await expect(page.locator('[aria-selected]')).toHaveCount(0);
     await expect(
       page.getByRole('button', { name: 'Activity' }),
@@ -45,7 +43,6 @@ test.describe('animate-ui highlight', () => {
       .poll(async () => Math.abs((await highlightX(page, 'settings')) - end))
       .toBeLessThan(1.5);
     await expect(target).toHaveAttribute('data-active', 'true');
-    // The previous highlight is gone once it has faded out.
     await expect(page.locator(HIGHLIGHT)).toHaveCount(1);
   });
 

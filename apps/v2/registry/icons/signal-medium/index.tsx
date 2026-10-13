@@ -28,8 +28,6 @@ const pathAnimation: Variants = {
 };
 
 const animations = {
-  // Its bars pulse one after the other, never gone, as Hugeicons'; drawn in
-  // turn is `draw`.
   default: {
     group: {},
     path1: {

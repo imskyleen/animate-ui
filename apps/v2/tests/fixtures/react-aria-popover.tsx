@@ -20,7 +20,6 @@ import {
 
 const FRUITS = ['Apple', 'Banana', 'Cherry'];
 
-// API compatibility: one Popover under every React Aria trigger.
 export default function ReactAriaPopoverFixture() {
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState(false);

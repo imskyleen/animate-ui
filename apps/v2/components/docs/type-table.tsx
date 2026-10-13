@@ -13,7 +13,6 @@ import { cn } from 'cn';
 import Link from 'fumadocs-core/link';
 import type { ReactNode } from 'react';
 
-/** Fumadocs' TypeTable entry, so MDX pages keep their props. */
 export type TypeNode = {
   description?: ReactNode;
   type: ReactNode;
@@ -26,7 +25,6 @@ export type TypeNode = {
   returns?: ReactNode;
 };
 
-// Long types and defaults wrap instead of pushing Default out of view.
 const codeClassName =
   'rounded-md bg-accent px-1.5 py-1 font-mono text-[13px] leading-7 text-foreground box-decoration-clone break-words';
 
@@ -78,11 +76,6 @@ function Info({ name, item }: { name: string; item: TypeNode }) {
   );
 }
 
-/**
- * The API table: Prop, Type, Default in the accent frame, each prop a
- * rounded row on the background, the description in Animate UI's tooltip.
- * Same props as Fumadocs' TypeTable.
- */
 export function TypeTable({
   id,
   type,
@@ -101,7 +94,6 @@ export function TypeTable({
           className,
         )}
       >
-        {/* Rows are separate rounded cards: the cells carry the background. */}
         <table className="w-full min-w-xl border-separate border-spacing-x-0 border-spacing-y-1 text-left text-sm text-muted-foreground [&_tbody_td]:bg-background [&_tbody_td:first-child]:rounded-l-lg [&_tbody_td:last-child]:rounded-r-lg">
           <thead className="text-foreground">
             <tr>

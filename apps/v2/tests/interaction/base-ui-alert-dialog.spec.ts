@@ -45,7 +45,6 @@ test.describe('base-ui alert dialog demo', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
     expectDialogExit(await timeline.stop());
-    // A dismissed dialog's curve, as Motion handed it to the browser.
     expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
     await expect(
       page.getByRole('button', { name: 'Show Dialog' }),
@@ -58,7 +57,6 @@ test.describe('base-ui alert dialog demo', () => {
     await page.mouse.click(5, 5);
     await page.waitForTimeout(450);
     await expect(page.getByRole('alertdialog')).toBeVisible();
-    // shadcn/ui's Base UI action is a plain button: close with Cancel.
     await page.getByRole('button', { name: 'Cancel' }).click();
     await expect(page.getByRole('alertdialog')).toHaveCount(0, {
       timeout: 2500,

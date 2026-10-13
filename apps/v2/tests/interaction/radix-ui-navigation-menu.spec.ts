@@ -39,7 +39,6 @@ test.describe('radix-ui navigation-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
-    // From its top edge.
     expect(first.origin.endsWith(' 0px')).toBe(true);
     await page.waitForTimeout(400);
     const settled = await sample(page, VIEWPORT);
@@ -53,7 +52,6 @@ test.describe('radix-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
-    // Sampled in the page: the resize is mostly done in ~155ms.
     const widths = page.evaluate(
       (selector) =>
         new Promise<number[]>((resolve) => {
@@ -73,7 +71,6 @@ test.describe('radix-ui navigation-menu demo', () => {
     const seen = await widths;
     const after = await size(page);
     expect(after.width).toBeGreaterThan(before.width);
-    // Part of the way there on some frames, and never past it.
     expect(seen.some((w) => w > before.width + 1 && w < after.width - 1)).toBe(
       true,
     );
@@ -96,7 +93,6 @@ test.describe('radix-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, VIEWPORT)).opacity, {
         intervals: [16],
@@ -184,7 +180,6 @@ test.describe('radix-ui navigation-menu API', () => {
         (el) => new DOMMatrix(getComputedStyle(el).transform).m41,
       );
     const start = await x();
-    // v1's highlight spring: sampled in the page.
     const xs = indicator.evaluate(
       (el) =>
         new Promise<number[]>((resolve) => {

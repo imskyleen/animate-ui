@@ -3,7 +3,6 @@ import { expect, test, type Page } from '@playwright/test';
 type Wipe = { duration: number; easing: string; pseudoElement: string };
 
 const open = async (page: Page) => {
-  // Count the view transitions the toggler starts, and record its wipes.
   await page.addInitScript(() => {
     const w = window as unknown as { __transitions: number; __wipes: Wipe[] };
     w.__transitions = 0;
@@ -61,7 +60,6 @@ test.describe('animate-ui theme toggler', () => {
     );
     await expect.poll(() => isDark(page)).toBe(false);
     expect(await transitions(page)).toBeGreaterThanOrEqual(2);
-    // System resolves to light here: nothing changes on screen, no wipe.
     await toggler(page).click();
     await expect(toggler(page)).toHaveAccessibleName(
       'Theme: system. Switch to dark',
@@ -83,7 +81,6 @@ test.describe('animate-ui theme toggler', () => {
   test('reduced motion: swaps at once, no wipe', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
-    // System (light here), then dark, then light.
     await toggler(page).click();
     await expect.poll(() => isDark(page)).toBe(true);
     await toggler(page).click();

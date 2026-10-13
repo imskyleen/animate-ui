@@ -18,7 +18,6 @@ import {
 import { usePageVisible } from '@animate-ui/react/utils/use-page-visible';
 import { cn } from 'cn';
 
-/** Runs `keyframes` while playing, otherwise holds the `rest` frame. */
 function loop(
   playing: boolean,
   keyframes: TargetAndTransition,
@@ -30,10 +29,6 @@ function loop(
     : { initial: rest, animate: rest, transition: { duration: 0 } };
 }
 
-/**
- * A full turn from `from` degrees. The turns start at 0; under reduced motion
- * the still frame turns them apart so the bubbles spread instead of stacking.
- */
 const spin = (from: number) => ({ rotate: [from, from + 360] });
 
 type BubbleColors = {
@@ -75,8 +70,6 @@ function BubbleBackgroundContent({
   const springX = useSpring(mouseX, transition);
   const springY = useSpring(mouseY, transition);
 
-  // The loops (and the blurred layer they repaint) pause off screen and in a
-  // hidden tab, and stop under reduced motion.
   const inView = useInView(containerRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -84,8 +77,6 @@ function BubbleBackgroundContent({
 
   const filterId = `bubble-goo-${React.useId().replace(/[^\w-]/g, '')}`;
 
-  // The follower moves to the mouse (and to a tap, which browsers report as
-  // a mousemove), relative to the center of the container.
   React.useEffect(() => {
     if (!interactive || reduce) return;
 
@@ -240,7 +231,6 @@ function BubbleBackgroundContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
 function BubbleBackground(props: BubbleBackgroundProps) {
   return (
     <ReducedMotionConfig>

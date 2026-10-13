@@ -17,7 +17,6 @@ function Items({ prefix }: { prefix: string }) {
   ));
 }
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixSelectFixture() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('banana');
@@ -55,7 +54,6 @@ export default function RadixSelectFixture() {
       </section>
 
       <section data-testid="item-aligned">
-        {/* Radix's default position, with the `import * as` style. */}
         <SelectStar.Root defaultValue="cherry">
           <SelectStar.Trigger aria-label="Aligned">
             <SelectStar.Value placeholder="Pick one" />
@@ -98,7 +96,6 @@ export default function RadixSelectFixture() {
       </section>
 
       <section data-testid="force-mount">
-        {/* Last: a force-mounted Radix Select is modal even while closed. */}
         <button type="button" onClick={() => setForceMounted(true)}>
           Mount forceMount
         </button>
@@ -119,7 +116,6 @@ export default function RadixSelectFixture() {
       </section>
 
       <section data-testid="own-animation">
-        {/* Checks that pop, but this list's draw: it holds for a drawing. */}
         <AnimateUIProvider checkAnimation="pop">
           <Select.Root defaultValue="apple">
             <Select.Trigger aria-label="Own animation">

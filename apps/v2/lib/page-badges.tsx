@@ -4,7 +4,6 @@ import { Dancing_Script } from 'next/font/google';
 
 const dancing = Dancing_Script({ subsets: ['latin'] });
 
-/** A status written by hand, as in v1's sidebar. */
 export function BadgeLabel({
   badge,
   className,
@@ -27,7 +26,6 @@ export function BadgeLabel({
   );
 }
 
-/** Pages released in the last 30 days are new. */
 const NEW_FOR_DAYS = 30;
 
 export type PageBadge = 'new' | 'alpha' | 'beta' | 'deprecated' | 'updated';
@@ -40,11 +38,6 @@ const BADGE_COLORS: Record<PageBadge, string> = {
   updated: 'text-emerald-600 dark:text-emerald-400',
 };
 
-/**
- * A page's status, from its frontmatter: `new` for 30 days after its
- * `releaseDate`, or as long as it has `new: true` (a component v1 didn't
- * have); `alpha`, `beta`, `deprecated`, `updated` win over it.
- */
 export function pageBadge(frontmatter: object): PageBadge | null {
   const data = frontmatter as Record<string, unknown>;
   if (data.updated === true) return 'updated';
@@ -58,7 +51,6 @@ export function pageBadge(frontmatter: object): PageBadge | null {
   return recent || data.new === true ? 'new' : null;
 }
 
-// The status badge of a sidebar item, written on the right of its name.
 export const attachBadge: PageTreeTransformer['file'] = function (
   node,
   filePath,

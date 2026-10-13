@@ -130,7 +130,6 @@ const ORDER = Object.keys(states) as State[]
 export default function MotionGridDemo() {
   const [state, setState] = React.useState<State>("importing")
 
-  // Cycle through the states every 3 seconds.
   React.useEffect(() => {
     const interval = setInterval(() => {
       setState((current) => ORDER[(ORDER.indexOf(current) + 1) % ORDER.length]!)
@@ -139,8 +138,6 @@ export default function MotionGridDemo() {
   }, [])
 
   return (
-    // The button resizes with its label (a layout animation) and responds to
-    // the press.
     <motion.button
       type="button"
       layout
@@ -165,7 +162,6 @@ export default function MotionGridDemo() {
           className="text-primary-foreground"
         />
       </RotatingTextContainer>
-      {/* Sizes the button to the current label. */}
       <span className="invisible opacity-0" aria-hidden>
         {states[state].label}
       </span>

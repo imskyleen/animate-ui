@@ -6,7 +6,6 @@ import { ToggleGroup } from '@animate-ui/react/primitives/base-ui/toggle-group';
 
 import ToggleGroupDemo from '@/demos/base-ui/toggle-group';
 
-// API compatibility: the primitives must behave exactly like Base UI's.
 export default function BaseToggleGroupFixture() {
   const [value, setValue] = React.useState<string[]>(['a']);
 
@@ -35,7 +34,6 @@ export default function BaseToggleGroupFixture() {
       </section>
 
       <section data-testid="demo-single">
-        {/* The docs demo with its `multiple` control off (single selection). */}
         <ToggleGroupDemo multiple={false} />
       </section>
     </div>

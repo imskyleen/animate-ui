@@ -86,7 +86,6 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        // Hovered lighter than selected, so the two read apart.
         "hover:bg-muted/50 aria-pressed:hover:bg-muted aria-checked:hover:bg-muted data-[state=on]:hover:bg-muted data-selected:hover:bg-muted",
         className
       )}
@@ -125,11 +124,9 @@ export default function ToggleGroupDemo({
   spacing = 2,
   orientation = "horizontal",
 }: {
-  /** Several items pressed at once. */
   multiple?: boolean
   variant?: "default" | "outline"
   size?: "default" | "sm" | "lg"
-  /** Gap between the items (0: joined); a string from the test URL. */
   spacing?: number | string
   orientation?: "horizontal" | "vertical"
 }) {

@@ -24,7 +24,6 @@ export default function ScrollProgressDemo({
   global = false,
   direction = "vertical",
 }: {
-  /** Follow the page's scroll instead of the panel's. */
   global?: boolean
   direction?: "horizontal" | "vertical"
 }) {

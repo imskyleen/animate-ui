@@ -42,7 +42,6 @@ function subscribeToHoverCapability(onChange: () => void) {
   return () => mql.removeEventListener('change', onChange);
 }
 
-/** True only when the primary pointer can hover precisely (mouse, trackpad). */
 function useCanHover() {
   return React.useSyncExternalStore(
     subscribeToHoverCapability,
@@ -98,7 +97,6 @@ function MagneticInner({
   const compute = React.useCallback(
     (e: MouseEvent | React.MouseEvent) => {
       if (!localRef.current) return;
-      // Measured where the element is now, pull included.
       const { left, top, width, height } =
         localRef.current.getBoundingClientRect();
       const cx = left + width / 2;
@@ -127,12 +125,10 @@ function MagneticInner({
   }, [enabled, reset]);
 
   React.useEffect(() => {
-    // `onlyOnHover` reads the pointer from the element's own events.
     const el = localRef.current;
     if (!enabled || onlyOnHover || !el) return;
 
     let inView = false;
-    // Only track the pointer while the element is on screen.
     const handleMove = (e: MouseEvent) => {
       if (inView) compute(e);
     };

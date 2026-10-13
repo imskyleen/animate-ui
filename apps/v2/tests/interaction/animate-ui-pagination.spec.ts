@@ -39,15 +39,6 @@ import {
   type Sample,
 } from './spring-curves';
 
-// @animate-ui/react/primitives/pagination on its own (tests/fixtures/
-// animate-ui-pagination: plain links, no shadcn/ui, no library): one surface
-// shared by the page links, sliding on spring.selection (or its own
-// `transition`, paced by AnimateUIProvider's tempo), from where it was drawn,
-// with the speed it had; nothing moving on mount, nor when the current link
-// stays in place; a crossfade under reduced motion. The shadcn/ui demos
-// (radix-ui-, base-ui-, react-aria-pagination.spec.ts) cover it in every
-// base.
-
 const PATH = '/tests/fixtures/animate-ui-pagination';
 const nav = (id: string) => `[data-testid="${id}"]`;
 const CONTROLLED = nav('controlled');
@@ -60,7 +51,6 @@ const linkOf = (page: Page, id: string, label: string) =>
     .locator(LINK)
     .filter({ hasText: new RegExp(`^${label}$`) });
 
-/** Waits for the pagination `id` to rest on `label`. */
 async function settle(page: Page, id: string, label: string) {
   await restOn(page, nav(id), label);
   expectAtRest(await drawnNow(page, nav(id)), await box(page, id, label));
@@ -68,10 +58,6 @@ async function settle(page: Page, id: string, label: string) {
 
 const when = (f: Frame) => `${Math.round(f.t)}ms`;
 
-/**
- * A computed color's alpha: `rgba(…, a)`, `oklab(… / a)`; opaque without
- * one.
- */
 const alphaOf = (color: string) => {
   const slash = /\/\s*([\d.e-]+)\s*\)$/.exec(color);
   if (slash) return Number(slash[1]);
@@ -79,10 +65,6 @@ const alphaOf = (color: string) => {
   return parts?.length === 4 ? Number(parts[3]) : 1;
 };
 
-/**
- * Notes the frame `record` is about to take (`window.__at`, read back by
- * `clickedAt`), then runs `change` in the page, on `selector`'s element.
- */
 const changeAt = (
   page: Page,
   selector: string,
@@ -94,7 +76,6 @@ const changeAt = (
     (new Function(`return (${change})`)() as (el: Element) => void)(el);
   }, change.toString());
 
-/** A screenshot's pixels (RGBA, row by row), decoded by the page. */
 const pixelsOf = (page: Page, png: Buffer) =>
   page.evaluate(async (data) => {
     const image = new Image();
@@ -114,7 +95,6 @@ const pixelsOf = (page: Page, png: Buffer) =>
     return { width: image.width, height: image.height, rgba: [...rgba] };
   }, png.toString('base64'));
 
-/** A CSS color as the page draws it: sRGB, 0 to 255. */
 const rgbOf = (page: Page, color: string) =>
   page.evaluate((color) => {
     const canvas = document.createElement('canvas');
@@ -149,12 +129,9 @@ test.describe('animate-ui pagination primitive', () => {
         hidden: surface.getAttribute('aria-hidden'),
         surfacePosition: style.position,
         boxSizing: style.boxSizing,
-        // Over the list's and items' backgrounds, under the links.
         zIndex: style.zIndex,
         pointerEvents: style.pointerEvents,
-        // A copy of the current link's classes.
         sameClasses: surface.className === current.className,
-        // The links are positioned (drawn after it), once it's ready.
         links: [
           ...new Set(
             [...el.querySelectorAll('[data-slot="pagination-link"]')].map(
@@ -176,7 +153,6 @@ test.describe('animate-ui pagination primitive', () => {
       sameClasses: true,
       links: ['relative'],
     });
-    // The ellipsis too.
     expect(
       await page
         .locator(nav('window'))
@@ -185,8 +161,6 @@ test.describe('animate-ui pagination primitive', () => {
     ).toEqual(['relative', 'relative']);
     const drawn = await drawnNow(page, CONTROLLED);
     expectAtRest(drawn, await box(page, 'controlled', '1'));
-    // The current link's look (border, background, shadow) is the
-    // surface's; its own is hidden.
     const outline = await outlineOf(page, CONTROLLED);
     expect(outline.border).not.toBe(TRANSPARENT);
     expect(outline.background).not.toBe(TRANSPARENT);
@@ -198,7 +172,6 @@ test.describe('animate-ui pagination primitive', () => {
       shadow: 'none',
       radius: outline.radius,
     });
-    // Behind the link: its text and clicks are the link's.
     const hit = await root.locator('[aria-current="page"]').evaluate((el) => {
       const b = el.getBoundingClientRect();
       return el.contains(
@@ -221,17 +194,12 @@ test.describe('animate-ui pagination primitive', () => {
     );
     const timings = timingsIn(frames);
     expectSlideTiming(timings, SELECTION);
-    // Links of one size: its size isn't animated (the slide stays on the
-    // compositor).
     expect(timings.map((t) => t.properties)).toEqual([['translate']]);
-    // From the distance it has to go (its own translate is none) to none,
-    // replacing its translate: Chromium can't composite an additive one.
     const [slide] = timings;
     expect(slide!.composite).toBe('replace');
     const [dx, dy] = translateOf(slide!.translates[0]!);
     expect(Math.abs(dx! - (from.x - to.x))).toBeLessThan(0.5);
     expect(dy).toBe(0);
-    // On every frame of it.
     for (const f of frames)
       for (const t of f.surfaces[0]!.timings)
         expect(t.composite, when(f)).toBe('replace');
@@ -294,7 +262,6 @@ test.describe('animate-ui pagination primitive', () => {
     page,
   }) => {
     const to = await box(page, 'controlled', '2');
-    // Sent back once well under way (past 3).
     const three = await box(page, 'controlled', '3');
     const frames = await record(page, CONTROLLED, '2', () =>
       clickTwice(page, CONTROLLED, '5', '2', { past: three.x }),
@@ -302,10 +269,8 @@ test.describe('animate-ui pagination primitive', () => {
     expectOneSurface(frames);
     const at = await clickedAt(page);
     const xs = frames.map((f) => f.surfaces[0]!.x);
-    // Under way to 5, well past 2 when sent back.
     expect(xs[at - 1]! - to.x).toBeGreaterThan(5);
     expect(xs[at - 1]!).toBeGreaterThan(xs[at - 2]!);
-    // From there, back at once: never further on, never a jump.
     const back = xs.slice(at);
     expect(Math.max(...back)).toBeLessThanOrEqual(back[0]! + 0.5);
     expect(Math.abs(back[0]! - xs[at - 1]!)).toBeLessThan(20);
@@ -411,7 +376,6 @@ test.describe('animate-ui pagination primitive', () => {
     );
     expectAtRest(frames.at(-1)!, wide);
 
-    // Taller: its height and top too.
     const tall = await box(page, 'widths', 'Tall');
     expect(tall.h - wide.h).toBeGreaterThan(10);
     frames = await record(page, WIDTHS, 'Tall', () =>
@@ -443,12 +407,9 @@ test.describe('animate-ui pagination primitive', () => {
     page,
   }) => {
     const WINDOW = nav('window');
-    // 1 … 4 5 6 … 10
     const place = await box(page, 'window', '5');
     for (const [label, old] of [
-      // 1 … 5 6 7 … 10: 5 moves left.
       ['6', '5'],
-      // 1 … 4 5 6 … 10 again: 6 moves right.
       ['5', '6'],
     ] as const) {
       const frames = await record(
@@ -459,8 +420,6 @@ test.describe('animate-ui pagination primitive', () => {
         600,
       );
       for (const f of frames) expectAtRest(f, place, when(f));
-      // The scenario: the new current link took the surface's place, the
-      // old one moved away from it in the same commit.
       const now = await box(page, 'window', label);
       expect(Math.abs(now.x - place.x)).toBeLessThan(0.5);
       expect(
@@ -474,20 +433,17 @@ test.describe('animate-ui pagination primitive', () => {
   }) => {
     const WINDOW = nav('window');
     await page.getByTestId('window-go-3').click();
-    // 1 2 3 4 … 10
     await settle(page, 'window', '3');
     const from = await box(page, 'window', '3');
     const frames = await record(page, WINDOW, '4', () =>
       clickLink(page, WINDOW, '4'),
     );
-    // 1 … 3 4 5 … 10: 3 moved right (its ellipsis is wider than a link).
     const [moved, to] = [
       await box(page, 'window', '3'),
       await box(page, 'window', '4'),
     ];
     expect(moved.x - from.x).toBeGreaterThan(10);
     expect(to.x - moved.x).toBeGreaterThan(10);
-    // From where it was drawn, not from the old link's new place.
     const after = frames.filter((f) => f.t >= 0);
     expect(after[0]!.surfaces[0]!.x).toBeLessThan(
       from.x + (to.x - from.x) * 0.2,
@@ -499,8 +455,6 @@ test.describe('animate-ui pagination primitive', () => {
     page,
   }) => {
     const REMOUNT = nav('remount');
-    // The case: shadcn/ui's links (transition-all), the current one's
-    // border translucent (dark mode's border-input).
     const link = linkOf(page, 'remount', '1');
     expect(
       await link.evaluate((el) => getComputedStyle(el).transitionProperty),
@@ -522,14 +476,11 @@ test.describe('animate-ui pagination primitive', () => {
         10,
       );
       for (const f of mounted) {
-        // Before the surface is on screen, the link wears its own look.
         if (!f.surfaces.length) {
           expect(f.own!.border, when(f)).not.toBe(TRANSPARENT);
           continue;
         }
         expectAtRest(f, place, when(f));
-        // From the frame it shows in, the link's own look is gone, not
-        // fading out over it (transition-all): one border, not two.
         expect(f.own, when(f)).toEqual({
           background: TRANSPARENT,
           border: TRANSPARENT,
@@ -549,7 +500,6 @@ test.describe('animate-ui pagination primitive', () => {
       await box(page, 'nested-inner', 'Inner 1'),
       await box(page, 'nested-inner', 'Inner 3'),
     ];
-    // The outer one holds still while the inner one slides.
     const still = await record(
       page,
       OUTER,
@@ -561,7 +511,6 @@ test.describe('animate-ui pagination primitive', () => {
     );
     for (const f of still) expectAtRest(f, outer1, when(f));
     expectAtRest(await drawnNow(page, INNER), inner3);
-    // And the inner one while the outer one slides.
     const outer2 = await box(page, 'nested-outer', 'Outer 2');
     const [frames, inner] = await Promise.all([
       record(page, OUTER, 'Outer 2', () => clickLink(page, OUTER, 'Outer 2')),
@@ -601,11 +550,9 @@ test.describe('animate-ui pagination primitive', () => {
       () => linkOf(page, 'nested-inner', 'Inner 1').hover(),
       600,
     );
-    // The inner one's own goes under its hovered current link (the case).
     await expect
       .poll(async () => (await drawnNow(page, INNER)).surfaces[0]!.background)
       .toBe(TRANSPARENT);
-    // The outer one's keeps its background, all along.
     for (const f of [...frames, await drawnNow(page, OUTER)])
       expect(
         paintOf(f.surfaces[0]!),
@@ -620,8 +567,6 @@ test.describe('animate-ui pagination primitive', () => {
       nav('nested-first-outer'),
       nav('nested-first-inner'),
     ];
-    // The case: the inner pagination's current link comes first in the
-    // outer one.
     expect(
       await page
         .locator(OUTER)
@@ -639,15 +584,12 @@ test.describe('animate-ui pagination primitive', () => {
     ];
     expectAtRest(await drawnNow(page, OUTER), outer1);
     expectAtRest(await drawnNow(page, INNER), inner1);
-    // Another page of its own: it slides there.
     const outer3 = await box(page, 'nested-first-outer', 'Outer 3');
     const frames = await record(page, OUTER, 'Outer 3', () =>
       clickLink(page, OUTER, 'Outer 3'),
     );
     expectSlide(frames, outer1, outer3);
     expectAtRest(await drawnNow(page, INNER), inner1);
-    // None of its own: no surface, not ready (the inner one's current link
-    // isn't its).
     await page.getByTestId('nested-first-none').click();
     await expect(page.locator(OUTER)).not.toHaveAttribute(
       'data-animate-ui-pagination-ready',
@@ -669,7 +611,6 @@ test.describe('animate-ui pagination primitive', () => {
           shadow: style.boxShadow,
         };
       });
-    // Hover: another link's hover background, then the current one's own.
     await linkOf(page, 'controlled', '2').hover();
     const hover = (await own('2')).background;
     expect(hover).not.toBe(TRANSPARENT);
@@ -679,7 +620,6 @@ test.describe('animate-ui pagination primitive', () => {
     expectAtRest(await drawnNow(page, CONTROLLED), one);
     await page.mouse.move(0, 0);
     expect((await own('1')).background).toBe(TRANSPARENT);
-    // The surface's own background back (it fades on transition.color).
     const outline = await outlineOf(page, CONTROLLED);
     await expect
       .poll(
@@ -687,7 +627,6 @@ test.describe('animate-ui pagination primitive', () => {
       )
       .toBe(outline.background);
 
-    // Keyboard focus: another link's focus look, then the current one's own.
     await linkOf(page, 'controlled', '3').focus();
     await page.keyboard.press('Shift+Tab');
     const focus = await own('2');
@@ -734,8 +673,6 @@ test.describe('animate-ui pagination primitive', () => {
         (await record(page, NAV, '1', act, duration + 800)).map((f) =>
           alphaOf(f.surfaces[0]!.background),
         );
-      // Hovered: from its background to none, through the values between
-      // (not at once), only going.
       const out = await alphas(() => linkOf(page, id, '1').hover());
       expect(out[0], id).toBe(1);
       expect(out.at(-1), id).toBe(0);
@@ -745,7 +682,6 @@ test.describe('animate-ui pagination primitive', () => {
       ).toBeGreaterThanOrEqual(duration / 70);
       for (let i = 1; i < out.length; i++)
         expect(out[i]!, id).toBeLessThanOrEqual(out[i - 1]! + 0.001);
-      // Left: back the same way.
       const back = await alphas(() => page.mouse.move(0, 0));
       expect(back[0], id).toBe(0);
       expect(back.at(-1), id).toBe(1);
@@ -766,7 +702,6 @@ test.describe('animate-ui pagination primitive', () => {
       const width = await page
         .getByTestId(id)
         .evaluate((el) => el.getBoundingClientRect().width);
-      // The case: offsetWidth rounds it.
       expect(Math.abs(width - Math.round(width)), id).toBeGreaterThan(0.01);
       const drawn = await drawnNow(page, nav(id));
       const link = await box(page, id, drawn.current!);
@@ -791,8 +726,6 @@ test.describe('animate-ui pagination primitive', () => {
       await wrap.evaluate((el, scale) => {
         (el as HTMLElement).style.scale = scale;
       }, scale);
-      // The case: the nav drawn less than a pixel taller or shorter than
-      // its own height (and a width that isn't a whole number of pixels).
       const size = await page.locator(SCALED).evaluate((el) => ({
         drawn: el.getBoundingClientRect().height,
         own: (el as HTMLElement).offsetHeight,
@@ -803,8 +736,6 @@ test.describe('animate-ui pagination primitive', () => {
       expect(off, scale).toBeLessThan(1);
       await clickLink(page, SCALED, label);
       await restOn(page, SCALED, label);
-      // Past the frames it reads the links again on while the nav is drawn
-      // at another size (90 at most): what it keeps is what it read scaled.
       await waitFrames(page, 100);
       await wrap.evaluate((el) => {
         (el as HTMLElement).style.scale = '';
@@ -828,7 +759,6 @@ test.describe('animate-ui pagination primitive', () => {
       () => page.getByTestId('entrance-open').click(),
       600,
     );
-    // The case: it showed drawn tilted and scaled down.
     const first = frames.find((f) => f.surfaces.length)!;
     expect(first.link!.w).toBeLessThan(30);
     const wrap = page.getByTestId('entrance-wrap');
@@ -860,7 +790,6 @@ test.describe('animate-ui pagination primitive', () => {
     );
     const at = await clickedAt(page);
     const after = await box(page, 'label', '2');
-    // The case: the link moved, nothing it watches resized.
     expect(after.x - before.x).toBeGreaterThan(50);
     expect(after.w).toBe(before.w);
     expect(
@@ -872,7 +801,6 @@ test.describe('animate-ui pagination primitive', () => {
       expect(f.surfaces, when(f)).toHaveLength(1);
       const [surface] = f.surfaces;
       expect(surface!.animations, when(f)).toBe(0);
-      // Where the link was, or where it is: never between.
       const x = surface!.x;
       expect(
         Math.min(Math.abs(x - before.x), Math.abs(x - after.x)),
@@ -900,7 +828,6 @@ test.describe('animate-ui pagination primitive', () => {
     );
     const at = await clickedAt(page);
     const after = await box(page, 'scroll', '4');
-    // The case: the list scrolled (not the nav), the link with it.
     expect(after.x - before.x).toBeCloseTo(-60, 1);
     expect(await page.locator(SCROLL).evaluate((el) => el.scrollLeft)).toBe(0);
     for (const [i, f] of frames.entries()) {
@@ -916,7 +843,6 @@ test.describe('animate-ui pagination primitive', () => {
   }) => {
     const CONTENT = nav('content-box');
     const link = linkOf(page, 'content-box', '1');
-    // The case: the size the link's classes give it is its content box.
     expect(await link.evaluate((el) => getComputedStyle(el).boxSizing)).toBe(
       'content-box',
     );
@@ -946,14 +872,12 @@ test.describe('animate-ui pagination primitive', () => {
       );
       await page.mouse.down();
       await page.waitForTimeout(200);
-      // The case: pressed, the link is drawn scaled down.
       const pressed = await link.evaluate(
         (el) => el.getBoundingClientRect().width,
       );
       expect(pressed, id).toBeLessThan(31.8);
       await page.mouse.up();
       await restOn(page, NAV, '3');
-      // The link's own transition back is over.
       await expect
         .poll(() => link.evaluate((el) => el.getAnimations().length))
         .toBe(0);
@@ -969,7 +893,6 @@ test.describe('animate-ui pagination primitive', () => {
     page,
   }) => {
     const PERCENT = nav('percent');
-    // The case: -10% of the link's height.
     expect(
       await linkOf(page, 'percent', '2').evaluate(
         (el) => getComputedStyle(el).translate,
@@ -989,8 +912,6 @@ test.describe('animate-ui pagination primitive', () => {
     await root.scrollIntoViewIfNeeded();
     const drawn = await drawnNow(page, UL);
     expectAtRest(drawn, await box(page, 'ul-bg', '2'));
-    // The case: the list and the item under the current link paint
-    // backgrounds.
     expect(
       await root.evaluate((el) => {
         const link = el.querySelector('[aria-current="page"]')!;
@@ -1022,7 +943,6 @@ test.describe('animate-ui pagination primitive', () => {
       const i = ((y - clip.y) * image.width + (x - clip.x)) * 4;
       return image.rgba.slice(i, i + 3);
     };
-    // The middle of its top border: its border's color, drawn.
     const border = await rgbOf(page, geometry.border);
     const middle = Math.round(surface.x + surface.w / 2);
     const top = Math.round(surface.y);
@@ -1032,13 +952,11 @@ test.describe('animate-ui pagination primitive', () => {
       ),
     );
     expect(distance, `border ${border.join(',')}`).toBeLessThanOrEqual(4);
-    // The link's text is drawn over it: dark pixels in its middle.
     let darkest = 255;
     for (let y = Math.round(link.y + 8); y < link.y + link.h - 8; y++)
       for (let x = Math.round(link.x + 8); x < link.x + link.w - 8; x++)
         darkest = Math.min(darkest, ...at(x, y));
     expect(darkest).toBeLessThan(100);
-    // And its clicks.
     const hit = await root.locator('[aria-current="page"]').evaluate((el) => {
       const b = el.getBoundingClientRect();
       return el.contains(
@@ -1052,7 +970,6 @@ test.describe('animate-ui pagination primitive', () => {
     page,
   }) => {
     const HIDDEN = nav('hidden-dup');
-    // The case: the first current link in the nav isn't drawn.
     expect(
       await page
         .locator(HIDDEN)
@@ -1076,7 +993,6 @@ test.describe('animate-ui pagination primitive', () => {
       shadow: 'none',
       radius: outline.radius,
     });
-    // Another page: it slides there.
     const five = await box(page, 'hidden-dup', '5');
     const frames = await record(page, HIDDEN, '5', () =>
       clickLink(page, HIDDEN, '5'),
@@ -1087,7 +1003,6 @@ test.describe('animate-ui pagination primitive', () => {
   test('its page set as it mounts (in a layout effect, in an effect, once its surface shows): nothing slides, from its first frame it rests on that page', async ({
     page,
   }) => {
-    // Its first frame painted is on 3: set before, it doesn't slide there.
     for (const id of ['restored-layout', 'restored-effect', 'restored-ready']) {
       const frames = await record(
         page,
@@ -1103,7 +1018,6 @@ test.describe('animate-ui pagination primitive', () => {
         expect(f.current, `${id} ${when(f)}`).toBe('3');
         expectAtRest(f, three, `${id} ${when(f)}`);
       }
-      // Unmounted, for the next.
       await page.getByTestId('restored-toggle').click();
       await expect(page.locator(nav(id))).toHaveCount(0);
     }
@@ -1121,7 +1035,6 @@ test.describe('animate-ui pagination primitive', () => {
         target.y + target.height / 2,
       );
       await page.mouse.down();
-      // Pressed: active:translate-y-px, all the way.
       await expect
         .poll(() => link.evaluate((el) => getComputedStyle(el).translate))
         .toBe('0px 1px');
@@ -1145,16 +1058,12 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
   test('the copy holds its first opacity until its fade starts: never shown at full opacity first', async ({
     page,
   }) => {
-    // Started at performance.now(), ahead of the frame's time: with only
-    // its last keyframe held (fill: forwards), it showed a frame at
-    // opacity 1 before fading from where the surface was.
     const fill = await page.evaluate(async (nav) => {
       const root = document.querySelector(nav)!;
       const link = Array.from(
         root.querySelectorAll<HTMLElement>('[data-slot="pagination-link"]'),
       ).find((el) => el.textContent?.trim() === '3')!;
       link.click();
-      // The copy is made once the change reaches the surface.
       for (let i = 0; i < 60; i++) {
         const copy = root.querySelector('[data-animate-ui-leaving]');
         const fill = copy?.getAnimations()[0]?.effect?.getTiming().fill;
@@ -1183,7 +1092,6 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
     expect(timingsIn(frames, true)).toEqual([fadeTiming(['1', '0'])]);
     expect(timingsIn(frames)).toEqual([fadeTiming(['0', '1'])]);
     expectCrossfade(frames, from, to);
-    // The copy wears the look it leaves with.
     const copy = frames.flatMap((f) => f.surfaces).find((s) => s.leaving)!;
     expect(paintOf(copy)).toEqual(await outlineOf(page, CONTROLLED));
     await expect(page.locator('[data-animate-ui-leaving]')).toHaveCount(0);
@@ -1254,7 +1162,6 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
   test('changed again while it crossfades: nothing pops, the copy already leaving goes on, the surface leaves from where its fade had it', async ({
     page,
   }) => {
-    // Under tempo={2} (a 400ms crossfade): frames enough to see each part.
     const TEMPO = nav('tempo');
     const duration = FADE.duration * 2;
     const [one, two, four] = [
@@ -1277,15 +1184,12 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
         f.surfaces.some((s) => s.slides),
         when(f),
       ).toBe(false);
-    // Just before the second change: the surface fading in on 2, partly.
     const fading = frames[at - 1]!.surfaces.find(
       (s) => !s.leaving && on(two)(s),
     )!;
     expect(fading, 'fading in on 2').toBeDefined();
     expect(fading.o).toBeGreaterThan(0.05);
     expect(fading.o).toBeLessThan(0.98);
-    // Then it leaves from there (a copy on 2): its fade out starts at the
-    // opacity it had (not at 1), over the share of the fade left.
     const after = frames.slice(at);
     const copy = timingsIn(
       after.map((f) => ({ ...f, surfaces: f.surfaces.filter(on(two)) })),
@@ -1298,7 +1202,6 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
     expect(copy[0]!.opacities[1]).toBe('0');
     expect(copy[0]!.easing).toBe(FADE.easing);
     expect(Math.abs(copy[0]!.duration - duration * start)).toBeLessThan(1);
-    // Never brighter than that, only fading.
     const leaving2 = after
       .flatMap((f) => f.surfaces.filter((s) => s.leaving && on(two)(s)))
       .map((s) => s.o);
@@ -1306,15 +1209,12 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
     expect(leaving2[0]!).toBeLessThanOrEqual(start + 0.001);
     for (let i = 1; i < leaving2.length; i++)
       expect(leaving2[i]!).toBeLessThanOrEqual(leaving2[i - 1]! + 0.001);
-    // The copy leaving 1 goes on fading out, all the way, instead of being
-    // cut where it was.
     const leaving1 = frames
       .flatMap((f) => f.surfaces.filter((s) => s.leaving && on(one)(s)))
       .map((s) => s.o);
     for (let i = 1; i < leaving1.length; i++)
       expect(leaving1[i]!).toBeLessThanOrEqual(leaving1[i - 1]! + 0.001);
     expect(leaving1.at(-1)!).toBeLessThan(0.1);
-    // The surface fades in on 4 from nothing, one way, on the whole fade.
     expect(
       timingsIn(
         after.map((f) => ({ ...f, surfaces: f.surfaces.filter(on(four)) })),
@@ -1327,7 +1227,6 @@ test.describe('animate-ui pagination primitive, reduced motion', () => {
     expect(coming[0]!, coming.join(' ')).toBeLessThan(0.3);
     for (let i = 1; i < coming.length; i++)
       expect(coming[i]!).toBeGreaterThanOrEqual(coming[i - 1]! - 0.001);
-    // Crossfading: the copy on 2 and the surface on 4 both partly shown.
     const partly = (o: number) => o > 0.02 && o < 0.98;
     expect(
       after.filter(

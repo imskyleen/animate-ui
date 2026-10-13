@@ -27,8 +27,6 @@ function Item({ item, active }: { item: TOCItemType; active: boolean }) {
     <TOCItem
       href={item.url}
       data-toc-item={item.url}
-      // pr-1: room for the label's 3px shift, or the list overflows sideways
-      // and the scroll spy scrolls it (the line then jumps by 3px).
       className="relative flex items-center py-1.5 pr-1 pl-4 text-start [overflow-wrap:anywhere]"
       {...hoverProps}
     >
@@ -46,10 +44,6 @@ function Item({ item, active }: { item: TOCItemType; active: boolean }) {
 
 type Range = { top: number; height: number } | null;
 
-/**
- * The bar covering every heading in view: it grows, shrinks and moves with
- * the reading position. Same place and look as the sidebar's active bar.
- */
 function RangeBar({
   list,
   active,
@@ -73,7 +67,6 @@ function RangeBar({
       if (items.length === 0) return setRange(null);
       const first = items[0]!;
       const last = items[items.length - 1]!;
-      // Like a sidebar bar: 56% of an item's height, centered.
       const top = first.offsetTop + first.offsetHeight * 0.22;
       const bottom = last.offsetTop + last.offsetHeight * 0.78;
       setRange({ top, height: bottom - top });
@@ -99,13 +92,10 @@ function RangeBar({
   );
 }
 
-// `slots.toc.main` of DocsPage: Fumadocs' placement and scroll spy, the
-// sidebar's look (section title, line and gliding bars).
 export function TOC({ container }: TOCProps) {
   const items = useTOCItems();
   const active = useActiveAnchors();
   const list = useRef<HTMLDivElement>(null);
-  // Fades its edges only where there's more to scroll.
   const scroll = useRef<HTMLDivElement>(null);
   useScrollFade(scroll, { size: 24 });
 

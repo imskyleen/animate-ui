@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Popover } from '@animate-ui/react/primitives/radix-ui/popover';
 import * as PopoverStar from '@animate-ui/react/primitives/radix-ui/popover';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixPopoverFixture() {
   const [open, setOpen] = React.useState(false);
   const [changes, setChanges] = React.useState(0);
@@ -37,7 +36,6 @@ export default function RadixPopoverFixture() {
       <section data-testid="default-open">
         <Popover.Root defaultOpen>
           <Popover.Trigger>Default open trigger</Popover.Trigger>
-          {/* Inline, without a Portal. */}
           <Popover.Content data-testid="default-open-content" side="right">
             Open on load
           </Popover.Content>
@@ -56,7 +54,6 @@ export default function RadixPopoverFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-popover. */}
         <PopoverStar.Root>
           <PopoverStar.Trigger>Star trigger</PopoverStar.Trigger>
           <PopoverStar.Portal>

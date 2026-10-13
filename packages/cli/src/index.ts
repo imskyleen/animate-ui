@@ -71,7 +71,6 @@ async function main(argv: string[]) {
     return 1;
   }
 
-  // `--exclude a,b --exclude c`: a, b and c.
   const exclude = values.exclude.flatMap((value) =>
     value.split(',').flatMap((name) => (name.trim() ? [name.trim()] : [])),
   );

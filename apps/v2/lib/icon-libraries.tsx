@@ -1,11 +1,9 @@
 import type { ComponentProps, ReactNode } from 'react';
 
-/** Lucide's logo: two interlocking curves. */
 export function LucideLogo({
   monochrome = false,
   ...props
 }: ComponentProps<'svg'> & {
-  /** In the text color only (Lucide's red stroke too). */
   monochrome?: boolean;
 }) {
   return (
@@ -30,10 +28,6 @@ export function LucideLogo({
   );
 }
 
-/**
- * Hugeicons' logo (their basket), drawn as in their free set: a handle over
- * a basket, in the text color.
- */
 export function HugeiconsLogo(props: ComponentProps<'svg'>) {
   return (
     <svg
@@ -53,7 +47,6 @@ export function HugeiconsLogo(props: ComponentProps<'svg'>) {
   );
 }
 
-/** The logo shown before each icon library's name, by docs URL (monochrome). */
 export const ICON_LIBRARY_LOGOS: Record<string, ReactNode> = {
   '/docs/icons/lucide-icons': (
     <LucideLogo monochrome className="size-4 shrink-0 text-muted-foreground" />

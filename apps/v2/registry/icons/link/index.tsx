@@ -13,8 +13,6 @@ import {
 type LinkProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // The links unhook along the chain, whole, and snap back (unlink keeps them
-  // apart), as Hugeicons' Link; drawn together is `join`.
   default: {
     path1: {
       initial: { x: 0, y: 0 },

@@ -13,8 +13,6 @@ import {
 type RouterProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // The waves pulse one after the other and the lights dim, never gone
-  // (as Hugeicons').
   default: (() => {
     const animation: Record<string, Variants> = {
       rect: {},
@@ -58,7 +56,6 @@ const animations = {
 
     return animation;
   })() satisfies Record<string, Variants>,
-  // The waves gone and back, one after the other.
   blink: (() => {
     const animation: Record<string, Variants> = {
       rect: {},

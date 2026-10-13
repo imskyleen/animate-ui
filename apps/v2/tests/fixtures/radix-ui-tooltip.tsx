@@ -4,14 +4,12 @@ import * as React from 'react';
 import { Tooltip } from '@animate-ui/react/primitives/radix-ui/tooltip';
 import * as TooltipStar from '@animate-ui/react/primitives/radix-ui/tooltip';
 
-// A toolbar of tooltips, for their warm-up.
 const TOOLS = [
   { label: 'Bold', shortcut: '⌘B' },
   { label: 'Italic', shortcut: '⌘I' },
   { label: 'Underline', shortcut: '⌘U' },
 ];
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixTooltipFixture() {
   const [open, setOpen] = React.useState(false);
 
@@ -54,7 +52,6 @@ export default function RadixTooltipFixture() {
         </section>
 
         <section data-testid="star">
-          {/* The `import * as` style of @radix-ui/react-tooltip. */}
           <TooltipStar.Provider>
             <TooltipStar.Root delayDuration={0}>
               <TooltipStar.Trigger>Star trigger</TooltipStar.Trigger>
@@ -69,7 +66,6 @@ export default function RadixTooltipFixture() {
         </section>
 
         <section data-testid="toolbar">
-          {/* Under their own Provider, like shadcn/ui's TooltipProvider. */}
           <Tooltip.Provider delayDuration={0}>
             <div className="flex items-center gap-1 rounded-xl border p-1">
               {TOOLS.map((tool) => (

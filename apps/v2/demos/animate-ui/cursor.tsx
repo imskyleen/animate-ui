@@ -38,7 +38,6 @@ export default function CursorDemo({
   align = "end",
   alignOffset = 5,
 }: {
-  /** Follow the pointer over the whole page. */
   global?: boolean
   enableCursor?: boolean
   enableCursorFollow?: boolean

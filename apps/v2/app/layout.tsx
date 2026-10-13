@@ -39,8 +39,6 @@ export default function Layout({ children }: LayoutProps<'/'>) {
       <body className="flex min-h-screen flex-col">
         <RootProvider>
           {children}
-          {/* Sonner's toasts, mounted like shadcn's docs do: the Base UI
-              drawer demo confirms with one. */}
           <Toaster position="top-center" />
         </RootProvider>
       </body>

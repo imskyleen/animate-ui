@@ -8,10 +8,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// One demo (demos/<lib>/<name>.tsx) alone on the page, as an app would render
-// it: the docs show demos that lay out a whole page (a sidebar) in an iframe
-// of this (`<ComponentPreview iframe>`), like shadcn/ui's blocks and v1's
-// examples.
 export default async function ExamplePage({
   params,
 }: PageProps<'/examples/[lib]/[name]'>) {

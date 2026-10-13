@@ -14,18 +14,12 @@ const modal =
   'fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg border bg-background p-6';
 const overlay = 'fixed inset-0 z-50 bg-black/20';
 
-/**
- * Sheets from the edges the sheet demo doesn't use (it opens from the right):
- * a Modal with `data-side`, placed like shadcn/ui's Sheet.
- */
 const sheets = {
   top: 'fixed inset-x-0 top-0 z-50 border-b bg-background p-6',
   bottom: 'fixed inset-x-0 bottom-0 z-50 border-t bg-background p-6',
   left: 'fixed inset-y-0 left-0 z-50 h-full w-3/4 border-r bg-background p-6 sm:max-w-sm',
 } as const;
 
-// API compatibility: Modal and ModalOverlay must behave exactly like React
-// Aria's.
 export default function ReactAriaModalFixture() {
   const [open, setOpen] = React.useState(false);
   const [changes, setChanges] = React.useState<boolean[]>([]);
@@ -35,7 +29,6 @@ export default function ReactAriaModalFixture() {
   return (
     <div className="flex flex-col items-start gap-6">
       <section data-testid="standalone">
-        {/* A Modal on its own, opened by a DialogTrigger. */}
         <DialogTrigger>
           <Button>Standalone trigger</Button>
           <Modal isDismissable className={modal} data-testid="standalone-modal">
@@ -52,7 +45,6 @@ export default function ReactAriaModalFixture() {
         <p data-testid="controlled-changes">{changes.join(',')}</p>
         <p data-testid="ref-tag">{refTag}</p>
         <Button onPress={() => setOpen(true)}>Open controlled</Button>
-        {/* Controlled ModalOverlay, with render-prop className and style. */}
         <ModalOverlay
           ref={overlayRef}
           isOpen={open}

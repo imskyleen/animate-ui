@@ -14,7 +14,6 @@ import {
 } from './navigation-menu-swap';
 import { describeBaseNavigationMenuCases } from './navigation-menu-cases';
 
-// The shadcn/ui Popup has no data-slot: it is the element Base UI sizes.
 const POPUP = '[class*="h-(--popup-height)"]';
 
 const size = (page: Page) =>
@@ -51,7 +50,6 @@ test.describe('base-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(700);
     const before = await size(page);
-    // Sampled in the page: the resize is mostly done in ~155ms.
     const widths = page.evaluate(
       (selector) =>
         new Promise<number[]>((resolve) => {
@@ -92,7 +90,6 @@ test.describe('base-ui navigation-menu demo', () => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, POPUP)).opacity, {
         intervals: [16],

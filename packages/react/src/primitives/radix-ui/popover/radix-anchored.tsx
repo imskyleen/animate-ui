@@ -11,14 +11,6 @@ import {
 } from '../../../internal/anchored';
 import { useFollowCursorStyle } from '../../../internal/follow-cursor';
 
-// The Radix side of Popover, HoverCard and Tooltip: the Root mirrors the open
-// state (Radix keeps it private) and each Content gates itself with
-// AnimatePresence, so it works with or without a Portal around it.
-
-/**
- * Open state of a Radix Root, controlled or not. It's handed back to Radix as
- * `open`, so there is one source of truth.
- */
 function useRadixOpenState(
   openProp: boolean | undefined,
   defaultOpen: boolean | undefined,
@@ -37,9 +29,7 @@ function useRadixOpenState(
 }
 
 type RadixAnchoredContentProps = AnchoredAnimationProps & {
-  /** Radix's Content part. */
   component: React.ElementType;
-  /** The props the user gave to Content (minus forceMount). */
   contentProps: {
     children?: React.ReactNode;
     asChild?: boolean;
@@ -47,17 +37,10 @@ type RadixAnchoredContentProps = AnchoredAnimationProps & {
   } & Record<string, unknown>;
   open: boolean;
   keepMounted: boolean;
-  /** Radix's transform-origin variable for this content. */
   origin: string;
-  /** Tooltips grow from 0.7, popovers and hover cards from 0.8. */
   kind?: AnchoredKind;
 };
 
-/**
- * The animated Content, rendered as AnimatePresence's child. Radix's props
- * (className, style, data-state, data-side, ids, handlers) land on the motion
- * element through `asChild`: it is the element shadcn/ui styles.
- */
 function RadixAnchoredContent({
   component: Content,
   contentProps: { children, asChild, style, ...contentProps },
@@ -75,20 +58,16 @@ function RadixAnchoredContent({
     transition,
     exitTransition,
   });
-  // v1's followCursor (Tooltip, HoverCard): the popup leans to the pointer.
   const follow = useFollowCursorStyle();
   const elementProps = {
     ...motionProps,
-    // Motion values in the style: a motion element takes them.
     style: { ...motionProps.style, ...follow } as React.CSSProperties,
-    // Kept mounted while closed: out of reach (tab order, a11y tree).
     inert: keepMounted && !open ? true : undefined,
   };
 
   return (
     <Content
       {...contentProps}
-      // Grows from the trigger. Before the user's style, so it can be changed.
       style={{ transformOrigin: origin, ...style }}
       forceMount
       asChild

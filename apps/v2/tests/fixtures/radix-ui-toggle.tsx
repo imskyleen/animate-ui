@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Toggle } from '@animate-ui/react/primitives/radix-ui/toggle';
 import * as ToggleStar from '@animate-ui/react/primitives/radix-ui/toggle';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixToggleFixture() {
   const [pressed, setPressed] = React.useState(false);
 
@@ -21,7 +20,6 @@ export default function RadixToggleFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-toggle. */}
         <ToggleStar.Root defaultPressed>Star</ToggleStar.Root>
       </section>
 

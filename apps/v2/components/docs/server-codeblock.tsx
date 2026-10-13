@@ -3,10 +3,6 @@ import type { ReactNode } from 'react';
 
 import { CodeBlock, Pre, type CodeBlockProps } from './codeblock';
 
-/**
- * Highlighted on the server by Fumadocs (Shiki), shown in Animate UI's code
- * block.
- */
 export async function ServerCodeBlock({
   code,
   lang,
@@ -16,11 +12,6 @@ export async function ServerCodeBlock({
   code: string;
   lang: string;
   codeblock?: Omit<CodeBlockProps, 'children'>;
-  /**
-   * Lines removed (`-`) or added (`+`), one per line of `code` (`' '` for
-   * neither): Fumadocs' diff lines, as `// [!code --]` and `// [!code ++]`
-   * mark them in MDX.
-   */
   diff?: string;
 }): Promise<ReactNode> {
   return highlight(code, {
@@ -40,7 +31,6 @@ export async function ServerCodeBlock({
 
 type Transformer = NonNullable<HighlightOptions['transformers']>[number];
 
-/** Marks lines the way Fumadocs' `[!code ++]` / `[!code --]` notation does. */
 function diffLines(diff: string): Transformer {
   return {
     name: 'animate-ui:diff-lines',

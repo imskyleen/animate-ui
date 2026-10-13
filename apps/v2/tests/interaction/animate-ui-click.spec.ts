@@ -6,7 +6,6 @@ const open = (page: Page) =>
 const area = (page: Page) =>
   page.getByText('Click anywhere in this area').locator('..');
 
-/** The fixed layer Click portals into document.body. */
 const layer = (page: Page) =>
   page.locator(
     'body > div[style*="position: fixed"][style*="pointer-events: none"]',
@@ -24,10 +23,8 @@ test.describe('animate-ui click', () => {
     const effect = layer(page).locator('svg').first();
     await expect(effect).toBeVisible();
     const rect = (await effect.boundingBox())!;
-    // Centered on the pointer.
     expect(Math.abs(rect.x + rect.width / 2 - x)).toBeLessThan(2);
     expect(Math.abs(rect.y + rect.height / 2 - y)).toBeLessThan(2);
-    // Removed once it has played.
     await expect(layer(page).locator('svg')).toHaveCount(0, { timeout: 2000 });
   });
 

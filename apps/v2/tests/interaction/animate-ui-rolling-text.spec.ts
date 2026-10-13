@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="rolling-text"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -26,13 +24,11 @@ async function hydrated(page: Page, selector: string) {
 
 const root = (page: Page) => page.locator('[data-slot="rolling-text"]');
 
-/** Transforms of the front copy of every letter. */
 const fronts = (page: Page) =>
   root(page)
     .locator('[aria-hidden="true"] > span > span > span:first-child')
     .evaluateAll((els) => els.map((el) => getComputedStyle(el).transform));
 
-// rotateX(90deg): the front copy of the letter has rolled away.
 function isRolled(transform: string) {
   const match = transform.match(/matrix3d\(([^)]+)\)/);
   if (!match) return false;
@@ -55,8 +51,6 @@ test.describe('animate-ui rolling text', () => {
     await page.waitForTimeout(250);
     const early = await fronts(page);
     expect(early).toHaveLength(11);
-    // The first letters are rolling, the last ones (0.1s apart) haven't
-    // started.
     expect(early.some((t) => !isRolled(t))).toBe(true);
     await expect
       .poll(async () => (await fronts(page)).every(isRolled), {

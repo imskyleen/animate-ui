@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="highlight-text"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -24,7 +22,6 @@ async function hydrated(page: Page, selector: string) {
   );
 }
 
-/** Width of the highlight, in percent. */
 const size = (page: Page) =>
   page
     .locator('[data-slot="highlight-text"]')
@@ -34,7 +31,6 @@ test.describe('animate-ui highlight text', () => {
   test('sweeps in slowly, speeds up, then settles', async ({ page }) => {
     await open(page);
     await page.getByRole('button', { name: 'Replay' }).click();
-    // A 2s ease-in-out: barely started after 300ms.
     await page.waitForTimeout(300);
     const early = await size(page);
     expect(early).toBeLessThan(15);

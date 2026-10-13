@@ -2,33 +2,23 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { pressScale, type Lib } from './controls-helpers';
 
-// The toggle groups' motion (Radix UI, Base UI, React Aria): the selected
-// surfaces (grown in like a fill, joined between neighbours, one sliding
-// surface for a single selection), the hover highlight, and the demo's icons.
-// The surfaces are drawn in the group's shadow root (internal/controls/
-// highlight.tsx); every test reads them there, frame by frame.
-
 const GROUP = '[data-slot="toggle-group"]';
 const ITEM = '[data-slot="toggle-group-item"]';
 const FIXTURE = '/tests/fixtures/toggle-group-surfaces';
 
-/** A surface drawn on one frame, in the group's pixels. */
 export type Drawn = {
   slot: string;
-  /** The item it belongs to (multiple selection), or -1 (the single one). */
   index: number;
   x: number;
   y: number;
   w: number;
   h: number;
   opacity: number;
-  /** Corners: top left, top right, bottom right, bottom left. */
   radii: number[];
 };
 
 export type Frame = { t: number; surfaces: Drawn[] };
 
-/** The surfaces drawn right now (visible ones only). */
 function readSurfaces(root: Element): Drawn[] {
   const shadow = root.shadowRoot;
   if (!shadow) return [];
@@ -52,7 +42,6 @@ function readSurfaces(root: Element): Drawn[] {
         h: parseFloat(el.style.height),
         opacity: Number(el.style.opacity || 1),
         radii: (() => {
-          // The shorthand, 1 to 4 values, as the browser serialises it.
           const r = el.style.borderRadius.split(' ').map((v) => parseFloat(v));
           const [a = 0, b = a, c = a, d = b] = r;
           return [a, b, c, d];
@@ -61,7 +50,6 @@ function readSurfaces(root: Element): Drawn[] {
     });
 }
 
-/** Records the group's surfaces on each animation frame. */
 export async function sample(group: Locator, frames = 60) {
   await group.evaluate(
     (root, [n, read]) => {
@@ -104,7 +92,6 @@ export async function surfacesNow(group: Locator) {
   );
 }
 
-/** An item's box in the group's pixels. */
 export async function boxOf(group: Locator, index: number) {
   return group
     .locator(ITEM)
@@ -133,7 +120,6 @@ const hover = (f: Frame) =>
   f.surfaces.find((s) => s.slot === 'toggle-group-highlight');
 
 async function toggle(group: Locator, index: number) {
-  // From the keyboard: no hover highlight on the way.
   await group.locator(ITEM).nth(index).focus();
   await group.page().keyboard.press('Space');
 }
@@ -160,7 +146,6 @@ export function describeToggleGroup(lib: Lib) {
       await toggle(group, 1);
       const on = (await frames()).map((f) => selection(f, 1)).filter(Boolean);
       expect(on.length).toBeGreaterThan(8);
-      // From ~70% (and nearly transparent), from the item's center.
       const first = on[0]!;
       expect(first.w / item.w).toBeLessThan(0.8);
       expect(first.w / item.w).toBeGreaterThanOrEqual(0.69);
@@ -170,7 +155,6 @@ export function describeToggleGroup(lib: Lib) {
       const last = on.at(-1)!;
       expect(last.w).toBeCloseTo(item.w, 1);
       expect(last.opacity).toBe(1);
-      // The item's own background is cleared: the surface stands for it.
       expect((await boxOf(group, 1)).background).toBe('rgba(0, 0, 0, 0)');
 
       frames = await sample(group, 30);
@@ -198,7 +182,6 @@ export function describeToggleGroup(lib: Lib) {
         const rtl = id.endsWith('rtl');
         const [a, b] = [await boxOf(group, 0), await boxOf(group, 1)];
         const size = axis === 'x' ? 'w' : 'h';
-        // The gap's middle, between the first item and the second.
         const end = (box: typeof a) => (axis === 'x' ? box.x : box.y);
         const middle = rtl
           ? (end(b) + b[size] + end(a)) / 2
@@ -219,8 +202,6 @@ export function describeToggleGroup(lib: Lib) {
               ? s.x + s.w
               : s.y + s.h;
         };
-        // The first one stretches toward the second, its inner corners
-        // squaring off on the way.
         const reaches = joining
           .map(reach)
           .filter((r) => r !== null) as number[];
@@ -234,20 +215,15 @@ export function describeToggleGroup(lib: Lib) {
         const last = joining.at(-1)!;
         const s0 = selection(last, 0)!;
         const s1 = selection(last, 1)!;
-        // Past the middle by a hair (0.5px), so no seam shows.
         expect(
           Math.abs(reach(last)! - (middle + (rtl ? -0.5 : 0.5))),
         ).toBeLessThan(0.1);
-        // Inner corners square, outer ones keep the item's radius.
         const inner = axis === 'y' ? [2, 3] : rtl ? [0, 3] : [1, 2];
         for (const c of inner) expect(s0.radii[c]).toBeLessThan(0.01);
-        // The second one meets it: no gap, a hair of overlap.
         const start1 = rtl ? s1.x + s1.w : axis === 'x' ? s1.x : s1.y;
         expect(Math.abs(start1 - (middle + (rtl ? 0.5 : -0.5)))).toBeLessThan(
           0.1,
         );
-        // Some frames are half joined: the corners square off smoothly
-        // (touching items whose inner corners are square already excepted).
         const rounded = selection(joining[0]!, 0)!.radii[inner[0]!]!;
         if (rounded > 0.5)
           expect(
@@ -257,8 +233,6 @@ export function describeToggleGroup(lib: Lib) {
             }),
           ).toBe(true);
 
-        // Deselecting the second one splits them: the first one is its own
-        // box again.
         await toggle(group, 1);
         await settle(page);
         const after = { surfaces: await surfacesNow(group), t: 0 };
@@ -292,7 +266,6 @@ export function describeToggleGroup(lib: Lib) {
         await boxOf(group, 1),
         await boxOf(group, 2),
       ];
-      // Joined first: the first one reaches past the gap's middle.
       const joined = selection(
         { t: 0, surfaces: await surfacesNow(group) },
         0,
@@ -308,7 +281,6 @@ export function describeToggleGroup(lib: Lib) {
         1,
       );
       expect(selection(last, 2)!.x).toBeCloseTo(c.x, 1);
-      // The middle one shrinks while its neighbours pull back.
       expect(
         split.some((f) => {
           const s = selection(f, 1);
@@ -325,7 +297,6 @@ export function describeToggleGroup(lib: Lib) {
         await items.nth(2).click();
       }
       await settle(page);
-      // Three clicks each: both selected, at rest, joined.
       const now = { t: 0, surfaces: await surfacesNow(group) };
       const [b, c] = [await boxOf(group, 1), await boxOf(group, 2)];
       expect(selection(now, 0)).toBeUndefined();
@@ -350,7 +321,6 @@ export function describeToggleGroup(lib: Lib) {
         await boxOf(group, 3),
       ];
       const frames = await sample(group, 50);
-      // Picked again 70ms in, mid-slide; the frame it happens on is noted.
       await group.evaluate(async (root) => {
         const items = root.querySelectorAll<HTMLElement>(
           '[data-slot="toggle-group-item"]',
@@ -365,19 +335,14 @@ export function describeToggleGroup(lib: Lib) {
         () => (window as unknown as { __at: number }).__at,
       );
       const run = await frames();
-      // Never two surfaces.
       for (const f of run)
         expect(
           f.surfaces.filter((s) => s.slot === 'toggle-group-selection').length,
         ).toBeLessThanOrEqual(1);
       const xs = run.map((f) => single(f)?.x ?? NaN);
       expect(xs.every(Number.isFinite)).toBe(true);
-      // Through the middle, then on to the last one.
       expect(xs.some((x) => x > a.x + 5 && x < c.x - 5)).toBe(true);
       expect(xs.at(-1)).toBeCloseTo(d.x, 0);
-      // Picked up on the way, it keeps its speed: the frames right after
-      // move about as far as the ones right before (from rest, a spring's
-      // first frames barely move).
       const steps = xs.slice(1).map((x, i) => x - xs[i]!);
       const before = steps[at - 2]!;
       expect(before).toBeGreaterThan(1);
@@ -415,7 +380,6 @@ export function describeToggleGroup(lib: Lib) {
       let frames = await sample(group, 25);
       await page.mouse.move(...(await center(0)));
       const lit = (await frames()).map(hover);
-      // From nothing, in place.
       expect(lit.find(Boolean)!.opacity).toBeLessThan(0.5);
       expect(lit.find(Boolean)!.x).toBeCloseTo(a.x, 0);
       expect(lit.at(-1)!.opacity).toBe(1);
@@ -425,7 +389,6 @@ export function describeToggleGroup(lib: Lib) {
       const glide = (await frames()).map(hover);
       expect(glide.some((s) => s && s.x > a.x + 3 && s.x < b.x - 3)).toBe(true);
       expect(glide.at(-1)!.x).toBeCloseTo(b.x, 0);
-      // One surface, never two.
       expect(glide.every((s) => s && s.opacity > 0.5)).toBe(true);
 
       frames = await sample(group, 25);
@@ -454,7 +417,6 @@ export function describeToggleGroup(lib: Lib) {
       expect(order.lastIndexOf('toggle-group-highlight')).toBeGreaterThan(
         order.lastIndexOf('toggle-group-selection'),
       );
-      // Hovering the selected item: its surface already paints it.
       const box = (await group.locator(ITEM).nth(1).boundingBox())!;
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.waitForTimeout(400);
@@ -475,7 +437,6 @@ export function describeToggleGroup(lib: Lib) {
       await page.mouse.down();
       await page.mouse.up();
       const run = await frames();
-      // Until the surface is there, the highlight stays on, then it goes.
       for (const f of run) {
         const s = selection(f, 1);
         if (s && s.opacity < 1) expect(hover(f)?.opacity).toBe(1);
@@ -523,8 +484,6 @@ export function describeToggleGroup(lib: Lib) {
       const frames = await sample(group, 30);
       await toggle(group, 1);
       const run = await frames();
-      // While the second one fades in at full size, over the gap, the
-      // first one doesn't move.
       for (const f of run) {
         const s1 = selection(f, 1);
         if (!s1 || s1.opacity >= 1) continue;
@@ -541,7 +500,6 @@ export function describeToggleGroup(lib: Lib) {
         }),
       ).toBe(true);
 
-      // A single selection fades out on one item and in on the other.
       const one = groupOf(page, 'outline-0-horizontal-single');
       await toggle(one, 0);
       await settle(page);
@@ -587,9 +545,6 @@ export function describeToggleGroup(lib: Lib) {
     });
 
     test('hovering reads lighter than selected', async ({ page }) => {
-      // The demo's items: hovered bg-muted/50, selected bg-muted (the user
-      // asked them apart), so the hover highlight is fainter than a
-      // selected surface, and a selected item hovered keeps its own.
       const group = page.locator(GROUP).first();
       await toggle(group, 0);
       await settle(page);
@@ -625,7 +580,6 @@ export function describeToggleGroup(lib: Lib) {
       expect(hovered).toBeDefined();
       expect(alphaOf(hovered!.color)).toBeLessThan(alphaOf(selected!.color));
 
-      // The selected item hovered: its own surface, no highlight over it.
       const first = (await page.locator(ITEM).nth(0).boundingBox())!;
       await page.mouse.move(
         first.x + first.width / 2,

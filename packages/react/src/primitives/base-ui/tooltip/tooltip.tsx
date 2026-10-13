@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
@@ -18,14 +18,9 @@ import {
   type AnchoredAnimationProps,
 } from '../popover/base-anchored';
 
-// Same API as Base UI's Tooltip. The Popup grows from 0.7 and fades in
-// from the trigger on a spring, and shrinks back the same way, every time it
-// opens.
-
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Tooltip.Root',
 );
-// The user's `keepMounted` on the closest Portal.
 const KeepMountedContext = React.createContext(false);
 
 function Root<Payload = unknown>({
@@ -135,7 +130,6 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
 
 namespace Popup {
   export type State = TooltipPrimitive.Popup.State;
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
   export type Props = TooltipPrimitive.Popup.Props & AnchoredAnimationProps;
 }
 

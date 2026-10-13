@@ -21,16 +21,6 @@ import {
   type PreviewImageOptions,
 } from '../../../internal/preview-link';
 
-// Animate UI v1's Preview Link Card, on Radix UI's HoverCard: hovering a link
-// shows a screenshot of the page it leads to, and the card is itself a link
-// there. It is Animate UI's HoverCard, so the card moves exactly like it:
-// it grows from 0.8 and fades in from the trigger on a spring, and shrinks
-// back the same way.
-//
-// The screenshot comes from Microlink's API (as in v1) unless `src` is given,
-// and is preloaded as soon as the Root mounts, so it's there when the card
-// opens.
-
 type PreviewLinkCardContextType = {
   href: string;
   src: string;
@@ -43,7 +33,6 @@ const [PreviewLinkCardProvider, usePreviewLinkCard] =
 
 type PreviewLinkCardProps = HoverCardProps &
   PreviewImageOptions & {
-    /** The page the link leads to, and the one the screenshot shows. */
     href: string;
   };
 
@@ -71,7 +60,6 @@ function PreviewLinkCard({
 type PreviewLinkCardTriggerProps = HoverCardTriggerProps &
   React.RefAttributes<HTMLAnchorElement>;
 
-/** Radix's Trigger is a link: it leads to the Root's `href`. */
 function PreviewLinkCardTrigger({
   href,
   ...props
@@ -93,7 +81,6 @@ function PreviewLinkCardPortal(props: PreviewLinkCardPortalProps) {
   return <HoverCardPortal data-slot="preview-link-card-portal" {...props} />;
 }
 
-/** The attributes of the card's link (the rest goes to the card itself). */
 type LinkAttributes = Pick<
   React.ComponentProps<'a'>,
   | 'href'
@@ -112,11 +99,6 @@ type PreviewLinkCardContentProps = Omit<
   LinkAttributes &
   React.RefAttributes<HTMLAnchorElement>;
 
-/**
- * The card: a link to the Root's `href`, rendered as Radix's Content (it is
- * the animated element, so its className styles the card). With `asChild`,
- * the child is rendered instead, as in v1.
- */
 function PreviewLinkCardContent({
   side = 'top',
   sideOffset = 10,
@@ -169,7 +151,6 @@ type PreviewLinkCardImageProps = Omit<
   'src' | 'width' | 'height'
 >;
 
-/** The screenshot, at the Root's `width` and `height`. */
 function PreviewLinkCardImage({
   alt = 'preview image',
   ...props

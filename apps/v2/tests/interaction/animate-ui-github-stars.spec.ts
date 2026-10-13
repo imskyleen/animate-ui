@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// The GitHub API is mocked: tests never depend on the network.
 const mockStars = (page: Page, stars: number, delay = 0) =>
   page.route(
     'https://api.github.com/repos/imskyleen/animate-ui',
@@ -27,8 +26,6 @@ test.describe('animate-ui github stars', () => {
   test("the demo's star has no outline of its own: stroked like it's filled", async ({
     page,
   }) => {
-    // Hugeicons strokes its paths in currentColor: left alone, the star had
-    // a black (or white) border around its gray or yellow fill.
     await page.goto('/tests/demos/animate-ui/github-stars', {
       waitUntil: 'networkidle',
     });
@@ -66,7 +63,6 @@ test.describe('animate-ui github stars', () => {
   test('the star fills as the count climbs', async ({ page }) => {
     await mockStars(page, 1234);
     await open(page);
-    // The filled copy of the icon is clipped from the top until complete.
     const filled = page.locator('svg[style*="clip-path"]');
     await expect
       .poll(() => filled.evaluate((el) => getComputedStyle(el).clipPath))

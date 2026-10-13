@@ -6,7 +6,6 @@ import { Switch } from '@animate-ui/react/primitives/base-ui/switch';
 const track = 'inline-flex h-5 w-9 items-center rounded-full border';
 const thumb = 'block size-4 rounded-full bg-current data-checked:translate-x-4';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseSwitchFixture() {
   const [checked, setChecked] = React.useState(false);
 

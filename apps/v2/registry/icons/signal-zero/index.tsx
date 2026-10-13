@@ -13,8 +13,6 @@ import {
 type SignalZeroProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // Its bars pulse one after the other, never gone, as Hugeicons'; drawn in
-  // turn is `draw`.
   default: {
     path1: {
       initial: { opacity: 1, scale: 1 },

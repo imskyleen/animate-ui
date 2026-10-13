@@ -46,7 +46,6 @@ test.describe('radix-ui popover API', () => {
     await page.getByRole('button', { name: 'Close controlled' }).click();
     await expect(page.getByTestId('controlled-open')).toHaveText('closed');
     await expect(content).toHaveCount(0, { timeout: 1500 });
-    // Opened from outside: the state is the only source of truth.
     await page.getByRole('button', { name: 'Open from outside' }).click();
     await expect(content).toBeVisible();
     await expect(page.getByTestId('changes')).toHaveText('2');
@@ -65,7 +64,6 @@ test.describe('radix-ui popover API', () => {
     await page.waitForTimeout(120);
     await trigger.click();
     await page.waitForTimeout(650);
-    // Same element: it retargeted instead of remounting.
     expect(await element!.evaluate((el) => el.isConnected)).toBe(true);
     expect(
       await element!.evaluate((el) => Number(getComputedStyle(el).opacity)),
@@ -103,7 +101,6 @@ test.describe('radix-ui popover API', () => {
     ).toBeVisible();
     expect(await state()).toEqual({ inert: false, visibility: 'visible' });
     await page.keyboard.press('Escape');
-    // Hidden once the exit is over, still mounted.
     await expect.poll(state).toEqual({ inert: true, visibility: 'hidden' });
     await expect(content).toHaveCount(1);
   });
@@ -115,7 +112,6 @@ test.describe('radix-ui popover API', () => {
     expect(
       await content.evaluate((el) => getComputedStyle(el).transformOrigin),
     ).toBe('0px 0px');
-    // A 200ms entrance instead of the spring.
     await page.waitForTimeout(260);
     expect(
       await content.evaluate((el) => Number(getComputedStyle(el).opacity)),

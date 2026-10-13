@@ -44,7 +44,6 @@ function isActive(pathname: string, url: string) {
   return pathname === url || pathname.startsWith(`${url}/`);
 }
 
-// v2 and v1 docs: in development, the local v2 (3300) and v1 (3200) servers.
 function VersionMenu() {
   return (
     <DropdownMenu.Root modal={false}>
@@ -112,15 +111,12 @@ const subscribeNever = () => () => {};
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  // The theme is only known in the browser, so the server HTML can't pick an
-  // icon.
   const hydrated = useSyncExternalStore(
     subscribeNever,
     () => true,
     () => false,
   );
 
-  // Until then, both icons render and CSS shows the right one.
   if (!hydrated)
     return (
       <button
@@ -143,7 +139,6 @@ export function ThemeToggle({ className }: { className?: string }) {
       </button>
     );
 
-  // Theme Toggler Button: the icons turn as they swap.
   return (
     <ThemeTogglerButton
       theme={(theme ?? 'system') as ThemeSelection}
@@ -175,7 +170,6 @@ export function GitHubLink({ className }: { className?: string }) {
   );
 }
 
-/** The site header. `menu` is the mobile control (the docs open their sidebar). */
 export function SiteHeader({
   menu,
   ...props
@@ -234,8 +228,6 @@ export function SiteHeader({
   );
 }
 
-// `slots.header` of DocsLayout: fixed and full width above the docs grid;
-// the layout reserves its height through `--fd-banner-height`.
 export function Header(props: ComponentProps<'header'>) {
   const { setOpen } = useSidebar();
 

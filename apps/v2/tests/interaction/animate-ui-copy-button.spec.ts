@@ -12,7 +12,6 @@ const open = async (page: Page) => {
   await hydrated(page, SELECTOR);
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -33,11 +32,9 @@ type IconFrame = {
   opacity: number;
   scale: number;
   blur: number;
-  /** Distance between the icon's center and the button's, in px. */
   offset: number;
 };
 
-/** Every icon in the button, on every animation frame for `ms`. */
 const recordIcons = (page: Page, ms: number) =>
   page.evaluate(
     ([sel, duration]) =>
@@ -94,7 +91,6 @@ test.describe('animate-ui copy button', () => {
     await expect(icons(page)).toHaveCount(1);
     await expect(icons(page)).toHaveAttribute('data-icon', 'copied');
 
-    // Back after 3s.
     await page.waitForTimeout(2500);
     await expect(icons(page)).toHaveAttribute('data-icon', 'copied');
     await expect(button(page)).not.toHaveAttribute('data-copied', {
@@ -119,28 +115,23 @@ test.describe('animate-ui copy button', () => {
     await open(page);
     const recording = recordIcons(page, 400);
     await button(page).click();
-    // Pressed again at once: the button scales while the icons swap.
     await page.mouse.down();
     const frames = await recording;
     await page.mouse.up();
 
     const copied = frames.flatMap((f) => f.filter((i) => i.icon === 'copied'));
     const copy = frames.flatMap((f) => f.filter((i) => i.icon === 'copy'));
-    // The check grows out of half its size and a 2px blur...
     expect(Math.min(...copied.map((i) => i.scale))).toBeLessThan(0.75);
     expect(Math.min(...copied.map((i) => i.scale))).toBeGreaterThanOrEqual(
       0.5 - 1e-3,
     );
     expect(Math.max(...copied.map((i) => i.blur))).toBeGreaterThan(0.5);
     expect(Math.max(...copied.map((i) => i.blur))).toBeLessThanOrEqual(2);
-    // ...while the copy icon leaves the same way, in place (both on screen).
     expect(frames.some((f) => f.length === 2)).toBe(true);
     const leaving = copy.filter((i) => i.opacity < 1);
     expect(leaving.length).toBeGreaterThan(0);
     expect(Math.min(...leaving.map((i) => i.scale))).toBeLessThan(0.9);
-    // Both stay centered in the button: the leaving one doesn't jump.
     expect(Math.max(...frames.flat().map((i) => i.offset))).toBeLessThan(1);
-    // It settles within 0.15s (plus the clipboard round trip): sharp, whole.
     expect(frames.at(-1)).toMatchObject([
       { icon: 'copied', opacity: 1, scale: 1, blur: 0 },
     ]);
@@ -171,7 +162,6 @@ test.describe('animate-ui copy button', () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       'Hello world!',
     );
-    // 2s after the first click + 1.5s: the delay restarted at the second.
     await page.waitForTimeout(1500);
     await expect(button(page)).toHaveAttribute('data-copied', '');
     await expect(button(page)).not.toHaveAttribute('data-copied', {
@@ -189,7 +179,6 @@ test.describe('animate-ui copy button', () => {
     const frames = await recording;
     const all = frames.flat();
     expect(all.every((i) => i.scale === 1 && i.blur === 0)).toBe(true);
-    // Still a fade, not a cut.
     expect(all.some((i) => i.opacity > 0 && i.opacity < 1)).toBe(true);
     expect(frames.at(-1)).toMatchObject([
       { icon: 'copied', opacity: 1, scale: 1, blur: 0 },

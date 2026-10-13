@@ -9,7 +9,6 @@ import {
 
 type Frame = { t: number; cards: EntranceSample[] };
 
-/** Clicks Replay and samples the three cards on every frame for `ms`. */
 const replayTimeline = (page: Page, ms: number) =>
   page.evaluate(async (ms) => {
     const read = (el: Element) => {
@@ -61,7 +60,6 @@ test.describe('animate-ui zoom', () => {
     await open(page, 'zoom');
     const frames = await replayTimeline(page, 1000);
     const scales = frames.map((f) => f.cards[0]!.scale);
-    // The v1 spring (stiffness 200, damping 20) goes ~2% past its size.
     expect(Math.min(...scales)).toBeLessThan(0.8);
     expect(Math.max(...scales)).toBeGreaterThan(1.01);
     expect(Math.max(...scales)).toBeLessThan(1.05);

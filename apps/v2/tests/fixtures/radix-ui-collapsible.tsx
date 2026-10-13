@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Collapsible } from '@animate-ui/react/primitives/radix-ui/collapsible';
 import * as CollapsibleStar from '@animate-ui/react/primitives/radix-ui/collapsible';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixCollapsibleFixture() {
   const [open, setOpen] = React.useState(true);
 
@@ -22,7 +21,6 @@ export default function RadixCollapsibleFixture() {
       </section>
 
       <section>
-        {/* The `import * as` style of @radix-ui/react-collapsible. */}
         <CollapsibleStar.Root defaultOpen>
           <CollapsibleStar.CollapsibleTrigger>
             Uncontrolled
@@ -43,7 +41,6 @@ export default function RadixCollapsibleFixture() {
       </section>
 
       <section>
-        {/* Radix's own alias of Root, through the radix-ui style namespace. */}
         <Collapsible.Collapsible disabled>
           <Collapsible.Trigger>Disabled</Collapsible.Trigger>
           <Collapsible.Content>Disabled content</Collapsible.Content>

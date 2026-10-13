@@ -21,26 +21,11 @@ import {
   useThumbStretch,
 } from '../../../internal/slider';
 
-// Same API as React Aria's Slider, SliderFill and SliderThumb, animated like
-// Animate UI v1's switch thumb (v1 had no slider): the dragged thumb stretches
-// along the track, and a press on the track glides the thumb and the fill to
-// the new value, on a spring (stiffness 400, damping 32; see
-// ../../../internal/slider). Dragging and the keyboard follow instantly. The
-// animated elements are React Aria's own, through its `render` prop.
-
 type SliderFillProps = AriaSliderFillProps & {
-  /**
-   * Transition of the fill after a press on the track. Defaults to a spring
-   * (stiffness 400, damping 32).
-   */
   transition?: Transition;
 };
 
 type SliderThumbProps = AriaSliderThumbProps & {
-  /**
-   * Transition of the thumb after a press on the track, and of its stretch
-   * while dragged. Defaults to a spring (stiffness 400, damping 32).
-   */
   transition?: Transition;
 };
 
@@ -59,8 +44,6 @@ function SliderRoot<T extends number | number[]>({
   onChange,
   ...props
 }: SliderProps<T> & React.RefAttributes<HTMLDivElement>) {
-  // Mirrors the value (React Aria keeps it in its state) to know when it
-  // changes; React Aria stays the source of truth.
   const controlled = props.value !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(props.defaultValue);
   const value = controlled ? props.value : uncontrolled;
@@ -81,7 +64,6 @@ function SliderRoot<T extends number | number[]>({
         render={(domProps, renderProps) => {
           const element = {
             ...domProps,
-            // Presses on the track (and the thumbs) start here.
             onPointerDownCapture: (
               event: React.PointerEvent<HTMLDivElement>,
             ) => {
@@ -105,7 +87,6 @@ function SliderFill({
     <AriaSliderFill
       {...props}
       render={(domProps, renderProps) =>
-        // A custom `render` keeps working, without the animation.
         render ? (
           render(domProps, renderProps)
         ) : (
@@ -174,14 +155,12 @@ function ThumbMotion({
   partTransition: Transition | undefined;
 }) {
   const spring = useTempoTransition(partTransition ?? SLIDER_TRANSITION);
-  // React Aria centers the thumb with its own transform: ours goes after it.
   const base = typeof style?.transform === 'string' ? style.transform : '';
   const { ref: motionRef, transform } = useSliderPartMotion(
     'thumb',
     spring,
     base,
   );
-  // React Aria drags the thumb a press on the track moved, too.
   useThumbStretch(motionRef, isDragging, spring);
 
   return (

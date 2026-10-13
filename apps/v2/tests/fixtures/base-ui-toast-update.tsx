@@ -4,9 +4,6 @@ import * as React from 'react';
 
 import { Toaster, toast } from '@/demos/base-ui/toast';
 
-// The Base UI toast demo's own Toaster (shadcn/ui's), with toasts updated in
-// place: a toast whose content grows, then changes type, and one updated
-// while it's still coming in.
 export default function BaseToastUpdateFixture() {
   const idRef = React.useRef<string>('');
   return (

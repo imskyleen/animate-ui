@@ -8,48 +8,19 @@ import {
 } from '../utils/motion';
 import { animateTo, forget, targetsOf, type Look } from './controls/indicator';
 
-// What moves inside a Base UI toast, on top of the CSS transitions of its
-// stack (primitives/base-ui/toast):
-//
-// - Its icon (shadcn/ui's `data-slot="toast-icon"`, whatever SVG it holds)
-//   shows by its type once the toast has landed: a success check draws
-//   itself like a checkbox's check (its stroke, `transition.check`), an
-//   error cross draws the same way and shakes "no" (`transition.shake`,
-//   `shift.shake`), any other icon pops in from half its size out of a
-//   light blur (`spring.checkPop`, like `checkAnimation="pop"`).
-// - Updated (`toast.update`, `toast.promise`), it changes in place: the
-//   previous icon (a spinner keeps spinning) and the text that changed leave
-//   as copies into a light blur (`transition.swap`, `blur.icon`, the icon
-//   shrinking to `scale.icon`) while the new text comes out of it, and the
-//   new icon shows as above once the previous one has gone: the spinner
-//   turns into a drawn check, or cross. The toast's height glides to its
-//   new content's with its stack (Base UI measures it).
-// - A swipe rubber-bands the wrong way and fades with distance; released,
-//   the toast is thrown at the finger's speed (see `swipeStyle`).
-//
-// Under reduced motion, icons and text only fade.
-
-/* Update snapshots ---------------------------------------------------------- */
-
-/** A part of the toast as it showed, copied before React changed it. */
 type Copy = {
-  /** The copy (ids and slots removed), not in the page yet. */
   element: HTMLElement | SVGElement;
-  /** Where it showed, in the page. */
   rect: DOMRect;
   text: string;
   opacity: number;
   filter: string;
   color: string;
-  /** Its CSS animation's time (a spinner's turn), to carry on from. */
   time: number | null;
 };
 
 type Snapshot = {
   root: DOMRect;
-  /** The root's height, before the update. */
   height: number;
-  /** The root's scale on screen (its offset size against its box). */
   scale: number;
   icon: Copy | null;
   title: Copy | null;
@@ -58,13 +29,11 @@ type Snapshot = {
 
 const ICON = '[data-slot="toast-icon"]';
 
-/** The icon of the toast: the first element of its icon slot. */
 function iconOf(root: HTMLElement) {
   return (root.querySelector(ICON)?.firstElementChild ?? null) as
     HTMLElement | SVGElement | null;
 }
 
-/** The title or description, by the root's `aria-labelledby`/`describedby`. */
 function labelOf(root: HTMLElement, attribute: string) {
   const id = root.getAttribute(attribute);
   return id
@@ -109,7 +78,6 @@ function copyOf(element: HTMLElement | SVGElement | null): Copy | null {
   };
 }
 
-/** Copies the icon, title and description as they show, before an update. */
 function takeSnapshot(root: HTMLElement | null): Snapshot | null {
   if (!root) return null;
   const box = root.getBoundingClientRect();
@@ -123,11 +91,6 @@ function takeSnapshot(root: HTMLElement | null): Snapshot | null {
   };
 }
 
-/**
- * Calls `onUpdate` with a snapshot of the toast taken right before React
- * changes the DOM for a new `watch` (React's `getSnapshotBeforeUpdate`: the
- * only moment the previous content can still be read).
- */
 class UpdateSnapshot extends React.Component<{
   watch: readonly unknown[];
   take: () => Snapshot | null;
@@ -154,14 +117,8 @@ class UpdateSnapshot extends React.Component<{
   }
 }
 
-/* Icons --------------------------------------------------------------------- */
-
 const DRAWN_TYPES = ['success', 'error'];
 
-/**
- * Shows the toast's icon by its type: drawn (success, error: the error
- * cross then shakes), or popped (anything else).
- */
 function showIcon(
   icon: Element,
   type: string | undefined,
@@ -169,8 +126,6 @@ function showIcon(
   tokens: MotionTokens,
   reduce: boolean,
 ) {
-  // React may have kept the element and changed its shapes (a spinner's
-  // paths becoming a check's): start over from them.
   forget([icon]);
   const drawn = DRAWN_TYPES.includes(type ?? '');
   const look: Look = { kind: 'check', animation: drawn ? 'draw' : 'pop' };
@@ -179,7 +134,6 @@ function showIcon(
     : { ...tokens.spring.checkPop, delay };
   void animateTo(targetsOf([icon], look), look, true, transition, reduce);
   if (type === 'error' && !reduce) {
-    // Once the cross is half drawn.
     const check = tokens.transition.check;
     shake(icon, (delay + check.duration / 2) * 1000, tokens);
   }
@@ -198,12 +152,6 @@ function shake(element: Element, delay: number, tokens: MotionTokens) {
   );
 }
 
-/* Copies leaving ------------------------------------------------------------ */
-
-/**
- * Puts a copy back where it showed, inside the root (positioned, so the copy
- * moves with the toast), on top of the content.
- */
 function place(root: HTMLElement, copy: Copy, snapshot: Snapshot) {
   const { element, rect } = copy;
   const s = snapshot.scale || 1;
@@ -241,7 +189,6 @@ function place(root: HTMLElement, copy: Copy, snapshot: Snapshot) {
 
 const css = (transition: Transition) => toCssTiming(transition);
 
-/** A copy fading out into a light blur (an icon also shrinking), then gone. */
 function leave(
   holder: HTMLElement,
   shrink: boolean,
@@ -271,7 +218,6 @@ function leave(
   );
 }
 
-/** New text coming out of a light blur. */
 function arrive(element: Element, tokens: MotionTokens, reduce: boolean) {
   const { duration, easing } = css(tokens.transition.swap);
   element.animate(
@@ -285,15 +231,6 @@ function arrive(element: Element, tokens: MotionTokens, reduce: boolean) {
   );
 }
 
-/**
- * The toast's height gliding from what it was to its new content's, on its
- * stack's transition. Base UI measures the new height by setting the Root's
- * height to `auto` for a moment, which cuts a CSS transition of `height`:
- * so the glide is a Web Animation, started before the new content is
- * painted, from the height it had to the one measured the same way. While
- * it runs, Base UI reads the gliding height and the stack follows it; it
- * measures the real one again as it ends.
- */
 function glideHeight(root: HTMLElement, from: number, timing: CssTiming) {
   const inline = root.style.height;
   root.style.height = 'auto';
@@ -306,10 +243,6 @@ function glideHeight(root: HTMLElement, from: number, timing: CssTiming) {
   });
 }
 
-/**
- * After an update: what changed leaves as copies, the new text comes in, the
- * new icon shows once the previous one has gone.
- */
 function swapContent(
   root: HTMLElement | null,
   snapshot: Snapshot,
@@ -347,22 +280,12 @@ function swapContent(
     );
 }
 
-/* Swipe --------------------------------------------------------------------- */
-
 type Direction = 'up' | 'down' | 'left' | 'right';
 
-/** Rubber band the wrong way: half the finger's way at first, then a limit. */
 const RUBBER_BAND_FACTOR = 0.5;
-/** px: how far the rubber band can stretch. */
 const RUBBER_BAND_LIMIT = 48;
-/**
- * ms: the longest a thrown toast takes to leave (a drawer's): slower
- * fingers throw it at the speed it takes to leave in this.
- */
 const THROW_DURATION = 360;
-/** ms: the shortest throw, for the quickest flicks. */
 const MIN_THROW_DURATION = 80;
-/** ms: the stretch of the gesture its release speed is read over. */
 const VELOCITY_WINDOW = 100;
 
 function rubberBand(delta: number) {
@@ -382,10 +305,6 @@ function displacement(direction: Direction, x: number, y: number) {
 
 type Point = { t: number; x: number; y: number };
 
-/**
- * The pointer's way through a swipe, read as Base UI reads it (the same
- * start, the same axis lock), so the toast can be placed and released here.
- */
 type Drag = {
   pointerId: number;
   start: { x: number; y: number };
@@ -422,7 +341,6 @@ function moveDrag(
   directions: Direction[],
 ) {
   if (event.pointerId !== drag.pointerId || drag.releasedAt !== null) return;
-  // Base UI starts measuring from the first move (iOS delays it).
   if (drag.first) {
     drag.start = { x: event.clientX, y: event.clientY };
     drag.first = false;
@@ -437,7 +355,6 @@ function moveDrag(
   if (drag.points.length > 32) drag.points.shift();
 }
 
-/** Where the finger has taken the toast: the wrong way, rubber-banded. */
 function dragOffset(drag: Drag, directions: Direction[]) {
   const last = drag.points.at(-1)!;
   const dx = drag.first ? 0 : last.x - drag.start.x;
@@ -454,10 +371,6 @@ function dragOffset(drag: Drag, directions: Direction[]) {
   return { x, y };
 }
 
-/**
- * The toast following the finger: rubber-banded the wrong way, fading as it
- * goes the way it can be swiped (gone at its own size away).
- */
 function swipeStyle(drag: Drag, directions: Direction[]): React.CSSProperties {
   const { x, y } = dragOffset(drag, directions);
   const progress = Math.max(
@@ -475,16 +388,11 @@ function swipeStyle(drag: Drag, directions: Direction[]): React.CSSProperties {
   };
 }
 
-/**
- * A toast swiped away keeps the finger's speed: linear, over the time its
- * own size takes at that speed (between 80 and 360ms).
- */
 function throwTiming(drag: Drag, direction: Direction) {
   const end = drag.releasedAt ?? drag.points.at(-1)!.t;
   const recent = drag.points.filter((p) => end - p.t <= VELOCITY_WINDOW);
   const first = recent[0];
   const last = recent.at(-1);
-  // Held still before letting go: no speed left.
   const speed =
     first && last && last !== first && end > first.t
       ? displacement(direction, last.x - first.x, last.y - first.y) /
@@ -499,17 +407,9 @@ function throwTiming(drag: Drag, direction: Direction) {
   return { duration: Math.round(duration), easing: 'linear' };
 }
 
-/* Remaining time ------------------------------------------------------------- */
-
 const PROGRESS = 'data-animate-ui-toast-progress';
 const PROGRESS_BAR = 'data-animate-ui-toast-progress-bar';
 
-/**
- * The bar's default look, at zero specificity (any class of yours wins): a
- * 2px line along the toast's bottom edge, in its type's color (its icon's,
- * at 80%) or else its text color at 25%, clipped
- * by its corners; only the front toast's shows while the stack is collapsed.
- */
 const PROGRESS_CSS = `
 :where([${PROGRESS}]) {
   position: absolute;

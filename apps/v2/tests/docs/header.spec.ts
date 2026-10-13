@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-// The header's theme button is the Theme Toggler Button: its icons turn as
-// they swap.
 test('the header theme button switches the theme, turning its icon', async ({
   page,
 }) => {
@@ -12,7 +10,6 @@ test('the header theme button switches the theme, turning its icon', async ({
     .filter({ visible: true })
     .first();
   await expect(button).toHaveAttribute('data-theme', 'light');
-  // Records the largest turn of the button's icons.
   await button.evaluate((el) => {
     const w = window as unknown as { __turn: number };
     w.__turn = 0;

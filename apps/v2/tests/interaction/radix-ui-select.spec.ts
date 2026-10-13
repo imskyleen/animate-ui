@@ -6,23 +6,17 @@ import { expectAtRestThrough, withAnimation } from './item-checks';
 import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
 const LIST = '[role="listbox"]';
-// shadcn/ui's demo: its list opens over the trigger (item-aligned, Radix's
-// default), where it only fades. Its scale, where it grows from, retargeting
-// and the keyboard are checked with the list below the trigger (popper).
 const DEMO = '/tests/demos/radix-ui/select';
 const POPPER = `${DEMO}?position=popper`;
-/** Radix's ItemIndicator, inside the demo's span. */
 const CHECK = ':scope > span > span';
 
 const trigger = (page: Page) => page.locator('[data-slot="select-trigger"]');
 const option = (page: Page, name: string) =>
   page.getByRole('option', { name, exact: true });
 
-/** Loads a demo page. */
 const load = (page: Page, path: string) =>
   page.goto(path, { waitUntil: 'networkidle' });
 
-/** Opens the list with a click and lets its entrance finish. */
 async function openList(page: Page) {
   await trigger(page).click();
   await page.waitForTimeout(650);
@@ -42,8 +36,6 @@ test.describe('radix-ui select demo', () => {
     expect(first.opacity).toBeLessThan(1);
     await page.waitForTimeout(650);
     expect((await sample(page, LIST)).opacity).toBe(1);
-    // Laid over the trigger, as in Radix: its first item (no value yet)
-    // lined up on it, and focused.
     const middle = (box: { y: number; height: number }) =>
       box.y + box.height / 2;
     const item = (await option(page, 'Apple').boundingBox())!;
@@ -97,7 +89,6 @@ test.describe('radix-ui select demo', () => {
     await option(page, 'Banana').click();
     await expect(page.locator(LIST)).toHaveCount(0, { timeout: 1000 });
     await openList(page);
-    // Nothing changes: no check to wait for.
     await expectCloseWithoutHold(page, LIST, () =>
       option(page, 'Banana').click(),
     );
@@ -120,7 +111,6 @@ test.describe('radix-ui select demo, its list below the trigger', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
-    // Popper below the trigger: it grows from its top edge.
     expect(first.origin.split(' ')[1]).toBe('0px');
 
     await page.waitForTimeout(400);
@@ -135,8 +125,6 @@ test.describe('radix-ui select demo, its list below the trigger', () => {
     await openList(page);
     await option(page, 'Grapes').click();
 
-    // Still on screen for the 220ms exit, then gone.
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, LIST)).opacity, {
         intervals: [16],
@@ -159,15 +147,12 @@ test.describe('radix-ui select demo, its list below the trigger', () => {
         intervals: [16],
       })
       .toBeLessThan(0.95);
-    // Dispatched: while the list leaves, Radix's modal layer still blocks
-    // the pointer outside it (and focus comes back once it has left).
     await trigger(page).dispatchEvent('pointerdown', {
       button: 0,
       pointerType: 'mouse',
       isPrimary: true,
     });
     await page.waitForTimeout(650);
-    // The same element: it retargeted instead of remounting.
     expect(await element!.evaluate((el) => el.isConnected)).toBe(true);
     expect((await sample(page, LIST)).opacity).toBe(1);
   });
@@ -177,7 +162,6 @@ test.describe('radix-ui select demo, its list below the trigger', () => {
   }) => {
     await trigger(page).focus();
     await page.keyboard.press('Enter');
-    // No value yet: Radix focuses the first item.
     await expect(option(page, 'Apple')).toBeFocused();
     await page.keyboard.press('ArrowDown');
     await expect(option(page, 'Banana')).toBeFocused();
@@ -250,7 +234,6 @@ test.describe('radix-ui select API', () => {
     const first = await probe.firstFrame();
     expect(first.scale).toBe(1);
     expect(first.opacity).toBeLessThan(1);
-    // The selected item is lined up with the trigger, as in Radix.
     await expect(
       page.getByRole('option', { name: 'Aligned Cherry' }),
     ).toBeFocused();
@@ -309,15 +292,12 @@ describeMenuHighlight('radix-ui select highlight', {
     await trigger(page).click();
     await page.waitForTimeout(400);
   },
-  // No value yet: Radix highlights the first item as the list opens.
   first: (page) => option(page, 'Apple'),
   second: (page) => option(page, 'Banana'),
   keyboardNext: 'ArrowDown',
   highlightedOnOpen: true,
 });
 
-// Only choosing animates a check: the list opening shows the chosen item's
-// at rest, and closing leaves it as it is.
 test.describe('radix-ui select checks', () => {
   test.describe.configure({ timeout: 180_000 });
   for (const animation of ['draw', 'pop'] as const) {

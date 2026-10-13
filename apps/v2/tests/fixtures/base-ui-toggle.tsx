@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Toggle } from '@animate-ui/react/primitives/base-ui/toggle';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseToggleFixture() {
   const [pressed, setPressed] = React.useState(false);
 

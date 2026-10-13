@@ -16,21 +16,10 @@ const [CopyButtonProvider, useCopyButton] =
   getStrictContext<CopyButtonContextType>('CopyButtonContext');
 
 type CopyButtonProps = ButtonProps & {
-  /** The text written to the clipboard on click. */
   content: string;
-  /** Whether the content was just copied (controlled). */
   copied?: boolean;
-  /** Whether the content was just copied, initially (uncontrolled). */
   defaultCopied?: boolean;
-  /**
-   * Called when the copied state changes: with the content once it's
-   * copied, and with `false` once `delay` has passed.
-   */
   onCopiedChange?: (copied: boolean, content?: string) => void;
-  /**
-   * Time the button stays copied, in milliseconds.
-   * @default 3000
-   */
   delay?: number;
 };
 
@@ -55,13 +44,11 @@ function CopyButton({
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(event);
-      // Controlled and already copied: the parent decides when it resets.
       if (event.defaultPrevented || copied || !content) return;
       navigator.clipboard
         .writeText(content)
         .then(() => {
           setIsCopied(true, content);
-          // Copying again restarts the delay.
           clearTimeout(timeoutRef.current);
           timeoutRef.current = setTimeout(() => setIsCopied(false), delay);
         })
@@ -85,11 +72,8 @@ function CopyButton({
 }
 
 type CopyButtonIconProps = Omit<React.ComponentProps<'span'>, 'children'> & {
-  /** The icon shown until the content is copied. */
   icon: React.ReactNode;
-  /** The icon shown once the content is copied. */
   copiedIcon: React.ReactNode;
-  /** Transition of the swap. */
   transition?: Transition;
 };
 

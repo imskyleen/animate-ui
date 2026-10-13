@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu';
 
@@ -22,8 +22,6 @@ import {
   SubmenuTrigger,
 } from '../menu/menu';
 
-// Untouched parts: the import alias keeps both the component and its type
-// namespace (`ContextMenu.Trigger.Props`).
 import Trigger = ContextMenuPrimitive.Trigger;
 import Backdrop = ContextMenuPrimitive.Backdrop;
 import Portal = ContextMenuPrimitive.Portal;
@@ -33,18 +31,11 @@ import Group = ContextMenuPrimitive.Group;
 import GroupLabel = ContextMenuPrimitive.GroupLabel;
 import Separator = ContextMenuPrimitive.Separator;
 
-// Same API as Base UI's Context Menu, which is a Menu opened by a right click
-// or a long press: its Popup, items, indicators and submenus are the animated
-// Menu parts. It has no Animate UI v1 counterpart: it moves like v1's Base UI
-// Menu (a 220ms fade and scale from the pointer, a highlight gliding behind
-// the highlighted item, checks popping in).
-
 function Root({ actionsRef, onOpenChange, ...props }: Root.Props) {
   const manual = useManualUnmount(actionsRef, onOpenChange);
   return (
     <UnmountContext value={manual.unmount}>
       <RootPicks picked={manual.picked} registerCheck={manual.registerCheck}>
-        {/* Its popup opens on its own, even inside a menubar's menu. */}
         <PopupHandoffContext value={null}>
           <ContextMenuPrimitive.Root
             {...props}

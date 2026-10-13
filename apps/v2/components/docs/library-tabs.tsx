@@ -11,10 +11,6 @@ import { useEffect } from 'react';
 import { getLibrary, LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { setPreferredLibrary } from '@/lib/preferred-library';
 
-/**
- * The libraries a primitive exists in; only those get a tab. Animate UI's
- * Highlight slides to the clicked library while its page loads.
- */
 export function LibraryTabs({
   current,
   urls,
@@ -22,14 +18,12 @@ export function LibraryTabs({
   current: LibraryId;
   urls: Partial<Record<LibraryId, string>>;
 }) {
-  // Opening a primitive in a library makes it the reader's default.
   useEffect(() => setPreferredLibrary(current), [current]);
 
   return (
     <div
       role="tablist"
       aria-label="Library"
-      // Sits right on top of the preview, like a tab list on its panel.
       className="-mb-2 flex flex-wrap items-center gap-1"
     >
       <Highlight

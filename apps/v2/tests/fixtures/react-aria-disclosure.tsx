@@ -10,7 +10,6 @@ import {
   type Key,
 } from '@animate-ui/react/primitives/react-aria';
 
-// API compatibility: the panel must behave exactly like React Aria's.
 export default function ReactAriaDisclosureFixture() {
   const [expanded, setExpanded] = React.useState(true);
   const [keys, setKeys] = React.useState<Set<Key>>(() => new Set(['a']));

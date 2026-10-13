@@ -104,7 +104,6 @@ export const controls = {
   },
 }
 
-/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
 function toPlacement(
   side: "top" | "right" | "bottom" | "left",
   align: "start" | "center" | "end"

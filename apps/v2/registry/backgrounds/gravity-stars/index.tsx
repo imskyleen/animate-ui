@@ -61,12 +61,8 @@ function GravityStarsBackgroundContent({
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const starsRef = React.useRef<Particle[]>([]);
-  // The last pointer position over the canvas: the stars keep gathering
-  // there after the pointer leaves.
   const mouseRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // The loop pauses off screen and in a hidden tab, and renders a single
-  // static frame under reduced motion.
   const inView = useInView(containerRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -107,8 +103,6 @@ function GravityStarsBackgroundContent({
     let width = 0;
     let height = 0;
     let dpr = 1;
-    // Reading computed styles every frame forces a style recalc: the color is
-    // cached and refreshed on resize and theme changes only.
     let color = '#ffffff';
     let running = false;
     let frameId = 0;
@@ -134,7 +128,6 @@ function GravityStarsBackgroundContent({
     const draw = () => {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Shared state is set once per frame; only the per-star values change.
       ctx.save();
       ctx.shadowColor = color;
       ctx.fillStyle = color;
@@ -159,7 +152,6 @@ function GravityStarsBackgroundContent({
       if (!running) draw();
     };
 
-    // Every star moves at `movementSpeed`, with the resting opacity.
     const retuneStars = () => {
       const { starsOpacity, movementSpeed } = optionsRef.current;
       for (const p of starsRef.current) {
@@ -182,8 +174,6 @@ function GravityStarsBackgroundContent({
       retuneStars();
     };
 
-    // As in v1: a resize scatters the stars again, and a new size resets
-    // their speed and opacity.
     const resize = () => {
       const rect = container.getBoundingClientRect();
       const sizeChanged = rect.width !== width || rect.height !== height;
@@ -202,7 +192,6 @@ function GravityStarsBackgroundContent({
         }
         if (sizeChanged) retuneStars();
       }
-      // Resizing clears the canvas: redraw the held frame while paused.
       if (!running) draw();
     };
 
@@ -332,7 +321,6 @@ function GravityStarsBackgroundContent({
       }
     };
 
-    // One step per displayed frame, as in v1.
     const tick = () => {
       update();
       draw();
@@ -355,7 +343,6 @@ function GravityStarsBackgroundContent({
       if (!running) draw();
     };
 
-    // New opacity or speed apply to the stars already there.
     const retune = () => {
       retuneStars();
       if (!running) draw();
@@ -366,7 +353,6 @@ function GravityStarsBackgroundContent({
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
 
-    // Theme switches change the inherited text color without resizing.
     const mutationObserver = new MutationObserver(readColor);
     mutationObserver.observe(document.documentElement, {
       attributes: true,
@@ -387,7 +373,6 @@ function GravityStarsBackgroundContent({
     };
   }, []);
 
-  // A new count or size draws a new sky.
   React.useEffect(() => {
     engineRef.current?.reset();
   }, [starsCount, starsSize]);
@@ -438,7 +423,6 @@ function GravityStarsBackgroundContent({
   );
 }
 
-// Under reduced motion the stars hold still.
 function GravityStarsBackground(props: GravityStarsProps) {
   return (
     <ReducedMotionConfig>

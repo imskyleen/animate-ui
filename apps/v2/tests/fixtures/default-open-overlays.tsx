@@ -37,10 +37,6 @@ import {
   TooltipTrigger,
 } from '@animate-ui/react/primitives/react-aria';
 
-// One overlay open from the start per page (`?case=<name>`): it must play its
-// entrance on page load, like Animate UI v1. The animated popup carries
-// `data-testid="overlay"`.
-
 const panel = 'rounded-md border bg-white p-2 shadow-md';
 const FRUITS = ['Apple', 'Banana', 'Cherry'];
 

@@ -17,7 +17,6 @@ const overlay = 'fixed inset-0 z-50 bg-black/20';
 
 type From = 'left' | 'bottom';
 
-// `from` (Animate UI v1's flip direction) on each library's dialog content.
 export default function DialogFromFixture() {
   return (
     <div className="flex flex-col items-start gap-6">

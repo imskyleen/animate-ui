@@ -6,9 +6,7 @@ import * as CheckboxStar from '@animate-ui/react/primitives/radix-ui/checkbox';
 
 const box = 'grid size-5 place-content-center border';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixCheckboxFixture() {
-  // Mounted checked after the page has loaded, as a dialog's would be.
   const [shown, setShown] = React.useState(false);
   const [checked, setChecked] = React.useState<Checkbox.CheckedState>(false);
 
@@ -57,7 +55,6 @@ export default function RadixCheckboxFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-checkbox. */}
         <CheckboxStar.Root aria-label="Star" className={box} defaultChecked>
           <CheckboxStar.Indicator data-testid="star-indicator">
             <span>✓</span>

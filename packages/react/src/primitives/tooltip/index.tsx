@@ -36,17 +36,6 @@ import {
 } from '../../utils/motion';
 import { Slot, type WithAsChild } from '../slot';
 
-// Animate UI's own tooltip: every tooltip of a provider shares one popup,
-// positioned with Floating UI. Moving from a trigger to the next one glides
-// the popup (a shared layout animation) instead of closing and reopening it.
-// It moves like the library tooltips (Radix UI, Base UI, React Aria): the
-// popup grows from 0.7 and fades in from the point facing its trigger, and
-// goes back the same way when it closes, on a spring as quick as theirs, a
-// touch calmer (stiffness 400, damping 31: about 2% past, theirs 4%).
-// While it glides, its content changes like an icon swapping: the previous
-// label leaves into a light blur, fading out and sliding a few px away from
-// where the popup goes, the next one comes in from there (ContentSwap).
-
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type Align = 'start' | 'center' | 'end';
 
@@ -93,7 +82,6 @@ const [LocalTooltipProvider, useTooltip] = getStrictContext<TooltipContextType>(
 
 type TooltipPosition = { x: number; y: number };
 
-/** The popup's id, referenced by its trigger's `aria-describedby`. */
 const contentIdOf = (id: string) => `${id}-tooltip`;
 
 function getResolvedSide(placement: Side | `${Side}-${Align}`) {
@@ -103,17 +91,8 @@ function getResolvedSide(placement: Side | `${Side}-${Align}`) {
   return placement as Side;
 }
 
-/**
- * The entrance, the exit and the glide between triggers: as quick as the
- * library tooltips' spring, a touch calmer.
- */
 const TOOLTIP_TRANSITION = motionTokens.spring.tooltip;
 
-/**
- * The point of the popup facing its trigger (Motion's `originX`/`originY`,
- * which its layout projection takes into account): it grows out of the
- * trigger, like the library tooltips from their origin variables.
- */
 function originFor(side: Side, align: Align) {
   const along = align === 'start' ? 0 : align === 'end' ? 1 : 0.5;
   if (side === 'top') return { originX: along, originY: 1 };
@@ -122,12 +101,8 @@ function originFor(side: Side, align: Align) {
   return { originX: 0, originY: along };
 }
 
-/* Content swap ------------------------------------------------------------ */
-
-/** Where the next content comes from: its axis, and 1 the end, -1 the start. */
 type Way = { axis: 'x' | 'y'; sign: number };
 
-/** From a trigger to the next: by their centers on screen (RTL included). */
 function wayBetween(from: DOMRect, to: DOMRect): Way {
   const dx = to.left + to.width / 2 - (from.left + from.width / 2);
   const dy = to.top + to.height / 2 - (from.top + from.height / 2);
@@ -141,7 +116,6 @@ type SwapValues = {
   x: MotionValue<number>;
   y: MotionValue<number>;
   opacity: MotionValue<number>;
-  /** In px. */
   blur: MotionValue<number>;
 };
 
@@ -168,17 +142,10 @@ const readValues = (values: SwapValues): SwapTarget => ({
   blur: values.blur.get(),
 });
 
-/** `blur.tooltip`, in px. */
 const SWAP_BLUR = Number.parseFloat(
   motionTokens.blur.tooltip.replace(/[^\d.]/g, ''),
 );
 
-/**
- * The content's swap, like a tab panel's: the leaving label goes quickly
- * (`transition.tooltipOut`, 0.13s), the next one slides in and shows from
- * the start of its slide (`transition.tooltipIn`, 0.34s: long enough to
- * outlast the popup's glide), so the way it comes from reads.
- */
 type SwapTimings = { out: Transition; move: Transition; in: Transition };
 
 const SWAP_TIMINGS: SwapTimings = {
@@ -187,7 +154,6 @@ const SWAP_TIMINGS: SwapTimings = {
   in: motionTokens.transition.tooltipIn,
 };
 
-/** The layout styles the content's layer takes from the popup. */
 const LAYOUT_KEYS = [
   'display',
   'flexDirection',
@@ -202,15 +168,10 @@ const LAYOUT_KEYS = [
   'gridAutoFlow',
 ] as const;
 
-/**
- * The content's layer: it lays its content out like the popup would
- * (whatever display the popup has), so it changes nothing until it moves.
- */
 const LAYER_STYLE: React.CSSProperties = Object.fromEntries(
   LAYOUT_KEYS.map((key) => [key, 'inherit']),
 );
 
-/** Where a leaving content is copied: the popup's box, which clips it. */
 const VIEWPORT_STYLE: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
@@ -219,28 +180,10 @@ const VIEWPORT_STYLE: React.CSSProperties = {
   pointerEvents: 'none',
 };
 
-/**
- * The content changing while the popup glides from a trigger to the next.
- *
- * - The content is laid out in a layer inside the popup. As the trigger
- *   changes, the layer is copied as it shows (aria-hidden, inert) into the
- *   popup's box, which clips it, and the copy leaves into `blur.tooltip`,
- *   fading out and sliding `shift.tooltip` away from where the popup goes
- *   (see `SWAP_TIMINGS`). The layer, showing the next content, comes in from
- *   there, out of the blur.
- * - The popup resizes on its shared layout animation, which scales it: both
- *   are scaled back every frame (around the point the popup grows from), so
- *   no text is ever stretched, and the layer is clipped by the popup too.
- * - Each content is one layer: coming back to a content still leaving takes
- *   it back from where its copy is, and what was coming in leaves from where
- *   it is.
- */
 class ContentSwap {
   private layer: HTMLElement | null = null;
   private viewport: HTMLElement | null = null;
-  /** The point the popup grows from, as fractions of its box. */
   private anchor: [number, number] = [0.5, 1];
-  /** The popup's own scale (its entrance), not its layout's. */
   private popupScale: () => number = () => 1;
   private timing: () => SwapTimings = () => SWAP_TIMINGS;
   private current: SwapLayer = { values: swapValues(REST), controls: [] };
@@ -254,7 +197,6 @@ class ContentSwap {
     way: Way;
   } | null = null;
   private running = false;
-  /** Frames the popup's resizing has been settled for. */
   private settled = 0;
 
   configure(options: {
@@ -267,18 +209,15 @@ class ContentSwap {
     this.timing = options.timing;
   }
 
-  /** The content's layer (null: unmounted, everything stops). */
   setLayer(el: HTMLElement | null) {
     if (!el) this.reset();
     this.layer = el;
   }
 
-  /** Where leaving contents are copied. */
   setViewport(el: HTMLElement | null) {
     this.viewport = el;
   }
 
-  /** The layer showing `id` is about to show the next trigger's content. */
   capture(id: string, way: Way) {
     const layer = this.layer;
     if (!layer?.isConnected) return;
@@ -302,7 +241,6 @@ class ContentSwap {
     };
   }
 
-  /** The layer shows the next content `id`: the swap starts. */
   commit(id: string | undefined) {
     const pending = this.pending;
     this.pending = null;
@@ -314,7 +252,6 @@ class ContentSwap {
     const shift = motionTokens.shift.tooltip * sign;
     const [ax, ay] = this.anchor;
 
-    // The previous content leaves from where it is.
     const { element } = pending;
     Object.assign(element.style, {
       position: 'absolute',
@@ -355,8 +292,6 @@ class ContentSwap {
       },
     );
 
-    // The next one comes in from where the popup goes, or, coming back to a
-    // content still leaving, from where its copy is.
     const back = this.leaving.get(id);
     const from = back
       ? readValues(back.values)
@@ -387,7 +322,6 @@ class ContentSwap {
     this.start();
   }
 
-  /** Stops everything: the content shows as it is, at rest. */
   reset() {
     this.pending = null;
     for (const out of this.leaving.values()) {
@@ -418,12 +352,8 @@ class ContentSwap {
     this.settled = 0;
     if (!this.running) {
       this.running = true;
-      // After Motion has drawn the popup (its layout animation), every frame.
       frame.postRender(this.tick, true);
     }
-    // And now (already running too): the swap's first frame, once Motion has
-    // started the popup's layout animation (in a microtask after this
-    // commit).
     queueMicrotask(() => this.tick());
   }
 
@@ -448,12 +378,9 @@ class ContentSwap {
       this.reset();
       return;
     }
-    // The popup's layout animation's scale: what it shows over its size,
-    // without its own (entrance) scale.
     const [sx, sy] = this.layoutScale(popup);
     const values = readValues(this.current.values);
     this.draw(layer, values, sx, sy);
-    // The layer, clipped by the popup's box, as it shows.
     const [ax, ay] = this.anchor;
     const { offsetLeft: l, offsetTop: t } = layer;
     const { offsetWidth: w, offsetHeight: h } = layer;
@@ -467,8 +394,6 @@ class ContentSwap {
     for (const out of this.leaving.values())
       this.draw(out.element, readValues(out.values), sx, sy);
 
-    // Settled for a few frames: not a spring crossing its rest as it
-    // overshoots.
     this.settled =
       Math.abs(sx - 1) > 1e-3 || Math.abs(sy - 1) > 1e-3 ? 0 : this.settled + 1;
     const moving =
@@ -482,16 +407,11 @@ class ContentSwap {
     }
   };
 
-  /**
-   * The popup's layout animation's scale: what it shows over its size, apart
-   * from its own (entrance) scale. 1 once Motion has dropped its transform.
-   */
   private layoutScale(popup: HTMLElement): [number, number] {
     const transform = popup.style.transform;
     if (!transform || transform === 'none') return [1, 1];
     const rect = popup.getBoundingClientRect();
     const own = this.popupScale() || 1;
-    // Its size, unrounded (offsetWidth is rounded to whole pixels).
     const style = getComputedStyle(popup);
     const extra = (a: string, b: string) =>
       style.boxSizing === 'border-box'
@@ -508,7 +428,6 @@ class ContentSwap {
     ];
   }
 
-  /** Scaled back from the popup's resizing, around the popup's origin. */
   private draw(el: HTMLElement, v: SwapTarget, sx: number, sy: number) {
     const [ax, ay] = this.anchor;
     el.style.transformOrigin = `${ax * 100}% ${ay * 100}%`;
@@ -520,7 +439,6 @@ class ContentSwap {
   }
 }
 
-/** A `TooltipArrow` inside the content hands its props to the popup's. */
 const ArrowSlotContext = React.createContext<
   ((props: TooltipArrowProps | null) => void) | null
 >(null);
@@ -629,7 +547,6 @@ type RenderedTooltipContextType = {
   side: Side;
   align: Align;
   open: boolean;
-  /** Floating UI has placed the popup (it's measured unseen until then). */
   positioned: boolean;
 };
 
@@ -674,8 +591,6 @@ function TooltipArrowImpl({
       data-align={align}
       data-slot="tooltip-arrow"
       style={{ rotate: deg }}
-      // Like the popup's: no layoutId while it's measured at 0, 0, or the
-      // arrow would fly in from there.
       layoutId={
         withTransition && positioned ? `tooltip-arrow-${globalId}` : undefined
       }
@@ -697,11 +612,6 @@ function shallowEqualProps(a: object | null, b: object | null) {
   );
 }
 
-/**
- * The popup's arrow. Written inside `TooltipContent`, it's drawn by the popup
- * itself, outside the content that changes from a trigger to the next: it
- * glides with the popup, never fades or blurs with the content.
- */
 function TooltipArrow(props: TooltipArrowProps) {
   const register = React.use(ArrowSlotContext);
   React.useLayoutEffect(() => {
@@ -733,7 +643,6 @@ function TooltipOverlay() {
 
   const arrowRef = React.useRef<SVGSVGElement | null>(null);
 
-  // The arrow written in the content, drawn by the popup.
   const [arrowProps, setArrowProps] = React.useState<TooltipArrowProps | null>(
     null,
   );
@@ -745,7 +654,6 @@ function TooltipOverlay() {
     [],
   );
 
-  // The popup's own scale (its entrance and exit), apart from its layout's.
   const popupScale = useMotionValue(1);
   const swapOut = useTempoTransition(SWAP_TIMINGS.out);
   const swapMove = useTempoTransition(SWAP_TIMINGS.move);
@@ -756,7 +664,6 @@ function TooltipOverlay() {
   const align = rendered.data?.align ?? 'center';
 
   const { refs, x, y, strategy, context, update, isPositioned } = useFloating({
-    // Tracked so `isPositioned` tells when the first position is known.
     open: rendered.data !== null,
     placement: align === 'center' ? side : `${side}-${align}`,
     whileElementsMounted: autoUpdate,
@@ -778,8 +685,6 @@ function TooltipOverlay() {
 
   React.useEffect(() => {
     if (currentTooltip) {
-      // Another trigger's content while the popup shows: it swaps (the
-      // layer is copied as it shows, before it changes).
       const { rendered: previous, positioned, reduce } = swapStateRef.current;
       if (
         previous.data &&
@@ -802,7 +707,6 @@ function TooltipOverlay() {
     swap.commit(renderedId);
   }, [swap, renderedId]);
 
-  // Under reduced motion, contents change at once, like the popup jumps.
   React.useEffect(() => {
     if (reduce) swap.reset();
   }, [swap, reduce]);
@@ -828,8 +732,6 @@ function TooltipOverlay() {
   const resolvedAlign =
     (context.placement.split('-')[1] as Align | undefined) ?? 'center';
 
-  // Grows from 0.7 out of the trigger. Under reduced motion it only fades,
-  // and moving between triggers jumps.
   const origin = originFor(resolvedSide, resolvedAlign);
   React.useLayoutEffect(() => {
     swap.configure({
@@ -839,8 +741,6 @@ function TooltipOverlay() {
     });
   });
 
-  // The content, in its layer (see ContentSwap), and the arrow apart from
-  // it. With `asChild`, inside the child, which is the popup.
   const contentProps = rendered.data?.contentProps;
   const wrap = (children: React.ReactNode) => (
     <>
@@ -895,7 +795,6 @@ function TooltipOverlay() {
               left: 0,
               zIndex: 50,
               transform: `translate3d(${x}px, ${y}px, 0)`,
-              // Measured unseen until Floating UI has placed it.
               visibility: isPositioned ? undefined : 'hidden',
             }}
           >
@@ -909,12 +808,6 @@ function TooltipOverlay() {
                 }}
               >
                 <Component
-                  // Floating UI renders the popup at 0, 0 before it has
-                  // measured it. Until it's placed, the popup is measured
-                  // without its layoutId (the shared layout animation would
-                  // fly it in from the corner), then mounts afresh where it
-                  // belongs and plays its entrance there. Moving between
-                  // triggers keeps the same element: it glides.
                   key={isPositioned ? 'positioned' : 'measuring'}
                   id={contentIdOf(rendered.data.id)}
                   role="tooltip"
@@ -926,8 +819,6 @@ function TooltipOverlay() {
                     isPositioned ? `tooltip-content-${globalId}` : undefined
                   }
                   initial={hidden}
-                  // One spring for everything: the entrance, the exit and
-                  // the shared layout move between triggers.
                   animate={
                     rendered.open
                       ? { opacity: 1, scale: 1, transition }
@@ -1014,10 +905,6 @@ function shallowEqualWithoutChildren(
   return true;
 }
 
-/**
- * Declares what the tooltip shows. It renders nothing in place: the
- * provider's shared popup renders its props.
- */
 function TooltipContent({ asChild = false, ...props }: TooltipContentProps) {
   const { setProps, setAsChild } = useTooltip();
   const lastPropsRef = React.useRef<HTMLMotionProps<'div'> | undefined>(

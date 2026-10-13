@@ -7,10 +7,6 @@ import { Command } from './installation';
 import { ServerCodeBlock } from './server-codeblock';
 import { InstallTabs } from './install-tabs';
 
-/**
- * A shadcn registry item (backgrounds): the CLI adds the file to your
- * project; Manual installs its dependencies and shows the file to copy.
- */
 export async function RegistryInstallation({ name }: { name: string }) {
   const item = JSON.parse(
     await readFile(

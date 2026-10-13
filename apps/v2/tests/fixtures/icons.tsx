@@ -7,9 +7,6 @@ import { Bell } from '@/registry/icons/bell';
 import { CirclePlus } from '@/registry/icons/circle-plus';
 import { Fingerprint } from '@/registry/icons/fingerprint';
 
-// The icon core's triggers, on the Bell icon: its group rotates through
-// [0, 20, -10, 10, -5, 3, 0]° in 0.9s and its clapper slides through
-// [0, -6, 5, -5, 4, -3, 2, 0]px in 1.1s.
 export default function IconsFixture() {
   const [play, setPlay] = React.useState(false);
   const [delayed, setDelayed] = React.useState(false);
@@ -34,7 +31,6 @@ export default function IconsFixture() {
         <Bell data-speed="1" animate={play} size={48} />
         <Bell data-speed="2" animate={play} speed={2} size={48} />
       </section>
-      {/* A grouped icon with a prop of its own still follows its group. */}
       <AnimateIcon animateOnHover data-testid="group-override">
         <span className="inline-flex p-2">
           <Bell speed={1.5} size={48} />
@@ -50,7 +46,6 @@ export default function IconsFixture() {
           </span>
         </AnimateIcon>
       </section>
-      {/* Paths drawn with pathLength rest solid (pathClassName). */}
       <section data-testid="path" className="flex items-center gap-4">
         <button type="button" onClick={() => setDrawn(true)}>
           Draw

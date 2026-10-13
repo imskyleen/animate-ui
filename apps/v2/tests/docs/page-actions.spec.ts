@@ -5,7 +5,6 @@ test('the page menu opens the page elsewhere', async ({ page }) => {
   await page.getByRole('button', { name: 'More page actions' }).click();
   const item = (name: string) => page.getByRole('menuitem', { name });
   await expect(item('Open in Claude')).toBeVisible();
-  // The demo as a registry item, for v0.
   await expect(item('Open in v0')).toHaveAttribute(
     'href',
     /v0\.dev\/chat\/api\/open\?url=.*demo-radix-ui-accordion\.json/,

@@ -8,7 +8,6 @@ const open = (page: Page) =>
 const toggle = (page: Page) =>
   page.getByRole('button', { name: /Show (more|less)/ });
 
-/** The AutoHeight element sits right before the toggle button. */
 const height = (page: Page) =>
   toggle(page).evaluate(
     (button) => button.previousElementSibling!.getBoundingClientRect().height,
@@ -28,10 +27,6 @@ const contentHeight = (page: Page) =>
     );
   });
 
-/**
- * Clicks the toggle and records the AutoHeight's height on every frame for
- * `ms`, in the page (it holds up on a busy machine).
- */
 async function recordToggle(page: Page, ms = 1500) {
   return toggle(page).evaluate(async (button, ms) => {
     const box = button.previousElementSibling as HTMLElement;
@@ -50,8 +45,6 @@ test.describe('animate-ui auto height', () => {
   test('springs smoothly to the new content height', async ({ page }) => {
     await open(page);
     const start = await height(page);
-    // The demo blurs the old content out first (v1's demo), then the height
-    // springs to the new content.
     const heights = await recordToggle(page);
     const target = await contentHeight(page);
     expect(target).toBeGreaterThan(start + 20);
@@ -63,7 +56,6 @@ test.describe('animate-ui auto height', () => {
     await open(page);
     const start = await height(page);
     await toggle(page).click();
-    // Grown to the long content (after the old content has blurred out).
     await expect.poll(() => height(page)).toBeGreaterThan(start + 20);
     await expect
       .poll(async () =>
@@ -83,7 +75,6 @@ test.describe('animate-ui auto height', () => {
     const heights = await recordToggle(page);
     const target = await contentHeight(page);
     expect(Math.abs(heights.at(-1)! - target)).toBeLessThan(1.5);
-    // No frame in between: it jumps once the new content is in.
     expect(heights.some((h) => h > start + 2 && h < target - 2)).toBe(false);
   });
 });

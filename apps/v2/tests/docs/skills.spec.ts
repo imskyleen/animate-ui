@@ -32,13 +32,11 @@ test('the skills page installs the skill with the skills CLI, in each package ma
 });
 
 test('the repository holds one skill the skills CLI finds: skills/animate-ui', () => {
-  // `skills add imskyleen/animate-ui` installs every skill under skills/.
   expect(readdirSync(SKILLS)).toEqual(['animate-ui']);
   const skill = readFileSync(join(SKILLS, 'animate-ui/SKILL.md'), 'utf8');
   const frontmatter = skill.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
   expect(frontmatter).toMatch(/^name: animate-ui$/m);
   const description = frontmatter.match(/^description: (.+)$/m)?.[1] ?? '';
-  // skills.sh's index takes descriptions of up to 1024 characters.
   expect(description.length).toBeGreaterThan(0);
   expect(description.length).toBeLessThanOrEqual(1024);
 });

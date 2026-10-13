@@ -11,18 +11,7 @@ import {
   type IndicatorAnimationProps,
 } from '../../../internal/controls/indicator';
 
-// Same API as Radix's Radio Group, animated like Animate UI v1's radio group:
-// items scale to 0.97 while pressed (no hover scale), and the
-// Indicator's dot pops in (scale and opacity from 0, spring stiffness 200,
-// damping 16) and out the same way, staying mounted until it has left. Only
-// choosing animates: selected as it appears, the dot is at rest.
-
-/** Animate UI's additions to `RadioGroup.Item`. */
 type ItemAnimationProps = {
-  /**
-   * Transition of the press scale. Defaults to a spring (stiffness 550,
-   * damping 30).
-   */
   transition?: Transition;
 };
 
@@ -32,7 +21,6 @@ type RadioGroupItemProps = RadioGroupPrimitive.RadioGroupItemProps &
 type RadioGroupIndicatorProps = RadioGroupPrimitive.RadioGroupIndicatorProps &
   IndicatorAnimationProps;
 
-// Nothing animates on the group itself.
 const Root = RadioGroupPrimitive.Root;
 
 function Item(
@@ -88,8 +76,6 @@ function Indicator({
 
   return (
     <ReducedMotionConfig>
-      {/* Always mounted for Radix: the presence below decides, from the
-          data-state Radix passes down. */}
       <RadioGroupPrimitive.Indicator {...props} forceMount asChild>
         <RadixIndicator
           keepMounted={forceMount}
@@ -123,8 +109,6 @@ function RadixIndicator(
 const createRadioGroupScope: typeof RadioGroupPrimitive.createRadioGroupScope =
   RadioGroupPrimitive.createRadioGroupScope;
 
-// Radix's unstable composition API, untouched (an Indicator inside it still
-// animates).
 const unstable_RadioGroupItemProvider =
   RadioGroupPrimitive.unstable_RadioGroupItemProvider;
 const unstable_RadioGroupItemTrigger =

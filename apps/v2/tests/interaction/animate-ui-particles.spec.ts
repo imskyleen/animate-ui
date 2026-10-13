@@ -23,7 +23,6 @@ test.describe('animate-ui particles', () => {
         ),
       )
       .toEqual([0, 0, 0, 0, 0, 0]);
-    // The button reports its pressed state.
     await expect(page.getByRole('button', { name: 'Liked' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -70,18 +69,14 @@ test.describe('animate-ui particles', () => {
     );
     const after = frames.at(-1)!.width;
     expect(after).toBeGreaterThan(before + 3);
-    // The width glides: several frames strictly between the two sizes.
     const between = frames.filter(
       (f) => f.width > before + 0.5 && f.width < after - 0.5,
     );
     expect(between.length).toBeGreaterThan(4);
-    // Both words show together for a while: one leaves as the other comes in.
     expect(frames.some((f) => f.words === 2)).toBe(true);
     expect(frames.at(-1)!.words).toBe(1);
-    // The heart pops past its size, then settles.
     expect(Math.max(...frames.map((f) => f.heart))).toBeGreaterThan(1.15);
     expect(frames.at(-1)!.heart).toBeCloseTo(1, 3);
-    // The button itself stays mounted (it is not re-created to replay the burst).
     expect(
       await page.evaluate(
         () => (window as unknown as { __button: Element }).__button.isConnected,

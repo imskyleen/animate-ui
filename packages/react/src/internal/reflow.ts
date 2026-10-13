@@ -6,52 +6,26 @@ import { animate, type Transition } from 'motion/react';
 import { motionTokens, toCssTiming } from '../utils/motion';
 import { glideFrom, stopGlide, whenLanded } from './glide';
 
-// A row of chips (a Base UI combobox's chips, React Aria's tags) and what
-// follows them (the input): adding a chip or removing one moves the others.
-// They glide from where they were to where they land, and a removed chip
-// leaves through a copy of itself, shrinking in place out of the flow while
-// the others close its gap. When the row wraps onto a line more, or one less,
-// the box around it (the field) grows or shrinks on the same spring instead
-// of jumping. An added chip pops in on its own (its part plays it), from
-// CHIP_SCALE. A placeholder showing up as its input glides (the last chip
-// removed) waits for the input to land, then fades in where it rests: it
-// doesn't ride along.
-
-/** A chip popping in starts at half its size, and a removed one ends there. */
 const CHIP_SCALE = 0.5;
-/** A chip popping in: the popovers' spring. */
 const CHIP_TRANSITION: Transition = motionTokens.spring.pop;
-/** A removed chip shrinking out, quicker than it came. */
 const CHIP_EXIT_TRANSITION: Transition = motionTokens.transition.popOut;
-/** The others making room or closing the gap: quick, without overshoot. */
 const REFLOW_TRANSITION: Transition = motionTokens.spring.reflow;
-/** A placeholder showing up, once its input is there: fading in place. */
 const PLACEHOLDER_TRANSITION: Transition = motionTokens.transition.reveal;
-/** ...from a light blur, like a short label coming in place. */
 const PLACEHOLDER_BLUR = motionTokens.blur.icon;
 
-/** Copies of removed chips, still leaving. */
 const copies = new WeakSet<Element>();
-/** Running resizes, by container. */
 const resizes = new WeakMap<Element, Animation>();
-/** Inputs whose placeholder is coming in: ends it at once. */
 const entering = new WeakMap<HTMLElement, () => void>();
 
-/**
- * On an input while its placeholder comes in: hidden until the input lands,
- * then fading in through these variables.
- */
 const PLACEHOLDER_ENTERING = 'data-placeholder-entering';
 const PLACEHOLDER_OPACITY = '--animate-ui-placeholder-opacity';
 const PLACEHOLDER_FILTER = '--animate-ui-placeholder-filter';
 
-/** What a chip row needs on the page: the parts laying chips out render it. */
 const REFLOW_STYLE = {
   href: 'animate-ui-reflow',
   css: `[${PLACEHOLDER_ENTERING}]::placeholder { opacity: var(${PLACEHOLDER_OPACITY}, 0) !important; filter: var(${PLACEHOLDER_FILTER}, none); }`,
 };
 
-/** A text field showing its placeholder. */
 function hasPlaceholder(item: HTMLElement) {
   const field = item as Partial<HTMLInputElement>;
   return (
@@ -61,23 +35,16 @@ function hasPlaceholder(item: HTMLElement) {
   );
 }
 
-/** Shows `input`'s placeholder as it is, if it was coming in. */
 function showPlaceholder(input: HTMLElement) {
   entering.get(input)?.();
 }
 
-/**
- * Brings `input`'s placeholder in: hidden until `input` lands from its glide,
- * then fading in where it rests, from a light blur (only fading under
- * reduced motion).
- */
 function enterPlaceholder(
   input: HTMLElement,
   fade: Transition,
   reduce: boolean,
 ) {
   showPlaceholder(input);
-  // To its own opacity.
   const opacity = Number(getComputedStyle(input, '::placeholder').opacity);
   input.setAttribute(PLACEHOLDER_ENTERING, '');
   let fading: { stop: () => void } | null = null;
@@ -109,7 +76,6 @@ function enterPlaceholder(
   });
 }
 
-/** The CSS `height` that gives `container` a box `height` px tall. */
 function cssHeight(container: HTMLElement, height: number) {
   const style = getComputedStyle(container);
   if (style.boxSizing === 'border-box') return height;
@@ -122,11 +88,6 @@ function cssHeight(container: HTMLElement, height: number) {
   );
 }
 
-/**
- * Grows or shrinks `container` from the `from` px height it had to the one
- * it now has, and returns where its items are at its start: wherever its
- * free space puts them (a centered row), they glide with it from there.
- */
 function resize(
   container: HTMLElement,
   items: HTMLElement[],
@@ -135,7 +96,6 @@ function resize(
   glide: Transition,
 ) {
   const start = `${cssHeight(container, from)}px`;
-  // Held at its height before, while its items are measured.
   const inline = container.style.height;
   container.style.height = start;
   const held = new Map(
@@ -155,7 +115,6 @@ function resize(
   return held;
 }
 
-/** The element laying `element` out: itself, or its closest box (not `display: contents`). */
 function layoutBox(element: HTMLElement): HTMLElement {
   let box = element;
   while (box.parentElement && getComputedStyle(box).display === 'contents')
@@ -163,7 +122,6 @@ function layoutBox(element: HTMLElement): HTMLElement {
   return box;
 }
 
-/** The boxes laid out in `container`: its children, through `display: contents` ones. */
 function layoutItems(container: Element): HTMLElement[] {
   return Array.from(container.children).flatMap((child) => {
     if (!(child instanceof HTMLElement) || copies.has(child)) return [];
@@ -181,13 +139,11 @@ type Leaving = {
   reduce: boolean;
 };
 
-/** Puts a removed chip's copy where it was, out of the flow, and lets it go. */
 function leaveThrough(
   container: HTMLElement,
   { copy, rect, transition, reduce }: Leaving,
 ) {
   copies.add(copy);
-  // Only seen: no id or test id twice on the page.
   for (const element of [
     copy,
     ...copy.querySelectorAll('[id], [data-testid]'),
@@ -195,8 +151,6 @@ function leaveThrough(
     element.removeAttribute('id');
     element.removeAttribute('data-testid');
   }
-  // Not a chip anymore: what counts the field's chips doesn't count it
-  // (shadcn/ui's field narrows its padding while it holds one).
   copy.removeAttribute('data-slot');
   copy.setAttribute('aria-hidden', 'true');
   copy.setAttribute('inert', '');
@@ -212,14 +166,10 @@ function leaveThrough(
     pointerEvents: 'none',
   });
   container.appendChild(copy);
-  // Measured once in: wherever its containing block is.
   const at = copy.getBoundingClientRect();
   copy.style.left = `${rect.left - at.left}px`;
   copy.style.top = `${rect.top - at.top}px`;
-  // Without Web Animations (a test DOM), it goes at once.
   if (typeof copy.animate !== 'function') return copy.remove();
-  // One animation for both, from where it is (a chip still popping in):
-  // they move on the same progress.
   const { duration, easing } = toCssTiming(transition);
   const animation = copy.animate(
     reduce ? { opacity: 0 } : { opacity: 0, scale: String(CHIP_SCALE) },
@@ -231,17 +181,9 @@ function leaveThrough(
   );
 }
 
-/**
- * A chip row's reflow: its chips tell it when one is about to be added
- * (`measure`, while it renders) and once it is (`settle`), and when one is
- * about to be removed (`leave`, while it's still on the page).
- */
 type Reflow = {
-  /** Where everything is, before the page changes. */
   measure: () => void;
-  /** A chip was added: what moved glides, before the next frame. */
   settle: () => void;
-  /** A chip is about to leave the page: it leaves through a copy. */
   leave: (
     element: HTMLElement,
     transition: Transition,
@@ -250,27 +192,19 @@ type Reflow = {
 };
 
 type ReflowOptions = {
-  /**
-   * The element laying the chips out, when it's known. Otherwise, a removed
-   * chip's parent box.
-   */
   container: () => HTMLElement | null;
   glide: Transition;
-  /** A placeholder showing up, once its input is there. */
   fade: Transition;
   reduce: boolean;
 };
 
 function createReflow(options: () => ReflowOptions): Reflow {
   let before: Map<HTMLElement, DOMRect> | null = null;
-  /** The inputs showing their placeholder, before. */
   let shown = new Set<HTMLElement>();
-  /** The container's height, before (on screen: resizing, maybe). */
   let height = 0;
   let frame = 0;
   let scheduled = false;
   let leaving: Leaving[] = [];
-  /** The container measured, for the next settle. */
   let target: HTMLElement | null = null;
 
   const measure = (container = options().container()) => {
@@ -279,11 +213,9 @@ function createReflow(options: () => ReflowOptions): Reflow {
     height = container.getBoundingClientRect().height;
     const items = layoutItems(container);
     before = new Map(items.map((item) => [item, item.getBoundingClientRect()]));
-    // To the eye: not one still coming in.
     shown = new Set(
       items.filter((item) => hasPlaceholder(item) && !entering.has(item)),
     );
-    // Measured for a change that didn't come (a render React dropped).
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(() => {
       if (!scheduled) before = target = null;
@@ -301,12 +233,9 @@ function createReflow(options: () => ReflowOptions): Reflow {
     if (!container?.isConnected) return;
     const { glide, fade, reduce } = options();
     const items = layoutItems(container);
-    // Where everything rests now: the glides and the resize running stop.
     for (const item of items) stopGlide(item);
     resizes.get(container)?.cancel();
     const now = container.getBoundingClientRect().height;
-    // Onto a line more, or one less: its height glides too (without Web
-    // Animations, a test DOM, it's at its height at once).
     const resized =
       from !== null &&
       !reduce &&
@@ -315,14 +244,11 @@ function createReflow(options: () => ReflowOptions): Reflow {
     const held = resized ? resize(container, items, height, now, glide) : null;
     for (const item of items) {
       const start = reduce ? undefined : from?.get(item);
-      // From where it was (gliding, maybe) to where it lands.
       if (start) glideFrom(item, start, glide, held?.get(item));
-      // A placeholder showing up comes in where its input lands, once there.
       if (from && hasPlaceholder(item) && !shown.has(item))
         enterPlaceholder(item, fade, reduce);
       else showPlaceholder(item);
     }
-    // Still on the page: it wasn't removed (a ref handed over).
     for (const item of gone)
       if (!item.element.isConnected) leaveThrough(container, item);
   };
@@ -356,14 +282,11 @@ function createReflow(options: () => ReflowOptions): Reflow {
   };
 }
 
-/** A chip row's reflow, for its chips (see `Reflow`). */
 function useReflow(options: ReflowOptions): Reflow {
   const optionsRef = React.useRef(options);
   React.useLayoutEffect(() => {
     optionsRef.current = options;
   });
-  // Read while a chip renders, on purpose: where everything is before the
-  // page changes.
   // eslint-disable-next-line react-hooks/refs
   const [reflow] = React.useState(() => createReflow(() => optionsRef.current));
   return reflow;

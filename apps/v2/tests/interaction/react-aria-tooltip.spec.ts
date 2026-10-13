@@ -10,7 +10,6 @@ import {
 const PATH = '/tests/demos/react-aria/tooltip';
 const CONTENT = '[data-slot="tooltip-content"]';
 const FIXTURE = '/tests/fixtures/react-aria-tooltip';
-/** The fixture's toolbar of tooltips (the demo has a single one). */
 const TOOLBAR = '[data-testid="toolbar-content"]';
 
 describeAnchoredOverlay('react-aria tooltip demo', {
@@ -19,12 +18,9 @@ describeAnchoredOverlay('react-aria tooltip demo', {
   kind: 'tooltip',
   open: (page) => page.getByRole('button', { name: 'Hover' }).hover(),
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
-  // React Aria's TooltipTrigger waits 500ms (its default) before closing.
   closeDelay: 500,
 });
 
-// React Aria's own warmup: once a tooltip has shown, the next one along the
-// toolbar swaps in at once (React Aria asks to skip the animations).
 test.describe('react-aria tooltip warmup', () => {
   test.describe.configure({ timeout: 180_000 });
   test.beforeEach(async ({ page }) => {
@@ -70,9 +66,7 @@ test.describe('react-aria tooltip API', () => {
     await expect(page.getByTestId('controlled-open')).toHaveText('open');
     await expect(content).toBeVisible();
     await expect(content).toHaveClass(/is-open/);
-    // Tooltip state on the Tooltip itself follows too.
     await expect(page.getByTestId('own-state-content')).toBeVisible();
-    // The isExiting render prop shows up while the exit plays.
     const sawExiting = page.evaluate(
       () =>
         new Promise<boolean>((resolve) => {
@@ -112,7 +106,6 @@ test.describe('react-aria tooltip API', () => {
   });
 
   test('keyboard focus opens it, Escape closes it', async ({ page }) => {
-    // Fresh page, no pointer moves: keyboard modality from the start.
     await page.goto(FIXTURE, {
       waitUntil: 'networkidle',
       timeout: 150_000,

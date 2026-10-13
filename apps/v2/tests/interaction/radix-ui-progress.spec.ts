@@ -37,7 +37,6 @@ test.describe('radix-ui progress API', () => {
 
   test('a custom transition is used', async ({ page }) => {
     await page.getByRole('button', { name: 'Complete' }).click();
-    // 1.5s linear tween: about a fifth of the way after 300ms.
     await page.waitForTimeout(300);
     const value = await revealed(page, '[data-testid="slow-indicator"]');
     expect(value).toBeGreaterThan(0.55);

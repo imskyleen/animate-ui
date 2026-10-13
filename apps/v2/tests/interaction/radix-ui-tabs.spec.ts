@@ -20,9 +20,6 @@ test.describe('radix-ui tabs, the panel leaving', () => {
     page,
   }) => {
     await gotoTabs(page, '/tests/demos/radix-ui/tabs');
-    // Uncontrolled, Radix reports the new value from an effect, a commit
-    // late: in that commit the leaving panel was unmounted, then mounted
-    // again (what it was doing, its Card's glide and fades, was lost).
     await page.evaluate(() => {
       const w = window as unknown as { __mutations: string[] };
       w.__mutations = [];
@@ -38,7 +35,6 @@ test.describe('radix-ui tabs, the panel leaving', () => {
       (window as unknown as { __card: Element }).__card = el;
     });
     await page.getByRole('tab', { name: 'Analytics' }).click();
-    // Still leaving: the same Card, fading out.
     expect(
       await card.evaluate(
         (el) => el === (window as unknown as { __card: Element }).__card,
@@ -47,8 +43,6 @@ test.describe('radix-ui tabs, the panel leaving', () => {
     await expect(
       page.getByRole('tabpanel').filter({ hasText: 'Analytics' }),
     ).toBeVisible();
-    // Nothing in it was mounted again on the way out (it's emptied once
-    // gone, as Radix does).
     const mutations = await page.evaluate(
       () => (window as unknown as { __mutations: string[] }).__mutations,
     );
@@ -67,7 +61,6 @@ test.describe('radix-ui tabs API', () => {
     await expect(page.getByTestId('controlled-value')).toHaveText('b');
     await expect(section.getByText('Controlled panel b')).toBeVisible();
     await expect(section.getByText('Controlled panel a')).toHaveCount(0);
-    // Changed from outside the tabs.
     await page.getByRole('button', { name: 'Select a' }).click();
     await expect(
       section.getByRole('tab', { name: 'Controlled a' }),

@@ -16,29 +16,12 @@ import {
   recordTimeline,
 } from './modal-timeline';
 
-// shadcn/ui's Sheet, on each library's Dialog (Radix UI's and Base UI's
-// Dialog, React Aria's Modal), as `animate-ui animate sheet` leaves it: the
-// demos are shadcn's docs demos (sheet-demo, sheet-side,
-// sheet-no-close-button). Animate UI's Sheet motion:
-//
-// - the overlay fades in like a dialog's: its tint and backdrop blur grow
-//   from 0 together (never its opacity), in 400ms on a soft ease-out, and
-//   clear the same way, outlasting the sheet, clear before it unmounts;
-// - the sheet slides in from its side by its own size and fades in, in 0.4s
-//   on a soft ease-out, never past its rest; dismissed (Escape, the overlay,
-//   a close button), it speeds off its edge like a dismissed dialog (0.2s, a
-//   steady push), fading out, then unmounts;
-// - reopened while it leaves, it slides back from where it is;
-// - under reduced motion, it fades in place.
-
 const SHEET = '[data-slot="sheet-content"]';
 const OVERLAY = '[data-slot="sheet-overlay"]';
-/** shadcn/ui's overlay: `bg-black/10 backdrop-blur-xs`. */
 const REST = { bg: 0.1, blur: 4 };
 
 const SIDES = Object.keys(SHEET_TRAVEL) as (keyof typeof SHEET_TRAVEL)[];
 
-/** The import diff of a page's Manual installation: `-`, `+` or ` ` lines. */
 async function importDiff(page: Page, path: string) {
   await page.goto(path, { waitUntil: 'networkidle' });
   await page
@@ -57,7 +40,6 @@ async function importDiff(page: Page, path: string) {
 
 export function sheetCases(
   library: 'radix-ui' | 'base-ui' | 'react-aria',
-  /** The Manual installation's swapped lines, as shadcn/ui writes them. */
   install: string[],
 ) {
   const demo = (name: string) => `/tests/demos/${library}/${name}`;
@@ -86,10 +68,7 @@ export function sheetCases(
         .toBeCloseTo(REST.bg, 3);
       const frames = await timeline.stop();
       expectSheetEntrance(frames, 'right');
-      // Its curve, as Motion handed it to the browser.
       expectAnimationCurve(await timeline.timing('content'), SHEET_CURVE);
-      // The overlay: from nothing, its tint and blur together, never its
-      // opacity, at a dialog's pace.
       expect(present(frames, 'overlay')[0]!.samples.overlay!.bg).toBeLessThan(
         REST.bg * 0.1,
       );
@@ -98,7 +77,6 @@ export function sheetCases(
       const rest = await readState(page, OVERLAY);
       expect(rest.opacity).toBe(1);
       expect(rest.backdrop).toBe(REST.blur);
-      // Its content is reachable at once: focus is in the sheet.
       await expect(page.getByRole('dialog')).toBeVisible();
     });
 
@@ -116,12 +94,10 @@ export function sheetCases(
       await expect(page.locator(OVERLAY)).toHaveCount(0, { timeout: 2500 });
       const frames = await timeline.stop();
       expectSheetExit(frames, 'right');
-      // A dismissed dialog's curve, as Motion handed it to the browser.
       expectAnimationCurve(await timeline.timing('content'), DISMISS_CURVE);
       expectProgressiveOverlay(frames, REST);
       expectDialogLikeOverlay(frames, { rest: REST.bg, leaving: true });
       expectClearBeforeUnmount(frames, REST);
-      // The sheet is out of sight well before the overlay has cleared.
       const sheetGone = frames.find(
         (frame) => (frame.samples.content?.opacity ?? 0) < 0.02,
       )!.t;
@@ -137,7 +113,6 @@ export function sheetCases(
     }) => {
       await open(page);
       const timeline = await recordTimeline(page, { content: SHEET });
-      // The overlay, left of the sheet.
       await page.mouse.click(5, 5);
       await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
       expectSheetExit(await timeline.stop(), 'right');
@@ -153,7 +128,6 @@ export function sheetCases(
         .click();
       await expect(page.locator(SHEET)).toHaveCount(0, { timeout: 2500 });
       await open(page);
-      // The footer's Close, after the corner's.
       await page
         .locator(SHEET)
         .getByRole('button', { name: 'Close', exact: true })
@@ -165,29 +139,20 @@ export function sheetCases(
     test('reopened while it leaves, it slides back in from where it is', async ({
       page,
     }) => {
-      // Radix holds a click's "pointer down outside" until the click: the
-      // trigger's click during the exit reopened it, then that held event
-      // closed it again (create-radix-modal ignores presses that start
-      // while it's closed).
       const trigger = page.getByRole('button', { name: 'Open', exact: true });
-      // Where the trigger is (hidden from the accessibility tree while the
-      // sheet is open): clicked through the clearing overlay, at once.
       const box = (await trigger.boundingBox())!;
       await open(page);
       const timeline = await recordTimeline(page, { content: SHEET });
       await page.keyboard.press('Escape');
-      // Part way out (its exit takes 0.2s).
       await page.waitForTimeout(80);
       await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
       await expectSheetSettled(page, SHEET, 'right');
       const frames = await timeline.stop();
-      // In the page all along, never back at its edge: it turned around.
       expect(present(frames, 'content')).toHaveLength(frames.length);
       const way = frames.map((frame) => frame.samples.content!.x);
       const furthest = Math.max(...way);
       expect(furthest).toBeGreaterThan(0.05);
       expect(furthest).toBeLessThan(0.9);
-      // Back in from there, without jumping: no frame-to-frame leap.
       const turn = way.indexOf(furthest);
       for (let i = turn + 1; i < way.length; i++)
         expect(way[i]!).toBeLessThanOrEqual(way[i - 1]! + 0.002);

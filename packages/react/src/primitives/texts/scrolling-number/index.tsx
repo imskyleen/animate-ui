@@ -131,7 +131,6 @@ function ScrollingNumberContainer({
         {...props}
       >
         {children}
-        {/* The wheel is aria-hidden: screen readers get the number once. */}
         <span className="sr-only" style={VISUALLY_HIDDEN}>
           {formatter.format(number)}
         </span>
@@ -167,19 +166,12 @@ function ScrollingNumberHighlight({
 }
 
 type ScrollingNumberProps = HTMLMotionProps<'div'> & {
-  /** Delay before the wheel spins, in milliseconds. */
   delay?: number;
-  /** Called once the wheel (nearly) lands on `number`. */
   onCompleted?: () => void;
 };
 
 const DEFAULT_TRANSITION: Transition = { stiffness: 90, damping: 30 };
 
-/**
- * A `transition` without a `type` or an `ease` is a set of spring options
- * (the original API, fed to `useSpring`): animate it as a spring, with
- * `useSpring`'s rest thresholds so it settles exactly like one.
- */
 function resolveTransition(transition: Transition): Transition {
   if ('type' in transition || 'ease' in transition) return transition;
   return {
@@ -229,7 +221,6 @@ function ScrollingNumberContent({
   } = useScrollingNumber();
   const reduce = useShouldReduceMotion();
 
-  // btt / rtl move the strip forward (positive), ttb / ltr backward.
   const sign = direction === 'ttb' || direction === 'ltr' ? -1 : 1;
   const initialPosition = -sign * itemsSize * sideItemsCount;
   const finalPosition = sign * itemsSize * (range.length - displayedItemsCount);
@@ -239,8 +230,6 @@ function ScrollingNumberContent({
     isVertical ? `translateY(${p}px)` : `translateX(${p}px)`,
   );
 
-  // Read when the spin starts: a new inline transition object on every
-  // render must not restart it.
   const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
   const transitionRef = React.useRef(transition ?? defaultTransition);
   React.useEffect(() => {
@@ -250,14 +239,11 @@ function ScrollingNumberContent({
   React.useEffect(() => {
     if (!isInView) return;
 
-    // Under reduced motion the wheel lands on the number right away.
     if (reduce) {
       position.jump(finalPosition);
       return;
     }
 
-    // animate() starts from the current position and velocity, replacing the
-    // running animation: a new `number` retargets the spring mid-spin.
     const timer = setTimeout(() => {
       animate(
         position,
@@ -270,8 +256,6 @@ function ScrollingNumberContent({
 
   React.useEffect(() => () => position.stop(), [position]);
 
-  // Index of the range item (counted from the smallest value) under the
-  // center slot.
   const indexAt = (p: number) => (sign * p) / itemsSize + sideItemsCount;
   const lastNumberRef = React.useRef<number | null>(null);
   const completedRef = React.useRef(false);
@@ -298,8 +282,6 @@ function ScrollingNumberContent({
 
   return (
     <motion.div
-      // The strip lists every value it passes: screen readers read the
-      // container's final number instead.
       aria-hidden="true"
       data-slot="scrolling-number"
       style={{

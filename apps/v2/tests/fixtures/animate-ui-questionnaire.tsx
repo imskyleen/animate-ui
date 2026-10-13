@@ -20,42 +20,6 @@ import {
   QuestionnaireTitle,
 } from '@/demos/base-ui/questionnaire';
 
-// @animate-ui/react/primitives/questionnaire's API, through shadcn/ui's
-// questionnaire (the Base UI demo's parts), for
-// tests/interaction/animate-ui-questionnaire.spec.ts. Three questions of
-// different heights: "Pick a color" (required), "Any extras?" (multiple,
-// optional: Skip shows) and "Which size?" (required, last). `data-testid`
-// on each section:
-//
-// - controlled: `item` and `onItemChange`, its calls listed in
-//   `controlled-calls`; the buttons "Show <name>" set `item` from outside;
-// - resume: `defaultItem="extras"`, Green and Olives checked by default;
-// - custom-progress: a Progress of its own (`render`: "Step 1/3");
-// - tempo: inside `AnimateUIProvider tempo={2}`;
-// - reset: reset by the spec (`form.reset()`);
-// - submit: its FormData, once submitted, in `submit-data` (JSON);
-// - rtl: right to left;
-// - progress-in-items: a Progress in each question, none above them
-//   (shadcn/ui's card and dialog examples);
-// - navigation-state: shadcn/ui's navigation-state example on "Pick a color"
-//   and "Which size?" (both required, controlled): Next (secondary,
-//   `data-[status=unanswered]:opacity-50`) and Submit disabled while the
-//   question shown is unanswered (the Button's `disabled:opacity-50`); the
-//   buttons "Go to <name>" set `item` from outside;
-// - inline-styles: the form and the actions row `position: static` inline,
-//   "Pick a color" `width: 400px; margin-bottom: 6px` inline, Next
-//   `width: 120px` inline (`style` props);
-// - content-box: questions `box-sizing: content-box`, with a 2px border and
-//   14px of padding;
-// - fractional: 400.39px wide (the questions and the buttons at fractions
-//   of a pixel);
-// - jump-back: "Pick a color" and "Which size?" (both required), resumed on
-//   "Which size?" with Large checked: Submit goes back to "Pick a color",
-//   its error showing;
-// - conditional: shadcn/ui's conditional example: "Where should it run?"
-//   (Local checked), "Which environment?" (enabled by Cloud only) and
-//   "When to ask?".
-
 type Question = {
   name: string;
   title: string;
@@ -92,15 +56,10 @@ const QUESTIONS: Question[] = [
 const [COLOR, , SIZE] = QUESTIONS as [Question, Question, Question];
 
 type FlowProps = React.ComponentProps<typeof Questionnaire> & {
-  /** A Progress of its own, in place of the default one. */
   progress?: React.ReactNode;
-  /** The choices checked by default, by question. */
   defaults?: Record<string, string[]>;
-  /** Its questions (the three by default). */
   questions?: Question[];
-  /** A Progress in each question (none above them). */
   progressInItems?: boolean;
-  /** Each question's own props. */
   itemProps?: (
     question: Question,
   ) => Partial<React.ComponentProps<typeof QuestionnaireItem>>;
@@ -224,7 +183,6 @@ function Submitted() {
   );
 }
 
-/** shadcn/ui's navigation-state example, on two required questions. */
 function NavigationState() {
   const [item, setItem] = React.useState('color');
   const [statuses, setStatuses] = React.useState<
@@ -263,7 +221,6 @@ function NavigationState() {
   );
 }
 
-/** shadcn/ui's conditional example: Cloud adds a question. */
 function Conditional() {
   const [runtime, setRuntime] = React.useState('local');
   const items = React.useMemo(

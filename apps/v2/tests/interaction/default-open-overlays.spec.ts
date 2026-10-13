@@ -1,10 +1,6 @@
 import { test } from '@playwright/test';
 import { expectEntranceOnLoad, type EntranceKind } from './anchored-overlay';
 
-// Overlays open from the start (`defaultOpen`, a menubar's or navigation
-// menu's `defaultValue`) play their entrance on page load, like Animate UI v1.
-// One overlay per page: tests/fixtures/default-open-overlays.tsx.
-
 const FIXTURE = '/tests/fixtures/default-open-overlays';
 const OVERLAY = '[data-testid="overlay"]';
 

@@ -31,18 +31,9 @@ import {
   type RootMotion,
 } from '../select/motion';
 
-// Same API as Base UI's Combobox, animated like Animate UI v1's Base UI Menu
-// (see ../select/motion.tsx). A chip added to the selection pops in, a
-// removed one shrinks out, and the others (the input too) glide to make
-// room or close the gap (internal/reflow). With an `actionsRef`, Base UI
-// keeps the popup mounted until we unmount it after the exit animation; it
-// also waits until then to reset the query and sync the input, so the list
-// doesn't change while it fades out.
-
 const RootContext = React.createContext<RootMotion | null>(null);
 
 type ChipsMotion = {
-  /** True once the Chips have mounted: later chips were just added. */
   mounted: React.RefObject<boolean>;
   reflow: Reflow;
 };
@@ -102,22 +93,17 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
 }
 
 declare namespace Popup {
-  /** Base UI's props, but `render`: Animate UI renders the popup. */
   type Props = Omit<ComboboxPrimitive.Popup.Props, 'render'> &
     PopupAnimationProps;
   type State = ComboboxPrimitive.Popup.State;
 }
 
-// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
 function PopupMotion({ transition, exitTransition, ...props }: Popup.Props) {
   const root = React.use(RootContext);
   const render = usePopupRender(root, { transition, exitTransition });
   return <ComboboxPrimitive.Popup {...props} render={render} />;
 }
 
-// An item's check draws itself when the item is chosen and erases itself
-// when it's not anymore (with `pop`, it pops in and out, and a single
-// selection's check glides to the chosen item), while a closing list holds.
 function ItemIndicator({
   render,
   animation,
@@ -132,7 +118,6 @@ function ItemIndicator({
   return (
     <ComboboxPrimitive.ItemIndicator
       {...props}
-      // Kept mounted, to hide itself when its item isn't chosen anymore.
       keepMounted
       render={(elementProps, state) => (
         <IndicatorMotion
@@ -148,7 +133,6 @@ function ItemIndicator({
   );
 }
 
-/** Takes part in the list's highlight (pointer and arrow keys alike). */
 function Item(props: Item.Props) {
   return <ComboboxPrimitive.Item {...useHighlightedItem(props)} />;
 }
@@ -163,8 +147,6 @@ declare namespace ItemIndicator {
   type State = ComboboxPrimitive.ItemIndicator.State;
 }
 
-// Lays the chips out: they glide in it when one is added or removed, and the
-// input's placeholder showing up fades in once the input is there.
 function Chips({ ref, ...props }: Chips.Props) {
   const mountedRef = React.useRef(false);
   React.useEffect(() => {
@@ -206,23 +188,11 @@ declare namespace Chips {
   type State = ComboboxPrimitive.Chips.State;
 }
 
-/** Animate UI's additions to `Chip`. */
 type ChipAnimationProps = {
-  /**
-   * Transition of a chip being added: it pops in from half its size. Defaults
-   * to a spring (stiffness 400, damping 29).
-   */
   transition?: Transition;
-  /**
-   * Transition of a removed chip shrinking out. Defaults to 0.15s on a
-   * strong ease-out.
-   */
   exitTransition?: Transition;
 };
 
-// A chip added to the selection pops in from half its size; chips already
-// there on mount don't. A removed one (with its remove button or Backspace)
-// shrinks out in place, out of the flow, while the others close the gap.
 function Chip(props: Chip.Props) {
   return (
     <ReducedMotionConfig>
@@ -231,7 +201,6 @@ function Chip(props: Chip.Props) {
   );
 }
 
-// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
 function AnimatedChip({
   ref,
   transition,
@@ -241,7 +210,6 @@ function AnimatedChip({
   const chips = React.use(ChipsContext);
   const [entering] = React.useState(() => {
     const added = chips?.mounted.current === true;
-    // Where the others are, before this chip pushes them.
     if (added) chips?.reflow.measure();
     return added;
   });
@@ -249,13 +217,11 @@ function AnimatedChip({
   const reduce = useShouldReduceMotion();
   const pop = useTempoTransition(transition ?? CHIP_TRANSITION);
   const out = useTempoTransition(exitTransition ?? CHIP_EXIT_TRANSITION);
-  // Read when it leaves.
   const exitRef = React.useRef({ out, reduce });
   React.useLayoutEffect(() => {
     exitRef.current = { out, reduce };
   });
 
-  // Before paint, so the chip never flashes at full opacity first.
   React.useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element) return undefined;
@@ -269,10 +235,8 @@ function AnimatedChip({
     if (entering) chips?.reflow.settle();
     return () => {
       controls?.stop();
-      // Removed: it leaves through a copy, the others close the gap.
       chips?.reflow.leave(element, exitRef.current.out, exitRef.current.reduce);
     };
-    // Plays once, when the chip mounts.
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, []);
 
@@ -295,14 +259,11 @@ declare namespace Chip {
   type State = ComboboxPrimitive.Chip.State;
 }
 
-// Untouched parts keep Base UI's value and type namespace (`Input.Props`…).
 export import Label = ComboboxPrimitive.Label;
 export import Value = ComboboxPrimitive.Value;
 export import Input = ComboboxPrimitive.Input;
 export import InputGroup = ComboboxPrimitive.InputGroup;
 export import Trigger = ComboboxPrimitive.Trigger;
-// No per-item or height animation: items appear and disappear at once as the
-// query changes (typing is keyboard-driven and high frequency).
 export import List = ComboboxPrimitive.List;
 export import Status = ComboboxPrimitive.Status;
 export import Portal = ComboboxPrimitive.Portal;

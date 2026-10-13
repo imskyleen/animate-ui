@@ -62,8 +62,6 @@ const animations = {
         rotate: -360,
         scale: [1, 0.8, 0.8, 1],
         transition: {
-          // (Critically damped: round without lingering short of it; once
-          // it's smaller.)
           rotate: { type: 'spring', stiffness: 170, damping: 26, delay: 0.1 },
           scale: {
             duration: 1.4,

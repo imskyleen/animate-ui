@@ -20,19 +20,7 @@ import {
 } from '../../../utils/motion';
 import { PROGRESS_TRANSITION } from '../../../internal/progress';
 
-// Same API as React Aria's ProgressBar, animated like Animate UI's Base UI
-// progress (v1 had no React Aria one): the bar's width springs to a new value
-// like Motion UI's progress bar (stiffness 300, damping 35). React Aria only hands its children a
-// `percentage`; the bar itself is your markup, sized with an inline
-// percentage width (`style={{ width: `${percentage}%` }}`, as shadcn/ui and
-// React Aria's docs do). The ProgressBar finds that element and springs its
-// width from the previous value instead of jumping to it.
-
 type ProgressBarProps = AriaProgressBarProps & {
-  /**
-   * Transition of the bar moving to a new value. Defaults to a spring
-   * (stiffness 300, damping 35).
-   */
   transition?: Transition;
 };
 
@@ -63,9 +51,7 @@ function ProgressBar({
 }
 
 type Bar = {
-  /** The width we show, in percent. */
   width: MotionValue<number>;
-  /** The inline width we last wrote (React's own until it animates). */
   written: string;
   controls: AnimationPlaybackControls | null;
 };
@@ -86,20 +72,16 @@ function ProgressBarMotion({
   const [root, setRoot] = React.useState<HTMLDivElement | null>(null);
   const barsRef = React.useRef(new WeakMap<HTMLElement, Bar>());
 
-  // After every commit: a bar whose percentage width React just changed
-  // springs to it from the width it shows.
   React.useLayoutEffect(() => {
     if (!root) return;
     for (const el of root.querySelectorAll<HTMLElement>('[style]')) {
       const inline = el.style.width;
       if (!inline.endsWith('%') || el.childElementCount > 0) continue;
       const bar = barsRef.current.get(el);
-      // Ours, unchanged: React didn't write a new value.
       if (bar?.written === inline) continue;
       const percentage = parseFloat(inline);
       if (!Number.isFinite(percentage)) continue;
       if (!bar) {
-        // First sight: it starts where the value is, no animation.
         const next: Bar = {
           width: motionValue(percentage),
           written: inline,
@@ -112,8 +94,6 @@ function ProgressBarMotion({
         barsRef.current.set(el, next);
         continue;
       }
-      // React wrote a new value: back where it was on this very frame, then
-      // to the new value.
       el.style.width = bar.written;
       bar.controls?.stop();
       if (reduce) {

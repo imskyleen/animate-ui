@@ -37,7 +37,6 @@ test.describe('react-aria slider API', () => {
     await page.mouse.down();
     await expect(thumb).toHaveClass(/dragging/);
     await page.mouse.up();
-    // React Aria's translate(-50%, -50%) still centers it on its value.
     const track = (await page
       .getByTestId('controlled')
       .locator('.react-aria-SliderTrack')

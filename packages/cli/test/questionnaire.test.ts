@@ -5,10 +5,6 @@ import { expect, test } from 'vitest';
 import { findPrimitive, primitiveModule } from '../src/lib/primitives';
 import { transform } from '../src/lib/transform';
 
-// shadcn/ui's Questionnaire imports @shadcn/react's in every base. Animate
-// UI's own questionnaire replaces it with the same API:
-// `"@shadcn/react/questionnaire"` maps to `primitives/questionnaire` (no
-// library folder).
 const SHADCN = '@shadcn/react/questionnaire';
 const QUESTIONNAIRE = '@animate-ui/react/primitives/questionnaire';
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
@@ -35,11 +31,9 @@ for (const library of ['radix-ui', 'base-ui', 'react-aria']) {
       expect(result.imports).toEqual([
         { from: SHADCN, to: QUESTIONNAIRE, name: 'questionnaire' },
       ]);
-      // No CSS animation to remove: the choice's color transition stays.
       expect(result.removedClasses).toEqual([]);
       expect(result.code).toContain('transition-colors');
       expect(result.unsupported).toEqual([]);
-      // Only the import source changes.
       expect(result.code).toBe(input.replace(SHADCN, QUESTIONNAIRE));
     }
   });

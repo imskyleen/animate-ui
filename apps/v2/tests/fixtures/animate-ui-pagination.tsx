@@ -4,69 +4,23 @@ import * as React from 'react';
 import * as PaginationPrimitive from '@animate-ui/react/primitives/pagination';
 import { AnimateUIProvider } from '@animate-ui/react/provider';
 
-// The pagination primitive on its own (no shadcn/ui, no library), for
-// tests/interaction/animate-ui-pagination.spec.ts. Plain links: the current
-// one wears a border, a background and a shadow (the surface copies them),
-// every one has a hover background, a keyboard focus look and a press nudge.
-// `data-testid` on each Root:
-//
-// - controlled: pages 1 to 5 (1 current), set by its links or by the buttons
-//   beside it (`controlled-go-<n>`), and re-rendered by `controlled-rerender`;
-// - tempo: inside `AnimateUIProvider tempo={2}`;
-// - custom: `transition` a 400ms linear tween;
-// - window: 10 pages, keyed by page number, showing 1 … n-1 n n+1 … 10 (its
-//   ellipses wider than a link): a click shifts the numbers in the same
-//   commit (`window-go-<n>` sets the page);
-// - widths: links of different widths and heights;
-// - remount: `remount-button` remounts it (a new key) on another page; its
-//   links are shadcn/ui's (`transition-all`), the current one's border
-//   translucent;
-// - nested-outer, nested-inner: a pagination inside another's links;
-// - scaled: inside `scaled-wrap`, which the spec scales (a nav whose width
-//   isn't a whole number of pixels);
-// - entrance: mounted (on page 3) by `entrance-open` inside `entrance-wrap`,
-//   which comes in like a dialog (perspective, rotateX and scale, 400ms);
-//   its nav padded (taller than its links: tilted, they don't scale alike);
-// - label: a fixed width, "Page" (`label-text`, a text node the spec
-//   rewrites) before the links;
-// - scroll: 8 pages (4 current) in a list overflowing 150px, scrolling;
-// - content-box: links with `box-sizing: content-box` (padding and border);
-// - press: links scaling to 0.97 while pressed (`scale`, eased back over
-//   300ms); press-transform: the same with a `transform`;
-// - percent: links translated by -10% of their height, at rest;
-// - ul-bg: a list (positioned) and items with their own backgrounds;
-// - nested-first-outer, nested-first-inner: the inner pagination before the
-//   outer's links; `nested-first-none` leaves the outer without a current
-//   page;
-// - hidden-dup: a `display: none` copy of its list (the current page marked
-//   too) before the one shown;
-// - restored-layout, restored-effect, restored-ready: mounted by
-//   `restored-toggle` on page 1, set to 3 on mount (a layout effect, an
-//   effect) or once its surface shows, before the page is painted (its Root
-//   ready).
-
 type Transition = React.ComponentProps<
   typeof PaginationPrimitive.Root
 >['transition'];
 
 const LINK =
   'inline-flex h-8 min-w-8 items-center justify-center rounded-md border px-2 text-sm outline-none transition-[translate] duration-150 hover:bg-zinc-200 focus-visible:border-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600/50 active:translate-y-px';
-/** shadcn/ui's outline variant, roughly: what the surface copies. */
 const CURRENT = 'border-zinc-400 bg-white shadow-sm';
-/** shadcn/ui's ghost variant. */
 const OTHER = 'border-transparent';
-/** shadcn/ui's Button transitions everything. */
 const SHADCN_LINK = LINK.replace(
   'transition-[translate] duration-150',
   'transition-all duration-150',
 );
-/** Pressed links easing back over 300ms. */
 const PRESS_LINK = LINK.replace(
   'transition-[translate] duration-150',
   'transition-transform duration-300',
 );
 
-/** A dialog's entrance (Animate UI's): from a tilt and a scale. */
 const ENTRANCE_CSS =
   '@keyframes pagination-entrance{from{transform:perspective(500px) rotateX(-20deg) scale(0.8)}}';
 
@@ -80,21 +34,14 @@ type PagesProps = {
   page: number;
   onPage: (page: number) => void;
   transition?: Transition;
-  /** In the list, after the items. */
   children?: React.ReactNode;
-  /** In the list, before the items. */
   before?: React.ReactNode;
-  /** The links' classes (besides the current or other look). */
   link?: string;
   current?: string;
   other?: string;
-  /** The list's classes. */
   list?: string;
-  /** Each item's classes. */
   item?: string;
-  /** The Root's classes. */
   nav?: string;
-  /** A `display: none` copy of the list first. */
   duplicate?: boolean;
 };
 
@@ -168,7 +115,6 @@ const numbers = (count: number): Item[] =>
     page: i + 1,
   }));
 
-/** Pages 1 to `count` (5), holding their own page (from `initial`, 1). */
 function Uncontrolled({
   initial = 1,
   count = 5,
@@ -219,7 +165,6 @@ function Controlled() {
   );
 }
 
-/** 1 … n-1 n n+1 … 10, keyed by page number. */
 function windowOf(page: number): Item[] {
   const shown = [...new Set([1, page - 1, page, page + 1, 10])]
     .filter((n) => n >= 1 && n <= 10)

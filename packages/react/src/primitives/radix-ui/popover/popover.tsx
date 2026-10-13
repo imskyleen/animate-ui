@@ -9,13 +9,9 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import type { AnchoredAnimationProps } from '../../../internal/anchored';
 import { RadixAnchoredContent, useRadixOpenState } from './radix-anchored';
 
-// Same API as Radix's Popover. The Content grows from 0.8 and fades in from
-// the trigger on a spring, and shrinks back the same way.
-
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Popover.Root',
 );
-// The `forceMount` of the closest Portal: it keeps the Content mounted too.
 const PortalForceMountContext = React.createContext(false);
 
 type PopoverProps = PopoverPrimitive.PopoverProps;
@@ -54,8 +50,6 @@ const Anchor = PopoverPrimitive.Anchor;
 function Portal({ forceMount, ...props }: PopoverPortalProps) {
   return (
     <PortalForceMountContext value={Boolean(forceMount)}>
-      {/* Always mounted: the Content decides when it leaves the DOM, after
-          its exit. Closed, it renders nothing, so neither does the portal. */}
       <PopoverPrimitive.Portal {...props} forceMount />
     </PortalForceMountContext>
   );

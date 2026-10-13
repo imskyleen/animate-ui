@@ -29,19 +29,6 @@ import {
 } from '../../../internal/menu-handoff';
 import type { Picked } from '../../../internal/item-indicator';
 
-// Same API as Radix's Menubar. The Root mirrors which menu is open (Radix
-// keeps it private) so each Content can play an exit before it unmounts.
-// Radix's Menubar has no Animate UI v1 counterpart: a menu opens and closes
-// like v1's DropdownMenu (a 220ms fade and scale, a highlight gliding behind
-// the highlighted item). Moving from an open menu to another, the popover
-// doesn't close and reopen: it moves to the next menu and resizes, on a
-// spring that eases in, without going past, while the content changes like
-// Motion's mega menu, the previous items sliding 6px away as the next ones
-// slide in (internal/menu-handoff). The
-// triggers share one highlight, like a menu's items: hovered, focused or
-// with its menu open, a trigger's background glides from the previous one
-// (internal/item-highlight).
-
 type MenubarProps = MenubarPrimitive.MenubarProps;
 type MenubarMenuProps = MenubarPrimitive.MenubarMenuProps;
 type MenubarTriggerProps = MenubarPrimitive.MenubarTriggerProps;
@@ -64,12 +51,7 @@ type MenubarSubContentProps = MenubarPrimitive.MenubarSubContentProps &
   PresenceAnimationProps;
 
 type MenubarState = {
-  /** The value of the open menu ('' when none is). */
   value: string;
-  /**
-   * The open menu closed because an item whose check moves was chosen: how
-   * it shows.
-   */
   picked: Picked;
 };
 
@@ -85,9 +67,7 @@ function Root({
   const controlled = valueProp !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? '');
   const value = controlled ? valueProp : uncontrolled;
-  // Its menus' picks: choosing an item closes the open menu.
   const picks = useMenuPicks();
-  // Its menus hand their popover over to one another.
   const handoff = useHandoffGroup();
 
   return picks.provide(
@@ -96,8 +76,6 @@ function Root({
         <TriggerHighlightScope>
           <MenubarPrimitive.Root
             {...props}
-            // The triggers' highlight goes under their content, above the
-            // bar's background: the bar is its own stacking context.
             style={{ isolation: 'isolate', ...style }}
             value={value}
             onValueChange={(next) => {
@@ -116,8 +94,6 @@ function Menu({
   value: valueProp,
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Menu>) {
-  // Radix generates a value when there is none: generate it here so the open
-  // state can be read from the Root's value.
   const fallbackId = React.useId();
   const value = valueProp || fallbackId;
   const menubar = React.use(MenubarStateContext);
@@ -199,8 +175,6 @@ export {
   Sub,
   SubTrigger,
   SubContent,
-  // `Menubar` is Radix's alias of Root: with the radix-ui import style,
-  // `MenubarPrimitive.Menubar` keeps working.
   Root as Menubar,
   Menu as MenubarMenu,
   Trigger as MenubarTrigger,

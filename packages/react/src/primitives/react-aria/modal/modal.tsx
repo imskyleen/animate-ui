@@ -26,50 +26,13 @@ import {
   type ModalAnimationProps,
 } from '../../../internal/modal-motion';
 
-// Same API as React Aria's Modal and ModalOverlay, animated like Animate UI
-// v1's Dialog (Radix, Base UI and Headless UI shipped the same motion): the
-// overlay fades in 400ms (soft ease-out), the modal tips forward from
-// `perspective(500px) rotateX(-20deg) scale(0.8)` with a fade and a blur on a
-// spring, or slides and fades in from its edge when it has `data-side`
-// (shadcn/ui's Sheet, v1's Sheet). See ../../../internal/modal-motion.ts.
-//
-// React Aria renders the Modal inside the ModalOverlay, where v1's overlay and
-// content were siblings: fading the overlay's opacity (and filter) would fade
-// and blur the modal with it, cutting its exit short. So the overlay fades its
-// own background color and backdrop filter instead (from the values its
-// classes give it), and the modal moves exactly like v1's content.
-//
-// React Aria keeps an exiting modal mounted while the animations it finds on
-// it run, but it looks for them before Motion's exit has started. So the
-// ModalOverlay resolves the open state like React Aria does (its own props,
-// else the DialogTrigger's state), gates itself with AnimatePresence and
-// passes `isExiting` while its exit plays: React Aria then keeps it mounted,
-// marks it `data-exiting` and stops trapping focus. The modal renders a
-// motion.div through React Aria's `render` prop (or the user's own `render`,
-// made animatable), so its attributes, `className` and `style` (render props
-// included) stay on that element.
-
-/** Animate UI's additions to `ModalOverlay`. */
 type OverlayAnimationProps = {
-  /**
-   * Fade in (of its background color and backdrop filter).
-   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: ModalAnimationProps['transition'];
-  /** Fade out. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
-/** Animate UI's additions to `Modal`. */
 type ModalAnimationPropsDoc = {
-  /**
-   * Transition of the opening, a sheet's slide from its `data-side` edge
-   * included.
-   * @default { type: 'spring', stiffness: 150, damping: 25 } (damping 22 for a
-   * sheet, with `data-side`)
-   */
   transition?: ModalAnimationProps['transition'];
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: ModalAnimationProps['transition'];
 };
 
@@ -87,10 +50,7 @@ type LiveState = {
   setOpen: (open: boolean) => void;
 };
 
-// The live open state, read by the exiting overlay (AnimatePresence keeps the
-// props of its last render, when it was still open).
 const LiveStateContext = React.createContext<LiveState | null>(null);
-// Set inside our ModalOverlay, so a Modal knows it isn't standalone.
 const InOverlayContext = React.createContext(false);
 
 function ModalOverlay({
@@ -100,8 +60,6 @@ function ModalOverlay({
   ...props
 }: ModalOverlayProps) {
   const contextState = React.use(OverlayTriggerStateContext);
-  // React Aria's rule: its own props when given (or without a trigger), else
-  // the DialogTrigger's state.
   const local = isOpenProp != null || defaultOpen != null || !contextState;
   const [localOpen, setLocalOpen] = useControlledState<boolean>({
     value: isOpenProp,
@@ -130,7 +88,6 @@ function OverlayPresence({
   ref,
   ...props
 }: Omit<ModalOverlayProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'> & {
-  /** False for the invisible overlay of a standalone Modal. */
   animated?: boolean;
 }) {
   const live = React.use(LiveStateContext)!;
@@ -162,7 +119,6 @@ function OverlayPresence({
         isExiting={!isPresent || isExiting}
         render={ariaMotionRender(
           render,
-          // Once closed, clicks go through to the page while the exit plays.
           isPresent ? {} : { style: { pointerEvents: 'none' } },
         )}
       />
@@ -170,7 +126,6 @@ function OverlayPresence({
   );
 }
 
-// The props React Aria reads on the overlay a standalone Modal creates.
 const OVERLAY_PROPS = [
   'isDismissable',
   'isKeyboardDismissDisabled',
@@ -187,7 +142,6 @@ function Modal(props: ModalProps) {
   const inOverlay = React.use(InOverlayContext);
   if (inOverlay) return <ModalContent {...props} />;
 
-  // Standalone, like React Aria: it creates its own (invisible) overlay.
   const overlayProps: Record<string, unknown> = {};
   const contentProps: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(props)) {
@@ -211,7 +165,6 @@ function ModalContent({
 }: ModalProps) {
   const reduce = useShouldReduceMotion();
   const isPresent = useIsPresent();
-  // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
   const side = getModalSide((props as Record<string, unknown>)['data-side']);
   const { enter, exit } = useContentTransitions(
     side,

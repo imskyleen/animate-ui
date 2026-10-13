@@ -11,12 +11,10 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 
-/** The highlight's spring (stiffness 500, damping 40), quicker than v1's. */
 const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.highlight;
 
 const INSTANT: Transition = { duration: 0 };
 
-/** Joins class names, skipping empty ones. */
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(' ') || undefined;
 }
@@ -66,11 +64,6 @@ function subscribeToHoverCapability(onChange: () => void) {
   return () => mql.removeEventListener('change', onChange);
 }
 
-/**
- * True only on devices whose primary pointer can hover precisely (mouse,
- * trackpad). Touch taps fire emulated `mouseenter` without a matching
- * `mouseleave`, which would leave a hover highlight stuck on screen.
- */
 function useCanHover() {
   return React.useSyncExternalStore(
     subscribeToHoverCapability,
@@ -87,14 +80,6 @@ type ParentHighlightProps = {
   style?: React.CSSProperties;
 };
 
-/**
- * Parent mode indicator (v1's): its top, left, width and height spring to the
- * active item's box, it fades in when it appears and fades out `exitDelay`
- * after the last item is left.
- *
- * Rendered inside `ReducedMotionConfig`, so `useShouldReduceMotion` sees the
- * OS setting: under reduced motion it jumps to the item and only fades.
- */
 function ParentHighlight({
   bounds,
   transition,
@@ -245,8 +230,6 @@ function Highlight<T extends React.ElementType = 'div'>({
     mode = 'children',
   } = props;
 
-  // v1's exit delay, and the highlight's spring, paced by the provider's
-  // tempo (the exit delay too).
   const { tempo } = useMotionTokens();
   const transition = useTempoTransition(transitionProp ?? HIGHLIGHT_TRANSITION);
   const exitDelay = exitDelayProp * tempo;
@@ -534,9 +517,6 @@ function HighlightItem<T extends React.ElementType>({
       forceUpdateBounds === true ||
       (contextForceUpdateBounds && forceUpdateBounds !== false);
 
-    // With `forceUpdateBounds`, v1 re-measures the active item on every frame,
-    // so the highlight follows it whatever moves it (an animated sidebar, a
-    // transform…).
     const updateBounds = () => {
       if (!localRef.current) return;
 
@@ -580,9 +560,6 @@ function HighlightItem<T extends React.ElementType>({
 
   if (!React.isValidElement(children)) return children;
 
-  // Visual state only: Highlight is an effect, not a widget, so it sets no
-  // ARIA (`aria-selected` is invalid on links and buttons). Components that
-  // are real tabs or options (e.g. Tabs' triggers) set it themselves.
   const dataAttributes = {
     'data-active': isActive ? 'true' : 'false',
     'data-disabled': isDisabled,

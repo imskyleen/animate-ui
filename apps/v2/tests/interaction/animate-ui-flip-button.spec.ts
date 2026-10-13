@@ -9,7 +9,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="flip-button"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -17,7 +16,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -33,7 +31,6 @@ const BACK = '[data-slot="flip-button-back"]';
 const transformOf = (page: Page, selector: string) =>
   page.locator(selector).evaluate((el) => getComputedStyle(el).transform);
 
-/** The element's rotateX, in degrees, on every animation frame for `ms`. */
 const recordRotateX = (page: Page, selector: string, ms: number) =>
   page.evaluate(
     ([sel, duration]) =>
@@ -66,10 +63,8 @@ test.describe('animate-ui flip button', () => {
   }) => {
     await open(page);
     await page.locator(BUTTON).hover();
-    // Mid-flip, the back face is rotating in.
     await page.waitForTimeout(60);
     expect(await transformOf(page, BACK)).toMatch(/^matrix3d/);
-    // The spring overshoots: the faces' opacities settle once it does.
     await expect.poll(async () => (await sample(page, BACK)).opacity).toBe(1);
     await expect.poll(async () => (await sample(page, FRONT)).opacity).toBe(0);
     await page.mouse.move(0, 0);
@@ -82,8 +77,6 @@ test.describe('animate-ui flip button', () => {
     const frames = recordRotateX(page, FRONT, 900);
     await page.locator(BUTTON).hover();
     const angles = await frames;
-    // Spring stiffness 280, damping 20: the front face swings past 90deg
-    // (about 98.6deg) before settling edge-on.
     expect(Math.max(...angles)).toBeGreaterThan(95);
     expect(angles.at(-1)).toBeCloseTo(90, 0);
   });

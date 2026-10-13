@@ -7,8 +7,6 @@ import { probeFirstFrame, sample } from './motion-probe';
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
-// shadcn's demo menu (~575px tall) doesn't fit under its trigger, in the
-// middle of a 720px viewport: it would scroll, and hide its last items.
 test.use({ viewport: { width: 1280, height: 1280 } });
 
 test.describe('base-ui menu demo', () => {
@@ -28,8 +26,6 @@ test.describe('base-ui menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
-    // Below the trigger, aligned to its start: its top-left corner (Base UI
-    // offsets the origin by the side offset).
     expect(first.origin).toMatch(/^0px -?\d/);
 
     await page.waitForTimeout(400);
@@ -42,7 +38,6 @@ test.describe('base-ui menu demo', () => {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, CONTENT)).opacity, {
         intervals: [16],
@@ -70,7 +65,6 @@ test.describe('base-ui menu demo', () => {
     const first = await probe.firstFrame();
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeLessThan(1);
-    // Opens on the right: anchored on its left edge.
     expect(first.origin).toMatch(/^-?0px/);
   });
 
@@ -79,8 +73,6 @@ test.describe('base-ui menu demo', () => {
   }) => {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
-    // Click and sample in the page: the first frames go by too fast for a
-    // round trip.
     const frames = await page.evaluate(async () => {
       const item = [
         ...document.querySelectorAll<HTMLElement>('[role="menuitemcheckbox"]'),
@@ -101,7 +93,6 @@ test.describe('base-ui menu demo', () => {
       }
       return seen;
     });
-    // Its stroke draws itself from nothing as it fades in, to the whole check.
     expect(frames[0]!.dash).toBeLessThan(0.3);
     expect(frames[0]!.opacity).toBeLessThan(0.3);
     expect(frames.some((f) => f.dash > 0.3 && f.dash < 0.9)).toBe(true);
@@ -149,7 +140,6 @@ test.describe('base-ui menu API', () => {
     await expect(page.getByTestId('open')).toHaveText('open');
     await page.getByRole('menuitem', { name: 'Controlled item' }).click();
     await expect(page.getByTestId('open')).toHaveText('closed');
-    // Called once the exit has played and the popup unmounted.
     await expect(page.getByTestId('complete')).toHaveText('closed', {
       timeout: 600,
     });
@@ -204,9 +194,6 @@ describeMenuHighlight('base-ui menu highlight', {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(400);
   },
-  // Two rows above the submenu trigger, as the old demo's were: leaving the
-  // submenu for an item further up, the part in the submenu is cut by it
-  // before the new one has faded in.
   first: (page) => page.getByRole('menuitem', { name: /Settings/ }),
   second: (page) => page.getByRole('menuitem', { name: 'Team', exact: true }),
   submenuTrigger: (page) =>

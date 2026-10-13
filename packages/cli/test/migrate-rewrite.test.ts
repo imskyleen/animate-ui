@@ -1,4 +1,3 @@
-// rewrite() on single files: the import shapes users write around v1.
 import { describe, expect, test } from 'vitest';
 
 import type { V1Module } from '../src/lib/migrate/project';
@@ -274,7 +273,6 @@ describe('rewrite', () => {
         '',
       ].join('\n'),
     );
-    // v1's items were motion elements; v2's aren't animated at all.
     expect(manual.map((step) => step.message)).toEqual([
       "<DropdownMenuItem> `transition`: this part isn't animated in v2 (v1 rendered a motion element): drop it.",
       "<DropdownMenuItem> `whileTap` is a Motion prop: v2 parts aren't motion components (animated parts take `transition` and `exitTransition`). Drop it, or animate an element of your own inside the part.",
@@ -313,7 +311,6 @@ describe('rewrite', () => {
       ].join('\n'),
     );
     expect(imports[0]!.names).toEqual(['DropdownMenu', 'DropdownMenuItem']);
-    // One step per name left on v1, pointing at it in the new code.
     expect(manual.map((step) => [step.line, step.migratedLine])).toEqual([
       [4, 6],
       [5, 7],

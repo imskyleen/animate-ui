@@ -15,7 +15,6 @@ type Link2Props = IconProps<keyof typeof animations>;
 const spring = { type: 'spring', damping: 20, stiffness: 200 } as const;
 
 const animations = {
-  // Little "clink" at the joint
   default: {
     left: {
       initial: { rotate: 0, transformOrigin: '9px 12px' },
@@ -58,7 +57,6 @@ const animations = {
     },
   } satisfies Record<string, Variants>,
 
-  // Pull apart: arcs move outward, line shrinks away
   unlink: {
     left: {
       initial: { x: 0 },
@@ -110,7 +108,6 @@ const animations = {
     },
   } satisfies Record<string, Variants>,
 
-  // Pull apart: arcs move outward, line shrinks away
   'unlink-loop': {
     left: {
       initial: { x: 0 },
@@ -168,7 +165,6 @@ const animations = {
     },
   } satisfies Record<string, Variants>,
 
-  // Emphasize link: arcs nudge toward center, line pulses slightly
   link: {
     left: {
       initial: { x: 0 },
@@ -220,21 +216,18 @@ function IconComponent({ size, ...props }: Link2Props) {
       strokeLinejoin="round"
       {...props}
     >
-      {/* Left arc */}
       <motion.path
         d="M9 17H7A5 5 0 0 1 7 7h2"
         variants={variants.left}
         initial="initial"
         animate={controls}
       />
-      {/* Right arc */}
       <motion.path
         d="M15 7h2a5 5 0 1 1 0 10h-2"
         variants={variants.right}
         initial="initial"
         animate={controls}
       />
-      {/* Middle line */}
       <motion.line
         x1={8}
         y1={12}
@@ -245,7 +238,6 @@ function IconComponent({ size, ...props }: Link2Props) {
         initial="initial"
         animate={controls}
       />
-      {/* Explosion lines (shown in unlink) - rotated around center to avoid overlap */}
       <motion.g style={{ rotate: 45, transformOrigin: '12px 12px' }}>
         <motion.line
           x1={8}

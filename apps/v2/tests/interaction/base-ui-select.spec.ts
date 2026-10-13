@@ -6,25 +6,18 @@ import { expectAtRestThrough, withAnimation } from './item-checks';
 import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
 const POPUP = '[data-slot="select-content"]';
-// shadcn/ui's demo: its popup opens over the trigger (alignItemWithTrigger,
-// Base UI's default), where it only fades. Its scale, where it grows from,
-// retargeting and the keyboard are checked with the popup below the trigger.
 const DEMO = '/tests/demos/base-ui/select';
 const POPPER = `${DEMO}?position=popper`;
-/** The ItemIndicator, beside the highlight. */
 const CHECK = ':scope > span:not([data-slot="item-highlight"])';
-/** The item of the demo's `null` value, chosen on load: the placeholder. */
 const PLACEHOLDER = 'Select a fruit';
 
 const trigger = (page: Page) => page.locator('[data-slot="select-trigger"]');
 const option = (page: Page, name: string) =>
   page.getByRole('option', { name, exact: true });
 
-/** Loads a demo page. */
 const load = (page: Page, path: string) =>
   page.goto(path, { waitUntil: 'networkidle' });
 
-/** Opens the popup with a click and lets its entrance finish. */
 async function openList(page: Page) {
   await trigger(page).click();
   await page.waitForTimeout(650);
@@ -44,8 +37,6 @@ test.describe('base-ui select demo', () => {
     expect(first.opacity).toBeLessThan(1);
     await page.waitForTimeout(650);
     expect((await sample(page, POPUP)).opacity).toBe(1);
-    // Laid over the trigger, as in Base UI: the chosen item (the
-    // placeholder's) lined up on it, and highlighted.
     const middle = (box: { y: number; height: number }) =>
       box.y + box.height / 2;
     const item = (await option(page, PLACEHOLDER).boundingBox())!;
@@ -80,7 +71,6 @@ test.describe('base-ui select demo', () => {
   }) => {
     await load(page, DEMO);
     await openList(page);
-    // Nothing changes: no check to wait for.
     await expectCloseWithoutHold(page, POPUP, () =>
       option(page, PLACEHOLDER).click(),
     );
@@ -103,7 +93,6 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
     expect(first.opacity).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
     expect(first.scale).toBeLessThan(1);
-    // Below the trigger: it grows from its top edge (minus the side offset).
     expect(parseFloat(first.origin.split(' ')[1]!)).toBeLessThanOrEqual(0);
 
     await page.waitForTimeout(400);
@@ -116,7 +105,6 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
     await openList(page);
     await option(page, 'Grapes').click();
 
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, POPUP)).opacity, {
         intervals: [16],
@@ -129,7 +117,6 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
   test('reopening mid-exit retargets instead of restarting', async ({
     page,
   }) => {
-    // Measured first: an open select hides the page from assistive tech.
     const box = (await trigger(page).boundingBox())!;
     await openList(page);
     const element = await page.locator(POPUP).elementHandle();
@@ -139,10 +126,8 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
         intervals: [16],
       })
       .toBeLessThan(0.95);
-    // Straight back, without actionability waits: the exit takes 220ms.
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await page.waitForTimeout(650);
-    // The same element: it retargeted instead of remounting.
     expect(await element!.evaluate((el) => el.isConnected)).toBe(true);
     expect((await sample(page, POPUP)).opacity).toBe(1);
   });
@@ -152,7 +137,6 @@ test.describe('base-ui select demo, its popup below the trigger', () => {
     await page.keyboard.press('ArrowDown');
     await expect(page.locator(POPUP)).toHaveCount(1);
     await page.waitForTimeout(650);
-    // The value's item (the placeholder's) is highlighted as it opens.
     await expect(option(page, PLACEHOLDER)).toHaveAttribute(
       'data-highlighted',
       '',
@@ -192,7 +176,6 @@ test.describe('base-ui select API', () => {
     await page.getByRole('button', { name: 'Open from outside' }).click();
     await expect(page.getByTestId('controlled-popup')).toBeVisible();
     await expect(page.getByTestId('controlled-open')).toHaveText('open');
-    // Base UI skips it with an actionsRef: Animate UI calls it after the entrance.
     await expect(page.getByTestId('completed')).toHaveText('true', {
       timeout: 1000,
     });
@@ -227,13 +210,11 @@ test.describe('base-ui select API', () => {
   }) => {
     await page.getByRole('combobox', { name: 'Multiple' }).click();
     await page.waitForTimeout(650);
-    // Already selected: its check came in as the list opened.
     expect((await sample(page, '[data-testid="check-apple"]')).opacity).toBe(1);
 
     await page.getByRole('option', { name: 'Multiple Cherry' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('apple,cherry');
     await page.waitForTimeout(40);
-    // A text check ("✓") fades in, as a checkbox's would.
     const appearing = await sample(page, '[data-testid="check-cherry"]');
     expect(appearing.opacity).toBeLessThan(1);
     expect(appearing.scale).toBe(1);
@@ -249,7 +230,6 @@ test.describe('base-ui select API', () => {
     );
     await page.getByRole('option', { name: 'Multiple Apple' }).click();
     await expect(page.getByTestId('multiple-value')).toHaveText('cherry');
-    // Deselected: the check fades out (kept mounted).
     const recorded = await leaving;
     expect(recorded.some((f) => f.opacity > 0.03 && f.opacity < 0.95)).toBe(
       true,
@@ -271,7 +251,6 @@ test.describe('base-ui select API', () => {
     await page.getByRole('option', { name: 'Popped Cherry' }).click();
     await expect(page.getByTestId('popped-value')).toHaveText('apple,cherry');
     const shown = (await arriving).filter((f) => f.opacity > 0.02);
-    // From half its size (the text "✓" made a box for it), past its size.
     expect(shown[0]!.scale).toBeLessThan(0.85);
     expect(Math.max(...shown.map((f) => f.scale))).toBeGreaterThan(1.02);
     expect(shown.at(-1)!.scale).toBe(1);
@@ -324,16 +303,12 @@ describeMenuHighlight('base-ui select highlight', {
     await trigger(page).click();
     await page.waitForTimeout(400);
   },
-  // The placeholder's item is the value: Base UI highlights it as the list
-  // opens.
   first: (page) => option(page, PLACEHOLDER),
   second: (page) => option(page, 'Apple'),
   keyboardNext: 'ArrowDown',
   highlightedOnOpen: true,
 });
 
-// Only choosing animates a check: the list opening shows the chosen item's
-// (the placeholder's, on load) at rest, and closing leaves it as it is.
 test.describe('base-ui select checks', () => {
   test.describe.configure({ timeout: 180_000 });
   for (const animation of ['draw', 'pop'] as const) {

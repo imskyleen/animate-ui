@@ -33,7 +33,6 @@ const thumb = {
   background: 'black',
 } as const;
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixSliderFixture() {
   const [value, setValue] = React.useState([20]);
   const [committed, setCommitted] = React.useState<number[]>([]);
@@ -60,7 +59,6 @@ export default function RadixSliderFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-slider. */}
         <SliderStar.Root defaultValue={[10, 60]} style={root}>
           <SliderStar.Track style={track}>
             <SliderStar.Range style={range} />
@@ -80,7 +78,6 @@ export default function RadixSliderFixture() {
       </section>
 
       <section data-testid="range">
-        {/* shadcn's slider-range example, on the docs demo's Slider. */}
         <DemoSlider
           defaultValue={[25, 50]}
           max={100}

@@ -13,7 +13,6 @@ const Track = ({ isSelected }: { isSelected: boolean }) => (
   </span>
 );
 
-// API compatibility: the component must behave exactly like React Aria's.
 export default function ReactAriaSwitchFixture() {
   const [selected, setSelected] = React.useState(false);
 

@@ -8,15 +8,11 @@ import * as DropdownMenuStar from '@animate-ui/react/primitives/radix-ui/dropdow
 
 const content = 'min-w-40 rounded-md border bg-white p-1 shadow-md';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixDropdownMenuFixture() {
   const [open, setOpen] = React.useState(false);
   const [size, setSize] = React.useState('small');
   const [bold, setBold] = React.useState(false);
   const [grid, setGrid] = React.useState(false);
-  // Mounted on demand: an open modal menu hides the rest of the page from
-  // assistive tech, and force-mounted content takes focus when it mounts
-  // (both as with Radix), which would get in the way of the other sections.
   const [showStar, setShowStar] = React.useState(false);
   const [showKept, setShowKept] = React.useState(false);
 
@@ -70,7 +66,6 @@ export default function RadixDropdownMenuFixture() {
           <DropdownMenu.Trigger>View</DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content className={content}>
-              {/* Choosing it keeps the menu open: Radix's onSelect, prevented. */}
               <DropdownMenu.CheckboxItem
                 checked={grid}
                 onCheckedChange={setGrid}
@@ -91,7 +86,6 @@ export default function RadixDropdownMenuFixture() {
           Show star menu
         </button>
         {showStar && (
-          // The `import * as` style of @radix-ui/react-dropdown-menu.
           <DropdownMenuStar.Root defaultOpen>
             <DropdownMenuStar.Trigger>Star</DropdownMenuStar.Trigger>
             <DropdownMenuStar.Content className={content} side="right">

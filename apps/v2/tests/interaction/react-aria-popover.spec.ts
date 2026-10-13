@@ -50,7 +50,6 @@ test.describe('react-aria popover API', () => {
       await popover.evaluate((el) => getComputedStyle(el).outlineStyle),
     ).toBe('solid');
     await page.getByRole('button', { name: 'Close standalone' }).click();
-    // The isExiting render prop and data-exiting follow the exit.
     await expect(popover).toHaveClass(/is-exiting/);
     await expect(popover).toHaveAttribute('data-exiting', 'true');
     await expect(popover).toHaveCount(0, { timeout: 1500 });
@@ -63,7 +62,6 @@ test.describe('react-aria popover API', () => {
     const trigger = page.getByRole('button', { name: /Fruit/ });
     await trigger.click();
     const first = await probe.firstFrame();
-    // Like the menus: from 0.9, not a popover's 0.8.
     expect(first.scale).toBeGreaterThanOrEqual(0.89);
     expect(first.scale).toBeLessThan(1);
     expect(first.opacity).toBeLessThan(1);
@@ -111,12 +109,10 @@ test.describe('react-aria popover API', () => {
     );
     await page.getByRole('menuitem', { name: 'Share' }).click();
     const subFirst = await submenu.firstFrame();
-    // v1's sub content moves like its content.
     expect(subFirst.scale).toBeGreaterThanOrEqual(0.89);
     expect(subFirst.scale).toBeLessThan(1);
     expect(subFirst.opacity).toBeLessThan(1);
     await page.getByRole('menuitem', { name: 'Email' }).click();
-    // Choosing an item closes both, each with its exit.
     await expect(page.getByTestId('menu-popover')).toHaveCount(0, {
       timeout: 1500,
     });

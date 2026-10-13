@@ -30,8 +30,6 @@ import {
 } from './docs/tabs';
 import { TypeTable } from './docs/type-table';
 
-// Fumadocs stays the primitive layer (MDX pipeline, Shiki, headings, links);
-// what readers see is Animate UI's components, in v1's design.
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,

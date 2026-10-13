@@ -50,7 +50,6 @@ const animations = {
         transition: {
           duration: 0.6,
           ease: 'easeInOut',
-          // It wobbles on the way, done before the lid's at the grid's top.
           rotate: {
             duration: 0.33,
             ease: 'easeInOut',

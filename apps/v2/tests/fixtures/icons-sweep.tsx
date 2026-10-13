@@ -11,8 +11,6 @@ type Entry = {
   animations: string[];
 };
 
-// Every icon, with every one of its own animations, played together by the
-// Play button.
 export default function IconsSweepFixture() {
   const [entries, setEntries] = React.useState<Entry[] | null>(null);
   const [play, setPlay] = React.useState(false);

@@ -9,7 +9,6 @@ import {
 
 type Frame = { t: number; cards: EntranceSample[] };
 
-/** Clicks Replay and samples the three cards on every frame for `ms`. */
 const replayTimeline = (page: Page, ms: number) =>
   page.evaluate(async (ms) => {
     const read = (el: Element) => {
@@ -49,7 +48,6 @@ test.describe('animate-ui slide', () => {
   }) => {
     await open(page, 'slide');
     const [first, , last] = await replayFirstFrame(page);
-    // Starts below (offset 100px, direction up) and travels up.
     expect(first!.y).toBeGreaterThan(50);
     expect(first!.y).toBeLessThanOrEqual(100);
     expect(last!.y).toBeGreaterThanOrEqual(first!.y);
@@ -64,8 +62,6 @@ test.describe('animate-ui slide', () => {
     await open(page, 'slide');
     const frames = await replayTimeline(page, 1000);
     const ys = frames.map((f) => f.cards[0]!.y);
-    // From ~100px below; the v1 spring (stiffness 200, damping 20) then goes
-    // ~4px past its place.
     expect(Math.max(...ys)).toBeGreaterThan(50);
     expect(Math.min(...ys)).toBeLessThan(-2);
     expect(Math.min(...ys)).toBeGreaterThan(-8);

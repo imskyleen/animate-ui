@@ -19,7 +19,6 @@ import {
   type ParticlesEffectProps,
 } from '../effects/particles';
 
-/** Joins class names, skipping empty ones. */
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(' ') || undefined;
 }
@@ -76,7 +75,6 @@ function GithubStars({
   const Component = asChild ? Slot : motion.div;
 
   React.useEffect(() => {
-    // A fixed `value` skips the request.
     if (value !== undefined) {
       setStars(value);
       setIsLoading(false);
@@ -121,7 +119,6 @@ function GithubStars({
           </Component>
         )
       ) : (
-        // Always mounted so `inView` can observe it; filled once loaded.
         <Component ref={localRef} aria-busy={isLoading || undefined} {...props}>
           {!isLoading && children}
         </Component>
@@ -150,7 +147,6 @@ function GithubStarsNumber({
 }
 
 type GithubStarsIconProps<T extends React.ElementType> = {
-  /** The icon component (not an element), rendered twice: empty and filled. */
   icon: T;
   color?: string;
   activeClassName?: string;

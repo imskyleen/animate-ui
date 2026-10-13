@@ -7,7 +7,6 @@ import {
   RadioGroup,
 } from '@animate-ui/react/primitives/react-aria';
 
-// API compatibility: the components must behave exactly like React Aria's.
 export default function ReactAriaRadioGroupFixture() {
   const [value, setValue] = React.useState('a');
 

@@ -1,46 +1,20 @@
-// What `animate-ui migrate` knows about Animate UI v1: where each v1 export
-// went in @animate-ui/react. Checked against the v1 registry and the v2
-// sources by test/migrate-table.test.ts.
-
-/**
- * Where a v1 export lives in v2, relative to its entry's `module` (or to
- * `<module>#` when it moved to another one):
- * - `Root`: a named export, imported under the v1 name (`Root as Accordion`).
- * - `Popover.Trigger`: a member of a named export (Base UI's namespaces). The
- *   v1 name becomes a local alias: `const PopoverTrigger = Popover.Trigger`.
- * - `ComponentProps<Root>`: the props of a part (types only), for the v1
- *   prop types v2 doesn't name.
- * - `DialogContentProps & { side?: … }`: a type plus the v1 props it lacks
- *   (types only), declared as a local type alias.
- */
 export type Target = string;
 
 export type PropRule =
-  /** Same prop under another name: rewritten. */
-  | { rename: string; message?: string }
-  /** v1-only prop: reported as a manual step. */
-  | { manual: string };
+  { rename: string; message?: string } | { manual: string };
 
 export type Migration = {
-  /** The v2 module, under `@animate-ui/react/`. */
   module: string;
   values: Record<string, Target>;
   types: Record<string, Target>;
-  /** v1 exports with no v2 equivalent: kept on the v1 file and reported. */
   unmapped: string[];
-  /** Props of a part (by v1 export name) that changed. */
   props?: Record<string, Record<string, PropRule>>;
-  /** Attributes a part needs in v2 when the v1 prop was left to its default. */
   defaults?: Record<string, Record<string, string>>;
-  /** Parts that rendered another one around themselves in v1 (a Portal). */
   wrap?: Record<string, { in: string; move: string[] }>;
-  /** Behaviour changes worth a look, reported when the part is imported. */
   notes?: Record<string, string>;
 };
 
-/** v1 primitives (`<library>/<name>`) and their v2 modules. */
 export const PRIMITIVES: Record<string, Migration> = {
-  // Animate UI's own primitives keep their v1 API: names map one to one.
   'texts/counting-number': {
     module: 'primitives/texts/counting-number',
     values: { CountingNumber: 'CountingNumber' },
@@ -726,7 +700,6 @@ export const PRIMITIVES: Record<string, Migration> = {
       SheetOverlayProps: 'DialogOverlayProps',
       SheetTriggerProps: 'DialogTriggerProps',
       SheetCloseProps: 'DialogCloseProps',
-      // v1's `side`, which v2 reads as `data-side`: v1 components take it.
       SheetContentProps:
         "DialogContentProps & { side?: 'top' | 'right' | 'bottom' | 'left' }",
       SheetTitleProps: 'DialogTitleProps',
@@ -1186,7 +1159,6 @@ export const PRIMITIVES: Record<string, Migration> = {
   },
 };
 
-/** v1 primitives with no v2 equivalent: their files stay the user's. */
 export const UNSUPPORTED_PRIMITIVES = [
   'radix/files',
   'radix/preview-link-card',
@@ -1194,7 +1166,6 @@ export const UNSUPPORTED_PRIMITIVES = [
   'base/preview-link-card',
 ];
 
-/** Headless UI is dropped in v2. */
 export const HEADLESS_PRIMITIVES = [
   'checkbox',
   'dialog',
@@ -1218,7 +1189,6 @@ const PORTAL_CONTAINER: Record<string, PropRule> = {
   },
 };
 
-/** v1 rendered a motion element; the v2 part isn't animated. */
 const NOT_ANIMATED: Record<string, PropRule> = {
   transition: {
     manual:
@@ -1235,14 +1205,8 @@ const CHECKBOX_PRESS =
 const HOVER_SCALE =
   "v2's buttons answer the press, not the hover: they no longer grow on hover (v1 scaled them to 1.05). Set `hoverScale={1.05}` to keep v1's hover.";
 
-// v1's Base UI primitives were built on @base-ui-components/react
-// 1.0.0-beta.4. Base UI 1 (@base-ui/react, which v2 uses) renamed, moved or
-// inverted some of their props, and changed some defaults.
-
-/** Base UI 1 renamed `loop` to `loopFocus`. */
 const LOOP_FOCUS: Record<string, PropRule> = { loop: { rename: 'loopFocus' } };
 
-/** Base UI 1 moved these props from the Root to the trigger. */
 function movedToTrigger(trigger: string, props: string[], or = '') {
   return Object.fromEntries(
     props.map((prop): [string, PropRule] => [
@@ -1254,7 +1218,6 @@ function movedToTrigger(trigger: string, props: string[], or = '') {
   );
 }
 
-/** Base UI 1 replaced a boolean with its opposite. */
 function inverted(prop: string, replacement: string): Record<string, PropRule> {
   return {
     [prop]: {
@@ -1265,7 +1228,6 @@ function inverted(prop: string, replacement: string): Record<string, PropRule> {
 
 const TRACK_ANCHOR = inverted('trackAnchor', 'disableAnchorTracking');
 
-/** v1's ProgressValue rendered a CountingNumber, and took its props. */
 const COUNTING_NUMBER: Record<string, PropRule> = Object.fromEntries(
   [
     'fromNumber',
@@ -1299,7 +1261,6 @@ const EXTRAS: Record<string, Partial<Migration>> = {
       Accordion: LOOP_FOCUS,
       AccordionPanel: { keepRendered: { rename: 'keepMounted' } },
     },
-    // Base UI's beta opened several items at once by default.
     defaults: { Accordion: { multiple: 'multiple' } },
   },
   'base/collapsible': {
@@ -1371,7 +1332,6 @@ const EXTRAS: Record<string, Partial<Migration>> = {
   },
   'base/tabs': {
     props: { TabsList: LOOP_FOCUS },
-    // Base UI's beta activated a tab when it got focus.
     defaults: { TabsList: { activateOnFocus: 'activateOnFocus' } },
     notes: {
       TabsTab:
@@ -1423,11 +1383,6 @@ for (const [id, extra] of Object.entries(EXTRAS)) {
   Object.assign(PRIMITIVES[id]!, extra);
 }
 
-/**
- * v1 libs, hooks and the icon core, by location: `icons/icon` under the
- * components alias (`components/animate-ui/icons/icon`), the others under the
- * `lib` and `hooks` aliases.
- */
 export const UTILITIES: Record<string, Migration> = {
   'icons/icon': {
     module: 'icons',
@@ -1467,10 +1422,6 @@ export const UTILITIES: Record<string, Migration> = {
   },
 };
 
-/**
- * v1 hooks v2 doesn't ship (its primitives keep theirs private). They only
- * import React and Motion: the files stay the user's and keep working.
- */
 export const UNSUPPORTED_UTILITIES = [
   'hooks/use-auto-height',
   'hooks/use-data-state',

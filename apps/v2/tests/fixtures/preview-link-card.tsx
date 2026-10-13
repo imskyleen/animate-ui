@@ -4,9 +4,6 @@ import * as Radix from '@animate-ui/react/primitives/radix-ui/preview-link-card'
 import * as Base from '@animate-ui/react/primitives/base-ui/preview-link-card';
 import * as Aria from '@animate-ui/react/primitives/react-aria/preview-link-card';
 
-// The Preview Link Card's own props, in each library: an image of your own
-// (`src`), and the screenshot's options (size, scale, color scheme).
-
 const CUSTOM_SRC = 'https://screenshots.test/custom.svg';
 const SCREENSHOT = {
   href: 'https://example.com/',

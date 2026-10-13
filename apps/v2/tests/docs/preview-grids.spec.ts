@@ -3,14 +3,9 @@ import path from 'node:path';
 
 import { expect, test } from '@playwright/test';
 
-// The Primitives, Backgrounds and Icons pages: a grid of cards, each with a
-// preview that plays while it's hovered (recorded clips, scripts/
-// record-previews.mts; live icons for the icon libraries).
-
 const docs = path.join(process.cwd(), 'content', 'docs');
 const previews = path.join(process.cwd(), 'public', 'previews');
 
-/** Every primitive slug and background, from the docs' files. */
 const PRIMITIVES = [
   ...new Set(
     ['base-ui', 'radix-ui', 'react-aria', 'animate-ui'].flatMap((library) =>
@@ -45,7 +40,6 @@ test('the Primitives page is one card per primitive, opening its page', async ({
   await page.goto('/docs/primitives', { waitUntil: 'networkidle' });
   const cards = page.locator('[data-slot="preview-card"]');
   await expect(cards).toHaveCount(PRIMITIVES.length);
-  // Grouped like the sidebar.
   for (const title of [
     'Components',
     'Animate UI',

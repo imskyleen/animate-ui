@@ -5,7 +5,6 @@ import { expect, test } from '@playwright/test';
 
 const PRIMITIVES = join(__dirname, '../../../../packages/cli/src/primitives');
 
-/** `alert-dialog` → `Alert Dialog`. */
 const title = (name: string) =>
   name.replace(
     /(^|-)([a-z])/g,
@@ -45,7 +44,6 @@ test('the supported primitives table lists every primitive the CLI animates', as
   const rows = page.locator(
     '#supported-primitives ~ div table tr, #supported-primitives ~ table tr',
   );
-  // The primitives' cell of a library's row.
   const row = (library: string) =>
     rows.filter({ hasText: library }).first().locator('td').nth(1);
   for (const [folder, library] of [
@@ -62,15 +60,12 @@ test('the supported primitives table lists every primitive the CLI animates', as
       .match(/exports: \[([^\]]*)\]/)![1]!
       .match(/'([^']+)'/g)!
       .map((name) => name.slice(1, -1));
-    // Named by its file (Disclosure, ListBox) or its main export
-    // (ToggleButtonGroup).
     const names = [
       title(file.replace(/\.ts$/, '')).replace(/ /g, ''),
       exports[0]!,
     ];
     await expect(aria).toContainText(new RegExp(`\\b(${names.join('|')})\\b`));
   }
-  // Animate UI's own drop-ins (Input OTP, Questionnaire), under Others.
   const others = row('Others');
   for (const file of readdirSync(join(PRIMITIVES, 'animate-ui')))
     await expect(others).toContainText(

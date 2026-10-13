@@ -154,7 +154,6 @@ function SpringProvider({
 
   React.useEffect(() => {
     if (!isDragging) return;
-    // Keep the grabbing cursor while the pointer leaves the element.
     const previous = document.body.style.cursor;
     document.body.style.cursor = 'grabbing';
     return () => {
@@ -268,7 +267,6 @@ function SpringElement({
       onDragEnd={() => {
         x.set(0);
         y.set(0);
-        // Reduced motion: back in place at once, no bounce.
         if (reduce) {
           springX.jump(0);
           springY.jump(0);

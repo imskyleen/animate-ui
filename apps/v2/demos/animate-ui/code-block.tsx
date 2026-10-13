@@ -48,7 +48,6 @@ export default function CodeBlockDemo({
   delay?: number
   duration?: number
   writing?: boolean
-  /** A blinking caret at the end while it writes. */
   cursor?: boolean
 }) {
   const { resolvedTheme } = useTheme()

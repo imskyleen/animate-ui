@@ -18,7 +18,6 @@ test('base toast: shadcn CSS stack is gone, its layout stays', () => {
     expect(code).not.toMatch(/\[(transform|transition):/);
     expect(code).not.toMatch(/\[--(offset-y|scale|shrink|peek):/);
     expect(code).not.toContain('duration-250');
-    // Kept: the stack's sizing, the gap filler and the limited state.
     expect(code).toContain('h-(--height)');
     expect(code).toContain('data-expanded:h-(--toast-height)');
     expect(code).toContain('[--gap:0.75rem]');

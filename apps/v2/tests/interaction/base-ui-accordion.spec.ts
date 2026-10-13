@@ -6,11 +6,6 @@ import {
   gotoHydrated,
 } from './disclosure-timeline';
 
-/**
- * Find-in-page: the browser reveals the panel and fires `beforematch`.
- * Returns the panel's opacity one frame after the library reports it open:
- * 1 means it opened without animating.
- */
 const revealByFind = (panel: Locator) =>
   panel.evaluate(async (el) => {
     const frame = () => new Promise((r) => requestAnimationFrame(r));
@@ -51,7 +46,6 @@ test.describe('base-ui accordion API', () => {
     await button(page, 'Controlled b').click();
     await expect(page.getByTestId('controlled-value')).toHaveText('b');
     await expect(page.getByText('Controlled content b')).toBeVisible();
-    // The other item closes with its exit, then unmounts.
     await expect(page.getByText('Controlled content a')).toBeVisible();
     await expect(page.getByText('Controlled content a')).toHaveCount(0, {
       timeout: 600,

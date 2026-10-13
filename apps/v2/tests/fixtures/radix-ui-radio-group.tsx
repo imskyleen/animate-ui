@@ -6,9 +6,7 @@ import * as RadioGroupStar from '@animate-ui/react/primitives/radix-ui/radio-gro
 
 const item = 'grid size-5 place-content-center rounded-full border';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixRadioGroupFixture() {
-  // Mounted checked after the page has loaded, as a dialog's would be.
   const [shown, setShown] = React.useState(false);
   const [value, setValue] = React.useState('a');
 
@@ -66,7 +64,6 @@ export default function RadixRadioGroupFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-radio-group. */}
         <RadioGroupStar.Root aria-label="Star" defaultValue="y">
           {['x', 'y'].map((v) => (
             <RadioGroupStar.Item

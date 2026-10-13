@@ -3,26 +3,19 @@ import path from 'node:path';
 
 import { loadProject } from '../project';
 
-/** A v1 file, by what it is rather than where the user's aliases put it. */
 export type V1Module =
-  /** `components/animate-ui/primitives/<library>/<name>`. */
   | { kind: 'primitive'; library: string; name: string }
-  /** `components/animate-ui/icons/icon`, `lib/get-strict-context`, `hooks/use-…`. */
   | { kind: 'utility'; id: string };
 
 export type MigrateProject = {
   root: string;
   hasPackage: boolean;
-  /** Whether package.json lists a package (dependencies or devDependencies). */
   hasDependency: (name: string) => boolean;
   componentsDir: string;
   libDir: string;
   hooksDir: string;
-  /** Absolute path (without extension) an import specifier points to. */
   resolve: (fromFile: string, specifier: string) => string | undefined;
-  /** The v1 module at an absolute path (without extension), if any. */
   classify: (target: string) => V1Module | undefined;
-  /** Every source file of the project, node_modules and build output aside. */
   sourceFiles: () => string[];
 };
 
@@ -46,7 +39,6 @@ const IGNORED_DIRS = new Set([
   'storybook-static',
 ]);
 
-/** Parses JSON with comments and trailing commas (tsconfig files). */
 function parseJsonc(text: string) {
   const withoutComments = text.replace(
     /("(?:\\.|[^"\\])*")|\/\/[^\n]*|\/\*[\s\S]*?\*\//g,
@@ -65,7 +57,6 @@ function readJson(file: string) {
 
 type PathMapping = { prefix: string; targets: string[]; exact: boolean };
 
-/** The `paths` of the tsconfig/jsconfig files, resolved against their baseUrl. */
 function readPathMappings(root: string): PathMapping[] {
   const mappings: PathMapping[] = [];
   for (const name of ['tsconfig.json', 'tsconfig.app.json', 'jsconfig.json']) {
@@ -85,7 +76,6 @@ function readPathMappings(root: string): PathMapping[] {
       });
     }
   }
-  // Longest prefix first, like TypeScript.
   return mappings.sort((a, b) => b.prefix.length - a.prefix.length);
 }
 
@@ -106,7 +96,6 @@ function isDirectory(dir: string) {
 }
 
 export function loadMigrateProject(cwd: string): MigrateProject {
-  // Validates the shadcn/ui project (components.json) and reads package.json.
   const { root, hasPackage } = loadProject(cwd);
   const aliases = readJson(path.join(root, 'components.json')).aliases ?? {};
   const pkg = readJson(path.join(root, 'package.json'));
@@ -130,7 +119,6 @@ export function loadMigrateProject(cwd: string): MigrateProject {
         ) ?? candidates[0]
       );
     }
-    // No tsconfig paths: shadcn/ui's `@/` points at the root, or at src/.
     const match = specifier.match(/^[@~]\/(.*)$/);
     if (!match) return undefined;
     const fromRoot = path.join(root, match[1]!);
@@ -174,7 +162,6 @@ export function loadMigrateProject(cwd: string): MigrateProject {
       return { kind: 'primitive', library: primitive[1]!, name: primitive[2]! };
     if (fromComponents === 'animate-ui/icons/icon')
       return { kind: 'utility', id: 'icons/icon' };
-    // v1's one lib (`lib/utils` is shadcn/ui's).
     if (path.relative(libDir, target) === 'get-strict-context')
       return { kind: 'utility', id: 'lib/get-strict-context' };
     const inHooks = path.relative(hooksDir, target);

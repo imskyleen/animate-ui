@@ -5,15 +5,11 @@ import { overshootOf } from './spring-curves';
 
 const CONTENT = '[data-slot="tooltip-content"]';
 
-/** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
-// Animate UI's own Tooltip: a touch calmer than the library tooltips' 400/29.
 const TOOLTIP_SPRING = { stiffness: 400, damping: 31 };
 
-/** `shift.tooltip`, `blur.tooltip` (px) and the incoming slide and fade, `transition.tooltipIn` (s). */
 const SHIFT = 40;
 const BLUR = 6;
 const SWAP = 0.34;
-/** The leaving content's fade, `transition.tooltipOut` (s). */
 const OUT = 0.13;
 
 type Layer = {
@@ -22,7 +18,6 @@ type Layer = {
   y: number;
   opacity: number;
   blur: number;
-  /** Its text as drawn over its size: 1 is undistorted. */
   textScaleX: number;
 };
 
@@ -30,15 +25,10 @@ type SwapFrame = {
   t: number;
   layer: Layer & { clip: string };
   copies: Layer[];
-  /** The popup as drawn over its size (its layout animation). */
   popupScaleX: number;
   arrows: { count: number; opacity: number; filter: string; inLayer: boolean };
 };
 
-/**
- * Every frame for `ms` of the popup's content: its layer, its leaving
- * copies, the popup's resizing and the arrow. Start it, then move.
- */
 const sampleSwap = (page: Page, ms = 700) =>
   page.evaluate(
     (ms) =>
@@ -101,7 +91,6 @@ const sampleSwap = (page: Page, ms = 700) =>
     ms,
   );
 
-/** Hovers `name`, and waits for the popup to rest there. */
 const rest = async (page: Page, name: string) => {
   await trigger(page, name).hover();
   await expect(page.getByRole('tooltip')).toContainText(name);
@@ -115,7 +104,6 @@ const open = (page: Page) =>
 const trigger = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });
 
-/** Horizontal center of the popup as drawn (its layout animation included). */
 const contentX = (page: Page) =>
   page.locator(CONTENT).evaluate((el) => {
     const rect = el.getBoundingClientRect();
@@ -170,13 +158,10 @@ test.describe('animate-ui tooltip', () => {
     );
     await trigger(page, 'Bold').hover();
     const seen = await frames;
-    // From 0.7, in place (like the library tooltips: no slide).
     expect(seen[0]!.scale).toBeGreaterThanOrEqual(0.69);
     expect(seen[0]!.scale).toBeLessThan(0.85);
     expect(seen[0]!.y).toBe(0);
     expect(seen[0]!.opacity).toBeLessThan(1);
-    // On its spring (400/31): past full size by its overshoot over that
-    // 0.3 travel (frames may miss the very peak), then back.
     const overshoot = overshootOf(TOOLTIP_SPRING);
     const peak = Math.max(...seen.map((f) => f.scale));
     expect(peak).toBeGreaterThan(1 + 0.3 * overshoot * 0.7);
@@ -191,8 +176,6 @@ test.describe('animate-ui tooltip', () => {
     page,
   }) => {
     await open(page);
-    // Popup and arrow centers on every frame of the entrance: the arrow
-    // never flies in from where Floating UI first renders the popup.
     const frames = page.evaluate(
       () =>
         new Promise<{ dx: number; gap: number; opacity: number }[]>(
@@ -235,7 +218,6 @@ test.describe('animate-ui tooltip', () => {
     await open(page);
     await trigger(page, 'Bold').hover();
     await expect(page.locator(CONTENT)).toBeVisible();
-    // Side "top", centered: its bottom center, towards the trigger.
     const origin = await page.locator(CONTENT).evaluate((el) => {
       const [x = 0, y = 0] = getComputedStyle(el)
         .transformOrigin.split(' ')
@@ -273,7 +255,6 @@ test.describe('animate-ui tooltip', () => {
     );
     await page.mouse.move(5, 5);
     const seen = await frames;
-    // Shrinks back to 0.7 towards its trigger before it unmounts.
     expect(Math.min(...seen.map((f) => f.scale))).toBeLessThan(0.75);
     await expect(page.locator(CONTENT)).toHaveCount(0);
   });
@@ -282,11 +263,9 @@ test.describe('animate-ui tooltip', () => {
     await open(page);
     await trigger(page, 'Bold').hover();
     await expect(page.getByRole('tooltip')).toContainText('Bold');
-    // Settled: Motion drops the transform once the spring rests.
     await expect(page.locator(CONTENT)).toHaveCSS('transform', 'none');
     const from = await contentX(page);
 
-    // Its center on every frame of the glide.
     const glide = page.evaluate(
       (selector) =>
         new Promise<number[]>((resolve) => {
@@ -306,15 +285,12 @@ test.describe('animate-ui tooltip', () => {
     );
     await trigger(page, 'Insert link').hover();
     await expect(page.getByRole('tooltip')).toContainText('Insert link');
-    // One popup all along: it moved instead of closing and reopening.
     await expect(page.locator(CONTENT)).toHaveCount(1);
     await expect(page.locator(CONTENT)).toHaveAttribute('data-state', 'open');
     const centers = await glide;
     await expect(page.locator(CONTENT)).toHaveCSS('transform', 'none');
     const to = await contentX(page);
     expect(to - from).toBeGreaterThan(100);
-    // On the same spring: a little past the new trigger, by the spring's
-    // overshoot of the distance, then back.
     const expected = overshootOf(TOOLTIP_SPRING) * (to - from);
     const past = Math.max(...centers) - to;
     expect(past).toBeGreaterThan(expected * 0.7);
@@ -364,15 +340,11 @@ test.describe('animate-ui tooltip', () => {
       expect(swapping.length).toBeGreaterThan(5);
       const first = swapping[0]!;
 
-      // The next one, from the right (the way the popup goes), out of the
-      // blur, faded out: on its first frame it has barely moved.
       expect(first.layer.x).toBeGreaterThan(SHIFT * 0.5);
       expect(first.layer.x).toBeLessThanOrEqual(SHIFT + 0.01);
       expect(first.layer.y).toBe(0);
       expect(first.layer.blur).toBeGreaterThan(BLUR * 0.5);
       expect(first.layer.opacity).toBeLessThan(0.5);
-      // The previous one, copied as it showed, leaving to the left into the
-      // blur as it fades out.
       expect(first.copies).toHaveLength(1);
       expect(first.copies[0]!.text).toContain('Bold');
       expect(first.copies[0]!.opacity).toBeGreaterThan(0.5);
@@ -384,7 +356,6 @@ test.describe('animate-ui tooltip', () => {
       expect(Math.max(...copies.map((c) => c.blur))).toBeGreaterThan(
         BLUR * 0.6,
       );
-      // Every frame, the next one moves toward rest, never back.
       for (let i = 1; i < swapping.length; i++) {
         expect(swapping[i]!.layer.x).toBeLessThanOrEqual(
           swapping[i - 1]!.layer.x + 0.01,
@@ -393,8 +364,6 @@ test.describe('animate-ui tooltip', () => {
           swapping[i - 1]!.layer.opacity - 0.01,
         );
       }
-      // On the tab panels' timings: the copy is gone after its 0.13s, and
-      // the next one rests (its styles dropped) after its 0.34s.
       const gone = swapping.find((f) => f.copies.length === 0)!;
       expect(gone.t - first.t).toBeGreaterThan(OUT * 1000 * 0.7);
       expect(gone.t - first.t).toBeLessThan(OUT * 1000 + 120);
@@ -425,18 +394,14 @@ test.describe('animate-ui tooltip', () => {
       const sampling = sampleSwap(page);
       await trigger(page, 'Strikethrough').hover();
       const frames = await sampling;
-      // The popup does resize, by its layout animation's scale…
       const resizing = frames.filter((f) => Math.abs(f.popupScaleX - 1) > 0.05);
       expect(resizing.length).toBeGreaterThan(3);
       expect(resizing.some((f) => f.copies.length > 0)).toBe(true);
-      // …and neither content is ever stretched by it.
       for (const frame of frames) {
         expect(frame.layer.textScaleX).toBeCloseTo(1, 2);
         for (const copy of frame.copies)
           expect(copy.textScaleX).toBeCloseTo(1, 2);
       }
-      // The wider label, shown at its size in a popup still narrower, is
-      // clipped by it.
       expect(resizing.every((f) => f.layer.clip.startsWith('inset('))).toBe(
         true,
       );
@@ -483,15 +448,11 @@ test.describe('animate-ui tooltip', () => {
       );
       expect(away).toBeGreaterThan(-1);
       expect(back).toBeGreaterThan(away);
-      // Never two of the same content, never the shown one leaving too.
       for (const frame of frames) {
         expect(frame.copies.length).toBeLessThanOrEqual(1);
         for (const copy of frame.copies)
           expect(copy.text).not.toBe(frame.layer.text);
       }
-      // "Bold" takes over from its copy as it showed, a frame later: it
-      // doesn't start over (faded out, from the right), it goes on from the
-      // left, partly faded, by no more than a frame of its swap.
       const leaving = frames[back - 1]!.copies.find((c) =>
         c.text.includes('Bold'),
       )!;
@@ -502,7 +463,6 @@ test.describe('animate-ui tooltip', () => {
       expect(Math.abs(resumed.opacity - leaving.opacity)).toBeLessThan(0.25);
       expect(resumed.x).toBeLessThan(0);
       expect(Math.abs(resumed.x - leaving.x)).toBeLessThan(SHIFT * 0.3);
-      // And what was coming in leaves from where it was: one copy, "Italic".
       expect(frames[back]!.copies.map((c) => c.text)).toEqual([
         expect.stringContaining('Italic'),
       ]);
@@ -564,8 +524,6 @@ test.describe('animate-ui tooltip', () => {
       await rest(page, 'Alpha');
       const popup = page.getByTestId('as-child');
       await expect(popup).toHaveAttribute('role', 'tooltip');
-      // The child is the popup; the layer, the arrow and the copies' box are
-      // its children.
       await expect(
         popup.locator('> [data-slot="tooltip-content-layer"]'),
       ).toHaveText('Alpha as child');

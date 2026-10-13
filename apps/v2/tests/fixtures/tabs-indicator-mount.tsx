@@ -6,18 +6,6 @@ import * as Base from '@/demos/base-ui/tabs';
 import * as Radix from '@/demos/radix-ui/tabs';
 import * as Aria from '@/demos/react-aria/tabs';
 
-// shadcn's tabs (the demos' own parts) mounted after the page has loaded, the
-// way a dialog's or a popover's are, for tests/interaction/tabs-helpers.ts
-// (describeTabsMounted). In dark mode: the active tab's own border and
-// background are translucent (shadcn's `border-input`, `bg-input/30`), and its
-// `transition-all` would fade them out over the indicator. Each library has
-// two sections, `data-testid`:
-//
-// - `<library>-settle`: "Show tabs" mounts them, "Hide tabs" unmounts them;
-// - `<library>-entrance`: "Show in entrance" mounts them in a box coming in
-//   like Animate UI's dialog (from `perspective(500px) rotateX(-20deg)
-//   scale(0.8)` to none, 300ms): their first read is under that transform.
-
 const TABS = ['One', 'Two', 'Three'];
 
 function RadixTabs() {
@@ -83,7 +71,6 @@ const LIBRARIES = [
   { id: 'react-aria', Tabs: AriaTabs },
 ];
 
-/** Animate UI's dialog entrance, roughly. */
 const ENTRANCE =
   '@keyframes tabs-mount-entrance{from{transform:perspective(500px) rotateX(-20deg) scale(0.8)}}';
 

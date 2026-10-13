@@ -2,20 +2,11 @@
 
 import * as React from 'react';
 
-// Shared by the Preview Link Cards (Radix UI, Base UI, React Aria): the
-// screenshot of the linked page, as Animate UI v1 builds it.
-
-/** The screenshot's options, on the Root of a Preview Link Card. */
 type PreviewImageOptions = {
-  /** The image to show. Defaults to a Microlink screenshot of `href`. */
   src?: string;
-  /** The image's width, in CSS pixels. */
   width?: number;
-  /** The image's height, in CSS pixels. */
   height?: number;
-  /** The device scale factor of the screenshot. */
   deviceScaleFactor?: number;
-  /** The color scheme the page is captured in. */
   colorScheme?: 'light' | 'dark';
 };
 
@@ -30,10 +21,6 @@ function buildQueryString(
   return search.toString();
 }
 
-/**
- * v1's screenshot URL: Microlink captures `href` on a mobile viewport three
- * times the image's size, and answers with the image itself.
- */
 function buildPreviewSrc({
   href,
   width,
@@ -54,10 +41,6 @@ function buildPreviewSrc({
   })}`;
 }
 
-/**
- * Preloads the image as soon as the card's Root mounts (a `<link
- * rel="preload">` in the head, as in v1), so it's there when the card opens.
- */
 function usePreloadImage(src: string) {
   React.useEffect(() => {
     const link = document.createElement('link');

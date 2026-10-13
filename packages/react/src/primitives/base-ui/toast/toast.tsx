@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Toast as ToastPrimitive } from '@base-ui/react/toast';
@@ -38,101 +38,27 @@ import {
   type Snapshot,
 } from '../../../internal/toast-motion';
 
-// Same API as Base UI's Toast. Animate UI v1 had no toast: it rises from its
-// edge like v1's Sheet, by its own size, and lands. A toast anchored to an
-// element is a small bubble, like a tooltip: it grows from 0.7 and fades in
-// from its anchor, on the tooltips' spring (stiffness 400, damping 29). The
-// content behind the front toast fades in 200ms, ease-out.
-//
-// Base UI drives the stack, swipe-to-dismiss and enter/exit itself, through
-// CSS variables (`--toast-index`, `--toast-offset-y`, `--toast-height`,
-// `--toast-swipe-movement-*`, the viewport's `--toast-frontmost-height`) and
-// its transition status, and waits for CSS transitions before removing a
-// toast. So the Root animates with CSS transitions too (a JS animation would
-// fight the swipe), springs written as the `linear()` curve Motion itself
-// would use, and sets them itself from its state (`tempo` applies):
-//
-// - It rises from its edge (a full toast height away), from 0.96 and a 4px
-//   blur, fading in, on a spring that goes a little past its rest and
-//   settles (stiffness 280, damping 24): it lands.
-// - Collapsed, each toast behind the front one scales down by 0.05 per step
-//   (never below 0.9) and peeks out by 0.75rem; hovering or focusing the
-//   viewport expands the stack with a 0.75rem gap, front to back, each toast
-//   30ms after the one in front of it, and it folds back the same way. The
-//   stack moves on the same spring, its height too (a toast updated with
-//   longer content glides to its new height).
-// - While swiped it follows the finger, rubber-banded the wrong way, fading
-//   as it goes; let go, it springs back, or it's thrown the way it was
-//   swiped at the finger's speed (linear).
-// - Dismissed, it leaves through its edge the way it came, quicker than it
-//   came, speeding away (0.2s, like a dialog dismissed).
-// - Its icon shows by type, and an update swaps its icon and text in place
-//   (internal/toast-motion).
-// - A bar of the time it has left, in its type's color, paused whenever
-//   Base UI pauses its timer (`progressBar={false}` on the Root or the
-//   Provider leaves it out).
-// - Under reduced motion it fades in place, the stack changes at once, the
-//   icon and text only fade.
-
-/** Animate UI's additions to `Toast.Root`. */
 type RootAnimationProps = {
-  /**
-   * Transition of the entrance and the stack (a CSS transition: a spring
-   * becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier
-   * or named `ease`). `{ type: 'spring', stiffness: 280, damping: 24 }` by
-   * default, or `{ type: 'spring', stiffness: 400, damping: 29 }` for a toast
-   * anchored to an element.
-   */
   transition?: Transition;
-  /**
-   * Transition of the exit (a CSS transition). `{ duration: 0.2, ease:
-   * [0.33, 0.17, 0.67, 0.5] }` by default; an anchored toast leaves on its
-   * `transition`. A swiped toast is thrown at the finger's speed instead.
-   */
   exitTransition?: Transition;
-  /**
-   * Shows a bar of the time the toast has left along its bottom edge,
-   * paused while Base UI pauses its timer (the stack hovered or focused, the
-   * window in the background). Defaults to the Provider's `progressBar`.
-   */
   progressBar?: boolean;
 };
 
-/** Animate UI's additions to `Toast.Content`. */
 type ContentAnimationProps = {
-  /**
-   * Transition of the content fading behind the front toast (a CSS
-   * transition).
-   * @default { duration: 0.2, ease: [0.23, 1, 0.32, 1] }
-   */
   transition?: Transition;
 };
 
-/** Animate UI's additions to `Toast.Provider`. */
 type ProviderAnimationProps = {
-  /**
-   * Shows a bar of the time each toast has left (see `Toast.Root`'s
-   * `progressBar`). Pass `false` to leave it out.
-   * @default true
-   */
   progressBar?: boolean;
 };
 
 const GAP = '0.75rem';
 const PEEK = '0.75rem';
-/** An anchored toast grows from 0.7, like a tooltip. */
 const ANCHORED_SCALE = HIDDEN_SCALE.tooltip;
-/** A toast from an edge rises from 0.96, out of a 4px blur. */
 const RISE_SCALE = motionTokens.scale.toast;
 const RISE_BLUR = motionTokens.blur.surface;
-/** The content behind the front toast: a short fade, 200ms ease-out. */
 const FADE_TRANSITION = motionTokens.transition.fade;
-/** Base UI's default `timeout`. */
 const DEFAULT_TIMEOUT = 5000;
-/**
- * ms: how long after the stack expands (or collapses) a change still
- * cascades, front to back.
- */
 const CASCADE_WINDOW = 150;
 
 const STYLE_HREF = 'animate-ui-base-ui-toast';
@@ -167,17 +93,12 @@ function getDirections(swipeDirection: Root.Props['swipeDirection']) {
   ) as Direction[];
 }
 
-// Toasts swiped down (Base UI's default) live at the bottom edge.
 function getSide(directions: Direction[]) {
   return directions.includes('up') && !directions.includes('down')
     ? 'top'
     : 'bottom';
 }
 
-/**
- * Whether the stack has just expanded or collapsed: its changes then
- * cascade, front to back. Read while Base UI renders (its `style` callback).
- */
 function useCascade() {
   const ref = React.useRef<{ expanded?: boolean; at: number }>({
     at: -Infinity,
@@ -197,11 +118,8 @@ type StackOptions = {
   anchored: boolean;
   enter: CssTiming;
   exit: CssTiming;
-  /** The cascade's delay, while the stack expands or collapses. */
   cascade: string | undefined;
-  /** The toast following the finger. */
   swipe: React.CSSProperties | null;
-  /** Thrown away by a swipe. */
   thrown: CssTiming | null;
 };
 
@@ -213,11 +131,8 @@ function stackStyle(
   const starting = state.transitionStatus === 'starting';
   const hidden = starting || ending || state.limited;
 
-  // While swiped, Base UI sets no transition: the toast follows the finger.
   if (state.swiping) return swipe ?? { opacity: hidden ? 0 : 1 };
 
-  // A toast anchored to an element (Toast.Positioner) isn't stacked: it
-  // grows from its anchor, like a tooltip.
   if (anchored) {
     return {
       opacity: hidden ? 0 : 1,
@@ -233,10 +148,7 @@ function stackStyle(
   const swiped = ending
     ? (state.swipeDirection as Direction | undefined)
     : undefined;
-  // Thrown by a swipe: it keeps the finger's speed, and doesn't blur.
   const timing = swiped && thrown ? thrown : ending ? exit : enter;
-  // Under reduced motion only the fade transitions, but a swipe still
-  // throws the toast along the swipe.
   const properties = !reduce
     ? ['transform', 'opacity', 'height', 'filter']
     : swiped
@@ -248,25 +160,18 @@ function stackStyle(
   };
 
   const dir = side === 'top' ? -1 : 1;
-  // Scale of a toast behind the front one, never below 0.9.
   const behindScale = 'max(0.9, calc(1 - var(--toast-index) * 0.05))';
   const restScale = state.expanded ? '1' : behindScale;
-  // Collapsed toasts take the front toast's height (shadcn/ui sizes them
-  // so); scaled down, they are pulled back by what they lost.
   const clamp = 'var(--toast-frontmost-height, var(--toast-height, 0px))';
   const restY = state.expanded
     ? `calc(var(--toast-swipe-movement-y, 0px) - ${dir} * (var(--toast-offset-y, 0px) + var(--toast-index, 0) * ${GAP}))`
     : `calc(var(--toast-swipe-movement-y, 0px) - ${dir} * (var(--toast-index, 0) * ${PEEK} + (1 - ${behindScale}) * ${clamp}))`;
 
-  // Off-screen offset: from and back to its edge, or onward in the swipe
-  // direction. None under reduced motion: it fades in place (a swipe still
-  // throws it along the swipe).
   let exitX = '0px';
   let exitY = '0px';
   let scale = restScale;
   if ((starting || ending) && !swiped && !reduce) {
     exitY = `${dir * 100}%`;
-    // It rises from 0.96, out of a 4px blur, and leaves the same way.
     scale = `calc(${restScale} * ${RISE_SCALE})`;
     style.filter = RISE_BLUR;
   }
@@ -304,7 +209,6 @@ function Provider({ progressBar = true, ...props }: Provider.Props) {
 }
 
 namespace Provider {
-  /** Base UI's props, plus Animate UI's `progressBar`. */
   export type Props = ToastPrimitive.Provider.Props & ProviderAnimationProps;
   export type State = ToastPrimitive.Provider.State;
 }
@@ -362,13 +266,11 @@ function RootMotion({
   const rootRef = React.useRef<HTMLDivElement>(null);
   const dragRef = React.useRef<Drag | null>(null);
 
-  // The icon shows once the toast has landed.
   React.useLayoutEffect(() => {
     const root = rootRef.current;
     const icon = root && iconOf(root);
     if (icon)
       showIcon(icon, toast.type, tokens.transition.check.delay, tokens, reduce);
-    // On mount only: updates go through `UpdateSnapshot`.
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, []);
 
@@ -417,8 +319,6 @@ function RootMotion({
           onPointerCancel?.(event);
           dragRef.current = null;
         }}
-        // Base UI calls it with the toast's state on every change; the user's
-        // style still applies on top.
         style={(state) => {
           const cascade =
             cascading(state.expanded) && !reduce
@@ -465,10 +365,6 @@ function RootMotion({
 }
 
 namespace Root {
-  /**
-   * Base UI's props, plus Animate UI's `transition`, `exitTransition` and
-   * `progressBar`.
-   */
   export type Props = ToastPrimitive.Root.Props &
     RootAnimationProps &
     React.RefAttributes<HTMLDivElement>;
@@ -478,7 +374,6 @@ namespace Root {
     ToastPrimitive.Root.ToastObject<Data>;
 }
 
-/** Whether the window is in the foreground (Base UI pauses timers when not). */
 function subscribeToWindowFocus(onChange: () => void) {
   window.addEventListener('focus', onChange, true);
   window.addEventListener('blur', onChange, true);
@@ -488,14 +383,6 @@ function subscribeToWindowFocus(onChange: () => void) {
   };
 }
 
-/**
- * The time the toast has left: a bar shrinking linearly over its timeout
- * (real time: `tempo` doesn't pace it), paused while Base UI pauses its timer
- * (the stack expanded, the window in the background), from where it was.
- * It starts over when the timer does: a loading toast resolved, a new
- * timeout. A toast without a timer (loading, `timeout: 0`) has no bar.
- */
-/** The bar's color when the toast's type has one (its icon's). */
 const TINT_VAR = '--animate-ui-toast-progress-color';
 const TINTED = 'data-tinted';
 
@@ -515,11 +402,8 @@ function RemainingTime({
     () => document.hasFocus(),
     () => true,
   );
-  // What pauses it besides the stack expanding, as of the last commit.
   const pausedRef = React.useRef({ ending, windowFocused });
 
-  // The Root: the bar's holder's parent (its ref isn't set yet when the
-  // bar's own effects first run).
   const rootOf = () => barRef.current?.parentElement?.parentElement ?? null;
 
   const sync = React.useCallback(() => {
@@ -542,8 +426,6 @@ function RemainingTime({
       { duration, easing: 'linear', fill: 'forwards' },
     );
     animationRef.current = animation;
-    // In the color of the toast's type: its icon's (shadcn colors the
-    // error's), else its text's.
     const root = rootOf();
     const icon = root?.querySelector('[data-slot="toast-icon"] > *');
     const tint = icon && root ? getComputedStyle(icon).color : null;
@@ -561,7 +443,6 @@ function RemainingTime({
     };
   }, [running, duration, sync]);
 
-  // Base UI marks the stack expanded on the Root (`data-expanded`).
   React.useLayoutEffect(() => {
     const root = rootOf();
     if (!running || !root) return undefined;
@@ -592,9 +473,6 @@ function Content({ style, transition, ...props }: Content.Props) {
   const reduce = useShouldReduceMotion();
   const cascading = useCascade();
   const stagger = useMotionTokens().stagger.stack * 1000;
-  // Fades behind the front toast while collapsed (shadcn/ui's
-  // data-behind:opacity-0), back in when the stack expands, in cascade with
-  // its toast: v1's fade.
   const timing = toCssTiming(useTempoTransition(transition ?? FADE_TRANSITION));
 
   return (
@@ -615,7 +493,6 @@ function Content({ style, transition, ...props }: Content.Props) {
 }
 
 namespace Content {
-  /** Base UI's props, plus Animate UI's `transition`. */
   export type Props = ToastPrimitive.Content.Props &
     ContentAnimationProps &
     React.RefAttributes<HTMLDivElement>;

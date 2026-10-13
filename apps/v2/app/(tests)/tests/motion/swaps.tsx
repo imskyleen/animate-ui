@@ -3,9 +3,6 @@
 import { CopyButton } from '@/components/docs/copy-button';
 import { ThemeToggle } from '@/components/layout/header';
 
-// The docs' own icon swaps, live on the motion review page (a server page
-// can't hand `getText` to the copy button itself).
-
 export function CopySwap() {
   return (
     <CopyButton

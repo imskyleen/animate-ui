@@ -7,7 +7,6 @@ import * as ContextMenuStar from '@animate-ui/react/primitives/radix-ui/context-
 const area = 'flex h-24 w-64 items-center justify-center rounded-md border';
 const content = 'min-w-40 rounded-md border bg-white p-1 shadow-md';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixContextMenuFixture() {
   const [open, setOpen] = React.useState(false);
   const [pinned, setPinned] = React.useState(false);
@@ -30,7 +29,6 @@ export default function RadixContextMenuFixture() {
 
       <section className="flex items-center gap-4">
         <p data-testid="pinned">{String(pinned)}</p>
-        {/* The `import * as` style of @radix-ui/react-context-menu. */}
         <ContextMenuStar.Root>
           <ContextMenuStar.Trigger className={area}>
             Star area

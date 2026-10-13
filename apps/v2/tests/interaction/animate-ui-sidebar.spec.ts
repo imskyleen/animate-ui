@@ -1,18 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// @animate-ui/react/primitives/sidebar on its own (tests/fixtures/
-// animate-ui-sidebar): shadcn/ui's sidebar behaviour (state, controlled or
-// not, the cookie, useSidebar), the offcanvas slide, and the highlight
-// switched off. The shadcn/ui demos (radix-ui-, base-ui-, react-aria-
-// sidebar.spec.ts) cover the motion in every base.
-
 const PATH = '/tests/fixtures/animate-ui-sidebar';
 const SURFACE = '[data-slot="trigger-highlight"]';
 
 const sidebar = (page: Page, label: string) => page.getByTestId(label);
 const state = (page: Page, label: string) => page.getByTestId(`${label}-state`);
 
-/** The container's `left` transition, paused and seeked (0, 70… 280ms). */
 function seekLeft(page: Page, label: string) {
   return sidebar(page, label)
     .locator('[data-slot="sidebar-container"]')
@@ -25,7 +18,6 @@ function seekLeft(page: Page, label: string) {
       if (!animation) return null;
       animation.pause();
       const timing = animation.effect!.getTiming();
-      // From the box's padding edge (inside its border).
       const parent =
         el.parentElement!.getBoundingClientRect().left +
         el.parentElement!.clientLeft;
@@ -54,7 +46,6 @@ test.describe('animate-ui sidebar primitive', () => {
     await expect(state(page, 'collapsed')).toHaveText('collapsed false');
     const gap = sidebar(page, 'collapsed').locator('[data-slot="sidebar-gap"]');
     expect((await gap.boundingBox())!.width).toBe(0);
-    // No transition ran on mount.
     expect(
       await sidebar(page, 'collapsed').evaluate(
         (root) => root.getAnimations({ subtree: true }).length,
@@ -70,7 +61,6 @@ test.describe('animate-ui sidebar primitive', () => {
     expect(out).not.toBeNull();
     expect(out!.duration).toBe(280);
     expect(out!.easing).toBe('cubic-bezier(0.77, 0, 0.175, 1)');
-    // Slow at first, half way at half time, then there.
     expect(out!.lefts[0]).toBeCloseTo(0, 0);
     expect(out!.lefts[1]).toBeGreaterThan(-20);
     expect(out!.lefts[2]).toBeLessThan(-100);
@@ -94,7 +84,6 @@ test.describe('animate-ui sidebar primitive', () => {
       (c) => c.name === 'sidebar_state',
     );
     expect(cookie?.value).toBe('true');
-    // shadcn/ui's 7 days.
     expect(cookie!.expires - Date.now() / 1000).toBeGreaterThan(
       60 * 60 * 24 * 7 - 60,
     );
@@ -107,7 +96,6 @@ test.describe('animate-ui sidebar primitive', () => {
     await page.getByTestId('controlled-toggle').click();
     await expect(state(page, 'controlled')).toHaveText('collapsed false');
     await expect(page.getByTestId('controlled-changes')).toHaveText('false');
-    // Changed from outside: it follows, without calling onOpenChange.
     await page.getByTestId('controlled-outside').click();
     await expect(state(page, 'controlled')).toHaveText('expanded true');
     await expect(page.getByTestId('controlled-changes')).toHaveText('false');
@@ -139,8 +127,6 @@ test.describe('animate-ui sidebar primitive', () => {
             const visible = [
               ...root.querySelectorAll<HTMLElement>(selector),
             ].filter((el) => Number(getComputedStyle(el).opacity) > 0.5);
-            // The part of it on screen: inside its clipping button, it
-            // would show only once inside the button.
             for (const el of visible) out.push(el.getBoundingClientRect().top);
             if (performance.now() - t0 < 400) requestAnimationFrame(tick);
             else resolve(out);
@@ -154,7 +140,6 @@ test.describe('animate-ui sidebar primitive', () => {
     expect(
       frames.filter((top) => top > inbox.y + 1 && top < sent.y - 1).length,
     ).toBeGreaterThanOrEqual(3);
-    // Beside the button, in its item: not clipped by the button.
     expect(
       await page
         .locator(SURFACE)
@@ -167,7 +152,6 @@ test.describe('animate-ui sidebar primitive', () => {
     const pinned = sidebar(page, 'icons').getByRole('button', {
       name: 'Pinned',
     });
-    // Lit by its own styles while it's expanded, wherever the pointer is.
     await pinned.click();
     await page.mouse.move(5, 5);
     await expect(sidebar(page, 'icons').locator(SURFACE)).toHaveCount(1);
@@ -177,7 +161,6 @@ test.describe('animate-ui sidebar primitive', () => {
           const out: { surface: DOMRect; item: DOMRect }[] = [];
           const t0 = performance.now();
           const channel = new MessageChannel();
-          // Read once the frame is painted (after the resize observers).
           channel.port1.onmessage = () => {
             const surface = root.querySelector(selector);
             const item = root.querySelector('[data-sidebar="menu-button"]')!;
@@ -226,20 +209,16 @@ test.describe('animate-ui sidebar primitive', () => {
             .map((el) => el.parentElement!.textContent!.trim()),
         );
     const TRANSPARENT = 'rgba(0, 0, 0, 0)';
-    // At rest: its own background, no surface.
     expect(await own('Drafts')).not.toBe(TRANSPARENT);
     expect(await lit()).toEqual([]);
-    // Another button hovered: one surface there, the active one keeps its own.
     await section.getByRole('button', { name: 'Inbox', exact: true }).hover();
     await page.waitForTimeout(300);
     expect(await lit()).toEqual(['Inbox']);
     expect(await own('Drafts')).not.toBe(TRANSPARENT);
-    // The active one hovered: the surface glides there and stands for it.
     await section.getByRole('button', { name: 'Drafts', exact: true }).hover();
     await page.waitForTimeout(300);
     expect(await lit()).toEqual(['Drafts']);
     expect(await own('Drafts')).toBe(TRANSPARENT);
-    // Left: its own background is back, the surface goes.
     await page.mouse.move(5, 5);
     await page.waitForTimeout(400);
     expect(await lit()).toEqual([]);

@@ -2,7 +2,6 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { overshootOf } from './spring-curves';
 
-/** The library tooltips' and popovers' spring, Animate UI's Tooltip's too. */
 const POP_SPRING = { stiffness: 400, damping: 29 };
 
 const open = (page: Page) =>
@@ -13,7 +12,6 @@ const open = (page: Page) =>
 const avatar = (page: Page, name: string) =>
   page.getByRole('img', { name, exact: true });
 
-/** The element that rises: the avatar's motion wrapper. */
 const riseOf = (page: Page, name: string) =>
   avatar(page, name)
     .locator('..')
@@ -28,7 +26,6 @@ test.describe('animate-ui avatar-group', () => {
     await avatar(page, 'Adam Wathan').hover();
     await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeLessThan(0);
     await expect(page.getByRole('tooltip')).toContainText('Adam Wathan');
-    // -30% of the 48px avatar, once the spring settles.
     await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeCloseTo(-14.4, 0);
   });
 
@@ -46,7 +43,6 @@ test.describe('animate-ui avatar-group', () => {
     });
     await avatar(page, 'Adam Wathan').hover();
     const values = await sampling;
-    // The v1 spring (stiffness 300, damping 17) rises ~17% past -14.4px.
     expect(Math.min(...values)).toBeLessThan(-16);
     expect(Math.min(...values)).toBeGreaterThan(-18);
     await expect.poll(() => riseOf(page, 'Adam Wathan')).toBeCloseTo(-14.4, 0);
@@ -73,8 +69,6 @@ test.describe('animate-ui avatar-group', () => {
     );
     await avatar(page, 'Adam Wathan').hover();
     const scales = await sampling;
-    // From 0.7, past full size by the spring's overshoot over that 0.3 travel
-    // (frames may miss the very peak), then at rest.
     expect(scales[0]!).toBeGreaterThanOrEqual(0.69);
     expect(scales[0]!).toBeLessThan(0.85);
     const overshoot = overshootOf(POP_SPRING);

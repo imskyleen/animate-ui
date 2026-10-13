@@ -13,7 +13,6 @@ import {
 type PaperclipProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // It swings, as Hugeicons' Attachment; drawn again is `draw`.
   default: {
     path: {
       initial: { rotate: 0 },

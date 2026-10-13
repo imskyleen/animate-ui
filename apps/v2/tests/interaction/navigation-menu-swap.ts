@@ -3,42 +3,25 @@ import { expect, test, type Page } from '@playwright/test';
 import { paintedLeft } from './menubar-handoff';
 import { describeBarTriggers, type BarSetup } from './menubar-triggers';
 
-// A navigation menu's content changing (shared by the Radix UI and Base UI
-// navigation menu specs), like a menubar's: moving from Getting started to
-// Components, Getting started's links leave 24px to the left and fade out,
-// Components' come in from 24px to the right and fade in behind them (the
-// other way around going back), in place on screen while the popup moves to
-// its trigger (Base UI's; Radix's viewport stays). Each content shows once,
-// and back to one still leaving, it comes back from where it is. The triggers
-// share one highlight, like a menubar's, and so do each content's links.
-
 const CONTENT = '[data-slot="navigation-menu-content"]';
-/** How far the contents slide (`shift.navigation`). */
 const SHIFT = 24;
 const COPY = '[data-animate-ui-handoff]';
 
 type Shown = {
-  /** Its first link's title. */
   label: string;
-  /** How much it shows: its opacity, on its first link's. */
   shown: number;
-  /** Its first link, on screen. */
   left: number;
   copy: boolean;
 };
 
 export type SwapFrame = {
   t: number;
-  /** The document timeline's time: what animations are sampled at. */
   clock: number;
-  /** The viewport (or popup), on screen. */
   box: { left: number; width: number };
   contents: Shown[];
-  /** Copies inside copies. */
   nested: number;
 };
 
-/** Records the contents frame by frame, for `duration` ms. */
 export function recordSwap(page: Page, container: string, duration: number) {
   return page.evaluate(
     ({ container, content, copy, duration }) =>
@@ -53,7 +36,6 @@ export function recordSwap(page: Page, container: string, duration: number) {
             ...document.querySelectorAll(`${content}, ${copy}`),
           ].flatMap((el) => {
             const link = el.querySelector('a');
-            // Not a content holding another one (a submenu's).
             if (!link || el.querySelector(content)) return [];
             const title = link.querySelector('div') ?? link;
             return [
@@ -84,13 +66,11 @@ export function recordSwap(page: Page, container: string, duration: number) {
 const trigger = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });
 
-/** Hovers a trigger (its center), at once. */
 async function hover(page: Page, name: string) {
   const box = (await trigger(page, name).boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
 }
 
-/** A content's first link, at rest. */
 async function restOf(page: Page, label: string) {
   return page
     .locator(CONTENT, { hasText: label })
@@ -99,7 +79,6 @@ async function restOf(page: Page, label: string) {
     .evaluate((el) => el.getBoundingClientRect().left);
 }
 
-/** The content showing `label` (its own, or its copy), frame by frame. */
 export function seriesOf(frames: SwapFrame[], label: string, copy: boolean) {
   return frames.flatMap((frame) => {
     const found = frame.contents.find(
@@ -109,7 +88,6 @@ export function seriesOf(frames: SwapFrame[], label: string, copy: boolean) {
   });
 }
 
-/** Only ever goes one way (`way` 1: right or up, -1: left or down). */
 function expectOneWay(values: number[], way: 1 | -1, slack = 0.5) {
   expect(values.length).toBeGreaterThan(3);
   for (let i = 1; i < values.length; i++)
@@ -117,9 +95,7 @@ function expectOneWay(values: number[], way: 1 | -1, slack = 0.5) {
 }
 
 type NavSetup = {
-  /** The element that clips the contents (and moves, for Base UI). */
   container: string;
-  /** It moves from trigger to trigger. */
   moves: boolean;
 };
 
@@ -143,7 +119,6 @@ export function describeNavigationMenuSwap(
       const intro = await restOf(page, 'Introduction');
       let recording = recordSwap(page, nav.container, 700);
       await hover(page, 'Components');
-      // The leaving links are only seen.
       await page.waitForTimeout(40);
       const copy = page.locator(COPY).first();
       await expect(copy).toHaveAttribute('aria-hidden', 'true');
@@ -155,8 +130,6 @@ export function describeNavigationMenuSwap(
       let frames = await recording;
       const alert = await restOf(page, 'Alert Dialog');
 
-      // Getting started's links start where they were on screen, then only
-      // go left, 24px, as they fade out.
       let leaving = seriesOf(frames, 'Introduction', true);
       expect(Math.abs(leaving[0]!.left - intro)).toBeLessThan(1.5);
       expect(leaving[0]!.shown).toBeGreaterThan(0.75);
@@ -166,8 +139,6 @@ export function describeNavigationMenuSwap(
       );
       expect(leaving.at(-1)!.left - intro).toBeLessThan(-SHIFT / 2);
       expect(leaving.at(-1)!.left - intro).toBeGreaterThanOrEqual(-SHIFT - 0.5);
-      // Components' come in from the right of where they rest, on screen
-      // (wherever the popup is), and only go left, fading in behind them.
       const coming = seriesOf(frames, 'Alert Dialog', false);
       expect(coming[0]!.shown).toBeLessThan(0.1);
       expect(coming[0]!.left - alert).toBeGreaterThan(SHIFT / 2);
@@ -180,7 +151,6 @@ export function describeNavigationMenuSwap(
       expect(Math.abs(coming.at(-1)!.left - alert)).toBeLessThan(0.3);
       await expect(page.locator(COPY)).toHaveCount(0, { timeout: 600 });
 
-      // Back to Getting started: the other way around.
       await page.waitForTimeout(300);
       recording = recordSwap(page, nav.container, 600);
       await hover(page, 'Getting started');
@@ -225,8 +195,6 @@ export function describeNavigationMenuSwap(
     }) => {
       const intro = await restOf(page, 'Introduction');
       const recording = recordSwap(page, nav.container, 900);
-      // Back while Getting started's content is leaving (once the menu has
-      // switched: Base UI waits a moment on hover, Radix doesn't).
       await hover(page, 'Components');
       await page.locator(COPY).first().waitFor({ state: 'attached' });
       await hover(page, 'Getting started');
@@ -243,9 +211,6 @@ export function describeNavigationMenuSwap(
       expect(back).toBeGreaterThan(0);
       const leaving = seen[back - 1]!;
       const returning = seen[back]!;
-      // Still in sight when it comes back, it goes on from there (give or
-      // take the frame or two it went on fading out): not from nothing, not
-      // from 24px aside.
       expect(leaving.shown).toBeGreaterThan(0.1);
       expect(returning.shown).toBeGreaterThan(leaving.shown * 0.6);
       expect(Math.abs(returning.left - leaving.left)).toBeLessThan(1.5);
@@ -309,8 +274,6 @@ export function describeNavigationMenuSwap(
         () => hover(page, 'Components'),
         300,
       );
-      // Getting started's links slide 24px left over 220ms (about 5px a frame at
-      // most), until the popup's edge clips them: never a jump.
       const seen = lefts.filter((left): left is number => left !== null);
       expect(seen.length).toBeGreaterThan(2);
       for (let i = 1; i < seen.length; i++)
@@ -338,7 +301,6 @@ export function describeNavigationMenuSwap(
           lefts.filter((left) => left > start + 1 && left < end - 1).length,
           lefts.join(', '),
         ).toBeGreaterThanOrEqual(3);
-        // However far it moves, the links stay put but for their slide.
         for (const c of seriesOf(frames, 'Introduction', true)) {
           expect(c.left - intro).toBeLessThanOrEqual(0.5);
           expect(c.left - intro).toBeGreaterThanOrEqual(-SHIFT - 0.5);
@@ -362,7 +324,6 @@ export function describeNavigationMenuSwap(
     const boxOf = async (page: Page) =>
       (await page.locator(nav.container).boundingBox())!;
 
-    /** Its speed from the frame before (on the timeline), per ms. */
     const speedOf = (values: number[], frames: SwapFrame[], i: number) =>
       (values[i]! - values[i - 1]!) / (frames[i]!.clock - frames[i - 1]!.clock);
 
@@ -382,17 +343,10 @@ export function describeNavigationMenuSwap(
       const trace = frames
         .map((f) => `${Math.round(f.clock)}:${f.box.width.toFixed(1)}`)
         .join(' ');
-      // On a critically damped spring from rest: never faster than its
-      // peak, ~0.95% of the way per ms (a tween starting at its fastest goes
-      // 1.25% or more).
       const fastest = Math.max(
         ...widths.slice(1).map((_, i) => speedOf(widths, frames, i + 1)),
       );
       expect(fastest, trace).toBeLessThan((after - before) * 0.0105);
-      // Its first frames speed up (a tween, only slowing down, would start
-      // at its fastest). (Base UI's CSS transition starts with a frame;
-      // Motion's, for Radix, mid-frame, and a frame later if the content is
-      // measured again: its own steps aren't whole frames.)
       if (nav.moves) {
         const first = widths.findIndex(
           (width, i) => i > 0 && width > widths[i - 1]! + 0.01,
@@ -402,7 +356,6 @@ export function describeNavigationMenuSwap(
           speedOf(widths, frames, first + 1) * 0.95,
         );
       }
-      // No bounce: never wider than the next content.
       expect(Math.max(...widths)).toBeLessThanOrEqual(after + 0.5);
       expect(Math.abs(widths.at(-1)! - after)).toBeLessThan(0.5);
     });
@@ -422,7 +375,6 @@ export function describeNavigationMenuSwap(
       );
       await hover(page, 'Getting started');
       const frames = await recording;
-      // Getting started's content gone (Components' shows), then back.
       const gone = frames.findIndex(
         (frame) =>
           shows('Alert Dialog')(frame) && !shows('Introduction')(frame),
@@ -431,9 +383,6 @@ export function describeNavigationMenuSwap(
       const back = gone + frames.slice(gone).findIndex(shows('Introduction'));
       expect(back).toBeGreaterThan(gone);
       const widths = frames.map((frame) => frame.box.width);
-      // Where it had grown to as it turns (Radix's viewport turns once it
-      // has measured the content back, a frame later), and never wider
-      // after: no bounce.
       const at = nav.moves ? widths[back - 1]! : widths[back + 1]!;
       expect(at - before).toBeGreaterThan(10);
       expect(Math.max(...widths.slice(back + 1))).toBeLessThanOrEqual(at + 0.5);
@@ -463,9 +412,6 @@ export function describeNavigationMenuSwap(
         const lefts = frames.map((frame) => frame.box.left);
         const before = speedOf(lefts, frames, next - 1);
         expect(before).toBeGreaterThan(0.05);
-        // On from where it was, at about the speed it had, as the next
-        // trigger takes it: no lurch (a tween starting at its fastest), no
-        // stop; then speeding up toward With Icon, farther.
         const trace = frames
           .map((f) => `${Math.round(f.clock)}:${f.box.left.toFixed(1)}`)
           .join(' ');
@@ -489,7 +435,6 @@ export function describeNavigationMenuSwap(
           ({ container, left }) =>
             document.querySelector(container)!.getBoundingClientRect().left >
             left,
-          // Past Components (131px from Getting started), on its way.
           { container: nav.container, left: start + 150 },
           { polling: 'raf' },
         );
@@ -501,8 +446,6 @@ export function describeNavigationMenuSwap(
         const lefts = frames.map((frame) => frame.box.left);
         const at = lefts[back - 1]!;
         expect(at - components).toBeGreaterThan(10);
-        // No bounce: it doesn't go on right (where it was going) first, and
-        // it eases into Components' place without going past it.
         expect(Math.max(...lefts.slice(back))).toBeLessThanOrEqual(at + 0.5);
         expect(Math.min(...lefts.slice(back))).toBeGreaterThanOrEqual(
           components - 0.5,
@@ -524,8 +467,6 @@ export function describeNavigationMenuSwap(
       await hover(page, 'Components');
       const frames = await recording;
       const alert = await restOf(page, 'Alert Dialog');
-      // Nothing leaves (a copy left behind would show cut where the popup
-      // jumped from): the next content fades in, in place.
       expect(
         frames.every((frame) => frame.contents.every((c) => !c.copy)),
       ).toBe(true);
@@ -589,7 +530,6 @@ export function describeNavigationMenuSwap(
         lefts.filter((l) => l > from.box.x + 1 && l < to.box.x - 1).length,
       ).toBeGreaterThanOrEqual(3);
       expect(Math.abs(lefts.at(-1)! - to.box.x)).toBeLessThan(0.5);
-      // The links' own backgrounds are cleared: one highlight.
       expect(
         await link('Hover Card').evaluate(
           (el) => getComputedStyle(el).backgroundColor,
@@ -599,11 +539,6 @@ export function describeNavigationMenuSwap(
   });
 }
 
-/**
- * An open trigger's background (`data-open:bg-muted/50`) and a hovered one's
- * (`hover:bg-muted`) differ: the highlight's color changes between them on
- * the color's curve, not at once.
- */
 export function describeNavigationMenuTriggerColors(
   title: string,
   path: string,
@@ -628,7 +563,6 @@ export function describeNavigationMenuTriggerColors(
                 '[data-slot="navigation-menu-trigger"] [data-slot="trigger-highlight"]',
               );
               if (surface) {
-                // The color's alpha (`… / a)`, or 1).
                 const color = getComputedStyle(surface).backgroundColor;
                 const alpha = color.match(/\/\s*([\d.]+)\)|,\s*([\d.]+)\)$/);
                 seen.push(alpha ? Number(alpha[1] ?? alpha[2]) : 1);
@@ -639,7 +573,6 @@ export function describeNavigationMenuTriggerColors(
             requestAnimationFrame(tick);
           }),
       );
-      // Off the trigger, into its content: it stays open, not hovered.
       await page.mouse.move(box.x + box.width / 2, box.y + box.height + 60);
       const seen = await alphas;
       const start = seen[0]!;
@@ -652,7 +585,6 @@ export function describeNavigationMenuTriggerColors(
   });
 }
 
-/** The navigation menu's triggers, beside its Docs link. */
 export function describeNavigationMenuTriggers(title: string, path: string) {
   const setup: BarSetup = {
     triggers:
@@ -669,8 +601,6 @@ export function describeNavigationMenuTriggers(title: string, path: string) {
       content: (page) => page.locator(CONTENT, { hasText: 'Alert Dialog' }),
     },
     open: (page, name) => hover(page, name),
-    // Escape gives the focus back to the trigger, which `focus:bg-muted`
-    // lights.
     escapeClears: false,
   };
   test.describe(`${title} triggers`, () => {

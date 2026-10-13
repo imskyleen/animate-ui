@@ -51,7 +51,6 @@ function AddButton({ label, title }: { label: string; title: string }) {
 
 const topManager = Toast.createToastManager();
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseToastFixture() {
   return (
     <div className="flex flex-col gap-4">

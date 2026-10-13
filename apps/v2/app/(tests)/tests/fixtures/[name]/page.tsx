@@ -3,7 +3,6 @@ import path from 'node:path';
 
 import { notFound } from 'next/navigation';
 
-// API compatibility fixtures (tests/fixtures/<name>.tsx), for Playwright.
 export default async function FixtureTestPage({
   params,
 }: PageProps<'/tests/fixtures/[name]'>) {

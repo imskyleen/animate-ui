@@ -4,10 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useSyncedValue, type TabItem } from './tabs';
 
-/**
- * CLI or Manual: shadcn/ui's Tabs on Animate UI's Radix Tabs. The choice is
- * remembered across pages (`groupId`, `persist`); a panel mounts when opened.
- */
 export function InstallTabs({
   tabs,
   label = 'Installation',
@@ -42,8 +38,6 @@ export function InstallTabs({
         <TabsContent
           key={tab.value}
           value={tab.value}
-          // The tab row sets the spacing: a panel's own block margins (code
-          // blocks, steps) would add to it.
           className="*:first:mt-0 *:last:mb-0 [&_.fd-step:first-child>h3:first-child]:mt-0"
         >
           {tab.content}

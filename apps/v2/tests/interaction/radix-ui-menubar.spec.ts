@@ -36,14 +36,12 @@ test.describe('radix-ui menubar demo', () => {
     await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     await page.waitForTimeout(500);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, CONTENT)).opacity, {
         intervals: [16],
       })
       .toBeLessThan(1);
     await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 600 });
-    // Focus is back on the trigger right away.
     await expect(
       page.locator('[data-slot="menubar-trigger"]').first(),
     ).toBeFocused();
@@ -96,7 +94,6 @@ test.describe('radix-ui menubar API', () => {
     await page.mouse.move(beta.x + beta.width / 2, beta.y + beta.height / 2);
     const frames = await recording;
     expect(frames[0]!.subs).toBe(1);
-    // Gone in the frame Beta's menu shows.
     expect(
       frames.filter(
         (frame) =>
@@ -111,13 +108,10 @@ test.describe('radix-ui menubar API', () => {
   }) => {
     const gamma = page.getByRole('menuitem', { name: 'Gamma', exact: true });
     const item = page.getByRole('menuitem', { name: 'Gamma item' });
-    // A closed kept-mounted menu is still a dismissable layer: the pointer
-    // down that opens it must not count as one outside it.
     await gamma.click();
     await expect(item).toBeVisible();
     await page.waitForTimeout(400);
     await expect(item).toBeVisible();
-    // A click outside still closes it, and so does its trigger.
     await page.mouse.click(5, 5);
     await expect(item).toBeHidden({ timeout: 600 });
     await gamma.click();
@@ -144,8 +138,6 @@ test.describe('radix-ui menubar API', () => {
 
 describeMenuHighlight('radix-ui menubar highlight', {
   path: '/tests/demos/radix-ui/menubar',
-  // The Edit menu: its submenu trigger sits two rows below its first item,
-  // like the old demo's (see the dropdown menu's spec).
   open: async (page) => {
     await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
     await page.waitForTimeout(400);

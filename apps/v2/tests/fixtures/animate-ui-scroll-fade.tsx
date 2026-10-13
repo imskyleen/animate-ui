@@ -9,7 +9,6 @@ const items = (count: number) =>
     </div>
   ));
 
-// Each container is 200px with a 40px fade.
 export default function ScrollFadeFixture() {
   return (
     <div className="flex flex-col gap-6">

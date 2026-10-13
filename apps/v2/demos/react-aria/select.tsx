@@ -233,7 +233,6 @@ function SelectItem({
           <span className="flex flex-1 gap-2 shrink-0 whitespace-nowrap">
             {children}
           </span>
-          {/* On every item: it shows itself on the chosen one. */}
           <SelectionIndicator className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
             <HugeiconsIcon icon={Tick02Icon} strokeWidth={2}
               className="pointer-events-none"
@@ -309,7 +308,6 @@ export const controls = {
   },
 }
 
-/** Radix UI and Base UI's `side` and `align`, as React Aria's `placement`. */
 function toPlacement(
   side: "top" | "right" | "bottom" | "left",
   align: "start" | "center" | "end"
@@ -330,7 +328,6 @@ export default function SelectDemo({
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   return (

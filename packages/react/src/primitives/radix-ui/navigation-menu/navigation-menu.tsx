@@ -40,38 +40,8 @@ import {
   withHighlight,
 } from '../../../internal/item-highlight';
 
-// Same API as Radix's Navigation Menu. The Root (and each Sub) mirrors the
-// open value (Radix keeps it private) so the Viewport, the Content and the
-// Indicator can play an exit before they unmount.
-//
-// It has no Animate UI v1 counterpart: it moves like v1's DropdownMenu, and
-// like Animate UI's Menubar between items.
-// - The Viewport fades and scales from 0.9 in 220ms, both ways, like the
-//   menus, and its size follows the active content on a spring that eases
-//   in without going past (`spring.morph`), carrying on the speed it has.
-// - Moving to another item, the content changes inside the Viewport like a
-//   menubar's, like Motion's mega menu: the previous one leaves 24px away
-//   from where the next one comes from while it fades out, the next one
-//   comes in from 24px that way and fades in behind it (internal/
-//   content-swap). Without a Viewport, each Content fades and scales on its
-//   own, like a menu.
-// - The triggers (and the links beside them) share one highlight, like a
-//   menubar's, and so do the links of each Content (internal/item-highlight).
-// - The Indicator follows the active trigger like v1's menu highlight, on
-//   the highlight's spring (stiffness 500, damping 40), fading in on it and
-//   out 200ms later.
-
-/** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
-  /**
-   * Transition of the entrance (and, for the Viewport, of its resizing from
-   * item to item), and of the exit unless `exitTransition` is set. Defaults
-   * to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }` (the Indicator:
-   * the highlight's spring), and the Viewport resizes on `{ type: 'spring',
-   * stiffness: 660, damping: 52 }`.
-   */
   transition?: Transition;
-  /** Transition of the exit. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -93,32 +63,16 @@ type MenuState = {
   value: string;
   orientation: 'horizontal' | 'vertical';
   dir: 'ltr' | 'rtl';
-  /** A Viewport is rendered: Contents are displayed inside it. */
   hasViewport: boolean;
   registerViewport: () => () => void;
-  /**
-   * A click Radix acts on, on `item`'s trigger (opening or closing it): until
-   * the pointer arrives on a trigger again, `item` opening isn't the
-   * pointer's doing (Radix's hover timer, armed as it arrived, may still
-   * open it).
-   */
   clicked: (item: string) => void;
-  /** The pointer arrives on a trigger. */
   pointerEntered: () => void;
-  /** The pointer (not a click) has just opened `item` (see Trigger). */
   justOpened: (item: string) => boolean;
-  /** A click kept `item` open (see Trigger): the next one toggles it. */
   keptOpen: (item: string) => void;
 };
 
-/**
- * How soon after the pointer opened an item a click on its trigger keeps it
- * open: Base UI's "patient click" (its `PATIENT_CLICK_THRESHOLD`).
- */
 const PATIENT_CLICK = 500;
 
-// Nullable contexts: a part used outside Animate UI's Root falls back to the
-// plain Radix part instead of throwing.
 const MenuStateContext = React.createContext<MenuState | null>(null);
 const ItemValueContext = React.createContext<string | null>(null);
 
@@ -129,7 +83,6 @@ type ValueProps = {
   orientation?: 'horizontal' | 'vertical';
 };
 
-/** Mirrors Radix's value and hands it back (one source of truth). */
 function useMenuState(
   { value: valueProp, defaultValue, onValueChange, orientation }: ValueProps,
   dir: 'ltr' | 'rtl',
@@ -142,7 +95,6 @@ function useMenuState(
     setViewports((count) => count + 1);
     return () => setViewports((count) => count - 1);
   }, []);
-  // Which item opened last, when, and whether a click opened it.
   const openedRef = React.useRef({ item: '', at: -Infinity, byClick: false });
   const clickedRef = React.useRef<string | null>(null);
 
@@ -174,8 +126,6 @@ function useMenuState(
   const onChange = (next: string) => {
     if (!controlled) setUncontrolled(next);
     onValueChange?.(next);
-    // (Radix opens it again on its hover timer, armed as the pointer
-    // arrived, even when a click has already: it's still what opened it.)
     if (next === value) return;
     openedRef.current = next
       ? {
@@ -195,7 +145,6 @@ function Root(
   const [state, onValueChange] = useMenuState(props, dir);
   return (
     <MenuStateContext value={state}>
-      {/* Its triggers share one highlight. */}
       <TriggerHighlightScope>
         <NavigationMenuPrimitive.Root
           {...props}
@@ -230,9 +179,6 @@ function List({
   return (
     <NavigationMenuPrimitive.List
       {...props}
-      // The triggers' highlight goes under their content, above what's
-      // behind the list: the list is its own stacking context (not the Root,
-      // whose Viewport must stay above the page).
       style={{ isolation: 'isolate', ...style }}
     />
   );
@@ -242,8 +188,6 @@ function Item({
   value: valueProp,
   ...props
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Item>) {
-  // Radix generates a value when there is none: generate it here so the open
-  // state can be read from the Root's value.
   const fallbackId = React.useId();
   const value = valueProp || fallbackId;
   return (
@@ -260,10 +204,6 @@ type HighlightedProps = {
   ref?: React.Ref<HTMLElement>;
 };
 
-/**
- * A trigger, or a link: it takes part in the highlight of its list (the
- * triggers'), or of its Content (the links').
- */
 function useHighlighted<P extends HighlightedProps>({
   asChild,
   disabled,
@@ -302,11 +242,6 @@ function Trigger({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || !menu || item === null) return;
-        // A click on the trigger of an item the pointer has just opened
-        // keeps it open (Base UI's "patient click"): Radix would toggle it
-        // closed. Later, a second time, from the keyboard (no pointer), on
-        // an item a click opened, or on a link (preventing Radix's toggle
-        // would cancel its navigation too), it toggles as usual.
         if (
           menu.value === item &&
           event.detail > 0 &&
@@ -351,8 +286,6 @@ function Content({
     );
   }
 
-  // Inside a Viewport, Radix mounts only the active Content (and renders it
-  // in the Viewport): moving between items, it changes in place.
   if (menu.hasViewport) {
     return (
       <NavigationMenuPrimitive.Content
@@ -393,24 +326,14 @@ type SlotChildProps = React.ComponentProps<'div'> & {
   'data-orientation'?: string;
 };
 
-/** Where the next content comes from, by Radix's `data-motion`. */
 function wayOf(motionAttribute: string | undefined, menu: MenuState | null) {
   if (!motionAttribute?.startsWith('from-')) return null;
   const axis = menu?.orientation === 'vertical' ? 'y' : 'x';
   const motion = motionAttribute === 'from-end' ? 1 : -1;
-  // Radix orders the items the other way in a right-to-left menu, whatever
-  // its orientation: its `start` is then the physical left, which is right
-  // across, but the bottom, down a vertical menu.
   const sign = axis === 'y' && menu?.dir === 'rtl' ? -motion : motion;
   return { axis, sign } satisfies Way;
 }
 
-/**
- * Radix renders it in the Viewport, through asChild. Moving between items,
- * the one leaving is copied as it unmounts, and the one coming in comes in
- * from Radix's `data-motion` (from-start or from-end, read once, on mount).
- * The first opening has none: the Viewport's entrance is enough.
- */
 function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
   const swapper = React.use(SwapContext);
   const menu = React.use(MenuStateContext);
@@ -423,7 +346,6 @@ function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
     const node = nodeRef.current;
     if (!swapper || !node) return;
     swapper.enter(node, id, way);
-    // Still in the page: Radix removes it after this.
     return () => swapper.leave(node, id);
   }, [swapper, id, way]);
 
@@ -431,14 +353,11 @@ function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
     <div
       {...props}
       ref={mergedRef}
-      // Its links' highlight goes under their content, above the Viewport's
-      // background.
       style={{ isolation: 'isolate', ...style }}
     />
   );
 }
 
-/** Without a Viewport, each Content scales and fades under its item. */
 function InlineContentMotion({
   open,
   keepMounted,
@@ -472,10 +391,7 @@ function InlineContentMotion({
         if (keepMounted && !open) setSettledClosed(true);
       }}
       style={{
-        // It hangs from the start edge of its item.
         transformOrigin: menu?.dir === 'rtl' ? 'top right' : 'top left',
-        // Its links' highlight goes under their content, above its
-        // background.
         isolation: 'isolate',
         ...(keepMounted && settledClosed && !open
           ? { visibility: 'hidden' as const }
@@ -541,7 +457,6 @@ function ViewportMotion({
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
-  // Resizing from one content to the next.
   const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const [settledClosed, setSettledClosed] = React.useState(!open);
@@ -551,14 +466,8 @@ function ViewportMotion({
     transition: morph,
     reduce,
   });
-  // Its contents change in place, moving between items.
   const swapper = useContentSwapper(morph, reduce);
 
-  // Radix measures the active content and sets these variables at once:
-  // Animate UI animates them instead, so classes reading them
-  // (h-(--radix-navigation-menu-viewport-height)) resize smoothly. Written
-  // on the element directly, every frame, and again whenever Radix writes
-  // its own value (it would show for a frame).
   React.useEffect(() => {
     const node = ref.current;
     if (!node || !measured) return;
@@ -586,7 +495,6 @@ function ViewportMotion({
   return (
     <SwapContext value={swapper}>
       <MotionViewport
-        // Motion reads onAnimationStart & co. as its own events, not CSS ones.
         {...(props as React.ComponentProps<typeof MotionViewport>)}
         ref={ref}
         forceMount
@@ -601,7 +509,6 @@ function ViewportMotion({
           if (keepMounted && !open) setSettledClosed(true);
         }}
         style={{
-          // It drops from the menu, centered under it.
           transformOrigin:
             menu?.orientation === 'vertical'
               ? menu.dir === 'rtl'
@@ -618,13 +525,6 @@ function ViewportMotion({
   );
 }
 
-/**
- * The size of the Content displayed in the Viewport, animated when it
- * changes (on a spring that eases in, carrying on the speed it has when it
- * changes again).
- * Radix mounts only the active Content in the Viewport; one leaving with a
- * CSS animation is marked `data-motion="to-…"`.
- */
 function useActiveContentSize(
   viewportRef: React.RefObject<HTMLDivElement | null>,
   options: { transition: Transition; reduce: boolean },
@@ -644,9 +544,6 @@ function useActiveContentSize(
     if (!viewport) return;
     let content: HTMLElement | null = null;
     let first = true;
-    // The size it's heading to, and its resizes under way (for the speed
-    // they carry on: Motion's own estimate is 0 after 30ms without a frame,
-    // as when the next content takes that long to render).
     let heading: { width: number; height: number } | null = null;
     const runs = new Map<typeof width, { run: Run; since: number }>();
 
@@ -659,14 +556,10 @@ function useActiveContentSize(
         height.jump(next.height);
         runs.clear();
       } else if (
-        // Already heading there (the resize observer's first report of a
-        // content it just started observing): nothing to start over.
         !heading ||
         next.width !== heading.width ||
         next.height !== heading.height
       ) {
-        // From where it is now, at the speed it has, as far as it takes it
-        // toward the next size without going past it (internal/momentum).
         const resize = (value: typeof width, to: number) => {
           value.stop();
           const now = performance.now();
@@ -695,7 +588,6 @@ function useActiveContentSize(
 
     const resizeObserver = new ResizeObserver(measure);
     const track = () => {
-      // Not a previous content's copy, leaving (internal/content-swap).
       const active =
         Array.from(viewport.children).find(
           (child): child is HTMLElement =>
@@ -766,7 +658,6 @@ function Indicator({
   );
 }
 
-/** Radix positions it with an inline transform and size: Motion animates them. */
 function IndicatorMotion({
   visible,
   transition,
@@ -782,8 +673,6 @@ function IndicatorMotion({
       ([, value]) => value !== undefined,
     ),
   );
-  // v1's menu highlight: one spring to move and to fade in, and a fade out
-  // that waits 200ms.
   const spring = useTempoTransition(transition ?? HIGHLIGHT_TRANSITION);
   const move = reduce ? { duration: 0 } : spring;
   const enter = spring;
@@ -794,7 +683,6 @@ function IndicatorMotion({
   return (
     <motion.div
       {...(props as React.ComponentProps<typeof motion.div>)}
-      // It appears where it is: only the opacity animates the first time.
       initial={{ opacity: 0, ...position }}
       animate={{
         opacity: visible ? 1 : 0,
@@ -820,8 +708,6 @@ export {
   Content,
   Viewport,
   Indicator,
-  // `NavigationMenu` is Radix's alias of Root: with the radix-ui import
-  // style, `NavigationMenuPrimitive.NavigationMenu` keeps working.
   Root as NavigationMenu,
   Sub as NavigationMenuSub,
   List as NavigationMenuList,

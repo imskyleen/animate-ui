@@ -9,8 +9,6 @@ const trigger =
   'flex h-12 w-72 items-center justify-center rounded-md border text-sm';
 const popup = 'rounded-md border bg-background px-3 py-1.5 text-sm';
 
-// Animate UI v1's `followCursor` on the Radix UI Tooltip and HoverCard and
-// the Base UI Tooltip and PreviewCard.
 export default function FollowCursorFixture() {
   return (
     <div className="flex flex-col items-start gap-16 pt-16">

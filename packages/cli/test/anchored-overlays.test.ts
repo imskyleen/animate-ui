@@ -4,13 +4,9 @@ import { expect, test } from 'vitest';
 
 import { transform } from '../src/lib/transform';
 
-// Popover, hover card / preview card and tooltip, in every base and style:
-// Motion owns their entrance and exit, so no CSS keyframe (nor its duration)
-// is left, and the origin and side offsets stay.
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 const COMPONENT = /^(popover|hover-card|tooltip)\./;
 const MODULE: Record<string, (component: string) => string> = {
-  // shadcn imports the `radix-ui` umbrella: it moves to the barrel.
   'radix-ui': () => '@animate-ui/react/primitives/radix-ui',
   'base-ui': (component) =>
     `@animate-ui/react/primitives/base-ui/${component === 'hover-card' ? 'preview-card' : component}`,
@@ -28,7 +24,6 @@ for (const library of Object.keys(MODULE)) {
         /\b(animate-(in|out)|fade-(in|out)|zoom-(in|out)|slide-in-from)/,
       );
       expect(result.code).not.toMatch(/\bduration-100\b/);
-      // Kept: the origin variables and the arrow's own transforms.
       expect(result.code).toMatch(
         /origin-\(--(radix-[a-z-]+-content-transform-origin|transform-origin|trigger-anchor-point)\)/,
       );

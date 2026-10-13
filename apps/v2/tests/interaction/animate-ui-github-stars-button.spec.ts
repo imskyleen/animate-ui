@@ -4,7 +4,6 @@ import { sample } from './motion-probe';
 
 const SELECTOR = '[data-slot="github-stars-button"]';
 
-// The GitHub API is mocked: tests never depend on the network.
 const mockStars = (page: Page, stars: number, delay = 0) =>
   page.route(
     'https://api.github.com/repos/imskyleen/animate-ui',
@@ -26,7 +25,6 @@ const open = async (page: Page) => {
   await hydrated(page, SELECTOR);
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -52,8 +50,6 @@ test.describe('animate-ui github stars button', () => {
   test("the demo's star has no outline of its own: stroked like it's filled", async ({
     page,
   }) => {
-    // Hugeicons strokes its paths in currentColor: left alone, the star had
-    // a black (or white) border around its gray or yellow fill.
     await page.goto('/tests/demos/animate-ui/github-stars-button', {
       waitUntil: 'networkidle',
     });
@@ -92,13 +88,11 @@ test.describe('animate-ui github stars button', () => {
     await mockStars(page, 1234);
     await open(page);
     await expect(srNumber(page)).toHaveText(/1,?234/);
-    // The filled copy of the star is clipped from the top until complete.
     await expect
       .poll(() =>
         filledStar(page).evaluate((el) => getComputedStyle(el).clipPath),
       )
       .toMatch(/inset\(0(px|%)?( 0(px|%)?)*\)/);
-    // Completed: the particles burst around the star.
     await expect
       .poll(() =>
         button(page)
@@ -126,13 +120,11 @@ test.describe('animate-ui github stars button', () => {
   test('stays put on hover, shrinks while pressed', async ({ page }) => {
     await mockStars(page, 1234);
     await open(page);
-    // Let the count settle first.
     await expect
       .poll(() =>
         filledStar(page).evaluate((el) => getComputedStyle(el).clipPath),
       )
       .toMatch(/inset\(0(px|%)?( 0(px|%)?)*\)/);
-    // Don't follow the link when released.
     await button(page).evaluate((el) =>
       el.addEventListener('click', (e) => e.preventDefault()),
     );

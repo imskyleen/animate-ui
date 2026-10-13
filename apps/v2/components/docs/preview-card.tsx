@@ -12,14 +12,6 @@ import { getLibrary, LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { BadgeLabel, type PageBadge } from '@/lib/page-badges';
 import { usePreferredLibrary } from '@/lib/preferred-library';
 
-/**
- * A card of the Primitives, Backgrounds and Icons pages: a preview in a frame,
- * its name and an arrow below. At rest the preview is its clip's first frame;
- * hovered or focused, the clip plays (scripts/record-previews.mts records
- * them), back to that first frame when it's left. Under reduced motion it
- * stays still. `children` replaces the clip with a live preview, playing
- * while `hovered`.
- */
 export function PreviewCard({
   href,
   title,
@@ -31,9 +23,7 @@ export function PreviewCard({
   href: string;
   title: ReactNode;
   logo?: ReactNode;
-  /** Its page's status (new, beta…), written by hand like the sidebar's. */
   badge?: PageBadge | null;
-  /** The clip: public/previews/<preview>-<light|dark>.(webm|jpg). */
   preview?: string;
   children?: (hovered: boolean) => ReactNode;
 }) {
@@ -46,7 +36,6 @@ export function PreviewCard({
     setHovered(true);
     const video = videoRef.current;
     if (!video || !preview || reduce) return;
-    // The theme shown now (next-themes' class on <html>).
     const theme = document.documentElement.classList.contains('dark')
       ? 'dark'
       : 'light';
@@ -76,7 +65,6 @@ export function PreviewCard({
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-background">
         {preview && (
           <>
-            {/* At rest: the clip's first frame, in the theme shown. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/previews/${preview}-light.jpg`}
@@ -130,7 +118,6 @@ export type PrimitiveCardEntry = {
   urls: Partial<Record<LibraryId, string>>;
 };
 
-/** A primitive's card: it opens the reader's library, like the sidebar. */
 export function PrimitiveCard({ entry }: { entry: PrimitiveCardEntry }) {
   const preferred = usePreferredLibrary();
   const libraries = LIBRARIES.filter((library) => entry.urls[library.id]);
@@ -148,7 +135,6 @@ export function PrimitiveCard({ entry }: { entry: PrimitiveCardEntry }) {
   );
 }
 
-/** A grid of cards. */
 export function PreviewGrid({ children }: { children: ReactNode }) {
   return (
     <div className="not-prose grid grid-cols-1 gap-4 text-foreground sm:grid-cols-2 lg:grid-cols-3">
@@ -157,10 +143,6 @@ export function PreviewGrid({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * An icon library's card: some of its best icons, playing their animations
- * (looped) while the card is hovered.
- */
 export function IconLibraryCard({
   href,
   title,

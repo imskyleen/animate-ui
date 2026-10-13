@@ -5,7 +5,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { Bell } from '@/registry/icons/bell';
 
-// Icons turned into SVG strings (map markers, data URLs, emails).
 export default function IconsMarkupFixture() {
   const [markup, setMarkup] = React.useState<string[] | null>(null);
 

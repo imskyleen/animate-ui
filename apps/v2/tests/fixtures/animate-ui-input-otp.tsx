@@ -10,9 +10,6 @@ import {
 
 const SLOTS = [0, 1, 2, 3, 4, 5];
 
-// A code checked once complete (and refused: it turns invalid), with a
-// button that resets it, like a "resend code". And one whose slots sit on
-// fractional pixels.
 export default function InputOTPFixture() {
   const [value, setValue] = React.useState('');
   const [invalid, setInvalid] = React.useState(false);

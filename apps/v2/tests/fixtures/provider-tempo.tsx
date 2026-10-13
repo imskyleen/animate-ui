@@ -18,7 +18,6 @@ function Panel({ label }: { label: string }) {
   );
 }
 
-// The same accordion at the default pace and at tempo 2.
 export default function ProviderTempoFixture() {
   return (
     <div className="flex gap-10">

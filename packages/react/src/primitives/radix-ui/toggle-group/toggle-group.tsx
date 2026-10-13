@@ -12,28 +12,11 @@ import {
   useToggleGroupHighlight,
 } from '../../../internal/controls/highlight';
 
-// Same API as Radix's Toggle Group: items scale to 0.97 while pressed; with
-// `type="multiple"` each selected item's surface grows in like a fill and
-// neighbours join into one surface, with `type="single"` one surface slides
-// to the selected item, and a hover highlight glides between items (see
-// ../../../internal/controls/highlight). Arrow keys only move the focus
-// (roving tabindex), which never animates.
-
-/** Animate UI's additions to `ToggleGroup.Root`. */
 type RootAnimationProps = {
-  /**
-   * Transition of the surface sliding between items (`type="single"`).
-   * Defaults to a spring (stiffness 300, damping 30).
-   */
   transition?: Transition;
 };
 
-/** Animate UI's additions to `ToggleGroup.Item`. */
 type ItemAnimationProps = {
-  /**
-   * Transition of the press scale. Defaults to a spring (stiffness 550,
-   * damping 30).
-   */
   transition?: Transition;
 };
 

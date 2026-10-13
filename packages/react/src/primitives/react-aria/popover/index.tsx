@@ -29,32 +29,8 @@ import {
 } from '../../../internal/item-indicator';
 import { originFor } from './origin';
 
-// Same API as React Aria's Popover, the overlay under DialogTrigger,
-// PreviewTrigger (hover cards), MenuTrigger and SubmenuTrigger, Select,
-// ComboBox and DatePicker. React Aria has no Animate UI v1 counterpart, so it
-// moves like the matching Radix and Base UI overlay:
-// - under menus, submenus, selects and comboboxes, like the menus: a 220ms
-//   fade and scale from 0.9, both ways;
-// - anywhere else (dialogs, hover cards, date pickers), like the popovers: it
-//   grows from 0.8 and fades in from the trigger on a spring, and shrinks
-//   back the same way.
-//
-// React Aria keeps a popover mounted while it exits only if it sees running
-// animations when it closes, before Motion has started any. So the Popover
-// gates itself with AnimatePresence on the open state (the same one React Aria
-// reads) and passes `isExiting` while the exit plays.
-//
-// Under a Select or a ComboBox with a single selection, choosing another item
-// closes the list: when a check (a SelectionIndicator) is there, it holds
-// still first (250ms for a drawn check, 150ms for a glide or a pop), so the
-// check is seen landing on the item.
-// Under a menu, likewise when the item chosen closes the menu while its check
-// moves (Animate UI's MenuItem tells it); the menus around a submenu hold
-// with it.
-
 type PopoverProps = PopoverPrimitiveProps & AnchoredAnimationProps;
 
-/** The overlays of a list: they move like v1's DropdownMenu content. */
 const MENU_TRIGGERS = new Set([
   'MenuTrigger',
   'SubmenuTrigger',
@@ -67,14 +43,8 @@ type PopoverContextValue = PopoverPrimitiveProps | null | undefined;
 type LivePopoverProps = PopoverPrimitiveProps &
   React.RefAttributes<HTMLElement>;
 
-/**
- * The Popover's latest props, for the leaving popover: AnimatePresence keeps
- * the element it last rendered, but what's inside goes on updating (a menu's
- * selection changes as the menu closes, and its check glides there).
- */
 const LivePropsContext = React.createContext<LivePopoverProps | null>(null);
 
-/** The selection of a Select's or a ComboBox's state (both are lists). */
 type ListTriggerState = {
   selectionManager?: {
     selectionMode: string;
@@ -82,7 +52,6 @@ type ListTriggerState = {
   };
 };
 
-/** The trigger's selection, comparable from one render to the next. */
 function selectionOf(state: ListTriggerState | null) {
   const keys = state?.selectionManager?.selectedKeys;
   if (keys === undefined || keys === 'all') return keys;
@@ -101,8 +70,6 @@ function Popover({
   ) as PopoverContextValue;
   const triggerState = React.use(OverlayTriggerStateContext);
 
-  // Same rule as React Aria: its own state when controlled, uncontrolled or
-  // standalone; otherwise the trigger's (DialogTrigger, Select, MenuTrigger…).
   const isOpenProp = props.isOpen ?? context?.isOpen;
   const defaultOpen = props.defaultOpen ?? context?.defaultOpen;
   const local = isOpenProp != null || defaultOpen != null || !triggerState;
@@ -116,8 +83,6 @@ function Popover({
     props.onOpenChange?.(next);
   };
 
-  // Closed with another single selection than it opened with: an item was
-  // chosen, whose check shows itself.
   const list = triggerState as ListTriggerState | null;
   const selection = selectionOf(list);
   const [openedWith, setOpenedWith] = React.useState(selection);
@@ -131,10 +96,7 @@ function Popover({
     !open &&
     list?.selectionManager?.selectionMode === 'single' &&
     selection !== openedWith;
-  // Nothing moves under reduced motion: nothing to wait for.
   const reduce = useShouldReduceMotion();
-  // The SelectionIndicators of its ListBox or Menu register: no check, no
-  // hold. A menu's items mark their picks, for it and the menus around.
   const parentPicks = React.use(PickContext);
   const { picks, registerCheck, wasPicked } = usePicks();
   const menuPicks = React.useMemo(
@@ -148,13 +110,11 @@ function Popover({
     }),
     [picks, parentPicks],
   );
-  // Read as it closes: a menu item was just chosen (how its check shows).
   const [menuPicked, setMenuPicked] = React.useState<Picked>(false);
   if (openChanged) setMenuPicked(!open && wasPicked());
   const popoverProps = {
     ...props,
     ref,
-    // Its own state: handed back to React Aria, one source of truth.
     ...(local && { isOpen: open, defaultOpen: undefined, onOpenChange }),
   };
 
@@ -162,7 +122,6 @@ function Popover({
     <ReducedMotionConfig>
       <PickContext value={menuPicks}>
         <CheckRegistryContext value={registerCheck}>
-          {/* `custom` reaches the leaving popover: whether to hold still. */}
           <LivePropsContext value={popoverProps}>
             <AnimatePresence
               custom={reduce ? false : menuPicked || (picked && 'list')}
@@ -180,9 +139,6 @@ function Popover({
           </LivePropsContext>
         </CheckRegistryContext>
       </PickContext>
-      {/* Closed, React Aria's Popover renders nothing, except in a
-          collection's hidden tree: Select and ComboBox build their items
-          from it. */}
       {!open && <PopoverPrimitive {...popoverProps} />}
     </ReducedMotionConfig>
   );
@@ -190,7 +146,6 @@ function Popover({
 
 type AnimatedPopoverProps = AnchoredAnimationProps & {
   popoverProps: LivePopoverProps;
-  /** How its list's checks show (or `false`: none), read when it leaves. */
   checkOf: () => Picked;
 };
 
@@ -200,7 +155,6 @@ function AnimatedPopover({
   exitTransition,
   checkOf,
 }: AnimatedPopoverProps) {
-  // Leaving, it still gets the latest props.
   const { render, isExiting, ...props } =
     React.use(LivePropsContext) ?? popoverProps;
   const isPresent = useIsPresent();
@@ -209,7 +163,6 @@ function AnimatedPopover({
     props.slot,
   ) as PopoverContextValue;
   const trigger = props.trigger ?? context?.trigger;
-  // PreviewTrigger skips both when swapping between previews during warmup.
   const skip = Boolean(
     props.shouldSkipAnimation ?? context?.shouldSkipAnimation,
   );
@@ -221,12 +174,8 @@ function AnimatedPopover({
     exitTransition,
   });
   const hold = usePickHold();
-  // A variant, so the leaving popover reads AnimatePresence's `custom`: what
-  // was just chosen. A list's choice is resolved as it leaves, once the
-  // chosen item's check has mounted; a menu item knew when it was chosen.
   const variants = {
     exit: (held: Picked | 'list' | undefined) => {
-      // A menu item's check, as marked; a list's, read now.
       const look = held === 'list' ? checkOf() : held;
       if (!look) return exit;
       const leave = exit.transition as { delay?: number } | undefined;
@@ -240,10 +189,7 @@ function AnimatedPopover({
   return (
     <PopoverPrimitive
       {...props}
-      // Mounted until the exit is over, like React Aria's CSS animations.
       isExiting={isExiting || !isPresent}
-      // React Aria's render prop: its props (resolved className and style,
-      // data-placement, data-trigger, role, ref…) land on the motion element.
       render={(domProps, values) => {
         const elementProps = {
           ...motionProps,

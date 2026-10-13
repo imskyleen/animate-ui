@@ -1,11 +1,3 @@
-// Prints a shadcn/ui component as an Animate UI user gets it: the shadcn
-// source (nova style by default, Hugeicons) after `animate-ui animate`.
-//   node scripts/shadcn-component.mts <shadcn-dir> <radix|base|aria> <component> [--style <name>] [--out <file>] [--raw]
-// --raw skips the animate step (for shared components like button).
-// --style picks another shadcn style (the Base UI drawer demo is rhea, like
-// shadcn's docs).
-// <shadcn-dir> holds style-<style>.css and <base>/<component>.tsx from
-// github.com/shadcn-ui/ui apps/v4/registry/{styles,bases/<base>/ui}.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -37,7 +29,6 @@ for (const [, name, classes] of css.matchAll(
 
 let code = readFileSync(path.join(dir, base, `${component}.tsx`), 'utf8');
 
-// 1. nova: inline cn-* classes like `shadcn add` does.
 code = code.replace(
   /(["'`])([^"'`\n]*\bcn-[^"'`\n]*)\1/g,
   (_, quote: string, value: string) => {
@@ -51,7 +42,6 @@ code = code.replace(
   },
 );
 
-// 2. Hugeicons: <IconPlaceholder lucide="…" hugeicons="X" …/> → <HugeiconsIcon icon={X} strokeWidth={2} …/>.
 const icons = new Set<string>();
 code = code.replace(/<IconPlaceholder([\s\S]*?)\/>/g, (_, attrs: string) => {
   const icon = attrs.match(/hugeicons="([^"]+)"/)?.[1];
@@ -62,7 +52,6 @@ code = code.replace(/<IconPlaceholder([\s\S]*?)\/>/g, (_, attrs: string) => {
     /\s*(lucide|tabler|hugeicons|phosphor|remixicon)="[^"]*"/g,
     '',
   );
-  // Animate UI's Hugeicons always use a stroke of 2.
   const stroke = /strokeWidth=/.test(rest) ? '' : ' strokeWidth={2}';
   return `<HugeiconsIcon icon={${icon}}${stroke}${rest}/>`;
 });
@@ -73,10 +62,6 @@ code = code.replace(
     : '',
 );
 
-// 3. shadcn's registry paths become this repo's helpers: the project paths
-// users have (@/components/ui/<name>), in the library's folder for Base UI
-// and React Aria, and the style's for a style other than nova. The docs show
-// them as @/components/ui/<name> again.
 const LIBRARY_FOLDERS: Record<string, string> = {
   base: 'base-ui/',
   aria: 'react-aria/',
@@ -89,7 +74,6 @@ code = code.replace(
   `@/components/ui/${folder}`,
 );
 
-// 4. `animate-ui animate`, with the real CLI on a throwaway project.
 if (!values.raw) {
   const project = mkdtempSync(path.join(tmpdir(), 'animate-ui-demo-'));
   writeFileSync(

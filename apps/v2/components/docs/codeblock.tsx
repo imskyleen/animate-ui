@@ -13,12 +13,10 @@ import {
 
 import { CopyButton, getPreText } from './copy-button';
 
-/** Inside code tabs, a code block is only its viewport: the tabs own the frame. */
 export const InCodeTabsContext = createContext(false);
 
 export type CodeBlockProps = Omit<HTMLAttributes<HTMLElement>, 'title'> & {
   title?: ReactNode;
-  /** An SVG string (from Fumadocs' rehype-code) or a node. */
   icon?: ReactNode;
   allowCopy?: boolean | 'true' | 'false';
   viewportClassName?: string;
@@ -38,10 +36,6 @@ export function Pre({ className, ...props }: ComponentProps<'pre'>) {
   );
 }
 
-/**
- * v1's code block: an accent frame, the code on the background inside, and
- * Animate UI's copy button in the top-right notch (or in the title bar).
- */
 export function CodeBlock({
   title,
   icon,
@@ -68,7 +62,6 @@ export function CodeBlock({
       )}
       style={
         {
-          // Long lines scroll clear of the copy button's notch.
           ...(!title && copy && !inTabs
             ? { '--padding-right': 'calc(var(--spacing) * 10)' }
             : {}),
@@ -87,7 +80,6 @@ export function CodeBlock({
       <div
         {...props}
         dir="ltr"
-        // Shiki's <pre tabindex="0">: the viewport is the focusable part here.
         tabIndex={-1}
         className={cn('shiki not-prose text-sm', className)}
         style={style}
@@ -101,7 +93,6 @@ export function CodeBlock({
     <figure
       {...props}
       dir="ltr"
-      // Shiki's <pre tabindex="0">: the viewport is the focusable part here.
       tabIndex={-1}
       data-slot="codeblock"
       className={cn(

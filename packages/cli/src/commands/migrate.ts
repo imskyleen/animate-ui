@@ -27,20 +27,14 @@ import {
 export type MigrateOptions = {
   cwd: string;
   dryRun: boolean;
-  /** v1 primitives left out (`all` but these). */
   exclude?: string[];
-  /** Remove the v1 files nothing imports anymore, without asking. */
   delete?: boolean;
-  /** Keep them all, without asking. */
   keep?: boolean;
-  /** Whether to ask about them (default: stdin and stdout are TTYs). */
   interactive?: boolean;
-  /** How to ask (default: an arrow-key select in the terminal). */
   ask?: Ask;
   log?: (message: string) => void;
 };
 
-/** The name `migrate <name>` selects a v1 module by. */
 function selectionName(module: V1Module) {
   if (module.kind === 'primitive') return module.name;
   if (module.id === 'icons/icon') return 'icons';
@@ -58,10 +52,6 @@ function knownNames() {
   return names;
 }
 
-/**
- * The shadcn/ui component to swap a v1 component for, when its name differs
- * (`null`: none `animate` animates).
- */
 const SHADCN_COMPONENTS: Record<string, string | null> = {
   menu: 'dropdown-menu',
   radio: 'radio-group',
@@ -71,10 +61,6 @@ const SHADCN_COMPONENTS: Record<string, string | null> = {
   sidebar: null,
 };
 
-/**
- * `animate-ui migrate <components...|all>`: moves a project from the files of
- * Animate UI v1 to @animate-ui/react. Resolves with the exit code.
- */
 export async function migrate(components: string[], options: MigrateOptions) {
   const log = options.log ?? console.log;
   const project = loadMigrateProject(options.cwd);
@@ -95,7 +81,6 @@ export async function migrate(components: string[], options: MigrateOptions) {
   }
   if (!all && names.size === 0) return exitCode;
 
-  // `--exclude`: left out, their imports and files untouched.
   const excluded = new Set<string>();
   for (const name of options.exclude ?? []) {
     if (!known.has(name)) {
@@ -112,18 +97,11 @@ export async function migrate(components: string[], options: MigrateOptions) {
     !excluded.has(selectionName(module)) &&
     (all || names.has(selectionName(module)));
 
-  /** The v1 module a file is, when v2 replaces it (a deletion candidate). */
   const replacedModule = (file: string) => {
     const module = project.classify(stripExtension(file));
     return module && findMigration(module) ? module : undefined;
   };
 
-  /**
-   * A v1 primitive v2 doesn't replace (Files, Preview Link Card, Headless UI)
-   * stays the user's and keeps working: it moves to v2's utilities and own
-   * primitives, which keep v1's API, but stays on the v1 Radix UI and Base
-   * UI primitives it is built on (v2's take the library's API).
-   */
   const isKeptPrimitive = (file: string) => {
     const module = project.classify(stripExtension(file));
     return module?.kind === 'primitive' && !findMigration(module);
@@ -144,7 +122,6 @@ export async function migrate(components: string[], options: MigrateOptions) {
   for (const file of files) {
     const code = readFileSync(file, 'utf8');
     contents.set(file, code);
-    // v1 files that v2 replaces are left alone: they go away.
     if (replacedModule(file)) continue;
     let result: RewriteResult;
     try {
@@ -170,7 +147,6 @@ export async function migrate(components: string[], options: MigrateOptions) {
     results.push({ file, result, changed });
   }
 
-  // Per file: the imports that moved, the mechanical changes, what's left.
   let changedFiles = 0;
   let manualSteps = 0;
   for (const { file, result, changed } of results) {
@@ -230,12 +206,10 @@ export async function migrate(components: string[], options: MigrateOptions) {
     );
   }
 
-  // v1 files that v2 replaces and nothing imports anymore.
   const candidates = new Map<string, string>();
   for (const file of files) {
     const module = replacedModule(file);
     if (!module || !selected(module)) continue;
-    // Only what still looks like the v1 file: it defines v1's exports.
     const code = contents.get(file)!;
     const v1 = Object.keys(findMigration(module)!.values).every((name) =>
       new RegExp(`\\b${name}\\b`).test(code),
@@ -247,9 +221,7 @@ export async function migrate(components: string[], options: MigrateOptions) {
     let sources: string[] = [];
     try {
       sources = listImports(code, file);
-    } catch {
-      // Unparsable: counts as importing nothing.
-    }
+    } catch {}
     imports.set(
       file,
       sources.flatMap((source) => {
@@ -277,8 +249,6 @@ export async function migrate(components: string[], options: MigrateOptions) {
   }
   const unused = [...candidateFiles].filter((file) => !used.has(file)).sort();
 
-  // Replaced, but still imported: by v1-only parts left on them. The v1
-  // files those import stay with them.
   const importersOf = (file: string) =>
     [...imports]
       .filter(
@@ -383,8 +353,6 @@ export async function migrate(components: string[], options: MigrateOptions) {
     }
   }
 
-  // v2's Base UI primitives import @base-ui/react (Base UI 1). v1's were
-  // built on its beta, @base-ui-components/react.
   const baseUI =
     !project.hasDependency('@base-ui/react') &&
     results.some(({ result }) =>

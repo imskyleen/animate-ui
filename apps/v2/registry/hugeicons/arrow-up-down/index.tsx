@@ -118,7 +118,6 @@ function IconComponent({ size, ...props }: ArrowUpDownProps) {
       strokeWidth={2}
       {...props}
     >
-      {/* Right Arrow (Down) */}
       <motion.g
         variants={variants.downArrowGroup}
         initial="initial"
@@ -141,7 +140,6 @@ function IconComponent({ size, ...props }: ArrowUpDownProps) {
           animate={controls}
         />
       </motion.g>
-      {/* Left Arrow (Up) */}
       <motion.g
         variants={variants.upArrowGroup}
         initial="initial"

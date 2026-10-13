@@ -1,5 +1,5 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-namespace -- each part keeps Base UI's `Part.Props`/`Part.State` type namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
@@ -13,13 +13,9 @@ import {
   type AnchoredAnimationProps,
 } from './base-anchored';
 
-// Same API as Base UI's Popover. The Popup grows from 0.8 and fades in from
-// the trigger on a spring, and shrinks back the same way.
-
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Popover.Root',
 );
-// The user's `keepMounted` on the closest Portal.
 const KeepMountedContext = React.createContext(false);
 
 function Root<Payload = unknown>({
@@ -103,7 +99,6 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
 
 namespace Popup {
   export type State = PopoverPrimitive.Popup.State;
-  /** Base UI's props, plus Animate UI's `transition` and `exitTransition`. */
   export type Props = PopoverPrimitive.Popup.Props & AnchoredAnimationProps;
 }
 

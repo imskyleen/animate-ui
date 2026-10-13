@@ -16,7 +16,6 @@ test.describe('animate-ui pinned list', () => {
   }) => {
     await open(page);
     const before = (await item(page, 'Inbox').boundingBox())!;
-    // Click and sample on the next frames, in the page: no round-trip delay.
     const mid = await page.evaluate(async () => {
       document
         .querySelector<HTMLButtonElement>('[aria-label="Pin Inbox"]')!
@@ -33,10 +32,8 @@ test.describe('animate-ui pinned list', () => {
     await expect
       .poll(async () => (await item(page, 'Inbox').boundingBox())!.y)
       .toBeLessThan(before.y - 50);
-    // Settled at the top.
     await page.waitForTimeout(800);
     const end = (await item(page, 'Inbox').boundingBox())!;
-    // Mid-flight it was still travelling from its old place.
     expect(mid).toBeGreaterThan(end.y + 5);
     await expect(
       page.getByRole('button', { name: 'Unpin Inbox' }),
@@ -61,7 +58,6 @@ test.describe('animate-ui pinned list', () => {
   test('the move springs past its place, then settles', async ({ page }) => {
     await open(page);
     const before = (await item(page, 'Inbox').boundingBox())!;
-    // The item's offset from its new place, on every frame.
     const offsets = await page.evaluate(async () => {
       document
         .querySelector<HTMLButtonElement>('[aria-label="Pin Inbox"]')!
@@ -78,9 +74,7 @@ test.describe('animate-ui pinned list', () => {
       return values;
     });
     const after = (await item(page, 'Inbox').boundingBox())!;
-    // It starts from its old place...
     expect(Math.max(...offsets)).toBeGreaterThan(before.y - after.y - 60);
-    // ...and the v1 spring (stiffness 320, damping 25, mass 0.8) overshoots.
     expect(Math.min(...offsets)).toBeLessThan(-1);
     expect(offsets.at(-1)).toBeCloseTo(0, 0);
   });
@@ -88,8 +82,6 @@ test.describe('animate-ui pinned list', () => {
   test('the labels slide with the items, on their spring, not ahead', async ({
     page,
   }) => {
-    // On a 220ms strong ease-out, "All" reached its place within ~80ms of
-    // moving, well ahead of the items making room around it.
     await open(page);
     await page.evaluate(() => {
       const label = [...document.querySelectorAll('p')].find(

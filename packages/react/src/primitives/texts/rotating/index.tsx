@@ -28,7 +28,6 @@ type RotatingTextContextType = {
   currentText: string;
   y: number;
   isInView: boolean;
-  /** What assistive tech reads: every word once, never the cycling one. */
   label: string;
 };
 
@@ -37,11 +36,8 @@ const [RotatingTextProvider, useRotatingText] =
 
 type RotatingTextContainerProps = React.ComponentProps<'div'> & {
   text: string | string[];
-  /** Interval between two swaps, in milliseconds. */
   duration?: number;
-  /** Travel of the swap, in pixels: the new text enters from `-y` and the old one leaves to `y`. */
   y?: number;
-  /** Delay before the first swap, in milliseconds. */
   delay?: number;
 } & UseIsInViewOptions;
 
@@ -69,9 +65,6 @@ function RotatingTextContainer({
     },
   );
 
-  // The cycle pauses off screen and in a hidden tab. Under reduced motion it
-  // keeps cycling, as a plain crossfade (see RotatingText): the words are
-  // content, stopping would hide all but the first one.
   const onScreen = useInView(localRef);
   const pageVisible = usePageVisible();
 
@@ -81,8 +74,6 @@ function RotatingTextContainer({
 
   React.useEffect(() => {
     if (!playing) return;
-    // The first swap comes after `delay` (right away by default), then one
-    // every `duration`.
     const timeoutId = setTimeout(
       () => {
         setHasRotated(true);
@@ -93,7 +84,6 @@ function RotatingTextContainer({
     return () => clearTimeout(timeoutId);
   }, [playing, index, count, duration, delay, hasRotated]);
 
-  // The array can shrink while the index points past its end.
   const currentText = texts[index % count] ?? '';
   const label = texts.join(', ');
 
@@ -136,7 +126,6 @@ function RotatingTextContent({
   const transition = transitionProp ?? defaultTransition;
   const { currentText, y, isInView, label } = useRotatingText();
   const reduce = useShouldReduceMotion();
-  // Reduced motion: no travel, the texts crossfade in place.
   const travel = reduce ? 0 : y;
 
   return (
@@ -144,7 +133,6 @@ function RotatingTextContent({
       <span className="sr-only" style={VISUALLY_HIDDEN}>
         {label}
       </span>
-      {/* mode="wait": the old text leaves before the new one comes in. */}
       <AnimatePresence mode="wait">
         {isInView && (
           <motion.div

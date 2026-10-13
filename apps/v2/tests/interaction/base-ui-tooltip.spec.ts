@@ -18,7 +18,6 @@ describeAnchoredOverlay('base-ui tooltip demo', {
   close: (page) => page.mouse.move(5, 5, { steps: 4 }),
 });
 
-// The demo has a single tooltip: the toolbar is the fixture's.
 describeToolbarTooltips(
   'base-ui toolbar tooltips',
   FIXTURE,

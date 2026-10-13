@@ -43,60 +43,27 @@ import {
   type Picked,
 } from '../../../internal/item-indicator';
 
-// Shared by Radix's Dropdown Menu, Context Menu and Menubar: the three are
-// built on the same internal Menu, so they animate the same way (Animate UI
-// v1's DropdownMenu). Each module passes its own Radix parts to these
-// factories.
-//
-// - Content and SubContent fade and scale from 0.9 in 220ms, both ways.
-// - One highlight glides behind the highlighted item (internal/item-highlight).
-// - An item's check draws itself when it's checked (or the menu opens), and
-//   erases itself when it's unchecked, like a checkbox's; with `pop`, it pops
-//   in and out, and a radio item's check glides to the newly checked item,
-//   like a select's (internal/item-indicator).
-// - Choosing an item closes the menu (Radix's default): when its check
-//   changes, the menu holds still first (250ms for a drawn check, 150ms
-//   for a glide or a pop), so the change is seen.
-
-/** Animate UI's additions to the parts that appear and disappear. */
 type PresenceAnimationProps = {
-  /**
-   * Transition of the entrance (and, in a menubar, of the popover moving to
-   * the next menu), and of the exit unless `exitTransition` is set. Defaults
-   * to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`, and in a menubar
-   * the popover moves on `{ type: 'spring', stiffness: 660, damping: 52 }`.
-   */
   transition?: Transition;
-  /** Transition of the exit. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
-/** Animate UI's additions to `ItemIndicator`. */
 type IndicatorAnimationProps = ItemCheckAnimationProps;
 
 type MenuState = {
   open: boolean;
-  /**
-   * It closed because an item was chosen whose check moves: how it shows
-   * (it holds for it).
-   */
   picked?: Picked;
 };
 
-// Nullable contexts: a part used outside Animate UI's Root falls back to the
-// plain Radix part instead of throwing.
 const MenuStateContext = React.createContext<MenuState | null>(null);
-/** `forceMount` passed by the user to the Portal (Animate UI always mounts it). */
 const PortalForceMountContext = React.createContext(false);
 
 type IndicatorItem = {
   checked: boolean | 'indeterminate';
   kind: 'checkbox' | 'radio';
-  /** The group of a radio item's check: it glides between them (`pop`). */
   group?: CheckGroup;
 };
 
-/** The checked state of the closest checkbox or radio item. */
 const IndicatorItemContext = React.createContext<IndicatorItem | null>(null);
 const RadioGroupContext = React.createContext<{
   value: string | undefined;
@@ -109,7 +76,6 @@ type OpenStateProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-/** Mirrors Radix's open state, which it keeps private. */
 function useOpenState({ open, defaultOpen, onOpenChange }: OpenStateProps) {
   const controlled = open !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen ?? false);
@@ -121,10 +87,6 @@ function useOpenState({ open, defaultOpen, onOpenChange }: OpenStateProps) {
   return [value, setValue] as const;
 }
 
-/**
- * A menu's picks, for its root (a Root, or a Menubar): `onClose` reads them
- * when the menu closes. Its submenus and items use the same.
- */
 function useMenuPicks() {
   const { picks, registerCheck, wasPicked } = usePicks();
   const [picked, setPicked] = React.useState<Picked>(false);
@@ -139,13 +101,11 @@ function useMenuPicks() {
   return { picked, onOpenChange, provide };
 }
 
-/** `Root` and `Sub`: they track the open state and give it back to Radix. */
 function createOpenRoot<P extends OpenStateProps>(
   RadixRoot: React.ComponentType<P>,
   { sub = false }: { sub?: boolean } = {},
 ) {
   function OpenRoot(props: P) {
-    // A Sub closes with its root: the root's picks hold it too.
     const parent = React.use(MenuStateContext);
     const picks = useMenuPicks();
     const [open, setOpen] = useOpenState(props);
@@ -170,10 +130,6 @@ function createOpenRoot<P extends OpenStateProps>(
 
 type PortalProps = { forceMount?: true; children?: React.ReactNode };
 
-/**
- * Radix unmounts the Portal as soon as the menu closes, which would cut the
- * exit short. Animate UI keeps it mounted; the Content decides when to leave.
- */
 function createPortal<P extends PortalProps>(
   RadixPortal: React.ComponentType<P>,
 ) {
@@ -189,10 +145,6 @@ function createPortal<P extends PortalProps>(
 
 type OutsideEvent = {
   preventDefault: () => void;
-  /**
-   * Radix's outside events carry the pointer or focus event behind them
-   * (`originalEvent`); Escape's is a key event (a number).
-   */
   detail?: unknown;
 };
 
@@ -209,26 +161,12 @@ type ContentProps = {
 };
 
 type ContentOptions = {
-  /** The CSS variable Radix sets with the trigger-anchored origin. */
   origin: string;
-  /** A submenu: it shares the highlight of its root content. */
   sub?: boolean;
-  /**
-   * Where focus goes when the menu closes, done at once instead of after the
-   * exit (Radix does it on unmount, once the exit is over): `trigger` (the
-   * element
-   * labelling the content), `previous` (the element focused before opening),
-   * or `none` (Radix handles it, as it does for submenus).
-   */
   returnFocus: 'trigger' | 'previous' | 'none';
-  /**
-   * A menubar's menu: it takes over the popover of the menu open before it,
-   * which moves to it (internal/menu-handoff).
-   */
   handoff?: boolean;
 };
 
-/** `Content` and `SubContent`: scale and fade from the trigger. */
 function createContent<P extends ContentProps>(
   RadixContent: React.ComponentType<P>,
   options: ContentOptions,
@@ -273,9 +211,6 @@ type ContentMotionProps = ContentProps &
     keepMounted: boolean;
   };
 
-// Rendered inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
-// It reads the open state from context (not props): while it exits,
-// AnimatePresence keeps its last element, but context still reaches it.
 function ContentMotion({
   component: RadixContent,
   options,
@@ -301,20 +236,11 @@ function ContentMotion({
   const leave = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
-  // A menubar's popover moving and resizing to the next menu.
   const morph = useTempoTransition(transition ?? MORPH_TRANSITION);
   const hold = usePickHold();
-  // `scale`, like v1: Motion writes `transform: none` once it's back to 1, so
-  // a settled content never becomes the containing block of the submenus'
-  // fixed positioning (shadcn/ui renders them inside the content).
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
-  // Its values, to end its exit at once when a menubar's next menu takes its
-  // popover over.
   const opacity = useMotionValue(hidden.opacity);
   const scale = useMotionValue(hidden.scale);
-  // A menubar's next menu takes its popover over: it starts from where this
-  // one is, which leaves at once, unseen (its exit ends there, so Radix
-  // unmounts it: focus and Escape go to the next menu).
   const handoff = useMenuHandoff(
     options.handoff ? React.use(MenuHandoffContext) : null,
     {
@@ -330,10 +256,7 @@ function ContentMotion({
       },
     },
   );
-  // A submenu goes with its menu when the next one takes its popover over.
   useHandoffNested(ref, Boolean(options.sub));
-  // Closing because an item was chosen whose check moves: the menu holds
-  // still while it does (nothing moves under reduced motion).
   const exit: Transition = handoff.dropped
     ? { duration: 0 }
     : picked && !reduce
@@ -343,31 +266,23 @@ function ContentMotion({
         }
       : leave;
 
-  // Force-mounted content stays in the DOM while closed: once its exit has
-  // played, hide it so it leaves the tab order and the accessibility tree.
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
   const openRef = React.useRef(open);
   React.useLayoutEffect(() => {
     openRef.current = open;
   });
-  // When it last opened (performance.now()).
   const openedAtRef = React.useRef(-Infinity);
   const guard =
     <E extends OutsideEvent>(handler?: (event: E) => void) =>
     (event: E) => {
       handler?.(event);
-      // Neither a leaving menu, nor the event that opened it: a kept-mounted
-      // menu is a dismissable layer already, so Radix takes the pointer down
-      // on its trigger, once it has opened it, for one outside it.
       const cause = (event.detail as { originalEvent?: Event } | undefined)
         ?.originalEvent;
       if (!openRef.current || (cause && cause.timeStamp < openedAtRef.current))
         event.preventDefault();
     };
 
-  // A layout effect runs before Radix's focus scope moves focus in (a
-  // passive effect), so this still sees the element focused before opening.
   React.useLayoutEffect(() => {
     if (!open) return;
     openedAtRef.current = performance.now();
@@ -375,15 +290,10 @@ function ContentMotion({
     returnedFocusRef.current = false;
   }, [open]);
 
-  // A passive effect: by then Radix's focus scope has stopped trapping focus
-  // (it would pull it back in).
   React.useEffect(() => {
     const node = ref.current;
     if (open || !node) return;
     const doc = node.ownerDocument;
-    // Closing. Keyboard users must not keep acting on a menu that is leaving:
-    // return focus now, the way Radix will on unmount. A user handler on
-    // onCloseAutoFocus keeps full control instead.
     if (options.returnFocus === 'none' || onCloseAutoFocus) return;
     if (!node.contains(doc.activeElement)) return;
     const target =
@@ -401,17 +311,12 @@ function ContentMotion({
       {...props}
       forceMount
       asChild
-      // A leaving menu is still a dismissable layer until it unmounts: it
-      // must not dismiss anything. When moving between the menus of a
-      // menubar, focus entering the new menu would otherwise close the bar.
       onEscapeKeyDown={guard(onEscapeKeyDown)}
       onPointerDownOutside={guard(onPointerDownOutside)}
       onFocusOutside={guard(onFocusOutside)}
       onInteractOutside={guard(onInteractOutside)}
       onCloseAutoFocus={(event: Event) => {
         onCloseAutoFocus?.(event);
-        // Focus already went back on close: don't move it again on unmount
-        // (the user may have moved on since).
         if (returnedFocusRef.current) event.preventDefault();
       }}
     >
@@ -420,7 +325,6 @@ function ContentMotion({
         initial={
           handoff.from ? { opacity: handoff.from.opacity, scale: 1 } : hidden
         }
-        // Transitions live in the targets: each direction keeps its own.
         animate={
           open
             ? handoff.from
@@ -436,15 +340,10 @@ function ContentMotion({
           opacity,
           scale,
           transformOrigin: `var(${options.origin})`,
-          // The highlight goes under the items' content, above the menu's
-          // background: the menu is its own stacking context.
           isolation: 'isolate',
           ...(keepMounted && settledClosed && !open
             ? { visibility: 'hidden' as const }
             : null),
-          // A leaving menu doesn't react to the pointer: hovering it would
-          // move focus back into it. (No key at all while open: Radix sets
-          // pointer-events on the layer of a modal menu.)
           ...(open ? null : { pointerEvents: 'none' as const }),
           ...style,
         }}
@@ -452,7 +351,6 @@ function ContentMotion({
         {options.sub ? (
           children
         ) : (
-          // Its submenus go with it in a menubar's handoff (none otherwise).
           <HandoffNestedContext value={options.handoff ? handoff.entry : null}>
             <HighlightScope open={open}>{children}</HighlightScope>
           </HandoffNestedContext>
@@ -469,10 +367,8 @@ type ItemProps = {
   ref?: React.Ref<HTMLDivElement>;
 };
 
-/** Checkbox and radio items: Radix's `onSelect`, before it closes. */
 type SelectableItemProps = ItemProps & { onSelect?: (event: Event) => void };
 
-/** An item that takes part in the content's highlight. */
 function HighlightedItem<P extends ItemProps>({
   component: RadixItem,
   props: { asChild, disabled, children, ref, ...props },
@@ -497,7 +393,6 @@ function HighlightedItem<P extends ItemProps>({
   );
 }
 
-/** `Item` and `SubTrigger`. */
 function createItem<P extends ItemProps>(RadixItem: React.ComponentType<P>) {
   function Item(props: P) {
     return <HighlightedItem component={RadixItem} props={props} />;
@@ -509,11 +404,6 @@ type CheckboxItemProps = SelectableItemProps & {
   checked?: boolean | 'indeterminate';
 };
 
-/**
- * Radix calls `onSelect` right before it closes the menu (unless it's
- * prevented): the pick is marked then, if `moves` says its check moves (how
- * it shows).
- */
 function useMarkPick(
   onSelect: ((event: Event) => void) | undefined,
   moves: (item: Element | null) => Picked,
@@ -527,13 +417,11 @@ function useMarkPick(
   };
 }
 
-/** Shares its checked state with its ItemIndicator. */
 function createCheckboxItem<P extends CheckboxItemProps>(
   RadixCheckboxItem: React.ComponentType<P>,
 ) {
   function CheckboxItem(props: P) {
     const picks = React.use(PickContext);
-    // Its check shows or hides itself.
     const onSelect = useMarkPick(
       props.onSelect,
       (item) => picks?.checkOf(item) ?? false,
@@ -572,7 +460,6 @@ function createRadioItem<P extends SelectableItemProps & { value: string }>(
   function RadioItem(props: P) {
     const group = React.use(RadioGroupContext);
     const picks = React.use(PickContext);
-    // Another item than the checked one: the check moves there.
     const onSelect = useMarkPick(
       props.onSelect,
       (item) =>
@@ -607,12 +494,6 @@ type ItemIndicatorProps = {
   children?: React.ReactNode;
 };
 
-/**
- * An item's check shows itself when the item is checked, and hides itself
- * when it's unchecked: it stays mounted for that. The menu opening shows it
- * at rest. With `pop`, a radio item's check glides from the previously
- * checked item.
- */
 function createItemIndicator<P extends ItemIndicatorProps>(
   RadixItemIndicator: React.ComponentType<P>,
 ) {

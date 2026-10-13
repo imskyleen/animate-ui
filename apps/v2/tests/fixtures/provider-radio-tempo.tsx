@@ -25,8 +25,6 @@ function Group({ label }: { label: string }) {
   );
 }
 
-// The same radio group at the default pace and at tempo 2: a dot leaves on
-// the spring it came in on, paced once.
 export default function ProviderRadioTempoFixture() {
   return (
     <div className="flex flex-col gap-10">

@@ -3,12 +3,10 @@ import path from 'node:path';
 
 export type Project = {
   root: string;
-  /** Directory of the shadcn/ui components (components.json `aliases.ui`). */
   uiDir: string;
   hasPackage: boolean;
 };
 
-/** Parses JSON with comments and trailing commas (tsconfig files). */
 function parseJsonc(text: string) {
   const withoutComments = text.replace(
     /("(?:\\.|[^"\\])*")|\/\/[^\n]*|\/\*[\s\S]*?\*\//g,
@@ -21,7 +19,6 @@ function readJson(file: string) {
   return parseJsonc(readFileSync(file, 'utf8'));
 }
 
-/** Resolves an import alias (`@/components/ui`) with the tsconfig paths. */
 function resolveAlias(root: string, alias: string) {
   for (const name of ['tsconfig.json', 'tsconfig.app.json', 'jsconfig.json']) {
     const file = path.join(root, name);

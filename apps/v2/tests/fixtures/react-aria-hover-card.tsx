@@ -7,7 +7,6 @@ import {
   PreviewTrigger,
 } from '@animate-ui/react/primitives/react-aria';
 
-// API compatibility: React Aria's PreviewTrigger with the animated Popover.
 export default function ReactAriaHoverCardFixture() {
   const [open, setOpen] = React.useState(false);
 

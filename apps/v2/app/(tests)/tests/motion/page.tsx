@@ -2,20 +2,14 @@ import type { ComponentType } from 'react';
 
 import { CopySwap, ThemeSwap } from './swaps';
 
-// Local review page: every motion "family" of Animate UI, its rule and
-// values, with the live demos side by side. Not linked from the docs.
-
 type DemoRef = { demo: string; label: string; note?: string };
 
 type Family = {
   id: string;
   name: string;
-  /** When this family applies, and what moves. */
   rule: string;
-  /** The values, as written in the primitives. */
   values: string[];
   demos: DemoRef[];
-  /** Also shows the docs' own icon swaps (copy button, theme toggle). */
   live?: boolean;
 };
 

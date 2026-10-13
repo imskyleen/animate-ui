@@ -22,7 +22,6 @@ export default function proxy(request: NextRequest) {
 
     if (result) {
       return NextResponse.rewrite(new URL(result, request.nextUrl), {
-        // this URL has two representations, selected by `Accept`
         headers: { Vary: 'Accept' },
       });
     }

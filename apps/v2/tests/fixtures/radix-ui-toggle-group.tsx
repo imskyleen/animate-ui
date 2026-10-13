@@ -6,7 +6,6 @@ import * as ToggleGroupStar from '@animate-ui/react/primitives/radix-ui/toggle-g
 
 import ToggleGroupDemo from '@/demos/radix-ui/toggle-group';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixToggleGroupFixture() {
   const [value, setValue] = React.useState('a');
 
@@ -29,7 +28,6 @@ export default function RadixToggleGroupFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-toggle-group. */}
         <ToggleGroupStar.Root
           type="multiple"
           aria-label="Star"
@@ -41,7 +39,6 @@ export default function RadixToggleGroupFixture() {
       </section>
 
       <section data-testid="demo-single">
-        {/* The docs demo with its `multiple` control off (single selection). */}
         <ToggleGroupDemo multiple={false} />
       </section>
     </div>

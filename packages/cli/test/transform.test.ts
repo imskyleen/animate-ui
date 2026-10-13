@@ -9,7 +9,6 @@ const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 const ACCORDION = '@animate-ui/react/primitives/radix-ui/accordion';
 const RADIX = '@animate-ui/react/primitives/radix-ui';
 
-// Every fixture: real shadcn/ui output (test/fixtures/<library>/<component>.<style>.tsx).
 describe('shadcn/ui fixtures', () => {
   for (const library of readdirSync(FIXTURES)) {
     for (const file of readdirSync(path.join(FIXTURES, library))) {
@@ -20,7 +19,6 @@ describe('shadcn/ui fixtures', () => {
         expect(result.imports.length).toBeGreaterThan(0);
         for (const change of result.imports)
           expect(result.code).toContain(change.to);
-        // Idempotent: nothing left to swap or strip.
         const again = transform(result.code);
         expect(again.code).toBe(result.code);
         await expect(result.code).toMatchFileSnapshot(
@@ -78,7 +76,6 @@ test('moves a whole radix-ui import to the barrel, unanimated names included', (
       name: 'Accordion',
     },
   ]);
-  // Slot has nothing to animate; Avatar isn't animated yet.
   expect(result.unsupported).toEqual(['radix-ui Avatar']);
 });
 
@@ -141,7 +138,6 @@ export const C = () => <div className={cva("animate-in", { variants: {} })} />
   const { code } = transform(input);
   expect(code).toContain('className={cn(className)}');
   expect(code).toContain('className={cn(\n  "px-2"\n)}');
-  // cva keeps its base argument.
   expect(code).toContain('cva("", { variants: {} })');
   expect(transform(code).code).toBe(code);
 });

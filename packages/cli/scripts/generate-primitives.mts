@@ -1,6 +1,3 @@
-// Writes src/primitives/index.ts from the src/primitives/<library>/<name>.ts
-// files, so adding a primitive never touches a shared list.
-//   pnpm --filter @animate-ui/cli gen
 import { readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 

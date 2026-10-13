@@ -1,22 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// shadcn/ui's sidebar demo (sidebar-demo: collapsible to icons), wired onto
-// @animate-ui/react/primitives/sidebar, in every base (Radix UI, Base UI,
-// React Aria), alone on its page (/examples/<library>/sidebar, the page the
-// docs show in an iframe):
-//
-// - its menu buttons share one highlight: a surface beside each button (in
-//   its menu item, the button clips its content) that glides from button to
-//   button on `spring.highlight`, fades in from nothing and out where it is
-//   on `transition.color`, sub-menu buttons included;
-// - collapsing and expanding, the gap's and the container's widths change on
-//   v1's 400ms curves (the container on the in-out curve, the gap with a
-//   hint of anticipation and of overshoot), none under reduced motion, never
-//   on mount;
-// - Cmd/Ctrl+B toggles it (and the `sidebar_state` cookie keeps it);
-// - collapsed to icons, its buttons show their (animated) tooltips;
-// - on a phone, it's a sheet sliding in from the left.
-
 const SURFACE = '[data-slot="trigger-highlight"]';
 const BUTTONS =
   '[data-sidebar="menu-button"], [data-sidebar="menu-sub-button"]';
@@ -24,12 +7,10 @@ const GAP = '[data-slot="sidebar-gap"]';
 const CONTAINER = '[data-slot="sidebar-container"]';
 const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
-/** shadcn/ui's widths: 16rem expanded, 3rem collapsed to icons. */
 const EXPANDED = 256;
 const ICONS = 48;
 
 type Surface = {
-  /** The button it stands for (its menu item's). */
   button: string;
   top: number;
   left: number;
@@ -37,26 +18,17 @@ type Surface = {
   height: number;
   opacity: number;
   color: string;
-  /** How far its fade (in or out) is, in ms (null: none running). */
   fade: number | null;
-  /**
-   * The share of it its clipping ancestors (`overflow`) let show: a surface
-   * inside a button that clips its content shows only once inside it.
-   */
   shown: number;
-  /** Its button's box, the same frame. */
   item: { top: number; left: number; width: number; height: number };
 };
 
 type HighlightFrame = {
   t: number;
-  /** Surfaces on screen (not transparent). */
   surfaces: Surface[];
-  /** The buttons' own backgrounds, by name. */
   own: Record<string, string>;
 };
 
-/** Records, frame by frame, the menu buttons' highlight, for `duration` ms. */
 function recordHighlight(page: Page, duration: number) {
   return page.evaluate(
     ({ selector, buttons, duration }) =>
@@ -136,14 +108,12 @@ type WidthFrame = {
   state: string | null;
 };
 
-/** Records the desktop sidebar's gap and container widths, frame by frame. */
 function recordWidths(page: Page, duration: number) {
   return page.evaluate(
     ({ gap, container, duration }) =>
       new Promise<WidthFrame[]>((resolve) => {
         const frames: WidthFrame[] = [];
         const t0 = performance.now();
-        // The first one at once: before the interaction that follows.
         const tick = () => {
           frames.push({
             t: Math.round(performance.now() - t0),
@@ -164,7 +134,6 @@ function recordWidths(page: Page, duration: number) {
   );
 }
 
-/** Only ever goes one way (1: up the axis, -1: down), within `slack`. */
 function expectOneWay(values: number[], way: 1 | -1, slack = 0.5) {
   for (let i = 1; i < values.length; i++)
     expect((values[i]! - values[i - 1]!) * way).toBeGreaterThanOrEqual(-slack);
@@ -176,35 +145,29 @@ const button = (page: Page, name: string) =>
 const boxOf = async (page: Page, name: string) =>
   (await button(page, name).boundingBox())!;
 
-/** Hovers a menu button (its center), at once. */
 async function hover(page: Page, name: string) {
   const box = await boxOf(page, name);
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
 }
 
-/** Into the page, beside the sidebar. */
 const leave = (page: Page) => page.mouse.move(700, 400);
 
-/** The sidebar's collapse, frame by frame: from a width to another. */
 function expectCollapse(frames: WidthFrame[], from: number, to: number) {
   const way = to > from ? 1 : -1;
   expect(frames[0]!.container).toBeCloseTo(from, 0);
   expect(frames[0]!.gap).toBeCloseTo(from, 0);
-  // The container slides and resizes one way, seen on its way (not a jump).
   const containers = frames.map((frame) => frame.container);
   expectOneWay(containers, way);
   const between = (width: number) =>
     (width - from) * way > 1 && (to - width) * way > 1;
   expect(containers.filter(between).length).toBeGreaterThanOrEqual(5);
   expect(frames.at(-1)!.container).toBeCloseTo(to, 0);
-  // The page's gap moves with it, every frame: no sliver, no overlap.
   for (const frame of frames)
     expect(Math.abs(frame.gap - frame.container), `${frame.t}ms`).toBeLessThan(
       0.5,
     );
 }
 
-/** A CSS `cubic-bezier()`'s progress at `x` (share of the time). */
 function bezier([x1, y1, x2, y2]: number[], x: number) {
   const at = (a: number, b: number, t: number) =>
     3 * a * t * (1 - t) ** 2 + 3 * b * t ** 2 * (1 - t) + t ** 3;
@@ -218,37 +181,27 @@ function bezier([x1, y1, x2, y2]: number[], x: number) {
   return at(y1!, y2!, (lo + hi) / 2);
 }
 
-/** `transition.collapse`: 280ms on `ease.inOut`, for all that resizes. */
 const COLLAPSE_MS = 280;
 const COLLAPSE_CURVE = [0.77, 0, 0.175, 1];
 const COLLAPSE_EASING = `cubic-bezier(${COLLAPSE_CURVE.join(', ')})`;
-/** `transition.collapseLabel`: labels fade in 140ms. */
 const LABEL_MS = 140;
-/** The moments the toggle is seeked to. */
 const STEPS = [0, 35, 70, 105, 140, 175, 210, 245, 280];
 
 type Seek = {
   t: number;
   container: number;
   gap: number;
-  /** The container's right edge minus the page's left edge. */
   edges: number;
-  /** A menu button's icon, and the team switcher's logo (lg). */
   icon: number;
   logo: number;
-  /** The "Platform" group label's top margin and opacity. */
   groupLabel: { marginTop: number; opacity: number; filter: string };
-  /** A button label (`Models`), as it shows. */
   label: { opacity: number; filter: string };
-  /** Labels truncated with an ellipsis while they show. */
   ellipses: string[];
-  /** Playground's sub-menu and the Projects group (both hidden in icons). */
   sub: { height: number; opacity: number };
   projects: { height: number; opacity: number };
 };
 
 type Seeked = {
-  /** The CSS transitions and Web Animations the toggle runs. */
   running: {
     target: string;
     property: string;
@@ -259,12 +212,6 @@ type Seeked = {
   steps: Seek[];
 };
 
-/**
- * Right after a toggle: every animation it started in the sidebar (the CSS
- * transitions of the widths, the buttons, the group labels, and Animate
- * UI's label and part animations), paused together and seeked through the
- * collapse, read at each step: exact, however busy the machine.
- */
 function seekToggle(page: Page) {
   return page.evaluate(
     ({ steps }) => {
@@ -389,7 +336,6 @@ function seekToggle(page: Page) {
   ) as Promise<Seeked>;
 }
 
-/** What shows before a toggle: the parts' heights. */
 function heightsBefore(page: Page) {
   return page.evaluate(() => ({
     sub: document
@@ -404,17 +350,11 @@ function heightsBefore(page: Page) {
   }));
 }
 
-/**
- * The toggle, seeked: everything on one curve and one duration (280ms on
- * the in-out curve), edges together, icons anchored, labels fading with no
- * ellipsis, group labels sliding in step, hidden parts folding.
- */
 function expectToggle(
   seeked: Seeked,
   collapsing: boolean,
   heights: { sub: number; projects: number },
 ) {
-  // The widths, and the buttons' own resizing, on the collapse's timing.
   for (const target of [
     'sidebar-gap',
     'sidebar-container',
@@ -439,18 +379,13 @@ function expectToggle(
       Math.abs(step.container - (from + (to - from) * p)),
       at,
     ).toBeLessThan(1);
-    // Edges together: the page's edge is the sidebar's.
     expect(Math.abs(step.edges), at).toBeLessThan(0.5);
     expect(Math.abs(step.gap - step.container), at).toBeLessThan(0.5);
-    // Icons stay put; the team logo (lg: its padding goes) moves on the
-    // same curve.
     expect(Math.abs(step.icon - 16), at).toBeLessThan(0.5);
     expect(Math.abs(step.logo - (16 - 8 * shrink)), at).toBeLessThan(0.5);
-    // The group label slides up in step (shadcn/ui's -mt-8).
     expect(Math.abs(step.groupLabel.marginTop + 32 * shrink), at).toBeLessThan(
       0.5,
     );
-    // Labels: gone in the first half collapsing, back in the last half.
     const labelShown = collapsing
       ? step.t >= LABEL_MS
         ? 0
@@ -463,7 +398,6 @@ function expectToggle(
       expect(step.groupLabel.opacity, at).toBeLessThan(0.01);
     }
     expect(step.ellipses, at).toEqual([]);
-    // The hidden parts fold on the same curve.
     expect(
       Math.abs(step.sub.height - heights.sub * (1 - shrink)),
       at,
@@ -479,7 +413,6 @@ function expectToggle(
   if (collapsing) {
     expect(first.label.opacity).toBe(1);
     expect(first.label.filter).toBe('blur(0px)');
-    // Into a light blur (blur.icon).
     const faded = seeked.steps.find((step) => step.t === LABEL_MS)!;
     expect(faded.label.filter).toBe('blur(2px)');
     expect(last.sub.opacity).toBeLessThan(0.01);
@@ -532,8 +465,6 @@ export function describeSidebar(library: string) {
         expect(Math.abs(surface!.height - models.height)).toBeLessThan(0.5);
         expect(surface!.color).not.toBe(TRANSPARENT);
       }
-      // It fades in, on the color's curve (CSS's `ease` over 200ms: under
-      // half in at 40ms).
       expect(lit[0]!.surfaces[0]!.opacity).toBeLessThan(0.7);
       for (const { surfaces } of lit) {
         const { fade, opacity } = surfaces[0]!;
@@ -541,7 +472,6 @@ export function describeSidebar(library: string) {
           expect(opacity, `${fade}ms`).toBeLessThan(0.5);
       }
       expect(lit.at(-1)!.surfaces[0]!.opacity).toBe(1);
-      // Under the button's content: its text stays on top.
       const covered = await button(page, 'Models').evaluate((el) => {
         const box = el.getBoundingClientRect();
         const hit = document.elementFromPoint(
@@ -565,8 +495,6 @@ export function describeSidebar(library: string) {
       const documentation = await boxOf(page, 'Documentation');
       for (const frame of frames) {
         expect(frame.surfaces.length, `${frame.t}ms`).toBe(1);
-        // On screen all along, fully: one surface handed over, never cut
-        // by a button's edge.
         expect(frame.surfaces[0]!.opacity, `${frame.t}ms`).toBeGreaterThan(
           0.99,
         );
@@ -577,13 +505,10 @@ export function describeSidebar(library: string) {
       }
       const tops = frames.map((frame) => frame.surfaces[0]!.top);
       expectOneWay(tops, 1);
-      // Through every frame on the way, not a jump.
       expect(
         tops.filter((top) => top > models.y + 1 && top < documentation.y - 1)
           .length,
       ).toBeGreaterThanOrEqual(3);
-      // On the highlight's spring (stiffness 500, damping 40): most of the
-      // way within ~100ms, there by ~300ms.
       const moved = frames.findIndex(
         (frame) => frame.surfaces[0]!.top > models.y + 0.5,
       );
@@ -608,9 +533,6 @@ export function describeSidebar(library: string) {
       let frames = await recording;
       const playground = await boxOf(page, 'Playground');
       const starred = await boxOf(page, 'Starred');
-      // Something lit all along: the sub-button's surface glides in from
-      // Playground's (the sub-menu clips its own, so Playground's glides
-      // along with it and goes once there).
       for (const frame of frames)
         expect(
           Math.max(...frame.surfaces.map((surface) => surface.opacity)),
@@ -634,7 +556,6 @@ export function describeSidebar(library: string) {
       expect(Math.abs(last[0]!.left - starred.x)).toBeLessThan(0.5);
       expect(Math.abs(last[0]!.width - starred.width)).toBeLessThan(0.5);
 
-      // And back to a top-level button.
       recording = recordHighlight(page, 500);
       await hover(page, 'Models');
       frames = await recording;
@@ -678,7 +599,6 @@ export function describeSidebar(library: string) {
           expect(lit[0]!.button, when).toContain(name);
           expect(lit[0]!.opacity, when).toBe(1);
           expect(lit[0]!.color, when).not.toBe(TRANSPARENT);
-          // Its own background stays cleared: one surface.
           expect(
             await trigger.evaluate(
               (el) => getComputedStyle(el).backgroundColor,
@@ -691,16 +611,13 @@ export function describeSidebar(library: string) {
         await expect(menu).toBeVisible();
         await page.waitForTimeout(400);
         await expectLit('open');
-        // The pointer goes into the menu: still lit.
         const box = (await menu.boundingBox())!;
         await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
         await page.waitForTimeout(400);
         await expectLit('pointer in the menu');
-        // The keyboard moves in the menu: still lit.
         await page.keyboard.press('ArrowDown');
         await page.waitForTimeout(300);
         await expectLit('keyboard in the menu');
-        // Closed, it fades out where it is, on the color's curve.
         await page.mouse.move(700, 400);
         const recording = recordHighlight(page, 600);
         await page.keyboard.press('Escape');
@@ -729,13 +646,11 @@ export function describeSidebar(library: string) {
       const fading = frames.filter(
         (frame) => frame.surfaces[0] && frame.surfaces[0].opacity < 0.99,
       );
-      // Never a hard cut: seen on its way out.
       expect(fading.length).toBeGreaterThanOrEqual(3);
       for (const { surfaces } of fading) {
         expect(surfaces).toHaveLength(1);
         expect(Math.abs(surfaces[0]!.top - documentation.y)).toBeLessThan(0.5);
         const { fade, opacity } = surfaces[0]!;
-        // CSS's `ease` over 200ms: still more than half there at 40ms.
         if (fade !== null && fade > 10 && fade <= 40)
           expect(opacity, `${fade}ms`).toBeGreaterThan(0.5);
       }
@@ -745,7 +660,6 @@ export function describeSidebar(library: string) {
       );
       expect(frames.at(-1)!.surfaces).toEqual([]);
       await expect(page.locator(SURFACE)).toHaveCount(0);
-      // The button's own background is back, and it's transparent.
       expect(frames.at(-1)!.own.Documentation).toBe(TRANSPARENT);
     });
 
@@ -764,7 +678,6 @@ export function describeSidebar(library: string) {
       expect(frames.at(-1)!.state).toBe('expanded');
       expectCollapse(frames, ICONS, EXPANDED);
 
-      // Exactly, seeked: both ways.
       await page.waitForTimeout(100);
       let heights = await heightsBefore(page);
       await trigger(page).click();
@@ -837,8 +750,6 @@ export function describeSidebar(library: string) {
       await hover(page, 'Models');
       const shown = await frames;
       await expect(tooltip).toBeVisible();
-      // It grows and fades in (Animate UI's tooltip), to the button's right
-      // (Base UI's after its own delay: shadcn/ui's sidebar sets none).
       expect(shown.length).toBeGreaterThan(5);
       expect(shown[0]!.opacity).toBeLessThan(1);
       expect(shown.at(-1)!.opacity).toBe(1);
@@ -846,7 +757,6 @@ export function describeSidebar(library: string) {
       const box = (await tooltip.boundingBox())!;
       expect(box.x).toBeGreaterThan(models.x + models.width);
 
-      // Expanded, none.
       await leave(page);
       await page.keyboard.press('ControlOrMeta+b');
       await page.waitForTimeout(600);
@@ -859,7 +769,6 @@ export function describeSidebar(library: string) {
       page,
     }) => {
       const icons = trigger(page).locator('[data-icon]');
-      // At rest, one icon: the panel closing (it's open).
       await expect(icons).toHaveCount(1);
       await expect(icons).toHaveAttribute('data-icon', 'open');
       const frames = page.evaluate(
@@ -894,8 +803,6 @@ export function describeSidebar(library: string) {
       );
       await page.keyboard.press('ControlOrMeta+b');
       const shown = await frames;
-      // The panel opening grows in, out of a half-size, faded icon, while
-      // the closing one shrinks out (the swap: 150ms).
       const entering = shown.flatMap((icons) =>
         icons.filter((icon) => icon.key === 'closed'),
       );
@@ -932,11 +839,9 @@ export function describeSidebar(library: string) {
       const chevron = (name: string) =>
         button(page, name).locator('svg').last();
       const angle = (name: string) =>
-        // Tailwind's `rotate-90` is the `rotate` property.
         chevron(name).evaluate(
           (el) => parseFloat(getComputedStyle(el).rotate) || 0,
         );
-      // Playground is open from the start: its chevron points down.
       await expect.poll(() => angle('Playground')).toBe(90);
       expect(await angle('Models')).toBe(0);
       expect(
@@ -1001,13 +906,11 @@ export function describeSidebar(library: string) {
       const iframe = page.locator('[data-slot="preview-iframe"]');
       await expect(iframe).toHaveAttribute('src', path);
       const frame = page.frameLocator('[data-slot="preview-iframe"]');
-      // Desktop (the iframe is wider than md), cut off on the right.
       await expect(frame.locator(CONTAINER)).toBeVisible();
       expect((await iframe.boundingBox())!.width).toBeGreaterThanOrEqual(1024);
       await expect(
         frame.locator(BUTTONS).filter({ hasText: /^\s*Models\s*$/ }),
       ).toBeVisible();
-      // The replay button reloads it.
       await page.getByRole('button', { name: 'Replay' }).first().click();
       await expect(frame.locator(CONTAINER)).toBeVisible();
     });
@@ -1034,7 +937,6 @@ export function describeSidebar(library: string) {
             `${frame.t}ms`,
           ).toBeLessThan(0.5);
       }
-      // Expanding, labels still fade back in, without a blur.
       await trigger(page).click();
       const { running } = await seekToggle(page);
       const fades = running.filter((r) => /opacity/.test(r.property));
@@ -1085,8 +987,6 @@ export function describeSidebar(library: string) {
     }) => {
       await page.goto(path, { waitUntil: 'networkidle' });
       await expect(page.locator(CONTAINER)).toBeHidden();
-      // The sliding element (React Aria's Modal, inside the overlay that
-      // shadcn/ui's Sheet passes the sidebar's attributes to).
       const sheet =
         '[data-mobile="true"][data-side], [data-slot="sheet-content"][data-side]';
       const frames = page.evaluate(
@@ -1114,7 +1014,6 @@ export function describeSidebar(library: string) {
       await trigger(page).click();
       const shown = await frames;
       expect(shown.length).toBeGreaterThan(5);
-      // From off its edge (left), all the way in, one way.
       expect(shown[0]!.left).toBeLessThan(-100);
       expectOneWay(
         shown.map((frame) => frame.left),
@@ -1125,14 +1024,12 @@ export function describeSidebar(library: string) {
         shown.filter((frame) => frame.left < -5 && frame.left > -250).length,
       ).toBeGreaterThanOrEqual(3);
 
-      // Its menu buttons share the highlight too.
       const recording = recordHighlight(page, 400);
       await hover(page, 'Models');
       const lit = (await recording).filter((frame) => frame.surfaces.length);
       expect(lit.length).toBeGreaterThan(3);
       expect(lit.at(-1)!.surfaces[0]!.button).toBe('Models');
 
-      // Cmd/Ctrl+B closes it.
       await page.keyboard.press('ControlOrMeta+b');
       await expect(page.locator(sheet)).toHaveCount(0);
     });

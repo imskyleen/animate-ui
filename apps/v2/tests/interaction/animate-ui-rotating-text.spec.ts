@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="rotating-text-container"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -37,7 +35,6 @@ const hideTab = (page: Page) =>
 
 type Run = { text: string; start: number; maxOpacity: number };
 
-/** Logs, from the first paint, each word shown and its highest opacity. */
 const recordWords = (page: Page) =>
   page.addInitScript(() => {
     const runs: Run[] = [];
@@ -76,8 +73,6 @@ test.describe('animate-ui rotating text', () => {
       .poll(async () => (await runsOf(page)).length, { timeout: 8000 })
       .toBeGreaterThanOrEqual(3);
     const [first, second, third] = await runsOf(page);
-    // With no delay, the first word leaves as soon as it mounts, before it
-    // shows: "Text" is the first one to slide in, then each holds 2 seconds.
     expect(first!.text).toBe('Rotating');
     expect(first!.maxOpacity).toBeLessThan(0.3);
     expect(second!.text).toBe('Text');
@@ -90,7 +85,6 @@ test.describe('animate-ui rotating text', () => {
   test('pauses while the tab is hidden', async ({ page }) => {
     await open(page);
     await hideTab(page);
-    // A swap already under way finishes; then nothing moves.
     await page.waitForTimeout(800);
     const shown = await word(page).textContent();
     await page.waitForTimeout(3000);

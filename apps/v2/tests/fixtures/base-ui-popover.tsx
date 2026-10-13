@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Popover } from '@animate-ui/react/primitives/base-ui/popover';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseUIPopoverFixture() {
   const [open, setOpen] = React.useState(false);
   const [completed, setCompleted] = React.useState<string[]>([]);

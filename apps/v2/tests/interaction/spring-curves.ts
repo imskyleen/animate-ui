@@ -6,10 +6,6 @@ import {
   spring,
 } from 'motion';
 
-// Expectations computed from a spring (or a tween's curve) itself, with
-// Motion's own generator and easings (the ones the primitives animate with):
-// a spec names the spring, never numbers measured from it.
-
 export type SpringOptions = {
   stiffness: number;
   damping: number;
@@ -17,7 +13,6 @@ export type SpringOptions = {
   restDelta?: number;
 };
 
-/** The spring from `from` to `to`, one value per millisecond until it rests. */
 function trajectory(options: SpringOptions, from: number, to: number) {
   const generator = spring({ keyframes: [from, to], ...options });
   const values: number[] = [];
@@ -29,10 +24,6 @@ function trajectory(options: SpringOptions, from: number, to: number) {
   return values;
 }
 
-/**
- * How far the spring goes past its target, as a share of the distance it
- * travels (0 when it doesn't overshoot).
- */
 export function overshootOf(options: SpringOptions) {
   return trajectory(options, 0, 1).reduce(
     (peak, value) => Math.max(peak, value - 1),
@@ -40,7 +31,6 @@ export function overshootOf(options: SpringOptions) {
   );
 }
 
-/** When (ms) the spring from `from` to `to` first reaches `value`. */
 export function springTimeTo(
   options: SpringOptions,
   from: number,
@@ -55,16 +45,11 @@ export function springTimeTo(
   return t;
 }
 
-/** The output values of a CSS `linear()` easing, without their positions. */
 export function linearPoints(easing: string) {
   const inner = /^linear\((.*)\)$/.exec(easing.trim())?.[1];
   return inner ? inner.split(',').map((stop) => Number.parseFloat(stop)) : [];
 }
 
-/**
- * The spring as the CSS transition Motion hands the browser for it: its
- * duration (ms) and its `linear()` curve, sampled every 10ms.
- */
 export function springAsCss(options: SpringOptions) {
   const { duration, ease } = createGeneratorEasing(
     { type: 'spring', ...options },
@@ -75,10 +60,6 @@ export function springAsCss(options: SpringOptions) {
   return { duration: ms, points: linearPoints(generateLinearEasing(ease, ms)) };
 }
 
-/**
- * Expects a computed CSS transition (its first duration and timing function)
- * to run the spring.
- */
 export function expectCssSpring(
   timing: { duration: string; easing: string },
   options: SpringOptions,
@@ -93,13 +74,11 @@ export function expectCssSpring(
   expect(deviation).toBeLessThan(1e-4);
 }
 
-/** A tween: its duration (ms) and its cubic-bezier curve. */
 export type CurveOptions = {
   duration: number;
   ease: [number, number, number, number];
 };
 
-/** When (ms) the tween from `from` to `to` first reaches `value`. */
 export function curveTimeTo(
   options: CurveOptions,
   from: number,
@@ -113,10 +92,6 @@ export function curveTimeTo(
   throw new Error(`The curve never reaches ${value}`);
 }
 
-/**
- * Expects a computed CSS transition (its first duration and timing function)
- * to run the tween.
- */
 export function expectCssCurve(
   timing: { duration: string; easing: string },
   options: CurveOptions,
@@ -127,17 +102,10 @@ export function expectCssCurve(
   );
 }
 
-/** A value recorded on an animation frame: `[t (ms, any origin), value]`. */
 export type Sample = [number, number];
 
 type Pace = { from: number; to: number; a: number; b: number; slack?: number };
 
-/**
- * Expects the motion in `samples` (one per frame) to take as long as the
- * spring from `from` to `to` does to go from `a` to `b`. Each crossing is
- * bounded by the frames around it, so a dropped frame only widens the
- * window; `slack` (ms) covers a frame of rendering lag.
- */
 export function expectSpringPace(
   samples: Sample[],
   options: SpringOptions,
@@ -151,7 +119,6 @@ export function expectSpringPace(
   );
 }
 
-/** Like `expectSpringPace`, for a tween. */
 export function expectCurvePace(
   samples: Sample[],
   options: CurveOptions,
@@ -165,7 +132,6 @@ export function expectCurvePace(
   );
 }
 
-/** Expects the motion in `samples` to take `expected` ms from `a` to `b`. */
 function expectPace(
   samples: Sample[],
   expected: number,

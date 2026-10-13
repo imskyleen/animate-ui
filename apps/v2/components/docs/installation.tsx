@@ -38,22 +38,11 @@ export async function Command({
 
 const PRIMITIVES = '@animate-ui/react/primitives/';
 
-/**
- * Animate UI's own drop-ins, by module (`primitives/<name>`, named after
- * shadcn/ui's component): the package import each one stands in for. Their
- * shadcn/ui components have no CSS animation to delete (InputOTP's caret
- * blink stays).
- */
 const DROP_INS: Record<string, string> = {
   'input-otp': 'input-otp',
   questionnaire: '@shadcn/react/questionnaire',
 };
 
-/**
- * The package an Animate UI primitive's module stands in for, and the module
- * the CLI writes for it (shadcn/ui's Radix Drawer imports Vaul, whose
- * replacement is Radix UI's drawer).
- */
 function swap(module: string, names: string[]) {
   const [library, ...rest] = module.slice(PRIMITIVES.length).split('/');
   const sub = rest.join('/');
@@ -74,18 +63,8 @@ function swap(module: string, names: string[]) {
   return { from, to: module };
 }
 
-/** Prettier's line length, which shadcn/ui's components are printed with. */
 const PRINT_WIDTH = 80;
 
-/**
- * The imports to swap, as a diff: those of the shadcn/ui component (the
- * page's demo, before its demo function), from the library and from Animate
- * UI, as the CLI swaps them: value imports only, each with the names the
- * component uses, laid out as Prettier prints them in shadcn/ui's file (past
- * the print width, an import of several names breaks over lines; one of a
- * single name stays on one line). A multi-line import only changes its last
- * line.
- */
 async function ImportDiff({
   library,
   name,
@@ -97,11 +76,9 @@ async function ImportDiff({
     path.join(process.cwd(), 'demos', library, `${name}.tsx`),
     'utf8',
   ).catch(() => '');
-  // The component: up to its exports, before the demo.
   const component = demo.split(/^export\s+(?:\{|default\s|const\s)/m)[0]!;
   const statements = [
     ...component.matchAll(
-      // One statement: its clause never runs into the next `import`.
       /^import\s+((?:(?!\nimport\s)[\s\S])*?)\s+from\s+["']([^"']+)["'];?$/gm,
     ),
   ];
@@ -117,7 +94,6 @@ async function ImportDiff({
   const lines: string[] = [];
   let diff = '';
   for (const [, clause, module] of statements) {
-    // Type-only imports stay: the CLI leaves them alone.
     if (!module!.startsWith(PRIMITIVES) || /^type\s/.test(clause!)) continue;
     const named = /^\{([\s\S]*)\}$/.exec(clause!.trim());
     let specifiers: string[] = [];
@@ -165,18 +141,11 @@ async function ImportDiff({
   return <ServerCodeBlock code={lines.join('\n')} lang="tsx" diff={diff} />;
 }
 
-/**
- * Two paths. CLI: packages, the shadcn/ui component, then the CLI animates
- * it. Manual (built on the library directly): the package, then swap the
- * import. Without `name` (Animate UI's own primitives), the package is all
- * it takes.
- */
 export function Installation({
   name,
   library,
 }: {
   name?: string;
-  /** The page's library (its demo shows the imports to swap). */
   library?: LibraryId;
 }) {
   if (!name) {

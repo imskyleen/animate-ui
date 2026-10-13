@@ -4,13 +4,9 @@ import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';
 import { probeFirstFrame, sample } from './motion-probe';
 
-// React Aria's menus open in Animate UI's animated Popover, and their items
-// take part in the menus' highlight (menu-highlight.ts), into submenus too.
 const CONTENT = '[data-slot="dropdown-menu-content"]';
 const SUB_CONTENT = '[data-slot="dropdown-menu-sub-content"]';
 
-// shadcn's demo menu (~575px tall) doesn't fit under its trigger, in the
-// middle of a 720px viewport: it would scroll, and hide its last items.
 test.use({ viewport: { width: 1280, height: 1280 } });
 
 test.describe('react-aria dropdown-menu demo', () => {
@@ -40,7 +36,6 @@ test.describe('react-aria dropdown-menu demo', () => {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(700);
     await page.keyboard.press('Escape');
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, CONTENT)).opacity, {
         intervals: [16],
@@ -83,13 +78,11 @@ test.describe('react-aria dropdown-menu demo', () => {
     await page.waitForTimeout(400);
     await page.getByRole('menuitem', { name: 'Email' }).hover();
     await page.waitForTimeout(600);
-    // The submenu shares its menu's highlight: it moved into the submenu.
     const copies = page.locator('[data-slot="item-highlight"]');
     await expect(copies).toHaveCount(1);
     expect(
       await copies.first().evaluate((el) => el.parentElement?.textContent),
     ).toContain('Email');
-    // The open trigger shows no background of its own.
     expect(
       await trigger.evaluate((el) => getComputedStyle(el).backgroundColor),
     ).toBe('rgba(0, 0, 0, 0)');
@@ -111,9 +104,6 @@ describeMenuHighlight('react-aria dropdown-menu highlight', {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await page.waitForTimeout(500);
   },
-  // Two rows above the submenu trigger, as the old demo's were: leaving the
-  // submenu for an item further up, the part in the submenu is cut by it
-  // before the new one has faded in.
   first: (page) => page.getByRole('menuitem', { name: /Settings/ }),
   second: (page) => page.getByRole('menuitem', { name: 'Team', exact: true }),
   submenuTrigger: (page) =>

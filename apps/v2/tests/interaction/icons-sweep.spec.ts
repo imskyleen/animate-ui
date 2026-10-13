@@ -1,9 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Every animation of every icon (tests/fixtures/icons-sweep.tsx), played
-// together: each one moves, and stopped midway, returns exactly to rest.
-
-/** Each icon's drawing: its elements' transforms, opacities, dashes and geometry. */
 const snapshot = (page: Page) =>
   page.evaluate(() => {
     const round = (value: string) =>
@@ -38,9 +34,6 @@ const snapshot = (page: Page) =>
       result[host.dataset.icon!] = [svg, ...svg.querySelectorAll('*')]
         .map((el) => {
           const cs = getComputedStyle(el);
-          // A fully drawn path (Motion's `pathLength: 1`, dashes of the
-          // whole path's length) draws like an undashed one; a fill's
-          // opacity doesn't show without a fill.
           const drawn =
             cs.strokeDasharray === '1px, 1px' &&
             parseFloat(cs.strokeDashoffset) === 0;
@@ -89,8 +82,6 @@ test('every icon animation moves, and returns to rest when stopped midway', asyn
   }
   expect(names.filter((name) => !moved.has(name))).toEqual([]);
 
-  // Stop ~0.9s in, then early on (most animations still running): back to
-  // rest both times.
   for (const playFor of [0, 250]) {
     if (playFor) {
       await play.click();

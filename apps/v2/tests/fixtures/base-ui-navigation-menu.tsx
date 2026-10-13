@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { NavigationMenu } from '@animate-ui/react/primitives/base-ui/navigation-menu';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseNavigationMenuFixture() {
   const [value, setValue] = React.useState<string | null>(null);
   const [complete, setComplete] = React.useState('none');

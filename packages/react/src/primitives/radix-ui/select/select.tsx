@@ -32,36 +32,16 @@ import {
   type RegisterCheck,
 } from '../../../internal/item-indicator';
 
-// Same API as Radix's Select. It has no Animate UI v1 counterpart: its list
-// moves like the menus (a 220ms fade and scale from 0.9, both
-// ways), a highlight glides behind the highlighted item, and the chosen
-// item's check draws itself while the previous one erases itself (with
-// `pop`, the check glides to the chosen item on a quick spring). Choosing
-// another item closes the list after a hold (250ms for a drawn check,
-// 150ms for a glide or a pop), so the change is seen
-// (internal/item-indicator). The Root mirrors `open` and `value` (Radix keeps
-// them private) so the Content can play an exit before Radix unmounts it, and
-// every item's check stays mounted to show and hide itself.
-
 const [OpenProvider, useOpen] = getStrictContext<{
   open: boolean;
-  /** The chosen value, as Radix has it. */
   value: string | undefined;
-  /**
-   * The list closed because an item was chosen whose check changes: how it
-   * shows (the list holds for it).
-   */
   picked: Picked;
-  /** Called by an item about to be chosen, just before Radix closes. */
   markPick: (item: Element) => void;
-  /** Lets a check register with the list. */
   registerCheck: RegisterCheck;
 }>('Select.Root');
 
-/** Whether the closest Item is the chosen one. */
 const ItemSelectedContext = React.createContext<boolean | null>(null);
 
-// `forceMount` on the Portal applies to the Content, like in Radix.
 const PortalContext = React.createContext<{ forceMount?: true }>({});
 
 type SelectProps = SelectPrimitive.SelectProps;
@@ -88,18 +68,11 @@ type unstable_SelectProviderProps =
 type unstable_SelectBubbleInputProps =
   SelectPrimitive.unstable_SelectBubbleInputProps;
 
-/** Animate UI's additions to `Select.Content`. */
 type ContentAnimationProps = {
-  /**
-   * Transition of the opening, and of the closing unless `exitTransition` is
-   * set. Defaults to `{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`.
-   */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
-/** Animate UI's additions to `Select.ItemIndicator`. */
 type IndicatorAnimationProps = ItemCheckAnimationProps;
 
 type OpenProps = Pick<
@@ -111,13 +84,6 @@ type OpenProps = Pick<
   onValueChange?: (value: string) => void;
 };
 
-/**
- * `open` and `value` controlled or not, exactly like Radix resolves them,
- * and whether the list closed because an item was chosen. Radix chooses an
- * item from its pointer and key handlers, which run right after the item's
- * own: the item marks itself there (`markPick`), and Radix closes the list in
- * the same event.
- */
 function useOpenState({
   open: openProp,
   defaultOpen,
@@ -136,7 +102,6 @@ function useOpenState({
   const pickedRef = React.useRef<Element | null>(null);
   const markPick = React.useCallback((item: Element) => {
     pickedRef.current = item;
-    // Only for this event: an item that wasn't chosen leaves no mark.
     queueMicrotask(() => {
       pickedRef.current = null;
     });
@@ -144,12 +109,10 @@ function useOpenState({
 
   const setOpen = (next: boolean) => {
     if (!controlled) setUncontrolled(next);
-    // The chosen item has a check: it shows itself while the list holds.
     const item = pickedRef.current;
     setPicked(!next && item !== null && checkOf(item));
     onOpenChange?.(next);
   };
-  // Radix keeps its own value: this only follows it.
   const setValue = (next: string) => {
     setOwnValue(next);
     onValueChange?.(next);
@@ -161,11 +124,6 @@ function useOpenState({
   };
 }
 
-/**
- * The checks of an open list share it: a check glides to the chosen item
- * (`pop`). Only in the animated list: Radix also renders the items of a
- * closed select, off-screen.
- */
 const IndicatorGroupContext = React.createContext<CheckGroup | null>(null);
 
 function Root(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
@@ -217,7 +175,6 @@ function Content({
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
 
-  // True while the list is open or playing its exit.
   const [present, setPresent] = React.useState(open);
   if (open && !present) setPresent(true);
 
@@ -230,9 +187,6 @@ function Content({
           </ReducedMotionConfig>
         )}
       </AnimatePresence>
-      {/* Once the exit is over, Radix's closed Content takes back: it keeps the
-          items mounted off-screen, so the trigger shows the selected label,
-          typeahead works on the closed trigger and forms submit. */}
       {!present && !keepMounted && <SelectPrimitive.Content {...props} />}
     </>
   );
@@ -246,7 +200,6 @@ type ContentMotionProps = Omit<
   exit: Transition;
 };
 
-// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
 function ContentMotion({
   enter,
   exit,
@@ -254,49 +207,34 @@ function ContentMotion({
   style,
   ...props
 }: ContentMotionProps) {
-  // From context, not props: AnimatePresence freezes the props of an exiting
-  // child, but context still reaches it, so the closing list turns inert.
   const { open, picked, registerCheck } = useOpen();
   const reduce = useShouldReduceMotion();
   const hold = usePickHold();
-  // Closing because an item was chosen: the list holds still while its check
-  // shows itself (nothing moves under reduced motion).
   const exitDelay = (exit as { delay?: number }).delay ?? 0;
   const leave: Transition =
     picked && !reduce ? { ...exit, delay: exitDelay + hold(picked) } : exit;
   const group = useCheckGroup();
-  // Item-aligned (Radix's default) lays the list over the trigger, lining the
-  // selected item up with the value, and measures it on mount: a scale would
-  // skew that measure, and there's no anchor side to grow from. Fade only.
   const popper = props.position === 'popper';
-  // `scale` (like v1's menus): `transform: none` once settled.
   const hidden = popper
     ? { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu }
     : { opacity: 0 };
   const visible = popper ? { opacity: 1, scale: 1 } : { opacity: 1 };
 
   return (
-    // Radix's props (className, data-state, data-side, role, ids…) land on
-    // the motion.div through asChild; it only carries the animation.
     <SelectPrimitive.Content {...props} forceMount asChild>
       <motion.div
         initial={hidden}
-        // Transitions live in the targets: an exiting element keeps the props
-        // of its last render, when it was still open.
         animate={
           open
             ? { ...visible, transition: enter }
             : { ...hidden, transition: leave }
         }
         exit={{ ...hidden, transition: leave }}
-        // A closing (or force-mounted closed) list can't be clicked through.
         inert={!open}
         style={{
           transformOrigin: popper
             ? 'var(--radix-select-content-transform-origin)'
             : undefined,
-          // The highlight goes under the items' content, above the list's
-          // background: the list is its own stacking context.
           isolation: 'isolate',
           ...style,
         }}
@@ -315,14 +253,8 @@ const Viewport = SelectPrimitive.Viewport;
 const Group = SelectPrimitive.Group;
 const Label = SelectPrimitive.Label;
 
-/** Radix's keys to choose an item. */
 const SELECTION_KEYS = new Set(['Enter', ' ']);
 
-/**
- * Takes part in the list's highlight (pointer and arrow keys alike), tells
- * the Root when it's being chosen, and its ItemIndicator whether it's the
- * chosen one.
- */
 function Item({
   asChild,
   disabled,
@@ -339,8 +271,6 @@ function Item({
     () => mergeRefs(ref, highlightRef),
     [ref, highlightRef],
   );
-  // Run before Radix's own handlers, which choose the item and close.
-  // Another item than the chosen one: the checks change.
   const mark = (event: React.SyntheticEvent<HTMLDivElement>) => {
     const item = event.currentTarget;
     if (
@@ -378,13 +308,6 @@ function Item({
 
 const ItemText = SelectPrimitive.ItemText;
 
-/**
- * On the chosen item, at rest when the list opens; choosing another item
- * hides it there and shows it on the new one (with `pop`, it glides there),
- * while the list holds still before it closes. Radix renders it for the
- * chosen item only: in the animated list, it's on every item, Radix's
- * `<span aria-hidden>` all the same.
- */
 function ItemIndicator({
   animation,
   transition,

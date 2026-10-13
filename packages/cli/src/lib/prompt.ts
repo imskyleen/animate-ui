@@ -1,10 +1,8 @@
 import { emitKeypressEvents } from 'node:readline';
 import { stripVTControlCharacters, styleText } from 'node:util';
 
-/** Asks a question, resolves with the index of the chosen answer. */
 export type Ask = (question: string, choices: string[]) => Promise<number>;
 
-/** Ctrl-C during a prompt. */
 export class PromptAbortedError extends Error {
   constructor() {
     super('Aborted.');
@@ -22,11 +20,6 @@ type Output = NodeJS.WritableStream & { columns?: number };
 const HIDE_CURSOR = '\x1b[?25l';
 const SHOW_CURSOR = '\x1b[?25h';
 
-/**
- * An arrow-key select: ↑/↓ (or k/j) and Enter, or the digit of a choice.
- * Ctrl-C rejects with a PromptAbortedError. Raw mode and the cursor are
- * restored whatever happens.
- */
 export function select(
   question: string,
   choices: string[],
@@ -37,7 +30,6 @@ export function select(
 ): Promise<number> {
   return new Promise((resolve, reject) => {
     let index = 0;
-    /** Terminal rows the last render took, to redraw over them. */
     let rows = 0;
 
     const rowsOf = (lines: string[]) => {
@@ -80,7 +72,6 @@ export function select(
     };
     const choose = (i: number) => {
       cleanup();
-      // The answer replaces the list.
       draw([
         `${styleText('green', '✔')} ${styleText('bold', question)} ${styleText('cyan', choices[i]!)}`,
       ]);

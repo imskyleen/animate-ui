@@ -85,7 +85,6 @@ export const controls = {
 export default function AccordionDemo({
   multiple = false,
 }: {
-  /** Several items open at once. */
   multiple?: boolean
 }) {
   return (

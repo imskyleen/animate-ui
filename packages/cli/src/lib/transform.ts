@@ -18,15 +18,11 @@ export type TransformResult = {
   code: string;
   imports: ImportChange[];
   removedClasses: string[];
-  /** Primitives imported from a supported library that Animate UI doesn't animate yet. */
   unsupported: string[];
 };
 
 type Edit = { start: number; end: number; text: string };
 
-// Calls whose string arguments are class lists.
-
-// Class mergers: an emptied argument can simply go.
 const MERGE_FUNCTIONS = new Set(['cn', 'clsx', 'cx', 'twMerge', 'twJoin']);
 
 const CLASS_FUNCTIONS = new Set([
@@ -39,7 +35,6 @@ const CLASS_FUNCTIONS = new Set([
   'twJoin',
 ]);
 
-// Primitives with nothing to animate: never reported as missing.
 const NOT_ANIMATED = new Set([
   'slot',
   'label',
@@ -58,12 +53,10 @@ const NOT_ANIMATED = new Set([
   'form',
 ]);
 
-/** `@radix-ui/react-alert-dialog` → `alert-dialog`. */
 function radixPackageName(source: string) {
   return source.match(/^@radix-ui\/react-(.+)$/)?.[1];
 }
 
-/** `@base-ui/react/accordion` (or the old `@base-ui-components/react/…`) → `accordion`. */
 function baseUiPackageName(source: string) {
   return source.match(/^@base-ui(?:-components)?\/react\/([a-z-]+)$/)?.[1];
 }
@@ -74,10 +67,6 @@ function specifierName(specifier: t.ImportSpecifier) {
     : specifier.imported.value;
 }
 
-/**
- * Swaps the primitive imports of one file for Animate UI's and removes the
- * CSS animation classes they made redundant. Pure: returns the new code.
- */
 export function transform(code: string): TransformResult {
   const ast = parse(code, {
     sourceType: 'module',
@@ -95,8 +84,6 @@ export function transform(code: string): TransformResult {
     const source = node.source.value;
     const quote = code[node.source.start!];
 
-    // `import { Popover, Button } from "react-aria-components"`: the whole
-    // import moves to Animate UI's mirror, which re-exports everything.
     if (source === 'react-aria-components') {
       const names = node.specifiers.flatMap((specifier) =>
         specifier.type === 'ImportSpecifier' ? [specifierName(specifier)] : [],
@@ -119,9 +106,6 @@ export function transform(code: string): TransformResult {
       continue;
     }
 
-    // `import { Accordion as AccordionPrimitive, Slot } from "radix-ui"` (or
-    // `{ Combobox } from "@base-ui/react"`): the library's barrel mirror
-    // re-exports everything it doesn't animate, so only the source changes.
     const umbrella: Library | undefined =
       source === 'radix-ui'
         ? 'radix-ui'
@@ -152,17 +136,11 @@ export function transform(code: string): TransformResult {
       continue;
     }
 
-    // One package per primitive: only the source changes.
     const perPackage: [Library, string | undefined][] = [
       ['radix-ui', radixPackageName(source)],
       ['base-ui', baseUiPackageName(source)],
-      // shadcn/ui's Radix Drawer imports Vaul: its replacement has its API.
       ['radix-ui', source === 'vaul' ? 'drawer' : undefined],
-      // shadcn/ui's InputOTP (every base) imports input-otp: Animate UI's
-      // own input-otp is a drop-in replacement.
       ['animate-ui', source === 'input-otp' ? 'input-otp' : undefined],
-      // shadcn/ui's Questionnaire (every base) imports @shadcn/react's:
-      // Animate UI's own questionnaire is a drop-in replacement.
       [
         'animate-ui',
         source === '@shadcn/react/questionnaire' ? 'questionnaire' : undefined,
@@ -189,11 +167,9 @@ export function transform(code: string): TransformResult {
 
   const removedClasses: string[] = [];
 
-  // Only files whose primitives now animate lose their CSS animations.
   if (swapped.length > 0) {
     const extra = swapped.flatMap((primitive) => primitive.strip ?? []);
 
-    // Strings already removed whole (emptied class-merger arguments).
     const handled = new Set<t.Node>();
 
     const visitString = (node: t.StringLiteral | t.TemplateElement) => {
@@ -244,9 +220,6 @@ export function transform(code: string): TransformResult {
         CLASS_FUNCTIONS.has(n.callee.name)
       ) {
         childInClasses = true;
-        // A class-list argument left empty is dropped with its comma, so
-        // `cn("animate-in", className)` becomes `cn(className)`. cva/tv keep
-        // their (base classes) first argument.
         if (MERGE_FUNCTIONS.has(n.callee.name)) {
           const args = n.arguments;
           const emptied = new Set<number>();
@@ -265,8 +238,6 @@ export function transform(code: string): TransformResult {
                 ...stripClasses((arg as t.StringLiteral).value, extra).removed,
               );
               handled.add(arg);
-              // Before a kept argument: remove it up to the next one. After
-              // the last kept one: remove the whole trailing run at once.
               if (i < lastKept) {
                 edits.push({
                   start: arg.start!,

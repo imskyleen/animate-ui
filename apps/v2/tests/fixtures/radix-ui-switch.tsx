@@ -8,7 +8,6 @@ const track = 'inline-flex h-5 w-9 items-center rounded-full border';
 const thumb =
   'block size-4 rounded-full bg-current data-[state=checked]:translate-x-4';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixSwitchFixture() {
   const [checked, setChecked] = React.useState(false);
 
@@ -30,14 +29,12 @@ export default function RadixSwitchFixture() {
       </section>
 
       <section data-testid="star">
-        {/* The `import * as` style of @radix-ui/react-switch. */}
         <SwitchStar.Root aria-label="Star" className={track} defaultChecked>
           <SwitchStar.Thumb data-testid="star-thumb" className={thumb} />
         </SwitchStar.Root>
       </section>
 
       <section data-testid="leftover-transition">
-        {/* A thumb still carrying shadcn's `transition-transform` (no CLI). */}
         <Switch.Root aria-label="Leftover transition" className={track}>
           <Switch.Thumb className={`${thumb} transition-transform`} />
         </Switch.Root>

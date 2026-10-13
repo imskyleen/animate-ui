@@ -21,7 +21,6 @@ const animations = {
     group: {
       initial: { x: 0 },
       animate: {
-        // (Their arcs run from edge to edge: more, and they'd be cut.)
         x: [0, -0.6, 0.6, -0.6, 0.6, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },

@@ -5,7 +5,6 @@ import { Menu } from '@animate-ui/react/primitives/base-ui/menu';
 
 const popup = 'min-w-40 rounded-md border bg-white p-1 shadow-md outline-none';
 
-// API compatibility: the primitive must behave exactly like Base UI's.
 export default function BaseMenuFixture() {
   const [open, setOpen] = React.useState(false);
   const [complete, setComplete] = React.useState('none');

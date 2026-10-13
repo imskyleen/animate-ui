@@ -14,37 +14,15 @@ import {
 import { getStrictContext } from '../utils/strict-context';
 import { motionTokens, useShouldReduceMotion } from '../utils/motion';
 
-// Shared by the Radix UI, Base UI and React Aria sliders. Animate UI v1 had no
-// slider: they move like v1's switch thumb. While pressed (or dragged), the
-// thumb stretches along the track, its width growing by 3/16 (a 16px thumb
-// becomes 19px, v1's `pressedWidth`), and a press on the track glides the
-// thumb and the range to the new value, both on a spring as quick as v1's
-// switch thumb's, calmer (stiffness 400, damping 32: it goes ~1.5% past the
-// value, where v1's went ~4%).
-//
-// The libraries position the thumbs and the range with layout (percentage
-// `left`/`width`), and dragging or the keyboard must follow instantly. Only a
-// press on the track (a jump) glides: the parts jump in layout, and a
-// transform offset springs back to identity (FLIP).
-
-/**
- * Pointer travel (px) after which a press on the track becomes a drag. A drag
- * cancels the jump animation so the thumb sits under the pointer.
- */
 const DRAG_THRESHOLD = 3;
 
-/** The thumb's and the range's transition. */
 const SLIDER_TRANSITION: Transition = motionTokens.spring.slider;
 
-/** v1's styled switch stretched its 16px thumb to 19px while pressed. */
 const PRESSED_STRETCH = 19 / 16;
 
 type SliderMotionItem = {
-  /** Records the visual (transformed) and layout box before a press. */
   snapshot: () => void;
-  /** FLIPs from the snapshot to the new layout box. */
   play: () => void;
-  /** Stops any running animation and jumps to the layout box. */
   cancel: () => void;
 };
 
@@ -59,12 +37,6 @@ const [SliderMotionProvider, useSliderMotion] =
 
 type PressState = { x: number; y: number; moved: boolean; pending: boolean };
 
-/**
- * The root's side: tracks presses, and plays the parts' FLIP when the value
- * changes because of a press on the track. Call `startPress` from the
- * element that receives the press (capture phase), and pass a key that
- * changes with the values.
- */
 function useSliderRootMotion({
   disabled,
   valuesKey,
@@ -108,7 +80,6 @@ function useSliderRootMotion({
         moveEvent.clientY - press.y,
       );
       if (distance <= DRAG_THRESHOLD) return;
-      // Direct manipulation: from now on the thumb follows the pointer.
       press.moved = true;
       press.pending = false;
       itemsRef.current.forEach((item) => item.cancel());
@@ -134,13 +105,9 @@ function useSliderRootMotion({
   React.useLayoutEffect(() => {
     const press = pressRef.current;
     if (press?.pending) {
-      // A press on the track (a jump): FLIP from where the parts were.
       press.pending = false;
-      // Measure after the library's own layout-effect updates have flushed
-      // (Base UI's `thumbAlignment="edge"` places thumbs in a second pass).
       queueMicrotask(() => itemsRef.current.forEach((item) => item.play()));
     } else if (!press || press.moved) {
-      // Keyboard, drag or programmatic change: instant.
       itemsRef.current.forEach((item) => item.cancel());
     }
   }, [valuesKey]);
@@ -152,7 +119,6 @@ type FlipStart = { tx: number; ty: number; sx: number; sy: number };
 
 const IDENTITY: FlipStart = { tx: 0, ty: 0, sx: 1, sy: 1 };
 
-/** The box without our transform (keeping the library's own, if any). */
 function measureLayout(el: HTMLElement, base: string) {
   const transform = el.style.transform;
   el.style.transform = base || 'none';
@@ -173,11 +139,6 @@ function sameBox(a: DOMRect, b: DOMRect) {
 const toTransform = (base: string, [tx, ty, sx, sy]: number[]) =>
   `${base ? `${base} ` : ''}translateX(${tx}px) translateY(${ty}px) scaleX(${sx}) scaleY(${sy})`;
 
-/**
- * FLIP for a part the library positions with layout. Returns the ref and the
- * `transform` motion value to put on the part's own element. `base` is a
- * transform the library already sets on it (React Aria's thumb centering).
- */
 function useSliderPartMotion(
   kind: 'thumb' | 'range',
   transition: Transition,
@@ -214,8 +175,6 @@ function useSliderPartMotion(
       ty.jump(start.ty);
       sx.jump(start.sx);
       sy.jump(start.sy);
-      // Write it now so the first painted frame already starts from there.
-      // (The motion value itself updates the style on the next frame.)
       if (ref.current) {
         ref.current.style.transform = toTransform(baseRef.current, [
           start.tx,
@@ -242,13 +201,11 @@ function useSliderPartMotion(
         snapshot = null;
         if (!el || !from) return;
         const layout = measureLayout(el, baseRef.current);
-        // This part didn't move (the other thumb of a range slider).
         if (sameBox(layout, from.layout)) return;
 
         stop();
         const visual = from.visual;
         if (kind === 'thumb') {
-          // Centers: unaffected by the press scale.
           set({
             tx:
               visual.left + visual.width / 2 - (layout.left + layout.width / 2),
@@ -258,7 +215,6 @@ function useSliderPartMotion(
             sy: 1,
           });
         } else {
-          // An empty range can't be scaled back from: show it as it is.
           if (layout.width < 1 || layout.height < 1) {
             set(IDENTITY);
             return;
@@ -271,12 +227,6 @@ function useSliderPartMotion(
           });
         }
         const t = transitionRef.current;
-        // The range's scale rests within half a pixel of its length, like
-        // the offsets: Motion's default (half a unit past a delta of 5)
-        // would let it stop short where the spring turns back, then jump.
-        // Only on a spring: on a transition naming no curve (`{}`, a
-        // `delay`), it would make Motion pick another default for the scale
-        // than for the offsets.
         const rest = (size: number): Transition =>
           t.type === 'spring'
             ? { restDelta: 0.5 / size, restSpeed: 2 / size, ...t }
@@ -304,14 +254,12 @@ function useSliderPartMotion(
 
 type Stretch = {
   size: MotionValue<number>;
-  /** The thumb's own size along the track, measured at rest. */
   natural: number;
   axis: 'width' | 'height';
   stretched: boolean;
   controls: AnimationPlaybackControls | null;
 };
 
-/** The thumb's own size along the track (its CSS size, without ours). */
 function naturalSize(el: HTMLElement, axis: 'width' | 'height') {
   const inline = el.style[axis];
   el.style[axis] = '';
@@ -320,12 +268,6 @@ function naturalSize(el: HTMLElement, axis: 'width' | 'height') {
   return size;
 }
 
-/**
- * Stretches a thumb along the track while `pressed`, like v1's switch thumb:
- * its real width (its height when vertical), so its round ends stay round.
- * The libraries center the thumb on its value, so it grows on both sides.
- * None under reduced motion.
- */
 function useThumbStretch(
   ref: React.RefObject<HTMLElement | null>,
   pressed: boolean,
@@ -378,7 +320,6 @@ function useThumbStretch(
     stretch.controls = controls;
     void controls.then(() => {
       if (stretch.controls !== controls || press) return;
-      // At rest: the thumb as the library rendered it.
       stretch.controls = null;
       stretch.stretched = false;
       el.style[stretch.axis] = '';

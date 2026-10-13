@@ -34,7 +34,6 @@ test.describe('base-ui menubar demo', () => {
     await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     await page.waitForTimeout(500);
     await page.mouse.click(5, 5);
-    // It plays an exit (polled: a loaded machine can skip the first frames).
     await expect
       .poll(async () => (await sample(page, CONTENT)).opacity, {
         intervals: [16],
@@ -84,8 +83,6 @@ test.describe('base-ui menubar API', () => {
 
 describeMenuHighlight('base-ui menubar highlight', {
   path: '/tests/demos/base-ui/menubar',
-  // The Edit menu: its submenu trigger sits two rows below its first item,
-  // like the old demo's (see the dropdown menu's spec).
   open: async (page) => {
     await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
     await page.waitForTimeout(400);

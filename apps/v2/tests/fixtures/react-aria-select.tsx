@@ -12,7 +12,6 @@ import {
   type Key,
 } from '@animate-ui/react/primitives/react-aria';
 
-// API compatibility: React Aria's Select with Animate UI's Popover.
 export default function ReactAriaSelectFixture() {
   const [value, setValue] = React.useState<Key | null>('banana');
   const [open, setOpen] = React.useState(false);

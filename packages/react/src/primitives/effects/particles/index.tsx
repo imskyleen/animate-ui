@@ -94,7 +94,6 @@ function ParticlesEffect({
   ...props
 }: ParticlesEffectProps) {
   const { animate, isInView } = useParticles();
-  // Reduced motion: decorative bursts are skipped entirely.
   const reduce = useShouldReduceMotion();
 
   const isVertical = side === 'top' || side === 'bottom';

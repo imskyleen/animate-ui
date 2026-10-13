@@ -309,7 +309,6 @@ export default function DropdownMenuDemo({
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   const [showStatusBar, setShowStatusBar] = React.useState(true)

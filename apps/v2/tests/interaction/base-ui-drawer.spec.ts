@@ -19,24 +19,10 @@ import {
 } from './modal-timeline';
 import { expectCssCurve } from './spring-curves';
 
-// The drawer slides opaque, run by CSS transitions: in 0.4s with a hint of
-// bounce (cubic-bezier(0.34, 1.2, 0.64, 1), a hair past its rest), out like
-// quickly, speeding off its edge (0.16s on an ease-in, without crawling),
-// thrown by a swipe at the finger's speed (linear); its shadow lifts off the
-// page with it. Its backdrop comes in and clears like a dialog's overlay:
-// its tint and backdrop blur grow from 0 (never its opacity) in 400ms on a
-// soft ease-out, follow the swipe, and are clear before the drawer
-// unmounts.
-
 const POPUP = '[data-slot="drawer-popup"]';
 const OVERLAY = '[data-slot="drawer-overlay"]';
 const HANDLE = '[data-slot="drawer-swipe-handle"]';
 
-/**
- * Reads, as soon as Base UI marks `selector` as ending, the first duration
- * and the timing function of its CSS transitions: call before closing, await
- * the result after.
- */
 async function endingTiming(page: Page, selector: string) {
   const key = `__ending${selector.replace(/\W/g, '')}`;
   await page.locator(selector).evaluate((el, key) => {
@@ -63,7 +49,6 @@ async function endingTiming(page: Page, selector: string) {
     )) as { duration: string; easing: string; swipe: boolean };
 }
 
-/** The first duration and the timing function of its CSS transitions. */
 const timing = (page: Page, selector: string) =>
   page
     .locator(selector)
@@ -76,15 +61,9 @@ const timing = (page: Page, selector: string) =>
       };
     });
 
-/**
- * The demo backdrop's classes (shadcn/ui's rhea style, like its docs):
- * `bg-black/30`, `backdrop-blur-sm`.
- */
 const REST = { bg: 0.3, blur: 8 };
-/** The demo popup's `shadow-xl`: the strongest alpha of its colors. */
 const SHADOW = 0.1;
 
-/** Horizontal/vertical offset in px, and opacity. */
 const state = (page: Page, selector: string) =>
   page
     .locator(selector)
@@ -95,8 +74,6 @@ const state = (page: Page, selector: string) =>
       return { x: m.m41, y: m.m42, opacity: Number(cs.opacity) };
     });
 
-// The demo's drawer floats at the right by default (its `direction`), inset
-// from the edges; `direction` also brings it from the bottom.
 const SIDES = [
   { side: 'right', query: '', axis: 'x', swipe: 'right' },
   { side: 'bottom', query: '?direction=bottom', axis: 'y', swipe: 'down' },
@@ -113,7 +90,6 @@ for (const { side, query, axis, swipe } of SIDES) {
     const open = async (page: Page) => {
       await page.getByRole('button', { name: 'Open Drawer' }).click();
       await expectSheetSettled(page, POPUP, side);
-      // Past its bounce and its backdrop's fade, which end at 400ms.
       await page.waitForTimeout(400);
     };
 
@@ -131,11 +107,8 @@ for (const { side, query, axis, swipe } of SIDES) {
         swipe,
       );
       expectDrawerEntrance(frames, side);
-      // Its shadow lifts off the page with it, from none.
       expectShadowLifts(frames, SHADOW);
 
-      // Its backdrop, from nothing, along with the drawer: half way in at
-      // about the same time.
       const backdrop = present(frames, 'overlay');
       expect(backdrop[0]!.samples.overlay!.bg).toBeLessThan(REST.bg * 0.1);
       expect(backdrop[0]!.samples.overlay!.backdrop).toBeLessThan(
@@ -150,7 +123,6 @@ for (const { side, query, axis, swipe } of SIDES) {
       expect(rest.bg).toBeCloseTo(REST.bg, 3);
       expect(rest.backdrop).toBe(REST.blur);
 
-      // As CSS: the drawer's curve, and a dialog overlay's.
       expectCssCurve(await timing(page, POPUP), DRAWER_CURVE);
       expectCssCurve(await timing(page, OVERLAY), OVERLAY_CURVE);
     });
@@ -166,20 +138,14 @@ for (const { side, query, axis, swipe } of SIDES) {
         overlay: OVERLAY,
       });
       await page.keyboard.press('Escape');
-      // As CSS: an ease-in, speeding off its edge, and a dialog overlay's.
       expectCssCurve(await popupExit(), DRAWER_EXIT_CURVE);
       expectCssCurve(await backdropExit(), OVERLAY_CURVE);
       await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
       const frames = await timeline.stop();
       expectDrawerExit(frames, side);
-      // The backdrop clears like a dialog's, its tint and blur together,
-      // ahead of the drawer speeding away, and the drawer waits for it: it's
-      // clear before the drawer unmounts (Base UI cut it short at 6%, the
-      // page snapping back sharp).
       expectProgressiveOverlay(frames, REST);
       expectDialogLikeOverlay(frames, { rest: REST.bg, leaving: true, axis });
       expectClearBeforeUnmount(frames, REST);
-      // Its shadow goes down with it, to none.
       expectShadowLifts(frames, SHADOW, { leaving: true });
     });
 
@@ -195,9 +161,6 @@ for (const { side, query, axis, swipe } of SIDES) {
   });
 }
 
-// On a phone, shadcn/ui's demo brings the drawer from the bottom with a swipe
-// handle: the mouse swipes it from there (Base UI leaves a mouse drag that
-// starts on Drawer.Content to text selection; on desktop there's no handle).
 test.describe('base-ui drawer demo, on a phone', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
@@ -225,13 +188,10 @@ test.describe('base-ui drawer demo, on a phone', () => {
       await page.mouse.move(x, y + i * 8);
       await page.waitForTimeout(32);
     }
-    // No lag: the popup sits where the finger is, on the same frame.
     const dragged = await state(page, POPUP);
     expect(dragged.y).toBeGreaterThan(60);
     expect(dragged.y).toBeLessThan(100);
     expect(dragged.opacity).toBe(1);
-    // The backdrop follows the swipe progress without lag too: its tint and
-    // its blur, never its opacity.
     const swiped = await readState(page, OVERLAY);
     expect(swiped.opacity).toBe(1);
     expect(swiped.bg).toBeLessThan(REST.bg * 0.95);
@@ -240,9 +200,6 @@ test.describe('base-ui drawer demo, on a phone', () => {
       Math.abs(swiped.backdrop / REST.blur - swiped.bg / REST.bg),
     ).toBeLessThan(0.1);
 
-    // Hold still, then let go: not a flick, so it springs back up, through
-    // the positions in between (recorded in the page: a busy machine can't
-    // miss them).
     await page.waitForTimeout(150);
     const timeline = await recordTimeline(page, { content: POPUP });
     await page.mouse.up();
@@ -258,27 +215,19 @@ test.describe('base-ui drawer demo, on a phone', () => {
   test("a flick throws it out at the finger's speed: linear, never stalling or crawling", async ({
     page,
   }) => {
-    // 40% of its height, short of the half that dismisses a slow swipe: its
-    // speed dismisses it.
     const { height } = (await page.locator(POPUP).boundingBox())!;
     const distance = Math.round(height * 0.4);
     const box = (await page.locator(HANDLE).boundingBox())!;
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
-    // Recording from before the swipe: nothing may slow the flick down.
     const exit = await endingTiming(page, POPUP);
     const timeline = await recordTimeline(page, { content: POPUP });
     await page.mouse.move(x, y);
     await page.mouse.down();
-    // Base UI times the swipe from its first move: a nudge starts it, then
-    // the flick, its moves back to back (a busy machine can't slow it down
-    // into a drag).
     await page.mouse.move(x, y + 2);
     await page.mouse.move(x, y + 2 + distance / 2);
     await page.mouse.move(x, y + 2 + distance);
     await page.mouse.up();
-    // Linear, over the time the rest of the way takes at the finger's speed
-    // (Base UI's swipe strength, a share of 360ms).
     const timing = await exit();
     expect(timing.swipe).toBe(true);
     expect(timing.easing.split(', ')[0]).toBe('linear');
@@ -300,7 +249,6 @@ test.describe('base-ui drawer demo: confirming', () => {
     await expectSheetSettled(page, POPUP, 'right');
     await page.getByText('6:00 PM – 6:15 PM').click();
     await expect(page.getByRole('radio', { name: /6:00 PM/ })).toBeChecked();
-    // Closed from its state (controlled), it still leaves the way it came.
     const timeline = await recordTimeline(page, { content: POPUP });
     await page.getByRole('button', { name: 'Confirm Delivery Time' }).click();
     await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 2500 });
@@ -339,11 +287,9 @@ test.describe('base-ui drawer API', () => {
     const timeline = await recordTimeline(page, { content: popup });
     await page.getByRole('button', { name: 'Open right drawer' }).click();
     await expectSheetSettled(page, popup, 'right');
-    // From its right edge…
     const first = present(await timeline.stop(), 'content')[0]!.samples
       .content!;
     expect(first.x).toBeGreaterThan(0.6);
-    // …on the 200ms tween given instead of Vaul's curve.
     const timing = await page
       .locator(popup)
       .evaluate((el) => [
@@ -352,7 +298,6 @@ test.describe('base-ui drawer API', () => {
       ]);
     expect(timing).toEqual(['0.2s', 'cubic-bezier(0.4, 0, 0.2, 1)']);
 
-    // A 100ms exit.
     await page.keyboard.press('Escape');
     await expect(page.locator(popup)).toHaveCount(0, { timeout: 1000 });
   });
@@ -365,7 +310,6 @@ test.describe('base-ui drawer API', () => {
     await page.getByRole('button', { name: 'Open gradient drawer' }).click();
     await expectSheetSettled(page, '[data-testid="gradient-popup"]', 'bottom');
     const frames = present(await timeline.stop(), 'overlay');
-    // No color to deepen: from transparent, through the values in between.
     expect(frames[0]!.samples.overlay!.opacity).toBeLessThan(0.3);
     expect(
       frames.some(

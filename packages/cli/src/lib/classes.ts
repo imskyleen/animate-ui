@@ -1,10 +1,6 @@
-// Animation utilities from tw-animate-css and shadcn's keyframes. Matched on
-// the utility itself, whatever its variants (data-open:, data-[state=closed]:,
-// data-[side=bottom]:…).
 const ANIMATION_UTILITY =
   /^(animate-(in|out|accordion-(up|down)|collapsible-(up|down))|(fade|zoom|spin|blur)-(in|out)(-.+)?|slide-(in-from|out-to)-.+)$/;
 
-/** The utility of a class, without its variants: `data-open:fade-in-0` → `fade-in-0`. */
 export function utilityOf(token: string) {
   let depth = 0;
   let start = 0;
@@ -25,7 +21,6 @@ export function isAnimationClass(token: string, extra: RegExp[] = []) {
   );
 }
 
-/** Removes animation classes from a class string, keeping its spacing tidy. */
 export function stripClasses(value: string, extra: RegExp[] = []) {
   const removed: string[] = [];
   const kept = value.split(/(\s+)/).filter((part) => {

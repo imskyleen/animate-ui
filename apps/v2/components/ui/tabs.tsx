@@ -5,8 +5,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 import { Tabs as TabsPrimitive } from "@animate-ui/react/primitives/radix-ui"
 
-// shadcn/ui's Tabs (Radix base), on Animate UI's Radix Tabs: the docs' own
-// switches (CLI / Manual) use them.
 function Tabs({
   className,
   orientation = "horizontal",

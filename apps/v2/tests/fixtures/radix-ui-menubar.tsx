@@ -6,7 +6,6 @@ import * as MenubarStar from '@animate-ui/react/primitives/radix-ui/menubar';
 
 const content = 'min-w-40 rounded-md border bg-white p-1 shadow-md';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixMenubarFixture() {
   const [value, setValue] = React.useState('');
 
@@ -33,8 +32,6 @@ export default function RadixMenubarFixture() {
                     {menu === 'alpha' ? 'Alpha item' : 'Beta item'}
                   </Menubar.Item>
                   {menu === 'alpha' && (
-                    // A submenu in a portal of its own: it goes with its
-                    // menu all the same.
                     <Menubar.Sub>
                       <Menubar.SubTrigger>Alpha more</Menubar.SubTrigger>
                       <Menubar.Portal>
@@ -55,8 +52,6 @@ export default function RadixMenubarFixture() {
       </section>
 
       <section>
-        {/* The `import * as` style of @radix-ui/react-menubar, menus without
-            a value (Radix generates one). */}
         <MenubarStar.Root className="flex gap-2">
           <MenubarStar.Menu>
             <MenubarStar.Trigger>Star menu</MenubarStar.Trigger>
@@ -78,8 +73,6 @@ export default function RadixMenubarFixture() {
       </section>
 
       <section>
-        {/* Kept mounted (forceMount): the next menu takes the popover over
-            all the same. */}
         <Menubar.Root className="flex gap-2">
           {['Gamma', 'Delta'].map((menu) => (
             <Menubar.Menu key={menu} value={menu}>

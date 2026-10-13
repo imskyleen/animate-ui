@@ -1,18 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Clicking a navigation menu's triggers (shared by the Radix UI and Base UI
-// navigation menu specs). A mouse always reaches a trigger before it clicks
-// it, and that opens its item (or switches the menu to it): a click on it
-// right after (Base UI's "patient click", 500ms) keeps the menu open, as
-// Base UI keeps it after a hover opened it from closed. Base UI forgot it
-// after a hover switched items, and Radix always toggled: the click closed
-// the menu the pointer had just opened. Later clicks, a second click, clicks
-// on an item a click opened, and the keyboard still toggle it closed.
-
 const trigger = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });
 
-/** Moves the pointer onto a trigger (its center), in a few steps. */
 export async function moveTo(page: Page, name: string) {
   const box = (await trigger(page, name).boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
@@ -20,16 +10,11 @@ export async function moveTo(page: Page, name: string) {
   });
 }
 
-/** Presses the mouse where it is, as a click. */
 export async function press(page: Page) {
   await page.mouse.down();
   await page.mouse.up();
 }
 
-/**
- * Waits for an element's item to open, seen within a frame (an assertion
- * polls up to 500ms apart: past the window a click keeps it open in).
- */
 export async function opened(page: Page, locator: ReturnType<Page['locator']>) {
   await page.waitForFunction(
     (el) => el?.getAttribute('aria-expanded') === 'true',
@@ -44,7 +29,6 @@ const expanded = (page: Page, name: string, open: boolean) =>
     open ? 'true' : 'false',
   );
 
-/** Getting started opened by the pointer, then Components switched to. */
 async function switchToComponents(page: Page) {
   await moveTo(page, 'Getting started');
   await expanded(page, 'Getting started', true);
@@ -122,8 +106,6 @@ export function describeNavigationMenuClicks(
     }) => {
       await trigger(page, 'Getting started').click();
       await expanded(page, 'Getting started', true);
-      // (Past Radix's hover delay: its own timer, armed as the pointer
-      // arrived, would open it again.)
       await page.waitForTimeout(300);
       await trigger(page, 'Getting started').click();
       await expanded(page, 'Getting started', false);
@@ -133,8 +115,6 @@ export function describeNavigationMenuClicks(
       test("opened again by Radix's hover timer after a double-click, it closes on the next click", async ({
         page,
       }) => {
-        // The double-click opens it and closes it before Radix's hover
-        // delay; its timer, armed as the pointer arrived, opens it again.
         const box = (await trigger(page, 'Getting started').boundingBox())!;
         await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
         await page.mouse.dblclick(

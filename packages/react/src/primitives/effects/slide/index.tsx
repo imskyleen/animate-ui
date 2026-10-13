@@ -69,7 +69,6 @@ function SlideInner({
   const reduce = useShouldReduceMotion();
 
   const axis = direction === 'up' || direction === 'down' ? 'y' : 'x';
-  // Reduced motion: no travel, a fade instead.
   const hidden: Variant = reduce
     ? { opacity: 0 }
     : {

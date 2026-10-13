@@ -8,7 +8,6 @@ const button = (page: Page) =>
 const overlay = (page: Page) =>
   button(page).locator('div[style*="linear-gradient"]');
 
-/** translateX of the overlay, in % of the button width. */
 const position = (page: Page) =>
   overlay(page).evaluate((el) => {
     const m = getComputedStyle(el).transform.match(/matrix\(([^)]+)\)/);
@@ -32,7 +31,6 @@ test.describe('animate-ui shine', () => {
 
   test('with loop, it sweeps again', async ({ page }) => {
     await open(page);
-    // Wait for a sweep to finish (1.2s), then for the next to start (0.5s).
     await expect
       .poll(() => position(page), { timeout: 4000 })
       .toBeLessThan(-80);

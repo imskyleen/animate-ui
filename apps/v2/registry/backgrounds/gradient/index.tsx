@@ -23,8 +23,6 @@ function GradientBackgroundContent({
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
-  // The loop pauses off screen and in a hidden tab, and stops under reduced
-  // motion (backgroundPosition is not covered by Motion's reduced motion).
   const inView = useInView(localRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
@@ -49,7 +47,6 @@ function GradientBackgroundContent({
   );
 }
 
-// Under reduced motion the loops stop and `motion` skips its transforms.
 function GradientBackground(props: GradientBackgroundProps) {
   return (
     <ReducedMotionConfig>

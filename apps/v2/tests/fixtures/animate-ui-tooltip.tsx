@@ -10,8 +10,6 @@ import {
 
 const CONTENT = 'rounded-md bg-black px-3 py-1.5 text-xs text-white';
 
-// Animate UI's Tooltip: stacked triggers (the content swaps vertically) and
-// an `asChild` content (the swap happens inside the child).
 export default function AnimateUITooltipFixture() {
   return (
     <div className="flex gap-40">

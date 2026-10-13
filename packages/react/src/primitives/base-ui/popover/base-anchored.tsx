@@ -11,16 +11,8 @@ import {
 } from '../../../internal/anchored';
 import { useFollowCursorStyle } from '../../../internal/follow-cursor';
 
-// The Base UI side of Popover, PreviewCard and Tooltip. The Root mirrors the
-// open state and hands it back to Base UI (one source of truth). The Portal
-// gates its subtree with AnimatePresence and keeps Base UI's portal mounted
-// meanwhile, so the Popup's exit can play before anything unmounts. Base UI
-// waits for the popup's running animations (Motion's are WAAPI) before it
-// hides the positioner.
-
 type ChangeDetails = { isCanceled: boolean };
 
-/** Open state of a Base UI Root, controlled or not. Honours `cancel()`. */
 function useBaseOpenState<Details extends ChangeDetails>(
   openProp: boolean | undefined,
   defaultOpen: boolean | undefined,
@@ -32,7 +24,6 @@ function useBaseOpenState<Details extends ChangeDetails>(
 
   const setOpen = (next: boolean, details: Details) => {
     onOpenChange?.(next, details);
-    // Base UI lets the handler cancel the change.
     if (details.isCanceled) return;
     if (!controlled) setUncontrolled(next);
   };
@@ -41,11 +32,9 @@ function useBaseOpenState<Details extends ChangeDetails>(
 }
 
 type BaseAnchoredPortalProps = {
-  /** Base UI's Portal part. */
   component: React.ElementType;
   portalProps: Record<string, unknown>;
   open: boolean;
-  /** The user's `keepMounted`: the subtree stays, the Popup hides in place. */
   keepMounted: boolean;
 };
 
@@ -74,7 +63,6 @@ type StyleProp =
   | undefined;
 
 type BaseAnchoredPopupProps = AnchoredAnimationProps & {
-  /** Base UI's Popup part. */
   component: React.ElementType;
   popupProps: { render?: RenderProp; style?: StyleProp } & Record<
     string,
@@ -82,16 +70,11 @@ type BaseAnchoredPopupProps = AnchoredAnimationProps & {
   >;
   open: boolean;
   keepMounted: boolean;
-  /** Tooltips grow from 0.7, popovers and preview cards from 0.8. */
   kind?: AnchoredKind;
 };
 
 const ORIGIN = 'var(--transform-origin)';
 
-/**
- * The animated Popup. Base UI renders it as the motion element (`render`),
- * so its props, state attributes and resolved className land on it.
- */
 function BaseAnchoredPopup({
   component: Popup,
   popupProps: { render, style, ...popupProps },
@@ -101,7 +84,6 @@ function BaseAnchoredPopup({
   transition,
   exitTransition,
 }: BaseAnchoredPopupProps) {
-  // v1's followCursor (Tooltip, PreviewCard): the popup leans to the pointer.
   const follow = useFollowCursorStyle();
   const motionProps = useAnchoredMotion({
     kind,
@@ -114,8 +96,6 @@ function BaseAnchoredPopup({
   return (
     <Popup
       {...popupProps}
-      // Grows from the trigger (Base UI's Positioner sets the variable).
-      // Before the user's style, so it can be changed.
       style={
         typeof style === 'function'
           ? (state: unknown) => ({ transformOrigin: ORIGIN, ...style(state) })
@@ -129,7 +109,6 @@ function BaseAnchoredPopup({
   );
 }
 
-/** A `motion.div`, or the element the user renders made animatable. */
 function motionRender(render: RenderProp, props: Record<string, unknown>) {
   if (typeof render === 'function') {
     const fn: RenderFunction = (renderProps, state) =>

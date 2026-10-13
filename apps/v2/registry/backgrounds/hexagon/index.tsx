@@ -4,12 +4,11 @@ import * as React from 'react';
 
 import { cn } from 'cn';
 
-/** [0, 1, …, length - 1]: grid positions, which are also the cells' keys. */
 const range = (length: number) => Array.from({ length }, (_, i) => i);
 
 type HexagonBackgroundProps = React.ComponentProps<'div'> & {
   hexagonProps?: React.ComponentProps<'div'>;
-  hexagonSize?: number; // value greater than 50
+  hexagonSize?: number;
   hexagonMargin?: number;
 };
 
@@ -38,7 +37,6 @@ function HexagonBackground({
     columns: 0,
   });
 
-  // Enough hexagons to cover the container, recounted when it resizes.
   React.useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;

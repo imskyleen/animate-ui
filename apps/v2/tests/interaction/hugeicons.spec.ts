@@ -6,10 +6,6 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { playWaves, track, wavesOf } from './icon-waves';
 
-// Hugeicons' animated icons (registry/hugeicons): Hugeicons' free set, drawn
-// at a stroke of 2, in the same gallery as Lucide's, installed as
-// `@animate-ui/icons-hugeicons-<name>` into components/animate-ui/icons/hugeicons.
-
 const URL = '/docs/icons/hugeicons';
 const REGISTRY = path.join(process.cwd(), 'registry/hugeicons');
 const NAMES = readdirSync(REGISTRY, { withFileTypes: true })
@@ -29,10 +25,6 @@ const source = (name: string) =>
     `${title(name).replace(/ /g, '')}Icon`
   ]!;
 
-/**
- * Each run of a path (from one M to the next), as its sorted numbers: the
- * same whichever way it's drawn.
- */
 const runs = (d: string) =>
   d.split(/(?=M)/).map((run) =>
     (run.match(/-?\d*\.?\d+/g) ?? [])
@@ -45,7 +37,6 @@ async function gotoGallery(page: Page) {
   await page.goto(URL, { waitUntil: 'networkidle' });
 }
 
-/** Its title in the gallery (its meta's, as CCTV). */
 const label = (name: string) =>
   (
     JSON.parse(
@@ -56,18 +47,12 @@ const label = (name: string) =>
 const tile = (page: Page, name: string) =>
   page.locator(`button[aria-pressed][title="${label(name)}"]`);
 
-/**
- * Elements of the icon moved, faded or reshaped (off rest): a path's shape
- * against the one it had when first seen.
- */
 const moving = (svg: Locator) =>
   svg.evaluate(
     (el) =>
       [el, ...el.querySelectorAll('*')].filter((node) => {
         const style = getComputedStyle(node);
         const m = new DOMMatrix(style.transform);
-        // Its shape and how much of it is drawn (a stroke drawing itself),
-        // against when first seen.
         const shape = `${node.getAttribute('d')} ${style.strokeDasharray}`;
         const rest = (node as HTMLElement).dataset?.restShape;
         if (rest === undefined) node.setAttribute('data-rest-shape', shape);
@@ -90,7 +75,6 @@ test.describe('hugeicons', () => {
       const file = readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8');
       expect(file, name).toContain('strokeWidth={2}');
       expect(file, name).not.toMatch(/strokeWidth=\{?"?1\.5/);
-      // The elements it draws at rest (their JSX attributes).
       const drawn: Source = [
         ...[...file.matchAll(/\sd="([^"]+)"/g)].map(
           (m) => ['path', { d: m[1]! }] as Source[number],
@@ -104,13 +88,9 @@ test.describe('hugeicons', () => {
             ['circle', { cx: m[1]!, cy: m[2]!, r: m[3]! }] as Source[number],
         ),
       ];
-      // Every point of Hugeicons' icon is on what's drawn, and the other
-      // way round: the same icon, whatever its pieces.
       const off = await page.evaluate(
         ([theirs, ours]) => {
           const svg = document.querySelector('svg')!;
-          // Each subpath on its own: sampled as one path, a tiny one (a
-          // dot) could fall between two samples.
           const make = (elements: typeof theirs) =>
             elements
               .flatMap(([tag, attrs]) =>
@@ -135,7 +115,6 @@ test.describe('hugeicons', () => {
             els.flatMap((el) => {
               const out: DOMPoint[] = [];
               const length = el.getTotalLength();
-              // (Where its own transform puts it, if it has one.)
               const m = el.transform.baseVal.consolidate()?.matrix;
               const at = (l: number) => {
                 const p = el.getPointAtLength(l);
@@ -193,8 +172,6 @@ test.describe('hugeicons', () => {
     await expect(
       page.getByPlaceholder(`Search ${NAMES.length} icons…`),
     ).toBeVisible();
-    // Every one new to Animate UI: a dot at its top left, as on Hugeicons'
-    // site.
     await expect(tiles.locator('[data-slot=new]')).toHaveCount(NAMES.length);
     const dot = await tiles.first().evaluate((tile) => {
       const box = tile.getBoundingClientRect();
@@ -212,8 +189,6 @@ test.describe('hugeicons', () => {
     expect(dot.size).toBe(8);
     await page.getByRole('button', { name: 'New', exact: true }).click();
     await expect(tiles).toHaveCount(NAMES.length);
-    // The same tags as Lucide's: the time one keeps the clocks, not the
-    // bell.
     await page.getByRole('button', { name: 'Time', exact: true }).click();
     await expect(tile(page, 'clock-01')).toBeVisible();
     await expect(tile(page, 'notification-01')).toHaveCount(0);
@@ -235,7 +210,6 @@ test.describe('hugeicons', () => {
     await expect(drawer).toContainText(
       "import { Notification01 } from '@/components/animate-ui/icons/hugeicons/notification-01';",
     );
-    // Its own animations, then the drawn ones.
     for (const animation of ['default', 'path', 'path-loop'])
       await expect(
         drawer.getByRole('button', { name: animation, exact: true }),
@@ -265,14 +239,12 @@ test.describe('hugeicons', () => {
           return {
             x: m.e,
             y: m.f,
-            // Its stroke (2) included.
             min: Math.min(box.x + m.e, box.y + m.f) - 1,
             max:
               Math.max(box.x + box.width + m.e, box.y + box.height + m.f) + 1,
           };
         }),
       );
-    // The sheet (drawn first), then the copy.
     expect(parted.map(({ x, y }) => [x, y])).toEqual([
       [-1.5, -1.5],
       [1.5, 1.5],
@@ -295,8 +267,6 @@ test.describe('hugeicons', () => {
       .locator('svg')
       .first()
       .evaluate((svg) => {
-        // Where an element is drawn: its box moved by its own and its
-        // group's transforms.
         const drawn = (el: SVGGraphicsElement) => {
           let y = 0;
           for (
@@ -352,13 +322,10 @@ test.describe('hugeicons', () => {
     );
     let apart = 0;
     for (const [a, b] of frames) {
-      // Whole: no dash cutting a link short.
       expect(a!.dash).toBe('none');
       expect(b!.dash).toBe('none');
-      // Along the chain's axis (down-left, up-right), mirrored.
       expect(Math.abs(a!.x + a!.y)).toBeLessThan(0.01);
       expect(Math.abs(a!.x + b!.x)).toBeLessThan(0.01);
-      // Never past the grid's edge (1 each way), a hair of snap aside.
       expect(Math.abs(a!.x)).toBeLessThanOrEqual(1.01);
       apart = Math.max(apart, -a!.x);
     }
@@ -417,8 +384,6 @@ test.describe('hugeicons', () => {
     page,
   }) => {
     await gotoGallery(page);
-    // Every icon with clock hands (the alarm clock shakes, its hands still,
-    // as Lucide's).
     const clocks = NAMES.filter((name) =>
       readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').includes(
         'variants.minute',
@@ -440,7 +405,6 @@ test.describe('hugeicons', () => {
               const paths = [...svg.querySelectorAll('path')];
               const [minute, hour] = paths.slice(-2) as SVGPathElement[];
               const root = (svg as SVGSVGElement).getScreenCTM()!.inverse();
-              // Where a hand's center end is drawn now, in the icon's grid.
               const pinned = (hand: SVGPathElement) =>
                 hand
                   .getPointAtLength(hand.getTotalLength())
@@ -506,7 +470,6 @@ test.describe('hugeicons', () => {
             (resolve) => {
               const frame = svg.getBoundingClientRect();
               const unit = frame.height / 24;
-              // In the icon's grid, its stroke (2) included.
               const box = (el: Element) => {
                 const r = el.getBoundingClientRect();
                 return {
@@ -527,8 +490,6 @@ test.describe('hugeicons', () => {
                   requestAnimationFrame(tick);
                 else
                   resolve({
-                    // Between the lid's bottom edge and the box's top one
-                    // (their strokes' centers).
                     gap: box(body!).top + 1 - (box(lid!).bottom - 1),
                     top,
                     bottom,
@@ -563,14 +524,12 @@ test.describe('hugeicons', () => {
         const [box, , lid] = [
           ...svg.querySelectorAll('path'),
         ] as SVGPathElement[];
-        // The box's top corners: its path's ends.
         const boxLeft = box!
           .getPointAtLength(0)
           .matrixTransform(root.multiply(box!.getScreenCTM()!));
         const boxRight = box!
           .getPointAtLength(box!.getTotalLength())
           .matrixTransform(root.multiply(box!.getScreenCTM()!));
-        // The lid and bow's highest point drawn (their stroke, 1, above).
         let top = Infinity;
         for (const path of svg.querySelectorAll(
           'g path',
@@ -611,7 +570,6 @@ test.describe('hugeicons', () => {
         const p = shackle.getPointAtLength(shackle.getTotalLength());
         return { x: p.x, y: p.y };
       });
-    // Out of the body (its top at 9), as Hugeicons draws it unlocked.
     expect(end.x).toBeCloseTo(16.5, 1);
     expect(end.y).toBeCloseTo(5, 1);
   });
@@ -660,7 +618,6 @@ test.describe('hugeicons', () => {
         const p = shackle.getPointAtLength(shackle.getTotalLength());
         return { x: p.x, y: p.y };
       });
-    // Into the body (its top at 9), as Hugeicons draws it locked.
     expect(end.x).toBeCloseTo(16.5, 1);
     expect(end.y).toBeCloseTo(9, 1);
   });
@@ -712,14 +669,11 @@ test.describe('hugeicons', () => {
     page,
   }) => {
     await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
-    // Lucide's Star, loaded once in view.
     const lucideStar = page.locator('button[aria-pressed][title="Star"]');
     await lucideStar.scrollIntoViewIfNeeded();
     await expect(lucideStar.locator('svg')).toBeVisible();
-    // Client-side, the loaded modules kept.
     await page.locator('aside a[href="/docs/icons/hugeicons"]').click();
     await page.waitForURL(`**${URL}`);
-    // (Loaded once in view.)
     await tile(page, 'star').scrollIntoViewIfNeeded();
     const star = tile(page, 'star').locator('svg path');
     await expect(star).toHaveCount(1);
@@ -729,9 +683,6 @@ test.describe('hugeicons', () => {
   });
 });
 
-// Drawn whole: no animation takes a piece past the icon's 24-unit grid (its
-// stroke, 1, included), where the icon would be cut. (Sent and the arrows'
-// out fly off and back in, on purpose, as Lucide's.)
 test.describe('hugeicons within the grid', () => {
   for (const name of NAMES)
     test(`${name}: every animation stays within the grid`, async ({ page }) => {
@@ -745,7 +696,6 @@ test.describe('hugeicons within the grid', () => {
         .filter({ hasText: /^[a-z-]+$/ });
       await expect(buttons.first()).toBeVisible();
       for (const animation of await buttons.allInnerTexts()) {
-        // Off the grid and back, on purpose (as Lucide's Send and arrows).
         if (
           (['sent', 'send-horizontal'].includes(name) &&
             animation === 'default') ||
@@ -761,8 +711,6 @@ test.describe('hugeicons within the grid', () => {
           .evaluate(
             (svg) =>
               new Promise<number>((resolve) => {
-                // In the icon's own grid, where it's cut: what moves the
-                // whole icon (its svg) moves its grid with it.
                 const shapes = [
                   ...svg.querySelectorAll('path, circle'),
                 ] as SVGGeometryElement[];
@@ -772,7 +720,6 @@ test.describe('hugeicons within the grid', () => {
                   for (const shape of shapes) {
                     if (Number(getComputedStyle(shape).opacity) < 0.05)
                       continue;
-                    // (To the svg's own pixels: back to its 24 units.)
                     const m = new DOMMatrix()
                       .scale(24 / (svg as SVGSVGElement).width.baseVal.value)
                       .multiply(shape.getCTM()!);
@@ -801,8 +748,6 @@ test.describe('hugeicons within the grid', () => {
     });
 });
 
-// Waves (wifi, volume): they pulse one after the other by default, never
-// gone, and blink as Lucide's (gone and back).
 test.describe('hugeicons waves', () => {
   const waved = NAMES.filter((name) =>
     readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').includes(
@@ -822,7 +767,6 @@ test.describe('hugeicons waves', () => {
       page,
     }) => {
       const pulsed = await playWaves(page, URL, label(name), 'default');
-      // (Its waves; a badge moves its own way.)
       for (const dip of pulsed.filter((dip) => dip.wave))
         expect(dip.min).toBeGreaterThan(0.2);
       const waves = wavesOf(pulsed);
@@ -838,13 +782,9 @@ test.describe('hugeicons waves', () => {
   }
 });
 
-// Icons marked off, disconnected or in error move as Lucide's (they shake,
-// what marks them moving its own way), and badges animate after or along
-// their waves.
 test.describe('hugeicons wifi and volume states', () => {
   const shaken = (tracks: { tag: string; dx: [number, number] }[]) => {
     const group = tracks.find((t) => t.tag === 'g')!;
-    // (Sampled frame by frame: a little under its ±0.6.)
     expect(group.dx[0], 'shakes left').toBeLessThan(-0.35);
     expect(group.dx[1], 'and right').toBeGreaterThan(0.35);
   };
@@ -857,7 +797,6 @@ test.describe('hugeicons wifi and volume states', () => {
       shaken(tracks);
       for (const t of tracks) expect(t.minOpacity).toBeGreaterThan(0.9);
       const off = await track(page, URL, label(name), 'off');
-      // The slash: the last piece of the shaken group.
       expect(off.filter((t) => t.dashed)).toHaveLength(1);
       expect(off.findLast((t) => t.tag !== 'g')!.dashed).toBe(true);
     });
@@ -896,7 +835,6 @@ test.describe('hugeicons wifi and volume states', () => {
       expect(check, 'its check').toHaveLength(1);
       const waves = tracks.filter((t) => !t.dashed && t.minOpacity < 0.6);
       expect(waves.length).toBeGreaterThanOrEqual(2);
-      // It starts once they have.
       expect(check[0]!.delay).toBeGreaterThan(
         Math.min(...waves.map((w) => w.delay)),
       );
@@ -920,7 +858,6 @@ test.describe('hugeicons wifi and volume states', () => {
     });
 });
 
-// Each icon on its own page: hovered, it plays; left, it goes back to rest.
 test.describe('hugeicons on hover', () => {
   for (const name of NAMES)
     test(`${name} plays on hover and goes back to rest when left`, async ({
@@ -944,10 +881,7 @@ test.describe('hugeicons on hover', () => {
     });
 });
 
-// Twins: a Hugeicons icon and its Lucide counterpart offer the same
-// animations, each playing.
 const TWINS: Record<string, string> = {
-  // Ported from Lucide's, under Lucide's name.
   ...Object.fromEntries(
     NAMES.filter((name) =>
       existsSync(path.join(process.cwd(), 'registry/icons', name)),
@@ -966,7 +900,6 @@ const TWINS: Record<string, string> = {
   sparkles: 'sparkles',
   star: 'star',
   'download-04': 'download',
-  // Animated first as Hugeicons', then on Lucide's.
   flash: 'zap',
   'mail-01': 'mail',
   'minus-sign': 'minus',
@@ -1049,7 +982,6 @@ const TWINS: Record<string, string> = {
   ),
 };
 
-/** An icon file's animation names. */
 const animationsOf = (file: string) => {
   const source = readFileSync(file, 'utf8');
   const block = source.slice(
@@ -1073,7 +1005,6 @@ test.describe('hugeicons and their lucide twins', () => {
     }
   });
 
-  // Each of the animations brought over plays.
   for (const [name, animations] of [
     ['sparkles', ['blink']],
     ['link-01', ['join', 'join-loop']],
@@ -1128,8 +1059,6 @@ test("each Hugeicons icon has its Lucide twin's categories (or its family's), sh
   ).toHaveText(['Time & calendar']);
 });
 
-// Pieces ported from Lucide's run its way, keep Hugeicons' look, and land
-// where Hugeicons' drawing needs them.
 test.describe('hugeicons ported from lucide', () => {
   const pathsOf = (name: string) =>
     [
@@ -1153,7 +1082,6 @@ test.describe('hugeicons ported from lucide', () => {
 
   test('filled Hugeicons pieces stay filled, as wide as the strokes beside them (Clipboard, Wifi Lock, Square Arrow Out…)', () => {
     for (const name of NAMES) {
-      // Every subpath of a filled piece, wherever it went.
       const filled = new Set(
         source(name)
           .filter(([, attrs]) => attrs.fill && attrs.fill !== 'none')
@@ -1164,8 +1092,6 @@ test.describe('hugeicons ported from lucide', () => {
         const d = element.match(/\sd="([^"]+)"/)?.[1];
         if (!d || !d.split(/(?=M)/).some((piece) => filled.has(piece)))
           continue;
-        // (Hugeicons fills them as strokes 1.5 wide: 0.5 more, as wide as
-        // the strokes beside them at 2.)
         expect(element, name).toMatch(
           /fill="currentColor"\s+strokeWidth=\{0\.5\}/,
         );
@@ -1175,7 +1101,6 @@ test.describe('hugeicons ported from lucide', () => {
 
   test("every piece keeps Hugeicons' own caps and joins (Clapperboard's square ends stay inside its board)", () => {
     for (const name of NAMES) {
-      // Each subpath's caps and joins, as Hugeicons draws them.
       const theirs = new Map<string, string>();
       for (const [tag, attrs] of source(name))
         if (tag === 'path' && (!attrs.fill || attrs.fill === 'none'))
@@ -1234,10 +1159,7 @@ test.describe('hugeicons ported from lucide', () => {
   });
 });
 
-// Lucide's icons whose Hugeicons twin draws them its own way: Lucide's
-// animations, moved Hugeicons' way.
 test.describe('hugeicons drawn their own way, after lucide', () => {
-  /** Each drawn piece's box (in the icon's units) once `animation` ends. */
   const after = async (page: Page, name: string, animation: string) => {
     await page.goto(URL, { waitUntil: 'networkidle' });
     await page.getByPlaceholder(/Search/).fill(label(name).toLowerCase());
@@ -1266,7 +1188,6 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
   test("Chart Column increasing: its bars end in Lucide's order, shortest to tallest", async ({
     page,
   }) => {
-    // (Its bars, not its axes: the narrow ones.)
     const bars = (await after(page, 'chart-column', 'increasing'))
       .filter((b) => b.w < 3)
       .sort((a, b) => a.x - b.x);
@@ -1299,7 +1220,6 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
         expect(way > 0 ? t.dx[1] : -t.dx[0]).toBeGreaterThan(1.5);
     });
 
-  /** Each path's highest top (in the icon's units) while `animation` plays. */
   const highest = async (page: Page, name: string, animation: string) => {
     await page.goto(URL, { waitUntil: 'networkidle' });
     await page.getByPlaceholder(/Search/).fill(label(name).toLowerCase());
@@ -1348,12 +1268,10 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
     page,
   }) => {
     const pieces = await after(page, 'between-vertical-end', 'default');
-    // Its axes (the tallest piece) and its up arrow (the topmost of the rest).
     const axes = pieces.reduce((a, b) => (b.h > a.h ? b : a));
     const arrow = pieces
       .filter((p) => p !== axes)
       .reduce((a, b) => (b.y < a.y ? b : a));
-    // (At rest the arrow's tip is 1 above the axis's end.)
     expect(Math.abs(axes.y - 1 - arrow.y)).toBeLessThan(0.3);
   });
 
@@ -1363,7 +1281,6 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
     const tracks = await track(page, URL, label('gauge'), 'default');
     const needle = tracks.find((t) => t.turn > 30)!;
     expect(needle).toBeDefined();
-    // Turned round the hub (12, 16): moved by its own turn, not more.
     const hub = await page
       .locator('[data-slot=icon-drawer] svg')
       .first()
@@ -1394,8 +1311,6 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
     page,
   }) => {
     const tracks = await track(page, URL, label('clapperboard'), 'default');
-    // Its arm (a group) opens by more than a nudge; the rest of it doesn't
-    // turn.
     expect(tracks.filter((t) => t.turn > 10)).toHaveLength(1);
     expect(tracks.find((t) => t.turn > 10)!.tag).toBe('g');
   });
@@ -1440,9 +1355,6 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
       await drawer
         .getByRole('button', { name: 'default', exact: true })
         .click();
-      // Where the handle's inner end lies across the lens (as a share of its
-      // width), frame by frame: the same all along (grown apart, it poked
-      // in).
       const gaps = await drawer
         .locator('svg')
         .first()
@@ -1491,7 +1403,6 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
     page,
   }) => {
     const pieces = await after(page, 'move-down', 'pointing');
-    // Its shaft (narrow, filled) half as long, its head (the widest) up.
     const shaft = pieces.find((p) => p.w < 2 && p.h > 2)!;
     const head = pieces.reduce((a, b) => (b.w > a.w ? b : a));
     expect(shaft.h).toBeLessThan(9);

@@ -7,7 +7,6 @@ const open = async (page: Page) => {
   await hydrated(page, '[data-slot="morphing-text"]');
 };
 
-/** Resolves once React has hydrated `selector`: its handlers and effects are live. */
 async function hydrated(page: Page, selector: string) {
   await page.waitForFunction((sel) => {
     const el = document.querySelector(sel);
@@ -15,7 +14,6 @@ async function hydrated(page: Page, selector: string) {
       !!el && Object.keys(el).some((key) => key.startsWith('__reactProps'))
     );
   }, selector);
-  // Effects (Motion's gesture listeners, timers) run after the commit.
   await page.evaluate(
     () =>
       new Promise((resolve) =>
@@ -36,7 +34,6 @@ const hideTab = (page: Page) =>
     document.dispatchEvent(new Event('visibilitychange'));
   });
 
-/** Scale and blur of every letter. */
 const letters = (page: Page) =>
   root(page)
     .locator('[aria-hidden="true"] > span')
@@ -60,7 +57,6 @@ const TEXTS = [
   'Built with Motion ✨',
 ];
 
-/** Logs, from the first paint, when the current text changes. */
 const recordTexts = (page: Page) =>
   page.addInitScript(() => {
     const log: [number, string][] = [];
@@ -80,7 +76,6 @@ const textsOf = (page: Page) =>
     () => (window as unknown as { __texts: [number, string][] }).__texts,
   );
 
-/** Resolves once the current text has changed. */
 async function nextText(page: Page, timeout = 4000) {
   const current = await srText(page).textContent();
   await expect(srText(page)).not.toHaveText(current!, { timeout });
@@ -114,7 +109,6 @@ test.describe('animate-ui morphing text', () => {
       .toBeGreaterThanOrEqual(3);
     const [first, second, third] = await textsOf(page);
     expect([first![1], second![1], third![1]]).toEqual(TEXTS.slice(0, 3));
-    // The first text shows from the server render, before the cycle starts.
     expect(second![0] - first![0]).toBeGreaterThan(2200);
     expect(third![0] - second![0]).toBeGreaterThan(2200);
     expect(third![0] - second![0]).toBeLessThan(3500);
@@ -123,8 +117,6 @@ test.describe('animate-ui morphing text', () => {
   test('letters blur and shrink in and out', async ({ page }) => {
     await open(page);
     await nextText(page);
-    // Mid-morph (a soft spring of about a second), leaving and entering
-    // letters are blurred and scaled between 0.8 and 1.
     await expect
       .poll(
         async () =>
@@ -148,7 +140,6 @@ test.describe('animate-ui morphing text', () => {
   test('pauses while the tab is hidden', async ({ page }) => {
     await open(page);
     await hideTab(page);
-    // A morph already under way finishes; then the text stays.
     await page.waitForTimeout(800);
     const shown = await srText(page).textContent();
     await page.waitForTimeout(3500);

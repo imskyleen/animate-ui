@@ -52,7 +52,6 @@ type ThemeTogglerProps = {
   children?: ChildrenRender;
 };
 
-/** Wipe duration in ms at tempo 1. */
 const WIPE_DURATION = 700;
 const WIPE_EASING = 'ease-in-out';
 
@@ -60,11 +59,6 @@ function subscribeToNothing() {
   return () => {};
 }
 
-/**
- * False during SSR and hydration, true afterwards. Theme libraries (e.g.
- * next-themes) only know the theme on the client, so rendering it on the
- * first pass makes the server HTML and the hydrating client disagree.
- */
 function useIsMounted() {
   return React.useSyncExternalStore(
     subscribeToNothing,
@@ -73,7 +67,6 @@ function useIsMounted() {
   );
 }
 
-/** Rendered on the server and while hydrating, before the theme is known. */
 const PLACEHOLDER_STATE = {
   effective: 'system',
   resolved: 'light',
@@ -136,7 +129,6 @@ function ThemeTogglerInner({
         return;
       }
 
-      // Reduced motion: swap instantly, no wipe.
       if (reduce || !document.startViewTransition) {
         flushSync(() => {
           setPreview({ effective: theme, resolved });

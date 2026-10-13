@@ -12,9 +12,6 @@ import {
   type ReactNode,
 } from 'react';
 
-// The sidebar's and the TOC's lists: a vertical line, and two bars that glide
-// from item to item (layoutId): the active one, and the hovered one.
-
 export const indicatorTransition = {
   type: 'spring',
   stiffness: 500,
@@ -32,7 +29,6 @@ const NavContext = createContext<{
   setHovered: (id: string | null) => void;
 }>({ hovered: null, setHovered: () => {} });
 
-/** One list: its bars only glide between its own items. */
 export function AnimatedNav({ children }: { children: ReactNode }) {
   const [hovered, setHovered] = useState<string | null>(null);
   return (
@@ -44,7 +40,6 @@ export function AnimatedNav({ children }: { children: ReactNode }) {
   );
 }
 
-/** Hover state of an item: mouse only, touch doesn't leave a bar behind. */
 export function useNavHover(id: string) {
   const { hovered, setHovered } = use(NavContext);
   return {
@@ -58,7 +53,6 @@ export function useNavHover(id: string) {
   };
 }
 
-/** The line, the bars and the label of an item, inside its link. */
 export function NavItemContent({
   active,
   hovered,
@@ -68,9 +62,7 @@ export function NavItemContent({
 }: {
   active: boolean;
   hovered: boolean;
-  /** False when the list draws its own active bar (the TOC's range). */
   activeBar?: boolean;
-  /** TOC: nested headings are indented. */
   depth?: number;
   children: ReactNode;
 }) {

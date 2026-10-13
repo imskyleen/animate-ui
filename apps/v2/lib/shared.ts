@@ -8,11 +8,6 @@ export const docsContentRoute = '/llms.mdx/docs';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-/**
- * The docs versions of the version menu. In development they point to the
- * local servers (v1 on 3200, v2 on 3300); NEXT_PUBLIC_V1_URL and
- * NEXT_PUBLIC_V2_URL override them.
- */
 export const docsVersions = [
   {
     id: 'v2',

@@ -1,8 +1,6 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-namespace -- each part merges a
-   namespace of types with its component, like Base UI's own parts
-   (`Drawer.Popup.Props`, `Drawer.Root.SnapPoint`…). */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
@@ -20,54 +18,8 @@ import {
   useModalTransitions,
 } from '../../../internal/modal-motion';
 
-// Same API as Base UI's Drawer, with Vaul's motion (Animate UI v1 had no
-// drawer).
-//
-// CSS-driven, not Motion: Base UI drives the swipe itself through CSS
-// variables (`--drawer-swipe-movement-*`, `--drawer-snap-point-offset`,
-// `--drawer-swipe-progress`, `--drawer-swipe-strength`), data attributes
-// (`data-starting-style`, `data-ending-style`, `data-swiping`) and an inline
-// transform while dragging, and waits for CSS transitions before unmounting.
-// A JavaScript animation layered on top would fight the finger. So the Popup
-// and the Backdrop get a small stylesheet (zero specificity, hoisted once by
-// React) and their timing as inline variables, springs as the `linear()`
-// curve Motion itself would use, which `tempo` reaches:
-//
-// - Popup: it rests at the swipe offset, starts and ends one full size off
-//   its edge, and slides opaque. It comes in (and snaps, and eases back
-//   after a swipe) in 0.4s of cubic-bezier(0.34, 1.2, 0.64, 1): it answers
-//   at once, goes a hair past its rest (~1%, which shadcn/ui's bleed below
-//   it covers), then settles back, a hint of bounce where Vaul's curve zips
-//   in, then stops. Closed, it leaves quickly, seen speeding off its edge
-//   (0.16s on an ease-in), so it never reads as a constant slide and its
-//   last pixels don't crawl out. Thrown by a swipe (`data-swipe-dismiss`), it keeps the
-//   finger's speed: linear, over Base UI's `--drawer-swipe-strength` share
-//   of 360ms, the time the rest of the way takes at that speed. Nothing
-//   transitions while the finger (or a nested drawer) drags it. Its shadow
-//   lifts off the page with it, from none off screen. On its way out, it
-//   waits for its Backdrop to clear: Base UI unmounts the drawer once the
-//   Popup's transitions have played, which cut a slower Backdrop short and
-//   snapped the page back sharp.
-// - Backdrop: like a dialog's overlay. One level (a registered `<number>`)
-//   transitions, in 400ms on a soft ease-out both ways or following the
-//   swipe; its tint deepens and its backdrop blur grows from 0 with it, so
-//   the page behind blurs progressively instead of cross-fading with an
-//   already blurred copy. Its classes' values are read once it mounts and
-//   held as variables the stylesheet scales; over a background image, it
-//   fades its opacity instead.
-// - Reduced motion: it fades in place; a swipe dismissal still leaves along
-//   the swipe.
-//
-// It reads shadcn/ui's `--translate-x`, `--translate-y`, `--stack-scale` and
-// `--closed-transform` when they're set, so nested-drawer stacking and the
-// drawer's inset keep working.
-
 const STYLE_HREF = 'animate-ui-base-ui-drawer';
 
-/**
- * ms: Base UI's longest swipe release, which `--drawer-swipe-strength`
- * scales down to the time the rest of the way takes at the finger's speed.
- */
 const THROW_DURATION = 360;
 
 const POPUP = ':where([data-animate-ui-drawer="popup"])';
@@ -139,40 +91,16 @@ ${BACKDROP_IS('[data-ending-style]')} {
 ${BACKDROP_IS('[data-swiping]:not([data-ending-style])')} { transition-duration: 0ms; }
 `;
 
-/** Animate UI's additions to `Drawer.Popup`. */
 type PopupAnimationProps = {
-  /**
-   * Opening (slide in), snapping and easing back after a swipe that does not
-   * dismiss. CSS-driven: a spring becomes a `linear()` curve, a tween keeps
-   * its `duration` and cubic-bezier or named `ease`.
-   * @default { duration: 0.4, ease: [0.34, 1.2, 0.64, 1] }
-   */
   transition?: Transition;
-  /**
-   * Closing (slide out) by a button, Escape or a click outside: at once,
-   * quicker than it came, speeding off its edge. A swipe dismissal is thrown
-   * instead: it keeps the finger's speed.
-   * @default { duration: 0.16, ease: [0.4, 0, 1, 1] }
-   */
   exitTransition?: Transition;
 };
 
-/** Animate UI's additions to `Drawer.Backdrop`. */
 type BackdropAnimationProps = {
-  /**
-   * Its tint and backdrop blur coming in, like a dialog's overlay.
-   * CSS-driven, like the Popup's.
-   * @default { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: Transition;
-  /** Its tint and backdrop blur clearing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
-/**
- * The timing variables of a part, as the modals pick them: `exitTransition`,
- * or the part's own exit (`exitFallback`), or `transition` both ways.
- */
 function useTimingVariables(
   transition: Transition | undefined,
   exitTransition: Transition | undefined,
@@ -200,7 +128,6 @@ type StyleProp<State> =
   | ((state: State) => React.CSSProperties | undefined)
   | undefined;
 
-/** The variables first, so the user's own style still wins. */
 function withVariables<State>(
   variables: React.CSSProperties,
   style: StyleProp<State>,
@@ -239,7 +166,6 @@ function PopupWithTiming({
   ...props
 }: Popup.Props) {
   const reduce = useShouldReduceMotion();
-  // In with a hint of bounce; closed, out quickly, speeding off its edge.
   const variables = useTimingVariables(
     transition,
     exitTransition,
@@ -262,14 +188,12 @@ function PopupWithTiming({
   );
 }
 
-/** Sets `ref` to `node`; a callback ref may return its cleanup. */
 function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
   if (typeof ref === 'function') return ref(node);
   if (ref) (ref as React.RefObject<T | null>).current = node;
   return undefined;
 }
 
-/** The Backdrop beside a Popup: in the same Base UI portal. */
 function findBackdrop(popup: HTMLElement) {
   return popup
     .closest('[data-base-ui-portal]')
@@ -278,7 +202,6 @@ function findBackdrop(popup: HTMLElement) {
     );
 }
 
-/** ms left to the longest of `element`'s animations. */
 function timeLeft(element: HTMLElement) {
   let left = 0;
   for (const animation of element.getAnimations()) {
@@ -289,13 +212,6 @@ function timeLeft(element: HTMLElement) {
   return left;
 }
 
-/**
- * Base UI unmounts a closed drawer once its Popup's own animations have
- * played, its Backdrop's or not: a Backdrop still clearing was cut short, the
- * page snapping back sharp from a half-cleared blur. On its way out, the
- * Popup holds (an empty Web Animation, which Base UI waits for too) until its
- * Backdrop has cleared. Returns the Popup's ref.
- */
 function useHoldForBackdrop(ref: React.Ref<HTMLDivElement> | undefined) {
   return React.useCallback(
     (node: HTMLDivElement | null) => {
@@ -309,8 +225,6 @@ function useHoldForBackdrop(ref: React.Ref<HTMLDivElement> | undefined) {
         }
         const backdrop = findBackdrop(node);
         if (hold || !backdrop || typeof node.animate !== 'function') return;
-        // Its clearing started with the Popup's way out (reading its
-        // animations starts their transitions).
         const left = timeLeft(backdrop);
         if (left > 0) hold = node.animate([], { duration: left });
       });
@@ -330,23 +244,16 @@ function useHoldForBackdrop(ref: React.Ref<HTMLDivElement> | undefined) {
   );
 }
 
-/**
- * Holds `node`'s tint and backdrop blur, from its classes, as the variables
- * the stylesheet scales by its level: read, then set, with nothing
- * transitioning (it mounts transparent, and only then comes in).
- */
 function holdBackdrop(node: HTMLElement) {
   const { style } = node;
   const transition = style.getPropertyValue('transition');
   style.setProperty('transition', 'none');
   const computed = getComputedStyle(node);
-  // Over a background image, there's no color to deepen: it fades.
   if (computed.backgroundImage === 'none') {
     style.setProperty('--animate-ui-backdrop-color', computed.backgroundColor);
     node.setAttribute('data-animate-ui-backdrop', '');
     const filter = computed.backdropFilter;
     const blur = /^blur\(([\d.]+)px\)$/.exec(filter)?.[1];
-    // Other filters than a blur are left as they are.
     if (blur || filter === 'none') {
       style.setProperty('--animate-ui-backdrop-blur', `${blur ?? 0}px`);
       node.setAttribute('data-animate-ui-backdrop-blur', '');
@@ -364,7 +271,6 @@ function Backdrop({
   ref,
   ...props
 }: Backdrop.Props) {
-  // A dialog's overlay: 400ms on a soft ease-out, both ways.
   const variables = useTimingVariables(
     transition,
     exitTransition,

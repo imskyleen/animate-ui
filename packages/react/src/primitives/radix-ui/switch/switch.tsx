@@ -12,11 +12,6 @@ import {
   type ThumbAnimationProps,
 } from '../../../internal/controls/thumb';
 
-// Same API as Radix's Switch, animated like Animate UI v1's switch: while the
-// switch is pressed, the Thumb stretches toward the middle of the track; when
-// it changes, the Thumb springs to its new side (stiffness 300, damping 25).
-// The Root itself doesn't move, and its colours are the component's CSS.
-
 type SwitchProps = SwitchPrimitive.SwitchProps;
 type SwitchThumbProps = SwitchPrimitive.SwitchThumbProps & ThumbAnimationProps;
 
@@ -27,8 +22,6 @@ function Root({
 }: React.ComponentProps<typeof SwitchPrimitive.Root>) {
   const [pressed, setPressed] = React.useState(false);
 
-  // The user's own element: Radix's behaviour, and a Thumb that still
-  // glides (without the press stretch).
   if (asChild)
     return (
       <SwitchPrimitive.Root {...props} asChild>
@@ -38,9 +31,6 @@ function Root({
 
   return (
     <SwitchPressedContext value={pressed}>
-      {/* Radix's props (className, data-state, handlers…) land on the
-          motion.button through asChild. Its press gesture is v1's: pointer,
-          and Enter on the keyboard. */}
       <SwitchPrimitive.Root {...props} asChild>
         <motion.button
           onTapStart={() => {
@@ -71,8 +61,6 @@ function Thumb({
 
   return (
     <ReducedMotionConfig>
-      {/* Radix's props (className, data-state…) land on the span through
-          asChild, which re-renders it on every change. */}
       <SwitchPrimitive.Thumb {...props} asChild>
         <AnimatedThumb transition={transition}>{children}</AnimatedThumb>
       </SwitchPrimitive.Thumb>
@@ -99,8 +87,6 @@ function AnimatedThumb({
 const createSwitchScope: typeof SwitchPrimitive.createSwitchScope =
   SwitchPrimitive.createSwitchScope;
 
-// Radix's unstable composition API, untouched (a Thumb inside it still
-// glides).
 const unstable_SwitchProvider = SwitchPrimitive.unstable_SwitchProvider;
 const unstable_SwitchTrigger = SwitchPrimitive.unstable_SwitchTrigger;
 const unstable_SwitchBubbleInput = SwitchPrimitive.unstable_SwitchBubbleInput;

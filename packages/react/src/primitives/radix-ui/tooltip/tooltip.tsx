@@ -17,14 +17,9 @@ import {
   useRadixOpenState,
 } from '../popover/radix-anchored';
 
-// Same API as Radix's Tooltip. The Content grows from 0.7 and fades in
-// from the trigger on a spring, and shrinks back the same way, every time it
-// opens. Radix ignores touch pointers.
-
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Tooltip.Root',
 );
-// The `forceMount` of the closest Portal: it keeps the Content mounted too.
 const PortalForceMountContext = React.createContext(false);
 
 type TooltipProviderProps = TooltipPrimitive.TooltipProviderProps;
@@ -84,8 +79,6 @@ function Trigger({
 function Portal({ forceMount, ...props }: TooltipPortalProps) {
   return (
     <PortalForceMountContext value={Boolean(forceMount)}>
-      {/* Always mounted: the Content decides when it leaves the DOM, after
-          its exit. Closed, it renders nothing, so neither does the portal. */}
       <TooltipPrimitive.Portal {...props} forceMount />
     </PortalForceMountContext>
   );

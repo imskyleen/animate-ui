@@ -5,7 +5,6 @@ import { Menubar } from '@animate-ui/react/primitives/base-ui/menubar';
 
 const popup = 'min-w-40 rounded-md border bg-white p-1 shadow-md outline-none';
 
-// API compatibility: the primitives must behave exactly like Base UI's.
 export default function BaseMenubarFixture() {
   return (
     <div className="flex flex-col items-start gap-10">
@@ -24,7 +23,6 @@ export default function BaseMenubarFixture() {
         ))}
       </Menubar>
 
-      {/* Kept mounted: the next menu takes the popover over all the same. */}
       <Menubar className="flex gap-2">
         {['Gamma', 'Delta'].map((name) => (
           <Menu.Root key={name}>

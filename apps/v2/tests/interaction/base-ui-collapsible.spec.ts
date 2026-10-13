@@ -6,11 +6,6 @@ import {
   gotoHydrated,
 } from './disclosure-timeline';
 
-/**
- * Find-in-page: the browser reveals the panel and fires `beforematch`.
- * Returns the panel's opacity one frame after the library reports it open:
- * 1 means it opened without animating.
- */
 const revealByFind = (panel: Locator) =>
   panel.evaluate(async (el) => {
     const frame = () => new Promise((r) => requestAnimationFrame(r));
@@ -67,12 +62,10 @@ test.describe('base-ui collapsible API', () => {
 
   test('keepMounted: collapses, then hidden like Base UI', async ({ page }) => {
     const panel = page.getByTestId('kept');
-    // During the exit: still shown, out of the tab order.
     const during = await clickAndInspect(page, 'Kept mounted', panel);
     expect(during.hidden).toBe(false);
     expect(during.height).toBeGreaterThan(0);
     expect(during.inert).toBe(true);
-    // After it: still mounted, with Base UI's `hidden` and data-closed.
     await expect(panel).toHaveAttribute('hidden', '', { timeout: 600 });
     await expect(panel).toHaveAttribute('data-closed', '');
     await button(page, 'Kept mounted').click();
@@ -87,15 +80,12 @@ test.describe('base-ui collapsible API', () => {
   }) => {
     const panel = page.getByTestId('until-found');
     await expect(panel).toHaveAttribute('hidden', 'until-found');
-    // Not inert while closed, or find-in-page would skip it.
     expect(await panel.evaluate((el) => (el as HTMLElement).inert)).toBe(false);
     await expect(panel).toHaveClass('is-closed');
 
-    // Two frames later it's fully open: no animation.
     expect(await revealByFind(panel)).toBe(1);
     await expect(panel).toHaveClass('is-open');
 
-    // Closing animates, then it's hidden until found again.
     const during = await clickAndInspect(page, 'Until found', panel);
     expect(during.hidden).toBe(false);
     expect(during.height).toBeGreaterThan(0);

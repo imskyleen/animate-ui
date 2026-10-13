@@ -26,7 +26,6 @@ const animations = {
             repeat: Infinity,
             repeatType: 'loop',
           },
-          // (Smaller before it has turned far.)
           scale: { duration: 0.15, ease: 'easeInOut' },
         },
       },

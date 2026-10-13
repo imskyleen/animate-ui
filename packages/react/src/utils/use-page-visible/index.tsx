@@ -7,10 +7,6 @@ function subscribeToVisibility(onChange: () => void) {
   return () => document.removeEventListener('visibilitychange', onChange);
 }
 
-/**
- * False while the tab is hidden. Pair it with `useInView` and
- * `useShouldReduceMotion` to pause looping animations nobody can see.
- */
 function usePageVisible() {
   return React.useSyncExternalStore(
     subscribeToVisibility,

@@ -23,57 +23,27 @@ import {
   type Run,
 } from './momentum';
 
-// A navigation menu's content changing, like a menubar's (internal/
-// menu-handoff), like Motion's mega menu: its viewport (or popup) stays, and
-// moving from one item to another, the content it shows changes in place on
-// screen. The previous content leaves 24px away from where the next one
-// comes from (moving to an item on the right, it leaves to the left) while it
-// fades out; the next one comes in from 24px that way and fades in behind it
-// (`shift.navigation`, four times a menubar's: its content is wider).
-//
-// - The previous content is copied as it leaves (aria-hidden, inert), and the
-//   copy leaves inside the viewport, which clips it. Each content is one
-//   layer: going back and forth faster than it settles, what's still leaving
-//   goes on from where it is, and coming back to a content still leaving
-//   takes it back from where its copy is, as it shows.
-// - A popup that moves from item to item (Base UI's, placed under each
-//   trigger) moves on Web Animations (`translate`, added to its own) on its
-//   own transition (`spring.morph`), from where it was, at the speed it had
-//   (internal/momentum): the content stays where it is on screen while the
-//   popup slides over it (`MoveFollower`).
-
 type Way = {
-  /** The axis the items lie along. */
   axis: 'x' | 'y';
-  /** Where the next content comes from on it: 1 the end, -1 the start. */
   sign: number;
 };
 
 type SwapTimings = {
-  /** The popup moving: its own transition. */
   move: Transition;
-  /** The previous content leaving. */
   out: Transition;
-  /** The next content fading in. */
   fadeIn: Transition;
-  /** The next content sliding in. */
   slideIn: Transition;
 };
 
-/** A content's copy, made as it left, as it showed. */
 type ContentCopy = {
   element: HTMLElement;
-  /** Its viewport. */
   host: HTMLElement | null;
   menu: string | null;
-  /** On screen, as it showed. */
   box: DOMRect;
   opacity: number;
-  /** Elements to scroll back, once it's in the page. */
   scrolls: [Element, number, number][];
 };
 
-/** Copies a content as it shows right now: running animations frozen. */
 function copyNode(node: HTMLElement, menu: string | null): ContentCopy {
   const element = node.cloneNode(true) as HTMLElement;
   const scrolls: ContentCopy['scrolls'] = [];
@@ -82,7 +52,6 @@ function copyNode(node: HTMLElement, menu: string | null): ContentCopy {
     scrolls.push([element, node.scrollTop, node.scrollLeft]);
   for (const el of [element, ...element.querySelectorAll('*')])
     for (const name of UNIQUE_ATTRIBUTES) el.removeAttribute(name);
-  // Not a content anymore (styles and tests reading the slot leave it be).
   element.removeAttribute('data-slot');
   element.setAttribute('aria-hidden', 'true');
   element.setAttribute('inert', '');
@@ -97,7 +66,6 @@ function copyNode(node: HTMLElement, menu: string | null): ContentCopy {
     width: `${node.offsetWidth}px`,
     height: `${node.offsetHeight}px`,
     pointerEvents: 'none',
-    // Placed by its box on screen, which counts them.
     translate: 'none',
     transform: 'none',
     opacity: '',
@@ -112,7 +80,6 @@ function copyNode(node: HTMLElement, menu: string | null): ContentCopy {
   };
 }
 
-/** The `translate` an element shows (none: 0, 0). */
 function translateOf(element: Element): [number, number] {
   const value = getComputedStyle(element).translate;
   if (!value || value === 'none') return [0, 0];
@@ -125,39 +92,18 @@ const isZero = ([x, y]: [number, number]) =>
 
 const toTranslate = ([x, y]: [number, number]) => `${x}px ${y}px`;
 
-/**
- * Moves a popup from where it was each time its anchor (the element that
- * places it) jumps to another place while it switches items, and keeps what's
- * pinned inside it where it should be on screen: a content leaving where it
- * was, the content coming in where it rests. Each jump, and each element
- * pinned on the way, starts every move over from where things are, all in
- * one go, at the speed the popup had (internal/momentum). They're added
- * (`composite: 'add'`), so the browser runs them all on the main thread, and
- * they're given one start time, when where things are was read: created in
- * one task, the browser may still start some of them (an element just
- * added's) a frame before the others, and a copy would jump aside by a frame
- * of the move.
- */
 class MoveFollower {
-  /** The popup's move (its offset from its layout, to none). */
   private move: Animation | null = null;
-  /** Its offset and curve, for its velocity when it starts over. */
   private run: Run | null = null;
-  /**
-   * Pinned elements, and their own move: `rest` follows the layout (it makes
-   * up for the popup's offset), `screen` stays where it is on screen.
-   */
   private pinned = new Map<
     HTMLElement,
     { kind: 'rest' | 'screen'; animation: Animation | null }
   >();
   private observer: MutationObserver | null = null;
   private rest: DOMRect | null = null;
-  /** Until when a jump of the anchor is an item switch (animated). */
   private switching = 0;
   private waiting: (() => void)[] = [];
   private previousTransition = '';
-  /** The popup's own `translate` (its styles'), under its moves. */
   private base: [number, number] = [0, 0];
 
   constructor(
@@ -167,7 +113,6 @@ class MoveFollower {
   ) {}
 
   start() {
-    // The popup moves on its own animations: none on the anchor's CSS.
     this.previousTransition = this.anchor.style.getPropertyValue(
       'transition-property',
     );
@@ -175,8 +120,6 @@ class MoveFollower {
     this.rest = this.anchor.getBoundingClientRect();
     this.base = translateOf(this.mover);
     this.observer = new MutationObserver(() =>
-      // After the swap that may be due in this same commit (a microtask
-      // queued before this one): it marks the switch.
       queueMicrotask(() => this.check()),
     );
     this.observer.observe(this.anchor, {
@@ -197,16 +140,11 @@ class MoveFollower {
     for (const run of this.waiting.splice(0)) run();
   }
 
-  /** The popup's offset from its layout right now (its move). */
   offset(): [number, number] {
     const [x, y] = translateOf(this.mover);
     return [x - this.base[0], y - this.base[1]];
   }
 
-  /**
-   * Items are switching: a jump of the anchor in the next 300ms moves the
-   * popup, and `run` runs once it has (or after two frames, if it doesn't).
-   */
   expect(run: () => void) {
     this.switching = performance.now() + 300;
     this.waiting.push(run);
@@ -227,15 +165,11 @@ class MoveFollower {
     run();
   }
 
-  /** An element inside the popup, kept where it should be on screen. */
   pin(element: HTMLElement, kind: 'rest' | 'screen') {
     this.pinned.set(element, { kind, animation: null });
-    // A popup still moving: everything starts over from where it is, with
-    // this one.
     if (this.move) this.restart([0, 0]);
   }
 
-  /** Not kept anymore (a content leaving: it stops moving at once). */
   unpin(element: HTMLElement) {
     this.pinned.get(element)?.animation?.cancel();
     this.pinned.delete(element);
@@ -243,7 +177,6 @@ class MoveFollower {
 
   private check() {
     if (!this.observer) return;
-    // Re-applied: a render may have written the anchor's style again.
     this.anchor.style.setProperty('transition-property', 'none');
     const now = this.anchor.getBoundingClientRect();
     const before = this.rest;
@@ -254,37 +187,22 @@ class MoveFollower {
       before.top - now.top,
     ];
     if (isZero(jump)) return;
-    // Not a switch (the page resized): everything goes with it.
     if (performance.now() < this.switching) this.restart(jump);
     for (const run of this.waiting.splice(0)) run();
   }
 
-  /**
-   * Starts every move over from where things are on screen, the popup's
-   * layout having jumped by `jump`: the popup from where it shows to its
-   * layout, what rests making up for its offset, what stays put making up
-   * for its layout's jump too, once it has moved.
-   */
   private restart(jump: [number, number]) {
     const { move, reduce } = this.timing();
     const [ox, oy] = this.offset();
     const total: [number, number] = [ox + jump[0], oy + jump[1]];
-    // Still moving: it carries on at the speed it has, toward its new place.
     const velocity =
       this.move && this.run
         ? velocityOf(this.run, Number(this.move.currentTime) || 0)
         : [0, 0];
-    // Reduced motion: at once.
     const curve = reduce ? INSTANT : curveFrom(move, total, velocity);
     const timing = { duration: curve.duration, easing: curve.easing };
-    // Where things are now is where they were when the page last showed (a
-    // long task since, rendering the next content, showed nothing): still
-    // moving, they go on from then, catching up instead of pausing; from
-    // rest, they start as they show.
-    // (The popup's own document's timeline: the one they run on.)
     const timeline = this.mover.ownerDocument.timeline;
     const sampled = carries(curve, total) ? timeline.currentTime : null;
-    // Read before anything is cancelled: where each one is now.
     const offsets = new Map<HTMLElement, [number, number]>();
     for (const [element, { kind }] of this.pinned) {
       if (!element.isConnected) this.pinned.delete(element);
@@ -332,14 +250,10 @@ class MoveFollower {
       );
       created.push(pin.animation);
     }
-    // Moving, they all go on at once, from when they were read (held for a
-    // frame, they'd stop there, then jump to catch up).
     if (sampled !== null) {
       for (const animation of created) animation.startTime = sampled;
       return;
     }
-    // From rest, held at their first keyframe until the next frame starts
-    // them all at once.
     for (const animation of created) animation.pause();
     requestAnimationFrame(() => {
       const start = timeline.currentTime;
@@ -349,7 +263,6 @@ class MoveFollower {
   }
 }
 
-/** A size written in two CSS variables, in px (none while it's `auto`). */
 function sizeIn(style: CSSStyleDeclaration, width: string, height: string) {
   const w = style.getPropertyValue(width).trim();
   const h = style.getPropertyValue(height).trim();
@@ -361,27 +274,9 @@ function sizeIn(style: CSSStyleDeclaration, width: string, height: string) {
 const sameSize = (a: [number, number], b: [number, number]) =>
   Math.abs(a[0] - b[0]) < 0.01 && Math.abs(a[1] - b[1]) < 0.01;
 
-/**
- * A popup its library resizes with CSS transitions (Base UI's navigation
- * menu): switching items, it holds the popup at the size it shows (read as
- * the page last showed: `--popup-width`, `--popup-height`), the next
- * content's size written on the positioner (`--positioner-width`,
- * `--positioner-height`), then, a frame later, writes that size on the
- * popup, which transitions to it, timed on a curve from the speed the
- * previous resize had (internal/momentum). Carrying a speed on, Animate UI
- * writes that size at once (the popup would stand still a frame), started
- * from when its size was read, like the popup's move (`MoveFollower`), so
- * the two stay in step. Started, the timing goes back to the plain one, for a resize
- * nothing held first.
- */
 class SizeFollower {
   private observer: MutationObserver | null = null;
-  /** The size last written on the popup. */
   private written: [number, number] | null = null;
-  /**
-   * The resize timed while the popup is held: from, to, at what speed, on
-   * what curves, and from when, if it carries a speed on.
-   */
   private next: {
     from: [number, number];
     to: [number, number];
@@ -389,7 +284,6 @@ class SizeFollower {
     curves: [Curve, Curve];
     at: number | null;
   } | null = null;
-  /** The resize under way, per axis: from its offset, to where, since when. */
   private runs: [Run, Run] | null = null;
   private target: [number, number] = [0, 0];
   private since = 0;
@@ -412,7 +306,6 @@ class SizeFollower {
     this.observer = null;
   }
 
-  /** Its transitions' durations and timing functions (width, height). */
   timing() {
     const plain = curveOf(this.transition());
     const [width, height] = this.next?.curves ?? [plain, plain];
@@ -428,16 +321,11 @@ class SizeFollower {
     this.popup.style.setProperty('transition-timing-function', easing);
   }
 
-  /**
-   * The time on the popup's document's timeline (its CSS transitions', and
-   * the computed styles' its library reads the size from).
-   */
   private clock() {
     const time = this.popup.ownerDocument.timeline.currentTime;
     return typeof time === 'number' ? time : performance.now();
   }
 
-  /** Where the resize under way is now, and how fast it goes (per ms). */
   private now(): { shown: [number, number] | null; velocity: number[] } {
     const runs = this.runs;
     if (!runs) return { shown: null, velocity: [0, 0] };
@@ -455,8 +343,6 @@ class SizeFollower {
   private check() {
     const size = sizeIn(this.popup.style, '--popup-width', '--popup-height');
     if (!size) {
-      // Back to `auto` (its library's reset once it has landed, or a window
-      // resize cutting it short): it shows its own size, at rest.
       if (this.runs || this.next) {
         this.runs = null;
         this.next = null;
@@ -471,8 +357,6 @@ class SizeFollower {
     if (!target) return;
     const before = this.written;
     const held = !sameSize(size, target);
-    // Its own size written again, or the same hold: nothing new (held again
-    // at the same size toward another content is).
     if (
       before &&
       sameSize(size, before) &&
@@ -481,8 +365,6 @@ class SizeFollower {
       return;
     this.written = size;
     if (held) {
-      // Held at the size it shows: its resize to `target` is timed now, at
-      // the speed it has (held again where it was, the speed it had then).
       const again = this.next && sameSize(this.next.from, size);
       const velocity = again ? this.next!.velocity : this.now().velocity;
       const transition = this.transition();
@@ -500,11 +382,6 @@ class SizeFollower {
         at: carried ? (again ? this.next!.at : this.clock()) : null,
       };
       this.apply();
-      // Its library writes that size a frame later. Moving, held still that
-      // frame, the popup would stop: written now, once the size it holds is
-      // its style (so it transitions from there), it resizes on. From rest,
-      // it starts on that frame (started now, it would jump ahead after the
-      // next content's render).
       if (this.next.at !== null) {
         this.popup.getAnimations();
         this.popup.style.setProperty('--popup-width', `${target[0]}px`);
@@ -512,14 +389,11 @@ class SizeFollower {
       }
       return;
     }
-    // It resizes to `size` now (the browser has started it, or does now),
-    // on the timing set while it was held, if it was.
     const transitions = this.popup.getAnimations();
     const next = this.next && sameSize(this.next.to, size) ? this.next : null;
     const plain = curveOf(this.transition());
     const from = next?.from ?? this.now().shown ?? before ?? size;
     const curves = next?.curves ?? [plain, plain];
-    // Carrying a speed on, from when its size was read.
     const at = next?.at ?? null;
     if (at !== null)
       for (const animation of transitions)
@@ -540,7 +414,6 @@ class SizeFollower {
   }
 }
 
-/** The layers leaving inside a viewport. */
 const layersIn = (host: HTMLElement) =>
   Array.from(host.children).filter(
     (child): child is HTMLElement =>
@@ -549,7 +422,6 @@ const layersIn = (host: HTMLElement) =>
 
 type Entering = { node: HTMLElement; menu: string | null; way: Way | null };
 
-/** The layers leave inside their viewport: it's their containing block. */
 function hostFor(host: HTMLElement) {
   if (getComputedStyle(host).position === 'static' || positioned.has(host)) {
     positioned.add(host);
@@ -557,7 +429,6 @@ function hostFor(host: HTMLElement) {
   }
 }
 
-/** Puts a copy where its content was on screen, in its viewport. */
 function place(copy: ContentCopy, host: HTMLElement) {
   const { element, box } = copy;
   const origin = host.getBoundingClientRect();
@@ -572,7 +443,6 @@ function place(copy: ContentCopy, host: HTMLElement) {
   }
 }
 
-/** A copy that won't be seen. */
 function drop(copy: ContentCopy) {
   if (!copy.element.isConnected) return;
   layers.delete(copy.element);
@@ -580,10 +450,6 @@ function drop(copy: ContentCopy) {
   if (copy.host) release(copy.host);
 }
 
-/**
- * A copy holding still where its content was (the menu closing): it fades
- * out with its viewport. Gone after a second, if the viewport didn't.
- */
 function holdStill(copy: ContentCopy) {
   const host = copy.host;
   if (!host?.isConnected || copy.element.isConnected) return;
@@ -597,25 +463,12 @@ function holdStill(copy: ContentCopy) {
   }, 1000);
 }
 
-/**
- * A viewport's content changes (one per navigation menu viewport or popup):
- * the content leaving is copied (`leave`), the one coming in announced
- * (`enter`), in the same commit or the next frame, and both run then.
- */
 class ContentSwapper {
   follower: MoveFollower | null = null;
-  /** Its popup's (or viewport's) timings, as of its last render. */
   private own: { timings: SwapTimings; reduce: boolean } | null = null;
-  /** Its menu's, when it has no popup (a submenu in the content). */
   private fallback: { timings: SwapTimings; reduce: boolean } | null = null;
-  /**
-   * The contents leaving, copied as they showed. By element: one coming
-   * back in the meantime (React's StrictMode remounting it, or the library
-   * showing it again) never left.
-   */
   private leaving = new Map<HTMLElement, ContentCopy>();
 
-  /** Its timings and reduced motion, as of the last render. */
   configure(timings: SwapTimings, reduce: boolean, fallback = false) {
     if (fallback) this.fallback = { timings, reduce };
     else this.own = { timings, reduce };
@@ -625,17 +478,14 @@ class ContentSwapper {
     return this.own ?? this.fallback;
   }
 
-  /** Under reduced motion, contents fade in place, without a copy leaving. */
   get reduce() {
     return this.settings?.reduce ?? false;
   }
 
-  /** The popup's move (its transition). */
   get move() {
     return this.settings?.timings.move ?? null;
   }
 
-  /** Its popup moves from item to item: `follower` follows it. */
   follow(follower: MoveFollower) {
     this.follower = follower;
     return () => {
@@ -644,22 +494,15 @@ class ContentSwapper {
   }
 
   private entering: Entering | null = null;
-  /**
-   * A content that came in by a switch before the one leaving (a submenu's:
-   * the library may close it a commit later): hidden a frame, waiting.
-   */
   private awaiting: { entering: Entering; hold: Animation } | null = null;
   private scheduled = false;
 
-  /** A content leaves: copied now, as it shows. */
   leave(node: HTMLElement, menu: string | null) {
-    // Copied where it shows, then let go of (its pin stops at once).
     if (node.isConnected) this.leaving.set(node, copyNode(node, menu));
     this.follower?.unpin(node);
     if (node.isConnected) this.schedule();
   }
 
-  /** A content comes in (`way` null: the viewport just opened). */
   enter(node: HTMLElement, menu: string | null, way: Way | null) {
     this.leaving.delete(node);
     this.entering = { node, menu, way };
@@ -669,8 +512,6 @@ class ContentSwapper {
   private schedule() {
     if (this.scheduled) return;
     this.scheduled = true;
-    // Once the commit is done: the content leaving and the one coming in may
-    // run their effects in any order.
     queueMicrotask(() => {
       this.scheduled = false;
       this.flush();
@@ -687,10 +528,6 @@ class ContentSwapper {
       this.awaiting = null;
     }
     if (!entering) {
-      // Left alone: the menu closing (the library may remove a content
-      // before its popup has faded out), or the next content coming in the
-      // next frame. Each copy holds still where it was, fading out with its
-      // viewport, and is kept a frame for a content coming in.
       for (const [, copy] of copies) holdStill(copy);
       if (copies.length)
         requestAnimationFrame(() => {
@@ -700,19 +537,15 @@ class ContentSwapper {
       return;
     }
     this.leaving.clear();
-    // The latest one to leave; any other one goes at once.
     const left = copies.at(-1)?.[1] ?? null;
     for (const [, copy] of copies.slice(0, -1)) drop(copy);
     const { node, way } = entering;
     const host = node.parentElement;
     const settings = this.settings;
-    // Under reduced motion, nothing leaves: the next content fades in place.
     if (!host || !node.isConnected || !way || !settings || settings.reduce) {
       if (left) drop(left);
       if (!host || !node.isConnected || !way || !settings) return;
     }
-    // Nothing left yet: wait a frame, hidden, for the content leaving (or,
-    // the menu opening again, a content showing again: no change to make).
     if (!left && !settings.reduce) {
       const hold = node.animate([{ opacity: 0 }, { opacity: 0 }], {
         duration: 1000,
@@ -737,10 +570,6 @@ class ContentSwapper {
   }
 }
 
-/**
- * The content `entering` comes in inside `host`, from `way`, while the copy
- * of the one that left (`left`) leaves the other way.
- */
 function swap(
   host: HTMLElement,
   entering: Entering & { way: Way },
@@ -758,18 +587,13 @@ function swap(
   const slideIn = toCssTiming(timings.slideIn);
   const move = toCssTiming(timings.move);
 
-  // The layers leave inside the viewport (their containing block): it clips
-  // them while either content moves.
   hostFor(host);
   host.animate([{ overflow: 'hidden' }, { overflow: 'hidden' }], {
     duration: Math.max(out.duration, fadeIn.duration, move.duration),
   });
 
-  // The content that left leaves where it was on screen, the other way.
   if (left) {
     const element = left.element;
-    // Placed where it was, against where the viewport is on screen now (its
-    // pin then makes up for the popup's move, the rest of it included).
     place(left, host);
     element.style.opacity = '';
     follower?.pin(element, 'screen');
@@ -797,9 +621,6 @@ function swap(
     fade.finished.then(remove, remove);
   }
 
-  // The content coming in: hidden until the popup has its place (it moves a
-  // frame or two later), then in from the way it goes, or from its own copy
-  // still leaving.
   const hold = node.animate([{ opacity: 0 }, { opacity: 0 }], {
     duration: 1000,
   });
@@ -839,16 +660,10 @@ function swap(
 
 const SwapContext = React.createContext<ContentSwapper | null>(null);
 
-/**
- * For a navigation menu's viewport (or popup): its contents change in place.
- * `move` is its own transition (the popup moving, for Base UI's). `existing`:
- * a swapper made higher up (where its contents can reach it).
- */
 function useContentSwapper(
   move: Transition,
   reduce: boolean,
   existing?: ContentSwapper | null,
-  /** The menu's own settings: its popup's, if it has one, come first. */
   fallback = false,
 ) {
   const [own] = React.useState(() => new ContentSwapper());
@@ -862,10 +677,6 @@ function useContentSwapper(
   return swapper;
 }
 
-/**
- * A popup that moves from item to item (its `anchor` places it): it moves
- * from where it was, and keeps its contents where they are on screen.
- */
 function useMoveFollower(
   swapper: ContentSwapper,
   mover: React.RefObject<HTMLElement | null>,
@@ -889,11 +700,6 @@ function useMoveFollower(
   }, [swapper, mover, enabled]);
 }
 
-/**
- * A popup its library resizes with CSS transitions (Base UI's navigation
- * menu): each resize on `transition`, from the speed the previous one had.
- * Returns its transitions' timings, to write with its `width, height`.
- */
 function useSizeFollower(
   popup: React.RefObject<HTMLElement | null>,
   transition: Transition,

@@ -240,13 +240,11 @@ export default function SelectDemo({
   alignOffset = 0,
   checkAnimation = "draw",
 }: {
-  /** "item-aligned" overlaps the trigger with the selected item (Base UI's alignItemWithTrigger); side and align apply to "popper". */
   position?: "popper" | "item-aligned"
   side?: "top" | "right" | "bottom" | "left"
   sideOffset?: number
   align?: "start" | "center" | "end"
   alignOffset?: number
-  /** How the checks show and hide. */
   checkAnimation?: "draw" | "pop"
 }) {
   return (

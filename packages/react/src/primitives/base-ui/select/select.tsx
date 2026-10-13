@@ -15,11 +15,6 @@ import {
   type RootMotion,
 } from './motion';
 
-// Same API as Base UI's Select, animated like Animate UI v1's Base UI Menu
-// (see motion.tsx). Base UI has no `keepMounted` for this popup: with an
-// `actionsRef`, it keeps the popup mounted until we unmount it, after the exit
-// animation.
-
 const RootContext = React.createContext<RootMotion | null>(null);
 
 function Root<Value, Multiple extends boolean | undefined = false>({
@@ -68,22 +63,17 @@ function Popup({ transition, exitTransition, ...props }: Popup.Props) {
 }
 
 declare namespace Popup {
-  /** Base UI's props, but `render`: Animate UI renders the popup. */
   type Props = Omit<SelectPrimitive.Popup.Props, 'render'> &
     PopupAnimationProps;
   type State = SelectPrimitive.Popup.State;
 }
 
-// Inside ReducedMotionConfig, so useShouldReduceMotion() sees it.
 function PopupMotion({ transition, exitTransition, ...props }: Popup.Props) {
   const root = React.use(RootContext);
   const render = usePopupRender(root, { transition, exitTransition });
   return <SelectPrimitive.Popup {...props} render={render} />;
 }
 
-// An item's check draws itself when the item is chosen and erases itself
-// when it's not anymore (with `pop`, it pops in and out, and a single
-// selection's check glides to the chosen item), while a closing list holds.
 function ItemIndicator({
   render,
   animation,
@@ -97,7 +87,6 @@ function ItemIndicator({
   return (
     <SelectPrimitive.ItemIndicator
       {...props}
-      // Kept mounted, to hide itself when its item isn't chosen anymore.
       keepMounted
       render={(elementProps, state) => (
         <IndicatorMotion
@@ -113,7 +102,6 @@ function ItemIndicator({
   );
 }
 
-/** Takes part in the list's highlight (pointer and arrow keys alike). */
 function Item(props: Item.Props) {
   return <SelectPrimitive.Item {...useHighlightedItem(props)} />;
 }
@@ -128,7 +116,6 @@ declare namespace ItemIndicator {
   type State = SelectPrimitive.ItemIndicator.State;
 }
 
-// Untouched parts keep Base UI's value and type namespace (`Trigger.Props`…).
 export import Label = SelectPrimitive.Label;
 export import Trigger = SelectPrimitive.Trigger;
 export import Value = SelectPrimitive.Value;

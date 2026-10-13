@@ -10,24 +10,6 @@ import {
   useTempoTransition,
 } from '../utils/motion';
 
-// Shared by every disclosure panel (Radix UI Accordion and Collapsible, Base
-// UI Accordion and Collapsible, React Aria's DisclosurePanel). The libraries
-// hide a closed panel the moment it closes: these helpers keep it visible
-// until Motion's exit is over.
-
-// The panel unfolds: its height grows from 0 while the content fades in from
-// a light blur (after Motion's accordion example). Folding back plays the
-// same in reverse.
-//
-// While it moves, the panel cuts its content off at its bottom edge, right
-// where what follows it starts (an item's border). That edge fades instead,
-// over 16px, or over the part still hidden once less than 16px is: the
-// content never meets the edge with a hard cut, and an open panel shows it
-// untouched. The fade needs the content's height (`--animate-ui-panel-
-// content`), measured when the panel starts moving (`measurePanel`) and
-// dropped once it's open (`releasePanel`): at rest nothing fades, whatever
-// the content does next.
-
 const collapsed = {
   height: 0,
   opacity: 0,
@@ -37,55 +19,33 @@ const expanded = {
   height: 'auto',
   opacity: 1,
   filter: 'blur(0px)',
-  // Dropped at rest: `filter` would make the panel the containing block of
-  // its fixed descendants.
   transitionEnd: { filter: 'none' },
 };
 
 const CONTENT_VAR = '--animate-ui-panel-content';
 
-// The fade starts 16px above the edge (100% - 16px), or as far above it as
-// the content still hidden, the content's height minus the panel's
-// (100% - (content - 100%)): whichever is lower. Without the content's
-// height, nothing fades.
 const EDGE_MASK = `linear-gradient(to bottom, black max(100% - 16px, 200% - var(${CONTENT_VAR}, 100%)), transparent)`;
 
-/** A panel's own style: it clips its content, its bottom edge faded. */
 const panelStyle = {
   overflow: 'hidden',
   maskImage: EDGE_MASK,
   WebkitMaskImage: EDGE_MASK,
 } as const;
 
-/** Records the content's height for the faded edge, as the panel starts moving. */
 function measurePanel(element: HTMLElement | null) {
   element?.style.setProperty(CONTENT_VAR, `${element.scrollHeight}px`);
 }
 
-/** Drops it once the panel is open: nothing fades at rest. */
 function releasePanel(element: HTMLElement | null) {
   element?.style.removeProperty(CONTENT_VAR);
 }
 
-/**
- * The opening and the closing alike: 350ms on a soft ease-out, so the panel
- * answers the click at once without snapping open, and the eye follows it.
- */
 const DISCLOSURE_TRANSITION: Transition = motionTokens.transition.disclosure;
 
 const INSTANT: Transition = { duration: 0 };
 
 type HiddenMode = 'until-found' | false;
 
-/**
- * The opening and closing transitions: 350ms on a soft ease-out both ways
- * (`exitTransition` defaults to `transition`), paced by the provider's tempo.
- *
- * Under reduced motion the height jumps, while the fade and the blur still
- * play. Motion applies its reduced-motion setting when an element mounts; a
- * panel that stays mounted (React Aria, keepMounted, forceMount) must also
- * follow a preference changed later, so the height's duration is zeroed here.
- */
 function useDisclosureTransitions(
   transition: Transition | undefined,
   exitTransition: Transition | undefined,
@@ -99,24 +59,11 @@ function useDisclosureTransitions(
   const instantMoves = (t: Transition): Transition =>
     reduce ? { ...t, height: INSTANT } : t;
   return {
-    // Find-in-page reveals the match at once, as the libraries do.
     enter: revealedByFind ? INSTANT : instantMoves(enter),
     exit: instantMoves(exit),
   };
 }
 
-/**
- * State of a panel that may stay mounted while closed.
- *
- * - `visible` is true while open and during the exit.
- * - The library's `hidden` attribute is held off while visible (Base UI and
- *   React Aria set it from effects as soon as the panel closes), then
- *   `hidden="until-found"` is restored once the exit is over.
- * - A panel revealed by the browser's find-in-page (`beforematch`) opens
- *   instantly, as the libraries do.
- * - `sizeVars`: measured size variables the library writes on the element by
- *   hand (React Aria), held at `auto` while visible: Motion owns the size.
- */
 function useDisclosurePanel(
   open: boolean,
   hiddenMode: HiddenMode,
@@ -125,7 +72,6 @@ function useDisclosurePanel(
   const ref = React.useRef<HTMLDivElement | null>(null);
   const [settled, setSettled] = React.useState(!open);
   const [revealedByFind, setRevealedByFind] = React.useState(false);
-  // Reopening during the exit: the panel is visible again right away.
   if (open && settled) setSettled(false);
 
   const visible = open || !settled;
@@ -135,7 +81,6 @@ function useDisclosurePanel(
     const element = ref.current;
     if (!element) return undefined;
     if (!visible) {
-      // React only renders a boolean `hidden`: set the string value by hand.
       if (hiddenMode === 'until-found')
         element.setAttribute('hidden', 'until-found');
       return undefined;
@@ -160,8 +105,6 @@ function useDisclosurePanel(
   React.useEffect(() => {
     const element = ref.current;
     if (!element || hiddenMode !== 'until-found') return undefined;
-    // Capture: runs before the library's own listener opens the panel, and
-    // flushSync commits it first (React Aria opens it in a flushSync too).
     // eslint-disable-next-line @eslint-react/dom-no-flush-sync
     const onBeforeMatch = () => flushSync(() => setRevealedByFind(true));
     element.addEventListener('beforematch', onBeforeMatch, { capture: true });
@@ -171,7 +114,6 @@ function useDisclosurePanel(
       });
   }, [hiddenMode]);
 
-  // The faded edge needs the content's height, as the panel starts moving.
   const onAnimationStart = () => measurePanel(ref.current);
 
   const onAnimationComplete = () => {
@@ -204,7 +146,6 @@ type AnyComponent = React.ElementType<any>;
 
 const motionComponents = new Map<AnyComponent, AnyComponent>();
 
-/** The `motion` version of an element type, created once per type. */
 function motionFor(type: AnyComponent): AnyComponent {
   let component = motionComponents.get(type);
   if (!component) {
@@ -224,7 +165,6 @@ type MotionPanelProps = Record<string, unknown> & {
   style: React.CSSProperties;
 };
 
-/** Makes the element a user passed to Base UI's `render` animatable. */
 function asMotion(element: React.ReactElement, props: MotionPanelProps) {
   const own = element.props as ElementProps;
   const Component = motionFor(element.type as AnyComponent);
@@ -242,10 +182,6 @@ function asMotion(element: React.ReactElement, props: MotionPanelProps) {
 type RenderFunction = (props: any, state: any) => React.ReactElement;
 type RenderProp = React.ReactElement | RenderFunction | undefined;
 
-/**
- * Base UI's `render` prop for an animated panel: a `motion.div` by default,
- * or the user's own `render` element made animatable.
- */
 function motionRender<T extends RenderProp>(
   render: T,
   props: MotionPanelProps,
@@ -259,14 +195,8 @@ function motionRender<T extends RenderProp>(
   return (<motion.div {...props} />) as T;
 }
 
-/** Animate UI's additions to a disclosure panel. */
 type PanelAnimationProps = {
-  /**
-   * Transition of the opening.
-   * @default { duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }
-   */
   transition?: Transition;
-  /** Transition of the closing. Defaults to `transition`. */
   exitTransition?: Transition;
 };
 
@@ -277,11 +207,6 @@ type BaseUIPanelProps = PanelAnimationProps & {
   style?: unknown;
 };
 
-/**
- * A Base UI Collapsible.Panel or Accordion.Panel animated with Motion. Base UI
- * keeps it mounted (`keepMounted`) so the exit can play; without the user's
- * `keepMounted`/`hiddenUntilFound`, AnimatePresence unmounts it afterwards.
- */
 function BaseUIPanel<P extends BaseUIPanelProps>({
   component: Panel,
   open,
@@ -295,7 +220,6 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
 }: P & {
   component: React.ComponentType<P>;
   open: boolean;
-  /** The library's measured size variables, neutralized to `auto`. */
   sizeVars: [height: string, width: string];
 }) {
   const untilFound = hiddenUntilFound ?? false;
@@ -310,21 +234,15 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
   const motionProps: MotionPanelProps = {
     ref: panel.ref,
     initial: collapsed,
-    // Transitions live in the targets: an exiting element keeps the props of
-    // its last render, when it was still open.
     animate: open
       ? { ...expanded, transition: enter }
       : { ...collapsed, transition: exit },
     exit: { ...collapsed, transition: exit },
     onAnimationStart: panel.onAnimationStart,
     onAnimationComplete: panel.onAnimationComplete,
-    // Closed but still in the DOM: out of the tab order and the accessibility
-    // tree. Not once hidden until found, or find-in-page would skip it.
     inert: !open && !(untilFound && panel.settled),
     style: {
       ...panelStyle,
-      // Base UI measures these for CSS transitions; Motion owns the height
-      // now, so classes reading them follow the content.
       [sizeVars[0]]: 'auto',
       [sizeVars[1]]: 'auto',
     },
@@ -332,8 +250,6 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
 
   const panelProps = {
     ...props,
-    // Base UI unmounts or hides the panel as soon as it closes: it stays
-    // mounted and visible until the exit is over.
     keepMounted: true,
     hiddenUntilFound: untilFound,
     hidden: persistent && !untilFound && !open && panel.settled,
@@ -341,7 +257,6 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
   } as unknown as P;
 
   return (
-    // Open on mount (an item open by default), it animates open, as in v1.
     <AnimatePresence>
       {(open || persistent) && <Panel {...panelProps} />}
     </AnimatePresence>

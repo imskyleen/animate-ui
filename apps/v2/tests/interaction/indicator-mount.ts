@@ -2,12 +2,6 @@ import { expect, test } from '@playwright/test';
 
 import { expectAtRest, expectDrawnIn, recordCheck } from './item-checks';
 
-// A check or a radio dot animates when it's checked or unchecked, not when
-// it shows up already checked: the page loading, a dialog, a popover or a
-// menu opening. Shared by the checkbox and radio group specs, on their
-// fixture's "Show checked" section: a control mounted checked, after the
-// page has loaded, the way a dialog's would.
-
 export function describeCheckedOnMount(
   title: string,
   path: string,
@@ -41,7 +35,6 @@ export function describeCheckedOnMount(
         const popped = recordCheck(page, target, 900);
         await page.getByRole('radio', { name: 'Mounted a' }).click();
         const shown = (await popped).filter((f) => f.present);
-        // It pops in from nothing, then rests.
         expect(shown.some((f) => f.scale < 0.9 || f.opacity < 0.9)).toBe(true);
         expect(shown.at(-1)!.opacity).toBeGreaterThan(0.98);
       }

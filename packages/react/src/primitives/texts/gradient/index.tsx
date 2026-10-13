@@ -20,7 +20,6 @@ import {
 const DEFAULT_GRADIENT =
   'linear-gradient(90deg, #3b82f6 0%, #a855f7 20%, #ec4899 50%, #a855f7 80%, #3b82f6 100%)';
 
-// Module-level so the default keeps a stable identity across renders.
 const DEFAULT_TRANSITION: Transition = {
   duration: 50,
   repeat: Infinity,
@@ -59,20 +58,14 @@ function GradientTextContent({
   const localRef = React.useRef<HTMLSpanElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLSpanElement);
 
-  // The sweep pauses off screen and in a hidden tab, and stops under reduced
-  // motion (backgroundPosition is not covered by Motion's reduced motion).
   const inView = useInView(localRef);
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
   const playing = inView && pageVisible;
 
-  // Both layers (text and neon glow) share one motion value: one animation,
-  // no React render per frame, and pausing keeps the current position.
   const backgroundPosition = useMotionValue(START_POSITION);
   const controlsRef = React.useRef<AnimationPlaybackControls | null>(null);
 
-  // Inline transition objects get a new identity every render: restart the
-  // loop only when their content changes.
   const transitionKey = JSON.stringify(transition);
   const transitionRef = React.useRef(transition);
   React.useEffect(() => {
@@ -121,8 +114,6 @@ function GradientTextContent({
       <motion.span style={layerStyle}>{text}</motion.span>
 
       {neon && (
-        // A blurred copy of the text: decorative, so screen readers read the
-        // text once.
         <motion.span
           aria-hidden
           style={{

@@ -7,7 +7,6 @@ const open = (page: Page) =>
 
 const bar = (page: Page) => page.locator('[data-slot="scroll-progress"]');
 
-/** The bar's width as a fraction of its track (its parent). */
 const progress = (page: Page) =>
   bar(page).evaluate(
     (el) =>
@@ -29,7 +28,6 @@ test.describe('animate-ui scroll progress', () => {
     expect(await progress(page)).toBe(0);
     await scrollTo(page, 0.5);
     await expect.poll(() => progress(page)).toBeGreaterThan(0.2);
-    // The width changes, so rounded ends keep their shape.
     await expect(bar(page)).toHaveCSS('transform', 'none');
   });
 

@@ -18,19 +18,6 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 
-/**
- * A demo's live controls, in v1's `demoProps` format: a demo file exports
- * `controls` and its default component receives the current values as
- * props. Either flat (`{ delay: { value: 0, min: 0, max: 3000, step: 100 } }`)
- * or grouped by component (`{ Tooltip: { side: { … } } }`, one collapsible
- * section per group); groups are flattened, so prop names stay unique.
- *
- * - `options` → a select (values keep their type: string, number, boolean)
- * - a number with `min` and `max` → a slider and a number field
- * - any other number → a number field
- * - a string → a text field
- * - a boolean → a switch
- */
 type ControlValue = string | number | boolean;
 type Control = {
   value: ControlValue;
@@ -50,7 +37,6 @@ const isGrouped = (
 ): controls is Record<string, FlatControls> =>
   Object.values(controls).every((group) => !isControl(group));
 
-/** The props the demo receives: every control's value, groups flattened. */
 function controlsToProps(controls: Controls): Record<string, ControlValue> {
   const flat: FlatControls = isGrouped(controls)
     ? Object.assign({}, ...Object.values(controls))
@@ -71,7 +57,6 @@ function setControl(controls: Controls, key: string, value: ControlValue) {
   ) as Controls;
 }
 
-/** A number field that lets you type freely and clamps what it sends. */
 function NumberField({
   id,
   value,
@@ -91,7 +76,6 @@ function NumberField({
 }) {
   const [display, setDisplay] = useState(String(value));
   const [prev, setPrev] = useState(value);
-  // Follow the slider.
   if (value !== prev) {
     setPrev(value);
     setDisplay(String(value));
@@ -285,7 +269,6 @@ function ControlList({
   );
 }
 
-/** The live controls of a demo (v1's tweakpane). */
 function ControlsPanel({
   controls,
   onControlsChange,
@@ -335,7 +318,6 @@ function ControlsPanel({
   );
 }
 
-/** `controls` with some of their values replaced (`{ side: 'top' }`). */
 function withValues(
   controls: Controls,
   values: Record<string, ControlValue>,

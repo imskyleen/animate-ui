@@ -14,7 +14,6 @@ const LONG = [
   "Its own primitives, like this one, cover the effects those libraries don't have.",
 ]
 
-// The content swaps with a blur, then AutoHeight springs to its height.
 const swap = {
   initial: { opacity: 0, filter: "blur(4px)" },
   animate: { opacity: 1, filter: "blur(0px)" },

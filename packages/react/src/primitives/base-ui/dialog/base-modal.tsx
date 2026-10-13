@@ -23,21 +23,9 @@ import {
   type ModalTargets,
 } from '../../../internal/modal-motion';
 
-// Animated Root, Portal, Backdrop and Popup shared by Base UI's Dialog and
-// Alert Dialog (Base UI's Alert Dialog reuses the Dialog's parts).
-//
-// Base UI unmounts a closed popup once the animations it can see have
-// finished, which it checks before Motion's exit has started. So the Root
-// mirrors `open`, the Portal gates itself with AnimatePresence and passes
-// `keepMounted`, and the Backdrop and Popup render a motion.div through
-// `render` (or the user's own `render`, made animatable): Base UI's attributes
-// (data-open, data-starting-style, role, data-side…) stay on the element
-// shadcn styles.
-
 type OpenState = { open: boolean };
 
 const [OpenProvider, useOpen] = getStrictContext<OpenState>('Dialog.Root');
-// Set inside our Portal, with the user's own `keepMounted`.
 const PortalContext = React.createContext<{ keepMounted: boolean }>({
   keepMounted: false,
 });
@@ -45,12 +33,10 @@ const PortalContext = React.createContext<{ keepMounted: boolean }>({
 type RootLikeProps = {
   open?: boolean;
   defaultOpen?: boolean;
-  // Each root has its own event details type; all have `isCanceled`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onOpenChange?: (open: boolean, eventDetails: any) => void;
 };
 
-/** Wraps a Base UI root so its open state is known to the Portal. */
 function createRoot<Props extends RootLikeProps>(
   RootPrimitive: React.ComponentType<Props>,
 ) {
@@ -63,7 +49,6 @@ function createRoot<Props extends RootLikeProps>(
 
     const onOpenChange: RootLikeProps['onOpenChange'] = (next, details) => {
       props.onOpenChange?.(next, details);
-      // `eventDetails.cancel()` keeps the dialog as it is.
       if ((details as { isCanceled?: boolean } | undefined)?.isCanceled) return;
       if (!controlled) setUncontrolled(next);
     };
@@ -98,11 +83,6 @@ function Portal({ keepMounted, children, ...props }: PortalProps) {
   );
 }
 
-/**
- * Props for the motion.div a part renders. While its exit plays, Base UI may
- * already consider the popup closed and mark it `hidden`: keep it visible
- * until the exit has finished.
- */
 function useMotionElementProps(targets: ModalTargets) {
   const { open } = useOpen();
   const { keepMounted } = React.use(PortalContext);
@@ -115,13 +95,10 @@ function useMotionElementProps(targets: ModalTargets) {
 
   return {
     initial: targets.initial,
-    // Transitions live in the targets: an exiting element keeps the props of
-    // its last render, when it was still open.
     animate: getAnimateTarget(targets, open, keepMounted),
     exit: targets.exit,
     onAnimationComplete,
     ...(exiting ? { hidden: false } : {}),
-    // Once closed, clicks go through to the page while the exit plays.
     ...(open ? {} : { style: { pointerEvents: 'none' as const } }),
   };
 }
@@ -136,7 +113,6 @@ function Backdrop({
 }: BackdropProps) {
   const { open } = useOpen();
   const { keepMounted } = React.use(PortalContext);
-  // The Portal waits for its fade out before unmounting.
   const [isPresent, safeToRemove] = usePresence();
   const { hidden, onAnimationComplete } = useHiddenWhenClosed(
     open,
@@ -157,9 +133,7 @@ function Backdrop({
       {...props}
       render={motionRender(render, {
         ref,
-        // Base UI may mark it `hidden` before its fade out has played.
         ...(exiting ? { hidden: false } : {}),
-        // Once closed, clicks go through to the page while it fades out.
         ...(open ? {} : { style: { pointerEvents: 'none' as const } }),
       })}
     />
@@ -178,7 +152,6 @@ function Popup({
   ...props
 }: PopupProps) {
   const reduce = useShouldReduceMotion();
-  // shadcn/ui's Sheet passes `data-side`: it slides from that edge.
   const side = getModalSide((props as Record<string, unknown>)['data-side']);
   const { enter, exit } = useContentTransitions(
     side,

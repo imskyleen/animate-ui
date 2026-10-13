@@ -15,12 +15,6 @@ import {
   type PresenceAnimationProps,
 } from '../_menu/menu';
 
-// Same API as Radix's Context Menu. It has no Animate UI v1 counterpart: it
-// moves like v1's DropdownMenu (a 220ms fade and scale from the pointer, a
-// highlight gliding behind the highlighted item, checks popping in). The Root
-// and each Sub mirror their open state (Radix keeps it private) so the
-// Content and SubContent can play an exit before they unmount.
-
 type ContextMenuProps = ContextMenuPrimitive.ContextMenuProps;
 type ContextMenuTriggerProps = ContextMenuPrimitive.ContextMenuTriggerProps;
 type ContextMenuPortalProps = ContextMenuPrimitive.ContextMenuPortalProps;
@@ -49,7 +43,6 @@ const Trigger = ContextMenuPrimitive.Trigger;
 const Portal = createPortal(ContextMenuPrimitive.Portal);
 const Content = createContent(ContextMenuPrimitive.Content, {
   origin: '--radix-context-menu-content-transform-origin',
-  // The trigger is an area, not a control: focus goes back where it was.
   returnFocus: 'previous',
 });
 const Group = ContextMenuPrimitive.Group;
@@ -89,8 +82,6 @@ export {
   Sub,
   SubTrigger,
   SubContent,
-  // `ContextMenu` is Radix's alias of Root: with the radix-ui import style,
-  // `ContextMenuPrimitive.ContextMenu` keeps working.
   Root as ContextMenu,
   Trigger as ContextMenuTrigger,
   Portal as ContextMenuPortal,

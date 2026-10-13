@@ -21,7 +21,6 @@ const FRUITS = [
   { id: 'cherry', name: 'Cherry' },
 ];
 
-// API compatibility: the primitives must behave exactly like React Aria's.
 export default function ReactAriaComboboxFixture() {
   const [tags, setTags] = React.useState([{ id: 'apple', name: 'Apple' }]);
   const [value, setValue] = React.useState<Key | null>('banana');

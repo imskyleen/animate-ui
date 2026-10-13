@@ -4,7 +4,6 @@ const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/spring', { waitUntil: 'networkidle' });
 
 const handle = (page: Page) => page.getByLabel('Drag me');
-/** The coil: a full-viewport SVG drawn under the element. */
 const path = (page: Page) => page.locator('svg[width="100vw"] path');
 
 const offset = (page: Page) =>
@@ -40,7 +39,6 @@ test.describe('animate-ui spring', () => {
     await expect(page.locator('body')).toHaveCSS('cursor', 'grabbing');
     await page.mouse.up();
     await page.waitForTimeout(50);
-    // Still on its way back.
     expect(await offset(page)).toBeGreaterThan(1);
     await expect.poll(() => offset(page), { timeout: 5000 }).toBeLessThan(0.5);
     await expect(page.locator('body')).not.toHaveCSS('cursor', 'grabbing');

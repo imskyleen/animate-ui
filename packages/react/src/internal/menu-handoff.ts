@@ -6,64 +6,13 @@ import type { Transition } from 'motion/react';
 import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 import { carries, curveFrom, velocityOf, type Run } from './momentum';
 
-// A menubar's popover, handed from one menu to the next. Moving from an open
-// menu to another (hovering the next trigger, clicking or tapping it, or the
-// arrow keys), the next menu doesn't pop up on its own while the previous one
-// fades out in place: it takes the previous one's popover over, which moves
-// from where it was on screen to its own place, resizing on the way. The
-// content changes like Motion's mega menu
-// (motion.dev/ui/sections/react-nav-mega-menu): it stays where it is on
-// screen while the popover slides over it, the previous menu's items leaving
-// 6px away from where the popover goes (going to Edit from File, they leave
-// to the left) while they fade out, the next menu's arriving 6px from there
-// (from the right) and fading in behind them.
-//
-// - One popover on screen: the previous menu is hidden in the frame the next
-//   one shows, with its open submenus. A copy of its items (aria-hidden,
-//   inert) leaves inside the next menu's popover, clipped by it.
-// - The popover that moves is the next menu itself, interactive from its
-//   first frame: Web Animations move it (`translate`, added to its own) and
-//   resize it (`width`/`height`, its margins making up the difference so the
-//   library never sees its size change and places it once), on one spring
-//   (`spring.morph`) that starts gently and eases in without going past
-//   (internal/momentum); it's never scaled, so its items keep
-//   their size, and nothing is left on it once it has landed. Its items and
-//   the copy are moved back by as much as it moves (the same timing), so
-//   they stay where they are on screen.
-// - Moving on again before it landed, the popover leaves from where it is,
-//   with what it shows, at the speed it has. A menu that opened and closed
-//   before it was shown passes on the popover it was to take over.
-// - Each menu's content is one layer, like Motion's: going back and forth
-//   faster than it settles, what's still leaving goes on leaving from where
-//   it is, inside the next popover (never inside another copy), and a menu
-//   coming back takes its items back from where its copy is, as it shows,
-//   instead of them coming in again.
-
-/** A menu's popover, as its menubar knows it. */
 class HandoffEntry {
-  /** The popover, once mounted. */
   node: HTMLElement | null = null;
-  /**
-   * Open as of the last commit. Written in a passive effect: a menu opening
-   * in the same commit as another one closes still sees it open.
-   */
   open = false;
-  /** When it last opened: the latest one open hands its popover over. */
   openedAt = 0;
-  /**
-   * It closed because the user moved on to another menu of the bar, which
-   * opens next (Base UI closes one before it opens the other, on the arrow
-   * keys or a tap): it hands its popover over while it's still leaving.
-   */
   movedOn = false;
-  /** Another menu took its popover over: it's hidden, and goes at once. */
   dropped = false;
-  /**
-   * The menu whose popover it takes over, until its handoff has run (the
-   * next frame): until then, that one is the popover on screen.
-   */
   pending: HandoffEntry | null = null;
-  /** Its open submenus' popovers: they go with it. */
   readonly nested = new Set<HTMLElement>();
   private onDrop = () => {};
 
@@ -72,29 +21,23 @@ class HandoffEntry {
     this.onDrop = onDrop;
   }
 
-  /** Hides it at once, with its submenus: the next menu shows instead. */
   drop() {
     this.dropped = true;
     this.pending = null;
-    // Hidden in the frame the next popover shows: setting state would land
-    // too late.
     for (const node of [this.node, ...this.nested]) hide(node);
     this.onDrop();
   }
 
-  /** Opened again after it was dropped (a kept-mounted menu). */
   reopen() {
     if (!this.dropped) return;
     this.dropped = false;
     show(this.node);
   }
 
-  /** It takes `source`'s popover over in the next frame (null: it did). */
   await(source: HandoffEntry | null) {
     this.pending = source;
   }
 
-  /** A submenu's popover, while it's mounted. */
   addNested(node: HTMLElement) {
     show(node);
     this.nested.add(node);
@@ -104,7 +47,6 @@ class HandoffEntry {
   }
 }
 
-/** Popovers a handoff hid (it shows them again when they open again). */
 const hidden = new WeakSet<HTMLElement>();
 
 function hide(node: HTMLElement | null) {
@@ -119,7 +61,6 @@ function show(node: HTMLElement | null) {
   hidden.delete(node);
 }
 
-/** A menubar's menus. */
 class HandoffGroup {
   private entries = new Set<HandoffEntry>();
   private clock = 0;
@@ -137,11 +78,6 @@ class HandoffGroup {
     if (open) entry.openedAt = this.clock += 1;
   }
 
-  /**
-   * The menu whose popover `self`, opening, takes over: the one open, or the
-   * one the user just moved on from, still leaving. Menus between them that
-   * were never shown are passed (`skipped`): they go too.
-   */
   source(self: HandoffEntry) {
     let source: HandoffEntry | null = null;
     for (const entry of this.entries) {
@@ -163,14 +99,12 @@ class HandoffGroup {
   }
 }
 
-/** Still on screen (a popover leaving). */
 function isShown(node: HTMLElement | null) {
   if (!node?.isConnected) return false;
   const style = getComputedStyle(node);
   return style.visibility !== 'hidden' && Number(style.opacity) > 0.02;
 }
 
-/** Web Animations: without them (a test DOM), menus open on their own. */
 function canAnimate() {
   return (
     typeof Element !== 'undefined' &&
@@ -179,22 +113,15 @@ function canAnimate() {
   );
 }
 
-/** The menubar whose menus hand their popover over (null: none). */
 const MenuHandoffContext = React.createContext<HandoffGroup | null>(null);
 
-/** The menubar's menu whose submenus go with its popover (null: none). */
 const HandoffNestedContext = React.createContext<HandoffEntry | null>(null);
 
-/** For a menubar: its menus hand their popover over. */
 function useHandoffGroup(): HandoffGroup {
   const [group] = React.useState(() => new HandoffGroup());
   return group;
 }
 
-/**
- * A submenu of a menubar's menu: hidden with it when the next menu takes
- * its popover over.
- */
 function useHandoffNested(
   nodeRef: React.RefObject<HTMLElement | null>,
   nested: boolean,
@@ -210,13 +137,10 @@ function useHandoffNested(
 type Opening = {
   open: boolean;
   source: HandoffEntry | null;
-  /** Never shown menus between it and the source: they go with it. */
   skipped: HandoffEntry[];
-  /** The source popover's opacity when this one opened. */
   opacity: number;
 };
 
-/** Attributes a copy must not repeat (ids, test ids, focus, collections). */
 const UNIQUE_ATTRIBUTES = [
   'id',
   'data-testid',
@@ -225,7 +149,6 @@ const UNIQUE_ATTRIBUTES = [
   'data-radix-collection-item',
 ];
 
-/** What Web Animations may be moving on an element: frozen on its copy. */
 const ANIMATED_PROPERTIES = [
   'opacity',
   'transform',
@@ -236,16 +159,10 @@ const ANIMATED_PROPERTIES = [
   'clip-path',
 ] as const;
 
-/** Marks a submenu inside the popover: its copy leaves it out. */
 const SKIP = 'data-animate-ui-handoff-skip';
 
-/** Marks a copy of a menu's content leaving inside a popover: a layer. */
 const LAYER = 'data-animate-ui-handoff';
 
-/**
- * A layer, as the handoff knows it: whose content it is (`menu`), where it
- * slides to (`to`, from where it was copied) and the fade running on it.
- */
 type Layer = {
   menu: string | null;
   to: [number, number];
@@ -254,11 +171,9 @@ type Layer = {
 
 const layers = new WeakMap<HTMLElement, Layer>();
 
-/** A menu, the same each time it opens: its popover's id. */
 const menuOf = (popover: HTMLElement) =>
   popover.id || popover.getAttribute('aria-labelledby') || null;
 
-/** An element's translation by its `transform` (none: 0, 0). */
 function translationOf(style: CSSStyleDeclaration): [number, number] {
   const match = style.transform.match(/^matrix\(([^)]+)\)$/);
   if (!match) return [0, 0];
@@ -266,19 +181,11 @@ function translationOf(style: CSSStyleDeclaration): [number, number] {
   return [values[4] ?? 0, values[5] ?? 0];
 }
 
-/**
- * A copy of the popover's content as it shows right now, laid out the way it
- * was: running animations (a check drawing itself, items still fading in)
- * frozen where they are, scrolled the way it was.
- */
 type ContentCopy = {
   element: HTMLElement;
-  /** Whose content it is. */
   menu: string | null;
-  /** Its offset in the popover: the popover's border. */
   left: number;
   top: number;
-  /** Elements to scroll back, once it's in the page. */
   scrolls: [Element, number, number][];
 };
 
@@ -325,7 +232,6 @@ function copyContent(popover: HTMLElement, nested: Set<HTMLElement>) {
     gridTemplateColumns: computed.gridTemplateColumns,
     gridTemplateRows: computed.gridTemplateRows,
   });
-  // Submenus rendered inside it (Radix's) go with it, not with the copy.
   const skipped: Element[] = [];
   for (const node of nested) {
     if (!popover.contains(node)) continue;
@@ -339,8 +245,6 @@ function copyContent(popover: HTMLElement, nested: Set<HTMLElement>) {
   if (popover.scrollTop || popover.scrollLeft)
     scrolls.push([element, popover.scrollTop, popover.scrollLeft]);
   for (const node of Array.from(popover.childNodes)) {
-    // Its own content only: what's still leaving inside it from earlier
-    // handoffs goes on leaving on its own.
     if (
       node instanceof Element &&
       (node.hasAttribute(LAYER) || node.hasAttribute(SKIP))
@@ -366,19 +270,15 @@ function copyContent(popover: HTMLElement, nested: Set<HTMLElement>) {
   } satisfies ContentCopy;
 }
 
-/** A layer leaving inside a popover, as it shows right now. */
 type Leaving = {
   element: HTMLElement;
   menu: string | null;
-  /** On screen. */
   box: DOMRect;
   opacity: number;
-  /** Where it has slid to, and where it slides to. */
   slide: [number, number];
   to: [number, number];
 };
 
-/** The layers leaving inside a popover, still in sight. */
 function leavingIn(popover: HTMLElement): Leaving[] {
   const found: Leaving[] = [];
   for (const element of Array.from(popover.children)) {
@@ -399,45 +299,25 @@ function leavingIn(popover: HTMLElement): Leaving[] {
 }
 
 type HandoffTimings = {
-  /**
-   * The popover moving and resizing: the menu's own transition, or else
-   * `spring.morph`.
-   */
   move: Transition;
-  /**
-   * The velocity of the popover it takes over, as it does (px per ms of its
-   * left, top, width and height): it carries on from there.
-   */
   velocity?: number[];
-  /**
-   * When where it is and its velocity were read (the document timeline's
-   * time): the move goes on from then.
-   */
   since?: number | null;
-  /** The previous content leaving. */
   out: Transition;
-  /** The next content fading in. */
   fadeIn: Transition;
-  /** The next content sliding in. */
   slideIn: Transition;
 };
 
-/** The handoff's animations running on a popover, by popover. */
 const running = new WeakMap<HTMLElement, Animation[]>();
-/** A popover's move (left, top, width, height), and the animation it's on. */
 const moving = new WeakMap<HTMLElement, { run: Run; animation: Animation }>();
 
-/** A popover's velocity right now (px per ms of its left, top, size). */
 function velocityOfPopover(popover: HTMLElement) {
   const move = moving.get(popover);
   const time = move?.animation.currentTime;
   if (!move || typeof time !== 'number') return [0, 0, 0, 0];
   return velocityOf(move.run, time);
 }
-/** Popovers made `position: relative` for the layers leaving inside. */
 const positioned = new WeakSet<HTMLElement>();
 
-/** Its layers are gone: it gets its own position back. */
 function release(popover: HTMLElement) {
   if (!positioned.has(popover) || popover.querySelector(`:scope > [${LAYER}]`))
     return;
@@ -445,14 +325,6 @@ function release(popover: HTMLElement) {
   popover.style.position = '';
 }
 
-/**
- * Moves the popover from `from` (the previous one, on screen) to where it
- * rests, resizing it on the way, and swaps the content in place on screen:
- * the previous one's copy leaves, the popover's own items come in. What was
- * still leaving inside the previous one (`leaving`) goes on leaving inside
- * it, each from where it is; its own content, if it's among them, comes
- * back from there instead of coming in again.
- */
 function handOver(
   popover: HTMLElement,
   from: DOMRect,
@@ -460,8 +332,6 @@ function handOver(
   leaving: Leaving[],
   timings: HandoffTimings,
 ) {
-  // An earlier handoff to this popover (taken over again before it landed):
-  // it starts over from where it is.
   for (const animation of running.get(popover) ?? []) animation.cancel();
   for (const copy of popover.querySelectorAll(`:scope > [${LAYER}]`))
     copy.remove();
@@ -477,8 +347,6 @@ function handOver(
     return animation;
   };
 
-  // Where it rests, at its size: without a transform Motion may still have on
-  // it (a kept-mounted menu at its closed scale).
   const transform = popover.style.transform;
   popover.style.transform = 'none';
   const to = popover.getBoundingClientRect();
@@ -489,12 +357,8 @@ function handOver(
   );
 
   const shift = motionTokens.shift.handoff;
-  // Where the popover goes (`way`): the next content arrives from that side,
-  // the previous one leaves to the other.
   const x = from.left - to.left;
   const y = from.top - to.top;
-  // Its move and resize, on one curve (an edge resting against the trigger
-  // stays there), carrying on the speed of the popover it takes over.
   const offset = [x, y, from.width - to.width, from.height - to.height];
   const curve = curveFrom(
     timings.move,
@@ -507,8 +371,6 @@ function handOver(
   const along = (distance: number): [number, number] =>
     horizontal ? [distance, 0] : [0, distance];
 
-  // Its own content still leaving (back to a menu just left): it comes back
-  // from where it is, as it shows, instead of coming in again.
   const menu = menuOf(popover);
   const back = menu
     ? leaving.find((layer) => layer.menu === menu && layer.opacity > 0.02)
@@ -532,11 +394,6 @@ function handOver(
     };
   }
 
-  // Its size for the way. Its margins make up the difference, so the box the
-  // library places stays at its rest size (it would place it again on every
-  // frame, wherever its place depends on its size: above its trigger, aligned
-  // to its end or center, shifted from an edge). Its items stay on one line
-  // (they don't wrap while it's narrower than they need).
   const marginRight = parseFloat(computed.marginRight) || 0;
   const marginBottom = parseFloat(computed.marginBottom) || 0;
   const sizing = {
@@ -546,7 +403,6 @@ function handOver(
     minHeight: '0px',
     maxHeight: 'none',
   };
-  // The animations on the move's timing.
   const moved: Animation[] = [];
   const resize = animate(
     popover,
@@ -582,7 +438,6 @@ function handOver(
     );
     moved.push(translate);
   }
-  // What it doesn't show yet is clipped, while either content moves.
   const fadeIn = toCssTiming(timings.fadeIn);
   const slideIn = toCssTiming(timings.slideIn);
   const out = toCssTiming(timings.out);
@@ -591,8 +446,6 @@ function handOver(
     duration: Math.max(move.duration, out.duration, fadeIn.duration),
   });
 
-  // Its own items stay where they rest on screen while it moves over them
-  // (moved back by as much as it moves), and come in from the way it goes.
   const [slideX, slideY] = enter.slide;
   const slides = Math.abs(slideX) >= 0.5 || Math.abs(slideY) >= 0.5;
   for (const item of items) {
@@ -624,15 +477,10 @@ function handOver(
       );
   }
 
-  // The previous content leaves where it was on screen, the other way,
-  // inside the popover (its containing block: it's clipped by it), and so
-  // does what was still leaving inside the previous popover, each from where
-  // it is: one layer per menu, none inside another.
   if (computed.position === 'static' || positioned.has(popover)) {
     positioned.add(popover);
     popover.style.position = 'relative';
   }
-  // The popover's padding box on screen, as it starts.
   const originLeft = from.left + popover.clientLeft;
   const originTop = from.top + popover.clientTop;
   const leave = (
@@ -646,7 +494,6 @@ function handOver(
       to: slideTo,
     }: {
       menu: string | null;
-      /** Where it is on screen, not counting its slide. */
       left: number;
       top: number;
       opacity: number;
@@ -658,10 +505,6 @@ function handOver(
     element.style.left = `${left - originLeft}px`;
     element.style.top = `${top - originTop}px`;
     popover.appendChild(element);
-    // It stays where it is on screen while the popover moves. Added, like
-    // the popover's own move: the browser runs both on the main thread, in
-    // step (on its own, this one would run on the compositor, a frame ahead
-    // of the popover: the content would jump aside as the move starts).
     if (moves)
       moved.push(
         element.animate(
@@ -684,7 +527,6 @@ function handOver(
     const layer: Layer = { menu: layerMenu, to: slideTo, fade };
     layers.set(element, layer);
     const remove = () => {
-      // Moved on into another popover since: it leaves from there.
       if (layers.get(element)?.fade !== fade) return;
       element.remove();
       release(popover);
@@ -723,12 +565,6 @@ function handOver(
     element.scrollLeft = left;
   }
 
-  // They start all at once, by their start time (left to the browser, some
-  // would start a frame before the others). Taking over a popover still
-  // moving, from when that one was read, a frame or more ago (mounting this
-  // menu took that): it catches up instead of pausing. From rest, on the
-  // first frame it shows (it would jump ahead after a long task).
-  // (The popover's own document's timeline: the one they run on.)
   const timeline = popover.ownerDocument.timeline;
   const now = timeline.currentTime;
   if (
@@ -749,49 +585,24 @@ function handOver(
 }
 
 type HandoffOptions = {
-  /** The menu's popover. */
   nodeRef: React.RefObject<HTMLElement | null>;
   open: boolean;
-  /**
-   * It closed because the user moved on to another menu of the bar (Base
-   * UI's reasons): the next one may open after it closed.
-   */
   movedOn?: boolean;
-  /**
-   * The popover moving and resizing: the menu's own transition, or else
-   * `spring.morph`.
-   */
   transition: Transition;
   reduce: boolean;
-  /**
-   * Another menu took its popover over: make it leave at once (it's hidden
-   * already).
-   */
   onDrop?: () => void;
 };
 
 type Handoff = {
-  /**
-   * It opened by taking over another menu's popover, which showed at this
-   * opacity: it starts from there, without its entrance.
-   */
   from: { opacity: number } | null;
-  /** Another menu took its popover over: it leaves at once, unseen. */
   dropped: boolean;
-  /** For its submenus: they go with it (`HandoffNestedContext`). */
   entry: HandoffEntry;
 };
 
-/** The duration of a Motion transition (0: the menu moves at once). */
 function isInstant(transition: Transition) {
   return toCssTiming(transition).duration === 0;
 }
 
-/**
- * A menu of a menubar (`group`, null for any other menu): it opens by taking
- * over the popover of the menu open before it, and hands its own over to the
- * next one.
- */
 function useMenuHandoff(
   group: HandoffGroup | null,
   {
@@ -804,7 +615,6 @@ function useMenuHandoff(
   }: HandoffOptions,
 ): Handoff {
   const [entry] = React.useState(() => new HandoffEntry());
-  // Under reduced motion each menu fades on its own, in place.
   const enabled = group !== null && !reduce && canAnimate();
   const take = (): Opening => {
     const found = open && enabled ? group.source(entry) : null;
@@ -845,7 +655,6 @@ function useMenuHandoff(
 
   React.useLayoutEffect(() => group?.add(entry), [group, entry]);
 
-  // Read by the next menu opening: after this commit's layout effects.
   React.useEffect(() => {
     group?.setOpen(entry, open, movedOn);
   }, [entry, group, open, movedOn]);
@@ -858,25 +667,17 @@ function useMenuHandoff(
     if (!source?.node) return;
     entry.await(source);
     const skipped = opening.skipped;
-    // Read now, before the source changes: where it is, how fast it moves,
-    // what it shows.
     const from = source.node.getBoundingClientRect();
     const velocity = velocityOfPopover(source.node);
     const since = source.node.ownerDocument.timeline.currentTime;
     const instant = isInstant(timingsRef.current.move);
     const previous = instant ? null : copyContent(source.node, source.nested);
-    // Floating UI places the popover asynchronously, before the frame is
-    // rendered: both popovers swap then, before it's painted. A resize
-    // observer reports a new element in that frame's rendering, after layout,
-    // even when it opened during the frame's own callbacks (Base UI opens a
-    // pressed menu in an animation frame); the frame callback is the fallback.
     let swapped = false;
     const swap = () => {
       if (swapped) return;
       swapped = true;
       stop();
       entry.await(null);
-      // What still leaves inside it goes on leaving inside the next one.
       const leaving = previous && source.node ? leavingIn(source.node) : [];
       for (const other of skipped) other.drop();
       source.drop();
@@ -896,8 +697,6 @@ function useMenuHandoff(
       observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-    // Not run (it closed before its frame): the popover on screen is still
-    // the source's, passed on to the next menu opening (`pending`).
     return stop;
   }, [opening, entry, nodeRef]);
 
@@ -908,11 +707,6 @@ function useMenuHandoff(
   };
 }
 
-/**
- * The opening of a menu that took another one's popover over: no entrance,
- * it shows at once as that one did (its opacity, unscaled), even when it was
- * still leaving itself, and becomes fully opaque on its transition.
- */
 function takeOver(from: { opacity: number }, transition: Transition) {
   return {
     opacity: [from.opacity, 1],
@@ -928,7 +722,6 @@ export {
   useHandoffGroup,
   useHandoffNested,
   useMenuHandoff,
-  // Shared with a navigation menu's content changes (internal/content-swap).
   freeze,
   release,
   translationOf,

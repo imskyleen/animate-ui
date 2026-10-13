@@ -14,7 +14,6 @@ function Star(props: Omit<React.ComponentProps<typeof HugeiconsIcon>, 'icon'>) {
   return <HugeiconsIcon icon={StarIcon} strokeWidth={2} {...props} />;
 }
 
-// The demo without a fixed value: it fetches the count (mocked in tests).
 export default function GithubStarsDemo() {
   return (
     <GithubStars

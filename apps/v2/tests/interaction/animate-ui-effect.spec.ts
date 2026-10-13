@@ -9,7 +9,6 @@ import {
 
 type Frame = { t: number; cards: EntranceSample[] };
 
-/** Clicks Replay and samples the three cards on every frame for `ms`. */
 const replayTimeline = (page: Page, ms: number) =>
   page.evaluate(async (ms) => {
     const read = (el: Element) => {
@@ -69,7 +68,6 @@ test.describe('animate-ui effect', () => {
     expect(Math.max(...ys)).toBeGreaterThan(50);
     expect(Math.min(...scales)).toBeLessThan(0.8);
     expect(Math.max(...card.map((c) => c.blur))).toBeGreaterThan(5);
-    // The v1 spring (stiffness 200, damping 20) overshoots.
     expect(Math.min(...ys)).toBeLessThan(-2);
     expect(Math.max(...scales)).toBeGreaterThan(1.01);
   });

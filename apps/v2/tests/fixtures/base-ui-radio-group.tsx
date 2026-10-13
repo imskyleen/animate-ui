@@ -6,9 +6,7 @@ import { RadioGroup } from '@animate-ui/react/primitives/base-ui/radio-group';
 
 const item = 'grid size-5 place-content-center rounded-full border';
 
-// API compatibility: the primitives must behave exactly like Base UI's.
 export default function BaseRadioGroupFixture() {
-  // Mounted checked after the page has loaded, as a dialog's would be.
   const [shown, setShown] = React.useState(false);
   const [value, setValue] = React.useState('a');
 

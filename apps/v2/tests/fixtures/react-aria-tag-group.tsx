@@ -7,10 +7,6 @@ import {
   TagList,
 } from '@animate-ui/react/primitives/react-aria';
 
-// Tags added after the list mounted pop in; removed ones go at once. Below,
-// tags in a field beside an input whose placeholder shows once it's empty,
-// and whose padding narrows while it holds tags (shadcn/ui's chips field);
-// then the same with a placeholder shown all along.
 export default function ReactAriaTagGroupFixture() {
   const [tags, setTags] = React.useState(['Astro', 'Next.js']);
   const [picked, setPicked] = React.useState(['Remix', 'Gatsby']);

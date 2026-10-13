@@ -13,7 +13,6 @@ import {
 type WifiZeroProps = IconProps<keyof typeof animations>;
 
 const animations = {
-  // The waves pulse one after the other, never gone (as Hugeicons').
   default: {
     path1: {
       initial: { opacity: 1, scale: 1 },
@@ -24,7 +23,6 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
-  // The waves gone and back, one after the other.
   blink: {
     path1: {
       initial: { opacity: 1, scale: 1 },

@@ -23,7 +23,6 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
         },
       }}
       containerProps={{
-        // Room for the fixed, full-width header.
         className:
           'mx-auto max-w-[1670px] pt-(--fd-banner-height) [--fd-banner-height:--spacing(14)] md:[--fd-banner-height:--spacing(17)]',
       }}

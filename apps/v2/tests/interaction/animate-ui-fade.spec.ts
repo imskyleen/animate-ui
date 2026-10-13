@@ -9,7 +9,6 @@ import {
 
 type Frame = { t: number; cards: EntranceSample[] };
 
-/** Clicks Replay and samples the three cards on every frame for `ms`. */
 const replayTimeline = (page: Page, ms: number) =>
   page.evaluate(async (ms) => {
     const read = (el: Element) => {
@@ -43,10 +42,6 @@ const replayTimeline = (page: Page, ms: number) =>
     return frames;
   }, ms);
 
-/**
- * A card's opacity 200ms after it got past 0.2. Read mid-animation, so a slow
- * first frame doesn't skew it.
- */
 const opacityAfter20 = (frames: Frame[], card: number) => {
   const start = frames.find(
     (f) => f.cards[card]!.opacity >= 0.2 && f.cards[card]!.opacity < 0.95,
@@ -60,7 +55,6 @@ test.describe('animate-ui fade', () => {
     await open(page, 'fade');
     const [first, , last] = await replayFirstFrame(page);
     expect(first!.opacity).toBeLessThan(0.9);
-    // holdDelay: the last card hasn't started yet.
     expect(last!.opacity).toBeLessThanOrEqual(first!.opacity);
     expect(last!.opacity).toBeLessThan(0.2);
     await expect
@@ -71,8 +65,6 @@ test.describe('animate-ui fade', () => {
   test('fades in on a quick spring: about 250ms', async ({ page }) => {
     await open(page, 'fade');
     const frames = await replayTimeline(page, 900);
-    // The v1 spring (stiffness 200, damping 20) goes from 0.2 to opaque in
-    // ~180ms; a 600ms ease-out is still at ~0.85 200ms later.
     expect(opacityAfter20(frames, 0)).toBeGreaterThan(0.98);
   });
 

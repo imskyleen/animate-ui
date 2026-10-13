@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Accordion } from '@animate-ui/react/primitives/radix-ui/accordion';
 import * as AccordionStar from '@animate-ui/react/primitives/radix-ui/accordion';
 
-// API compatibility: the primitive must behave exactly like Radix's.
 export default function RadixAccordionFixture() {
   const [value, setValue] = React.useState('a');
 
@@ -30,7 +29,6 @@ export default function RadixAccordionFixture() {
       </section>
 
       <section data-testid="multiple">
-        {/* The `import * as` style of @radix-ui/react-accordion. */}
         <AccordionStar.Root type="multiple" defaultValue={['x']}>
           {['x', 'y'].map((item) => (
             <AccordionStar.Item key={item} value={item}>

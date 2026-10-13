@@ -25,7 +25,6 @@ test.describe('react-aria checkbox API', () => {
     await expect(check).toBeVisible();
     await root.click();
     await expect(page.getByTestId('controlled-value')).toHaveText('false');
-    // The exit copy goes away after the animation.
     await expect(check).toHaveCount(0);
     await expect(
       section.locator('[data-slot="checkbox-indicator"] > *'),

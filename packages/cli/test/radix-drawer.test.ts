@@ -4,8 +4,6 @@ import { expect, test } from 'vitest';
 
 import { transform } from '../src/lib/transform';
 
-// shadcn/ui's Radix Drawer imports Vaul, which Animate UI replaces with the
-// same API: `"vaul"` maps to the radix-ui drawer module.
 const DRAWER = '@animate-ui/react/primitives/radix-ui/drawer';
 const FIXTURES = path.join(import.meta.dirname, 'fixtures', 'radix-ui');
 
@@ -23,7 +21,6 @@ test('radix drawer, every style: vaul swapped, overlay fade gone', () => {
       { from: 'vaul', to: DRAWER, name: 'drawer' },
     ]);
     expect(result.code).not.toMatch(/\b(animate-(in|out)|fade-(in|out))/);
-    // Layout keyed on Vaul's data attributes stays.
     expect(result.code).toContain(
       'data-[vaul-drawer-direction=bottom]:bottom-0',
     );

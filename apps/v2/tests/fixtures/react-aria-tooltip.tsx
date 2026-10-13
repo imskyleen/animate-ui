@@ -7,14 +7,12 @@ import {
   TooltipTrigger,
 } from '@animate-ui/react/primitives/react-aria';
 
-// A toolbar of tooltips, for React Aria's own warmup.
 const TOOLS = [
   { label: 'Bold', shortcut: '⌘B' },
   { label: 'Italic', shortcut: '⌘I' },
   { label: 'Underline', shortcut: '⌘U' },
 ];
 
-// API compatibility: the primitive must behave exactly like React Aria's.
 export default function ReactAriaTooltipFixture() {
   const [open, setOpen] = React.useState(false);
 
@@ -46,7 +44,6 @@ export default function ReactAriaTooltipFixture() {
       </section>
 
       <section data-testid="own-state">
-        {/* Controlled on the Tooltip itself. */}
         <TooltipTrigger delay={0}>
           <Button>Tooltip state trigger</Button>
           <Tooltip
