@@ -109,6 +109,7 @@ export const ICONS: IconEntry[] = [
   { name: "signal-full-01", title: "Signal Full 01", keywords: ["signal","network","cellular","bars"], categories: [], added: "2026-10-12", load: () => import('./signal-full-01') },
   { name: "sparkles", title: "Sparkles", keywords: ["magic","ai","stars","shine"], categories: [], added: "2026-10-12", load: () => import('./sparkles') },
   { name: "square-lock-02", title: "Square Lock 02", keywords: ["lock","secure","password","private"], categories: [], added: "2026-10-12", load: () => import('./square-lock-02') },
+  { name: "square-unlock-02", title: "Square Unlock 02", keywords: ["unlock","open","unsecure","access"], categories: [], added: "2026-10-12", load: () => import('./square-unlock-02') },
   { name: "star", title: "Star", keywords: ["favorite","rating","bookmark","like"], categories: [], added: "2026-10-12", load: () => import('./star') },
   { name: "sun-03", title: "Sun 03", keywords: ["light","day","theme","brightness"], categories: [], added: "2026-10-12", load: () => import('./sun-03') },
   { name: "target-01", title: "Target 01", keywords: ["goal","aim","focus","objective"], categories: [], added: "2026-10-12", load: () => import('./target-01') },

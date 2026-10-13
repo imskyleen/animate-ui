@@ -624,6 +624,29 @@ test.describe('hugeicons', () => {
       expect(wavesOf(dips)).toHaveLength(count);
     });
 
+  test("Square Unlock 02 lock: its shackle's right leg goes back into the body (Hugeicons' locked lock)", async ({
+    page,
+  }) => {
+    await gotoGallery(page);
+    const button = tile(page, 'square-unlock-02');
+    await button.scrollIntoViewIfNeeded();
+    await button.click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'lock', exact: true }).click();
+    await page.waitForTimeout(600);
+    const end = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        const shackle = [...svg.querySelectorAll('path')].at(-1)!;
+        const p = shackle.getPointAtLength(shackle.getTotalLength());
+        return { x: p.x, y: p.y };
+      });
+    // Into the body (its top at 9), as Hugeicons draws it locked.
+    expect(end.x).toBeCloseTo(16.5, 1);
+    expect(end.y).toBeCloseTo(9, 1);
+  });
+
   test("Copy 01 merge: the sheet behind lands exactly on the copy, as Lucide's Copy (still drawn, not faded)", async ({
     page,
   }) => {
