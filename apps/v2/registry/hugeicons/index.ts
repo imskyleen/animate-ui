@@ -767,6 +767,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./circle-plus'),
   },
   {
+    name: 'circle-question-mark',
+    title: 'Circle Question Mark',
+    keywords: ['help', 'question', 'faq', 'support', 'unknown'],
+    categories: ['accessibility', 'text', 'notifications'],
+    added: '2026-10-13',
+    load: () => import('./circle-question-mark'),
+  },
+  {
     name: 'circle-x',
     title: 'Circle X',
     keywords: [
@@ -1268,6 +1276,22 @@ export const ICONS: IconEntry[] = [
     load: () => import('./expand'),
   },
   {
+    name: 'eye-closed',
+    title: 'Eye Closed',
+    keywords: ['view', 'sleep', 'hidden', 'closed', 'blink'],
+    categories: ['accessibility', 'photography'],
+    added: '2026-10-13',
+    load: () => import('./eye-closed'),
+  },
+  {
+    name: 'eye-off',
+    title: 'Eye Off',
+    keywords: ['view', 'watch', 'hide', 'hidden', 'invisible'],
+    categories: ['accessibility', 'photography', 'security'],
+    added: '2026-10-13',
+    load: () => import('./eye-off'),
+  },
+  {
     name: 'fan',
     title: 'Fan',
     keywords: ['air', 'cooler', 'ventilation', 'ventilator', 'blower'],
@@ -1535,6 +1559,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./house-wifi'),
   },
   {
+    name: 'info',
+    title: 'Info',
+    keywords: ['help', 'information', 'details', 'about', 'tooltip'],
+    categories: ['accessibility', 'notifications'],
+    added: '2026-10-13',
+    load: () => import('./info'),
+  },
+  {
     name: 'kanban',
     title: 'Kanban',
     keywords: [
@@ -1564,6 +1596,14 @@ export const ICONS: IconEntry[] = [
     categories: ['security', 'account'],
     added: '2026-10-12',
     load: () => import('./key-01'),
+  },
+  {
+    name: 'key-round',
+    title: 'Key Round',
+    keywords: ['password', 'login', 'authentication', 'secure', 'unlock'],
+    categories: ['security', 'account'],
+    added: '2026-10-13',
+    load: () => import('./key-round'),
   },
   {
     name: 'layers-01',
@@ -2274,6 +2314,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./notification-01'),
   },
   {
+    name: 'octagon-alert',
+    title: 'Octagon Alert',
+    keywords: ['warning', 'stop', 'error', 'danger', 'exclamation'],
+    categories: ['notifications', 'shapes'],
+    added: '2026-10-13',
+    load: () => import('./octagon-alert'),
+  },
+  {
     name: 'orbit',
     title: 'Orbit',
     keywords: ['planet', 'space', 'physics', 'satellites', 'moons'],
@@ -2878,6 +2926,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./share-08'),
   },
   {
+    name: 'shield-check',
+    title: 'Shield Check',
+    keywords: ['security', 'safe', 'protected', 'verified', 'secure'],
+    categories: ['security', 'account'],
+    added: '2026-10-13',
+    load: () => import('./shield-check'),
+  },
+  {
     name: 'shrink',
     title: 'Shrink',
     keywords: ['scale', 'fullscreen', 'maximize', 'minimize', 'contract'],
@@ -3293,6 +3349,14 @@ export const ICONS: IconEntry[] = [
     categories: ['files', 'mail'],
     added: '2026-10-13',
     load: () => import('./trash'),
+  },
+  {
+    name: 'triangle-alert',
+    title: 'Triangle Alert',
+    keywords: ['warning', 'alert', 'danger', 'caution', 'exclamation'],
+    categories: ['notifications'],
+    added: '2026-10-13',
+    load: () => import('./triangle-alert'),
   },
   {
     name: 'undo-02',
