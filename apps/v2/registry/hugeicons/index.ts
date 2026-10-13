@@ -439,6 +439,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./blocks'),
   },
   {
+    name: 'bluetooth',
+    title: 'Bluetooth',
+    keywords: ['wireless', 'connection', 'device', 'pair', 'signal'],
+    categories: ['connectivity', 'devices'],
+    added: '2026-10-13',
+    load: () => import('./bluetooth'),
+  },
+  {
     name: 'bookmark',
     title: 'Bookmark',
     keywords: ['read', 'save', 'favorite', 'later', 'mark'],
@@ -1151,6 +1159,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./cloud-upload'),
   },
   {
+    name: 'coffee-02',
+    title: 'Coffee 02',
+    keywords: ['drink', 'cup', 'mug', 'tea', 'cafe'],
+    categories: ['food-beverage'],
+    added: '2026-10-13',
+    load: () => import('./coffee-02'),
+  },
+  {
     name: 'cog',
     title: 'Cog',
     keywords: [
@@ -1234,6 +1250,14 @@ export const ICONS: IconEntry[] = [
     categories: ['shapes'],
     added: '2026-10-12',
     load: () => import('./cross'),
+  },
+  {
+    name: 'crown',
+    title: 'Crown',
+    keywords: ['diadem', 'tiara', 'king', 'queen', 'royal'],
+    categories: ['gaming'],
+    added: '2026-10-13',
+    load: () => import('./crown'),
   },
   {
     name: 'delete-02',
@@ -1607,12 +1631,28 @@ export const ICONS: IconEntry[] = [
     load: () => import('./gavel'),
   },
   {
+    name: 'ghost',
+    title: 'Ghost',
+    keywords: ['pac-man', 'spooky', 'halloween', 'boo', 'spirit'],
+    categories: ['gaming', 'emoji'],
+    added: '2026-10-13',
+    load: () => import('./ghost'),
+  },
+  {
     name: 'gift',
     title: 'Gift',
     keywords: ['present', 'surprise', 'reward', 'birthday'],
     categories: ['finance', 'gaming'],
     added: '2026-10-12',
     load: () => import('./gift'),
+  },
+  {
+    name: 'globe-02',
+    title: 'Globe 02',
+    keywords: ['world', 'browser', 'language', 'translate', 'earth'],
+    categories: ['navigation', 'travel', 'development'],
+    added: '2026-10-13',
+    load: () => import('./globe-02'),
   },
   {
     name: 'hammer',
@@ -1653,6 +1693,14 @@ export const ICONS: IconEntry[] = [
     categories: ['home', 'buildings', 'connectivity'],
     added: '2026-10-13',
     load: () => import('./house-wifi'),
+  },
+  {
+    name: 'infinity',
+    title: 'Infinity',
+    keywords: ['unlimited', 'forever', 'loop', 'math', 'endless'],
+    categories: ['math'],
+    added: '2026-10-13',
+    load: () => import('./infinity'),
   },
   {
     name: 'info',
@@ -2777,6 +2825,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./pin-off'),
   },
   {
+    name: 'plane-takeoff',
+    title: 'Plane Takeoff',
+    keywords: ['departure', 'flight', 'travel', 'airport', 'trip'],
+    categories: ['transportation', 'travel'],
+    added: '2026-10-13',
+    load: () => import('./plane-takeoff'),
+  },
+  {
     name: 'play',
     title: 'Play',
     keywords: ['start', 'media', 'video'],
@@ -2807,6 +2863,14 @@ export const ICONS: IconEntry[] = [
     categories: ['math', 'tools', 'development', 'text', 'cursors', 'gaming'],
     added: '2026-10-12',
     load: () => import('./plus-sign'),
+  },
+  {
+    name: 'power',
+    title: 'Power',
+    keywords: ['on', 'off', 'device', 'switch', 'toggle'],
+    categories: ['connectivity', 'devices'],
+    added: '2026-10-13',
+    load: () => import('./power'),
   },
   {
     name: 'preference-horizontal',
@@ -3629,6 +3693,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./triangle-alert'),
   },
   {
+    name: 'trophy',
+    title: 'Trophy',
+    keywords: ['prize', 'sports', 'winner', 'achievement', 'award'],
+    categories: ['sports', 'gaming'],
+    added: '2026-10-13',
+    load: () => import('./trophy'),
+  },
+  {
     name: 'umbrella',
     title: 'Umbrella',
     keywords: ['rain', 'weather', 'protection', 'insurance', 'cover'],
@@ -3762,6 +3834,14 @@ export const ICONS: IconEntry[] = [
     categories: ['finance'],
     added: '2026-10-13',
     load: () => import('./wallet'),
+  },
+  {
+    name: 'wand-sparkles',
+    title: 'Wand Sparkles',
+    keywords: ['magic', 'wizard', 'magician', 'sparkles', 'effect'],
+    categories: ['design', 'gaming'],
+    added: '2026-10-13',
+    load: () => import('./wand-sparkles'),
   },
   {
     name: 'waves',

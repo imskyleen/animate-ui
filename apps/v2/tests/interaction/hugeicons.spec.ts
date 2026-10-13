@@ -981,6 +981,8 @@ const TWINS: Record<string, string> = {
   'share-03': 'share',
   'music-3': 'music',
   temperature: 'thermometer',
+  'coffee-02': 'coffee',
+  'globe-02': 'globe',
   'upload-04': 'upload',
   user: 'user',
   'message-01': 'message-square',
