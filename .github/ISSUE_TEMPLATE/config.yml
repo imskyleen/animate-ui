@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💡 Request a new component
+    url: https://github.com/imskyleen/animate-ui/discussions/new?category=ideas
+    about: New components, primitives, icons and backgrounds are discussed in GitHub Discussions first.
+  - name: ❓ Ask a question
+    url: https://github.com/imskyleen/animate-ui/discussions/new?category=q-a
+    about: Questions about using Animate UI.

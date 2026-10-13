@@ -1,340 +1,168 @@
-# Contributing to Animate UI
+# Contributing
 
-Thank you for your interest in **contributing to Animate UI**! Your support is highly appreciated, and we look forward to your contributions. This guide will help you understand the project structure and provide detailed instructions for adding a new component to Animate UI.
+Thanks for your interest in contributing to Animate UI! Please take a moment to review this document before submitting your first pull request. We also strongly recommend that you check for open issues and pull requests to see if someone else is working on something similar.
 
-## Introduction
+## What to contribute
+
+Contributions are most welcome for:
+
+- Bug fixes, with a test that reproduces the bug.
+- Accessibility, performance and reduced-motion improvements.
+- Fixes and improvements to the CLI.
+- Documentation fixes: typos, wrong props, broken links, unclear explanations.
+
+## Requests for new components
+
+If you have a request for a new component, primitive, icon or background, please [open a discussion on GitHub](https://github.com/imskyleen/animate-ui/discussions). We'll be happy to help you out.
+
+What Animate UI adds is decided in discussions first, so please don't open a pull request for a new component that hasn't been agreed on there: it will be closed.
+
+## About this repository
 
 This repository is a monorepo.
 
 - We use [pnpm](https://pnpm.io) and [workspaces](https://pnpm.io/workspaces) for development.
 - We use [Turborepo](https://turbo.build/repo) as our build system.
 
-## Structure
+Animate UI v1 lives in `apps/v1` as its own project, with its own lockfile. It is frozen: changes go to v2 only.
 
-This repository is structured as follows:
+## Structure
 
 ```
 apps
-└── www
-    ├── app
-    ├── components
-    ├── content
-    ├── lib
-    └── registry
-        ├── components
-        │   ├── animate (Animate UI Components)
-        │   ├── backgrounds
-        │   ├── base (Base UI Components)
-        │   ├── buttons
-        │   ├── community (Community Components)
-        │   ├── headless (Headless UI Components)
-        │   └── radix (Radix UI Components)
-        ├── demo
-        │   ├── components
-        │   └── primitives
-        ├── hooks
-        ├── icons
-        ├── lib
-        └── primitives
-            ├── animate (Animate UI Primitives)
-            ├── base (Base UI Primitives)
-            ├── buttons
-            ├── effects
-            ├── headless (Headless UI Primitives)
-            ├── radix (Radix UI Primitives)
-            └── texts
+├── v1                # Animate UI v1 (frozen)
+└── v2                # The website and the docs
+    ├── content/docs  # The documentation (MDX)
+    ├── demos         # The demos shown in the docs
+    ├── registry      # The shadcn registry: icons, hugeicons, backgrounds
+    └── tests         # Playwright tests
 packages
+├── react             # @animate-ui/react: the animated primitives
+├── cli               # @animate-ui/cli: the animate and migrate commands
 ├── eslint-config
-├── typescript-config
-└── ui (Internal UI components)
+└── typescript-config
+skills
+└── animate-ui        # The Animate UI skill for AI assistants
 ```
 
-## Getting Started
+| Path                   | Description                                                 |
+| ---------------------- | ----------------------------------------------------------- |
+| `packages/react/src`   | The primitives: Radix UI, Base UI, React Aria and our own.  |
+| `packages/cli/src`     | The CLI that animates shadcn/ui components and migrates v1. |
+| `apps/v2/registry`     | The icons (Lucide and Hugeicons) and the backgrounds.       |
+| `apps/v2/content/docs` | The documentation.                                          |
 
-### Fork and Clone the Repository
+## Development
 
-#### 1. Fork the Repository
+### Fork this repo
 
-Click [here](https://github.com/imskyleen/animate-ui/fork) to fork the repository.
+You can fork this repo by clicking the fork button in the top right corner of this page.
 
-#### 2. Clone your Fork to Your Local Machine
+### Clone on your local machine
 
 ```bash
-  git clone https://github.com/<YOUR_USERNAME>/animate-ui.git
+git clone https://github.com/your-username/animate-ui.git
 ```
 
-#### 3. Navigate to the Project Directory
+### Navigate to project directory
 
 ```bash
 cd animate-ui
 ```
 
-#### 4. Create a New Branch for Your Changes
+### Create a new branch
 
 ```bash
-git checkout -b my-branch
+git checkout -b my-new-branch
 ```
 
-#### 5. Install Dependencies
+### Install dependencies
 
 ```bash
-pnpm i
+pnpm install
 ```
 
-#### 6. Run the Project
+### Run the docs
 
 ```bash
-pnpm dev
+pnpm --filter=v2 dev
 ```
 
-## Components
+## Fixing a bug
 
-We use the shadcn/ui registry system for developing components. You can find the source code for the components under `apps/v1/apps/www/registry`. The components are organized by categories.
+1. Reproduce the bug in a test that fails without your fix: a Playwright test in `apps/v2/tests` for a primitive, an icon or the docs, a Vitest test in `packages/cli/test` for the CLI.
+2. Fix it, and check that the test passes.
+3. Many primitives share their mechanism across Radix UI, Base UI and React Aria. If the bug comes from a shared mechanism, fix it in every primitive that uses it.
 
-Each component is in a folder organized as follows:
+## Primitives
 
-```
-my-component
-├── index.tsx (the component code)
-└── registry-item.json (information for the shadcn registry)
-```
+The primitives in `packages/react` are drop-in replacements: they keep the API, the DOM and the data attributes of the library they animate, so shadcn/ui's styles keep working.
 
-### Primitives
+When adding or modifying a primitive, please ensure that:
 
-Primitives are unstyled components to which we add animations.
+1. Its API stays the same as the library it animates.
+2. It respects reduced motion.
+3. It uses the motion tokens from `packages/react/src/utils/motion`.
+4. Its documentation page and its demo are up to date.
 
-When adding or modifying primitive, please ensure that:
+## Icons
 
-1. You have modified or created the associated component.
-2. You have modified or created the associated documentation.
-3. You have created or modified the demo(s).
-4. You run `pnpm registry:build` to update the registry.
-
-### Components
-
-The components use animated primitives (except for certain components such as backgrounds) and are styled with Tailwind.
-
-When adding or modifying a component, please ensure that:
-
-1. You have modified or created the associated primitive.
-2. You have modified or created the associated documentation.
-3. You have created or modified the demo(s).
-4. You run `pnpm registry:build` to update the registry.
-
-### Icons
-
-We exclusively animate icons from [Lucide Icons](https://lucide.dev/icons/).
+Icons animate [Lucide](https://lucide.dev/icons) and [Hugeicons](https://hugeicons.com) icons. Each icon is a folder in `apps/v2/registry/icons` (Lucide) or `apps/v2/registry/hugeicons` (Hugeicons), with an `index.tsx` and a `meta.json`.
 
 When adding or modifying an icon, please ensure that:
 
-1. You animated an icon Lucide Icons.
-2. You have correctly filled in the same categories as Lucide Icons in the `registry-item.json` file.
-3. You run `pnpm registry:build` to update the registry.
+1. Its drawing is the library's own, unmodified (Hugeicons with `strokeWidth={2}`).
+2. Every animation stays within the 24×24 grid.
+3. Its `meta.json` uses the library's categories.
+4. An icon in both libraries offers the same animations in both.
+5. You run `pnpm registry:build` to rebuild the registry.
 
-**Note: You don't need to create documentation or make a demo for the icons.**
+## CLI
 
-### Registry Item
+The CLI lives in `packages/cli`. Its documentation is [here](https://animate-ui.com/docs/cli).
 
-The registry-item.json file is required to make the component available in the registry.
+Please add tests for your changes in `packages/cli/test`.
 
-This is what it should look like:
+## Documentation
 
-```json title="my-component/registry-item.json"
-{
-  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "my-component",
-  "type": "registry:ui",
-  "title": "My Component",
-  "description": "My Component Description",
-  "dependencies": [...],
-  "registryDependencies": [...],
-  "devDependencies": [...],
-  "files": [
-    {
-      "path": "registry/[primitives/components/icons]/[category]/my-component/index.tsx",
-      "type": "registry:ui",
-      "target": "components/animate-ui/[primitives/components/icons]/[category]/my-component.tsx"
-    }
-  ]
-}
+The documentation lives in `apps/v2/content/docs`. Run it locally with:
+
+```bash
+pnpm --filter=v2 dev
 ```
 
-[Click here](https://ui.shadcn.com/docs/registry/registry-item-json) to see the `registry-item.json` documentation.
+## Commit convention
 
-### Demo
+Before you create a pull request, please check that your commits follow the [Conventional Commits](https://www.conventionalcommits.org/) convention used in this repository:
 
-A demo is required to make your component visible in the Animate UI documentation.
+`category(scope): message`
 
-The demo is structured as a component, but is located in the demo folder.
+- `feat`: a new feature
+- `fix`: a bug fix (reference an issue if there is one)
+- `refactor`: a code change that is neither a bug fix nor a feature
+- `docs`: documentation changes
+- `test`: adding or changing tests
+- `build`: changes to the build, the CI or the dependencies
+- `chore`: anything else
 
-```
-demo
-└── [primitives/components]
-    └── [category]
-        └── my-component
-            ├── index.tsx (the demo component code)
-            └── registry-item.json (information for the shadcn registry)
-```
+e.g. `fix(react): keep the tooltip open while hovering its content`
 
-#### Add a Tweakpane
+## Testing
 
-You can add a Tweakpane allowing users to play with your demo props. Your demo must accept the props you want in your tweakpane.
+Run the Playwright tests of the docs, the primitives and the icons:
 
-You must then specify the demo props information in your demo's `registry-item.json` file:
-
-```json title="my-component-demo/registry-item.json"
-{
-  ...
-  "meta": {
-    "demoProps": {
-      "MyComponent": {
-        "props1": { "value": 700, "min": 0, "max": 2000, "step": 100 },
-        "props2": { "value": 0 },
-        "props3": { "value": "foo" },
-        "props4": {
-          "value": "center",
-          "options": {
-            "start": "start",
-            "center": "center",
-            "end": "end"
-          }
-        },
-        "props5": { "value": true }
-      }
-    }
-  },
- ...
-}
+```bash
+pnpm --filter=v2 test
 ```
 
-**You need to run `pnpm registry:build` to see the updated tweakpane in the demo.**
+Run the CLI tests:
 
-So, how to use `demoProps`?
-
-##### Number
-
-Simple number input:
-
-```json
-"myNumber": { "value": 10 }
+```bash
+pnpm --filter=@animate-ui/cli test
 ```
 
-Slider:
+Please ensure the tests pass when submitting a pull request.
 
-```json
-"myNumber": { "value": 10, "min": 0, "max": 100, "step": 1 }
-```
+## Ask for help
 
-Select:
-
-```json
-"myNumber": {
-  "value": 10,
-  "options": {
-    "Big": 30,
-    "Medium": 20,
-    "Small": 10
-  }
-}
-```
-
-##### String
-
-Simple text input:
-
-```json
-"myString": { "value": "Hello World" }
-```
-
-Select:
-
-```json
-"myNumber": {
-  "value": "small",
-  "options": {
-    "Big": "big",
-    "Medium": "medium",
-    "Small": "small"
-  }
-}
-```
-
-##### Boolean
-
-```json
-"myBoolean": { "value": true }
-```
-
-### Documentation
-
-The documentation is located in the `apps/v1/apps/www/content` folder and follows a structure similar to the registry folder.
-
-```
-apps
-└── www
-    └── content
-        ├── components
-        │   ├── animate
-        │   ├── backgrounds
-        │   ├── base
-        │   ├── buttons
-        │   ├── community
-        │   ├── headless
-        │   └── radix
-        ├── icons
-        └── primitives
-            ├── animate
-            ├── base
-            ├── buttons
-            ├── effects
-            ├── headless
-            ├── radix
-            └── texts
-```
-
-Voici un exemple:
-
-```mdx
----
-title: My Component
-description: Description for the new component
-author:
-  name: your name
-  url: https://link-to-your-profile.com
-releaseDate: 2025-XX-XX
----
-
-<ComponentPreview name="demo-my-component" />
-
-## Installation
-
-<ComponentInstallation name="my-component" />
-
-## Usage
-
-[Basic usage of the component]
-
-## API Reference
-
-### MyComponent
-
-<TypeTable
-  type={{
-    myProps: {
-      description: 'Description for my props',
-      type: 'string',
-      required: true,
-    },
-  }}
-/>
-
-## Credits
-
-- Credits to [you](https://link-to-your-profile.com) for creating the component
-```
-
-## Ask for Help
-
-If you need any assistance or have questions, please feel free to open a [GitHub issue](https://github.com/imskyleen/animate-ui/issues/new). We are here to help!
-
-Thank you again for your contribution to Animate UI! We look forward to seeing your improvements and new components.
+If you have a question, please [open a discussion on GitHub](https://github.com/imskyleen/animate-ui/discussions). We're here to help!

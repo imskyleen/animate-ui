@@ -1,5 +1,5 @@
 name: ✨ Feature Request
-description: Propose a new feature for Animate UI.
+description: Propose an improvement to an existing component, the CLI or the docs. To request a new component, open a discussion instead.
 labels: ['enhancement']
 body:
   - type: textarea
