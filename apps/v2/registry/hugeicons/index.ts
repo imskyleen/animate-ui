@@ -1279,6 +1279,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./download-04'),
   },
   {
+    name: 'droplet',
+    title: 'Droplet',
+    keywords: ['water', 'weather', 'liquid', 'fluid', 'drop'],
+    categories: ['weather', 'gaming'],
+    added: '2026-10-13',
+    load: () => import('./droplet'),
+  },
+  {
     name: 'equal-not',
     title: 'Equal Not',
     keywords: ['calculate', 'off', 'math', 'operator', 'code', '≠'],
@@ -1439,6 +1447,14 @@ export const ICONS: IconEntry[] = [
     categories: ['account', 'social'],
     added: '2026-10-13',
     load: () => import('./flag'),
+  },
+  {
+    name: 'flame',
+    title: 'Flame',
+    keywords: ['fire', 'hot', 'burn', 'heat', 'lit'],
+    categories: ['weather', 'social', 'gaming'],
+    added: '2026-10-13',
+    load: () => import('./flame'),
   },
   {
     name: 'flash',
@@ -1700,6 +1716,14 @@ export const ICONS: IconEntry[] = [
     categories: ['design', 'layout'],
     added: '2026-10-13',
     load: () => import('./layout-dashboard'),
+  },
+  {
+    name: 'leaf',
+    title: 'Leaf',
+    keywords: ['sustainability', 'nature', 'energy', 'plant', 'autumn'],
+    categories: ['sustainability', 'seasons'],
+    added: '2026-10-13',
+    load: () => import('./leaf'),
   },
   {
     name: 'lightbulb',
@@ -3248,6 +3272,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./sliders-vertical'),
   },
   {
+    name: 'snowflake',
+    title: 'Snowflake',
+    keywords: ['cold', 'weather', 'freeze', 'snow', 'winter'],
+    categories: ['weather', 'seasons'],
+    added: '2026-10-13',
+    load: () => import('./snowflake'),
+  },
+  {
     name: 'sparkle',
     title: 'Sparkle',
     keywords: [
@@ -3477,6 +3509,22 @@ export const ICONS: IconEntry[] = [
     load: () => import('./sun-moon'),
   },
   {
+    name: 'sunrise',
+    title: 'Sunrise',
+    keywords: ['weather', 'time', 'morning', 'day', 'dawn'],
+    categories: ['weather', 'time'],
+    added: '2026-10-13',
+    load: () => import('./sunrise'),
+  },
+  {
+    name: 'sunset',
+    title: 'Sunset',
+    keywords: ['weather', 'time', 'evening', 'night', 'dusk'],
+    categories: ['weather', 'time'],
+    added: '2026-10-13',
+    load: () => import('./sunset'),
+  },
+  {
     name: 'tag',
     title: 'Tag',
     keywords: ['label', 'badge', 'ticket', 'price', 'sale'],
@@ -3491,6 +3539,14 @@ export const ICONS: IconEntry[] = [
     categories: ['gaming', 'sports'],
     added: '2026-10-12',
     load: () => import('./target-01'),
+  },
+  {
+    name: 'temperature',
+    title: 'Temperature',
+    keywords: ['temperature', 'celsius', 'fahrenheit', 'weather', 'heat'],
+    categories: ['weather'],
+    added: '2026-10-13',
+    load: () => import('./temperature'),
   },
   {
     name: 'thumbs-down',
@@ -3571,6 +3627,14 @@ export const ICONS: IconEntry[] = [
     categories: ['notifications'],
     added: '2026-10-13',
     load: () => import('./triangle-alert'),
+  },
+  {
+    name: 'umbrella',
+    title: 'Umbrella',
+    keywords: ['rain', 'weather', 'protection', 'insurance', 'cover'],
+    categories: ['weather'],
+    added: '2026-10-13',
+    load: () => import('./umbrella'),
   },
   {
     name: 'undo-02',
@@ -3698,6 +3762,14 @@ export const ICONS: IconEntry[] = [
     categories: ['finance'],
     added: '2026-10-13',
     load: () => import('./wallet'),
+  },
+  {
+    name: 'waves',
+    title: 'Waves',
+    keywords: ['water', 'sea', 'sound', 'hertz', 'wavy'],
+    categories: ['weather', 'navigation', 'multimedia'],
+    added: '2026-10-13',
+    load: () => import('./waves'),
   },
   {
     name: 'wifi-01',
