@@ -43,6 +43,47 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  'default-loop': {
+    group: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0],
+        y: -1,
+        transition: {
+          x: { duration: 0.5, repeat: Infinity, repeatType: 'loop' },
+          y: { duration: 0.2 },
+        },
+      },
+    },
+    path1: {},
+    path2: {},
+    path3: {},
+    hands: {},
+    bell1: {
+      initial: { rotate: 0 },
+      animate: {
+        rotate: [0, 12, -12, 12, -12, 12, -12, 12, -12, 12, -12, 0],
+        transition: {
+          duration: 0.5,
+          ease: 'easeInOut',
+          repeat: Infinity,
+          repeatType: 'loop',
+        },
+      },
+    },
+    bell2: {
+      initial: { rotate: 0 },
+      animate: {
+        rotate: [0, -12, 12, -12, 12, -12, 12, -12, 12, -12, 12, 0],
+        transition: {
+          duration: 0.5,
+          ease: 'easeInOut',
+          repeat: Infinity,
+          repeatType: 'loop',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: AlarmClockProps) {

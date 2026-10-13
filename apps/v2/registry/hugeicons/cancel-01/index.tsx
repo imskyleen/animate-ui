@@ -29,6 +29,24 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  plus: {
+    line1: {
+      initial: { rotate: 0, scale: 1 },
+      animate: {
+        rotate: 45,
+        scale: 0.82,
+        transition: { duration: 0.3, ease: 'easeInOut', delay: 0.1 },
+      },
+    },
+    line2: {
+      initial: { rotate: 0, scale: 1 },
+      animate: {
+        rotate: 45,
+        scale: 0.82,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Cancel01Props) {

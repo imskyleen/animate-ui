@@ -151,6 +151,42 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  draw: {
+    still1: {},
+    still2: {},
+    wave1: {
+      initial: { pathLength: 1, opacity: 1 },
+      animate: {
+        pathLength: [0, 1],
+        opacity: [0, 1],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    wave2: {
+      initial: { pathLength: 1, opacity: 1 },
+      animate: {
+        pathLength: [0, 1],
+        opacity: [0, 1],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+    wave3: {
+      initial: { pathLength: 1, opacity: 1 },
+      animate: {
+        pathLength: [0, 1],
+        opacity: [0, 1],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.4 },
+      },
+    },
+    wave4: {
+      initial: { pathLength: 1, opacity: 1 },
+      animate: {
+        pathLength: [0, 1],
+        opacity: [0, 1],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.6 },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: SignalFull01Props) {

@@ -58,6 +58,41 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  blink: {
+    group: {
+      initial: { scale: 1 },
+      animate: {
+        scale: [1, 0.9, 1.1, 1],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path1: {},
+    path2: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.15,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+            delay: 0.15,
+          },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: SparklesProps) {

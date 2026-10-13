@@ -83,6 +83,46 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  join: {
+    path1: {
+      initial: { x: 0, y: 0, pathLength: 1 },
+      animate: {
+        x: 1.5,
+        y: -1.5,
+        pathLength: 0.85,
+        transition: { duration: 0.4, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0, pathLength: 1 },
+      animate: {
+        x: -1.5,
+        y: 1.5,
+        pathLength: 0.85,
+        transition: { duration: 0.4, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  'join-loop': {
+    path1: {
+      initial: { x: 0, y: 0, pathLength: 1 },
+      animate: {
+        x: [0, 1.5, 0],
+        y: [0, -1.5, 0],
+        pathLength: [1, 0.85, 1],
+        transition: { duration: 0.8, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0, pathLength: 1 },
+      animate: {
+        x: [0, -1.5, 0],
+        y: [0, 1.5, 0],
+        pathLength: [1, 0.85, 1],
+        transition: { duration: 0.8, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Link01Props) {

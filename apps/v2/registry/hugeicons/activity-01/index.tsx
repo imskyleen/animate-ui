@@ -24,6 +24,40 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  'default-return': {
+    frame: {},
+    line: {
+      initial: { opacity: 1, pathLength: 1, pathOffset: 0 },
+      animate: {
+        opacity: [0, 1, 1, 1],
+        pathLength: [0, 1, 0, 1],
+        pathOffset: [1, 0, 0.01, 0],
+        transition: {
+          duration: 2.5,
+          ease: 'easeInOut',
+          opacity: { duration: 0.01 },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  'default-loop': {
+    frame: {},
+    line: {
+      initial: { opacity: 1, pathLength: 1, pathOffset: 0 },
+      animate: {
+        opacity: [0, 1, 1, 1, 1],
+        pathLength: [0, 1, 0, 1, 0],
+        pathOffset: [1, 0, 0.01, 0, 0.999],
+        transition: {
+          duration: 3,
+          ease: 'easeInOut',
+          repeat: Infinity,
+          repeatType: 'loop',
+          opacity: { duration: 0.01 },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Activity01Props) {

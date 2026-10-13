@@ -32,6 +32,59 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  pointing: {
+    path1: {
+      initial: {
+        d: 'M12 18.502V5.00195',
+        opacity: 1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+      animate: {
+        d: 'M12 15.002V5.00195',
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { y: 0 },
+      animate: {
+        y: -3.5,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    group: {},
+  } satisfies Record<string, Variants>,
+  'pointing-loop': {
+    path1: {
+      initial: { d: 'M12 18.502V5.00195' },
+      animate: {
+        d: ['M12 18.502V5.00195', 'M12 15.002V5.00195', 'M12 18.502V5.00195'],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { y: 0 },
+      animate: {
+        y: [0, -3.5, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    group: {},
+  } satisfies Record<string, Variants>,
+  out: {
+    path1: {},
+    path2: {},
+    group: {
+      initial: { y: 0 },
+      animate: {
+        y: [0, '150%', '-150%', 0],
+        transition: {
+          duration: 0.6,
+          ease: 'easeInOut',
+          times: [0, 0.5, 0.5, 1],
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: ArrowDown02Props) {

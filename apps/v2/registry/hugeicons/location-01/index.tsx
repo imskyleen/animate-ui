@@ -42,6 +42,18 @@ const animations = {
     path1: {},
     path2: {},
   } satisfies Record<string, Variants>,
+  rotate: {
+    group: {
+      initial: { transform: 'rotate3d(0, 1, 0, 0deg)', perspective: 600 },
+      animate: {
+        transform: 'rotate3d(0, 1, 0, 360deg)',
+        perspective: 600,
+        transition: { ease: 'easeInOut', duration: 0.7 },
+      },
+    },
+    path1: {},
+    path2: {},
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Location01Props) {

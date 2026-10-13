@@ -114,6 +114,8 @@ export type Track = {
   dy: [number, number];
   /** Its largest turn either way (degrees). */
   turn: number;
+  /** How far its scale went from 1, either way. */
+  scaled: number;
   /** Drawn with a dash (its path drawing itself) at some point. */
   dashed: boolean;
   /** When its opacity starts changing (its Web Animation's delay, ms). */
@@ -149,6 +151,7 @@ export async function track(
           dx: [0, 0],
           dy: [0, 0],
           turn: 0,
+          scaled: 0,
           dashed: false,
           delay: Math.min(
             Infinity,
@@ -178,6 +181,7 @@ export async function track(
               t.turn,
               Math.abs((Math.atan2(m.b, m.a) * 180) / Math.PI),
             );
+            t.scaled = Math.max(t.scaled, Math.abs(Math.hypot(m.a, m.b) - 1));
             if (style.strokeDasharray !== 'none') t.dashed = true;
           });
           if (now < 1300) requestAnimationFrame(tick);

@@ -110,6 +110,29 @@ const animations = {
         },
       },
     },
+    group: {},
+  } satisfies Record<string, Variants>,
+  spin: {
+    ray1: {},
+    ray2: {},
+    ray3: {},
+    ray4: {},
+    ray5: {},
+    ray6: {},
+    ray7: {},
+    ray8: {},
+    group: {
+      initial: { rotate: 0 },
+      animate: {
+        rotate: 360,
+        transition: {
+          duration: 1.5,
+          ease: 'linear',
+          repeat: Infinity,
+          repeatType: 'loop',
+        },
+      },
+    },
   } satisfies Record<string, Variants>,
 } as const;
 
@@ -128,62 +151,64 @@ function IconComponent({ size, ...props }: Loading03Props) {
       strokeWidth={2}
       {...props}
     >
-      <motion.path
-        d="M12 3V6"
-        strokeLinecap="round"
-        variants={variants.ray1}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M18.3635 5.63672L16.2422 7.75804"
-        strokeLinecap="round"
-        variants={variants.ray2}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M21 12L18 12"
-        strokeLinecap="round"
-        variants={variants.ray3}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M18.3635 18.3635L16.2422 16.2422"
-        strokeLinecap="round"
-        variants={variants.ray4}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M12 18V21"
-        strokeLinecap="round"
-        variants={variants.ray5}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M7.75804 16.2422L5.63672 18.3635"
-        strokeLinecap="round"
-        variants={variants.ray6}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M6 12L3 12"
-        strokeLinecap="round"
-        variants={variants.ray7}
-        initial="initial"
-        animate={controls}
-      />
-      <motion.path
-        d="M7.75804 7.75804L5.63672 5.63672"
-        strokeLinecap="round"
-        variants={variants.ray8}
-        initial="initial"
-        animate={controls}
-      />
+      <motion.g variants={variants.group} initial="initial" animate={controls}>
+        <motion.path
+          d="M12 3V6"
+          strokeLinecap="round"
+          variants={variants.ray1}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M18.3635 5.63672L16.2422 7.75804"
+          strokeLinecap="round"
+          variants={variants.ray2}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M21 12L18 12"
+          strokeLinecap="round"
+          variants={variants.ray3}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M18.3635 18.3635L16.2422 16.2422"
+          strokeLinecap="round"
+          variants={variants.ray4}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M12 18V21"
+          strokeLinecap="round"
+          variants={variants.ray5}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M7.75804 16.2422L5.63672 18.3635"
+          strokeLinecap="round"
+          variants={variants.ray6}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M6 12L3 12"
+          strokeLinecap="round"
+          variants={variants.ray7}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M7.75804 7.75804L5.63672 5.63672"
+          strokeLinecap="round"
+          variants={variants.ray8}
+          initial="initial"
+          animate={controls}
+        />
+      </motion.g>
     </motion.svg>
   );
 }

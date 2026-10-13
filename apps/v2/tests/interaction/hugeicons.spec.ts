@@ -712,8 +712,8 @@ test.describe('hugeicons', () => {
 });
 
 // Drawn whole: no animation takes a piece past the icon's 24-unit grid (its
-// stroke, 1, included), where the icon would be cut. (Sent flies off and
-// back in, on purpose, as Lucide's Send.)
+// stroke, 1, included), where the icon would be cut. (Sent and the arrows'
+// out fly off and back in, on purpose, as Lucide's.)
 test.describe('hugeicons within the grid', () => {
   for (const name of NAMES)
     test(`${name}: every animation stays within the grid`, async ({ page }) => {
@@ -727,7 +727,9 @@ test.describe('hugeicons within the grid', () => {
         .filter({ hasText: /^[a-z-]+$/ });
       await expect(buttons.first()).toBeVisible();
       for (const animation of await buttons.allInnerTexts()) {
-        if (name === 'sent' && animation === 'default') continue;
+        // Off the grid and back, on purpose (as Lucide's Send and arrows).
+        if ((name === 'sent' && animation === 'default') || animation === 'out')
+          continue;
         await drawer
           .getByRole('button', { name: animation, exact: true })
           .click();
@@ -765,7 +767,7 @@ test.describe('hugeicons within the grid', () => {
                       );
                     }
                   }
-                  if (performance.now() - start < 1300)
+                  if (performance.now() - start < 2000)
                     requestAnimationFrame(tick);
                   else resolve(worst);
                 };
@@ -917,5 +919,149 @@ test.describe('hugeicons on hover', () => {
       await expect
         .poll(() => moving(svg), { message: 'back to rest', timeout: 6000 })
         .toBe(0);
+    });
+});
+
+// Twins: a Hugeicons icon and its Lucide counterpart offer the same
+// animations, each playing.
+const TWINS: Record<string, string> = {
+  'notification-01': 'bell',
+  favourite: 'heart',
+  'settings-02': 'settings',
+  sent: 'send',
+  'search-01': 'search',
+  refresh: 'refresh-cw',
+  'checkmark-circle-02': 'circle-check',
+  'delete-02': 'trash-2',
+  'copy-01': 'copy',
+  'arrow-right-01': 'chevron-right',
+  sparkles: 'sparkles',
+  star: 'star',
+  'download-04': 'download',
+  'upload-04': 'upload',
+  user: 'user',
+  'message-01': 'message-square',
+  'moon-02': 'moon',
+  'sun-03': 'sun',
+  'link-01': 'link',
+  'add-01': 'plus',
+  'cancel-01': 'x',
+  'menu-01': 'menu',
+  'thumbs-up': 'thumbs-up',
+  'thumbs-down': 'thumbs-down',
+  'alarm-clock': 'alarm-clock',
+  'volume-high': 'volume-2',
+  'volume-01': 'volume-1',
+  'volume-off': 'volume-off',
+  'wifi-01': 'wifi',
+  'wifi-high': 'wifi-high',
+  'wifi-low': 'wifi-low',
+  'wifi-zero': 'wifi-zero',
+  'location-01': 'map-pin',
+  'logout-01': 'log-out',
+  'login-01': 'log-in',
+  'clock-01': 'clock',
+  'attachment-01': 'paperclip',
+  'square-lock-02': 'lock',
+  'square-unlock-02': 'lock-open',
+  'loading-02': 'loader-circle',
+  'loading-01': 'loader-pinwheel',
+  'loading-03': 'loader',
+  'arrow-down-01': 'chevron-down',
+  'arrow-up-01': 'chevron-up',
+  'arrow-left-01': 'chevron-left',
+  'arrow-down-02': 'arrow-down',
+  'arrow-up-02': 'arrow-up',
+  'arrow-left-02': 'arrow-left',
+  'arrow-right-02': 'arrow-right',
+  'plus-sign': 'plus',
+  'maximize-01': 'maximize',
+  'minimize-01': 'minimize',
+  play: 'play',
+  pause: 'pause',
+  'rotate-clockwise': 'rotate-cw',
+  'more-horizontal': 'ellipsis',
+  'more-vertical': 'ellipsis-vertical',
+  'link-square-02': 'external-link',
+  'layers-01': 'layers',
+  'computer-terminal-01': 'terminal',
+  'key-01': 'key',
+  pin: 'pin',
+  'battery-full': 'battery-full',
+  'battery-medium-01': 'battery-medium',
+  'battery-low': 'battery-low',
+  'battery-charging': 'battery-charging',
+  'signal-full-01': 'signal',
+  'finger-print': 'fingerprint',
+  'download-01': 'download',
+  'upload-01': 'upload',
+  'activity-01': 'activity',
+  ...Object.fromEntries(
+    Array.from({ length: 12 }, (_, i) => [
+      `clock-hour-${i + 1}`,
+      `clock-${i + 1}`,
+    ]),
+  ),
+};
+
+/** An icon file's animation names. */
+const animationsOf = (file: string) => {
+  const source = readFileSync(file, 'utf8');
+  const block = source.slice(
+    source.indexOf('const animations'),
+    source.indexOf('} as const'),
+  );
+  return [...block.matchAll(/^ {2}'?([a-z][a-z0-9-]*)'?: /gm)].map(
+    (m) => m[1]!,
+  );
+};
+
+test.describe('hugeicons and their lucide twins', () => {
+  test("every Hugeicons twin offers each of its Lucide twin's animations", () => {
+    for (const [hugeicon, lucide] of Object.entries(TWINS)) {
+      const ours = animationsOf(path.join(REGISTRY, hugeicon, 'index.tsx'));
+      const theirs = animationsOf(
+        path.join(process.cwd(), 'registry/icons', lucide, 'index.tsx'),
+      );
+      for (const name of theirs)
+        expect(ours, `${hugeicon} (${lucide}): ${name}`).toContain(name);
+    }
+  });
+
+  // Each of the animations brought over plays.
+  for (const [name, animations] of [
+    ['sparkles', ['blink']],
+    ['link-01', ['join', 'join-loop']],
+    ['add-01', ['x']],
+    ['cancel-01', ['plus']],
+    ['alarm-clock', ['default-loop']],
+    ['location-01', ['rotate']],
+    ['square-lock-02', ['lock']],
+    ['square-unlock-02', ['unlock']],
+    ['loading-03', ['spin']],
+    ['arrow-down-02', ['pointing', 'pointing-loop', 'out']],
+    ['arrow-right-02', ['pointing', 'pointing-loop', 'out']],
+    ['plus-sign', ['x']],
+    ['rotate-clockwise', ['tilt', 'rotate']],
+    ['more-horizontal', ['vertical', 'jump', 'pulse']],
+    ['more-vertical', ['horizontal', 'pulse']],
+    ['pin', ['bounce', 'wiggle', 'rotate']],
+    ['signal-full-01', ['draw']],
+    ['finger-print', ['default-2']],
+    ['activity-01', ['default-return', 'default-loop']],
+  ] as const)
+    test(`${name}: ${animations.join(', ')} play`, async ({ page }) => {
+      for (const animation of animations) {
+        const tracks = await track(page, URL, title(name), animation);
+        const moved = tracks.some(
+          (t) =>
+            t.dashed ||
+            t.minOpacity < 0.9 ||
+            t.turn > 3 ||
+            t.scaled > 0.05 ||
+            Math.max(-t.dx[0], t.dx[1], -t.dy[0], t.dy[1]) > 0.3,
+        );
+        expect(moved, `${name} ${animation}`).toBe(true);
+      }
     });
 });

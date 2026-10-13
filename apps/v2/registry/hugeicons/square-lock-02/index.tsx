@@ -48,6 +48,30 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  lock: {
+    group: {
+      initial: { rotate: 0, scale: 1 },
+      animate: {
+        rotate: [0, 7, 0],
+        scale: [1, 0.9, 1],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    keyhole: {},
+    body: {},
+    shackle: {
+      initial: {
+        d: 'M7.5 9V6.5C7.5 4.01472 9.51471 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9',
+      },
+      animate: {
+        d: [
+          'M7.5 9V6.5C7.5 4.01472 9.51472 2 12 2C13.9593 2 15.8664 3.25221 16.5 5V5',
+          'M7.5 9V6.5C7.5 4.01472 9.51471 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9',
+        ],
+        transition: { duration: 0.4, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: SquareLock02Props) {

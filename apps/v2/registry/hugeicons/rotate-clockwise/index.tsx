@@ -33,6 +33,47 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  tilt: {
+    path1: {},
+    path2: {},
+    group: {
+      initial: {
+        rotate: 0,
+        scale: 1,
+        transition: { type: 'spring', stiffness: 150, damping: 25 },
+      },
+      animate: {
+        rotate: -45,
+        scale: 0.85,
+        transition: { type: 'spring', stiffness: 150, damping: 25 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  rotate: {
+    path1: {},
+    path2: {},
+    group: {
+      initial: {
+        rotate: 0,
+        scale: 1,
+        transition: { type: 'spring', stiffness: 170, damping: 26 },
+      },
+      animate: {
+        rotate: -360,
+        scale: [1, 0.8, 0.8, 1],
+        transition: {
+          // (Critically damped: round without lingering short of it; once
+          // it's smaller.)
+          rotate: { type: 'spring', stiffness: 170, damping: 26, delay: 0.1 },
+          scale: {
+            duration: 1.4,
+            ease: 'easeInOut',
+            times: [0, 0.07, 0.85, 1],
+          },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: RotateClockwiseProps) {

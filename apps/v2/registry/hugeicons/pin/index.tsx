@@ -25,6 +25,44 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  bounce: {
+    path1: {},
+    path2: {},
+    group: {
+      initial: { scale: 1, rotate: 0, y: 0, transformOrigin: '0% 100%' },
+      animate: {
+        scale: [1, 0.75, 1, 1],
+        rotate: [0, 20, -4, 0],
+        y: [0, -3, 0, 0],
+        transformOrigin: '0% 100%',
+        transition: { duration: 1, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  wiggle: {
+    path1: {},
+    path2: {},
+    group: {
+      initial: { rotate: 0, transformOrigin: '0% 100%' },
+      animate: {
+        rotate: [0, 8, -6, 0],
+        transformOrigin: '0% 100%',
+        transition: { duration: 1, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  rotate: {
+    path1: {},
+    path2: {},
+    group: {
+      initial: { transform: 'rotate3d(0, 1, 0, 0deg)', perspective: 600 },
+      animate: {
+        transform: 'rotate3d(0, 1, 0, 360deg)',
+        perspective: 600,
+        transition: { ease: 'easeInOut', duration: 0.7 },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: PinProps) {
