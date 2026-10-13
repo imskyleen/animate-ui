@@ -15,18 +15,38 @@ type Minimize01Props = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     frame: {},
-    arrows: {
+    arrow1: {
       initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
-      animate: { x: 1, y: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: -0.8,
+        y: 0.8,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    arrow2: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: 0.8,
+        y: -0.8,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
     },
   } satisfies Record<string, Variants>,
   'default-loop': {
     frame: {},
-    arrows: {
+    arrow1: {
       initial: { x: 0, y: 0 },
       animate: {
-        x: [0, 1, 0],
-        y: [0, 1, 0],
+        x: [0, -0.8, 0],
+        y: [0, 0.8, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    arrow2: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, 0.8, 0],
+        y: [0, -0.8, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -57,10 +77,18 @@ function IconComponent({ size, ...props }: Minimize01Props) {
         animate={controls}
       />
       <motion.path
-        d="M6.95693 2.2382C6.95693 2.2382 6.7053 4.50936 6.95693 4.75695M6.95693 4.75695C7.28338 5.07806 9.55878 4.80775 9.55878 4.80775M6.95693 4.75695L10.001 1.74805M5.04502 9.24998C5.04502 9.24998 5.29665 6.97882 5.04502 6.73124M5.04502 6.73124C4.71857 6.41012 2.44317 6.68043 2.44317 6.68043M5.04502 6.73124L2.00098 9.74014"
+        d="M6.95693 2.2382C6.95693 2.2382 6.7053 4.50936 6.95693 4.75695M6.95693 4.75695C7.28338 5.07806 9.55878 4.80775 9.55878 4.80775M6.95693 4.75695L10.001 1.74805"
         strokeLinecap="round"
         strokeLinejoin="round"
-        variants={variants.arrows}
+        variants={variants.arrow1}
+        initial="initial"
+        animate={controls}
+      />
+      <motion.path
+        d="M5.04502 9.24998C5.04502 9.24998 5.29665 6.97882 5.04502 6.73124M5.04502 6.73124C4.71857 6.41012 2.44317 6.68043 2.44317 6.68043M5.04502 6.73124L2.00098 9.74014"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        variants={variants.arrow2}
         initial="initial"
         animate={controls}
       />

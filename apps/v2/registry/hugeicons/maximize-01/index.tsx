@@ -15,22 +15,38 @@ type Maximize01Props = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     frame: {},
-    arrows: {
+    arrow1: {
       initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
       animate: {
-        x: -0.7,
-        y: -0.7,
+        x: 0.8,
+        y: -0.8,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    arrow2: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: -0.8,
+        y: 0.8,
         transition: { duration: 0.3, ease: 'easeInOut' },
       },
     },
   } satisfies Record<string, Variants>,
   'default-loop': {
     frame: {},
-    arrows: {
+    arrow1: {
       initial: { x: 0, y: 0 },
       animate: {
-        x: [0, -0.7, 0],
-        y: [0, -0.7, 0],
+        x: [0, 0.8, 0],
+        y: [0, -0.8, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    arrow2: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, -0.8, 0],
+        y: [0, 0.8, 0],
         transition: { duration: 0.6, ease: 'easeInOut' },
       },
     },
@@ -61,10 +77,18 @@ function IconComponent({ size, ...props }: Maximize01Props) {
         animate={controls}
       />
       <motion.path
-        d="M7.32936 1.85194C7.32936 1.85194 9.54861 1.58797 9.867 1.90156C10.1124 2.14335 9.867 4.36134 9.867 4.36134M9.867 1.90156L6.89808 4.84002M4.6477 9.59694C4.6477 9.59694 2.42845 9.86092 2.11005 9.54732C1.86463 9.30553 2.11005 7.08754 2.11005 7.08754M2.11005 9.54732L5.07898 6.60886"
+        d="M7.32936 1.85194C7.32936 1.85194 9.54861 1.58797 9.867 1.90156C10.1124 2.14335 9.867 4.36134 9.867 4.36134M9.867 1.90156L6.89808 4.84002"
         strokeLinecap="round"
         strokeLinejoin="round"
-        variants={variants.arrows}
+        variants={variants.arrow1}
+        initial="initial"
+        animate={controls}
+      />
+      <motion.path
+        d="M4.6477 9.59694C4.6477 9.59694 2.42845 9.86092 2.11005 9.54732C1.86463 9.30553 2.11005 7.08754 2.11005 7.08754M2.11005 9.54732L5.07898 6.60886"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        variants={variants.arrow2}
         initial="initial"
         animate={controls}
       />

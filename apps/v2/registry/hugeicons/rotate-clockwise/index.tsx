@@ -23,7 +23,7 @@ const animations = {
         transition: { duration: 0.8, ease: 'easeInOut' },
       },
       animate: {
-        rotate: 360,
+        rotate: -360,
         scale: [1, 0.8, 0.8, 1],
         transition: {
           duration: 0.8,
