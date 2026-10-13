@@ -1,6 +1,3 @@
-// Builds the backgrounds registry from registry/backgrounds/<name>/{index.tsx,meta.json}:
-// public/r/backgrounds-<name>.json, installable with
-// `shadcn add @animate-ui/backgrounds-<name>`.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -22,8 +19,6 @@ for (const name of names) {
     readFileSync(path.join(dir, 'meta.json'), 'utf8'),
   ) as Meta;
   const content = readFileSync(path.join(dir, 'index.tsx'), 'utf8');
-  // The npm packages it imports, React aside: `motion/react` → `motion`,
-  // `@animate-ui/react/utils/motion` → `@animate-ui/react`.
   const dependencies = [
     ...new Set(
       [...content.matchAll(/from '([^'.][^']*)'/g)]
@@ -45,7 +40,7 @@ for (const name of names) {
           {
             path: `registry/backgrounds/${name}/index.tsx`,
             type: 'registry:ui',
-            target: `components/animate-ui/backgrounds/${name}.tsx`,
+            target: `@components/animate-ui/backgrounds/${name}.tsx`,
             content,
           },
         ],

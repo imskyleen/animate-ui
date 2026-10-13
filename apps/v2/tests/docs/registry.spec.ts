@@ -1,0 +1,72 @@
+import { readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+import { expect, test } from '@playwright/test';
+
+const OUT = join(__dirname, '../../public/r');
+const SHADCN_REGISTRY = join(
+  realpathSync(join(__dirname, '../../node_modules/shadcn')),
+  '../@shadcn/registry/dist',
+);
+const load = (file: string) =>
+  import(pathToFileURL(join(SHADCN_REGISTRY, file)).href);
+
+const CWD = '/project';
+const config = (registries: Record<string, string> = {}) => ({
+  style: 'new-york',
+  tailwind: { config: '', css: 'src/app.css', baseColor: 'neutral' },
+  rsc: true,
+  tsx: true,
+  aliases: {
+    components: '~/kit',
+    ui: '~/kit/base',
+    lib: '~/helpers',
+    hooks: '~/use',
+    utils: '~/helpers/utils',
+  },
+  registries,
+  resolvedPaths: {
+    cwd: CWD,
+    tailwindConfig: '',
+    tailwindCss: `${CWD}/src/app.css`,
+    components: `${CWD}/src/kit`,
+    ui: `${CWD}/src/kit/base`,
+    lib: `${CWD}/src/helpers`,
+    hooks: `${CWD}/src/use`,
+    utils: `${CWD}/src/helpers/utils`,
+  },
+});
+
+test('every registry file lands where components.json points', async () => {
+  const { resolveFilePath } = await load('utils/updaters/update-files.js');
+  const roots = Object.values(config().resolvedPaths).filter(
+    (dir) => dir.startsWith(`${CWD}/src/`) && !dir.endsWith('.css'),
+  );
+  const stray: string[] = [];
+  for (const file of readdirSync(OUT)) {
+    if (file === 'registry.json' || !file.endsWith('.json')) continue;
+    const item = JSON.parse(readFileSync(join(OUT, file), 'utf8'));
+    for (const entry of item.files ?? []) {
+      const target = resolveFilePath(entry, config(), { isSrcDir: true });
+      if (!roots.some((root) => target.startsWith(`${root}/`)))
+        stray.push(`${item.name}: ${target}`);
+    }
+  }
+  expect(stray).toEqual([]);
+});
+
+test('the shadcn MCP finds items in the @animate-ui registry', async ({
+  baseURL,
+}) => {
+  const { searchRegistries } = await load('registry/index.js');
+  const result = await searchRegistries(['@animate-ui'], {
+    query: 'bell',
+    config: config({
+      '@animate-ui': `${baseURL}/r/{name}.json`,
+    }),
+  });
+  expect(result.items.map((item: { name: string }) => item.name)).toContain(
+    'icons-lucide-bell',
+  );
+});

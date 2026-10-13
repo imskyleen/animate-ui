@@ -1,15 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-// Every install command on the docs is offered in npm, pnpm, yarn and bun,
-// and follows the reader's choice; installs that can be done by hand offer
-// CLI or Manual.
-
 const PAGES = [
   '/docs',
   '/docs/installation',
   '/docs/react',
   '/docs/cli',
   '/docs/skills',
+  '/docs/mcp',
   '/docs/icons/get-started',
   '/docs/icons/lucide-icons',
   '/docs/icons/hugeicons',
@@ -40,7 +37,6 @@ for (const url of PAGES)
         return pres
           .filter((pre) => pattern.test(pre.textContent ?? ''))
           .map((pre) => {
-            // The tab group the block is a panel of (its closest one).
             const GROUP = '[data-slot="code-tabs"], [data-slot="tabs"]';
             const group = pre.closest(GROUP);
             const tabs = group
@@ -86,14 +82,12 @@ test('the home command follows the chosen package manager', async ({
   await expect(
     page.getByText('bunx --bun @animate-ui/cli@latest animate all'),
   ).toBeVisible();
-  // The docs' commands follow the same choice.
   await page.goto('/docs/installation', { waitUntil: 'networkidle' });
   await expect(
     page.getByRole('tab', { name: 'bun', selected: true }).first(),
   ).toBeVisible();
 });
 
-// CLI / Manual switch on Radix's Tabs (shadcn/ui's), not Animate UI's own.
 for (const url of [
   '/docs/primitives/radix-ui/accordion',
   '/docs/backgrounds/bubble',
@@ -103,16 +97,12 @@ for (const url of [
     await page.goto(url, { waitUntil: 'networkidle' });
     const tabs = page.locator('[data-slot="install-tabs"]').first();
     const manual = tabs.getByRole('tab', { name: 'Manual' });
-    // Radix's ids, and no Animate UI highlight.
     await expect(manual).toHaveAttribute('id', /radix-/);
     await expect(tabs.locator('[data-slot="tabs-highlight"]')).toHaveCount(0);
     await manual.click();
     await expect(manual).toHaveAttribute('data-state', 'active');
   });
 
-// Switching CLI and Manual glides the panel's height: what's below it moves
-// with the glide, without jumping as it starts or ends (a trailing margin
-// trapped inside the gliding steps made it jump ~20px at both ends).
 for (const url of [
   '/docs/primitives/radix-ui/accordion',
   '/docs/primitives/base-ui/accordion',
@@ -125,7 +115,6 @@ for (const url of [
     const tabs = page.locator('[data-slot="install-tabs"]').first();
     await tabs.scrollIntoViewIfNeeded();
     for (const tab of ['Manual', 'CLI']) {
-      // The top of what follows the install tabs, on every frame.
       const frames = tabs.evaluate(
         (el) =>
           new Promise<number[]>((resolve) => {

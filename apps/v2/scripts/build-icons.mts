@@ -1,8 +1,3 @@
-// Builds each icon library's registry from registry/<library>/<name>/{index.tsx,meta.json}:
-// - public/r/<prefix>-<name>.json, installable with `shadcn add @animate-ui/<prefix>-<name>`
-// - registry/<library>/index.ts, the list the docs gallery lazy-loads, with each
-//   icon's categories (Lucide's, titles in registry/icons/categories.json) and
-//   the date it was added, if known (the gallery's New filter).
 import {
   existsSync,
   mkdirSync,
@@ -20,23 +15,20 @@ type Meta = {
   title: string;
   description: string;
   keywords: string[];
-  /** The library's categories for the icon (Lucide's: lucide/icons/<name>.json). */
   categories: string[];
-  /** When the icon was added (YYYY-MM-DD). */
   added?: string;
 };
 
-/** Each icon library: its registry folder, item prefix and install folder. */
 const LIBRARIES = [
   {
     dir: 'icons',
     prefix: 'icons-lucide',
-    target: 'components/animate-ui/icons',
+    target: '@components/animate-ui/icons',
   },
   {
     dir: 'hugeicons',
     prefix: 'icons-hugeicons',
-    target: 'components/animate-ui/icons/hugeicons',
+    target: '@components/animate-ui/icons/hugeicons',
   },
 ];
 
@@ -44,7 +36,6 @@ for (const library of LIBRARIES) build(library);
 
 function build({ dir, prefix, target }: (typeof LIBRARIES)[number]) {
   const iconsDir = path.join(root, 'registry', dir);
-  // Category titles: Lucide's (Hugeicons' icons take their twins' categories).
   const categoriesFile = path.join(
     root,
     'registry',

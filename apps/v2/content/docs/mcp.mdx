@@ -1,0 +1,69 @@
+---
+title: MCP
+description: Browse and add Animate UI's icons and backgrounds from your AI assistant with the shadcn MCP server.
+---
+
+The [shadcn MCP server](https://ui.shadcn.com/docs/mcp) lets your AI assistant search Animate UI's registry and add its icons and backgrounds to your project.
+
+## Add the registry
+
+The MCP server searches the registries listed in your `components.json`. Add Animate UI's:
+
+```json title="components.json"
+{
+  "registries": {
+    "@animate-ui": "https://animate-ui.com/r/{name}.json"
+  }
+}
+```
+
+## Configure the MCP server
+
+Run the command for your MCP client:
+
+<Tabs items={['Claude Code', 'Cursor', 'VS Code']}>
+  <Tab value="Claude Code">
+
+```npm
+npx shadcn@latest mcp init --client claude
+```
+
+  </Tab>
+  <Tab value="Cursor">
+
+```npm
+npx shadcn@latest mcp init --client cursor
+```
+
+  </Tab>
+  <Tab value="VS Code">
+
+```npm
+npx shadcn@latest mcp init --client vscode
+```
+
+  </Tab>
+</Tabs>
+
+Or add the server to your client's MCP configuration yourself (`.mcp.json` for Claude Code, `.cursor/mcp.json` for Cursor, `.vscode/mcp.json` for VS Code):
+
+```json
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    }
+  }
+}
+```
+
+## Use it
+
+Ask your assistant things like:
+
+- _"Show me the animated icons in the Animate UI registry."_
+- _"Add the Lucide bell icon from Animate UI."_
+- _"Add Animate UI's stars background to the hero."_
+
+To animate your shadcn/ui components, use the [CLI](/docs/cli) or the [skill](/docs/skills).

@@ -1,7 +1,3 @@
-// Builds a registry item per docs demo, for "Open in v0":
-// public/r/demo-<library>-<name>.json holds the demo and every local file it
-// imports (shadcn/ui components animated by Animate UI, backgrounds…), at the
-// paths they'd have in a shadcn/ui project.
 import {
   existsSync,
   mkdirSync,
@@ -16,8 +12,6 @@ const demosDir = path.join(root, 'demos');
 const outDir = path.join(root, 'public', 'r');
 mkdirSync(outDir, { recursive: true });
 
-// This repo's paths → a shadcn/ui project's (helpers in a style folder, like
-// components/ui/base-ui/rhea/, are the project's components too).
 const toProject = (source: string) =>
   source
     .replace(
@@ -26,11 +20,13 @@ const toProject = (source: string) =>
     )
     .replace(/@\/registry\//g, '@/components/animate-ui/');
 
+const toAlias = (target: string) =>
+  target
+    .replace(/^components\/ui\//, '@ui/')
+    .replace(/^(components|hooks|lib)\//, '@$1/');
+
 const IGNORED = new Set(['react', 'react-dom', 'next']);
 
-// @animate-ui/react's optional peers, by the module (`primitives/<name>`)
-// that needs them: the primitive libraries, the packages Animate UI's own
-// drop-ins are built on, and its own primitives' dependencies.
 const PEERS: Record<string, string> = {
   'radix-ui': 'radix-ui',
   'base-ui': '@base-ui/react',
@@ -77,7 +73,6 @@ for (const library of readdirSync(demosDir)) {
         } else if (!specifier!.startsWith('.')) {
           const pkg = specifier!.match(/^(@[^/]+\/[^/]+|[^/]+)/)![1]!;
           if (!IGNORED.has(pkg)) dependencies.add(pkg);
-          // @animate-ui/react's peers: Motion, and the module's own.
           if (pkg === '@animate-ui/react') {
             dependencies.add('motion');
             const library = specifier!.match(/primitives\/([\w-]+)/)?.[1];
@@ -94,9 +89,11 @@ for (const library of readdirSync(demosDir)) {
           : relative.startsWith('hooks/')
             ? 'registry:hook'
             : 'registry:ui',
-        target: isDemo
-          ? `components/${name}-demo.tsx`
-          : toProject(`@/${relative}`).slice(2),
+        target: toAlias(
+          isDemo
+            ? `components/${name}-demo.tsx`
+            : toProject(`@/${relative}`).slice(2),
+        ),
         content: toProject(source),
       });
     };
