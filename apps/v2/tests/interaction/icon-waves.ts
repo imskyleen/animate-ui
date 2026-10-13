@@ -181,7 +181,12 @@ export async function track(
               t.turn,
               Math.abs((Math.atan2(m.b, m.a) * 180) / Math.PI),
             );
-            t.scaled = Math.max(t.scaled, Math.abs(Math.hypot(m.a, m.b) - 1));
+            // (Either way: across or up and down.)
+            t.scaled = Math.max(
+              t.scaled,
+              Math.abs(Math.hypot(m.a, m.b) - 1),
+              Math.abs(Math.hypot(m.c, m.d) - 1),
+            );
             if (style.strokeDasharray !== 'none') t.dashed = true;
           });
           if (now < 1300) requestAnimationFrame(tick);

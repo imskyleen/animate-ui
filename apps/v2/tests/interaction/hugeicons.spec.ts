@@ -1467,6 +1467,22 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
       expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThan(0.005);
     });
 
+  for (const url of [URL, '/docs/icons/lucide-icons'])
+    test(`Eye Off (${url.split('/').pop()}): its slash drawn across, the eye still`, async ({
+      page,
+    }) => {
+      const tracks = await track(page, url, 'Eye Off', 'default');
+      expect(
+        tracks.filter(
+          (t) =>
+            t.scaled > 0.01 ||
+            t.turn > 0.5 ||
+            Math.max(-t.dx[0], t.dx[1], -t.dy[0], t.dy[1]) > 0.05,
+        ),
+      ).toHaveLength(0);
+      expect(tracks.filter((t) => t.dashed)).toHaveLength(1);
+    });
+
   test('Move Down pointing: its shaft shorter and its head drawn back up', async ({
     page,
   }) => {
