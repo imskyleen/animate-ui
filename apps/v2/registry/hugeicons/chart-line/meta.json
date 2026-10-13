@@ -1,7 +1,14 @@
 {
   "title": "Chart Line Icon",
   "description": "Chart line icon component.",
-  "keywords": ["statistics", "analytics", "diagram", "graph"],
-  "categories": ["charts"],
+  "keywords": [
+    "statistics",
+    "analytics",
+    "diagram",
+    "graph"
+  ],
+  "categories": [
+    "charts"
+  ],
   "added": "2026-10-12"
 }

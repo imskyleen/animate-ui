@@ -15,9 +15,10 @@ type ZoomOutProps = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     lens: {
-      initial: { scale: 1 },
+      initial: { scale: 1, transformOrigin: '44.44% 44.44%' },
       animate: {
         scale: [1, 1.1, 1],
+        transformOrigin: '44.44% 44.44%',
         transition: { duration: 0.5, ease: 'easeInOut' },
       },
     },
@@ -48,8 +49,8 @@ function IconComponent({ size, ...props }: ZoomOutProps) {
       strokeLinejoin="round"
       {...props}
     >
-      <line x1={21} x2={16.65} y1={21} y2={16.65} />
       <motion.g variants={variants.lens} initial="initial" animate={controls}>
+        <line x1={21} x2={16.65} y1={21} y2={16.65} />
         <circle cx={11} cy={11} r={8} />
         <motion.line
           x1={8}

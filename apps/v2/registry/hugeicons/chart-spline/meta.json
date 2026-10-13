@@ -14,6 +14,8 @@
     "function",
     "interpolation"
   ],
-  "categories": ["charts"],
+  "categories": [
+    "charts"
+  ],
   "added": "2026-10-12"
 }

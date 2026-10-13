@@ -11,6 +11,8 @@
     "network",
     "forward"
   ],
-  "categories": ["social"],
+  "categories": [
+    "social"
+  ],
   "added": "2026-10-12"
 }

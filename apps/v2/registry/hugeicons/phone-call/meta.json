@@ -13,6 +13,10 @@
     "waves",
     "signal"
   ],
-  "categories": ["connectivity", "devices", "communication"],
+  "categories": [
+    "connectivity",
+    "devices",
+    "communication"
+  ],
   "added": "2026-10-13"
 }

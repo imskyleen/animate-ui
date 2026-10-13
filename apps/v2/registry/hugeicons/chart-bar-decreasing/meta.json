@@ -1,7 +1,15 @@
 {
   "title": "Chart Bar Decreasing Icon",
   "description": "Chart bar decreasing icon component.",
-  "keywords": ["statistics", "analytics", "diagram", "graph", "trending down"],
-  "categories": ["charts"],
+  "keywords": [
+    "statistics",
+    "analytics",
+    "diagram",
+    "graph",
+    "trending down"
+  ],
+  "categories": [
+    "charts"
+  ],
   "added": "2026-10-13"
 }

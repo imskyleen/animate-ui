@@ -1147,7 +1147,7 @@ test.describe('hugeicons ported from lucide', () => {
     expect(pathsOf('crop')[0]!.startsWith('M4 2V4M4 7.5')).toBe(true);
   });
 
-  test('filled Hugeicons pieces stay filled, never stroked (Clipboard, Wifi Lock…)', () => {
+  test('filled Hugeicons pieces stay filled, as wide as the strokes beside them (Clipboard, Wifi Lock, Square Arrow Out…)', () => {
     for (const name of NAMES) {
       // Every subpath of a filled piece, wherever it went.
       const filled = new Set(
@@ -1160,7 +1160,11 @@ test.describe('hugeicons ported from lucide', () => {
         const d = element.match(/\sd="([^"]+)"/)?.[1];
         if (!d || !d.split(/(?=M)/).some((piece) => filled.has(piece)))
           continue;
-        expect(element, name).toMatch(/fill="currentColor"\s+stroke="none"/);
+        // (Hugeicons fills them as strokes 1.5 wide: 0.5 more, as wide as
+        // the strokes beside them at 2.)
+        expect(element, name).toMatch(
+          /fill="currentColor"\s+strokeWidth=\{0\.5\}/,
+        );
       }
     }
   });
@@ -1413,6 +1417,55 @@ test.describe('hugeicons drawn their own way, after lucide', () => {
     expect(wheel.turn).toBeGreaterThan(10);
     expect(wheel.turn).toBeLessThan(60);
   });
+
+  for (const [url, name] of [
+    [URL, 'zoom-in'],
+    [URL, 'zoom-out'],
+    ['/docs/icons/lucide-icons', 'zoom-in'],
+    ['/docs/icons/lucide-icons', 'zoom-out'],
+  ] as const)
+    test(`${name} (${url.split('/').pop()}): the whole glass pulses, its handle staying on its lens`, async ({
+      page,
+    }) => {
+      await page.goto(url, { waitUntil: 'networkidle' });
+      await page.getByPlaceholder(/Search/).fill(name.replace('-', ' '));
+      await page
+        .locator(`button[aria-pressed][title="${title(name)}"]`)
+        .click();
+      const drawer = page.locator('[data-slot=icon-drawer]');
+      await drawer
+        .getByRole('button', { name: 'default', exact: true })
+        .click();
+      // Where the handle's inner end lies across the lens (as a share of its
+      // width), frame by frame: the same all along (grown apart, it poked
+      // in).
+      const gaps = await drawer
+        .locator('svg')
+        .first()
+        .evaluate(
+          (svg) =>
+            new Promise<number[]>((resolve) => {
+              const pieces = [...svg.querySelectorAll('path, circle, line')];
+              const box = (el: Element) => el.getBoundingClientRect();
+              const lens = pieces.reduce((a, b) =>
+                box(b).width > box(a).width ? b : a,
+              );
+              const handle = pieces.reduce((a, b) =>
+                box(b).left + box(b).top > box(a).left + box(a).top ? b : a,
+              );
+              const out: number[] = [];
+              const start = performance.now();
+              const tick = () => {
+                out.push((box(handle).left - box(lens).left) / box(lens).width);
+                if (performance.now() - start < 700)
+                  requestAnimationFrame(tick);
+                else resolve(out);
+              };
+              requestAnimationFrame(tick);
+            }),
+        );
+      expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThan(0.005);
+    });
 
   test('Move Down pointing: its shaft shorter and its head drawn back up', async ({
     page,

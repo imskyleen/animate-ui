@@ -127,7 +127,8 @@ function IconComponent({ size, ...props }: MoveDownProps) {
         <motion.path
           d="M11.9922 4H11.2422V19.5H11.9922H12.7422V4H11.9922Z"
           fill="currentColor"
-          stroke="none"
+          strokeWidth={0.5}
+          strokeLinejoin="round"
           variants={variants.path1}
           initial="initial"
           animate={controls}
@@ -135,7 +136,8 @@ function IconComponent({ size, ...props }: MoveDownProps) {
         <motion.path
           d="M11.2422 19.5C11.2422 19.9142 11.578 20.25 11.9922 20.25C12.4064 20.25 12.7422 19.9142 12.7422 19.5H11.9922H11.2422Z"
           fill="currentColor"
-          stroke="none"
+          strokeWidth={0.5}
+          strokeLinejoin="round"
           variants={variants.cap}
           initial="initial"
           animate={controls}
@@ -143,7 +145,8 @@ function IconComponent({ size, ...props }: MoveDownProps) {
         <path
           d="M12.7422 4C12.7422 3.58579 12.4064 3.25 11.9922 3.25C11.578 3.25 11.2422 3.58579 11.2422 4H11.9922H12.7422Z"
           fill="currentColor"
-          stroke="none"
+          strokeWidth={0.5}
+          strokeLinejoin="round"
         />
         <motion.path
           d="M6.99219 15C7.97523 16.0114 10.5918 20 11.9922 20C13.3926 20 16.0091 16.0114 16.9922 15"

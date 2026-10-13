@@ -1,7 +1,15 @@
 {
   "title": "Chart No Axes Column Increasing Icon",
   "description": "Chart no axes column increasing icon component.",
-  "keywords": ["statistics", "analytics", "diagram", "graph", "trending up"],
-  "categories": ["charts"],
+  "keywords": [
+    "statistics",
+    "analytics",
+    "diagram",
+    "graph",
+    "trending up"
+  ],
+  "categories": [
+    "charts"
+  ],
   "added": "2026-10-13"
 }
