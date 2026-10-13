@@ -1188,6 +1188,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./copy-01'),
   },
   {
+    name: 'credit-card',
+    title: 'Credit Card',
+    keywords: ['bank', 'purchase', 'payment', 'cc', 'debit'],
+    categories: ['finance'],
+    added: '2026-10-13',
+    load: () => import('./credit-card'),
+  },
+  {
     name: 'crop',
     title: 'Crop',
     keywords: ['photo', 'image'],
@@ -3028,6 +3036,22 @@ export const ICONS: IconEntry[] = [
     load: () => import('./shield-check'),
   },
   {
+    name: 'shopping-bag',
+    title: 'Shopping Bag',
+    keywords: ['ecommerce', 'cart', 'purchase', 'store', 'bag'],
+    categories: ['finance'],
+    added: '2026-10-13',
+    load: () => import('./shopping-bag'),
+  },
+  {
+    name: 'shopping-cart',
+    title: 'Shopping Cart',
+    keywords: ['trolley', 'cart', 'basket', 'e-commerce', 'store'],
+    categories: ['finance', 'transportation'],
+    added: '2026-10-13',
+    load: () => import('./shopping-cart'),
+  },
+  {
     name: 'shrink',
     title: 'Shrink',
     keywords: ['scale', 'fullscreen', 'maximize', 'minimize', 'contract'],
@@ -3381,6 +3405,14 @@ export const ICONS: IconEntry[] = [
     load: () => import('./sun-moon'),
   },
   {
+    name: 'tag',
+    title: 'Tag',
+    keywords: ['label', 'badge', 'ticket', 'price', 'sale'],
+    categories: ['account', 'finance'],
+    added: '2026-10-13',
+    load: () => import('./tag'),
+  },
+  {
     name: 'target-01',
     title: 'Target 01',
     keywords: ['goal', 'aim', 'focus', 'objective'],
@@ -3570,6 +3602,14 @@ export const ICONS: IconEntry[] = [
     categories: ['multimedia'],
     added: '2026-10-12',
     load: () => import('./volume-x'),
+  },
+  {
+    name: 'wallet',
+    title: 'Wallet',
+    keywords: ['money', 'finance', 'pocket', 'payment', 'cash'],
+    categories: ['finance'],
+    added: '2026-10-13',
+    load: () => import('./wallet'),
   },
   {
     name: 'wifi-01',
