@@ -13,7 +13,40 @@ import {
 type CopyProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // The two sheets part, as Hugeicons' Copy; their merge is `merge`.
   default: {
+    rect: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: { x: 1, y: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
+    },
+    path: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: -1,
+        y: -1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  'default-loop': {
+    rect: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, 1, 0],
+        y: [0, 1, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, -1, 0],
+        y: [0, -1, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  merge: {
     rect: {
       initial: {
         y: 0,
@@ -43,7 +76,7 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
-  'default-loop': {
+  'merge-loop': {
     rect: {
       initial: {
         y: 0,

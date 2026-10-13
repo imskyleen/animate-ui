@@ -13,7 +13,19 @@ import {
 type RotateCwProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // Once round, as Hugeicons' Rotate Clockwise; a quarter's lean is `tilt`.
   default: {
+    group: {
+      initial: { rotate: 0, transition: { duration: 0.8, ease: 'easeInOut' } },
+      animate: {
+        rotate: 360,
+        transition: { duration: 0.8, ease: 'easeInOut' },
+      },
+    },
+    path1: {},
+    path2: {},
+  } satisfies Record<string, Variants>,
+  tilt: {
     group: {
       initial: {
         rotate: 0,

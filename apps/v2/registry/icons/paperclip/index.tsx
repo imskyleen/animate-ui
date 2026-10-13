@@ -13,7 +13,17 @@ import {
 type PaperclipProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // It swings, as Hugeicons' Attachment; drawn again is `draw`.
   default: {
+    path: {
+      initial: { rotate: 0 },
+      animate: {
+        rotate: [0, -12, 8, -4, 0],
+        transition: { duration: 0.8, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  draw: {
     path: {
       initial: { pathLength: 1 },
       animate: {
@@ -25,7 +35,7 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
-  'default-loop': {
+  'draw-loop': {
     path: {
       initial: { pathLength: 1 },
       animate: {

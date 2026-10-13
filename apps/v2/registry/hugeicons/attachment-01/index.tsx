@@ -22,6 +22,24 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  draw: {
+    path: {
+      initial: { pathLength: 1 },
+      animate: {
+        pathLength: [0.02, 1],
+        transition: { duration: 1.2, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  'draw-loop': {
+    path: {
+      initial: { pathLength: 1 },
+      animate: {
+        pathLength: [1, 0.02, 1],
+        transition: { duration: 2.4, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Attachment01Props) {

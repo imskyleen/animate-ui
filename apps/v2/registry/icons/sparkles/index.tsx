@@ -13,7 +13,34 @@ import {
 type SparklesProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // Every piece stays: the star pulses, the plus and the dot twinkle after it,
+  // as Hugeicons' Sparkles; gone and back is `blink`.
   default: {
+    group: {
+      initial: { scale: 1 },
+      animate: {
+        scale: [1, 0.9, 1.1, 1],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+    path: {},
+    plus: {
+      initial: { scale: 1, rotate: 0 },
+      animate: {
+        scale: [1, 0.7, 1.2, 1],
+        rotate: [0, 90],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.15 },
+      },
+    },
+    circle: {
+      initial: { scale: 1 },
+      animate: {
+        scale: [1, 0.7, 1.2, 1],
+        transition: { duration: 0.6, ease: 'easeInOut', delay: 0.15 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  blink: {
     group: {
       initial: {
         scale: 1,

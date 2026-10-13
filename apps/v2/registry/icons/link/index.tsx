@@ -13,7 +13,79 @@ import {
 type LinkProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // The links unhook along the chain, whole, and snap back (unlink keeps them
+  // apart), as Hugeicons' Link; drawn together is `join`.
   default: {
+    path1: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, 1, 0],
+        y: [0, -1, 0],
+        transition: {
+          duration: 0.6,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, -1, 0],
+        y: [0, 1, 0],
+        transition: {
+          duration: 0.6,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  'default-loop': {
+    path1: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, 1, 0],
+        y: [0, -1, 0],
+        transition: {
+          duration: 0.8,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0 },
+      animate: {
+        x: [0, -1, 0],
+        y: [0, 1, 0],
+        transition: {
+          duration: 0.8,
+          times: [0, 0.4, 1],
+          ease: ['easeOut', 'backOut'],
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  unlink: {
+    path1: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: 1,
+        y: -1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { x: 0, y: 0, transition: { duration: 0.3, ease: 'easeInOut' } },
+      animate: {
+        x: -1,
+        y: 1,
+        transition: { duration: 0.3, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  join: {
     path1: {
       initial: {
         x: 0,
@@ -55,7 +127,7 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
-  'default-loop': {
+  'join-loop': {
     path1: {
       initial: {
         x: 0,

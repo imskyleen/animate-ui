@@ -137,7 +137,11 @@ export async function track(
   return (await play(page, animation)).evaluate(
     (svg) =>
       new Promise<Track[]>((resolve) => {
-        const elements = [...svg.querySelectorAll('g, path, circle')];
+        const elements = [
+          // (The icon itself too: some move as a whole.)
+          svg,
+          ...svg.querySelectorAll('g, path, circle, rect, line'),
+        ];
         const tracks: Track[] = elements.map((el) => ({
           tag: el.tagName,
           minOpacity: 1,

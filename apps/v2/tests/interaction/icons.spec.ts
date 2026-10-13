@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { playWaves, wavesOf } from './icon-waves';
+import { playWaves, track, wavesOf } from './icon-waves';
 
 // The icon core (@animate-ui/react/icons) on the Bell icon
 // (tests/fixtures/icons.tsx), whose group swings through
@@ -805,4 +805,88 @@ test.describe('lucide waves', () => {
         expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(100);
     });
   }
+});
+
+// Lucide's icons move by default as their Hugeicons counterparts do; what
+// they did is kept under another name.
+test.describe('lucide defaults, as hugeicons', () => {
+  const URL = '/docs/icons/lucide-icons';
+  const named = async (page: Page, animations: string[]) => {
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    for (const name of animations)
+      await expect(
+        drawer.getByRole('button', { name, exact: true }),
+      ).toBeVisible();
+  };
+
+  test('Copy: its sheets part (merge kept)', async ({ page }) => {
+    const [rect, path] = (await track(page, URL, 'Copy', 'default')).filter(
+      (t) => t.tag !== 'svg',
+    );
+    expect(rect!.dx[1]).toBeGreaterThan(0.6);
+    expect(path!.dx[0]).toBeLessThan(-0.6);
+    await named(page, ['merge', 'merge-loop']);
+  });
+
+  test('Link: its links unhook whole and snap back (unlink, join kept)', async ({
+    page,
+  }) => {
+    const tracks = (await track(page, URL, 'Link', 'default')).filter(
+      (t) => t.tag !== 'svg',
+    );
+    for (const t of tracks) expect(t.dashed, 'whole').toBe(false);
+    expect(tracks[0]!.dx[1]).toBeGreaterThan(0.6);
+    expect(tracks[1]!.dx[0]).toBeLessThan(-0.6);
+    await named(page, ['unlink', 'join', 'join-loop']);
+  });
+
+  test('Sparkles: every piece stays drawn (blink kept)', async ({ page }) => {
+    const tracks = await track(page, URL, 'Sparkles', 'default');
+    for (const t of tracks) expect(t.minOpacity).toBeGreaterThan(0.99);
+    expect(
+      tracks.some((t) => t.turn > 30),
+      'the plus turns',
+    ).toBe(true);
+    await named(page, ['blink']);
+  });
+
+  test('Paperclip: it swings (draw kept)', async ({ page }) => {
+    const tracks = await track(page, URL, 'Paperclip', 'default');
+    expect(tracks.some((t) => t.turn > 5)).toBe(true);
+    expect(tracks.every((t) => !t.dashed)).toBe(true);
+    await named(page, ['draw', 'draw-loop']);
+  });
+
+  test('Pin: it swings on its tip, without jumping (bounce kept)', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, 'Pin', 'default');
+    expect(tracks.some((t) => t.turn > 5)).toBe(true);
+    for (const t of tracks) expect(Math.abs(t.dy[0])).toBeLessThan(0.5);
+    await named(page, ['bounce']);
+  });
+
+  test('Rotate Cw: once round (tilt kept)', async ({ page }) => {
+    const tracks = await track(page, URL, 'Rotate Cw', 'default');
+    expect(tracks.some((t) => t.turn > 150)).toBe(true);
+    await named(page, ['tilt']);
+  });
+
+  for (const [title, count, kept] of [
+    ['Battery Full', 3, 'blink'],
+    ['Battery Medium', 2, 'blink'],
+    ['Battery Low', 1, 'blink'],
+    ['Signal', 5, 'draw'],
+    ['Signal High', 4, 'draw'],
+  ] as const)
+    test(`${title}: its bars pulse one after the other, never gone (${kept} kept)`, async ({
+      page,
+    }) => {
+      const dips = await playWaves(page, URL, title, 'default');
+      const waves = wavesOf(dips);
+      expect(waves).toHaveLength(count);
+      for (const dip of dips.filter((d) => d.wave))
+        expect(dip.min).toBeGreaterThan(0.2);
+      await named(page, [kept]);
+    });
 });

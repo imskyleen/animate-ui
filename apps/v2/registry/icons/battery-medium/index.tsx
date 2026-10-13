@@ -13,7 +13,29 @@ import {
 type BatteryMediumProps = IconProps<keyof typeof animations>;
 
 const animations = {
+  // Its bars pulse one after the other, never gone, as Hugeicons'; gone and
+  // back is `blink`.
   default: {
+    rect: {},
+    line1: {},
+    line2: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+    line3: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.12 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  blink: {
     rect: {},
     line1: {},
     line2: {

@@ -28,7 +28,52 @@ const pathAnimation: Variants = {
 };
 
 const animations = {
+  // Its bars pulse one after the other, never gone, as Hugeicons'; drawn in
+  // turn is `draw`.
   default: {
+    group: {},
+    path1: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+    path2: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.12 },
+      },
+    },
+    path3: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.24 },
+      },
+    },
+    path4: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.36 },
+      },
+    },
+    path5: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.48 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  draw: {
     group: {
       initial: {},
       animate: {
