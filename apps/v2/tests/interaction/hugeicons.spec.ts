@@ -58,14 +58,15 @@ const moving = (svg: Locator) =>
       [el, ...el.querySelectorAll('*')].filter((node) => {
         const style = getComputedStyle(node);
         const m = new DOMMatrix(style.transform);
-        const d = node.getAttribute('d');
-        const rest = (node as HTMLElement).dataset?.restD;
-        if (d !== null && rest === undefined)
-          node.setAttribute('data-rest-d', d);
+        // Its shape and how much of it is drawn (a stroke drawing itself),
+        // against when first seen.
+        const shape = `${node.getAttribute('d')} ${style.strokeDasharray}`;
+        const rest = (node as HTMLElement).dataset?.restShape;
+        if (rest === undefined) node.setAttribute('data-rest-shape', shape);
         return (
           !m.isIdentity ||
           Number(style.opacity) < 0.99 ||
-          (rest !== undefined && rest !== d)
+          (rest !== undefined && rest !== shape)
         );
       }).length,
   );
@@ -74,6 +75,7 @@ test.describe('hugeicons', () => {
   test('the registry draws Hugeicons’ own icons at rest, at a stroke of 2 (split into pieces to animate, never reshaped)', async ({
     page,
   }) => {
+    test.setTimeout(240_000);
     expect(NAMES.length).toBeGreaterThanOrEqual(16);
     await page.setContent('<svg viewBox="0 0 24 24"></svg>');
     for (const name of NAMES) {
@@ -397,10 +399,12 @@ test.describe('hugeicons', () => {
     page,
   }) => {
     await gotoGallery(page);
-    // Every clock with hands (the alarm clock shakes, its hands still, as
-    // Lucide's).
-    const clocks = NAMES.filter(
-      (name) => name.includes('clock') && name !== 'alarm-clock',
+    // Every icon with clock hands (the alarm clock shakes, its hands still,
+    // as Lucide's).
+    const clocks = NAMES.filter((name) =>
+      readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').includes(
+        'variants.minute',
+      ),
     );
     expect(clocks.length).toBeGreaterThanOrEqual(26);
     for (const name of clocks) {

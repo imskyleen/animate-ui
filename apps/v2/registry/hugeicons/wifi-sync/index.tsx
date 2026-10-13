@@ -22,8 +22,12 @@ const animations = {
       },
       animate: {
         rotate: 180,
-        scale: [1, 0.8, 1],
-        transition: { duration: 0.8, ease: 'easeInOut' },
+        scale: [1, 0.8, 0.8, 1],
+        transition: {
+          duration: 0.8,
+          ease: 'easeInOut',
+          scale: { duration: 0.8, ease: 'easeInOut', times: [0, 0.2, 0.8, 1] },
+        },
       },
     },
     wave1: {
