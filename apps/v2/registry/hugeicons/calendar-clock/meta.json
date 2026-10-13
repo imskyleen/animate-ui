@@ -1,7 +1,14 @@
 {
   "title": "Calendar Clock Icon",
   "description": "Calendar Clock icon component.",
-  "keywords": ["calendar", "schedule", "date", "time"],
-  "categories": [],
+  "keywords": [
+    "calendar",
+    "schedule",
+    "date",
+    "time"
+  ],
+  "categories": [
+    "time"
+  ],
   "added": "2026-10-12"
 }

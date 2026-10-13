@@ -1,7 +1,15 @@
 {
   "title": "Wifi Full Signal Icon",
   "description": "Wifi Full Signal icon component.",
-  "keywords": ["wireless", "network", "signal", "internet"],
-  "categories": [],
+  "keywords": [
+    "wireless",
+    "network",
+    "signal",
+    "internet"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

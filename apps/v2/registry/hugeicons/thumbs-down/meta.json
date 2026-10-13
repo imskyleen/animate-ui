@@ -1,7 +1,15 @@
 {
   "title": "Thumbs Down Icon",
   "description": "Thumbs Down icon component.",
-  "keywords": ["dislike", "bad", "no"],
-  "categories": [],
+  "keywords": [
+    "dislike",
+    "bad",
+    "no"
+  ],
+  "categories": [
+    "account",
+    "social",
+    "emoji"
+  ],
   "added": "2026-10-12"
 }

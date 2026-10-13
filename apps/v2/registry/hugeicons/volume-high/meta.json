@@ -1,7 +1,16 @@
 {
   "title": "Volume High Icon",
   "description": "Volume High icon component.",
-  "keywords": ["sound", "speaker", "audio", "loud"],
-  "categories": [],
+  "keywords": [
+    "sound",
+    "speaker",
+    "audio",
+    "loud"
+  ],
+  "categories": [
+    "connectivity",
+    "communication",
+    "multimedia"
+  ],
   "added": "2026-10-12"
 }

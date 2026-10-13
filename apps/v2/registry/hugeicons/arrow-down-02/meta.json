@@ -1,7 +1,12 @@
 {
   "title": "Arrow Down 02 Icon",
   "description": "Arrow Down 02 icon component.",
-  "keywords": ["arrow", "direction"],
-  "categories": [],
+  "keywords": [
+    "arrow",
+    "direction"
+  ],
+  "categories": [
+    "arrows"
+  ],
   "added": "2026-10-12"
 }

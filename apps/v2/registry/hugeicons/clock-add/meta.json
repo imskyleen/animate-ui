@@ -1,7 +1,14 @@
 {
   "title": "Clock Add Icon",
   "description": "Clock Add icon component.",
-  "keywords": ["time", "add", "new", "schedule"],
-  "categories": [],
+  "keywords": [
+    "time",
+    "add",
+    "new",
+    "schedule"
+  ],
+  "categories": [
+    "time"
+  ],
   "added": "2026-10-12"
 }

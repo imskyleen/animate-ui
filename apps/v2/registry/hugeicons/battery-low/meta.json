@@ -1,7 +1,15 @@
 {
   "title": "Battery Low Icon",
   "description": "Battery Low icon component.",
-  "keywords": ["battery", "charge", "power", "low"],
-  "categories": [],
+  "keywords": [
+    "battery",
+    "charge",
+    "power",
+    "low"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

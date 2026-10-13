@@ -1,7 +1,15 @@
 {
   "title": "Gift Icon",
   "description": "Gift icon component.",
-  "keywords": ["present", "surprise", "reward", "birthday"],
-  "categories": [],
+  "keywords": [
+    "present",
+    "surprise",
+    "reward",
+    "birthday"
+  ],
+  "categories": [
+    "finance",
+    "gaming"
+  ],
   "added": "2026-10-12"
 }

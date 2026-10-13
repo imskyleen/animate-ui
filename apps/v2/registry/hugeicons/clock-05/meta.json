@@ -1,7 +1,15 @@
 {
   "title": "Clock 05 Icon",
   "description": "Clock 05 icon component.",
-  "keywords": ["time", "watch", "hour", "schedule", "timer"],
-  "categories": [],
+  "keywords": [
+    "time",
+    "watch",
+    "hour",
+    "schedule",
+    "timer"
+  ],
+  "categories": [
+    "time"
+  ],
   "added": "2026-10-12"
 }

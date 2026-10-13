@@ -1,7 +1,15 @@
 {
   "title": "Battery Charging Icon",
   "description": "Battery Charging icon component.",
-  "keywords": ["battery", "charge", "power", "energy"],
-  "categories": [],
+  "keywords": [
+    "battery",
+    "charge",
+    "power",
+    "energy"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

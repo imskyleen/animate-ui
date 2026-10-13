@@ -1,7 +1,15 @@
 {
   "title": "Volume X Icon",
   "description": "Volume X icon component.",
-  "keywords": ["sound", "speaker", "audio", "mute", "off"],
-  "categories": [],
+  "keywords": [
+    "sound",
+    "speaker",
+    "audio",
+    "mute",
+    "off"
+  ],
+  "categories": [
+    "multimedia"
+  ],
   "added": "2026-10-12"
 }

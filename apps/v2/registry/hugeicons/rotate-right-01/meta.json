@@ -1,7 +1,13 @@
 {
   "title": "Rotate Right 01 Icon",
   "description": "Rotate Right 01 icon component.",
-  "keywords": ["rotate", "right", "turn"],
-  "categories": [],
+  "keywords": [
+    "rotate",
+    "right",
+    "turn"
+  ],
+  "categories": [
+    "arrows"
+  ],
   "added": "2026-10-12"
 }

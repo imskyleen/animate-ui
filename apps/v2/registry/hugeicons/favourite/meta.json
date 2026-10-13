@@ -1,7 +1,19 @@
 {
   "title": "Favourite Icon",
   "description": "Favourite icon component.",
-  "keywords": ["heart", "like", "love", "favorite"],
-  "categories": [],
+  "keywords": [
+    "heart",
+    "like",
+    "love",
+    "favorite"
+  ],
+  "categories": [
+    "medical",
+    "social",
+    "multimedia",
+    "emoji",
+    "gaming",
+    "shapes"
+  ],
   "added": "2026-10-12"
 }

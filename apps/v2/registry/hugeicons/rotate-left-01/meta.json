@@ -1,7 +1,13 @@
 {
   "title": "Rotate Left 01 Icon",
   "description": "Rotate Left 01 icon component.",
-  "keywords": ["rotate", "left", "turn"],
-  "categories": [],
+  "keywords": [
+    "rotate",
+    "left",
+    "turn"
+  ],
+  "categories": [
+    "arrows"
+  ],
   "added": "2026-10-12"
 }

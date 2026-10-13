@@ -1,7 +1,14 @@
 {
   "title": "Square Unlock 02 Icon",
   "description": "Square Unlock 02 icon component.",
-  "keywords": ["unlock", "open", "unsecure", "access"],
-  "categories": [],
+  "keywords": [
+    "unlock",
+    "open",
+    "unsecure",
+    "access"
+  ],
+  "categories": [
+    "security"
+  ],
   "added": "2026-10-12"
 }

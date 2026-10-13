@@ -1,7 +1,15 @@
 {
   "title": "Flash Icon",
   "description": "Flash icon component.",
-  "keywords": ["lightning", "energy", "power", "bolt"],
-  "categories": [],
+  "keywords": [
+    "lightning",
+    "energy",
+    "power",
+    "bolt"
+  ],
+  "categories": [
+    "weather",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

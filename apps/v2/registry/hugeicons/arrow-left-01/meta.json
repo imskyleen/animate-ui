@@ -1,7 +1,13 @@
 {
   "title": "Arrow Left 01 Icon",
   "description": "Arrow Left 01 icon component.",
-  "keywords": ["chevron", "arrow", "direction"],
-  "categories": [],
+  "keywords": [
+    "chevron",
+    "arrow",
+    "direction"
+  ],
+  "categories": [
+    "arrows"
+  ],
   "added": "2026-10-12"
 }

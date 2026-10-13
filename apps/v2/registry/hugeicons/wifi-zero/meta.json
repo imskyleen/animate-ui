@@ -1,7 +1,15 @@
 {
   "title": "Wifi Zero Icon",
   "description": "Wifi Zero icon component.",
-  "keywords": ["wireless", "network", "signal", "internet"],
-  "categories": [],
+  "keywords": [
+    "wireless",
+    "network",
+    "signal",
+    "internet"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

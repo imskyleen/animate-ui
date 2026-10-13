@@ -1,7 +1,16 @@
 {
   "title": "Thumbs Up Icon",
   "description": "Thumbs Up icon component.",
-  "keywords": ["like", "approve", "good", "yes"],
-  "categories": [],
+  "keywords": [
+    "like",
+    "approve",
+    "good",
+    "yes"
+  ],
+  "categories": [
+    "account",
+    "social",
+    "emoji"
+  ],
   "added": "2026-10-12"
 }

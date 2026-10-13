@@ -1,7 +1,14 @@
 {
   "title": "Upload 01 Icon",
   "description": "Upload 01 icon component.",
-  "keywords": ["export", "send", "arrow up"],
-  "categories": [],
+  "keywords": [
+    "export",
+    "send",
+    "arrow up"
+  ],
+  "categories": [
+    "arrows",
+    "files"
+  ],
   "added": "2026-10-12"
 }

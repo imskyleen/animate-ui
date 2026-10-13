@@ -1,7 +1,14 @@
 {
   "title": "Maximize 01 Icon",
   "description": "Maximize 01 icon component.",
-  "keywords": ["expand", "fullscreen", "enlarge"],
-  "categories": [],
+  "keywords": [
+    "expand",
+    "fullscreen",
+    "enlarge"
+  ],
+  "categories": [
+    "layout",
+    "design"
+  ],
   "added": "2026-10-12"
 }

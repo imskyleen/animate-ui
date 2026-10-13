@@ -1,7 +1,16 @@
 {
   "title": "Wifi Pen Icon",
   "description": "Wifi Pen icon component.",
-  "keywords": ["wireless", "network", "signal", "internet", "edit"],
-  "categories": [],
+  "keywords": [
+    "wireless",
+    "network",
+    "signal",
+    "internet",
+    "edit"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

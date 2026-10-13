@@ -1,7 +1,14 @@
 {
   "title": "Arrow Down 01 Icon",
   "description": "Arrow Down 01 icon component.",
-  "keywords": ["chevron", "arrow", "direction"],
-  "categories": [],
+  "keywords": [
+    "chevron",
+    "arrow",
+    "direction"
+  ],
+  "categories": [
+    "arrows",
+    "gaming"
+  ],
   "added": "2026-10-12"
 }

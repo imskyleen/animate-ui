@@ -1,7 +1,18 @@
 {
   "title": "Activity 01 Icon",
   "description": "Activity 01 icon component.",
-  "keywords": ["pulse", "health", "heartbeat", "monitor"],
-  "categories": [],
+  "keywords": [
+    "pulse",
+    "health",
+    "heartbeat",
+    "monitor"
+  ],
+  "categories": [
+    "medical",
+    "account",
+    "social",
+    "science",
+    "multimedia"
+  ],
   "added": "2026-10-12"
 }

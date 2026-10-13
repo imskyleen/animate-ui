@@ -1,7 +1,15 @@
 {
   "title": "Clock Hour 10 Icon",
   "description": "Clock Hour 10 icon component.",
-  "keywords": ["time", "watch", "hour", "schedule", "10 o'clock"],
-  "categories": [],
+  "keywords": [
+    "time",
+    "watch",
+    "hour",
+    "schedule",
+    "10 o'clock"
+  ],
+  "categories": [
+    "time"
+  ],
   "added": "2026-10-12"
 }

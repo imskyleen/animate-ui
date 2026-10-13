@@ -1,15 +1,7 @@
 {
   "title": "Chart Column Decreasing Icon",
   "description": "Chart column decreasing icon component.",
-  "keywords": [
-    "statistics",
-    "analytics",
-    "diagram",
-    "graph",
-    "trending down"
-  ],
-  "categories": [
-    "charts"
-  ],
+  "keywords": ["statistics", "analytics", "diagram", "graph", "trending down"],
+  "categories": ["charts"],
   "added": "2025-09-07"
 }

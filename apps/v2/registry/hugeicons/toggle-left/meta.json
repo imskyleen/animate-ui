@@ -1,0 +1,16 @@
+{
+  "title": "Toggle Left Icon",
+  "description": "Toggle left icon component.",
+  "keywords": [
+    "on",
+    "off",
+    "switch",
+    "boolean"
+  ],
+  "categories": [
+    "layout",
+    "account",
+    "development"
+  ],
+  "added": "2026-10-12"
+}

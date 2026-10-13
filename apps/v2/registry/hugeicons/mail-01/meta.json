@@ -1,7 +1,15 @@
 {
   "title": "Mail 01 Icon",
   "description": "Mail 01 icon component.",
-  "keywords": ["email", "envelope", "letter", "inbox"],
-  "categories": [],
+  "keywords": [
+    "email",
+    "envelope",
+    "letter",
+    "inbox"
+  ],
+  "categories": [
+    "mail",
+    "communication"
+  ],
   "added": "2026-10-12"
 }

@@ -1,7 +1,20 @@
 {
   "title": "Star Icon",
   "description": "Star icon component.",
-  "keywords": ["favorite", "rating", "bookmark", "like"],
-  "categories": [],
+  "keywords": [
+    "favorite",
+    "rating",
+    "bookmark",
+    "like"
+  ],
+  "categories": [
+    "account",
+    "social",
+    "shapes",
+    "multimedia",
+    "weather",
+    "emoji",
+    "gaming"
+  ],
   "added": "2026-10-12"
 }

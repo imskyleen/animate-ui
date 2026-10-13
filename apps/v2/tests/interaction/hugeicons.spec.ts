@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
 import * as Hugeicons from '@hugeicons/core-free-icons';
@@ -8,7 +8,7 @@ import { playWaves, track, wavesOf } from './icon-waves';
 
 // Hugeicons' animated icons (registry/hugeicons): Hugeicons' free set, drawn
 // at a stroke of 2, in the same gallery as Lucide's, installed as
-// `@animate-ui/hugeicons-<name>` into components/animate-ui/icons/hugeicons.
+// `@animate-ui/icons-hugeicons-<name>` into components/animate-ui/icons/hugeicons.
 
 const URL = '/docs/icons/hugeicons';
 const REGISTRY = path.join(process.cwd(), 'registry/hugeicons');
@@ -45,8 +45,16 @@ async function gotoGallery(page: Page) {
   await page.goto(URL, { waitUntil: 'networkidle' });
 }
 
+/** Its title in the gallery (its meta's, as CCTV). */
+const label = (name: string) =>
+  (
+    JSON.parse(
+      readFileSync(path.join(REGISTRY, name, 'meta.json'), 'utf8'),
+    ) as { title: string }
+  ).title.replace(/ Icon$/, '');
+
 const tile = (page: Page, name: string) =>
-  page.locator(`button[aria-pressed][title="${title(name)}"]`);
+  page.locator(`button[aria-pressed][title="${label(name)}"]`);
 
 /**
  * Elements of the icon moved, faded or reshaped (off rest): a path's shape
@@ -89,7 +97,7 @@ test.describe('hugeicons', () => {
         ),
         ...[
           ...file.matchAll(
-            /<motion\.circle\s+cx=\{([\d.]+)\}\s+cy=\{([\d.]+)\}\s+r=\{([\d.]+)\}/g,
+            /<(?:motion\.)?circle\s+cx=\{([\d.]+)\}\s+cy=\{([\d.]+)\}\s+r=\{([\d.]+)\}/g,
           ),
         ].map(
           (m) =>
@@ -118,7 +126,8 @@ test.describe('hugeicons', () => {
                   tag,
                 ) as SVGGeometryElement;
                 for (const [k, v] of Object.entries(attrs))
-                  if (['d', 'cx', 'cy', 'r'].includes(k)) el.setAttribute(k, v);
+                  if (['d', 'cx', 'cy', 'r', 'transform'].includes(k))
+                    el.setAttribute(k, v);
                 svg.append(el);
                 return el;
               });
@@ -126,9 +135,14 @@ test.describe('hugeicons', () => {
             els.flatMap((el) => {
               const out: DOMPoint[] = [];
               const length = el.getTotalLength();
-              for (let at = 0; at <= length; at += step)
-                out.push(el.getPointAtLength(at));
-              out.push(el.getPointAtLength(length));
+              // (Where its own transform puts it, if it has one.)
+              const m = el.transform.baseVal.consolidate()?.matrix;
+              const at = (l: number) => {
+                const p = el.getPointAtLength(l);
+                return m ? p.matrixTransform(m) : p;
+              };
+              for (let l = 0; l <= length; l += step) out.push(at(l));
+              out.push(at(length));
               return out;
             });
           const a = make(theirs);
@@ -157,9 +171,9 @@ test.describe('hugeicons', () => {
   }) => {
     for (const name of NAMES) {
       const item = await (
-        await request.get(`/r/hugeicons-${name}.json`)
+        await request.get(`/r/icons-hugeicons-${name}.json`)
       ).json();
-      expect(item.name).toBe(`hugeicons-${name}`);
+      expect(item.name).toBe(`icons-hugeicons-${name}`);
       expect(item.dependencies).toEqual(['@animate-ui/react', 'motion']);
       expect(item.files[0].target).toBe(
         `components/animate-ui/icons/hugeicons/${name}.tsx`,
@@ -170,7 +184,7 @@ test.describe('hugeicons', () => {
     }
   });
 
-  test('the gallery lists every icon, searchable by keyword, each new one dotted at its top left (New filters them)', async ({
+  test("the gallery lists every icon, searchable by keyword and filtered by Lucide's category tags, each new one dotted at its top left (New filters them)", async ({
     page,
   }) => {
     await gotoGallery(page);
@@ -196,23 +210,27 @@ test.describe('hugeicons', () => {
     expect(dot.left).toBeLessThan(16);
     expect(dot.top).toBeLessThan(16);
     expect(dot.size).toBe(8);
-    // No tags: All and New only.
     await page.getByRole('button', { name: 'New', exact: true }).click();
     await expect(tiles).toHaveCount(NAMES.length);
+    // The same tags as Lucide's: the time one keeps the clocks, not the
+    // bell.
+    await page.getByRole('button', { name: 'Time', exact: true }).click();
+    await expect(tile(page, 'clock-01')).toBeVisible();
+    await expect(tile(page, 'notification-01')).toHaveCount(0);
+    expect(await tiles.count()).toBeLessThan(NAMES.length);
     await page.getByRole('button', { name: 'All', exact: true }).click();
     await page.getByPlaceholder(/Search/).fill('bell');
-    await expect(tiles).toHaveCount(1);
     await expect(tile(page, 'notification-01')).toBeVisible();
   });
 
-  test('a picked icon installs from its drawer as @animate-ui/hugeicons-<name>, and imports from icons/hugeicons', async ({
+  test('a picked icon installs from its drawer as @animate-ui/icons-hugeicons-<name>, and imports from icons/hugeicons', async ({
     page,
   }) => {
     await gotoGallery(page);
     await tile(page, 'notification-01').click();
     const drawer = page.locator('[data-slot=icon-drawer]');
     await expect(drawer).toContainText(
-      'shadcn@latest add @animate-ui/hugeicons-notification-01',
+      'shadcn@latest add @animate-ui/icons-hugeicons-notification-01',
     );
     await expect(drawer).toContainText(
       "import { Notification01 } from '@/components/animate-ui/icons/hugeicons/notification-01';",
@@ -718,7 +736,7 @@ test.describe('hugeicons within the grid', () => {
   for (const name of NAMES)
     test(`${name}: every animation stays within the grid`, async ({ page }) => {
       await gotoGallery(page);
-      await page.getByPlaceholder(/Search/).fill(title(name).toLowerCase());
+      await page.getByPlaceholder(/Search/).fill(label(name).toLowerCase());
       await tile(page, name).click();
       const drawer = page.locator('[data-slot=icon-drawer]');
       const buttons = drawer
@@ -728,7 +746,11 @@ test.describe('hugeicons within the grid', () => {
       await expect(buttons.first()).toBeVisible();
       for (const animation of await buttons.allInnerTexts()) {
         // Off the grid and back, on purpose (as Lucide's Send and arrows).
-        if ((name === 'sent' && animation === 'default') || animation === 'out')
+        if (
+          (['sent', 'send-horizontal'].includes(name) &&
+            animation === 'default') ||
+          animation === 'out'
+        )
           continue;
         await drawer
           .getByRole('button', { name: animation, exact: true })
@@ -799,7 +821,7 @@ test.describe('hugeicons waves', () => {
     test(`${name}: its ${count} waves pulse one after the other, never gone; blink takes them and brings them back`, async ({
       page,
     }) => {
-      const pulsed = await playWaves(page, URL, title(name), 'default');
+      const pulsed = await playWaves(page, URL, label(name), 'default');
       // (Its waves; a badge moves its own way.)
       for (const dip of pulsed.filter((dip) => dip.wave))
         expect(dip.min).toBeGreaterThan(0.2);
@@ -808,7 +830,7 @@ test.describe('hugeicons waves', () => {
       for (let i = 1; i < waves.length; i++)
         expect(waves[i]!.at - waves[i - 1]!.at).toBeGreaterThan(60);
       const blinked = wavesOf(
-        await playWaves(page, URL, title(name), 'blink'),
+        await playWaves(page, URL, label(name), 'blink'),
         0.05,
       );
       expect(blinked).toHaveLength(count);
@@ -831,10 +853,10 @@ test.describe('hugeicons wifi and volume states', () => {
     test(`${name}: it shakes (its waves never pulse); off draws its slash again`, async ({
       page,
     }) => {
-      const tracks = await track(page, URL, title(name), 'default');
+      const tracks = await track(page, URL, label(name), 'default');
       shaken(tracks);
       for (const t of tracks) expect(t.minOpacity).toBeGreaterThan(0.9);
-      const off = await track(page, URL, title(name), 'off');
+      const off = await track(page, URL, label(name), 'off');
       // The slash: the last piece of the shaken group.
       expect(off.filter((t) => t.dashed)).toHaveLength(1);
       expect(off.findLast((t) => t.tag !== 'g')!.dashed).toBe(true);
@@ -847,7 +869,7 @@ test.describe('hugeicons wifi and volume states', () => {
     'wifi-disconnected-04',
   ])
     test(`${name}: it shakes as its x turns`, async ({ page }) => {
-      const tracks = await track(page, URL, title(name), 'default');
+      const tracks = await track(page, URL, label(name), 'default');
       shaken(tracks);
       const turned = tracks.filter((t) => t.turn > 25);
       expect(turned, 'both strokes of its x').toHaveLength(2);
@@ -855,7 +877,7 @@ test.describe('hugeicons wifi and volume states', () => {
 
   for (const name of ['wifi-error-01', 'wifi-error-02'])
     test(`${name}: it shakes as its ! bounces`, async ({ page }) => {
-      const tracks = await track(page, URL, title(name), 'default');
+      const tracks = await track(page, URL, label(name), 'default');
       shaken(tracks);
       const bounced = tracks.filter((t) => t.tag !== 'g' && t.dy[1] > 0.6);
       expect(bounced, 'its !').toHaveLength(1);
@@ -869,7 +891,7 @@ test.describe('hugeicons wifi and volume states', () => {
     test(`${name}: its waves pulse, then its check draws itself`, async ({
       page,
     }) => {
-      const tracks = await track(page, URL, title(name), 'default');
+      const tracks = await track(page, URL, label(name), 'default');
       const check = tracks.filter((t) => t.dashed);
       expect(check, 'its check').toHaveLength(1);
       const waves = tracks.filter((t) => !t.dashed && t.minOpacity < 0.6);
@@ -890,7 +912,7 @@ test.describe('hugeicons wifi and volume states', () => {
     test(`${name}: its badge moves its own way as its waves pulse`, async ({
       page,
     }) => {
-      const tracks = await track(page, URL, title(name), 'default');
+      const tracks = await track(page, URL, label(name), 'default');
       expect(tracks.filter((t) => check(t as never))).toHaveLength(1);
       expect(
         tracks.filter((t) => t.minOpacity < 0.6).length,
@@ -905,7 +927,7 @@ test.describe('hugeicons on hover', () => {
       page,
     }) => {
       await gotoGallery(page);
-      await page.getByPlaceholder(/Search/).fill(title(name).toLowerCase());
+      await page.getByPlaceholder(/Search/).fill(label(name).toLowerCase());
       const button = tile(page, name);
       const svg = button.locator('svg').first();
       await expect(svg).toBeVisible();
@@ -925,6 +947,12 @@ test.describe('hugeicons on hover', () => {
 // Twins: a Hugeicons icon and its Lucide counterpart offer the same
 // animations, each playing.
 const TWINS: Record<string, string> = {
+  // Ported from Lucide's, under Lucide's name.
+  ...Object.fromEntries(
+    NAMES.filter((name) =>
+      existsSync(path.join(process.cwd(), 'registry/icons', name)),
+    ).map((name) => [name, name]),
+  ),
   'notification-01': 'bell',
   favourite: 'heart',
   'settings-02': 'settings',
@@ -938,6 +966,19 @@ const TWINS: Record<string, string> = {
   sparkles: 'sparkles',
   star: 'star',
   'download-04': 'download',
+  // Animated first as Hugeicons', then on Lucide's.
+  flash: 'zap',
+  'mail-01': 'mail',
+  'minus-sign': 'minus',
+  'pencil-edit-02': 'pencil',
+  'redo-02': 'redo',
+  'undo-02': 'undo',
+  'rocket-01': 'rocket',
+  'share-08': 'share-2',
+  view: 'eye',
+  'wifi-off-01': 'wifi-off',
+  'home-03': 'house',
+  'share-03': 'share',
   'upload-04': 'upload',
   user: 'user',
   'message-01': 'message-square',
@@ -1052,7 +1093,7 @@ test.describe('hugeicons and their lucide twins', () => {
   ] as const)
     test(`${name}: ${animations.join(', ')} play`, async ({ page }) => {
       for (const animation of animations) {
-        const tracks = await track(page, URL, title(name), animation);
+        const tracks = await track(page, URL, label(name), animation);
         const moved = tracks.some(
           (t) =>
             t.dashed ||
@@ -1064,4 +1105,323 @@ test.describe('hugeicons and their lucide twins', () => {
         expect(moved, `${name} ${animation}`).toBe(true);
       }
     });
+});
+
+test("each Hugeicons icon has its Lucide twin's categories (or its family's), shown in its drawer", async ({
+  page,
+}) => {
+  for (const name of NAMES) {
+    const meta = JSON.parse(
+      readFileSync(path.join(REGISTRY, name, 'meta.json'), 'utf8'),
+    ) as { categories: string[] };
+    expect(meta.categories.length, name).toBeGreaterThan(0);
+  }
+  await page.goto(URL, { waitUntil: 'networkidle' });
+  await page.getByPlaceholder(/Search/).fill('clock 01');
+  await tile(page, 'clock-01').click();
+  await expect(
+    page.locator('[data-slot=icon-drawer] [data-slot=category]'),
+  ).toHaveText(['Time & calendar']);
+});
+
+// Pieces ported from Lucide's run its way, keep Hugeicons' look, and land
+// where Hugeicons' drawing needs them.
+test.describe('hugeicons ported from lucide', () => {
+  const pathsOf = (name: string) =>
+    [
+      ...readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').matchAll(
+        /\sd="([^"]+)"/g,
+      ),
+    ].map((m) => m[1]!);
+  const ends = (d: string) => {
+    const n = (d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+    return { start: [n[0]!, n[1]!], end: [n.at(-2)!, n.at(-1)!] };
+  };
+
+  test("Check Check: its second check drawn from its left end, as Lucide's", () => {
+    const { start, end } = ends(pathsOf('check-check')[1]!);
+    expect(start[0]).toBeLessThan(end[0]);
+  });
+
+  test("Crop: its corner drawn from its top, in Lucide's order", () => {
+    expect(pathsOf('crop')[0]!.startsWith('M4 2V4M4 7.5')).toBe(true);
+  });
+
+  test('filled Hugeicons pieces stay filled, never stroked (Clipboard, Wifi Lock…)', () => {
+    for (const name of NAMES) {
+      // Every subpath of a filled piece, wherever it went.
+      const filled = new Set(
+        source(name)
+          .filter(([, attrs]) => attrs.fill && attrs.fill !== 'none')
+          .flatMap(([, attrs]) => attrs.d!.split(/(?=M)/)),
+      );
+      const file = readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8');
+      for (const [element] of file.matchAll(/<motion\.path\b[\s\S]*?\/>/g)) {
+        const d = element.match(/\sd="([^"]+)"/)?.[1];
+        if (!d || !d.split(/(?=M)/).some((piece) => filled.has(piece)))
+          continue;
+        expect(element, name).toMatch(/fill="currentColor"\s+stroke="none"/);
+      }
+    }
+  });
+
+  test("every piece keeps Hugeicons' own caps and joins (Clapperboard's square ends stay inside its board)", () => {
+    for (const name of NAMES) {
+      // Each subpath's caps and joins, as Hugeicons draws them.
+      const theirs = new Map<string, string>();
+      for (const [tag, attrs] of source(name))
+        if (tag === 'path' && (!attrs.fill || attrs.fill === 'none'))
+          for (const d of attrs.d!.split(/(?=M)/))
+            theirs.set(
+              d.replace(/\s/g, ''),
+              `${attrs.strokeLinecap ?? 'butt'} ${attrs.strokeLinejoin ?? 'miter'}`,
+            );
+      const file = readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8');
+      for (const [element] of file.matchAll(/<(?:motion\.)?path\b[^>]*?\/>/g)) {
+        const d = element.match(/\sd="([^"]+)"/)?.[1];
+        if (!d) continue;
+        const caps = `${element.match(/strokeLinecap="(\w+)"/)?.[1] ?? 'butt'} ${element.match(/strokeLinejoin="(\w+)"/)?.[1] ?? 'miter'}`;
+        for (const sub of d.split(/(?=M)/)) {
+          const expected = theirs.get(sub.replace(/\s/g, ''));
+          if (expected)
+            expect(caps, `${name}: ${sub.slice(0, 30)}`).toBe(expected);
+        }
+      }
+    }
+  });
+
+  for (const [name, travel] of [
+    ['toggle-left', 8],
+    ['toggle-right', -8],
+  ] as const)
+    test(`${name}: its thumb goes to the track's end`, async ({ page }) => {
+      const tracks = (await track(page, URL, label(name), 'default')).filter(
+        (t) => t.tag === 'path',
+      );
+      const thumb = tracks.find((t) => Math.max(-t.dx[0], t.dx[1]) > 1)!;
+      expect(travel > 0 ? thumb.dx[1] : -thumb.dx[0]).toBeGreaterThan(
+        Math.abs(travel) - 0.2,
+      );
+    });
+
+  test('Lock Keyhole Open lock: its shackle closes into the body', async ({
+    page,
+  }) => {
+    await page.goto(URL, { waitUntil: 'networkidle' });
+    await page.getByPlaceholder(/Search/).fill('lock keyhole open');
+    await tile(page, 'lock-keyhole-open').click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: 'lock', exact: true }).click();
+    await page.waitForTimeout(700);
+    const end = await drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        const shackle = [...svg.querySelectorAll('path')].at(-1)!;
+        const p = shackle.getPointAtLength(shackle.getTotalLength());
+        return { x: p.x, y: p.y };
+      });
+    expect(end.x).toBeCloseTo(16.5, 1);
+    expect(end.y).toBeCloseTo(9, 1);
+  });
+});
+
+// Lucide's icons whose Hugeicons twin draws them its own way: Lucide's
+// animations, moved Hugeicons' way.
+test.describe('hugeicons drawn their own way, after lucide', () => {
+  /** Each drawn piece's box (in the icon's units) once `animation` ends. */
+  const after = async (page: Page, name: string, animation: string) => {
+    await page.goto(URL, { waitUntil: 'networkidle' });
+    await page.getByPlaceholder(/Search/).fill(label(name).toLowerCase());
+    await tile(page, name).click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    await drawer.getByRole('button', { name: animation, exact: true }).click();
+    await page.waitForTimeout(1200);
+    return drawer
+      .locator('svg')
+      .first()
+      .evaluate((svg) => {
+        const box = svg.getBoundingClientRect();
+        const unit = 24 / box.width;
+        return [...svg.querySelectorAll('path')].map((path) => {
+          const r = path.getBoundingClientRect();
+          return {
+            x: (r.left - box.left) * unit,
+            y: (r.top - box.top) * unit,
+            w: r.width * unit,
+            h: r.height * unit,
+          };
+        });
+      });
+  };
+
+  test("Chart Column increasing: its bars end in Lucide's order, shortest to tallest", async ({
+    page,
+  }) => {
+    // (Its bars, not its axes: the narrow ones.)
+    const bars = (await after(page, 'chart-column', 'increasing'))
+      .filter((b) => b.w < 3)
+      .sort((a, b) => a.x - b.x);
+    expect(bars).toHaveLength(3);
+    expect(bars[0]!.h).toBeLessThan(bars[1]!.h);
+    expect(bars[1]!.h).toBeLessThan(bars[2]!.h);
+  });
+
+  test('Forklift: its fork lifts up its mast, the mast staying', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, label('forklift'), 'default');
+    const moved = tracks.filter((t) => t.dy[0] < -0.5 || t.dx[1] > 0.5);
+    expect(moved).toHaveLength(1);
+    expect(moved[0]!.dy[0]).toBeLessThan(-9);
+  });
+
+  for (const [name, way] of [
+    ['panel-left-close', 1],
+    ['panel-left-open', -1],
+  ] as const)
+    test(`${name}: its divider and arrow move the way its arrow points (Hugeicons' points the other way from Lucide's)`, async ({
+      page,
+    }) => {
+      const tracks = (await track(page, URL, label(name), 'default')).filter(
+        (t) => t.tag === 'path' && Math.max(-t.dx[0], t.dx[1]) > 0.5,
+      );
+      expect(tracks).toHaveLength(2);
+      for (const t of tracks)
+        expect(way > 0 ? t.dx[1] : -t.dx[0]).toBeGreaterThan(1.5);
+    });
+
+  /** Each path's highest top (in the icon's units) while `animation` plays. */
+  const highest = async (page: Page, name: string, animation: string) => {
+    await page.goto(URL, { waitUntil: 'networkidle' });
+    await page.getByPlaceholder(/Search/).fill(label(name).toLowerCase());
+    await tile(page, name).click();
+    const drawer = page.locator('[data-slot=icon-drawer]');
+    const svg = drawer.locator('svg').first();
+    await drawer.getByRole('button', { name: animation, exact: true }).click();
+    return svg.evaluate(
+      (el) =>
+        new Promise<number[]>((resolve) => {
+          const paths = [...el.querySelectorAll('path')];
+          const tops = paths.map(() => Infinity);
+          const start = performance.now();
+          const tick = () => {
+            const box = el.getBoundingClientRect();
+            paths.forEach((path, i) => {
+              const r = path.getBoundingClientRect();
+              tops[i] = Math.min(
+                tops[i]!,
+                ((r.top - box.top) * 24) / box.width,
+              );
+            });
+            if (performance.now() - start < 1400) requestAnimationFrame(tick);
+            else resolve(tops);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+  };
+
+  test('Between Horizontal End: its left chevron moves in (right), not up with the top block', async ({
+    page,
+  }) => {
+    const tracks = await track(
+      page,
+      URL,
+      label('between-horizontal-end'),
+      'default',
+    );
+    const chevron = tracks.find((t) => t.tag === 'path' && t.dx[1] > 2)!;
+    expect(chevron).toBeDefined();
+    expect(chevron.dy[0]).toBeGreaterThan(-0.2);
+  });
+
+  test('Between Vertical End: its arrows ride the ends of its axes as they grow', async ({
+    page,
+  }) => {
+    const pieces = await after(page, 'between-vertical-end', 'default');
+    // Its axes (the tallest piece) and its up arrow (the topmost of the rest).
+    const axes = pieces.reduce((a, b) => (b.h > a.h ? b : a));
+    const arrow = pieces
+      .filter((p) => p !== axes)
+      .reduce((a, b) => (b.y < a.y ? b : a));
+    // (At rest the arrow's tip is 1 above the axis's end.)
+    expect(Math.abs(axes.y - 1 - arrow.y)).toBeLessThan(0.3);
+  });
+
+  test('Gauge: its needle turns on its hub, the hub staying put', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, label('gauge'), 'default');
+    const needle = tracks.find((t) => t.turn > 30)!;
+    expect(needle).toBeDefined();
+    // Turned round the hub (12, 16): moved by its own turn, not more.
+    const hub = await page
+      .locator('[data-slot=icon-drawer] svg')
+      .first()
+      .evaluate((svg) => {
+        const box = svg.getBoundingClientRect();
+        const c = svg.querySelectorAll('circle')[1]!.getBoundingClientRect();
+        const u = 24 / box.width;
+        return [
+          (c.left + c.width / 2 - box.left) * u,
+          (c.top + c.height / 2 - box.top) * u,
+        ];
+      });
+    expect(Math.abs(hub[0]! - 12)).toBeLessThan(0.2);
+    expect(Math.abs(hub[1]! - 16)).toBeLessThan(0.2);
+  });
+
+  test('Lightbulb: it swings whole, its glass never parting from its base', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, label('lightbulb'), 'default');
+    expect(tracks.filter((t) => t.tag === 'path' && t.turn > 1)).toHaveLength(
+      0,
+    );
+    expect(tracks.some((t) => t.tag === 'g' && t.turn > 5)).toBe(true);
+  });
+
+  test('Clapperboard: a real clap, its striped arm opening on its hinge and shutting', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, label('clapperboard'), 'default');
+    // Its arm (a group) opens by more than a nudge; the rest of it doesn't
+    // turn.
+    expect(tracks.filter((t) => t.turn > 10)).toHaveLength(1);
+    expect(tracks.find((t) => t.turn > 10)!.tag).toBe('g');
+  });
+
+  test('Blend: its square, ring and circle drawn one after the other, never moving (their gaps stay hidden)', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, label('blend'), 'default');
+    for (const t of tracks)
+      expect(
+        Math.max(-t.dx[0], t.dx[1], -t.dy[0], t.dy[1], t.turn),
+      ).toBeLessThan(0.1);
+    const drawn = tracks.filter((t) => t.dashed).map((t) => t.delay);
+    expect(drawn).toHaveLength(3);
+    expect(new Set(drawn).size).toBe(3);
+  });
+
+  test('Accessibility: its wheel rocks, never turning round (the figure would seem to run)', async ({
+    page,
+  }) => {
+    const tracks = await track(page, URL, label('accessibility'), 'default');
+    const wheel = tracks.reduce((a, b) => (b.turn > a.turn ? b : a));
+    expect(wheel.turn).toBeGreaterThan(10);
+    expect(wheel.turn).toBeLessThan(60);
+  });
+
+  test('Move Down pointing: its shaft shorter and its head drawn back up', async ({
+    page,
+  }) => {
+    const pieces = await after(page, 'move-down', 'pointing');
+    // Its shaft (narrow, filled) half as long, its head (the widest) up.
+    const shaft = pieces.find((p) => p.w < 2 && p.h > 2)!;
+    const head = pieces.reduce((a, b) => (b.w > a.w ? b : a));
+    expect(shaft.h).toBeLessThan(9);
+    expect(head.y + head.h).toBeLessThan(14);
+  });
 });

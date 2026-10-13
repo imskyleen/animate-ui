@@ -1,7 +1,15 @@
 {
   "title": "Notification 01 Icon",
   "description": "Notification 01 icon component.",
-  "keywords": ["bell", "alert", "alarm", "reminder"],
-  "categories": [],
+  "keywords": [
+    "bell",
+    "alert",
+    "alarm",
+    "reminder"
+  ],
+  "categories": [
+    "account",
+    "notifications"
+  ],
   "added": "2026-10-12"
 }

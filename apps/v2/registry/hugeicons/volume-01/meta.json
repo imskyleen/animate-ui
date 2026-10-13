@@ -1,7 +1,15 @@
 {
   "title": "Volume 01 Icon",
   "description": "Volume 01 icon component.",
-  "keywords": ["sound", "speaker", "audio"],
-  "categories": [],
+  "keywords": [
+    "sound",
+    "speaker",
+    "audio"
+  ],
+  "categories": [
+    "connectivity",
+    "communication",
+    "multimedia"
+  ],
   "added": "2026-10-12"
 }

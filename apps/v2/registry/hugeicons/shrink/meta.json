@@ -1,0 +1,16 @@
+{
+  "title": "Shrink Icon",
+  "description": "Shrink icon component.",
+  "keywords": [
+    "scale",
+    "fullscreen",
+    "maximize",
+    "minimize",
+    "contract"
+  ],
+  "categories": [
+    "layout",
+    "arrows"
+  ],
+  "added": "2026-10-12"
+}

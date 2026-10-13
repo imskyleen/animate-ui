@@ -1,7 +1,15 @@
 {
   "title": "Pencil Edit 02 Icon",
   "description": "Pencil Edit 02 icon component.",
-  "keywords": ["edit", "write", "pen", "compose"],
-  "categories": [],
+  "keywords": [
+    "edit",
+    "write",
+    "pen",
+    "compose"
+  ],
+  "categories": [
+    "text",
+    "design"
+  ],
   "added": "2026-10-12"
 }

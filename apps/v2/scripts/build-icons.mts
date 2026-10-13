@@ -28,10 +28,14 @@ type Meta = {
 
 /** Each icon library: its registry folder, item prefix and install folder. */
 const LIBRARIES = [
-  { dir: 'icons', prefix: 'icons', target: 'components/animate-ui/icons' },
+  {
+    dir: 'icons',
+    prefix: 'icons-lucide',
+    target: 'components/animate-ui/icons',
+  },
   {
     dir: 'hugeicons',
-    prefix: 'hugeicons',
+    prefix: 'icons-hugeicons',
     target: 'components/animate-ui/icons/hugeicons',
   },
 ];
@@ -40,7 +44,13 @@ for (const library of LIBRARIES) build(library);
 
 function build({ dir, prefix, target }: (typeof LIBRARIES)[number]) {
   const iconsDir = path.join(root, 'registry', dir);
-  const categoriesFile = path.join(iconsDir, 'categories.json');
+  // Category titles: Lucide's (Hugeicons' icons take their twins' categories).
+  const categoriesFile = path.join(
+    root,
+    'registry',
+    'icons',
+    'categories.json',
+  );
   const categoryTitles = (
     existsSync(categoriesFile)
       ? JSON.parse(readFileSync(categoriesFile, 'utf8'))

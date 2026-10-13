@@ -1,7 +1,15 @@
 {
   "title": "More Horizontal Icon",
   "description": "More Horizontal icon component.",
-  "keywords": ["ellipsis", "menu", "options", "dots"],
-  "categories": [],
+  "keywords": [
+    "ellipsis",
+    "menu",
+    "options",
+    "dots"
+  ],
+  "categories": [
+    "layout",
+    "development"
+  ],
   "added": "2026-10-12"
 }

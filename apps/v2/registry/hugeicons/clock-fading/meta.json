@@ -1,7 +1,15 @@
 {
   "title": "Clock Fading Icon",
   "description": "Clock Fading icon component.",
-  "keywords": ["time", "watch", "hour", "schedule", "fading"],
-  "categories": [],
+  "keywords": [
+    "time",
+    "watch",
+    "hour",
+    "schedule",
+    "fading"
+  ],
+  "categories": [
+    "time"
+  ],
   "added": "2026-10-12"
 }

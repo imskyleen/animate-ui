@@ -1,7 +1,14 @@
 {
   "title": "Settings 02 Icon",
   "description": "Settings 02 icon component.",
-  "keywords": ["cog", "gear", "preferences", "options"],
-  "categories": [],
+  "keywords": [
+    "cog",
+    "gear",
+    "preferences",
+    "options"
+  ],
+  "categories": [
+    "account"
+  ],
   "added": "2026-10-12"
 }

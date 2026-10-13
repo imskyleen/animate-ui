@@ -1,7 +1,17 @@
 {
   "title": "Sparkles Icon",
   "description": "Sparkles icon component.",
-  "keywords": ["magic", "ai", "stars", "shine"],
-  "categories": [],
+  "keywords": [
+    "magic",
+    "ai",
+    "stars",
+    "shine"
+  ],
+  "categories": [
+    "cursors",
+    "multimedia",
+    "gaming",
+    "weather"
+  ],
   "added": "2026-10-12"
 }

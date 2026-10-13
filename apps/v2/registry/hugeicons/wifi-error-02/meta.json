@@ -1,7 +1,17 @@
 {
   "title": "Wifi Error 02 Icon",
   "description": "Wifi Error 02 icon component.",
-  "keywords": ["wireless", "network", "signal", "internet", "error", "warning"],
-  "categories": [],
+  "keywords": [
+    "wireless",
+    "network",
+    "signal",
+    "internet",
+    "error",
+    "warning"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

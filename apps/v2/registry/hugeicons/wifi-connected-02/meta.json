@@ -1,7 +1,16 @@
 {
   "title": "Wifi Connected 02 Icon",
   "description": "Wifi Connected 02 icon component.",
-  "keywords": ["wireless", "network", "signal", "internet", "connected"],
-  "categories": [],
+  "keywords": [
+    "wireless",
+    "network",
+    "signal",
+    "internet",
+    "connected"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

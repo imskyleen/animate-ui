@@ -364,7 +364,9 @@ test.describe('icons gallery', () => {
     // Installation: the CLI command, or Manual with the icon's source.
     await expect(
       // In every package manager; npm's shows first.
-      drawer.getByText('npx shadcn@latest add @animate-ui/icons-bell').first(),
+      drawer
+        .getByText('npx shadcn@latest add @animate-ui/icons-lucide-bell')
+        .first(),
     ).toBeVisible();
     await drawer.getByRole('tab', { name: 'Manual' }).click();
     await expect(

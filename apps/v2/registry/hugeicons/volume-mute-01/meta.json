@@ -1,7 +1,15 @@
 {
   "title": "Volume Mute 01 Icon",
   "description": "Volume Mute 01 icon component.",
-  "keywords": ["sound", "speaker", "audio", "mute", "silent"],
-  "categories": [],
+  "keywords": [
+    "sound",
+    "speaker",
+    "audio",
+    "mute",
+    "silent"
+  ],
+  "categories": [
+    "multimedia"
+  ],
   "added": "2026-10-12"
 }

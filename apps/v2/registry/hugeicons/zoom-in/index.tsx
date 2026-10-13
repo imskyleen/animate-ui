@@ -1,0 +1,76 @@
+'use client';
+
+import * as React from 'react';
+import { motion, type Variants } from 'motion/react';
+
+import {
+  getVariants,
+  useAnimateIconContext,
+  IconWrapper,
+  type IconProps,
+} from '@animate-ui/react/icons';
+
+type ZoomInProps = IconProps<keyof typeof animations>;
+
+const animations = {
+  default: {
+    lens: {
+      initial: { scale: 1 },
+      animate: {
+        scale: [1, 1.1, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+    sign: {
+      initial: { rotate: 0 },
+      animate: { rotate: 90, transition: { duration: 0.5, ease: 'easeInOut' } },
+    },
+  } satisfies Record<string, Variants>,
+} as const;
+
+function IconComponent({ size, ...props }: ZoomInProps) {
+  const { controls } = useAnimateIconContext();
+  const variants = getVariants(animations);
+
+  return (
+    <motion.svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      {...props}
+    >
+      <path d="M17 17L21 21" strokeLinecap="round" strokeLinejoin="round" />
+      <motion.g variants={variants.lens} initial="initial" animate={controls}>
+        <path
+          d="M19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19C15.4183 19 19 15.4183 19 11Z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <motion.g variants={variants.sign} initial="initial" animate={controls}>
+          <path
+            d="M7.5 11L14.5 11"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path d="M11 7.5V14.5" strokeLinecap="round" strokeLinejoin="round" />
+        </motion.g>
+      </motion.g>
+    </motion.svg>
+  );
+}
+
+function ZoomIn(props: ZoomInProps) {
+  return <IconWrapper icon={IconComponent} {...props} />;
+}
+
+export {
+  animations,
+  ZoomIn,
+  ZoomIn as ZoomInIcon,
+  type ZoomInProps,
+  type ZoomInProps as ZoomInIconProps,
+};

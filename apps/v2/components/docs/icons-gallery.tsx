@@ -78,35 +78,42 @@ function newIcons(icons: IconEntry[]) {
   );
 }
 
+/**
+ * The categories offered as tags, in both libraries: the easiest to browse,
+ * not every category (38 tags filled five rows).
+ */
+const TAGS = [
+  { id: 'arrows', title: 'Arrows' },
+  { id: 'charts', title: 'Charts' },
+  { id: 'weather', title: 'Weather' },
+  { id: 'time', title: 'Time' },
+  { id: 'devices', title: 'Devices' },
+  { id: 'connectivity', title: 'Connectivity' },
+  { id: 'multimedia', title: 'Multimedia' },
+  { id: 'notifications', title: 'Notifications' },
+  { id: 'development', title: 'Development' },
+];
+
 const ICON_LIBRARIES = {
   lucide: {
     icons: lucide.ICONS,
     categoryTitles: Object.fromEntries(
       lucide.CATEGORIES.map((category) => [category.id, category.title]),
     ),
-    // Not every Lucide category (38 tags filled five rows).
-    tags: [
-      { id: 'arrows', title: 'Arrows' },
-      { id: 'charts', title: 'Charts' },
-      { id: 'weather', title: 'Weather' },
-      { id: 'time', title: 'Time' },
-      { id: 'devices', title: 'Devices' },
-      { id: 'connectivity', title: 'Connectivity' },
-      { id: 'multimedia', title: 'Multimedia' },
-      { id: 'notifications', title: 'Notifications' },
-      { id: 'development', title: 'Development' },
-    ],
+    tags: TAGS,
     iconComponent: lucide.iconComponent,
-    prefix: 'icons',
+    prefix: 'icons-lucide',
     importPath: '@/components/animate-ui/icons',
     newIcons: newIcons(lucide.ICONS),
   },
   hugeicons: {
     icons: hugeicons.ICONS,
-    categoryTitles: {},
-    tags: [],
+    categoryTitles: Object.fromEntries(
+      hugeicons.CATEGORIES.map((category) => [category.id, category.title]),
+    ),
+    tags: TAGS,
     iconComponent: hugeicons.iconComponent,
-    prefix: 'hugeicons',
+    prefix: 'icons-hugeicons',
     importPath: '@/components/animate-ui/icons/hugeicons',
     newIcons: newIcons(hugeicons.ICONS),
   },

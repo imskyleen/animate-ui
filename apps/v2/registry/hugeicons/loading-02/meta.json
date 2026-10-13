@@ -1,7 +1,16 @@
 {
   "title": "Loading 02 Icon",
   "description": "Loading 02 icon component.",
-  "keywords": ["loader", "spinner", "loading", "wait"],
-  "categories": [],
+  "keywords": [
+    "loader",
+    "spinner",
+    "loading",
+    "wait"
+  ],
+  "categories": [
+    "cursors",
+    "multimedia",
+    "layout"
+  ],
   "added": "2026-10-12"
 }

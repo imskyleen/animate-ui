@@ -1,7 +1,16 @@
 {
   "title": "Wifi Off 01 Icon",
   "description": "Wifi Off 01 icon component.",
-  "keywords": ["wireless", "network", "signal", "internet", "off"],
-  "categories": [],
+  "keywords": [
+    "wireless",
+    "network",
+    "signal",
+    "internet",
+    "off"
+  ],
+  "categories": [
+    "connectivity",
+    "devices"
+  ],
   "added": "2026-10-12"
 }

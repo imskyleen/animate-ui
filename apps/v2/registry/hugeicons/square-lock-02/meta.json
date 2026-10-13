@@ -1,7 +1,14 @@
 {
   "title": "Square Lock 02 Icon",
   "description": "Square Lock 02 icon component.",
-  "keywords": ["lock", "secure", "password", "private"],
-  "categories": [],
+  "keywords": [
+    "lock",
+    "secure",
+    "password",
+    "private"
+  ],
+  "categories": [
+    "security"
+  ],
   "added": "2026-10-12"
 }

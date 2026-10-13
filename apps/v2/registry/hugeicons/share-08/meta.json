@@ -1,7 +1,15 @@
 {
   "title": "Share 08 Icon",
   "description": "Share 08 icon component.",
-  "keywords": ["share", "network", "connect", "social"],
-  "categories": [],
+  "keywords": [
+    "share",
+    "network",
+    "connect",
+    "social"
+  ],
+  "categories": [
+    "social",
+    "communication"
+  ],
   "added": "2026-10-12"
 }

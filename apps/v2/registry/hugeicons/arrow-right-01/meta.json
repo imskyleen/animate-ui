@@ -1,7 +1,16 @@
 {
   "title": "Arrow Right 01 Icon",
   "description": "Arrow Right 01 icon component.",
-  "keywords": ["chevron", "next", "forward", "right"],
-  "categories": [],
+  "keywords": [
+    "chevron",
+    "next",
+    "forward",
+    "right"
+  ],
+  "categories": [
+    "arrows",
+    "math",
+    "development"
+  ],
   "added": "2026-10-12"
 }

@@ -1,7 +1,15 @@
 {
   "title": "Login 01 Icon",
   "description": "Login 01 icon component.",
-  "keywords": ["sign in", "enter", "access", "arrow"],
-  "categories": [],
+  "keywords": [
+    "sign in",
+    "enter",
+    "access",
+    "arrow"
+  ],
+  "categories": [
+    "arrows",
+    "account"
+  ],
   "added": "2026-10-12"
 }
