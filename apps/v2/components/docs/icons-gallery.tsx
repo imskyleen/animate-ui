@@ -34,6 +34,7 @@ import {
   type ComponentType,
 } from 'react';
 
+import { toProjectPath } from '@/lib/registry-path';
 import * as hugeicons from '@/registry/hugeicons';
 import * as lucide from '@/registry/icons';
 import type { IconEntry } from '@/registry/icons';
@@ -254,7 +255,7 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
                   lang="tsx"
                   codeblock={{
                     className: 'my-0',
-                    title: file.target,
+                    title: toProjectPath(file.target),
                     viewportClassName: 'max-h-44',
                   }}
                   code={file.content.trimEnd()}

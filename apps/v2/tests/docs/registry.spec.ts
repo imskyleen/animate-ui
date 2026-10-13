@@ -70,3 +70,15 @@ test('the shadcn MCP finds items in the @animate-ui registry', async ({
     'icons-lucide-bell',
   );
 });
+
+test('the manual steps show the file path a default project gets', async ({
+  page,
+}) => {
+  await page.goto('/docs/backgrounds/bubble', { waitUntil: 'networkidle' });
+  await page.getByRole('tab', { name: 'Manual' }).first().click();
+  await expect(
+    page.locator('code', {
+      hasText: /^components\/animate-ui\/backgrounds\/bubble\.tsx$/,
+    }),
+  ).toBeAttached();
+});

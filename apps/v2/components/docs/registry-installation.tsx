@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
+import { toProjectPath } from '@/lib/registry-path';
+
 import { Command } from './installation';
 import { ServerCodeBlock } from './server-codeblock';
 import { InstallTabs } from './install-tabs';
@@ -45,7 +47,7 @@ export async function RegistryInstallation({ name }: { name: string }) {
               </Step>
               <Step>
                 <h3>
-                  Copy the code into <code>{file.target}</code>
+                  Copy the code into <code>{toProjectPath(file.target)}</code>
                 </h3>
                 <ServerCodeBlock
                   code={file.content.trimEnd()}

@@ -339,7 +339,7 @@ test.describe('icons gallery', () => {
     ).toBeVisible();
     await drawer.getByRole('tab', { name: 'Manual' }).click();
     await expect(
-      drawer.getByText('components/animate-ui/icons/bell.tsx'),
+      drawer.getByText('components/animate-ui/icons/bell.tsx', { exact: true }),
     ).toBeVisible();
     await expect(
       drawer.getByText('npm install @animate-ui/react motion').first(),
