@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '../test';
 import { expectEntranceOnLoad, type EntranceKind } from './anchored-overlay';
 
 const FIXTURE = '/tests/fixtures/default-open-overlays';

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const CONTENT = path.join(process.cwd(), 'content', 'docs');
 const PAGES = readdirSync(CONTENT, { recursive: true, encoding: 'utf8' })

@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '../test';
 
 export type MotionSample = { opacity: number; scale: number; origin: string };
 

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 const page = (name: string) =>
   readFileSync(path.join(process.cwd(), 'content', 'docs', name), 'utf8');

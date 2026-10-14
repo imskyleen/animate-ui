@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const INPUT = 'input[data-input-otp]';
 const SLOT = '[data-slot="input-otp-slot"]';

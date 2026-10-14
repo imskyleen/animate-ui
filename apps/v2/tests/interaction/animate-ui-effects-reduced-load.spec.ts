@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 for (const name of ['slide', 'zoom', 'blur', 'effect', 'fade'])
   test(`${name}: under reduced motion, a server-rendered page lands at rest`, async ({

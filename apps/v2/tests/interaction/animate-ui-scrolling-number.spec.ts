@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const open = async (page: Page) => {
   await page.goto('/tests/demos/animate-ui/scrolling-number', {

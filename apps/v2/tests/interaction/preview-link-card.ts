@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 import { describeAnchoredOverlay, gotoReady } from './anchored-overlay';
 
 const SCREENSHOT = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="135"><rect width="240" height="135" fill="#3b82f6"/></svg>`;

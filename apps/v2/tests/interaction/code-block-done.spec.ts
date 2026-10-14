@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('a static CodeBlock calls onDone once', async ({ page }) => {
   await page.goto('/tests/fixtures/code-block-done', {

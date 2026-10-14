@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('the header theme button switches the theme, turning its icon', async ({
   page,

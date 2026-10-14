@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const PATH = '/tests/fixtures/animate-ui-sidebar';
 const SURFACE = '[data-slot="trigger-highlight"]';
@@ -35,6 +35,11 @@ function seekLeft(page: Page, label: string) {
 }
 
 test.describe('animate-ui sidebar primitive', () => {
+  test.use({
+    expectedProblems:
+      /useSidebar must be used within a SidebarProvider|Encountered a script tag|status of 500/,
+  });
+
   test.beforeEach(async ({ page, context }) => {
     await context.clearCookies();
     await page.goto(PATH, { waitUntil: 'networkidle' });

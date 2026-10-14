@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const trigger = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });

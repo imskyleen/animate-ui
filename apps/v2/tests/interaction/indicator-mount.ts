@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 import { expectAtRest, expectDrawnIn, recordCheck } from './item-checks';
 

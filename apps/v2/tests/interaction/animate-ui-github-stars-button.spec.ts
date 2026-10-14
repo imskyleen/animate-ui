@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 import { sample } from './motion-probe';
 
@@ -199,12 +199,18 @@ test.describe('animate-ui github stars button, loading', () => {
     await expect(srNumber(page)).toHaveText('42');
   });
 
-  test('a failed request shows no count', async ({ page }) => {
-    await answer(page, 'animate-ui', 403, { message: 'rate limited' });
-    await openInView(page);
-    await page.waitForTimeout(800);
-    await expect(button(page)).toBeHidden();
-    await expect(button(page)).toHaveAttribute('aria-busy', 'true');
+  test.describe(() => {
+    test.use({
+      expectedProblems: /status of 403|could not load stars/,
+    });
+
+    test('a failed request shows no count', async ({ page }) => {
+      await answer(page, 'animate-ui', 403, { message: 'rate limited' });
+      await openInView(page);
+      await page.waitForTimeout(800);
+      await expect(button(page)).toBeHidden();
+      await expect(button(page)).toHaveAttribute('aria-busy', 'true');
+    });
   });
 
   test("an older repository's answer never overwrites the newer one", async ({

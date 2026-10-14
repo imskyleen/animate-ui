@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '../test';
 
 export type Lib = 'radix-ui' | 'base-ui' | 'react-aria';
 

@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 const OUT = join(__dirname, '../../public/r');
 const SHADCN_REGISTRY = join(

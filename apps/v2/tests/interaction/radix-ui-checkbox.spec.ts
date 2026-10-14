@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 import { describeCheckboxDemo, opacityOf } from './controls-helpers';
 import { describeCheckedOnMount } from './indicator-mount';

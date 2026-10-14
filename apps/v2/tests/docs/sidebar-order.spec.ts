@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('the sidebar lists Installation right after Introduction', async ({
   page,

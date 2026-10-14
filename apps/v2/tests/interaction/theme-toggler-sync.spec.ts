@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('the render function follows a theme changed elsewhere', async ({
   page,

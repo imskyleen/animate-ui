@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '../test';
 
 export async function gotoHydrated(page: Page, url: string) {
   await page.goto(url, { waitUntil: 'networkidle' });

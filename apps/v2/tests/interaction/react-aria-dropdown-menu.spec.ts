@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 import { describeMenuChecks } from './menu-checks';
 import { describeMenuHighlight } from './menu-highlight';

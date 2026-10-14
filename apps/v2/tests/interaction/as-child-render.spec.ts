@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/tests/fixtures/as-child-render', {

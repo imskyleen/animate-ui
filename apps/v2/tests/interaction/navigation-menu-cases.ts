@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 import { paintedLeft } from './menubar-handoff';
 import { recordSwap, seriesOf, type SwapFrame } from './navigation-menu-swap';

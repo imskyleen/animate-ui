@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect } from '../test';
 import {
   createGeneratorEasing,
   cubicBezier,

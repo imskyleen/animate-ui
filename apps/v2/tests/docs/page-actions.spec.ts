@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('the page menu opens the page elsewhere', async ({ page }) => {
   await page.goto('/docs/primitives/radix-ui/accordion');

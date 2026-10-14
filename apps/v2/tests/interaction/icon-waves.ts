@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Page } from '../test';
 
 async function play(page: Page, animation: string) {
   const drawer = page.locator('[data-slot=icon-drawer]');

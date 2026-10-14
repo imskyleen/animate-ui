@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 import { describeAnchoredOverlay, gotoReady } from './anchored-overlay';
 
 const PATH = '/tests/demos/base-ui/popover';

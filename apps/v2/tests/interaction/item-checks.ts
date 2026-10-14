@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Page } from '../test';
 
 export type CheckAnimation = 'draw' | 'pop';
 

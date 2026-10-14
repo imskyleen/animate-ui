@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const TEXT =
   'Typing Text component made with Motion. Highly customizable and easy to use.';

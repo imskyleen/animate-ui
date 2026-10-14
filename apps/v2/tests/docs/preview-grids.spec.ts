@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 const docs = path.join(process.cwd(), 'content', 'docs');
 const previews = path.join(process.cwd(), 'public', 'previews');

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 type Timers = { created: number[]; cleared: number[]; recording: boolean };
 

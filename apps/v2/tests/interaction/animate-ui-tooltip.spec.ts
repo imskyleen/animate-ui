@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 import { probeFirstFrame } from './motion-probe';
 import { overshootOf } from './spring-curves';

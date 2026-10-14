@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('llms.txt names each library as it is written', async ({ request }) => {
   const text = await (await request.get('/llms.txt')).text();

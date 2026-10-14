@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
 import * as Hugeicons from '@hugeicons/core-free-icons';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '../test';
 
 import { playWaves, track, wavesOf } from './icon-waves';
 

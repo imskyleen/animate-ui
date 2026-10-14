@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('edge cases render without crashing or spinning', async ({ page }) => {
   const errors: string[] = [];

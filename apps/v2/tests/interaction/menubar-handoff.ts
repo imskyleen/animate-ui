@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const CONTENT = '[data-slot="menubar-content"]';
 const SUB_CONTENT = '[data-slot$="sub-content"]';

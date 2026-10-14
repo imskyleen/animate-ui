@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 const open = (page: Page) =>
   page.goto('/tests/demos/animate-ui/pinned-list', {

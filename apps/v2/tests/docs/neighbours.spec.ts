@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 for (const [url, previous, next] of [
   ['/docs/backgrounds/hole', 'Hexagon Background', 'Stars Background'],

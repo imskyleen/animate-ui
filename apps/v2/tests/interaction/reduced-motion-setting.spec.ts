@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 const open = (page: import('@playwright/test').Page) =>
   page.goto('/tests/fixtures/reduced-motion-setting', {

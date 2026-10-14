@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 test('the sidebar shows the Lucide logo in its text color only', async ({
   page,
 }) => {

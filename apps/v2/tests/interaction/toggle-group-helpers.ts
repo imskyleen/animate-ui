@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '../test';
 
 import { pressScale, type Lib } from './controls-helpers';
 

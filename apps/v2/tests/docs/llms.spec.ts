@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../test';
 
 test('the markdown exports carry the commands and tables, not JSX', async ({
   request,

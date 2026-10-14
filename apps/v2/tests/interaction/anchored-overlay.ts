@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 import { probeFirstFrame } from './motion-probe';
 
 export const HIDDEN_SCALE = { tooltip: 0.7, popover: 0.8, menu: 0.9 } as const;

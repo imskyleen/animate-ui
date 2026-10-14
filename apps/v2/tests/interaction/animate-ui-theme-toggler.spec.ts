@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../test';
 
 type Wipe = { duration: number; easing: string; pseudoElement: string };
 
