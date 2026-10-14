@@ -26,6 +26,7 @@ function HighlightedItem<Values extends { isDisabled: boolean }>({
   const own = domProps as ItemDOMProps;
   const { ref: highlightRef, highlight } = useItemHighlight(values.isDisabled, {
     attribute: 'data-focused',
+    followFocus: true,
   });
   const ownRef = own.ref;
   const ref = React.useMemo(

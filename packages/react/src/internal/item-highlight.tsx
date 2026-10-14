@@ -320,6 +320,7 @@ type ItemHighlight = {
 
 type ItemHighlightOptions = {
   attribute?: string;
+  followFocus?: boolean;
 };
 
 type TriggerHighlightOptions = {
@@ -328,9 +329,18 @@ type TriggerHighlightOptions = {
 
 function useItemHighlight(
   disabled?: boolean,
-  { attribute = 'data-highlighted' }: ItemHighlightOptions = {},
+  {
+    attribute = 'data-highlighted',
+    followFocus = false,
+  }: ItemHighlightOptions = {},
 ): ItemHighlight {
-  return useHighlightIn(React.use(HighlightScopeContext), disabled, attribute);
+  return useHighlightIn(
+    React.use(HighlightScopeContext),
+    disabled,
+    attribute,
+    false,
+    followFocus,
+  );
 }
 
 function useTriggerHighlight(
@@ -360,6 +370,7 @@ function useHighlightIn(
   disabled: boolean | undefined,
   attribute: string | null,
   beside = false,
+  followFocus = false,
 ): ItemHighlight {
   const id = React.useId();
   const [node, setNode] = React.useState<HTMLElement | null>(null);
@@ -444,7 +455,7 @@ function useHighlightIn(
       if (node.hasAttribute(attribute)) {
         setSurface(paint(readSurface(node)));
         light(id, node);
-      } else unlight(id);
+      } else if (followFocus) unlight(id);
       clear();
     };
     const focus = () => {
@@ -465,7 +476,7 @@ function useHighlightIn(
       node.removeEventListener('blur', clear);
       clearOwnSurface(node, false);
     };
-  }, [light, unlight, paint, node, id, attribute]);
+  }, [light, unlight, paint, node, id, attribute, followFocus]);
 
   const active = scope?.activeId === id && !disabled;
   const leaving =
