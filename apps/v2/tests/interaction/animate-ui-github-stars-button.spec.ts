@@ -71,7 +71,8 @@ test.describe('animate-ui github stars button', () => {
     await mockStars(page, 1234, 1200);
     await page.goto('/tests/fixtures/animate-ui-github-stars-button');
     await page.waitForTimeout(400);
-    await expect(button(page)).toHaveCount(0);
+    await expect(button(page)).toBeHidden();
+    await expect(button(page)).toHaveAttribute('aria-busy', 'true');
     await expect(button(page)).toBeVisible({ timeout: 5000 });
     await expect(button(page)).toHaveAttribute(
       'href',
@@ -163,5 +164,59 @@ test.describe('animate-ui github stars button', () => {
     await page.waitForTimeout(200);
     expect((await sample(page, SELECTOR)).scale).toBe(1);
     await page.mouse.up();
+  });
+});
+
+test.describe('animate-ui github stars button, loading', () => {
+  const answer = (
+    page: Page,
+    repo: string,
+    status: number,
+    body: object,
+    delay = 0,
+  ) =>
+    page.route(
+      `https://api.github.com/repos/imskyleen/${repo}`,
+      async (route) => {
+        if (delay) await new Promise((r) => setTimeout(r, delay));
+        await route.fulfill({
+          status,
+          contentType: 'application/json',
+          headers: { 'access-control-allow-origin': '*' },
+          body: JSON.stringify(body),
+        });
+      },
+    );
+  const openInView = (page: Page) =>
+    page.goto('/tests/fixtures/animate-ui-github-stars-in-view', {
+      waitUntil: 'networkidle',
+    });
+
+  test('with inView, shows up once in view and loaded', async ({ page }) => {
+    await answer(page, 'animate-ui', 200, { stargazers_count: 42 });
+    await openInView(page);
+    await expect(button(page)).toBeVisible();
+    await expect(srNumber(page)).toHaveText('42');
+  });
+
+  test('a failed request shows no count', async ({ page }) => {
+    await answer(page, 'animate-ui', 403, { message: 'rate limited' });
+    await openInView(page);
+    await page.waitForTimeout(800);
+    await expect(button(page)).toBeHidden();
+    await expect(button(page)).toHaveAttribute('aria-busy', 'true');
+  });
+
+  test("an older repository's answer never overwrites the newer one", async ({
+    page,
+  }) => {
+    await answer(page, 'animate-ui', 200, { stargazers_count: 111 }, 1500);
+    await answer(page, 'other', 200, { stargazers_count: 222 });
+    await page.goto('/tests/fixtures/animate-ui-github-stars-in-view');
+    await hydrated(page, SELECTOR);
+    await page.getByRole('button', { name: 'Switch repo' }).click();
+    await expect(srNumber(page)).toHaveText('222');
+    await page.waitForTimeout(2000);
+    await expect(srNumber(page)).toHaveText('222');
   });
 });

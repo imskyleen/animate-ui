@@ -80,25 +80,39 @@ function GithubStars({
       setIsLoading(false);
       return;
     }
-    if (!isInView) {
-      setStars(0);
-      setIsLoading(true);
-      return;
-    }
+    setStars(0);
+    setIsLoading(true);
+    if (!isInView || !username || !repo) return;
 
+    const controller = new AbortController();
     const timeout = setTimeout(() => {
-      fetch(`https://api.github.com/repos/${username}/${repo}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data && typeof data.stargazers_count === 'number') {
-            setStars(data.stargazers_count);
-          }
+      fetch(`https://api.github.com/repos/${username}/${repo}`, {
+        signal: controller.signal,
+      })
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(`GitHub API responded ${response.status}`);
+          return response.json();
         })
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
+        .then((data) => {
+          if (typeof data?.stargazers_count !== 'number')
+            throw new Error('GitHub API sent no star count');
+          setStars(data.stargazers_count);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          if (!controller.signal.aborted)
+            console.error(
+              'Animate UI GithubStars: could not load stars',
+              error,
+            );
+        });
     }, delay);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, [username, repo, value, isInView, delay]);
 
   return (
@@ -113,11 +127,16 @@ function GithubStars({
       }}
     >
       {asChild ? (
-        !isLoading && (
-          <Component ref={localRef} {...props}>
-            {children}
-          </Component>
-        )
+        <Component
+          ref={localRef}
+          aria-busy={isLoading || undefined}
+          {...props}
+          style={
+            isLoading ? { ...props.style, visibility: 'hidden' } : props.style
+          }
+        >
+          {children}
+        </Component>
       ) : (
         <Component ref={localRef} aria-busy={isLoading || undefined} {...props}>
           {!isLoading && children}
