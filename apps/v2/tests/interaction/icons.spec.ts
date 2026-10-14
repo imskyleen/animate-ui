@@ -261,6 +261,23 @@ test.describe('icons', () => {
 });
 
 test.describe('icons gallery', () => {
+  for (const [title, component] of [
+    ['CCTV', 'Cctv'],
+    ['EV Charger', 'EvCharger'],
+    ['Axis 3D', 'Axis3D'],
+  ])
+    test(`${title}'s usage imports the name its file exports`, async ({
+      page,
+    }) => {
+      await page.goto('/docs/icons/lucide-icons', { waitUntil: 'networkidle' });
+      const tile = page.locator(`button[title="${title}"]`);
+      await tile.scrollIntoViewIfNeeded();
+      await tile.click();
+      await expect(page.locator('[data-slot=icon-drawer]')).toContainText(
+        `import { ${component} } from`,
+      );
+    });
+
   test('a tile clicked far down the grid opens its detail in view', async ({
     page,
   }) => {

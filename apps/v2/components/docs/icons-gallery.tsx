@@ -46,6 +46,7 @@ import { InstallTabs } from './install-tabs';
 
 type Loaded = {
   Icon: ComponentType<IconProps<string>>;
+  name: string;
   animations: string[];
 };
 
@@ -118,6 +119,11 @@ function loadIcon(library: IconLibrary, entry: IconEntry) {
   if (!promise) {
     promise = entry.load().then((mod) => ({
       Icon: library.iconComponent(mod, entry.name)!,
+      name:
+        Object.keys(mod).find(
+          (key) =>
+            key.toLowerCase() === entry.name.replace(/-/g, '').toLowerCase(),
+        ) ?? entry.title.replace(/\s+/g, ''),
       animations: [
         ...Object.keys(mod.animations),
         ...Object.keys(staticAnimations),
@@ -284,7 +290,7 @@ function IconDetail({
   const icon = useIcon(entry);
   const [animation, setAnimation] = useState('default');
   const [run, setRun] = useState(0);
-  const component = entry.title.replace(/\s+/g, '');
+  const component = icon?.name ?? entry.title.replace(/\s+/g, '');
 
   return (
     <div className="grid gap-4 p-4 sm:grid-cols-[180px_1fr] sm:gap-6">
