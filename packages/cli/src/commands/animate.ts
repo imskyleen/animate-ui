@@ -45,7 +45,7 @@ export function animate(components: string[], options: AnimateOptions) {
   if (components.includes('all')) {
     files.push(...listFiles(project.uiDir));
   } else {
-    for (const name of components) {
+    for (const name of new Set(components)) {
       const file = findComponent(project.uiDir, name);
       if (file) {
         files.push(file);
@@ -53,14 +53,16 @@ export function animate(components: string[], options: AnimateOptions) {
         exitCode = 1;
         log(
           `${styleText('red', '✖')} ${name} isn't installed in ${relative(project.uiDir)}. ` +
-            `Add it first: pnpm dlx shadcn@latest add ${name}`,
+            `Add it first: ${project.dlx} shadcn@latest add ${name}`,
         );
       }
     }
   }
 
   const excluded = new Set(
-    (options.exclude ?? []).map((name) => name.replace(/\.[jt]sx?$/, '')),
+    (options.exclude ?? []).map((name) =>
+      name.replace(/\.[jt]sx?$/, '').toLowerCase(),
+    ),
   );
   for (const name of excluded) {
     if (findComponent(project.uiDir, name)) continue;
@@ -69,7 +71,9 @@ export function animate(components: string[], options: AnimateOptions) {
     );
   }
   const baseName = (file: string) => path.basename(file, path.extname(file));
-  const kept = files.filter((file) => !excluded.has(baseName(file)));
+  const kept = files.filter(
+    (file) => !excluded.has(baseName(file).toLowerCase()),
+  );
   files.length = 0;
   files.push(...kept);
 
@@ -114,7 +118,7 @@ export function animate(components: string[], options: AnimateOptions) {
 
   if (changedFiles > 0 && !project.hasPackage) {
     log(
-      `\n${styleText('yellow', '!')} ${PACKAGE} isn't installed yet: pnpm add ${PACKAGE} motion`,
+      `\n${styleText('yellow', '!')} ${PACKAGE} isn't installed yet: ${project.install} ${PACKAGE} motion`,
     );
   }
 

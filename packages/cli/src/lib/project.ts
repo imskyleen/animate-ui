@@ -7,7 +7,27 @@ export type Project = {
   root: string;
   uiDir: string;
   hasPackage: boolean;
+  install: string;
+  dlx: string;
 };
+
+const PACKAGE_MANAGERS: [string, string, string][] = [
+  ['pnpm-lock.yaml', 'pnpm add', 'pnpm dlx'],
+  ['bun.lock', 'bun add', 'bunx --bun'],
+  ['bun.lockb', 'bun add', 'bunx --bun'],
+  ['yarn.lock', 'yarn add', 'yarn'],
+  ['package-lock.json', 'npm install', 'npx'],
+];
+
+function packageManager(root: string) {
+  for (let dir = root; ;) {
+    for (const [lockfile, install, dlx] of PACKAGE_MANAGERS)
+      if (existsSync(path.join(dir, lockfile))) return { install, dlx };
+    const parent = path.dirname(dir);
+    if (parent === dir) return { install: 'npm install', dlx: 'npx' };
+    dir = parent;
+  }
+}
 
 function resolveAlias(root: string, alias: string) {
   return (
@@ -35,5 +55,10 @@ export function loadProject(cwd: string): Project {
     pkg.devDependencies?.['@animate-ui/react'],
   );
 
-  return { root, uiDir: resolveAlias(root, uiAlias), hasPackage };
+  return {
+    root,
+    uiDir: resolveAlias(root, uiAlias),
+    hasPackage,
+    ...packageManager(root),
+  };
 }

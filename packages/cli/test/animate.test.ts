@@ -1,4 +1,10 @@
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -34,6 +40,7 @@ beforeEach(() => {
     path.join(root, 'package.json'),
     JSON.stringify({ dependencies: {} }),
   );
+  writeFileSync(path.join(root, 'pnpm-lock.yaml'), "lockfileVersion: '9.0'\n");
   mkdirSync(path.dirname(uiFile()), { recursive: true });
   writeFileSync(uiFile(), ACCORDION);
   writeFileSync(
@@ -172,4 +179,41 @@ test('uses the longest matching paths pattern, as TypeScript does', () => {
   );
   expect(run(['accordion']).code).toBe(0);
   expect(readFileSync(uiFile(), 'utf8')).toContain('@animate-ui/react');
+});
+
+test("says the commands in the project's package manager", () => {
+  rmSync(path.join(root, 'pnpm-lock.yaml'));
+  writeFileSync(path.join(root, 'bun.lock'), '');
+  const { output } = run(['accordion', 'dialog']);
+  expect(output).toContain('bunx --bun shadcn@latest add dialog');
+  expect(output).toContain('bun add @animate-ui/react motion');
+});
+
+test('a component named twice is animated once', () => {
+  const { output } = run(['accordion', 'accordion'], true);
+  expect(output.match(/✔/g)).toHaveLength(1);
+});
+
+test('--exclude ignores case', () => {
+  const lines: string[] = [];
+  animate(['all'], {
+    cwd: root,
+    dryRun: false,
+    exclude: ['Accordion'],
+    log: (l) => lines.push(l),
+  });
+  expect(readFileSync(uiFile(), 'utf8')).toBe(ACCORDION);
+});
+
+test('an unknown option prints the help, not a stack trace', () => {
+  const cli = path.join(import.meta.dirname, '../src/index.ts');
+  const result = spawnSync(
+    process.execPath,
+    ['--import', 'tsx', cli, 'animate', 'all', '--nope'],
+    { cwd: path.join(import.meta.dirname, '..'), encoding: 'utf8' },
+  );
+  expect(result.status).toBe(1);
+  expect(result.stderr).toContain("Unknown option '--nope'");
+  expect(result.stderr).toContain('Usage: animate-ui');
+  expect(result.stderr).not.toContain('    at ');
 });

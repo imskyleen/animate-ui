@@ -11,6 +11,8 @@ export type V1Module =
 export type MigrateProject = {
   root: string;
   hasPackage: boolean;
+  install: string;
+  dlx: string;
   hasDependency: (name: string) => boolean;
   componentsDir: string;
   libDir: string;
@@ -148,7 +150,7 @@ function walkFiles(
 }
 
 export function loadMigrateProject(cwd: string): MigrateProject {
-  const { root, hasPackage } = loadProject(cwd);
+  const { root, hasPackage, install, dlx } = loadProject(cwd);
   const aliases = readJson(path.join(root, 'components.json')).aliases ?? {};
   const pkg = readJson(path.join(root, 'package.json'));
   const dependencies = new Set([
@@ -229,6 +231,8 @@ export function loadMigrateProject(cwd: string): MigrateProject {
   return {
     root,
     hasPackage,
+    install,
+    dlx,
     hasDependency: (name) => dependencies.has(name),
     componentsDir,
     libDir,

@@ -33,19 +33,28 @@ function isCommand(value: string | undefined): value is Command {
 }
 
 async function main(argv: string[]) {
-  const { values, positionals } = parseArgs({
-    args: argv,
-    allowPositionals: true,
-    options: {
-      cwd: { type: 'string', default: process.cwd() },
-      'dry-run': { type: 'boolean', default: false },
-      exclude: { type: 'string', multiple: true, default: [] },
-      delete: { type: 'boolean', default: false },
-      keep: { type: 'boolean', default: false },
-      help: { type: 'boolean', short: 'h', default: false },
-      version: { type: 'boolean', short: 'v', default: false },
-    },
-  });
+  let parsed;
+  try {
+    parsed = parseArgs({
+      args: argv,
+      allowPositionals: true,
+      options: {
+        cwd: { type: 'string', default: process.cwd() },
+        'dry-run': { type: 'boolean', default: false },
+        exclude: { type: 'string', multiple: true, default: [] },
+        delete: { type: 'boolean', default: false },
+        keep: { type: 'boolean', default: false },
+        help: { type: 'boolean', short: 'h', default: false },
+        version: { type: 'boolean', short: 'v', default: false },
+      },
+    });
+  } catch (error) {
+    console.error(
+      `${error instanceof Error ? error.message : error}\n\n${HELP}`,
+    );
+    return 1;
+  }
+  const { values, positionals } = parsed;
 
   if (values.version) {
     console.log(pkg.version);

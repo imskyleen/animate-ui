@@ -82,12 +82,13 @@ export async function migrate(components: string[], options: MigrateOptions) {
   if (!all && names.size === 0) return exitCode;
 
   const excluded = new Set<string>();
-  for (const name of options.exclude ?? []) {
+  for (const raw of options.exclude ?? []) {
+    const name = raw.toLowerCase();
     if (!known.has(name)) {
       log(
-        `${styleText('yellow', '!')} ${name} isn't an Animate UI v1 primitive: nothing to exclude.`,
+        `${styleText('red', '✖')} ${raw} isn't an Animate UI v1 primitive: check --exclude.`,
       );
-      continue;
+      return 1;
     }
     excluded.add(name === 'icon' ? 'icons' : name);
   }
@@ -177,7 +178,7 @@ export async function migrate(components: string[], options: MigrateOptions) {
       log(
         styleText(
           'dim',
-          `    A v1 component: it keeps working on v2.${shadcn ? ` You can also swap it for shadcn/ui's ${shadcn} (pnpm dlx shadcn@latest add ${shadcn}) and run animate-ui animate ${shadcn}.` : ''}`,
+          `    A v1 component: it keeps working on v2.${shadcn ? ` You can also swap it for shadcn/ui's ${shadcn} (${project.dlx} shadcn@latest add ${shadcn}) and run animate-ui animate ${shadcn}.` : ''}`,
         ),
       );
     }
@@ -396,7 +397,7 @@ export async function migrate(components: string[], options: MigrateOptions) {
   ];
   if (missing.length > 0) {
     log(
-      `\n${styleText('yellow', '!')} ${missing[0]} isn't installed yet: pnpm add ${missing.join(' ')}`,
+      `\n${styleText('yellow', '!')} ${missing[0]} isn't installed yet: ${project.install} ${missing.join(' ')}`,
     );
     if (baseUI)
       log(

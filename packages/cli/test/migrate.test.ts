@@ -403,11 +403,20 @@ test('migrate all --exclude leaves that primitive on v1', async () => {
   expect(output).not.toContain(`${V1}/primitives/radix/tooltip.tsx\n`);
 });
 
-test('--exclude warns about a name that is not a v1 primitive', async () => {
-  const { code, output } = await run(['all'], { exclude: ['nope'] });
-  expect(code).toBe(0);
+test('--exclude stops on a name that is not a v1 primitive', async () => {
+  const before = snapshot(root);
+  const { code, output } = await run(['all'], { exclude: ['toolip'] });
+  expect(code).toBe(1);
   expect(output).toContain(
-    "nope isn't an Animate UI v1 primitive: nothing to exclude.",
+    "toolip isn't an Animate UI v1 primitive: check --exclude.",
+  );
+  expect(snapshot(root)).toEqual(before);
+});
+
+test('--exclude ignores case', async () => {
+  await run(['all'], { exclude: ['Tooltip'] });
+  expect(read(PAGE)).toContain(
+    "} from '@/components/animate-ui/primitives/radix/tooltip';",
   );
 });
 
