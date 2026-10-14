@@ -179,12 +179,12 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
       type: 'React.ReactElement',
       required: true,
     },
-    value: {
-      description: 'Value of the item.',
+    id: {
+      description: 'Value of the item. Takes precedence over value.',
       type: 'string',
     },
-    id: {
-      description: 'Value of the item (alias).',
+    value: {
+      description: 'Value of the item, when there is no id.',
       type: 'string',
     },
     className: {
@@ -206,9 +206,8 @@ With `controlledItems`, place `HighlightItem`s anywhere inside `Highlight` inste
       type: 'Transition',
     },
     disabled: {
-      description: 'Never highlight this item.',
+      description: 'Never highlight this item. Defaults to the Highlight one.',
       type: 'boolean',
-      default: 'false',
     },
     exitDelay: {
       description:

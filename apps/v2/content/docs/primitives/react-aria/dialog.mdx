@@ -69,12 +69,6 @@ React Aria has no Animate UI v1 counterpart: the motion is v1's Dialog (Radix UI
 
 <TypeTable
   type={{
-    from: {
-      description:
-        'The edge the modal tips from as it comes in, as in v1. Ignored by a sheet (data-side).',
-      type: "'top' | 'bottom' | 'left' | 'right'",
-      default: "'top'",
-    },
     transition: {
       description:
         'Transition of the fade in (of its background color and backdrop filter).',
@@ -93,6 +87,12 @@ React Aria has no Animate UI v1 counterpart: the motion is v1's Dialog (Radix UI
 
 <TypeTable
   type={{
+    from: {
+      description:
+        'The edge the modal tips from as it comes in, as in v1. Ignored by a sheet (data-side).',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
     transition: {
       description:
         'Transition of the opening. One you pass drives its fade too.',

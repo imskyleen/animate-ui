@@ -67,6 +67,21 @@ A button built on [GitHub Stars](/docs/primitives/animate-ui/github-stars): its 
       type: 'number',
       default: '0',
     },
+    inView: {
+      description: 'Wait for the element to be in view before the request.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewOnce: {
+      description: 'Only the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    inViewMargin: {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
     hoverScale: {
       description:
         'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
@@ -77,6 +92,11 @@ A button built on [GitHub Stars](/docs/primitives/animate-ui/github-stars): its 
       description: 'Scale of the button while pressed.',
       type: 'number',
       default: '0.97',
+    },
+    transition: {
+      description: 'Transition of the tap (and hover) scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
     },
     asChild: {
       description: 'Render your child element (a link) instead of a `button`.',
