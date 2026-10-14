@@ -345,6 +345,10 @@ const BubbleInput = SelectPrimitive.unstable_BubbleInput;
 const createSelectScope: typeof SelectPrimitive.createSelectScope =
   SelectPrimitive.createSelectScope;
 
+Content.displayName = 'SelectContent';
+Item.displayName = 'SelectItem';
+ItemIndicator.displayName = 'SelectItemIndicator';
+
 export {
   Root,
   Trigger,

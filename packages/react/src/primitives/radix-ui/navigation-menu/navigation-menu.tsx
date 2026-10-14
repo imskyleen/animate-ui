@@ -698,6 +698,16 @@ function IndicatorMotion({
 const createNavigationMenuScope: typeof NavigationMenuPrimitive.createNavigationMenuScope =
   NavigationMenuPrimitive.createNavigationMenuScope;
 
+Root.displayName = 'NavigationMenu';
+Sub.displayName = 'NavigationMenuSub';
+List.displayName = 'NavigationMenuList';
+Item.displayName = 'NavigationMenuItem';
+Trigger.displayName = 'NavigationMenuTrigger';
+Link.displayName = 'NavigationMenuLink';
+Content.displayName = 'NavigationMenuContent';
+Viewport.displayName = 'NavigationMenuViewport';
+Indicator.displayName = 'NavigationMenuIndicator';
+
 export {
   Root,
   Sub,

@@ -117,6 +117,9 @@ const Arrow = TooltipPrimitive.Arrow;
 const createTooltipScope: typeof TooltipPrimitive.createTooltipScope =
   TooltipPrimitive.createTooltipScope;
 
+Trigger.displayName = 'TooltipTrigger';
+Content.displayName = 'TooltipContent';
+
 export {
   Provider,
   Root,

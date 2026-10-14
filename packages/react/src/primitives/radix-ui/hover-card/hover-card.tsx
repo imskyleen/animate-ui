@@ -113,6 +113,9 @@ const Arrow = HoverCardPrimitive.Arrow;
 const createHoverCardScope: typeof HoverCardPrimitive.createHoverCardScope =
   HoverCardPrimitive.createHoverCardScope;
 
+Trigger.displayName = 'HoverCardTrigger';
+Content.displayName = 'HoverCardContent';
+
 export {
   Root,
   Trigger,

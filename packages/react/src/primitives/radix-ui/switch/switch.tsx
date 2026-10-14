@@ -96,6 +96,9 @@ type unstable_SwitchTriggerProps = SwitchPrimitive.unstable_SwitchTriggerProps;
 type unstable_SwitchBubbleInputProps =
   SwitchPrimitive.unstable_SwitchBubbleInputProps;
 
+Root.displayName = 'Switch';
+Thumb.displayName = 'SwitchThumb';
+
 export {
   Root,
   Thumb,

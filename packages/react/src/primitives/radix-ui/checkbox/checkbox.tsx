@@ -86,6 +86,8 @@ type unstable_CheckboxTriggerProps =
 type unstable_CheckboxBubbleInputProps =
   CheckboxPrimitive.unstable_CheckboxBubbleInputProps;
 
+Indicator.displayName = 'CheckboxIndicator';
+
 export {
   Root,
   Indicator,

@@ -201,6 +201,7 @@ function createContent<P extends ContentProps>(
       </AnimatePresence>
     );
   }
+  Content.displayName = RadixContent.displayName;
   return Content;
 }
 
@@ -397,6 +398,7 @@ function createItem<P extends ItemProps>(RadixItem: React.ComponentType<P>) {
   function Item(props: P) {
     return <HighlightedItem component={RadixItem} props={props} />;
   }
+  Item.displayName = RadixItem.displayName;
   return Item;
 }
 
@@ -437,6 +439,7 @@ function createCheckboxItem<P extends CheckboxItemProps>(
       </IndicatorItemContext>
     );
   }
+  CheckboxItem.displayName = RadixCheckboxItem.displayName;
   return CheckboxItem;
 }
 
@@ -451,6 +454,7 @@ function createRadioGroup<P extends { value?: string }>(
       </RadioGroupContext>
     );
   }
+  RadioGroup.displayName = RadixRadioGroup.displayName;
   return RadioGroup;
 }
 
@@ -485,6 +489,7 @@ function createRadioItem<P extends SelectableItemProps & { value: string }>(
       </IndicatorItemContext>
     );
   }
+  RadioItem.displayName = RadixRadioItem.displayName;
   return RadioItem;
 }
 
@@ -528,6 +533,7 @@ function createItemIndicator<P extends ItemIndicatorProps>(
       </RadixItemIndicator>
     );
   }
+  ItemIndicator.displayName = RadixItemIndicator.displayName;
   return ItemIndicator;
 }
 

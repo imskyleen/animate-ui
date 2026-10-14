@@ -121,6 +121,10 @@ function Content({
 const createAccordionScope: typeof AccordionPrimitive.createAccordionScope =
   AccordionPrimitive.createAccordionScope;
 
+Root.displayName = 'Accordion';
+Item.displayName = 'AccordionItem';
+Content.displayName = 'AccordionContent';
+
 export {
   Root,
   Item,

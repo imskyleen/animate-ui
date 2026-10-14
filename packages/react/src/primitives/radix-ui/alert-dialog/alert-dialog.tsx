@@ -8,6 +8,7 @@ import type {
   FlipDirection,
   ModalAnimationProps,
 } from '../../../internal/modal-motion';
+import { type Part } from '../../../internal/part';
 
 type AlertDialogProps = AlertDialogPrimitive.AlertDialogProps;
 type AlertDialogTriggerProps = AlertDialogPrimitive.AlertDialogTriggerProps;
@@ -47,12 +48,14 @@ const modal = createRadixModal(
 
 const Root: React.FC<AlertDialogProps> = modal.Root;
 const Portal: React.FC<AlertDialogPortalProps> = modal.Portal;
-const Overlay: React.FC<
+const Overlay: Part<
   AlertDialogOverlayProps & React.RefAttributes<HTMLDivElement>
 > = modal.Overlay;
-const Content: React.FC<
+Overlay.displayName = 'AlertDialogOverlay';
+const Content: Part<
   AlertDialogContentProps & React.RefAttributes<HTMLDivElement>
 > = modal.Content;
+Content.displayName = 'AlertDialogContent';
 
 const Trigger = AlertDialogPrimitive.Trigger;
 const Action = AlertDialogPrimitive.Action;

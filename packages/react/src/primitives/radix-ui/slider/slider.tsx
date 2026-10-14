@@ -157,6 +157,10 @@ type unstable_SliderThumbProviderProps =
 type unstable_SliderThumbTriggerProps =
   SliderPrimitive.unstable_SliderThumbTriggerProps;
 
+Root.displayName = 'Slider';
+Range.displayName = 'SliderRange';
+Thumb.displayName = 'SliderThumb';
+
 export {
   Root,
   Track,

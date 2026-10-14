@@ -157,6 +157,9 @@ const SubContent = createContent(MenubarPrimitive.SubContent, {
 const createMenubarScope: typeof MenubarPrimitive.createMenubarScope =
   MenubarPrimitive.createMenubarScope;
 
+Root.displayName = 'Menubar';
+Trigger.displayName = 'MenubarTrigger';
+
 export {
   Root,
   Menu,

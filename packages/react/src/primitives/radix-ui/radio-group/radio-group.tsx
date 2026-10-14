@@ -122,6 +122,9 @@ type unstable_RadioGroupItemTriggerProps =
 type unstable_RadioGroupItemBubbleInputProps =
   RadioGroupPrimitive.unstable_RadioGroupItemBubbleInputProps;
 
+Item.displayName = 'RadioGroupItem';
+Indicator.displayName = 'RadioGroupIndicator';
+
 export {
   Root,
   Item,

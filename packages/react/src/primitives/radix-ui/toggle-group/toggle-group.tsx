@@ -90,6 +90,9 @@ function AnimatedItem({
 const createToggleGroupScope: typeof ToggleGroupPrimitive.createToggleGroupScope =
   ToggleGroupPrimitive.createToggleGroupScope;
 
+Root.displayName = 'ToggleGroup';
+Item.displayName = 'ToggleGroupItem';
+
 export {
   Root,
   Item,

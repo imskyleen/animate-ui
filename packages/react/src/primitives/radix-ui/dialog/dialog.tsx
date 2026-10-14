@@ -8,6 +8,7 @@ import type {
   FlipDirection,
   ModalAnimationProps,
 } from '../../../internal/modal-motion';
+import { type Part } from '../../../internal/part';
 
 type DialogProps = DialogPrimitive.DialogProps;
 type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
@@ -45,12 +46,12 @@ const modal = createRadixModal(
 
 const Root: React.FC<DialogProps> = modal.Root;
 const Portal: React.FC<DialogPortalProps> = modal.Portal;
-const Overlay: React.FC<
-  DialogOverlayProps & React.RefAttributes<HTMLDivElement>
-> = modal.Overlay;
-const Content: React.FC<
-  DialogContentProps & React.RefAttributes<HTMLDivElement>
-> = modal.Content;
+const Overlay: Part<DialogOverlayProps & React.RefAttributes<HTMLDivElement>> =
+  modal.Overlay;
+Overlay.displayName = 'DialogOverlay';
+const Content: Part<DialogContentProps & React.RefAttributes<HTMLDivElement>> =
+  modal.Content;
+Content.displayName = 'DialogContent';
 
 const Trigger = DialogPrimitive.Trigger;
 const Title = DialogPrimitive.Title;

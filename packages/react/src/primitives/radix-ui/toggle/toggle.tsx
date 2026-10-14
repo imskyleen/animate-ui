@@ -44,4 +44,6 @@ function AnimatedRoot({
   );
 }
 
+Root.displayName = 'Toggle';
+
 export { Root, Root as Toggle, type ToggleProps };

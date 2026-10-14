@@ -99,6 +99,9 @@ function Content({
 const createCollapsibleScope: typeof CollapsiblePrimitive.createCollapsibleScope =
   CollapsiblePrimitive.createCollapsibleScope;
 
+Root.displayName = 'Collapsible';
+Content.displayName = 'CollapsibleContent';
+
 export {
   Root,
   Trigger,

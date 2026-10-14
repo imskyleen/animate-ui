@@ -28,6 +28,7 @@ import {
   useOverlayTransitions,
   type Scrub,
 } from '../../../internal/modal-motion';
+import { type Part } from '../../../internal/part';
 
 const CLOSE_THRESHOLD = 0.25;
 const SCROLL_LOCK_TIMEOUT = 100;
@@ -528,7 +529,7 @@ function Portal(props: PortalProps): React.JSX.Element {
   );
 }
 
-const Overlay: React.FC<OverlayProps & React.RefAttributes<HTMLDivElement>> = (
+const Overlay: Part<OverlayProps & React.RefAttributes<HTMLDivElement>> = (
   props,
 ) => {
   const context = useDrawerContext();
@@ -649,7 +650,7 @@ function OverlayMotion({
   );
 }
 
-const Content: React.FC<ContentProps & React.RefAttributes<HTMLDivElement>> = (
+const Content: Part<ContentProps & React.RefAttributes<HTMLDivElement>> = (
   props,
 ) => {
   const context = useDrawerContext();
@@ -1284,7 +1285,7 @@ function ContentMotion({
   );
 }
 
-const Handle: React.FC<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
+const Handle: Part<HandleProps & React.RefAttributes<HTMLDivElement>> = ({
   preventCycle = false,
   children,
   onClick,
@@ -1488,6 +1489,14 @@ const Drawer: DrawerParts = {
   Title: DialogPrimitive.Title,
   Description: DialogPrimitive.Description,
 };
+
+Root.displayName = 'Drawer';
+NestedRoot.displayName = 'DrawerNestedRoot';
+Portal.displayName = 'DrawerPortal';
+
+Overlay.displayName = 'DrawerOverlay';
+Content.displayName = 'DrawerContent';
+Handle.displayName = 'DrawerHandle';
 
 export {
   Content,

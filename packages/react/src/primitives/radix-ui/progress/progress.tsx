@@ -65,6 +65,8 @@ function IndicatorMotion({
 const createProgressScope: typeof ProgressPrimitive.createProgressScope =
   ProgressPrimitive.createProgressScope;
 
+Indicator.displayName = 'ProgressIndicator';
+
 export {
   Root,
   Indicator,

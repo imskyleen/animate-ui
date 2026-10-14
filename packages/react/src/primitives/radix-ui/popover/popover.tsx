@@ -88,6 +88,8 @@ const Arrow = PopoverPrimitive.Arrow;
 const createPopoverScope: typeof PopoverPrimitive.createPopoverScope =
   PopoverPrimitive.createPopoverScope;
 
+Content.displayName = 'PopoverContent';
+
 export {
   Root,
   Trigger,

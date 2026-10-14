@@ -131,6 +131,11 @@ function Content({
 const createTabsScope: typeof TabsPrimitive.createTabsScope =
   TabsPrimitive.createTabsScope;
 
+Root.displayName = 'Tabs';
+List.displayName = 'TabsList';
+Trigger.displayName = 'TabsTrigger';
+Content.displayName = 'TabsContent';
+
 export {
   Root,
   List,
