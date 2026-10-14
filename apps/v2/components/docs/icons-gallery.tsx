@@ -63,11 +63,10 @@ type IconLibrary = {
 function newIcons(icons: IconEntry[]) {
   const since = new Date();
   since.setDate(since.getDate() - 30);
-  const recent = icons.filter(
-    (icon) => icon.added && new Date(icon.added) >= since,
-  );
   return new Set(
-    recent.length < icons.length ? recent.map((icon) => icon.name) : [],
+    icons
+      .filter((icon) => icon.added && new Date(icon.added) >= since)
+      .map((icon) => icon.name),
   );
 }
 
@@ -630,7 +629,7 @@ export function IconsGallery({
             >
               All
             </FilterChip>
-            {newOnes.size > 0 && (
+            {newOnes.size > 0 && newOnes.size < allIcons.length && (
               <FilterChip
                 active={filter === 'new'}
                 onClick={() => setFilter('new')}

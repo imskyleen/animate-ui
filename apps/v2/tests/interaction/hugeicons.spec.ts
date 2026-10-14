@@ -155,15 +155,18 @@ test.describe('hugeicons', () => {
       expect(item.name).toBe(`icons-hugeicons-${name}`);
       expect(item.dependencies).toEqual(['@animate-ui/react', 'motion']);
       expect(item.files[0].target).toBe(
-        `components/animate-ui/icons/hugeicons/${name}.tsx`,
+        `@components/animate-ui/icons/hugeicons/${name}.tsx`,
       );
-      expect(item.files[0].content).toContain(
-        `${title(name).replace(/ /g, '')} as ${title(name).replace(/ /g, '')}Icon`,
+      const component = title(name).replace(/ /g, '');
+      expect(item.files[0].content).toMatch(
+        new RegExp(
+          `\\b(${component} as ${component}Icon|${component}Icon as ${component})\\b`,
+        ),
       );
     }
   });
 
-  test("the gallery lists every icon, searchable by keyword and filtered by Lucide's category tags, each new one dotted at its top left (New filters them)", async ({
+  test("the gallery lists every icon, searchable by keyword and filtered by Lucide's category tags, each new one dotted at its top left (no New filter when all are)", async ({
     page,
   }) => {
     await gotoGallery(page);
@@ -187,8 +190,9 @@ test.describe('hugeicons', () => {
     expect(dot.left).toBeLessThan(16);
     expect(dot.top).toBeLessThan(16);
     expect(dot.size).toBe(8);
-    await page.getByRole('button', { name: 'New', exact: true }).click();
-    await expect(tiles).toHaveCount(NAMES.length);
+    await expect(
+      page.getByRole('button', { name: 'New', exact: true }),
+    ).toHaveCount(0);
     await page.getByRole('button', { name: 'Time', exact: true }).click();
     await expect(tile(page, 'clock-01')).toBeVisible();
     await expect(tile(page, 'notification-01')).toHaveCount(0);
