@@ -1,4 +1,13 @@
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { beforeEach, describe, expect, test } from 'vitest';
 
@@ -608,5 +617,72 @@ describe('the unused v1 files, in a terminal', () => {
       'No longer imported (v1 files @animate-ui/react replaces):',
     );
     expect(output).not.toContain('Would remove');
+  });
+});
+
+describe('imports the import graph misses keep their v1 file', () => {
+  const TOOLTIP = `${V1}/primitives/radix/tooltip.tsx`;
+  const IMPORT =
+    "import { TooltipContent } from '@/components/animate-ui/primitives/radix/tooltip';\n";
+  const add = (file: string, code: string) => {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), code);
+  };
+
+  test.each([
+    ['a build folder', 'build/preview.tsx', IMPORT],
+    ['an MDX page', 'docs/tooltip.mdx', `${IMPORT}\n# Tooltip\n`],
+    [
+      'a file it cannot parse',
+      'src/decorated.ts',
+      `${IMPORT}@decorator class A { @field b = 1 }\n`,
+    ],
+  ])('%s', async (_, file, code) => {
+    add(file, code);
+    const { output } = await run(['all'], { delete: true });
+    expect(existsSync(path.join(root, TOOLTIP))).toBe(true);
+    expect(output).toContain(`${TOOLTIP}: still imported by ${file}`);
+  });
+
+  test('a hidden folder is migrated too', async () => {
+    add('.storybook/preview.tsx', IMPORT);
+    await run(['all']);
+    expect(read('.storybook/preview.tsx')).toContain(
+      "from '@animate-ui/react/primitives/radix-ui/tooltip';",
+    );
+  });
+
+  test('another app of the monorepo', async () => {
+    const mono = mkdtempSync(path.join(tmpdir(), 'animate-ui-mono-'));
+    writeFileSync(
+      path.join(mono, 'pnpm-workspace.yaml'),
+      "packages: ['apps/*']\n",
+    );
+    cpSync(root, path.join(mono, 'apps/web'), { recursive: true });
+    root = path.join(mono, 'apps/web');
+    mkdirSync(path.join(mono, 'apps/docs'));
+    writeFileSync(
+      path.join(mono, 'apps/docs/page.tsx'),
+      "import { TooltipContent } from '../web/src/components/animate-ui/primitives/radix/tooltip';\n",
+    );
+    await run(['all'], { delete: true });
+    expect(existsSync(path.join(root, TOOLTIP))).toBe(true);
+  });
+
+  test('an import through baseUrl is migrated', async () => {
+    writeFileSync(
+      path.join(root, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: { baseUrl: 'src', paths: { '@/*': ['./*'] } },
+      }),
+    );
+    add(
+      'src/app/base-url.tsx',
+      "import { TooltipContent } from 'components/animate-ui/primitives/radix/tooltip';\n",
+    );
+    await run(['all'], { delete: true });
+    expect(read('src/app/base-url.tsx')).toContain(
+      "from '@animate-ui/react/primitives/radix-ui/tooltip';",
+    );
   });
 });

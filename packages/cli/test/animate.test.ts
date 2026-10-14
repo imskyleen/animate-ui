@@ -143,3 +143,33 @@ test('--exclude takes several components, comma-separated or repeated', () => {
   expect(readFileSync(tooltip, 'utf8')).toBe(before);
   expect(readFileSync(uiFile(), 'utf8')).toBe(ACCORDION);
 });
+
+test('follows the tsconfig extends to find the ui folder', () => {
+  writeFileSync(
+    path.join(root, 'tsconfig.json'),
+    JSON.stringify({ extends: './config/tsconfig.base.json' }),
+  );
+  mkdirSync(path.join(root, 'config'));
+  writeFileSync(
+    path.join(root, 'config', 'tsconfig.base.json'),
+    JSON.stringify({ compilerOptions: { paths: { '@/*': ['../src/*'] } } }),
+  );
+  expect(run(['accordion']).code).toBe(0);
+  expect(readFileSync(uiFile(), 'utf8')).toContain('@animate-ui/react');
+});
+
+test('uses the longest matching paths pattern, as TypeScript does', () => {
+  writeFileSync(
+    path.join(root, 'tsconfig.json'),
+    JSON.stringify({
+      compilerOptions: {
+        paths: {
+          '@/*': ['./other/*'],
+          '@/components/*': ['./src/components/*'],
+        },
+      },
+    }),
+  );
+  expect(run(['accordion']).code).toBe(0);
+  expect(readFileSync(uiFile(), 'utf8')).toContain('@animate-ui/react');
+});

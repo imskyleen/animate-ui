@@ -234,7 +234,31 @@ export async function migrate(components: string[], options: MigrateOptions) {
     );
   }
   const candidateFiles = new Set(candidates.values());
-  const used = new Set<string>();
+  const mentions = new Map<string, string[]>();
+  const patterns = [...candidateFiles].map((file): [string, RegExp] => {
+    const tail = stripExtension(file).split(path.sep).slice(-2).join('/');
+    return [
+      file,
+      new RegExp(
+        `/${tail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:/index)?(?:\\.[cm]?[jt]sx?)?['"\`]`,
+      ),
+    ];
+  });
+  if (patterns.length > 0)
+    for (const file of project.textFiles()) {
+      if (candidateFiles.has(file)) continue;
+      let code = contents.get(file);
+      if (code === undefined)
+        try {
+          code = readFileSync(file, 'utf8');
+        } catch {
+          continue;
+        }
+      for (const [candidate, pattern] of patterns)
+        if (pattern.test(code))
+          mentions.set(candidate, [...(mentions.get(candidate) ?? []), file]);
+    }
+  const used = new Set<string>(mentions.keys());
   for (let grew = true; grew;) {
     grew = false;
     for (const [file, targets] of imports) {
@@ -250,12 +274,18 @@ export async function migrate(components: string[], options: MigrateOptions) {
   const unused = [...candidateFiles].filter((file) => !used.has(file)).sort();
 
   const importersOf = (file: string) =>
-    [...imports]
-      .filter(
-        ([importer, targets]) =>
-          !candidateFiles.has(importer) && targets.includes(file),
-      )
-      .map(([importer]) => relative(importer))
+    [
+      ...new Set([
+        ...[...imports]
+          .filter(
+            ([importer, targets]) =>
+              !candidateFiles.has(importer) && targets.includes(file),
+          )
+          .map(([importer]) => importer),
+        ...(mentions.get(file) ?? []),
+      ]),
+    ]
+      .map(relative)
       .sort();
   const stillImported = [...used]
     .sort()

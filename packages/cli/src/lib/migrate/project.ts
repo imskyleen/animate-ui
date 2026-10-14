@@ -1,7 +1,8 @@
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 import { loadProject } from '../project';
+import { readJson, readPathConfig, resolveWithConfig } from '../tsconfig';
 
 export type V1Module =
   | { kind: 'primitive'; library: string; name: string }
@@ -17,6 +18,7 @@ export type MigrateProject = {
   resolve: (fromFile: string, specifier: string) => string | undefined;
   classify: (target: string) => V1Module | undefined;
   sourceFiles: () => string[];
+  textFiles: () => string[];
 };
 
 export const SOURCE_EXTENSIONS = [
@@ -30,7 +32,33 @@ export const SOURCE_EXTENSIONS = [
   '.cjs',
 ];
 
+const TEXT_EXTENSIONS = [
+  ...SOURCE_EXTENSIONS,
+  '.mdx',
+  '.md',
+  '.vue',
+  '.svelte',
+  '.astro',
+];
+
+const GENERATED_DIRS = new Set([
+  'node_modules',
+  '.git',
+  '.next',
+  '.nuxt',
+  '.output',
+  '.svelte-kit',
+  '.turbo',
+  '.vercel',
+  '.cache',
+  '.parcel-cache',
+  '.yarn',
+  '.pnpm-store',
+  '.expo',
+]);
+
 const IGNORED_DIRS = new Set([
+  ...GENERATED_DIRS,
   'node_modules',
   'dist',
   'build',
@@ -38,46 +66,6 @@ const IGNORED_DIRS = new Set([
   'coverage',
   'storybook-static',
 ]);
-
-function parseJsonc(text: string) {
-  const withoutComments = text.replace(
-    /("(?:\\.|[^"\\])*")|\/\/[^\n]*|\/\*[\s\S]*?\*\//g,
-    (match, string: string | undefined) => string ?? '',
-  );
-  return JSON.parse(withoutComments.replace(/,(\s*[}\]])/g, '$1'));
-}
-
-function readJson(file: string) {
-  try {
-    return parseJsonc(readFileSync(file, 'utf8'));
-  } catch {
-    return {};
-  }
-}
-
-type PathMapping = { prefix: string; targets: string[]; exact: boolean };
-
-function readPathMappings(root: string): PathMapping[] {
-  const mappings: PathMapping[] = [];
-  for (const name of ['tsconfig.json', 'tsconfig.app.json', 'jsconfig.json']) {
-    const file = path.join(root, name);
-    if (!existsSync(file)) continue;
-    const options = readJson(file).compilerOptions ?? {};
-    const baseUrl = path.join(root, options.baseUrl ?? '.');
-    for (const [pattern, targets] of Object.entries<string[]>(
-      options.paths ?? {},
-    )) {
-      mappings.push({
-        prefix: pattern.replace(/\*$/, ''),
-        exact: !pattern.endsWith('*'),
-        targets: targets.map((target) =>
-          path.join(baseUrl, target.replace(/\*$/, '')),
-        ),
-      });
-    }
-  }
-  return mappings.sort((a, b) => b.prefix.length - a.prefix.length);
-}
 
 export function stripExtension(file: string) {
   const extension = path.extname(file);
@@ -95,6 +83,44 @@ function isDirectory(dir: string) {
   }
 }
 
+function workspaceRoot(root: string) {
+  for (let dir = root; ;) {
+    if (
+      ['pnpm-workspace.yaml', 'lerna.json', 'nx.json', 'turbo.json'].some(
+        (name) => existsSync(path.join(dir, name)),
+      ) ||
+      readJson(path.join(dir, 'package.json')).workspaces
+    )
+      return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) return root;
+    dir = parent;
+  }
+}
+
+function walkFiles(
+  dir: string,
+  skipDir: (name: string) => boolean,
+  keep: (name: string) => boolean,
+  files: string[] = [],
+) {
+  let entries;
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return files;
+  }
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (!skipDir(entry.name)) walkFiles(full, skipDir, keep, files);
+    } else if (entry.isFile() && keep(entry.name)) {
+      files.push(full);
+    }
+  }
+  return files;
+}
+
 export function loadMigrateProject(cwd: string): MigrateProject {
   const { root, hasPackage } = loadProject(cwd);
   const aliases = readJson(path.join(root, 'components.json')).aliases ?? {};
@@ -103,22 +129,11 @@ export function loadMigrateProject(cwd: string): MigrateProject {
     ...Object.keys(pkg.dependencies ?? {}),
     ...Object.keys(pkg.devDependencies ?? {}),
   ]);
-  const mappings = readPathMappings(root);
+  const pathConfig = readPathConfig(root);
 
   const resolveAlias = (specifier: string) => {
-    for (const { prefix, targets, exact } of mappings) {
-      if (exact ? specifier !== prefix : !specifier.startsWith(prefix))
-        continue;
-      const rest = exact ? '' : specifier.slice(prefix.length);
-      const candidates = targets.map((target) => path.join(target, rest));
-      return (
-        candidates.find(
-          (candidate) =>
-            isDirectory(candidate) ||
-            SOURCE_EXTENSIONS.some((ext) => existsSync(candidate + ext)),
-        ) ?? candidates[0]
-      );
-    }
+    const configured = resolveWithConfig(pathConfig, specifier);
+    if (configured !== undefined) return configured;
     const match = specifier.match(/^[@~]\/(.*)$/);
     if (!match) return undefined;
     const fromRoot = path.join(root, match[1]!);
@@ -170,26 +185,21 @@ export function loadMigrateProject(cwd: string): MigrateProject {
     return undefined;
   };
 
-  const sourceFiles = () => {
-    const files: string[] = [];
-    const walk = (dir: string) => {
-      for (const entry of readdirSync(dir, { withFileTypes: true })) {
-        if (entry.name.startsWith('.')) continue;
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) {
-          if (!IGNORED_DIRS.has(entry.name)) walk(full);
-        } else if (
-          entry.isFile() &&
-          SOURCE_EXTENSIONS.includes(path.extname(entry.name)) &&
-          !/\.d\.[cm]?ts$/.test(entry.name)
-        ) {
-          files.push(full);
-        }
-      }
-    };
-    walk(root);
-    return files.sort();
-  };
+  const sourceFiles = () =>
+    walkFiles(
+      root,
+      (name) => IGNORED_DIRS.has(name),
+      (name) =>
+        SOURCE_EXTENSIONS.includes(path.extname(name)) &&
+        !/\.d\.[cm]?ts$/.test(name),
+    ).sort();
+
+  const textFiles = () =>
+    walkFiles(
+      workspaceRoot(root),
+      (name) => GENERATED_DIRS.has(name),
+      (name) => TEXT_EXTENSIONS.includes(path.extname(name)),
+    ).sort();
 
   return {
     root,
@@ -201,5 +211,6 @@ export function loadMigrateProject(cwd: string): MigrateProject {
     resolve,
     classify,
     sourceFiles,
+    textFiles,
   };
 }
