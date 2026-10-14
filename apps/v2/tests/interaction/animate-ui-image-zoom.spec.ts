@@ -47,3 +47,31 @@ test.describe('animate-ui image zoom', () => {
     expect(await scale(page)).toBe(3);
   });
 });
+
+test.describe('animate-ui image zoom on touch', () => {
+  test.use({ hasTouch: true, isMobile: true });
+
+  test('a tap zooms in and stays zoomed', async ({ page }) => {
+    await open(page);
+    const box = (await container(page).boundingBox())!;
+    await page.touchscreen.tap(box.x + 40, box.y + 40);
+    await expect.poll(() => scale(page)).toBeGreaterThan(2.9);
+    await page.waitForTimeout(300);
+    expect(await scale(page)).toBeGreaterThan(2.9);
+  });
+});
+
+test('own handlers and ref compose with the zoom', async ({ page }) => {
+  await page.goto('/tests/fixtures/animate-ui-image-zoom-props', {
+    waitUntil: 'networkidle',
+  });
+  const zoom = page.getByRole('img', { name: 'Zoomable' });
+  await zoom.hover();
+  await zoom.click();
+  await expect(page.getByTestId('log')).toHaveText('enter,click DIV');
+  await expect
+    .poll(() =>
+      zoom.evaluate((el) => getComputedStyle(el.firstElementChild!).transform),
+    )
+    .not.toBe('none');
+});

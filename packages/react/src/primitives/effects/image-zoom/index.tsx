@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion, type Transition } from 'motion/react';
 
 import { ReducedMotionConfig } from '../../../utils/motion';
+import { mergeRefs } from '../../../internal/anchored';
 
 const COARSE_QUERY = '(pointer: coarse)';
 
@@ -43,10 +44,19 @@ export function ImageZoom({
   disabled = false,
   width = '100%',
   height = '100%',
+  ref,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseMove,
+  onClick,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
   ...props
 }: ImageZoomProps) {
   const [isZoomed, setIsZoomed] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(containerRef, ref), [ref]);
   const isTouch = useIsTouch();
 
   const setOriginFromEvent = React.useCallback(
@@ -105,8 +115,7 @@ export function ImageZoom({
     (e: React.TouchEvent) => {
       if (disabled) return;
       setOriginFromEvent(e);
-      if (zoomOnClick) setIsZoomed((v) => !v);
-      else setIsZoomed(true);
+      if (!zoomOnClick) setIsZoomed(true);
     },
     [disabled, zoomOnClick, setOriginFromEvent],
   );
@@ -126,7 +135,7 @@ export function ImageZoom({
 
   return (
     <div
-      ref={containerRef}
+      ref={mergedRef}
       style={{
         overflow: 'hidden',
         position: 'relative',
@@ -136,15 +145,36 @@ export function ImageZoom({
         cursor: disabled ? 'default' : isZoomed ? 'zoom-out' : 'zoom-in',
         ...style,
       }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
-      onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       role="img"
       {...props}
+      onMouseEnter={(e) => {
+        handleMouseEnter();
+        onMouseEnter?.(e);
+      }}
+      onMouseLeave={(e) => {
+        handleMouseLeave();
+        onMouseLeave?.(e);
+      }}
+      onMouseMove={(e) => {
+        handleMouseMove(e);
+        onMouseMove?.(e);
+      }}
+      onClick={(e) => {
+        handleClick(e);
+        onClick?.(e);
+      }}
+      onTouchStart={(e) => {
+        handleTouchStart(e);
+        onTouchStart?.(e);
+      }}
+      onTouchMove={(e) => {
+        handleTouchMove(e);
+        onTouchMove?.(e);
+      }}
+      onTouchEnd={(e) => {
+        handleTouchEnd();
+        onTouchEnd?.(e);
+      }}
     >
       <ReducedMotionConfig>
         <motion.div
