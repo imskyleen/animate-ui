@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { Menu as MenuPrimitive } from '@base-ui/react/menu';
-import { motion, type Transition } from 'motion/react';
+import { type Transition } from 'motion/react';
 
 import {
   useShouldReduceMotion,
@@ -31,6 +31,7 @@ import {
   type Picked,
   type RegisterCheck,
 } from '../../../internal/item-indicator';
+import { MotionSlot, renderedElement } from '../../../internal/modal-motion';
 
 type PresenceAnimationProps = {
   transition?: Transition;
@@ -163,10 +164,12 @@ function PopupMotion({
   unmount,
   transition,
   exitTransition,
+  render,
 }: PresenceAnimationProps & {
   htmlProps: HTMLProps;
   state: PopupState;
   unmount: () => void;
+  render?: MenuPrimitive.Popup.Props['render'];
 }) {
   const reduce = useShouldReduceMotion();
   const [entering] = React.useState(state.open);
@@ -235,8 +238,9 @@ function PopupMotion({
   const { children, ...props } = htmlProps;
 
   return (
-    <motion.div
-      {...(props as React.ComponentProps<typeof motion.div>)}
+    <MotionSlot
+      element={renderedElement(render, htmlProps, state)}
+      {...props}
       ref={ref}
       initial={
         handoff.from
@@ -269,7 +273,7 @@ function PopupMotion({
           <HighlightScope open={state.open}>{children}</HighlightScope>
         </HandoffNestedContext>
       )}
-    </motion.div>
+    </MotionSlot>
   );
 }
 

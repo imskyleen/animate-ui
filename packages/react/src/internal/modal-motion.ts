@@ -308,7 +308,7 @@ export { toCssTiming, type CssTiming } from '../utils/motion';
 type AnyComponent = React.ComponentType<any>;
 type ElementProps = Record<string, any> & {
   ref?: React.Ref<unknown>;
-  style?: React.CSSProperties;
+  style?: object;
 };
 type RenderFunction = (props: any, state: any) => React.ReactElement;
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -370,4 +370,47 @@ export function ariaMotionRender(
           ...motionProps,
           style: { ...domProps.style, ...motionProps.style },
         });
+}
+
+export function slotChild(
+  asChild: boolean | undefined,
+  children: React.ReactNode,
+) {
+  const element =
+    asChild && React.isValidElement<{ children?: React.ReactNode }>(children)
+      ? children
+      : null;
+  return { element, inner: element ? element.props.children : children };
+}
+
+export function MotionSlot({
+  element,
+  as = 'div',
+  children,
+  ...motionProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: Record<string, any> & {
+  element: React.ReactElement | null;
+  as?: 'div' | 'span' | 'nav';
+  children?: unknown;
+}) {
+  if (element)
+    return asMotion(
+      React.cloneElement(element, undefined, children as React.ReactNode),
+      motionProps,
+    );
+  return React.createElement(
+    motionFor(as),
+    motionProps,
+    children as React.ReactNode,
+  );
+}
+
+export function renderedElement(
+  render: React.ReactElement | RenderFunction | undefined,
+  props: ElementProps,
+  state?: unknown,
+) {
+  if (typeof render === 'function') return render(props, state);
+  return render ?? null;
 }

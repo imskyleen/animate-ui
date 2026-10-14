@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  type Transition,
-} from 'motion/react';
+import { AnimatePresence, useMotionValue, type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
@@ -42,6 +37,7 @@ import {
   type ItemCheckAnimationProps,
   type Picked,
 } from '../../../internal/item-indicator';
+import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 type PresenceAnimationProps = {
   transition?: Transition;
@@ -219,6 +215,7 @@ function ContentMotion({
   transition,
   exitTransition,
   style,
+  asChild,
   children,
   onCloseAutoFocus,
   onEscapeKeyDown,
@@ -307,6 +304,7 @@ function ContentMotion({
     }
   }, [open, onCloseAutoFocus, options.returnFocus]);
 
+  const slot = slotChild(asChild, children);
   return (
     <RadixContent
       {...props}
@@ -321,7 +319,8 @@ function ContentMotion({
         if (returnedFocusRef.current) event.preventDefault();
       }}
     >
-      <motion.div
+      <MotionSlot
+        element={slot.element}
         ref={ref}
         initial={
           handoff.from ? { opacity: handoff.from.opacity, scale: 1 } : hidden
@@ -353,10 +352,10 @@ function ContentMotion({
           children
         ) : (
           <HandoffNestedContext value={options.handoff ? handoff.entry : null}>
-            <HighlightScope open={open}>{children}</HighlightScope>
+            <HighlightScope open={open}>{slot.inner}</HighlightScope>
           </HandoffNestedContext>
         )}
-      </motion.div>
+      </MotionSlot>
     </RadixContent>
   );
 }

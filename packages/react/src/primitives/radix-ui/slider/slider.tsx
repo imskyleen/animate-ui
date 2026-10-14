@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Slider as SliderPrimitive } from 'radix-ui';
-import { motion, type Transition } from 'motion/react';
+import { type Transition } from 'motion/react';
 
 import { ReducedMotionConfig, useTempoTransition } from '../../../utils/motion';
 import {
@@ -13,6 +13,7 @@ import {
   useSliderRootMotion,
   useThumbStretch,
 } from '../../../internal/slider';
+import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 type SliderProps = SliderPrimitive.SliderProps;
 type SliderTrackProps = SliderPrimitive.SliderTrackProps;
@@ -83,20 +84,24 @@ const Track = SliderPrimitive.Track;
 
 function Range({
   transition,
+  asChild,
   children,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Range> & RangeAnimationProps) {
   const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
   const { ref, transform } = useSliderPartMotion('range', spring);
 
+  const slot = slotChild(asChild, children);
   return (
     <SliderPrimitive.Range {...props} asChild>
-      <motion.span
+      <MotionSlot
+        element={slot.element}
+        as="span"
         ref={ref as React.Ref<HTMLSpanElement>}
         style={{ transform, transformOrigin: '0 0' }}
       >
-        {children}
-      </motion.span>
+        {slot.inner}
+      </MotionSlot>
     </SliderPrimitive.Range>
   );
 }
@@ -105,6 +110,7 @@ function Thumb({
   transition,
   onFocus,
   onBlur,
+  asChild,
   children,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Thumb> & ThumbAnimationProps) {
@@ -116,6 +122,7 @@ function Thumb({
   const isPressed = isPressing && isFocused;
   useThumbStretch(ref, isPressed, spring);
 
+  const slot = slotChild(asChild, children);
   return (
     <SliderPrimitive.Thumb
       data-pressed={isPressed || undefined}
@@ -130,12 +137,14 @@ function Thumb({
       }}
       asChild
     >
-      <motion.span
+      <MotionSlot
+        element={slot.element}
+        as="span"
         ref={ref as React.Ref<HTMLSpanElement>}
         style={{ transform }}
       >
-        {children}
-      </motion.span>
+        {slot.inner}
+      </MotionSlot>
     </SliderPrimitive.Thumb>
   );
 }

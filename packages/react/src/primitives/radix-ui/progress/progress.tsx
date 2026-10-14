@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Progress as ProgressPrimitive } from 'radix-ui';
-import { motion, type Transition } from 'motion/react';
+import { type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
@@ -10,6 +10,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import { PROGRESS_TRANSITION } from '../../../internal/progress';
+import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 type ProgressProps = ProgressPrimitive.ProgressProps;
 type ProgressIndicatorProps = ProgressPrimitive.ProgressIndicatorProps &
@@ -35,6 +36,7 @@ function Indicator(
 function IndicatorMotion({
   style,
   transition,
+  asChild,
   children,
   ...props
 }: React.ComponentProps<typeof ProgressPrimitive.Indicator> &
@@ -49,15 +51,17 @@ function IndicatorMotion({
       : undefined;
   const target = x !== undefined ? { x } : transform ? { transform } : null;
 
+  const slot = slotChild(asChild, children);
   return (
     <ProgressPrimitive.Indicator {...props} asChild>
-      <motion.div
+      <MotionSlot
+        element={slot.element}
         style={rest}
         initial={false}
         animate={target ? { ...target, transition: move } : undefined}
       >
-        {children}
-      </motion.div>
+        {slot.inner}
+      </MotionSlot>
     </ProgressPrimitive.Indicator>
   );
 }

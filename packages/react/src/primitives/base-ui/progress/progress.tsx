@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Progress as ProgressPrimitive } from '@base-ui/react/progress';
-import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
+import { type HTMLMotionProps, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
@@ -17,6 +17,7 @@ import {
   useCountingNumber,
 } from '../../../internal/progress';
 import { useHydrationLocale } from '../../../internal/hydration-locale';
+import { MotionSlot, renderedElement } from '../../../internal/modal-motion';
 
 type IndicatorAnimationProps = {
   transition?: Transition;
@@ -67,14 +68,15 @@ namespace Track {
   export type State = ProgressPrimitive.Track.State;
 }
 
-function Indicator({ transition, ...props }: Indicator.Props) {
+function Indicator({ transition, render, ...props }: Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator
       {...props}
-      render={(renderProps) => (
+      render={(renderProps, state) => (
         <IndicatorMotion
           {...(renderProps as HTMLMotionProps<'div'>)}
           moveTransition={transition}
+          element={renderedElement(render, renderProps, state)}
         />
       )}
     />
@@ -91,18 +93,24 @@ namespace Indicator {
 function IndicatorMotion({
   style,
   moveTransition,
+  element,
   ...props
-}: HTMLMotionProps<'div'> & { moveTransition: Transition | undefined }) {
+}: HTMLMotionProps<'div'> & {
+  moveTransition: Transition | undefined;
+  element: React.ReactElement | null;
+}) {
   const { percentage } = useProgressMotion();
   const reduce = useShouldReduceMotion();
   const spring = useTempoTransition(moveTransition ?? PROGRESS_TRANSITION);
 
-  if (percentage === null) return <motion.div {...props} style={style} />;
+  if (percentage === null)
+    return <MotionSlot element={element} {...props} style={style} />;
 
   const rest: Record<string, unknown> = { ...style };
   delete rest.width;
   return (
-    <motion.div
+    <MotionSlot
+      element={element}
       {...props}
       style={rest as HTMLMotionProps<'div'>['style']}
       initial={false}

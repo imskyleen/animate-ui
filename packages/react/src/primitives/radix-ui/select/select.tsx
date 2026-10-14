@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Select as SelectPrimitive } from 'radix-ui';
-import { AnimatePresence, motion, type Transition } from 'motion/react';
+import { AnimatePresence, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import {
@@ -31,6 +31,7 @@ import {
   type Picked,
   type RegisterCheck,
 } from '../../../internal/item-indicator';
+import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 const [OpenProvider, useOpen] = getStrictContext<{
   open: boolean;
@@ -200,6 +201,7 @@ type ContentMotionProps = Omit<
 function ContentMotion({
   enter,
   exit,
+  asChild,
   children,
   style,
   ...props
@@ -217,9 +219,11 @@ function ContentMotion({
     : { opacity: 0 };
   const visible = popper ? { opacity: 1, scale: 1 } : { opacity: 1 };
 
+  const slot = slotChild(asChild, children);
   return (
     <SelectPrimitive.Content {...props} forceMount asChild>
-      <motion.div
+      <MotionSlot
+        element={slot.element}
         initial={hidden}
         animate={
           open
@@ -238,10 +242,10 @@ function ContentMotion({
       >
         <IndicatorGroupContext value={group}>
           <CheckRegistryContext value={registerCheck}>
-            <HighlightScope open={open}>{children}</HighlightScope>
+            <HighlightScope open={open}>{slot.inner}</HighlightScope>
           </CheckRegistryContext>
         </IndicatorGroupContext>
-      </motion.div>
+      </MotionSlot>
     </SelectPrimitive.Content>
   );
 }

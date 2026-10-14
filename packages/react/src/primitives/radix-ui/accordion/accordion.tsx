@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Accordion as AccordionPrimitive } from 'radix-ui';
-import { AnimatePresence, motion, type Transition } from 'motion/react';
+import { AnimatePresence, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
@@ -14,6 +14,7 @@ import {
   releasePanel,
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
+import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 type Value = string | string[] | undefined;
 
@@ -76,6 +77,7 @@ const Trigger = AccordionPrimitive.Trigger;
 
 function Content({
   forceMount,
+  asChild,
   children,
   transition,
   exitTransition,
@@ -86,11 +88,13 @@ function Content({
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
   const ref = React.useRef<HTMLDivElement>(null);
 
+  const slot = slotChild(asChild, children);
   return (
     <AnimatePresence>
       {(open || forceMount) && (
         <AccordionPrimitive.Content {...props} forceMount asChild>
-          <motion.div
+          <MotionSlot
+            element={slot.element}
             ref={ref}
             initial={collapsed}
             animate={
@@ -110,8 +114,8 @@ function Content({
               ['--radix-accordion-content-height' as string]: 'auto',
             }}
           >
-            {children}
-          </motion.div>
+            {slot.inner}
+          </MotionSlot>
         </AccordionPrimitive.Content>
       )}
     </AnimatePresence>

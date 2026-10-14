@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui/react/navigation-menu';
-import { motion, type Transition } from 'motion/react';
+import { type Transition } from 'motion/react';
 
 import {
   ReducedMotionConfig,
@@ -35,6 +35,7 @@ import Viewport = NavigationMenuPrimitive.Viewport;
 import Backdrop = NavigationMenuPrimitive.Backdrop;
 import Arrow = NavigationMenuPrimitive.Arrow;
 import Icon = NavigationMenuPrimitive.Icon;
+import { MotionSlot, renderedElement } from '../../../internal/modal-motion';
 
 type PresenceAnimationProps = {
   transition?: Transition;
@@ -301,6 +302,7 @@ function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
             swapper={root.swapper}
             transition={transition}
             exitTransition={exitTransition}
+            render={render}
           />
         </ReducedMotionConfig>
       )}
@@ -321,11 +323,13 @@ function PopupMotion({
   swapper,
   transition,
   exitTransition,
+  render,
 }: PresenceAnimationProps & {
   htmlProps: HTMLProps;
   state: Popup.State;
   unmount: () => void;
   swapper: ContentSwapper;
+  render?: Popup.Props['render'];
 }) {
   const reduce = useShouldReduceMotion();
   const [entering] = React.useState(state.open);
@@ -351,8 +355,10 @@ function PopupMotion({
   useMoveFollower(swapper, nodeRef, true);
 
   return (
-    <motion.nav
-      {...(htmlProps as React.ComponentProps<typeof motion.nav>)}
+    <MotionSlot
+      element={renderedElement(render, htmlProps, state)}
+      as="nav"
+      {...htmlProps}
       ref={mergedRef}
       initial={entering ? hidden : false}
       animate={
@@ -393,6 +399,7 @@ function Content({
           state={state}
           swapper={root.swapper}
           id={id}
+          render={render}
         />
       )}
     />
@@ -425,11 +432,13 @@ function ContentMotion({
   state,
   swapper,
   id,
+  render,
 }: {
   htmlProps: HTMLProps;
   state: Content.State;
   swapper: ContentSwapper;
   id: string;
+  render?: Content.Props['render'];
 }) {
   const ref = useInlineTransition(htmlProps, { property: 'none' });
   const nodeRef = React.useRef<HTMLElement | null>(null);
@@ -453,7 +462,8 @@ function ContentMotion({
   }, [state.open, state.activationDirection, swapper, id]);
 
   return (
-    <div
+    <MotionSlot
+      element={renderedElement(render, htmlProps, state)}
       {...htmlProps}
       ref={mergedRef}
       style={{
@@ -462,7 +472,7 @@ function ContentMotion({
       }}
     >
       <TriggerHighlightScope>{htmlProps.children}</TriggerHighlightScope>
-    </div>
+    </MotionSlot>
   );
 }
 

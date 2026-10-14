@@ -149,6 +149,7 @@ function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
             unmount={unmount}
             transition={transition}
             exitTransition={exitTransition}
+            render={render}
           />
         </ReducedMotionConfig>
       )}
@@ -255,6 +256,7 @@ function CheckboxItemIndicator({
   transition,
   ...props
 }: CheckboxItemIndicator.Props) {
+  if (props.render) return <MenuPrimitive.CheckboxItemIndicator {...props} />;
   return (
     <MenuPrimitive.CheckboxItemIndicator
       {...props}
@@ -283,6 +285,7 @@ function RadioItemIndicator({
   transition,
   ...props
 }: RadioItemIndicator.Props) {
+  if (props.render) return <MenuPrimitive.RadioItemIndicator {...props} />;
   return (
     <MenuPrimitive.RadioItemIndicator
       {...props}

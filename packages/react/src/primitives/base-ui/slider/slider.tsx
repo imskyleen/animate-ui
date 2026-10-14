@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Slider as SliderPrimitive } from '@base-ui/react/slider';
-import { motion, type Transition } from 'motion/react';
+import { type Transition } from 'motion/react';
 
 import { ReducedMotionConfig, useTempoTransition } from '../../../utils/motion';
 import {
@@ -16,6 +16,7 @@ import {
   useThumbStretch,
 } from '../../../internal/slider';
 import { useHydrationLocale } from '../../../internal/hydration-locale';
+import { motionRender } from '../../../internal/modal-motion';
 
 type IndicatorAnimationProps = {
   transition?: Transition;
@@ -113,22 +114,20 @@ namespace Track {
   export type State = SliderPrimitive.Track.State;
 }
 
-function Indicator({ ref, transition, ...props }: Indicator.Props) {
+function Indicator({ ref, transition, render, ...props }: Indicator.Props) {
   const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
   const { ref: motionRef, transform } = useSliderPartMotion('range', spring);
 
   return (
     <SliderPrimitive.Indicator
       {...props}
-      render={
-        <motion.div
-          ref={(node: HTMLDivElement | null) => {
-            motionRef.current = node;
-            assignRef(ref, node);
-          }}
-          style={{ transform, transformOrigin: '0 0' }}
-        />
-      }
+      render={motionRender(render, {
+        ref: (node: HTMLDivElement | null) => {
+          motionRef.current = node;
+          assignRef(ref, node);
+        },
+        style: { transform, transformOrigin: '0 0' },
+      })}
     />
   );
 }
@@ -140,7 +139,14 @@ namespace Indicator {
   export type State = SliderPrimitive.Indicator.State;
 }
 
-function Thumb({ ref, transition, onFocus, onBlur, ...props }: Thumb.Props) {
+function Thumb({
+  ref,
+  transition,
+  onFocus,
+  onBlur,
+  render,
+  ...props
+}: Thumb.Props) {
   const spring = useTempoTransition(transition ?? SLIDER_TRANSITION);
   const { isPressing } = useSliderMotion();
   const [isFocused, setIsFocused] = React.useState(false);
@@ -160,16 +166,14 @@ function Thumb({ ref, transition, onFocus, onBlur, ...props }: Thumb.Props) {
         setIsFocused(false);
         onBlur?.(event);
       }}
-      render={
-        <motion.div
-          ref={(node: HTMLDivElement | null) => {
-            motionRef.current = node;
-            assignRef(ref, node);
-          }}
-          data-pressed={isPressed || undefined}
-          style={{ transform }}
-        />
-      }
+      render={motionRender(render, {
+        ref: (node: HTMLDivElement | null) => {
+          motionRef.current = node;
+          assignRef(ref, node);
+        },
+        'data-pressed': isPressed || undefined,
+        style: { transform },
+      })}
     />
   );
 }

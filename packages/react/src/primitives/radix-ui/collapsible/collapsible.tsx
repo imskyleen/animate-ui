@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
-import { AnimatePresence, motion, type Transition } from 'motion/react';
+import { AnimatePresence, type Transition } from 'motion/react';
 
 import { getStrictContext } from '../../../utils/strict-context';
 import { ReducedMotionConfig } from '../../../utils/motion';
@@ -14,6 +14,7 @@ import {
   releasePanel,
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
+import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
   'Collapsible.Root',
@@ -54,6 +55,7 @@ const Trigger = CollapsiblePrimitive.Trigger;
 
 function Content({
   forceMount,
+  asChild,
   children,
   transition,
   exitTransition,
@@ -64,11 +66,13 @@ function Content({
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
   const ref = React.useRef<HTMLDivElement>(null);
 
+  const slot = slotChild(asChild, children);
   return (
     <AnimatePresence>
       {(open || forceMount) && (
         <CollapsiblePrimitive.Content {...props} forceMount asChild>
-          <motion.div
+          <MotionSlot
+            element={slot.element}
             ref={ref}
             initial={collapsed}
             animate={
@@ -88,8 +92,8 @@ function Content({
               ['--radix-collapsible-content-width' as string]: 'auto',
             }}
           >
-            {children}
-          </motion.div>
+            {slot.inner}
+          </MotionSlot>
         </CollapsiblePrimitive.Content>
       )}
     </AnimatePresence>
