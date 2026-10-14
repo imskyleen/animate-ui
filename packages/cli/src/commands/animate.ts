@@ -42,10 +42,19 @@ export function animate(components: string[], options: AnimateOptions) {
   let exitCode = 0;
   const files: string[] = [];
 
+  if (!existsSync(project.uiDir)) {
+    log(
+      `${styleText('red', '✖')} No ui folder at ${relative(project.uiDir)}: check the ui alias in components.json and your tsconfig paths.`,
+    );
+    return 1;
+  }
+
   if (components.includes('all')) {
     files.push(...listFiles(project.uiDir));
   } else {
-    for (const name of new Set(components)) {
+    for (const name of new Set(
+      components.map((name) => name.replace(/\.[jt]sx?$/, '').toLowerCase()),
+    )) {
       const file = findComponent(project.uiDir, name);
       if (file) {
         files.push(file);
@@ -82,7 +91,16 @@ export function animate(components: string[], options: AnimateOptions) {
 
   for (const file of files) {
     const code = readFileSync(file, 'utf8');
-    const result = transform(code);
+    let result;
+    try {
+      result = transform(code, file);
+    } catch (error) {
+      exitCode = 1;
+      log(
+        `${styleText('red', '✖')} ${relative(file)}: couldn't parse it (${error instanceof Error ? error.message : error}), skipped.`,
+      );
+      continue;
+    }
     result.unsupported.forEach((name) => unsupported.add(name));
     if (result.code === code) continue;
 

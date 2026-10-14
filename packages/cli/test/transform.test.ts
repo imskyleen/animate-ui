@@ -159,3 +159,27 @@ describe("radix's self-named root", () => {
     );
   });
 });
+
+describe('class removal keeps the source text', () => {
+  const head = 'import { Dialog } from "radix-ui"\n';
+
+  test('escapes and JSX entities stay as written', () => {
+    const input = `${head}const a = cn('before:content-[\\'x\\'] animate-in')\nconst b = <div className="after:content-[&quot;*&quot;] animate-in" />\n`;
+    const { code } = transform(input);
+    expect(code).toContain("cn('before:content-[\\'x\\']')");
+    expect(code).toContain('className="after:content-[&quot;*&quot;]"');
+  });
+
+  test('cva variant names are left alone', () => {
+    const { code } = transform(
+      `${head}const v = cva('', { variants: { motion: { 'fade-in': 'animate-in' } } })\n`,
+    );
+    expect(code).toContain("{ 'fade-in': '' }");
+  });
+
+  test('a .ts file with an angle-bracket cast parses', () => {
+    expect(() =>
+      transform(`${head}export const n = <number>(<unknown>"1");\n`, 'a.ts'),
+    ).not.toThrow();
+  });
+});

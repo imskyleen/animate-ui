@@ -67,10 +67,10 @@ function specifierName(specifier: t.ImportSpecifier) {
     : specifier.imported.value;
 }
 
-export function transform(code: string): TransformResult {
+export function transform(code: string, file = 'file.tsx'): TransformResult {
   const ast = parse(code, {
     sourceType: 'module',
-    plugins: ['typescript', 'jsx'],
+    plugins: /\.[cm]?ts$/.test(file) ? ['typescript'] : ['typescript', 'jsx'],
   });
 
   const edits: Edit[] = [];
@@ -187,20 +187,13 @@ export function transform(code: string): TransformResult {
 
     const visitString = (node: t.StringLiteral | t.TemplateElement) => {
       if (handled.has(node)) return;
-      const value = node.type === 'StringLiteral' ? node.value : node.value.raw;
-      const result = stripClasses(value, extra);
+      const quoted = node.type === 'StringLiteral' ? 1 : 0;
+      const start = node.start! + quoted;
+      const end = node.end! - quoted;
+      const result = stripClasses(code.slice(start, end), extra);
       if (result.removed.length === 0) return;
       removedClasses.push(...result.removed);
-      if (node.type === 'StringLiteral') {
-        const delimiter = code[node.start!];
-        edits.push({
-          start: node.start!,
-          end: node.end!,
-          text: `${delimiter}${result.value}${delimiter}`,
-        });
-      } else {
-        edits.push({ start: node.start!, end: node.end!, text: result.value });
-      }
+      edits.push({ start, end, text: result.value });
     };
 
     const walk = (node: unknown, inClasses: boolean): void => {
@@ -217,6 +210,11 @@ export function transform(code: string): TransformResult {
         (n.type === 'StringLiteral' || n.type === 'TemplateElement')
       ) {
         visitString(n);
+        return;
+      }
+
+      if (n.type === 'ObjectProperty') {
+        walk(n.value, inClasses);
         return;
       }
 

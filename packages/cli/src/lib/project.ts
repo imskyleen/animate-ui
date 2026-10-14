@@ -19,6 +19,16 @@ const PACKAGE_MANAGERS: [string, string, string][] = [
   ['package-lock.json', 'npm install', 'npx'],
 ];
 
+function installedAbove(root: string, name: string) {
+  for (let dir = root; ;) {
+    if (existsSync(path.join(dir, 'node_modules', name, 'package.json')))
+      return true;
+    const parent = path.dirname(dir);
+    if (parent === dir) return false;
+    dir = parent;
+  }
+}
+
 function packageManager(root: string) {
   for (let dir = root; ;) {
     for (const [lockfile, install, dlx] of PACKAGE_MANAGERS)
@@ -50,10 +60,12 @@ export function loadProject(cwd: string): Project {
 
   const pkgFile = path.join(root, 'package.json');
   const pkg = existsSync(pkgFile) ? readJson(pkgFile) : {};
-  const hasPackage = Boolean(
-    pkg.dependencies?.['@animate-ui/react'] ??
-    pkg.devDependencies?.['@animate-ui/react'],
-  );
+  const hasPackage =
+    Boolean(
+      pkg.dependencies?.['@animate-ui/react'] ??
+      pkg.devDependencies?.['@animate-ui/react'] ??
+      pkg.peerDependencies?.['@animate-ui/react'],
+    ) || installedAbove(root, '@animate-ui/react');
 
   return {
     root,

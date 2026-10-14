@@ -217,3 +217,35 @@ test('an unknown option prints the help, not a stack trace', () => {
   expect(result.stderr).toContain('Usage: animate-ui');
   expect(result.stderr).not.toContain('    at ');
 });
+
+test('a file it cannot parse is named and skipped, the others still animated', () => {
+  writeFileSync(
+    path.join(path.dirname(uiFile()), 'broken.tsx'),
+    'export const = ;\n',
+  );
+  const { code, output } = run(['all']);
+  expect(code).toBe(1);
+  expect(output).toContain("src/components/ui/broken.tsx: couldn't parse it");
+  expect(readFileSync(uiFile(), 'utf8')).toContain('@animate-ui/react');
+});
+
+test('a missing ui folder is an error, not "nothing to animate"', () => {
+  rmSync(path.dirname(uiFile()), { recursive: true });
+  const { code, output } = run(['all']);
+  expect(code).toBe(1);
+  expect(output).toContain('No ui folder at src/components/ui');
+});
+
+test('a component named with its extension or in capitals is found', () => {
+  const { code } = run(['Accordion.tsx']);
+  expect(code).toBe(0);
+  expect(readFileSync(uiFile(), 'utf8')).toContain('@animate-ui/react');
+});
+
+test('@animate-ui/react as a peer dependency counts as installed', () => {
+  writeFileSync(
+    path.join(root, 'package.json'),
+    JSON.stringify({ peerDependencies: { '@animate-ui/react': '^2.0.0' } }),
+  );
+  expect(run(['accordion']).output).not.toContain("isn't installed yet");
+});
