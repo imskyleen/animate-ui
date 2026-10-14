@@ -247,6 +247,10 @@ export function sheetCases(
   }) => {
     const lines = await importDiff(page, `/docs/primitives/${library}/sheet`);
     expect(lines.filter((line) => !line.startsWith(' '))).toEqual(install);
+    await page
+      .getByRole('tablist', { name: 'Installation' })
+      .getByRole('tab', { name: 'CLI' })
+      .click();
     await expect(
       page.getByText(`animate-ui/cli@latest animate sheet`).first(),
     ).toBeAttached();
