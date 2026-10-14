@@ -17,6 +17,7 @@ import {
 } from '../../../utils/motion';
 import {
   asMotion,
+  mergeRefs,
   useAnchoredMotion,
   type AnchoredAnimationProps,
 } from '../../../internal/anchored';
@@ -39,6 +40,8 @@ const MENU_TRIGGERS = new Set([
 ]);
 
 type PopoverContextValue = PopoverPrimitiveProps | null | undefined;
+
+const FOCUS_TARGET = '[role=menu],[role=listbox],[role=dialog]';
 
 type LivePopoverProps = PopoverPrimitiveProps &
   React.RefAttributes<HTMLElement>;
@@ -163,6 +166,24 @@ function AnimatedPopover({
     props.slot,
   ) as PopoverContextValue;
   const trigger = props.trigger ?? context?.trigger;
+  const nodeRef = React.useRef<HTMLElement | null>(null);
+  const wasPresentRef = React.useRef(isPresent);
+  React.useEffect(() => {
+    const returned = isPresent && !wasPresentRef.current;
+    wasPresentRef.current = isPresent;
+    const node = nodeRef.current;
+    if (
+      !returned ||
+      !node ||
+      trigger === 'ComboBox' ||
+      node.contains(document.activeElement)
+    )
+      return;
+    const target = node.matches(FOCUS_TARGET)
+      ? node
+      : (node.querySelector<HTMLElement>(FOCUS_TARGET) ?? node);
+    target.focus({ preventScroll: true });
+  }, [isPresent, trigger]);
   const skip = Boolean(
     props.shouldSkipAnimation ?? context?.shouldSkipAnimation,
   );
@@ -193,6 +214,10 @@ function AnimatedPopover({
       render={(domProps, values) => {
         const elementProps = {
           ...motionProps,
+          ref: mergeRefs(
+            (domProps as { ref?: React.Ref<HTMLElement> }).ref,
+            nodeRef,
+          ),
           exit: 'exit',
           variants,
           style: {
