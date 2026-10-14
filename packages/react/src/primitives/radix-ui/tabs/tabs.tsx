@@ -138,6 +138,7 @@ Content.displayName = 'TabsContent';
 
 export {
   Root,
+  Root as Tabs,
   List,
   Trigger,
   Content,

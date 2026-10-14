@@ -141,3 +141,21 @@ export const C = () => <div className={cva("animate-in", { variants: {} })} />
   expect(code).toContain('cva("", { variants: {} })');
   expect(transform(code).code).toBe(code);
 });
+
+describe("radix's self-named root", () => {
+  test('a per-package import of the root keeps pointing at the root', () => {
+    const { code } = transform(
+      `import { Dialog, DialogContent } from "@radix-ui/react-dialog";\nimport { Tabs as T } from "@radix-ui/react-tabs";\n`,
+    );
+    expect(code).toBe(
+      `import { Root as Dialog, DialogContent } from "@animate-ui/react/primitives/radix-ui/dialog";\nimport { Root as T } from "@animate-ui/react/primitives/radix-ui/tabs";\n`,
+    );
+  });
+
+  test("vaul's Drawer stays its namespace", () => {
+    const { code } = transform(`import { Drawer } from "vaul";\n`);
+    expect(code).toBe(
+      `import { Drawer } from "@animate-ui/react/primitives/radix-ui/drawer";\n`,
+    );
+  });
+});

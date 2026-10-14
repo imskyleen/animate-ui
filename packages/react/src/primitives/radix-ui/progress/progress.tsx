@@ -69,6 +69,7 @@ Indicator.displayName = 'ProgressIndicator';
 
 export {
   Root,
+  Root as Progress,
   Indicator,
   Indicator as ProgressIndicator,
   createProgressScope,

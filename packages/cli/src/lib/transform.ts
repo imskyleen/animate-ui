@@ -159,6 +159,19 @@ export function transform(code: string): TransformResult {
         end: node.source.end!,
         text: `${quote}${to}${quote}`,
       });
+      if (source.startsWith('@radix-ui/'))
+        for (const specifier of node.specifiers) {
+          if (
+            specifier.type !== 'ImportSpecifier' ||
+            toKebab(specifierName(specifier)) !== name
+          )
+            continue;
+          edits.push({
+            start: specifier.start!,
+            end: specifier.end!,
+            text: `Root as ${specifier.local.name}`,
+          });
+        }
       imports.push({ from: source, to, name });
       swapped.push(primitive);
       break;

@@ -68,6 +68,7 @@ const createAlertDialogScope: typeof AlertDialogPrimitive.createAlertDialogScope
 
 export {
   Root,
+  Root as AlertDialog,
   Trigger,
   Portal,
   Overlay,

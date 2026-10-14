@@ -65,6 +65,7 @@ const createDialogScope: typeof DialogPrimitive.createDialogScope =
 
 export {
   Root,
+  Root as Dialog,
   Trigger,
   Portal,
   Overlay,

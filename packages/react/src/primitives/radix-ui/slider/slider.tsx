@@ -163,6 +163,7 @@ Thumb.displayName = 'SliderThumb';
 
 export {
   Root,
+  Root as Slider,
   Track,
   Range,
   Thumb,

@@ -177,3 +177,26 @@ export const displayNames = [
   Tooltip.Content.displayName,
   Tooltip.Trigger.displayName,
 ];
+
+export const roots = [
+  Accordion.Accordion,
+  AlertDialog.AlertDialog,
+  Checkbox.Checkbox,
+  Collapsible.Collapsible,
+  ContextMenu.ContextMenu,
+  Dialog.Dialog,
+  DropdownMenu.DropdownMenu,
+  HoverCard.HoverCard,
+  Menubar.Menubar,
+  NavigationMenu.NavigationMenu,
+  Popover.Popover,
+  Progress.Progress,
+  RadioGroup.RadioGroup,
+  Select.Select,
+  Slider.Slider,
+  Switch.Switch,
+  Tabs.Tabs,
+  Toggle.Toggle,
+  ToggleGroup.ToggleGroup,
+  Tooltip.Tooltip,
+];

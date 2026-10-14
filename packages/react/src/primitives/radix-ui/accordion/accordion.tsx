@@ -127,6 +127,7 @@ Content.displayName = 'AccordionContent';
 
 export {
   Root,
+  Root as Accordion,
   Item,
   Header,
   Trigger,
