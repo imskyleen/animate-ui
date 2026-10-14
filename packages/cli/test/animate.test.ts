@@ -185,7 +185,7 @@ test("says the commands in the project's package manager", () => {
   rmSync(path.join(root, 'pnpm-lock.yaml'));
   writeFileSync(path.join(root, 'bun.lock'), '');
   const { output } = run(['accordion', 'dialog']);
-  expect(output).toContain('bunx --bun shadcn@latest add dialog');
+  expect(output).toContain('bun x shadcn@latest add dialog');
   expect(output).toContain('bun add @animate-ui/react motion');
 });
 

@@ -13,8 +13,8 @@ export type Project = {
 
 const PACKAGE_MANAGERS: [string, string, string][] = [
   ['pnpm-lock.yaml', 'pnpm add', 'pnpm dlx'],
-  ['bun.lock', 'bun add', 'bunx --bun'],
-  ['bun.lockb', 'bun add', 'bunx --bun'],
+  ['bun.lock', 'bun add', 'bun x'],
+  ['bun.lockb', 'bun add', 'bun x'],
   ['yarn.lock', 'yarn add', 'yarn'],
   ['package-lock.json', 'npm install', 'npx'],
 ];

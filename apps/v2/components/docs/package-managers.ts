@@ -2,7 +2,7 @@ export const MANAGERS = {
   npm: { add: 'npm install', dlx: 'npx' },
   pnpm: { add: 'pnpm add', dlx: 'pnpm dlx' },
   yarn: { add: 'yarn add', dlx: 'yarn dlx' },
-  bun: { add: 'bun add', dlx: 'bunx --bun' },
+  bun: { add: 'bun add', dlx: 'bun x' },
 } as const;
 
 export type Manager = keyof typeof MANAGERS;

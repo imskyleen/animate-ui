@@ -80,7 +80,7 @@ test('the home command follows the chosen package manager', async ({
   ).toBeVisible();
   await managers.getByRole('radio', { name: 'bun' }).click();
   await expect(
-    page.getByText('bunx --bun @animate-ui/cli@latest animate all'),
+    page.getByText('bun x @animate-ui/cli@latest animate all'),
   ).toBeVisible();
   await page.goto('/docs/installation', { waitUntil: 'networkidle' });
   await expect(
@@ -140,3 +140,23 @@ for (const url of [
       expect(Math.abs(steps.at(-1)!), tab).toBeLessThan(5);
     }
   });
+
+test('bun runs packages the same way in every command', async ({ page }) => {
+  for (const url of [
+    '/docs/installation',
+    '/docs/primitives/radix-ui/accordion',
+  ]) {
+    await page.goto(url, { waitUntil: 'networkidle' });
+    const commands = (await page.locator('pre').allTextContents()).filter(
+      (text) => text.startsWith('bun'),
+    );
+    expect(
+      commands.some((text) => text.startsWith('bun x')),
+      url,
+    ).toBe(true);
+    expect(
+      commands.filter((text) => text.startsWith('bunx')),
+      url,
+    ).toEqual([]);
+  }
+});
