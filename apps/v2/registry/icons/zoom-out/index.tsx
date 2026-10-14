@@ -30,6 +30,17 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  shrink: {
+    lens: {
+      initial: { scale: 1, transformOrigin: '44.44% 44.44%' },
+      animate: {
+        scale: [1, 0.86, 1],
+        transformOrigin: '44.44% 44.44%',
+        transition: { duration: 0.9, times: [0, 0.45, 1], ease: 'easeInOut' },
+      },
+    },
+    sign: {},
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: ZoomOutProps) {

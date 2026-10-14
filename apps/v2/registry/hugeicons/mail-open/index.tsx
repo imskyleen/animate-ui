@@ -30,6 +30,21 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  close: {
+    fold: {},
+    letter: {
+      initial: { y: 0, opacity: 1 },
+      animate: {
+        y: [0, 5, 5, 0],
+        opacity: [1, 0, 0, 1],
+        transition: {
+          duration: 1.2,
+          times: [0, 0.35, 0.65, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: MailOpenProps) {

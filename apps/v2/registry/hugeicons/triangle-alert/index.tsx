@@ -26,6 +26,19 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  blink: {
+    mark: {
+      initial: { opacity: 1 },
+      animate: {
+        opacity: [1, 0.15, 1, 0.15, 1],
+        transition: {
+          duration: 1.1,
+          times: [0, 0.2, 0.45, 0.7, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: TriangleAlertProps) {

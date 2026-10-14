@@ -14,12 +14,27 @@ type GhostProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
+    eyes: {},
     ghost: {
       initial: { y: 0, skewX: 0 },
       animate: {
         y: [0, -1, 0, -0.5, 0],
         skewX: [0, 3, -3, 1.5, 0],
         transition: { duration: 1.2, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  look: {
+    ghost: {},
+    eyes: {
+      initial: { x: 0 },
+      animate: {
+        x: [0, -1.8, -1.8, 1.8, 1.8, 0],
+        transition: {
+          duration: 1.4,
+          times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+          ease: 'easeInOut',
+        },
       },
     },
   } satisfies Record<string, Variants>,
@@ -46,26 +61,28 @@ function IconComponent({ size, ...props }: GhostProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <path
-          d="M15 10.125V10.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M15.25 10.25C15.25 10.3881 15.1381 10.5 15 10.5C14.8619 10.5 14.75 10.3881 14.75 10.25C14.75 10.1119 14.8619 10 15 10C15.1381 10 15.25 10.1119 15.25 10.25Z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M9 10.125V10.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M9.25 10.25C9.25 10.3881 9.13807 10.5 9 10.5C8.86193 10.5 8.75 10.3881 8.75 10.25C8.75 10.1119 8.86193 10 9 10C9.13807 10 9.25 10.1119 9.25 10.25Z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <motion.g variants={variants.eyes} initial="initial" animate={controls}>
+          <path
+            d="M15 10.125V10.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M15.25 10.25C15.25 10.3881 15.1381 10.5 15 10.5C14.8619 10.5 14.75 10.3881 14.75 10.25C14.75 10.1119 14.8619 10 15 10C15.1381 10 15.25 10.1119 15.25 10.25Z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M9 10.125V10.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M9.25 10.25C9.25 10.3881 9.13807 10.5 9 10.5C8.86193 10.5 8.75 10.3881 8.75 10.25C8.75 10.1119 8.86193 10 9 10C9.13807 10 9.25 10.1119 9.25 10.25Z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </motion.g>
       </motion.g>
     </motion.svg>
   );

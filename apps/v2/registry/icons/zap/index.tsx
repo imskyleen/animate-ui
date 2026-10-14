@@ -36,6 +36,17 @@ const animations = {
       animate: { fillOpacity: 1, transition: { delay: 0.2 } },
     },
   } satisfies Record<string, Variants>,
+  shake: {
+    group: {
+      initial: { scale: 1, rotate: 0 },
+      animate: {
+        scale: [1, 0.9, 1.08, 0.98, 1],
+        rotate: [0, -8, 8, -4, 0],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+    path: {},
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: ZapProps) {

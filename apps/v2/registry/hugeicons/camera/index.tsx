@@ -36,6 +36,20 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  flash: {
+    body: {},
+    lens: {
+      initial: { fill: 'currentColor', fillOpacity: 0 },
+      animate: {
+        fillOpacity: [0, 1, 0, 1, 0, 1, 0],
+        transition: {
+          duration: 0.6,
+          times: [0, 0.17, 0.33, 0.5, 0.67, 0.83, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: CameraProps) {

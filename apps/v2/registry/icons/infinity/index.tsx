@@ -52,14 +52,14 @@ function IconComponent({ size, ...props }: InfinityProps) {
   );
 }
 
-function Infinity(props: InfinityProps) {
+function InfinityIcon(props: InfinityProps) {
   return <IconWrapper icon={IconComponent} {...props} />;
 }
 
 export {
   animations,
-  Infinity,
-  Infinity as InfinityIcon,
+  InfinityIcon as Infinity,
+  InfinityIcon,
   type InfinityProps,
   type InfinityProps as InfinityIconProps,
 };

@@ -31,6 +31,36 @@ const animations = {
     },
     path2: {},
   } satisfies Record<string, Variants>,
+  open: {
+    path1: {
+      initial: {
+        pathLength: 1,
+        opacity: 1,
+        transition: { duration: 0.35, ease: 'easeInOut' },
+      },
+      animate: {
+        pathLength: 0,
+        opacity: 0,
+        transition: { duration: 0.45, ease: 'easeInOut' },
+      },
+    },
+    path2: {},
+  } satisfies Record<string, Variants>,
+  peek: {
+    path1: {
+      initial: { pathLength: 1, opacity: 1 },
+      animate: {
+        pathLength: [1, 0, 0, 1],
+        opacity: [1, 0, 0, 1],
+        transition: {
+          duration: 1.4,
+          times: [0, 0.3, 0.7, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
+    path2: {},
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Mail01Props) {

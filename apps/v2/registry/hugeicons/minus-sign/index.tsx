@@ -22,6 +22,23 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  shrink: {
+    path1: {},
+    left: {
+      initial: { pathLength: 1 },
+      animate: {
+        pathLength: [1, 0, 1],
+        transition: { duration: 0.9, times: [0, 0.4, 1], ease: 'easeInOut' },
+      },
+    },
+    right: {
+      initial: { pathLength: 1 },
+      animate: {
+        pathLength: [1, 0, 1],
+        transition: { duration: 0.9, times: [0, 0.4, 1], ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: MinusSignProps) {
@@ -39,14 +56,24 @@ function IconComponent({ size, ...props }: MinusSignProps) {
       strokeWidth={2}
       {...props}
     >
-      <motion.path
-        d="M20 12L4 12"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        variants={variants.path1}
-        initial="initial"
-        animate={controls}
-      />
+      <motion.g variants={variants.path1} initial="initial" animate={controls}>
+        <motion.path
+          d="M12 12L4 12"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          variants={variants.left}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d="M12 12L20 12"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          variants={variants.right}
+          initial="initial"
+          animate={controls}
+        />
+      </motion.g>
     </motion.svg>
   );
 }

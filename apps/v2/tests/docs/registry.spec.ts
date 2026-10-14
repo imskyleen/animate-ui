@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -81,4 +81,19 @@ test('the manual steps show the file path a default project gets', async ({
       hasText: /^components\/animate-ui\/backgrounds\/bubble\.tsx$/,
     }),
   ).toBeAttached();
+});
+
+test('no registry component shadows a global name', () => {
+  const shadowing: string[] = [];
+  for (const library of ['icons', 'hugeicons', 'backgrounds']) {
+    const dir = join(__dirname, '../../registry', library);
+    for (const name of readdirSync(dir)) {
+      const file = join(dir, name, 'index.tsx');
+      if (!existsSync(file)) continue;
+      const source = readFileSync(file, 'utf8');
+      if (/\bfunction (Infinity|NaN|undefined|eval|arguments)\b/.test(source))
+        shadowing.push(`${library}/${name}`);
+    }
+  }
+  expect(shadowing).toEqual([]);
 });

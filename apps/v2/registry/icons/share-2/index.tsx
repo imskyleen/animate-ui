@@ -39,6 +39,40 @@ const animations = {
       },
     },
   } satisfies Record<string, Variants>,
+  spread: {
+    lines: {},
+    path1: {
+      initial: { pathLength: 1, transition: { duration: 0.15 } },
+      animate: {
+        pathLength: [0, 1],
+        transition: { duration: 0.35, delay: 0.08, ease: 'easeOut' },
+      },
+    },
+    path2: {
+      initial: { pathLength: 1, transition: { duration: 0.15 } },
+      animate: {
+        pathLength: [0, 1],
+        transition: { duration: 0.35, delay: 0.08, ease: 'easeOut' },
+      },
+    },
+    node1: {
+      initial: { x: 0, y: 0, transition: { duration: 0.15 } },
+      animate: {
+        x: [0, 1, 0],
+        y: [0, -1, 0],
+        transition: { duration: 0.45, times: [0, 0.4, 1], ease: 'easeOut' },
+      },
+    },
+    node2: {},
+    node3: {
+      initial: { x: 0, y: 0, transition: { duration: 0.15 } },
+      animate: {
+        x: [0, 1, 0],
+        y: [0, 1, 0],
+        transition: { duration: 0.45, times: [0, 0.4, 1], ease: 'easeOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: Share2Props) {

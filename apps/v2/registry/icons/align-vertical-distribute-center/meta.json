@@ -1,0 +1,16 @@
+{
+  "title": "Align Vertical Distribute Center Icon",
+  "description": "Align Vertical Distribute Center icon component.",
+  "keywords": [
+    "items",
+    "flex",
+    "justify",
+    "space",
+    "evenly",
+    "around"
+  ],
+  "categories": [
+    "layout"
+  ],
+  "added": "2026-10-13"
+}
