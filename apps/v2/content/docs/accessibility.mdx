@@ -34,7 +34,7 @@ Content kept mounted while closed (`forceMount`, `keepMounted`) is made `inert` 
 
 ## Timing
 
-Entrances take 600ms on a strong ease-out, so most of the movement happens in the first 150ms and the interface responds at once; exits take 400ms. If your product needs a different pace, `AnimateUIProvider` changes every duration from one place:
+Animations run on springs and short tweens with a strong ease-out, so most of the movement happens at once and the interface responds right away; exits are quicker than entrances. If your product needs a different pace, `AnimateUIProvider` changes every duration from one place:
 
 ```tsx
 <AnimateUIProvider tempo={0.8}>{children}</AnimateUIProvider>
