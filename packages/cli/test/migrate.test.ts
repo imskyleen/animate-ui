@@ -686,3 +686,16 @@ describe('imports the import graph misses keep their v1 file', () => {
     );
   });
 });
+
+test("a hook of the user's own, named like v1's, is left alone", async () => {
+  const hook = 'src/hooks/use-controlled-state.tsx';
+  const own =
+    'import * as React from "react";\nexport function useControlledState(initial: number) {\n  return React.useState(initial);\n}\n';
+  writeFileSync(path.join(root, hook), own);
+  const { output } = await run(['all'], { delete: true });
+  expect(read(PAGE)).toContain(
+    "import { useControlledState } from '@/hooks/use-controlled-state';",
+  );
+  expect(read(hook)).toBe(own);
+  expect(output).not.toContain(hook);
+});

@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 import { loadProject } from '../project';
@@ -81,6 +81,32 @@ function isDirectory(dir: string) {
   } catch {
     return false;
   }
+}
+
+const V1_UTILITIES: Record<string, RegExp> = {
+  'lib/get-strict-context': /useSafeContext/,
+  'hooks/use-controlled-state': /CommonControlledStateProps/,
+  'hooks/use-is-in-view': /isInView = !inView \|\| inViewResult/,
+  'hooks/use-auto-height': /includeParentBox/,
+  'hooks/use-data-state': /parseDatasetValue/,
+  'hooks/use-motion-value-state': /motionValue\.on\('change'/,
+};
+
+function isV1Utility(target: string, id: string) {
+  const fingerprint = V1_UTILITIES[id];
+  if (!fingerprint) return false;
+  for (const file of [
+    ...SOURCE_EXTENSIONS.map((ext) => target + ext),
+    ...SOURCE_EXTENSIONS.map((ext) => path.join(target, `index${ext}`)),
+  ]) {
+    if (!existsSync(file)) continue;
+    try {
+      return fingerprint.test(readFileSync(file, 'utf8'));
+    } catch {
+      return false;
+    }
+  }
+  return true;
 }
 
 function workspaceRoot(root: string) {
@@ -177,12 +203,11 @@ export function loadMigrateProject(cwd: string): MigrateProject {
       return { kind: 'primitive', library: primitive[1]!, name: primitive[2]! };
     if (fromComponents === 'animate-ui/icons/icon')
       return { kind: 'utility', id: 'icons/icon' };
-    if (path.relative(libDir, target) === 'get-strict-context')
-      return { kind: 'utility', id: 'lib/get-strict-context' };
-    const inHooks = path.relative(hooksDir, target);
-    if (/^use-[a-z-]+$/.test(inHooks))
-      return { kind: 'utility', id: `hooks/${inHooks}` };
-    return undefined;
+    const id =
+      path.relative(libDir, target) === 'get-strict-context'
+        ? 'lib/get-strict-context'
+        : `hooks/${path.relative(hooksDir, target)}`;
+    return isV1Utility(target, id) ? { kind: 'utility', id } : undefined;
   };
 
   const sourceFiles = () =>
