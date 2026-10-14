@@ -276,27 +276,29 @@ test.describe('radix-ui drawer demo', () => {
     ).toBe('none');
   });
 
-  test("closes quicker than it came, speeding off its edge without crawling, opaque, the overlay clearing ahead of it like a dialog's, then unmounts", async ({
-    page,
-  }) => {
-    await open(page);
-    const timeline = await recordTimeline(page, {
-      content: CONTENT,
-      overlay: OVERLAY,
-    });
-    await page.keyboard.press('Escape');
-    await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
-    await expect(page.locator(OVERLAY)).toHaveCount(0);
-    const frames = await timeline.stop();
-    expectDrawerExit(frames, 'bottom');
-    expectProgressiveOverlay(frames, REST);
-    expectDialogLikeOverlay(frames, {
-      rest: REST.bg,
-      leaving: true,
-      axis: 'y',
-    });
-    expectClearBeforeUnmount(frames, REST);
-  });
+  test(
+    "closes quicker than it came, speeding off its edge without crawling, opaque, the overlay clearing ahead of it like a dialog's, then unmounts",
+    { tag: '@timing' },
+    async ({ page }) => {
+      await open(page);
+      const timeline = await recordTimeline(page, {
+        content: CONTENT,
+        overlay: OVERLAY,
+      });
+      await page.keyboard.press('Escape');
+      await expect(page.locator(CONTENT)).toHaveCount(0, { timeout: 2500 });
+      await expect(page.locator(OVERLAY)).toHaveCount(0);
+      const frames = await timeline.stop();
+      expectDrawerExit(frames, 'bottom');
+      expectProgressiveOverlay(frames, REST);
+      expectDialogLikeOverlay(frames, {
+        rest: REST.bg,
+        leaving: true,
+        axis: 'y',
+      });
+      expectClearBeforeUnmount(frames, REST);
+    },
+  );
 
   test('a drag follows the finger 1:1, the overlay with it; a slow release springs back', async ({
     page,

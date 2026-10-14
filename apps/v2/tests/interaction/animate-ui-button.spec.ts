@@ -70,17 +70,21 @@ test.describe('animate-ui button', () => {
       .toBeCloseTo(1, 3);
   });
 
-  test('the press springs to its scale quickly', async ({ page }) => {
-    await open(page);
-    await page.getByRole('button', { name: 'Button', exact: true }).hover();
-    const frames = recordScales(page, SELECTOR, 600);
-    await page.mouse.down();
-    const scales = await frames;
-    expect(scales.some((s) => s < 0.995 && s > 0.971)).toBe(true);
-    expect(Math.min(...scales)).toBeGreaterThan(0.94);
-    expect(scales.at(-1)).toBeCloseTo(0.97, 3);
-    await page.mouse.up();
-  });
+  test(
+    'the press springs to its scale quickly',
+    { tag: '@timing' },
+    async ({ page }) => {
+      await open(page);
+      await page.getByRole('button', { name: 'Button', exact: true }).hover();
+      const frames = recordScales(page, SELECTOR, 600);
+      await page.mouse.down();
+      const scales = await frames;
+      expect(scales.some((s) => s < 0.995 && s > 0.971)).toBe(true);
+      expect(Math.min(...scales)).toBeGreaterThan(0.94);
+      expect(scales.at(-1)).toBeCloseTo(0.97, 3);
+      await page.mouse.up();
+    },
+  );
 
   test('reduced motion: no scaling', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
