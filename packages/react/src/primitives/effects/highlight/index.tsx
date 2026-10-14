@@ -10,6 +10,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
+import { mergeRefs } from '../../../internal/anchored';
 
 const HIGHLIGHT_TRANSITION: Transition = motionTokens.spring.highlight;
 
@@ -458,11 +459,14 @@ function HighlightItem<T extends React.ElementType>({
   className,
   style,
   transition,
-  disabled = false,
+  disabled,
   activeClassName,
   exitDelay,
   asChild = false,
   forceUpdateBounds,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
   ...props
 }: HighlightItemProps<T>) {
   const itemId = React.useId();
@@ -502,9 +506,13 @@ function HighlightItem<T extends React.ElementType>({
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
-  const refCallback = React.useCallback((node: HTMLElement | null) => {
-    localRef.current = node as HTMLDivElement;
-  }, []);
+  const childRef = React.isValidElement(children)
+    ? (children as React.ReactElement<ExtendedChildProps>).props.ref
+    : undefined;
+  const refCallback = React.useMemo(
+    () => mergeRefs<HTMLElement>(localRef as React.Ref<HTMLElement>, childRef),
+    [childRef],
+  );
 
   React.useEffect(() => {
     if (mode !== 'parent') return;
@@ -537,15 +545,30 @@ function HighlightItem<T extends React.ElementType>({
       setBounds(bounds);
     };
 
-    if (isActive) {
+    let observer: ResizeObserver | undefined;
+    if (isActive && isDisabled) clearBounds();
+    else if (isActive) {
       updateBounds();
       setActiveClassName(activeClassName ?? '');
+      const node = localRef.current;
+      if (node && !shouldUpdateBounds) {
+        observer = new ResizeObserver(() => updateBounds());
+        observer.observe(node);
+        const container = node.closest(
+          '[data-slot="motion-highlight-container"]',
+        );
+        if (container) observer.observe(container);
+      }
     } else if (!activeValue) clearBounds();
 
-    if (shouldUpdateBounds) return () => cancelAnimationFrame(rafId);
+    return () => {
+      observer?.disconnect();
+      if (shouldUpdateBounds) cancelAnimationFrame(rafId);
+    };
   }, [
     mode,
     isActive,
+    isDisabled,
     activeValue,
     setBounds,
     clearBounds,
@@ -564,27 +587,27 @@ function HighlightItem<T extends React.ElementType>({
     'data-highlight': true,
   };
 
-  const commonHandlers = hover
-    ? canHover
-      ? {
-          onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
-            setActiveValue(childValue);
-            element.props.onMouseEnter?.(e);
-          },
-          onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
-            setActiveValue(null);
-            element.props.onMouseLeave?.(e);
-          },
-        }
-      : {}
-    : click
-      ? {
-          onClick: (e: React.MouseEvent<HTMLDivElement>) => {
-            setActiveValue(childValue);
-            element.props.onClick?.(e);
-          },
-        }
-      : {};
+  const own = { onClick, onMouseEnter, onMouseLeave } as Pick<
+    ExtendedChildProps,
+    'onClick' | 'onMouseEnter' | 'onMouseLeave'
+  >;
+  const handler =
+    (
+      name: 'onClick' | 'onMouseEnter' | 'onMouseLeave',
+      next: string | null,
+      active: boolean,
+    ) =>
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (active) setActiveValue(next);
+      if (asChild) element.props[name]?.(e);
+      own[name]?.(e);
+    };
+
+  const handlers = {
+    onMouseEnter: handler('onMouseEnter', childValue, hover && canHover),
+    onMouseLeave: handler('onMouseLeave', null, hover && canHover),
+    onClick: handler('onClick', childValue, !hover && click),
+  };
 
   if (asChild) {
     if (mode === 'children') {
@@ -598,8 +621,8 @@ function HighlightItem<T extends React.ElementType>({
             ...dataAttributes,
             'data-slot': 'motion-highlight-item-container',
           }),
-          ...commonHandlers,
           ...props,
+          ...handlers,
         },
         <>
           <AnimatePresence initial={false} mode="wait">
@@ -649,7 +672,7 @@ function HighlightItem<T extends React.ElementType>({
         ...dataAttributes,
         'data-slot': 'motion-highlight-item',
       }),
-      ...commonHandlers,
+      ...handlers,
     });
   }
 
@@ -661,7 +684,7 @@ function HighlightItem<T extends React.ElementType>({
       className={cn(mode === 'children' && 'relative', className)}
       {...dataAttributes}
       {...props}
-      {...commonHandlers}
+      {...handlers}
     >
       {mode === 'children' && (
         <AnimatePresence initial={false} mode="wait">
@@ -694,7 +717,7 @@ function HighlightItem<T extends React.ElementType>({
       )}
 
       {React.cloneElement(element, {
-        style: { position: 'relative', zIndex: 1 },
+        style: { position: 'relative', zIndex: 1, ...element.props.style },
         className: element.props.className,
         ...getNonOverridingDataAttributes(element, {
           ...dataAttributes,
