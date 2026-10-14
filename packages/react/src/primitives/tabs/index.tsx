@@ -396,6 +396,14 @@ function TabsContents({
     [],
   );
 
+  const [rtl, setRtl] = React.useState(false);
+  React.useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const next = getComputedStyle(container).direction === 'rtl';
+    if (next !== rtl) setRtl(next);
+  }, [activeIndex, rtl]);
+
   const roRef = React.useRef<ResizeObserver | null>(null);
 
   const measure = React.useCallback((index: number) => {
@@ -475,7 +483,9 @@ function TabsContents({
     >
       <motion.div
         style={{ display: 'flex', marginInline: -8 }}
-        animate={{ x: activeIndex * -100 + '%' }}
+        animate={{
+          x: activeIndex * (rtl ? 100 : -100) + '%',
+        }}
         transition={transition}
       >
         {childrenArray.map((child, index) => (

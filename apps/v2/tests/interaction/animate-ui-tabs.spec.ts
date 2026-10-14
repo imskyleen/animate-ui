@@ -287,6 +287,20 @@ test.describe('animate-ui tabs keyboard', () => {
     await expectSelected(page, 'RTL', 'One');
   });
 
+  const panelInView = (page: Page, text: string) =>
+    page.getByText(text, { exact: true }).evaluate((panel) => {
+      const contents = panel.closest('[data-slot="tabs-contents"]')!;
+      const a = panel.getBoundingClientRect();
+      const b = contents.getBoundingClientRect();
+      return a.left >= b.left - 1 && a.right <= b.right + 1;
+    });
+
+  test('RTL: the chosen panel slides into view', async ({ page }) => {
+    await openFixture(page);
+    await tab(page, 'RTL', 'Three').click();
+    await expect.poll(() => panelInView(page, 'RTL Three panel')).toBe(true);
+  });
+
   test('own ids on a trigger and a panel stay paired', async ({ page }) => {
     await openFixture(page);
     const t = tab(page, 'Custom ids', 'Alpha');
