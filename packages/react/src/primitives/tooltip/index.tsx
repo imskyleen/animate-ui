@@ -742,6 +742,10 @@ function TooltipOverlay() {
   });
 
   const contentProps = rendered.data?.contentProps;
+  const {
+    onAnimationComplete: onContentAnimationComplete,
+    ...restContentProps
+  } = contentProps ?? {};
   const wrap = (children: React.ReactNode) => (
     <>
       {arrowProps && <TooltipArrowImpl {...arrowProps} />}
@@ -825,12 +829,13 @@ function TooltipOverlay() {
                       : { ...hidden, transition }
                   }
                   exit={{ ...hidden, transition }}
-                  onAnimationComplete={() => {
+                  transition={transition}
+                  {...restContentProps}
+                  onAnimationComplete={(definition) => {
+                    onContentAnimationComplete?.(definition);
                     if (!rendered.open)
                       setRendered({ data: null, open: false });
                   }}
-                  transition={transition}
-                  {...rendered.data.contentProps}
                   style={{
                     position: 'relative',
                     scale: popupScale,
@@ -889,22 +894,6 @@ function Tooltip({
 
 type TooltipContentProps = WithAsChild<HTMLMotionProps<'div'>>;
 
-function shallowEqualWithoutChildren(
-  a?: HTMLMotionProps<'div'>,
-  b?: HTMLMotionProps<'div'>,
-) {
-  if (a === b) return true;
-  if (!a || !b) return false;
-  const keysA = Object.keys(a).filter((k) => k !== 'children');
-  const keysB = Object.keys(b).filter((k) => k !== 'children');
-  if (keysA.length !== keysB.length) return false;
-  for (const k of keysA) {
-    // @ts-expect-error index
-    if (a[k] !== b[k]) return false;
-  }
-  return true;
-}
-
 function TooltipContent({ asChild = false, ...props }: TooltipContentProps) {
   const { setProps, setAsChild } = useTooltip();
   const lastPropsRef = React.useRef<HTMLMotionProps<'div'> | undefined>(
@@ -912,7 +901,7 @@ function TooltipContent({ asChild = false, ...props }: TooltipContentProps) {
   );
 
   React.useEffect(() => {
-    if (!shallowEqualWithoutChildren(lastPropsRef.current, props)) {
+    if (!shallowEqualProps(lastPropsRef.current ?? null, props)) {
       lastPropsRef.current = props;
       setProps(props);
     }
@@ -985,6 +974,25 @@ function TooltipTrigger({
     id,
   ]);
 
+  const open = currentTooltip?.id === id;
+  const openRef = React.useRef(open);
+  const handleOpenRef = React.useRef(handleOpen);
+  React.useLayoutEffect(() => {
+    openRef.current = open;
+    handleOpenRef.current = handleOpen;
+  });
+
+  React.useEffect(() => {
+    if (openRef.current) handleOpenRef.current();
+  }, [contentProps, contentAsChild, side, sideOffset, align, alignOffset]);
+
+  React.useEffect(
+    () => () => {
+      if (openRef.current) hideImmediate();
+    },
+    [hideImmediate],
+  );
+
   const handlePointerDown = React.useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       onPointerDown?.(e);
@@ -1033,7 +1041,6 @@ function TooltipTrigger({
   );
 
   const Component = asChild ? Slot : motion.div;
-  const open = currentTooltip?.id === id;
 
   return (
     <Component
