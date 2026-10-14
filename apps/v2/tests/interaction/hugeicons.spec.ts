@@ -753,11 +753,10 @@ test.describe('hugeicons within the grid', () => {
 });
 
 test.describe('hugeicons waves', () => {
-  const waved = NAMES.filter((name) =>
-    readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').includes(
-      'variants.wave1',
-    ),
-  );
+  const waved = NAMES.filter((name) => {
+    const code = readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8');
+    return code.includes('variants.wave1') && code.includes('blink');
+  });
   test('every wifi and volume icon with waves has them', () => {
     expect(waved.length).toBeGreaterThanOrEqual(20);
   });
