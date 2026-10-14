@@ -40,6 +40,21 @@ function mergeProps<T extends HTMLElement>(
 ): AnyProps {
   const merged: AnyProps = { ...childProps, ...slotProps };
 
+  for (const key in slotProps) {
+    const slotHandler = slotProps[key as keyof typeof slotProps];
+    const childHandler = childProps[key];
+    if (
+      /^on[A-Z]/.test(key) &&
+      typeof slotHandler === 'function' &&
+      typeof childHandler === 'function'
+    ) {
+      merged[key] = (...args: unknown[]) => {
+        childHandler(...args);
+        slotHandler(...args);
+      };
+    }
+  }
+
   if (childProps.className || slotProps.className) {
     merged.className = [childProps.className, slotProps.className]
       .filter(Boolean)
@@ -61,22 +76,24 @@ function Slot<T extends HTMLElement = HTMLElement>({
   ref,
   ...props
 }: SlotProps<T>) {
+  const child = React.isValidElement(children) ? children : null;
+  const type = child?.type;
   const isAlreadyMotion =
-    typeof children.type === 'object' &&
-    children.type !== null &&
-    isMotionComponent(children.type);
+    typeof type === 'object' && type !== null && isMotionComponent(type);
 
   const Base = React.useMemo(
     () =>
-      isAlreadyMotion
-        ? (children.type as React.ElementType)
-        : motion.create(children.type as React.ElementType),
-    [isAlreadyMotion, children.type],
+      type === undefined
+        ? null
+        : isAlreadyMotion
+          ? (type as React.ElementType)
+          : motion.create(type as React.ElementType),
+    [isAlreadyMotion, type],
   );
 
-  if (!React.isValidElement(children)) return null;
+  if (!child || !Base) return null;
 
-  const { ref: childRef, ...childProps } = children.props as AnyProps;
+  const { ref: childRef, ...childProps } = child.props as AnyProps;
 
   const mergedProps = mergeProps(childProps, props);
 
