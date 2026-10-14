@@ -216,6 +216,14 @@ async function flick(
   await cdp.detach();
 }
 
+const pageFree = (page: Page) =>
+  page.evaluate(() => ({
+    scrollLocked: document.body.hasAttribute('data-scroll-locked'),
+    pointerEvents: getComputedStyle(document.body).pointerEvents,
+    hidden: document.querySelector('main')?.getAttribute('aria-hidden') ?? null,
+  }));
+const FREE = { scrollLocked: false, pointerEvents: 'auto', hidden: null };
+
 test.describe('radix-ui drawer demo', () => {
   test.beforeEach(async ({ page }) => {
     await gotoHydrated(page, '/tests/demos/radix-ui/drawer');
@@ -813,29 +821,20 @@ test.describe('radix-ui drawer API', () => {
       .toBe(true);
   });
 
-  test('forceMount keeps closed content mounted, hidden and inert', async ({
+  test('forceMount: closed content leaves, the page stays usable', async ({
     page,
   }) => {
     await gotoHydrated(page, '/tests/fixtures/radix-ui-drawer-force-mount');
     const content = page.getByTestId('kept-content');
-    const kept = () =>
-      content.evaluate((el) => ({
-        visibility: getComputedStyle(el).visibility,
-        inert: (el as HTMLElement).inert,
-      }));
-    await expect(content).toHaveCount(1);
-    expect(await kept()).toEqual({ visibility: 'hidden', inert: true });
+    await expect(content).toHaveCount(0);
+    expect(await pageFree(page)).toEqual(FREE);
 
     await page.getByText('Open kept').click();
     await expect(content).toBeVisible();
-    await page.waitForTimeout(700);
-    expect((await kept()).inert).toBe(false);
 
     await page.getByText('Close kept').click();
-    await expect
-      .poll(kept, { timeout: 2500 })
-      .toEqual({ visibility: 'hidden', inert: true });
-    await expect(content).toHaveCount(1);
+    await expect(content).toHaveCount(0, { timeout: 2500 });
+    await expect.poll(() => pageFree(page)).toEqual(FREE);
   });
 
   test('an overlay over an image fades its opacity instead', async ({

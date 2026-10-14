@@ -22,6 +22,14 @@ async function openList(page: Page) {
   await page.waitForTimeout(650);
 }
 
+const pageFree = (page: Page) =>
+  page.evaluate(() => ({
+    scrollLocked: document.body.hasAttribute('data-scroll-locked'),
+    pointerEvents: getComputedStyle(document.body).pointerEvents,
+    hidden: document.querySelector('main')?.getAttribute('aria-hidden') ?? null,
+  }));
+const FREE = { scrollLocked: false, pointerEvents: 'auto', hidden: null };
+
 test.describe('radix-ui select demo', () => {
   test.describe.configure({ timeout: 180_000 });
 
@@ -257,17 +265,18 @@ test.describe('radix-ui select API', () => {
     });
   });
 
-  test('forceMount on the Portal keeps the closed list mounted, hidden and inert', async ({
+  test('forceMount on the Portal: the closed list leaves, the page stays usable', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Mount forceMount' }).click();
     const content = page.getByTestId('forced-content');
-    await expect(content).toHaveCount(1);
-    await expect(content).toHaveAttribute('data-state', 'closed');
-    await expect(content).toHaveAttribute('inert', '');
-    expect((await sample(page, '[data-testid="forced-content"]')).opacity).toBe(
-      0,
-    );
+    await expect(content).toHaveCount(0);
+    expect(await pageFree(page)).toEqual(FREE);
+    await page.getByRole('combobox', { name: 'Force mounted' }).click();
+    await expect(content).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(content).toHaveCount(0);
+    await expect.poll(() => pageFree(page)).toEqual(FREE);
   });
 });
 

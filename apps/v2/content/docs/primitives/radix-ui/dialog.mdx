@@ -52,7 +52,7 @@ Animate UI v1's dialog motion, with a smoother overlay and a quicker exit.
 - Radix keeps the Overlay and the Content mounted while they exit. Clicks go through to the page as soon as the dialog closes, and focus returns to the trigger once the exit is over.
 - Reopening while it closes picks up from where it is.
 - Opening from the keyboard animates the same way; focus moves into the dialog at once.
-- With `forceMount` (on the Portal, Overlay or Content), the closed dialog stays in the DOM: it plays its exit, then is hidden and `inert`.
+- `forceMount` (on the Portal, Overlay or Content) doesn't keep the closed dialog in the DOM: it plays its exit, then leaves, so a closed dialog never locks the page's scroll or hides it from screen readers.
 - A Content rendered without a Portal animates on its own, and `asChild` makes your element the animated one.
 - Under reduced motion, the content fades and un-blurs without tilting, scaling or sliding.
 - `AnimateUIProvider tempo` scales every duration and spring.

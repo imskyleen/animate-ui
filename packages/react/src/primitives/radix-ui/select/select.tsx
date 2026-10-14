@@ -42,8 +42,6 @@ const [OpenProvider, useOpen] = getStrictContext<{
 
 const ItemSelectedContext = React.createContext<boolean | null>(null);
 
-const PortalContext = React.createContext<{ forceMount?: true }>({});
-
 type SelectProps = SelectPrimitive.SelectProps;
 type SelectTriggerProps = SelectPrimitive.SelectTriggerProps;
 type SelectValueProps = SelectPrimitive.SelectValueProps;
@@ -152,15 +150,16 @@ const Trigger = SelectPrimitive.Trigger;
 const Value = SelectPrimitive.Value;
 const Icon = SelectPrimitive.Icon;
 
-function Portal(props: React.ComponentProps<typeof SelectPrimitive.Portal>) {
-  return (
-    <PortalContext value={{ forceMount: props.forceMount }}>
-      <SelectPrimitive.Portal {...props} />
-    </PortalContext>
-  );
+function Portal({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  forceMount,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Portal>) {
+  return <SelectPrimitive.Portal {...props} />;
 }
 
 function Content({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   forceMount,
   transition,
   exitTransition,
@@ -168,8 +167,6 @@ function Content({
 }: React.ComponentProps<typeof SelectPrimitive.Content> &
   ContentAnimationProps) {
   const { open } = useOpen();
-  const portal = React.use(PortalContext);
-  const keepMounted = Boolean(forceMount ?? portal.forceMount);
   const enter = useTempoTransition(transition ?? MENU_TRANSITION);
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
@@ -181,13 +178,13 @@ function Content({
   return (
     <>
       <AnimatePresence onExitComplete={() => setPresent(false)}>
-        {(open || keepMounted) && (
+        {open && (
           <ReducedMotionConfig key="content">
             <ContentMotion {...props} enter={enter} exit={exit} />
           </ReducedMotionConfig>
         )}
       </AnimatePresence>
-      {!present && !keepMounted && <SelectPrimitive.Content {...props} />}
+      {!present && <SelectPrimitive.Content {...props} />}
     </>
   );
 }

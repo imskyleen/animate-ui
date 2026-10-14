@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
   expectDialogEntrance,
@@ -13,6 +13,14 @@ import {
 
 const CONTENT = '[data-slot="dialog-content"]';
 const OVERLAY = '[data-slot="dialog-overlay"]';
+
+const pageFree = (page: Page) =>
+  page.evaluate(() => ({
+    scrollLocked: document.body.hasAttribute('data-scroll-locked'),
+    pointerEvents: getComputedStyle(document.body).pointerEvents,
+    hidden: document.querySelector('main')?.getAttribute('aria-hidden') ?? null,
+  }));
+const FREE = { scrollLocked: false, pointerEvents: 'auto', hidden: null };
 
 test.describe('radix-ui dialog demo', () => {
   test.beforeEach(async ({ page }) => {
@@ -135,35 +143,22 @@ test.describe('radix-ui dialog API', () => {
     );
   });
 
-  test('forceMount keeps closed content mounted, hidden and inert', async ({
+  test('forceMount: closed content leaves, the page stays usable', async ({
     page,
   }) => {
     await page.goto('/tests/fixtures/radix-ui-dialog-force-mount', {
       waitUntil: 'networkidle',
     });
     const content = page.getByTestId('kept-content');
-    const overlay = page.getByTestId('kept-overlay');
-    const state = () =>
-      content.evaluate((el) => ({
-        visibility: getComputedStyle(el).visibility,
-        inert: (el as HTMLElement).inert,
-        overlay: getComputedStyle(
-          document.querySelector('[data-testid="kept-overlay"]')!,
-        ).pointerEvents,
-      }));
-    const closed = { visibility: 'hidden', inert: true, overlay: 'none' };
-    await expect(content).toHaveCount(1);
-    await expect(overlay).toHaveCount(1);
-    expect(await state()).toEqual(closed);
+    await expect(content).toHaveCount(0);
+    expect(await pageFree(page)).toEqual(FREE);
 
     await page.getByText('Force mounted trigger').click();
     await expect(content).toBeVisible();
-    await expectDialogSettled(page, '[data-testid="kept-content"]');
-    expect((await state()).inert).toBe(false);
 
     await page.getByText('Close kept').click();
-    await expect.poll(state, { timeout: 2500 }).toEqual(closed);
-    await expect(content).toHaveCount(1);
+    await expect(content).toHaveCount(0, { timeout: 2500 });
+    await expect.poll(() => pageFree(page)).toEqual(FREE);
   });
 
   test('a Content without a Portal animates in and out', async ({ page }) => {

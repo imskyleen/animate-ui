@@ -61,9 +61,7 @@ type PartProps = ModalAnimationProps &
 
 export function createRadixModal(parts: RadixModalParts, name: string) {
   const [OpenProvider, useOpen] = getStrictContext<OpenState>(`${name}.Root`);
-  const PortalContext = React.createContext<{ forceMount: boolean } | null>(
-    null,
-  );
+  const PortalContext = React.createContext(false);
 
   function Root(props: RootProps) {
     const controlled = props.open !== undefined;
@@ -84,50 +82,36 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function Portal({ forceMount, children, ...props }: PortalProps) {
     const { open } = useOpen();
 
     return (
       <AnimatePresence>
-        {(open || forceMount) && (
+        {open && (
           <parts.Portal key="portal" {...props} forceMount>
-            <PortalBody forceMount={Boolean(forceMount)}>{children}</PortalBody>
+            <PortalContext value>
+              <ReducedMotionConfig>{children}</ReducedMotionConfig>
+            </PortalContext>
           </parts.Portal>
         )}
       </AnimatePresence>
     );
   }
 
-  function PortalBody({
-    forceMount,
-    children,
-  }: {
-    forceMount: boolean;
-    children?: React.ReactNode;
-  }) {
-    return (
-      <PortalContext value={{ forceMount }}>
-        <ReducedMotionConfig>{children}</ReducedMotionConfig>
-      </PortalContext>
-    );
-  }
-
-  function usePresence(forceMount: true | undefined) {
-    const portal = React.use(PortalContext);
+  function usePresence() {
+    const inPortal = React.use(PortalContext);
     const { open } = useOpen();
-    const keepMounted = Boolean(forceMount ?? portal?.forceMount);
-    return { open, keepMounted, inPortal: portal !== null };
+    return { open, inPortal };
   }
 
   function Overlay(props: PartProps) {
-    const { open, keepMounted, inPortal } = usePresence(props.forceMount);
-    const body = (
-      <OverlayMotion {...props} open={open} keepMounted={keepMounted} />
-    );
+    const { open, inPortal } = usePresence();
+    const body = <OverlayMotion {...props} open={open} />;
     if (inPortal) return body;
     return (
       <AnimatePresence>
-        {(open || keepMounted) && (
+        {open && (
           <ReducedMotionConfig key="overlay">{body}</ReducedMotionConfig>
         )}
       </AnimatePresence>
@@ -136,19 +120,15 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
 
   function OverlayMotion({
     open,
-    keepMounted,
     asChild,
     transition,
     exitTransition,
     children,
     style,
     ...props
-  }: PartProps & { open: boolean; keepMounted: boolean }) {
+  }: PartProps & { open: boolean }) {
     const [isPresent, safeToRemove] = useMotionPresence();
-    const { hidden, onAnimationComplete } = useHiddenWhenClosed(
-      open,
-      keepMounted,
-    );
+    const { hidden, onAnimationComplete } = useHiddenWhenClosed(open, false);
     const ref = useBackdropFade({
       visible: open && isPresent,
       ...useOverlayTransitions(transition, exitTransition),
@@ -169,14 +149,12 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
   }
 
   function Content(props: PartProps) {
-    const { open, keepMounted, inPortal } = usePresence(props.forceMount);
-    const body = (
-      <ContentMotion {...props} open={open} keepMounted={keepMounted} />
-    );
+    const { open, inPortal } = usePresence();
+    const body = <ContentMotion {...props} open={open} />;
     if (inPortal) return body;
     return (
       <AnimatePresence>
-        {(open || keepMounted) && (
+        {open && (
           <ReducedMotionConfig key="content">{body}</ReducedMotionConfig>
         )}
       </AnimatePresence>
@@ -185,7 +163,6 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
 
   function ContentMotion({
     open,
-    keepMounted,
     asChild,
     from,
     transition,
@@ -193,7 +170,7 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     children,
     style,
     ...props
-  }: PartProps & { open: boolean; keepMounted: boolean }) {
+  }: PartProps & { open: boolean }) {
     const reduce = useShouldReduceMotion();
     const side = getModalSide(props['data-side']);
     const { enter, exit } = useContentTransitions(
@@ -202,10 +179,7 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       exitTransition,
     );
     const targets = getContentTargets({ side, from, reduce, enter, exit });
-    const { hidden, onAnimationComplete } = useHiddenWhenClosed(
-      open,
-      keepMounted,
-    );
+    const { hidden, onAnimationComplete } = useHiddenWhenClosed(open, false);
     const startedClosedRef = React.useRef(new WeakSet<Event>());
     React.useEffect(() => {
       if (open) return;
@@ -230,10 +204,9 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       >
         {motionChild(asChild, children, {
           initial: targets.initial,
-          animate: getAnimateTarget(targets, open, keepMounted),
+          animate: getAnimateTarget(targets, open, false),
           exit: targets.exit,
           onAnimationComplete,
-          inert: keepMounted && !open ? true : undefined,
           style: closedStyle(style, open, hidden),
         })}
       </parts.Content>

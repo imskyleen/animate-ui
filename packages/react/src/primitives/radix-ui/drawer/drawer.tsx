@@ -178,7 +178,7 @@ function useDrawerContext() {
   return context;
 }
 
-const PortalContext = React.createContext<{ forceMount: boolean } | null>(null);
+const PortalContext = React.createContext(false);
 
 const isVertical = (direction: Direction) =>
   direction === 'top' || direction === 'bottom';
@@ -504,6 +504,7 @@ function Portal(props: PortalProps): React.JSX.Element {
   const context = useDrawerContext();
   const {
     container = context.container,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     forceMount,
     children,
     ...portalProps
@@ -511,14 +512,14 @@ function Portal(props: PortalProps): React.JSX.Element {
 
   return (
     <AnimatePresence>
-      {(context.isOpen || forceMount) && (
+      {context.isOpen && (
         <DialogPrimitive.Portal
           key="portal"
           {...portalProps}
           container={container}
           forceMount
         >
-          <PortalContext value={{ forceMount: Boolean(forceMount) }}>
+          <PortalContext value>
             <ReducedMotionConfig>{children}</ReducedMotionConfig>
           </PortalContext>
         </DialogPrimitive.Portal>
@@ -532,14 +533,13 @@ const Overlay: React.FC<OverlayProps & React.RefAttributes<HTMLDivElement>> = (
 ) => {
   const context = useDrawerContext();
   const portal = React.use(PortalContext);
-  const keepMounted = Boolean(props.forceMount ?? portal?.forceMount);
   if (!context.modal) return null;
 
-  const body = <OverlayMotion {...props} keepMounted={keepMounted} />;
+  const body = <OverlayMotion {...props} />;
   if (portal) return body;
   return (
     <AnimatePresence>
-      {(context.isOpen || keepMounted) && (
+      {context.isOpen && (
         <ReducedMotionConfig key="overlay">{body}</ReducedMotionConfig>
       )}
     </AnimatePresence>
@@ -547,7 +547,6 @@ const Overlay: React.FC<OverlayProps & React.RefAttributes<HTMLDivElement>> = (
 };
 
 function OverlayMotion({
-  keepMounted,
   asChild,
   transition,
   exitTransition,
@@ -555,8 +554,7 @@ function OverlayMotion({
   children,
   ref,
   ...props
-}: OverlayProps &
-  React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
+}: OverlayProps & React.RefAttributes<HTMLDivElement>) {
   const context = useDrawerContext();
   const { enter, exit } = useOverlayTransitions(transition, exitTransition);
   const [isPresent, safeToRemove] = usePresence();
@@ -599,9 +597,6 @@ function OverlayMotion({
     };
   }, [level]);
 
-  const [settled, setSettled] = React.useState(!visible);
-  if (visible && settled) setSettled(false);
-
   const liveRef = useLatest({
     enter,
     exit,
@@ -630,7 +625,6 @@ function OverlayMotion({
       animate(presence, 0, exit).then(() => {
         if (generationRef.current !== id) return;
         if (!liveRef.current.isPresent) liveRef.current.safeToRemove?.();
-        else setSettled(true);
       }),
     );
   }, [visible, presence, liveRef]);
@@ -649,11 +643,7 @@ function OverlayMotion({
       asChild
     >
       {motionChild(asChild, children, {
-        style: closedStyle(
-          { ...style },
-          visible,
-          keepMounted && !visible && settled,
-        ),
+        style: closedStyle({ ...style }, visible),
       })}
     </DialogPrimitive.Overlay>
   );
@@ -664,13 +654,12 @@ const Content: React.FC<ContentProps & React.RefAttributes<HTMLDivElement>> = (
 ) => {
   const context = useDrawerContext();
   const portal = React.use(PortalContext);
-  const keepMounted = Boolean(props.forceMount ?? portal?.forceMount);
 
-  const body = <ContentMotion {...props} keepMounted={keepMounted} />;
+  const body = <ContentMotion {...props} />;
   if (portal) return body;
   return (
     <AnimatePresence>
-      {(context.isOpen || keepMounted) && (
+      {context.isOpen && (
         <ReducedMotionConfig key="content">{body}</ReducedMotionConfig>
       )}
     </AnimatePresence>
@@ -687,7 +676,6 @@ type Press = {
 };
 
 function ContentMotion({
-  keepMounted,
   asChild,
   transition,
   exitTransition,
@@ -703,8 +691,7 @@ function ContentMotion({
   onPointerDownOutside,
   onFocusOutside,
   ...props
-}: ContentProps &
-  React.RefAttributes<HTMLDivElement> & { keepMounted: boolean }) {
+}: ContentProps & React.RefAttributes<HTMLDivElement>) {
   const context = useDrawerContext();
   const reduce = useShouldReduceMotion();
   const enter = useTempoTransition(transition ?? DRAWER_TRANSITION);
@@ -747,9 +734,6 @@ function ContentMotion({
       offShift();
     };
   }, [direction, position, nestedShift, transform]);
-
-  const [settled, setSettled] = React.useState(!visible);
-  if (visible && settled) setSettled(false);
 
   const [delayedSnapPoints, setDelayedSnapPoints] = React.useState(false);
   React.useEffect(() => {
@@ -895,7 +879,6 @@ function ContentMotion({
           const { context, isPresent, safeToRemove } = liveRef.current;
           context.onAnimationEnd(false);
           if (!isPresent) safeToRemove?.();
-          else setSettled(true);
         },
       ),
     );
@@ -1233,7 +1216,6 @@ function ContentMotion({
     dragTo(current, along, event);
   };
 
-  const hidden = keepMounted && !visible && settled;
   const snapStyle = hasSnapPoints
     ? ({
         '--snap-point-height': `${sign * restDistance}px`,
@@ -1292,11 +1274,9 @@ function ContentMotion({
         }}
       >
         {motionChild(asChild, children, {
-          inert: keepMounted && !visible ? true : undefined,
           style: closedStyle(
             { ...snapStyle, ...style, transform, opacity },
             visible,
-            hidden,
           ),
         })}
       </DialogPrimitive.Content>
@@ -1386,17 +1366,9 @@ function motionChild(
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-function closedStyle<T extends object>(
-  style: T,
-  open: boolean,
-  hidden: boolean,
-): T {
+function closedStyle<T extends object>(style: T, open: boolean): T {
   if (open) return style;
-  return {
-    ...style,
-    pointerEvents: 'none',
-    visibility: hidden ? 'hidden' : undefined,
-  };
+  return { ...style, pointerEvents: 'none' };
 }
 
 function toTransform(direction: Direction, value: number, shift: number) {

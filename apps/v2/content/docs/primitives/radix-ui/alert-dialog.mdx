@@ -48,7 +48,7 @@ Animate UI v1's alert dialog motion, with a smoother overlay and a quicker exit.
 - On the overlay, `exitTransition` defaults to `transition`: change `transition` and both directions follow, as in v1. The dialog's own exit is the quicker one above unless you set `exitTransition`.
 - Radix keeps the Overlay and the Content mounted while they exit; Cancel is focused as soon as it opens, and focus returns to the trigger once the exit is over.
 - Reopening while it closes picks up from where it is.
-- With `forceMount`, the closed alert dialog stays in the DOM: it plays its exit, then is hidden and `inert`.
+- `forceMount` doesn't keep the closed alert dialog in the DOM: it plays its exit, then leaves, so a closed alert dialog never locks the page's scroll or hides it from screen readers.
 - Under reduced motion, the content fades and un-blurs without tilting or scaling.
 - `AnimateUIProvider tempo` scales every duration and spring.
 

@@ -52,7 +52,7 @@ Animate UI v1 had no drawer: it keeps Vaul's API and behaviour, with Animate UI'
 - A drag dismissal continues from where the pointer let go; opening again while it closes picks up from where it is. The click that ends a drag doesn't activate the button under it.
 - **Nested drawers**: the parent steps back (16px towards its open edge, slightly smaller) on the drawer's curve while a nested drawer is open, and follows the nested drawer's drag.
 - **`shouldScaleBackground`** scales the `[data-vaul-drawer-wrapper]` element with the drawer's position, and paints the body black (`setBackgroundColorOnScale`, not with `noBodyStyles`).
-- With `forceMount`, the closed drawer stays in the DOM: it plays its exit, then is hidden and `inert`.
+- `forceMount` doesn't keep the closed drawer in the DOM: it plays its exit, then leaves, so a closed drawer never locks the page's scroll or hides it from screen readers.
 - Under reduced motion, the drawer fades in place and settles without moving; a drag still follows the pointer.
 - `AnimateUIProvider tempo` scales every duration and spring.
 
