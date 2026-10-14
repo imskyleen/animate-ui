@@ -72,10 +72,11 @@ import { AnimateUIProvider } from '@animate-ui/react/provider';
 </AnimateUIProvider>;
 ```
 
-| Prop             | Type              | Default  | Description                                                              |
-| ---------------- | ----------------- | -------- | ------------------------------------------------------------------------ |
-| `tempo`          | `number`          | `1`      | Multiplies every duration and spring: `0.8` crisper, `1.2` more relaxed. |
-| `checkAnimation` | `'draw' \| 'pop'` | `'draw'` | How checks show and hide: drawn like a pen, or popped in.                |
+| Prop             | Type                            | Default  | Description                                                              |
+| ---------------- | ------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `tempo`          | `number`                        | `1`      | Multiplies every duration and spring: `0.8` crisper, `1.2` more relaxed. |
+| `checkAnimation` | `'draw' \| 'pop'`               | `'draw'` | How checks show and hide: drawn like a pen, or popped in.                |
+| `reducedMotion`  | `'user' \| 'never' \| 'always'` | `'user'` | Reduced motion: follow the system setting, never, or always.             |
 
 Providers can be nested: the closest one sets what it's given, the rest comes from the one around it. See [Installation](/docs/installation) for more.
 

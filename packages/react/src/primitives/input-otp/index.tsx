@@ -23,6 +23,7 @@ import {
   toCssTiming,
   useMotionTokens,
   useShouldReduceMotion,
+  useReducedMotionSetting,
   useTempoTransition,
 } from '../../utils/motion';
 
@@ -65,7 +66,7 @@ function getEntry(prev: string, next: string) {
   return { start, end };
 }
 
-const REDUCED_MOTION_CSS = `@media (prefers-reduced-motion:reduce){[data-input-otp-container] ${SLOT_SELECTOR} *{animation:none!important}}[data-input-otp-container][data-reduced-motion] ${SLOT_SELECTOR} *{animation:none!important}`;
+const REDUCED_MOTION_CSS = `@media (prefers-reduced-motion:reduce){[data-input-otp-container]:not([data-full-motion]) ${SLOT_SELECTOR} *{animation:none!important}}[data-input-otp-container][data-reduced-motion] ${SLOT_SELECTOR} *{animation:none!important}`;
 
 const running = new WeakMap<Element, Animation>();
 
@@ -266,6 +267,7 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
   const ghostTransition = useTempoTransition(GHOST_TRANSITION);
   const waveDown = useTempoTransition(WAVE_DOWN);
   const reduce = useShouldReduceMotion();
+  const fullMotion = useReducedMotionSetting() === 'never';
   const value = slots.map((slot) => slot.char ?? '').join('');
   const prevValueRef = React.useRef(value);
   const ringRef = React.useRef<HTMLSpanElement>(null);
@@ -551,7 +553,8 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
 
   React.useEffect(() => {
     getContainer()?.toggleAttribute('data-reduced-motion', reduce);
-  }, [reduce, getContainer]);
+    getContainer()?.toggleAttribute('data-full-motion', fullMotion);
+  }, [reduce, fullMotion, getContainer]);
 
   React.useEffect(() => {
     const state = ringStateRef.current;

@@ -269,18 +269,26 @@ function toCssTiming(motionTransition: Transition): CssTiming {
   };
 }
 
+type ReducedMotion = 'user' | 'never' | 'always';
+
+const ReducedMotionContext = React.createContext<ReducedMotion>('user');
+
+function useReducedMotionSetting(): ReducedMotion {
+  const own = React.use(ReducedMotionContext);
+  const { reducedMotion } = React.use(MotionConfigContext);
+  return reducedMotion === 'always' ? 'always' : own;
+}
+
 type ReducedMotionConfigProps = {
   children: React.ReactNode;
   remount?: boolean;
 };
 
 function ReducedMotionConfig({ children, remount }: ReducedMotionConfigProps) {
-  const { reducedMotion } = React.use(MotionConfigContext);
+  const reducedMotion = useReducedMotionSetting();
 
   return (
-    <MotionConfig
-      reducedMotion={reducedMotion === 'always' ? 'always' : 'user'}
-    >
+    <MotionConfig reducedMotion={reducedMotion}>
       {remount ? <RemountOnReduce>{children}</RemountOnReduce> : children}
     </MotionConfig>
   );
@@ -302,13 +310,14 @@ function subscribeToReducedMotion(onChange: () => void) {
 }
 
 function useShouldReduceMotion() {
-  const { reducedMotion } = React.use(MotionConfigContext);
+  const reducedMotion = useReducedMotionSetting();
   const prefersReduced = React.useSyncExternalStore(
     subscribeToReducedMotion,
     () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
     () => false,
   );
 
+  if (reducedMotion === 'never') return false;
   return reducedMotion === 'always' || prefersReduced;
 }
 
@@ -329,6 +338,8 @@ export {
   stagger,
   ReducedMotionConfig,
   useShouldReduceMotion,
+  useReducedMotionSetting,
+  ReducedMotionContext,
   scaleTransition,
   useTempoTransition,
   toCssTiming,
@@ -336,4 +347,5 @@ export {
   type ReducedMotionConfigProps,
   type MotionTokens,
   type CheckAnimation,
+  type ReducedMotion,
 };

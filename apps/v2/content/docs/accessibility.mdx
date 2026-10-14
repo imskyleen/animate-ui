@@ -14,7 +14,11 @@ When the operating system asks for reduced motion (`prefers-reduced-motion: redu
 - Indicators, thumbs and highlights jump to their new position.
 - Icons and looping effects don't animate.
 
-It works without any setup, follows the setting live, and respects an app-level `<MotionConfig reducedMotion="always">`.
+It works without any setup, follows the setting live, and respects an app-level `<MotionConfig reducedMotion="always">`. To choose for your app, set `reducedMotion` on `AnimateUIProvider`: `'never'` keeps full motion whatever the system asks, `'always'` reduces it everywhere.
+
+```tsx
+<AnimateUIProvider reducedMotion="never">{children}</AnimateUIProvider>
+```
 
 ## Keyboard
 
