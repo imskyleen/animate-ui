@@ -45,8 +45,8 @@ function CopyButton({
     (event: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(event);
       if (event.defaultPrevented || copied || !content) return;
-      navigator.clipboard
-        .writeText(content)
+      Promise.resolve()
+        .then(() => navigator.clipboard.writeText(content))
         .then(() => {
           setIsCopied(true, content);
           clearTimeout(timeoutRef.current);

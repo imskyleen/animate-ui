@@ -81,6 +81,7 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
   } = props as ClickProps;
   const [items, setItems] = React.useState<Item[]>([]);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const nextId = React.useRef(0);
   const mounted = useIsMounted();
   const reduce = useShouldReduceMotion();
 
@@ -105,7 +106,7 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
       }
       const x = e.clientX;
       const y = e.clientY;
-      const id = crypto.randomUUID();
+      const id = String(nextId.current++);
       const item: Item = {
         id,
         x,

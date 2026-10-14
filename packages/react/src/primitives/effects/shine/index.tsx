@@ -204,7 +204,6 @@ const ShineInner = ({
         willChange: 'transform, opacity',
         background: `linear-gradient(to right, transparent, ${color}, transparent)`,
         opacity,
-        ...style,
       }}
       onAnimationComplete={handleAnimationComplete}
     />
