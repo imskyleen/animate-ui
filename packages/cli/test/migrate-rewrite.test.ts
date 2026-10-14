@@ -222,6 +222,19 @@ describe('rewrite', () => {
     expect(found).toEqual(['hooks/use-auto-height']);
   });
 
+  test("SpringProvider's dragElastic is reported for removal", () => {
+    const { manual } = run(
+      [
+        "import { SpringProvider } from '@/components/animate-ui/primitives/animate/spring';",
+        'export const a = <SpringProvider dragElastic={0.4} />;',
+        '',
+      ].join('\n'),
+    );
+    expect(manual.map((step) => `${step.line} ${step.message}`)).toEqual([
+      '2 <SpringProvider> `dragElastic`: v2 removed it, as it never had an effect: drop it.',
+    ]);
+  });
+
   test("Base UI 1's renames and defaults (v1 was built on its beta)", () => {
     const { code, changes, manual } = run(
       [

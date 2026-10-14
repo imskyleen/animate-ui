@@ -1250,6 +1250,15 @@ const COUNTING_NUMBER: Record<string, PropRule> = Object.fromEntries(
 );
 
 const EXTRAS: Record<string, Partial<Migration>> = {
+  'animate/spring': {
+    props: {
+      SpringProvider: {
+        dragElastic: {
+          manual: 'v2 removed it, as it never had an effect: drop it.',
+        },
+      },
+    },
+  },
   'radix/accordion': {
     props: { AccordionContent: { keepRendered: { rename: 'forceMount' } } },
   },

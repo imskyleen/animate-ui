@@ -12,7 +12,11 @@ description: A draggable element tied to its place by a spring coil, which pulls
 ## Usage
 
 ```tsx
-import { Spring, SpringElement, SpringProvider } from '@animate-ui/react/primitives/spring';
+import {
+  Spring,
+  SpringElement,
+  SpringProvider,
+} from '@animate-ui/react/primitives/spring';
 
 export function Avatar() {
   return (
@@ -44,12 +48,6 @@ export function Avatar() {
 
 <TypeTable
   type={{
-    dragElastic: {
-      description:
-        'How much the element follows the pointer: lower stretches less.',
-      type: 'number',
-      default: '0.2',
-    },
     transition: {
       description: 'Spring pulling the element back.',
       type: 'SpringOptions',

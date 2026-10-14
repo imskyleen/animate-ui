@@ -89,7 +89,6 @@ function generateSpringPath(
 }
 
 type SpringContextType = {
-  dragElastic?: number;
   childRef: React.RefObject<HTMLDivElement | null>;
   springX: MotionValue<number>;
   springY: MotionValue<number>;
@@ -105,13 +104,11 @@ const [LocalSpringProvider, useSpring] =
 
 type SpringProviderProps = {
   children: React.ReactNode;
-  dragElastic?: number;
   pathConfig?: SpringPathConfig;
   transition?: SpringOptions;
 };
 
 function SpringProvider({
-  dragElastic = 0.2,
   transition = { stiffness: 200, damping: 16 },
   pathConfig = {},
   children,
@@ -178,7 +175,6 @@ function SpringProvider({
         y,
         isDragging,
         setIsDragging,
-        dragElastic,
         childRef,
         path,
       }}
@@ -229,16 +225,8 @@ function SpringElement({
   style,
   ...props
 }: SpringElementProps) {
-  const {
-    childRef,
-    dragElastic,
-    isDragging,
-    setIsDragging,
-    springX,
-    springY,
-    x,
-    y,
-  } = useSpring();
+  const { childRef, isDragging, setIsDragging, springX, springY, x, y } =
+    useSpring();
 
   React.useImperativeHandle(ref, () => childRef.current as HTMLDivElement);
   const reduce = useShouldReduceMotion();
@@ -255,7 +243,6 @@ function SpringElement({
         ...style,
       }}
       drag
-      dragElastic={dragElastic}
       dragMomentum={false}
       onDragStart={() => {
         setIsDragging(true);
