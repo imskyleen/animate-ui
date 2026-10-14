@@ -261,6 +261,16 @@ test.describe('icons', () => {
 });
 
 test.describe('icons gallery', () => {
+  test('no New filter when every icon of the library is new', async ({
+    page,
+  }) => {
+    await page.goto('/docs/icons/hugeicons', { waitUntil: 'networkidle' });
+    await expect(
+      page.getByRole('button', { name: 'All', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: /^New/ })).toHaveCount(0);
+  });
+
   for (const [title, component] of [
     ['CCTV', 'Cctv'],
     ['EV Charger', 'EvCharger'],

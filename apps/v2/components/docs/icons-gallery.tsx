@@ -63,10 +63,11 @@ type IconLibrary = {
 function newIcons(icons: IconEntry[]) {
   const since = new Date();
   since.setDate(since.getDate() - 30);
+  const recent = icons.filter(
+    (icon) => icon.added && new Date(icon.added) >= since,
+  );
   return new Set(
-    icons
-      .filter((icon) => icon.added && new Date(icon.added) >= since)
-      .map((icon) => icon.name),
+    recent.length < icons.length ? recent.map((icon) => icon.name) : [],
   );
 }
 
