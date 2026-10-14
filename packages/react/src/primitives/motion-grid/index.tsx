@@ -121,7 +121,7 @@ function MotionGridCells({
         key={i}
         data-active={isActive}
         data-animate={animate}
-        transition={{ duration, ease: 'easeInOut' }}
+        transition={{ duration: duration / 1000, ease: 'easeInOut' }}
         {...props}
         {...componentProps}
       />

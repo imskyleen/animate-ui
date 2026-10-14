@@ -54,3 +54,16 @@ test.describe('animate-ui motion grid', () => {
     expect(await pattern(page)).toBe(frozen);
   });
 });
+
+test('cells change in the given duration, in milliseconds', async ({
+  page,
+}) => {
+  await page.goto('/tests/fixtures/animate-ui-motion-grid-duration', {
+    waitUntil: 'networkidle',
+  });
+  await page.waitForTimeout(600);
+  const opacity = await page
+    .locator('div[data-active="false"]')
+    .evaluate((el) => Number(getComputedStyle(el).opacity));
+  expect(opacity).toBeCloseTo(0.2, 2);
+});
