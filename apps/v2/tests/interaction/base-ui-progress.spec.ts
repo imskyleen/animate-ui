@@ -143,3 +143,31 @@ test.describe('base-ui progress API', () => {
     await expect(indicator).toHaveCSS('background-color', 'rgb(0, 0, 0)');
   });
 });
+
+test('reduced motion: the value shows its new number at once, without counting', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/tests/fixtures/base-ui-progress', {
+    waitUntil: 'networkidle',
+  });
+  const value = page.getByTestId('value');
+  await expect(value).toHaveText('50%');
+  await page.evaluate(() => {
+    const el = document.querySelector('[data-testid="value"]')!;
+    const seen = new Set<string>();
+    (window as unknown as { seen: Set<string> }).seen = seen;
+    new MutationObserver(() => seen.add(el.textContent ?? '')).observe(el, {
+      subtree: true,
+      characterData: true,
+      childList: true,
+    });
+  });
+  await page.getByRole('button', { name: 'Complete' }).click();
+  await expect(value).toHaveText('100%');
+  await page.waitForTimeout(300);
+  const seen = await page.evaluate(() => [
+    ...(window as unknown as { seen: Set<string> }).seen,
+  ]);
+  expect(seen).toEqual(['100%']);
+});
