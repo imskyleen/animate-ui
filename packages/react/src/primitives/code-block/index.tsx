@@ -64,6 +64,7 @@ function CodeBlockContent({
   const [isDone, setIsDone] = React.useState(false);
 
   const onDoneRef = React.useRef(onDone);
+  const doneCodeRef = React.useRef<string | null>(null);
   const onWriteRef = React.useRef(onWrite);
   React.useLayoutEffect(() => {
     onDoneRef.current = onDone;
@@ -101,6 +102,8 @@ function CodeBlockContent({
 
   React.useEffect(() => {
     if (!animated) {
+      if (doneCodeRef.current === code) return;
+      doneCodeRef.current = code;
       setVisibleCode(code);
       setIsDone(true);
       onDoneRef.current?.();
@@ -114,6 +117,7 @@ function CodeBlockContent({
 
     if (!code.length || !isInView) return;
 
+    doneCodeRef.current = null;
     setVisibleCode('');
     setIsDone(false);
 
