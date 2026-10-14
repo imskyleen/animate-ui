@@ -212,3 +212,9 @@ describe('imports beyond a plain import list', () => {
     ).toBe(`export { Root as Accordion } from "${ACCORDION}"\n`);
   });
 });
+
+test('a class on an interaction variant stays: only state variants animate', () => {
+  expect(
+    stripClasses('hover:duration-100 duration-100', [/^duration-100$/]).value,
+  ).toBe('hover:duration-100');
+});

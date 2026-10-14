@@ -13,11 +13,18 @@ export function utilityOf(token: string) {
   return token.slice(start).replace(/^!/, '');
 }
 
+const INTERACTION_VARIANT =
+  /(^|:)(group-|peer-)?(hover|focus|focus-visible|focus-within|active|disabled|visited)(\/[\w-]+)?:/;
+
 export function isAnimationClass(token: string, extra: RegExp[] = []) {
   const utility = utilityOf(token);
+  const onInteraction = INTERACTION_VARIANT.test(token);
   return (
     ANIMATION_UTILITY.test(utility) ||
-    extra.some((pattern) => pattern.test(token) || pattern.test(utility))
+    extra.some(
+      (pattern) =>
+        pattern.test(token) || (!onInteraction && pattern.test(utility)),
+    )
   );
 }
 
