@@ -102,6 +102,10 @@ export function animate(components: string[], options: AnimateOptions) {
       continue;
     }
     result.unsupported.forEach((name) => unsupported.add(name));
+    for (const source of result.beta)
+      log(
+        `${styleText('yellow', '!')} ${relative(file)} imports ${source}, Base UI's beta: move it to @base-ui/react (Base UI 1) first, then run animate again.`,
+      );
     if (result.code === code) continue;
 
     changedFiles++;

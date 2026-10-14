@@ -183,3 +183,32 @@ describe('class removal keeps the source text', () => {
     ).not.toThrow();
   });
 });
+
+describe('imports beyond a plain import list', () => {
+  test("Base UI's beta is reported, not rewritten", () => {
+    const input = 'import { Dialog } from "@base-ui-components/react/dialog"\n';
+    const result = transform(input);
+    expect(result.code).toBe(input);
+    expect(result.beta).toEqual(['@base-ui-components/react/dialog']);
+  });
+
+  test('a namespace import of radix-ui moves to the barrel', () => {
+    const result = transform(
+      'import * as Radix from "radix-ui"\nexport const a = <Radix.Dialog.Root />\n',
+    );
+    expect(result.code).toContain(`from "${RADIX}"`);
+    expect(result.imports.map((change) => change.name)).toEqual(['Dialog']);
+  });
+
+  test('re-exports from radix-ui and a Radix package move too', () => {
+    expect(transform('export { Dialog } from "radix-ui"\n').code).toBe(
+      `export { Dialog } from "${RADIX}"\n`,
+    );
+    expect(transform('export * from "@radix-ui/react-accordion"\n').code).toBe(
+      `export * from "${ACCORDION}"\n`,
+    );
+    expect(
+      transform('export { Accordion } from "@radix-ui/react-accordion"\n').code,
+    ).toBe(`export { Root as Accordion } from "${ACCORDION}"\n`);
+  });
+});

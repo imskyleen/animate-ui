@@ -19,6 +19,7 @@ export type TransformResult = {
   imports: ImportChange[];
   removedClasses: string[];
   unsupported: string[];
+  beta: string[];
 };
 
 type Edit = { start: number; end: number; text: string };
@@ -58,13 +59,25 @@ function radixPackageName(source: string) {
 }
 
 function baseUiPackageName(source: string) {
-  return source.match(/^@base-ui(?:-components)?\/react\/([a-z-]+)$/)?.[1];
+  return source.match(/^@base-ui\/react\/([a-z-]+)$/)?.[1];
 }
 
-function specifierName(specifier: t.ImportSpecifier) {
-  return specifier.imported.type === 'Identifier'
-    ? specifier.imported.name
-    : specifier.imported.value;
+function nameOf(node: t.Identifier | t.StringLiteral) {
+  return node.type === 'Identifier' ? node.name : node.value;
+}
+
+type Specifier =
+  | t.ImportSpecifier
+  | t.ImportDefaultSpecifier
+  | t.ImportNamespaceSpecifier
+  | t.ExportSpecifier
+  | t.ExportDefaultSpecifier
+  | t.ExportNamespaceSpecifier;
+
+function specifierName(specifier: t.ImportSpecifier | t.ExportSpecifier) {
+  return nameOf(
+    specifier.type === 'ImportSpecifier' ? specifier.imported : specifier.local,
+  );
 }
 
 export function transform(code: string, file = 'file.tsx'): TransformResult {
@@ -76,27 +89,53 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
   const edits: Edit[] = [];
   const imports: ImportChange[] = [];
   const unsupported: string[] = [];
+  const beta: string[] = [];
   const swapped: Primitive[] = [];
 
+  const membersOf = (local: string) =>
+    [
+      ...code.matchAll(new RegExp(`\\b${local}\\.([A-Za-z_$][\\w$]*)`, 'g')),
+    ].map((match) => match[1]!);
+
   for (const node of ast.program.body) {
-    if (node.type !== 'ImportDeclaration' || node.importKind === 'type')
+    if (!(
+      (node.type === 'ImportDeclaration' && node.importKind !== 'type') ||
+      (node.type === 'ExportNamedDeclaration' &&
+        node.source &&
+        node.exportKind !== 'type') ||
+      (node.type === 'ExportAllDeclaration' && node.exportKind !== 'type')
+    ))
       continue;
-    const source = node.source.value;
-    const quote = code[node.source.start!];
+    const source = node.source!.value;
+    const quote = code[node.source!.start!];
+    const specifiers: Specifier[] =
+      node.type === 'ExportAllDeclaration' ? [] : node.specifiers;
+    const everything = node.type === 'ExportAllDeclaration';
+    const namesOf = () =>
+      specifiers.flatMap((specifier) =>
+        specifier.type === 'ImportSpecifier' ||
+        specifier.type === 'ExportSpecifier'
+          ? [specifierName(specifier)]
+          : specifier.type === 'ImportNamespaceSpecifier'
+            ? membersOf(specifier.local.name)
+            : [],
+      );
+
+    if (/^@base-ui-components\/react(\/|$)/.test(source)) {
+      beta.push(source);
+      continue;
+    }
 
     if (source === 'react-aria-components') {
-      const names = node.specifiers.flatMap((specifier) =>
-        specifier.type === 'ImportSpecifier' ? [specifierName(specifier)] : [],
-      );
-      const animated = names.flatMap((name) => {
+      const animated = namesOf().flatMap((name) => {
         const primitive = findReactAriaPrimitive(name);
         return primitive ? [{ name, primitive }] : [];
       });
       if (animated.length === 0) continue;
       const to = primitiveModule(animated[0]!.primitive);
       edits.push({
-        start: node.source.start!,
-        end: node.source.end!,
+        start: node.source!.start!,
+        end: node.source!.end!,
         text: `${quote}${to}${quote}`,
       });
       for (const { name, primitive } of animated) {
@@ -115,18 +154,25 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
     if (umbrella) {
       const to = barrelModule(umbrella);
       const animated: { name: string; primitive: Primitive }[] = [];
-      for (const specifier of node.specifiers) {
-        if (specifier.type !== 'ImportSpecifier') continue;
-        const name = specifierName(specifier);
+      for (const name of new Set(namesOf())) {
         const primitive = findPrimitive(umbrella, toKebab(name));
         if (primitive) animated.push({ name, primitive });
         else if (!NOT_ANIMATED.has(toKebab(name)))
           unsupported.push(`${source} ${name}`);
       }
+      if (everything) {
+        edits.push({
+          start: node.source!.start!,
+          end: node.source!.end!,
+          text: `${quote}${to}${quote}`,
+        });
+        imports.push({ from: source, to, name: '*' });
+        continue;
+      }
       if (animated.length === 0) continue;
       edits.push({
-        start: node.source.start!,
-        end: node.source.end!,
+        start: node.source!.start!,
+        end: node.source!.end!,
         text: `${quote}${to}${quote}`,
       });
       for (const { name, primitive } of animated) {
@@ -155,21 +201,26 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
       }
       const to = primitiveModule(primitive);
       edits.push({
-        start: node.source.start!,
-        end: node.source.end!,
+        start: node.source!.start!,
+        end: node.source!.end!,
         text: `${quote}${to}${quote}`,
       });
       if (source.startsWith('@radix-ui/'))
-        for (const specifier of node.specifiers) {
+        for (const specifier of specifiers) {
           if (
-            specifier.type !== 'ImportSpecifier' ||
+            (specifier.type !== 'ImportSpecifier' &&
+              specifier.type !== 'ExportSpecifier') ||
             toKebab(specifierName(specifier)) !== name
           )
             continue;
           edits.push({
             start: specifier.start!,
             end: specifier.end!,
-            text: `Root as ${specifier.local.name}`,
+            text: `Root as ${
+              specifier.type === 'ImportSpecifier'
+                ? specifier.local.name
+                : nameOf(specifier.exported)
+            }`,
           });
         }
       imports.push({ from: source, to, name });
@@ -287,5 +338,5 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
     output = output.slice(0, edit.start) + edit.text + output.slice(edit.end);
   }
 
-  return { code: output, imports, removedClasses, unsupported };
+  return { code: output, imports, removedClasses, unsupported, beta };
 }
