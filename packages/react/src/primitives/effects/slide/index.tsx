@@ -37,7 +37,7 @@ const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Slide(props: SlideProps) {
   return (
-    <ReducedMotionConfig>
+    <ReducedMotionConfig remount>
       <SlideInner {...props} />
     </ReducedMotionConfig>
   );

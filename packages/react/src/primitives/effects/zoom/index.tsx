@@ -30,7 +30,7 @@ const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Zoom(props: ZoomProps) {
   return (
-    <ReducedMotionConfig>
+    <ReducedMotionConfig remount>
       <ZoomInner {...props} />
     </ReducedMotionConfig>
   );

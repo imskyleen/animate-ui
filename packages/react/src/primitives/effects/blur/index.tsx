@@ -30,7 +30,7 @@ const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Blur(props: BlurProps) {
   return (
-    <ReducedMotionConfig>
+    <ReducedMotionConfig remount>
       <BlurInner {...props} />
     </ReducedMotionConfig>
   );

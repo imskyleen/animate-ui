@@ -64,7 +64,7 @@ const DEFAULT_TRANSITION: Transition = motionTokens.spring.entrance;
 
 function Effect(props: EffectProps) {
   return (
-    <ReducedMotionConfig>
+    <ReducedMotionConfig remount>
       <EffectInner {...props} />
     </ReducedMotionConfig>
   );
