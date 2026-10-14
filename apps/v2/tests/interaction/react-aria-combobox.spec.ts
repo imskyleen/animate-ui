@@ -52,6 +52,32 @@ test.describe('react-aria combobox demo', () => {
     expect((await sample(page, POPOVER)).scale).toBe(1);
   });
 
+  test('the highlight leaves once typing takes the focus off the options', async ({
+    page,
+  }) => {
+    await load(page, DEMO);
+    const input = page.getByRole('combobox', { name: 'Framework' });
+    await input.click();
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(650);
+    await expect(page.locator('[role="option"][data-focused]')).toHaveCount(1);
+    await input.pressSequentially('s');
+    await expect(page.locator('[role="option"][data-focused]')).toHaveCount(0);
+    await expect
+      .poll(() =>
+        page
+          .locator(`${POPOVER} [data-slot="item-highlight"]`)
+          .evaluateAll(
+            (highlights) =>
+              highlights.filter(
+                (el) => Number(getComputedStyle(el).opacity) > 0.05,
+              ).length,
+          ),
+      )
+      .toBe(0);
+  });
+
   test('picking an item closes it the same way', async ({ page }) => {
     await load(page, DEMO);
     const input = page.getByRole('combobox', { name: 'Framework' });

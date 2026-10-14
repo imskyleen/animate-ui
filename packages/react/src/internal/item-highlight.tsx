@@ -364,7 +364,6 @@ function useHighlightIn(
   const id = React.useId();
   const [node, setNode] = React.useState<HTMLElement | null>(null);
   const [surface, setSurface] = React.useState<Surface | null>(null);
-  const activate = scope?.activate;
   const paint = scope?.paint;
   const light = scope?.light;
   const unlight = scope?.unlight;
@@ -430,7 +429,7 @@ function useHighlightIn(
   }, [attribute, light, unlight, node, id, disabled, beside]);
 
   React.useLayoutEffect(() => {
-    if (attribute === null || !activate || !paint || !node) return;
+    if (attribute === null || !light || !unlight || !paint || !node) return;
     if (getComputedStyle(node).position === 'static')
       node.style.setProperty('position', 'relative');
 
@@ -444,8 +443,8 @@ function useHighlightIn(
     const sync = () => {
       if (node.hasAttribute(attribute)) {
         setSurface(paint(readSurface(node)));
-        activate(id, node);
-      }
+        light(id, node);
+      } else unlight(id);
       clear();
     };
     const focus = () => {
@@ -466,7 +465,7 @@ function useHighlightIn(
       node.removeEventListener('blur', clear);
       clearOwnSurface(node, false);
     };
-  }, [activate, paint, node, id, attribute]);
+  }, [light, unlight, paint, node, id, attribute]);
 
   const active = scope?.activeId === id && !disabled;
   const leaving =
