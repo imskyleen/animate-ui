@@ -59,7 +59,7 @@ function RippleButtonContent({
   const [ripples, setRipples] = React.useState<Ripple[]>([]);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const nextIdRef = React.useRef(0);
-  const timers = React.useRef(new Set<ReturnType<typeof setTimeout>>());
+  const timersRef = React.useRef(new Set<ReturnType<typeof setTimeout>>());
   const reduce = useShouldReduceMotion();
   React.useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
 
@@ -82,16 +82,16 @@ function RippleButtonContent({
       setRipples((prev) => [...prev, newRipple]);
 
       const timer = setTimeout(() => {
-        timers.current.delete(timer);
+        timersRef.current.delete(timer);
         setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
       }, 600 * tempo);
-      timers.current.add(timer);
+      timersRef.current.add(timer);
     },
     [tempo],
   );
 
   React.useEffect(() => {
-    const pending = timers.current;
+    const pending = timersRef.current;
     return () => pending.forEach((timer) => clearTimeout(timer));
   }, []);
 

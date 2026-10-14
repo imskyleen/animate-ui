@@ -81,8 +81,8 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
   } = props as ClickProps;
   const [items, setItems] = React.useState<Item[]>([]);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const nextId = React.useRef(0);
-  const timers = React.useRef(new Set<number>());
+  const nextIdRef = React.useRef(0);
+  const timersRef = React.useRef(new Set<number>());
   const mounted = useIsMounted();
   const reduce = useShouldReduceMotion();
 
@@ -107,7 +107,7 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
       }
       const x = e.clientX;
       const y = e.clientY;
-      const id = String(nextId.current++);
+      const id = String(nextIdRef.current++);
       const item: Item = {
         id,
         x,
@@ -119,17 +119,17 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
       };
       setItems((prev) => [...prev, item]);
       const timer = window.setTimeout(() => {
-        timers.current.delete(timer);
+        timersRef.current.delete(timer);
         setItems((prev) => prev.filter((it) => it.id !== id));
       }, duration + 300);
-      timers.current.add(timer);
+      timersRef.current.add(timer);
     }
     el.addEventListener('pointerup', onPointerUp, { passive: true });
     return () => el.removeEventListener('pointerup', onPointerUp);
   }, [scope, variant, color, size, duration, disabled, reduce]);
 
   React.useEffect(() => {
-    const pending = timers.current;
+    const pending = timersRef.current;
     return () => pending.forEach((timer) => clearTimeout(timer));
   }, []);
 
