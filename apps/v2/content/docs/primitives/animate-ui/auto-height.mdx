@@ -28,7 +28,7 @@ The content is measured with a `ResizeObserver`, so the height also follows chan
 ## Animation
 
 - The height springs to the content's height (stiffness 300, damping 30, no bounce), clipping the content while it moves.
-- The container's padding and border are included in the measured height.
+- With `box-sizing: border-box` (Tailwind's default), the container's padding and border are included in the measured height.
 - `<AnimateUIProvider tempo>` paces the default spring.
 - Under reduced motion, the height changes at once.
 

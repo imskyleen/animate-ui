@@ -36,7 +36,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 The motion of Animate UI v1's progress:
 
 - **Indicator**: Base UI sizes it with a percentage `width`, and its width springs to each new value (stiffness 300, damping 35: most of the way in ~230ms and settled by ~550ms, like [Motion UI's progress bar](https://motion.dev/ui/components/progress-bar), with no jump at the end; no overshoot), the width v1 animated. Right-to-left works as Base UI lays it out (`inset-inline-start`).
-- **Value** counts to each new value on the bar's own spring (stiffness 300, damping 35), so the number moves with the bar, formatted as Base UI formats it (a percentage, or your `format` and `locale`, within `min` and `max`), from 0 when it appears, as v1's counting value did. A `children` function gets the counted text and number.
+- **Value** counts to each new value on the bar's own spring (stiffness 300, damping 35), so the number moves with the bar, formatted as Base UI formats it (a percentage, or your `format` and `locale`, within `min` and `max`), from `min` (0 by default) when it appears, as v1's counting value did. A `children` function gets the counted text and number.
 - The indicator starts at its value on mount, with no animation.
 - Indeterminate (`value={null}`): the indicator is left to your styles, and the Value to Base UI.
 - shadcn/ui's `transition-all` on the indicator would run on top of Motion: the CLI removes it.

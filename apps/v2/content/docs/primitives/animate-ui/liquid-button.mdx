@@ -1,6 +1,6 @@
 ---
 title: Liquid Button
-description: A button that fills with colour from the bottom on hover.
+description: A button that fills with color from the bottom on hover.
 ---
 
 <ComponentPreview name="animate-ui/liquid-button" />
@@ -11,7 +11,7 @@ description: A button that fills with colour from the bottom on hover.
 
 ## Usage
 
-Set the two colours with CSS variables:
+Set the two colors with CSS variables:
 
 ```tsx
 import { LiquidButton } from '@animate-ui/react/primitives/buttons/liquid';
@@ -27,7 +27,7 @@ export function Start() {
 
 ## Animation
 
-- On hover, a `fillHeight` line of `--liquid-button-color` slides in along the bottom, then rises to fill the button, each step taking `delay` (a CSS transition). Leaving, the fill variables ease back over 0.3s, then the text colour and the liquid drain in reverse.
+- On hover, a `fillHeight` line of `--liquid-button-color` slides in along the bottom, then rises to fill the button, each step taking `delay` (a CSS transition). Leaving, the fill variables ease back over 0.3s, then the text color and the liquid drain in reverse.
 - Pressing scales the button to `tapScale` (0.97), and releasing springs it back (Motion's spring for scale, `stiffness: 550, damping: 30`). Hovering fills it without scaling it, unless you set `hoverScale` (then a 0.3s ease-out).
 - `transition` replaces the press, release and leave transitions.
 - `<AnimateUIProvider tempo>` paces the Motion transitions (not the CSS `delay`).
@@ -85,11 +85,11 @@ export function Start() {
 <TypeTable
   type={{
     '--liquid-button-color': {
-      description: 'Colour of the liquid.',
+      description: 'Color of the liquid.',
       type: 'color',
     },
     '--liquid-button-background-color': {
-      description: 'Background colour of the button at rest.',
+      description: 'Background color of the button at rest.',
       type: 'color',
     },
   }}

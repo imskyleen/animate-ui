@@ -81,7 +81,7 @@ To pop every check of your app at once (checkboxes, menus, selects, comboboxes),
 Base UI's Combobox has no Animate UI v1 counterpart: it moves like v1's Base UI Menu.
 
 - **Popup** fades and scales in from 0.9, from the input (`--transform-origin`), in 220ms (`{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way before it unmounts. Reopening while it closes picks up from where it is.
-- **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, like v1's menu highlight. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms, on CSS's `ease`) when it appears from nothing, and its color changes the same way when the item's highlighted background differs from the previous one's. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a submenu opening for instance, doesn't stall it. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
+- **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike, like v1's menu highlight. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms, on CSS's `ease`) when it appears from nothing, and its color changes the same way when the item's highlighted background differs from the previous one's. It glides on the compositor (a Web Animation of `transform`), so a busy main thread, a heavy render for instance, doesn't stall it. When the pointer leaves the list, it stays on the last item. It wears the item's own highlighted background (`focus:bg-accent`, `data-highlighted:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
 - Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation.
 - Base UI resets the query and syncs the input when the popup unmounts, so the list doesn't change while it fades out.
 - **Chip**: a chip added to the selection pops in from half its size with a fade, on the popovers' spring (stiffness 400, damping 29). A removed one (with its remove button or Backspace) leaves the selection at once, and a copy of it shrinks out where it was, out of the flow, in 0.15s. Either way, the chips after it and the input glide to make room or close the gap, on a quick spring without overshoot (stiffness 500, damping 40), instead of jumping, and when the row wraps onto a line more (or one less), the Chips grow (or shrink) to it on the same spring. A placeholder showing up as the input glides back (the last chip removed) fades in once the input is there, from a light blur (2px, 0.3s on a strong ease-out), instead of riding along. Chips already selected on mount don't animate. The copy is only seen: hidden from assistive tech, inert, without your ids, and without the chip's `data-slot`, so it doesn't count as a chip (shadcn/ui's Chips narrow their padding while they hold one).
@@ -94,13 +94,17 @@ Base UI's Combobox has no Animate UI v1 counterpart: it moves like v1's Base UI 
 
 Every part takes exactly the props of [Base UI's Combobox](https://base-ui.com/react/components/combobox#api-reference). Animate UI adds the animation props below.
 
-### Root, Input, InputGroup, Trigger, Clear, Value, Icon, Portal, Backdrop, Positioner, List, Row, Collection, Group, GroupLabel, Empty, Status, Separator, Arrow, Label, Chips, ChipRemove
+### Root, Input, InputGroup, Trigger, Clear, Value, Icon, Portal, Backdrop, Positioner, List, Row, Collection, Group, GroupLabel, Empty, Status, Separator, Arrow, Label, ChipRemove
 
 [Base UI props](https://base-ui.com/react/components/combobox#root) only. They are not animated.
 
 ### Item
 
 [Base UI props](https://base-ui.com/react/components/combobox#item) only. It takes part in the highlight; it needs nothing more.
+
+### Chips
+
+[Base UI props](https://base-ui.com/react/components/combobox#chips) only. It drives the reflow: its chips and the input glide when a chip comes or goes, and it grows or shrinks when the row wraps onto a line more or one less, on a quick spring without overshoot (stiffness 500, damping 40).
 
 ### Popup
 

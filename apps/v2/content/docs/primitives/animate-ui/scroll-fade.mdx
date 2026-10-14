@@ -30,6 +30,8 @@ export function Changelog() {
 To fade a scroll element you don't render yourself (a library's viewport), pass its ref to `useScrollFade`:
 
 ```tsx
+import { useRef } from 'react';
+import { ScrollArea } from 'radix-ui';
 import { useScrollFade } from '@animate-ui/react/primitives/effects/scroll-fade';
 
 function Sidebar() {

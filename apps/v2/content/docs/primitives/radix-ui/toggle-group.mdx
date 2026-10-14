@@ -48,7 +48,7 @@ The motion of Animate UI v1's toggle group, made livelier:
 - Neighbours selected together join into one surface: on the same 300ms, each one stretches to the middle of the gap between them as its inner corners square off, so the item selected next to a selected one seems to flow out of it; deselecting one splits the surface again (the middle one shrinks out while its neighbours pull back). Items join when they touch (`spacing={0}`), or across a gap no wider than half their height when they have no border on the sides facing each other: bordered items apart (the outline variant with a gap) keep their own surfaces, since a band painted between two frames reads as a stray strip. Rows, columns and right to left alike.
 - **Root** with `type="single"`: one surface slides from the selected item to the newly selected one, on a spring (stiffness 300, damping 30), its size and corners following. Picked again on the way (quick clicks), it goes on from where it is with the speed it had, like the tabs' indicator. The first selection grows it in like a fill; clearing the selection shrinks it out.
 - Hovering an item lights a highlight that glides from item to item on a quick spring (stiffness 500, damping 40), like a menubar's triggers, fading in from nothing and out to nothing in 200ms (`ease`). It's lit only where the item's own hover style paints something its selection doesn't already: a selected item hovered keeps its surface alone. It's drawn above the selected surfaces; clicking a hovered item, it stays until the surface growing (or sliding) in under it has arrived, so the item never dims on the way.
-- The surfaces copy each item's own background and corners (shadcn/ui's `data-[state=on]:bg-muted`, `hover:bg-muted`) — the demo hovers lighter than it selects (`hover:bg-muted/50`), so the two read apart, drawn behind the items and under their borders, in the group's shadow root (so the items' `first:` / `last:` styles are untouched); a small stylesheet clears the items' own backgrounds. Borders, shadows, text colours and focus rings stay the items'. A pressed item's surface scales with it.
+- The surfaces copy each item's own background and corners (shadcn/ui's `data-[state=on]:bg-muted`, `hover:bg-muted`), drawn behind the items and under their borders, in the group's shadow root (so the items' `first:` / `last:` styles are untouched); a small stylesheet clears the items' own backgrounds. The demo hovers lighter than it selects (`hover:bg-muted/50`), so the two read apart. Borders, shadows, text colors and focus rings stay the items'. A pressed item's surface scales with it.
 - The arrow keys only move the focus between items: nothing animates. Space and Enter select like a click.
 - Nothing moves when the group mounts.
 - Under reduced motion, there is no press scale and nothing grows, slides or stretches: surfaces only fade (a single selection fades out on the item it leaves and in on the chosen one, a surface fading in next to a selected item covers the gap between them as it fades), and the highlight jumps from item to item.
@@ -81,7 +81,7 @@ Every part takes exactly the props of [Radix UI's Toggle Group](https://www.radi
     transition: {
       description: 'Transition of the press scale.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 550, damping: 30 }",
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
     },
   }}
 />

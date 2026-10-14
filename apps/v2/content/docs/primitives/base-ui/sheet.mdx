@@ -42,13 +42,13 @@ export function EditProfile() {
 
 ### Side
 
-Use the `side` prop on `SheetContent` to set the edge of the screen where the sheet appears. Values are `top`, `right`, `bottom`, or `left`.
+The `side` prop of shadcn/ui's `SheetContent` wrapper sets the edge of the screen where the sheet appears. Values are `top`, `right`, `bottom`, or `left`. The wrapper passes it to the Popup as `data-side`.
 
 <ComponentPreview name="base-ui/sheet-side" />
 
 ### No Close Button
 
-Use `showCloseButton={false}` on `SheetContent` to hide the close button.
+Use `showCloseButton={false}` on shadcn/ui's `SheetContent` wrapper to hide the close button. The prop belongs to the wrapper, not to the primitive.
 
 <ComponentPreview name="base-ui/sheet-no-close-button" />
 
