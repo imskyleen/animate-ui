@@ -67,7 +67,7 @@ function AvatarContainer({
 }
 
 type AvatarGroupProps = Omit<React.ComponentProps<'div'>, 'translate'> & {
-  children: React.ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
   invertOverlap?: boolean;
   translate?: string | number;
   transition?: Transition;
@@ -116,7 +116,7 @@ function AvatarGroup({
         }}
         {...props}
       >
-        {children?.map((child, index) => (
+        {React.Children.toArray(children).map((child, index) => (
           <AvatarContainer
             key={index}
             zIndex={

@@ -331,8 +331,10 @@ function FireworksBackgroundContent({
     };
 
     const launchFirework = () => {
-      addFirework(rand(maxX * 0.1, maxX * 0.9), rand(maxY * 0.1, maxY * 0.4));
-      const timeout = rand(300, 800) / optionsRef.current.population;
+      const { population } = optionsRef.current;
+      if (population > 0)
+        addFirework(rand(maxX * 0.1, maxX * 0.9), rand(maxY * 0.1, maxY * 0.4));
+      const timeout = rand(300, 800) / (population > 0 ? population : 1);
       launchTimeoutId = setTimeout(launchFirework, timeout);
     };
 

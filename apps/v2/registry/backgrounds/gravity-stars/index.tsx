@@ -53,12 +53,14 @@ function GravityStarsBackgroundContent({
   gravityStrength = 75,
   starsInteraction = false,
   starsInteractionType = 'bounce',
+  ref,
   className,
   onMouseMove,
   onTouchMove,
   ...props
 }: GravityStarsProps) {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const starsRef = React.useRef<Particle[]>([]);
   const mouseRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });

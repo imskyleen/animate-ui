@@ -119,6 +119,8 @@ function HoleBackgroundContent({
       prevBottom = bottom;
       stateRef.current.discs.push(disc);
     }
+    if (!stateRef.current.clip.disc)
+      stateRef.current.clip = { disc: { ...stateRef.current.startDisc }, i: 0 };
     const clipPath = new Path2D();
     const disc = stateRef.current.clip.disc;
     clipPath.ellipse(disc.x, disc.y, disc.w, disc.h, 0, 0, Math.PI * 2);
