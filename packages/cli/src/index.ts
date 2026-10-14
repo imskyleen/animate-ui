@@ -25,6 +25,33 @@ Options:
   -v, --version   Show the version
 `;
 
+const COMMAND_OPTIONS = `Options:
+  --cwd <path>    the project directory (default: the current directory)
+  --dry-run       show the changes without writing them
+  --exclude <components...>
+                  leave these components out: comma-separated
+                  (--exclude sidebar,tooltip) or repeated`;
+
+const COMMAND_HELP = {
+  animate: `Usage: animate-ui animate <components...|all> [options]
+
+Arguments:
+  components      the components to animate (their file names in your ui
+                  folder), or all
+
+${COMMAND_OPTIONS}
+  -h, --help      show the help`,
+  migrate: `Usage: animate-ui migrate <components...|all> [options]
+
+Arguments:
+  components      the v1 primitives to migrate, or all
+
+${COMMAND_OPTIONS}
+  --delete        delete the v1 files nothing imports anymore, without asking
+  --keep          keep them, without asking
+  -h, --help      show the help`,
+};
+
 const COMMANDS = ['animate', 'migrate'] as const;
 type Command = (typeof COMMANDS)[number];
 
@@ -62,6 +89,11 @@ async function main(argv: string[]) {
   }
 
   const [command, ...components] = positionals;
+
+  if (values.help && isCommand(command)) {
+    console.log(COMMAND_HELP[command]);
+    return 0;
+  }
 
   if (values.help || !command) {
     console.log(HELP);
