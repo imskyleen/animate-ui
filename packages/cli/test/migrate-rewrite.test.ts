@@ -159,6 +159,53 @@ describe('rewrite', () => {
     );
   });
 
+  test('a Portal wrapped around a Content leaves its template literals as they are', () => {
+    const { code } = run(
+      [
+        "import { DropdownMenuContent } from '@/components/animate-ui/primitives/radix/dropdown-menu';",
+        'export const a = (',
+        '  <DropdownMenuContent',
+        '    className={`a',
+        'b`}',
+        '  />',
+        ');',
+        '',
+      ].join('\n'),
+    );
+    expect(code).toContain('className={`a\nb`}');
+  });
+
+  test('the declarations come before the code using them', () => {
+    const { code } = run(
+      [
+        "import { PopoverTrigger } from '@/components/animate-ui/primitives/base/popover';",
+        'export const Trigger = PopoverTrigger;',
+        "import { cn } from '@/lib/utils';",
+        '',
+      ].join('\n'),
+    );
+    expect(code.indexOf('const PopoverTrigger')).toBeLessThan(
+      code.indexOf('export const Trigger'),
+    );
+  });
+
+  test('a CRLF file stays CRLF', () => {
+    const { code } = run(
+      "import { PopoverTrigger } from '@/components/animate-ui/primitives/base/popover';\r\nexport const a = <PopoverTrigger />;\r\n",
+    );
+    expect(code).toContain('const PopoverTrigger');
+    expect(code.replace(/\r\n/g, '')).not.toContain('\n');
+  });
+
+  test('a test mock of a v1 module is reported', () => {
+    const { manual } = run(
+      "vi.mock('@/components/animate-ui/primitives/radix/tooltip', () => ({}));\n",
+    );
+    expect(manual.map((step) => step.message)).toEqual([
+      'Mock of a v1 module: point it at @animate-ui/react/primitives/radix-ui/tooltip, which now replaces it.',
+    ]);
+  });
+
   test('an imported Portal is reused', () => {
     const { code } = run(
       [

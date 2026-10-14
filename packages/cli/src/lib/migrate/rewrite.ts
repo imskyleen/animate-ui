@@ -224,6 +224,15 @@ type Plan = {
 };
 
 export function rewrite(code: string, context: RewriteContext): RewriteResult {
+  if (!code.includes('\r\n')) return rewriteLf(code, context);
+  const lf = code.replace(/\r\n/g, '\n');
+  const result = rewriteLf(lf, context);
+  result.code =
+    result.code === lf ? code : result.code.replace(/\r?\n/g, '\r\n');
+  return result;
+}
+
+function rewriteLf(code: string, context: RewriteContext): RewriteResult {
   const { project, file, selected } = context;
   const typescriptOnly = /\.[cm]?ts$/.test(file);
   const ast = parse(code, {
@@ -470,25 +479,50 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
     }
   }
 
+  const v2Sources = new Set(
+    ast.program.body.flatMap((node) =>
+      node.type === 'ImportDeclaration' ? [node.source.value] : [],
+    ),
+  );
   for (const { node, name, local, migration, key } of unmapped)
     manual(
       node,
-      unmappedMessage(name, migration, migratedModules.has(key)),
+      unmappedMessage(
+        name,
+        migration,
+        migratedModules.has(key) ||
+          v2Sources.has(`${PACKAGE}/${migration.module}`),
+      ),
       local,
     );
 
   walk(ast.program, (node) => {
+    const mock =
+      node.type === 'CallExpression' &&
+      node.callee.type === 'MemberExpression' &&
+      node.callee.object.type === 'Identifier' &&
+      ['vi', 'jest'].includes(node.callee.object.name) &&
+      node.callee.property.type === 'Identifier' &&
+      ['mock', 'doMock', 'unmock', 'doUnmock'].includes(
+        node.callee.property.name,
+      );
     const source =
       node.type === 'ImportExpression'
         ? node.source
-        : node.type === 'CallExpression' && node.callee.type === 'Import'
+        : node.type === 'CallExpression' &&
+            (node.callee.type === 'Import' || mock)
           ? node.arguments[0]
           : undefined;
     if (source?.type !== 'StringLiteral') return;
     const module = migrationOf(source.value);
     if (module && findMigration(module)) {
       found.add(moduleKey(module));
-      manual(node, 'Dynamic import of a v1 module: rewrite it by hand.');
+      manual(
+        node,
+        mock
+          ? `Mock of a v1 module: point it at ${PACKAGE}/${findMigration(module)!.module}, which now replaces it.`
+          : 'Dynamic import of a v1 module: rewrite it by hand.',
+      );
     }
   });
 
@@ -572,10 +606,20 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
           },
           { start: parent.end!, end: parent.end!, text: `\n${indent}${close}` },
         );
+        const literals: [number, number][] = [];
+        walk(parent, (child) => {
+          if (child.type === 'TemplateLiteral')
+            literals.push([child.start!, child.end!]);
+        });
         for (let i = parent.start!; i < parent.end!; i++) {
           if (code[i] !== '\n') continue;
           const at = i + 1;
-          if (removed.some(([start, end]) => start < at && at < end)) continue;
+          if (
+            [...removed, ...literals].some(
+              ([start, end]) => start < at && at < end,
+            )
+          )
+            continue;
           edits.push({ start: at, end: at, text: '  ' });
         }
       } else {
@@ -753,15 +797,25 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
   }
 
   if (declarations.length > 0) {
-    const imports = ast.program.body.filter(
-      (node) => node.type === 'ImportDeclaration',
-    );
-    const last = imports[imports.length - 1]!;
-    edits.push({
-      start: last.end!,
-      end: last.end!,
-      text: `\n\n${declarations.join('\n')}`,
-    });
+    const body = ast.program.body;
+    const isImport = (node: t.Statement) =>
+      node.type === 'ImportDeclaration' ||
+      node.type === 'ExportAllDeclaration' ||
+      (node.type === 'ExportNamedDeclaration' && Boolean(node.source));
+    const firstCode = body.findIndex((node) => !isImport(node));
+    const anchor = body[(firstCode === -1 ? body.length : firstCode) - 1];
+    if (anchor)
+      edits.push({
+        start: anchor.end!,
+        end: anchor.end!,
+        text: `\n\n${declarations.join('\n')}`,
+      });
+    else
+      edits.push({
+        start: body[0]!.start!,
+        end: body[0]!.start!,
+        text: `${declarations.join('\n')}\n\n`,
+      });
   }
 
   edits.sort((a, b) => b.start - a.start || b.end - a.end);

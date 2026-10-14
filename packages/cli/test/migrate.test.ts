@@ -318,6 +318,17 @@ describe('migrate all', () => {
   });
 });
 
+test('a second pass says the same about what is left', async () => {
+  const first = (await run(['all'])).output;
+  const second = (await run(['all'])).output;
+  const message = (output: string) =>
+    output.match(/`useAccordionItem` is a v1 context hook[^\n]*/)![0];
+  expect(message(second)).toBe(message(first));
+  expect((await run(['tooltip'])).output).toContain(
+    'Nothing to migrate: no import of the v1 tooltip left.',
+  );
+});
+
 test('is idempotent', async () => {
   await run(['all']);
   const after = snapshot(root);

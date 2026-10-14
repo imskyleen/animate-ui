@@ -196,7 +196,9 @@ export async function migrate(components: string[], options: MigrateOptions) {
   }
 
   if (changedFiles === 0 && manualSteps === 0) {
-    log('Nothing to migrate: no import of Animate UI v1 left.');
+    log(
+      `Nothing to migrate: no import of ${all ? 'Animate UI v1' : `the v1 ${[...names].join(', ')}`} left.`,
+    );
   } else {
     const verb = options.dryRun ? 'would be migrated' : 'migrated';
     log(
