@@ -68,7 +68,7 @@ type ScrollingNumberContainerProps = React.ComponentProps<'div'> & {
 function ScrollingNumberContainer({
   ref,
   number,
-  step,
+  step: stepProp,
   itemsSize = 30,
   sideItemsCount = 2,
   direction = 'btt',
@@ -80,6 +80,7 @@ function ScrollingNumberContainer({
   children,
   ...props
 }: ScrollingNumberContainerProps) {
+  const step = stepProp > 0 ? stepProp : 1;
   const { ref: localRef, isInView } = useIsInView(
     ref as React.Ref<HTMLDivElement>,
     {

@@ -187,6 +187,7 @@ function FlipButtonBack({
   return (
     <Component
       data-slot="flip-button-back"
+      aria-hidden
       variants={backVariants}
       transition={transition ?? defaultTransition}
       style={{

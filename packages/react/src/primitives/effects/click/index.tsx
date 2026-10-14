@@ -82,6 +82,7 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
   const [items, setItems] = React.useState<Item[]>([]);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const nextId = React.useRef(0);
+  const timers = React.useRef(new Set<number>());
   const mounted = useIsMounted();
   const reduce = useShouldReduceMotion();
 
@@ -117,13 +118,20 @@ function ClickInner(props: ClickProps): React.ReactElement | null {
         duration,
       };
       setItems((prev) => [...prev, item]);
-      window.setTimeout(() => {
+      const timer = window.setTimeout(() => {
+        timers.current.delete(timer);
         setItems((prev) => prev.filter((it) => it.id !== id));
       }, duration + 300);
+      timers.current.add(timer);
     }
     el.addEventListener('pointerup', onPointerUp, { passive: true });
     return () => el.removeEventListener('pointerup', onPointerUp);
   }, [scope, variant, color, size, duration, disabled, reduce]);
+
+  React.useEffect(() => {
+    const pending = timers.current;
+    return () => pending.forEach((timer) => clearTimeout(timer));
+  }, []);
 
   const portal = mounted ? document.body : null;
 
