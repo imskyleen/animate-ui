@@ -71,12 +71,21 @@ function ThemeTogglerButton({
     return () => cancelAnimationFrame(frame);
   }, [mounted]);
 
-  const shown = modes.includes('system') ? theme : resolvedTheme;
+  const shown = mounted
+    ? modes.includes('system')
+      ? theme
+      : resolvedTheme
+    : 'light';
   const next = getNextTheme(theme, resolvedTheme, modes);
 
   return (
     <ThemeTogglerButtonProvider
-      value={{ theme: shown, effective: theme, resolved: resolvedTheme, next }}
+      value={{
+        theme: shown,
+        effective: mounted ? theme : 'light',
+        resolved: mounted ? resolvedTheme : 'light',
+        next,
+      }}
     >
       <InstantContext value={!settled}>
         <Button

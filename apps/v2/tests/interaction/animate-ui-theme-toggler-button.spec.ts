@@ -209,3 +209,16 @@ test.describe('animate-ui theme toggler button', () => {
     expect(all.some((i) => i.opacity > 0 && i.opacity < 1)).toBe(true);
   });
 });
+
+test('a stored theme hydrates without a mismatch, then shows', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.addInitScript(() => localStorage.setItem('theme', 'dark'));
+  await page.goto('/tests/demos/animate-ui/theme-toggler-button', {
+    waitUntil: 'networkidle',
+  });
+  await expect(page.locator(SELECTOR)).toHaveAttribute('data-theme', 'dark');
+  expect(errors.filter((message) => /hydrat/i.test(message))).toEqual([]);
+});
