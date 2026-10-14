@@ -34,8 +34,8 @@ test('demo registry items hold the demo and its local files', async ({
     expect.arrayContaining(['@animate-ui/react', 'motion', '@base-ui/react']),
   );
   const targets = item.files.map((file: { target: string }) => file.target);
-  expect(targets).toContain('components/dialog-demo.tsx');
-  expect(targets).toContain('components/ui/button.tsx');
+  expect(targets).toContain('@components/dialog-demo.tsx');
+  expect(targets).toContain('@ui/button.tsx');
 });
 
 test('the version menu links v2 and v1 (local servers in development)', async ({
