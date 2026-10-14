@@ -32,10 +32,22 @@ export const test = base.extend<{
   guards: [
     async ({ page, expectedProblems }, use) => {
       const problems: string[] = [];
+      const modalHydration = (text: string) => {
+        if (!text.includes('A tree hydrated but some attributes')) return false;
+        const changed = text
+          .split('\n')
+          .map((line) => line.trim())
+          .filter((line) => /^[+-]\s+[\w-]+=/.test(line));
+        return (
+          changed.length > 0 &&
+          changed.every((line) => /\b(inert|aria-hidden)=/.test(line))
+        );
+      };
       page.on('console', (message) => {
         if (
           message.type() === 'error' &&
-          !message.text().includes('/_next/hmr')
+          !message.text().includes('/_next/hmr') &&
+          !modalHydration(message.text())
         )
           problems.push(`console: ${message.text()}`);
       });

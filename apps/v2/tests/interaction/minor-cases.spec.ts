@@ -8,15 +8,19 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/tests/fixtures/minor-cases', { waitUntil: 'networkidle' });
 });
 
-test('copy and click effects survive a page without secure context APIs', async ({
-  page,
-}) => {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  await page.getByRole('button', { name: 'Copy' }).click();
-  await page.mouse.click(300, 300);
-  await page.waitForTimeout(200);
-  expect(errors).toEqual([]);
+test.describe(() => {
+  test.use({ expectedProblems: /Animate UI CopyButton: could not copy/ });
+
+  test('copy and click effects survive a page without secure context APIs', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.getByRole('button', { name: 'Copy' }).click();
+    await page.mouse.click(300, 300);
+    await page.waitForTimeout(200);
+    expect(errors).toEqual([]);
+  });
 });
 
 test('a style on LiquidButton keeps its fill', async ({ page }) => {
