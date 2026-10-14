@@ -422,7 +422,9 @@ export function rewrite(code: string, context: RewriteContext): RewriteResult {
         const target = valueTarget ?? migration.types[name];
         const parsed = target ? parseTarget(target, migration) : undefined;
         if (!parsed || needsDeclaration(parsed)) {
-          plan.kept.push(name === exported ? name : `${name} as ${exported}`);
+          plan.kept.push(
+            `${specifier.exportKind === 'type' ? 'type ' : ''}${name === exported ? name : `${name} as ${exported}`}`,
+          );
           if (parsed)
             manual(
               specifier,

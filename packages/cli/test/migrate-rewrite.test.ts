@@ -46,6 +46,15 @@ describe('rewrite', () => {
     );
   });
 
+  test('a type re-export left on v1 keeps its type keyword', () => {
+    const { code } = run(
+      "export { Accordion, type AccordionProps } from '@/components/animate-ui/primitives/radix/accordion';\n",
+    );
+    expect(code).toContain(
+      "export { type AccordionProps } from '@/components/animate-ui/primitives/radix/accordion';",
+    );
+  });
+
   test('a Base UI re-export needs a declaration: reported', () => {
     const source =
       "export { PopoverTrigger } from '@/components/animate-ui/primitives/base/popover';\n";
