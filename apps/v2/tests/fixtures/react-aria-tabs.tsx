@@ -40,7 +40,9 @@ export default function ReactAriaTabsFixture() {
       <section data-testid="uncontrolled">
         <Tabs disabledKeys={['two']}>
           <TabList aria-label="Uncontrolled">
-            <Tab id="one">One</Tab>
+            <Tab id="one" data-testid="tab-one">
+              One
+            </Tab>
             <Tab id="two">Two</Tab>
             <Tab id="three">Three</Tab>
           </TabList>

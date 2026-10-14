@@ -21,7 +21,7 @@ type IndicatorSnapshot = Box & {
 };
 
 const SKIPPED_ATTRIBUTE =
-  /^data-(slot|animate-ui-.*|hovered|pressed|focused|focus-visible|highlighted|rac|react-aria-.*|key|radix-.*|composite-.*)$/;
+  /^data-(slot|testid|animate-ui-.*|hovered|pressed|focused|focus-visible|highlighted|rac|react-aria-.*|key|radix-.*|composite-.*)$/;
 
 const NONE = (value: string) => !value || value === 'none';
 

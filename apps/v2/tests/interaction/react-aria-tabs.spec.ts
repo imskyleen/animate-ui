@@ -20,6 +20,13 @@ test.describe('react-aria tabs API', () => {
     await gotoTabs(page, '/tests/fixtures/react-aria-tabs');
   });
 
+  test("the indicator doesn't copy the selected tab's test id", async ({
+    page,
+  }) => {
+    await expect(page.getByTestId('tab-one')).toHaveCount(1);
+    await expect(page.getByTestId('tab-one')).toHaveAttribute('role', 'tab');
+  });
+
   test('controlled selectedKey and onSelectionChange', async ({ page }) => {
     const section = page.getByTestId('controlled');
     await section.getByRole('tab', { name: 'Controlled b' }).click();
