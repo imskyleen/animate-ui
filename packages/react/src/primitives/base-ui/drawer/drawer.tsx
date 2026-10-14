@@ -248,6 +248,8 @@ function holdBackdrop(node: HTMLElement) {
   const { style } = node;
   const transition = style.getPropertyValue('transition');
   style.setProperty('transition', 'none');
+  node.removeAttribute('data-animate-ui-backdrop');
+  node.removeAttribute('data-animate-ui-backdrop-blur');
   const computed = getComputedStyle(node);
   if (computed.backgroundImage === 'none') {
     style.setProperty('--animate-ui-backdrop-color', computed.backgroundColor);
@@ -287,8 +289,22 @@ function Backdrop({
     [ref],
   );
   React.useLayoutEffect(() => {
-    if (nodeRef.current) holdBackdrop(nodeRef.current);
-  }, []);
+    const node = nodeRef.current;
+    if (!node) return;
+    holdBackdrop(node);
+    const hold = () => holdBackdrop(node);
+    const observer = new MutationObserver(hold);
+    observer.observe(node.ownerDocument.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'style', 'data-theme'],
+    });
+    const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+    scheme.addEventListener('change', hold);
+    return () => {
+      observer.disconnect();
+      scheme.removeEventListener('change', hold);
+    };
+  }, [props.className]);
 
   return (
     <>

@@ -44,6 +44,23 @@ export default function BaseDrawerFixture() {
         </Drawer.Root>
       </section>
 
+      <section data-testid="themed">
+        <Drawer.Root>
+          <Drawer.Trigger>Open themed drawer</Drawer.Trigger>
+          <Drawer.Portal>
+            <Drawer.Backdrop
+              className="fixed inset-0 z-50 bg-black/20 dark:bg-white/30"
+              data-testid="themed-backdrop"
+            />
+            <Drawer.Viewport className={viewport}>
+              <Drawer.Popup className="fixed inset-x-0 bottom-0 border bg-background p-6">
+                <Drawer.Title>Themed drawer</Drawer.Title>
+              </Drawer.Popup>
+            </Drawer.Viewport>
+          </Drawer.Portal>
+        </Drawer.Root>
+      </section>
+
       <section data-testid="right">
         <Drawer.Root swipeDirection="right">
           <Drawer.Trigger>Open right drawer</Drawer.Trigger>

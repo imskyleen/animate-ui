@@ -326,3 +326,18 @@ test.describe('base-ui drawer API', () => {
     );
   });
 });
+
+test("the backdrop follows the theme's color while open", async ({ page }) => {
+  await page.goto('/tests/fixtures/base-ui-drawer', {
+    waitUntil: 'networkidle',
+  });
+  await page.getByRole('button', { name: 'Open themed drawer' }).click();
+  const backdrop = page.getByTestId('themed-backdrop');
+  const color = () =>
+    backdrop.evaluate((el) =>
+      (el as HTMLElement).style.getPropertyValue('--animate-ui-backdrop-color'),
+    );
+  await expect.poll(color).toContain('/ 0.2');
+  await page.evaluate(() => document.documentElement.classList.add('dark'));
+  await expect.poll(color).toContain('/ 0.3');
+});
