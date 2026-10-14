@@ -107,6 +107,13 @@ test.describe('animate-ui sidebar primitive', () => {
     await expect(state(page, 'plain')).toHaveText('collapsed false');
   });
 
+  test('Cmd/Ctrl+B leaves sidebars alone while typing', async ({ page }) => {
+    await page.getByRole('textbox', { name: 'Notes' }).focus();
+    await page.keyboard.press('ControlOrMeta+b');
+    await expect(state(page, 'collapsed')).toHaveText('collapsed false');
+    await expect(state(page, 'plain')).toHaveText('expanded true');
+  });
+
   test('the highlight glides between buttons that clip their content', async ({
     page,
   }) => {

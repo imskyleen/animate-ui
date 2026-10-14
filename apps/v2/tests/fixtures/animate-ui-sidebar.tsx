@@ -128,6 +128,7 @@ export default function SidebarFixture() {
 
   return (
     <div className="flex flex-col gap-6">
+      <input aria-label="Notes" className="w-64 rounded border px-2" />
       <section>
         <SidebarPrimitive.Provider defaultOpen={false}>
           <Bar label="collapsed" />

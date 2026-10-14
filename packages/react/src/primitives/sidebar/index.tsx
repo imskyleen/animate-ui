@@ -121,7 +121,10 @@ function Provider({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
-        (event.metaKey || event.ctrlKey)
+        (event.metaKey || event.ctrlKey) &&
+        !(event.target as HTMLElement | null)?.closest?.(
+          'input, textarea, select, [contenteditable]:not([contenteditable="false"])',
+        )
       ) {
         event.preventDefault();
         toggleSidebar();
