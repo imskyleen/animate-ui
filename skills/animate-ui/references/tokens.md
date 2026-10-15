@@ -30,7 +30,7 @@ Import `transition` as `motionTransition` when the component also takes a `trans
 
 ## Springs
 
-Springs first: nearly everything moves on a spring. They retarget with their velocity when interrupted, and a little overshoot makes motion feel alive. Animate UI's springs are `stiffness` / `damping` pairs (mass 1): tune those, not `bounce`, which Motion ignores when stiffness or damping are set.
+Springs first: nearly everything moves on a spring. They retarget with their velocity when interrupted, and a little overshoot makes motion feel alive. Animate UI's springs are `stiffness` / `damping` pairs (mass 1): tune those, not `bounce`, which Motion ignores when stiffness or damping are set (a spring written for an app from a feel uses `visualDuration` and `bounce` instead, never mixed with stiffness or damping: `feel.md`).
 
 | Token              | Value                                                          | Feel                                                                                                    | Use for                                                                                                                                                                                                                 |
 | ------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

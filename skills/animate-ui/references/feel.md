@@ -5,6 +5,8 @@ People describe motion with words ("snappier", "plus doux", "make it bounce"). T
 - **Pace**: how soon it arrives. Measured as the time to cover 90% of the way.
 - **Life**: how far it goes past its rest before settling (overshoot). Zero is calm, a few percent is alive, over 10% is playful.
 
+Three durations describe one spring, and they differ: the **pace** (90% of the way, what the tables give), the **`visualDuration`** (when it looks settled, about twice the pace) and the **CSS duration** `css-timing.mjs` prints (the whole curve until it rests, longer still). `spring.dialog`: 327ms pace, `visualDuration` 0.43, 750ms of CSS curve. Likewise the visible overshoot and Motion's `bounce` knob are two scales: `bounce` 0.1 → 0.2% · 0.2 → 1.5% · 0.3 → 4.6% · 0.36 → 7% · 0.4 → 9.5% · 0.5 → 16%.
+
 ## Words
 
 | Asked for                                             | Life       | Pace                  | Start from                                                                |
@@ -31,11 +33,13 @@ Each step below is one unit; asked again, take another step from where it is.
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | bouncier · plus de rebond               | bounce +0.1 (a surface: dialog, sheet, popover stays at 0.3 or below; anything else 0.5 or below)                                 |
 | less bouncy · moins de rebond, plus sec | bounce −0.1, down to 0                                                                                                            |
-| faster · plus rapide, plus vif          | time ×0.85                                                                                                                        |
-| slower · plus lent                      | time ×1.15                                                                                                                        |
+| faster · plus rapide, plus vif          | `visualDuration` (or a tween's duration) ×0.85                                                                                    |
+| slower · plus lent                      | `visualDuration` (or a tween's duration) ×1.15                                                                                    |
 | softer · plus doux                      | bounce −0.1 and, for a tween, `ease.soft` instead of `ease.out`                                                                   |
 | subtler · plus discret                  | distances halved, starting scales twice as close to 1 (0.9 → 0.95), blur one step down; time unchanged                            |
 | bolder · plus marqué                    | distances ×1.5, starting scales twice as far from 1 (0.95 → 0.9, never below 0.7 for a popup), add `blur.surface`; time unchanged |
+
+A playful press may also go one scale deeper (a card's 0.985 → 0.97): a big bounce on a 1.5% press barely shows. A word about leaving ("leave quickly") changes the surface's exit, not its overlay, which still clears like it came.
 
 "Faster" or "slower" for **everything** is `tempo` (SKILL.md, § Pace); for one component, change its own transition.
 
@@ -52,7 +56,7 @@ bounce         ≈ 1 − d / (2 · √k)
 
 ## Words never override the rules
 
-A feel changes the pace and the life, never the quality rules (`rules.md`): no ease-in on what enters, reduced motion still keeps fades and blurs, nothing pressed scales on hover. And the frequency gate still holds: "make the menu bouncy" bounces its checks and the press, while the menu itself stays short, since it opens all day.
+A feel changes the pace and the life inside the frequency gate (SKILL.md), never the quality rules (`rules.md`): no ease-in on what enters, reduced motion still keeps fades and blurs, nothing pressed scales on hover. And the frequency gate still holds: "make the menu bouncy" bounces its checks and the press, while the menu itself stays short, since it opens all day.
 
 ## CSS without a JavaScript runtime
 
@@ -65,3 +69,45 @@ node <skill>/scripts/css-timing.mjs '{"type":"spring","visualDuration":0.4,"boun
 ```
 
 It prints the duration, the easing (a spring becomes the `linear()` curve it plays) and a ready `transition` line. In code, `toCssTiming(transition)` from `@animate-ui/react/utils/motion` returns the same `{ duration, easing }`. Put the curve in a CSS variable when several rules share it, and keep the reduced-motion rule beside it (`@media (prefers-reduced-motion: reduce)`: travel zeroed, fades kept).
+
+An element toggled with `display: none` animates both ways with `@starting-style` and `transition-behavior: allow-discrete`: the open rule carries the entrance, the closed rule the exit (an exiting element takes the closed rule's transition), and `display` transitions for as long as the longest of them.
+
+```css
+:root {
+  --dialog-in: 750ms linear(0, 0.0071, …, 1); /* css-timing.mjs spring.dialog */
+  --dialog-out: 200ms cubic-bezier(…); /* css-timing.mjs transition.dismiss */
+  --dialog-from: perspective(500px) rotateX(-20deg) scale(0.8);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dialog-from: none;
+  }
+}
+.modal {
+  transition:
+    transform var(--dialog-in),
+    filter var(--dialog-in),
+    opacity 400ms cubic-bezier(…),
+    display 750ms allow-discrete;
+}
+@starting-style {
+  .modal[data-open='true'] {
+    opacity: 0;
+    transform: var(--dialog-from);
+    filter: blur(4px);
+  }
+}
+.modal[data-open='false'] {
+  display: none;
+  opacity: 0;
+  transform: var(--dialog-from);
+  filter: blur(4px);
+  transition:
+    transform var(--dialog-out),
+    filter var(--dialog-out),
+    opacity var(--dialog-out),
+    display 200ms allow-discrete;
+}
+```
+
+Browsers without `@starting-style` open and close at once, still usable.
