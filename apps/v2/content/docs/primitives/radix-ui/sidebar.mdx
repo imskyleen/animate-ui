@@ -195,7 +195,7 @@ Animate UI v1's sidebar, in Animate UI's motion.
 - **Collapsed to icons**, the buttons' tooltips are Animate UI's Tooltip: they grow from the button, from 0.7, on a spring.
 - Collapsibles inside (shadcn/ui's `sidebar-menu-collapsible`) unfold like Animate UI's Collapsible. Their chevrons turn as they do, over 350ms on the same soft ease-out (`transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-data-open/collapsible:rotate-90`, on the collapsible's `data-state="open"`, which the `data-open` variant matches). shadcn/ui's demo writes `group-data-[state=open]/collapsible:rotate-90`.
 - Nothing animates on mount: a sidebar collapsed from the start (its cookie) shows collapsed at once, and the trigger shows its icon at once.
-- Under reduced motion, the sidebar and all inside it collapse and expand at once (hidden parts too), and the highlight moves to the next button at once. The highlight, the labels and the trigger's icon still fade, without blur or scale.
+- Under reduced motion, the sidebar and all inside it collapse and expand at once (hidden parts too), and the highlight moves to the next button at once. The highlight and the trigger's icon still fade, without scale, and the labels fade through their blur.
 - `AnimateUIProvider tempo` scales every duration and spring.
 
 ## API Reference

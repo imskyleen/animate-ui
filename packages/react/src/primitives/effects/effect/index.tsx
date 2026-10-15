@@ -136,7 +136,7 @@ function EffectInner({
         : (zoom.scale ?? DEFAULT_ZOOM_SCALE);
   }
 
-  if (blur && !reduce) {
+  if (blur) {
     hiddenVariant.filter =
       typeof blur === 'boolean'
         ? `blur(${DEFAULT_BLUR_INITIAL_BLUR}px)`
@@ -147,7 +147,7 @@ function EffectInner({
         : `blur(${blur.blur ?? DEFAULT_BLUR_BLUR}px)`;
   }
 
-  if (reduce && (slide || zoom || blur)) {
+  if (reduce && (slide || zoom)) {
     hiddenVariant.opacity ??= DEFAULT_FADE_INITIAL_OPACITY;
     visibleVariant.opacity ??= DEFAULT_FADE_OPACITY;
   }

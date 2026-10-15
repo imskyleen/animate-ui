@@ -37,7 +37,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
 ## Animation
 
 - The element sharpens from `initialBlur` to `blur` on a spring (stiffness 200, damping 20): about 250ms from 10px to sharp.
-- Under reduced motion, it fades in instead.
+- Under reduced motion, it still comes into focus: a blur doesn't move anything.
 - `inView` waits for the element to scroll into view, once by default.
 - `<AnimateUIProvider tempo>` paces the default spring.
 

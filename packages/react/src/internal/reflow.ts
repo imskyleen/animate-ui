@@ -39,11 +39,7 @@ function showPlaceholder(input: HTMLElement) {
   entering.get(input)?.();
 }
 
-function enterPlaceholder(
-  input: HTMLElement,
-  fade: Transition,
-  reduce: boolean,
-) {
+function enterPlaceholder(input: HTMLElement, fade: Transition) {
   showPlaceholder(input);
   const opacity = Number(getComputedStyle(input, '::placeholder').opacity);
   input.setAttribute(PLACEHOLDER_ENTERING, '');
@@ -64,10 +60,7 @@ function enterPlaceholder(
       input,
       {
         [PLACEHOLDER_OPACITY]: [0, Number.isFinite(opacity) ? opacity : 1],
-        [PLACEHOLDER_FILTER]: [
-          reduce ? 'blur(0px)' : PLACEHOLDER_BLUR,
-          'blur(0px)',
-        ],
+        [PLACEHOLDER_FILTER]: [PLACEHOLDER_BLUR, 'blur(0px)'],
       },
       fade,
     );
@@ -246,7 +239,7 @@ function createReflow(options: () => ReflowOptions): Reflow {
       const start = reduce ? undefined : from?.get(item);
       if (start) glideFrom(item, start, glide, held?.get(item));
       if (from && hasPlaceholder(item) && !shown.has(item))
-        enterPlaceholder(item, fade, reduce);
+        enterPlaceholder(item, fade);
       else showPlaceholder(item);
     }
     for (const item of gone)

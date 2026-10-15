@@ -103,7 +103,7 @@ test.describe('react-aria tag group', () => {
     expectPlaceholderComesIn(recording);
   });
 
-  test('reduced motion: the last tag removed, a placeholder showing up only fades in', async ({
+  test('reduced motion: the last tag removed, a placeholder showing up fades in out of its blur', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });

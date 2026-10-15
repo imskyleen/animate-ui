@@ -217,7 +217,7 @@ export function expectPlaceholderComesIn(
   );
   expect(fading.length).toBeGreaterThan(1);
   for (const f of fading) {
-    const blur = reduce ? 0 : 2 * (1 - f.placeholder);
+    const blur = 2 * (1 - f.placeholder);
     expect(Math.abs(f.placeholderBlur - blur)).toBeLessThan(0.25);
   }
   const last = frames.at(-1)!;
@@ -379,7 +379,7 @@ export function describeChipMotion(name: string, c: ChipsDemo) {
     });
 
     if (c.placeholder === 'empty')
-      test('reduced motion: the last chip removed, its placeholder only fades in', async ({
+      test('reduced motion: the last chip removed, its placeholder fades in out of its blur', async ({
         page,
       }) => {
         await keepLast(page);

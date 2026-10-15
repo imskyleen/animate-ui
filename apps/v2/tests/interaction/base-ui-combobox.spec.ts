@@ -394,7 +394,7 @@ test.describe('base-ui combobox chips placeholder', () => {
     expectPlaceholderComesIn(recording);
   });
 
-  test('reduced motion: the last chip removed, its placeholder only fades in', async ({
+  test('reduced motion: the last chip removed, its placeholder fades in out of its blur', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });

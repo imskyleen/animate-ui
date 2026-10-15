@@ -48,7 +48,7 @@ export function Settings() {
 - React Aria keeps the outgoing panel mounted until its fade out is over, then removes it. With `shouldForceMount`, inactive panels stay in the DOM and `inert`, as in React Aria, and fade in when they become selected.
 - The `className`, `style` and `children` render props keep working. The indicator and the panel go through React Aria's `render` prop; a `render` of your own on `TabList` still receives the indicator, on `TabPanel` it replaces the animation.
 - `<AnimateUIProvider tempo>` paces every transition.
-- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading only (no blur, no slide), the incoming one over 200ms.
+- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading through their blur without sliding, the incoming one over 200ms.
 
 ## API Reference
 

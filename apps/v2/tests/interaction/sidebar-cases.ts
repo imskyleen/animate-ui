@@ -925,7 +925,9 @@ export function describeSidebar(library: string) {
       await page.mouse.move(700, 400);
     });
 
-    test('it collapses and expands at once', async ({ page }) => {
+    test('it collapses and expands at once, its labels still fading through their blur', async ({
+      page,
+    }) => {
       const recording = recordWidths(page, 400);
       await trigger(page).click();
       const frames = await recording;
@@ -941,7 +943,8 @@ export function describeSidebar(library: string) {
       const { running } = await seekToggle(page);
       const fades = running.filter((r) => /opacity/.test(r.property));
       expect(fades.length).toBeGreaterThan(3);
-      for (const r of running) expect(r.property).not.toMatch(/filter|height/);
+      expect(running.some((r) => /filter/.test(r.property))).toBe(true);
+      for (const r of running) expect(r.property).not.toMatch(/height/);
     });
 
     test('the highlight moves to the next button at once, and still fades', async ({

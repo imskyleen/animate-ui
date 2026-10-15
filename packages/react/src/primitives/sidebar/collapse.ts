@@ -110,8 +110,8 @@ function runCollapse(
   if (!collapsing && !expanding) return;
 
   const { duration, easing, labelDuration, labelEasing, reduce } = timings;
-  const blurred = reduce ? {} : { filter: timings.blur };
-  const sharp = reduce ? {} : { filter: 'blur(0px)' };
+  const blurred = { filter: timings.blur };
+  const sharp = { filter: 'blur(0px)' };
   const labelDelay = expanding && !reduce ? duration - labelDuration : 0;
   const animations: Animation[] = [];
   const restores: (() => void)[] = [];

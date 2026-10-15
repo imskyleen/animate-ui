@@ -44,7 +44,7 @@ Coming from the `@radix-ui/react-tabs` package? Use the subpath: `import * as Ta
 - Keyboard changes animate like clicks: arrow keys, Home and End slide the indicator and change the panels; focus moves at once.
 - Radix unmounts an unselected panel at once: the outgoing one is kept mounted (`forceMount`) while it fades out. With your own `forceMount`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
 - `<AnimateUIProvider tempo>` paces every transition.
-- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading only (no blur, no slide), the incoming one over 200ms.
+- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading through their blur without sliding, the incoming one over 200ms.
 
 ## API Reference
 

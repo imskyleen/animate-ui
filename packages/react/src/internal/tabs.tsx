@@ -613,7 +613,7 @@ function usePanelMotion(
     out: toCssTiming(leave),
     height: toCssTiming(height),
     follow,
-    blur: !reduce,
+    blur: true,
     glide: !reduce,
     shift: !reduce,
   };

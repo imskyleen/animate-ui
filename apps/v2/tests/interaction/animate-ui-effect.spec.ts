@@ -72,12 +72,14 @@ test.describe('animate-ui effect', () => {
     expect(Math.max(...scales)).toBeGreaterThan(1.01);
   });
 
-  test('reduced motion: only the fade remains', async ({ page }) => {
+  test('reduced motion: the fade and the blur remain, nothing moves', async ({
+    page,
+  }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page, 'effect');
     const [first] = await replayFirstFrame(page);
     expect(first!.opacity).toBeLessThan(0.9);
-    expect(first!.blur).toBe(0);
+    expect(first!.blur).toBeGreaterThan(1);
     expect(first!.y).toBe(0);
     expect(first!.scale).toBe(1);
   });

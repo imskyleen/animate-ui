@@ -1028,7 +1028,7 @@ export function describeTabsHeights(library: string) {
       ).toBeLessThan(0.01);
     });
 
-    test('reduced motion: the indicator and the height jump, the panels only fade', async ({
+    test('reduced motion: the indicator and the height jump, the panels fade through their blur without moving', async ({
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1040,9 +1040,10 @@ export function describeTabsHeights(library: string) {
       const frames = await recordSwitch(page, 'Tall', 700, undefined, scope);
       const after = frames.at(-1)!.panels[0]!.h;
       expect(after).toBeGreaterThan(before + 20);
-      expect(frames.every((f) => f.panels.every((p) => p.blur === 0))).toBe(
-        true,
-      );
+      const blurs = frames.flatMap((f) => f.panels.map((p) => p.blur));
+      expect(blurs.some((blur) => blur > 0)).toBe(true);
+      expect(blurs.every((blur) => blur <= 5)).toBe(true);
+      expect(frames.at(-1)!.panels.every((p) => p.blur === 0)).toBe(true);
       expect(
         frames.every((f) => f.panels.every((p) => p.tx === 0 && p.ty === 0)),
       ).toBe(true);

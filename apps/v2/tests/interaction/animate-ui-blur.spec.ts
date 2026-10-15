@@ -73,14 +73,13 @@ test.describe('animate-ui blur', () => {
     expect(firstSharp?.cards[2]!.blur).toBeGreaterThan(1);
   });
 
-  test('reduced motion: a fade instead of the blur', async ({ page }) => {
+  test('reduced motion: the blur stays, nothing moves', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page, 'blur');
     const [first] = await replayFirstFrame(page);
-    expect(first!.blur).toBe(0);
-    expect(first!.opacity).toBeLessThan(0.9);
+    expect(first!.blur).toBeGreaterThan(1);
     await expect
-      .poll(async () => (await sampleCards(page)).map((c) => c.opacity))
-      .toEqual([1, 1, 1]);
+      .poll(async () => (await sampleCards(page)).map((c) => c.blur))
+      .toEqual([0, 0, 0]);
   });
 });

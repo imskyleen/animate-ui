@@ -6,7 +6,6 @@ import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 import {
   motionTokens,
   ReducedMotionConfig,
-  useShouldReduceMotion,
   useTempoTransition,
 } from '../../../utils/motion';
 import {
@@ -58,8 +57,6 @@ function BlurInner({
       inViewMargin,
     },
   );
-  const reduce = useShouldReduceMotion();
-
   const Component = asChild ? Slot : motion.div;
 
   return (
@@ -68,14 +65,10 @@ function BlurInner({
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       exit="hidden"
-      variants={
-        reduce
-          ? { hidden: { opacity: 0 }, visible: { opacity: 1 } }
-          : {
-              hidden: { filter: `blur(${initialBlur}px)` },
-              visible: { filter: `blur(${blur}px)` },
-            }
-      }
+      variants={{
+        hidden: { filter: `blur(${initialBlur}px)` },
+        visible: { filter: `blur(${blur}px)` },
+      }}
       transition={{
         ...baseTransition,
         delay: (baseTransition.delay ?? 0) + delay / 1000,

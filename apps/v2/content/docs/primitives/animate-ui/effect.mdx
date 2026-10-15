@@ -38,7 +38,7 @@ With `asChild`, the animation is applied to your element instead of a wrapping `
 
 - Pick any combination of `fade`, `blur`, `slide` and `zoom`. `true` uses each effect's defaults; an object customizes it.
 - Everything animates together on one spring (stiffness 200, damping 20). Slide (`x` / `y`) and zoom (`scale`) are hardware-accelerated transforms.
-- Under reduced motion, there is no travel, scale or blur: the element only fades in.
+- Under reduced motion, there is no travel or scale: the fade and the blur still play.
 - `inView` waits for the element to scroll into view, once by default.
 - `<AnimateUIProvider tempo>` paces the default spring.
 

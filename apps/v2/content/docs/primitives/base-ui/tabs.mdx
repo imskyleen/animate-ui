@@ -45,7 +45,7 @@ Using the `@base-ui/react` umbrella import instead? The barrel mirrors it: `impo
 - Base UI keeps the outgoing panel mounted until its fade out is over, then removes it. With `keepMounted`, inactive panels stay in the DOM, `hidden`, and fade in when they become active.
 - Rendering Base UI's own `Tabs.Indicator` turns the sliding indicator off: yours is used instead.
 - `<AnimateUIProvider tempo>` paces every transition.
-- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading only (no blur, no slide), the incoming one over 200ms.
+- Under reduced motion, the indicator and the height jump; the panels still change one after the other, fading through their blur without sliding, the incoming one over 200ms.
 
 ## API Reference
 
