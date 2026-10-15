@@ -1,4 +1,5 @@
 import {
+  chmodSync,
   cpSync,
   existsSync,
   mkdirSync,
@@ -726,4 +727,14 @@ test("a hook of the user's own, named like v1's, is left alone", async () => {
   );
   expect(read(hook)).toBe(own);
   expect(output).not.toContain(hook);
+});
+
+test('a file it cannot write is named and skipped, the others still migrated', async () => {
+  const before = read(PAGE);
+  chmodSync(path.join(root, PAGE), 0o444);
+  const { code, output } = await run(['all']);
+  expect(code).toBe(1);
+  expect(output).toContain(`${PAGE}: couldn't write it`);
+  expect(output).not.toContain(`✔ ${PAGE}`);
+  expect(read(PAGE)).toBe(before);
 });

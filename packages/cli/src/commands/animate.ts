@@ -108,8 +108,18 @@ export function animate(components: string[], options: AnimateOptions) {
       );
     if (result.code === code) continue;
 
+    if (!options.dryRun) {
+      try {
+        writeFileSync(file, result.code);
+      } catch (error) {
+        exitCode = 1;
+        log(
+          `${styleText('red', '✖')} ${relative(file)}: couldn't write it (${error instanceof Error ? error.message : error}), skipped.`,
+        );
+        continue;
+      }
+    }
     changedFiles++;
-    if (!options.dryRun) writeFileSync(file, result.code);
 
     log(`${styleText('green', '✔')} ${relative(file)}`);
     for (const change of result.imports) {

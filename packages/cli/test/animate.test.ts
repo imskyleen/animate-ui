@@ -1,4 +1,5 @@
 import {
+  chmodSync,
   mkdtempSync,
   mkdirSync,
   readFileSync,
@@ -227,6 +228,26 @@ test('a file it cannot parse is named and skipped, the others still animated', (
   expect(code).toBe(1);
   expect(output).toContain("src/components/ui/broken.tsx: couldn't parse it");
   expect(readFileSync(uiFile(), 'utf8')).toContain('@animate-ui/react');
+});
+
+test('a file it cannot write is named and skipped, the others still animated', () => {
+  chmodSync(uiFile(), 0o444);
+  writeFileSync(
+    path.join(path.dirname(uiFile()), 'tabs.tsx'),
+    readFileSync(
+      path.join(import.meta.dirname, 'fixtures', 'radix-ui', 'tabs.nova.tsx'),
+      'utf8',
+    ),
+  );
+  const { code, output } = run(['all']);
+  expect(code).toBe(1);
+  expect(output).toContain(
+    "src/components/ui/accordion.tsx: couldn't write it",
+  );
+  expect(output).not.toContain('✔ src/components/ui/accordion.tsx');
+  expect(
+    readFileSync(path.join(path.dirname(uiFile()), 'tabs.tsx'), 'utf8'),
+  ).toContain('@animate-ui/react');
 });
 
 test('a missing ui folder is an error, not "nothing to animate"', () => {

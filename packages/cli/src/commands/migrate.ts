@@ -141,10 +141,18 @@ export async function migrate(components: string[], options: MigrateOptions) {
     result.found.forEach((key) => found.add(key));
     const changed = result.code !== code;
     if (!changed && result.manual.length === 0) continue;
-    if (changed) {
-      contents.set(file, result.code);
-      if (!options.dryRun) writeFileSync(file, result.code);
+    if (changed && !options.dryRun) {
+      try {
+        writeFileSync(file, result.code);
+      } catch (error) {
+        exitCode = 1;
+        log(
+          `${styleText('red', '✖')} ${relative(file)}: couldn't write it (${error instanceof Error ? error.message : error}), skipped.`,
+        );
+        continue;
+      }
     }
+    if (changed) contents.set(file, result.code);
     results.push({ file, result, changed });
   }
 
