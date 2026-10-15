@@ -1,6 +1,6 @@
 # Interactions
 
-Recipes for interactions people ask for by name ("make me a loading button", "animate my list") that aren't a component to install. Check `catalog.md` first; then start from the matching recipe here, keep the user's markup and styles, and change only what moves. Every recipe compiles as written, uses the tokens through `useTempoTransition()`, and keeps a reduced-motion path. Overlays, menus and controls built on a library are in `recipes.md`.
+Recipes for interactions people ask for by name ("make me a loading button", "animate my list") that aren't a component to install. Check `catalog.md` first; then start from the matching recipe here, keep the user's markup and styles, and change only what moves. The recipes' colors (`bg-white`, `neutral-*`) and sizes are placeholders: use the project's own (its theme tokens, its dark mode). The distances and scales a recipe writes by hand (an 8px rise, a 0.96 exit) are part of the recipe: keep them. Every recipe compiles as written, uses the tokens through `useTempoTransition()`, and keeps a reduced-motion path. Overlays, menus and controls built on a library are in `recipes.md`.
 
 ## Status button (loading, success, error)
 
@@ -9,6 +9,7 @@ Purpose: state, the action's progress shows where it was triggered. The label sw
 ```tsx
 'use client';
 
+import * as React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   blur,
@@ -71,9 +72,14 @@ function StatusButtonMotion({
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={status}
-            initial={{ opacity: 0, scale: scale.icon, filter: blur.icon }}
+            initial={{ opacity: 0, scale: scale.action, filter: blur.icon }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: scale.icon, filter: blur.icon }}
+            exit={{
+              opacity: 0,
+              scale: scale.action,
+              filter: blur.icon,
+              transition: swap,
+            }}
             transition={swap}
           >
             {LABELS[status]}
@@ -85,10 +91,42 @@ function StatusButtonMotion({
 }
 ```
 
-- The label is a Swap (recipes.md): `mode="popLayout"` lets the old one leave while the new one comes, `initial={false}` keeps the first render still.
+When the button runs the action itself (`onSave: () => Promise<void>`), it owns its status:
+
+```tsx
+export function useActionStatus(action: () => Promise<unknown>, hold = 1500) {
+  const [status, setStatus] = React.useState<Status>('idle');
+  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  React.useEffect(() => () => clearTimeout(timer.current), []);
+
+  const run = React.useCallback(async () => {
+    clearTimeout(timer.current);
+    setStatus('loading');
+    try {
+      await action();
+      setStatus('success');
+      timer.current = setTimeout(() => setStatus('idle'), hold);
+    } catch {
+      setStatus('error');
+    }
+  }, [action, hold]);
+
+  return [status, run] as const;
+}
+
+export function SaveButton({ onSave }: { onSave: () => Promise<void> }) {
+  const [status, run] = useActionStatus(onSave);
+  return <StatusButton status={status} onClick={run} />;
+}
+```
+
+- The label is a Swap (recipes.md): `mode="popLayout"` lets the old one leave while the new one comes, `initial={false}` keeps the first render still. A text label swaps from `scale.action` (0.9); an icon from `scale.icon` (0.5).
+- "Saved" holds about 1.5s, then goes back to idle. The hold is real time: `tempo` paces motion, not how long a message stays readable. A failure stays on "Try again" until the next click; clicking again clears a pending hold.
+- What the animation needs from the classes: `inline-flex items-center overflow-hidden` on the button. The height, padding and colors are the user's.
 - `layout` resizes the button to its label on `spring.reflow`; the press stays on `spring.press` (the `layout` key of the transition only drives the resize).
 - `aria-live="polite"` reads the new label; disable the button while loading so a second click can't fire.
-- A spinner inside spins with CSS (`motion-safe:animate-spin`): under reduced motion it stops, the label still says it's loading.
+- "Show it's loading" is the label; add a spinner only when the project has one (an icon set, a Spinner component). It spins with CSS (`motion-safe:animate-spin`): under reduced motion it stops, the label still says it's loading.
 - Copying text or toggling a like has a catalog item (Copy Button, Icon Button): use those.
 
 ## A list: items in, out, and the gap closing
@@ -152,6 +190,7 @@ export function AnimatedList({
 - An added item fades in and rises 8px at once, wherever it lands. The items already there on first render show at rest (`initial={false}`); a page's first entrance is Effects with `holdDelay` (catalog), not this list.
 - A removed item fades and shrinks to 0.96 in place, and `mode="popLayout"` takes it out of the flow at once so the others close the gap on `spring.reflow` (`layout="position"`: they move, they don't stretch).
 - Results of a search or filter don't cascade (the Palette recipe): only items added one by one animate in.
+- Spacing between items is `gap`, never `space-y-*` or margins: the item `popLayout` takes out of the flow would jump by its margin. Swapping the user's `space-y-*` for `flex flex-col gap-*` of the same size is part of the recipe; say so in the output.
 - Under reduced motion, `ReducedMotionConfig` drops the rise and the layout moves; the fades stay.
 
 ## A list reordered by drag
@@ -230,6 +269,7 @@ export function ExpandingCards({ cards }: { cards: Card[] }) {
   const morph = useTempoTransition(spring.dialog);
   const overlay = useTempoTransition(transition.overlay);
   const reveal = useTempoTransition(transition.reveal);
+  const swap = useTempoTransition(transition.swap);
 
   React.useEffect(() => {
     if (!open) return;
@@ -277,7 +317,7 @@ export function ExpandingCards({ cards }: { cards: Card[] }) {
         {open && (
           <motion.div
             key="overlay"
-            className="fixed inset-0 bg-black/40"
+            className="fixed inset-0 z-50 bg-black/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: overlay }}
             exit={{ opacity: 0, transition: overlay }}
@@ -292,7 +332,7 @@ export function ExpandingCards({ cards }: { cards: Card[] }) {
             aria-label={open.title}
             layoutId={`card-${open.id}`}
             transition={morph}
-            className="fixed inset-x-0 top-16 mx-auto w-[min(640px,90vw)] overflow-hidden rounded-2xl bg-white"
+            className="fixed inset-x-0 top-16 z-50 mx-auto w-[min(640px,90vw)] overflow-hidden rounded-2xl border bg-white"
           >
             <motion.img
               layoutId={`image-${open.id}`}
@@ -312,7 +352,7 @@ export function ExpandingCards({ cards }: { cards: Card[] }) {
               className="px-4 pb-6 text-neutral-600"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: reveal }}
-              exit={{ opacity: 0, transition: { duration: 0.1 } }}
+              exit={{ opacity: 0, transition: swap }}
             >
               {open.body}
             </motion.p>
@@ -325,8 +365,9 @@ export function ExpandingCards({ cards }: { cards: Card[] }) {
 ```
 
 - `layoutId` pairs each part with its larger self (card ↔ panel, image ↔ image, title ↔ title): Motion morphs between them on `spring.dialog`, calm, without overshoot.
-- Content that only exists in the large view (the body) fades in on `transition.reveal` after the frame moved, and leaves in 100ms so it doesn't stretch with the closing frame.
+- Content that only exists in the large view (the body) fades in on `transition.reveal` after the frame moved, and leaves on `transition.swap` (150ms) so it doesn't stretch with the closing frame.
 - The page dims on `transition.overlay`; Escape and a click outside close it. For a real dialog (focus trap, return focus), wrap the panel in a library Dialog and keep the `layoutId` on its content.
+- The card and the panel share their background, border and radius: the panel is the card grown, so a card without a background gets the panel's (the project's surface color), or the box pops in mid-morph. Overlay and panel sit above the page (`z-50`, the panel after the overlay), above the grid's moving cards.
 - Images keep their aspect ratio in both states (`aspect-video` + `object-cover` on both), or the morph distorts them.
 - Under reduced motion, the layout morph is skipped: the view appears and fades its body in.
 
