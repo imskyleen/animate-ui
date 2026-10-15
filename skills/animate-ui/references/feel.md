@@ -7,6 +7,16 @@ People describe motion with words ("snappier", "plus doux", "make it bounce"). T
 
 Three durations describe one spring, and they differ: the **pace** (90% of the way, what the tables give), the **`visualDuration`** (when it looks settled, about twice the pace) and the **CSS duration** `css-timing.mjs` prints (the whole curve until it rests, longer still). `spring.dialog`: 327ms pace, `visualDuration` 0.43, 750ms of CSS curve. Likewise the visible overshoot and Motion's `bounce` knob are two scales: `bounce` 0.1 → 0.2% · 0.2 → 1.5% · 0.3 → 4.6% · 0.36 → 7% · 0.4 → 9.5% · 0.5 → 16%.
 
+## Levels
+
+How much motion, asked before the feel when the request doesn't say (SKILL.md § 3). The gate still holds at every level: what's used all day stays short, only its rare moments grow.
+
+| Level                          | What it does                                                                                                                                                                                                        | Example: a label changing       | Example: a list item added                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ------------------------------------------------------------------ |
+| **Subtle** (default) · discret | The role's token as it is: a fade, a light blur (`blur.icon`), small travel, no overshoot beyond the token's own. Noticeable without drawing the eye.                                                               | Fades through a 2px blur, 150ms | Fades in, rises 8px, the others close the gap                      |
+| **More** · plus animé          | One step up: `blur.surface`, distances ×1.5 or a short slide where there was none, `transition.reveal` instead of `transition.swap`, bounce +0.1 on what isn't a surface.                                           | 4px blur, slides 6px, 300ms     | Rises 12px out of a 4px blur, a hint of bounce                     |
+| **Expressive** · très animé    | Animate UI's expressive primitives first (Rotating, Morphing, Rolling Text, Sliding Number, Particles, Effects with a stagger), then springs with a clear bounce (`spring.bounce`) and staggers. Rare moments only. | Rolling or Morphing Text        | Pops in on `spring.bounce`, a stagger when several arrive together |
+
 ## Words
 
 | Asked for                                             | Life       | Pace                  | Start from                                                                |

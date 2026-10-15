@@ -225,17 +225,23 @@ When two states replace each other in place (an icon swapping for another, a lab
 
 Values come from `@animate-ui/react/utils/motion`. To change the pace of everything, set `tempo` on `AnimateUIProvider` (`tokens.md`), not individual components; to pop checks instead of drawing them, its `checkAnimation`.
 
-### B9. Text changes without scaling
+### B9. Nothing stretches
 
-A changing text (a label, a status, a word, a number) never scales and is never stretched: scaled or squeezed, letters read as distorted, not as a change. Three levels, the first by default:
+A resize is smooth, never a distortion. Anything that changes size with `layout` (a button, a card, a panel, a row, a popover) scales on the way, and stretches what it holds unless that is corrected: text, icons, images, borders, radius. A squeezed label or a stretched image reads as a glitch, not as motion.
 
-1. **Base**: opacity through `blur.icon` on `transition.swap`, nothing else. Noticeable without drawing the eye: a button's label, a status, a value in a form.
+- Give each child that would stretch `layout` (or `layout="position"` when it should only move), with the box's `layout` transition: Motion counters the box's scale on them. Set the box's `borderRadius` (and a shadow) in `style` or `animate`, not only in a class, so it's corrected too.
+- When the content can't be corrected (deep or library-rendered content, many children), resize another way: the height through Auto Height (catalog) or a disclosure's height animation, or don't resize the box and swap its content through a blur.
+- Check a frame mid-resize: nothing inside looks wider, narrower or bolder than at rest.
+
+A changing text (a label, a status, a word, a number) also never scales: it fades, blurs or slides, at the level asked (feel.md, § Levels), subtle by default:
+
+1. **Subtle**: opacity through `blur.icon` on `transition.swap`, nothing else. Noticeable without drawing the eye: a button's label, a status, a value in a form.
 2. **More**: the same, pushed: `blur.surface` instead of `blur.icon`, a short slide (`shift.handoff`, up for what comes next or grows) and `transition.reveal`. A headline, a hero's changing word, a confirmation worth seeing.
-3. **Most**: Animate UI's texts (`catalog.md`), before anything by hand: Rotating Text for words taking turns, Morphing Text for one string turning into the next, Rolling Text for letters rolling over, Sliding Number or Counting Number for a number.
+3. **Expressive**: Animate UI's texts (`catalog.md`), before anything by hand: Rotating Text for words taking turns, Morphing Text for one string turning into the next, Rolling Text for letters rolling over, Sliding Number or Counting Number for a number.
 
-Go up a level only when asked ("more animated", "plus vivant", feel.md's "bolder") or when the text is the point of the page.
+Go up a level when asked (the level question, "plus animé", feel.md's "bolder") or when the text is the point of the page.
 
-- A box resized with `layout` around a text (a button whose label changes) stretches it while it resizes: give each text inside `layout="position"` (with the box's `layout` transition), so it moves and keeps its proportions.
+- A text inside a box that resizes (a button whose label changes) takes `layout="position"`, as above.
 - Icons still swap from `scale.icon` (B6), and a whole element may still scale with the text it holds (a card coming in, a badge bumping): the rule is about a text changing in place.
 
 ```tsx
@@ -271,4 +277,5 @@ Style (defaults; deviations named in the output):
 - [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays, menus and sheets, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a closed drawer's `transition.drawerOut`, and a menubar's next content fading in on `transition.handoffIn`; a dismissed dialog or sheet speeds away on `ease.away`)
 - [ ] Press at `scale.press` (0.97; `scale.choice` for a card or row), nothing pressed scales on hover; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance (a dismissed modal: at once, quicker, speeding away; its overlay clear before it unmounts)
-- [ ] Swaps bridged with a light blur; a changing text fades, blurs or slides, never scales, and keeps its proportions inside a resizing box
+- [ ] Swaps bridged with a light blur; a changing text fades, blurs or slides, never scales
+- [ ] Nothing stretches while it resizes: children of a `layout` box corrected, or the height animated instead

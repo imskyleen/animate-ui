@@ -37,6 +37,7 @@ The gate (§ Gate, under C) decides how much a component moves, and when to stop
 
 - **An explicit request is always honored.** Asked to animate something, animate it: the gate only picks the form, the shortest one when the component is used all day (a command palette on ⌘K gets a quick fade and slight scale, never a wait), and the output says why in one line. Never answer an explicit request with no motion.
 - **An open request** ("make the page feel alive", "what do you think of the motion") may end with less motion, or none where motion would only add a wait. "Review it, then fix it" on something that already moves is explicit: keep it moving, in its right form.
+- **Ask the level when it isn't given.** A request to animate something that names no level, feel or reference ("anime ma liste", "add an animation to this button") gets one question before any code: which level, **subtle**, **more** or **expressive** (`references/feel.md`, § Levels), each with what it would look like on this component in a few words, the one the gate suggests marked as recommended. Don't ask when the request already says it ("subtle", "bouncy", "plus animé", a feel word, a link or a video), on A, B, D and § Pace, or when nobody can answer (a non-interactive run): take **subtle** and say so in the output.
 - On **A** and **B** the gate only chooses which components to run: the primitives bring their own tokens. **D** and **§ Pace** skip it.
 
 ## A. shadcn/ui components: run the CLI
@@ -123,7 +124,7 @@ Keyboard navigation animates like the pointer. Name the purpose in one word: fee
 - Transform, opacity and filter (height only where content must push what's below). Anchored popups grow from their trigger (library origin variables), from 0.7 / 0.8 / 0.9 by kind; modals stay centered.
 - Press scales to 0.97 on a spring (0.985 for a whole card or row); the pressed element never scales on hover. Hover changes color, background, border or shadow; inside a clipped card the image may zoom and the card may lift a few pixels.
 - Tweens: ease-out for what enters and leaves, a softer ease-out for what the eye watches change (disclosures unfolding, overlays, menus opening, sheets sliding in), ease-in-out for what moves on screen, `ease` for color; never ease-in, but a closed drawer speeds off its edge on a short one (`transition.drawerOut`), a dismissed dialog or sheet speeds away on a steady push (`transition.dismiss`), and a menubar's next content fades in behind the one leaving on a slow start (`transition.handoffIn`). A light blur bridges a swap.
-- A changing text fades, blurs or slides, never scales: Animate UI's texts first (Rotating, Morphing, Rolling Text, Sliding Number), and `layout="position"` on a text inside a box that resizes, so it isn't stretched.
+- Nothing stretches: a box resized with `layout` gets `layout` on its children (or its height animated instead), so text, icons and images keep their proportions. A changing text fades, blurs or slides, never scales; Animate UI's texts (Rotating, Morphing, Rolling Text, Sliding Number) for the expressive level.
 - The exit replays the entrance (a dismissed dialog, drawer or sheet leaves at once, quicker, speeding away), its transition inside the `exit` target (an exiting element keeps its last props). Open from the start, it still animates.
 - Keep the library element as the animated element (Radix `asChild`, Base UI `render`, React Aria `render`/`motion.create`) so `data-*` attributes and styles still apply.
 - Warm tooltips show at once (and the one they replace goes at once).
@@ -177,7 +178,7 @@ Without a browser (an agent's shell, CI), check what can be read. On A and B: th
 The change (CLI run, import swap or code), then in a few lines:
 
 - **A, B**: what the CLI or the swap changed, the packages to add, and what was left on purpose.
-- **C**: the gate result (and why, when it shortened or skipped motion), the catalog item or recipe used, the tokens, and any style default changed and why.
+- **C**: the level (asked, or subtle by default), the gate result (and why, when it shortened or skipped motion), the catalog item or recipe used, the tokens, and any style default changed and why.
 - **D**: the manual steps done and left, and the files deleted or kept.
 - **E**: what was measured, the tokens it became or the values kept, and what the reference didn't show.
 - **Pace**: the tempo set and where.
