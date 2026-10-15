@@ -168,7 +168,13 @@ const motionTokens: MotionTokens = createMotionTokens();
 
 const MotionTokensContext = React.createContext<MotionTokens>(motionTokens);
 
-const TIME_KEYS = ['duration', 'delay', 'repeatDelay', 'delayChildren'];
+const TIME_KEYS = [
+  'duration',
+  'visualDuration',
+  'delay',
+  'repeatDelay',
+  'delayChildren',
+];
 
 function scaleTransition<T extends Transition | undefined>(
   transition: T,

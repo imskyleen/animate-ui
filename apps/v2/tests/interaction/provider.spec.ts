@@ -97,3 +97,21 @@ test('AnimateUIProvider tempo paces a radio dot leaving once', async ({
   expect(slow / normal).toBeGreaterThan(1.4);
   expect(slow / normal).toBeLessThan(2.8);
 });
+
+test('AnimateUIProvider tempo paces a spring written with visualDuration, keeping its bounce', async ({
+  page,
+}) => {
+  await page.goto('/tests/fixtures/provider-tempo-visual-duration', {
+    waitUntil: 'networkidle',
+  });
+  const read = async (id: string) =>
+    JSON.parse((await page.getByTestId(id).textContent()) ?? '{}');
+  expect(await read('default')).toMatchObject({
+    visualDuration: 0.4,
+    bounce: 0.3,
+  });
+  expect(await read('slow')).toMatchObject({
+    visualDuration: 0.8,
+    bounce: 0.3,
+  });
+});
