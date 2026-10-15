@@ -110,7 +110,7 @@ To pop every check of your app at once (checkboxes, menus, selects, comboboxes),
 
 ## Animation
 
-Base UI's Menubar has no Animate UI v1 counterpart: each menu opens and closes like v1's Base UI Menu, and moving between menus hands one popover from menu to menu, like [Motion's mega menu](https://motion.dev/ui/sections/react-nav-mega-menu).
+Base UI's Menubar has no Animate UI v1 counterpart: each menu opens and closes like v1's Base UI Menu, and moving between menus hands one popover from menu to menu.
 
 - Opening the bar fades and scales the menu in from 0.9 in 220ms (a soft ease-out), from its trigger; closing it takes 220ms too.
 - Moving from one open menu to another (hovering, clicking or tapping a trigger, or pressing the arrow keys), the popover doesn't close and reopen: it moves to the next menu and resizes on a spring (stiffness 660, damping 52): it starts gently, is most of the way there in ~155ms and eases in without going past, settled by ~300ms (the Popup's `transition`, if you set one), sliding over the content, which stays where it is on screen. Going from File to Edit, File's items leave to the left, 6px, while they fade out (220ms, a soft ease-out), and Edit's come in from 6px to the right on a spring (stiffness 450, damping 43) and fade in behind them (260ms, on a slow start); going back, the other way around. The popover clips them as it goes.

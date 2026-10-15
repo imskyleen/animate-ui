@@ -34,7 +34,7 @@ Coming from the `@radix-ui/react-progress` package? Use the subpath: `import * a
 
 The motion of Animate UI v1's progress:
 
-- **Indicator** springs to each new value (stiffness 300, damping 35: most of the way in ~230ms and settled by ~550ms, like [Motion UI's progress bar](https://motion.dev/ui/components/progress-bar), with no jump at the end; no overshoot, which would uncover the start of the track). Radix leaves the indicator's position to you: shadcn/ui moves it with `style={{ transform: translateX(-…%) }}`, the `x` v1 animated. Animate UI animates that translation instead of jumping to it, as an `x` that keeps its momentum when a new value arrives mid-way.
+- **Indicator** springs to each new value (stiffness 300, damping 35: most of the way in ~230ms and settled by ~550ms, with no jump at the end; no overshoot, which would uncover the start of the track). Radix leaves the indicator's position to you: shadcn/ui moves it with `style={{ transform: translateX(-…%) }}`, the `x` v1 animated. Animate UI animates that translation instead of jumping to it, as an `x` that keeps its momentum when a new value arrives mid-way.
 - It starts at its value on mount, with no animation.
 - shadcn/ui's `transition-all` on the indicator would run on top of Motion: the CLI removes it.
 - Under reduced motion, the indicator jumps to each value.
