@@ -152,6 +152,8 @@ function AnimateIconRoot({
   ref,
   onMouseEnter,
   onMouseLeave,
+  onPointerEnter,
+  onPointerLeave,
   onPointerDown,
   onPointerUp,
   onPointerCancel,
@@ -403,12 +405,23 @@ function AnimateIconRoot({
   const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
     childProps.onMouseEnter?.(event);
     onMouseEnter?.(event);
-    if (animateOnHover) startAnimation(animateOnHover);
   };
 
   const handleMouseLeave = (event: React.MouseEvent<HTMLElement>) => {
     childProps.onMouseLeave?.(event);
     onMouseLeave?.(event);
+  };
+
+  const handlePointerEnter = (event: React.PointerEvent<HTMLElement>) => {
+    childProps.onPointerEnter?.(event);
+    onPointerEnter?.(event);
+    if (animateOnHover && event.pointerType !== 'touch')
+      startAnimation(animateOnHover);
+  };
+
+  const handlePointerLeave = (event: React.PointerEvent<HTMLElement>) => {
+    childProps.onPointerLeave?.(event);
+    onPointerLeave?.(event);
     if (animateOnHover || animateOnTap) stopAnimation();
   };
 
@@ -433,6 +446,8 @@ function AnimateIconRoot({
   const handlers = {
     onMouseEnter: handleMouseEnter,
     onMouseLeave: handleMouseLeave,
+    onPointerEnter: handlePointerEnter,
+    onPointerLeave: handlePointerLeave,
     onPointerDown: handlePointerDown,
     onPointerUp: handlePointerUp,
     onPointerCancel: handlePointerCancel,

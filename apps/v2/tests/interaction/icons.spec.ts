@@ -260,6 +260,32 @@ test.describe('icons', () => {
   });
 });
 
+test.describe('icons on touch', () => {
+  test.use({ hasTouch: true, isMobile: true });
+
+  for (const id of ['hover', 'group-override']) {
+    test(`a tap doesn't play a hover animation, nor leave it stuck (${id})`, async ({
+      page,
+    }) => {
+      await open(page);
+      const svg = page.getByTestId(id).locator('svg');
+      await record(svg, 1);
+      await svg.tap();
+      const tapped = await now(page);
+      await page.waitForTimeout(1200);
+      expect(maxAbs(await between(page, tapped))).toBeLessThan(1);
+    });
+  }
+
+  test('a tap still plays a tap animation', async ({ page }) => {
+    await open(page);
+    const svg = page.getByTestId('tap-complete').locator('svg');
+    await record(svg, 5);
+    await svg.tap();
+    await waitForThreshold(page);
+  });
+});
+
 test.describe('icons gallery', () => {
   test('no New filter when every icon of the library is new', async ({
     page,

@@ -36,7 +36,7 @@ Icons inside an `AnimateIcon` inherit its props and can override them individual
 ### Triggers
 
 - `animate`: animates while `true` (or plays the named animation).
-- `animateOnHover`: animates while the pointer is over the icon, and returns to rest when it leaves.
+- `animateOnHover`: animates while the pointer is over the icon, and returns to rest when it leaves. A touch doesn't play it (a finger can't leave): add `animateOnTap` for touch screens.
 - `animateOnTap`: animates while pressed, and returns to rest on release or when the pointer leaves. Add `completeOnStop` to always finish the animation.
 - `animateOnView`: plays when the icon scrolls into view (`animateOnViewMargin`, `animateOnViewOnce`).
 
