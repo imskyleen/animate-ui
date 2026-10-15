@@ -19,6 +19,7 @@ Its motion is springy and alive, but coherent: nearly everything moves on a spri
 | An Animate UI v1 project (`components/animate-ui/...` files)                   | **D. Migrate**                   |
 | An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                       |
 | Reviewing existing motion                                                      | **C**, the rules as a checklist  |
+| An animation to reproduce: a link, a video, a GIF                              | **E. Reproduce it**              |
 
 Before writing motion by hand, check `references/catalog.md`: entrances, scroll reveals, counters, text effects, buttons, backgrounds and icons already ship, and using one beats rebuilding it.
 
@@ -75,12 +76,13 @@ To make every animation faster or slower at once, wrap the app in `AnimateUIProv
 
 ## C. Anything else: animate it with the rules
 
-1. **Catalog first**: if `references/catalog.md` has it (a counter, an entrance, a scroll reveal, a text effect, a button effect), use that.
-2. **Gate** (below), then classify the component and start from the matching recipe in `references/recipes.md`.
-3. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. A hand-rolled overlay stays hand-rolled unless the user asks: animating it doesn't mean moving it onto a library (that would change its focus, modality and dismissal), so wire Motion into it as it is, the way `references/base-libraries.md` shows for plain markup, and mention in the output what a primitive would add.
-4. Motion runs in client components: put `'use client'` on the file that animates, and keep a server page server-side by moving the animated part into its own client component. Content that enters on mount starts hidden in the server HTML; keep that for what is below the fold or decorative, never for the page's main text on first paint.
-5. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, shift, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in (but a dismissed dialog's `transition.dismiss`, and a menubar's next content fading in on `transition.handoffIn`), no ease-in-out on an entrance.
-6. Check every rule in `references/rules.md` (quality rules are non-negotiable; style rules are defaults), then verify (§ Verify).
+1. **Know the technique.** Motion's documentation and examples (motion.dev) show how most interactions are built; when a tool can read them, learn the technique there, then write it with Animate UI's tokens and rules. Present the result as the user's animation, not as someone's example.
+2. **Catalog first**: if `references/catalog.md` has it (a counter, an entrance, a scroll reveal, a text effect, a button effect), use that.
+3. **Gate** (below), then classify the component and start from the matching recipe in `references/recipes.md`.
+4. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. A hand-rolled overlay stays hand-rolled unless the user asks: animating it doesn't mean moving it onto a library (that would change its focus, modality and dismissal), so wire Motion into it as it is, the way `references/base-libraries.md` shows for plain markup, and mention in the output what a primitive would add.
+5. Motion runs in client components: put `'use client'` on the file that animates, and keep a server page server-side by moving the animated part into its own client component. Content that enters on mount starts hidden in the server HTML; keep that for what is below the fold or decorative, never for the page's main text on first paint.
+6. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, shift, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in (but a dismissed dialog's `transition.dismiss`, and a menubar's next content fading in on `transition.handoffIn`), no ease-in-out on an entrance.
+7. Check every rule in `references/rules.md` (quality rules are non-negotiable; style rules are defaults), then verify (§ Verify).
 
 ### Gate: should it animate?
 
@@ -124,6 +126,17 @@ Keyboard navigation animates like the pointer. Name the purpose in one word: fee
 - A menubar's popover moves to the next menu and resizes (`spring.morph`: it starts gently and eases in without going past, keeping its speed from menu to menu) instead of closing and reopening, its content changing in place: the content stays where it is on screen while the popover slides over it, the previous items leaving `shift.handoff` (6px) away from where it goes as they fade out (`transition.handoffOut`), the next ones arriving from there on `spring.handoff` and fading in behind them (`transition.handoffIn`): from File to Edit, File's leave to the left, Edit's come from the right. One popover on screen at every frame, each menu's content once (a menu coming back takes its leaving items back from where they are), and the triggers share one highlight gliding from trigger to trigger (internal/menu-handoff.ts, internal/item-highlight.tsx).
 - The keyboard animates like the pointer; hover only on hover-capable fine pointers; re-triggering retargets, never restarts; loops pause off screen.
 
+## E. Reproduce an animation from a link or a video
+
+The user shows an animation they like (a site, a video, a GIF, a screen recording) and wants it on their component. Copy **only the motion**: which properties move, from where to where, for how long, on which curve or spring, in which order. Their component keeps its own look (colors, sizes, radius, type, layout, content) unless they ask for that too.
+
+1. **Read the motion.**
+   - A link: open it in a browser tool when there is one and read what drives the animation: CSS `transition`, `animation` and `@keyframes`, inline Motion or GSAP props in the scripts, or `element.getAnimations()` (keyframes, `duration`, `easing`) while it plays. Trigger it the way a user would (hover, click, scroll). A page that can't be opened: ask for a recording.
+   - A video or GIF: look at it frame by frame (extract frames with `ffmpeg -i in.mp4 -vf fps=60 frame_%03d.png` when available, and view them). Note each moving element's properties (position, scale, rotation, opacity, blur, clip), start and end values, when each one starts and ends (frame count ÷ fps), and whether it goes past its end and comes back (a spring) or eases in (a curve).
+2. **Translate it.** A measured value within about 10% of a token uses the token (it stays coherent with the rest of the app and follows `tempo`). Otherwise keep the measured value: the user asked for that animation. Write a spring as `{ type: 'spring', visualDuration, bounce }` from what was seen (settle time, overshoot), a tween as its duration and `cubic-bezier`.
+3. **Apply the rules anyway.** It gets a reduced-motion path, animates `transform`, `opacity` and `filter` (a reference moving `top` or `width` becomes a transform or a `layout` animation), and stays interruptible. A reference that breaks one (an ease-in entrance, a hover scale on a button) is reproduced as asked; say in the output what the rule would change.
+4. **Output** what was measured (properties, durations, curve or spring), which values became tokens and which stayed measured, and what wasn't visible in the reference (the exit, reduced motion) and how it was filled in.
+
 ## D. Animate UI v1 projects: migrate
 
 ```bash
@@ -161,4 +174,5 @@ The change (CLI run, import swap or code), then in a few lines:
 - **A, B**: what the CLI or the swap changed, the packages to add, and what was left on purpose.
 - **C**: the gate result (and why, when it shortened or skipped motion), the catalog item or recipe used, the tokens, and any style default changed and why.
 - **D**: the manual steps done and left, and the files deleted or kept.
+- **E**: what was measured, the tokens it became or the values kept, and what the reference didn't show.
 - **Pace**: the tempo set and where.
