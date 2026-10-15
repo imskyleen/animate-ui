@@ -707,7 +707,10 @@ function useMenuHandoff(
   };
 }
 
-function takeOver(from: { opacity: number }, transition: Transition) {
+function takeOver(
+  from: { opacity: number },
+  transition: Transition,
+): { opacity: number[]; scale: number; transition: Transition } {
   return {
     opacity: [from.opacity, 1],
     scale: 1,

@@ -37,7 +37,7 @@ export function useModalTransitions(
   exitTransition: Transition | undefined,
   fallback: Transition,
   exitFallback?: Transition,
-) {
+): { enter: Transition; exit: Transition } {
   const enter = useTempoTransition(transition ?? fallback);
   const exit = useTempoTransition(
     exitTransition ?? exitFallback ?? transition ?? fallback,
@@ -58,7 +58,7 @@ export function useContentTransitions(
   side: ModalSide | undefined,
   transition: Transition | undefined,
   exitTransition: Transition | undefined,
-) {
+): { enter: Transition; exit: Transition } {
   const { enter, exit } = useModalTransitions(
     transition,
     exitTransition,

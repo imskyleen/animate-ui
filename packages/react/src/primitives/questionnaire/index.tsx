@@ -944,7 +944,7 @@ function Progress({ children, render, ...props }: ProgressProps) {
   );
 }
 
-const Questionnaire = {
+const Questionnaire: typeof QuestionnairePrimitive = {
   Root,
   Progress,
   Item,
