@@ -23,6 +23,7 @@ type ScrollFadeEdge = 'top' | 'bottom' | 'left' | 'right';
 type UseScrollFadeOptions = {
   orientation?: ScrollFadeOrientation;
   size?: number;
+  shrink?: number;
   transition?: Transition;
   enabled?: boolean;
 };
@@ -55,6 +56,14 @@ const MASKS: Record<ScrollFadeOrientation, string> = {
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
+function itemsOf(el: HTMLElement) {
+  let parent: Element = el;
+  while (parent.children.length === 1) parent = parent.children[0]!;
+  return Array.from(parent.children).filter(
+    (child): child is HTMLElement => child instanceof HTMLElement,
+  );
+}
+
 function setMask(el: HTMLElement, mask: string | null) {
   const style = el.style;
   if (mask) {
@@ -78,6 +87,7 @@ function useScrollFade(
   {
     orientation = 'vertical',
     size = 40,
+    shrink = 0.05,
     transition: transitionProp,
     enabled = true,
   }: UseScrollFadeOptions = {},
@@ -114,6 +124,39 @@ function useScrollFade(
 
     el.style.setProperty(VAR.size, `${size}px`);
 
+    const shrunk = new Set<HTMLElement>();
+    const restore = () => {
+      for (const item of shrunk) item.style.removeProperty('scale');
+      shrunk.clear();
+    };
+    const shrinkItems = () => {
+      if (!shrink || reduceRef.current) return restore();
+      const box = el.getBoundingClientRect();
+      for (const item of itemsOf(el)) {
+        const rect = item.getBoundingClientRect();
+        let depth = 0;
+        if (vertical) {
+          const center = rect.top + rect.height / 2;
+          depth = Math.max(
+            clamp01(1 - (center - box.top) / size) * values.top.get(),
+            clamp01(1 - (box.bottom - center) / size) * values.bottom.get(),
+          );
+        }
+        if (horizontal) {
+          const center = rect.left + rect.width / 2;
+          depth = Math.max(
+            depth,
+            clamp01(1 - (center - box.left) / size) * values.left.get(),
+            clamp01(1 - (box.right - center) / size) * values.right.get(),
+          );
+        }
+        if (depth > 0.001) {
+          item.style.scale = String(1 - shrink * depth);
+          shrunk.add(item);
+        } else if (shrunk.delete(item)) item.style.removeProperty('scale');
+      }
+    };
+
     const write = () => {
       let any = false;
       for (const edge of EDGES) {
@@ -125,6 +168,7 @@ function useScrollFade(
         masked = any;
         setMask(el, any ? mask : null);
       }
+      shrinkItems();
     };
 
     const unsubscribe = EDGES.map((edge) => values[edge].on('change', write));
@@ -192,10 +236,11 @@ function useScrollFade(
       mutationObserver.disconnect();
       unsubscribe.forEach((off) => off());
       setMask(el, null);
+      restore();
       for (const name of Object.values(VAR)) el.style.removeProperty(name);
       for (const edge of EDGES) values[edge].jump(0);
     };
-  }, [ref, enabled, orientation, size, values]);
+  }, [ref, enabled, orientation, size, shrink, values]);
 
   return values;
 }
@@ -220,6 +265,7 @@ function ScrollFade({
   asChild = false,
   orientation = 'vertical',
   size,
+  shrink,
   transition,
   enabled,
   style,
@@ -229,7 +275,13 @@ function ScrollFade({
   const localRef = React.useRef<HTMLDivElement | null>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
-  useScrollFade(localRef, { orientation, size, transition, enabled });
+  useScrollFade(localRef, {
+    orientation,
+    size,
+    shrink,
+    transition,
+    enabled,
+  });
 
   const sharedProps = {
     'data-slot': 'scroll-fade',

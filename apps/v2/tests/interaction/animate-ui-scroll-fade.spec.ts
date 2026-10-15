@@ -189,4 +189,57 @@ test.describe('animate-ui scroll fade', () => {
       .poll(async () => (await state(page, 'long')).mask)
       .toBe('none');
   });
+  const scales = (page: Page, testId: string) =>
+    page
+      .getByTestId(testId)
+      .evaluate((el) =>
+        [...el.children].map((child) =>
+          Number((child as HTMLElement).style.scale || 1),
+        ),
+      );
+
+  test('items shrink into the fade, by how deep they sit in it, down to 95%', async ({
+    page,
+  }) => {
+    await open(page);
+    let s = await scales(page, 'long');
+    expect(s[0]).toBe(1);
+    expect(s[3]).toBe(1);
+    expect(s[4]).toBeCloseTo(0.975, 2);
+    await scrollTo(page, 'long', 'middle');
+    await settled(page, 'long', { top: 1, bottom: 1 });
+    s = await scales(page, 'long');
+    const shrunk = s.filter((value) => value < 1);
+    expect(shrunk.length).toBeGreaterThanOrEqual(2);
+    for (const value of shrunk) expect(value).toBeGreaterThanOrEqual(0.95);
+    await scrollTo(page, 'long', 'start');
+    await settled(page, 'long', { top: 0, bottom: 1 });
+    s = await scales(page, 'long');
+    expect(s[0]).toBe(1);
+  });
+
+  test('items inside a wrapper (a list) shrink too', async ({ page }) => {
+    await page.goto('/tests/demos/animate-ui/scroll-fade', {
+      waitUntil: 'networkidle',
+    });
+    const rows = await page
+      .locator('[data-slot="scroll-fade"] li')
+      .evaluateAll((items) =>
+        items.map((item) => Number((item as HTMLElement).style.scale || 1)),
+      );
+    expect(rows[0]).toBe(1);
+    expect(rows.some((value) => value < 1 && value >= 0.95)).toBe(true);
+  });
+
+  test('reduced motion: nothing shrinks, the fade alone stays', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page);
+    await scrollTo(page, 'long', 'middle');
+    await settled(page, 'long', { top: 1, bottom: 1 });
+    expect((await scales(page, 'long')).every((value) => value === 1)).toBe(
+      true,
+    );
+  });
 });
