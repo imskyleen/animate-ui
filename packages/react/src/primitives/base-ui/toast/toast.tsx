@@ -153,7 +153,7 @@ function stackStyle(
     ? ['transform', 'opacity', 'height', 'filter']
     : swiped
       ? ['transform', 'opacity']
-      : ['opacity'];
+      : ['opacity', 'filter'];
   const style: React.CSSProperties = {
     opacity: hidden ? 0 : 1,
     ...transitionStyle(properties, timing, ending ? undefined : cascade),
@@ -170,10 +170,12 @@ function stackStyle(
   let exitX = '0px';
   let exitY = '0px';
   let scale = restScale;
-  if ((starting || ending) && !swiped && !reduce) {
-    exitY = `${dir * 100}%`;
-    scale = `calc(${restScale} * ${RISE_SCALE})`;
+  if ((starting || ending) && !swiped) {
     style.filter = RISE_BLUR;
+    if (!reduce) {
+      exitY = `${dir * 100}%`;
+      scale = `calc(${restScale} * ${RISE_SCALE})`;
+    }
   }
   if (swiped === 'down') exitY = '100%';
   if (swiped === 'up') exitY = '-100%';

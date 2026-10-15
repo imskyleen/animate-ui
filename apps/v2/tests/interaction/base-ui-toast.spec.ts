@@ -385,7 +385,7 @@ test.describe('base-ui toast demo', () => {
     expect(success.opacity).toBeCloseTo(0.25, 2);
   });
 
-  test('reduced motion: fades in place, the stack unfolds at once', async ({
+  test('reduced motion: fades in place out of its blur, the stack unfolds at once', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -397,8 +397,10 @@ test.describe('base-ui toast demo', () => {
     const first = shown[0]!.samples.toast!;
     expect(Math.abs(first.y)).toBeLessThan(0.02);
     expect(first.opacity).toBeLessThan(1);
+    expect(first.blur).toBeGreaterThan(0);
+    expect(shown.at(-1)!.samples.toast!.blur).toBe(0);
     for (const frame of shown) {
-      expect(frame.samples.toast!.blur).toBe(0);
+      expect(frame.samples.toast!.blur).toBeLessThanOrEqual(4);
       expect(frame.samples.toast!.scale).toBe(1);
       expect(frame.samples.toast!.y).toBeGreaterThanOrEqual(-0.001);
     }
