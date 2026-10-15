@@ -143,7 +143,7 @@ The same drop-in animates the questionnaire of the [Base UI](/docs/primitives/ba
 - **Nothing moves on mount**, nor before the page has been painted: a resumed question (`defaultItem`) and default answers show at rest.
 - `<AnimateUIProvider tempo>` paces every transition, the height's follow spring included.
 - Under reduced motion, the questions still change one after the other, fading through their blur without sliding: out over 200ms, then in over 200ms (`cubic-bezier(0.23, 1, 0.32, 1)`), the height changing at once to the next one's when the leaving one has faded out. The error (what's below it jumps), the buttons (to their own resting opacity), the dot and the check fade only, and the progress numbers crossfade over 200ms.
-- The demo is shadcn/ui's `questionnaire-demo` for Radix UI: three questions, a required one with three described choices and a freeform answer, an optional multiple choice (Skip shows), and a required last one (Submit reads "Save plan"), with letter shortcuts. Submitting shows the answers in a toast.
+- The demo is shadcn/ui's `questionnaire-demo` for Radix UI: three questions, a required one with three described choices and a freeform answer, an optional multiple choice (Skip shows), and a required last one (Submit reads "Save plan"), with letter shortcuts. Submitting shows the answers in Animate UI's [Toast](/docs/primitives/base-ui/toast), where shadcn/ui's uses Sonner.
 
 ### How it works
 
