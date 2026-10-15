@@ -1,6 +1,7 @@
 import { cn } from 'cn';
 import type { PageTreeTransformer } from 'fumadocs-core/source';
 import { Dancing_Script } from 'next/font/google';
+import { isNewPage } from '@/lib/new-badge';
 
 const dancing = Dancing_Script({ subsets: ['latin'] });
 
@@ -26,8 +27,6 @@ export function BadgeLabel({
   );
 }
 
-const NEW_FOR_DAYS = 30;
-
 export type PageBadge = 'new' | 'alpha' | 'beta' | 'deprecated' | 'updated';
 
 const BADGE_COLORS: Record<PageBadge, string> = {
@@ -44,11 +43,7 @@ export function pageBadge(frontmatter: object): PageBadge | null {
   if (data.deprecated === true) return 'deprecated';
   if (data.beta === true) return 'beta';
   if (data.alpha === true) return 'alpha';
-  const recent =
-    typeof data.releaseDate === 'string' &&
-    (Date.now() - new Date(data.releaseDate).getTime()) / 86_400_000 <=
-      NEW_FOR_DAYS;
-  return recent || data.new === true ? 'new' : null;
+  return isNewPage(data) ? 'new' : null;
 }
 
 export const attachBadge: PageTreeTransformer['file'] = function (

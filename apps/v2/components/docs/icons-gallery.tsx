@@ -43,6 +43,7 @@ import { Check } from '@/registry/icons/check';
 import { ClientCommand } from './client-command';
 import { DynamicCodeBlock } from './dynamic-codeblock';
 import { InstallTabs } from './install-tabs';
+import { isRecent } from '@/lib/new-badge';
 
 type Loaded = {
   Icon: ComponentType<IconProps<string>>;
@@ -61,11 +62,9 @@ type IconLibrary = {
 };
 
 function newIcons(icons: IconEntry[]) {
-  const since = new Date();
-  since.setDate(since.getDate() - 30);
   return new Set(
     icons
-      .filter((icon) => icon.added && new Date(icon.added) >= since)
+      .filter((icon) => icon.added && isRecent(icon.added))
       .map((icon) => icon.name),
   );
 }

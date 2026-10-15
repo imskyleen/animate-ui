@@ -334,7 +334,7 @@ test('the sidebar and TOC fade only where there is more to scroll', async ({
     .toMatch(/^0(\.0+)?$|^$/);
 });
 
-test('a page released in the last 30 days has a "new" badge', async ({
+test('a page released in the last 60 days has a "new" badge', async ({
   page,
 }) => {
   await page.goto('/docs/primitives/animate-ui/scroll-fade');
