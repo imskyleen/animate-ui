@@ -35,6 +35,14 @@ const GHOST_SCALE = 0.5;
 
 const STAGGER = 0.05;
 
+const LANDING = 0.12;
+const LANDING_SCALE = 0.55;
+const LANDING_OPACITY = 0.45;
+const LANDING_ORIGIN = '20% 85%';
+
+const CLEAR_STAGGER = 0.05;
+const CLEAR_DROP = 6;
+
 const WAVE_RISE = 4;
 const WAVE_UP = 0.1;
 const WAVE_DOWN: Transition = motionTokens.spring.checkPop;
@@ -270,6 +278,7 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
   const fullMotion = useReducedMotionSetting() === 'never';
   const value = slots.map((slot) => slot.char ?? '').join('');
   const prevValueRef = React.useRef(value);
+  const ringValueRef = React.useRef(value);
   const ringRef = React.useRef<HTMLSpanElement>(null);
   const glyphsRef = React.useRef<HTMLSpanElement>(null);
   const ringStateRef = React.useRef<RingState>({
@@ -291,7 +300,7 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
   );
 
   const placeRing = React.useCallback(
-    (box: Box, radii: string[], glide: boolean) => {
+    (box: Box, radii: string[], glide: boolean, delay = 0) => {
       const ring = ringRef.current;
       const state = ringStateRef.current;
       if (!ring) return;
@@ -307,17 +316,38 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
           height: `${box.height}px`,
           ...Object.fromEntries(RADII.map((corner, i) => [corner, radii[i]])),
         },
-        glide ? ringTransition : { duration: 0 },
+        glide ? { ...ringTransition, delay } : { duration: 0 },
       );
     },
     [ringTransition],
   );
 
   React.useLayoutEffect(() => {
+    const before = ringValueRef.current;
+    ringValueRef.current = value;
     const container = getContainer();
     const ring = ringRef.current;
     if (!container || !ring) return;
     const state = ringStateRef.current;
+    const slots = Array.from(
+      container.querySelectorAll<HTMLElement>(SLOT_SELECTOR),
+    );
+    const activeIndex = slots.findIndex(
+      (slot) => slot.getAttribute('data-active') === 'true',
+    );
+    const typed =
+      activeIndex > 0 &&
+      state.slot === slots[activeIndex - 1] &&
+      Boolean(value[activeIndex - 1]);
+    const cleared =
+      before.length - value.length > 1 && before.startsWith(value);
+    const ringDelay = reduce
+      ? 0
+      : cleared
+        ? (before.length - value.length) * CLEAR_STAGGER * tempo
+        : typed
+          ? LANDING * tempo
+          : 0;
     const active = container.querySelector<HTMLElement>(
       `${SLOT_SELECTOR}[data-active="true"]`,
     );
@@ -353,7 +383,7 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       worn.radii.join() === state.radii.join()
     )
       return;
-    placeRing(box, worn.radii, state.shown && !reduce);
+    placeRing(box, worn.radii, state.shown && !reduce, ringDelay);
     if (moved) {
       cancelWaves(ring);
       rideWave(active, ring);
@@ -389,8 +419,9 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
     const leaving = leavingRef.current;
     const entering = enteringRef.current;
 
+    const cascade = prev.length - value.length > 1 && prev.startsWith(value);
     if (
-      !reduce &&
+      (!reduce || cascade) &&
       layer &&
       prev.length > value.length &&
       prev.startsWith(value)
@@ -418,13 +449,36 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
         layer.append(ghost);
         leaving.set(slot, ghost);
         rideWave(slot, ghost);
-        const shrink = ghost.animate(
-          [
-            { opacity: from.opacity, scale: from.scale },
-            { opacity: 0, scale: Math.min(GHOST_SCALE, from.scale) },
-          ],
-          { duration, easing, fill: 'forwards' },
-        );
+        const shrink = cascade
+          ? ghost.animate(
+              [
+                {
+                  opacity: from.opacity,
+                  scale: from.scale,
+                  translate: '0px 0px',
+                  filter: 'blur(0px)',
+                },
+                {
+                  opacity: 0,
+                  scale: from.scale,
+                  translate: `0px ${reduce ? 0 : CLEAR_DROP}px`,
+                  filter: motionTokens.blur.surface,
+                },
+              ],
+              {
+                duration,
+                easing,
+                delay: (prev.length - 1 - index) * CLEAR_STAGGER * tempo * 1000,
+                fill: 'both',
+              },
+            )
+          : ghost.animate(
+              [
+                { opacity: from.opacity, scale: from.scale },
+                { opacity: 0, scale: Math.min(GHOST_SCALE, from.scale) },
+              ],
+              { duration, easing, fill: 'forwards' },
+            );
         const done = () => {
           ghost.remove();
           if (leaving.get(slot) === ghost) leaving.delete(slot);
@@ -472,14 +526,32 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
       }
       const copy = glyphCopy(container, el, value[index]!);
       copy.dataset.glyph = 'enter';
+      copy.style.transformOrigin = LANDING_ORIGIN;
       layer.append(copy);
       rideWave(el, copy);
+      const opacity = Number(getComputedStyle(el).opacity);
+      const landing = end - start === 1 ? LANDING * tempo * 1000 : 0;
+      if (landing)
+        copy.animate(
+          [
+            { opacity: 0, scale: LANDING_SCALE * 0.8 },
+            { opacity: opacity * LANDING_OPACITY, scale: LANDING_SCALE },
+          ],
+          { duration: landing / 2, easing: 'ease-out', fill: 'forwards' },
+        );
       copy.animate(
         [
-          { opacity: 0, scale: 0 },
-          { opacity: getComputedStyle(el).opacity, scale: 1 },
+          landing
+            ? { opacity: opacity * LANDING_OPACITY, scale: LANDING_SCALE }
+            : { opacity: 0, scale: 0 },
+          { opacity, scale: 1 },
         ],
-        { duration, delay, easing, fill: 'both' },
+        {
+          duration,
+          delay: delay + landing,
+          easing,
+          fill: landing ? 'forwards' : 'both',
+        },
       );
       const hidden = el.animate(
         [
@@ -494,7 +566,7 @@ function SlotsMotion({ slots, inputRef, children }: SlotsMotionProps) {
             textShadow: 'none',
           },
         ],
-        { duration, delay, fill: 'backwards' },
+        { duration: duration + landing, delay, fill: 'backwards' },
       );
       running.set(el, hidden);
       entering.set(el, copy);

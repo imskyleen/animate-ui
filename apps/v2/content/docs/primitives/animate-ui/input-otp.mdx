@@ -56,13 +56,14 @@ export function VerificationCode() {
 
 ## Animation
 
-- A typed character pops in: its glyph grows from 0 while it fades in, on a spring that never goes past its size (stiffness 500, damping 45: most of the way in ~175ms). It grows by a transform, smoothly: animating its font size instead, laid out again on every frame, snapped it up and down a pixel as it grew.
+- A typed character lands at once, small and faint in the lower left of its slot (at 55% of its size), then grows into place 120ms later, on a spring that never goes past its size (stiffness 500, damping 45: most of the way in ~175ms). It grows by a transform, smoothly: animating its font size instead, laid out again on every frame, snapped it up and down a pixel as it grew.
 - A pasted or autofilled code staggers its characters by 50ms, like split text.
-- **The ring glides**: the active slot's ring moves from slot to slot as you type, delete or move with the arrow keys, on the highlights' spring (stiffness 500, damping 40), like the item highlight of Animate UI's menus. It's the ring your slot's styles paint (shadcn/ui's `data-[active=true]:ring-3`, its color and its corners), worn by an overlay in the container while the slot paints its resting box-shadow; it's read again whenever the field renders, so an invalid code (`aria-invalid`) turns it red. It fades in where the focus lands, and out where it is when the field loses it.
+- **The ring glides**: the active slot's ring moves from slot to slot as you type, delete or move with the arrow keys, on the highlights' spring (stiffness 500, damping 40); as you type, the caret moves on at once and the ring follows once the character has landed (120ms), like the item highlight of Animate UI's menus. It's the ring your slot's styles paint (shadcn/ui's `data-[active=true]:ring-3`, its color and its corners), worn by an overlay in the container while the slot paints its resting box-shadow; it's read again whenever the field renders, so an invalid code (`aria-invalid`) turns it red. It fades in where the focus lands, and out where it is when the field loses it.
 - **Deleting from the end** (Backspace): the slot empties at once and a copy of its character shrinks to half its size and fades out where it was, in 0.15s (from where it was, if it was still growing in). Characters that only shift because one before them was removed don't animate.
+- **A cleared code** (several characters removed at once, like a refused code reset): the characters leave from the last to the first, 50ms apart, each dropping 6px into a 4px blur as it fades out, and the ring glides back to the first slot behind them.
 - **A completed code** (the last slot filled) runs a wave through the slots: each rises 4px and springs back, 40ms after the one before, once the last character has mostly grown in. The ring and the characters still moving ride their slot's wave; completing it again restarts the wave.
 - `<AnimateUIProvider tempo>` paces the animation.
-- Under reduced motion, characters only fade (the slot's own text, no copy), without growing or staggering; the ring moves to the next slot at once (it still fades in and out), nothing shrinks or waves, and the fake caret stops blinking.
+- Under reduced motion, characters only fade (the slot's own text, no copy), without growing or staggering; the ring moves to the next slot at once (it still fades in and out), nothing shrinks or waves (a cleared code still leaves from the last to the first, fading through its blur without dropping), and the fake caret stops blinking.
 
 ### How it works
 

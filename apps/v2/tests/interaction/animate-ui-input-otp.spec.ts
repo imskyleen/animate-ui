@@ -81,7 +81,7 @@ test.describe('animate-ui input-otp', () => {
     );
   });
 
-  test('a typed character grows in on a spring, as a copy scaled over it', async ({
+  test('a typed character lands small in its slot at once, then grows in on a spring', async ({
     page,
   }) => {
     await open(page);
@@ -109,21 +109,38 @@ test.describe('animate-ui input-otp', () => {
 
     const copy = page.locator(`${GHOSTS} > [data-glyph="enter"]`);
     await expect(copy).toHaveText('4');
-    const grow = await copy.evaluate((el) => {
-      const [animation] = el.getAnimations();
-      const effect = animation!.effect as KeyframeEffect;
-      return {
-        keyframes: effect
-          .getKeyframes()
-          .map(({ opacity, scale }) => ({ opacity, scale })),
-        easing: String(effect.getTiming().easing),
-        duration: Number(effect.getTiming().duration),
-      };
-    });
-    expect(grow.keyframes).toEqual([
-      { opacity: '0', scale: '0' },
+    const [landing, grow] = await copy.evaluate((el) =>
+      el.getAnimations().map((animation) => {
+        const effect = animation.effect as KeyframeEffect;
+        return {
+          keyframes: effect
+            .getKeyframes()
+            .map(({ opacity, scale }) => ({ opacity, scale })),
+          easing: String(effect.getTiming().easing),
+          duration: Number(effect.getTiming().duration),
+          delay: Number(effect.getTiming().delay),
+          origin: getComputedStyle(el).transformOrigin,
+        };
+      }),
+    );
+    expect(landing!.keyframes).toEqual([
+      { opacity: '0', scale: '0.44' },
+      { opacity: '0.45', scale: '0.55' },
+    ]);
+    expect(landing!.delay).toBe(0);
+    expect(landing!.duration).toBeLessThan(80);
+    expect(grow!.keyframes).toEqual([
+      { opacity: '0.45', scale: '0.55' },
       { opacity: '1', scale: '1' },
     ]);
+    expect(grow!.delay).toBe(120);
+    const [w, h] = landing!.origin.split(' ').map(parseFloat);
+    const size = await copy.evaluate((el: HTMLElement) => ({
+      width: el.offsetWidth,
+      height: el.offsetHeight,
+    }));
+    expect(w! / size.width).toBeCloseTo(0.2, 1);
+    expect(h! / size.height).toBeCloseTo(0.85, 1);
     expect(grow.easing).toMatch(/^linear\(/);
     expect(grow.duration).toBeGreaterThan(250);
     expect(grow.duration).toBeLessThan(700);
@@ -199,6 +216,48 @@ test.describe('animate-ui input-otp', () => {
       { opacity: '0', scale: '0.5' },
     ]);
     await expect(ghost).toHaveCount(0);
+  });
+
+  test('typed, the caret moves at once and the ring follows once the character has landed', async ({
+    page,
+  }) => {
+    await open(page);
+    await page.locator(INPUT).click();
+    await page.waitForTimeout(400);
+    const frames = page.evaluate(
+      ({ ring, slot }) =>
+        new Promise<{ t: number; ring: number; active: number }[]>(
+          (resolve) => {
+            const out: { t: number; ring: number; active: number }[] = [];
+            const t0 = performance.now();
+            const tick = () => {
+              const slots = [...document.querySelectorAll(slot)];
+              out.push({
+                t: performance.now() - t0,
+                ring: document.querySelector(ring)!.getBoundingClientRect()
+                  .left,
+                active: slots.findIndex(
+                  (el) => el.getAttribute('data-active') === 'true',
+                ),
+              });
+              if (performance.now() - t0 < 600) requestAnimationFrame(tick);
+              else resolve(out);
+            };
+            requestAnimationFrame(tick);
+          },
+        ),
+      { ring: RING, slot: SLOT },
+    );
+    await page.keyboard.type('4');
+    const recorded = await frames;
+    const typedAt = recorded.find((f) => f.active === 1)!.t;
+    const start = recorded[0]!.ring;
+    const moving = recorded.find((f) => Math.abs(f.ring - start) > 0.5)!;
+    expect(moving.t - typedAt).toBeGreaterThan(90);
+    expect(moving.t - typedAt).toBeLessThan(220);
+    const end = recorded.at(-1)!.ring;
+    const second = (await page.locator(SLOT).nth(1).boundingBox())!.x;
+    expect(Math.abs(end - second)).toBeLessThan(1.5);
   });
 
   test('deleting in the middle: the characters shift, nothing shrinks', async ({
@@ -602,4 +661,47 @@ test.describe('animate-ui input-otp, quick changes', () => {
     const seen = await tops;
     expect(seen.at(-1)! - Math.min(...seen)).toBeLessThan(4.5);
   });
+  for (const reduce of [false, true])
+    test(
+      reduce
+        ? 'reduced motion: a cleared code still leaves from last to first, fading through a blur without dropping'
+        : 'a cleared code leaves from last to first, each character dropping into a blur',
+      async ({ page }) => {
+        if (reduce) await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.goto('/tests/fixtures/animate-ui-input-otp', {
+          waitUntil: 'networkidle',
+        });
+        const checked = page.getByTestId('checked');
+        await checked.locator(INPUT).click();
+        await page.keyboard.type('123643');
+        await page.waitForTimeout(900);
+        await checked.getByRole('button', { name: 'Reset' }).click();
+        const ghosts = checked.locator(`${GHOSTS} > [data-glyph="leave"]`);
+        await expect(ghosts).toHaveCount(6);
+        const leaving = await ghosts.evaluateAll((els) =>
+          els.map((el) => {
+            const effect = el.getAnimations()[0]!.effect as KeyframeEffect;
+            const last = effect.getKeyframes().at(-1)!;
+            return {
+              text: el.textContent,
+              delay: Math.round(Number(effect.getTiming().delay)),
+              opacity: last.opacity,
+              translate: last.translate,
+              filter: last.filter,
+            };
+          }),
+        );
+        const byText = [...leaving].sort((a, b) => a.delay - b.delay);
+        expect(byText.map((g) => g.text).join('')).toBe('346321');
+        expect(byText.map((g) => g.delay)).toEqual([0, 50, 100, 150, 200, 250]);
+        for (const ghost of leaving) {
+          expect(ghost.opacity).toBe('0');
+          expect(ghost.filter).toBe('blur(4px)');
+          expect(ghost.translate).toMatch(
+            reduce ? /^0px( 0px)?$/ : /^0px 6px$/,
+          );
+        }
+        await expect(ghosts).toHaveCount(0);
+      },
+    );
 });
