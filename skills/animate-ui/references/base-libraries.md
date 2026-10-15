@@ -14,6 +14,7 @@ import {
   ReducedMotionConfig,
   scale,
   spring,
+  transition as motionTransition,
   useShouldReduceMotion,
   useTempoTransition,
 } from '@animate-ui/react/utils/motion';
@@ -189,8 +190,39 @@ React Aria signals overlays with `isEntering` / `isExiting` render props and `da
 
 ## 5. Plain markup (no base library)
 
-Gate with `AnimatePresence` on your own state. You own focus management and dismissal: for an overlay, prefer adding a base library over hand-rolling one.
+Gate with `AnimatePresence` on your own state: render the element conditionally inside it, never return `null` before it (an early return skips the exit). The component keeps its own focus management and dismissal; animating it doesn't move it onto a library (SKILL.md, C), though the output may say what one would add.
+
+```tsx
+'use client';
+
+export function Panel({ open }: { open: boolean }) {
+  return (
+    <ReducedMotionConfig>
+      <AnimatePresence>{open && <PanelBody key="panel" />}</AnimatePresence>
+    </ReducedMotionConfig>
+  );
+}
+
+function PanelBody() {
+  const reduce = useShouldReduceMotion(); // inside the wrapper
+  const enter = useTempoTransition(motionTransition.sheet);
+  const leave = useTempoTransition(motionTransition.dismiss);
+  const hidden = {
+    opacity: 0,
+    transform: reduce ? 'translateX(0%)' : 'translateX(100%)',
+  };
+  return (
+    <motion.aside
+      initial={hidden}
+      animate={{ opacity: 1, transform: 'translateX(0%)', transition: enter }}
+      exit={{ ...hidden, transition: leave }}
+    />
+  );
+}
+```
+
+A hand-built component has no `transition` / `exitTransition` props unless you want them: the recipes' `transition ?? …` is how Animate UI's primitives take them, so use the token directly.
 
 ## Where `ReducedMotionConfig` goes
 
-Wrap the outermost element the component renders: inside the Portal for overlays, around the Root for in-flow components. One wrapper per component is enough. Components that call `useShouldReduceMotion()` must render inside it, which is why overlays use an inner component.
+Wrap the outermost element the component renders: inside the Portal for overlays, around the Root for in-flow components, around `AnimatePresence` for plain markup. One wrapper per component is enough. Components that call `useShouldReduceMotion()` must render inside it, which is why overlays use an inner component.

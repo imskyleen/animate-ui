@@ -2,7 +2,7 @@
 
 Parts of the rules in this skill (the frequency gate, easing curves chosen by role, trigger-anchored origins, press feedback, blur to bridge swaps, reduced-motion and hover-gating guidance) are adapted from Emil Kowalski's agent skills, https://github.com/emilkowalski/skill (`animate`, `review-animations`, `improve-animations`), and his article "7 practical animation tips" (https://emilkowal.ski/ui/7-practical-animation-tips).
 
-Animate UI adds its own motion language (its springs, scales and timing, from Animate UI v1), the base-library wiring (Radix UI, Base UI, React Aria), the shared token set and the recipes. The disclosure animation (height, fade and a light blur on a soft ease-out) takes after Motion's accordion example (https://motion.dev/examples/js-accordion), from watching it run; none of its source is used.
+Animate UI adds its own motion language (its springs, scales and timing, from Animate UI v1), the base-library wiring (Radix UI, Base UI, React Aria), the shared token set and the recipes.
 
 Emil Kowalski's skills are distributed under the MIT License:
 
