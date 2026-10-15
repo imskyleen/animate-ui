@@ -20,6 +20,7 @@ Its motion is springy and alive, but coherent: nearly everything moves on a spri
 | An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                       |
 | Reviewing existing motion                                                      | **C**, the rules as a checklist  |
 | An animation to reproduce: a link, a video, a GIF                              | **E. Reproduce it**              |
+| A feel in words ("snappier", "plus doux", "bouncy") or CSS for a token         | **`references/feel.md`**         |
 
 Before writing motion by hand, check `references/catalog.md`: entrances, scroll reveals, counters, text effects, buttons, backgrounds and icons already ship, and using one beats rebuilding it.
 
@@ -81,8 +82,9 @@ To make every animation faster or slower at once, wrap the app in `AnimateUIProv
 3. **Gate** (below), then classify the component and start from the matching recipe in `references/recipes.md`.
 4. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. A hand-rolled overlay stays hand-rolled unless the user asks: animating it doesn't mean moving it onto a library (that would change its focus, modality and dismissal), so wire Motion into it as it is, the way `references/base-libraries.md` shows for plain markup, and mention in the output what a primitive would add.
 5. Motion runs in client components: put `'use client'` on the file that animates, and keep a server page server-side by moving the animated part into its own client component. Content that enters on mount starts hidden in the server HTML; keep that for what is below the fold or decorative, never for the page's main text on first paint.
-6. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, shift, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in (but a dismissed dialog's `transition.dismiss`, and a menubar's next content fading in on `transition.handoffIn`), no ease-in-out on an entrance.
-7. Check every rule in `references/rules.md` (quality rules are non-negotiable; style rules are defaults), then verify (§ Verify).
+6. When the user describes a feel ("snappy", "calme", "more bounce"), read it with `references/feel.md` before picking values. For CSS without Motion (a stylesheet, Tailwind, a server component), print a token's timing with `node scripts/css-timing.mjs <token>` from the project's folder.
+7. Take every value from the tokens (`references/tokens.md`): `import { spring, transition, scale, blur, shift, ease, useTempoTransition, ReducedMotionConfig, useShouldReduceMotion } from '@animate-ui/react/utils/motion'`. Pass them through `useTempoTransition()` (or read them from `useMotionTokens()`) so `AnimateUIProvider`'s `tempo` applies. No hand-typed spring for a role a token covers, no ease-in (but a dismissed dialog's `transition.dismiss`, and a menubar's next content fading in on `transition.handoffIn`), no ease-in-out on an entrance.
+8. Check every rule in `references/rules.md` (quality rules are non-negotiable; style rules are defaults), then verify (§ Verify).
 
 ### Gate: should it animate?
 
