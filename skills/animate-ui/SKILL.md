@@ -11,16 +11,17 @@ Its motion is springy and alive, but coherent: nearly everything moves on a spri
 
 ## 1. Pick the path
 
-| The request is about…                                                          | Do this                          |
-| ------------------------------------------------------------------------------ | -------------------------------- |
-| A shadcn/ui component (the project has `components.json`)                      | **A. Run the CLI**               |
-| A component hand-built on Radix UI, Base UI or React Aria                      | **B. Swap the import**           |
-| Custom, plain markup, another library, or a primitive Animate UI doesn't cover | **C. Animate it with the rules** |
-| An Animate UI v1 project (`components/animate-ui/...` files)                   | **D. Migrate**                   |
-| An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                       |
-| Reviewing existing motion                                                      | **C**, the rules as a checklist  |
-| An animation to reproduce: a link, a video, a GIF                              | **E. Reproduce it**              |
-| A feel in words ("snappier", "plus doux", "bouncy") or CSS for a token         | **`references/feel.md`**         |
+| The request is about…                                                          | Do this                                  |
+| ------------------------------------------------------------------------------ | ---------------------------------------- |
+| A shadcn/ui component (the project has `components.json`)                      | **A. Run the CLI**                       |
+| A component hand-built on Radix UI, Base UI or React Aria                      | **B. Swap the import**                   |
+| Custom, plain markup, another library, or a primitive Animate UI doesn't cover | **C. Animate it with the rules**         |
+| An Animate UI v1 project (`components/animate-ui/...` files)                   | **D. Migrate**                           |
+| An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                               |
+| Reviewing existing motion                                                      | **C**, the rules as a checklist          |
+| An animation to reproduce: a link, a video, a GIF                              | **E. Reproduce it**                      |
+| A feel in words ("snappier", "plus doux", "bouncy") or CSS for a token         | **`references/feel.md`**                 |
+| An interaction by name: a loading button, a list, a swipe, a banner…           | **C**, from `references/interactions.md` |
 
 Before writing motion by hand, check `references/catalog.md`: entrances, scroll reveals, counters, text effects, buttons, backgrounds and icons already ship, and using one beats rebuilding it.
 
@@ -79,7 +80,7 @@ To make every animation faster or slower at once, wrap the app in `AnimateUIProv
 
 1. **Know the technique.** Motion's documentation and examples (motion.dev) show how most interactions are built; when a tool can read them, learn the technique there, then write it with Animate UI's tokens and rules. Present the result as the user's animation, not as someone's example.
 2. **Catalog first**: if `references/catalog.md` has it (a counter, an entrance, a scroll reveal, a text effect, a button effect), use that.
-3. **Gate** (below), then classify the component and start from the matching recipe in `references/recipes.md`.
+3. **Gate** (below), then classify the component and start from the matching recipe: `references/recipes.md` for overlays, menus, controls, cards, toasts and pages; `references/interactions.md` for interactions asked by name (a status button, a list that adds and removes, a drag to reorder, a card opening into a view, a skeleton, a counting badge, a field in error, a swipe to delete, a filtered grid, form steps, a banner).
 4. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. A hand-rolled overlay stays hand-rolled unless the user asks: animating it doesn't mean moving it onto a library (that would change its focus, modality and dismissal), so wire Motion into it as it is, the way `references/base-libraries.md` shows for plain markup, and mention in the output what a primitive would add.
 5. Motion runs in client components: put `'use client'` on the file that animates, and keep a server page server-side by moving the animated part into its own client component. Content that enters on mount starts hidden in the server HTML; keep that for what is below the fold or decorative, never for the page's main text on first paint.
 6. When the user describes a feel ("snappy", "calme", "more bounce"), read it with `references/feel.md` before picking values. For CSS without Motion (a stylesheet, Tailwind, a server component), print a token's timing with `node <skill>/scripts/css-timing.mjs <token>` (the script ships with this skill) from the project's folder, so it loads the project's `@animate-ui/react`.
