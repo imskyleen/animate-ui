@@ -54,41 +54,23 @@ const animations = {
       },
     },
     circle: {},
-    line1: {
-      initial: {
-        rotate: 0,
-      },
-      animate: {
-        transformOrigin: 'bottom left',
-        rotate: [0, 5, -5, 5, -5, 5, -5, 5, -5, 5, -5, 0],
-        transition: { ease: 'easeInOut', duration: 0.6 },
-      },
-    },
-    line2: {
-      initial: {
-        rotate: 0,
-      },
-      animate: {
-        transformOrigin: 'top left',
-        rotate: [0, 5, -5, 5, -5, 5, -5, 5, -5, 5, -5, 0],
-        transition: { ease: 'easeInOut', duration: 0.6 },
-      },
-    },
+    line1: {},
+    line2: {},
     path1: {
       initial: {
-        x: 0,
+        rotate: 0,
       },
       animate: {
-        x: [0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0],
+        rotate: [0, 12, -12, 12, -12, 12, -12, 12, -12, 12, -12, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
     path2: {
       initial: {
-        x: 0,
+        rotate: 0,
       },
       animate: {
-        x: [0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0],
+        rotate: [0, -12, 12, -12, 12, -12, 12, -12, 12, -12, 12, 0],
         transition: { ease: 'easeInOut', duration: 0.6 },
       },
     },
@@ -117,41 +99,23 @@ const animations = {
       },
     },
     circle: {},
-    line1: {
-      initial: {
-        rotate: 0,
-      },
-      animate: {
-        transformOrigin: 'bottom left',
-        rotate: [0, 10, -10, 10, -10, 10, -10, 10, -10, 10, -10, 0],
-        transition: { duration: 0.5, repeat: Infinity, repeatType: 'loop' },
-      },
-    },
-    line2: {
-      initial: {
-        rotate: 0,
-      },
-      animate: {
-        transformOrigin: 'top left',
-        rotate: [0, 10, -10, 10, -10, 10, -10, 10, -10, 10, -10, 0],
-        transition: { duration: 0.5, repeat: Infinity, repeatType: 'loop' },
-      },
-    },
+    line1: {},
+    line2: {},
     path1: {
       initial: {
-        x: 0,
+        rotate: 0,
       },
       animate: {
-        x: [0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0],
+        rotate: [0, 12, -12, 12, -12, 12, -12, 12, -12, 12, -12, 0],
         transition: { duration: 0.5, repeat: Infinity, repeatType: 'loop' },
       },
     },
     path2: {
       initial: {
-        x: 0,
+        rotate: 0,
       },
       animate: {
-        x: [0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0],
+        rotate: [0, -12, 12, -12, 12, -12, 12, -12, 12, -12, 12, 0],
         transition: { duration: 0.5, repeat: Infinity, repeatType: 'loop' },
       },
     },
