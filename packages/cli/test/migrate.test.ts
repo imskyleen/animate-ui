@@ -373,6 +373,28 @@ test('--delete removes the v1 files nothing imports anymore', async () => {
   );
 });
 
+test('an import of a v1 component never keeps the v1 primitive of the same name', async () => {
+  await run(['all']);
+  const page = path.join(root, PAGE);
+  writeFileSync(
+    page,
+    read(PAGE).replace(
+      "import { useAccordionItem } from '@/components/animate-ui/primitives/radix/accordion';\n",
+      '',
+    ),
+  );
+  expect(read(PAGE)).toContain(
+    "from '@/components/animate-ui/components/radix/accordion';",
+  );
+  const { output } = await run(['all'], { delete: true });
+  expect(output).not.toContain(
+    `${V1}/primitives/radix/accordion.tsx: still imported by ${PAGE}`,
+  );
+  expect(
+    existsSync(path.join(root, V1, 'primitives/radix/accordion.tsx')),
+  ).toBe(false);
+});
+
 test('--delete never removes a file that is no longer the v1 one', async () => {
   const hook = path.join(root, 'src/hooks/use-is-in-view.tsx');
   writeFileSync(hook, 'export const mine = 1;\n');

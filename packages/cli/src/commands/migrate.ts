@@ -251,10 +251,24 @@ export async function migrate(components: string[], options: MigrateOptions) {
     return [
       file,
       new RegExp(
-        `/${tail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:/index)?(?:\\.[cm]?[jt]sx?)?['"\`]`,
+        `['"\`]([^'"\`\\s]*/${tail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:/index)?(?:\\.[cm]?[jt]sx?)?)['"\`]`,
+        'g',
       ),
     ];
   });
+  const mentionsIt = (
+    code: string,
+    from: string,
+    candidate: string,
+    pattern: RegExp,
+  ) =>
+    [...code.matchAll(pattern)].some(([, specifier]) => {
+      const target = project.resolve(from, specifier!);
+      const own = stripExtension(candidate);
+      return (
+        target === undefined || target === own || target === `${own}/index`
+      );
+    });
   if (patterns.length > 0)
     for (const file of project.textFiles()) {
       if (candidateFiles.has(file)) continue;
@@ -266,7 +280,7 @@ export async function migrate(components: string[], options: MigrateOptions) {
           continue;
         }
       for (const [candidate, pattern] of patterns)
-        if (pattern.test(code))
+        if (mentionsIt(code, file, candidate, pattern))
           mentions.set(candidate, [...(mentions.get(candidate) ?? []), file]);
     }
   const used = new Set<string>(mentions.keys());
