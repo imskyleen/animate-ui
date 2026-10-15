@@ -72,15 +72,11 @@ function StatusButtonMotion({
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={status}
-            initial={{ opacity: 0, scale: scale.action, filter: blur.icon }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{
-              opacity: 0,
-              scale: scale.action,
-              filter: blur.icon,
-              transition: swap,
-            }}
-            transition={swap}
+            layout="position"
+            initial={{ opacity: 0, filter: blur.icon }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, filter: blur.icon, transition: swap }}
+            transition={{ ...swap, layout: resize }}
           >
             {LABELS[status]}
           </motion.span>
@@ -121,7 +117,7 @@ export function SaveButton({ onSave }: { onSave: () => Promise<void> }) {
 }
 ```
 
-- The label is a Swap (recipes.md): `mode="popLayout"` lets the old one leave while the new one comes, `initial={false}` keeps the first render still. A text label swaps from `scale.action` (0.9); an icon from `scale.icon` (0.5).
+- The label is a Swap (recipes.md): `mode="popLayout"` lets the old one leave while the new one comes, `initial={false}` keeps the first render still. The label fades through the blur without scaling, and `layout="position"` keeps it from stretching while the button resizes (rules B9). An icon beside it swaps from `scale.icon`.
 - "Saved" holds about 1.5s, then goes back to idle. The hold is real time: `tempo` paces motion, not how long a message stays readable. A failure stays on "Try again" until the next click; clicking again clears a pending hold.
 - What the animation needs from the classes: `inline-flex items-center overflow-hidden` on the button. The height, padding and colors are the user's.
 - `layout` resizes the button to its label on `spring.reflow`; the press stays on `spring.press` (the `layout` key of the transition only drives the resize).

@@ -213,7 +213,7 @@ Closing plays the entrance's transition in reverse: one transition both ways (`e
 
 ### B6. Blur to bridge a swap
 
-When two states replace each other in place (an icon swapping for another, a label changing), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons. Tab panels don't overlap: they go one after the other, the outgoing one into `blur.panel` (5px), the incoming one out of it. Dialogs come in from `blur.surface` (4px), a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed. A menubar's content changing as its popover moves to the next menu doesn't swap in place: it slides `shift.handoff` (6px) and fades, without a blur (A16).
+When two states replace each other in place (an icon swapping for another, a label changing), a light blur makes their overlap read as one shape changing: `blur.icon` (2px) with `scale.icon` (0.5) and `transition.swap` for icons; a text swaps without scaling (B9). Tab panels don't overlap: they go one after the other, the outgoing one into `blur.panel` (5px), the incoming one out of it. Dialogs come in from `blur.surface` (4px), a disclosure's content clears from `blur.disclosure` (2px) as its panel unfolds, and a combobox input's placeholder showing up clears from `blur.icon` on `transition.reveal` once the input has landed. A menubar's content changing as its popover moves to the next menu doesn't swap in place: it slides `shift.handoff` (6px) and fades, without a blur (A16).
 
 ### B7. Surfaces: modals tip, sheets slide
 
@@ -224,6 +224,24 @@ When two states replace each other in place (an icon swapping for another, a lab
 ### B8. One token set, one tempo
 
 Values come from `@animate-ui/react/utils/motion`. To change the pace of everything, set `tempo` on `AnimateUIProvider` (`tokens.md`), not individual components; to pop checks instead of drawing them, its `checkAnimation`.
+
+### B9. Text changes without scaling
+
+A changing text (a label, a status, a word, a number) never scales and is never stretched: scaled or squeezed, letters read as distorted, not as a change. It fades through `blur.icon`, and slides when the change has a direction (a value going up, the next step).
+
+- Before writing it by hand, use Animate UI's texts (`catalog.md`): Rotating Text for words taking turns, Morphing Text for one string turning into the next, Rolling Text for letters rolling over, Sliding Number or Counting Number for a number.
+- A box resized with `layout` around a text (a button whose label changes) stretches it while it resizes: give each text inside `layout="position"` (with the box's `layout` transition), so it moves and keeps its proportions.
+- Icons still swap from `scale.icon` (B6), and a whole element may still scale with the text it holds (a card coming in, a badge bumping): the rule is about a text changing in place.
+
+```tsx
+// Avoid
+initial={{ opacity: 0, scale: 0.5 }} // on a label
+
+// Do
+initial={{ opacity: 0, filter: blur.icon }}
+animate={{ opacity: 1, filter: 'blur(0px)' }}
+layout="position"
+```
 
 ## Checklist
 
@@ -248,4 +266,4 @@ Style (defaults; deviations named in the output):
 - [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays, menus and sheets, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a closed drawer's `transition.drawerOut`, and a menubar's next content fading in on `transition.handoffIn`; a dismissed dialog or sheet speeds away on `ease.away`)
 - [ ] Press at `scale.press` (0.97; `scale.choice` for a card or row), nothing pressed scales on hover; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance (a dismissed modal: at once, quicker, speeding away; its overlay clear before it unmounts)
-- [ ] Swaps bridged with a light blur
+- [ ] Swaps bridged with a light blur; a changing text fades, blurs or slides, never scales, and keeps its proportions inside a resizing box
