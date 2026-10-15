@@ -91,58 +91,66 @@ test.describe('animate-ui scroll fade', () => {
     await settled(page, 'long', { top: 0, bottom: 1 });
   });
 
-  test('the fade animates in over several frames', async ({ page }) => {
-    await open(page);
-    const frames = sample(page, 'long', 'top', 400);
-    await scrollTo(page, 'long', 'middle');
-    const values = await frames;
-    const between = values.filter((v) => v > 0.05 && v < 0.95);
-    expect(between.length).toBeGreaterThan(2);
-    for (let i = 1; i < values.length; i++)
-      expect(values[i]!).toBeGreaterThanOrEqual(values[i - 1]! - 1e-3);
-  });
-
-  test('a few pixels of scroll fade the edge in fully, within ~300ms', async ({
+  test('the fade follows the scroll with no lag: on the next frame, the edge is where the position puts it', async ({
     page,
   }) => {
     await open(page);
-    const frames = page.getByTestId('long').evaluate(
+    const read = await page.getByTestId('long').evaluate(
       (el) =>
-        new Promise<{ t: number; v: number }[]>((resolve) => {
-          const values: { t: number; v: number }[] = [];
-          let start = 0;
-          const tick = (now: number) => {
-            if (!start) {
-              start = now;
-              el.scrollTop = 20;
-            }
-            values.push({
-              t: now - start,
-              v: Number(el.style.getPropertyValue('--scroll-fade-top') || 0),
+        new Promise<number[]>((resolve) => {
+          const seen: number[] = [];
+          const value = () =>
+            Number(el.style.getPropertyValue('--scroll-fade-top') || 0);
+          requestAnimationFrame(() => {
+            el.scrollTop = 5;
+            requestAnimationFrame(() => {
+              seen.push(value());
+              el.scrollTop = 10;
+              requestAnimationFrame(() => {
+                seen.push(value());
+                el.scrollTop = 30;
+                requestAnimationFrame(() => {
+                  seen.push(value());
+                  resolve(seen);
+                });
+              });
             });
-            if (now - start < 600) requestAnimationFrame(tick);
-            else resolve(values);
-          };
-          requestAnimationFrame(tick);
+          });
         }),
     );
-    const values = await frames;
-    expect(values.at(-1)!.v).toBeCloseTo(1, 2);
-    const ninety = values.find((f) => f.v >= 0.9)!;
-    expect(ninety.t).toBeLessThan(350);
+    expect(read[0]).toBeCloseTo(0.25, 2);
+    expect(read[1]).toBeCloseTo(0.5, 2);
+    expect(read[2]).toBe(1);
   });
 
-  test('the fade grows out of the edge as it clears', async ({ page }) => {
+  test('the fade keeps its depth: only the edge itself clears', async ({
+    page,
+  }) => {
     await open(page);
     const mask = await page
       .getByTestId('long')
       .evaluate((el) => el.style.getPropertyValue('mask-image'));
     expect(mask).toContain(
-      'calc(var(--scroll-fade-size) * var(--scroll-fade-top, 0))',
+      'calc(var(--scroll-fade-size) * min(1, var(--scroll-fade-top, 0) * 1000))',
     );
     expect(mask).toContain(
-      'calc(var(--scroll-fade-size) * var(--scroll-fade-bottom, 0))',
+      'rgb(0 0 0 / calc(1 - var(--scroll-fade-bottom, 0)))',
     );
+  });
+
+  test('content resized without a scroll: the edge eases to its new amount', async ({
+    page,
+  }) => {
+    await open(page);
+    const frames = sample(page, 'long', 'bottom', 400);
+    await page.getByTestId('long').evaluate((el) => {
+      while (el.children.length > 2) el.lastElementChild!.remove();
+    });
+    const values = await frames;
+    expect(values.filter((v) => v > 0.05 && v < 0.95).length).toBeGreaterThan(
+      1,
+    );
+    expect(values.at(-1)).toBe(0);
   });
 
   test('reduced motion: the fade follows the scroll at once', async ({

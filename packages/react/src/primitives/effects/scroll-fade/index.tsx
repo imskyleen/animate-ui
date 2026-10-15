@@ -1,13 +1,20 @@
 'use client';
 
 import * as React from 'react';
-import { useSpring, type MotionValue, type SpringOptions } from 'motion/react';
+import {
+  animate,
+  useMotionValue,
+  type MotionValue,
+  type Transition,
+} from 'motion/react';
 
-import { useMotionTokens, useShouldReduceMotion } from '../../../utils/motion';
+import {
+  motionTokens,
+  useShouldReduceMotion,
+  useTempoTransition,
+} from '../../../utils/motion';
 
-const FADE_DURATION = 300;
-
-const RAMP = 16;
+const SETTLE = motionTokens.transition.fade;
 
 type ScrollFadeOrientation = 'vertical' | 'horizontal' | 'both';
 
@@ -16,7 +23,7 @@ type ScrollFadeEdge = 'top' | 'bottom' | 'left' | 'right';
 type UseScrollFadeOptions = {
   orientation?: ScrollFadeOrientation;
   size?: number;
-  transition?: SpringOptions;
+  transition?: Transition;
   enabled?: boolean;
 };
 
@@ -35,7 +42,7 @@ const VAR = {
 const edgeStop = (edge: ScrollFadeEdge) =>
   `rgb(0 0 0 / calc(1 - var(${VAR[edge]}, 0)))`;
 const depth = (edge: ScrollFadeEdge) =>
-  `calc(var(${VAR.size}) * var(${VAR[edge]}, 0))`;
+  `calc(var(${VAR.size}) * min(1, var(${VAR[edge]}, 0) * 1000))`;
 
 const GRADIENT_Y = `linear-gradient(to bottom, ${edgeStop('top')} 0, #000 ${depth('top')}, #000 calc(100% - ${depth('bottom')}), ${edgeStop('bottom')} 100%)`;
 const GRADIENT_X = `linear-gradient(to right, ${edgeStop('left')} 0, #000 ${depth('left')}, #000 calc(100% - ${depth('right')}), ${edgeStop('right')} 100%)`;
@@ -75,17 +82,17 @@ function useScrollFade(
     enabled = true,
   }: UseScrollFadeOptions = {},
 ): ScrollFadeValues {
-  const { tempo } = useMotionTokens();
   const reduce = useShouldReduceMotion();
-  const transition: SpringOptions = transitionProp ?? {
-    duration: FADE_DURATION * tempo,
-    bounce: 0,
-  };
+  const settle = useTempoTransition(transitionProp ?? SETTLE);
+  const settleRef = React.useRef(settle);
+  React.useEffect(() => {
+    settleRef.current = settle;
+  });
 
-  const top = useSpring(0, transition);
-  const bottom = useSpring(0, transition);
-  const left = useSpring(0, transition);
-  const right = useSpring(0, transition);
+  const top = useMotionValue(0);
+  const bottom = useMotionValue(0);
+  const left = useMotionValue(0);
+  const right = useMotionValue(0);
   const values = React.useMemo(
     () => ({ top, bottom, left, right }),
     [top, bottom, left, right],
@@ -122,11 +129,11 @@ function useScrollFade(
 
     const unsubscribe = EDGES.map((edge) => values[edge].on('change', write));
 
-    const ramp = Math.min(RAMP, size);
+    const ramp = size / 2;
     const amount = (distance: number) =>
       ramp > 0 ? clamp01(distance / ramp) : distance > 0.5 ? 1 : 0;
 
-    const measure = (instant: boolean) => {
+    const measure = (follow: boolean) => {
       const targets: Record<ScrollFadeEdge, number> = {
         top: 0,
         bottom: 0,
@@ -154,15 +161,16 @@ function useScrollFade(
       }
 
       for (const edge of EDGES) {
-        if (instant || reduceRef.current) values[edge].jump(targets[edge]);
-        else values[edge].set(targets[edge]);
+        if (follow || reduceRef.current) values[edge].jump(targets[edge]);
+        else if (Math.abs(values[edge].get() - targets[edge]) > 0.001)
+          animate(values[edge], targets[edge], settleRef.current);
       }
       write();
     };
 
     measure(true);
 
-    const onScroll = () => measure(false);
+    const onScroll = () => measure(true);
     el.addEventListener('scroll', onScroll, { passive: true });
 
     const resizeObserver = new ResizeObserver(() => measure(false));
