@@ -35,10 +35,10 @@ const GHOST_SCALE = 0.5;
 
 const STAGGER = 0.05;
 
-const LANDING = 0.12;
-const LANDING_SCALE = 0.55;
-const LANDING_OPACITY = 0.45;
-const LANDING_ORIGIN = '20% 85%';
+const LANDING = 0.05;
+const LANDING_SCALE = 0.7;
+const LANDING_OPACITY = 0.6;
+const LANDING_ORIGIN = '50% 80%';
 
 const CLEAR_STAGGER = 0.05;
 const CLEAR_DROP = 6;

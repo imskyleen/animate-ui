@@ -124,23 +124,23 @@ test.describe('animate-ui input-otp', () => {
       }),
     );
     expect(landing!.keyframes).toEqual([
-      { opacity: '0', scale: '0.44' },
-      { opacity: '0.45', scale: '0.55' },
+      { opacity: '0', scale: '0.56' },
+      { opacity: '0.6', scale: '0.7' },
     ]);
     expect(landing!.delay).toBe(0);
     expect(landing!.duration).toBeLessThan(80);
     expect(grow!.keyframes).toEqual([
-      { opacity: '0.45', scale: '0.55' },
+      { opacity: '0.6', scale: '0.7' },
       { opacity: '1', scale: '1' },
     ]);
-    expect(grow!.delay).toBe(120);
+    expect(grow!.delay).toBe(50);
     const [w, h] = landing!.origin.split(' ').map(parseFloat);
     const size = await copy.evaluate((el: HTMLElement) => ({
       width: el.offsetWidth,
       height: el.offsetHeight,
     }));
-    expect(w! / size.width).toBeCloseTo(0.2, 1);
-    expect(h! / size.height).toBeCloseTo(0.85, 1);
+    expect(w! / size.width).toBeCloseTo(0.5, 1);
+    expect(h! / size.height).toBeCloseTo(0.8, 1);
     expect(grow.easing).toMatch(/^linear\(/);
     expect(grow.duration).toBeGreaterThan(250);
     expect(grow.duration).toBeLessThan(700);
@@ -253,8 +253,8 @@ test.describe('animate-ui input-otp', () => {
     const typedAt = recorded.find((f) => f.active === 1)!.t;
     const start = recorded[0]!.ring;
     const moving = recorded.find((f) => Math.abs(f.ring - start) > 0.5)!;
-    expect(moving.t - typedAt).toBeGreaterThan(90);
-    expect(moving.t - typedAt).toBeLessThan(220);
+    expect(moving.t - typedAt).toBeGreaterThan(30);
+    expect(moving.t - typedAt).toBeLessThan(150);
     const end = recorded.at(-1)!.ring;
     const second = (await page.locator(SLOT).nth(1).boundingBox())!.x;
     expect(Math.abs(end - second)).toBeLessThan(1.5);
