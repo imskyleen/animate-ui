@@ -41,17 +41,22 @@ function resolveTransition(transition: SpringOptions | Transition): Transition {
 type FormatOptions = {
   decimals: number;
   decimalSeparator: string;
+  thousandSeparator: string | undefined;
   padLength: number;
 };
 
 function formatNumber(
   value: number,
-  { decimals, decimalSeparator, padLength }: FormatOptions,
+  { decimals, decimalSeparator, thousandSeparator, padLength }: FormatOptions,
 ) {
   const fixed = Math.abs(value).toFixed(decimals);
   const sign = value < 0 && Number(fixed) !== 0 ? '-' : '';
   const [intPart = '0', fracPart] = fixed.split('.');
-  const paddedInt = intPart.padStart(padLength, '0');
+  const padded = intPart.padStart(padLength, '0');
+  const paddedInt =
+    thousandSeparator === undefined
+      ? padded
+      : padded.replace(/\B(?=(\d{3})+$)/g, thousandSeparator);
   return fracPart
     ? `${sign}${paddedInt}${decimalSeparator}${fracPart}`
     : `${sign}${paddedInt}`;
@@ -63,6 +68,7 @@ type CountingNumberProps = Omit<React.ComponentProps<'span'>, 'children'> & {
   padStart?: boolean;
   decimalSeparator?: string;
   decimalPlaces?: number;
+  thousandSeparator?: string;
   transition?: SpringOptions | Transition;
   delay?: number;
   initiallyStable?: boolean;
@@ -85,6 +91,7 @@ function CountingNumberContent({
   inViewMargin = '0px',
   inViewOnce = true,
   decimalSeparator = '.',
+  thousandSeparator,
   transition: transitionProp,
   decimalPlaces = 0,
   delay = 0,
@@ -105,6 +112,7 @@ function CountingNumberContent({
   const formatOptions: FormatOptions = {
     decimals: decimalPlaces,
     decimalSeparator,
+    thousandSeparator,
     padLength: padStart ? Math.floor(Math.abs(number)).toString().length : 0,
   };
 

@@ -67,3 +67,40 @@ test.describe('animate-ui counting number', () => {
     await expect(ticking(page)).toHaveText('2025', { timeout: 300 });
   });
 });
+
+test.describe('animate-ui counting number, thousand separator', () => {
+  test('groups thousands in the shown and the announced number, while counting too', async ({
+    page,
+  }) => {
+    await page.goto('/tests/fixtures/counting-number-separators', {
+      waitUntil: 'networkidle',
+    });
+    const shown = (id: string) =>
+      page.getByTestId(id).locator('[aria-hidden="true"]');
+    const announced = (id: string) => page.getByTestId(id).locator('.sr-only');
+    await expect(shown('thousands')).toHaveText('12,480');
+    await expect(announced('thousands')).toHaveText('12,480');
+    await expect(shown('million')).toHaveText('-1 234 567,50');
+    await expect(shown('padded')).toHaveText('1,200');
+    await expect(shown('small')).toHaveText('999');
+    const frames = await shown('counting').evaluate(
+      (el) =>
+        new Promise<string[]>((resolve) => {
+          const seen: string[] = [];
+          const start = performance.now();
+          const tick = () => {
+            seen.push(el.textContent ?? '');
+            if (performance.now() - start < 600) requestAnimationFrame(tick);
+            else resolve(seen);
+          };
+          tick();
+        }),
+    );
+    const grouped = frames.filter(
+      (text) => Number(text.replace(/,/g, '')) >= 1000,
+    );
+    expect(grouped.length).toBeGreaterThan(0);
+    for (const text of grouped) expect(text).toMatch(/^\d{1,3}(,\d{3})+$/);
+    await expect(shown('counting')).toHaveText('48,000', { timeout: 15_000 });
+  });
+});
