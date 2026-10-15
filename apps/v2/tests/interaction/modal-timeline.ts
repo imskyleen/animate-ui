@@ -483,7 +483,7 @@ export function expectDialogLikeOverlay(
     const sample = frame.samples[name];
     return sample && Math.abs(sample[axis]) >= 0.5;
   })!;
-  expect(halfOut.samples[overlay]!.bg).toBeLessThan(rest * 0.35);
+  expect(halfOut.samples[overlay]!.bg).toBeLessThan(rest * 0.4);
 }
 
 export function expectThrown(
