@@ -11,6 +11,7 @@ import {
   scale,
   spring,
   transition as motionTransition,
+  useMotionTokens,
   useShouldReduceMotion,
   useTempoTransition,
 } from '@animate-ui/react/utils/motion';
@@ -112,7 +113,7 @@ const hidden = { opacity: 0, scale: reduce ? 1 : scale.menu };
 
 ## Modal (Dialog, Alert Dialog)
 
-Purpose: state, the page is now in a modal mode. Modals stay centered: no trigger origin.
+Purpose: state, the page is now in a modal mode. Modals stay centered: no trigger origin. A popup centered with `-translate-x-1/2 -translate-y-1/2` keeps its classes under Tailwind v4 (the `translate` property composes with Motion's `transform`); under Tailwind v3 they'd fight it: center it with a flex or grid wrapper instead.
 
 ```tsx
 const TIPPED = `perspective(500px) rotateX(-20deg) scale(${scale.dialog})`;
@@ -218,6 +219,11 @@ const offscreen: Record<Side, string> = {
   bottom: 'translateY(100%)',
 };
 
+// Inside ReducedMotionConfig, like every recipe.
+const reduce = useShouldReduceMotion();
+const enter = useTempoTransition(transition ?? motionTransition.sheet);
+const leave = useTempoTransition(exitTransition ?? motionTransition.dismiss);
+
 // Same transform function on both ends: Motion can't interpolate
 // `translate(0, 0)` with `translateX(100%)`.
 const shown =
@@ -226,13 +232,14 @@ const hidden = { opacity: 0, transform: reduce ? shown : offscreen[side] };
 
 <motion.div
   initial={hidden}
-  animate={{ opacity: 1, transform: shown, transition: enter }} // transition.drawer
+  animate={{ opacity: 1, transform: shown, transition: enter }}
   exit={{ ...hidden, transition: leave }}
 />;
 ```
 
 - It slides from its edge by its own size (percentages, never pixel offsets) while it fades, in on `transition.sheet` (0.4s on `ease.soft`, no bounce: held against the screen's edge, going past its rest would open a gap there) and out on `transition.dismiss` (`leave`), speeding off its edge. Under reduced motion it fades in place.
-- The overlay comes and goes like a modal's.
+- The overlay comes and goes like a modal's; a panel that has none (a non-modal side panel) doesn't get one.
+- A hand-built panel animates on its own open state, `AnimatePresence` around the conditional render (`base-libraries.md`, plain markup).
 - A drawer doesn't fade: it slides opaque. In, between snap points and back after a drag on `transition.drawer` (0.4s on `ease.drawer`: it answers at once and goes a hair past its rest, ~1%, which its bleed covers; a spring starts from rest and seems to hesitate, Vaul's curve zips in, stops, and crawls out). Closed, out on `transition.drawerOut` (0.16s on `ease.in`), seen speeding off its edge: a steady push read as a linear slide. Thrown by a swipe, it keeps the finger's speed: `linear`, over the time the rest of the way takes at that speed (Base UI's bounds: 0.2–4 px/ms, 80–360ms). Its shadow lifts off the page with it, from none off screen (`scrubShadow` in internal/modal-motion, by its position), so it doesn't ride out at full strength. Its overlay comes in and clears exactly like a dialog's, and follows the drag: a paused Web Animation from nothing to its classes' values, scrubbed by the drawer's position (`scrubBackdrop` in internal/modal-motion), never its opacity (over a background image, its opacity).
 - Drag to dismiss: use a library that decides dismissal on velocity (Animate UI's Radix Drawer, Base UI 1.8's Drawer with the CSS-driven recipe below). Don't reimplement it.
 
@@ -302,7 +309,7 @@ shadcn/ui's Questionnaire is built on `@shadcn/react/questionnaire`, whose drop-
 
 Purpose: feedback.
 
-- Press: ``whileTap={{ transform: `scale(${scale.press})` }}`` (0.97) on `spring.press`. Write the resting `transform: 'scale(1)'` in `initial`: Motion can only interpolate a missing transform from `scale(0)`. No hover scale.
+- Press: ``whileTap={{ transform: `scale(${scale.press})` }}`` (0.97) on `spring.press`. Write the resting `transform: 'scale(1)'` in `initial`: Motion can only interpolate a missing transform from `scale(0)`. No hover scale. Under reduced motion, press to `scale(1)` (``const pressed = reduce ? 'scale(1)' : `scale(${scale.press})` ``): the color change still answers.
 - Switch: the thumb stretches toward the middle of the track while pressed (×19/16 of its width) and glides to its side on `spring.thumb`; the track color changes at once.
 - Checkbox: the box doesn't scale; it answers at once with its fill (in the demos, a `before:` layer that grows from 70% as it fades in over 300ms, CSS in the classes, so it's nearly full when the check starts; the layer covers the border, `before:-inset-px`, and the border keeps its color, or an outline rings the growing fill); the check draws itself (stroke and opacity together) on `transition.check` (0.3s after 0.2s, `ease.draw`) and erases on `transition.uncheck` (0.3s, `ease.draw`); with `checkAnimation="pop"`, it pops in after the same 0.2s on `spring.checkPop` and out on `transition.popOut`. Only checking and unchecking animate: a box already checked when it mounts (the page loading, a dialog opening) shows its check at rest, as the server rendered it.
 - Radio: the dot pops in from 0 on `spring.bounce` and out the same way, when the selection changes; a radio already selected when it mounts shows its dot at rest. Its fill grows like the checkbox's: in the demos, a `before:` layer that grows from 70% as it fades in over 300ms (and shrinks back as it fades out), covering the border, which keeps its color.
@@ -332,6 +339,111 @@ Purpose: state. Two states replace each other in place, briefly overlapping: a l
 - `initial={false}`: nothing animates on mount.
 - Larger content (a panel, a card) uses `blur.surface` and its own recipe's transition.
 
+## Card (clickable card, tile, list row)
+
+Purpose: feedback. A surface the pointer rests on before choosing it.
+
+```tsx
+function ProductCard({ product }: { product: Product }) {
+  const reduce = useShouldReduceMotion();
+  const { spring, scale } = useMotionTokens();
+  const pressed = reduce ? 'scale(1)' : `scale(${scale.choice})`;
+
+  return (
+    <motion.button
+      type="button"
+      initial={{ transform: 'scale(1)' }}
+      whileTap={{ transform: pressed }}
+      transition={spring.press}
+      className="group overflow-hidden rounded-2xl border bg-card text-left shadow-sm transition-shadow hover:shadow-md"
+    >
+      <img
+        src={product.image}
+        alt=""
+        className="aspect-square w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+      />
+      <div className="p-4">{product.name}</div>
+    </motion.button>
+  );
+}
+```
+
+- Pressed, the whole card scales to `scale.choice` (0.985): it's large, so lighter than a button's 0.97.
+- Hovered, it never scales: its shadow deepens (`transition-shadow`), its image zooms to 1.05 inside it (clipped by `overflow-hidden`), and it may lift 2px (`hover:-translate-y-0.5`, 4px at most). Use Tailwind's `hover:`/`group-hover:` (v4 gates them to hover-capable pointers; on v3, wrap them in `@media (hover: hover) and (pointer: fine)`), or Motion's `whileHover` on `spring.highlight`, which ignores touch.
+- Under reduced motion the zoom and the lift go, the shadow stays.
+- A row in a list (settings, files) takes the same press and a background change on hover, no lift.
+
+## Palette (command palette, spotlight search)
+
+Purpose: spatial, but opened all day from the keyboard: the shortest form, never a wait.
+
+- The panel fades in and grows from `scale.menu` (0.9) on `transition.menu`, from its own center (it's centered, not anchored); it leaves the same way, no slower. No tilt and no `spring.dialog`: a palette isn't a modal moment.
+- The backdrop, if any, fades on the same transition, not on the modal's `transition.overlay`.
+- Results never stagger, and a query changing doesn't replay any entrance: filtered items appear and disappear at once (or with `layout` on `spring.reflow` if they must move). The selected result's background glides with Highlight (`references/catalog.md`) on `spring.highlight`.
+- Hand-built (a `div role="dialog"`): animate it as it is, with `AnimatePresence` around the conditional render; built on a library's Dialog, keep the library's Content and put the motion on its child, as the Overlay recipe does.
+
+## Toast (hand-built)
+
+Purpose: state, something arrived or went away. (Base UI's Toast: the CSS-driven recipe below.)
+
+```tsx
+// Inside the list component; ReducedMotionConfig comes from the same import.
+const enter = useTempoTransition(spring.toast);
+const leave = useTempoTransition(motionTransition.dismiss);
+
+<ReducedMotionConfig>
+  <ol className="fixed right-4 bottom-4 flex flex-col gap-2" aria-live="polite">
+    <AnimatePresence initial={false}>
+      {toasts.map((toast) => (
+        <motion.li
+          key={toast.id}
+          layout="position"
+          initial={{
+            opacity: 0,
+            y: '100%',
+            scale: scale.toast,
+            filter: blur.surface,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: 'blur(0px)',
+            transition: enter,
+          }}
+          exit={{
+            opacity: 0,
+            scale: scale.toast,
+            filter: blur.surface,
+            transition: leave,
+          }}
+          transition={enter}
+          style={{ originY: 1 }}
+        >
+          {toast.message}
+        </motion.li>
+      ))}
+    </AnimatePresence>
+  </ol>
+</ReducedMotionConfig>;
+```
+
+- In: it rises its own height (`y: '100%'`) from the edge it sits on, grows from `scale.toast` (0.96) out of `blur.surface`, on `spring.toast` (`enter`); the others make room with `layout="position"` on the same spring.
+- Out: it fades and shrinks back into its blur in place, on `transition.dismiss` (`leave`), without travelling across the toasts around it; swiped away, it keeps going the way it was thrown.
+- `layout` and a `transform` string don't mix: use the individual `y` and `scale` here, which `ReducedMotionConfig` drops under reduced motion (the fade and the blur stay).
+- A toast at the top mirrors it: `y: '-100%'`, `originY: 0`.
+
+## Page (hero, sections, feature grids, stats)
+
+Purpose: delight on arrival, continuity while scrolling. Start from the catalog (`references/catalog.md`):
+
+- The hero's lines come in one after the other: `Fades`, `Slides` or `Effects` (fade + blur + slide) with `holdDelay={100}`, on load.
+- Sections below the fold come in as they scroll into view: the same components with `inView` (once by default).
+- Stats count up with `CountingNumber` (`inView`); it shows its value at once under reduced motion and screen readers read the value, never the ticking.
+- Buttons press (`Button` from the catalog, or the Press recipe); headings may use a text effect from the catalog, one per page at most.
+
+By hand, the same values: fade on `transition.reveal`, rise a few pixels (16px at most) on `spring.entrance`, out of `blur.icon` for lines of text or `blur.surface` for cards, 80–100ms between items, `whileInView` with `viewport={{ once: true }}`. Keep the page's main text visible in the server HTML: animate decorations and what's below the fold, not the first line a reader needs.
+
 ## CSS-driven by the base library (Base UI Drawer, Toast)
 
 When the library drives a gesture (swipe to dismiss) or a stack and exposes it through CSS variables and data attributes, use CSS transitions. Validated on Animate UI's Base UI Drawer and Toast.
@@ -344,7 +456,7 @@ When the library drives a gesture (swipe to dismiss) or a stack and exposes it t
 - **A backdrop that follows the swipe** without fading its opacity: read its classes' color and backdrop blur once it mounts (with `transition: none`, so nothing transitions), hold them as variables, and let the stylesheet scale them by a level built from `--drawer-swipe-progress`, at 0 in `data-starting-style` / `data-ending-style`: `color-mix(in srgb, var(--color) calc(var(--level) * 100%), transparent)` and `blur(calc(var(--blur) * var(--level)))`, `!important` to beat the classes. Register the level (`@property`, `<number>`) and transition it, not the color and the filter: the tint and the blur follow it on every frame.
 - **Unmounting waits for the backdrop:** Base UI unmounts a closed drawer once its Popup's own animations have played, and a slower backdrop was cut short, the page snapping back sharp. When the Popup gets `data-ending-style`, give it an empty Web Animation as long as what's left of the backdrop's (`popup.animate([], { duration })`): Base UI waits for it too.
 - **A shadow that lifts:** add `box-shadow` to the Popup's transitions and drop it (`none`) in `data-starting-style` / `data-ending-style`: it grows as the drawer comes in and fades as it leaves.
-- **Reduced motion:** multiply the off-screen offset by a travel variable and set it to 0 under `motion-reduce:` (`[--drawer-travel:1] motion-reduce:[--drawer-travel:0]`), rather than overriding `transform` (direction variants are more specific and would win). Keep travel at 1 during a swipe dismissal so a dragged drawer keeps leaving. Toasts: `motion-reduce:[--toast-travel:0%] motion-reduce:transition-opacity`.
+- **Reduced motion:** multiply the off-screen offset by a travel variable and set it to 0 under `motion-reduce:` (`[--drawer-travel:1] motion-reduce:[--drawer-travel:0]`), rather than overriding `transform` (direction variants are more specific and would win). Keep travel at 1 during a swipe dismissal so a dragged drawer keeps leaving. Toasts: `motion-reduce:[--toast-travel:0%]`, keeping the opacity and `filter` transitions: they still fade in out of `blur.surface`.
 - **Stacks:** toasts behind scale down subtly (`max(0.9, 1 - index * 0.05)`), never below 0.9; hovering (or tapping) the viewport expands them on the same spring, front to back (`transition-delay: calc(var(--toast-index) * stagger.stack)`, only on the render where the stack expands or collapses: a change later must not wait). Toasts fire rapidly: transitions, never keyframes. They rise from the edge they came from (from `scale.toast` out of `blur.surface`, on `spring.toast`, which lands a little past its rest) and leave the same way on `transition.dismiss`, or keep going in the swipe direction.
 - **A toast thrown by a swipe** keeps the finger's speed: Base UI gives no swipe strength for toasts, so read the pointer yourself (its event times over the last 100ms before letting go) and go `linear` over the time the toast's own size takes at that speed, between 80 and 360ms. While it's swiped, set the transform yourself from the same pointer: the right way it follows the finger and fades (gone at its own size away), the wrong way it rubber-bands (half the finger's way, then saturating at 48px; Base UI's own square-root damping barely moves).
 - **A toast updated in place:** copy what changes before React does (`getSnapshotBeforeUpdate`: the icon, the title and description found by the Root's `aria-labelledby` / `aria-describedby`), put the copies back over the content inside the Root and let them leave into `blur.icon` (the icon also shrinking to `scale.icon`, a spinner's copy carrying on its turn) on `transition.swap`, while the new text comes out of the blur. Base UI measures the new height with `height: auto`, which cuts a CSS `height` transition: glide the height with a Web Animation started in the same commit, from the height it had to the one measured the same way.

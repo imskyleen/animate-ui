@@ -18,6 +18,8 @@ Two pieces, always together:
 - Wrap the component's motion tree in `ReducedMotionConfig`. Under reduced motion, Motion then skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter.
 - Motion does **not** skip a `transform` string. Neutralize it with `useShouldReduceMotion()`, called inside the wrapper.
 
+What reduced motion keeps, everywhere (toasts, surfaces, entrances): fades and blurs. What it drops: movement, scale and rotation. A number counting or rolling is movement too: under reduced motion it shows its value at once.
+
 ```tsx
 // Avoid: nothing checks the OS setting
 <motion.div initial={{ opacity: 0, transform: 'scale(0.8)' }} animate={{ opacity: 1, transform: 'scale(1)' }} />
@@ -98,6 +100,8 @@ animate={{ top: bounds.top, left: bounds.left, width: bounds.width, height: boun
 ```
 
 Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`), heights following their content (`spring.height`) and tab panels' heights gliding from the previous panel's (`transition.panelHeight`, Motion's layout curve). And a menubar's popover handed to the next menu resizes to it (`width`/`height`, a Web Animation for its move on `spring.morph`, A16): a scale would change its items' size. A tabs indicator resizes too (`width`/`height` on a Web Animation, its `translate` on the compositor) when the tabs' sizes differ: a scale would distort the active tab's border, radius and shadow it copies. Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`, `blur.panel`); large blurs are expensive to paint.
+
+Hover feedback isn't motion: a color, background, border or shadow changing on hover is one short repaint of one element. Transition those properties by name (`transition-colors`, `transition-shadow`, or `transition: background-color, box-shadow` on `transition.color`), never `all`. Whatever moves on hover (a card's lift, an image zooming inside its card) still goes through `transform`.
 
 #### A9. Prefer a `transform` string for press and continuous motion
 
@@ -190,7 +194,8 @@ A tween on `ease.out` reads faster than its duration: most of the movement happe
 
 ### B4. Scale: press only, and from a size that fits
 
-- Pressables (buttons, radio, toggles) scale to `scale.press` (0.97) on `spring.press` while pressed. **Nothing scales on hover**: hover changes color, a button answers the press. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
+- Pressables (buttons, radio, toggles) scale to `scale.press` (0.97) on `spring.press` while pressed; a whole card, tile or row is larger, so lighter: `scale.choice` (0.985). **The pressed element never scales on hover**: hover changes color, background, border or shadow, and the press answers the click. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
+- A card may do more on hover, since it's a surface rather than a control: its image zooms inside it (to 1.05, clipped by the card), its shadow deepens, and it lifts 2px (`translateY(-2px)`, 4px at most), all on `spring.highlight` so leaving retargets at once. The card itself still doesn't scale.
 - Anchored popups grow from their trigger, from farther when they are small: tooltips `scale.tooltip` (0.7), popovers and hover cards `scale.popover` (0.8), menus `scale.menu` (0.9).
 - A dialog tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)`.
 
@@ -224,7 +229,7 @@ Values come from `@animate-ui/react/utils/motion`. To change the pace of everyth
 
 Quality (any miss is a bug):
 
-- [ ] Wrapped in `ReducedMotionConfig`; `transform` strings neutralized with `useShouldReduceMotion()` (CSS: travel zeroed under `motion-reduce:`); loops stop under reduced motion
+- [ ] Wrapped in `ReducedMotionConfig`; `transform` strings neutralized with `useShouldReduceMotion()` (CSS: travel zeroed under `motion-reduce:`); fades and blurs kept; numbers show their value at once; loops stop under reduced motion
 - [ ] The keyboard animates like the pointer
 - [ ] Anchored popups set `transform-origin` in the primitive; modals stay centered
 - [ ] Overlays start from a visible size (≥ 0.7)
@@ -239,8 +244,8 @@ Quality (any miss is a bug):
 
 Style (defaults; deviations named in the output):
 
-- [ ] Springs from the tokens; tweens only for fades, menus, disclosures and swaps
+- [ ] Springs from the tokens; tweens only for fades, menus, disclosures, swaps, sheets and drawers (`transition.sheet`, `transition.drawer`), and dismissals
 - [ ] `ease.out` on enter and exit, `ease.soft` on disclosures, overlays, menus and sheets, `ease.draw` on a checkbox's check, ease-in-out on on-screen movement, `ease` on color, never ease-in (but a closed drawer's `transition.drawerOut`, and a menubar's next content fading in on `transition.handoffIn`; a dismissed dialog or sheet speeds away on `ease.away`)
-- [ ] Press at `scale.press` (0.97), no hover scale; popups from 0.7 / 0.8 / 0.9 by kind
+- [ ] Press at `scale.press` (0.97; `scale.choice` for a card or row), nothing pressed scales on hover; popups from 0.7 / 0.8 / 0.9 by kind
 - [ ] The exit replays the entrance (a dismissed modal: at once, quicker, speeding away; its overlay clear before it unmounts)
 - [ ] Swaps bridged with a light blur
