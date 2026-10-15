@@ -227,9 +227,14 @@ Values come from `@animate-ui/react/utils/motion`. To change the pace of everyth
 
 ### B9. Text changes without scaling
 
-A changing text (a label, a status, a word, a number) never scales and is never stretched: scaled or squeezed, letters read as distorted, not as a change. It fades through `blur.icon`, and slides when the change has a direction (a value going up, the next step).
+A changing text (a label, a status, a word, a number) never scales and is never stretched: scaled or squeezed, letters read as distorted, not as a change. Three levels, the first by default:
 
-- Before writing it by hand, use Animate UI's texts (`catalog.md`): Rotating Text for words taking turns, Morphing Text for one string turning into the next, Rolling Text for letters rolling over, Sliding Number or Counting Number for a number.
+1. **Base**: opacity through `blur.icon` on `transition.swap`, nothing else. Noticeable without drawing the eye: a button's label, a status, a value in a form.
+2. **More**: the same, pushed: `blur.surface` instead of `blur.icon`, a short slide (`shift.handoff`, up for what comes next or grows) and `transition.reveal`. A headline, a hero's changing word, a confirmation worth seeing.
+3. **Most**: Animate UI's texts (`catalog.md`), before anything by hand: Rotating Text for words taking turns, Morphing Text for one string turning into the next, Rolling Text for letters rolling over, Sliding Number or Counting Number for a number.
+
+Go up a level only when asked ("more animated", "plus vivant", feel.md's "bolder") or when the text is the point of the page.
+
 - A box resized with `layout` around a text (a button whose label changes) stretches it while it resizes: give each text inside `layout="position"` (with the box's `layout` transition), so it moves and keeps its proportions.
 - Icons still swap from `scale.icon` (B6), and a whole element may still scale with the text it holds (a card coming in, a badge bumping): the rule is about a text changing in place.
 
