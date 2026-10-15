@@ -8,6 +8,7 @@ import {
   type Transition,
 } from 'motion/react';
 
+import { mergeRefs } from '../../../internal/anchored';
 import {
   motionTokens,
   useShouldReduceMotion,
@@ -273,6 +274,13 @@ function ScrollFade({
   ...props
 }: ScrollFadeProps) {
   const localRef = React.useRef<HTMLDivElement | null>(null);
+  const ownRef = React.isValidElement<ChildProps>(children)
+    ? children.props.ref
+    : undefined;
+  const childRef = React.useMemo(
+    () => mergeRefs<HTMLElement | null>(localRef, ownRef),
+    [ownRef],
+  );
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
   useScrollFade(localRef, {
@@ -291,7 +299,6 @@ function ScrollFade({
 
   if (asChild && React.isValidElement<ChildProps>(children)) {
     const child = children;
-    const childRef = child.props.ref;
     return React.cloneElement(child, {
       ...child.props,
       ...sharedProps,
@@ -299,11 +306,7 @@ function ScrollFade({
         [child.props.className, props.className].filter(Boolean).join(' ') ||
         undefined,
       style: { ...OVERFLOW[orientation], ...child.props.style, ...style },
-      ref: (node: HTMLDivElement | null) => {
-        localRef.current = node;
-        if (typeof childRef === 'function') childRef(node);
-        else if (childRef) childRef.current = node;
-      },
+      ref: childRef,
     });
   }
 

@@ -242,4 +242,22 @@ test.describe('animate-ui scroll fade', () => {
       true,
     );
   });
+  test('asChild: the fade goes on the child, keeping its ref, classes and style', async ({
+    page,
+  }) => {
+    await open(page);
+    const child = page.getByTestId('as-child');
+    await expect(child).toHaveAttribute('data-ref', 'UL');
+    await expect(child).toHaveAttribute('data-slot', 'scroll-fade');
+    await expect(child).toHaveClass(/h-\[200px\]/);
+    await expect(child).toHaveClass(/faded/);
+    const look = await child.evaluate((el) => ({
+      overflowY: getComputedStyle(el).overflowY,
+      paddingTop: getComputedStyle(el).paddingTop,
+      mask: getComputedStyle(el).maskImage,
+    }));
+    expect(look.overflowY).toBe('auto');
+    expect(look.paddingTop).toBe('4px');
+    expect(look.mask).not.toBe('none');
+  });
 });

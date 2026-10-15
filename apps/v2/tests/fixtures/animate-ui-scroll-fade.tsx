@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { ScrollFade } from '@animate-ui/react/primitives/effects/scroll-fade';
 
 const items = (count: number) =>
@@ -8,6 +9,31 @@ const items = (count: number) =>
       Item {i + 1}
     </div>
   ));
+
+function AsChild() {
+  const ref = React.useRef<HTMLUListElement>(null);
+  const [seen, setSeen] = React.useState('');
+  React.useEffect(() => {
+    setSeen(ref.current?.tagName ?? 'none');
+  }, []);
+  return (
+    <ScrollFade asChild className="faded">
+      <ul
+        ref={ref}
+        data-testid="as-child"
+        data-ref={seen}
+        className="h-[200px] w-60 border"
+        style={{ paddingTop: 4 }}
+      >
+        {Array.from({ length: 20 }, (_, i) => (
+          <li key={i} className="h-10 leading-10">
+            Row {i + 1}
+          </li>
+        ))}
+      </ul>
+    </ScrollFade>
+  );
+}
 
 export default function ScrollFadeFixture() {
   return (
@@ -29,6 +55,7 @@ export default function ScrollFadeFixture() {
           </div>
         ))}
       </ScrollFade>
+      <AsChild />
     </div>
   );
 }
