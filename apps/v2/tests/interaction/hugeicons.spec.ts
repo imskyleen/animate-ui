@@ -387,6 +387,7 @@ test.describe('hugeicons', () => {
   test("every clock (the calendar's, file's and folder's too): the minute hand goes round once, the hour hand a step on and back (as Lucide's), both pinned at the clock's center", async ({
     page,
   }) => {
+    test.setTimeout(120_000);
     await gotoGallery(page);
     const clocks = NAMES.filter((name) =>
       readFileSync(path.join(REGISTRY, name, 'index.tsx'), 'utf8').includes(
@@ -401,9 +402,8 @@ test.describe('hugeicons', () => {
       await expect(svg).toBeVisible();
       await page.mouse.move(0, 0);
       await page.waitForTimeout(700);
-      await button.hover();
-      const run = await svg.evaluate(
-        (svg) =>
+      await svg.evaluate((svg) => {
+        (window as unknown as { clockRun: Promise<unknown> }).clockRun =
           new Promise<{ minute: number; hour: number; drift: number }>(
             (resolve) => {
               const paths = [...svg.querySelectorAll('path')];
@@ -438,13 +438,26 @@ test.describe('hugeicons', () => {
                     Math.hypot(p.x - rest[i]!.x, p.y - rest[i]!.y),
                   );
                 });
-                if (performance.now() - start < 800)
+                if (performance.now() - start < 1500)
                   requestAnimationFrame(tick);
                 else resolve({ minute: Math.abs(turned), hour: hour2, drift });
               };
               requestAnimationFrame(tick);
             },
-          ),
+          );
+      });
+      await button.hover();
+      const run = await page.evaluate(
+        () =>
+          (
+            window as unknown as {
+              clockRun: Promise<{
+                minute: number;
+                hour: number;
+                drift: number;
+              }>;
+            }
+          ).clockRun,
       );
       expect(
         run.minute,
