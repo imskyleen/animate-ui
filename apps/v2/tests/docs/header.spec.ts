@@ -33,3 +33,23 @@ test('the header theme button switches the theme, turning its icon', async ({
     await page.evaluate(() => (window as unknown as { __turn: number }).__turn),
   ).toBeGreaterThan(30);
 });
+
+for (const width of [375, 320]) {
+  test(`on a ${width}px phone the header keeps search, like v1, without overflowing`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 740 });
+    await page.goto('/docs', { waitUntil: 'networkidle' });
+    const search = page.getByRole('button', { name: /search/i });
+    await expect(search).toBeVisible();
+    const box = (await search.boundingBox())!;
+    expect(box.x + box.width).toBeLessThanOrEqual(width);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      ),
+    ).toBeLessThanOrEqual(0);
+    await search.click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+  });
+}

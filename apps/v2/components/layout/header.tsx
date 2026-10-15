@@ -92,10 +92,10 @@ function SearchButton() {
     <button
       type="button"
       onClick={() => setOpenSearch(true)}
-      className="flex h-8 w-48 items-center justify-between rounded-md bg-accent pr-1.5 pl-3 text-sm text-muted-foreground transition-colors hover:bg-accent/70 lg:w-56 xl:w-64"
+      className="flex h-8 w-48 max-w-full min-w-0 items-center justify-between gap-2 rounded-md bg-accent pr-1.5 pl-3 text-sm text-muted-foreground transition-colors hover:bg-accent/70 lg:w-56 xl:w-64"
     >
-      <span>Search...</span>
-      <span className="flex items-center gap-1">
+      <span className="truncate">Search...</span>
+      <span className="flex shrink-0 items-center gap-1">
         <kbd className="flex size-5 items-center justify-center rounded-[4px] border bg-background">
           <HugeiconsIcon icon={CommandIcon} strokeWidth={2} size={10} />
         </kbd>
@@ -205,9 +205,9 @@ export function SiteHeader({
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 md:gap-3">
+        <div className="ml-auto flex min-w-0 items-center gap-2 md:gap-3">
           <VersionMenu />
-          <div className="max-md:hidden">
+          <div className="min-w-0 shrink">
             <SearchButton />
           </div>
           <div className="flex items-center gap-1.5">
