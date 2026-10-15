@@ -188,7 +188,7 @@ test.describe('animate-ui theme toggler button', () => {
       .toBeCloseTo(1, 3);
   });
 
-  test('reduced motion: the icons crossfade without turning, no scale', async ({
+  test('reduced motion: the icons crossfade through their blur without turning, no scale', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -204,8 +204,9 @@ test.describe('animate-ui theme toggler button', () => {
     expect(await transitions(page)).toBe(0);
     const all = (await takeIcons(page)).flat();
     expect(
-      all.every((i) => i.scale === 1 && i.rotate === 0 && i.blur === 0),
+      all.every((i) => i.scale === 1 && i.rotate === 0 && i.blur <= 2),
     ).toBe(true);
+    expect(all.some((i) => i.blur > 0)).toBe(true);
     expect(all.some((i) => i.opacity > 0 && i.opacity < 1)).toBe(true);
   });
 });

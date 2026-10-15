@@ -198,14 +198,12 @@ function leave(
   const { duration, easing } = css(tokens.transition.swap);
   const from: Keyframe = { opacity: holder.style.opacity };
   const to: Keyframe = { opacity: 0 };
-  if (!reduce) {
-    from.filter =
-      holder.style.filter === 'none' ? 'blur(0px)' : holder.style.filter;
-    to.filter = tokens.blur.icon;
-    if (shrink) {
-      from.transform = 'scale(1)';
-      to.transform = `scale(${tokens.scale.icon})`;
-    }
+  from.filter =
+    holder.style.filter === 'none' ? 'blur(0px)' : holder.style.filter;
+  to.filter = tokens.blur.icon;
+  if (shrink && !reduce) {
+    from.transform = 'scale(1)';
+    to.transform = `scale(${tokens.scale.icon})`;
   }
   const animation = holder.animate([from, to], {
     duration,
@@ -218,15 +216,13 @@ function leave(
   );
 }
 
-function arrive(element: Element, tokens: MotionTokens, reduce: boolean) {
+function arrive(element: Element, tokens: MotionTokens) {
   const { duration, easing } = css(tokens.transition.swap);
   element.animate(
-    reduce
-      ? [{ opacity: 0 }, { opacity: 1 }]
-      : [
-          { opacity: 0, filter: tokens.blur.icon },
-          { opacity: 1, filter: 'blur(0px)' },
-        ],
+    [
+      { opacity: 0, filter: tokens.blur.icon },
+      { opacity: 1, filter: 'blur(0px)' },
+    ],
     { duration, easing },
   );
 }
@@ -264,7 +260,7 @@ function swapContent(
     if (before && before.text === text && now) continue;
     if (before && positioned)
       leave(place(root, before, snapshot), false, tokens, reduce);
-    if (now && text) arrive(now, tokens, reduce);
+    if (now && text) arrive(now, tokens);
   }
   if (!typeChanged) return;
   if (snapshot.icon && positioned)

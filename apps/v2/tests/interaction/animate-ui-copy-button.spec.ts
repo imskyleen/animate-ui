@@ -169,7 +169,7 @@ test.describe('animate-ui copy button', () => {
     });
   });
 
-  test('reduced motion: the icons crossfade, the button does not scale', async ({
+  test('reduced motion: the icons crossfade through their blur, nothing scales', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -178,7 +178,8 @@ test.describe('animate-ui copy button', () => {
     await button(page).click();
     const frames = await recording;
     const all = frames.flat();
-    expect(all.every((i) => i.scale === 1 && i.blur === 0)).toBe(true);
+    expect(all.every((i) => i.scale === 1 && i.blur <= 2)).toBe(true);
+    expect(all.some((i) => i.blur > 0)).toBe(true);
     expect(all.some((i) => i.opacity > 0 && i.opacity < 1)).toBe(true);
     expect(frames.at(-1)).toMatchObject([
       { icon: 'copied', opacity: 1, scale: 1, blur: 0 },

@@ -33,7 +33,7 @@ A click writes `content` to the clipboard (`navigator.clipboard.writeText`). Onc
 - Once copied, the copy icon shrinks to half its size into a light blur (`blur(2px)`) as it fades out, while the check grows out of the same blur in its place, over 0.15s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`). It swaps back the same way after `delay`. Nothing animates on mount.
 - Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
 - `<AnimateUIProvider tempo>` paces the swap and the press spring (not `delay`).
-- Under reduced motion, the icons crossfade without scaling or blurring, and the button doesn't scale.
+- Under reduced motion, the icons crossfade through their blur without scaling, and the button doesn't scale.
 
 ## API Reference
 

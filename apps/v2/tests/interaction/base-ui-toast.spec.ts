@@ -529,52 +529,65 @@ test.describe('base-ui toast types', () => {
 });
 
 test.describe('base-ui toast promise', () => {
-  test('the spinner turns into a drawn check, the text swaps through a blur', async ({
-    page,
-  }) => {
-    await page.goto('/tests/demos/base-ui/toast-promise', {
-      waitUntil: 'networkidle',
-    });
-    await page.getByRole('button', { name: 'Create Event' }).click();
-    const description = page.locator('[data-slot="toast-description"]');
-    await expect(description).toHaveText('Creating event…');
-    await settled(page);
-    const frames = await recordFrames<{
-      copies: { text: string; opacity: number; blur: number }[];
-      text: string;
-      opacity: number;
-      blur: number;
-      icon: { drawn: number } | null;
-    }>(
-      page,
-      `() => {
+  for (const reduce of [false, true])
+    test(
+      reduce
+        ? 'reduced motion: the text still swaps through a blur, nothing scales'
+        : 'the spinner turns into a drawn check, the text swaps through a blur',
+      async ({ page }) => {
+        if (reduce) await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.goto('/tests/demos/base-ui/toast-promise', {
+          waitUntil: 'networkidle',
+        });
+        await page.getByRole('button', { name: 'Create Event' }).click();
+        const description = page.locator('[data-slot="toast-description"]');
+        await expect(description).toHaveText('Creating event…');
+        await settled(page);
+        const frames = await recordFrames<{
+          copies: { text: string; opacity: number; blur: number }[];
+          text: string;
+          opacity: number;
+          blur: number;
+          icon: { drawn: number } | null;
+        }>(
+          page,
+          `() => {
         const root = document.querySelector('[data-slot="toast"]');
         const d = root.querySelector('[data-slot="toast-description"]');
         const blurOf = (el) => { const b = /blur\\(([\\d.]+)px\\)/.exec(getComputedStyle(el).filter); return b ? Number(b[1]) : 0; };
         const copies = [...root.querySelectorAll(':scope > [aria-hidden="true"]:not([data-animate-ui-toast-progress])')].map((c) => ({ text: c.textContent, opacity: Number(getComputedStyle(c).opacity), blur: blurOf(c) }));
         return { copies, text: d.textContent, opacity: Number(getComputedStyle(d).opacity), blur: blurOf(d), icon: (${ICON_SAMPLE})() };
       }`,
+        );
+        await expect(description).toHaveText('Event created.', {
+          timeout: 4000,
+        });
+        await page.waitForTimeout(800);
+        const samples = await frames.stop();
+        const swap = samples.findIndex((f) => f.v.text === 'Event created.');
+        const leaving = samples
+          .slice(swap)
+          .flatMap((f) => f.v.copies)
+          .filter((c) => c.text === 'Creating event…');
+        expect(leaving.length).toBeGreaterThan(0);
+        expect(leaving.some((c) => c.blur > 0.5 && c.opacity < 0.9)).toBe(true);
+        expect(
+          samples
+            .slice(swap)
+            .some((f) => f.v.copies.some((c) => c.text === '')),
+        ).toBe(true);
+        const arriving = samples.slice(swap, swap + 4).map((f) => f.v);
+        expect(arriving.some((v) => v.opacity < 0.8 && v.blur > 0.3)).toBe(
+          true,
+        );
+        if (!reduce) {
+          const icons = samples.slice(swap).map((f) => f.v.icon!.drawn);
+          expect(Math.min(...icons)).toBeLessThan(0.1);
+          expect(icons.at(-1)).toBe(1);
+        }
+        expect(samples.at(-1)!.v.copies).toEqual([]);
+      },
     );
-    await expect(description).toHaveText('Event created.', { timeout: 4000 });
-    await page.waitForTimeout(800);
-    const samples = await frames.stop();
-    const swap = samples.findIndex((f) => f.v.text === 'Event created.');
-    const leaving = samples
-      .slice(swap)
-      .flatMap((f) => f.v.copies)
-      .filter((c) => c.text === 'Creating event…');
-    expect(leaving.length).toBeGreaterThan(0);
-    expect(leaving.some((c) => c.blur > 0.5 && c.opacity < 0.9)).toBe(true);
-    expect(
-      samples.slice(swap).some((f) => f.v.copies.some((c) => c.text === '')),
-    ).toBe(true);
-    const arriving = samples.slice(swap, swap + 4).map((f) => f.v);
-    expect(arriving.some((v) => v.opacity < 0.8 && v.blur > 0.3)).toBe(true);
-    const icons = samples.slice(swap).map((f) => f.v.icon!.drawn);
-    expect(Math.min(...icons)).toBeLessThan(0.1);
-    expect(icons.at(-1)).toBe(1);
-    expect(samples.at(-1)!.v.copies).toEqual([]);
-  });
 });
 
 test.describe('base-ui toast updates', () => {

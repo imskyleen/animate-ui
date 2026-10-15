@@ -46,7 +46,7 @@ Each click applies the next theme of `modes` at once, through `setTheme`. For a 
 - The icon swaps as the theme changes: the old one turns 90° on as it shrinks to half its size into a light blur (`blur(2px)`) and fades out, while the new one turns in from 90° back and grows out of it, so both keep turning the same way. Over 0.3s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`), twice the Copy Button's swap, so the turn reads. Icons only swap once the button is used: on mount, and when the theme becomes known after hydrating, the icon shows at rest.
 - Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
 - `<AnimateUIProvider tempo>` paces the swap and the press spring.
-- Under reduced motion, the icons crossfade without turning, scaling or blurring, and the button doesn't scale.
+- Under reduced motion, the icons crossfade through their blur without turning or scaling, and the button doesn't scale.
 
 ## API Reference
 

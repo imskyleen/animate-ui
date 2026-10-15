@@ -41,17 +41,17 @@ function IconSwap({
   );
   const turn = reduce || !rotate ? undefined : rotate;
   const entering = reduce
-    ? { opacity: 0 }
+    ? { opacity: 0, filter: HIDDEN.filter }
     : turn
       ? { ...HIDDEN, rotate: -turn }
       : HIDDEN;
   const leaving = reduce
-    ? { opacity: 0 }
+    ? { opacity: 0, filter: HIDDEN.filter }
     : turn
       ? { ...HIDDEN, rotate: turn }
       : HIDDEN;
   const shown = reduce
-    ? { opacity: 1 }
+    ? { opacity: 1, filter: SHOWN.filter }
     : turn
       ? { ...SHOWN, rotate: 0 }
       : SHOWN;
