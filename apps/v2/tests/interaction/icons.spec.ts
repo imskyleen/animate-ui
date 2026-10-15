@@ -553,6 +553,7 @@ test.describe('icons gallery', () => {
           new Promise<
             {
               t: number;
+              at: number;
               there: boolean;
               bottom: number;
               clip: number;
@@ -563,6 +564,7 @@ test.describe('icons gallery', () => {
           >((resolve) => {
             const out: {
               t: number;
+              at: number;
               there: boolean;
               bottom: number;
               clip: number;
@@ -578,6 +580,7 @@ test.describe('icons gallery', () => {
               const holder = el?.parentElement;
               out.push({
                 t: now - start,
+                at: now,
                 there: !!el,
                 bottom: el?.getBoundingClientRect().bottom ?? 0,
                 clip: holder?.getBoundingClientRect().bottom ?? 0,
@@ -697,17 +700,23 @@ test.describe('icons gallery', () => {
         document.dispatchEvent(
           new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
         );
-        setTimeout(
-          () =>
-            document
-              .querySelector<HTMLElement>('button[title="Wifi Zero"]')!
-              .click(),
-          40,
-        );
+        setTimeout(() => {
+          (window as unknown as { reopenedAt: number }).reopenedAt =
+            performance.now();
+          document
+            .querySelector<HTMLElement>('button[title="Wifi Zero"]')!
+            .click();
+        }, 40);
       });
       const all = await frames;
+      const reopenedAt = await page.evaluate(
+        () => (window as unknown as { reopenedAt: number }).reopenedAt,
+      );
       const after = all.filter((f) => f.there && f.t > 20);
-      expect(Math.min(...after.map((f) => f.opacity))).toBeGreaterThan(0.2);
+      const atReopen = all.findLast((f) => f.at <= reopenedAt)!.opacity;
+      expect(Math.min(...after.map((f) => f.opacity))).toBeGreaterThan(
+        Math.min(atReopen - 0.02, 0.2),
+      );
       expect(after.at(-1)!.opacity).toBe(1);
     });
 

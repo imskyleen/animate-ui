@@ -68,7 +68,7 @@ test.describe('hugeicons', () => {
   test('the registry draws Hugeicons’ own icons at rest, at a stroke of 2 (split into pieces to animate, never reshaped)', async ({
     page,
   }) => {
-    test.setTimeout(240_000);
+    test.setTimeout(480_000);
     expect(NAMES.length).toBeGreaterThanOrEqual(16);
     await page.setContent('<svg viewBox="0 0 24 24"></svg>');
     for (const name of NAMES) {

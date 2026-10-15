@@ -467,28 +467,30 @@ export function describeTabsDemo(
       await expectSurfaceOnIndicator(page);
     });
 
-    test("the tabs' text color changes on transition.color (200ms, ease)", async ({
-      page,
-    }) => {
-      const tab = page.getByRole('tab', { name: 'Analytics' });
-      expectCssCurve(
-        await tab.evaluate((el) => {
-          const style = getComputedStyle(el);
-          return {
-            duration: style.transitionDuration,
-            easing: style.transitionTimingFunction,
-          };
-        }),
-        COLOR,
-      );
-      const frames = await recordSwitch(page, 'Analytics');
-      const final = frames.at(-1)!.color;
-      const started = frames.find((f) => f.color !== frames[0]!.color)!;
-      const reached = frames.find((f) => f.color === final)!;
-      expect(new Set(frames.map((f) => f.color)).size).toBeGreaterThan(3);
-      expect(reached.t - started.t).toBeGreaterThan(120);
-      expect(reached.t - started.t).toBeLessThan(COLOR.duration + 80);
-    });
+    test(
+      "the tabs' text color changes on transition.color (200ms, ease)",
+      { tag: '@timing' },
+      async ({ page }) => {
+        const tab = page.getByRole('tab', { name: 'Analytics' });
+        expectCssCurve(
+          await tab.evaluate((el) => {
+            const style = getComputedStyle(el);
+            return {
+              duration: style.transitionDuration,
+              easing: style.transitionTimingFunction,
+            };
+          }),
+          COLOR,
+        );
+        const frames = await recordSwitch(page, 'Analytics');
+        const final = frames.at(-1)!.color;
+        const started = frames.find((f) => f.color !== frames[0]!.color)!;
+        const reached = frames.find((f) => f.color === final)!;
+        expect(new Set(frames.map((f) => f.color)).size).toBeGreaterThan(3);
+        expect(reached.t - started.t).toBeGreaterThan(120);
+        expect(reached.t - started.t).toBeLessThan(COLOR.duration + 80);
+      },
+    );
 
     test('the panels change one after the other: the old one fades out into a blur, then the new one fades in from it', async ({
       page,

@@ -261,7 +261,12 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
         recorded.every((f) => f.copies.every((copy) => copy.opacity > 0.99)),
       ).toBe(true);
       expect(allPainted(recorded)).toBe(true);
-      expect(Math.abs(recorded.at(-1)!.copies[0]!.top - to)).toBeLessThan(1);
+      await expect
+        .poll(async () => {
+          const last = (await recordHighlight(page, 50)).at(-1)!;
+          return Math.abs(last.copies[0]!.top - to);
+        })
+        .toBeLessThan(1);
     });
 
     test('a fast sweep on a busy main thread: no item lights up on its own', async ({

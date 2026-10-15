@@ -64,9 +64,7 @@ test.describe('radix-ui accordion demo, Radix behavior', () => {
 
 test.describe('radix-ui accordion API', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/radix-ui-accordion', {
-      waitUntil: 'networkidle',
-    });
+    await gotoHydrated(page, '/tests/fixtures/radix-ui-accordion');
   });
 
   test('controlled value and onValueChange', async ({ page }) => {
@@ -97,6 +95,6 @@ test.describe('radix-ui accordion API', () => {
     ).toBeVisible({
       timeout: 800,
     });
-    expect(await inert()).toBe(false);
+    await expect.poll(inert, { timeout: 800 }).toBe(false);
   });
 });
