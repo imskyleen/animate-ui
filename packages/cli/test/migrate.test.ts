@@ -424,6 +424,14 @@ test('--exclude stops on a name that is not a v1 primitive', async () => {
   expect(snapshot(root)).toEqual(before);
 });
 
+test('component names ignore case', async () => {
+  const { code } = await run(['Tooltip']);
+  expect(code).toBe(0);
+  expect(read(PAGE)).toContain(
+    "from '@animate-ui/react/primitives/radix-ui/tooltip';",
+  );
+});
+
 test('--exclude ignores case', async () => {
   await run(['all'], { exclude: ['Tooltip'] });
   expect(read(PAGE)).toContain(

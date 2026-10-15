@@ -67,10 +67,10 @@ export async function migrate(components: string[], options: MigrateOptions) {
   const relative = (file: string) => path.relative(project.root, file);
 
   let exitCode = 0;
-  const all = components.includes('all');
+  const all = components.some((name) => name.toLowerCase() === 'all');
   const known = knownNames();
   const names = new Set<string>();
-  for (const name of components) {
+  for (const name of components.map((name) => name.toLowerCase())) {
     if (name === 'all') continue;
     if (!known.has(name)) {
       exitCode = 1;
