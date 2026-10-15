@@ -114,7 +114,7 @@ export {
 
 ## From another library
 
-Take the icon's real SVG (the library's package source, its site's "copy SVG", or the `.svg` file) and keep its drawing exactly: the same `viewBox`, `d` values, stroke width, caps and joins, fill or stroke. Split it into pieces only to animate them; never reshape them.
+Take the icon's real SVG (the library's package source, its site's "copy SVG", or the `.svg` file) and keep its drawing exactly: the same `viewBox`, `d` values, stroke width, caps and joins, fill or stroke. Split it into pieces only to animate them, so that at rest it looks exactly the same; never reshape them.
 
 - `stroke="currentColor"` and `fill="none"` for an outline set (Lucide, Tabler, Heroicons outline); `fill="currentColor"` on the svg or the pieces for a filled set (Phosphor fill, Heroicons solid). Caps and joins that differ per piece stay on the piece (Hugeicons).
 - Another grid (Phosphor's `0 0 256 256`, a 20px set) keeps its `viewBox`: amplitudes below are for 24 units, scale them to the grid (×10.7 on 256).
@@ -161,7 +161,7 @@ The same principles hold for every style; what changes is how each is drawn.
   ```
 
   - **A piece cut out of the shape** (a check or a mark punched through a badge, `fill-rule="evenodd"`) can't be split off: splitting it would fill it. Its `draw` covers the hole and erases the cover along the cut-out: a `path` with the hole's subpath filled in `currentColor`, masked by a white `rect` and a black stroke along the hole's centerline (as wide as the hole, round caps). The stroke draws `pathLength: [0, 1]` with `opacity` over the first 0.1s only, so the cut-out appears along its line. At rest the eraser is complete and the icon looks exactly like the original; `path` draws it too.
-  - **A part fused into the outline** (a clapper drawn in the bell's contour) can't move alone: the whole icon carries the motion (the bell swings, longer, as the follow-through), and the drawing stays as it is.
+  - **A part fused into the outline** (a clapper drawn in the bell's contour) is cut out of it so it can move: end the outline where the part joins it (the bell's rim becomes a straight `H`), and draw the part as its own closed path from the same arcs (`M88.81 200a40 40 0 0 0 78.38 0Z` plus its hole). At rest the two pieces show exactly the original; a frame mid-motion shows the part moving on its own.
 
 - **Outline drawn as a fill** (Phosphor regular, Material outlined: a filled shape with the inside cut out): treat it as solid. Don't invent a filled version for a `fill` alternate; take the set's own solid icon if it ships one, else skip `fill`.
 - **Duotone or bulk** (a pale layer behind the main drawing: Phosphor duotone, Hugeicons bulk, Font Awesome duotone): keep both layers and their opacity. The main layer carries the motion; the pale layer moves with it as one object, or fills in as a state: a copy of the pale layer's shape at full opacity rises through a clip (`attrY` and `height`, 0.6s `easeOut`) and drains back the same way.
@@ -174,7 +174,7 @@ The same principles hold for every style; what changes is how each is drawn.
 
 The principles every registry icon follows:
 
-- **It moves as it means.** The part that moves in real life moves; the rest stays still. A bell swings from its top while its clapper swings; a bin's lid lifts and its body opens below; a power button presses in (stem down 2, ring to 0.94); a tag swings from its hole; a handset rings; a folder's front swings down. An "off" icon (eye-off, mic-off) keeps the object still and draws only its slash.
+- **It moves as it means.** Get as close as possible to how the real object moves: every part that moves in real life moves, the way it does (a clapper swings behind the bell, lagging and longer; a lid lifts before it tips; a flame flickers from its base), and the rest stays still. How the icon is drawn never excuses a part standing still: split it (§ Styles). A bell swings from its top while its clapper swings; a bin's lid lifts and its body opens below; a power button presses in (stem down 2, ring to 0.94); a tag swings from its hole; a handset rings; a folder's front swings down. An "off" icon (eye-off, mic-off) keeps the object still and draws only its slash.
 - **Nothing vanishes, nothing doubles.** Every piece stays visible through the animation (a twinkle pulses, it doesn't disappear), and a piece landing on another lands exactly on it.
 - **Two kinds of animation.**
   - A **state** (hover in, hover out): `animate` is one target, and `initial` carries the same transition so the way back animates too. An arrow moves `x: '25%'` in 0.3s, a chevron 4, a download arrow `y: 2`.
