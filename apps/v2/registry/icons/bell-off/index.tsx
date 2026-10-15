@@ -19,7 +19,7 @@ const animations = {
         rotate: 0,
       },
       animate: {
-        rotate: [0, 10, -6, 3, -1, 0],
+        rotate: [0, 5, -4, 2, -1, 0],
         transformOrigin: 'top center',
         transition: { duration: 0.7, ease: 'easeInOut' },
       },
