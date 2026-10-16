@@ -53,3 +53,6 @@ const leave = useTempoTransition(motionTransition.dismiss);
 - `initial={false}`: toasts already there when the list mounts (restored after a reload) show at rest; every toast added later plays its entrance.
 - `layout` and a `transform` string don't mix: use the individual `y` and `scale` here, which `ReducedMotionConfig` drops under reduced motion (the fade and the blur stay).
 - A toast at the top mirrors it: `y: '-100%'`, `originY: 0`.
+- A toast is a surface: no bounce step. At **more** it rises 150% (`y: '150%'`) and a stack unfolds on hover with `stagger.stack`.
+- Toasts that already carry `role="status"` keep it, and the list takes no `aria-live`.
+- Key each toast by a unique id (a counter, `crypto.randomUUID()`), never `Date.now()`: two toasts in the same millisecond share a key.

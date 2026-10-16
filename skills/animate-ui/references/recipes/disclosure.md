@@ -36,3 +36,40 @@ const expanded = {
 - Reduced motion: the height jumps; the fade and the blur still play.
 - Derive each item's open state from the root value; never copy it into state with an effect. With a single-value root the value is a string, so compare with `===`, not `includes` (`'item-10'.includes('item-1')` is true).
 - Chevron: it turns 180° with the panel, on its timing (`transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)]`), so the two read as one gesture.
+
+## CSS: a native `<details>`
+
+Without a JavaScript runtime, a `<details>` animates its `::details-content` on `transition.disclosure`, height 0 → `auto` through `interpolate-size: allow-keywords`, and `content-visibility` with `allow-discrete` so the content stays shown while it closes:
+
+```css
+details {
+  interpolate-size: allow-keywords;
+  --disclosure: 350ms cubic-bezier(0.215, 0.61, 0.355, 1); /* transition.disclosure */
+}
+details::details-content {
+  height: 0;
+  overflow: clip;
+  opacity: 0;
+  filter: blur(2px); /* blur.disclosure */
+  transition:
+    height var(--disclosure),
+    opacity var(--disclosure),
+    filter var(--disclosure),
+    content-visibility var(--disclosure) allow-discrete;
+}
+details[open]::details-content {
+  height: auto;
+  opacity: 1;
+  filter: none;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 16px), transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content {
+    transition-property: opacity, filter, content-visibility;
+  }
+}
+```
+
+- Its edge fade is a plain 16px mask while open: CSS can't measure the part still hidden. Give the content 16px of bottom padding so the fade falls on empty space at rest.
+- Its marker stays, unless the project already replaces it (`list-style: none` with its own chevron, which then turns on the same timing).
+- Browsers without `::details-content` or `interpolate-size` open and close at once, still usable.

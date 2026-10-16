@@ -101,8 +101,9 @@ export function useActionStatus(action: () => Promise<unknown>, hold = 1500) {
       await action();
       setStatus('success');
       timer.current = setTimeout(() => setStatus('idle'), hold);
-    } catch {
+    } catch (error) {
       setStatus('error');
+      console.error(error);
     }
   }, [action, hold]);
 
@@ -116,6 +117,7 @@ export function SaveButton({ onSave }: { onSave: () => Promise<void> }) {
 ```
 
 - The label is a Swap ([../recipes/swap.md](../recipes/swap.md)): `mode="popLayout"` lets the old one leave while the new one comes, `initial={false}` keeps the first render still. The label fades through the blur without scaling, and `layout="position"` keeps it from stretching while the button resizes (rules B9). An icon beside it swaps from `scale.icon`.
+- The error state is part of the recipe: a failure shows "Try again", and the error still reaches the logs (`console.error`, or the project's own logger).
 - "Saved" holds about 1.5s, then goes back to idle. The hold is real time: `tempo` paces motion, not how long a message stays readable. A failure stays on "Try again" until the next click; clicking again clears a pending hold.
 - What the animation needs from the classes: `inline-flex items-center overflow-hidden` on the button. The height, padding and colors are the user's.
 - `layout` resizes the button to its label on `spring.reflow`; the press stays on `spring.press` (the `layout` key of the transition only drives the resize).

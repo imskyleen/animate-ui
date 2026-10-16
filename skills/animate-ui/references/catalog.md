@@ -19,7 +19,7 @@ Check this list before writing motion by hand: when one of these does the job, u
 
 ## Numbers and changing text
 
-These are the expressive choice for a value changing; at the subtle level a value changing in place swaps (`recipes/swap.md`).
+Counting Number for stats and Rotating Text for words cycling on a timer fit every level; only a value changing in place after an action swaps at the subtle level (`recipes/swap.md`). Rotating Text and Scrolling Number render a `<div>`: in a heading or a line of text, give them `inline-block align-bottom` and check the baseline. Rotating Text plays its first word on mount: say so in the output when it sits in the first viewport.
 
 | Need                                                                             | Use              | Import                                                |
 | -------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------- |
@@ -40,6 +40,7 @@ These are the expressive choice for a value changing; at the subtle level a valu
 | A button that presses down                         | Button                              | `@animate-ui/react/primitives/buttons/button`                                                              |
 | Copy to clipboard, icon swapping for a check       | Copy Button                         | `@animate-ui/react/primitives/buttons/copy`                                                                |
 | A like or favorite that bursts                     | Icon Button                         | `@animate-ui/react/primitives/buttons/icon`                                                                |
+| A button showing loading, success, error           | `interactions/status-button.md`     |                                                                                                            |
 | A burst of particles around anything               | Particles                           | `@animate-ui/react/primitives/effects/particles`                                                           |
 | A ripple from the click point                      | Ripple Button                       | `@animate-ui/react/primitives/buttons/ripple`                                                              |
 | A fill rising on hover                             | Liquid Button                       | `@animate-ui/react/primitives/buttons/liquid`                                                              |
@@ -48,6 +49,8 @@ These are the expressive choice for a value changing; at the subtle level a valu
 | A visual effect where the pointer clicks           | Click                               | `@animate-ui/react/primitives/effects/click`                                                               |
 | A light sweeping across an element                 | Shine                               | `@animate-ui/react/primitives/effects/shine`                                                               |
 | Loading and status dots                            | Motion Grid                         | `@animate-ui/react/primitives/motion-grid`                                                                 |
+
+Icon Button: render the particles only while liked, aim them at the icon (`side`, `sideOffset`) and color them with a `text-*` class. A label toggling between two words beside it is Morphing Text, with a `min-width` for the longer word.
 
 ## Pointer and layout
 

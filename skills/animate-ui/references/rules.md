@@ -194,7 +194,7 @@ A tween on `ease.out` reads faster than its duration: most of the movement happe
 
 ### B4. Scale: press only, and from a size that fits
 
-- Pressables (buttons, radio, toggles) scale to `scale.press` (0.97) on `spring.press` while pressed; a whole card, tile or row is larger, so lighter: `scale.choice` (0.985). **The pressed element never scales on hover**: hover changes color, background, border or shadow, and the press answers the click. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
+- Pressables (buttons, radio, toggles) scale to `scale.press` (0.97) on `spring.press` while pressed; a whole card, tile or row is larger, so lighter: `scale.choice` (0.985). **The pressed element never scales on hover**: hover changes color, background, border or shadow, and the press answers the click. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click. A pressable whose hover lift is removed gets the lightest change in its own palette instead (its text color), named in the output as a style change.
 - A card may do more on hover, since it's a surface rather than a control: its image zooms inside it (to 1.05, clipped by the card), its shadow deepens, and it lifts 2px (`translateY(-2px)`, 4px at most): the shadow on `transition.color`, the lift and the zoom on `spring.highlight` so leaving retargets at once. The card itself still doesn't scale.
 - Anchored popups grow from their trigger, from farther when they are small: tooltips `scale.tooltip` (0.7), popovers and hover cards `scale.popover` (0.8), menus `scale.menu` (0.9).
 - A dialog tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)`.
@@ -232,6 +232,7 @@ A resize is smooth, never a distortion. Anything that changes size with `layout`
 - Give each child that would stretch `layout` (or `layout="position"` when it should only move), with the box's `layout` transition: Motion counters the box's scale on them. Set the box's `borderRadius` (and a shadow) in `style` or `animate`, not only in a class, so it's corrected too.
 - When the content can't be corrected (deep or library-rendered content, many children), resize another way: the height through Auto Height (catalog) or a disclosure's height animation, or don't resize the box and swap its content through a blur.
 - Check a frame mid-resize: nothing inside looks wider, narrower or bolder than at rest.
+- A bar growing to its value (a chart, a meter) slides inside a clipped track (`translateY` from 100%) on `spring.number`, never `scaleY`: a scale stretches its radius and its label.
 
 A changing text (a label, a status, a word, a number) also never scales: it fades, blurs or slides, at the level asked (feel.md, § Levels), subtle by default:
 
@@ -243,6 +244,7 @@ Go up a level when asked (the level question, "plus animé", feel.md's "bolder")
 
 - A text inside a box that resizes (a button whose label changes) takes `layout="position"`, as above.
 - A word changing inside a line moves its neighbours when its width changes; in a centered line the whole line jumps. Reserve the widest word's width (the words stacked in one grid cell, only the current one visible) or give the line `layout`, so nothing snaps.
+- Labels keep the app's language: wording quoted in another language in the request is a translation to make, not the label to write.
 - Icons still swap from `scale.icon` (B6), and a whole element may still scale with the text it holds (a card coming in, a badge bumping): the rule is about a text changing in place.
 
 ```tsx
