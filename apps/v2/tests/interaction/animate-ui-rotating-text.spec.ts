@@ -103,3 +103,82 @@ test.describe('animate-ui rotating text', () => {
       expect(['none', 'matrix(1, 0, 0, 1, 0, 0)']).toContain(t);
   });
 });
+
+test.describe('animate-ui rotating text align', () => {
+  const box = (page: Page) =>
+    page.evaluate(() => {
+      const container = document.querySelector(
+        '[data-slot="rotating-text-container"]',
+      )!;
+      const current = document.querySelector('[data-slot="rotating-text"]');
+      const range = document.createRange();
+      const rect = (node: Node) => {
+        range.selectNodeContents(node);
+        return range.getBoundingClientRect();
+      };
+      const frame = container.getBoundingClientRect();
+      const word = current ? rect(current) : null;
+      return {
+        width: Math.round(frame.width),
+        left: Math.round(frame.left),
+        right: Math.round(frame.right),
+        wordLeft: word ? Math.round(word.left) : null,
+        wordRight: word ? Math.round(word.right) : null,
+      };
+    });
+
+  for (const align of ['start', 'center', 'end'] as const)
+    test(`align="${align}" keeps the widest word's width and places each word at the ${align}`, async ({
+      page,
+    }) => {
+      await page.goto(`/tests/demos/animate-ui/rotating-text?align=${align}`, {
+        waitUntil: 'networkidle',
+      });
+      await hydrated(page, '[data-slot="rotating-text-container"]');
+      const widths = new Set<number>();
+      const seen = new Set<string>();
+      for (let i = 0; i < 40 && seen.size < 3; i++) {
+        const text = await word(page)
+          .first()
+          .textContent({ timeout: 300 })
+          .catch(() => null);
+        const now = await box(page);
+        widths.add(now.width);
+        if (text && now.wordLeft !== null && !seen.has(text)) {
+          await page.waitForTimeout(450);
+          const settled = await box(page);
+          if (align === 'start')
+            expect(Math.abs(settled.wordLeft! - settled.left)).toBeLessThan(2);
+          if (align === 'end')
+            expect(Math.abs(settled.right - settled.wordRight!)).toBeLessThan(
+              2,
+            );
+          if (align === 'center')
+            expect(
+              Math.abs(
+                settled.left +
+                  settled.right -
+                  settled.wordLeft! -
+                  settled.wordRight!,
+              ),
+            ).toBeLessThan(3);
+          seen.add(text);
+        }
+        await page.waitForTimeout(150);
+      }
+      expect(seen.size).toBe(3);
+      expect(widths.size).toBe(1);
+    });
+
+  test('without align, the container takes the width of the current word', async ({
+    page,
+  }) => {
+    await page.goto('/tests/demos/animate-ui/rotating-text', {
+      waitUntil: 'networkidle',
+    });
+    await hydrated(page, '[data-slot="rotating-text-container"]');
+    await expect(page.locator('[data-slot="rotating-text-frame"]')).toHaveCount(
+      0,
+    );
+  });
+});

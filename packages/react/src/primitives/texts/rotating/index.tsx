@@ -39,6 +39,7 @@ type RotatingTextContainerProps = React.ComponentProps<'div'> & {
   duration?: number;
   y?: number;
   delay?: number;
+  align?: 'start' | 'center' | 'end';
 } & UseIsInViewOptions;
 
 function RotatingTextContainer({
@@ -51,6 +52,8 @@ function RotatingTextContainer({
   inView = false,
   inViewMargin = '0px',
   inViewOnce = true,
+  align,
+  children,
   ...props
 }: RotatingTextContainerProps) {
   const [index, setIndex] = React.useState(0);
@@ -103,7 +106,43 @@ function RotatingTextContainer({
           ...style,
         }}
         {...props}
-      />
+      >
+        {align ? (
+          <div
+            data-slot="rotating-text-frame"
+            style={{
+              display: 'grid',
+              justifyItems: align,
+              alignItems: 'baseline',
+            }}
+          >
+            {[...new Set(texts)].map((item) => (
+              <span
+                key={item}
+                aria-hidden="true"
+                style={{
+                  gridArea: '1 / 1',
+                  visibility: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {item}
+              </span>
+            ))}
+            <div
+              style={{
+                gridArea: '1 / 1',
+                justifySelf: align,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {children}
+            </div>
+          </div>
+        ) : (
+          children
+        )}
+      </div>
     </RotatingTextProvider>
   );
 }

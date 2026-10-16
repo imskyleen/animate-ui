@@ -10,6 +10,10 @@ export const controls = {
     delay: { value: 0, min: 0, max: 3000, step: 100 },
     y: { value: -50, min: -100, max: 100, step: 10 },
     duration: { value: 2000, min: 1000, max: 5000, step: 100 },
+    align: {
+      value: "none",
+      options: { none: "none", start: "start", center: "center", end: "end" },
+    },
   },
 }
 
@@ -17,10 +21,12 @@ export default function RotatingTextDemo({
   delay = 0,
   y = -50,
   duration = 2000,
+  align = "none",
 }: {
   delay?: number
   y?: number
   duration?: number
+  align?: "none" | "start" | "center" | "end"
 }) {
   return (
     <RotatingTextContainer
@@ -29,6 +35,7 @@ export default function RotatingTextDemo({
       delay={delay}
       y={y}
       duration={duration}
+      align={align === "none" ? undefined : align}
     >
       <RotatingText />
     </RotatingTextContainer>

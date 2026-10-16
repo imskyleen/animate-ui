@@ -8,9 +8,9 @@ test('the intro draws the logo, then gives the page and its scroll back', async 
   await page.goto('/');
   const intro = page.locator('[data-slot="home-intro"]');
   await expect(intro).toBeVisible();
-  expect(
-    await page.evaluate(() => document.documentElement.style.overflow),
-  ).toBe('hidden');
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.style.overflow))
+    .toBe('hidden');
   await expect(intro).toHaveCount(0, { timeout: 5000 });
   expect(
     await page.evaluate(() => document.documentElement.style.overflow),
@@ -188,7 +188,7 @@ for (const viewport of [
     expect(cut).toEqual([]);
   });
 
-test('the hero cycles the library name with Rolling Text while the rest of the title stays still', async ({
+test('the hero cycles the library name inline with Rotating Text while the rest of the title stays still', async ({
   page,
 }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
@@ -198,28 +198,44 @@ test('the hero cycles the library name with Rolling Text while the rest of the t
   const heading = page.getByRole('heading', { level: 1 });
   await expect(heading).toContainText('Animate your');
   await expect(heading).toContainText('components in one command');
-  const library = heading.locator(
-    '[data-slot="hero-library"] [data-slot="rolling-text"]',
-  );
+  const library = heading.locator('[data-slot="rotating-text-container"]');
   await expect(library).toHaveCount(1);
   const shown = () =>
-    library.evaluate((el) => el.querySelector('.sr-only')!.textContent!.trim());
-  const lines = () =>
-    heading.evaluate((el) =>
-      [...el.children]
-        .filter((child) => child.getAttribute('data-slot') !== 'hero-library')
-        .map((child) => {
-          const box = child.getBoundingClientRect();
-          return `${Math.round(box.left)},${Math.round(box.top)},${Math.round(box.width)}`;
-        })
-        .join('|'),
-    );
+    heading
+      .locator('[data-slot="rotating-text"]')
+      .first()
+      .textContent({ timeout: 4000 });
+  const measure = () =>
+    heading.evaluate((el) => {
+      const range = document.createRange();
+      const box = (node: Node) => {
+        range.selectNodeContents(node);
+        const rect = range.getBoundingClientRect();
+        return [Math.round(rect.left), Math.round(rect.bottom)];
+      };
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      const words: Record<string, number[]> = {};
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        const text = node.textContent!.trim();
+        if (['your', 'command'].includes(text)) words[text] = box(node);
+      }
+      return words;
+    });
   await page.waitForTimeout(1500);
   const first = await shown();
-  const layout = await lines();
-  await expect.poll(shown, { timeout: 5000 }).not.toBe(first);
-  for (let i = 0; i < 6; i++) {
-    expect(await lines()).toBe(layout);
+  const layout = await measure();
+  const rotating = await heading
+    .locator('[data-slot="rotating-text"]')
+    .first()
+    .evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      return Math.round(range.getBoundingClientRect().bottom);
+    });
+  expect(rotating).toBe(layout.your![1]);
+  await expect.poll(shown, { timeout: 6000 }).not.toBe(first);
+  for (let i = 0; i < 8; i++) {
+    expect(await measure()).toEqual(layout);
     await page.waitForTimeout(60);
   }
 });

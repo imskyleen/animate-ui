@@ -1,9 +1,11 @@
 'use client';
 
-import { RollingText } from '@animate-ui/react/primitives/texts/rolling';
+import {
+  RotatingText,
+  RotatingTextContainer,
+} from '@animate-ui/react/primitives/texts/rotating';
 import { SplittingText } from '@animate-ui/react/primitives/texts/splitting';
 import { ease } from '@animate-ui/react/utils/motion';
-import { useEffect, useState } from 'react';
 
 const LIBRARIES = ['shadcn/ui', 'Radix UI', 'Base UI', 'React Aria'];
 
@@ -23,45 +25,40 @@ function Line({
   done: boolean;
   delay: number;
 }) {
-  if (!done) return <div className="invisible">{text}</div>;
-  return <SplittingText type="words" text={text} delay={delay} {...WORD_IN} />;
+  if (!done) return <span className="invisible">{text}</span>;
+  return (
+    <SplittingText
+      type="words"
+      text={text}
+      delay={delay}
+      className="inline"
+      {...WORD_IN}
+    />
+  );
 }
 
 function Library({ done }: { done: boolean }) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!done) return;
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % LIBRARIES.length),
-      2600,
-    );
-    return () => clearInterval(id);
-  }, [done]);
-
-  const library = LIBRARIES[index]!;
-
+  if (!done) return <span className="invisible">{LIBRARIES[0]}</span>;
   return (
-    <div data-slot="hero-library" className="py-1">
-      {done ? (
-        <RollingText
-          key={library}
-          text={library}
-          delay={index === 0 ? 250 : 0}
-          className="text-neutral-500 dark:text-neutral-400"
-        />
-      ) : (
-        <span className="invisible">{library}</span>
-      )}
-    </div>
+    <RotatingTextContainer
+      text={LIBRARIES}
+      duration={2600}
+      delay={900}
+      align="start"
+      style={{ display: 'inline-block', overflow: 'clip' }}
+    >
+      <RotatingText className="text-neutral-500 dark:text-neutral-400" />
+    </RotatingTextContainer>
   );
 }
 
 export function HeroTitle({ done }: { done: boolean }) {
   return (
     <h1 className="flex max-w-[860px] flex-col items-center text-4xl font-medium md:text-6xl">
-      <Line text="Animate your" done={done} delay={0} />
-      <Library done={done} />
+      <span className="text-center">
+        <Line text="Animate your" done={done} delay={0} />{' '}
+        <Library done={done} />
+      </span>
       <Line text="components in one command" done={done} delay={300} />
     </h1>
   );
