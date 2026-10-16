@@ -20,7 +20,7 @@ export function HomeHeader() {
   return (
     <header
       data-slot="home-header"
-      className="fixed inset-x-0 top-0 z-40 h-20 bg-background/80 backdrop-blur-md"
+      className="fixed inset-x-0 top-0 z-[70] h-20 bg-background/80 backdrop-blur-md"
     >
       <div className="mx-auto flex h-full max-w-[1200px] items-center gap-3 px-5">
         <Link href="/" aria-label="Animate UI" className="flex items-center">

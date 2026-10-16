@@ -321,3 +321,85 @@ test('the command block is built from Animate UI tabs, copy button and buttons',
       'button',
     );
 });
+
+test('the library name enters out of a blur like the rest of the title, without sliding in', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const samples: { blur: number; slide: number }[] = [];
+    (window as unknown as { samples: typeof samples }).samples = samples;
+    const start = performance.now();
+    const tick = () => {
+      const wrapper = document.querySelector('[data-slot="hero-library"]');
+      const word = document.querySelector(
+        '[data-slot="hero-library"] [data-slot="rotating-text"]',
+      );
+      if (wrapper && word) {
+        const style = getComputedStyle(wrapper);
+        const opacity = Number(style.opacity);
+        if (opacity > 0.02 && opacity < 0.98)
+          samples.push({
+            blur: Number(style.filter.match(/blur\(([\d.]+)px\)/)?.[1] ?? 0),
+            slide: Math.abs(
+              new DOMMatrix(getComputedStyle(word).transform).m42,
+            ),
+          });
+      }
+      if (performance.now() - start < 6000) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  await page.goto('/');
+  await page.waitForTimeout(6500);
+  const samples = await page.evaluate(
+    () =>
+      (window as unknown as { samples: { blur: number; slide: number }[] })
+        .samples,
+  );
+  expect(samples.length).toBeGreaterThan(5);
+  expect(Math.max(...samples.map((s) => s.blur))).toBeGreaterThan(4);
+  expect(Math.max(...samples.map((s) => s.slide))).toBeLessThan(1);
+});
+
+test('nothing covers the logo while it glides into the header', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const covered: string[] = [];
+    let seen = 0;
+    (window as unknown as { glide: unknown }).glide = {
+      covered,
+      seen: () => seen,
+    };
+    const start = performance.now();
+    const tick = () => {
+      const logo = document.querySelector(
+        '[data-slot="home-header"] a[aria-label="Animate UI"] > div',
+      );
+      if (logo) {
+        seen++;
+        const box = logo.getBoundingClientRect();
+        const top = document.elementFromPoint(
+          box.left + box.width * 0.08,
+          box.top + box.height / 2,
+        );
+        if (top && !logo.contains(top))
+          covered.push(top.getAttribute('data-slot') ?? top.tagName);
+      }
+      if (performance.now() - start < 5000) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  await page.goto('/');
+  await page.waitForTimeout(5500);
+  const { covered, seen } = await page.evaluate(() => {
+    const glide = (
+      window as unknown as {
+        glide: { covered: string[]; seen: () => number };
+      }
+    ).glide;
+    return { covered: glide.covered, seen: glide.seen() };
+  });
+  expect(seen).toBeGreaterThan(10);
+  expect(covered).toEqual([]);
+});

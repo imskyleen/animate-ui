@@ -6,6 +6,7 @@ import {
 } from '@animate-ui/react/primitives/texts/rotating';
 import { SplittingText } from '@animate-ui/react/primitives/texts/splitting';
 import { ease } from '@animate-ui/react/utils/motion';
+import { motion } from 'motion/react';
 
 const LIBRARIES = ['shadcn/ui', 'Radix UI', 'Base UI', 'React Aria'];
 
@@ -38,17 +39,24 @@ function Line({
 }
 
 function Library({ done }: { done: boolean }) {
-  if (!done) return <span className="invisible">{LIBRARIES[0]}</span>;
   return (
-    <RotatingTextContainer
-      text={LIBRARIES}
-      duration={2600}
-      delay={900}
-      align="start"
-      style={{ display: 'inline-block', overflow: 'clip' }}
+    <motion.span
+      data-slot="hero-library"
+      className="inline-block"
+      initial={WORD_IN.initial}
+      animate={done ? WORD_IN.animate : WORD_IN.initial}
+      transition={{ ...WORD_IN.transition, delay: 2 * WORD_IN.stagger }}
     >
-      <RotatingText className="text-neutral-500 dark:text-neutral-400" />
-    </RotatingTextContainer>
+      <RotatingTextContainer
+        text={done ? LIBRARIES : LIBRARIES.slice(0, 1)}
+        duration={2600}
+        delay={1400}
+        align="start"
+        style={{ display: 'inline-block', overflow: 'clip' }}
+      >
+        <RotatingText className="text-neutral-500 dark:text-neutral-400" />
+      </RotatingTextContainer>
+    </motion.span>
   );
 }
 
