@@ -14,6 +14,15 @@ type MicProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
+    capsule: {
+      initial: { x: 0 },
+      animate: {
+        x: [0, -0.4, 0.4, -0.4, 0.4, -0.2, 0.2, 0],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  wiggle: {
     group: {
       initial: { rotate: 0, transformOrigin: '50% 100%' },
       animate: {
@@ -41,10 +50,13 @@ function IconComponent({ size, ...props }: MicProps) {
       {...props}
     >
       <motion.g variants={variants.group} initial="initial" animate={controls}>
-        <path
+        <motion.path
           d="M7 6.5C7 4.01472 9.01472 2 11.5 2C13.9853 2 16 4.01472 16 6.5V11.5C16 13.9853 13.9853 16 11.5 16C9.01472 16 7 13.9853 7 11.5V6.5Z"
           strokeLinecap="round"
           strokeLinejoin="round"
+          variants={variants.capsule}
+          initial="initial"
+          animate={controls}
         />
         <path
           d="M11.5 19H11.0828C7.57267 19 4.57706 16.4623 4 13"

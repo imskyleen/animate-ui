@@ -15,6 +15,58 @@ type Coffee02Props = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     steam1: {
+      initial: { pathLength: 1, pathOffset: 0, x: 0, y: 0, opacity: 1 },
+      animate: {
+        pathLength: [1, 0.01, 0.01, 1],
+        pathOffset: [0, 0, 0.99, 0],
+        y: [0, -1, 0, 0],
+        x: [0, 0.3, -0.3, 0],
+        opacity: [1, 0.2, 0.2, 1],
+        transition: {
+          duration: 1.2,
+          ease: 'easeInOut',
+          times: [0, 0.5, 0.5, 1],
+          x: { duration: 1.2, ease: 'easeInOut' },
+        },
+      },
+    },
+    steam2: {
+      initial: { pathLength: 1, pathOffset: 0, x: 0, y: 0, opacity: 1 },
+      animate: {
+        pathLength: [1, 0.01, 0.01, 1],
+        pathOffset: [0, 0, 0.99, 0],
+        y: [0, -1, 0, 0],
+        x: [0, 0.3, -0.3, 0],
+        opacity: [1, 0.2, 0.2, 1],
+        transition: {
+          duration: 1.2,
+          ease: 'easeInOut',
+          times: [0, 0.5, 0.5, 1],
+          delay: 0.2,
+          x: { duration: 1.2, ease: 'easeInOut', delay: 0.2 },
+        },
+      },
+    },
+    steam3: {
+      initial: { pathLength: 1, pathOffset: 0, x: 0, y: 0, opacity: 1 },
+      animate: {
+        pathLength: [1, 0.01, 0.01, 1],
+        pathOffset: [0, 0, 0.99, 0],
+        y: [0, -1, 0, 0],
+        x: [0, 0.3, -0.3, 0],
+        opacity: [1, 0.2, 0.2, 1],
+        transition: {
+          duration: 1.2,
+          ease: 'easeInOut',
+          times: [0, 0.5, 0.5, 1],
+          delay: 0.4,
+          x: { duration: 1.2, ease: 'easeInOut', delay: 0.4 },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  float: {
+    steam1: {
       initial: { y: 0, opacity: 1 },
       animate: {
         y: [0, -1, 0],

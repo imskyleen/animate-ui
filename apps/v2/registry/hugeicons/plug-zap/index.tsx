@@ -12,8 +12,31 @@ import {
 
 type PlugZapProps = IconProps<keyof typeof animations>;
 
+const PLUG: Variants = {
+  initial: { x: 0, y: 0 },
+  animate: {
+    x: [0, 1.2, 1.2, 0],
+    y: [0, -1.2, -1.2, 0],
+    transition: { duration: 0.8, ease: 'easeInOut', times: [0, 0.3, 0.55, 1] },
+  },
+};
+
 const animations = {
   default: {
+    path1: PLUG,
+    path2: PLUG,
+    path3: PLUG,
+    path4: PLUG,
+    path5: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.5, 1, 0.7, 1],
+        scale: [1, 1.2, 0.95, 1.08, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  flicker: {
     path1: {},
     path2: {},
     path3: {},

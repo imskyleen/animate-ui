@@ -12,60 +12,68 @@ import {
 
 type RadioProps = IconProps<keyof typeof animations>;
 
+const waves = (
+  wave: (ring: number, side: number) => Variants,
+): Record<string, Variants> =>
+  Object.fromEntries(
+    [1, 2, 3, 4].map((i) => [`path${i}`, wave((i - 1) % 2, i <= 2 ? 1 : -1)]),
+  );
+
 const animations = {
-  default: (() => {
-    const animation: Record<string, Variants> = {};
-
-    for (let i = 1; i <= 2; i++) {
-      animation[`path${i}`] = {
-        initial: { opacity: 1, scale: 1 },
-        animate: {
-          opacity: [1, 0.25, 1],
-          scale: [1, 0.85, 1],
-          transition: {
-            duration: 0.5,
-            ease: 'easeInOut',
-            delay: 0.15 * (i - 1),
-          },
+  default: {
+    ...waves((ring, side) => ({
+      initial: { opacity: 1, x: 0 },
+      animate: {
+        opacity: [1, 0.4, 1],
+        x: [0, side * 0.8, 0],
+        transition: {
+          duration: 0.5,
+          ease: 'easeInOut',
+          delay: 0.1 + 0.15 * ring,
         },
-      };
-    }
-
-    return animation;
-  })() satisfies Record<string, Variants>,
-  blink: (() => {
-    const animation: Record<string, Variants> = {};
-
-    for (let i = 1; i <= 2; i++) {
-      animation[`path${i}`] = {
-        initial: { opacity: 1, scale: 1 },
-        animate: {
-          opacity: 0,
-          scale: 0,
-          transition: {
-            opacity: {
-              duration: 0.2,
-              ease: 'easeInOut',
-              repeat: 1,
-              repeatType: 'reverse',
-              repeatDelay: 0.2,
-              delay: 0.2 * (i - 1),
-            },
-            scale: {
-              duration: 0.2,
-              ease: 'easeInOut',
-              repeat: 1,
-              repeatType: 'reverse',
-              repeatDelay: 0.2,
-              delay: 0.2 * (i - 1),
-            },
-          },
+      },
+    })),
+    circle: {
+      initial: { scale: 1 },
+      animate: {
+        scale: [1, 1.15, 0.96, 1.06, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  pulse: waves((ring) => ({
+    initial: { opacity: 1, scale: 1 },
+    animate: {
+      opacity: [1, 0.25, 1],
+      scale: [1, 0.85, 1],
+      transition: { duration: 0.5, ease: 'easeInOut', delay: 0.15 * ring },
+    },
+  })) satisfies Record<string, Variants>,
+  blink: waves((ring) => ({
+    initial: { opacity: 1, scale: 1 },
+    animate: {
+      opacity: 0,
+      scale: 0,
+      transition: {
+        opacity: {
+          duration: 0.2,
+          ease: 'easeInOut',
+          repeat: 1,
+          repeatType: 'reverse',
+          repeatDelay: 0.2,
+          delay: 0.2 * ring,
         },
-      };
-    }
-
-    return animation;
-  })() satisfies Record<string, Variants>,
+        scale: {
+          duration: 0.2,
+          ease: 'easeInOut',
+          repeat: 1,
+          repeatType: 'reverse',
+          repeatDelay: 0.2,
+          delay: 0.2 * ring,
+        },
+      },
+    },
+  })) satisfies Record<string, Variants>,
 } as const;
 
 function IconComponent({ size, ...props }: RadioProps) {
@@ -99,13 +107,13 @@ function IconComponent({ size, ...props }: RadioProps) {
       />
       <motion.path
         d="M7.753 16.239a6 6 0 0 1 0-8.478"
-        variants={variants.path1}
+        variants={variants.path3}
         initial="initial"
         animate={controls}
       />
       <motion.path
         d="M4.925 19.067a10 10 0 0 1 0-14.134"
-        variants={variants.path2}
+        variants={variants.path4}
         initial="initial"
         animate={controls}
       />

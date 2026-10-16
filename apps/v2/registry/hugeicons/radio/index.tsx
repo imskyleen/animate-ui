@@ -15,6 +15,16 @@ type RadioProps = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     path1: {
+      initial: { scale: 1 },
+      animate: {
+        scale: [1, 1.15, 0.96, 1.06, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+    path2: {},
+  } satisfies Record<string, Variants>,
+  pulse: {
+    path1: {
       initial: { opacity: 1, scale: 1 },
       animate: {
         opacity: [1, 0.25, 1],
