@@ -83,10 +83,15 @@ export function CopyCommand() {
             </TabsContent>
           ))}
         </TabsContents>
+        <span
+          aria-hidden="true"
+          data-slot="command-cover"
+          className="pointer-events-none absolute inset-y-px right-px w-16 rounded-r-[calc(var(--radius-xl)-1px)] bg-linear-to-r from-transparent via-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] via-40% to-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))]"
+        />
         <CopyButton
           content={command(manager as Manager)}
           aria-label="Copy the command"
-          className="absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg bg-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] text-muted-foreground transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:right-full before:w-6 before:bg-linear-to-l before:from-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] before:to-transparent after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-[calc(--spacing(1.5)-1px)] after:bg-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] hover:bg-accent hover:text-foreground"
+          className="absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
           <CopyButtonIcon
             icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} size={16} />}

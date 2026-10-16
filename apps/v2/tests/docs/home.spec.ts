@@ -317,26 +317,25 @@ test('the command block is built from Animate UI tabs, copy button and buttons',
   );
   const copy = hero.locator('[data-slot="copy-button"]');
   expect(
-    await copy.evaluate((el) => ({
-      inPane: !!el.closest('[data-slot="tabs-content"]'),
-      opaque:
-        /^(rgb|oklab|lab|oklch|color)\((?!.*\/ ?0?\.\d)/.test(
-          getComputedStyle(el).backgroundColor,
-        ) && getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)',
-    })),
-  ).toEqual({ inPane: false, opaque: true });
+    await copy.evaluate((el) => !!el.closest('[data-slot="tabs-content"]')),
+  ).toBe(false);
   const edges = await copy.evaluate((button) => {
-    const frame = button.parentElement!.querySelector(
-      '[data-slot="tabs-contents"]',
-    )!;
+    const wrapper = button.parentElement!;
+    const frame = wrapper.querySelector('[data-slot="tabs-contents"]')!;
+    const cover = wrapper
+      .querySelector('[data-slot="command-cover"]')!
+      .getBoundingClientRect();
     const box = frame.getBoundingClientRect();
-    const border = parseFloat(getComputedStyle(frame).borderRightWidth);
-    const cover =
-      button.getBoundingClientRect().right +
-      parseFloat(getComputedStyle(button, '::after').width);
-    return { cover, inner: box.right - border };
+    const style = getComputedStyle(frame);
+    return {
+      right: box.right - parseFloat(style.borderRightWidth) - cover.right,
+      top: cover.top - (box.top + parseFloat(style.borderTopWidth)),
+      bottom: box.bottom - parseFloat(style.borderBottomWidth) - cover.bottom,
+      under: button.getBoundingClientRect().left - 8 - cover.left,
+    };
   });
-  expect(edges.cover).toBeLessThanOrEqual(edges.inner + 0.25);
+  for (const gap of Object.values(edges))
+    expect(gap).toBeGreaterThanOrEqual(-0.01);
   await copy.click();
   await expect(copy).toHaveAttribute('data-copied', '');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
