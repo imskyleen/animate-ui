@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
@@ -32,6 +33,35 @@ test('every card has its clip and first frame, in both themes', () => {
     ),
   );
   expect(missing).toEqual([]);
+});
+
+test('no dark clip starts on a white frame', () => {
+  const bright = ['primitives', 'backgrounds'].flatMap((folder) =>
+    readdirSync(path.join(previews, folder))
+      .filter(
+        (file) => file.endsWith('-dark.webm') && !file.startsWith('theme-'),
+      )
+      .filter((file) => {
+        const pixels = execFileSync('ffmpeg', [
+          '-loglevel',
+          'error',
+          '-i',
+          path.join(previews, folder, file),
+          '-vf',
+          String.raw`select=eq(n\,0)+eq(n\,30),scale=1:1,format=gray`,
+          '-fps_mode',
+          'passthrough',
+          '-frames:v',
+          '2',
+          '-f',
+          'rawvideo',
+          '-',
+        ]);
+        return pixels[0]! - pixels[1]! > 60;
+      })
+      .map((file) => `${folder}/${file}`),
+  );
+  expect(bright).toEqual([]);
 });
 
 test('the Primitives page is one card per primitive, opening its page', async ({

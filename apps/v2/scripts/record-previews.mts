@@ -800,11 +800,19 @@ async function record(
       maxHeight: OUTPUT.height,
     });
 
+  let painted = 0;
   if (preview.mount) {
     await page.reload({ waitUntil: 'commit' });
     await startScreencast();
     await page.waitForLoadState('domcontentloaded');
     await page.addStyleTag({ content: layout(preview) });
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
+    painted = Date.now();
     await page.waitForLoadState('networkidle');
     if (preview.play) await preview.play(page);
   } else {
@@ -816,6 +824,8 @@ async function record(
   const end = Date.now();
   await cdp.send('Page.stopScreencast');
   await context.close();
+  const shown = frames.filter((frame) => frame.time >= painted);
+  frames.splice(0, frames.length - shown.length);
   if (!frames.length) throw new Error('no frames');
 
   const first = frames[0]!.time;
