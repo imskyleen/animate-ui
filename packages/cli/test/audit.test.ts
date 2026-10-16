@@ -277,3 +277,43 @@ test('a file that does not parse is named, not silently skipped', () => {
     "Couldn't parse, so not read: src/broken.tsx",
   );
 });
+
+test('CSS hover: a scale counts as a hover scale; a reduced-motion override or a transform reset is not a hover that moves', () => {
+  write(
+    'src/tiles.css',
+    `.tile:hover { transform: scale(1.05); }
+@media (prefers-reduced-motion: reduce) {
+  .tile:hover { transform: none; }
+}
+.chip:hover { transform: none; }
+`,
+  );
+  expect(facts('src/tiles.css', 'hover-scale').map((f) => f.line)).toEqual([1]);
+  expect(facts('src/tiles.css', 'hover-not-gated').map((f) => f.line)).toEqual([
+    1,
+  ]);
+});
+
+test('only an app-wide reduced-motion setting is listed as project-wide', () => {
+  write(
+    'src/widget.tsx',
+    `export const W = () => <ReducedMotionConfig><motion.div animate={{ x: 1 }} /></ReducedMotionConfig>;`,
+  );
+  write(
+    'src/local.css',
+    `@media (prefers-reduced-motion: reduce) { .tile { transition: none; } }\n`,
+  );
+  expect(runAudit(root).reducedMotion.project).toEqual([]);
+  write(
+    'src/providers.tsx',
+    `export const P = ({ children }) => <ReducedMotionConfig>{children}</ReducedMotionConfig>;`,
+  );
+  write(
+    'src/global.css',
+    `@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }\n`,
+  );
+  expect(runAudit(root).reducedMotion.project).toEqual([
+    'src/global.css',
+    'src/providers.tsx',
+  ]);
+});

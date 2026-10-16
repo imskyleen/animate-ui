@@ -185,8 +185,8 @@ const REDUCED = [
 ];
 const PROJECT_REDUCED = [
   /<MotionConfig[^>]*reducedMotion\s*=\s*["{]/,
-  /<ReducedMotionConfig\b/,
-  /@media[^{]*prefers-reduced-motion/,
+  /<ReducedMotionConfig[^>]*>\s*\{\s*(props\.)?children\s*\}/,
+  /@media[^{]*prefers-reduced-motion[^{]*\{\s*(\*|html|:root|body)[\s,{:]/,
 ];
 const LONG = 0.4;
 
@@ -266,21 +266,36 @@ function mediaBlocks(text: string) {
 function auditCss(file: string, text: string, facts: Fact[]) {
   const media = mediaBlocks(text);
   for (const match of text.matchAll(/([^{};]*:hover[^{]*)\{([^}]*)\}/g)) {
-    if (!/\b(transform|translate|scale|rotate)\s*:/.test(match[2] ?? ''))
+    const body = match[2] ?? '';
+    if (!/\b(transform|translate|scale|rotate)\s*:/.test(body)) continue;
+    const inside = (query: RegExp) =>
+      media.some(
+        (block) =>
+          block.start < match.index &&
+          block.end > match.index &&
+          query.test(block.query),
+      );
+    if (inside(/prefers-reduced-motion\s*:\s*reduce/)) continue;
+    if (/\b(transform|translate|scale|rotate)\s*:\s*none\s*(;|$)/.test(body))
       continue;
-    const gated = media.some(
-      (block) =>
-        block.start < match.index &&
-        block.end > match.index &&
-        /hover\s*:\s*hover/.test(block.query),
+    const line = lineAt(
+      text,
+      match.index + (match[0].length - match[0].trimStart().length),
     );
-    if (!gated)
+    const grows =
+      body.match(/\bscale\s*:\s*([\d.]+)/)?.[1] ??
+      body.match(/scale[XY]?\(\s*([\d.]+)/)?.[1];
+    if (grows !== undefined && Number(grows) !== 1)
       facts.push({
         file,
-        line: lineAt(
-          text,
-          match.index + (match[0].length - match[0].trimStart().length),
-        ),
+        line,
+        kind: 'hover-scale',
+        detail: `${(match[1] ?? '').trim()} scales to ${grows} on hover`,
+      });
+    if (!inside(/hover\s*:\s*hover/))
+      facts.push({
+        file,
+        line,
         kind: 'hover-not-gated',
         detail: `${(match[1] ?? '').trim()} moves on hover outside @media (hover: hover): a tap on a touch screen leaves it there`,
       });
