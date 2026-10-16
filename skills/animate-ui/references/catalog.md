@@ -21,17 +21,17 @@ Check this list before writing motion by hand: when one of these does the job, u
 
 Counting Number for stats and Rotating Text for words cycling on a timer fit every level; only a value changing in place after an action swaps at the subtle level (`recipes/swap.md`). Rotating Text and Scrolling Number render a `<div>`: in a heading or a line of text, give them `inline-block align-bottom` and check the baseline. Rotating Text plays its first word on mount: say so in the output when it sits in the first viewport.
 
-| Need                                                                             | Use              | Import                                                |
-| -------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------- |
-| A number counting up to its value (stats, totals)                                | Counting Number  | `@animate-ui/react/primitives/texts/counting-number`  |
-| Digits rolling to a new value, like an odometer                                  | Sliding Number   | `@animate-ui/react/primitives/texts/sliding-number`   |
-| A wheel of numbers settling on a value                                           | Scrolling Number | `@animate-ui/react/primitives/texts/scrolling-number` |
-| Words taking turns in place (reserve the widest word's width in a centered line) | Rotating Text    | `@animate-ui/react/primitives/texts/rotating`         |
-| One string morphing into the next                                                | Morphing Text    | `@animate-ui/react/primitives/texts/morphing`         |
-| Letters rolling over, like a flip board                                          | Rolling Text     | `@animate-ui/react/primitives/texts/rolling`          |
-| A highlighter sweep behind text                                                  | Highlight Text   | `@animate-ui/react/primitives/texts/highlight`        |
-| A glint running across text                                                      | Shimmering Text  | `@animate-ui/react/primitives/texts/shimmering`       |
-| A gradient sweeping across text                                                  | Gradient Text    | `@animate-ui/react/primitives/texts/gradient`         |
+| Need                                                                                             | Use              | Import                                                |
+| ------------------------------------------------------------------------------------------------ | ---------------- | ----------------------------------------------------- |
+| A number counting up to its value (stats, totals)                                                | Counting Number  | `@animate-ui/react/primitives/texts/counting-number`  |
+| Digits rolling to a new value, like an odometer                                                  | Sliding Number   | `@animate-ui/react/primitives/texts/sliding-number`   |
+| A wheel of numbers settling on a value                                                           | Scrolling Number | `@animate-ui/react/primitives/texts/scrolling-number` |
+| Words taking turns in place (inside a line of text: `recipes/swap.md`, a word cycling in a line) | Rotating Text    | `@animate-ui/react/primitives/texts/rotating`         |
+| One string morphing into the next                                                                | Morphing Text    | `@animate-ui/react/primitives/texts/morphing`         |
+| Letters rolling over, like a flip board                                                          | Rolling Text     | `@animate-ui/react/primitives/texts/rolling`          |
+| A highlighter sweep behind text                                                                  | Highlight Text   | `@animate-ui/react/primitives/texts/highlight`        |
+| A glint running across text                                                                      | Shimmering Text  | `@animate-ui/react/primitives/texts/shimmering`       |
+| A gradient sweeping across text                                                                  | Gradient Text    | `@animate-ui/react/primitives/texts/gradient`         |
 
 ## Buttons and feedback
 

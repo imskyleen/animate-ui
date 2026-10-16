@@ -137,6 +137,8 @@ Recipes and the gate table are for C; on B the primitive brings its own motion.
 
 ## Verify
 
+With a browser, look at frames in the middle of each animation, not only at rest: nothing passes over a label it shouldn't, the words around a change don't move, text keeps its baseline, and every part that changes state animates (a chevron that flips at once is a miss).
+
 - Run the type-check before touching anything, even for a one-line swap: its output is the before.
 - Every quality item of the checklist in `references/rules.md` passes; style deviations are named.
 - Reduced motion (OS setting or Playwright `emulateMedia({ reducedMotion: 'reduce' })`): things still appear and disappear, nothing moves.

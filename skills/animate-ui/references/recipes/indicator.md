@@ -6,6 +6,7 @@ Purpose: spatial, the selection moves between items.
 
 - A shared element with `layoutId` (Animate UI's `Highlight` in children mode) on `spring.selection`: the new surface slides from the previous one while the old copy fades out 200ms later. A spring keeps fast clicking smooth: it retargets with its velocity.
 - The keyboard moves it like a click.
+- The labels stay above it: `relative z-10` on each label. Without it, a surface moving to a later item passes over the earlier items' labels (it's later in the DOM). Check a frame mid-move.
 - Never follow an item by animating `top`, `left`, `width` or `height`.
 - Base UI Tabs don't select on focus since 1.0 (`activateOnFocus` is `false`): arrow keys move focus, Enter or Space selects.
 - `ReducedMotionConfig` around the Root turns the `layoutId` move into a jump.

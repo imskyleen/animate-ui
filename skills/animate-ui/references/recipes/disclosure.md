@@ -71,5 +71,5 @@ details[open]::details-content {
 ```
 
 - Its edge fade is a plain 16px mask while open: CSS can't measure the part still hidden. Give the content 16px of bottom padding so the fade falls on empty space at rest.
-- Its marker stays, unless the project already replaces it (`list-style: none` with its own chevron, which then turns on the same timing).
+- Its marker turns with the opening: a native marker can't animate, so hide it (`list-style: none`, `summary::-webkit-details-marker { display: none }`) and draw the same triangle as `summary::before` (`content: '▶'`, `display: inline-block`), turning `rotate: 90deg` on `[open]` on the same timing. Under reduced motion it turns at once. A project that already draws its own chevron turns that one.
 - Browsers without `::details-content` or `interpolate-size` open and close at once, still usable.
