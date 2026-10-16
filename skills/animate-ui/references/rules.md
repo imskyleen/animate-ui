@@ -242,6 +242,7 @@ A changing text (a label, a status, a word, a number) also never scales: it fade
 Go up a level when asked (the level question, "plus animé", feel.md's "bolder") or when the text is the point of the page.
 
 - A text inside a box that resizes (a button whose label changes) takes `layout="position"`, as above.
+- A word changing inside a line moves its neighbours when its width changes; in a centered line the whole line jumps. Reserve the widest word's width (the words stacked in one grid cell, only the current one visible) or give the line `layout`, so nothing snaps.
 - Icons still swap from `scale.icon` (B6), and a whole element may still scale with the text it holds (a card coming in, a badge bumping): the rule is about a text changing in place.
 
 ```tsx
