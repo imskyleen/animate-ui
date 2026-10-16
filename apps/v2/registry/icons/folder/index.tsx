@@ -12,8 +12,24 @@ import {
 
 type FolderProps = IconProps<keyof typeof animations>;
 
+const CLOSED_FRONT =
+  'M20 20 a2 2 0 0 0 2 -2 V8 a2 2 0 0 0 -2 -2 h-7.9 a2 2 0 0 1 -1.69 -0.9 L9.6 3.9 A2 2 0 0 0 7.93 3 H4 a2 2 0 0 0 -2 2 v13 a2 2 0 0 0 2 2 Z';
+const OPEN_FRONT =
+  'M20 20 a2 2 0 0 0 2 -2 V11 a2 2 0 0 0 -2 -2 h-7.9 a20 20 0 0 1 -1.69 0 L9.6 9 A20 20 0 0 0 7.93 9 H4 a2 2 0 0 0 -2 2 v7 a2 2 0 0 0 2 2 Z';
+
 const animations = {
   default: {
+    group: {},
+    back: {},
+    path: {
+      initial: { d: CLOSED_FRONT },
+      animate: {
+        d: [CLOSED_FRONT, OPEN_FRONT, CLOSED_FRONT],
+        transition: { duration: 0.6, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  wiggle: {
     group: {
       initial: {
         scale: 1,
@@ -27,6 +43,7 @@ const animations = {
         transition: { duration: 0.5, ease: 'easeInOut' },
       },
     },
+    back: {},
     path: {},
   } satisfies Record<string, Variants>,
   bounce: {
@@ -41,6 +58,7 @@ const animations = {
         transition: { duration: 0.5, ease: 'easeInOut' },
       },
     },
+    back: {},
     path: {},
   } satisfies Record<string, Variants>,
   fill: {
@@ -57,6 +75,7 @@ const animations = {
         transition: { duration: 0.5, ease: 'easeInOut' },
       },
     },
+    back: {},
     path: {
       initial: {
         fill: 'currentColor',
@@ -89,7 +108,13 @@ function IconComponent({ size, ...props }: FolderProps) {
     >
       <motion.g variants={variants.group} initial="initial" animate={controls}>
         <motion.path
-          d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+          d={CLOSED_FRONT}
+          variants={variants.back}
+          initial="initial"
+          animate={controls}
+        />
+        <motion.path
+          d={CLOSED_FRONT}
           variants={variants.path}
           initial="initial"
           animate={controls}

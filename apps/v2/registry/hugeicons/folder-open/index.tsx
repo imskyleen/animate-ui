@@ -15,6 +15,21 @@ type FolderOpenProps = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     front: {
+      initial: { scaleY: 1, skewX: 0, transformOrigin: '50% 100%' },
+      animate: {
+        scaleY: [1, 0.8, 1.04, 1],
+        skewX: [0, -6, 1.5, 0],
+        transformOrigin: '50% 100%',
+        transition: {
+          duration: 0.6,
+          times: [0, 0.45, 0.8, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  squash: {
+    front: {
       initial: { scaleY: 1, transformOrigin: '50% 100%' },
       animate: {
         scaleY: [1, 0.78, 1],
