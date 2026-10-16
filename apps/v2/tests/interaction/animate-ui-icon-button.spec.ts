@@ -153,7 +153,10 @@ test.describe('animate-ui icon button', () => {
     await page.mouse.up();
     const values = await scales;
     expect(values.some((v) => v > 0.971 && v < 0.999)).toBe(true);
-    expect(values.at(-1)).toBeCloseTo(1, 3);
+    expect(Math.min(...values)).toBeGreaterThan(0.969);
+    await expect
+      .poll(async () => (await sample(page, SELECTOR)).scale)
+      .toBeCloseTo(1, 3);
     await expect(particles(page)).toHaveCount(6);
   });
 
