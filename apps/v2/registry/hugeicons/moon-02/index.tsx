@@ -17,6 +17,15 @@ const animations = {
     path: {
       initial: { rotate: 0, transition: { duration: 0.5, ease: 'easeInOut' } },
       animate: {
+        rotate: [0, -15, 8, -3, 0],
+        transition: { duration: 0.9, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  spin: {
+    path: {
+      initial: { rotate: 0, transition: { duration: 0.5, ease: 'easeInOut' } },
+      animate: {
         rotate: [0, -30, 400, 360],
         transition: {
           duration: 1.2,

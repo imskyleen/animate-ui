@@ -15,6 +15,29 @@ type MoonStarProps = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     path1: {
+      initial: { rotate: 0, transition: { duration: 0.5, ease: 'easeInOut' } },
+      animate: {
+        rotate: [0, -15, 8, -3, 0],
+        transition: { duration: 0.9, ease: 'easeInOut' },
+      },
+    },
+    group: {
+      initial: { scale: 1, opacity: 1 },
+      animate: {
+        scale: [1, 0.6, 1.2, 1],
+        opacity: [1, 0.5, 1, 1],
+        transition: {
+          duration: 0.9,
+          ease: 'easeInOut',
+          times: [0, 0.35, 0.7, 1],
+        },
+      },
+    },
+    path2: {},
+    path3: {},
+  } satisfies Record<string, Variants>,
+  spin: {
+    path1: {
       initial: {
         rotate: 0,
         transition: { duration: 0 },
