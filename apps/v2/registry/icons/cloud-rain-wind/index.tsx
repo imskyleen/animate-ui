@@ -13,28 +13,24 @@ import {
 type CloudRainWindProps = IconProps<keyof typeof animations>;
 
 const rainAnimation: Variants = {
-  initial: {
-    opacity: 1,
-  },
-  animate: {
-    opacity: [1, 0.4, 1],
+  initial: { x: 0, y: 0, opacity: 1 },
+  animate: (i: number = 0) => ({
+    x: [0, -0.43, 0.43, 0],
+    y: [0, 1, -1, 0],
+    opacity: [1, 0, 0, 1],
     transition: {
       duration: 1.2,
+      times: [0, 0.4, 0.4, 1],
+      ease: ['easeIn', 'linear', 'easeOut'],
       repeat: Infinity,
-      ease: 'easeInOut',
+      delay: i * 0.3,
     },
-  },
+  }),
 };
 
 const animations = {
   default: {
-    group: {
-      animate: {
-        transition: {
-          staggerChildren: 0.3,
-        },
-      },
-    },
+    group: {},
     path1: {},
     path2: rainAnimation,
     path3: rainAnimation,
@@ -68,9 +64,9 @@ function IconComponent({ size, ...props }: CloudRainWindProps) {
         animate={controls}
       />
       <motion.g variants={variants.group} initial="initial" animate={controls}>
-        <motion.path d="m9.2 22 3-7" variants={variants.path2} />
-        <motion.path d="m9 13-3 7" variants={variants.path3} />
-        <motion.path d="m17 13-3 7" variants={variants.path4} />
+        <motion.path d="m9.2 22 3-7" variants={variants.path2} custom={0} />
+        <motion.path d="m9 13-3 7" variants={variants.path3} custom={1} />
+        <motion.path d="m17 13-3 7" variants={variants.path4} custom={2} />
       </motion.g>
     </motion.svg>
   );

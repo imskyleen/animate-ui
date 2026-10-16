@@ -13,17 +13,18 @@ import {
 type CloudSunRainProps = IconProps<keyof typeof animations>;
 
 const rainAnimation: Variants = {
-  initial: {
-    opacity: 1,
-  },
-  animate: {
-    opacity: [1, 0.4, 1],
+  initial: { y: 0, opacity: 1 },
+  animate: (i: number = 0) => ({
+    y: [0, 1, -1, 0],
+    opacity: [1, 0, 0, 1],
     transition: {
       duration: 0.8,
+      times: [0, 0.4, 0.4, 1],
+      ease: ['easeIn', 'linear', 'easeOut'],
       repeat: Infinity,
-      ease: 'easeInOut',
+      delay: i * 0.3,
     },
-  },
+  }),
 };
 
 const animations = {
@@ -31,13 +32,7 @@ const animations = {
     const animation: Record<string, Variants> = {
       path1: {},
       path2: {},
-      group: {
-        animate: {
-          transition: {
-            staggerChildren: 0.3,
-          },
-        },
-      },
+      group: {},
       path3: rainAnimation,
       path4: rainAnimation,
     };
@@ -94,8 +89,8 @@ function IconComponent({ size, ...props }: CloudSunRainProps) {
       />
 
       <motion.g variants={variants.group} initial="initial" animate={controls}>
-        <motion.path d="M7 19v2" variants={variants.path3} />
-        <motion.path d="M11 20v2" variants={variants.path4} />
+        <motion.path d="M7 19v2" variants={variants.path3} custom={0} />
+        <motion.path d="M11 20v2" variants={variants.path4} custom={1} />
       </motion.g>
 
       <motion.line

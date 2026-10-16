@@ -13,14 +13,22 @@ import {
 type CloudSnowProps = IconProps<keyof typeof animations>;
 
 const snowAnimation: Variants = {
-  initial: { opacity: 1 },
+  initial: { x: 0, y: 0, opacity: 1 },
   animate: (i: number = 0) => ({
-    opacity: [1, 0.4, 1],
+    x: [0, 0.5, 0, -0.5, 0],
+    y: [0, 1.5, -1, 0],
+    opacity: [1, 0, 0, 1],
     transition: {
-      duration: 1.2,
-      ease: 'easeInOut',
+      duration: 2,
+      times: [0, 0.5, 0.5, 1],
+      ease: ['linear', 'linear', 'easeOut'],
       repeat: Infinity,
-      delay: i * 0.2,
+      delay: i * 0.3,
+      x: {
+        inherit: true,
+        times: [0, 0.25, 0.5, 0.75, 1],
+        ease: 'easeInOut',
+      },
     },
   }),
 };

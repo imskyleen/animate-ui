@@ -13,28 +13,23 @@ import {
 type CloudMoonRainProps = IconProps<keyof typeof animations>;
 
 const rainAnimation: Variants = {
-  initial: {
-    opacity: 1,
-  },
-  animate: {
-    opacity: [1, 0.4, 1],
+  initial: { y: 0, opacity: 1 },
+  animate: (i: number = 0) => ({
+    y: [0, 1, -1, 0],
+    opacity: [1, 0, 0, 1],
     transition: {
       duration: 0.8,
+      times: [0, 0.4, 0.4, 1],
+      ease: ['easeIn', 'linear', 'easeOut'],
       repeat: Infinity,
-      ease: 'easeInOut',
+      delay: i * 0.3,
     },
-  },
+  }),
 };
 
 const animations = {
   default: {
-    group: {
-      animate: {
-        transition: {
-          staggerChildren: 0.3,
-        },
-      },
-    },
+    group: {},
     path1: {},
     path2: {},
     path3: rainAnimation,
@@ -81,6 +76,7 @@ function IconComponent({ size, ...props }: CloudMoonRainProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path3}
+          custom={0}
           initial="initial"
           animate={controls}
         />
@@ -89,6 +85,7 @@ function IconComponent({ size, ...props }: CloudMoonRainProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path4}
+          custom={1}
           initial="initial"
           animate={controls}
         />

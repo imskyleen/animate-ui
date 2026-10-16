@@ -13,14 +13,22 @@ import {
 type CloudSnowProps = IconProps<keyof typeof animations>;
 
 const snowAnimation: Variants = {
-  initial: { opacity: 1 },
+  initial: { x: 0, y: 0, opacity: 1 },
   animate: (i: number = 0) => ({
-    opacity: [1, 0.4, 1],
+    x: [0, 0.5, 0, -0.5, 0],
+    y: [0, 1.5, -1, 0],
+    opacity: [1, 0, 0, 1],
     transition: {
-      duration: 1.2,
-      ease: 'easeInOut',
+      duration: 2,
+      times: [0, 0.5, 0.5, 1],
+      ease: ['linear', 'linear', 'easeOut'],
       repeat: Infinity,
-      delay: i * 0.2,
+      delay: i * 0.3,
+      x: {
+        inherit: true,
+        times: [0, 0.25, 0.5, 0.75, 1],
+        ease: 'easeInOut',
+      },
     },
   }),
 };
@@ -72,6 +80,7 @@ function IconComponent({ size, ...props }: CloudSnowProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path2}
+          custom={0}
           initial="initial"
           animate={controls}
         />
@@ -80,6 +89,7 @@ function IconComponent({ size, ...props }: CloudSnowProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path3}
+          custom={1}
           initial="initial"
           animate={controls}
         />
@@ -88,6 +98,7 @@ function IconComponent({ size, ...props }: CloudSnowProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path4}
+          custom={2}
           initial="initial"
           animate={controls}
         />
@@ -96,6 +107,7 @@ function IconComponent({ size, ...props }: CloudSnowProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path7}
+          custom={3}
           initial="initial"
           animate={controls}
         />
@@ -104,6 +116,7 @@ function IconComponent({ size, ...props }: CloudSnowProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path6}
+          custom={4}
           initial="initial"
           animate={controls}
         />
@@ -112,6 +125,7 @@ function IconComponent({ size, ...props }: CloudSnowProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={variants.path5}
+          custom={5}
           initial="initial"
           animate={controls}
         />

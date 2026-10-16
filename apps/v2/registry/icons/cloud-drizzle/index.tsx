@@ -13,14 +13,16 @@ import {
 type CloudDrizzleProps = IconProps<keyof typeof animations>;
 
 const drizzleAnimation: Variants = {
-  initial: { opacity: 1 },
+  initial: { y: 0, opacity: 1 },
   animate: (i: number = 0) => ({
-    opacity: [1, 0.4, 1],
+    y: [0, 0.75, -0.75, 0],
+    opacity: [1, 0, 0, 1],
     transition: {
-      duration: 1.2,
-      ease: 'easeInOut',
+      duration: 1.6,
+      times: [0, 0.45, 0.45, 1],
+      ease: ['easeIn', 'linear', 'easeOut'],
       repeat: Infinity,
-      delay: i * 0.2,
+      delay: i * 0.25,
     },
   }),
 };

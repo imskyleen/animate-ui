@@ -13,14 +13,16 @@ import {
 type CloudHailProps = IconProps<keyof typeof animations>;
 
 const hailAnimation: Variants = {
-  initial: { opacity: 1 },
+  initial: { y: 0, opacity: 1 },
   animate: (i: number = 0) => ({
-    opacity: [1, 0.4, 1],
+    y: [0, 1, -1, 0, -0.4, 0],
+    opacity: [1, 0, 0, 1, 1, 1],
     transition: {
-      duration: 1.2,
-      ease: 'easeInOut',
+      duration: 0.9,
+      times: [0, 0.25, 0.25, 0.6, 0.8, 1],
+      ease: ['easeIn', 'linear', 'easeIn', 'easeOut', 'easeIn'],
       repeat: Infinity,
-      delay: i * 0.2,
+      delay: i * 0.15,
     },
   }),
 };
