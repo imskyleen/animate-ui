@@ -398,3 +398,31 @@ test.describe('animate-ui tabs keyboard', () => {
     expect(heights.at(-1)!).toBeCloseTo(120, 0);
   });
 });
+
+test('switching tabs hands one highlight over: never two shown at once', async ({
+  page,
+}) => {
+  await page.goto('/tests/demos/animate-ui/tabs', { waitUntil: 'networkidle' });
+  await page.getByRole('tab', { name: 'Overview' }).click();
+  await page.waitForTimeout(600);
+  await page.evaluate(() => {
+    const samples: number[] = [];
+    (window as unknown as { samples: number[] }).samples = samples;
+    const start = performance.now();
+    const tick = () => {
+      samples.push(
+        [...document.querySelectorAll('[data-slot="motion-highlight"]')].filter(
+          (element) => Number(getComputedStyle(element).opacity) > 0.02,
+        ).length,
+      );
+      if (performance.now() - start < 700) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  await page.getByRole('tab', { name: 'Reports' }).click();
+  await page.waitForTimeout(900);
+  const samples = await page.evaluate(
+    () => (window as unknown as { samples: number[] }).samples,
+  );
+  expect(Math.max(...samples)).toBe(1);
+});

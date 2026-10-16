@@ -40,6 +40,7 @@ type HighlightContextType<T extends string> = {
   as?: keyof HTMLElementTagNameMap;
   mode: HighlightMode;
   activeValue: T | null;
+  previousValue: T | null;
   setActiveValue: (value: T | null) => void;
   setBounds: (bounds: DOMRect) => void;
   clearBounds: () => void;
@@ -271,6 +272,12 @@ function Highlight<T extends React.ElementType = 'div'>({
     defaultValue ?? null,
   );
   const activeValue = controlled ? value : internalValue;
+  const [values, setValues] = React.useState<{
+    current: string | null;
+    previous: string | null;
+  }>({ current: activeValue ?? null, previous: null });
+  if (values.current !== (activeValue ?? null))
+    setValues({ current: activeValue ?? null, previous: values.current });
   const [boundsState, setBoundsState] = React.useState<Bounds | null>(null);
   const [activeClassNameState, setActiveClassNameState] =
     React.useState<string>('');
@@ -374,6 +381,7 @@ function Highlight<T extends React.ElementType = 'div'>({
       value={{
         mode,
         activeValue,
+        previousValue: values.previous,
         setActiveValue: safeSetActiveValue,
         id,
         hover,
@@ -472,6 +480,7 @@ function HighlightItem<T extends React.ElementType>({
   const itemId = React.useId();
   const {
     activeValue,
+    previousValue,
     setActiveValue,
     mode,
     setBounds,
@@ -494,12 +503,27 @@ function HighlightItem<T extends React.ElementType>({
   const childValue =
     id ?? value ?? element.props?.['data-value'] ?? element.props?.id ?? itemId;
   const isActive = activeValue === childValue;
+  const handOff = activeValue !== null;
+  const handedTo =
+    isActive && previousValue !== null && previousValue !== childValue;
   const isDisabled = disabled === undefined ? contextDisabled : disabled;
   const { tempo } = useMotionTokens();
   const ownTransition = useTempoTransition(transition);
   const itemTransition = ownTransition ?? contextTransition;
   const itemExitDelay =
     exitDelay === undefined ? contextExitDelay : exitDelay * tempo;
+  const fade = {
+    hidden: (handingOff: boolean) => ({
+      opacity: 0,
+      transition: handingOff
+        ? { duration: 0 }
+        : {
+            ...itemTransition,
+            delay: (itemTransition?.delay ?? 0) + (itemExitDelay ?? 0) / 1000,
+          },
+    }),
+    shown: { opacity: 1 },
+  };
 
   const canHover = useCanHover();
 
@@ -625,7 +649,7 @@ function HighlightItem<T extends React.ElementType>({
           ...handlers,
         },
         <>
-          <AnimatePresence initial={false} mode="wait">
+          <AnimatePresence initial={false} mode="wait" custom={handOff}>
             {isActive && !isDisabled && (
               <motion.div
                 layoutId={`transition-background-${contextId}`}
@@ -638,17 +662,12 @@ function HighlightItem<T extends React.ElementType>({
                 }}
                 className={cn(contextClassName, activeClassName)}
                 transition={itemTransition}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{
-                  opacity: 0,
-                  transition: {
-                    ...itemTransition,
-                    delay:
-                      (itemTransition?.delay ?? 0) +
-                      (itemExitDelay ?? 0) / 1000,
-                  },
-                }}
+                layoutCrossfade={false}
+                custom={handOff}
+                variants={fade}
+                initial={handedTo ? false : 'hidden'}
+                animate="shown"
+                exit="hidden"
                 {...dataAttributes}
               />
             )}
@@ -687,7 +706,7 @@ function HighlightItem<T extends React.ElementType>({
       {...handlers}
     >
       {mode === 'children' && (
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence initial={false} mode="wait" custom={handOff}>
           {isActive && !isDisabled && (
             <motion.div
               layoutId={`transition-background-${contextId}`}
@@ -700,16 +719,12 @@ function HighlightItem<T extends React.ElementType>({
               }}
               className={cn(contextClassName, activeClassName)}
               transition={itemTransition}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{
-                opacity: 0,
-                transition: {
-                  ...itemTransition,
-                  delay:
-                    (itemTransition?.delay ?? 0) + (itemExitDelay ?? 0) / 1000,
-                },
-              }}
+              layoutCrossfade={false}
+              custom={handOff}
+              variants={fade}
+              initial={handedTo ? false : 'hidden'}
+              animate="shown"
+              exit="hidden"
               {...dataAttributes}
             />
           )}
