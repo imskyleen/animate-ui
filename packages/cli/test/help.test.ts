@@ -9,7 +9,7 @@ const DOCS = readFileSync(
   'utf8',
 );
 
-for (const command of ['animate', 'migrate'])
+for (const command of ['animate', 'migrate', 'audit'])
   test(`${command} --help prints the usage the docs show`, () => {
     const usage = DOCS.match(
       new RegExp(

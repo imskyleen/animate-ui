@@ -1,6 +1,6 @@
 ---
 title: CLI
-description: Use the Animate UI CLI to animate your shadcn/ui components and migrate from Animate UI v1.
+description: Use the Animate UI CLI to animate your shadcn/ui components, migrate from Animate UI v1 and list what moves in your project.
 ---
 
 The CLI changes your components in place, without copying anything: it swaps the primitives they import for `@animate-ui/react`'s animated ones and removes the CSS animations Motion replaces. It needs Node.js 22.12 or later.
@@ -182,15 +182,67 @@ At the end, `migrate` lists the v1 files `@animate-ui/react` replaces:
 
 It also tells you what to install: `@animate-ui/react` and `motion`, plus `@base-ui/react` (Base UI 1) when Base UI primitives were migrated.
 
+## audit
+
+Use the `audit` command to list what moves in your project and how: the properties each animation changes and what they cost the browser, the transitions on `all`, ease-in curves, long durations, hover scales, scales from 0, popups scaling without an origin, CSS transitions fighting Motion on the same element, a main heading hidden on first paint, hovers that move on touch screens, endless loops, layout animations, and the files that move without a reduced-motion path.
+
+```npm
+npx @animate-ui/cli@latest audit
+```
+
+Or only some folders or files:
+
+```npm
+npx @animate-ui/cli@latest audit src/components app/page.tsx
+```
+
+**Usage**
+
+```txt
+Usage: animate-ui audit [paths...] [options]
+
+Arguments:
+  paths           the files or folders to read (default: the whole project,
+                  without node_modules and build output)
+
+Options:
+  --cwd <path>    the project directory (default: the current directory)
+  --json          print the report as JSON
+  -h, --help      show the help
+```
+
+### What it reads
+
+Motion's props (`initial`, `animate`, `exit`, `while…`, `variants`, `transition`, `layout`), `animate()` calls, Tailwind's transition, duration, ease and animation classes, and CSS `transition`, `animation`, `@keyframes` and `will-change`. It changes nothing.
+
+Each animated property is sorted by what it costs: **compositor** (`transform`, `opacity`, `filter`: drawn by the GPU, smooth), **main-thread** (Motion's `x`, `y`, `scale`, `rotate` shorthands: no layout, but written by JavaScript every frame, so a busy page can make them stutter), **paint** (colors, shadows, SVG strokes: repainted every frame) and **layout** (`width`, `height`, `top`, margins: the page is measured again every frame).
+
+### Output
+
+```txt
+Motion audit: 2 of 41 files move, 10 facts.
+These are facts, not verdicts: weigh each one against how often the element is used and what its motion is for.
+
+src/components/menu.tsx
+  12  moves            initial, animate, exit: opacity (compositor) · scale (main-thread) · height (layout)
+  12  long duration    600ms (transition, on an element that enters)
+  12  no origin        motion.ul is positioned and scales without a transform origin: it grows from its own center
+  30  hover scale      whileHover scale: 1.05
+   –  reduced motion   no reduced-motion path in this file
+```
+
+The report states facts, it doesn't grade them: a 800ms entrance can be right on a page and wrong on a menu opened all day. Read it yourself, or hand it to your AI assistant with the [Animate UI skill](/docs/skills), which judges each fact in context. `--json` prints the same report for scripts.
+
 ## Options
 
 | Option                      | Commands             | Description                                                                                     |
 | --------------------------- | -------------------- | ----------------------------------------------------------------------------------------------- |
-| `--cwd <path>`              | `animate`, `migrate` | The project directory, with its `components.json`.                                              |
+| `--cwd <path>`              | all                  | The project directory (with its `components.json` for `animate` and `migrate`).                 |
 | `--dry-run`                 | `animate`, `migrate` | Show the changes without writing them.                                                          |
 | `--exclude <components...>` | `animate`, `migrate` | Leave these components out of `all`: comma-separated (`--exclude sidebar,tooltip`) or repeated. |
 | `--delete`                  | `migrate`            | Delete the v1 files nothing imports anymore, without asking.                                    |
 | `--keep`                    | `migrate`            | Keep them, without asking. Not with `--delete`.                                                 |
+| `--json`                    | `audit`              | Print the report as JSON.                                                                       |
 | `-h, --help`                |                      | Show the help.                                                                                  |
 | `-v, --version`             |                      | Show the CLI's version.                                                                         |
 

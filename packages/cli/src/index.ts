@@ -3,6 +3,7 @@ import { parseArgs } from 'node:util';
 
 import pkg from '../package.json' with { type: 'json' };
 import { animate } from './commands/animate';
+import { audit } from './commands/audit';
 import { migrate } from './commands/migrate';
 
 const HELP = `Usage: animate-ui <command> [components...] [options]
@@ -11,6 +12,8 @@ Commands:
   animate <components...|all>   Swap the primitives of installed shadcn/ui
                                 components for Animate UI's animated ones.
   migrate <components...|all>   Migrate Animate UI v1 components to v2.
+  audit [paths...]              List what moves in the project and how, for
+                                you or your AI to judge.
 
 Options:
   --cwd <path>    Project directory (default: current directory)
@@ -21,6 +24,7 @@ Options:
   --delete        migrate: delete the v1 files nothing imports anymore,
                   without asking (in a terminal, migrate asks)
   --keep          migrate: keep them, without asking
+  --json          audit: print the report as JSON
   -h, --help      Show this help
   -v, --version   Show the version
 `;
@@ -50,9 +54,19 @@ ${COMMAND_OPTIONS}
   --delete        delete the v1 files nothing imports anymore, without asking
   --keep          keep them, without asking
   -h, --help      show the help`,
+  audit: `Usage: animate-ui audit [paths...] [options]
+
+Arguments:
+  paths           the files or folders to read (default: the whole project,
+                  without node_modules and build output)
+
+Options:
+  --cwd <path>    the project directory (default: the current directory)
+  --json          print the report as JSON
+  -h, --help      show the help`,
 };
 
-const COMMANDS = ['animate', 'migrate'] as const;
+const COMMANDS = ['animate', 'migrate', 'audit'] as const;
 type Command = (typeof COMMANDS)[number];
 
 function isCommand(value: string | undefined): value is Command {
@@ -71,6 +85,7 @@ async function main(argv: string[]) {
         exclude: { type: 'string', multiple: true, default: [] },
         delete: { type: 'boolean', default: false },
         keep: { type: 'boolean', default: false },
+        json: { type: 'boolean', default: false },
         help: { type: 'boolean', short: 'h', default: false },
         version: { type: 'boolean', short: 'v', default: false },
       },
@@ -103,6 +118,15 @@ async function main(argv: string[]) {
   if (!isCommand(command)) {
     console.error(`Unknown command "${command}".\n\n${HELP}`);
     return 1;
+  }
+
+  if (command === 'audit') {
+    try {
+      return audit(components, { cwd: values.cwd, json: values.json });
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : error);
+      return 1;
+    }
   }
 
   if (components.length === 0) {
