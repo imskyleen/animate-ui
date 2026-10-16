@@ -93,7 +93,7 @@ export function animate(components: string[], options: AnimateOptions) {
     const code = readFileSync(file, 'utf8');
     let result;
     try {
-      result = transform(code, file);
+      result = transform(code, file, { tailwind: project.tailwind });
     } catch (error) {
       exitCode = 1;
       log(
@@ -127,6 +127,11 @@ export function animate(components: string[], options: AnimateOptions) {
     }
     if (result.removedClasses.length > 0) {
       log(`    removed CSS animations: ${result.removedClasses.join(' ')}`);
+    }
+    if (result.centering.length > 0) {
+      log(
+        `    centered with margins: ${result.centering.join(' ')} → inset-0 m-auto h-fit (under Tailwind 3 a translate would fight Motion's transform)`,
+      );
     }
   }
 

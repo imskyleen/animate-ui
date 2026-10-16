@@ -7,6 +7,7 @@ export type Project = {
   root: string;
   uiDir: string;
   hasPackage: boolean;
+  tailwind?: 3 | 4;
   install: string;
   dlx: string;
 };
@@ -46,6 +47,25 @@ function resolveAlias(root: string, alias: string) {
   );
 }
 
+type Manifest = Record<string, Record<string, string> | undefined>;
+
+function tailwindVersion(
+  root: string,
+  pkg: Manifest,
+  components: { tailwind?: { config?: string } },
+): 3 | 4 | undefined {
+  const range =
+    pkg.dependencies?.tailwindcss ?? pkg.devDependencies?.tailwindcss;
+  const major = range?.match(/(\d+)/)?.[1];
+  if (major === '3') return 3;
+  if (major === '4') return 4;
+  if (components.tailwind?.config) return 3;
+  if (components.tailwind && components.tailwind.config === '') return 4;
+  for (const extension of ['js', 'cjs', 'mjs', 'ts'])
+    if (existsSync(path.join(root, `tailwind.config.${extension}`))) return 3;
+  return undefined;
+}
+
 export function loadProject(cwd: string): Project {
   const root = path.resolve(cwd);
   const configFile = path.join(root, 'components.json');
@@ -71,6 +91,7 @@ export function loadProject(cwd: string): Project {
     root,
     uiDir: resolveAlias(root, uiAlias),
     hasPackage,
+    tailwind: tailwindVersion(root, pkg, readJson(configFile)),
     ...packageManager(root),
   };
 }

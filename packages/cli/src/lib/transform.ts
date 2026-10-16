@@ -1,7 +1,7 @@
 import { parse } from '@babel/parser';
 import type * as t from '@babel/types';
 
-import { stripClasses } from './classes';
+import { centerWithMargins, stripClasses } from './classes';
 import {
   findPrimitive,
   barrelModule,
@@ -18,6 +18,7 @@ export type TransformResult = {
   code: string;
   imports: ImportChange[];
   removedClasses: string[];
+  centering: string[];
   unsupported: string[];
   beta: string[];
 };
@@ -80,7 +81,13 @@ function specifierName(specifier: t.ImportSpecifier | t.ExportSpecifier) {
   );
 }
 
-export function transform(code: string, file = 'file.tsx'): TransformResult {
+export type TransformOptions = { tailwind?: 3 | 4 };
+
+export function transform(
+  code: string,
+  file = 'file.tsx',
+  options: TransformOptions = {},
+): TransformResult {
   const ast = parse(code, {
     sourceType: 'module',
     plugins: /\.[cm]?ts$/.test(file) ? ['typescript'] : ['typescript', 'jsx'],
@@ -230,6 +237,7 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
   }
 
   const removedClasses: string[] = [];
+  const centering: string[] = [];
 
   if (swapped.length > 0) {
     const extra = swapped.flatMap((primitive) => primitive.strip ?? []);
@@ -242,9 +250,14 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
       const start = node.start! + quoted;
       const end = node.end! - quoted;
       const result = stripClasses(code.slice(start, end), extra);
-      if (result.removed.length === 0) return;
+      const centered =
+        options.tailwind === 3
+          ? centerWithMargins(result.value)
+          : { value: result.value, replaced: [] as string[] };
+      if (result.removed.length === 0 && centered.replaced.length === 0) return;
       removedClasses.push(...result.removed);
-      edits.push({ start, end, text: result.value });
+      centering.push(...centered.replaced);
+      edits.push({ start, end, text: centered.value });
     };
 
     const walk = (node: unknown, inClasses: boolean): void => {
@@ -338,5 +351,12 @@ export function transform(code: string, file = 'file.tsx'): TransformResult {
     output = output.slice(0, edit.start) + edit.text + output.slice(edit.end);
   }
 
-  return { code: output, imports, removedClasses, unsupported, beta };
+  return {
+    code: output,
+    imports,
+    removedClasses,
+    centering,
+    unsupported,
+    beta,
+  };
 }

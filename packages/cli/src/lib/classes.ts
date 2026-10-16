@@ -43,3 +43,29 @@ export function stripClasses(value: string, extra: RegExp[] = []) {
   const tokens = kept.join('').trim().split(/\s+/).filter(Boolean);
   return { value: `${leading}${tokens.join(' ')}${trailing}`, removed };
 }
+
+const CENTERING = [
+  /^(top-1\/2|top-\[50%\])$/,
+  /^(left-1\/2|left-\[50%\])$/,
+  /^(-translate-x-1\/2|translate-x-\[-50%\])$/,
+  /^(-translate-y-1\/2|translate-y-\[-50%\])$/,
+];
+
+export function centerWithMargins(value: string) {
+  const tokens = value.trim().split(/\s+/).filter(Boolean);
+  const found = CENTERING.map((pattern) =>
+    tokens.find((token) => pattern.test(token)),
+  );
+  if (found.some((token) => !token)) return { value, replaced: [] };
+  const replaced = found as string[];
+  const kept = tokens.filter((token) => !replaced.includes(token));
+  const added = ['inset-0', 'm-auto', 'h-fit'].filter(
+    (token) => !kept.includes(token),
+  );
+  const leading = value.match(/^\s*/)?.[0] ?? '';
+  const trailing = value.match(/\s*$/)?.[0] ?? '';
+  return {
+    value: `${leading}${[...kept, ...added].join(' ')}${trailing}`,
+    replaced,
+  };
+}
