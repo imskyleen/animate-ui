@@ -54,9 +54,13 @@ if (input.trim().startsWith('{')) {
   transition = input
     .split('.')
     .reduce((value, key) => value?.[key], motionTokens);
-  if (!transition || typeof transition !== 'object') {
+  if (
+    !transition ||
+    typeof transition !== 'object' ||
+    Array.isArray(transition)
+  ) {
     console.error(
-      `No token named ${input}. Try spring.press, transition.menu…`,
+      `No transition named ${input}: give a spring.* or transition.* token (ease.* tokens are curves, not transitions). Try spring.press, transition.menu…`,
     );
     process.exit(1);
   }

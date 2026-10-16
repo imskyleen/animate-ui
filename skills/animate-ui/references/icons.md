@@ -106,7 +106,7 @@ export {
 ```
 
 - `animations` has a `default`, and named alternates beside it, each `satisfies Record<string, Variants>`, the whole `as const`: `IconProps<keyof typeof animations>` types the `animation` prop from it.
-- Each key is a piece, named for what it is (`lid`, `handset`, `slash`, `minute`), each with `initial` (rest) and `animate`. A piece that doesn't move in an animation is `{}`, still listed: `path` and `path-loop` draw every key of `default` except the ones named `group`, so a piece missing from `default` (or a plain `<path>`) won't draw.
+- Each key is a piece, named for what it is (`lid`, `handset`, `slash`, `minute`), each with `initial` (rest) and `animate`. A piece that doesn't move in an animation is `{}`, still listed: `path` and `path-loop` draw every key of `default` except the ones whose name contains `group` (so never put `group` in a drawn piece's name), so a piece missing from `default` (or a plain `<path>`) won't draw.
 - `group` moves the whole icon: on the `<motion.svg>`, or on a `<motion.g>` around the pieces that move together.
 - Every piece is a `motion.*` element with `variants`, `initial="initial"` and `animate={controls}`. Keep `{...props}` on the svg and `IconWrapper` around it: the triggers, the parent `AnimateIcon`, `speed`, `tempo` and reduced motion all come through them.
 - Write timings at speed 1: `getVariants` scales durations, delays and springs by `speed` and `tempo`. Under reduced motion the icon stays at rest; nothing to add.
@@ -132,7 +132,7 @@ Take the icon's real SVG (the library's package source, its site's "copy SVG", o
 
 ### The same icon in the registry
 
-When the registry has the same object (a rocket, a bell, a bolt is Lucide's `zap`; pick the variant whose pieces match the drawing, Tabler's trash with its two lines is Lucide's `trash-2`), start from its animation, adjusted to this drawing: read its source at `https://animate-ui.com/r/icons-lucide-<name>.json` or `https://animate-ui.com/r/icons-hugeicons-<name>.json` (the file's `content`), or the icon pages on animate-ui.com. Without network, an icon file already in the project's `components/animate-ui/icons/` counts as the source; with none there, design it from the principles below.
+When the registry has the same object (a rocket, a bell, a bolt is Lucide's `zap`; pick the variant whose pieces match the drawing, Tabler's trash with its two lines is Lucide's `trash-2`), start from its animation, adjusted to this drawing: read its source at `https://animate-ui.com/r/icons-lucide-<name>.json` or `https://animate-ui.com/r/icons-hugeicons-<name>.json` (the file's `content`), or the icon pages on animate-ui.com. Without network, an icon file already in the project's `components/animate-ui/icons/` (or `icons/hugeicons/` for a Hugeicon) counts as the source; with none there, design it from the principles below.
 
 ### Styles
 
