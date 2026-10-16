@@ -1,10 +1,12 @@
 import { HomeHeader } from '@/components/home/home-header';
 import { IntroProvider } from '@/components/home/intro';
+import { getGitHubStars } from '@/lib/github-stars';
 
-export default function Layout({ children }: LayoutProps<'/'>) {
+export default async function Layout({ children }: LayoutProps<'/'>) {
+  const stars = await getGitHubStars();
   return (
     <IntroProvider>
-      <HomeHeader />
+      <HomeHeader stars={stars} />
       <main className="flex flex-1 flex-col">{children}</main>
     </IntroProvider>
   );

@@ -1,10 +1,20 @@
 'use client';
 
 import { ease } from '@animate-ui/react/utils/motion';
+import {
+  GitHubStarsButton,
+  GitHubStarsButtonIcon,
+  GitHubStarsButtonNumber,
+  GitHubStarsButtonParticles,
+} from '@animate-ui/react/primitives/buttons/github-stars';
+import { GithubIcon, StarIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { cn } from 'cn';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 
 import { GitHubLink, ThemeToggle } from '@/components/layout/header';
+import { gitConfig } from '@/lib/shared';
 
 import { FullLogo, LOGO_GLIDE, useIntroPlaying } from './intro';
 
@@ -14,7 +24,45 @@ const LINKS = [
   { title: 'Icons', url: '/docs/icons' },
 ];
 
-export function HomeHeader() {
+function Stars({ stars }: { stars: number }) {
+  return (
+    <GitHubStarsButton
+      value={stars}
+      asChild
+      className="group inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+    >
+      <a
+        href={`https://github.com/${gitConfig.user}/${gitConfig.repo}`}
+        target="_blank"
+        rel="noreferrer noopener"
+        aria-label={`GitHub, ${stars} stars`}
+      >
+        <HugeiconsIcon icon={GithubIcon} strokeWidth={2} size={18} />
+        <GitHubStarsButtonNumber className="tabular-nums" />
+        <GitHubStarsButtonParticles className="text-yellow-500">
+          <GitHubStarsButtonIcon
+            icon={Star}
+            className="size-4 fill-neutral-300 stroke-neutral-300 dark:fill-neutral-700 dark:stroke-neutral-700"
+            color="var(--color-yellow-500)"
+          />
+        </GitHubStarsButtonParticles>
+      </a>
+    </GitHubStarsButton>
+  );
+}
+
+function Star(props: Omit<React.ComponentProps<typeof HugeiconsIcon>, 'icon'>) {
+  return (
+    <HugeiconsIcon
+      icon={StarIcon}
+      strokeWidth={2}
+      {...props}
+      className={cn('[&_path]:[stroke:inherit]', props.className)}
+    />
+  );
+}
+
+export function HomeHeader({ stars }: { stars?: number }) {
   const playing = useIntroPlaying();
 
   return (
@@ -60,7 +108,11 @@ export function HomeHeader() {
               </Link>
             ))}
           </nav>
-          <GitHubLink />
+          {stars === undefined ? (
+            <GitHubLink />
+          ) : (
+            !playing && <Stars stars={stars} />
+          )}
           <ThemeToggle />
         </motion.div>
       </div>
