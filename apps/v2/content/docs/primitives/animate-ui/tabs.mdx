@@ -50,7 +50,7 @@ Unlike the library tabs, these are Animate UI's own: no Radix UI, Base UI or Rea
 
 ## Animation
 
-- The highlight slides to the selected trigger on a spring (stiffness 300, damping 30): the new one fades in as it slides from the previous one, which fades out 200ms later ([Highlight](/docs/primitives/animate-ui/highlight)).
+- The highlight slides to the selected trigger on a spring (stiffness 300, damping 30): one surface is handed from the previous trigger to the new one, at full opacity ([Highlight](/docs/primitives/animate-ui/highlight)).
 - Panels sit side by side and slide to the selected one on a critically damped spring (stiffness 300, damping 35): they glide into place without bouncing past it. The container's height follows the active panel on the same spring. Mounted hidden (in a closed panel, or a tab waiting its turn), the container shows at its height once it's on screen, without growing in. Inactive panels blur (4px, spring with stiffness 300, damping 30) and are `inert`.
 - Keyboard: arrow keys move to the next or previous enabled trigger (wrapping) and select it, Home and End jump to the ends; only the selected trigger is in the Tab order. Keyboard selection animates exactly like a click.
 - `<AnimateUIProvider tempo>` paces every spring.
