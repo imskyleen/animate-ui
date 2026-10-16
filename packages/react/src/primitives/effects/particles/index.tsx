@@ -118,7 +118,10 @@ function ParticlesEffect({
     transform: 'translate(-50%, -50%)',
   };
 
-  const angleStep = (spread * (Math.PI / 180)) / Math.max(1, count - 1);
+  const fullCircle = spread % 360 === 0 && spread !== 0;
+  const angleStep =
+    (spread * (Math.PI / 180)) /
+    (fullCircle ? Math.max(1, count) : Math.max(1, count - 1));
 
   return (
     <AnimatePresence>
@@ -127,8 +130,8 @@ function ParticlesEffect({
         !reduce &&
         [...Array(count)].map((_, i) => {
           const angle = i * angleStep;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
+          const x = Math.round(Math.cos(angle) * radius * 100) / 100;
+          const y = Math.round(Math.sin(angle) * radius * 100) / 100;
 
           return (
             <motion.div

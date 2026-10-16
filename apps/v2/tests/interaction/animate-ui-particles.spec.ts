@@ -29,6 +29,53 @@ test.describe('animate-ui particles', () => {
     );
   });
 
+  test('a full circle spreads every particle apart: none lands on another', async ({
+    page,
+  }) => {
+    await open(page);
+    await page.getByRole('button', { name: 'Like' }).click();
+    await expect(particles(page)).toHaveCount(6);
+    await page.waitForTimeout(200);
+    const closest = await particles(page).evaluateAll((els) => {
+      const points = els.map((el) => {
+        const r = el.getBoundingClientRect();
+        return [r.x + r.width / 2, r.y + r.height / 2] as const;
+      });
+      let min = Infinity;
+      for (let i = 0; i < points.length; i++)
+        for (let j = i + 1; j < points.length; j++)
+          min = Math.min(
+            min,
+            Math.hypot(
+              points[i]![0] - points[j]![0],
+              points[i]![1] - points[j]![1],
+            ),
+          );
+      return min;
+    });
+    expect(closest).toBeGreaterThan(4);
+  });
+
+  test('every particle leaves the center, the one straight left too', async ({
+    page,
+  }) => {
+    await open(page);
+    const button = page.getByRole('button', { name: 'Like' });
+    const box = (await button.boundingBox())!;
+    const center = [box.x + box.width / 2, box.y + box.height / 2] as const;
+    await button.click();
+    await page.waitForTimeout(450);
+    const distances = await particles(page).evaluateAll(
+      (els, [cx, cy]) =>
+        els.map((el) => {
+          const r = el.getBoundingClientRect();
+          return Math.hypot(r.x + r.width / 2 - cx, r.y + r.height / 2 - cy);
+        }),
+      center,
+    );
+    expect(Math.min(...distances)).toBeGreaterThan(12);
+  });
+
   test('a like resizes the button smoothly, swaps the word and pops the heart', async ({
     page,
   }) => {
