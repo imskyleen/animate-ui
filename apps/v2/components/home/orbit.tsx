@@ -209,11 +209,13 @@ function OrbitStage() {
     mass: 0.4,
   });
   const drift = useMotionValue(0);
-  useAnimationFrame((_, delta) => drift.set(drift.get() + delta * 0.00008));
 
   const enter = useTransform(progress, (p) => smooth(clamp((p - 0.12) / 0.25)));
   const settle = useTransform(progress, (p) => clamp((p - 0.76) / 0.22));
-  const turn = useTransform(progress, (p) => clamp(p / 0.98) * Math.PI * 1.1);
+  const turn = useTransform(progress, (p) => clamp(p / 0.76) * Math.PI * 1.1);
+  useAnimationFrame((_, delta) => {
+    if (settle.get() === 0) drift.set(drift.get() + delta * 0.00008);
+  });
 
   const logoScale = useTransform(
     progress,

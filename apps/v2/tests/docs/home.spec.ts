@@ -519,3 +519,59 @@ test('the header shows the GitHub stars button, its count fetched on the server'
   );
   await expect(stars).not.toHaveAttribute('aria-busy', 'true');
 });
+
+test('the cards head straight to their grid places, without one more turn', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+    timeout: 5000,
+  });
+  const orbit = page.locator('[data-slot="home-orbit"]');
+  const { top, height, viewport } = await orbit.evaluate(
+    (section: HTMLElement) => ({
+      top: section.offsetTop,
+      height: section.offsetHeight,
+      viewport: window.innerHeight,
+    }),
+  );
+  const centers = () =>
+    page.locator('[data-slot="orbit-card"]').evaluateAll((els) =>
+      els.map((el) => {
+        const frame = el
+          .closest('[data-slot="home-orbit"] > div')!
+          .getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        return [
+          box.left + box.width / 2 - frame.left,
+          box.top + box.height / 2 - frame.top,
+        ];
+      }),
+    );
+  const end = top + height - viewport;
+  await page.evaluate((to) => window.scrollTo(0, to), end);
+  await page.waitForTimeout(800);
+  const final = await centers();
+  const start = top - viewport + height * 0.76;
+  const distances: number[][] = [];
+  for (let i = 0; i <= 10; i++) {
+    await page.evaluate(
+      (to) => window.scrollTo(0, to),
+      start + ((end - start) * i) / 10,
+    );
+    await page.waitForTimeout(450);
+    distances.push(
+      (await centers()).map(([x, y], card) =>
+        Math.hypot(x! - final[card]![0]!, y! - final[card]![1]!),
+      ),
+    );
+  }
+  const away = distances
+    .slice(1)
+    .flatMap((step, i) =>
+      step
+        .map((distance, card) => distance - distances[i]![card]!)
+        .filter((growth) => growth > 4),
+    );
+  expect(away).toEqual([]);
+});
