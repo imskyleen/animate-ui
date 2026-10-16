@@ -14,18 +14,21 @@ type LightbulbOffProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
-    group: {
-      initial: {
-        x: 0,
-      },
+    path1: {
+      initial: { opacity: 1 },
       animate: {
-        x: [0, '-7%', '7%', '-7%', '7%', 0],
-        transition: { duration: 0.6, ease: 'easeInOut' },
+        opacity: [1, 0.3, 1, 0.2, 0.6, 0.15, 1],
+        transition: { duration: 0.9, ease: 'easeInOut' },
       },
     },
-    path1: {},
     path2: {},
-    path3: {},
+    path3: {
+      initial: { opacity: 1 },
+      animate: {
+        opacity: [1, 0.3, 1, 0.2, 0.6, 0.15, 1],
+        transition: { duration: 0.9, ease: 'easeInOut' },
+      },
+    },
     path4: {},
     path5: {},
   } satisfies Record<string, Variants>,
@@ -63,9 +66,6 @@ function IconComponent({ size, ...props }: LightbulbOffProps) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      variants={variants.group}
-      initial="initial"
-      animate={controls}
       {...props}
     >
       <motion.path

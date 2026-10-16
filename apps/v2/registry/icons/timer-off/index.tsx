@@ -14,20 +14,29 @@ type TimerOffProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
-    group: {
-      initial: {
-        x: 0,
-      },
+    path1: {
+      initial: { y: 0 },
       animate: {
-        x: [0, '-7%', '7%', '-7%', '7%', 0],
-        transition: { duration: 0.6, ease: 'easeInOut' },
+        y: [0, 1, 0],
+        transition: { duration: 0.3, ease: 'easeInOut' },
       },
     },
-    path1: {},
     path2: {},
     path3: {},
     path4: {},
-    path5: {},
+    path5: {
+      initial: { rotate: 0, transformOrigin: '12px 14px' },
+      animate: {
+        rotate: [0, 6, 6, 0],
+        transformOrigin: '12px 14px',
+        transition: {
+          duration: 0.8,
+          delay: 0.15,
+          times: [0, 0.2, 0.7, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
   } satisfies Record<string, Variants>,
   off: {
     path1: {},
@@ -63,9 +72,6 @@ function IconComponent({ size, ...props }: TimerOffProps) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      variants={variants.group}
-      initial="initial"
-      animate={controls}
       {...props}
     >
       <motion.path
@@ -94,6 +100,7 @@ function IconComponent({ size, ...props }: TimerOffProps) {
       />
       <motion.path
         d="M12 12v-2"
+        style={{ transformBox: 'view-box' }}
         variants={variants.path5}
         initial="initial"
         animate={controls}
