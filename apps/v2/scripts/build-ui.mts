@@ -1,6 +1,8 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
+import { peersOf } from './react-peers.mts';
+
 const root = path.join(import.meta.dirname, '..');
 const outDir = path.join(root, 'public', 'r');
 mkdirSync(outDir, { recursive: true });
@@ -21,14 +23,19 @@ for (const category of ['backgrounds', 'buttons', 'components']) {
       readFileSync(path.join(itemDir, 'meta.json'), 'utf8'),
     ) as Meta;
     const content = readFileSync(path.join(itemDir, 'index.tsx'), 'utf8');
+    const specifiers = [
+      ...content.matchAll(
+        /(?:from\s+|import\s+|import\(\s*)["']([^"'.][^"']*)["']/g,
+      ),
+    ].map(([, source]) => source!);
     const packages = new Set(
-      [...content.matchAll(/from '([^'.][^']*)'/g)]
-        .map(([, source]) => source!.match(/^(@[^/]+\/[^/]+|[^/]+)/)![1]!)
+      specifiers
+        .map((source) => source.match(/^(@[^/]+\/[^/]+|[^/]+)/)![1]!)
         .filter((pkg) => pkg !== 'react' && pkg !== 'react-dom'),
     );
     if (packages.has('@animate-ui/react')) packages.add('motion');
-    if (content.includes('@animate-ui/react/primitives/code-block'))
-      packages.add('shiki');
+    for (const specifier of specifiers)
+      for (const peer of peersOf(specifier)) packages.add(peer);
     const dependencies = [...packages].sort();
     writeFileSync(
       path.join(outDir, `${category}-${name}.json`),

@@ -7,6 +7,8 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 
+import { peersOf } from './react-peers.mts';
+
 const root = path.join(import.meta.dirname, '..');
 const demosDir = path.join(root, 'demos');
 const outDir = path.join(root, 'public', 'r');
@@ -27,16 +29,6 @@ const toAlias = (target: string) =>
     .replace(/^(components|hooks|lib)\//, '@$1/');
 
 const IGNORED = new Set(['react', 'react-dom', 'next']);
-
-const PEERS: Record<string, string> = {
-  'radix-ui': 'radix-ui',
-  'base-ui': '@base-ui/react',
-  'react-aria': 'react-aria-components',
-  'input-otp': 'input-otp',
-  questionnaire: '@shadcn/react',
-  tooltip: '@floating-ui/react',
-  'code-block': 'shiki',
-};
 
 function resolveLocal(specifier: string) {
   const base = path.join(root, specifier.slice(2));
@@ -76,9 +68,7 @@ for (const library of readdirSync(demosDir)) {
           if (!IGNORED.has(pkg)) dependencies.add(pkg);
           if (pkg === '@animate-ui/react') {
             dependencies.add('motion');
-            const library = specifier!.match(/primitives\/([\w-]+)/)?.[1];
-            if (library && Object.hasOwn(PEERS, library))
-              dependencies.add(PEERS[library]!);
+            for (const peer of peersOf(specifier!)) dependencies.add(peer);
           }
         }
       }

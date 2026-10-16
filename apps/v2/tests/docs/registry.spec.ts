@@ -87,6 +87,21 @@ test('the shadcn MCP finds items in the @animate-ui registry', async ({
   );
 });
 
+test('the shadcn MCP finds the styled buttons in the @animate-ui registry', async ({
+  baseURL,
+}) => {
+  const { searchRegistries } = await load('registry/index.js');
+  const result = await searchRegistries(['@animate-ui'], {
+    query: 'liquid',
+    config: config({
+      '@animate-ui': `${baseURL}/r/{name}.json`,
+    }),
+  });
+  expect(result.items.map((item: { name: string }) => item.name)).toContain(
+    'buttons-liquid',
+  );
+});
+
 test('the manual steps show the file path a default project gets', async ({
   page,
 }) => {
@@ -101,7 +116,13 @@ test('the manual steps show the file path a default project gets', async ({
 
 test('no registry component shadows a global name', () => {
   const shadowing: string[] = [];
-  for (const library of ['icons', 'hugeicons', 'backgrounds']) {
+  for (const library of [
+    'icons',
+    'hugeicons',
+    'backgrounds',
+    'buttons',
+    'components',
+  ]) {
     const dir = join(__dirname, '../../registry', library);
     for (const name of readdirSync(dir)) {
       const file = join(dir, name, 'index.tsx');
@@ -138,4 +159,31 @@ test('the styled buttons and code block are registry files, not package exports'
   );
   expect(block.dependencies).toContain('shiki');
   expect(existsSync(join(PACKAGE, 'code-block'))).toBe(true);
+});
+
+test('a demo built on a primitive that uses another one declares that one’s peers too', () => {
+  const item = JSON.parse(
+    readFileSync(join(OUT, 'demo-animate-ui-avatar-group.json'), 'utf8'),
+  ) as { dependencies: string[] };
+  expect(item.dependencies).toContain('@floating-ui/react');
+});
+
+test('registry.json lists every item but the demos', () => {
+  const listed = (
+    JSON.parse(readFileSync(join(OUT, 'registry.json'), 'utf8')) as {
+      items: { name: string }[];
+    }
+  ).items
+    .map((item) => item.name)
+    .sort();
+  const files = readdirSync(OUT)
+    .filter(
+      (file) =>
+        file.endsWith('.json') &&
+        file !== 'registry.json' &&
+        !file.startsWith('demo-'),
+    )
+    .map((file) => file.replace(/\.json$/, ''))
+    .sort();
+  expect(listed).toEqual(files);
 });

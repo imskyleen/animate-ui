@@ -4,7 +4,9 @@ import path from 'node:path';
 const outDir = path.join(import.meta.dirname, '..', 'public', 'r');
 
 const items = readdirSync(outDir)
-  .filter((file) => /^(icons|backgrounds)-.+\.json$/.test(file))
+  .filter((file) =>
+    /^(icons|backgrounds|buttons|components)-.+\.json$/.test(file),
+  )
   .sort()
   .map((file) => {
     const { name, type, title, description } = JSON.parse(
