@@ -4,6 +4,7 @@ import { ease, useShouldReduceMotion } from '@animate-ui/react/utils/motion';
 import {
   motion,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useMotionValueEvent,
   useScroll,
@@ -12,6 +13,8 @@ import {
   type MotionValue,
 } from 'motion/react';
 import {
+  createContext,
+  use,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -69,8 +72,11 @@ function useStageScale() {
   return scale;
 }
 
+const OnScreenContext = createContext(true);
+
 function Card({ title, Vignette }: { title: string; Vignette: ComponentType }) {
   const [hovered, setHovered] = useState(false);
+  const onScreen = use(OnScreenContext);
   return (
     <div
       data-slot="orbit-card"
@@ -83,7 +89,7 @@ function Card({ title, Vignette }: { title: string; Vignette: ComponentType }) {
           {title}
         </span>
         <div className="flex flex-1 items-center justify-center p-4 pt-7">
-          <AutoplayScope paused={hovered}>
+          <AutoplayScope paused={hovered || !onScreen}>
             <Vignette />
           </AutoplayScope>
         </div>
@@ -210,6 +216,7 @@ function Headline({
 
 function OrbitStage() {
   const ref = useRef<HTMLElement>(null);
+  const onScreen = useInView(ref);
   const scale = useStageScale();
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -223,6 +230,8 @@ function OrbitStage() {
   const drift = useMotionValue(0);
 
   const enter = useTransform(progress, (p) => smooth(clamp((p - 0.12) / 0.25)));
+  const [entered, setEntered] = useState(false);
+  useMotionValueEvent(enter, 'change', (value) => setEntered(value > 0.001));
   const settle = useTransform(progress, (p) => clamp((p - 0.86) / 0.12));
   const turn = useTransform(progress, (p) => clamp(p / 0.86) * Math.PI * 1.1);
   useAnimationFrame((_, delta) => {
@@ -240,96 +249,103 @@ function OrbitStage() {
   const glow = useTransform(progress, [0, 0.3, 0.86, 0.95], [0.5, 1, 1, 0]);
 
   return (
-    <section
-      ref={ref}
-      data-slot="home-orbit"
-      className="relative mt-24 h-[300vh]"
-    >
-      <div className="sticky top-20 flex h-[calc(100dvh-5rem)] items-center justify-center overflow-hidden">
-        <div
-          className="relative shrink-0"
-          style={{
-            width: STAGE.width,
-            height: STAGE.height,
-            transform: `scale(${scale})`,
-          }}
-        >
-          <Headline progress={progress} range={[-0.01, 0, 0.78, 0.87]}>
-            Every primitive, alive.
-          </Headline>
-          <Headline progress={progress} range={[0.9, 0.97, 1, 1.01]}>
-            Go ahead, play with them.
-          </Headline>
-
-          <motion.div
-            aria-hidden="true"
-            style={{ opacity: glow }}
-            className="absolute top-1/2 left-1/2 -mt-[240px] -ml-[240px] size-[480px] rounded-full bg-foreground/10 blur-3xl"
-          />
-          <motion.div
-            aria-hidden="true"
-            className="absolute top-1/2 left-1/2 z-10 -mt-[120px] -ml-[128px]"
+    <OnScreenContext value={onScreen && entered}>
+      <section
+        ref={ref}
+        data-slot="home-orbit"
+        className="relative mt-24 h-[300vh]"
+      >
+        <div className="sticky top-20 flex h-[calc(100dvh-5rem)] items-center justify-center overflow-hidden">
+          <div
+            className="relative shrink-0"
             style={{
-              scale: logoScale,
-              opacity: logoOpacity,
-              rotate: logoRotate,
-              rotateX: logoTilt,
-              transformPerspective: 1200,
+              width: STAGE.width,
+              height: STAGE.height,
+              transform: `scale(${scale})`,
             }}
           >
-            <AnimateUILogo className="h-[240px] w-[256px] text-foreground drop-shadow-[0_30px_60px_rgb(0_0_0/0.25)]" />
-          </motion.div>
+            <Headline progress={progress} range={[-0.01, 0, 0.78, 0.87]}>
+              Every primitive, alive.
+            </Headline>
+            <Headline progress={progress} range={[0.9, 0.97, 1, 1.01]}>
+              Go ahead, play with them.
+            </Headline>
 
-          {VIGNETTES.map(({ title }, index) => (
-            <OrbitCard
-              key={title}
-              index={index}
-              enter={enter}
-              settle={settle}
-              turn={turn}
-              drift={drift}
+            <motion.div
+              aria-hidden="true"
+              style={{ opacity: glow }}
+              className="absolute top-1/2 left-1/2 -mt-[240px] -ml-[240px] size-[480px] rounded-full bg-foreground/10 blur-3xl"
             />
-          ))}
+            <motion.div
+              aria-hidden="true"
+              className="absolute top-1/2 left-1/2 z-10 -mt-[120px] -ml-[128px]"
+              style={{
+                scale: logoScale,
+                opacity: logoOpacity,
+                rotate: logoRotate,
+                rotateX: logoTilt,
+                transformPerspective: 1200,
+              }}
+            >
+              <AnimateUILogo className="h-[240px] w-[256px] text-foreground drop-shadow-[0_30px_60px_rgb(0_0_0/0.25)]" />
+            </motion.div>
+
+            {VIGNETTES.map(({ title }, index) => (
+              <OrbitCard
+                key={title}
+                index={index}
+                enter={enter}
+                settle={settle}
+                turn={turn}
+                drift={drift}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </OnScreenContext>
   );
 }
 
 function StaticGrid() {
+  const ref = useRef<HTMLElement>(null);
+  const onScreen = useInView(ref);
   return (
-    <section
-      data-slot="home-orbit"
-      className="mx-auto mt-24 flex w-full max-w-[1000px] flex-col gap-8 px-5"
-    >
-      <motion.h2
-        initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
-        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: ease.out }}
-        className="text-center text-3xl font-medium text-balance md:text-5xl"
+    <OnScreenContext value={onScreen}>
+      <section
+        ref={ref}
+        data-slot="home-orbit"
+        className="mx-auto mt-24 flex w-full max-w-[1000px] flex-col gap-8 px-5"
       >
-        Every primitive, alive.
-      </motion.h2>
-      <div className="grid gap-4 md:grid-cols-3">
-        {VIGNETTES.map(({ title, Vignette }, index) => (
-          <motion.div
-            key={title}
-            initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{
-              duration: 0.6,
-              ease: ease.out,
-              delay: (index % COLUMNS) * 0.06,
-            }}
-            style={{ height: CARD.height + 20 }}
-          >
-            <Card title={title} Vignette={Vignette} />
-          </motion.div>
-        ))}
-      </div>
-    </section>
+        <motion.h2
+          initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: ease.out }}
+          className="text-center text-3xl font-medium text-balance md:text-5xl"
+        >
+          Every primitive, alive.
+        </motion.h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {VIGNETTES.map(({ title, Vignette }, index) => (
+            <motion.div
+              key={title}
+              initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{
+                duration: 0.6,
+                ease: ease.out,
+                delay: (index % COLUMNS) * 0.06,
+              }}
+              style={{ height: CARD.height + 20 }}
+            >
+              <Card title={title} Vignette={Vignette} />
+            </motion.div>
+          ))}
+        </div>
+      </section>
+    </OnScreenContext>
   );
 }
 

@@ -785,3 +785,20 @@ test('the toast card keeps a few toasts while the window is in the background, i
     4,
   );
 });
+
+test('the orbit components stay still until their cards come in, so the hero pays nothing for them', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(4500);
+  const switches = page.locator('[data-slot="orbit-card"] [role="switch"]');
+  const states = () =>
+    switches.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute('aria-checked')).join(),
+    );
+  const before = await states();
+  for (let i = 0; i < 6; i++) {
+    await page.waitForTimeout(500);
+    expect(await states()).toBe(before);
+  }
+});
