@@ -52,7 +52,7 @@ Every icon has a `default` animation, often a few named ones, plus `path` (draws
 
 - `speed`: playback rate (`2` is twice as fast). At `1`, the default, icons play exactly as authored. It follows `AnimateUIProvider`'s `tempo`.
 - `delay`: milliseconds before the animation starts.
-- `loop`, `loopDelay`: repeat, with a pause between iterations.
+- `loop`, `loopDelay`: repeat, with a pause between iterations. Off screen, a loop waits after its current lap until the icon is back in view.
 
 ### Persistence
 

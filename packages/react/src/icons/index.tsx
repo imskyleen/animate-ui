@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   motion,
   useAnimation,
+  useInView,
   type SVGMotionProps,
   type UseInViewOptions,
   type LegacyAnimationControls,
@@ -254,6 +255,17 @@ function AnimateIconRoot({
     },
   );
 
+  const onScreen = useInView(inViewRef);
+  const onScreenRef = React.useRef(onScreen);
+  const resumeRef = React.useRef<(() => void) | null>(null);
+  React.useEffect(() => {
+    onScreenRef.current = onScreen;
+    if (onScreen) {
+      resumeRef.current?.();
+      resumeRef.current = null;
+    }
+  }, [onScreen]);
+
   const startAnim = React.useCallback(
     async (anim: 'initial' | 'animate', method: 'start' | 'set' = 'start') => {
       try {
@@ -382,6 +394,12 @@ function AnimateIconRoot({
           await startAnim('initial');
           return;
         }
+        if (!onScreenRef.current) {
+          await new Promise<void>((resolve) => {
+            resumeRef.current = resolve;
+          });
+          if (cancelledRef.current || gen !== runGenRef.current) return;
+        }
         await run();
       }
     }
@@ -390,6 +408,8 @@ function AnimateIconRoot({
 
     return () => {
       cancelledRef.current = true;
+      resumeRef.current?.();
+      resumeRef.current = null;
       if (delayRef.current) {
         clearTimeout(delayRef.current);
         delayRef.current = null;

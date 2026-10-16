@@ -916,3 +916,32 @@ test('a looping full turn starts each lap from rest instead of kicking backwards
   expect(Math.max(...degrees)).toBeGreaterThan(350);
   expect(Math.min(...degrees)).toBeGreaterThanOrEqual(-1);
 });
+
+test('a looping icon waits off screen between laps, and loops again once back', async ({
+  page,
+}) => {
+  await open(page);
+  const section = page.getByTestId('loop-turn');
+  const svg = section.locator('svg');
+  const angles = (ms: number) =>
+    svg.evaluate(
+      (el, ms) =>
+        new Promise<number[]>((resolve) => {
+          const samples: number[] = [];
+          const start = performance.now();
+          const tick = () => {
+            const { a, b } = new DOMMatrix(getComputedStyle(el).transform);
+            samples.push(Math.round((Math.atan2(b, a) * 180) / Math.PI));
+            if (performance.now() - start < ms) requestAnimationFrame(tick);
+            else resolve(samples);
+          };
+          requestAnimationFrame(tick);
+        }),
+      ms,
+    );
+  await section.evaluate((el) => (el.style.transform = 'translateY(-10000px)'));
+  await page.waitForTimeout(3000);
+  expect(new Set(await angles(1500)).size).toBe(1);
+  await section.evaluate((el) => (el.style.transform = ''));
+  expect(new Set(await angles(2500)).size).toBeGreaterThan(5);
+});
