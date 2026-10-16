@@ -325,6 +325,18 @@ test('the command block is built from Animate UI tabs, copy button and buttons',
         ) && getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)',
     })),
   ).toEqual({ inPane: false, opaque: true });
+  const edges = await copy.evaluate((button) => {
+    const frame = button.parentElement!.querySelector(
+      '[data-slot="tabs-contents"]',
+    )!;
+    const box = frame.getBoundingClientRect();
+    const border = parseFloat(getComputedStyle(frame).borderRightWidth);
+    const cover =
+      button.getBoundingClientRect().right +
+      parseFloat(getComputedStyle(button, '::after').width);
+    return { cover, inner: box.right - border };
+  });
+  expect(edges.cover).toBeLessThanOrEqual(edges.inner + 0.25);
   await copy.click();
   await expect(copy).toHaveAttribute('data-copied', '');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
