@@ -57,7 +57,7 @@ export function CopyCommand({
       onValueChange={setManager}
       className="flex w-[min(100%,30rem)] flex-col items-center gap-2"
     >
-      <TabsHighlight className="absolute inset-0 z-0 rounded-md bg-accent">
+      <TabsHighlight className="absolute inset-0 z-0 rounded-lg bg-accent">
         <TabsList
           aria-label="Package manager"
           className="inline-flex items-center gap-1 text-xs"
@@ -74,8 +74,8 @@ export function CopyCommand({
           ))}
         </TabsList>
       </TabsHighlight>
-      <div className="relative w-full">
-        <TabsContents className="rounded-xl border bg-accent/40 font-mono text-sm">
+      <div className="relative w-full rounded-xl bg-accent p-1">
+        <TabsContents className="rounded-lg bg-background font-mono text-sm">
           {MANAGER_NAMES.map((name) => (
             <TabsContent
               key={name}
@@ -90,12 +90,12 @@ export function CopyCommand({
         <span
           aria-hidden="true"
           data-slot="command-cover"
-          className="pointer-events-none absolute inset-y-px right-px w-16 rounded-r-[calc(var(--radius-xl)-1px)] bg-linear-to-r from-transparent via-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] via-40% to-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))]"
+          className="pointer-events-none absolute inset-y-1 right-1 w-16 rounded-r-lg bg-linear-to-r from-transparent via-background via-40% to-background"
         />
         <CopyButton
           content={command(manager as Manager)}
           aria-label="Copy the command"
-          className="absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="absolute top-1/2 right-2.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
           <CopyButtonIcon
             icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} size={16} />}
@@ -120,7 +120,7 @@ export function CallsToAction() {
       </Button>
       <Button
         asChild
-        className="inline-flex h-10 items-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-accent"
+        className="inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-medium transition-colors hover:bg-accent/70"
       >
         <Link href="/docs/primitives">Browse primitives</Link>
       </Button>

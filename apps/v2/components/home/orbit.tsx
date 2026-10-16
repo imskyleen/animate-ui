@@ -26,7 +26,7 @@ import { AnimateUILogo } from '@/lib/libraries';
 import { AutoplayScope, VIGNETTES } from './vignettes';
 
 const STAGE = { width: 1200, height: 780 };
-const CARD = { width: 300, height: 176 };
+const CARD = { width: 300, height: 188 };
 const GAP = 16;
 const COLUMNS = 3;
 const RADIUS = { x: 400, y: 240 };
@@ -76,15 +76,17 @@ function Card({ title, Vignette }: { title: string; Vignette: ComponentType }) {
       data-slot="orbit-card"
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      className="relative flex size-full flex-col rounded-2xl border bg-background dark:bg-neutral-900 shadow-[0_24px_60px_-28px_rgb(0_0_0/0.35)] dark:shadow-[0_24px_60px_-28px_rgb(0_0_0/0.9)]"
+      className="flex size-full flex-col rounded-2xl bg-accent p-1.5"
     >
-      <span className="absolute top-3 left-4 text-xs font-medium text-muted-foreground">
-        {title}
-      </span>
-      <div className="flex flex-1 items-center justify-center p-5 pt-8">
-        <AutoplayScope paused={hovered}>
-          <Vignette />
-        </AutoplayScope>
+      <div className="relative flex flex-1 flex-col rounded-xl bg-background">
+        <span className="absolute top-2.5 left-3.5 text-xs font-medium text-muted-foreground">
+          {title}
+        </span>
+        <div className="flex flex-1 items-center justify-center p-4 pt-7">
+          <AutoplayScope paused={hovered}>
+            <Vignette />
+          </AutoplayScope>
+        </div>
       </div>
     </div>
   );

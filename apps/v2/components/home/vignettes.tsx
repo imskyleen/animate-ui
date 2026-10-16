@@ -279,7 +279,7 @@ function ToastVignette() {
   );
   return (
     <ToastProvider toastManager={manager} limit={2}>
-      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
         <ToastViewport className="absolute inset-x-4 bottom-4 w-auto max-w-none sm:right-4 sm:left-4 sm:w-auto">
           <ToastStack />
         </ToastViewport>

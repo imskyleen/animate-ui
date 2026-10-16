@@ -141,7 +141,7 @@ function BellPreview({ playing }: { playing: boolean }) {
   return (
     <div className="flex flex-col items-center gap-4">
       <AnimateIcon animate={playing} loop loopDelay={700} animateOnHover>
-        <span className="flex size-20 items-center justify-center rounded-2xl border bg-background">
+        <span className="flex size-20 items-center justify-center rounded-xl bg-accent">
           <Notification01 size={36} />
         </span>
       </AnimateIcon>
@@ -197,7 +197,7 @@ function TodoPreview({ playing }: { playing: boolean }) {
               layout: spring.reflow,
               default: { duration: 0.3, ease: ease.out },
             }}
-            className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2.5 text-sm"
+            className="flex items-center gap-3 rounded-lg bg-accent px-3 py-2.5 text-sm"
           >
             <span className="size-4 shrink-0 rounded-[5px] border-2 border-muted-foreground/40" />
             {task}
@@ -278,7 +278,7 @@ function ReviewPreview({
               <motion.div
                 key={finding.where}
                 variants={ROW}
-                className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2"
+                className="flex items-center gap-3 rounded-lg bg-accent px-3 py-2"
               >
                 <div className="flex min-w-0 flex-1 flex-col">
                   <span className="font-medium">{finding.where}</span>
@@ -458,9 +458,9 @@ function ScenarioPane({
   const { Preview } = scenario;
 
   return (
-    <div className="grid min-h-[380px] md:grid-cols-[1.05fr_1fr]">
-      <div className="flex flex-col gap-4 border-b p-5 md:border-r md:border-b-0 md:p-6">
-        <div className="flex items-start gap-2.5 rounded-xl bg-accent/60 px-4 py-3 text-sm leading-5">
+    <div className="grid min-h-[380px] gap-1 md:grid-cols-[1.05fr_1fr]">
+      <div className="flex flex-col gap-4 rounded-lg bg-background p-5 md:p-6">
+        <div className="flex items-start gap-2.5 rounded-lg bg-accent px-4 py-3 text-sm leading-5">
           <span className="flex h-5 shrink-0 items-center text-muted-foreground">
             <ArrowRight01
               animate={progress >= 0}
@@ -499,7 +499,7 @@ function ScenarioPane({
           {finished && (
             <motion.div
               {...STEP_IN}
-              className="mt-auto flex items-center gap-2 rounded-lg border px-3 py-2 text-xs text-muted-foreground"
+              className="mt-auto flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-xs text-muted-foreground"
             >
               <HugeiconsIcon
                 icon={SparklesIcon}
@@ -514,9 +514,9 @@ function ScenarioPane({
           )}
         </AnimatePresence>
       </div>
-      <div className="relative flex flex-col bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:16px_16px]">
+      <div className="relative flex flex-col rounded-lg bg-background">
         <div className="flex items-center gap-2 px-5 pt-4">
-          <span className="rounded-md border bg-background px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+          <span className="rounded-md bg-accent px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
             localhost:3000
           </span>
         </div>
@@ -557,7 +557,7 @@ export function AISection() {
     >
       <motion.span
         {...reveal(0)}
-        className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground"
+        className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs text-muted-foreground"
       >
         <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} size={14} />
         Animate UI skill
@@ -591,7 +591,7 @@ export function AISection() {
           }}
           className="flex flex-col items-center gap-4"
         >
-          <TabsHighlight className="absolute inset-0 z-0 rounded-md bg-accent">
+          <TabsHighlight className="absolute inset-0 z-0 rounded-lg bg-accent">
             <TabsList
               aria-label="Example request"
               className="inline-flex flex-wrap items-center justify-center gap-1 text-sm"
@@ -608,8 +608,8 @@ export function AISection() {
               ))}
             </TabsList>
           </TabsHighlight>
-          <div className="w-full overflow-hidden rounded-2xl border bg-background shadow-[0_24px_60px_-32px_rgb(0_0_0/0.35)] dark:bg-neutral-900 dark:shadow-[0_24px_60px_-28px_rgb(0_0_0/0.9)]">
-            <div className="flex items-center gap-3 border-b px-4 py-3">
+          <div className="w-full overflow-hidden rounded-xl bg-accent p-1">
+            <div className="flex items-center gap-3 px-3 pt-1.5 pb-2.5">
               <span className="flex gap-1.5" aria-hidden="true">
                 <span className="size-2.5 rounded-full bg-foreground/15" />
                 <span className="size-2.5 rounded-full bg-foreground/15" />
@@ -617,10 +617,6 @@ export function AISection() {
               </span>
               <span className="font-mono text-xs text-muted-foreground">
                 ~/my-app
-              </span>
-              <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} size={12} />
-                Animate UI skill
               </span>
             </div>
             <TabsContents>
@@ -657,7 +653,7 @@ export function AISection() {
           </Button>
           <Button
             asChild
-            className="inline-flex h-10 items-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-accent"
+            className="inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-medium transition-colors hover:bg-accent/70"
           >
             <Link href="/docs/cli#audit">Audit with the CLI</Link>
           </Button>
