@@ -659,7 +659,7 @@ export function AISection() {
             asChild
             className="inline-flex h-10 items-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-accent"
           >
-            <Link href="/docs/cli">Audit with the CLI</Link>
+            <Link href="/docs/cli#audit">Audit with the CLI</Link>
           </Button>
         </div>
       </motion.div>
