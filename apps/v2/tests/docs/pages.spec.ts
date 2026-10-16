@@ -323,15 +323,41 @@ test('the sidebar and TOC fade only where there is more to scroll', async ({
           getComputedStyle(el).webkitMaskImage,
       );
   await expect.poll(() => mask('#nd-toc .overscroll-none')).toBe('none');
-  const sidebar = '#nd-sidebar [data-slot="scroll-fade"]';
+  const sidebar = '#nd-sidebar [data-slot="sidebar-scroll"]';
   await expect.poll(() => mask(sidebar)).not.toBe('none');
+  const fade = (edge: 't' | 'b') =>
+    page
+      .locator(sidebar)
+      .evaluate(
+        (el, edge) =>
+          getComputedStyle(el).getPropertyValue(`--scroll-fade-${edge}`),
+        edge,
+      );
+  await expect.poll(() => fade('t')).toContain('0 *');
+  await expect.poll(() => fade('b')).not.toContain('0 *');
+});
+
+test('the sidebar fades its edges without shrinking a row or a section', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/docs/primitives/radix-ui/accordion');
+  const sidebar = page.locator('#nd-sidebar [data-slot="sidebar-scroll"]');
+  await sidebar.evaluate((el) => (el.scrollTop = 700));
   await expect
     .poll(() =>
-      page
-        .locator(sidebar)
-        .evaluate((el) => el.style.getPropertyValue('--scroll-fade-top')),
+      sidebar.evaluate((el) =>
+        getComputedStyle(el).getPropertyValue('--scroll-fade-t'),
+      ),
     )
-    .toMatch(/^0(\.0+)?$|^$/);
+    .not.toContain('0 *');
+  const scaled = await sidebar.evaluate(
+    (el) =>
+      [...el.querySelectorAll<HTMLElement>('*')].filter(
+        (child) => getComputedStyle(child).scale !== 'none',
+      ).length,
+  );
+  expect(scaled).toBe(0);
 });
 
 test('a page released in the last 60 days has a "new" badge', async ({

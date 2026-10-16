@@ -11,7 +11,6 @@ import {
   TextFontIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
-import { ScrollFade } from '@animate-ui/react/primitives/effects/scroll-fade';
 import { cn } from 'cn';
 import {
   SidebarContent,
@@ -162,12 +161,12 @@ function Section({
 
 function SidebarScroll({ children }: { children: ReactNode }) {
   return (
-    <ScrollFade
-      size={24}
-      className="min-h-0 flex-1 overflow-y-auto overscroll-none px-6 pt-4 pb-8 [scrollbar-width:none] max-md:pt-8 md:pb-18"
+    <div
+      data-slot="sidebar-scroll"
+      className="min-h-0 flex-1 scroll-fade-y overflow-y-auto overscroll-none px-6 pt-4 pb-8 [scrollbar-width:none] max-md:pt-8 md:pb-18"
     >
       {children}
-    </ScrollFade>
+    </div>
   );
 }
 
