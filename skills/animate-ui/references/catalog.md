@@ -19,7 +19,7 @@ Check this list before writing motion by hand: when one of these does the job, u
 
 ## Numbers and changing text
 
-Counting Number for stats and Rotating Text for words cycling on a timer fit every level; only a value changing in place after an action swaps at the subtle level (`recipes/swap.md`). Rotating Text and Scrolling Number render a `<div>`: in a heading or a line of text, give them `inline-block align-bottom` and check the baseline. Rotating Text plays its first word on mount: say so in the output when it sits in the first viewport.
+Counting Number for stats and Rotating Text for words cycling on a timer fit every level; only a value changing in place after an action swaps at the subtle level (`recipes/swap.md`). Rotating Text and Scrolling Number render a `<div>`: in a heading or a line of text, Rotating Text takes `align` with `style={{ display: 'inline-block', overflow: 'clip' }}` (`recipes/swap.md`, a word cycling in a line); give Scrolling Number `inline-block align-bottom`; check the baseline. Rotating Text plays its first word on mount: say so in the output when it sits in the first viewport.
 
 | Need                                                                                             | Use              | Import                                                |
 | ------------------------------------------------------------------------------------------------ | ---------------- | ----------------------------------------------------- |

@@ -40,20 +40,15 @@ const swap = useTempoTransition(motionTransition.swap);
 
 ## A word cycling in a line of text
 
-A word changing on a timer inside a heading or a sentence ("Design. Code. **Ship.**" → "Grow." → "Win."): the line around it never moves, and the word keeps the line's baseline, color and weight.
+A word changing on a timer inside a heading or a sentence ("Design. Code. **Ship.**" → "Grow." → "Win."): the line around it never moves, and the word keeps the line's baseline, color and weight. Use Animate UI's Rotating Text, set inline:
 
 ```tsx
 'use client';
 
-import * as React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import {
-  blur,
-  ReducedMotionConfig,
-  spring,
-  transition,
-  useTempoTransition,
-} from '@animate-ui/react/utils/motion';
+  RotatingText,
+  RotatingTextContainer,
+} from '@animate-ui/react/primitives/texts/rotating';
 
 export function CyclingWord({
   words,
@@ -62,60 +57,22 @@ export function CyclingWord({
   words: string[];
   every?: number;
 }) {
-  const [index, setIndex] = React.useState(0);
-  const rise = useTempoTransition(spring.slide);
-  const fade = useTempoTransition(transition.swap);
-
-  React.useEffect(() => {
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % words.length),
-      every,
-    );
-    return () => clearInterval(id);
-  }, [words.length, every]);
-
   return (
-    <ReducedMotionConfig>
-      <span className="inline-grid justify-items-start">
-        <span className="sr-only">{words.join(', ')}</span>
-        {words.map((word) => (
-          <span
-            key={word}
-            aria-hidden="true"
-            className="invisible col-start-1 row-start-1"
-          >
-            {word}
-          </span>
-        ))}
-        <AnimatePresence initial={false}>
-          <motion.span
-            key={words[index]}
-            aria-hidden="true"
-            className="col-start-1 row-start-1"
-            initial={{ opacity: 0, y: '0.35em', filter: blur.surface }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              filter: 'blur(0px)',
-              transition: { ...rise, opacity: fade, filter: fade },
-            }}
-            exit={{
-              opacity: 0,
-              y: '-0.35em',
-              filter: blur.surface,
-              transition: fade,
-            }}
-          >
-            {words[index]}
-          </motion.span>
-        </AnimatePresence>
-      </span>
-    </ReducedMotionConfig>
+    <RotatingTextContainer
+      text={words}
+      duration={every}
+      align="start"
+      style={{ display: 'inline-block', overflow: 'clip' }}
+    >
+      <RotatingText className="text-blue-600" />
+    </RotatingTextContainer>
   );
 }
 ```
 
-- Every word sits in the same grid cell, the hidden ones reserving the widest word's width: the rest of the line stays put, and an inline grid keeps the text's baseline (Rotating Text renders a block, which drops it out of a line).
-- The new word rises out of a blur while the old one leaves upward; under reduced motion only the fade and the blur stay. The words keep the wrapper's own classes (`text-blue-600` stays on the span around it).
-- Screen readers read the list once; the timer runs from the first change, and the first word shows at rest on load.
-- Check it: the line's other words don't move between changes, and the word's letters sit on the same baseline as before.
+- `align` keeps the widest word's width, so the rest of the line stays put, and places each word at its start (`center` or `end` otherwise).
+- `display: inline-block` keeps it in the line. `overflow: clip` still hides the word's travel but, unlike the container's default `hidden`, keeps the text's baseline (an `overflow: hidden` inline-block sits on its bottom edge, a few pixels too high).
+- In a centered heading that wraps on narrow screens, the word can end up alone on its line: switch `align` to `center` when it does (compare its `offsetTop` with the line's first word, again on resize and once fonts load).
+- When the heading enters with its own effect (words rising out of a blur), wrap the container in that same entrance and give it a single word until the entrance ends. Otherwise it plays its own slide-in on mount, unlike the words around it.
+- Screen readers read the list once.
+- Check it: the line's other words don't move between changes, and the word's letters sit on the same baseline as the line's.
