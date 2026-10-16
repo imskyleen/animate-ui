@@ -293,24 +293,31 @@ test('scrolling from the hero through the orbit never shows an empty screen, and
   expect(empty).toEqual([]);
 
   const end = top + height - viewport;
-  const settled = async () =>
+  const layout = () =>
     page.locator('[data-slot="orbit-card"]').evaluateAll((els) =>
-      els.every((el) => {
-        const wrapper = el.parentElement!;
-        return (
-          getComputedStyle(wrapper).transform === 'none' ||
-          /matrix\(1, 0, 0, 1,/.test(getComputedStyle(wrapper).transform)
-        );
+      els.map((el) => {
+        const frame = el
+          .closest('[data-slot="home-orbit"] > div')!
+          .getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        return [
+          Math.round(box.left - frame.left),
+          Math.round(box.top - frame.top),
+          Math.round(box.width),
+        ];
       }),
     );
+  await page.evaluate((to) => window.scrollTo(0, to), end);
+  await page.waitForTimeout(800);
+  const final = JSON.stringify(await layout());
   let firstSettled = end;
-  for (let y = end; y > top; y -= 40) {
+  for (let y = end - 30; y > top; y -= 30) {
     await page.evaluate((to) => window.scrollTo(0, to), y);
-    await page.waitForTimeout(200);
-    if (!(await settled())) break;
+    await page.waitForTimeout(500);
+    if (JSON.stringify(await layout()) !== final) break;
     firstSettled = y;
   }
-  expect(end - firstSettled).toBeLessThan(viewport * 0.35);
+  expect(end - firstSettled).toBeLessThan(viewport * 0.12);
 });
 
 test('the command block is built from Animate UI tabs, copy button and buttons', async ({
