@@ -1,6 +1,6 @@
 ---
 name: animate-ui
-description: Animate React components with Animate UI (Motion-based animated primitives for Radix UI, Base UI and React Aria). For shadcn/ui components, runs the `@animate-ui/cli` codemod that swaps their primitives for Animate UI's; for components built directly on Radix UI, Base UI or React Aria, swaps the import to `@animate-ui/react`; for anything else (custom components, plain markup, other libraries), applies Animate UI's motion rules, tokens (springs, curves, scales, blur, shifts) and recipes with Motion (motion/react). Also migrates Animate UI v1 projects, and turns any icon (Lucide, Hugeicons, Tabler, Phosphor, a custom SVG) into an animated icon compatible with `AnimateIcon`. Use when asked to animate a component, make shadcn/ui "animated", add enter/exit, press or swap animations, set up Animate UI, animate an icon, change the animation pace, or review whether motion follows Animate UI's rules.
+description: Animate React components with Animate UI (Motion-based animated primitives for Radix UI, Base UI and React Aria). For shadcn/ui components, runs the `@animate-ui/cli` codemod that swaps their primitives for Animate UI's; for components built directly on Radix UI, Base UI or React Aria, swaps the import to `@animate-ui/react`; for anything else (custom components, plain markup, other libraries), applies Animate UI's motion rules, tokens (springs, curves, scales, blur, shifts) and recipes with Motion (motion/react). Also reviews existing motion with the `audit` command, migrates Animate UI v1 projects, and turns any icon (Lucide, Hugeicons, Tabler, Phosphor, a custom SVG) into an animated icon compatible with `AnimateIcon`. Use when asked to animate a component, make shadcn/ui "animated", add enter/exit, press or swap animations, set up Animate UI, animate an icon, change the animation pace, review whether motion follows Animate UI's rules, or find slow and janky animations.
 ---
 
 # Animate UI
@@ -18,7 +18,7 @@ Its motion is springy and alive, but coherent: nearly everything moves on a spri
 | Custom, plain markup, another library, or a primitive Animate UI doesn't cover | **C. Animate it with the rules**         |
 | An Animate UI v1 project (`components/animate-ui/...` files)                   | **D. Migrate**                           |
 | An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                               |
-| Reviewing existing motion                                                      | **C**, the rules as a checklist          |
+| Reviewing existing motion, finding slow or janky animations                    | **R. Review**                            |
 | An animation to reproduce: a link, a video, a GIF                              | **E. Reproduce it**                      |
 | A feel in words ("snappier", "plus doux", "bouncy") or CSS for a token         | **`references/feel.md`**                 |
 | An interaction by name: a loading button, a list, a swipe, a banner…           | **C**, from `references/interactions.md` |
@@ -132,6 +132,25 @@ Keyboard navigation animates like the pointer. Name the purpose in one word: fee
 - A menubar's popover moves to the next menu and resizes (`spring.morph`: it starts gently and eases in without going past, keeping its speed from menu to menu) instead of closing and reopening, its content changing in place: the content stays where it is on screen while the popover slides over it, the previous items leaving `shift.handoff` (6px) away from where it goes as they fade out (`transition.handoffOut`), the next ones arriving from there on `spring.handoff` and fading in behind them (`transition.handoffIn`): from File to Edit, File's leave to the left, Edit's come from the right. One popover on screen at every frame, each menu's content once (a menu coming back takes its leaving items back from where they are), and the triggers share one highlight gliding from trigger to trigger (internal/menu-handoff.ts, internal/item-highlight.tsx).
 - The keyboard animates like the pointer; hover only on hover-capable fine pointers; re-triggering retargets, never restarts; loops pause off screen.
 
+## R. Review existing motion
+
+Start from facts, then judge them yourself: the CLI reads the code, it doesn't know what each element is for.
+
+1. **Collect.** Run `pnpm dlx @animate-ui/cli@latest audit` from the project (no install needed; `--json` for a long report, paths to narrow it: `audit src/components`). Per file and line, it lists what each element animates with the cost of each property (**compositor**: transform strings, opacity, filter; **main-thread**: Motion's `x`, `y`, `scale`, `rotate` shorthands, smooth but written by JavaScript each frame, A9; **paint**: colors, shadows, SVG strokes; **layout**: width, height, top, margins), and patterns: `transition: all`, ease-in (saying when the element enters), durations of 400ms or more, hover scales, scales from 0, positioned popups scaling without an origin, CSS transitions on an element Motion also animates, a `motion.h1` hidden on first paint, CSS hovers that move outside `@media (hover: hover)`, endless loops (and whether a `motion-reduce:` class sits beside them), `layout` props, `will-change`, and files that move without a reduced-motion path.
+2. **Judge each fact in context.** Open the code it points to and decide with the gate table (§ Gate, under C: how often it's used, its purpose), `references/rules.md`, and `references/recipes.md` for the component's own rules (a page's main heading is there on first paint; a disclosure's height is allowed) and the fix:
+   - A cost matters where it runs often or on a large area: a `height` on an accordion is the disclosure exception; a `width` on every row of a list is a jank risk; a color on a small button is fine. Main-thread shorthands are fine for a one-off entrance and worth a transform string on a press or anything continuous (A9).
+   - A long duration is right on a page entrance or a rare success, wrong on a menu, a tooltip, a hover or anything keyboard-driven.
+   - `transition: all` is a bug when the element also changes layout properties or is animated by Motion, harmless on a color-only hover; name what it should list instead.
+   - Ease-in on something entering or reacting is a bug; on an element leaving for good it may be deliberate.
+   - A hover scale on a pressable is a rule break (B4); on a card's image inside its clip it's allowed.
+   - A loop pauses off screen and under reduced motion (A4); a loading spinner keeps saying it's loading: slower, or an opacity pulse instead of the turn.
+   - "No reduced-motion path" in a file can be covered higher up (a `MotionConfig reducedMotion`, Animate UI's primitives, a global CSS rule the report lists as project-wide): check before calling it missing.
+   - Hand-typed values that match no token are one minor finding for the whole review (cohesion, B8), not one per line.
+   - What the CLI can't see: pointer or scroll values going through React state (A10), the keyboard not animating like the pointer (A2), popups from a library growing from the wrong origin (A6), hovers wired in JavaScript without a pointer check (A3). Look for them in the files that move.
+3. **Rank.** Impact is how often it's felt times how bad it is: first what's slow or janky on things used all day (menus, buttons, inputs, navigation), then what breaks for some users (no reduced-motion path, a hover stuck on touch, a heading hidden on first paint), then occasional surfaces (dialogs, toasts, lists that update), then rare moments and polish.
+4. **Report.** Findings in that order, each with `file:line`, what it does now, why it matters there, and the fix with its token. Without `@animate-ui/react` in the project, give each token's value beside its name (`tokens.md`) and say that installing it brings them; `css-timing.mjs` needs the package, so a CSS fix without it uses the tween tokens' curves. List the facts you dismissed and why, one line each. Never paste the raw report as the review, and never give a score.
+5. **Fix** what the user asks for, with the C path, and run the audit again to show the facts that changed.
+
 ## E. Reproduce an animation from a link or a video
 
 The user shows an animation they like (a site, a video, a GIF, a screen recording) and wants it on their component. Copy **only the motion**: which properties move, from where to where, for how long, on which curve or spring, in which order. Their component keeps its own look (colors, sizes, radius, type, layout, content) unless they ask for that too.
@@ -183,4 +202,5 @@ The change (CLI run, import swap or code), then in a few lines:
 - **D**: the manual steps done and left, and the files deleted or kept.
 - **E**: what was measured, the tokens it became or the values kept, and what the reference didn't show.
 - **Icon**: the file and where it went, what the icon does and why it means that, the level, the usages replaced, the original files left, and any technique or rule of `icons.md` adapted or set aside.
+- **R**: the findings (file:line, why, fix), the facts dismissed and why, and the audit's before/after when fixes were made.
 - **Pace**: the tempo set and where.

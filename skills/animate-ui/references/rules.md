@@ -64,7 +64,7 @@ In CSS: `@media (hover: hover) and (pointer: fine) { … }`.
 
 #### A4. Loops pause when nobody can see them
 
-Infinite animations and canvas backgrounds pause off screen (`useInView`), in a hidden tab (`document.visibilityState`) and under reduced motion.
+Infinite animations and canvas backgrounds pause off screen (`useInView`), in a hidden tab (`document.visibilityState`) and under reduced motion. A loading spinner is the exception that keeps meaning something: under reduced motion it turns slower or becomes an opacity pulse, never a frozen frame.
 
 #### A5. The control answers on the frame of the interaction
 
