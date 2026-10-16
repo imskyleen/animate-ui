@@ -35,8 +35,15 @@ export function Loaded({
               key="skeleton"
               aria-hidden="true"
               exit={{ opacity: 0, transition: fade }}
-              className="h-24 animate-pulse rounded-lg bg-neutral-200 motion-reduce:animate-none"
-            />
+            >
+              <div className="flex animate-pulse items-center gap-3 p-4 motion-reduce:animate-none">
+                <div className="size-10 rounded-full bg-neutral-200" />
+                <div className="flex flex-1 flex-col gap-2">
+                  <div className="h-4 w-1/3 rounded bg-neutral-200" />
+                  <div className="h-4 w-2/3 rounded bg-neutral-200" />
+                </div>
+              </div>
+            </motion.div>
           ) : (
             <motion.div
               key="content"
@@ -54,5 +61,6 @@ export function Loaded({
 ```
 
 - The skeleton fades out on `transition.fade` while the content comes out of `blur.surface` on `transition.reveal`; `popLayout` overlaps them so nothing jumps between.
-- The skeleton's pulse is CSS, stopped under reduced motion (`motion-reduce:animate-none`).
-- When the content's height differs from the skeleton's, wrap both in Auto Height (catalog) so the space eases to it.
+- `initial={false}`: content already loaded on mount shows at once, on purpose; A15 doesn't apply.
+- The pulse is CSS on an inner element, so its opacity loop doesn't fight the exit's opacity. It stops under reduced motion (`motion-reduce:animate-none`).
+- Shape the skeleton like the content (its avatar, its text bars, the same padding) so the heights match; Auto Height (catalog) is for when they can't.

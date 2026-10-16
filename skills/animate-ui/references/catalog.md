@@ -19,6 +19,8 @@ Check this list before writing motion by hand: when one of these does the job, u
 
 ## Numbers and changing text
 
+These are the expressive choice for a value changing; at the subtle level a value changing in place swaps (`recipes/swap.md`).
+
 | Need                                              | Use              | Import                                                |
 | ------------------------------------------------- | ---------------- | ----------------------------------------------------- |
 | A number counting up to its value (stats, totals) | Counting Number  | `@animate-ui/react/primitives/texts/counting-number`  |

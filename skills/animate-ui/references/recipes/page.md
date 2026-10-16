@@ -11,3 +11,5 @@ Purpose: delight on arrival, continuity while scrolling. Start from the catalog 
 - Buttons press (`Button` from the catalog, or [press.md](press.md)); headings may use a text effect from the catalog, one per page at most.
 
 By hand, the same values: fade on `transition.reveal`, rise a few pixels (16px at most) on `spring.entrance`, out of `blur.icon` for lines of text or `blur.surface` for cards, 80–100ms between items, `whileInView` with `viewport={{ once: true }}`. Keep the page's main text visible in the server HTML: animate decorations and what's below the fold, not the first line a reader needs.
+
+- `Effects` with `inView` also works for what's already visible on load. A long list revealed on scroll staggers within each view, not by its index. A static card that scaled on hover gets no hover at all.

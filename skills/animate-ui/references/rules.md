@@ -15,7 +15,7 @@ Every `@animate-ui/react` primitive follows them. The style draws on Emil Kowals
 
 Two pieces, always together:
 
-- Wrap the component's motion tree in `ReducedMotionConfig`. Under reduced motion, Motion then skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter.
+- Wrap the component's motion tree in `ReducedMotionConfig` (a tree that only fades or blurs needs none; Animate UI's primitives bring their own, so a server page uses them without a wrapper). Under reduced motion, Motion then skips individual transform props (`x`, `scale`, `rotate`), size, position and `layout` animations, and keeps animating opacity, color and filter.
 - Motion does **not** skip a `transform` string. Neutralize it with `useShouldReduceMotion()`, called inside the wrapper.
 
 What reduced motion keeps, everywhere (toasts, surfaces, entrances): fades and blurs. What it drops: movement, scale and rotation. A number counting or rolling is movement too: under reduced motion it shows its value at once.
@@ -64,7 +64,7 @@ In CSS: `@media (hover: hover) and (pointer: fine) { … }`.
 
 #### A4. Loops pause when nobody can see them
 
-Infinite animations and canvas backgrounds pause off screen (`useInView`), in a hidden tab (`document.visibilityState`) and under reduced motion. A loading spinner is the exception that keeps meaning something: under reduced motion it turns slower or becomes an opacity pulse, never a frozen frame.
+Infinite animations and canvas backgrounds pause off screen (`useInView`), in a hidden tab (`document.visibilityState`) and under reduced motion. A loop with no loading state wired to it is decorative; a request about reduced motion only fixes that, and names the off-screen pause as a finding (a pure CSS loop pauses with `animation-play-state: paused`). A loading spinner is the exception that keeps meaning something: under reduced motion it turns slower or becomes an opacity pulse, never a frozen frame.
 
 #### A5. The control answers on the frame of the interaction
 
@@ -105,7 +105,7 @@ Hover feedback isn't motion: a color, background, border or shadow changing on h
 
 #### A9. Prefer a `transform` string for press and continuous motion
 
-Motion runs a `transform` string on the compositor (WAAPI); its `x`, `y` and `scale` shorthands run on the main thread. Use the string for press feedback, drags and anything long-running. An overlay that must end with `transform: none` (so a settled popup never becomes the containing block of fixed descendants) can use `scale`: Motion writes `none` once it's back to 1.
+Motion runs a `transform` string on the compositor (WAAPI); its `x`, `y` and `scale` shorthands run on the main thread. Use the string for press feedback and anything long-running. A drag through Motion's `drag` or `Reorder` writes `x`/`y` itself, and that's fine; animate its exit with a transform string. An overlay that must end with `transform: none` (so a settled popup never becomes the containing block of fixed descendants) can use `scale`: Motion writes `none` once it's back to 1.
 
 ```tsx
 whileTap={{ transform: `scale(${scale.press})` }}
@@ -195,7 +195,7 @@ A tween on `ease.out` reads faster than its duration: most of the movement happe
 ### B4. Scale: press only, and from a size that fits
 
 - Pressables (buttons, radio, toggles) scale to `scale.press` (0.97) on `spring.press` while pressed; a whole card, tile or row is larger, so lighter: `scale.choice` (0.985). **The pressed element never scales on hover**: hover changes color, background, border or shadow, and the press answers the click. (Animate UI's buttons keep an opt-in `hoverScale`, 1 by default.) The checkbox doesn't scale at all: its fill and its check answer the click.
-- A card may do more on hover, since it's a surface rather than a control: its image zooms inside it (to 1.05, clipped by the card), its shadow deepens, and it lifts 2px (`translateY(-2px)`, 4px at most), all on `spring.highlight` so leaving retargets at once. The card itself still doesn't scale.
+- A card may do more on hover, since it's a surface rather than a control: its image zooms inside it (to 1.05, clipped by the card), its shadow deepens, and it lifts 2px (`translateY(-2px)`, 4px at most): the shadow on `transition.color`, the lift and the zoom on `spring.highlight` so leaving retargets at once. The card itself still doesn't scale.
 - Anchored popups grow from their trigger, from farther when they are small: tooltips `scale.tooltip` (0.7), popovers and hover cards `scale.popover` (0.8), menus `scale.menu` (0.9).
 - A dialog tips forward from `perspective(500px) rotateX(-20deg) scale(0.8)`.
 

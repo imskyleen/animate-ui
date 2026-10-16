@@ -30,9 +30,18 @@ try {
   motion = await import(
     pathToFileURL(require.resolve('@animate-ui/react/utils/motion')).href
   );
-} catch {
+} catch (error) {
+  const found = (() => {
+    try {
+      return require.resolve('@animate-ui/react/utils/motion');
+    } catch {
+      return null;
+    }
+  })();
   console.error(
-    "Couldn't load @animate-ui/react from this project: install it (and motion), then run this from the project's folder.",
+    found
+      ? `Found ${found} but couldn't load it: ${error instanceof Error ? error.message : error}`
+      : "Couldn't find @animate-ui/react from this folder: install it (and motion), then run this from the project's folder. Without it, use the tween tokens' values from references/tokens.md.",
   );
   process.exit(1);
 }

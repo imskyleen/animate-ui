@@ -61,5 +61,5 @@ export function AnimatedList({
 - An added item fades in and rises 8px at once, wherever it lands. The items already there on first render show at rest (`initial={false}`); a page's first entrance is Effects with `holdDelay` (catalog), not this list.
 - A removed item fades and shrinks to 0.96 in place, and `mode="popLayout"` takes it out of the flow at once so the others close the gap on `spring.reflow` (`layout="position"`: they move, they don't stretch).
 - Results of a search or filter don't cascade ([../recipes/palette.md](../recipes/palette.md)): only items added one by one animate in.
-- Spacing between items is `gap`, never `space-y-*` or margins: the item `popLayout` takes out of the flow would jump by its margin. Swapping the user's `space-y-*` for `flex flex-col gap-*` of the same size is part of the recipe; say so in the output.
+- Spacing between items is `gap`, never `space-y-*` or margins (the item `popLayout` takes out of the flow would jump by its margin), and never `divide-y`: use a border on each item. Swapping the user's `space-y-*` for `flex flex-col gap-*` of the same size is part of the recipe; say so in the output.
 - Under reduced motion, `ReducedMotionConfig` drops the rise and the layout moves; the fades stay.

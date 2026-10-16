@@ -17,6 +17,8 @@ How much motion, asked before the feel when the request doesn't say (SKILL.md §
 | **More** · plus animé          | One step up: `blur.surface`, distances ×1.5 or a short slide where there was none, `transition.reveal` instead of `transition.swap`, bounce +0.1 on what isn't a surface.                                           | 4px blur, slides 6px, 300ms     | Rises 12px out of a 4px blur, a hint of bounce                     |
 | **Expressive** · très animé    | Animate UI's expressive primitives first (Rotating, Morphing, Rolling Text, Sliding Number, Particles, Effects with a stagger), then springs with a clear bounce (`spring.bounce`) and staggers. Rare moments only. | Rolling or Morphing Text        | Pops in on `spring.bounce`, a stagger when several arrive together |
 
+For an interaction, step its own recipe the same way: **more** adds `blur.surface` and a 6px slide to what enters, a little bounce to what settles (a reordered item, a swiped row coming back); **expressive** swaps a changing value for Sliding or Rolling Number, staggers what arrives together, and lets a dismissed row fly off with its throw.
+
 ## Words
 
 | Asked for                                             | Life       | Pace                  | Start from                                                                |
@@ -39,15 +41,15 @@ Fades and color changes stay tweens whatever the word: `transition.fade`, `trans
 
 Each step below is one unit; asked again, take another step from where it is.
 
-| Asked for                               | Step                                                                                                                                                                                  |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| bouncier · plus de rebond               | bounce +0.1 (a surface: dialog, sheet, popover stays at 0.3 or below; anything else 0.5 or below)                                                                                     |
-| less bouncy · moins de rebond, plus sec | bounce −0.1, down to 0                                                                                                                                                                |
-| faster · plus rapide, plus vif          | `visualDuration` (or a tween's duration) ×0.85                                                                                                                                        |
-| slower · plus lent                      | `visualDuration` (or a tween's duration) ×1.15                                                                                                                                        |
-| softer · plus doux                      | bounce −0.1 and, for a tween, `ease.soft` instead of `ease.out`                                                                                                                       |
-| subtler · plus discret                  | distances halved, starting scales twice as close to 1 (0.9 → 0.95), blur one step down; time unchanged                                                                                |
-| bolder · plus marqué                    | a changing text: one level up (rules B9); otherwise distances ×1.5, starting scales twice as far from 1 (0.95 → 0.9, never below 0.7 for a popup), add `blur.surface`; time unchanged |
+| Asked for                               | Step                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| bouncier · plus de rebond               | bounce +0.1 (a surface: dialog, sheet, popover, menu, select, tooltip stays at 0.3 or below; anything else 0.5 or below). On something opened all day (a menu, a select), the bounce goes to its press and its checks; the surface keeps its token. With no press or checks to take it, the surface's own bounce steps, at its pace and capped at 0.3 |
+| less bouncy · moins de rebond, plus sec | bounce −0.1, down to 0                                                                                                                                                                                                                                                                                                                                |
+| faster · plus rapide, plus vif          | `visualDuration` (or a tween's duration) ×0.85                                                                                                                                                                                                                                                                                                        |
+| slower · plus lent                      | `visualDuration` (or a tween's duration) ×1.15                                                                                                                                                                                                                                                                                                        |
+| softer · plus doux                      | bounce −0.1 and, for a tween, `ease.soft` instead of `ease.out`                                                                                                                                                                                                                                                                                       |
+| subtler · plus discret                  | distances halved, starting scales twice as close to 1 (0.9 → 0.95), blur one step down; time unchanged                                                                                                                                                                                                                                                |
+| bolder · plus marqué                    | a changing text: one level up (rules B9); otherwise distances ×1.5, starting scales twice as far from 1 (0.95 → 0.9, never below 0.7 for a popup), add `blur.surface`; time unchanged                                                                                                                                                                 |
 
 A playful press may also go one scale deeper (a card's 0.985 → 0.97): a big bounce on a 1.5% press barely shows. A word about leaving ("leave quickly") changes the surface's exit, not its overlay, which still clears like it came. A dialog's or a sheet's exit (`transition.dismiss`) is already quick: keep it, and step it (×0.85) only when asked again.
 
@@ -55,7 +57,7 @@ A playful press may also go one scale deeper (a card's 0.985 → 0.97): a big bo
 
 ## Writing the value
 
-A token stays a token when its role fits. When a step moves away from it, write the spring as `{ type: 'spring', visualDuration, bounce }` and pass it through `useTempoTransition()`. A token's equivalent, to start the step from (stiffness `k`, damping `d`, mass 1):
+A token stays a token when its role fits. Start a step from the token's exact equivalent and keep its `visualDuration`; the exit stays as it is. When a step moves away from it, write the spring as `{ type: 'spring', visualDuration, bounce }` and pass it through `useTempoTransition()`. A token's equivalent, to start the step from (stiffness `k`, damping `d`, mass 1):
 
 ```text
 visualDuration ≈ 2π / (1.2 · √k)

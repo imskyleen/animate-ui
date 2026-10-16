@@ -127,12 +127,12 @@ Take the icon's real SVG (the library's package source, its site's "copy SVG", o
 - Name the component as the user calls the icon (their file name or their word), else the library's name (`ShoppingCart`, `Notification01` for Hugeicons' numbered names), and export it also as `<Name>Icon`.
 - Replace the old usage (`<img src={rocket}>`, the library's component) with the new icon; leave the original file and its imports' type declarations in place, and say so in the output.
 - An icon beside a label that says the same thing is decoration: `aria-hidden` on it (the props pass through to the svg). An icon that carries its own meaning (verified, error, new) takes `role="img"` and an `aria-label`. Alone in a button, the button takes the `aria-label`.
-- Size it to where it sits: `size` defaults to 28; beside text, the text's size (16 for `text-sm` and `text-base`, 20 in a button).
+- Size it to where it sits: `size` defaults to 28; beside text, the text's size (16 for `text-sm` and `text-base`); in a button 20, unless the old icon set its own size. Import it through the project's path alias, else a relative path. A toggle with `aria-pressed` keeps one label for both states.
 - Pick the animation where the icon is used (`animation="draw"`); add a prop to the user's component for it only when they ask to switch it.
 
 ### The same icon in the registry
 
-When the registry has the same object (a rocket, a bell, a bolt is Lucide's `zap`), start from its animation, adjusted to this drawing: read its source at `https://animate-ui.com/r/icons-lucide-<name>.json` or `https://animate-ui.com/r/icons-hugeicons-<name>.json` (the file's `content`), or the icon pages on animate-ui.com. Without network, design it from the principles below.
+When the registry has the same object (a rocket, a bell, a bolt is Lucide's `zap`; pick the variant whose pieces match the drawing, Tabler's trash with its two lines is Lucide's `trash-2`), start from its animation, adjusted to this drawing: read its source at `https://animate-ui.com/r/icons-lucide-<name>.json` or `https://animate-ui.com/r/icons-hugeicons-<name>.json` (the file's `content`), or the icon pages on animate-ui.com. Without network, design it from the principles below.
 
 ### Styles
 
@@ -210,6 +210,7 @@ A state that comes from data rather than a gesture (unread notifications fill th
 ## Triggers
 
 - On the icon: `animateOnHover`, `animateOnTap`, `animateOnView` (once by default; `animateOnViewOnce={false}` replays each time it comes back, `animateOnViewMargin` starts it earlier or later), `animate`.
+- `animateOnTap` plays while the pointer is down and goes back to rest on release: add `completeOnStop` so a quick click plays it through. Keys don't trigger it; for a press from pointer and keyboard, or an icon a toggle swaps in, play it on mount with `animate`, and say what the other state does.
 - From a parent: `<AnimateIcon animateOnHover asChild>` (`import { AnimateIcon } from '@animate-ui/react/icons'`) around a button or a card, so the whole target triggers it. `AnimateIcon` and the icon file are client components already; the file using them needs no `'use client'` of its own.
 - Played on view, the icon starts as it touches the viewport; its `initial` stays the rest state (a draw doesn't start hidden), so under reduced motion or before the trigger it shows whole.
 - Inside something that has its own entrance (a card fading in), `delay` by about that entrance's length so the icon plays once it's there.
