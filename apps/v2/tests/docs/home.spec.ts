@@ -284,3 +284,40 @@ test('the orbit headline waits for the logo, and the grid does not hold the scro
   }
   expect(end - firstSettled).toBeLessThan(viewport * 0.35);
 });
+
+test('the command block is built from Animate UI tabs, copy button and buttons', async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+    timeout: 5000,
+  });
+  const hero = page.locator('section').first();
+  const managers = hero.locator('[data-slot="tabs-list"]');
+  await expect(managers).toHaveAttribute('aria-label', 'Package manager');
+  const highlight = () =>
+    hero
+      .locator('[data-slot="motion-highlight"]')
+      .first()
+      .evaluate((el) => Math.round(el.getBoundingClientRect().left));
+  await managers.getByRole('tab', { name: 'npm', exact: true }).click();
+  await page.waitForTimeout(500);
+  const before = await highlight();
+  await managers.getByRole('tab', { name: 'bun' }).click();
+  await expect.poll(highlight).toBeGreaterThan(before + 20);
+
+  const copy = hero.locator('[data-slot="copy-button"]');
+  await copy.click();
+  await expect(copy).toHaveAttribute('data-copied', '');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    'bun x @animate-ui/cli@latest animate all',
+  );
+
+  for (const name of ['Get started', 'Browse primitives'])
+    await expect(hero.getByRole('link', { name })).toHaveAttribute(
+      'data-slot',
+      'button',
+    );
+});

@@ -2,13 +2,22 @@
 
 import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@animate-ui/react/primitives/buttons/button';
+import {
+  CopyButton,
+  CopyButtonIcon,
+} from '@animate-ui/react/primitives/buttons/copy';
+import {
+  Tabs,
+  TabsHighlight,
+  TabsHighlightItem,
+  TabsList,
+  TabsTrigger,
+} from '@animate-ui/react/primitives/tabs';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { ease, ReducedMotionConfig } from '@animate-ui/react/utils/motion';
 import { motion } from 'motion/react';
-import { cn } from 'cn';
 import Link from 'next/link';
-import { useState } from 'react';
 
-import { IconSwap } from '@/components/docs/icon-swap';
 import { HeroTitle } from '@/components/home/hero-title';
 import { useIntroDone } from '@/components/home/intro';
 import {
@@ -32,7 +41,6 @@ const rise = (index: number, done: boolean) => ({
 });
 
 export function CopyCommand() {
-  const [copied, setCopied] = useState(false);
   const [manager, setManager] = useSyncedValue(MANAGER_NAMES, {
     groupId: MANAGER_GROUP,
     persist: true,
@@ -40,48 +48,58 @@ export function CopyCommand() {
   const COMMAND = command(manager as Manager);
   return (
     <div className="flex max-w-full flex-col items-center gap-2">
-      <div
-        role="radiogroup"
-        aria-label="Package manager"
-        className="flex gap-1 text-xs"
-      >
-        {MANAGER_NAMES.map((name) => (
-          <button
-            key={name}
-            type="button"
-            role="radio"
-            aria-checked={name === manager}
-            onClick={() => setManager(name)}
-            className={cn(
-              'rounded-md px-2 py-1 transition-colors',
-              name === manager
-                ? 'bg-accent text-foreground'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
+      <Tabs value={manager} onValueChange={setManager}>
+        <TabsHighlight className="absolute inset-0 z-0 rounded-md bg-accent">
+          <TabsList
+            aria-label="Package manager"
+            className="inline-flex items-center gap-1 text-xs"
           >
-            {name}
-          </button>
-        ))}
-      </div>
-      <Button
-        type="button"
-        aria-label={copied ? 'Copied' : 'Copy the command'}
-        onClick={async () => {
-          await navigator.clipboard.writeText(COMMAND);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500);
-        }}
+            {MANAGER_NAMES.map((name) => (
+              <TabsHighlightItem key={name} value={name}>
+                <TabsTrigger
+                  value={name}
+                  className="relative z-10 rounded-md px-2 py-1 text-muted-foreground transition-colors duration-300 hover:text-foreground data-[state=active]:text-foreground"
+                >
+                  {name}
+                </TabsTrigger>
+              </TabsHighlightItem>
+            ))}
+          </TabsList>
+        </TabsHighlight>
+      </Tabs>
+      <CopyButton
+        content={COMMAND}
+        aria-label="Copy the command"
         className="group flex h-11 max-w-full items-center gap-3 rounded-xl border bg-accent/40 pr-3 pl-4 font-mono text-sm transition-colors hover:bg-accent"
       >
         <span className="text-muted-foreground select-none">$</span>
         <span className="truncate">{COMMAND}</span>
-        <IconSwap
-          active={copied}
-          icon={Copy01Icon}
-          activeIcon={Tick02Icon}
-          size={16}
+        <CopyButtonIcon
           className="text-muted-foreground group-hover:text-foreground"
+          icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} size={16} />}
+          copiedIcon={
+            <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} size={16} />
+          }
         />
+      </CopyButton>
+    </div>
+  );
+}
+
+export function CallsToAction() {
+  return (
+    <div className="flex gap-3">
+      <Button
+        asChild
+        className="inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85"
+      >
+        <Link href="/docs">Get started</Link>
+      </Button>
+      <Button
+        asChild
+        className="inline-flex h-10 items-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-accent"
+      >
+        <Link href="/docs/primitives">Browse primitives</Link>
       </Button>
     </div>
   );
@@ -119,20 +137,7 @@ export function Hero() {
           className="mt-8 flex max-w-full flex-col items-center gap-4"
         >
           <CopyCommand />
-          <div className="flex gap-3">
-            <Link
-              href="/docs"
-              className="inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85"
-            >
-              Get started
-            </Link>
-            <Link
-              href="/docs/primitives"
-              className="inline-flex h-10 items-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-accent"
-            >
-              Browse primitives
-            </Link>
-          </div>
+          <CallsToAction />
         </motion.div>
 
         <motion.div

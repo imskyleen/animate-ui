@@ -2,9 +2,8 @@
 
 import { ease } from '@animate-ui/react/utils/motion';
 import { motion } from 'motion/react';
-import Link from 'next/link';
 
-import { CopyCommand } from './hero';
+import { CallsToAction, CopyCommand } from './hero';
 
 const reveal = (index: number) => ({
   initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
@@ -37,20 +36,7 @@ export function OneCommand() {
         className="mt-8 flex max-w-full flex-col items-center gap-4"
       >
         <CopyCommand />
-        <div className="flex gap-3">
-          <Link
-            href="/docs"
-            className="inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85"
-          >
-            Get started
-          </Link>
-          <Link
-            href="/docs/primitives"
-            className="inline-flex h-10 items-center rounded-lg border px-5 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            Browse primitives
-          </Link>
-        </div>
+        <CallsToAction />
       </motion.div>
     </section>
   );

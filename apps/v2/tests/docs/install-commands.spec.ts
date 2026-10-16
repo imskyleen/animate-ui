@@ -74,13 +74,13 @@ test('the home command follows the chosen package manager', async ({
 }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
   const managers = page
-    .getByRole('radiogroup', { name: 'Package manager' })
+    .getByRole('tablist', { name: 'Package manager' })
     .first();
-  await managers.getByRole('radio', { name: 'pnpm' }).click();
+  await managers.getByRole('tab', { name: 'pnpm' }).click();
   await expect(
     page.getByText('pnpm dlx @animate-ui/cli@latest animate all'),
   ).toHaveCount(2);
-  await managers.getByRole('radio', { name: 'bun' }).click();
+  await managers.getByRole('tab', { name: 'bun' }).click();
   await expect(
     page.getByText('bun x @animate-ui/cli@latest animate all'),
   ).toHaveCount(2);
