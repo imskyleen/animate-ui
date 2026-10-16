@@ -94,15 +94,11 @@ export function HomeHeader({ stars }: { stars?: number }) {
           transition={{ duration: 0.6, ease: ease.out, delay: 0.25 }}
         >
           <nav className="mr-1 flex items-center">
-            {LINKS.map((link, index) => (
+            {LINKS.map((link) => (
               <Link
                 key={link.url}
                 href={link.url}
-                className={
-                  index === 0
-                    ? 'inline-flex h-8 items-center rounded-md px-3 text-sm text-neutral-700 transition-colors hover:text-black dark:text-neutral-200 dark:hover:text-white'
-                    : 'hidden h-8 items-center rounded-md px-3 text-sm text-neutral-700 transition-colors hover:text-black sm:inline-flex dark:text-neutral-200 dark:hover:text-white'
-                }
+                className="hidden h-8 items-center rounded-md px-3 text-sm text-neutral-700 transition-colors hover:text-black sm:inline-flex dark:text-neutral-200 dark:hover:text-white"
               >
                 {link.title}
               </Link>
